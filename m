@@ -2,139 +2,144 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C6FC433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1886C433E3
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DEF020639
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDE492071E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="i8UhYGZn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJMuObmr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbgHYNTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Aug 2020 09:19:33 -0400
-Received: from mailoutvs32.siol.net ([185.57.226.223]:44428 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725904AbgHYNTS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 09:19:18 -0400
-X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Aug 2020 09:19:16 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 6417F523AC4;
-        Tue, 25 Aug 2020 15:10:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uAa3ThSR6OU9; Tue, 25 Aug 2020 15:10:56 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id F188C523B2E;
-        Tue, 25 Aug 2020 15:10:55 +0200 (CEST)
-Received: from localhost.localdomain (89-212-178-211.dynamic.t-2.net [89.212.178.211])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id 70C35523955;
-        Tue, 25 Aug 2020 15:10:55 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH] clk: sunxi-ng: sun8i: r40: Use sigma delta modulation for audio PLL
-Date:   Tue, 25 Aug 2020 15:10:49 +0200
-Message-Id: <20200825131049.1277596-1-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.28.0
+        id S1726804AbgHYNgw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 09:36:52 -0400
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:34481 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726749AbgHYNgX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 09:36:23 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id B57FBCCD;
+        Tue, 25 Aug 2020 09:36:20 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 25 Aug 2020 09:36:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=POEurteasFjtErahfEjgvleBxyP
+        Dp8wZRReEbv/IAys=; b=i8UhYGZnZjo037lPyii2wA/CX7LkgMwr9a3XbcVjYtH
+        Wmv4F/2SE2c8N6spUbl7zBloi9b8wwCB+yERBHAut3kTCUOpHgNgbOA4LR/Ew0vV
+        zHWRGcEy9u2JN0gE1wGX9XTkLkCrA7Mkx86YSG14ttmT+Uj6+qHU7u84BFVAS5sH
+        fXYnmp4r3f7OD7prv9BfPZedMze1b1hMbGqK9suB0YzsZo+r1Pwlb71TifHAQdcZ
+        T8olniVwYsB8msCX1/AJnol0C48g8QdEGfJm6UpKwcj6f5GUa8fq4cMTtm0kveAB
+        Q8qOXt9jXKfa556Nf62m8CjIn3OfmFnNPZlpFx0bL9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=POEurt
+        easFjtErahfEjgvleBxyPDp8wZRReEbv/IAys=; b=XJMuObmrP1KF2fiCudIQoF
+        Uw9YdDA9nRFLxEgXw4Mjs9KyCgAEczVVNqFx6J1rHndHBdOO5lsN9hYTd5dtYd2o
+        SiQ+GHyPrGNtuolY4oY5F0wdDLm6p9aUtcwVif+FX4vxcDyt7PIfORygP+kHk+PU
+        5y82npqA9hHXInV1zafBoPumQHM2nxY8MkCgYYQDh0chHba0IOTKOzdhfCFpUmqr
+        mRM5PpYFzv8lUAPcy88JZ84iEz+emJjwyCr0JgsRaWbO7k2o/042PGFoKQHO+cX6
+        3W2gjd2837hYtUzxOdHL8tBTnRCazMAGQiti0R8NLNtESi0NhEQEDTSm2jxGeohQ
+        ==
+X-ME-Sender: <xms:1BNFX-4Ec6Wt06BBmqcZp-stJ36Ws-Pz6M9S0fH9vKfHtHaYRipLhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedruddvtddgieelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepvddune
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:1BNFX34Jxf_MxSBsPQgv3osZA2IUOm9RuGW3he0GaDIb-Crt_jqsNQ>
+    <xmx:1BNFX9eW9OggrB-x6yam3EuKH9xSnH4r8TBzbmLawHnDvILI2Ef81w>
+    <xmx:1BNFX7LPwLSpf-QM7m7LqSbRD0zLgnVPKcNN9eWu5vFhQibCKW1fKQ>
+    <xmx:1BNFX6AWjA-EcPGV4346e34oYz6jt_QRUfA4kEdsWppp3Zws0d7Ei3LzJcE>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id ABAA63280059;
+        Tue, 25 Aug 2020 09:36:19 -0400 (EDT)
+Date:   Tue, 25 Aug 2020 10:55:32 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Frank Lee <tiny.windzz@gmail.com>,
+        Frank Lee <frank@allwinnertech.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, gregory.clement@bootlin.com,
+        Thomas Gleixner <tglx@linutronix.de>, jason@lakedaemon.net,
+        Marc Zyngier <maz@kernel.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        "p.zabel" <p.zabel@pengutronix.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        clabbe@baylibre.com, bage@linutronix.de,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-i2c@vger.kernel.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v5 00/16] Allwinner A100 Initial support
+Message-ID: <20200825085532.vv4dpuzmjnshm5qn@gilmour.lan>
+References: <cover.1595572867.git.frank@allwinnertech.com>
+ <CAEExFWsvScMgi_Dftfq06HZiF8CFAmym8Z_tgQoHHAfiGxWt0g@mail.gmail.com>
+ <CAEExFWuwjmqAh0c3kMLS3Gs6UC2A8TtY-9nJeWxFPRDugtR4pA@mail.gmail.com>
+ <20200824080327.GH3248864@dell>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="auueqe22v4rtftcj"
+Content-Disposition: inline
+In-Reply-To: <20200824080327.GH3248864@dell>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Audio cores need specific clock rates which can't be simply obtained by
-adjusting integer multipliers and dividers. HW for such cases supports
-delta-sigma modulation which enables fractional multipliers.
 
-Port H3 delta-sigma table to R40. They have identical audio PLLs.
+--auueqe22v4rtftcj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 37 ++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+On Mon, Aug 24, 2020 at 09:03:27AM +0100, Lee Jones wrote:
+> On Mon, 24 Aug 2020, Frank Lee wrote:
+>=20
+> > ping......
+>=20
+> "Please don't send content free pings and please allow a reasonable
+>  time for review.  People get busy, go on holiday, attend conferences
+>  and so on so unless there is some reason for urgency (like critical
+>  bug fixes) please allow at least a couple of weeks for review.  If
+>  there have been review comments then people may be waiting for those
+>  to be addressed.  Sending content free pings just adds to the mail
+>  volume (if they are seen at all) and if something has gone wrong
+>  you'll have to resend the patches anyway so [RESEND]ing with any
+>  comments addressed is generally a much better approach."
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/=
-ccu-sun8i-r40.c
-index 23bfe1d12f21..84153418453f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -45,18 +45,29 @@ static struct ccu_nkmp pll_cpu_clk =3D {
-  * the base (2x, 4x and 8x), and one variable divider (the one true
-  * pll audio).
-  *
-- * We don't have any need for the variable divider for now, so we just
-- * hardcode it to match with the clock names
-+ * With sigma-delta modulation for fractional-N on the audio PLL,
-+ * we have to use specific dividers. This means the variable divider
-+ * can no longer be used, as the audio codec requests the exact clock
-+ * rates we support through this mechanism. So we now hard code the
-+ * variable divider to 1. This means the clock rates will no longer
-+ * match the clock names.
-  */
- #define SUN8I_R40_PLL_AUDIO_REG	0x008
-=20
--static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
--				   "osc24M", 0x008,
--				   8, 7,	/* N */
--				   0, 5,	/* M */
--				   BIT(31),	/* gate */
--				   BIT(28),	/* lock */
--				   CLK_SET_RATE_UNGATE);
-+static struct ccu_sdm_setting pll_audio_sdm_table[] =3D {
-+	{ .rate =3D 22579200, .pattern =3D 0xc0010d84, .m =3D 8, .n =3D 7 },
-+	{ .rate =3D 24576000, .pattern =3D 0xc000ac02, .m =3D 14, .n =3D 14 },
-+};
-+
-+static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-ba=
-se",
-+				       "osc24M", 0x008,
-+				       8, 7,	/* N */
-+				       0, 5,	/* M */
-+				       pll_audio_sdm_table, BIT(24),
-+				       0x284, BIT(31),
-+				       BIT(31),	/* gate */
-+				       BIT(28),	/* lock */
-+				       CLK_SET_RATE_UNGATE);
-=20
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-vid=
-eo0",
- 						"osc24M", 0x0010,
-@@ -952,10 +963,10 @@ static const struct clk_hw *clk_parent_pll_audio[] =
-=3D {
- 	&pll_audio_base_clk.common.hw
- };
-=20
--/* We hardcode the divider to 4 for now */
-+/* We hardcode the divider to 1 for now */
- static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
- 			    clk_parent_pll_audio,
--			    4, 1, CLK_SET_RATE_PARENT);
-+			    1, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
- 			    clk_parent_pll_audio,
- 			    2, 1, CLK_SET_RATE_PARENT);
-@@ -1307,10 +1318,10 @@ static int sun8i_r40_ccu_probe(struct platform_de=
-vice *pdev)
- 	if (IS_ERR(reg))
- 		return PTR_ERR(reg);
-=20
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val =3D readl(reg + SUN8I_R40_PLL_AUDIO_REG);
- 	val &=3D ~GENMASK(19, 16);
--	writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
-+	writel(val | (0 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
-=20
- 	/* Force PLL-MIPI to MIPI mode */
- 	val =3D readl(reg + SUN8I_R40_PLL_MIPI_REG);
---=20
-2.28.0
+This is true to some extent, but pinging after a month doesn't seem
+unreasonable either.
 
+Maxime
+
+--auueqe22v4rtftcj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX0TSBAAKCRDj7w1vZxhR
+xQ6OAP9rRoEY6LGAwA8rIYGP9nqZkGQvX8jYgLKgy8LDGLzgHwD9FpLVh5zaq2PN
+wZuijCenTGRJcOzorN0M0qrwWwjOnwM=
+=/bST
+-----END PGP SIGNATURE-----
+
+--auueqe22v4rtftcj--
