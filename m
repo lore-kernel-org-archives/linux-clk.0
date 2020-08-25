@@ -2,137 +2,174 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A3CC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 16:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8390C433E1
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 18:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A4FA2080C
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 16:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD1F2071E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 18:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbgHYQsF convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Aug 2020 12:48:05 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43891 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbgHYQsE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 12:48:04 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v12so14593074ljc.10;
-        Tue, 25 Aug 2020 09:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nTSrXzEAroJk48irekSp56G+4B2v4pPedg0lBTRq2cw=;
-        b=S/SsSFAJHnMWHbArNn2dUJvcIoCl8RcC0osg1x07Qww1mxJYk3Y5VRTbTJyejV58s+
-         1rnXaxyaD58yu0vNA/fNJdMF0ld+EpqrdMPurbB8pRUjJ/c02Ro80NBv88f4+ZIXSrHl
-         uLWRY5mVLbSEuuHOcG770ey2LSDEf95uCUYAtwpdJwnMJF3OIbE7WekpdYmWJw4H/fic
-         v7RlOMZyJOgl9EntAiWQaj79JcFx14Wk5YvK4R/tLXDGN9prMVdtDL7VpMEn8BvGXH0F
-         vSyVokIzb+DFA3eozT2RvuOWLUdJ8EdolIMHkFkbYwZ5NjFKr6XzpyJ5qeo72vsK7cGj
-         s5+Q==
-X-Gm-Message-State: AOAM531PqP/PKkJLfUFM+sOw54SsCg5BKUGY1oC76QJZcSCJ/6SNJ4cf
-        D1k/DuyTC0wyRdxWnewlUelc4JMDInpErQ==
-X-Google-Smtp-Source: ABdhPJy2lLA/znQ/K+nshMqLdx/QxXOO8kZjwQ6kKS1O78uxwfG1QzxA9xoDFZ7aSIafPsJc36N+Lw==
-X-Received: by 2002:a2e:b04e:: with SMTP id d14mr5680053ljl.16.1598374081757;
-        Tue, 25 Aug 2020 09:48:01 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id d15sm2947454ljl.32.2020.08.25.09.48.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2020 09:48:01 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id i14so4731348lfl.12;
-        Tue, 25 Aug 2020 09:48:01 -0700 (PDT)
-X-Received: by 2002:a19:5046:: with SMTP id z6mr4935334lfj.4.1598374080957;
- Tue, 25 Aug 2020 09:48:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200825131049.1277596-1-jernej.skrabec@siol.net>
- <CAGb2v66q15syd5g-9RUocmEwJyvpbJniTmwLJL4QH5s==fCi2Q@mail.gmail.com> <21600331.3yVNq0iq4W@jernej-laptop>
-In-Reply-To: <21600331.3yVNq0iq4W@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 26 Aug 2020 00:47:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67Lm43mg-QrHJAV7svLnVJS0We6tiTLbCwi_d48ARRFVg@mail.gmail.com>
-Message-ID: <CAGb2v67Lm43mg-QrHJAV7svLnVJS0We6tiTLbCwi_d48ARRFVg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: sun8i: r40: Use sigma delta
- modulation for audio PLL
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
+        id S1726772AbgHYSk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 14:40:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:34662 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726730AbgHYSkO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Aug 2020 14:40:14 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B8AD1A038E;
+        Tue, 25 Aug 2020 20:30:10 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 183821A165E;
+        Tue, 25 Aug 2020 20:30:10 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 036DB203CE;
+        Tue, 25 Aug 2020 20:30:09 +0200 (CEST)
+Date:   Tue, 25 Aug 2020 21:30:09 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>, Rob Herring <robh@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, devicetree@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Mike Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 11/17] clk: imx: Add blk_ctrl combo driver
+Message-ID: <20200825183009.olarh5ewkljeh35d@fsr-ub1664-175>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
+ <1597406966-13740-12-git-send-email-abel.vesa@nxp.com>
+ <ea2563fcb456830b37b0031455e5054d6b81c680.camel@pengutronix.de>
+ <20200825112421.eut7gx3i4eirhnfw@fsr-ub1664-175>
+ <8e8e33386eea12036bb17529b4d578704bf735d1.camel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e8e33386eea12036bb17529b4d578704bf735d1.camel@pengutronix.de>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 12:45 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
->
-> Dne torek, 25. avgust 2020 ob 16:46:31 CEST je Chen-Yu Tsai napisal(a):
-> > On Tue, Aug 25, 2020 at 9:11 PM Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
-> > > Audio cores need specific clock rates which can't be simply obtained by
-> > > adjusting integer multipliers and dividers. HW for such cases supports
-> > > delta-sigma modulation which enables fractional multipliers.
-> > >
-> > > Port H3 delta-sigma table to R40. They have identical audio PLLs.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > ---
-> > >
-> > >  drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 37 ++++++++++++++++++----------
-> > >  1 file changed, 24 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> > > b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c index 23bfe1d12f21..84153418453f
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-> > > @@ -45,18 +45,29 @@ static struct ccu_nkmp pll_cpu_clk = {
-> > >
-> > >   * the base (2x, 4x and 8x), and one variable divider (the one true
-> > >   * pll audio).
-> > >   *
-> > >
-> > > - * We don't have any need for the variable divider for now, so we just
-> > > - * hardcode it to match with the clock names
-> > > + * With sigma-delta modulation for fractional-N on the audio PLL,
-> > > + * we have to use specific dividers. This means the variable divider
-> > > + * can no longer be used, as the audio codec requests the exact clock
-> > > + * rates we support through this mechanism. So we now hard code the
-> > > + * variable divider to 1. This means the clock rates will no longer
-> > > + * match the clock names.
-> > >
-> > >   */
-> > >
-> > >  #define SUN8I_R40_PLL_AUDIO_REG        0x008
-> > >
-> > > -static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
-> > > -                                  "osc24M", 0x008,
-> > > -                                  8, 7,        /* N */
-> > > -                                  0, 5,        /* M */
-> > > -                                  BIT(31),     /* gate */
-> > > -                                  BIT(28),     /* lock */
-> > > -                                  CLK_SET_RATE_UNGATE);
-> > > +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-> > > +       { .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
-> > > +       { .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
-> >
-> > The user manual has an additional requirement: 3 <= N/M <= 21.
-> > Though it then says 72 <= 24*N/P <= 504. Not sure which one is
-> > right...
-> >
-> > Did you run into any glitches or audio distortions?
->
-> No, I tested HDMI audio and it seems to work fine.
->
-> BSP driver also uses those values:
-> https://github.com/BPI-SINOVOIP/BPI-M2U-bsp/blob/master/linux-sunxi/drivers/
-> clk/sunxi/clk-sun8iw11.c#L160
+On 20-08-25 14:07:29, Philipp Zabel wrote:
+> On Tue, 2020-08-25 at 14:24 +0300, Abel Vesa wrote:
+> [...]
+> > > > +static int imx_blk_ctrl_reset_set(struct reset_controller_dev *rcdev,
+> > > > +				  unsigned long id, bool assert)
+> > > > +{
+> > > > +	struct imx_blk_ctrl_drvdata *drvdata = container_of(rcdev,
+> > > > +			struct imx_blk_ctrl_drvdata, rcdev);
+> > > > +	unsigned int offset = drvdata->rst_hws[id].offset;
+> > > > +	unsigned int shift = drvdata->rst_hws[id].shift;
+> > > > +	unsigned int mask = drvdata->rst_hws[id].mask;
+> > > > +	void __iomem *reg_addr = drvdata->base + offset;
+> > > > +	unsigned long flags;
+> > > > +	unsigned int asserted_before = 0, asserted_after = 0;
+> > > > +	u32 reg;
+> > > > +	int i;
+> > > > +
+> > > > +	spin_lock_irqsave(&drvdata->lock, flags);
+> > > > +
+> > > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
+> > > > +		if (drvdata->rst_hws[i].asserted)
+> > > > +			asserted_before++;
+> > > > +
+> > > > +	if (asserted_before == 0 && assert)
+> > > > +		pm_runtime_get(rcdev->dev);
+> > > 
+> > > Shouldn't that be pm_runtime_get_sync() ?
+> > > 
+> > > I would do that unconditionally before locking drvdata->lock and then
+> > > drop unnecessary refcounts afterwards.
+> > > 
+> > 
+> > I thought we already discussed this on the last's version thread.
+> 
+> This is about something different. pm_runtime_get() just queues the
+> device to be enabled at a later point, but I presume you want to have it
+> enabled before writing to its registers. (The question here is can you
+> write to the registers, and have the device update its internal state,
+> while the power domain is disabled?)
+> Either way, if you want the reset to be asserted after the function
+> returns (as is required by the reset API), as I understand it, you have
+> to make sure that the power domain is activated before the function
+> returns.
+> Therefore pm_runtime_get_sync() is required instead of pm_runtime_get(),
+> and that must be called outside of the spin locked section. My
+> suggestion would be:
+> 
+> 	if (assert)
+> 		pm_runtime_get_sync();
+> 	spin_lock_irqsave();
+> 	/* ... */
+> 	spin_unlock_irqrestore();
+> 	if (assert && asserted_before)
+> 		pm_runtime_put();
+> 
 
-Sounds good. Thanks.
+On a second thought this doesn't work because, for the first assertion,
+the runtime put will never be called, if the asserted_before does not count
+the current assertion. If it counts the current assertion, then every assertion
+will end with runtime put. None of these options work here.
+
+How about the following:
+
+	if (assert && !test_and_set_bit(1, &drvdata->rst_hws[id].asserted))     
+		pm_runtime_get_sync(rcdev->dev);                                
+                                                                        
+	spin_lock_irqsave(&drvdata->lock, flags);                               
+                                                                        
+	reg = readl(reg_addr);                                                  
+	if (assert)                                                             
+		writel(reg & ~(mask << shift), reg_addr);                       
+	else                                                                    
+		writel(reg | (mask << shift), reg_addr);                        
+                                                                        
+	spin_unlock_irqrestore(&drvdata->lock, flags);                          
+                                                                        
+	if (!assert && test_and_clear_bit(1, &drvdata->rst_hws[id].asserted))   
+		pm_runtime_put(rcdev->dev);                                     
+                                                                        
+This would only call the get_sync/put once for each reset bit.
+
+> unless the following might be an issue:
+> 
+> > > > +
+> > > > +	if (assert) {
+> > > > +		reg = readl(reg_addr);
+> > > > +		writel(reg & ~(mask << shift), reg_addr);
+> > > > +		drvdata->rst_hws[id].asserted = true;
+> > > > +	} else {
+> > > > +		reg = readl(reg_addr);
+> > > > +		writel(reg | (mask << shift), reg_addr);
+> 
+> Could this cause problems if the power domain is already disabled? If
+> so, it would be best to either temporarily enable power, or to skip the
+> register writes if asserted_before == 0 && !assert.
+> 
+> > > > +		drvdata->rst_hws[id].asserted = false;
+> > > > +	}
+> > > > +
+> > > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
+> > > > +		if (drvdata->rst_hws[i].asserted)
+> > > > +			asserted_after++;
+> > > > +
+> > > > +	if (asserted_before == 1 && asserted_after == 0)
+> > > > +		pm_runtime_put(rcdev->dev);
+> > > > +
+> > > > +	spin_unlock_irqrestore(&drvdata->lock, flags);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> 
+> regards
+> Philipp
