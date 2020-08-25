@@ -2,152 +2,139 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC00C433E3
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 12:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C6FC433E1
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9304B20706
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 12:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DEF020639
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730147AbgHYMHv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Aug 2020 08:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbgHYMHu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 08:07:50 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 454EEC061755
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2020 05:07:50 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1kAXje-0000BL-IT; Tue, 25 Aug 2020 14:07:30 +0200
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1kAXjd-0004kj-KW; Tue, 25 Aug 2020 14:07:29 +0200
-Message-ID: <8e8e33386eea12036bb17529b4d578704bf735d1.camel@pengutronix.de>
-Subject: Re: [PATCH v2 11/17] clk: imx: Add blk_ctrl combo driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>, Rob Herring <robh@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 25 Aug 2020 14:07:29 +0200
-In-Reply-To: <20200825112421.eut7gx3i4eirhnfw@fsr-ub1664-175>
-References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
-         <1597406966-13740-12-git-send-email-abel.vesa@nxp.com>
-         <ea2563fcb456830b37b0031455e5054d6b81c680.camel@pengutronix.de>
-         <20200825112421.eut7gx3i4eirhnfw@fsr-ub1664-175>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
+        id S1726230AbgHYNTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 09:19:33 -0400
+Received: from mailoutvs32.siol.net ([185.57.226.223]:44428 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725904AbgHYNTS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 09:19:18 -0400
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Aug 2020 09:19:16 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 6417F523AC4;
+        Tue, 25 Aug 2020 15:10:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id uAa3ThSR6OU9; Tue, 25 Aug 2020 15:10:56 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id F188C523B2E;
+        Tue, 25 Aug 2020 15:10:55 +0200 (CEST)
+Received: from localhost.localdomain (89-212-178-211.dynamic.t-2.net [89.212.178.211])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPSA id 70C35523955;
+        Tue, 25 Aug 2020 15:10:55 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mripard@kernel.org, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH] clk: sunxi-ng: sun8i: r40: Use sigma delta modulation for audio PLL
+Date:   Tue, 25 Aug 2020 15:10:49 +0200
+Message-Id: <20200825131049.1277596-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2020-08-25 at 14:24 +0300, Abel Vesa wrote:
-[...]
-> > > +static int imx_blk_ctrl_reset_set(struct reset_controller_dev *rcdev,
-> > > +				  unsigned long id, bool assert)
-> > > +{
-> > > +	struct imx_blk_ctrl_drvdata *drvdata = container_of(rcdev,
-> > > +			struct imx_blk_ctrl_drvdata, rcdev);
-> > > +	unsigned int offset = drvdata->rst_hws[id].offset;
-> > > +	unsigned int shift = drvdata->rst_hws[id].shift;
-> > > +	unsigned int mask = drvdata->rst_hws[id].mask;
-> > > +	void __iomem *reg_addr = drvdata->base + offset;
-> > > +	unsigned long flags;
-> > > +	unsigned int asserted_before = 0, asserted_after = 0;
-> > > +	u32 reg;
-> > > +	int i;
-> > > +
-> > > +	spin_lock_irqsave(&drvdata->lock, flags);
-> > > +
-> > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
-> > > +		if (drvdata->rst_hws[i].asserted)
-> > > +			asserted_before++;
-> > > +
-> > > +	if (asserted_before == 0 && assert)
-> > > +		pm_runtime_get(rcdev->dev);
-> > 
-> > Shouldn't that be pm_runtime_get_sync() ?
-> > 
-> > I would do that unconditionally before locking drvdata->lock and then
-> > drop unnecessary refcounts afterwards.
-> > 
-> 
-> I thought we already discussed this on the last's version thread.
+Audio cores need specific clock rates which can't be simply obtained by
+adjusting integer multipliers and dividers. HW for such cases supports
+delta-sigma modulation which enables fractional multipliers.
 
-This is about something different. pm_runtime_get() just queues the
-device to be enabled at a later point, but I presume you want to have it
-enabled before writing to its registers. (The question here is can you
-write to the registers, and have the device update its internal state,
-while the power domain is disabled?)
-Either way, if you want the reset to be asserted after the function
-returns (as is required by the reset API), as I understand it, you have
-to make sure that the power domain is activated before the function
-returns.
-Therefore pm_runtime_get_sync() is required instead of pm_runtime_get(),
-and that must be called outside of the spin locked section. My
-suggestion would be:
+Port H3 delta-sigma table to R40. They have identical audio PLLs.
 
-	if (assert)
-		pm_runtime_get_sync();
-	spin_lock_irqsave();
-	/* ... */
-	spin_unlock_irqrestore();
-	if (assert && asserted_before)
-		pm_runtime_put();
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 37 ++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
 
-unless the following might be an issue:
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/=
+ccu-sun8i-r40.c
+index 23bfe1d12f21..84153418453f 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -45,18 +45,29 @@ static struct ccu_nkmp pll_cpu_clk =3D {
+  * the base (2x, 4x and 8x), and one variable divider (the one true
+  * pll audio).
+  *
+- * We don't have any need for the variable divider for now, so we just
+- * hardcode it to match with the clock names
++ * With sigma-delta modulation for fractional-N on the audio PLL,
++ * we have to use specific dividers. This means the variable divider
++ * can no longer be used, as the audio codec requests the exact clock
++ * rates we support through this mechanism. So we now hard code the
++ * variable divider to 1. This means the clock rates will no longer
++ * match the clock names.
+  */
+ #define SUN8I_R40_PLL_AUDIO_REG	0x008
+=20
+-static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+-				   "osc24M", 0x008,
+-				   8, 7,	/* N */
+-				   0, 5,	/* M */
+-				   BIT(31),	/* gate */
+-				   BIT(28),	/* lock */
+-				   CLK_SET_RATE_UNGATE);
++static struct ccu_sdm_setting pll_audio_sdm_table[] =3D {
++	{ .rate =3D 22579200, .pattern =3D 0xc0010d84, .m =3D 8, .n =3D 7 },
++	{ .rate =3D 24576000, .pattern =3D 0xc000ac02, .m =3D 14, .n =3D 14 },
++};
++
++static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-ba=
+se",
++				       "osc24M", 0x008,
++				       8, 7,	/* N */
++				       0, 5,	/* M */
++				       pll_audio_sdm_table, BIT(24),
++				       0x284, BIT(31),
++				       BIT(31),	/* gate */
++				       BIT(28),	/* lock */
++				       CLK_SET_RATE_UNGATE);
+=20
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-vid=
+eo0",
+ 						"osc24M", 0x0010,
+@@ -952,10 +963,10 @@ static const struct clk_hw *clk_parent_pll_audio[] =
+=3D {
+ 	&pll_audio_base_clk.common.hw
+ };
+=20
+-/* We hardcode the divider to 4 for now */
++/* We hardcode the divider to 1 for now */
+ static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
+ 			    clk_parent_pll_audio,
+-			    4, 1, CLK_SET_RATE_PARENT);
++			    1, 1, CLK_SET_RATE_PARENT);
+ static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+ 			    clk_parent_pll_audio,
+ 			    2, 1, CLK_SET_RATE_PARENT);
+@@ -1307,10 +1318,10 @@ static int sun8i_r40_ccu_probe(struct platform_de=
+vice *pdev)
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+=20
+-	/* Force the PLL-Audio-1x divider to 4 */
++	/* Force the PLL-Audio-1x divider to 1 */
+ 	val =3D readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+ 	val &=3D ~GENMASK(19, 16);
+-	writel(val | (3 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
++	writel(val | (0 << 16), reg + SUN8I_R40_PLL_AUDIO_REG);
+=20
+ 	/* Force PLL-MIPI to MIPI mode */
+ 	val =3D readl(reg + SUN8I_R40_PLL_MIPI_REG);
+--=20
+2.28.0
 
-> > > +
-> > > +	if (assert) {
-> > > +		reg = readl(reg_addr);
-> > > +		writel(reg & ~(mask << shift), reg_addr);
-> > > +		drvdata->rst_hws[id].asserted = true;
-> > > +	} else {
-> > > +		reg = readl(reg_addr);
-> > > +		writel(reg | (mask << shift), reg_addr);
-
-Could this cause problems if the power domain is already disabled? If
-so, it would be best to either temporarily enable power, or to skip the
-register writes if asserted_before == 0 && !assert.
-
-> > > +		drvdata->rst_hws[id].asserted = false;
-> > > +	}
-> > > +
-> > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
-> > > +		if (drvdata->rst_hws[i].asserted)
-> > > +			asserted_after++;
-> > > +
-> > > +	if (asserted_before == 1 && asserted_after == 0)
-> > > +		pm_runtime_put(rcdev->dev);
-> > > +
-> > > +	spin_unlock_irqrestore(&drvdata->lock, flags);
-> > > +
-> > > +	return 0;
-> > > +}
-
-regards
-Philipp
