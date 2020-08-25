@@ -2,134 +2,154 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31404C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C121C433E3
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 14:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1090020738
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 13:53:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p6qMNMd5"
+	by mail.kernel.org (Postfix) with ESMTP id 237EC2078D
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 14:11:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbgHYNx2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Aug 2020 09:53:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbgHYNxZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 09:53:25 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A54C061574
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2020 06:53:24 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id x5so2521946wmi.2
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2020 06:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=m5K7q4ntfOvCuWo9VcwV3Y8K7PEmWf/RHpOYApWqYOo=;
-        b=p6qMNMd5VglEdqFcIL1iv1XVKPRZ+sI70S8iThAOM+4AcOZuWdjDKeIKcuVwOrv97l
-         mlzPdyztvYgnW6wJDVCB3Zwj5L/YbWx44evE1cefrB4fkVlzOUNZGIK1bwBRlX34j8Vx
-         rop3HtmimD+WJ70KqcQt4D6PQzT1TvsMJ/x9dio43yiqkEcoej/f4of2ZQlmhTfC4p+n
-         WIxtyaIr6IzvFHkq73aPJzB8sua9bocWmlXJIpI7t5WUNXF+apZlgt3q1ncLtpusFoWn
-         NSctCbUnOTq51icB0I75NTaV26VnEpI1kjT4ICWIZXkbN4xEi1Hp16oDmEPe/fetgm3z
-         M2hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=m5K7q4ntfOvCuWo9VcwV3Y8K7PEmWf/RHpOYApWqYOo=;
-        b=hcXiO5XVWziEAuMc4Q+UOGLtFgixhd1NxHa1zYbk+aQli6xq5ns0W3e9C8RMdeQScY
-         xhwqSZ/P6a1S8WUBpMVkWEL2GkFz8wsbUGejdApMCRD+EkRBON+jvv6fVgsIP3A1anCu
-         meT/pmsD6oGGADzSxiADM1kvMoWwgMypABrCQnTKFt4Ds/M9EKAmUu2bhwPuyuLZ02Mh
-         7HYQ9rO1W0aCd0DXGpTcNTSblTa2qf2zXXOTcEhaobcvkYznnbDEHjclcTzzf90mhK/+
-         4oMSmU+lK5g6+Va3oJoG/nkfOZqI90P4V1+Ve45R43OM8DBLBopaEVRpv9brEkkqwl24
-         Z1uQ==
-X-Gm-Message-State: AOAM5312cULE/yOkLb4X5zC11JJRystbHbzBxuc96gVnlx0Wn8EFRv5H
-        EPY7r3Ro2DOC74A+SC/VdoOloQ==
-X-Google-Smtp-Source: ABdhPJy8k9/Nb4tlj+y4Bq+1w/ACN3QGov3SCl+s4GMHcCRvFUwVSFwb3GgE8g5wKq+pB2bBXE/pBA==
-X-Received: by 2002:a1c:c90d:: with SMTP id f13mr2243927wmb.25.1598363603543;
-        Tue, 25 Aug 2020 06:53:23 -0700 (PDT)
-Received: from dell ([95.149.164.62])
-        by smtp.gmail.com with ESMTPSA id h10sm30075699wro.57.2020.08.25.06.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 06:53:22 -0700 (PDT)
-Date:   Tue, 25 Aug 2020 14:53:20 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Frank Lee <tiny.windzz@gmail.com>,
-        Frank Lee <frank@allwinnertech.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, gregory.clement@bootlin.com,
-        Thomas Gleixner <tglx@linutronix.de>, jason@lakedaemon.net,
-        Marc Zyngier <maz@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        "p.zabel" <p.zabel@pengutronix.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        clabbe@baylibre.com, bage@linutronix.de,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        id S1726351AbgHYOLU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 10:11:20 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:58902 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbgHYOLS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Aug 2020 10:11:18 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB7C21A05DF;
+        Tue, 25 Aug 2020 16:11:16 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BD4D81A05DD;
+        Tue, 25 Aug 2020 16:11:16 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A81D92030A;
+        Tue, 25 Aug 2020 16:11:16 +0200 (CEST)
+Date:   Tue, 25 Aug 2020 17:11:16 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>, Rob Herring <robh@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 00/16] Allwinner A100 Initial support
-Message-ID: <20200825135320.GM3248864@dell>
-References: <cover.1595572867.git.frank@allwinnertech.com>
- <CAEExFWsvScMgi_Dftfq06HZiF8CFAmym8Z_tgQoHHAfiGxWt0g@mail.gmail.com>
- <CAEExFWuwjmqAh0c3kMLS3Gs6UC2A8TtY-9nJeWxFPRDugtR4pA@mail.gmail.com>
- <20200824080327.GH3248864@dell>
- <20200825085532.vv4dpuzmjnshm5qn@gilmour.lan>
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 11/17] clk: imx: Add blk_ctrl combo driver
+Message-ID: <20200825141116.wgvybk7mtozvjxmb@fsr-ub1664-175>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
+ <1597406966-13740-12-git-send-email-abel.vesa@nxp.com>
+ <ea2563fcb456830b37b0031455e5054d6b81c680.camel@pengutronix.de>
+ <20200825112421.eut7gx3i4eirhnfw@fsr-ub1664-175>
+ <8e8e33386eea12036bb17529b4d578704bf735d1.camel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200825085532.vv4dpuzmjnshm5qn@gilmour.lan>
+In-Reply-To: <8e8e33386eea12036bb17529b4d578704bf735d1.camel@pengutronix.de>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 25 Aug 2020, Maxime Ripard wrote:
-
-> On Mon, Aug 24, 2020 at 09:03:27AM +0100, Lee Jones wrote:
-> > On Mon, 24 Aug 2020, Frank Lee wrote:
+On 20-08-25 14:07:29, Philipp Zabel wrote:
+> On Tue, 2020-08-25 at 14:24 +0300, Abel Vesa wrote:
+> [...]
+> > > > +static int imx_blk_ctrl_reset_set(struct reset_controller_dev *rcdev,
+> > > > +				  unsigned long id, bool assert)
+> > > > +{
+> > > > +	struct imx_blk_ctrl_drvdata *drvdata = container_of(rcdev,
+> > > > +			struct imx_blk_ctrl_drvdata, rcdev);
+> > > > +	unsigned int offset = drvdata->rst_hws[id].offset;
+> > > > +	unsigned int shift = drvdata->rst_hws[id].shift;
+> > > > +	unsigned int mask = drvdata->rst_hws[id].mask;
+> > > > +	void __iomem *reg_addr = drvdata->base + offset;
+> > > > +	unsigned long flags;
+> > > > +	unsigned int asserted_before = 0, asserted_after = 0;
+> > > > +	u32 reg;
+> > > > +	int i;
+> > > > +
+> > > > +	spin_lock_irqsave(&drvdata->lock, flags);
+> > > > +
+> > > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
+> > > > +		if (drvdata->rst_hws[i].asserted)
+> > > > +			asserted_before++;
+> > > > +
+> > > > +	if (asserted_before == 0 && assert)
+> > > > +		pm_runtime_get(rcdev->dev);
+> > > 
+> > > Shouldn't that be pm_runtime_get_sync() ?
+> > > 
+> > > I would do that unconditionally before locking drvdata->lock and then
+> > > drop unnecessary refcounts afterwards.
+> > > 
 > > 
-> > > ping......
-> > 
-> > "Please don't send content free pings and please allow a reasonable
-> >  time for review.  People get busy, go on holiday, attend conferences
-> >  and so on so unless there is some reason for urgency (like critical
-> >  bug fixes) please allow at least a couple of weeks for review.  If
-> >  there have been review comments then people may be waiting for those
-> >  to be addressed.  Sending content free pings just adds to the mail
-> >  volume (if they are seen at all) and if something has gone wrong
-> >  you'll have to resend the patches anyway so [RESEND]ing with any
-> >  comments addressed is generally a much better approach."
+> > I thought we already discussed this on the last's version thread.
 > 
-> This is true to some extent, but pinging after a month doesn't seem
-> unreasonable either.
+> This is about something different. pm_runtime_get() just queues the
+> device to be enabled at a later point, but I presume you want to have it
+> enabled before writing to its registers. (The question here is can you
+> write to the registers, and have the device update its internal state,
+> while the power domain is disabled?)
+> Either way, if you want the reset to be asserted after the function
+> returns (as is required by the reset API), as I understand it, you have
+> to make sure that the power domain is activated before the function
+> returns.
+> Therefore pm_runtime_get_sync() is required instead of pm_runtime_get(),
+> and that must be called outside of the spin locked section. My
+> suggestion would be:
+> 
+> 	if (assert)
+> 		pm_runtime_get_sync();
+> 	spin_lock_irqsave();
+> 	/* ... */
+> 	spin_unlock_irqrestore();
+> 	if (assert && asserted_before)
+> 		pm_runtime_put();
+> 
 
-Pinging is mostly a fruitless exercise.
+You're right this makes more sense.
 
-After a month, many Maintainers would have purged any un-serviced
-mails anyway.  If a patch-set is left hanging, still requiring
-attention before the next version, submitting a [RESEND] is generally
-a better option.
+> unless the following might be an issue:
+> 
+> > > > +
+> > > > +	if (assert) {
+> > > > +		reg = readl(reg_addr);
+> > > > +		writel(reg & ~(mask << shift), reg_addr);
+> > > > +		drvdata->rst_hws[id].asserted = true;
+> > > > +	} else {
+> > > > +		reg = readl(reg_addr);
+> > > > +		writel(reg | (mask << shift), reg_addr);
+> 
+> Could this cause problems if the power domain is already disabled? If
+> so, it would be best to either temporarily enable power, or to skip the
+> register writes if asserted_before == 0 && !assert.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I'll go with the latter one since it leaves the PD off.
+
+> 
+> > > > +		drvdata->rst_hws[id].asserted = false;
+> > > > +	}
+> > > > +
+> > > > +	for (i = 0; i < drvdata->rcdev.nr_resets; i++)
+> > > > +		if (drvdata->rst_hws[i].asserted)
+> > > > +			asserted_after++;
+> > > > +
+> > > > +	if (asserted_before == 1 && asserted_after == 0)
+> > > > +		pm_runtime_put(rcdev->dev);
+> > > > +
+> > > > +	spin_unlock_irqrestore(&drvdata->lock, flags);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> 
+> regards
+> Philipp
