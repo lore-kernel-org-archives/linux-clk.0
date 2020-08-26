@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9989AC433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 17:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7FCC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 17:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB41206FA
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 17:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE85206FA
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 17:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qXbgfVY/"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eqnN+jgc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgHZRPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Aug 2020 13:15:44 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:56581 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgHZRPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Aug 2020 13:15:42 -0400
+        id S1727111AbgHZRQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Aug 2020 13:16:03 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55465 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbgHZRQA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Aug 2020 13:16:00 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200826171540euoutp020d023d14d782dd385432cf3dffcecca7~u4NkKuqdK1438414384euoutp02n
-        for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2020 17:15:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200826171540euoutp020d023d14d782dd385432cf3dffcecca7~u4NkKuqdK1438414384euoutp02n
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200826171558euoutp01e9ed877b56c22c51c6c00f38ca8bc4bc~u4N0pci031033910339euoutp01E
+        for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2020 17:15:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200826171558euoutp01e9ed877b56c22c51c6c00f38ca8bc4bc~u4N0pci031033910339euoutp01E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598462140;
-        bh=76OUI6kZLvGNA+1rSSjmylaVxRhw/F8xCRxQ/TEodJM=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=qXbgfVY/sqRu9gt99eIf4YVtn3n40OixmB9D/+8lWPL5A8mlrwjaisQ5kxMsK1w1M
-         DMqfeCn0Uk9mMIe4JlvI3LuzW2yvR1DGQg7JbJrtq1hUSoG3Xlzj8bbH6xNYX4HldZ
-         KAtuWz3674U1rv9Pn2+0LitwNApW8uH/ldnlAfVg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        s=mail20170921; t=1598462158;
+        bh=RxDUEZhTgTZLzG9DMWoYoQ5hya6u+BHoB4EoxDqSuFo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eqnN+jgcbJG8nDHBQ0iaCHMyirgwF02LokHJbCiRddC3ydfIbkMZM4TwznXDw8+Cx
+         O1Nj6t3chRhf7HZAlGhbAWDPlaeKQB8M7tAwB9iyi8dAia+w5stBXgjaiYcEIsFKIq
+         z1MAyC2Wa64Y3ANIFsIcyVUctqgCjJyIjJUcG7p0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200826171540eucas1p1bcd0aeccbe67bc5ddb709b27d4f571e8~u4Njs6tIG1337913379eucas1p1J;
-        Wed, 26 Aug 2020 17:15:40 +0000 (GMT)
+        20200826171557eucas1p1864bf2eb479deef8cb35fb6896ff3c06~u4N0G9wAk1333013330eucas1p1Z;
+        Wed, 26 Aug 2020 17:15:57 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A1.AE.06318.BB8964F5; Wed, 26
-        Aug 2020 18:15:39 +0100 (BST)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 63.A5.06456.DC8964F5; Wed, 26
+        Aug 2020 18:15:57 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87~u4NjBr9K90677706777eucas1p2K;
-        Wed, 26 Aug 2020 17:15:39 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39~u4Nzy2lcc1338413384eucas1p1U;
+        Wed, 26 Aug 2020 17:15:57 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200826171539eusmtrp22689a7514204a322c73ee17f1e7477c3~u4NjA3XYZ0859008590eusmtrp2V;
-        Wed, 26 Aug 2020 17:15:39 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-ca-5f4698bbc755
+        20200826171557eusmtrp21a09873186da79dc19061299ba07e422~u4NzyFJ170949209492eusmtrp2C;
+        Wed, 26 Aug 2020 17:15:57 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-ba-5f4698cd7a32
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.4C.06314.BB8964F5; Wed, 26
-        Aug 2020 18:15:39 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FC.4C.06314.DC8964F5; Wed, 26
+        Aug 2020 18:15:57 +0100 (BST)
 Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200826171538eusmtip1b3620b893e0bcf28afa09652cd6ced2d~u4NiWnxe90053800538eusmtip1e;
-        Wed, 26 Aug 2020 17:15:38 +0000 (GMT)
+        20200826171556eusmtip19fde2d31ddd702dcf329a3c2df3dbb2c~u4NzF61qg3051230512eusmtip1i;
+        Wed, 26 Aug 2020 17:15:56 +0000 (GMT)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     linux-clk@vger.kernel.org
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
@@ -67,95 +67,331 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/3] clk: samsung: Add clk ID definitions for the CPU parent
- clocks
-Date:   Wed, 26 Aug 2020 19:15:27 +0200
-Message-Id: <20200826171529.23618-1-s.nawrocki@samsung.com>
+Subject: [PATCH 3/3] clk: samsung: Use cached clk_hws instead of
+ __clk_lookup() calls
+Date:   Wed, 26 Aug 2020 19:15:29 +0200
+Message-Id: <20200826171529.23618-3-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSa0hTYRjHeXfO2TkOV6cp+bZKYyZ0Qc3LhxOKlqScIKKiIiRbMw8qOidn
-        ztuXhPCSqYkQilleyLSFqWuZ09JQ2yB1UyS1pRbNyEsjzEvebaej9O33/C88Dy8vgUjKMSkR
-        n5TCsEmKRJlQhLYYV8ze7WUR8hOTtmCquawRo0YWfmBUZY8Zo+7bZhHKYmnCKZ1tGKPmCiYw
-        aqitQkiVWToEVEPPOE4Nfginst/24FT3z1yM2hxuRilt2zo4tZv+NZqN04bycZzWae8K6ZdP
-        btNFei2g53XuF4SRouAYJjE+lWF9Q26K4h5UDKPJrc7py906QRboE+UDJwKSgXCq0ALygYiQ
-        kPUA6rQPcc6QkAsAFpuv8TwP4HqXz05hrfkFyhfqABzWVwv4wVGoWljCuJSQ9IOF74sAx67k
-        QWg1rgi5EEIuIjBf/1vAGS7kFajL6/sXQkkvaJzrRzgWk0HQmNcE+HUe8HnTO4QrQ/IxDu1j
-        rzDeOAOXn7Zvh1zgjEmP83wAbhkqBXzhDoAF7Z9xfigG8IuparsRBMfMq46bCMdNR2Fjmy8v
-        n4YlW58AJ0NyFxy17+FkxIElLaUIL4thXo6ETx+Ga9pSAc9SeG9yC+WZhlk5jwD/dFFw2V6D
-        FQP38v+7qgDQAjdGo1bGMuqAJCbNR61QqjVJsT63VEodcPyY3k3TYivoWI/uAiQBZM7iI/II
-        uQRTpKozlF0AEojMVRzW33tDIo5RZGQyrErOahIZdRfYT6AyN3FAzXSUhIxVpDAJDJPMsDuu
-        gHCSZgGvZlXndGZoYe2iyekPG5VWvRHjmdBp/r7pkev/rLJ6KqRFih0fqjHNp0deD/1Km92g
-        ZjVbHr935PVlw3nlzMZZb1Wt4dLVJz3pCFsZ/uZjf/Qh5zCmYfaki/9FUU79gD01ZMDTqvmW
-        PtIxGZhi1w8uGWvXNmx95zom9tVZrVkyVB2n8DuGsGrFXzEMNKAtAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsVy+t/xu7q7Z7jFGzw+x2exccZ6VovrX56z
+In-Reply-To: <20200826171529.23618-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7pnZ7jFG1z8oWqxccZ6VovrX56z
         Wsw/co7Vov/xa2aL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8li7ZG77BYXT7latO49wm5x
-        +E07q8W/axtZLFbt+sPowO/x/kYru8fOWXfZPTat6mTz2Lyk3qNvyypGj8+b5ALYovRsivJL
-        S1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyps65xlKwg6fi
-        x+FNTA2MZ7i6GDk5JARMJH5vXMfSxcjFISSwlFHiypYnbF2MHEAJKYn5LUoQNcISf651sUHU
-        fGKU6Hp/hh0kwSZgKNF7tI8RxBYRkJW4dewnWBGzQCOLxNmJa1hBEsICwRLzl65nA7FZBFQl
-        jn08ywxi8wpYSxzr2MAIsUFeYvWGA8wTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93E
-        CAztbcd+bt7BeGlj8CFGAQ5GJR5ejXi3eCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXH
-        F5XmpBYfYjQFWj6RWUo0OR8Yd3kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KL
-        YPqYODilGhhjXE+Ynyvw/m79hPnMg1Xrlx9cO3+Df+DyKpGfqarZryXXnRdSWR4Q8mNHAKPa
-        JK8DytOTH0cFGgbxlMZKKnYr886a7f/w4Bspo5PiWlJW1cenpidobFXb49Dt2axX9TttjtOO
-        tD2Xrdbxa+x48vtHHkPV1YObZJZezflqevTx98cNb+efi2lQYinOSDTUYi4qTgQAZbgSBoMC
-        AAA=
-X-CMS-MailID: 20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87
+        +E07q8W/axtZLFbt+sPowO/x/kYru8fOWXfZPTat6mTz2Lyk3qNvyypGj8+b5ALYorhsUlJz
+        MstSi/TtErgy1n7awl4wO7Ti4LP/zA2Mv927GDk5JARMJPZ2zmPrYuTiEBJYwSgxYdYkKOcL
+        o8SbpRsYIZzPjBK/Li1khWm5/WwGE4gtJLCcUWLPFku4jh1bd7ODJNgEDCV6j/YxgtgiArIS
+        t479BBvLLPCVWaJryyewbmGBcImlVyezgNgsAqoSU998BLN5Bawlviw7xwixTV5i9YYDzCA2
+        p4CNxK+lZ5lBBkkIbGKXuNTXAFXkIvH63DFmCFtY4tXxLewQtozE/53zmSAamhklenbfZodw
+        JjBK3D++AKrbWuLOuV9A93EA3acpsX6XPkTYUWJe60EWkLCEAJ/EjbeCIGFmIHPStunMEGFe
+        iY42IYhqFYnfq6YzQdhSEt1P/rNA2B4SX+bcYIGEUD+jxMEPVxknMMrPQli2gJFxFaN4amlx
+        bnpqsWFearlecWJucWleul5yfu4mRmD6Of3v+KcdjF8vJR1iFOBgVOLh1Yh3ixdiTSwrrsw9
+        xCjBwawkwut09nScEG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJM
+        HJxSDYxsK4tWNjgk3U4++DHxUsfNozH62TePnHoyd03JlYumLqvkDHItMkOfRk2/Uyd0i8Wr
+        UF3cedL+JKN7JrPXPj+66FS4NQ97VrBcxYvV7BES+nm8txPz4ncxnW07weWn9ZlbQYPPZe39
+        VRHL2RcURQVdju46bZXSH1N6rMj/3Xv7WVuFc+LmbVZiKc5INNRiLipOBAAYL8bqOwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Xd2zM9ziDWZ+4bHYOGM9q8X1L89Z
+        LeYfOcdq0f/4NbPF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Sx9shddouLp1wtWvceYbc4
+        /Kad1eLftY0sFqt2/WF04Pd4f6OV3WPnrLvsHptWdbJ5bF5S79G3ZRWjx+dNcgFsUXo2Rfml
+        JakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZaz9tYS+YHVpx
+        8Nl/5gbG3+5djJwcEgImErefzWDqYuTiEBJYyijR07YUyOEASkhJzG9RgqgRlvhzrYsNouYT
+        o8SyVW0sIAk2AUOJ3qN9jCC2iICsxK1jP8GKmAUaWSTOTlzDCpIQFgiV2PDpBRuIzSKgKjH1
+        zUewZl4Ba4kvy84xQmyQl1i94QAziM0pYCPxa+lZMFsIqObO5lusExj5FjAyrGIUSS0tzk3P
+        LTbUK07MLS7NS9dLzs/dxAiMhW3Hfm7ewXhpY/AhRgEORiUeXo14t3gh1sSy4srcQ4wSHMxK
+        IrxOZ0/HCfGmJFZWpRblxxeV5qQWH2I0BTpqIrOUaHI+ME7zSuINTQ3NLSwNzY3Njc0slMR5
+        OwQOxggJpCeWpGanphakFsH0MXFwSjUw2l5//LdJmP3XqUdHud/KxZyIZzOJuh6d/jH+t6lo
+        JdPnWUXqJ4pf/jdWsuFlvLuprftuRM2FHw/Zkwp7JXNcg//P61JI/Bp4Od7v0Yf3R9er8Z+c
+        /XY1f8Znnzt7eXvb1R/+9vQvKaz7OlFcpP/UppdL/d/umXd9xsy4qY+dEvVjE2SEejb+VGIp
+        zkg01GIuKk4EAMVdmWCbAgAA
+X-CMS-MailID: 20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87
+X-RootMTR: 20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87
-References: <CGME20200826171539eucas1p2e999972d3e7dd6dd701e312548933e87@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39
+References: <20200826171529.23618-1-s.nawrocki@samsung.com>
+        <CGME20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock ID definitions for the CPU parent clocks for SoCs
-which don't have such definitions yet. This will allow us to
-reference the parent clocks directly by cached struct clk_hw
-pointers in the clock provider, rather than doing clk lookup
-by name.
+For the CPU clock registration two parent clocks are required, these
+are now being passed as struct clk_hw pointers, rather than by the
+global scope names. That allows us to avoid  __clk_lookup() calls
+and simplifies a bit the CPU clock registration function.
+While at it drop unneeded extern keyword in the function declaration.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- include/dt-bindings/clock/exynos5250.h | 4 +++-
- include/dt-bindings/clock/exynos5420.h | 5 +++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-cpu.c        | 37 +++++++++++++++---------------------
+ drivers/clk/samsung/clk-cpu.h        |  6 +++---
+ drivers/clk/samsung/clk-exynos3250.c |  6 ++++--
+ drivers/clk/samsung/clk-exynos4.c    |  7 +++++--
+ drivers/clk/samsung/clk-exynos5250.c |  4 +++-
+ drivers/clk/samsung/clk-exynos5420.c |  6 +++---
+ drivers/clk/samsung/clk-exynos5433.c | 10 ++++++++--
+ 7 files changed, 41 insertions(+), 35 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index bc8a3c5..e259cc0 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -172,8 +172,10 @@
- #define CLK_MOUT_GPLL		1025
- #define CLK_MOUT_ACLK200_DISP1_SUB	1026
- #define CLK_MOUT_ACLK300_DISP1_SUB	1027
-+#define CLK_MOUT_APLL		1028
-+#define CLK_MOUT_MPLL		1029
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index efc4fa6..00ef4d1 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -401,26 +401,34 @@ static int exynos5433_cpuclk_notifier_cb(struct notifier_block *nb,
  
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		1028
-+#define CLK_NR_CLKS		1030
+ /* helper function to register a CPU clock */
+ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+-		unsigned int lookup_id, const char *name, const char *parent,
+-		const char *alt_parent, unsigned long offset,
+-		const struct exynos_cpuclk_cfg_data *cfg,
++		unsigned int lookup_id, const char *name,
++		const struct clk_hw *parent, const struct clk_hw *alt_parent,
++		unsigned long offset, const struct exynos_cpuclk_cfg_data *cfg,
+ 		unsigned long num_cfgs, unsigned long flags)
+ {
+ 	struct exynos_cpuclk *cpuclk;
+ 	struct clk_init_data init;
+-	struct clk *parent_clk;
++	const char *parent_name;
+ 	int ret = 0;
  
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index ff917c8..9fffc6c 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -231,6 +231,11 @@
- #define CLK_MOUT_SCLK_SPLL	660
- #define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
- #define CLK_MOUT_SW_ACLK_G3D	662
-+#define CLK_MOUT_APLL		663
-+#define CLK_MOUT_MSPLL_CPU	664
-+#define CLK_MOUT_KPLL		665
-+#define CLK_MOUT_MSPLL_KFC	666
++	if (IS_ERR(parent) || IS_ERR(alt_parent)) {
++		pr_err("%s: invalid parent clock(s)\n", __func__);
++		return -EINVAL;
++	}
 +
+ 	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
+ 	if (!cpuclk)
+ 		return -ENOMEM;
  
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
++	parent_name = clk_hw_get_name(parent);
++
+ 	init.name = name;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = &parent;
++	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 	init.ops = &exynos_cpuclk_clk_ops;
+ 
++	cpuclk->alt_parent = alt_parent;
+ 	cpuclk->hw.init = &init;
+ 	cpuclk->ctrl_base = ctx->reg_base + offset;
+ 	cpuclk->lock = &ctx->lock;
+@@ -430,23 +438,8 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 	else
+ 		cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
+ 
+-	cpuclk->alt_parent = __clk_get_hw(__clk_lookup(alt_parent));
+-	if (!cpuclk->alt_parent) {
+-		pr_err("%s: could not lookup alternate parent %s\n",
+-				__func__, alt_parent);
+-		ret = -EINVAL;
+-		goto free_cpuclk;
+-	}
+-
+-	parent_clk = __clk_lookup(parent);
+-	if (!parent_clk) {
+-		pr_err("%s: could not lookup parent clock %s\n",
+-				__func__, parent);
+-		ret = -EINVAL;
+-		goto free_cpuclk;
+-	}
+ 
+-	ret = clk_notifier_register(parent_clk, &cpuclk->clk_nb);
++	ret = clk_notifier_register(parent->clk, &cpuclk->clk_nb);
+ 	if (ret) {
+ 		pr_err("%s: failed to register clock notifier for %s\n",
+ 				__func__, name);
+@@ -471,7 +464,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ free_cpuclk_data:
+ 	kfree(cpuclk->cfg);
+ unregister_clk_nb:
+-	clk_notifier_unregister(parent_clk, &cpuclk->clk_nb);
++	clk_notifier_unregister(parent->clk, &cpuclk->clk_nb);
+ free_cpuclk:
+ 	kfree(cpuclk);
+ 	return ret;
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index ad38cc2..af74686 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -46,7 +46,7 @@ struct exynos_cpuclk_cfg_data {
+  */
+ struct exynos_cpuclk {
+ 	struct clk_hw				hw;
+-	struct clk_hw				*alt_parent;
++	const struct clk_hw			*alt_parent;
+ 	void __iomem				*ctrl_base;
+ 	spinlock_t				*lock;
+ 	const struct exynos_cpuclk_cfg_data	*cfg;
+@@ -62,9 +62,9 @@ struct exynos_cpuclk {
+ #define CLK_CPU_HAS_E5433_REGS_LAYOUT	(1 << 2)
+ };
+ 
+-extern int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
++int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 			unsigned int lookup_id, const char *name,
+-			const char *parent, const char *alt_parent,
++			const struct clk_hw *parent, const struct clk_hw *alt_parent,
+ 			unsigned long offset,
+ 			const struct exynos_cpuclk_cfg_data *cfg,
+ 			unsigned long num_cfgs, unsigned long flags);
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 17897c7..17df7f9 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -808,14 +808,16 @@ static const struct exynos_cpuclk_cfg_data e3250_armclk_d[] __initconst = {
+ static void __init exynos3250_cmu_init(struct device_node *np)
+ {
+ 	struct samsung_clk_provider *ctx;
++	struct clk_hw **hws;
+ 
+ 	ctx = samsung_cmu_register_one(np, &cmu_info);
+ 	if (!ctx)
+ 		return;
+ 
++	hws = ctx->clk_data.hws;
+ 	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_core_p[0], mout_core_p[1], 0x14200,
+-			e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
++			hws[CLK_MOUT_APLL], hws[CLK_MOUT_MPLL_USER_C],
++			0x14200, e3250_armclk_d, ARRAY_SIZE(e3250_armclk_d),
+ 			CLK_CPU_HAS_DIV1);
+ 
+ 	exynos3_core_down_clock(ctx->reg_base);
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 51564fc..436fcd2 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1233,6 +1233,8 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 				    enum exynos4_soc soc)
+ {
+ 	struct samsung_clk_provider *ctx;
++	struct clk_hw **hws;
++
+ 	exynos4_soc = soc;
+ 
+ 	reg_base = of_iomap(np, 0);
+@@ -1240,6 +1242,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		panic("%s: failed to map registers\n", __func__);
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
++	hws = ctx->clk_data.hws;
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos4_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+@@ -1302,7 +1305,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			exynos4210_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos4210_fixed_factor_clks));
+ 		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_core_p4210[0], mout_core_p4210[1], 0x14200,
++			hws[CLK_MOUT_APLL], hws[CLK_SCLK_MPLL], 0x14200,
+ 			e4210_armclk_d, ARRAY_SIZE(e4210_armclk_d),
+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+ 	} else {
+@@ -1317,7 +1320,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+ 
+ 		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_core_p4x12[0], mout_core_p4x12[1], 0x14200,
++			hws[CLK_MOUT_APLL], hws[CLK_MOUT_MPLL_USER_C], 0x14200,
+ 			e4412_armclk_d, ARRAY_SIZE(e4412_armclk_d),
+ 			CLK_CPU_NEEDS_DEBUG_ALT_DIV | CLK_CPU_HAS_DIV1);
+ 	}
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 7bcff76..06588fa 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -782,6 +782,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ {
+ 	struct samsung_clk_provider *ctx;
+ 	unsigned int tmp;
++	struct clk_hw **hws;
+ 
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+@@ -792,6 +793,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
++	hws = ctx->clk_data.hws;
+ 
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+@@ -821,7 +823,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	samsung_clk_register_gate(ctx, exynos5250_gate_clks,
+ 			ARRAY_SIZE(exynos5250_gate_clks));
+ 	exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_cpu_p[0], mout_cpu_p[1], 0x200,
++			hws[CLK_MOUT_APLL], hws[CLK_MOUT_MPLL], 0x200,
+ 			exynos5250_armclk_d, ARRAY_SIZE(exynos5250_armclk_d),
+ 			CLK_CPU_HAS_DIV1);
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index d07cee2..ba4e0a4 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1625,15 +1625,15 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 
+ 	if (soc == EXYNOS5420) {
+ 		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_cpu_p[0], mout_cpu_p[1], 0x200,
++			hws[CLK_MOUT_APLL], hws[CLK_MOUT_MSPLL_CPU], 0x200,
+ 			exynos5420_eglclk_d, ARRAY_SIZE(exynos5420_eglclk_d), 0);
+ 	} else {
+ 		exynos_register_cpu_clock(ctx, CLK_ARM_CLK, "armclk",
+-			mout_cpu_p[0], mout_cpu_p[1], 0x200,
++			hws[CLK_MOUT_APLL], hws[CLK_MOUT_MSPLL_CPU], 0x200,
+ 			exynos5800_eglclk_d, ARRAY_SIZE(exynos5800_eglclk_d), 0);
+ 	}
+ 	exynos_register_cpu_clock(ctx, CLK_KFC_CLK, "kfcclk",
+-		mout_kfc_p[0], mout_kfc_p[1], 0x28200,
++		hws[CLK_MOUT_KPLL], hws[CLK_MOUT_MSPLL_KFC],  0x28200,
+ 		exynos5420_kfcclk_d, ARRAY_SIZE(exynos5420_kfcclk_d), 0);
+ 
+ 	samsung_clk_extended_sleep_init(reg_base,
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 6f29ecd..f203074 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -3679,6 +3679,7 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	struct samsung_clk_provider *ctx;
++	struct clk_hw **hws;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -3701,8 +3702,10 @@ static void __init exynos5433_cmu_apollo_init(struct device_node *np)
+ 	samsung_clk_register_gate(ctx, apollo_gate_clks,
+ 				  ARRAY_SIZE(apollo_gate_clks));
+ 
++	hws = ctx->clk_data.hws;
++
+ 	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
+-		mout_apollo_p[0], mout_apollo_p[1], 0x200,
++		hws[CLK_MOUT_APOLLO_PLL], hws[CLK_MOUT_BUS_PLL_APOLLO_USER], 0x200,
+ 		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
+ 		CLK_CPU_HAS_E5433_REGS_LAYOUT);
+ 
+@@ -3933,6 +3936,7 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	struct samsung_clk_provider *ctx;
++	struct clk_hw **hws;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -3955,8 +3959,10 @@ static void __init exynos5433_cmu_atlas_init(struct device_node *np)
+ 	samsung_clk_register_gate(ctx, atlas_gate_clks,
+ 				  ARRAY_SIZE(atlas_gate_clks));
+ 
++	hws = ctx->clk_data.hws;
++
+ 	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
+-		mout_atlas_p[0], mout_atlas_p[1], 0x200,
++		hws[CLK_MOUT_ATLAS_PLL], hws[CLK_MOUT_BUS_PLL_ATLAS_USER], 0x200,
+ 		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
+ 		CLK_CPU_HAS_E5433_REGS_LAYOUT);
+ 
 -- 
 2.7.4
 
