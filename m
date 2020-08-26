@@ -2,27 +2,28 @@ Return-Path: <SRS0=oSkA=CE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28160C433E3
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 09:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DF4C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 10:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9DF2067C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 09:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3172920838
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Aug 2020 10:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbgHZJ5D convert rfc822-to-8bit (ORCPT
+        id S1728374AbgHZKEo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Aug 2020 05:57:03 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:43983 "EHLO
+        Wed, 26 Aug 2020 06:04:44 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:41563 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbgHZJ5B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Aug 2020 05:57:01 -0400
+        with ESMTP id S1728020AbgHZKEn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Aug 2020 06:04:43 -0400
 Received: from [192.168.1.173] ([37.4.249.254]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MYNaE-1k5wTT3O0g-00VNmF; Wed, 26 Aug 2020 11:56:33 +0200
-Subject: Re: [PATCH 0/3] drm/vc4: Support HDMI QHD or higher output
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MdwRi-1kiYsf3wmM-00b5xY; Wed, 26 Aug 2020 12:04:20 +0200
+Subject: Re: [PATCH 3/3] drm/vc4: hdmi: Add pixel bvb clock control
 To:     Hoegeun Kwon <hoegeun.kwon@samsung.com>, nsaenzjulienne@suse.de,
         eric@anholt.net, maxime@cerno.tech
 Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
@@ -32,8 +33,9 @@ Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
         robh+dt@kernel.org, bcm-kernel-feedback-list@broadcom.com,
         linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-References: <CGME20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa@epcas1p1.samsung.com>
- <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+References: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+ <CGME20200821071122epcas1p3d00dda4665f94192ac5e9ee829d0557d@epcas1p3.samsung.com>
+ <20200821071045.24501-4-hoegeun.kwon@samsung.com>
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 Autocrypt: addr=stefan.wahren@i2se.com; keydata=
  LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdudVBHIHYy
@@ -165,67 +167,129 @@ Autocrypt: addr=stefan.wahren@i2se.com; keydata=
  VVBnY0pKTmFHWTIKVklEclpRaTROU2lOUTBOSWkrZGp1NGZOTW1DcFFxZzh0YkMzY0FhNnl3
  bTZvUUIxU0JobURYMmUxMWdSbGx1SQpPblRHUEUwSFRvM2w3MmxoYmc9PQo9cVpNVgotLS0t
  LUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==
-Message-ID: <a414477c-bbc9-3c32-5471-e1b44044d05c@i2se.com>
-Date:   Wed, 26 Aug 2020 11:56:31 +0200
+Message-ID: <61c199bf-852f-82d3-089a-a0a435343acf@i2se.com>
+Date:   Wed, 26 Aug 2020 12:04:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+In-Reply-To: <20200821071045.24501-4-hoegeun.kwon@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-X-Provags-ID: V03:K1:Q/dtWdNQTYDvqb4Gg9UmRr8d7GvHivEwYW4xxiKt2V39JN0H0JE
- LlmxGzLb99q80jCZdH62RAtVp+8NyPJUKW5YpknXhUuEdt9cPWXAB81JEhBlJ1uMIkxUPJE
- JFD5cBQYQpgDmX7lNckOsHtTNQsZWiJ55MONJRvuXoT8plmoXMbAFW0gDR8hkPvxZdD89Zi
- zJ/ly75b9NUsgfBocHw2w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ZStbWLXo574=:4q+2MV41g1zlHghSaujD76
- nwXiPO32yaDsiFmeXZiYY0ZnMpZ7/moWCVTZpLG5AQAO8z9XeKhn1JVX14DAwC8FxCMJcP1NJ
- jd/u+Kdz3Z5nhvXV2cjYS4uB7jdNQ9uNwhJfXCmuEclzqjvFpYBIQe91lIHprlWi19cevhnvY
- pHBdqdUFycJIXEnrc+3wI0RUbcLHMswWY07YPpNfil/qGOo0wl69otzGyU9o3WJiLs4b7FSVI
- vXmr/P2RsVe/pvBs37GHXvDfkkCZOc/8PlxboWC5QraRefVMtUUuiR2X9k/neS7E73+b19Xjd
- Sy+FAsiBQlt1qbzkCzbBbIelHwRGqCQAlUV4HWtA6M74eh/7AY6cxMg2TwdDRhnkyWaXUiA3X
- 2yggoKVtnTJmogfssJjHH95HtlHd3Q3Bo2TCrL4209KK7TOYq6m/zG6OXBwVJ8S4xDq8oouow
- yTYE0cHvTQoJtHYLDcqRGQ4AxFRjHKPeIUHCT89kQqIaDBSApCPHZi7kdmmK/2+MqHZKs4v3Q
- 8gtGDgbyRHuMyiu1dmkriUsd6oMas6BNuJP9islPYhYAKtnB5XSFM9wpS0wyzaDZutj1ilxMF
- WiZoaPeLml3Tg3pfu2pQ3qCuKBkSjvuBbRFDRW6u8Ld3vM+p7rD+GyRLgUjQYbAr5E+WwX5rY
- Vo+vwYsLbZ65UoejWp8ZqSGBmO8uT4Awf4eDbKWU141k0vZE97B1DY84JGXrTJXITGvFct+zS
- uhHaPA1eeixcjl1UF0JyS2IDoc7ciLR7CzbYXWTl4i0yNk++CQNKZn9TeThxBgsmmPegVnlO3
- P8xlrNxamYXJQj6T5VrpkeaKKN3fQiUKKkxP4ltU0lC3ZniKS9+GvmEfnxZKspXiIBsyyyw
+X-Provags-ID: V03:K1:xgczPhca5dk8Kh8ie4g5z0vNO37uIiwE/iwiPBL7KMs3SCb8hOV
+ 6nkYUnGUwstxFx94DS08v4pyQ3WSn1/iF7E00m2H+rhdMR0nPhaDbHfnGT3DXRpD/L98kCA
+ BYJBNU34wdtjxE6gW5QEe0wQlKUKX6ajAQ17R3pQFNHFFpHwWj+OiEPv1bDTGtkbK7SwFkB
+ ZNF5Py6AZiGwyI/ElAJUw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uUfsmtnf7eQ=:yBXKiNl5gaLDO+eZTbMQw8
+ qmOZp9ZawYFMyldoNu5JU4juEFptUGHq+2RBIIU0LFDmmghM+Txwt5wxRDWfM6a5ixQlvCgjW
+ jcjzxvpKifAxFILC86hLZXFTVBn8ChIAvJskTDwPwGd+oo7rILRgLUwErg/TlpBqsX4eylRzL
+ rCmmUltdxjBN4YPypWmpBvT7bFbIXnBD9ok2R1D7i/UpRTze4lshxiw4nzI7K2eg7c2gFtDxe
+ pUZ07UFIXVQ4Q0jsDoYPl8cOz2goe9YusRafIOpaT2XPlaEKYNK4MmTvSM0tD39wyma2g8d7q
+ fkd9lADRk9/b/lEpSvx13O0h4nz0Rj1dhNXx0Wx2S/e5UqPDpcbY3FjxW+J/tVhPt5QgeefsT
+ V3oA6E4NyKuhrWYYSHvYnDsRC0jMIlh04P/kTK4EH43xLOUCOkKshHa4gIdiBKZCD2GFoAjE7
+ q63BTOMDMCoHMkyg3GPvfz9vbfveFxBwQDyOw6VrqxMDg6VU5Ygb9dJ9HWMMd4KIIlXLzWSgl
+ XSutGxsdqmhQO8zEje/VDzAme19ZUFDXpGDx9gDp4RzLO6LnGy6hTdElH6spt1lbfZTFW/dhW
+ FNiTKw9ost1ClOMQ0JGAlZ9a2LygZPsafTXfbad+bwg9MH1A829OW4TSg9vHOUiIVDuknD8Jj
+ cK/441yzwAkPatEQl1kz9/qerjRqnbETrKupXnRS5VQpqY2h8jyr2TadSqaQ5xSjgnATwiNhW
+ MLchz/8OIvyaNde/sLkRc+Z2xo7ZL/z5CqGaxm5KWaqWCTzDIinTVjuH1BlerY4JY+Dg/i9L3
+ CfQsC7nMWn+JmEgLX1Mmo6ue5oKnTn8iUUAhisQsfWlW1grpnukiixTptr95pIjXKaY4TOv
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hoegeun,
+Hi Hoeguen,
 
 Am 21.08.20 um 09:10 schrieb Hoegeun Kwon:
-> Hi everyone,
->
 > There is a problem that the output does not work at a resolution
 > exceeding FHD. To solve this, we need to adjust the bvb clock at a
 > resolution exceeding FHD.
-thanks for providing this.
->
-> Rebased on top of next-20200708 and [1].
->
-> [1] : [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline (Maxime's patchset)
->
-> Hoegeun Kwon (3):the 
->   clk: bcm: rpi: Add register to control pixel bvb clk
->   ARM: dts: bcm2711: Add bvb clock for hdmi-pixel
->   drm/vc4: hdmi: Add pixel bvb clock control
 
-Please change the order of your last 2 patches. First the driver changes
-and then the device tree sources.
+this patch introduces a mandatory clock, please update
+brcm,bcm2835-hdmi.yaml first.
 
-Regards
+Is this clock physically available on BCM283x or only on BCM2711?
+
+I'm a little bit afraid, this change could break with older firmware
+versions on BCM283x.
+
+Best regards
 Stefan
 
 >
->  arch/arm/boot/dts/bcm2711-rpi-4-b.dts |  6 ++++--
->  drivers/clk/bcm/clk-raspberrypi.c     |  1 +
->  drivers/gpu/drm/vc4/vc4_hdmi.c        | 25 +++++++++++++++++++++++++
->  drivers/gpu/drm/vc4/vc4_hdmi.h        |  1 +
->  4 files changed, 31 insertions(+), 2 deletions(-)
+> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 25 +++++++++++++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_hdmi.h |  1 +
+>  2 files changed, 26 insertions(+)
 >
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> index 95ec5eedea39..eb3192d1fd86 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> @@ -80,6 +80,7 @@
+>  # define VC4_HD_M_ENABLE			BIT(0)
+>  
+>  #define CEC_CLOCK_FREQ 40000
+> +#define VC4_HSM_MID_CLOCK 149985000
+>  
+>  static int vc4_hdmi_debugfs_regs(struct seq_file *m, void *unused)
+>  {
+> @@ -380,6 +381,7 @@ static void vc4_hdmi_encoder_post_crtc_powerdown(struct drm_encoder *encoder)
+>  	HDMI_WRITE(HDMI_VID_CTL,
+>  		   HDMI_READ(HDMI_VID_CTL) & ~VC4_HD_VID_CTL_ENABLE);
+>  
+> +	clk_disable_unprepare(vc4_hdmi->pixel_bvb_clock);
+>  	clk_disable_unprepare(vc4_hdmi->hsm_clock);
+>  	clk_disable_unprepare(vc4_hdmi->pixel_clock);
+>  
+> @@ -638,6 +640,23 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder)
+>  		return;
+>  	}
+>  
+> +	ret = clk_set_rate(vc4_hdmi->pixel_bvb_clock,
+> +			(hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
+> +	if (ret) {
+> +		DRM_ERROR("Failed to set pixel bvb clock rate: %d\n", ret);
+> +		clk_disable_unprepare(vc4_hdmi->hsm_clock);
+> +		clk_disable_unprepare(vc4_hdmi->pixel_clock);
+> +		return;
+> +	}
+> +
+> +	ret = clk_prepare_enable(vc4_hdmi->pixel_bvb_clock);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to turn on pixel bvb clock: %d\n", ret);
+> +		clk_disable_unprepare(vc4_hdmi->hsm_clock);
+> +		clk_disable_unprepare(vc4_hdmi->pixel_clock);
+> +		return;
+> +	}
+> +
+>  	if (vc4_hdmi->variant->reset)
+>  		vc4_hdmi->variant->reset(vc4_hdmi);
+>  
+> @@ -1593,6 +1612,12 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi *vc4_hdmi)
+>  		return PTR_ERR(vc4_hdmi->audio_clock);
+>  	}
+>  
+> +	vc4_hdmi->pixel_bvb_clock = devm_clk_get(dev, "bvb");
+> +	if (IS_ERR(vc4_hdmi->pixel_bvb_clock)) {
+> +		DRM_ERROR("Failed to get pixel bvb clock\n");
+> +		return PTR_ERR(vc4_hdmi->pixel_bvb_clock);
+> +	}
+> +
+>  	vc4_hdmi->reset = devm_reset_control_get(dev, NULL);
+>  	if (IS_ERR(vc4_hdmi->reset)) {
+>  		DRM_ERROR("Failed to get HDMI reset line\n");
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> index 0806c6d9f24e..63c6f8bddf1d 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+> @@ -147,6 +147,7 @@ struct vc4_hdmi {
+>  	struct clk *pixel_clock;
+>  	struct clk *hsm_clock;
+>  	struct clk *audio_clock;
+> +	struct clk *pixel_bvb_clock;
+>  
+>  	struct reset_control *reset;
+>  
 
