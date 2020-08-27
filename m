@@ -2,450 +2,178 @@ Return-Path: <SRS0=MKtu=CF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98078C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 08:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAA5C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 08:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C87722B49
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 08:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6170322B47
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 08:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sDvv88ye"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aZGBoTuO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbgH0IUT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Aug 2020 04:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56540 "EHLO
+        id S1728033AbgH0Icw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Aug 2020 04:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbgH0IUR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 04:20:17 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C760C061264;
-        Thu, 27 Aug 2020 01:20:17 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id a5so4456155wrm.6;
-        Thu, 27 Aug 2020 01:20:17 -0700 (PDT)
+        with ESMTP id S1726266AbgH0Icv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 04:32:51 -0400
+Received: from mail-ua1-x943.google.com (mail-ua1-x943.google.com [IPv6:2607:f8b0:4864:20::943])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793F0C06121A
+        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2020 01:32:51 -0700 (PDT)
+Received: by mail-ua1-x943.google.com with SMTP id v20so1425366ual.4
+        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2020 01:32:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I8aoxgojlTAwesb6xOwCww2FI/7WLwpEkMEc06OSWRE=;
-        b=sDvv88yea+EJLlaSJOOLGx4Um5zqEyzuDBsxny1K9ssukhB8MUVgkSnJG+fhUlCKMC
-         DefIK69r39cusRTbSpd4APY6/D824GEFUs3nMjhVrUnP9nKFTjj2X5WoO5SobHH0zJgB
-         epxZJfzNF+sVrsmONg++N/nk2/HQoelX5boy1LXcvcwrelxwkzk2yB/yZMxWiK2fNQxZ
-         wfWIlsOa6K/ctkmkOmtviGgH07FqkP+TnJ0TZCvPeMY1m87EqvrcaCHkdj8bpbu6E19U
-         BUxKlNtIlyVxDg3wZ+iFQag0oOwSdfK1pz5WY2e1RXc0KSzBKQuT8T0IZ5XagcGEJlzc
-         /fmQ==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=rhR9VT3qebWft3rYGOJFMfWNZvBnzCun5bg3Dhn/9i0=;
+        b=aZGBoTuOF8rVF32THhxOpsi9PYhXbUvkb7iA9BiVqWrK8A9fNOuzqoabQppcZSffWj
+         lc1HEiWuoGdzD6xADgq6iHj7Fl3VuPh/n/fFXFQ88/6ljd7tIoV7MRPg+on6RG0TDF3E
+         WZVnI9QP0LWXlrWq+gSpRdsQcwC/wmONP0YEk5M43P6cDAFKaN0MD5m41Mnbnp6tYec8
+         NhdAF7hFFTIvK94EmZ9H6ockxQRNv3NPxgwHS8tesQCzKWP8hHh1hW39cZOXeSsMvgnO
+         uJVmcQv3X91JXfI1eEi49uao06EanOa1XLRbh7RdNsgusTUSoY4C9sVztXE4Ay8XzGyV
+         sHFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I8aoxgojlTAwesb6xOwCww2FI/7WLwpEkMEc06OSWRE=;
-        b=Y6MYHwihIAXiNaXHk4BIx5XF2wDkMomUW1if09iOaVC4urP8eEVY97d+xpmhGa0FL6
-         ra9CGsxUdHTbKT0qiNZE6vQXmJeQunJ14DU6ashZAeIznrY1GR1w9wVnv0ZMm74NNggM
-         VU1opAsWStMjSx9FqvQUsUxPJl4dMAZ3YUMdS3VWMVRM6hjh8Nyx2XQz3AdQNrgGXDcQ
-         h9GPviee9pB1u/syp5biyX5OAzP/jCmjNAgHmdDEvcveVDL13+18NK/7h4pvs4VPCmtQ
-         NH6/fUKIOMX6nB7Jz5ZzMndBiOJRtsznVCoXwSFmMXVWVqOHil4xOJwGt/6SXID9UgD/
-         S9EA==
-X-Gm-Message-State: AOAM532mdiLcFvmyE/N0sdHRcVVEnUSXGpYmlIVmVk+63GscOjA/PFQ0
-        s9BC2OoCjISImBNOIsM/uWFO8wK6e+UMIQ==
-X-Google-Smtp-Source: ABdhPJxTVv1Fg9DxwDaUW8EJK7csYimWudLT8js8kA6xgwFRevYUn0zc8J3j7OuxHEOKVrLp8bbP5g==
-X-Received: by 2002:a5d:61ca:: with SMTP id q10mr18321117wrv.47.1598516416121;
-        Thu, 27 Aug 2020 01:20:16 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.119.187])
-        by smtp.gmail.com with ESMTPSA id f17sm4777078wru.13.2020.08.27.01.20.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 01:20:15 -0700 (PDT)
-Subject: Re: [PATCH v10 2/3] arm64: dts: add dts nodes for MT6779
-To:     Hanks Chen <hanks.chen@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Andy Teng <andy.teng@mediatek.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com>
- <1596115816-11758-3-git-send-email-hanks.chen@mediatek.com>
- <1596594249.11014.1.camel@mtkswgap22>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <3648b63d-7521-fdfd-831e-6851fe555ca5@gmail.com>
-Date:   Thu, 27 Aug 2020 10:20:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=rhR9VT3qebWft3rYGOJFMfWNZvBnzCun5bg3Dhn/9i0=;
+        b=jxRtxJyKnN46DwClsUEY0gfcURTbPAsp/gvfnGJTITliJDfpARkjzMQipkJZ3Prqqv
+         MGxC87S88tilw0CKXmX9cF/s15wCrXisp7o+ypZwDkzuONK9BL7y8LbmzPvLGFx+okZL
+         9QX9ETHO+RzFjCqWw6teZIb46SOr0nhbapadu5qd5XD7tqt8xl+u5x/Q5RfG1T543gyh
+         2EDww//OOe+VrvjVfsCJV0o4uP/EnfxpE37IzQshQUk+NnIdgPD5qsn69uQ45//0X6mg
+         0YsEuT8pCx9TTmyoSfcrxwsRwAGDi9g0IoskRiWhaa/fOxccjTcr2bNfJ6bdOIBZaO3s
+         JHaA==
+X-Gm-Message-State: AOAM530AHXwZnp5yAN+zVJvkLFpBGukvSUOGyxC+uFE+yCyGNy0sRT3J
+        8Z7+grgOdQOHMFBpHyotldk8Ht6TZfTFzK5KbPIJNg==
+X-Google-Smtp-Source: ABdhPJyoDOX/UthsLuZecX/ETu8CpM1kRCQDNaNdec9QOaHPHOZ2e7G31MPopmbp4IpYYMkzGeVnrnBFXG52IvlRFt8=
+X-Received: by 2002:ab0:679a:: with SMTP id v26mr11228375uar.27.1598517170448;
+ Thu, 27 Aug 2020 01:32:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1596594249.11014.1.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 27 Aug 2020 14:02:39 +0530
+Message-ID: <CA+G9fYvUwH2FA9GOeA_7GYpLA31uOmEpg32VKnJ8-d5QSK4PdQ@mail.gmail.com>
+Subject: Kernel panic : Unable to handle kernel paging request at virtual
+ address - dead address between user and kernel address ranges
+To:     open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-mmc@vger.kernel.org,
+        lkft-triage@lists.linaro.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, lars.povlsen@microchip.com,
+        madhuparnabhowmik10@gmail.com,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+arm64 dragonboard db410c boot failed while running linux next 20200827 kernel.
 
+metadata:
+  git branch: master
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git commit: 88abac0b753dfdd85362a26d2da8277cb1e0842b
+  git describe: next-20200827
+  make_kernelversion: 5.9.0-rc2
+  kernel-config:
+https://builds.tuxbuild.com/vThV35pOF_GMlWdiTs3Bdw/kernel.config
 
-On 05/08/2020 04:24, Hanks Chen wrote:
-> Hi Matthias and all,
-> 
-> Gentle ping on this patch.
-> 
+Boot log,
 
-I'm fine with the patch. I'm waiting on the clk part to be accepted, then I'll 
-take this one.
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
+[    0.000000] Linux version 5.9.0-rc2-next-20200827
+(TuxBuild@12963d21faa5) (aarch64-linux-gnu-gcc (Debian 9.3.0-8) 9.3.0,
+GNU ld (GNU Binutils for Debian) 2.34) #1 SMP PREEMPT Thu Aug 27
+05:19:00 UTC 2020
+[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+[    0.000000] efi: UEFI not found.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please
+fix your bootloader!
+<trmi>
+[    3.451425] i2c_qup 78ba000.i2c: using default clock-frequency 100000
+[    3.451491] i2c_qup 78ba000.i2c:
+[    3.451491]  tx channel not available
+[    3.493455] sdhci: Secure Digital Host Controller Interface driver
+[    3.493508] sdhci: Copyright(c) Pierre Ossman
+[    3.500902] Synopsys Designware Multimedia Card Interface Driver
+[    3.507441] sdhci-pltfm: SDHCI platform and OF driver helper
+[    3.514308] Unable to handle kernel paging request at virtual
+address dead000000000108
+[    3.514695] Mem abort info:
+[    3.522421]   ESR = 0x96000044
+[    3.525096]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    3.528236]   SET = 0, FnV = 0
+[    3.533703]   EA = 0, S1PTW = 0
+[    3.536561] Data abort info:
+[    3.539601]   ISV = 0, ISS = 0x00000044
+[    3.542727]   CM = 0, WnR = 1
+[    3.546287] [dead000000000108] address between user and kernel address ranges
+[    3.549414] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+[    3.556520] Modules linked in:
+[    3.561901] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+5.9.0-rc2-next-20200827 #1
+[    3.565034] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    3.572584] pstate: 60000005 (nZCv daif -PAN -UAO BTYPE=--)
+[    3.579271] pc : __clk_put+0x40/0x140
+[    3.584556] lr : __clk_put+0x2c/0x140
+[    3.588373] sp : ffff80001002bb00
+[    3.592016] x29: ffff80001002bb00 x28: 000000000000002e
+[    3.595320] x27: ffff000009f7ba68 x26: ffff80001146d878
+[    3.600703] x25: ffff00003fcfd8f8 x24: ffff00003d0bc410
+[    3.605999] x23: ffff80001146d0e0 x22: ffff000009f7ba40
+[    3.611293] x21: ffff00003d0bc400 x20: ffff000009f7b580
+[    3.616588] x19: ffff00003bccc780 x18: 0000000007824000
+[    3.621883] x17: ffff000009f7ba00 x16: ffff000009f7b5d0
+[    3.627177] x15: ffff800011966cf8 x14: ffffffffffffffff
+[    3.632472] x13: ffff800012917000 x12: ffff800012917000
+[    3.637769] x11: 0000000000000020 x10: 0101010101010101
+[    3.643063] x9 : ffff8000107a984c x8 : 7f7f7f7f7f7f7f7f
+[    3.648358] x7 : ffff000009fd8000 x6 : ffff80001237a000
+[    3.653653] x5 : 0000000000000000 x4 : ffff000009fd8000
+[    3.658949] x3 : ffff8000124e6768 x2 : ffff000009fd8000
+[    3.664243] x1 : ffff00003bccca80 x0 : dead000000000100
+[    3.669539] Call trace:
+[    3.674830]  __clk_put+0x40/0x140
+[    3.677003]  clk_put+0x18/0x28
+[    3.680477]  dev_pm_opp_put_clkname+0x30/0x58
+[    3.683431]  sdhci_msm_probe+0x284/0x9a0
+[    3.687857]  platform_drv_probe+0x5c/0xb0
+[    3.691847]  really_probe+0xf0/0x4d8
+[    3.695753]  driver_probe_device+0xfc/0x168
+[    3.699399]  device_driver_attach+0x7c/0x88
+[    3.703306]  __driver_attach+0xac/0x178
+[    3.707472]  bus_for_each_dev+0x78/0xc8
+[    3.711291]  driver_attach+0x2c/0x38
+[    3.715110]  bus_add_driver+0x14c/0x230
+[    3.718929]  driver_register+0x6c/0x128
+[    3.722489]  __platform_driver_register+0x50/0x60
+[    3.726312]  sdhci_msm_driver_init+0x24/0x30
+[    3.731173]  do_one_initcall+0x4c/0x2c0
+[    3.735511]  kernel_init_freeable+0x21c/0x284
+[    3.739072]  kernel_init+0x1c/0x120
+[    3.743582]  ret_from_fork+0x10/0x30
+[    3.746885] Code: 35000720 a9438660 f9000020 b4000040 (f9000401)
+[    3.750720] ---[ end trace a8d4100497387a2e ]---
+[    3.756736] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    3.761392] SMP: stopping secondary CPUs
+[    3.768877] Kernel Offset: 0x80000 from 0xffff800010000000
+[    3.772924] PHYS_OFFSET: 0x80000000
+[    3.778216] CPU features: 0x0240002,24802005
+[    3.781602] Memory Limit: none
 
-Regards,
-Matthias
+full test log,
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200827/testrun/3123101/suite/linux-log-parser/test/check-kernel-oops-1714695/log
 
-> Thanks
-> 
-> 
-> Hanks Chen
-> 
-> On Thu, 2020-07-30 at 21:30 +0800, Hanks Chen wrote:
->> this adds initial MT6779 dts settings for board support,
->> including cpu, gic, timer, ccf, pinctrl, uart, sysirq...etc.
->>
->> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
->> ---
->>   arch/arm64/boot/dts/mediatek/Makefile       |   1 +
->>   arch/arm64/boot/dts/mediatek/mt6779-evb.dts |  31 +++
->>   arch/arm64/boot/dts/mediatek/mt6779.dtsi    | 271 ++++++++++++++++++++
->>   3 files changed, 303 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dts
->>   create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
->> index a57af9da9f5c..4d1b0f9d8d1c 100644
->> --- a/arch/arm64/boot/dts/mediatek/Makefile
->> +++ b/arch/arm64/boot/dts/mediatek/Makefile
->> @@ -1,6 +1,7 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
->>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
->> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
->>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
->>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
->>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
->> diff --git a/arch/arm64/boot/dts/mediatek/mt6779-evb.dts b/arch/arm64/boot/dts/mediatek/mt6779-evb.dts
->> new file mode 100644
->> index 000000000000..164f5cbb3821
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/mediatek/mt6779-evb.dts
->> @@ -0,0 +1,31 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Copyright (c) 2019 MediaTek Inc.
->> + * Author: Mars.C <mars.cheng@mediatek.com>
->> + *
->> + */
->> +
->> +/dts-v1/;
->> +#include "mt6779.dtsi"
->> +
->> +/ {
->> +	model = "MediaTek MT6779 EVB";
->> +	compatible = "mediatek,mt6779-evb", "mediatek,mt6779";
->> +
->> +	aliases {
->> +		serial0 = &uart0;
->> +	};
->> +
->> +	memory@40000000 {
->> +		device_type = "memory";
->> +		reg = <0 0x40000000 0 0x1e800000>;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:921600n8";
->> +	};
->> +};
->> +
->> +&uart0 {
->> +	status = "okay";
->> +};
->> diff --git a/arch/arm64/boot/dts/mediatek/mt6779.dtsi b/arch/arm64/boot/dts/mediatek/mt6779.dtsi
->> new file mode 100644
->> index 000000000000..370f309d32de
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/mediatek/mt6779.dtsi
->> @@ -0,0 +1,271 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Copyright (c) 2019 MediaTek Inc.
->> + * Author: Mars.C <mars.cheng@mediatek.com>
->> + *
->> + */
->> +
->> +#include <dt-bindings/clock/mt6779-clk.h>
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/pinctrl/mt6779-pinfunc.h>
->> +
->> +/ {
->> +	compatible = "mediatek,mt6779";
->> +	interrupt-parent = <&sysirq>;
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	psci {
->> +		compatible = "arm,psci-0.2";
->> +		method = "smc";
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu0: cpu@0 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x000>;
->> +		};
->> +
->> +		cpu1: cpu@1 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x100>;
->> +		};
->> +
->> +		cpu2: cpu@2 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x200>;
->> +		};
->> +
->> +		cpu3: cpu@3 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x300>;
->> +		};
->> +
->> +		cpu4: cpu@4 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x400>;
->> +		};
->> +
->> +		cpu5: cpu@5 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a55";
->> +			enable-method = "psci";
->> +			reg = <0x500>;
->> +		};
->> +
->> +		cpu6: cpu@6 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a75";
->> +			enable-method = "psci";
->> +			reg = <0x600>;
->> +		};
->> +
->> +		cpu7: cpu@7 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a75";
->> +			enable-method = "psci";
->> +			reg = <0x700>;
->> +		};
->> +	};
->> +
->> +	pmu {
->> +		compatible = "arm,armv8-pmuv3";
->> +		interrupt-parent = <&gic>;
->> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW 0>;
->> +	};
->> +
->> +	clk26m: oscillator@0 {
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <26000000>;
->> +		clock-output-names = "clk26m";
->> +	};
->> +
->> +	clk32k: oscillator@1 {
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <32768>;
->> +		clock-output-names = "clk32k";
->> +	};
->> +
->> +	timer {
->> +		compatible = "arm,armv8-timer";
->> +		interrupt-parent = <&gic>;
->> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW 0>,
->> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW 0>,
->> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW 0>,
->> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW 0>;
->> +	};
->> +
->> +	soc {
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		compatible = "simple-bus";
->> +		ranges;
->> +
->> +		gic: interrupt-controller@0c000000 {
->> +			compatible = "arm,gic-v3";
->> +			#interrupt-cells = <4>;
->> +			interrupt-parent = <&gic>;
->> +			interrupt-controller;
->> +			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
->> +			      <0 0x0c040000 0 0x200000>; /* GICR */
->> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
->> +
->> +			ppi-partitions {
->> +				ppi_cluster0: interrupt-partition-0 {
->> +					affinity = <&cpu0 &cpu1 \
->> +						&cpu2 &cpu3 &cpu4 &cpu5>;
->> +				};
->> +				ppi_cluster1: interrupt-partition-1 {
->> +					affinity = <&cpu6 &cpu7>;
->> +				};
->> +			};
->> +
->> +		};
->> +
->> +		sysirq: intpol-controller@0c53a650 {
->> +			compatible = "mediatek,mt6779-sysirq",
->> +				     "mediatek,mt6577-sysirq";
->> +			interrupt-controller;
->> +			#interrupt-cells = <3>;
->> +			interrupt-parent = <&gic>;
->> +			reg = <0 0x0c53a650 0 0x50>;
->> +		};
->> +
->> +		topckgen: clock-controller@10000000 {
->> +			compatible = "mediatek,mt6779-topckgen", "syscon";
->> +			reg = <0 0x10000000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		infracfg_ao: clock-controller@10001000 {
->> +			compatible = "mediatek,mt6779-infracfg_ao", "syscon";
->> +			reg = <0 0x10001000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		pio: pinctrl@10005000 {
->> +			compatible = "mediatek,mt6779-pinctrl", "syscon";
->> +			reg = <0 0x10005000 0 0x1000>,
->> +			      <0 0x11c20000 0 0x1000>,
->> +			      <0 0x11d10000 0 0x1000>,
->> +			      <0 0x11e20000 0 0x1000>,
->> +			      <0 0x11e70000 0 0x1000>,
->> +			      <0 0x11ea0000 0 0x1000>,
->> +			      <0 0x11f20000 0 0x1000>,
->> +			      <0 0x11f30000 0 0x1000>,
->> +			      <0 0x1000b000 0 0x1000>;
->> +			reg-names = "gpio", "iocfg_rm",
->> +				    "iocfg_br", "iocfg_lm",
->> +				    "iocfg_lb", "iocfg_rt",
->> +				    "iocfg_lt", "iocfg_tl",
->> +				    "eint";
->> +			gpio-controller;
->> +			#gpio-cells = <2>;
->> +			gpio-ranges = <&pio 0 0 210>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		apmixed: clock-controller@1000c000 {
->> +			compatible = "mediatek,mt6779-apmixed", "syscon";
->> +			reg = <0 0x1000c000 0 0xe00>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		uart0: serial@11002000 {
->> +			compatible = "mediatek,mt6779-uart",
->> +				     "mediatek,mt6577-uart";
->> +			reg = <0 0x11002000 0 0x400>;
->> +			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
->> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART0>;
->> +			clock-names = "baud", "bus";
->> +			status = "disabled";
->> +		};
->> +
->> +		uart1: serial@11003000 {
->> +			compatible = "mediatek,mt6779-uart",
->> +				     "mediatek,mt6577-uart";
->> +			reg = <0 0x11003000 0 0x400>;
->> +			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
->> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART1>;
->> +			clock-names = "baud", "bus";
->> +			status = "disabled";
->> +		};
->> +
->> +		uart2: serial@11004000 {
->> +			compatible = "mediatek,mt6779-uart",
->> +				     "mediatek,mt6577-uart";
->> +			reg = <0 0x11004000 0 0x400>;
->> +			interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_LOW>;
->> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART2>;
->> +			clock-names = "baud", "bus";
->> +			status = "disabled";
->> +		};
->> +
->> +		audio: clock-controller@11210000 {
->> +			compatible = "mediatek,mt6779-audio", "syscon";
->> +			reg = <0 0x11210000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		mfgcfg: clock-controller@13fbf000 {
->> +			compatible = "mediatek,mt6779-mfgcfg", "syscon";
->> +			reg = <0 0x13fbf000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		mmsys: syscon@14000000 {
->> +			compatible = "mediatek,mt6779-mmsys", "syscon";
->> +			reg = <0 0x14000000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		imgsys: clock-controller@15020000 {
->> +			compatible = "mediatek,mt6779-imgsys", "syscon";
->> +			reg = <0 0x15020000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		vdecsys: clock-controller@16000000 {
->> +			compatible = "mediatek,mt6779-vdecsys", "syscon";
->> +			reg = <0 0x16000000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		vencsys: clock-controller@17000000 {
->> +			compatible = "mediatek,mt6779-vencsys", "syscon";
->> +			reg = <0 0x17000000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		camsys: clock-controller@1a000000 {
->> +			compatible = "mediatek,mt6779-camsys", "syscon";
->> +			reg = <0 0x1a000000 0 0x10000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +		ipesys: clock-controller@1b000000 {
->> +			compatible = "mediatek,mt6779-ipesys", "syscon";
->> +			reg = <0 0x1b000000 0 0x1000>;
->> +			#clock-cells = <1>;
->> +		};
->> +
->> +	};
->> +};
-> 
+-- 
+Linaro LKFT
+https://lkft.linaro.org
