@@ -2,142 +2,84 @@ Return-Path: <SRS0=MKtu=CF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F002C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 10:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8CCC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 14:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E28BE207F7
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 10:12:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kLi7Icac"
+	by mail.kernel.org (Postfix) with ESMTP id 46C292177B
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 14:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728524AbgH0KMi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Aug 2020 06:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727827AbgH0KMe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 06:12:34 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70298C061232
-        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2020 03:12:34 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id t185so3110678pfd.13
-        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2020 03:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NJv+kX0fx+tQS4yK9UoZ8qyQVF+m9p2XpweB7RFLEmo=;
-        b=kLi7Icack7lOIO0wq/nfvgRAgBD76TneJHfLt62pddUwAvuIwFGXPrt1RPO8ERlHSo
-         jKOKr6Lrr2qByhU+y6ZmL9L813/DyrKinJcgIS7+KnjcL77/HCvBxrD4ZhmPbVAsHVIn
-         O5YKdLMrouJ3H29P/pzRpIb4owUvrYRpqQgJlBH3dcSERgXGWf/UyxE4RDoCA2o7w0ad
-         Tlu+f6TfGreAJScwgA+LinJxOc2eB9u1t427zGHYB1yHLCdJhS/hDO6U1c7GY4KEl3Xj
-         q6I7v/VS9qIH9hk9ODo0rX5fGAxRmbql8etWjJt15uj+qUnmMQ0DDhSxx2ciI6xaVGcp
-         lSgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NJv+kX0fx+tQS4yK9UoZ8qyQVF+m9p2XpweB7RFLEmo=;
-        b=jDsuPro7jnDGeu80Qx+lc0yx4X44P0mSi/4Yq4Af0IGK8hyqhu+rDoOYrNvfAjqu9R
-         XJe51Wta9Rj0fegmbj6oc50ufXc3SiODYLBWG/M7aK9fx86fS89t+FtJQt/ycJdXWcP7
-         4qm4IuZUP8P5HxoeInejJTlJV2t+tPfYonc72mhzQ4f3nQmjkGzPy1yH6DYUStxZK4UO
-         JEaFTHrBu5FAReEycTw8ElABxt4tnQA6F3UxzgohsnqToi+9V0mcb1EeB5a93jFxDbzR
-         dPF48900szDpLCzYPoXP/3IwkQgqkmIHSrnQjayJ3GIDQ02CQzNr9w3dooJH/m8p8CkN
-         gTKA==
-X-Gm-Message-State: AOAM532VErDVlw/Ti1bakALvg14bAasDjNjXW2QHyo4VrhlgB409QwEp
-        gY5wI/uTM0VQo8TYpsRqVDlpVw==
-X-Google-Smtp-Source: ABdhPJxcA/y5X1Cy7gMI+Ti+jy6KE1Bhf1haAh9otEUPNYOnJ/WNKO1u9FcJcYInXzwj9ZyU8C4HHg==
-X-Received: by 2002:a05:6a00:2285:: with SMTP id f5mr15977535pfe.173.1598523153812;
-        Thu, 27 Aug 2020 03:12:33 -0700 (PDT)
-Received: from localhost ([122.167.135.199])
-        by smtp.gmail.com with ESMTPSA id fv21sm1717054pjb.16.2020.08.27.03.12.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Aug 2020 03:12:32 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 15:42:31 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, John Stultz <john.stultz@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        madhuparnabhowmik10@gmail.com
-Subject: Re: Kernel panic : Unable to handle kernel paging request at virtual
- address - dead address between user and kernel address ranges
-Message-ID: <20200827101231.smqrhqu5da6jlz6i@vireshk-i7>
-References: <CA+G9fYvUwH2FA9GOeA_7GYpLA31uOmEpg32VKnJ8-d5QSK4PdQ@mail.gmail.com>
- <20200827090813.fjugeqbb47fachy7@vireshk-i7>
- <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
+        id S1726243AbgH0OTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Aug 2020 10:19:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10286 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727048AbgH0OQm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Aug 2020 10:16:42 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B0C8E137A87CD017985A;
+        Thu, 27 Aug 2020 22:15:04 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 27 Aug 2020 22:14:56 +0800
+From:   Jing Xiangfeng <jingxiangfeng@huawei.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <tdas@codeaurora.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <jingxiangfeng@huawei.com>
+Subject: [PATCH] clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe()
+Date:   Thu, 27 Aug 2020 22:16:29 +0800
+Message-ID: <20200827141629.101802-1-jingxiangfeng@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27-08-20, 11:48, Arnd Bergmann wrote:
-> > > [    3.680477]  dev_pm_opp_put_clkname+0x30/0x58
-> > > [    3.683431]  sdhci_msm_probe+0x284/0x9a0
-> 
-> dev_pm_opp_put_clkname() is part of the error handling in the
-> probe function, so I would deduct there are two problems:
-> 
-> - something failed during the probe and the driver is trying
->   to unwind
-> - the error handling it self is buggy and tries to undo something
->   again that has already been undone.
+lpass_core_sc7180_probe() misses to call pm_clk_destroy() and
+pm_runtime_disable() in error paths. Correct goto target to fix it.
+This issue is found by code inspection.
 
-Right.
+Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+---
+ drivers/clk/qcom/lpasscorecc-sc7180.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> This points to Viresh's
-> d05a7238fe1c mmc: sdhci-msm: Unconditionally call dev_pm_opp_of_remove_table()
-
-I completely forgot that Ulf already pushed this patch and I was
-wondering on which of the OPP core changes I wrote have done this :(
-
-> Most likely this is not the entire problem but it uncovered a preexisting
-> bug.
-
-I think this is.
-
-Naresh: Can you please test with this diff ?
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index b7e47107a31a..401839a97b57 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -2286,7 +2286,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
-        ret = dev_pm_opp_of_add_table(&pdev->dev);
-        if (ret != -ENODEV) {
-                dev_err(&pdev->dev, "Invalid OPP table in Device tree\n");
--               goto opp_cleanup;
-+               goto opp_put_clkname;
-        }
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index d4c1864e1ee9..228d08f5d26f 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -420,17 +420,18 @@ static int lpass_core_sc7180_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret = pm_clk_create(&pdev->dev);
+ 	if (ret)
+-		return ret;
++		goto disable_pm_runtime;
  
-        /* Vote for maximum clock rate for maximum performance */
-@@ -2451,6 +2451,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
-                                   msm_host->bulk_clks);
- opp_cleanup:
-        dev_pm_opp_of_remove_table(&pdev->dev);
-+opp_put_clkname:
-        dev_pm_opp_put_clkname(msm_host->opp_table);
- bus_clk_disable:
-        if (!IS_ERR(msm_host->bus_clk))
-
+ 	ret = pm_clk_add(&pdev->dev, "iface");
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to acquire iface clock\n");
+-		goto disable_pm_runtime;
++		goto destroy_pm_clk;
+ 	}
+ 
++	ret = -EINVAL;
+ 	clk_probe = of_device_get_match_data(&pdev->dev);
+ 	if (!clk_probe)
+-		return -EINVAL;
++		goto destroy_pm_clk;
+ 
+ 	ret = clk_probe(pdev);
+ 	if (ret)
 -- 
-viresh
+2.26.0.106.g9fadedd
+
