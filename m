@@ -2,85 +2,85 @@ Return-Path: <SRS0=MKtu=CF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5083C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 20:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D538DC433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 21:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4BD82084C
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 20:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37AF2084C
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 21:50:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="S+DqJmoU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbgH0UwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Aug 2020 16:52:05 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:35916 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbgH0UwF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Aug 2020 16:52:05 -0400
-Received: from [IPv6:2a01:cb1d:6eb:3100:ad4:cff:fee2:7ba1] (unknown [IPv6:2a01:cb1d:6eb:3100:ad4:cff:fee2:7ba1])
-        (Authenticated sender: sed)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id DAD4519F61F;
-        Thu, 27 Aug 2020 22:50:30 +0200 (CEST)
-Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with
- prototypes and unify declaration
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Lihua Yao <ylhuajnu@outlook.com>
-References: <20200804192654.12783-1-krzk@kernel.org>
- <20200804192654.12783-14-krzk@kernel.org>
- <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
- <CGME20200812091510eucas1p15944eb26bb496e20b9fadd609063a490@eucas1p1.samsung.com>
- <CAK8P3a13u0KY0jzxNLs=irTs6ZSXyObKKTp-8KEmowcOZrZXxQ@mail.gmail.com>
- <8066413c-367d-2f8d-3e7b-dacd954675be@samsung.com>
- <CAK8P3a1xXe56k5nKuCJ-25h1VqWKRb9JGnFrr=SPg_icay-vZA@mail.gmail.com>
- <6ccf14a9-802f-25b8-494d-e957cafd073d@samsung.com>
- <20200812133109.GA15697@pi3>
-From:   Cedric Roux <sed@free.fr>
-Message-ID: <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
-Date:   Thu, 27 Aug 2020 22:52:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726706AbgH0VuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Aug 2020 17:50:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbgH0VuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 17:50:03 -0400
+X-Greylist: delayed 368 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 27 Aug 2020 14:50:03 PDT
+Received: from mail.kmu-office.ch (mail.kmu-office.ch [IPv6:2a02:418:6a02::a2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35393C061264
+        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2020 14:50:03 -0700 (PDT)
+Received: from allenwind.lan (unknown [IPv6:2a02:169:3df5::4db])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 450AF5C246D;
+        Thu, 27 Aug 2020 23:43:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1598564628;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=9JtOjhabbWIc8Ze4vQoeOAqSEJ2W24d6AiC6SaHT6FY=;
+        b=S+DqJmoUOw7rynz3V6Z/5czgjniVBUNcFlPi9jafL5jRjc2WRXzbdRaf4SkRnbtDE3c14f
+        YRqnqepPP0QVd3V3FnftbWaYEtkh412UyU4ikzbs6nWz98e4sPV715EabbDRfuiLyXCJa5
+        8E+2iIb5yGAfJ5wpwwgVzsearP2GpF8=
+From:   Stefan Agner <stefan@agner.ch>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stefan@agner.ch
+Subject: [PATCH] clk: meson: g12a: mark fclk_div2 as critical
+Date:   Thu, 27 Aug 2020 23:43:44 +0200
+Message-Id: <c33df0ebe8be16b56741ce7f873221ab9087a0a6.1598564619.git.stefan@agner.ch>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20200812133109.GA15697@pi3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/12/20 3:31 PM, Krzysztof Kozlowski wrote:
-> Or even more important - is it worth to spend effort and time on this?
-> If there is no single production system using recent Linux kernel, the
-> answer should be negative...
+On Amlogic Meson G12b platform, similar to fclk_div3, the fclk_div2
+seems to be necessary for the system to operate correctly as well.
 
-Well, I have a server running on mini2440 with a not-too-young
-but not-too-old kernel. I don't have much time to test recent
-kernels though so I guess that doesn't count.
+Typically, the clock also gets chosen by the eMMC peripheral. This
+probably masked the problem so far. However, when booting from a SD
+card the clock seems to get disabled which leads to a system freeze.
+
+Let's mark this clock as critical, fixing boot from SD card on G12b
+platforms.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/clk/meson/g12a.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index fad616cac01e..2214b974f748 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -298,6 +298,7 @@ static struct clk_regmap g12a_fclk_div2 = {
+ 			&g12a_fclk_div2_div.hw
+ 		},
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.28.0
+
