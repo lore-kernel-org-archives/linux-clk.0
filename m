@@ -2,218 +2,335 @@ Return-Path: <SRS0=MKtu=CF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44176C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 09:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D781C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 09:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B67422CB1
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 09:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE43B20825
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Aug 2020 09:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbgH0Jsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Aug 2020 05:48:36 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:45001 "EHLO
+        id S1726266AbgH0JuM convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Aug 2020 05:50:12 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:49925 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgH0Jse (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 05:48:34 -0400
-Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MZCX1-1k6g3F0IPR-00V6R6; Thu, 27 Aug 2020 11:48:32 +0200
-Received: by mail-qk1-f177.google.com with SMTP id b14so5304867qkn.4;
-        Thu, 27 Aug 2020 02:48:31 -0700 (PDT)
-X-Gm-Message-State: AOAM533PqC7FW0F9apO+VvY32N+imGt4/eCRKL3/P3ADinNDmB59vGnX
-        kILQAN7WtF3MbOK2DIeRAaEnBhyYfqYMGzNbq6g=
-X-Google-Smtp-Source: ABdhPJz2qhthuFoFNG4F2I+EHUQH4Qe8BIJ2ZWE72T4SO8H6UduQHBh9aqiZepbwZau2BYWUFIYrMocg239BQNaJVrc=
-X-Received: by 2002:ae9:f106:: with SMTP id k6mr17041488qkg.3.1598521710483;
- Thu, 27 Aug 2020 02:48:30 -0700 (PDT)
+        with ESMTP id S1726851AbgH0JuI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Aug 2020 05:50:08 -0400
+Received: from [192.168.1.173] ([37.4.249.91]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MbAYo-1kmVAI1ZX6-00bbfo; Thu, 27 Aug 2020 11:49:38 +0200
+Subject: Re: [PATCH 3/3] drm/vc4: hdmi: Add pixel bvb clock control
+To:     Hoegeun Kwon <hoegeun.kwon@samsung.com>, nsaenzjulienne@suse.de,
+        eric@anholt.net, maxime@cerno.tech
+Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
+        dave.stevenson@raspberrypi.com, sboyd@kernel.org,
+        mturquette@baylibre.com, kdasu.kdev@gmail.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+ <CGME20200821071122epcas1p3d00dda4665f94192ac5e9ee829d0557d@epcas1p3.samsung.com>
+ <20200821071045.24501-4-hoegeun.kwon@samsung.com>
+ <61c199bf-852f-82d3-089a-a0a435343acf@i2se.com>
+ <80749dcd-d4b2-68a1-f3ca-c19a120f6f7b@samsung.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdudVBHIHYy
+ CgptUUlOQkZ0NmdCTUJFQUN1Yi9wQmV2SHhidkplZnlaRzMySklObW4yYnNFUFgyNVY2ZmVq
+ bXlZd21DR0tqRnRMCi9Eb1VNRVZIRHhDSjQ3Qk1YbzM0NGZIVjFDM0FudWRnTjFCZWhMb0J0
+ TEh4bW5lQ3pnSDNLY1B0V1c3cHRqNEcKdEp2OUNRRFp5MjdTS29FUHh5YUk4Q0YweWdSeEpj
+ NzJNOUk5d21zUFo1YlVIc0x1WVdNcVE3SmNSbVBzNkQ4ZwpCa2srOC95bmdFeU5FeHd4SnBS
+ MXlsajVianhXREh5WVF2dUo1THpaS3VPOUxCM2xYVnNjNGJxWEVqYzZWRnVaCkZDQ2svc3lp
+ by9ZaHNlOE4rUXN4N01RYWd6NHdLVWtRUWJmWGcxVnFrVG5BaXZYczQyVm5Ja211NWd6SXcv
+ MHQKUkp2NTBGUmhIaHhweUtBSThCOG5oTjhRdng3TVZrUGM1dkRmZDN1R1lXNDdKUGhWUUJj
+ VXdKd05rLzQ5RjllQQp2ZzJtdE1QRm5GT1JrV1VSdlArRzZGSmZtNitDdk92N1lmUDF1ZXdB
+ aTRsbitKTzFnK2dqVklXbC9XSnB5MG5UCmlwZGZlSDlkSGtnU2lmUXVuWWN1Y2lzTXlvUmJG
+ OTU1dENna0VZOUVNRWRZMXQ4aUdEaUNnWDZzNTBMSGJpM2sKNDUzdWFjcHhmUVhTYUF3UGtz
+ bDhNa0NPc3YyZUVyNElOQ0hZUUR5WmljbEJ1dUNnOEVOYlI2QUdWdFpTUGNRYgplbnpTektS
+ Wm9POUNhcUlEK2ZhdkxpQi9kaHptSEErOWJnSWhtWGZ2WFJMRFp6ZThwbzFkeXQzRTFzaFhp
+ ZGRaClBBOE51SlZ6RUl0MmxtSTZWOHBaRHBuMjIxcmZLaml2UlFpYW9zNTRUZ1pqak1ZSTdu
+ bko3ZTZ4endBUkFRQUIKdENCVGRHVm1ZVzRnVjJGb2NtVnVJRHgzWVdoeVpXNXpkRUJuYlhn
+ dWJtVjBQb2tDTndRVEFRZ0FJUVVDWElkYwo0Z0liQXdVTENRZ0hBZ1lWQ0FrS0N3SUVGZ0lE
+ QVFJZUFRSVhnQUFLQ1JDVWdld1BFWkR5MjFPVEQvOUdpWkxkCnRSWWNteVJKZ2x0aVFRekFp
+ UWRjSUQ3OGxHb1dwL3grci92Y1U2YjZqdVl1ZVR3Z1Iwclc3djdsMklSQnlEN24KSEp4YSt0
+ SVNvUVpCZ2hvbE1JZmI5TXRoR09KTENZNzdrL1FoQWhuMzJOR1prZWp3OXR6a3MvNDBtclpT
+ VVQ4NApaeWJzUVhyTE0vSFI2VElJL0RlUEIwbktEM0ppcHBzMlVIUUQ5cUQySWpFd1NRUGxI
+ akNPckVaaDQ1UFo3bTkrClo5M0x6aVRlc1dabFlRdUxpSndzNHJLcHRIVzFkL3dSZWxzaG1t
+ NlFxY0wybDRDL2U0MGVEQjlncTRkU1poOVgKUEVZbGxpeU5RaDdhMkxTZHVtRTFyK2NTd0lq
+ RS91ZHRSdmRPOWFLb0psT2JVSzVkTmpTUEg3d0tUYndkWGRZRApHUHdEaFhkNThOQXdyK1BY
+ QmxQajB0STFMQ3ErTEJ4ZUt6aFdYK0dWcTlEb2pWanlVREV4Rk5Ga1h1b0M3ZzhtClY5VDB0
+ ZUJpdVpSbm91WEt3VjJGcHRaT0hIN0JVRVd0a0t0aGgxZXRmT1dwaWdCemtVN2JQc2ZJWVQr
+ cnk5dGIKMW9KK3Y0MVBOYXFaRW1QVXBKeHZmek5UN3Ayd01lRDdaajlmMHJ1YlJQdExBSjJR
+ R2pyRkhzdVh3QU9xcHl6ZQoxOEVidHNZazBOMHp1SEVoY2orUEJJQmZoMFlJWWQ1MW9mNkdJ
+ aU95UjlxMFhYdHBsVUo3VDIvSDF1UXFrWGxwCitnVzRWa2lmc2NJckl1eWZueFpXMTJlSXZq
+ NnlicVdMN2FZS0dZbVQ2aUxDUGJIWXlZY2F5bDRFa0ZjckNGN0UKZTBXVC9zY1ZNaE8vNVgv
+ SGFOQTVIQngvcjUycGdMY3Y0aTlNeExRbVUzUmxabUZ1SUZkaGFISmxiaUE4YzNSbApabUZ1
+ TG5kaGFISmxia0JwTW5ObExtTnZiVDZKQWpnRUV3RUNBQ0lGQWx0NmdCTUNHd01HQ3drSUJ3
+ TUNCaFVJCkFna0tDd1FXQWdNQkFoNEJBaGVBQUFvSkVKU0I3QThSa1BMYmpic1AvamdqYVNz
+ NUh0bGtBSXZXUytGcm15N2MKaG5jT0F4TFRWL0Q2UkV3SU95R0poRkt3d29pck55UTJnOXZV
+ YTNZQ1lDZjFmSjh3RWhhS09COWQwTHBNUm5MNApkRVQ4ZDgyMzhFL3BLK0hxTktpSXNKaHM2
+ SnNLOFpnalZRR3JtbWZua0dyWisxdjBIQnV4ZGljZ0duUC9XdHVBClVsOGw2Mi9BTGJheXlq
+ KzYxQ2xyc0V0UklhcU82N0xJWXdQaVBEUkkrWGlNek5pR3pIRi8xUTZHUjAyUkg2YTMKRjg5
+ ejhhUHhjSGkxWnZDdDJ5a3o2VUVjaHpQMHI1Z3FGSisvTC9VcHU4ME1YaVk0djVlSWFCNTJn
+ VlBnaXlNQQpsTDJkRHMxbUladm5yUkxSWTJ0YjNtQVlOa1Y1QjVJRFQzcGtXeTZrS281T0Nn
+ SytZZFlPUjhGTloyb04ydDhPCnJLK1ZudGFLN01NU0tIbG1ZL3NPd3RSbEVoMU9CbXJjQ3dH
+ d21wLzA1R2tSNDZmL0lzaFJWZUZPUmF3K0dBcXQKUDIrQ0ZhMkNOQS9JSG5aTm95aWtsRHpQ
+ UUhVVUdzck5wcERyaFg5Sm1oQm1nMXYyeXdIMU5YdTFpRGZQMUJBdwpLZ29rdDVmNVVhUkY5
+ c0FBNTN2V0V2YlVVTjllZXNGR0x6UFdkSkdRNWhwZC9WSDVJUXk5U0JyaC93SWNla3E1Cm4w
+ a042cGJUSHhHRTUyU2kvTVZJa05UdURaM2FwbjJqbERaNHBPdHBCWEkydlAzYlBPK05pcUJa
+ anNVM3R4TGkKV2R2MkZqeXp6NlhMUndlV1JZVkw1SGE2TER0eG9yMnZ1NlVQMDdwOXh6MXhS
+ WmFPRFczb1lsSEZ6WXBhNFc1ZwpMSGIybEVrSXVVZlNjaWNHYmpqQXRDbFRkR1ZtWVc0Z1Yy
+ Rm9jbVZ1SUR4emRHVm1ZVzR1ZDJGb2NtVnVRR2x1CkxYUmxZMmd1WTI5dFBva0NOd1FUQVFn
+ QUlRVUNYSWRlaHdJYkF3VUxDUWdIQWdZVkNBa0tDd0lFRmdJREFRSWUKQVFJWGdBQUtDUkNV
+ Z2V3UEVaRHkyeUhURC85VUY3UWxEa0d4elE3QWFDSTZOOTVpUWY4LzFvU1VhRE51Mlk2SQpL
+ K0R6UXBiMVRiVE9yM1ZKd3dZOGEzT1d6NU5MU09MTVdlVnh0K29zTW1sUUlHdWJEM09EWko4
+ aXpQbEcvSnJOCnQ1elNkbU41SUE1ZjNlc1dXUVZLdmdoWkFnVERxZHB2K1pIVzJFbXhuQUox
+ dUxGWFhlUWQzVVpjQzVyMy9nL3YKU2FNbzl4ZWszSjVtTnVEbTcxbEVXc0FzL0JBY0ZjK3lu
+ TGh4d0JXQld3c3Z3UjhiSHRKNURPTVd2YUt1RHNrcApJR0ZVZS9LYjJCK2pyYXZRM1RuNnMv
+ SHFKTTBjZXhTSHo1cGUrMHNHdlArdDlKNzIzNEJGUXdlRkV4cmlleThVCkl4T3I0WEFiYWFi
+ U3J5WW5VL3pWSDlVMWkyQUlRWk1XSkFldkN2VmdRL1UrTmVSaFh1ZGU5WVVtRE1EbzJzQjIK
+ VkFGRUFxaUYyUVVIUEEybThhN0VPM3lmTDRyTWswaUh6TElLdmg2L3JIOFFDWThpM1h4VE5M
+ OWlDTHpCV3UvTgpPbkNBYlMremx2TFphaVNNaDVFZnV4VHR2NFBsVmRFamY2MlArWkhJRDE2
+ Z1VEd0VtYXpMQU1yeDY2NmpINWt1ClVDVFZ5bWJMMFR2Qis2TDZBUmw4QU55TTRBRG1rV2tw
+ eU0yMmtDdUlTWUFFZlFSM3VXWFo5WWd4YVBNcWJWK3cKQnJoSmc0SGFONkM2eFRxR3YzcjRC
+ MmFxYjc3L0NWb1JKMVo5Y3BIQ3dpT3pJYUFtdnl6UFU2TXhDRFhaOEZnWQpsVDR2MjNHNWlt
+ SlAyemdYNXMrRjZBQ1VKOVVRUEQwdVRmK0o5RGEycitza2gvc1dPbloreWNvSE5CUXZvY1pF
+ Ck5BSFFmN2tDRFFSYmVvQVRBUkFBMkhkMGZzRFZLNzJSTFNESGJ5ME9oZ0RjRGxWQk0yTSto
+ WVlwTzNmWDFyKysKc2hpcVBLQ0hWQXNRNWJ4ZTdIbUppbUhhNEtLWXMya3YvbWx0L0NhdUNK
+ Ly9wbWN5Y0JNN0d2d25Lem11WHp1QQpHbVZUWkM2V1I1TGtha0ZydEhPelZtc0VHcE52NVJj
+ OWw2SFlGcExrYlNrVmk1U1BRWkp5K0VNZ01DRmdqclpmClZGNnlvdHdFMWFmN0hOdE1oTlBh
+ TEROMW9VS0Y1aitSeVJnNWl3SnVDRGtuSGp3QlFWNHBndzIvNXZTOEE3WlEKdjJNYlcvVExF
+ eXBLWGlmNzhJaGdBelh0RTJYck0xbi9vNlpINzFvUkZGS096NDJsRmR6ZHJTWDBZc3FYZ0hD
+ WAo1Z0l0TGZxemoxcHNNYTlvMWVpTlRFbTFkVlFyVHFueXMwbDE4b2FsUk5zd1lsUW1uWUJ3
+ cHdDa2FUSExNSHdLCmZHQmJvNWRMUEVzaHRWb3dJNm5zZ3FMVHlRSG1xSFlxVVpZSXBpZ21t
+ QzNTd0JXWTFWNmZmVUVta3FwQUFDRW4KTDQvZ1Vnbjd5US81ZDBzZXFuQXEycFNCSE1VVW9D
+ Y1R6RVFVV1ZraUR2M1JrN2hURm1oVHNNcTc4eHYyWFJzWApNUjZ5UWhTVFBGWkNZRFVFeEVs
+ RXNTbzlGV0hXcjZ6SHlZY2M4cURMRnZHOUZQaG1RdVQyczlCbHg2Z0kzMjNHCm5FcTFsd1dQ
+ SlZ6UDRqUWtKS0lBWHdGcHYrVzhDV0xxekRXT3ZkbHJEYVRhVk1zY0ZUZUg1VzZVcHJsNjVq
+ cUYKUUdNcGNSR0NzOEdDVVcxM0gwSXlPdFF0d1dYQTRueStTTDgxcHZpQW1hU1hVOGxhS2FS
+ dTkxVk9WYUY5ZjRzQQpFUUVBQVlrQ0h3UVlBUUlBQ1FVQ1czcUFFd0liREFBS0NSQ1VnZXdQ
+ RVpEeTIrb1hELzljSEhSa0JaT2ZrbVNxCjE0U3Z4MDYyUHRVMEtWNDcwVFNucC9qV29ZSm5L
+ SXczRzBtWElSZ3J0SDJkUHdwSWdWanNZeVJTVk1LbVNwdDUKWnJEZjlOdFRiTldnazhWb0xl
+ WnpZRW8rSjNvUHFGclRNczNhWVl2N2U0K0pLNjk1WW5tUSttT0Q5bmlhOTE1dApyNUFaajk1
+ VWZTVGx5VW15aWMxZDhvdnNmMWZQN1hDVVZSRmNSamZOZkRGMW9ML3BEZ01QNUdaMk93YVRl
+ am15CkN1SGpNOElSMUNpYXZCcFlEbUJuVFlrN1B0aHk2YXRXdllsMGZ5L0NxYWpUS3N4Nytw
+ OXh6aXU4WmZWWCtpS0IKQ2MrSGUrRURFZEdJRGh2TlovSVFIZk9CMlBVWFdHUytzOUZOVHhy
+ L0E2bkxHWG5BOVk2dzkzaVBkWUl3eFM3SwpYTG9LSmVlMTBEamx6c1lzUmZsRk9XMFpPaVNp
+ aElDWGlRVjF1cU02dHpGRzlndFJjaXVzNVVBdGhXYU8xT3dVClNDUW1mQ09tNGZ2TUlKSUE5
+ cnh0b1M2T3FSUWNpRjNjcm1vMHJKQ3ROMmF3WmZnaThYRWlmN2Q2aGp2MEVLTTkKWFpvaUFa
+ WVpEKy9pTG01VGFLV042b0dJdGkwVmpKdjhaWk9aT2ZDYjZ2cUZJa0pXK2FPdTRvclRMRk16
+ MjhhbwpVM1F5V3BOQzhGRm1kWXNWdWE4czZnTjFOSWE2eTNxYS9aQjhiQS9pa3k1OUFFejRp
+ RElScmdVek1FZzhBazdUCmZtMUtpWWVpVHRCRENvMjVCdlhqYnFzeXhrUUQxbmtSbTZGQVZ6
+ RXVPUEllOEp1cVcyeEQ5aXhHWXZqVTVoa1IKZ0pwM2dQNWIrY25HM0xQcXF1UTJFNmdvS1VN
+ TEFia0NEUVJiZmw5REFSQUFzRExjYStMbFAydm5mdEVHaHBjQQpCR1ZOUUVGbkdQckNhdVU2
+ SGhOODA1V3RQVHRtc1JPdUp6cWdVVDBtcHFXSWZacTZzTXd5dkhLOVRzL0tIM0paClVWYlJD
+ M3oyaDNLZmhIL0RhZjk1cGQ2bVBjL2g5dkYvT3kzK2VUV2hnR25QNmNBNWtsUitmTzFXaEc4
+ VnJpWHYKck5lUkcyMHN6emplSG9jblNJY1Q1WHVaUjB1REhPaUd4T2l6MXNNUkZUR3h6R095
+ MTlSOXJ2dTYzdGlJM2Q3dgpnYzc1T0NBZGtlQi9TZUNFbGFSdzBUZjdMWmJQampzRjI2M0JZ
+ bk1mNGtrTkVLdnFXY1UyaWNNcCtxZXpqeW5CCnB2ZXVlMHJDVFFCWUFRbG9GQ1ZUR0hyV1dB
+ NkQ0VzVPMkFmSWRJYzF1MUpDWnAyZjVMV1ZvVUZUVklyUW5RUVUKU0hDaWZyOU1aeExUdFBK
+ ZFU1Mm9TUHczZGs0aExQOGlKSUx1dnYvYXZhakNzUVlIRXR3WXNiZUZaeGl1TGdscApBN1lj
+ Sk5ObXBnQ3BNRDR3VWh2bEN0QUtOQlFXeXIyOTc2OThFUVRuNDZlQmVVNkttMkNpaFhrZ3dD
+ eWY4ZXlLCkxFM3NYZXdhcTVrZ1pXdk5xNml1NXFZSVJCOXl3K2NYYzYwZE9aRE9scTkzWDVT
+ QVJZemFvZXBrSHo0cmtMa1AKUG8rdENIeUhRUHNHblBYYzlXVDgwREM5Tm5KR2R2VWx5NXJk
+ TUk0eHBaeWdlb2tqd293VlFsUFV1Y1M2TXluNwpmOHc4Y2dmQjdDMklBSWNEeDJwUC9IendY
+ dmtDT1FOQTdtVjFsTTA4bitnVmtUcnpweGlwNURicTRDSW9ZeDJNCkpaVDhiR1JINlhqY1VE
+ S2EwOVFoeVpzQUVRRUFBWWtFUkFRWUFRZ0FEd1VDVzM1ZlF3SWJBZ1VKQThKbkFBSXAKQ1JD
+ VWdld1BFWkR5MjhGZElBUVpBUWdBQmdVQ1czNWZRd0FLQ1JCVnhETFBjVk1NamNkc0QvMFJo
+ QXN1UVlPeQpyMTNCbDNOaFhrWUFaR3AyWkZER3VrZTdPU2tWOG9qT09UZFR5ei9jT1JHQ2J5
+ ZEQrRGd2cUZ5VmRuT1hLZ08wCmxKbUd3ckdlTGRnZ0F2aDBpaHJwNU8wWVVKOWJCU1htR01t
+ UVRZSC9BbUxUR2FkYnVqQ1dqNWZGVWtDeXd4aW0KSHV5MFBiMjRwelR2UzUwR1k1WStxSDBG
+ SE5haWdka2tpV04zcnVnN0haRXUvQ3lsUFpqT1h6K0QxUVBNckV4dwo3ZC9NS2FiVis5YU5i
+ UVlabGRJajk4UXd2VUYxS1N6YThqbFVJdnBoUnEyN0FUOGZER1lHUGZERU1nMmNCT2FlCkty
+ N29uUXM0YjdhV082aWZEbHhRVHB6c3pvK0FuODA3Tk1TdFZFRmYrczNBaFZEM2U3bmY4SkJh
+ dmJWckFlMGsKb20yNm96elBubnh6K2xxVlZ0dzZVazRYTUl6dGl4L0h3SFl3dUNuY1VYWndL
+ MEkzeUFKd2pZd29vck9DaEozUwpFVWJKUVB0R3NneFJERXhWQkZlNk5MUC82MnhQOU82dGFj
+ d09kYjBNbVAxYjM5cFJBVEM3YmdkMWxkVUxpNzVaCmxKckowL1NpVkVyb3FOWXk3OXRmbWdB
+ WjJVeFptczlTckV5Nm85UVNmc24xYVh2K01QTDlKYUNHbWtQNnpiTFEKTm5kajBKY2FRbmtD
+ MHZneWRPMUJtNk11OTZQOXVmbEtaY0FTNndtTE01SWRIT3lqTDg4d0h3anVjakFPQnRjdwpw
+ MG9HVG5WT25Sc05ZU084VzhZWi9LZGJ1Nzg1ZGF6TXFKMmlOakFEdUJiZG02TjRqNUVkTW5r
+ TG4wQklmUEpwCmRnbTR2bDJVcExqd1JHci9NM3dtbTVwdnMrNnVCN2hrL0ZKaUQvNGxsRU5Q
+ NGVNMWg3U200aitWcTZOMSt6VEIKSVhKQWViSXFhc0RwNXlaUzdYcnk0STM2bjg1WEVZZkcw
+ MWx0QXlob05WMkRPOFNJUlFwdWkydHErOVJQM1JLMQpKREJ4eEVKWTJFTzVKWjhNeGFQSFEw
+ RFQwNWxSRmpLMkFsaGRFSXRqTGpwSjNmVW05c3FMeE1XeHpQNlV6M2lpCjJ1YTR1bnJ0Nk9D
+ VHFRd2lqRi8zYlRXaXd2VkFBSG5NRlVpb1hzaEhhb2hWRGNWZm5lSU1mVjBiUUNYWWkzTnAK
+ WTB2MFp3Y2lGSCtnU0M3cUQ2WE51aHBWR1NMNElpbGlGeS9TemNhSkV6QUhlTERTaFpQMkNX
+ ZG5DNHZnbDM3dApocHg4aDU1WWhKbjZIU3VVelBnaGFLdFZCMmsrajdaZXlaK1NGeHA3SXVi
+ SEN3TEhsUWhUNzVSd1EzaUF4S242CjBxajUxY1lUbnF4ZFpYVzZmSDNQa3VNellVNUdwcVIv
+ MU9sNWMvd2ZJNmc2QW04eUtXLzBFVUx0K0tuNExGc1MKbTdZM201SDV2MTJVNkpCWXZWK3Ix
+ M2paaW9zNEVFREU5M0Q1c05IMk1JeVJ6Q0RxMXpkZHQ0WHV5S0ZqUEtXMQo5aWJaRGZGVjdL
+ dUNzdnVMMjNzQmMxc0NNb3ArRTFtVC9ReE9JQTZvRFQxTVFzdHdPVnVReURDdi9PdktTZ2Z6
+ CjhGWEdMNkFQY2xqQ3FqOEFKaHhReXN4ZG9pUVA4bS92dStialdHR3Z4dzVzMWxncGlSRFRS
+ VVBnY0pKTmFHWTIKVklEclpRaTROU2lOUTBOSWkrZGp1NGZOTW1DcFFxZzh0YkMzY0FhNnl3
+ bTZvUUIxU0JobURYMmUxMWdSbGx1SQpPblRHUEUwSFRvM2w3MmxoYmc9PQo9cVpNVgotLS0t
+ LUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==
+Message-ID: <84c423e8-25a6-8f23-cc80-7a17ce03fd1d@i2se.com>
+Date:   Thu, 27 Aug 2020 11:49:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CA+G9fYvUwH2FA9GOeA_7GYpLA31uOmEpg32VKnJ8-d5QSK4PdQ@mail.gmail.com>
- <20200827090813.fjugeqbb47fachy7@vireshk-i7>
-In-Reply-To: <20200827090813.fjugeqbb47fachy7@vireshk-i7>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 27 Aug 2020 11:48:14 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
-Message-ID: <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
-Subject: Re: Kernel panic : Unable to handle kernel paging request at virtual
- address - dead address between user and kernel address ranges
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, John Stultz <john.stultz@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        madhuparnabhowmik10@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:fwlx/IMYYiXA3qvzMsnEDzN1plCrqtL40GLEAVXgbA2abererWp
- l1HtCMtPv6r4WYvtn/lkTMP/VBUk8FJ6N7pqXUC7yxzrDgR6zxYOX2a7x0etPNfry//JOQK
- 8MiRqaMQBInHBpcZPc0Aq9sqI6VpaLpu7TRWrgXBDWffL8PqI1kXI0c6m0NqAnluVuyvpDh
- a9+Pz7uJqJuYTXuhMPerg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:voSHDp8wyfM=:9j3PFFzCV532iDAx6MQsHT
- MLh0ZLXpRuyMCLtlNOSO2oNlPehRJPQzx8bfKLUgcLUn7g2FfK4IhkTIQtpI2ed4KbCWSbsTI
- fPVbGy9QA8d7EQ0HpYXUbLoAdu+hTy4bmetLU7HHBtRdcQeMe7vLjfQPPfrufxTH7IES1d6C7
- nXSHfmvn+i7e1/p+f2yfz6AhzUowu5ptAcrw/rqglhwi1wlfZw88hO/+ec8LE6zkJSAwQtPwj
- epW8QbqePDs95NdjvZg5r00bUwJPEbIF2+LkOoFjODTFXKMfvGD9WqVMt/ddeqDOCZWtuPLc/
- HTLmtYU/QiwGQiDRKPMQyATf2eKg2QaAZ/ZFoVnVPejTR1jYh2ZpFS+pQzjhFGcqy+jfHCz/1
- pUezpMKKG+Cmn66GaUXSnLquLT13rejSqcYLJzPcGSMb7/hJ521oB4QXgqiHYToHPrIYGc5BR
- YG9LUaBZC0RuqUG80mnOuEuJpsCyrwbRpbruF2e84PCwo87yYwmOrX5QivYnEp2sTvilW74LJ
- MJxZfzfcsoqhiOBwjcUg2feZ6Pd84lvnyXnQf0ZCiHAyRgsg3e66gOdtVLNpmZW/xNIlXyD2b
- B1ueYH0nbt2Ba7DodeSs26cwBbmiM3WbE/Ct+arljPSpwOvlukEnuE0DexGicroJvNJCKRIbB
- 9/bS6Q9Digc63Q268lCMZWabjS3zlBhXHX8w30Hizk4MWwD9DxaaPCtgNvPJ1bgtxCRJD7LFV
- IA7BJe22fUN/notHUG49QmEkDkIxD7/Ybi6r/mUN7JUCOAeHdxj/jRpPjXdfekM9b9tCRcbdn
- Ig/MZ6eIr7+QGFXeFI3lV5g07DRz7hTI2sXuNdoETbwmvhGIaJ/iQKK68h3vzH+Y2S7EubC
+In-Reply-To: <80749dcd-d4b2-68a1-f3ca-c19a120f6f7b@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Provags-ID: V03:K1:bvfx4iKEVaKQ0Mj1G2wdRpRXeEBwhp+mKWBLhTARJrnxob94YRg
+ sslxBGyRfCmEAFoB630TyP3+6jAddte9GtWdJwGWIuI5ahheNWXw/uDmbauq/0mNd+k5i7J
+ nUYStrQ3M51SYoGUQEvG76RpkT2uVsQSenRofA2Cvwp6h40QcTsY0uS1b60wUNzuKSmoPg7
+ LER+4ERnA7QmC9A+JnprQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5nGLyyj6/bA=:r3sfGwS57RlAhrv8gvp8Rf
+ coEgChwQab49Gs/Ba2yKfx06x5hFc+GJSu8r8rzeHUrDsViEr1jDjTmoPTcoycRSIj0Qs7iVu
+ rgBSf8yiZsr0faVyw5csFlqoU5vgke+k1879iBXfQ6hvUr5Va9K0asCm7dbICX/JEmFheE4hY
+ C3oiUHMAppHueUvEbTSo5wVKA+831Tt8zNMtIGPS5W9R/CG60tXG+Kah1KGUgHCJ2lWoLGdE9
+ tIWDA6dfIDQhyPoLM2TqwhzKt51bve1cEK4hMUFf9WDDAFTucpEUT6UBVj73ND6uziwTlKeoI
+ 8Nx2hwpHBw9sMCmEHZzLIYDklMMDkwg8o4samOZ8tbQB4UZJ7WTtE0sjLB5J8EUlGx9oEc/1M
+ KHTBW+W4RdSHRQjYluE3Eiwjoe2YRXAj+Uaxyq1nLr4/Nf0jZrceMw9dVQyyTNHT0pkue7BDN
+ kKFMyQF61o9WIP1hJTtXLB3YKFjZFS0cevx5Lj4EyMaBFPE7pxDYYAI7SS2uPWBi1VVpb9Nwu
+ SngcZzwql6/konBO1xyH9dxX6ghAEpHGejZa4DvWLjy0Q0RA6p/eqpx9N6UiGvSTeB9/pCwXj
+ GB1hH8a+zLg7qmfD0c/LVOnTcrTlvsKz/ZJz5Hsenb3KaLCDQ/r0sptVJVkuh/hmIcM4uKXv3
+ msMyHZT31ddpu5IzfXOKgLs8Vjy+b2HzZWpVkTsZGvmwS8OCbLnzdXWC+87W/Bsy7bx0jG28Q
+ 1146WwUfpXwQV0tDaQ/CdiuHWjZhE+lkpVexLx9XH7/u3b/O6g6EQ3QBx6gqlyW53sSm4B1kx
+ xzxBoH+hv9BSsA1UpRhwvR4ETg7TXZUaFTK7YL62drzZ2Y/bDcFOLN0+Ac0nE8HCx5sqguw
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 11:08 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+Am 27.08.20 um 06:35 schrieb Hoegeun Kwon:
+> Hi Stefan,
 >
-> +Rajendra
+> Thank you for your review.
 >
-> On 27-08-20, 14:02, Naresh Kamboju wrote:
-> > arm64 dragonboard db410c boot failed while running linux next 20200827 kernel.
-> >
-> > metadata:
-> >   git branch: master
-> >   git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> >   git commit: 88abac0b753dfdd85362a26d2da8277cb1e0842b
-> >   git describe: next-20200827
-> >   make_kernelversion: 5.9.0-rc2
-> >   kernel-config:
-> > https://builds.tuxbuild.com/vThV35pOF_GMlWdiTs3Bdw/kernel.config
-> >
-> > Boot log,
-> >
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
-> > [    0.000000] Linux version 5.9.0-rc2-next-20200827
-> > (TuxBuild@12963d21faa5) (aarch64-linux-gnu-gcc (Debian 9.3.0-8) 9.3.0,
-> > GNU ld (GNU Binutils for Debian) 2.34) #1 SMP PREEMPT Thu Aug 27
-> > 05:19:00 UTC 2020
-> > [    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
-> > [    0.000000] efi: UEFI not found.
-> > [    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please
-> > fix your bootloader!
-> > <trmi>
-> > [    3.451425] i2c_qup 78ba000.i2c: using default clock-frequency 100000
-> > [    3.451491] i2c_qup 78ba000.i2c:
-> > [    3.451491]  tx channel not available
-> > [    3.493455] sdhci: Secure Digital Host Controller Interface driver
-> > [    3.493508] sdhci: Copyright(c) Pierre Ossman
-> > [    3.500902] Synopsys Designware Multimedia Card Interface Driver
-> > [    3.507441] sdhci-pltfm: SDHCI platform and OF driver helper
-> > [    3.514308] Unable to handle kernel paging request at virtual
-> > address dead000000000108
+>
+> On 8/26/20 7:04 PM, Stefan Wahren wrote:
+>> Hi Hoeguen,
+>>
+>> Am 21.08.20 um 09:10 schrieb Hoegeun Kwon:
+>>> There is a problem that the output does not work at a resolution
+>>> exceeding FHD. To solve this, we need to adjust the bvb clock at a
+>>> resolution exceeding FHD.
+>> this patch introduces a mandatory clock, please update
+>> brcm,bcm2835-hdmi.yaml first.
+>>
+>> Is this clock physically available on BCM283x or only on BCM2711?
+> As far as I know, BCM2711 raspberry pi 4 supports 4k,
+>
+> don't supported on pi 3 and pi 3+.
+>
+> Since 4k is not supported in versions prior to Raspberry Pi 4,
+>
+> I don't think we need to modify the bvb clock.
+>
+>
+> So I think it is better to update 'brcm,bcm2711-hdmi.yaml'
+>
+> instead of 'brcm,bcm2835-hdmi.yaml'.
 
-This is where the address comes from:
+You are correct please update only brcm,bcm2711-hdmi.yaml.
 
-#define POISON_POINTER_DELTA _AC(CONFIG_ILLEGAL_POINTER_VALUE, UL)
-#define LIST_POISON1  ((void *) 0x100 + POISON_POINTER_DELTA)
+My concern was that the function vc4_hdmi_encoder_pre_crtc_configure()
+is called on a non-bcm2711 platform or on a Raspberry Pi 4 with an older
+DTB. So making the BVB clock optional might be better?
 
-static inline void hlist_del(struct hlist_node *n)
-{
-        __hlist_del(n);
-        n->next = LIST_POISON1;
-        n->pprev = LIST_POISON2;
-}
+>
+> Please comment, what do you think?
+>
+>> I'm a little bit afraid, this change could break with older firmware
+>> versions on BCM283x.
+> Tested it several times with libdrm modetest.
+>
+> I expect there will be no problem.
+>
+>
+> Best regards,
+>
+> Hoegeun
+>
+>> Best regards
+>> Stefan
+>>
+>>> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+>>> ---
+>>>   drivers/gpu/drm/vc4/vc4_hdmi.c | 25 +++++++++++++++++++++++++
+>>>   drivers/gpu/drm/vc4/vc4_hdmi.h |  1 +
+>>>   2 files changed, 26 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+>>> index 95ec5eedea39..eb3192d1fd86 100644
+>>> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+>>> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+>>> @@ -80,6 +80,7 @@
+>>>   # define VC4_HD_M_ENABLE			BIT(0)
+>>>   
+>>>   #define CEC_CLOCK_FREQ 40000
+>>> +#define VC4_HSM_MID_CLOCK 149985000
+>>>   
+>>>   static int vc4_hdmi_debugfs_regs(struct seq_file *m, void *unused)
+>>>   {
+>>> @@ -380,6 +381,7 @@ static void vc4_hdmi_encoder_post_crtc_powerdown(struct drm_encoder *encoder)
+>>>   	HDMI_WRITE(HDMI_VID_CTL,
+>>>   		   HDMI_READ(HDMI_VID_CTL) & ~VC4_HD_VID_CTL_ENABLE);
+>>>   
+>>> +	clk_disable_unprepare(vc4_hdmi->pixel_bvb_clock);
+>>>   	clk_disable_unprepare(vc4_hdmi->hsm_clock);
+>>>   	clk_disable_unprepare(vc4_hdmi->pixel_clock);
+>>>   
+>>> @@ -638,6 +640,23 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder)
+>>>   		return;
+>>>   	}
+>>>   
+>>> +	ret = clk_set_rate(vc4_hdmi->pixel_bvb_clock,
+>>> +			(hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
+>>> +	if (ret) {
+>>> +		DRM_ERROR("Failed to set pixel bvb clock rate: %d\n", ret);
+>>> +		clk_disable_unprepare(vc4_hdmi->hsm_clock);
+>>> +		clk_disable_unprepare(vc4_hdmi->pixel_clock);
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	ret = clk_prepare_enable(vc4_hdmi->pixel_bvb_clock);
+>>> +	if (ret) {
+>>> +		DRM_ERROR("Failed to turn on pixel bvb clock: %d\n", ret);
+>>> +		clk_disable_unprepare(vc4_hdmi->hsm_clock);
+>>> +		clk_disable_unprepare(vc4_hdmi->pixel_clock);
+>>> +		return;
+>>> +	}
+>>> +
+>>>   	if (vc4_hdmi->variant->reset)
+>>>   		vc4_hdmi->variant->reset(vc4_hdmi);
+>>>   
+>>> @@ -1593,6 +1612,12 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi *vc4_hdmi)
+>>>   		return PTR_ERR(vc4_hdmi->audio_clock);
+>>>   	}
+>>>   
+>>> +	vc4_hdmi->pixel_bvb_clock = devm_clk_get(dev, "bvb");
+>>> +	if (IS_ERR(vc4_hdmi->pixel_bvb_clock)) {
+>>> +		DRM_ERROR("Failed to get pixel bvb clock\n");
+>>> +		return PTR_ERR(vc4_hdmi->pixel_bvb_clock);
+>>> +	}
+>>> +
+>>>   	vc4_hdmi->reset = devm_reset_control_get(dev, NULL);
+>>>   	if (IS_ERR(vc4_hdmi->reset)) {
+>>>   		DRM_ERROR("Failed to get HDMI reset line\n");
+>>> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
+>>> index 0806c6d9f24e..63c6f8bddf1d 100644
+>>> --- a/drivers/gpu/drm/vc4/vc4_hdmi.h
+>>> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+>>> @@ -147,6 +147,7 @@ struct vc4_hdmi {
+>>>   	struct clk *pixel_clock;
+>>>   	struct clk *hsm_clock;
+>>>   	struct clk *audio_clock;
+>>> +	struct clk *pixel_bvb_clock;
+>>>   
+>>>   	struct reset_control *reset;
+>>>   
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> > [    3.514695] Mem abort info:
-> > [    3.522421]   ESR = 0x96000044
-> > [    3.525096]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [    3.528236]   SET = 0, FnV = 0
-> > [    3.533703]   EA = 0, S1PTW = 0
-> > [    3.536561] Data abort info:
-> > [    3.539601]   ISV = 0, ISS = 0x00000044
-> > [    3.542727]   CM = 0, WnR = 1
-> > [    3.546287] [dead000000000108] address between user and kernel address ranges
-> > [    3.549414] Internal error: Oops: 96000044 [#1] PREEMPT SMP
-> > [    3.556520] Modules linked in:
-> > [    3.561901] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> > 5.9.0-rc2-next-20200827 #1
-> > [    3.565034] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > [    3.572584] pstate: 60000005 (nZCv daif -PAN -UAO BTYPE=--)
-> > [    3.579271] pc : __clk_put+0x40/0x140
-> > [    3.584556] lr : __clk_put+0x2c/0x140
-
-Fairly sure this is from the hlist_del(), meaning we try to remove the
-same list object a second time, after it was already removed.
-
-> > [    3.588373] sp : ffff80001002bb00
-> > [    3.592016] x29: ffff80001002bb00 x28: 000000000000002e
-> > [    3.595320] x27: ffff000009f7ba68 x26: ffff80001146d878
-> > [    3.600703] x25: ffff00003fcfd8f8 x24: ffff00003d0bc410
-> > [    3.605999] x23: ffff80001146d0e0 x22: ffff000009f7ba40
-> > [    3.611293] x21: ffff00003d0bc400 x20: ffff000009f7b580
-> > [    3.616588] x19: ffff00003bccc780 x18: 0000000007824000
-> > [    3.621883] x17: ffff000009f7ba00 x16: ffff000009f7b5d0
-> > [    3.627177] x15: ffff800011966cf8 x14: ffffffffffffffff
-> > [    3.632472] x13: ffff800012917000 x12: ffff800012917000
-> > [    3.637769] x11: 0000000000000020 x10: 0101010101010101
-> > [    3.643063] x9 : ffff8000107a984c x8 : 7f7f7f7f7f7f7f7f
-> > [    3.648358] x7 : ffff000009fd8000 x6 : ffff80001237a000
-> > [    3.653653] x5 : 0000000000000000 x4 : ffff000009fd8000
-> > [    3.658949] x3 : ffff8000124e6768 x2 : ffff000009fd8000
-> > [    3.664243] x1 : ffff00003bccca80 x0 : dead000000000100
-> > [    3.669539] Call trace:
-> > [    3.674830]  __clk_put+0x40/0x140
-> > [    3.677003]  clk_put+0x18/0x28
-> > [    3.680477]  dev_pm_opp_put_clkname+0x30/0x58
-> > [    3.683431]  sdhci_msm_probe+0x284/0x9a0
-
-dev_pm_opp_put_clkname() is part of the error handling in the
-probe function, so I would deduct there are two problems:
-
-- something failed during the probe and the driver is trying
-  to unwind
-- the error handling it self is buggy and tries to undo something
-  again that has already been undone.
-
-> > [    3.687857]  platform_drv_probe+0x5c/0xb0
-> > [    3.691847]  really_probe+0xf0/0x4d8
-> > [    3.695753]  driver_probe_device+0xfc/0x168
-> > [    3.699399]  device_driver_attach+0x7c/0x88
-> > [    3.703306]  __driver_attach+0xac/0x178
-> > [    3.707472]  bus_for_each_dev+0x78/0xc8
-> > [    3.711291]  driver_attach+0x2c/0x38
-> > [    3.715110]  bus_add_driver+0x14c/0x230
-> > [    3.718929]  driver_register+0x6c/0x128
-> > [    3.722489]  __platform_driver_register+0x50/0x60
-> > [    3.726312]  sdhci_msm_driver_init+0x24/0x30
-> > [    3.731173]  do_one_initcall+0x4c/0x2c0
-> > [    3.735511]  kernel_init_freeable+0x21c/0x284
-> > [    3.739072]  kernel_init+0x1c/0x120
-> > [    3.743582]  ret_from_fork+0x10/0x30
-> > [    3.746885] Code: 35000720 a9438660 f9000020 b4000040 (f9000401)
-> > [    3.750720] ---[ end trace a8d4100497387a2e ]---
-> > [    3.756736] Kernel panic - not syncing: Attempted to kill init!
-> > exitcode=0x0000000b
-> > [    3.761392] SMP: stopping secondary CPUs
-> > [    3.768877] Kernel Offset: 0x80000 from 0xffff800010000000
-> > [    3.772924] PHYS_OFFSET: 0x80000000
-> > [    3.778216] CPU features: 0x0240002,24802005
-> > [    3.781602] Memory Limit: none
-> >
-> > full test log,
-> > https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20200827/testrun/3123101/suite/linux-log-parser/test/check-kernel-oops-1714695/log
-
-Naresh writes later:
-> The reported issue is started from linux next tag next-20200825.
-> BAD:  next-20200825
-> GOOD:  next-20200824
-
-This points to Viresh's
-d05a7238fe1c mmc: sdhci-msm: Unconditionally call dev_pm_opp_of_remove_table()
-
-Most likely this is not the entire problem but it uncovered a preexisting
-bug.
-
-      Arnd
