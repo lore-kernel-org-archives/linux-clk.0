@@ -2,112 +2,106 @@ Return-Path: <SRS0=MiPE=CG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF51DC433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 09:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E2C433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3253208FE
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 09:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E742078A
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="WaxiOLCG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F6T3vOg5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yfZYGfWI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbgH1Jos (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Aug 2020 05:44:48 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:38787 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728016AbgH1Joq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 05:44:46 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id EF2DA8D9;
-        Fri, 28 Aug 2020 05:44:44 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 28 Aug 2020 05:44:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=P
-        tXB5hSLgVKMT2j7Z0Zf6VjUGFj2dGFbBan+VqncaY8=; b=WaxiOLCG1wd63Ab8p
-        nEomIFSHutNxqnOOT0uiTJQjuFRgyeHL3s0CYiCO6ElyoBYIrRDyGfqGxVSLOcam
-        +qaVN9OAPUwle2vIXuw+bJSrda7XxaRHE+S9ljasCf2J8Xe5eh0+DYURyq3cxOOd
-        MPBS7lYgpd0CEXhHyY50tOtZKK0tbRZwlqT4zFBhVCCb8Jd+cX7OI+HZZyJL6AN2
-        5phncL0hhAgZC5RjTtEv1iH4YvaddVO0er2I/RXtOjRKardVzoXmesG9TaQKF525
-        jwfWKfRWGiyG6FfkEAv7rrmceN+DqtVmN2+fZ12nWRNnCnMoxel/xxwHejD2PUQ6
-        ux5iw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=PtXB5hSLgVKMT2j7Z0Zf6VjUGFj2dGFbBan+Vqnca
-        Y8=; b=F6T3vOg5RkD/XnZfWJ6BPo+sYfYwPZQ6XdWeZ1JTC8PGr1+s4y//RPov7
-        OF/EtlUzJ4xzZgNg5pb1QKTAjH2O3E1PgwLlgj5nOFuzuoQ2jjyDC3SP7TIK4h8r
-        PpyELbuiO1ceQj+YWrNRPU1tX/CJFVKHtY0HAPwf7HprU7bVH7DjO86MmCw8N78p
-        ChaqVE53fIE6dMYLP9dxcMPHrSboZP639jgFqC8DPdP2UQu17aG/LhhCvnawVQiK
-        n79C01mXl0wcEPhbUqS51NXSKwFjbtSAK4X1svaP3ZQG4HMrYU7Ykj1AgDTW3Yr+
-        A4JquaiK6cN0B4EFaBUD2Cg9U7ezQ==
-X-ME-Sender: <xms:C9JIX7W03dadeG8PEMoGoVQfbh_sjVanI-guPv-3VbPVr-Oi5EBHlQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedruddvjedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpefgjeettdejgffgffdvteeutdehtdehgeehueetkeefgefhtdetjeekledu
-    gedvudenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:C9JIXzmrkoEGwVijS9wdGLeWSJS48ripl0cKVPDQWgVYh2iEL7bEvg>
-    <xmx:C9JIX3Z1NC_o9diyU9cdZgnc4uiDqV49Hs_EHT4shiolZMYtIB42MQ>
-    <xmx:C9JIX2VziRx8voA1cfGPjtE0YegQ1TiWRfZRBVq-WPf1uXwtS--Sjw>
-    <xmx:DNJIX3n7To6TC90qWslSds0yFEFG8Ls9wjHb99y34G1AY1Aqqje_4DLiu6E>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 602503280063;
-        Fri, 28 Aug 2020 05:44:43 -0400 (EDT)
-Date:   Fri, 28 Aug 2020 11:44:41 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Cc:     nsaenzjulienne@suse.de, eric@anholt.net,
-        devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
-        dave.stevenson@raspberrypi.com, sboyd@kernel.org,
-        mturquette@baylibre.com, kdasu.kdev@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] drm/vc4: Support HDMI QHD or higher output
-Message-ID: <20200828094441.6h6siehqbebayffn@gilmour.lan>
-References: <CGME20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa@epcas1p1.samsung.com>
- <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+        id S1728954AbgH1KC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Aug 2020 06:02:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728986AbgH1KCn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 06:02:43 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88927C061234
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:02:42 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id w14so658834ljj.4
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gg8w7FyxS5olNPP0T/p1d8kcV4d3oP7pvIBcK4KxiMA=;
+        b=yfZYGfWIaazhZpa4MiIfi8N1UYAwzELWPkKXWkeWzFH0MlcFmqxKiS+EAg2YC5+qd1
+         r+P2+8DvIOePVKtMKrUFWOydQlKrMISbi6KPh/K1RN1eF79khiLQGP0aJL4yAEsHZIhu
+         mLlsz7S6XqAjgLOoJe2zsL5z8EP92lbJAhoDJ2HAPkQQYf/4PR6erjtyFQvZ69ZDBFo8
+         geVZUT/w4DpGsf2+/cq4vAElPCWJeF8mLbiSZcFNQTPNypLVCx/4XEO+h782UOPyvBvx
+         6n8lsxYQb+0daon+8trpyWVpJN1BQcYSAou3pR+PM04gn6qcXNkxjP0Uruyr6u8BIUvE
+         XuuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gg8w7FyxS5olNPP0T/p1d8kcV4d3oP7pvIBcK4KxiMA=;
+        b=kGRM2EqLSsbRqONdDHuMNkbg0+tklIjqh+BK9LsrUJKYXZt2G9dAifFLGQZjyUbdla
+         AuNTzcDo0h9nTe+DQBeyjsz57/6ovC59KS+591Qa7zfaGz3xcCxwyEbJgKy/YixkYjp3
+         qHJ59Gq0Ezsbb2nb5XoGVncrioGJg6q3CmNFHbw+K54P/O1GOfJMeJvWQiSPC9+cMOFo
+         8ORjmGTAIYu4jHDmmPZSNo36u3Vjt3aQs/FtRLXnxB2sxlppulzWWuNvNiVqRa2LktAx
+         0L1Em3Ynj6LoBvo5rAsMmCZmzR+TD/L9tYQqQKZxA5mRY0BFCHfc19sYKUWHcVTnNp1E
+         3YIA==
+X-Gm-Message-State: AOAM5313oF3tDUA8X8eI9KfmG3hd44FORqlysf66K3WTrSHcZkt0WiUq
+        THNl4NaLSCJInAbhxWcJTCB/aDBuxhdrnf/1CFMzNw==
+X-Google-Smtp-Source: ABdhPJxGBDDIUGKlDHb7X+U9ZlUuxz6OTVqUpjGGNG25WaTWbUK0lfjyuNiH2UpzdtAP231LGoGkSdCBPbtNK7t7yF8=
+X-Received: by 2002:a2e:b80b:: with SMTP id u11mr556502ljo.286.1598608960272;
+ Fri, 28 Aug 2020 03:02:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+References: <cover.1595572867.git.frank@allwinnertech.com>
+In-Reply-To: <cover.1595572867.git.frank@allwinnertech.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 28 Aug 2020 12:02:29 +0200
+Message-ID: <CACRpkdYOKOj4r-9U2iHCkdB74fWkm2J0xHqsnH_sE81SV5g1=w@mail.gmail.com>
+Subject: Re: [PATCH v5 00/16] Allwinner A100 Initial support
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Frank Lee <tiny.windzz@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Ondrej Jirman <megous@megous.com>,
+        Corentin Labbe <clabbe@baylibre.com>, bage@linutronix.de,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+On Fri, Jul 24, 2020 at 8:53 AM Frank Lee <frank@allwinnertech.com> wrote:
 
-On Fri, Aug 21, 2020 at 04:10:42PM +0900, Hoegeun Kwon wrote:
-> Hi everyone,
->=20
-> There is a problem that the output does not work at a resolution
-> exceeding FHD. To solve this, we need to adjust the bvb clock at a
-> resolution exceeding FHD.
->=20
-> Rebased on top of next-20200708 and [1].
->=20
-> [1] : [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline (Maxime'=
-s patchset)
+> This patch set adds initial support for allwinner a100 soc,
+> which is a 64-bit tablet chip.
 
-Thanks a lot for figuring it out
+Shall I commit the pinctrl patches (if Maxime ACKed) separately
+or not? Once Maxime is happy, I am usually happy too.
 
-I have to send a new (and hopefully final) version next week to address som=
-e changes suggested by
-Dave, so I'll squash your patches into the series
-
-Thanks again!
-Maxime
+Yours,
+Linus Walleij
