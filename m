@@ -7,101 +7,133 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E2C433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9CCC433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1E742078A
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC9D208CA
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:09:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yfZYGfWI"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZyvI4mE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbgH1KC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Aug 2020 06:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
+        id S1729019AbgH1KI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Aug 2020 06:08:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728986AbgH1KCn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 06:02:43 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88927C061234
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:02:42 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id w14so658834ljj.4
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:02:41 -0700 (PDT)
+        with ESMTP id S1729018AbgH1KIs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 06:08:48 -0400
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F93C061264
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:08:48 -0700 (PDT)
+Received: by mail-ua1-x942.google.com with SMTP id y15so195701uan.9
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:08:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gg8w7FyxS5olNPP0T/p1d8kcV4d3oP7pvIBcK4KxiMA=;
-        b=yfZYGfWIaazhZpa4MiIfi8N1UYAwzELWPkKXWkeWzFH0MlcFmqxKiS+EAg2YC5+qd1
-         r+P2+8DvIOePVKtMKrUFWOydQlKrMISbi6KPh/K1RN1eF79khiLQGP0aJL4yAEsHZIhu
-         mLlsz7S6XqAjgLOoJe2zsL5z8EP92lbJAhoDJ2HAPkQQYf/4PR6erjtyFQvZ69ZDBFo8
-         geVZUT/w4DpGsf2+/cq4vAElPCWJeF8mLbiSZcFNQTPNypLVCx/4XEO+h782UOPyvBvx
-         6n8lsxYQb+0daon+8trpyWVpJN1BQcYSAou3pR+PM04gn6qcXNkxjP0Uruyr6u8BIUvE
-         XuuA==
+        bh=YuUZC5yykdxlzV9TZ9jygIZUaAZV3AvDbw/Md6MDSbk=;
+        b=CZyvI4mE5e6GC31FhNtjJu4hgn/6iN7+1V4C5ulyqQvdp/AkkHHa9duZvoDIUje0iQ
+         13aWi+vlxmpSwceKGI1Anf3Byyh4SWXLKs3jeJ2nnbUFWCEYFRbhuGFkEsY9mwkVfh5g
+         XQ1as2Rl9K2S8AjjSi9TqOjxKgqyQC4RAPaNlfnpEL5bV9hKEXDYJ9bVe+7JTBdTWyOH
+         YeBAr+lgKzo7JflY+R63AZ8Y8c1qTk6XxDXT+WH/ksJYiC7WjqC5dszMUwfVwr4JFqG8
+         b6B/uhfMQaV9bmR25nehSmrMuQzH5bpZNHzGyUS68pJ+ypT42I9akYEysVHy4sbJqEc8
+         Fv+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gg8w7FyxS5olNPP0T/p1d8kcV4d3oP7pvIBcK4KxiMA=;
-        b=kGRM2EqLSsbRqONdDHuMNkbg0+tklIjqh+BK9LsrUJKYXZt2G9dAifFLGQZjyUbdla
-         AuNTzcDo0h9nTe+DQBeyjsz57/6ovC59KS+591Qa7zfaGz3xcCxwyEbJgKy/YixkYjp3
-         qHJ59Gq0Ezsbb2nb5XoGVncrioGJg6q3CmNFHbw+K54P/O1GOfJMeJvWQiSPC9+cMOFo
-         8ORjmGTAIYu4jHDmmPZSNo36u3Vjt3aQs/FtRLXnxB2sxlppulzWWuNvNiVqRa2LktAx
-         0L1Em3Ynj6LoBvo5rAsMmCZmzR+TD/L9tYQqQKZxA5mRY0BFCHfc19sYKUWHcVTnNp1E
-         3YIA==
-X-Gm-Message-State: AOAM5313oF3tDUA8X8eI9KfmG3hd44FORqlysf66K3WTrSHcZkt0WiUq
-        THNl4NaLSCJInAbhxWcJTCB/aDBuxhdrnf/1CFMzNw==
-X-Google-Smtp-Source: ABdhPJxGBDDIUGKlDHb7X+U9ZlUuxz6OTVqUpjGGNG25WaTWbUK0lfjyuNiH2UpzdtAP231LGoGkSdCBPbtNK7t7yF8=
-X-Received: by 2002:a2e:b80b:: with SMTP id u11mr556502ljo.286.1598608960272;
- Fri, 28 Aug 2020 03:02:40 -0700 (PDT)
+        bh=YuUZC5yykdxlzV9TZ9jygIZUaAZV3AvDbw/Md6MDSbk=;
+        b=VVsKcbfiE+33EsT3NqRkbiNJaTJuxJVdbfqFXnICNCo47mcUbRFeHLsnor0F1pfsYI
+         H+X/HeH0UliCfE1DPHIyK8AdzleYLrD6HjXb6zddth0LATf/diVejfkLCL7LcBudtbIS
+         QFXA8RurFiUZhSvvHsrTdRahhxZoqJUUc/5XEMMfb4OOKVh1IZKNBG8mo+MsGpmPKRRK
+         xDvBKQzLd4/XdrcB6sTYu3QhaLFbe+BcorNPDd2o6qMK+P6+PUs2CVXJd0tmcpp0HUsy
+         sHxyMWvIhMOI66OPCDED9BhNd2RVZxCzaHhKq/sFeHIza5bg2eaWv86WAQdSezIDNlnB
+         SDZQ==
+X-Gm-Message-State: AOAM532FIRLaT/jEQ0WZBzWfhVcbLSEXRINrRgucXdXkfdlEbm8NEVTj
+        OkxIoLBeq/ZCqsLACkLVk3lHvMGa0QXQtap50LnUbQ==
+X-Google-Smtp-Source: ABdhPJyMI1UajVVYge2yCsL28v/NmQmEpJ4WfUVdXK+0KPWRsZ+SNiSYd8hwXxBo8btg1zi6xsg31YVKtF3Ev5GX/6U=
+X-Received: by 2002:a9f:35d0:: with SMTP id u16mr384896uad.113.1598609327689;
+ Fri, 28 Aug 2020 03:08:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1595572867.git.frank@allwinnertech.com>
-In-Reply-To: <cover.1595572867.git.frank@allwinnertech.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Aug 2020 12:02:29 +0200
-Message-ID: <CACRpkdYOKOj4r-9U2iHCkdB74fWkm2J0xHqsnH_sE81SV5g1=w@mail.gmail.com>
-Subject: Re: [PATCH v5 00/16] Allwinner A100 Initial support
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
+References: <CA+G9fYvUwH2FA9GOeA_7GYpLA31uOmEpg32VKnJ8-d5QSK4PdQ@mail.gmail.com>
+ <20200827090813.fjugeqbb47fachy7@vireshk-i7> <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
+ <20200827101231.smqrhqu5da6jlz6i@vireshk-i7> <CA+G9fYv=XLtsuD=tVR1HHotwpKLkbwZVyPr4UhY-jD+6-duTmw@mail.gmail.com>
+ <CA+G9fYvSEHua0EpW64rASucWuS-U2STAZxufrfN75UDspGt2cA@mail.gmail.com> <CAPDyKFrpOqpBiSvkvO7sXHiQDOwdXYmx-80Ji5wW79QF-MrOuQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFrpOqpBiSvkvO7sXHiQDOwdXYmx-80Ji5wW79QF-MrOuQ@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 28 Aug 2020 15:38:36 +0530
+Message-ID: <CA+G9fYtg=CYucGhtZNig7AoXjSSQDokddhERZH5SfEJBsRBZYg@mail.gmail.com>
+Subject: Re: Kernel panic : Unable to handle kernel paging request at virtual
+ address - dead address between user and kernel address ranges
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, John Stultz <john.stultz@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Frank Lee <tiny.windzz@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Ondrej Jirman <megous@megous.com>,
-        Corentin Labbe <clabbe@baylibre.com>, bage@linutronix.de,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        madhuparnabhowmik10@gmail.com,
+        Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 8:53 AM Frank Lee <frank@allwinnertech.com> wrote:
+On Fri, 28 Aug 2020 at 15:05, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Fri, 28 Aug 2020 at 11:22, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Thu, 27 Aug 2020 at 17:06, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > >
+> > > On Thu, 27 Aug 2020 at 15:42, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > On 27-08-20, 11:48, Arnd Bergmann wrote:
+> > > > > > > [    3.680477]  dev_pm_opp_put_clkname+0x30/0x58
+> > > > > > > [    3.683431]  sdhci_msm_probe+0x284/0x9a0
+> > > > >
+> > > > > dev_pm_opp_put_clkname() is part of the error handling in the
+> > > > > probe function, so I would deduct there are two problems:
+> > > > >
+> > > > > - something failed during the probe and the driver is trying
+> > > > >   to unwind
+> > > > > - the error handling it self is buggy and tries to undo something
+> > > > >   again that has already been undone.
+> > > >
+> > > > Right.
+> > > >
+> > > > > This points to Viresh's
+> > > > > d05a7238fe1c mmc: sdhci-msm: Unconditionally call dev_pm_opp_of_remove_table()
+> > > >
+> > > > I completely forgot that Ulf already pushed this patch and I was
+> > > > wondering on which of the OPP core changes I wrote have done this :(
+> > > >
+> > > > > Most likely this is not the entire problem but it uncovered a preexisting
+> > > > > bug.
+> > > >
+> > > > I think this is.
+> > > >
+> > > > Naresh: Can you please test with this diff ?
+> > >
+> > > I have applied your patch and tested but still see the reported problem.
+> >
+> > The git bisect shows that the first bad commit is,
+> > d05a7238fe1c mmc: sdhci-msm: Unconditionally call dev_pm_opp_of_remove_table()
+> >
+> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Reported-by: Anders Roxell <anders.roxell@linaro.org>
+>
+> I am not sure what version of the patch you tested.
 
-> This patch set adds initial support for allwinner a100 soc,
-> which is a 64-bit tablet chip.
+I have applied The v2 patch series on top of linux next-20200824.
+and tested again the reported kernel panic still there on db410c [1]
 
-Shall I commit the pinctrl patches (if Maxime ACKed) separately
-or not? Once Maxime is happy, I am usually happy too.
+https://lkft.validation.linaro.org/scheduler/job/1717611#L1874
 
-Yours,
-Linus Walleij
+- Naresh
