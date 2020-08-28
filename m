@@ -2,166 +2,161 @@ Return-Path: <SRS0=MiPE=CG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F391FC433E7
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 15:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA2AC433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 15:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE24F208D5
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 15:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C13D2075B
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 15:47:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="XQR50PRz"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gI9bAnr5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbgH1PiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Aug 2020 11:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38342 "EHLO
+        id S1726197AbgH1Pru (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Aug 2020 11:47:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728115AbgH1PiI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 11:38:08 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E4DC06121B
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 08:38:07 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id f7so1717443wrw.1
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 08:38:07 -0700 (PDT)
+        with ESMTP id S1725808AbgH1Prm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 11:47:42 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A6BC061264
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 08:47:41 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id k20so1327726wmi.5
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 08:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zF4wjuq7NlXDCWxwqRlprq8+YIO3EP/prTKpLCQVawE=;
-        b=XQR50PRzIDXP7atHlwU9Y4qtYH28bhVuN+nc6jOAmcqiR2nOALvWYBMqVBfos581P7
-         XGuz8fAztk6pjkS4VSz1i+BrPic5yobLkfpI+3tqM0DZ+225Umxxb14UGnoxugMMwDYV
-         x+L4fm0kLLr7OwOHtl8k3RTEFMTZC5zlrXj/PfItUmfoa0XNfo8m1fX3TvKoIs/sF4Dm
-         ERf6IkH4uup+VWncdtaax3E7liZHFGEQq07Yl+ikmZwcm7SH86z5AYK4p+pOIWBgzfKY
-         oPh/N/V4D+w+z8aCU/f8HsXnQ03i+Y425UyDnihNH9AJ9fJSueAzXi8Uqx8LfCNf5Jrg
-         zGWg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xOjcUQAzjdKMUBQz9pCR37JmdK7LsMO1KAx1BuqAcUE=;
+        b=gI9bAnr5JSfBRzzwqqeFQeZ+TmOK38nNFBQuIZSuzWnTnYJXoBTgAVen2uftuz8FEv
+         ZjC0A7+hOfbC2b7mLHY1Qu/RAunI+aiI4BGFFlIQxrAZPfADnPQPAY7Zy4HScXQd//on
+         m5vQgTPdOMuJ37l/5TnqUF32EQXXkNXeg4q0odzYqtEPmPm8lyONoJ+rhVImCRFP2ID+
+         j/rFOjVBYWIEo15+8iYb0UYiUyIS69HOfYFBPrJmlOrZCvetbcBEl6ZwSSBtExKR+K+6
+         99QIEWse2ti/ufQnkbYYRyi777IkFAWLnv+wCcLQH1yYcxBgObBqiXaHT11opun0faBO
+         LMVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zF4wjuq7NlXDCWxwqRlprq8+YIO3EP/prTKpLCQVawE=;
-        b=aXnkCU1p3RyHUBXk0DK0RBxmogEg/ek8c12YkrD2DlYvEsifa7WMizs3Oenz70CFs+
-         fljd1nlLhIW705qX6g4f0vD43PCujgUwKmFzMITUq8QosuyiyEyO8I78fLz2E6mUF5Wy
-         P5FIovdwaXXw5vBdk5/BN6R9C0jAJ+tvxQ0V2/f0nDb4CjFjq9GpM7nZZ0bA58w2WM8m
-         CEbxL6F/ZBNUIewcH4PDwOar2Fl6iQ6MiwHxCX3uO9/6I7eudL/IUIXg5UTyysLbvudi
-         4Sx+wzG2zCUCP9p1Hh9QdAZJSSd7Jxk0kN5NeaROBy1GTnhij3awxAkvxa0LyXn96+cc
-         6cMQ==
-X-Gm-Message-State: AOAM532/AI2zve4RxeaNdPtPKnllRgqjBgX19Uq+dnKompju/hBeb6PC
-        yTnaE53zrGxClO1CrdiR+6h20iAEe4fK1oiJsjI3sA==
-X-Google-Smtp-Source: ABdhPJxHuvA/mBiuIknMdmiA5hSVY4oW2N955fzVP5r0eRNvMn3H/kQnCuEvq9cPXPwP9snvFO3LG6RV314TaQhSdqo=
-X-Received: by 2002:a5d:43c7:: with SMTP id v7mr2146163wrr.27.1598629086231;
- Fri, 28 Aug 2020 08:38:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xOjcUQAzjdKMUBQz9pCR37JmdK7LsMO1KAx1BuqAcUE=;
+        b=USti79ThB7dZMqxU1Q6uPFMoijmKcJ05cNtShkcgOGeCg/QDuIN8VXQaXWZ+fKwJVb
+         4Tz8dzw7GSj/eG8Llo57QAiDAm/d6pze2GbewSp0QIeJmx8P+gropqamjYBKIjZBmGDR
+         X9ExpvkZMgb6CPhlG5h3rjdoBldvIiGQL3YQ8B66q/iEqNFhR1UhJtuzkhWlreAAPepV
+         fnOqkIBh8bcI/6klPjPXIcoIohtX87N61kPx0dsWJ5V69z+0wks6Xf/5axcQ5JOfzfuv
+         3ojFp49v1RjZylx90qjxFHSk12M+pjs5OujkNLkk9uLi1SXbSQeCVexRxFNYXULRnPr9
+         O+3Q==
+X-Gm-Message-State: AOAM530L069nGyAaKpvNxN1wScTBGlVJmicqLU9U5vPBD2lloCKxnaMt
+        ZePsRNBHef2vYkmwwTVIPG+nTg==
+X-Google-Smtp-Source: ABdhPJy5BerRgM4DpFWDQXDmijD30b0WFwUdB+Kqn2qC0AshshLhhAKK/GeM24eNPwjyGbElVhe2ew==
+X-Received: by 2002:a7b:c8cc:: with SMTP id f12mr2127732wml.169.1598629660269;
+        Fri, 28 Aug 2020 08:47:40 -0700 (PDT)
+Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id l1sm2921646wrb.12.2020.08.28.08.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2020 08:47:39 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: make shipped controller configurable
+Date:   Fri, 28 Aug 2020 17:47:35 +0200
+Message-Id: <20200828154735.435374-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-References: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
- <CGME20200821071122epcas1p3d00dda4665f94192ac5e9ee829d0557d@epcas1p3.samsung.com>
- <20200821071045.24501-4-hoegeun.kwon@samsung.com> <61c199bf-852f-82d3-089a-a0a435343acf@i2se.com>
- <80749dcd-d4b2-68a1-f3ca-c19a120f6f7b@samsung.com> <84c423e8-25a6-8f23-cc80-7a17ce03fd1d@i2se.com>
- <a19de8d5-2b01-cb62-38a2-b0732068025c@samsung.com> <a3231281-3bd0-e7c9-1bb0-f05848621e82@i2se.com>
- <20200828152510.jhhqvka6fmouozff@gilmour.lan>
-In-Reply-To: <20200828152510.jhhqvka6fmouozff@gilmour.lan>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Fri, 28 Aug 2020 16:37:50 +0100
-Message-ID: <CAPY8ntDeLOb+GvpLDX1BFrhtYyGQzJ01pWHiS30r-2ZUJTg8Gw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/vc4: hdmi: Add pixel bvb clock control
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Hoegeun Kwon <hoegeun.kwon@samsung.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
-        Tim Gover <tim.gover@raspberrypi.com>, kdasu.kdev@gmail.com,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Phil Elwell <phil@raspberrypi.com>, robh+dt@kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime, Stefan, and Hoegeun
+Add the necessary so bits so unnecessary amlogic clock controllers can be
+compiled out. This allows to save a few kB when necessary.
 
-On Fri, 28 Aug 2020 at 16:25, Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi,
->
-> On Fri, Aug 28, 2020 at 02:45:49PM +0200, Stefan Wahren wrote:
-> > Am 28.08.20 um 08:30 schrieb Hoegeun Kwon:
-> > > On 8/27/20 6:49 PM, Stefan Wahren wrote:
-> > >> Am 27.08.20 um 06:35 schrieb Hoegeun Kwon:
-> > >>> Hi Stefan,
-> > >>>
-> > >>> Thank you for your review.
-> > >>>
-> > >>>
-> > >>> On 8/26/20 7:04 PM, Stefan Wahren wrote:
-> > >>>> Hi Hoeguen,
-> > >>>>
-> > >>>> Am 21.08.20 um 09:10 schrieb Hoegeun Kwon:
-> > >>>>> There is a problem that the output does not work at a resolution
-> > >>>>> exceeding FHD. To solve this, we need to adjust the bvb clock at a
-> > >>>>> resolution exceeding FHD.
-> > >>>> this patch introduces a mandatory clock, please update
-> > >>>> brcm,bcm2835-hdmi.yaml first.
-> > >>>>
-> > >>>> Is this clock physically available on BCM283x or only on BCM2711?
-> > >>> As far as I know, BCM2711 raspberry pi 4 supports 4k,
-> > >>>
-> > >>> don't supported on pi 3 and pi 3+.
-> > >>>
-> > >>> Since 4k is not supported in versions prior to Raspberry Pi 4,
-> > >>>
-> > >>> I don't think we need to modify the bvb clock.
-> > >>>
-> > >>>
-> > >>> So I think it is better to update 'brcm,bcm2711-hdmi.yaml'
-> > >>>
-> > >>> instead of 'brcm,bcm2835-hdmi.yaml'.
-> > >> You are correct please update only brcm,bcm2711-hdmi.yaml.
-> > >>
-> > >> My concern was that the function vc4_hdmi_encoder_pre_crtc_configure()
-> > >> is called on a non-bcm2711 platform or on a Raspberry Pi 4 with an older
-> > >> DTB. So making the BVB clock optional might be better?
-> > > You are right, if use old dtb, we have a problem with the hdmi driver.
-> > >
-> > > So how about modifying it like this?
-> > >
-> > > @@ -1614,8 +1614,8 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi
-> > > *vc4_hdmi)
-> > >
-> > >          vc4_hdmi->pixel_bvb_clock = devm_clk_get(dev, "bvb");
-> > >          if (IS_ERR(vc4_hdmi->pixel_bvb_clock)) {
-> > > -               DRM_ERROR("Failed to get pixel bvb clock\n");
-> > > -               return PTR_ERR(vc4_hdmi->pixel_bvb_clock);
-> > > +               DRM_WARN("Failed to get pixel bvb clock\n");
-> > > +               vc4_hdmi->pixel_bvb_clock = NULL;
-> > >          }
-> >
-> > i think the better solution would be devm_clk_get_optional(), which
-> > return NULL in case the clock doesn't exist.
->
-> It's not really optional though. BCM2711 will require it in order to run
-> properly (as Hoegeun experienced), and the previous SoCs won't.
->
-> If we use clk_get_optional and that the DT is missing the clock on the
-> BCM2711, we will silently ignore it which doesn't sound great.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-Am I missing something here? (I know I missed this earlier)
-We're in vc5_hdmi_init_resources, which is inherently bcm2711 only.
-bcm283x will go through vc4_hdmi_init_resources.
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index dabeb435d067..034da203e8e0 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -1,4 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++menu "Clock support for Amlogic platforms"
++	depends on ARCH_MESON || COMPILE_TEST
++
+ config COMMON_CLK_MESON_REGMAP
+ 	tristate
+ 	select REGMAP
+@@ -41,8 +44,9 @@ config COMMON_CLK_MESON_CPU_DYNDIV
+ 	select COMMON_CLK_MESON_REGMAP
+ 
+ config COMMON_CLK_MESON8B
+-	bool
+-	depends on ARCH_MESON
++	bool "Meson8 SoC Clock controller support"
++	depends on ARM
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -54,8 +58,9 @@ config COMMON_CLK_MESON8B
+ 	  want peripherals and CPU frequency scaling to work.
+ 
+ config COMMON_CLK_GXBB
+-	bool
+-	depends on ARCH_MESON
++	bool "GXBB and GXL SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+@@ -69,8 +74,9 @@ config COMMON_CLK_GXBB
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+ 
+ config COMMON_CLK_AXG
+-	bool
+-	depends on ARCH_MESON
++	bool "AXG SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -84,7 +90,7 @@ config COMMON_CLK_AXG
+ 
+ config COMMON_CLK_AXG_AUDIO
+ 	tristate "Meson AXG Audio Clock Controller Driver"
+-	depends on ARCH_MESON
++	depends on ARM64
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_PHASE
+ 	select COMMON_CLK_MESON_SCLK_DIV
+@@ -94,8 +100,9 @@ config COMMON_CLK_AXG_AUDIO
+ 	  aka axg, Say Y if you want audio subsystem to work.
+ 
+ config COMMON_CLK_G12A
+-	bool
+-	depends on ARCH_MESON
++	bool "G12 and SM1 SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -107,3 +114,4 @@ config COMMON_CLK_G12A
+ 	help
+ 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+ 	  devices, aka g12a. Say Y if you want peripherals to work.
++endmenu
+-- 
+2.25.4
 
-As long as vc4_hdmi_init_resources has left vc4_hdmi->pixel_bvb_clock
-at NULL, then the clock framework will be happy to do a nop.
-
-For BCM2711 an old DT would have issues, but, as Maxime has stated, no
-binding or upstream DTB has been merged yet, so it can be made
-mandatory.
-Making it optional drops you back on whatever the firmware might have
-set it to, which may be sufficient for some resolutions but not
-others.
-
-  Dave
