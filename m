@@ -2,70 +2,71 @@ Return-Path: <SRS0=MiPE=CG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9CCC433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A02ECC433E7
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BBC9D208CA
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7551C2080C
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Aug 2020 10:29:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZyvI4mE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="COZoZdwm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbgH1KI5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Aug 2020 06:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43582 "EHLO
+        id S1728991AbgH1K3m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Aug 2020 06:29:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729018AbgH1KIs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 06:08:48 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F93C061264
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:08:48 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id y15so195701uan.9
-        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:08:48 -0700 (PDT)
+        with ESMTP id S1729092AbgH1K3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Aug 2020 06:29:34 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69B7C061232
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:29:33 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id d2so453427lfj.1
+        for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2020 03:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YuUZC5yykdxlzV9TZ9jygIZUaAZV3AvDbw/Md6MDSbk=;
-        b=CZyvI4mE5e6GC31FhNtjJu4hgn/6iN7+1V4C5ulyqQvdp/AkkHHa9duZvoDIUje0iQ
-         13aWi+vlxmpSwceKGI1Anf3Byyh4SWXLKs3jeJ2nnbUFWCEYFRbhuGFkEsY9mwkVfh5g
-         XQ1as2Rl9K2S8AjjSi9TqOjxKgqyQC4RAPaNlfnpEL5bV9hKEXDYJ9bVe+7JTBdTWyOH
-         YeBAr+lgKzo7JflY+R63AZ8Y8c1qTk6XxDXT+WH/ksJYiC7WjqC5dszMUwfVwr4JFqG8
-         b6B/uhfMQaV9bmR25nehSmrMuQzH5bpZNHzGyUS68pJ+ypT42I9akYEysVHy4sbJqEc8
-         Fv+Q==
+        bh=QVZYq2PBPO60+hzu+DH/FiN1wZH0KS7M3eptGgjOhVE=;
+        b=COZoZdwmI7PziLKiORCTiWJDGnCuoz7Y3bWHJ2oAICLzYBX2r0BR8efZez4ilASG1W
+         kaYUjOIqVzFdQRCfzuQOH6fo3FlcWH2L1WW8wrUCtoSXi4L8H75fgRt9SgIwy0u0sHyg
+         jE5+7xEi52Qf7F6bYe2vYA/sfnrl/iTTe16xU1v8qkv6ji0lXChDS9fqWadnRxJg5Wwx
+         PvND1ssAKs/wDsIp3Kb+krUb5LvrIpMfKX7O3xyfFrFYv54LFh1IUsawP9sk1gXbsKDW
+         IbK90giBWIXG0N+/DsisILRpLosibuaxOR10V5YHH6QlODOfxldsZKWTguOEG0DSIirV
+         qr2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YuUZC5yykdxlzV9TZ9jygIZUaAZV3AvDbw/Md6MDSbk=;
-        b=VVsKcbfiE+33EsT3NqRkbiNJaTJuxJVdbfqFXnICNCo47mcUbRFeHLsnor0F1pfsYI
-         H+X/HeH0UliCfE1DPHIyK8AdzleYLrD6HjXb6zddth0LATf/diVejfkLCL7LcBudtbIS
-         QFXA8RurFiUZhSvvHsrTdRahhxZoqJUUc/5XEMMfb4OOKVh1IZKNBG8mo+MsGpmPKRRK
-         xDvBKQzLd4/XdrcB6sTYu3QhaLFbe+BcorNPDd2o6qMK+P6+PUs2CVXJd0tmcpp0HUsy
-         sHxyMWvIhMOI66OPCDED9BhNd2RVZxCzaHhKq/sFeHIza5bg2eaWv86WAQdSezIDNlnB
-         SDZQ==
-X-Gm-Message-State: AOAM532FIRLaT/jEQ0WZBzWfhVcbLSEXRINrRgucXdXkfdlEbm8NEVTj
-        OkxIoLBeq/ZCqsLACkLVk3lHvMGa0QXQtap50LnUbQ==
-X-Google-Smtp-Source: ABdhPJyMI1UajVVYge2yCsL28v/NmQmEpJ4WfUVdXK+0KPWRsZ+SNiSYd8hwXxBo8btg1zi6xsg31YVKtF3Ev5GX/6U=
-X-Received: by 2002:a9f:35d0:: with SMTP id u16mr384896uad.113.1598609327689;
- Fri, 28 Aug 2020 03:08:47 -0700 (PDT)
+        bh=QVZYq2PBPO60+hzu+DH/FiN1wZH0KS7M3eptGgjOhVE=;
+        b=mhpOup48kudrEP2CJ92JS7stLK2YBCuadR2syVI6TZMzXHq844LyuZZKMG3D6X+cQW
+         WLHJkNRQaS/t9VLAgbvmRW5SOhIzRvRFNWmMs/wdH0IpWTT5RZe32FhzwoF8tCigVo8H
+         SzmlZp5pbzXjs7vmvdvpVsnh6VdbnqHNo7ECFIJKic1Q4VbUIdaof7ghMvozLQifBs16
+         f0isb+B6hxDzuxYApSKLMh8I+8oOcZTY6za1A0+8Lpc9D/UahmR2I/usi27dZn3nfeLa
+         MtzsTmW2Y5CPn2/cDzeMT49UenuRy3LtGVCDmdbvokTcilbxQjwL/20geRnmFLgVJrbd
+         xW4A==
+X-Gm-Message-State: AOAM5314E1+8xc8nmMu6VDm+ZPFc/Jde42gsvfi+H8KQEyufjf6sYBsx
+        H3d8KtFEzVLCosEXunowwrZbCR374t31IODaHF7Jbg==
+X-Google-Smtp-Source: ABdhPJz+qwt3X7HgwHyJ4lpLawfdxGagKrMWAvsaV5ZAG+gYUecbHreIkxf2KT8piK7zCbe9pYFyRHUfVwV16+Iet6Q=
+X-Received: by 2002:ac2:58c6:: with SMTP id u6mr481701lfo.105.1598610571828;
+ Fri, 28 Aug 2020 03:29:31 -0700 (PDT)
 MIME-Version: 1.0
 References: <CA+G9fYvUwH2FA9GOeA_7GYpLA31uOmEpg32VKnJ8-d5QSK4PdQ@mail.gmail.com>
  <20200827090813.fjugeqbb47fachy7@vireshk-i7> <CAK8P3a2zxybiMDzHXkTsT=VpHJOLkwd1=YTtCNU04vuMjZLkxA@mail.gmail.com>
  <20200827101231.smqrhqu5da6jlz6i@vireshk-i7> <CA+G9fYv=XLtsuD=tVR1HHotwpKLkbwZVyPr4UhY-jD+6-duTmw@mail.gmail.com>
  <CA+G9fYvSEHua0EpW64rASucWuS-U2STAZxufrfN75UDspGt2cA@mail.gmail.com> <CAPDyKFrpOqpBiSvkvO7sXHiQDOwdXYmx-80Ji5wW79QF-MrOuQ@mail.gmail.com>
 In-Reply-To: <CAPDyKFrpOqpBiSvkvO7sXHiQDOwdXYmx-80Ji5wW79QF-MrOuQ@mail.gmail.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 28 Aug 2020 15:38:36 +0530
-Message-ID: <CA+G9fYtg=CYucGhtZNig7AoXjSSQDokddhERZH5SfEJBsRBZYg@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 28 Aug 2020 12:29:20 +0200
+Message-ID: <CADYN=9K3D3OZ5T_K+6MfcgVLRoktPB6LvwDiXGj-+Zpq3faYfg@mail.gmail.com>
 Subject: Re: Kernel panic : Unable to handle kernel paging request at virtual
  address - dead address between user and kernel address ranges
 To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Arnd Bergmann <arnd@arndb.de>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -78,15 +79,14 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Lars Povlsen <lars.povlsen@microchip.com>,
-        madhuparnabhowmik10@gmail.com,
-        Anders Roxell <anders.roxell@linaro.org>
+        madhuparnabhowmik10@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 28 Aug 2020 at 15:05, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Fri, 28 Aug 2020 at 11:35, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
 > On Fri, 28 Aug 2020 at 11:22, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 > >
@@ -129,11 +129,17 @@ On Fri, 28 Aug 2020 at 15:05, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 > > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 > > Reported-by: Anders Roxell <anders.roxell@linaro.org>
 >
-> I am not sure what version of the patch you tested.
+> I am not sure what version of the patch you tested. However, I have
+> dropped Viresh's v1 and replaced it with v2 [1]. It's available for
+> testing at:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
+>
+> Can you please check if it still causes problems, then I will drop it, again.
 
-I have applied The v2 patch series on top of linux next-20200824.
-and tested again the reported kernel panic still there on db410c [1]
+I tried to run with a kernel from your tree and I could see the same
+kernel panic on db410c [1].
 
-https://lkft.validation.linaro.org/scheduler/job/1717611#L1874
-
-- Naresh
+Cheers,
+Anders
+[1] https://lkft.validation.linaro.org/scheduler/job/1717770#L1912
