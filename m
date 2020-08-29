@@ -2,124 +2,111 @@ Return-Path: <SRS0=JBhh=CH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC99C433E2
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Aug 2020 14:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19444C433E6
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Aug 2020 17:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81A1520C56
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Aug 2020 14:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED3672075B
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Aug 2020 17:57:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NO0oFEsN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHvExVGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgH2ORo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 Aug 2020 10:17:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50794 "EHLO
+        id S1728254AbgH2R5N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 Aug 2020 13:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728039AbgH2ORm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Aug 2020 10:17:42 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EAACC061239
-        for <linux-clk@vger.kernel.org>; Sat, 29 Aug 2020 07:17:42 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id l23so1592958edv.11
-        for <linux-clk@vger.kernel.org>; Sat, 29 Aug 2020 07:17:42 -0700 (PDT)
+        with ESMTP id S1728244AbgH2R5K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 29 Aug 2020 13:57:10 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8024C061236;
+        Sat, 29 Aug 2020 10:57:09 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id ds1so1023390pjb.1;
+        Sat, 29 Aug 2020 10:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=amOnBJfi9C9nYboXm63qVHBbqoT3lf+3WJlMeeBljmc=;
-        b=NO0oFEsNUOIozTzwin7bx10m1QgCrWmLDZCKWZh1Cao9Dg85oDsUq0oQErzGJrnctP
-         ai6BUNALGJT3YsdlA+k/yBOFury6vWvHFM9h3OSzVXOGsDn75MQamhTOtU95+LWtKV+/
-         NC1o6PUIWzuuZMa2P/WPJ8ifSicQMOzLf9z71T6Yd8NAE3UDSHYpWlNvmvSAeANIMH3h
-         cT+FVc3CobbAWvhChigjqtFx7ydvLT9vEll6kA5P7Coxuudv93Q3cpGFjekgO40M9Z6S
-         62QI2qZlLfju8YsJx6JBeILkUX/vcJL3sLja7GGON4L/8n++buABK1xf3vNRl+3FmcEh
-         64rw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=nXrk/kbkqy9ClgLwV0Wr/6W8seRn97oLX3UsuxPWEoY=;
+        b=nHvExVGcx1v5QIMuNToDfBdw5r05ACuQOvQVL0p0Mv7PF5Dv7tkS0/hatJ5fvM7Xe3
+         2/FqOoQTZ12UciQ1z9PpbYlxgsYqOVHrM6OWCuaq5ic56dZVeMCSDk2TxN7ZtXEsVQjx
+         lD7JOzPS865iRr7U/qypbQwlE9ZiSLukddyuj+cNj7BeiyoXN01+J9s76jAqkT3fFm3S
+         Ogu1na4EKzTVGBQ02b3UHuw/NvWTA2NUgIq81VLOCCHRSva9uD0p+ZrNgxrSAAAcTLPi
+         XkGGcSxok9dAtE0wqyXC2M+wdOcLvsmc1wJ2aKu/iOqh5GYqFnXL/KdMHJ9KfkltZVPS
+         fKVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=amOnBJfi9C9nYboXm63qVHBbqoT3lf+3WJlMeeBljmc=;
-        b=hFVNXly5KFbZYzGK44ew5cYYwv7Jf6KTAw8gfJAiclS8x8DoO997qcWCp5ue67KQFl
-         5MgrnLkb0SavssRbaBBcP0plZl8oUWfdtekCpU9sgjF8asQxvv8QMTdA6LmY70AMIBBe
-         9qotIlddm4YJ8zdoxvcMk7Z2VxUMN7xK75N4tEXlIqXfrAiEcsrSUpushdru/e6q2usT
-         bUrbgpHinFt2Pk9/JKSMzvzqcTgcU0UOScAQF8J+c6bDBJyi0amNfI3hUntSa8zcUe8f
-         o6dx4tHchZ3cOSkHiIXyrBeV0LdhM86HPFQzVZE5czW7SVdBJrDoptBkVfQfXvlIRk5g
-         m6nQ==
-X-Gm-Message-State: AOAM530y5FuD4QSU+a8hq7/1Gf705quomNYvp6YN63QgAJsU9zRsmzyE
-        zglz5sCkKOTleth2SR/MccmBPA==
-X-Google-Smtp-Source: ABdhPJwUV7R9h5h3EzhI3+fJWwMDtkF/1M7RjuXWJIl/zWcdObJ3QWm9KpNnDHl+yqcFic4ZVAhXgg==
-X-Received: by 2002:a05:6402:6c1:: with SMTP id n1mr3661175edy.215.1598710660247;
-        Sat, 29 Aug 2020 07:17:40 -0700 (PDT)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id s11sm2217128edh.17.2020.08.29.07.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Aug 2020 07:17:39 -0700 (PDT)
-References: <577e0129e8ee93972d92f13187ff4e4286182f67.1598629915.git.stefan@agner.ch>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stefan Agner <stefan@agner.ch>, narmstrong@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2] clk: meson: g12a: mark fclk_div2 as critical
-In-reply-to: <577e0129e8ee93972d92f13187ff4e4286182f67.1598629915.git.stefan@agner.ch>
-Date:   Sat, 29 Aug 2020 16:17:35 +0200
-Message-ID: <1ja6yd7czk.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=nXrk/kbkqy9ClgLwV0Wr/6W8seRn97oLX3UsuxPWEoY=;
+        b=GrFRkInhgzJ5YtNL08UB8yTbIdoa04kxV/RLgKgybqSTZ2DFrtpaXwMQfmxMQWntgR
+         3Q/0yA1CSa62r73vve9vQ/tI5PzIeb5jPJJiNcKO3y/42wJDa9Qj2PA0It5xlL9QSyLw
+         aNmp0sb5g8F2iAtsbce/dY9zAeteCNMV/A3E9zHVeGdMKATMlRO6bgjKKgR38T0s/nKj
+         T8v2/J1J64LqvtV+ofGsG+7pEbdfAXaeu9/27xwqFMqQnpU4bSrGV5kayuo8Mzu5f4Nh
+         p2PAJ6eddNH+tBQ00qAydEV10LdCjF5/ijt8yRILgKOQqoIZoWIbO1BW9rWW4VOP/dh5
+         P99A==
+X-Gm-Message-State: AOAM5321n2P8R+nRRmGhWcBoXpeus0jg8u1oDB7cAsKja0cgz1Yc8PBB
+        d/XbRHZ0V4/6ZNtfth1lv1w48xaxmXZDSlRK
+X-Google-Smtp-Source: ABdhPJz8kvXRTnTuh/ujkGXu/cl/rzn4a8toQGh/PurvhJq+27dEU+2ROM4rHVN/5lRrk2Eyk4IRfg==
+X-Received: by 2002:a17:902:8d82:: with SMTP id v2mr3404174plo.180.1598723829381;
+        Sat, 29 Aug 2020 10:57:09 -0700 (PDT)
+Received: from Kaladin ([49.207.221.164])
+        by smtp.gmail.com with ESMTPSA id j13sm3254207pfn.166.2020.08.29.10.57.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 29 Aug 2020 10:57:08 -0700 (PDT)
+Date:   Sat, 29 Aug 2020 23:27:04 +0530
+From:   Sumera Priyadarsini <sylphrenadin@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, Julia.Lawall@lip6.fr,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: versatile: Add of_node_put() before return statement
+Message-ID: <20200829175704.GA10998@Kaladin>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Every iteration of for_each_available_child_of_node() decrements
+the reference count of the previous node, however when control is
+transferred from the middle of the loop, as in the case of a return
+or break or goto, there is no decrement thus ultimately resulting in
+a memory leak.
 
-On Fri 28 Aug 2020 at 17:52, Stefan Agner <stefan@agner.ch> wrote:
+Fix a potential memory leak in clk-impd1.c by inserting
+of_node_put() before a return statement.
 
-> On Amlogic Meson G12b platform, similar to fclk_div3, the fclk_div2
-> seems to be necessary for the system to operate correctly as well.
->
-> Typically, the clock also gets chosen by the eMMC peripheral. This
-> probably masked the problem so far. However, when booting from a SD
-> card the clock seems to get disabled which leads to a system freeze.
->
-> Let's mark this clock as critical, fixing boot from SD card on G12b
-> platforms.
->
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
+Issue found with Coccinelle.
 
-Applied Thx.
+Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+---
+ drivers/clk/versatile/clk-impd1.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/clk/meson/g12a.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index fad616cac01e..6d44cadc06af 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -298,6 +298,17 @@ static struct clk_regmap g12a_fclk_div2 = {
->  			&g12a_fclk_div2_div.hw
->  		},
->  		.num_parents = 1,
-> +		/*
-> +		 * Similar to fclk_div3, it seems that this clock is used by
-> +		 * the resident firmware and is required by the platform to
-> +		 * operate correctly.
-> +		 * Until the following condition are met, we need this clock to
-> +		 * be marked as critical:
-> +		 * a) Mark the clock used by a firmware resource, if possible
-> +		 * b) CCF has a clock hand-off mechanism to make the sure the
-> +		 *    clock stays on until the proper driver comes along
-> +		 */
-> +		.flags = CLK_IS_CRITICAL,
->  	},
->  };
+diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
+index ca798249544d..85c395df9c00 100644
+--- a/drivers/clk/versatile/clk-impd1.c
++++ b/drivers/clk/versatile/clk-impd1.c
+@@ -109,8 +109,10 @@ static int integrator_impd1_clk_probe(struct platform_device *pdev)
+ 
+ 	for_each_available_child_of_node(np, child) {
+ 		ret = integrator_impd1_clk_spawn(dev, np, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			break;
++		}
+ 	}
+ 
+ 	return ret;
+-- 
+2.17.1
 
