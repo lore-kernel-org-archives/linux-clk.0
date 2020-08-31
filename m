@@ -2,134 +2,264 @@ Return-Path: <SRS0=AQ30=CJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96065C433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 14:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77873C433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 16:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC3C208CA
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 14:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480BE208DB
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 16:15:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiV0tOH4"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Pu3DizNR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgHaOS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Aug 2020 10:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
+        id S1728266AbgHaQPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Aug 2020 12:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbgHaOS4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2020 10:18:56 -0400
-Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 554E6C061573;
-        Mon, 31 Aug 2020 07:18:56 -0700 (PDT)
-Received: by mail-yb1-xb42.google.com with SMTP id h20so4107581ybj.8;
-        Mon, 31 Aug 2020 07:18:56 -0700 (PDT)
+        with ESMTP id S1726249AbgHaQPN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2020 12:15:13 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F99CC061573
+        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2020 09:15:13 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id l9so1625797plt.8
+        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2020 09:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vPzA/szbiOJ4LZqmMIhJgb16iEL9gpjeImZDHNLa1K4=;
-        b=AiV0tOH4tua4r/vbE/jeaLQJk25JCMzI1fGfk9/wqIdAdkDhez205t7pYCcXymDlHn
-         J9Zl/z8dl6MbUsaUzLBMjmvzIceGaR9Gct+RmVQ/SbQRsE7sHaJpOssmZm8h1enNTy4y
-         zTwf3J0eE8fyK3Q2b0Jaj9bylrHsNjphmHGQmudeSO/AZIjCvga0xIMbk9qvpsl3nfyM
-         tQKDPPnPId6/NU+j6AOTXCX8Fn9vfPu3vkRrBOXjLUxO6W381rNEXxi9JfONSVGaYPpn
-         F6JLhb4MUzwDiZrZjH+gopud/F6HNMqhUAu031OnhzgVYo5m4o+ChgEJhXnNHmKv80Bk
-         eyLg==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0RjF/F1q7e5EJMpYIifOzE0mACKZJWuEXmCqPj+pnkY=;
+        b=Pu3DizNREnzFzQA+0BeBKp4TxMLw6OsC6c7FmO7Mv9mYnjkrk8hNs/ZTDSl6y7Uu+r
+         tRdSRv/04MSfPk9qcrw5gCW540tCZuYBKJaGCjOL5I7yyc1dCGhYfza+Ddf3iU81vCwx
+         rjaw9dh0mA+Q0iABGgjCb3Te2pRG+GiAU2RXk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vPzA/szbiOJ4LZqmMIhJgb16iEL9gpjeImZDHNLa1K4=;
-        b=fVgHGt/SPDWGXNRgL+a1CBwuF1FmVeJttyOiujN8xMwiGmB7ga7dX+8WEvNha5QZpy
-         5MI3A/LUAEMgGpVHyjhT1POnoa4kbXed91zwpvvxpdKU2HtWypCORTnVmED7wcO7gILC
-         fBUPetvfdsrwzA4BxywKO3g94rrtLVZwqeoZbPv4cpsxktOUXyGZIp0KU0w7bF+gHVlJ
-         R9IHko8rX6yQr6JoDoKdq9bwQ7frxv7HnNhFQnASwRifNzRFwEl5ylSpah31LfyFW6KO
-         JUaU6mKLrYieivXaxciI/6wrz1b+J0vF9MVlhSRpA9kqIqGX+JOE4142SfQlZGpfU3VA
-         1ZCQ==
-X-Gm-Message-State: AOAM530rCRi8aQcgcKOgRdXbwovYbD37GiX1yMuYC0QUXPUzYl4J9wHp
-        HkYa3b6WIh76xH5ufhC5/cdCjza3Y+kghK/wH6A=
-X-Google-Smtp-Source: ABdhPJxSTs3UD78TilStje9+W40Pevt8nfLuWLrVXscOYtAfK/JkBiBHmW9zKsARiP0rESdwi90FVSuyOoIUF6PlWII=
-X-Received: by 2002:a25:2a58:: with SMTP id q85mr2710830ybq.518.1598883535216;
- Mon, 31 Aug 2020 07:18:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200825134806.25295-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVcGz_C+e49pgNM=ui8bTu6Vg0A7pZY6nq7n3RdAJObgg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVcGz_C+e49pgNM=ui8bTu6Vg0A7pZY6nq7n3RdAJObgg@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Mon, 31 Aug 2020 15:18:29 +0100
-Message-ID: <CA+V-a8v-KP95VXN84JzS5tJd6=ONy0+Pvse57PqgpWp20nNRxA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add clk entry for VSPR
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0RjF/F1q7e5EJMpYIifOzE0mACKZJWuEXmCqPj+pnkY=;
+        b=GStXLimRSd3jlCoJCF21r9AEzCcpdR+puADd/C8w8ezz6j8m3Tl1LW5cw+nquReA33
+         UAfKGOea56rzCMdEKc0GyGI5MYiduR0xjz+A/BEq6pQPIX79C5xUYXK+5U36rnOhNKaz
+         PymxeEySw7uMDJHUVqd7irh8TILMFWIua+C/aJV+kj4VVRI624/n6ZI6lrttKko2dTU0
+         RNbuaiC5J5o/WW5+9+5QYYv9CDHPPVGFPuv6y4y/7FVWAQsAyslqAOCqkKisehcMg50e
+         k8u+oVxhK6q0Rt4OHlTqcsMXmOeLOxGgxJrWGWSvidUYY/m9S1bJsOcQRzZ9k2CYs1iU
+         pKJA==
+X-Gm-Message-State: AOAM533o3b41Gw4MeCInUO4Riz8XjByyGUOyGV9mJM8DlJEgzg0IHNQP
+        ZmHGqRmNgIw/jLHC9IoPODPEUQ==
+X-Google-Smtp-Source: ABdhPJyjsTme/K/fl4Z4HUw8LpaYJCYVI+lFJeiPhXsGGUvnn0ykI4lDfE9gBtWauCMvpAa+rJOIDQ==
+X-Received: by 2002:a17:902:7582:: with SMTP id j2mr1632953pll.322.1598890512496;
+        Mon, 31 Aug 2020 09:15:12 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c809:c7d5:d50:45fe:aaf3:66ee])
+        by smtp.gmail.com with ESMTPSA id e23sm7804215pgm.1.2020.08.31.09.15.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2020 09:15:11 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>
+Subject: [PATCH] clk: rockchip: Fix overflow rate during fractional approximation
+Date:   Mon, 31 Aug 2020 21:44:36 +0530
+Message-Id: <20200831161436.134186-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+The current rockchip fractional approximation overflow the desired
+rate if parent rate is lower than the (rate * 20) for few clocks like
+dclk_vopb_frac.
 
-Thank you for your review.
+The overflow condition has observed in px30 for dclk_vopb_frac
+clock with an input rate of 71.1MHz and parent rate of 24MHz is,
 
-On Mon, Aug 31, 2020 at 1:38 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> On Tue, Aug 25, 2020 at 3:48 PM Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > Add clock entry 130 for VSPR module, so that this module can be used
->
-> VSPR ("VSP for Resizing")
->
-> > on R8A7742 (RZ/G1H) SoC.
-> >
-> > Note: The entry for VSPR clock was accidentally dropped from RZ/G manual
-> > when all the information related to RT were removed.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> > Similar details can be seen in commit 79ea9934b8df ("ARM: shmobile:
-> > r8a7790: Rename VSP1_(SY|RT) clocks to VSP1_(S|R)") for R-Car H2
->
-> Indeed.  And R-Car H2 and other related soCs are still affected, as that
-> fix never made it to the new clock drivers ;-(
->
-> > --- a/drivers/clk/renesas/r8a7742-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a7742-cpg-mssr.c
-> > @@ -97,6 +97,7 @@ static const struct mssr_mod_clk r8a7742_mod_clks[] __initconst = {
-> >         DEF_MOD("tmu0",                  125,   R8A7742_CLK_CP),
-> >         DEF_MOD("vsp1du1",               127,   R8A7742_CLK_ZS),
-> >         DEF_MOD("vsp1du0",               128,   R8A7742_CLK_ZS),
-> > +       DEF_MOD("vspr",                  130,   R8A7742_CLK_ZS),
-> >         DEF_MOD("vsp1-sy",               131,   R8A7742_CLK_ZS),
->
-> While at it, can you please replace "vsp1-sy" by "vsps" (VSPS = "VSP
-> Standard"), and fix the other drivers, too?
->
-Sure i'll get that done in v2.
+[    2.543280] rockchip-drm display-subsystem: bound ff460000.vop (ops vop_component_ops)
+[    2.557313] rockchip-drm display-subsystem: bound ff470000.vop (ops vop_component_ops)
+[    2.566356] rockchip-drm display-subsystem: bound ff140000.syscon:lvds (ops rockchip_lvds_component_ops)
+[    2.576999] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    2.592177] Unexpected kernel BRK exception at EL1
+[    2.597551] Internal error: ptrace BRK handler: f20003e8 [#1] PREEMPT SMP
+[    2.605143] Modules linked in:
+[    2.608566] CPU: 1 PID: 31 Comm: kworker/1:1 Tainted: G     U            5.8.0-rc1-15632-g97edd822b844 #30
+[    2.619363] Hardware name: Engicam PX30.Core C.TOUCH 2.0 10.1" Open Frame (DT)
+[    2.627460] Workqueue: events deferred_probe_work_func
+[    2.633209] pstate: 20000005 (nzCv daif -PAN -UAO BTYPE=--)
+[    2.639445] pc : rational_best_approximation+0xc4/0xd0
+[    2.645194] lr : rockchip_fractional_approximation+0xa8/0xe0
+[    2.651520] sp : ffff800011ea31c0
+[    2.655222] x29: ffff800011ea31c0 x28: ffff00007a4ecd50
+[    2.661162] x27: ffff00007d042600 x26: 000000000439fca3
+[    2.667102] x25: 0000000000000000 x24: ffff800011ac9948
+[    2.673033] x23: ffff800011ea3308 x22: ffff00007d042418
+[    2.678973] x21: ffff800011ea3240 x20: ffff800011ea3238
+[    2.684904] x19: ea47000000000000 x18: 0000000000000000
+[    2.690836] x17: 0000000000000500 x16: 0000000000000001
+[    2.696775] x15: ffffffffffffffff x14: 0000000000000000
+[    2.702707] x13: 0000000000000000 x12: 0000003c00000000
+[    2.708647] x11: 0000000000000030 x10: 0101010101010101
+[    2.714586] x9 : 0000032000000320 x8 : 7f7f7f7f7f7f7f7f
+[    2.720517] x7 : 000000a3c59050d3 x6 : 0000000000000030
+[    2.726457] x5 : ffff800011ea3240 x4 : ffff800011ea3238
+[    2.732397] x3 : 000000000000ffff x2 : 000000000000ffff
+[    2.738329] x1 : 00000000016e3600 x0 : 0000000001497e00
+[    2.744269] Call trace:
+[    2.747005]  rational_best_approximation+0xc4/0xd0
+[    2.752365]  clk_fd_round_rate+0x8c/0x110
+[    2.756846]  clk_composite_round_rate+0x30/0x40
+[    2.761917]  clk_core_determine_round_nolock.part.30+0x44/0x80
+[    2.768442]  clk_core_round_rate_nolock+0x78/0x80
+[    2.773701]  clk_mux_determine_rate_flags+0xd8/0x200
+[    2.779253]  clk_mux_determine_rate+0x10/0x20
+[    2.784124]  clk_core_determine_round_nolock.part.30+0x1c/0x80
+[    2.790639]  clk_core_round_rate_nolock+0x78/0x80
+[    2.795900]  clk_core_round_rate_nolock+0x5c/0x80
+[    2.801159]  clk_round_rate+0x64/0xf0
+[    2.805254]  vop_crtc_mode_fixup+0x2c/0x60
+[    2.809828]  drm_atomic_helper_check_modeset+0x95c/0xae0
+[    2.815767]  drm_atomic_helper_check+0x1c/0xa0
+[    2.820738]  drm_atomic_check_only+0x43c/0x760
+[    2.825705]  drm_atomic_commit+0x18/0x60
+[    2.830095]  drm_client_modeset_commit_atomic.isra.16+0x17c/0x250
+[    2.836911]  drm_client_modeset_commit_locked+0x58/0x1a0
+[    2.842851]  drm_client_modeset_commit+0x2c/0x50
+[    2.848014]  drm_fb_helper_restore_fbdev_mode_unlocked+0x70/0xd0
+[    2.854730]  drm_fb_helper_set_par+0x2c/0x60
+[    2.859497]  fbcon_init+0x3c0/0x540
+[    2.863400]  visual_init+0xac/0x100
+[    2.867298]  do_bind_con_driver+0x1e4/0x3a0
+[    2.871973]  do_take_over_console+0x140/0x200
+[    2.876843]  do_fbcon_takeover+0x6c/0xe0
+[    2.881228]  fbcon_fb_registered+0x10c/0x120
+[    2.886005]  register_framebuffer+0x1f0/0x340
+[    2.890878]  __drm_fb_helper_initial_config_and_unlock+0x318/0x4a0
+[    2.897790]  drm_fb_helper_initial_config+0x3c/0x50
+[    2.903244]  rockchip_drm_fbdev_init+0x5c/0xf0
+[    2.908202]  rockchip_drm_bind+0x194/0x1e0
+[    2.912785]  try_to_bring_up_master+0x164/0x1d0
+[    2.917851]  component_master_add_with_match+0xac/0xf0
+[    2.923597]  rockchip_drm_platform_probe+0x238/0x2e0
+[    2.929150]  platform_drv_probe+0x50/0xa0
+[    2.933631]  really_probe+0xd4/0x330
+[    2.937628]  driver_probe_device+0x54/0xb0
+[    2.942207]  __device_attach_driver+0x80/0xc0
+[    2.947078]  bus_for_each_drv+0x78/0xd0
+[    2.951365]  __device_attach+0xd4/0x130
+[    2.955652]  device_initial_probe+0x10/0x20
+[    2.960328]  bus_probe_device+0x90/0xa0
+[    2.964616]  deferred_probe_work_func+0x6c/0xa0
+[    2.969685]  process_one_work+0x1e4/0x360
+[    2.974166]  worker_thread+0x208/0x480
+[    2.978358]  kthread+0x150/0x160
+[    2.981968]  ret_from_fork+0x10/0x18
+[    2.985970] Code: d65f03c0 d2800008 d2800027 17ffffe8 (d4207d00)
 
-Cheers,
-Prabhakar
+This happened because the fractional divider does not apply if parent_rate
+is lower than (rate * 20).
 
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+So, this patch is trying to fix that overflow clock and switch to half-div
+instead computing fractioanl approximation.
+
+Some part of the patch is referenced from below BSP commit:
+
+commit <88a5404a2277> ("clk: rockchip: fix up the
+rockchip_fractional_approximation")
+
+commit <4186a0e4239b> ("clk: rockchip: Add supprot to limit input rate
+for fractional divider")
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-px30.c | 12 ++++++------
+ drivers/clk/rockchip/clk.c      |  9 +++++++++
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
+index 6fb9c98b7d24..06d3ff39d12f 100644
+--- a/drivers/clk/rockchip/clk-px30.c
++++ b/drivers/clk/rockchip/clk-px30.c
+@@ -660,7 +660,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	COMPOSITE(SCLK_UART1_SRC, "clk_uart1_src", mux_uart_src_p, CLK_SET_RATE_NO_REPARENT,
+ 			PX30_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(10), 12, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", CLK_SET_RATE_PARENT,
+ 			PX30_CLKSEL_CON(35), 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(10), 13, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
+@@ -673,7 +673,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	COMPOSITE(SCLK_UART2_SRC, "clk_uart2_src", mux_uart_src_p, 0,
+ 			PX30_CLKSEL_CON(37), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 0, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", CLK_SET_RATE_PARENT,
+ 			PX30_CLKSEL_CON(38), 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 1, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
+@@ -686,7 +686,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "clk_uart3_src", mux_uart_src_p, 0,
+ 			PX30_CLKSEL_CON(40), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 4, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", CLK_SET_RATE_PARENT,
+ 			PX30_CLKSEL_CON(41), 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 5, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
+@@ -699,7 +699,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "clk_uart4_src", mux_uart_src_p, 0,
+ 			PX30_CLKSEL_CON(43), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 8, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", CLK_SET_RATE_PARENT,
+ 			PX30_CLKSEL_CON(44), 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 9, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
+@@ -712,7 +712,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	COMPOSITE(0, "clk_uart5_src", mux_uart_src_p, 0,
+ 			PX30_CLKSEL_CON(46), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 12, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", CLK_SET_RATE_PARENT,
+ 			PX30_CLKSEL_CON(47), 0, 5, DFLAGS,
+ 			PX30_CLKGATE_CON(11), 13, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
+@@ -934,7 +934,7 @@ static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
+ 	COMPOSITE(0, "clk_uart0_pmu_src", mux_uart_src_p, 0,
+ 			PX30_PMU_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 5, DFLAGS,
+ 			PX30_PMU_CLKGATE_CON(1), 0, GFLAGS),
+-	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", 0,
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
+ 			PX30_PMU_CLKSEL_CON(4), 0, 5, DFLAGS,
+ 			PX30_PMU_CLKGATE_CON(1), 1, GFLAGS),
+ 	COMPOSITE_FRACMUX(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 546e810c3560..38d032faa05e 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -190,6 +190,15 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
+ 		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
+ 		p_parent_rate = clk_hw_get_rate(p_parent);
+ 		*parent_rate = p_parent_rate;
++
++		/* fractional divider not apply if parent_rate is lower than (rate * 20) */
++		if (*parent_rate < rate * 20) {
++			pr_warn("%s: %s fractional div is not allowed, so use half-div\n",
++				__func__, clk_hw_get_name(hw));
++			*m = 0;
++			*n = 1;
++			return;
++		}
+ 	}
+ 
+ 	/*
+-- 
+2.25.1
+
