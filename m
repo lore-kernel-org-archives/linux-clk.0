@@ -2,106 +2,134 @@ Return-Path: <SRS0=AQ30=CJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F719C433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 12:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96065C433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 14:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A62220782
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 12:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EC3C208CA
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Aug 2020 14:18:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiV0tOH4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgHaMjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Aug 2020 08:39:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41600 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726326AbgHaMit (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2020 08:38:49 -0400
-Received: by mail-oi1-f196.google.com with SMTP id 2so815240ois.8;
-        Mon, 31 Aug 2020 05:38:47 -0700 (PDT)
+        id S1727103AbgHaOS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Aug 2020 10:18:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbgHaOS4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2020 10:18:56 -0400
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 554E6C061573;
+        Mon, 31 Aug 2020 07:18:56 -0700 (PDT)
+Received: by mail-yb1-xb42.google.com with SMTP id h20so4107581ybj.8;
+        Mon, 31 Aug 2020 07:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vPzA/szbiOJ4LZqmMIhJgb16iEL9gpjeImZDHNLa1K4=;
+        b=AiV0tOH4tua4r/vbE/jeaLQJk25JCMzI1fGfk9/wqIdAdkDhez205t7pYCcXymDlHn
+         J9Zl/z8dl6MbUsaUzLBMjmvzIceGaR9Gct+RmVQ/SbQRsE7sHaJpOssmZm8h1enNTy4y
+         zTwf3J0eE8fyK3Q2b0Jaj9bylrHsNjphmHGQmudeSO/AZIjCvga0xIMbk9qvpsl3nfyM
+         tQKDPPnPId6/NU+j6AOTXCX8Fn9vfPu3vkRrBOXjLUxO6W381rNEXxi9JfONSVGaYPpn
+         F6JLhb4MUzwDiZrZjH+gopud/F6HNMqhUAu031OnhzgVYo5m4o+ChgEJhXnNHmKv80Bk
+         eyLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pCsWJiU+SeSX/BQT94U7ntSq2DXQU2wdBG6dv3ohm/A=;
-        b=snrgaOzUERKjWMwbP2Mq32S44hzGQgMsBpYMip7G6ah2ayCAjcd02Z5vMqdegoCvEo
-         hE39wJAjl6x2E3Ep0AOOfAkenpev18KYk5VBE2bhW8sR4U1TlYC56JjhRBFxxgbalQqQ
-         l68ldYB0UAbGZAOh9cpYPobqks9pX57gkg0xpLGmQ1rTqbIRKHXZrMTcxoxxbyLg9RhO
-         9zgGKmHAUXItskNRKhkUmEiF08xs+Lq/umsPnhw7DegkHoaqvMEG65mU//Rkn5aoJFGs
-         h7/kzp7oXLOibRy/WNGGCOFqUqSEd+mH6KXbY7cD1O721QTNiz60g+2Xlucq5ox07o25
-         42Pg==
-X-Gm-Message-State: AOAM532O1HPCr3t7opI9GPFIM45W2lZb/o6rPgbW4YhsTIMedmLT2N3W
-        V8ayodtJZQdS4vsXPysDDTY/bQ0Q6ezjFOLJ2oYZyTyJHQA=
-X-Google-Smtp-Source: ABdhPJzZB+2rt1wEa6gxS0s5ZyQyHRzufXJ1mYnhpK/hQPbXX6bNUonm86n9yv9d6v1JRXAsU5O4A+NuvGI1eRzAOJU=
-X-Received: by 2002:aca:52d6:: with SMTP id g205mr639635oib.54.1598877527029;
- Mon, 31 Aug 2020 05:38:47 -0700 (PDT)
+        bh=vPzA/szbiOJ4LZqmMIhJgb16iEL9gpjeImZDHNLa1K4=;
+        b=fVgHGt/SPDWGXNRgL+a1CBwuF1FmVeJttyOiujN8xMwiGmB7ga7dX+8WEvNha5QZpy
+         5MI3A/LUAEMgGpVHyjhT1POnoa4kbXed91zwpvvxpdKU2HtWypCORTnVmED7wcO7gILC
+         fBUPetvfdsrwzA4BxywKO3g94rrtLVZwqeoZbPv4cpsxktOUXyGZIp0KU0w7bF+gHVlJ
+         R9IHko8rX6yQr6JoDoKdq9bwQ7frxv7HnNhFQnASwRifNzRFwEl5ylSpah31LfyFW6KO
+         JUaU6mKLrYieivXaxciI/6wrz1b+J0vF9MVlhSRpA9kqIqGX+JOE4142SfQlZGpfU3VA
+         1ZCQ==
+X-Gm-Message-State: AOAM530rCRi8aQcgcKOgRdXbwovYbD37GiX1yMuYC0QUXPUzYl4J9wHp
+        HkYa3b6WIh76xH5ufhC5/cdCjza3Y+kghK/wH6A=
+X-Google-Smtp-Source: ABdhPJxSTs3UD78TilStje9+W40Pevt8nfLuWLrVXscOYtAfK/JkBiBHmW9zKsARiP0rESdwi90FVSuyOoIUF6PlWII=
+X-Received: by 2002:a25:2a58:: with SMTP id q85mr2710830ybq.518.1598883535216;
+ Mon, 31 Aug 2020 07:18:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200825134806.25295-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200825134806.25295-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 31 Aug 2020 14:38:35 +0200
-Message-ID: <CAMuHMdVcGz_C+e49pgNM=ui8bTu6Vg0A7pZY6nq7n3RdAJObgg@mail.gmail.com>
+References: <20200825134806.25295-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVcGz_C+e49pgNM=ui8bTu6Vg0A7pZY6nq7n3RdAJObgg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVcGz_C+e49pgNM=ui8bTu6Vg0A7pZY6nq7n3RdAJObgg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 31 Aug 2020 15:18:29 +0100
+Message-ID: <CA+V-a8v-KP95VXN84JzS5tJd6=ONy0+Pvse57PqgpWp20nNRxA@mail.gmail.com>
 Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add clk entry for VSPR
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
+        Biju Das <biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+Hi Geert,
 
-Thanks for your patch!
+Thank you for your review.
 
-On Tue, Aug 25, 2020 at 3:48 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add clock entry 130 for VSPR module, so that this module can be used
-
-VSPR ("VSP for Resizing")
-
-> on R8A7742 (RZ/G1H) SoC.
+On Mon, Aug 31, 2020 at 1:38 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> Note: The entry for VSPR clock was accidentally dropped from RZ/G manual
-> when all the information related to RT were removed.
+> Hi Prabhakar,
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> Similar details can be seen in commit 79ea9934b8df ("ARM: shmobile:
-> r8a7790: Rename VSP1_(SY|RT) clocks to VSP1_(S|R)") for R-Car H2
+> Thanks for your patch!
+>
+> On Tue, Aug 25, 2020 at 3:48 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > Add clock entry 130 for VSPR module, so that this module can be used
+>
+> VSPR ("VSP for Resizing")
+>
+> > on R8A7742 (RZ/G1H) SoC.
+> >
+> > Note: The entry for VSPR clock was accidentally dropped from RZ/G manual
+> > when all the information related to RT were removed.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> > Similar details can be seen in commit 79ea9934b8df ("ARM: shmobile:
+> > r8a7790: Rename VSP1_(SY|RT) clocks to VSP1_(S|R)") for R-Car H2
+>
+> Indeed.  And R-Car H2 and other related soCs are still affected, as that
+> fix never made it to the new clock drivers ;-(
+>
+> > --- a/drivers/clk/renesas/r8a7742-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a7742-cpg-mssr.c
+> > @@ -97,6 +97,7 @@ static const struct mssr_mod_clk r8a7742_mod_clks[] __initconst = {
+> >         DEF_MOD("tmu0",                  125,   R8A7742_CLK_CP),
+> >         DEF_MOD("vsp1du1",               127,   R8A7742_CLK_ZS),
+> >         DEF_MOD("vsp1du0",               128,   R8A7742_CLK_ZS),
+> > +       DEF_MOD("vspr",                  130,   R8A7742_CLK_ZS),
+> >         DEF_MOD("vsp1-sy",               131,   R8A7742_CLK_ZS),
+>
+> While at it, can you please replace "vsp1-sy" by "vsps" (VSPS = "VSP
+> Standard"), and fix the other drivers, too?
+>
+Sure i'll get that done in v2.
 
-Indeed.  And R-Car H2 and other related soCs are still affected, as that
-fix never made it to the new clock drivers ;-(
+Cheers,
+Prabhakar
 
-> --- a/drivers/clk/renesas/r8a7742-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7742-cpg-mssr.c
-> @@ -97,6 +97,7 @@ static const struct mssr_mod_clk r8a7742_mod_clks[] __initconst = {
->         DEF_MOD("tmu0",                  125,   R8A7742_CLK_CP),
->         DEF_MOD("vsp1du1",               127,   R8A7742_CLK_ZS),
->         DEF_MOD("vsp1du0",               128,   R8A7742_CLK_ZS),
-> +       DEF_MOD("vspr",                  130,   R8A7742_CLK_ZS),
->         DEF_MOD("vsp1-sy",               131,   R8A7742_CLK_ZS),
-
-While at it, can you please replace "vsp1-sy" by "vsps" (VSPS = "VSP
-Standard"), and fix the other drivers, too?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Thanks!
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
