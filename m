@@ -2,243 +2,206 @@ Return-Path: <SRS0=WeI5=CK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CB2C433E2
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Sep 2020 02:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B7BC433E2
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Sep 2020 04:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59A6F208DB
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Sep 2020 02:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5B952078B
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Sep 2020 04:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CKILSkLM"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hf8DGWlH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbgIACHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Aug 2020 22:07:54 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:19159 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgIACHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Aug 2020 22:07:53 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200901020751epoutp02326bc5b23000fae9008a0c6422eec77f~whspF7A-B1558115581epoutp02Y
-        for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2020 02:07:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200901020751epoutp02326bc5b23000fae9008a0c6422eec77f~whspF7A-B1558115581epoutp02Y
+        id S1726244AbgIAEJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Sep 2020 00:09:00 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:36658 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbgIAEI5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Sep 2020 00:08:57 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200901040855epoutp0303fbb2b80ddf526700a036b29d1cf213~wjWWmPJQ20578105781epoutp03q
+        for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2020 04:08:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200901040855epoutp0303fbb2b80ddf526700a036b29d1cf213~wjWWmPJQ20578105781epoutp03q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598926071;
-        bh=URBVDctkmVqca9PXVLh3E1qepQ6UHAxy0LP6rzedCbQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CKILSkLMlYAmu4KQQa14vuhNJ1+fl4TedF6kgW4ORdic7ONPcMl8zM3JKlF2J3ioP
-         ZIWhhXpboR2VSTf5yLBSnxyFQlyK/2poHHC2tjcbcWGBSdqMBhvWhZef9zfnZCQ8Vf
-         i+IKhJXfnpKMOhxIvi0SMf5GLNNfHG99Q3qVRT4k=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200901020750epcas1p2d70205ed0566b254540c0bc25c9ac072~whsoQQHJp2039520395epcas1p2b;
-        Tue,  1 Sep 2020 02:07:50 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4BgVpC1JpBzMqYm7; Tue,  1 Sep
-        2020 02:07:47 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E3.04.28578.1FCAD4F5; Tue,  1 Sep 2020 11:07:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        s=mail20170921; t=1598933335;
+        bh=aV0x4n6wQckii0JDBHb/o4LkoOEhIHxl7xns9Eg3VhU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hf8DGWlHDtIiMeG73eyxSzFBAYzmoxTvY394InsdbfmJjaJ5f0t7J+sHrE5L2sryZ
+         TvpMQBjHNoj0o7RLAuSUfYZMn+gIPS5uRmc/juNazbFqunjeGc5bdjcHlTuvhLGbhN
+         lfJlb0UK9+CmGXZzVPhiNPy6CVBSEf/K3cE8sgOk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200901040854epcas1p443d27e0bcaca9af33ddbfd8cfc4dff5c~wjWWE9Ni-3231032310epcas1p4a;
+        Tue,  1 Sep 2020 04:08:54 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4BgYTv4sNpzMqYkZ; Tue,  1 Sep
+        2020 04:08:51 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AB.E7.29173.359CD4F5; Tue,  1 Sep 2020 13:08:51 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200901020745epcas1p33a9988253efe06f536ece4c24c830137~whsj6j1wS2865628656epcas1p3F;
-        Tue,  1 Sep 2020 02:07:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200901020745epsmtrp2d906f389fe4a7a416ff22089a5800a88~whsj5FVt21929619296epsmtrp2P;
-        Tue,  1 Sep 2020 02:07:45 +0000 (GMT)
-X-AuditID: b6c32a39-8dfff70000006fa2-85-5f4dacf11fcf
+        20200901040851epcas1p3124094e38175758b2310bdae6d76793c~wjWSq0pmZ1717817178epcas1p3i;
+        Tue,  1 Sep 2020 04:08:51 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200901040851epsmtrp1d08ddbf21bbdc2721eaaf5d97955ed9e~wjWSpx1NR3200332003epsmtrp18;
+        Tue,  1 Sep 2020 04:08:51 +0000 (GMT)
+X-AuditID: b6c32a37-9b7ff700000071f5-92-5f4dc9532ba0
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        43.03.08303.1FCAD4F5; Tue,  1 Sep 2020 11:07:45 +0900 (KST)
-Received: from [10.113.111.64] (unknown [10.113.111.64]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5C.03.08382.359CD4F5; Tue,  1 Sep 2020 13:08:51 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.111.64]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200901020745epsmtip1ab493178da14b7dbe6bd1200a8620199~whsjiI7Pv0918909189epsmtip1h;
-        Tue,  1 Sep 2020 02:07:45 +0000 (GMT)
-Subject: Re: [PATCH 3/3] drm/vc4: hdmi: Add pixel bvb clock control
-To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
-        Tim Gover <tim.gover@raspberrypi.com>, kdasu.kdev@gmail.com,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Phil Elwell <phil@raspberrypi.com>, robh+dt@kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Hoegeun Kwon <hoegeun.kwon@samsung.com>
+        20200901040850epsmtip135477003d71b962546776499199b06ce~wjWSWXrx90868108681epsmtip1i;
+        Tue,  1 Sep 2020 04:08:50 +0000 (GMT)
 From:   Hoegeun Kwon <hoegeun.kwon@samsung.com>
-Message-ID: <f84797d1-22b6-7673-d0dd-398d339a5ed2@samsung.com>
-Date:   Tue, 1 Sep 2020 11:07:26 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CAPY8ntDeLOb+GvpLDX1BFrhtYyGQzJ01pWHiS30r-2ZUJTg8Gw@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVBUVRjGO7t37y7kNpev9kQUcMsUJj4WWD04fDQD1i38oKgx+KP1xt6A
-        WHZ39oJjZAQUybegELLAgGBCiyiBEiAbKwo7gWgFCEO6lLhOYrAIQ2M0YbtcnPjved/ze857
-        nnPmiPjOq7i7KEWVzmhVtJLEHbGuKz7+fktn98oDx4w81FYyiKH5uiYM1V+9LkDjK1YcGXPG
-        ALI2F+KoZ7wNQx2zNwXoYbFZgMZ6a3FU/mu7EJ18tAbQz8O7UZeuGUfnph/gKM9wVYjWbn5n
-        M7RM4ehO5Qx4zYXKtQ7hlHUqT0jpZkZx6tb1GzjVo7stpC5Oy6gOfQFOzRSZeFTn6c+pvMFV
-        jCq9oAdU58in1HLHi7HihNSwZIZWMFovRpWoVqSoksLJmDh5lFy2I1DqJw1FO0kvFZ3GhJPR
-        e2L9Xk9R2mKSXodoZYatFUuzLBkQEaZVZ6QzXslqNj2cZDQKpSZU48/SaWyGKsk/UZ22SxoY
-        GCSzgQdTk09apvia2y8c7tdN4tngB0khcBBBIgS2990SFgJHkTPRDeDYwH3AFUsAHn3cJ+CK
-        ZQC75ur5Tyz6qZENqhdA8xnzBjUPoMlSuk65EFGw8tFlgV27Eu/Da8aidQefmMRgVckCbl/A
-        CT+4UjzJs2sxEQFXF//E7BojXoZ3ZoeBXbsR8bDHcl/IMU7wx+q764wD8TYsaGpY34dPeMLv
-        52v5nJbA6bv1PPswSNQ4wL8HxoTcuaPh+faJjQwucM50YaPvDpcXDDinWThePYdx5mwAj5XX
-        bEDBsP+bE7ZdRbYJPvB8bwDX9oY9/9QBbvAzcGGlWGBHICGG+V85c8gr8F62UcBpDzhc0szj
-        NAWtJ64Iy4C3blM03aY4uk1xdP8PbgCYHjzLaNi0JIaVamSb37sDrH8C39BuUDW/6D8AeCIw
-        AKCIT7qKjb0xcmexgv4kk9Gq5doMJcMOAJntssv57m6JatsvUqXLpbKg4OBgFCLdIZNKSYn4
-        92kvuTORRKczqQyjYbRPfDyRg3s277Q2PDLuAJO6NORUGuBmHt0/KjmVdeTUe8PB8Q/fjdxm
-        kbTnYtD6Rv5ZfdCZhJzWoNzDsuKoyMYJC/bTS6bFrZn7DrgsPN3aaj7kWyb0VDusSRIOdp/b
-        2+R3qSDSUpeM8TwR6dpwby3nsewtNn7/8Zrjf/gox6s9Luqk2eOoXJGv/uw5a0HPHkPJq9u/
-        3tJocIopW9uZtWXrzL5vh6uibjg2xv3WUmwQeLdsr5gVVFz70LOKHzGzANT0Xx7bhEXm/sHO
-        lIlay1MeYUc/uFyRNcU3/vLRv/NfTl5KqWxTv5lzhIl+Z2jZpDMoRoriMnfpP+7LwaczviB3
-        Pz8HcVNhSN+DOBJjk2mpL1/L0v8BV5IXro0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsWy7bCSnO7HNb7xBh2nBC3W9h5lsXg7dzGL
+To:     nsaenzjulienne@suse.de, eric@anholt.net, maxime@cerno.tech,
+        stefan.wahren@i2se.com, dave.stevenson@raspberrypi.com
+Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
+        sboyd@kernel.org, mturquette@baylibre.com, kdasu.kdev@gmail.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
+        linux-arm-kernel@lists.infradead.org, hoegeun.kwon@samsung.com
+Subject: [PATCH v2 2/4] drm/vc4: hdmi: Add pixel bvb clock control
+Date:   Tue,  1 Sep 2020 13:07:57 +0900
+Message-Id: <20200901040759.29992-3-hoegeun.kwon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200901040759.29992-1-hoegeun.kwon@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmvm7wSd94g3lz1CzW9h5lsXg7dzGL
         xfwj51gtrnx9z2ZxoPEyo8X75V1sFjuvrGWx2PT4GqvFx557rBaXd81hs5h4ewO7xYwf/xgt
         Lp5ytdg2azmbxbpbr9ksWvceYbf4d20jUMOKG2wWj6beZ3QQ9mh6f4zN4/2NVnaPWffPsnnc
-        OXeezWPnrLvsHltvmXpsWtXJ5nG/+ziTx+Yl9R6tR3+xePRtWcXosfl0tcfnTXIBvFFcNimp
-        OZllqUX6dglcGTOe3mAuuCtbsX/WdbYGxn3iXYycHBICJhKrbpxm7GLk4hAS2MEo8f/YP0aI
-        hIzEqv4trF2MHEC2sMThw8UQNa8ZJSYsu8sKUiMs4Cwx9cdBMFtEIELizKq5YIOYBW6ySGzq
-        /8oOkhAS2MMiMfWYFIjNJqAr8bXnOhOIzStgJ/HrwxsWEJtFQEXi0eNTjCDLRAUiJXbusIQo
-        EZQ4OfMJWAmnQKBE5+IFbCA2s4CZxLzND5khbHmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0
-        zELSsoCRZRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnDUa2ntYNyz6oPeIUYmDsZD
-        jBIczEoivAd2eccL8aYkVlalFuXHF5XmpBYfYpTmYFES5/06a2GckEB6YklqdmpqQWoRTJaJ
-        g1OqgenAjguskjrnQqSU/Z0fOnw2yJW42O5ipfYpwpt52YO2+KaSDGm2qKlsWr/+ql4xjY1n
-        2e1aUPRGxeW30xQT7Y3hJ6X8z23R18r9e9hp8bxPojEVf5iL5EIWTt+6J7lmYpf28z8pgp8Y
-        4j2PiEex2t67wvFuWqnM+Yq9NxTV6wqfvr9dFPd6yu3lTq1X2xYeWKUkejsooZ6rUnNFpfD0
-        m+mX+8I6LWoPP9YVM9wrPe1if/3LNQsC85YaXtwX4cX0O6jnEEPHynjuCumWft/Uh9Ocfr1Z
-        eWy5jVHEXSfl5jyPZMGNTa42rT7F8wzMA3Iyqqx/axw4XyJi1d1aeWLe1LRJ+hM+2WwM3Bm9
-        cIWaEktxRqKhFnNRcSIA/lK3z2kDAAA=
-X-CMS-MailID: 20200901020745epcas1p33a9988253efe06f536ece4c24c830137
+        OXeezWPnrLvsHltvmXpsWtXJ5nG/+ziTx+Yl9R6tR3+xePRtWcXosfl0tcfnTXIBvFHZNhmp
+        iSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAbyoplCXmlAKF
+        AhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCiwL9IoTc4tL89L1kvNzrQwNDIxMgQoTsjP+fVrN
+        VLBFtOL4jE7WBsZuoS5GTg4JAROJgy/2sXUxcnEICexglPjQ/4MdwvnEKLH02QeozDdGiWPf
+        pgE5HGAtO0/UQcT3MkpcmH6AFcL5zCgx5/55NpC5bAK6El97rjOB2CICFRL7nl9nBCliFpjK
+        LPF0zjKwhLCAk8TOLa0sIDaLgKrEokP/GUFsXgFbiWdTO5ggDpSXWL3hADOIzSlgJ3F9yVsW
+        kEESAlc4JLb/PM8McZKLxNOTXBD1whKvjm9hh7ClJF72t0HZxRJXZr6C6m1glOifOBsqYSyx
+        f+lkJpA5zAKaEut36UOEFSV2/p4Ldg+zAJ/Eu689rBCreCU62qBhpybxrAHkeRBbRuJU73Ko
+        kz0kbr47xwwJlImMEo8XX2WewCg3C2HDAkbGVYxiqQXFuempxYYFxshRtokRnI61zHcwTnv7
+        Qe8QIxMH4yFGCQ5mJRHeA7u844V4UxIrq1KL8uOLSnNSiw8xmgIDbyKzlGhyPjAj5JXEG5oa
+        GRsbW5gYmpkaGiqJ8z68pRAvJJCeWJKanZpakFoE08fEwSnVwJSXKPhw9+nkmm7PlK/zD5Yf
+        vcNR735Z5kR6wNdLsWJRLz0PFax7rOsqm5WnVSH5P9/txL2zoqdNvZufbFJwsbu71SxuxpWM
+        irdtZ2X6UnT3Kux/vitgQVggQ/yjQCadPZUp+9x+LajPWPnxcdHq2xrCLDO3J13kMzGbtyFD
+        dHrNkhnd8z0W6gX+XymioH8o/OvTs0u1kvJbmT/N7HQUeXg4iqF3jcyDVo4LGxb4M1/osNr6
+        TLrHaIe2/gIvPnf2JasVRV0WPftssvAAo4Jb6sZtnK5R73IaizqXi3330FZ/avvMfOnsTytS
+        nQ5MvvpSWC/hUPS5L33yfTtDVC9vdM5/t2Otp+5lXvG3lwKeciixFGckGmoxFxUnAgDyAImL
+        UAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnG7wSd94g6d9HBZre4+yWLydu5jF
+        Yv6Rc6wWV76+Z7M40HiZ0eL98i42i51X1rJYbHp8jdXiY889VovLu+awWUy8vYHdYsaPf4wW
+        F0+5WmybtZzNYt2t12wWrXuPsFv8u7YRqGHFDTaLR1PvMzoIezS9P8bm8f5GK7vHrPtn2Tzu
+        nDvP5rFz1l12j623TD02repk87jffZzJY/OSeo/Wo79YPPq2rGL02Hy62uPzJrkA3igum5TU
+        nMyy1CJ9uwSujH+fVjMVbBGtOD6jk7WBsVuoi5GDQ0LARGLnibouRi4OIYHdjBIPp31h6WLk
+        BIrLSKzq38IKUSMscfhwMUTNR0aJnb/PMYLUsAnoSnztuc4EYosI1Ek86WgE62UWWMos0TJJ
+        AcQWFnCS2LmlFSzOIqAqsejQf7BeXgFbiWdTO5ggdslLrN5wgBnE5hSwk7i+5C1YvRBQzfE3
+        G9gmMPItYGRYxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHDNamjsYt6/6oHeIkYmD
+        8RCjBAezkgjvgV3e8UK8KYmVValF+fFFpTmpxYcYpTlYlMR5bxQujBMSSE8sSc1OTS1ILYLJ
+        MnFwSjUwuYs5+qStMyot2FV2r/mZUueJnrfXWq+YuwZY9zYz5FyI0TV9WanTtH9jHvfS2Z/f
+        sL0KjNC9/3rllQkb+/cXRZVuMzd+vNzDa6epmfJRCZfNMwW6GDcs6dsZnPPyy8M/q+pjua8a
+        FoWZTVFseRfLrJQ696uHgemU2nml+TtYNm1dUG5v5c/qufrFGRNVmT2lksdeFXufZP925Zjz
+        iRUKvAk/0jY/tlkZk7H+HX+0u77DmVv85068lX5+O/nyO9+VpU8CziqV7d6b/+lQzZ6sP7O+
+        tt64PmXpx5pgK5a1xlm7Zx2Ue3DActn+gONOW9+zVzwv+7/axTg9zfVLUeAfvgr/F9EMAX3r
+        H7Rq7z+3VomlOCPRUIu5qDgRAIXJgroIAwAA
+X-CMS-MailID: 20200901040851epcas1p3124094e38175758b2310bdae6d76793c
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200821071122epcas1p3d00dda4665f94192ac5e9ee829d0557d
-References: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
-        <CGME20200821071122epcas1p3d00dda4665f94192ac5e9ee829d0557d@epcas1p3.samsung.com>
-        <20200821071045.24501-4-hoegeun.kwon@samsung.com>
-        <61c199bf-852f-82d3-089a-a0a435343acf@i2se.com>
-        <80749dcd-d4b2-68a1-f3ca-c19a120f6f7b@samsung.com>
-        <84c423e8-25a6-8f23-cc80-7a17ce03fd1d@i2se.com>
-        <a19de8d5-2b01-cb62-38a2-b0732068025c@samsung.com>
-        <a3231281-3bd0-e7c9-1bb0-f05848621e82@i2se.com>
-        <20200828152510.jhhqvka6fmouozff@gilmour.lan>
-        <CAPY8ntDeLOb+GvpLDX1BFrhtYyGQzJ01pWHiS30r-2ZUJTg8Gw@mail.gmail.com>
+X-CMS-RootMailID: 20200901040851epcas1p3124094e38175758b2310bdae6d76793c
+References: <20200901040759.29992-1-hoegeun.kwon@samsung.com>
+        <CGME20200901040851epcas1p3124094e38175758b2310bdae6d76793c@epcas1p3.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thank you reviews by Dave, Maxime and Stefan.
+There is a problem that the output does not work at a resolution
+exceeding FHD. To solve this, we need to adjust the bvb clock at a
+resolution exceeding FHD.
 
-On 8/29/20 12:37 AM, Dave Stevenson wrote:
-> Hi Maxime, Stefan, and Hoegeun
->
-> On Fri, 28 Aug 2020 at 16:25, Maxime Ripard <maxime@cerno.tech> wrote:
->> Hi,
->>
->> On Fri, Aug 28, 2020 at 02:45:49PM +0200, Stefan Wahren wrote:
->>> Am 28.08.20 um 08:30 schrieb Hoegeun Kwon:
->>>> On 8/27/20 6:49 PM, Stefan Wahren wrote:
->>>>> Am 27.08.20 um 06:35 schrieb Hoegeun Kwon:
->>>>>> Hi Stefan,
->>>>>>
->>>>>> Thank you for your review.
->>>>>>
->>>>>>
->>>>>> On 8/26/20 7:04 PM, Stefan Wahren wrote:
->>>>>>> Hi Hoeguen,
->>>>>>>
->>>>>>> Am 21.08.20 um 09:10 schrieb Hoegeun Kwon:
->>>>>>>> There is a problem that the output does not work at a resolution
->>>>>>>> exceeding FHD. To solve this, we need to adjust the bvb clock at a
->>>>>>>> resolution exceeding FHD.
->>>>>>> this patch introduces a mandatory clock, please update
->>>>>>> brcm,bcm2835-hdmi.yaml first.
->>>>>>>
->>>>>>> Is this clock physically available on BCM283x or only on BCM2711?
->>>>>> As far as I know, BCM2711 raspberry pi 4 supports 4k,
->>>>>>
->>>>>> don't supported on pi 3 and pi 3+.
->>>>>>
->>>>>> Since 4k is not supported in versions prior to Raspberry Pi 4,
->>>>>>
->>>>>> I don't think we need to modify the bvb clock.
->>>>>>
->>>>>>
->>>>>> So I think it is better to update 'brcm,bcm2711-hdmi.yaml'
->>>>>>
->>>>>> instead of 'brcm,bcm2835-hdmi.yaml'.
->>>>> You are correct please update only brcm,bcm2711-hdmi.yaml.
->>>>>
->>>>> My concern was that the function vc4_hdmi_encoder_pre_crtc_configure()
->>>>> is called on a non-bcm2711 platform or on a Raspberry Pi 4 with an older
->>>>> DTB. So making the BVB clock optional might be better?
->>>> You are right, if use old dtb, we have a problem with the hdmi driver.
->>>>
->>>> So how about modifying it like this?
->>>>
->>>> @@ -1614,8 +1614,8 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi
->>>> *vc4_hdmi)
->>>>
->>>>           vc4_hdmi->pixel_bvb_clock = devm_clk_get(dev, "bvb");
->>>>           if (IS_ERR(vc4_hdmi->pixel_bvb_clock)) {
->>>> -               DRM_ERROR("Failed to get pixel bvb clock\n");
->>>> -               return PTR_ERR(vc4_hdmi->pixel_bvb_clock);
->>>> +               DRM_WARN("Failed to get pixel bvb clock\n");
->>>> +               vc4_hdmi->pixel_bvb_clock = NULL;
->>>>           }
->>> i think the better solution would be devm_clk_get_optional(), which
->>> return NULL in case the clock doesn't exist.
->> It's not really optional though. BCM2711 will require it in order to run
->> properly (as Hoegeun experienced), and the previous SoCs won't.
->>
->> If we use clk_get_optional and that the DT is missing the clock on the
->> BCM2711, we will silently ignore it which doesn't sound great.
-> Am I missing something here? (I know I missed this earlier)
-> We're in vc5_hdmi_init_resources, which is inherently bcm2711 only.
-> bcm283x will go through vc4_hdmi_init_resources.
->
-> As long as vc4_hdmi_init_resources has left vc4_hdmi->pixel_bvb_clock
-> at NULL, then the clock framework will be happy to do a nop.
->
-> For BCM2711 an old DT would have issues, but, as Maxime has stated, no
-> binding or upstream DTB has been merged yet, so it can be made
-> mandatory.
+Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 25 +++++++++++++++++++++++++
+ drivers/gpu/drm/vc4/vc4_hdmi.h |  1 +
+ 2 files changed, 26 insertions(+)
 
-If so, it seems good to set bvb_clock to mandatory without taking into
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index 95ec5eedea39..eb3192d1fd86 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -80,6 +80,7 @@
+ # define VC4_HD_M_ENABLE			BIT(0)
+ 
+ #define CEC_CLOCK_FREQ 40000
++#define VC4_HSM_MID_CLOCK 149985000
+ 
+ static int vc4_hdmi_debugfs_regs(struct seq_file *m, void *unused)
+ {
+@@ -380,6 +381,7 @@ static void vc4_hdmi_encoder_post_crtc_powerdown(struct drm_encoder *encoder)
+ 	HDMI_WRITE(HDMI_VID_CTL,
+ 		   HDMI_READ(HDMI_VID_CTL) & ~VC4_HD_VID_CTL_ENABLE);
+ 
++	clk_disable_unprepare(vc4_hdmi->pixel_bvb_clock);
+ 	clk_disable_unprepare(vc4_hdmi->hsm_clock);
+ 	clk_disable_unprepare(vc4_hdmi->pixel_clock);
+ 
+@@ -638,6 +640,23 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder)
+ 		return;
+ 	}
+ 
++	ret = clk_set_rate(vc4_hdmi->pixel_bvb_clock,
++			(hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
++	if (ret) {
++		DRM_ERROR("Failed to set pixel bvb clock rate: %d\n", ret);
++		clk_disable_unprepare(vc4_hdmi->hsm_clock);
++		clk_disable_unprepare(vc4_hdmi->pixel_clock);
++		return;
++	}
++
++	ret = clk_prepare_enable(vc4_hdmi->pixel_bvb_clock);
++	if (ret) {
++		DRM_ERROR("Failed to turn on pixel bvb clock: %d\n", ret);
++		clk_disable_unprepare(vc4_hdmi->hsm_clock);
++		clk_disable_unprepare(vc4_hdmi->pixel_clock);
++		return;
++	}
++
+ 	if (vc4_hdmi->variant->reset)
+ 		vc4_hdmi->variant->reset(vc4_hdmi);
+ 
+@@ -1593,6 +1612,12 @@ static int vc5_hdmi_init_resources(struct vc4_hdmi *vc4_hdmi)
+ 		return PTR_ERR(vc4_hdmi->audio_clock);
+ 	}
+ 
++	vc4_hdmi->pixel_bvb_clock = devm_clk_get(dev, "bvb");
++	if (IS_ERR(vc4_hdmi->pixel_bvb_clock)) {
++		DRM_ERROR("Failed to get pixel bvb clock\n");
++		return PTR_ERR(vc4_hdmi->pixel_bvb_clock);
++	}
++
+ 	vc4_hdmi->reset = devm_reset_control_get(dev, NULL);
+ 	if (IS_ERR(vc4_hdmi->reset)) {
+ 		DRM_ERROR("Failed to get HDMI reset line\n");
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
+index 0806c6d9f24e..63c6f8bddf1d 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.h
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+@@ -147,6 +147,7 @@ struct vc4_hdmi {
+ 	struct clk *pixel_clock;
+ 	struct clk *hsm_clock;
+ 	struct clk *audio_clock;
++	struct clk *pixel_bvb_clock;
+ 
+ 	struct reset_control *reset;
+ 
+-- 
+2.17.1
 
-account the BCM2711 an old DTB as it hasn't been merged yet.
-
-I will send version 2 patches.
-
-> Making it optional drops you back on whatever the firmware might have
-> set it to, which may be sufficient for some resolutions but not
-> others.
-
-As a result of checking by adding bvb_clock when I operated it with
-
-the firmware, it was confirmed that the firmware increased the bvb_clock
-
-from 75000000 to 150000000 when the FHD was exceeded.
-
-
-Best regards
-
-Hoegeun
-
->
->    Dave
->
