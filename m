@@ -2,78 +2,77 @@ Return-Path: <SRS0=xpBS=CL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C81C43461
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 03:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6485EC433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 03:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B0692068F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 03:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B0EC2068F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 03:15:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="T43X5Kbm"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="faFMq5I2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgIBDPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Sep 2020 23:15:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50180 "EHLO
+        id S1727776AbgIBDPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Sep 2020 23:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbgIBDO6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Sep 2020 23:14:58 -0400
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D179EC061247
-        for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2020 20:14:57 -0700 (PDT)
-Received: by mail-qt1-x844.google.com with SMTP id z2so2616015qtv.12
-        for <linux-clk@vger.kernel.org>; Tue, 01 Sep 2020 20:14:57 -0700 (PDT)
+        with ESMTP id S1726312AbgIBDOx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Sep 2020 23:14:53 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B71C061247
+        for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2020 20:14:52 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id n133so2920923qkn.11
+        for <linux-clk@vger.kernel.org>; Tue, 01 Sep 2020 20:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5Ea8WQ7Wt3j9I6paBCaizvENu7u3kExQvs9OIGg49V8=;
-        b=T43X5KbmN9quqEoOwg/Sle/n+McXfL0lJjPUhImrykyaXnR8DCAkq2iFDRK10Jur9B
-         wDBfhWpojeQunsT2fZ25eHXoKlS0nKO2g8LPVq1sjwZ9WNMRU38a4RhX54AkOH7+uciM
-         RtirV0XtnFyW20HZ3VnRzEKahK8TZkn8mIV/j0yTzcMdBi1+FEgJyT+Qc16Xsb7xtbv8
-         D7ErysIvk0L22AQjKX/gMDRYpqRsbIrq1ChkZazbF67eywXRgLts5S5PAMl+Z5e+yoOo
-         JP0xf/QGuUmPQo/uX1wLvdaujDnSKK3vEnyVNlN8FzozlCaL5w5nH3Yc8txrASuGv3wG
-         R7NQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UlbLWlkMVESoevFIWT1sNbNt8fHmHBsQCFMt8PDJq9U=;
+        b=faFMq5I2m3KPU2uraA7f990AlH5Kk1unL9mEVC3rhS1hpQBKeOZMJzc5i207HjiJyP
+         /LNh3z3Cicj7HYmrCp/qo+nLjseg4TGrp5Y53qDdVYvCY+NLN/d7m1HE/WINcV5EwS4h
+         cFqnWhFr8uBKuLQCo7eS1foqCCQdZW16LewbJSdiHaelnXRaOZUyZrN9Pj4S7lbYsdTc
+         dZ+C0CEwaHpbfENbARNSVg0Jce/V0UGEN3uKBkd8smLkJggsph1pjlXVg7Jmjv8iVvXH
+         M10kgU6i6ayLGyKIS2BdQ39B9e50G5SNSdmu3aGz8An+BzoQSnNhpKBvbUquG8Al1Two
+         mFtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5Ea8WQ7Wt3j9I6paBCaizvENu7u3kExQvs9OIGg49V8=;
-        b=XpL9SFM/JxcGjccRuYURvFkmUXBzx0nMfDG3eSF2eqtw9PcCdQY55CMN7L8tPqZ/pj
-         4tKwcuD1cOsK3buP56oDE/NVnRq8swim71CiCDTyatVt1v4BorLsIzOfIbjtdyU+9V8b
-         5T7OnD7kIeM5XTS+w+wYl/8Z0Wn3/7EDpYcYlOzISUqh5liFrv+vP3R8JdILmLZE18SN
-         cbKTeCpZGZEg1/rovI1JmZ0cc3HHz3FSETDcwJJGF+rc/lqSeszV8l/+LsxlIwdx4TP0
-         OKU3I/t+Mexe3uWfNdBZ+or3sBp9DX1UNl9XXMu0F7cAhwyzOOYOMTAh0s4AC1WWpgBC
-         aFiQ==
-X-Gm-Message-State: AOAM5330r3S4r0dV2w6vGWlUWGU2WdaufXX3SjdFf3icl8gtUKxM44FE
-        4WCNYKWn0s/iv+6S1eBRbvm2fA==
-X-Google-Smtp-Source: ABdhPJxF/WFugNydZ9grXTfO44GFOgMIDvNVhFjciGy95j+EFCwxll+3T0da17InEjt0oL96zQ83aA==
-X-Received: by 2002:ac8:660a:: with SMTP id c10mr4946660qtp.217.1599016497120;
-        Tue, 01 Sep 2020 20:14:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UlbLWlkMVESoevFIWT1sNbNt8fHmHBsQCFMt8PDJq9U=;
+        b=BiedMROo858xNZ7MPzMgjT1HraXS9TUpC9WMUy84/XR/D4K5Pb3QjjaE8qJA+19WFH
+         LYQAc8bvDcBlrzd4RMzPEiqSHywciSOaRwAyIBW5EZ43FPhk3r/T/pkGL4U20xmNsm3f
+         Ook+xk0JwMoHZ43ARK3IjxSli+UDMT3oY/dpqgYXT/IOn/1MMl+Tt8LzB1L/JhKVS2Pw
+         hxv+b5RqJrCk647AfropNpuNplmrpvBAnvKUCB23A+ezAR+0Cm1QuBIXH1Oo0CBEysfz
+         ODM3erin4IQ8c0bGVKA4UVLcX6bmB91Oc+KH85XQIPkPHXbM5MGVN3a+FTyImYFxDATp
+         tJEw==
+X-Gm-Message-State: AOAM532dWYKGE7GHkNzcuzh0LMNYLNG/OTYFlVuAwtQahTXNWoha93M/
+        GC5Yz8FTE/iIJ0Ny34QlTcAuqA==
+X-Google-Smtp-Source: ABdhPJzmQN78ydD5wyfMB+SzDVzcaoTShsa+fQWtAguBDxr2DV6ZYNi7BqHAMBHSSL3/Uqg7lIj9EQ==
+X-Received: by 2002:a37:9b8f:: with SMTP id d137mr4827236qke.459.1599016491705;
+        Tue, 01 Sep 2020 20:14:51 -0700 (PDT)
 Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id q35sm3755649qtd.75.2020.09.01.20.14.56
+        by smtp.gmail.com with ESMTPSA id q35sm3755649qtd.75.2020.09.01.20.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2020 20:14:56 -0700 (PDT)
+        Tue, 01 Sep 2020 20:14:51 -0700 (PDT)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/5] dt-bindings: clock: add SM8250 QCOM video clock bindings
-Date:   Tue,  1 Sep 2020 23:13:53 -0400
-Message-Id: <20200902031359.6703-4-jonathan@marek.ca>
+        DEVICE TREE BINDINGS),
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/5] SM8150 and SM8250 videocc drivers
+Date:   Tue,  1 Sep 2020 23:13:50 -0400
+Message-Id: <20200902031359.6703-1-jonathan@marek.ca>
 X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200902031359.6703-1-jonathan@marek.ca>
-References: <20200902031359.6703-1-jonathan@marek.ca>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -81,100 +80,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for video clock controller for SM8250 SoCs.
+Add videocc drivers for SM8150/SM8250 required to boot and use venus.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- .../bindings/clock/qcom,videocc.yaml          |  6 ++-
- .../dt-bindings/clock/qcom,videocc-sm8250.h   | 42 +++++++++++++++++++
- 2 files changed, 47 insertions(+), 1 deletion(-)
+Jonathan Marek (5):
+  dt-bindings: clock: combine qcom,sdm845-videocc and
+    qcom,sc7180-videocc
+  dt-bindings: clock: add SM8150 QCOM video clock bindings
+  dt-bindings: clock: add SM8250 QCOM video clock bindings
+  clk: qcom: add video clock controller driver for SM8150
+  clk: qcom: add video clock controller driver for SM8250
+
+ .../bindings/clock/qcom,sc7180-videocc.yaml   |  65 ---
+ ...,sdm845-videocc.yaml => qcom,videocc.yaml} |  20 +-
+ drivers/clk/qcom/Kconfig                      |  18 +
+ drivers/clk/qcom/Makefile                     |   2 +
+ drivers/clk/qcom/videocc-sm8150.c             | 276 ++++++++++
+ drivers/clk/qcom/videocc-sm8250.c             | 516 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,videocc-sm8150.h   |  25 +
+ .../dt-bindings/clock/qcom,videocc-sm8250.h   |  42 ++
+ 8 files changed, 894 insertions(+), 70 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+ rename Documentation/devicetree/bindings/clock/{qcom,sdm845-videocc.yaml => qcom,videocc.yaml} (63%)
+ create mode 100644 drivers/clk/qcom/videocc-sm8150.c
+ create mode 100644 drivers/clk/qcom/videocc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sm8150.h
  create mode 100644 include/dt-bindings/clock/qcom,videocc-sm8250.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-index d04f5bd28dde..757837e260a2 100644
---- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-@@ -11,12 +11,13 @@ maintainers:
- 
- description: |
-   Qualcomm video clock control module which supports the clocks, resets and
--  power domains on SDM845/SC7180/SM8150.
-+  power domains on SDM845/SC7180/SM8150/SM8250.
- 
-   See also:
-     dt-bindings/clock/qcom,videocc-sdm845.h
-     dt-bindings/clock/qcom,videocc-sc7180.h
-     dt-bindings/clock/qcom,videocc-sm8150.h
-+    dt-bindings/clock/qcom,videocc-sm8250.h
- 
- properties:
-   compatible:
-@@ -24,14 +25,17 @@ properties:
-       - qcom,sdm845-videocc
-       - qcom,sc7180-videocc
-       - qcom,sm8150-videocc
-+      - qcom,sm8250-videocc
- 
-   clocks:
-     items:
-       - description: Board XO source
-+      - description: Board XO source, always-on (required by sm8250 only)
- 
-   clock-names:
-     items:
-       - const: bi_tcxo
-+      - const: bi_tcxo_ao
- 
-   '#clock-cells':
-     const: 1
-diff --git a/include/dt-bindings/clock/qcom,videocc-sm8250.h b/include/dt-bindings/clock/qcom,videocc-sm8250.h
-new file mode 100644
-index 000000000000..4c44f9c468db
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,videocc-sm8250.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8250_H
-+#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8250_H
-+
-+/* VIDEO_CC clocks */
-+#define VIDEO_CC_AHB_CLK		0
-+#define VIDEO_CC_AHB_CLK_SRC		1
-+#define VIDEO_CC_MVS0_CLK		2
-+#define VIDEO_CC_MVS0_CLK_SRC		3
-+#define VIDEO_CC_MVS0_DIV_CLK_SRC	4
-+#define VIDEO_CC_MVS0C_CLK		5
-+#define VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC	6
-+#define VIDEO_CC_MVS1_CLK		7
-+#define VIDEO_CC_MVS1_CLK_SRC		8
-+#define VIDEO_CC_MVS1_DIV2_CLK		9
-+#define VIDEO_CC_MVS1_DIV_CLK_SRC	10
-+#define VIDEO_CC_MVS1C_CLK		11
-+#define VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC	12
-+#define VIDEO_CC_XO_CLK			13
-+#define VIDEO_CC_XO_CLK_SRC		14
-+#define VIDEO_CC_PLL0			15
-+#define VIDEO_CC_PLL1			16
-+
-+/* VIDEO_CC resets */
-+#define VIDEO_CC_CVP_INTERFACE_BCR	0
-+#define VIDEO_CC_CVP_MVS0_BCR		1
-+#define VIDEO_CC_MVS0C_CLK_ARES		2
-+#define VIDEO_CC_CVP_MVS0C_BCR		3
-+#define VIDEO_CC_CVP_MVS1_BCR		4
-+#define VIDEO_CC_MVS1C_CLK_ARES		5
-+#define VIDEO_CC_CVP_MVS1C_BCR		6
-+
-+#define MVS0C_GDSC 			0
-+#define MVS1C_GDSC 			1
-+#define MVS0_GDSC 			2
-+#define MVS1_GDSC 			3
-+
-+#endif
 -- 
 2.26.1
 
