@@ -2,45 +2,44 @@ Return-Path: <SRS0=xpBS=CL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DECEC433E2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A7C433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 16:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70451207EA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25BF720773
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 16:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgIBPyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:54:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:41322 "EHLO foss.arm.com"
+        id S1726173AbgIBQDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Sep 2020 12:03:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:41518 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbgIBPyV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:54:21 -0400
+        id S1726247AbgIBQDg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Sep 2020 12:03:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B6B6101E;
-        Wed,  2 Sep 2020 08:54:21 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 494FD101E;
+        Wed,  2 Sep 2020 09:03:35 -0700 (PDT)
 Received: from [10.57.40.122] (unknown [10.57.40.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 503B43F66F;
-        Wed,  2 Sep 2020 08:54:19 -0700 (PDT)
-Subject: Re: [PATCH v1 1/6] clk: rockchip: Use clk_hw_register_composite
- instead of clk_register_composite calls
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99D0F3F66F;
+        Wed,  2 Sep 2020 09:03:33 -0700 (PDT)
+Subject: Re: [PATCH v1 6/6] clk: rockchip: rk3399: Support module build
 To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
 Cc:     huangtao@rock-chips.com, xf@rock-chips.com, sboyd@kernel.org,
         mturquette@baylibre.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, kever.yang@rock-chips.com,
         linux-rockchip@lists.infradead.org, xxx@rock-chips.com
 References: <20200902064847.18881-1-zhangqing@rock-chips.com>
- <20200902064847.18881-2-zhangqing@rock-chips.com>
+ <20200902065000.18996-1-zhangqing@rock-chips.com>
 From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <862531c8-9d10-ae3e-e12a-f1ba0ed66d61@arm.com>
-Date:   Wed, 2 Sep 2020 16:54:18 +0100
+Message-ID: <6568dae9-4910-6525-d424-98a3fec2cae3@arm.com>
+Date:   Wed, 2 Sep 2020 17:03:33 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200902064847.18881-2-zhangqing@rock-chips.com>
+In-Reply-To: <20200902065000.18996-1-zhangqing@rock-chips.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -49,139 +48,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020-09-02 07:48, Elaine Zhang wrote:
-> clk_hw_register_composite it's already exported.
-> Preparation for compilation of rK common clock drivers into modules.
+On 2020-09-02 07:50, Elaine Zhang wrote:
+> support CLK_OF_DECLARE and builtin_platform_driver_probe
+> double clk init method.
+> add module author, description and license to support building
+> Soc Rk3399 clock driver as module.
 > 
 > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 > ---
->   drivers/clk/rockchip/clk-half-divider.c | 12 +++++----
->   drivers/clk/rockchip/clk.c              | 35 ++++++++++++++-----------
->   2 files changed, 27 insertions(+), 20 deletions(-)
+>   drivers/clk/rockchip/clk-rk3399.c | 40 +++++++++++++++++++++++++++++++
+>   1 file changed, 40 insertions(+)
 > 
-> diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-> index b333fc28c94b..35db0651ea1d 100644
-> --- a/drivers/clk/rockchip/clk-half-divider.c
-> +++ b/drivers/clk/rockchip/clk-half-divider.c
-> @@ -166,6 +166,7 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
->   					  unsigned long flags,
->   					  spinlock_t *lock)
->   {
-> +	struct clk_hw *hw;
->   	struct clk *clk;
->   	struct clk_mux *mux = NULL;
->   	struct clk_gate *gate = NULL;
-> @@ -212,12 +213,13 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
->   		div_ops = &clk_half_divider_ops;
->   	}
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index ce1d2446f142..a1d5704b9ba2 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -5,9 +5,11 @@
+>    */
 >   
-> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-> -				     mux ? &mux->hw : NULL, mux_ops,
-> -				     div ? &div->hw : NULL, div_ops,
-> -				     gate ? &gate->hw : NULL, gate_ops,
-> -				     flags);
-> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-> +				       mux ? &mux->hw : NULL, mux_ops,
-> +				       div ? &div->hw : NULL, div_ops,
-> +				       gate ? &gate->hw : NULL, gate_ops,
-> +				       flags);
->   
-> +	clk = hw->clk;
->   	return clk;
+>   #include <linux/clk-provider.h>
+> +#include <linux/module.h>
+>   #include <linux/io.h>
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/regmap.h>
+>   #include <dt-bindings/clock/rk3399-cru.h>
+> @@ -1600,3 +1602,41 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
+>   	rockchip_clk_of_add_provider(np, ctx);
+>   }
+>   CLK_OF_DECLARE(rk3399_cru_pmu, "rockchip,rk3399-pmucru", rk3399_pmu_clk_init);
+> +
+> +static int __init clk_rk3399_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	unsigned long data;
+> +
+> +	data = (unsigned long)of_device_get_match_data(&pdev->dev);
+> +	if (data)
+> +		rk3399_pmu_clk_init(np);
+> +	else
+> +		rk3399_clk_init(np);
 
-Nit: there's really no point keeping the "clk" variable here, you could 
-simply "return hw->clk" if registration succeeds - note that you also 
-need the rest of the logic from clk_register_composite() to check that 
-"hw" isn't an error value.
-
->   err_div:
->   	kfree(gate);
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 546e810c3560..2cfebfb61814 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -43,6 +43,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
->   		u8 gate_shift, u8 gate_flags, unsigned long flags,
->   		spinlock_t *lock)
->   {
-> +	struct clk_hw *hw;
->   	struct clk *clk;
->   	struct clk_mux *mux = NULL;
->   	struct clk_gate *gate = NULL;
-> @@ -100,12 +101,12 @@ static struct clk *rockchip_clk_register_branch(const char *name,
->   						: &clk_divider_ops;
->   	}
->   
-> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-> -				     mux ? &mux->hw : NULL, mux_ops,
-> -				     div ? &div->hw : NULL, div_ops,
-> -				     gate ? &gate->hw : NULL, gate_ops,
-> -				     flags);
-> -
-> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-> +				       mux ? &mux->hw : NULL, mux_ops,
-> +				       div ? &div->hw : NULL, div_ops,
-> +				       gate ? &gate->hw : NULL, gate_ops,
-> +				       flags);
-> +	clk = hw->clk;
->   	if (IS_ERR(clk)) {
-
-Similar to above, this is totally broken - you need to rework all the 
-error handling in terms of "hw" rather than "clk" - dereferencing an 
-ERR_PTR value does not yield another ERR_PTR value, it yields a crash ;)
+It might be clearer and simpler to just store a function pointer in the 
+match data directly - there's already precedent for that elsewhere.
 
 Robin.
 
->   		ret = PTR_ERR(clk);
->   		goto err_composite;
-> @@ -214,6 +215,7 @@ static struct clk *rockchip_clk_register_frac_branch(
->   		unsigned long flags, struct rockchip_clk_branch *child,
->   		spinlock_t *lock)
->   {
-> +	struct clk_hw *hw;
->   	struct rockchip_clk_frac *frac;
->   	struct clk *clk;
->   	struct clk_gate *gate = NULL;
-> @@ -255,11 +257,12 @@ static struct clk *rockchip_clk_register_frac_branch(
->   	div->approximation = rockchip_fractional_approximation;
->   	div_ops = &clk_fractional_divider_ops;
->   
-> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-> -				     NULL, NULL,
-> -				     &div->hw, div_ops,
-> -				     gate ? &gate->hw : NULL, gate_ops,
-> -				     flags | CLK_SET_RATE_UNGATE);
-> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-> +				       NULL, NULL,
-> +				       &div->hw, div_ops,
-> +				       gate ? &gate->hw : NULL, gate_ops,
-> +				       flags | CLK_SET_RATE_UNGATE);
-> +	clk = hw->clk;
->   	if (IS_ERR(clk)) {
->   		kfree(frac);
->   		return clk;
-> @@ -320,6 +323,7 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
->   		int gate_offset, u8 gate_shift, u8 gate_flags,
->   		unsigned long flags, spinlock_t *lock)
->   {
-> +	struct clk_hw *hw;
->   	struct clk *clk;
->   	struct clk_gate *gate = NULL;
->   	struct clk_fixed_factor *fix = NULL;
-> @@ -349,10 +353,11 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
->   	fix->mult = mult;
->   	fix->div = div;
->   
-> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-> -				     NULL, NULL,
-> -				     &fix->hw, &clk_fixed_factor_ops,
-> -				     &gate->hw, &clk_gate_ops, flags);
-> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-> +				       NULL, NULL,
-> +				       &fix->hw, &clk_fixed_factor_ops,
-> +				       &gate->hw, &clk_gate_ops, flags);
-> +	clk = hw->clk;
->   	if (IS_ERR(clk)) {
->   		kfree(fix);
->   		kfree(gate);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id clk_rk3399_match_table[] = {
+> +	{
+> +		.compatible = "rockchip,rk3399-cru",
+> +		.data = (void *)0
+> +	},  {
+> +		.compatible = "rockchip,rk3399-pmucru",
+> +		.data = (void *)1,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, clk_rk3399_match_table);
+> +
+> +static struct platform_driver clk_rk3399_driver = {
+> +	.driver		= {
+> +		.name	= "clk-rk3399",
+> +		.of_match_table = clk_rk3399_match_table,
+> +	},
+> +};
+> +builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
+> +
+> +MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:clk-rk3399");
 > 
