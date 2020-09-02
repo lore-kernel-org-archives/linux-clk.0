@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4A8C433E2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 06:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E5FC433E6
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 06:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2574520665
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 06:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8E2E2084C
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 06:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbgIBGtH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 02:49:07 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:44838 "EHLO
+        id S1726312AbgIBGtN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Sep 2020 02:49:13 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:38532 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbgIBGtF (ORCPT
+        with ESMTP id S1726144AbgIBGtF (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Sep 2020 02:49:05 -0400
 Received: from localhost (unknown [192.168.167.32])
-        by lucky1.263xmail.com (Postfix) with ESMTP id AA8F0A28B8;
-        Wed,  2 Sep 2020 14:48:56 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id 76658C64C8;
+        Wed,  2 Sep 2020 14:49:00 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -29,9 +29,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P11834T140500898137856S1599029334223657_;
-        Wed, 02 Sep 2020 14:48:56 +0800 (CST)
+        Wed, 02 Sep 2020 14:48:59 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <9031bee566e3d13e8f138596523814dc>
+X-UNIQUE-TAG: <2f67782fa89e65d172c349c035c9cf16>
 X-RL-SENDER: zhangqing@rock-chips.com
 X-SENDER: zhangqing@rock-chips.com
 X-LOGIN-NAME: zhangqing@rock-chips.com
@@ -47,9 +47,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-kernel@vger.kernel.org, xxx@rock-chips.com,
         xf@rock-chips.com, huangtao@rock-chips.com,
         kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 1/6] clk: rockchip: Use clk_hw_register_composite instead of clk_register_composite calls
-Date:   Wed,  2 Sep 2020 14:48:42 +0800
-Message-Id: <20200902064847.18881-2-zhangqing@rock-chips.com>
+Subject: [PATCH v1 4/6] clk: rockchip: Export some clock common APIs for module drivers
+Date:   Wed,  2 Sep 2020 14:48:45 +0800
+Message-Id: <20200902064847.18881-5-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200902064847.18881-1-zhangqing@rock-chips.com>
 References: <20200902064847.18881-1-zhangqing@rock-chips.com>
@@ -58,127 +58,140 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_hw_register_composite it's already exported.
-Preparation for compilation of rK common clock drivers into modules.
+This is used by the Rockchip clk driver, export it to allow that
+driver to be compiled as a module.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/rockchip/clk-half-divider.c | 12 +++++----
- drivers/clk/rockchip/clk.c              | 35 ++++++++++++++-----------
- 2 files changed, 27 insertions(+), 20 deletions(-)
+ drivers/clk/rockchip/clk.c | 52 ++++++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-index b333fc28c94b..35db0651ea1d 100644
---- a/drivers/clk/rockchip/clk-half-divider.c
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -166,6 +166,7 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
- 					  unsigned long flags,
- 					  spinlock_t *lock)
- {
-+	struct clk_hw *hw;
- 	struct clk *clk;
- 	struct clk_mux *mux = NULL;
- 	struct clk_gate *gate = NULL;
-@@ -212,12 +213,13 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
- 		div_ops = &clk_half_divider_ops;
- 	}
- 
--	clk = clk_register_composite(NULL, name, parent_names, num_parents,
--				     mux ? &mux->hw : NULL, mux_ops,
--				     div ? &div->hw : NULL, div_ops,
--				     gate ? &gate->hw : NULL, gate_ops,
--				     flags);
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux ? &mux->hw : NULL, mux_ops,
-+				       div ? &div->hw : NULL, div_ops,
-+				       gate ? &gate->hw : NULL, gate_ops,
-+				       flags);
- 
-+	clk = hw->clk;
- 	return clk;
- err_div:
- 	kfree(gate);
 diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 546e810c3560..2cfebfb61814 100644
+index 2cfebfb61814..796338c3bd6f 100644
 --- a/drivers/clk/rockchip/clk.c
 +++ b/drivers/clk/rockchip/clk.c
-@@ -43,6 +43,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 		u8 gate_shift, u8 gate_flags, unsigned long flags,
- 		spinlock_t *lock)
+@@ -366,8 +366,9 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
+ 	return clk;
+ }
+ 
+-struct rockchip_clk_provider * __init rockchip_clk_init(struct device_node *np,
+-			void __iomem *base, unsigned long nr_clks)
++struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
++						void __iomem *base,
++						unsigned long nr_clks)
  {
-+	struct clk_hw *hw;
- 	struct clk *clk;
- 	struct clk_mux *mux = NULL;
- 	struct clk_gate *gate = NULL;
-@@ -100,12 +101,12 @@ static struct clk *rockchip_clk_register_branch(const char *name,
- 						: &clk_divider_ops;
+ 	struct rockchip_clk_provider *ctx;
+ 	struct clk **clk_table;
+@@ -399,14 +400,16 @@ struct rockchip_clk_provider * __init rockchip_clk_init(struct device_node *np,
+ 	kfree(ctx);
+ 	return ERR_PTR(-ENOMEM);
+ }
++EXPORT_SYMBOL(rockchip_clk_init);
+ 
+-void __init rockchip_clk_of_add_provider(struct device_node *np,
+-				struct rockchip_clk_provider *ctx)
++void rockchip_clk_of_add_provider(struct device_node *np,
++				  struct rockchip_clk_provider *ctx)
+ {
+ 	if (of_clk_add_provider(np, of_clk_src_onecell_get,
+ 				&ctx->clk_data))
+ 		pr_err("%s: could not register clk provider\n", __func__);
+ }
++EXPORT_SYMBOL(rockchip_clk_of_add_provider);
+ 
+ void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
+ 			     struct clk *clk, unsigned int id)
+@@ -414,8 +417,9 @@ void rockchip_clk_add_lookup(struct rockchip_clk_provider *ctx,
+ 	if (ctx->clk_data.clks && id)
+ 		ctx->clk_data.clks[id] = clk;
+ }
++EXPORT_SYMBOL(rockchip_clk_add_lookup);
+ 
+-void __init rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
++void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+ 				struct rockchip_pll_clock *list,
+ 				unsigned int nr_pll, int grf_lock_offset)
+ {
+@@ -438,11 +442,11 @@ void __init rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+ 		rockchip_clk_add_lookup(ctx, clk, list->id);
  	}
+ }
++EXPORT_SYMBOL(rockchip_clk_register_plls);
  
--	clk = clk_register_composite(NULL, name, parent_names, num_parents,
--				     mux ? &mux->hw : NULL, mux_ops,
--				     div ? &div->hw : NULL, div_ops,
--				     gate ? &gate->hw : NULL, gate_ops,
--				     flags);
+-void __init rockchip_clk_register_branches(
+-				      struct rockchip_clk_provider *ctx,
+-				      struct rockchip_clk_branch *list,
+-				      unsigned int nr_clk)
++void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
++				    struct rockchip_clk_branch *list,
++				    unsigned int nr_clk)
+ {
+ 	struct clk *clk = NULL;
+ 	unsigned int idx;
+@@ -571,14 +575,15 @@ void __init rockchip_clk_register_branches(
+ 		rockchip_clk_add_lookup(ctx, clk, list->id);
+ 	}
+ }
 -
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux ? &mux->hw : NULL, mux_ops,
-+				       div ? &div->hw : NULL, div_ops,
-+				       gate ? &gate->hw : NULL, gate_ops,
-+				       flags);
-+	clk = hw->clk;
- 	if (IS_ERR(clk)) {
- 		ret = PTR_ERR(clk);
- 		goto err_composite;
-@@ -214,6 +215,7 @@ static struct clk *rockchip_clk_register_frac_branch(
- 		unsigned long flags, struct rockchip_clk_branch *child,
- 		spinlock_t *lock)
+-void __init rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+-			unsigned int lookup_id,
+-			const char *name, const char *const *parent_names,
+-			u8 num_parents,
+-			const struct rockchip_cpuclk_reg_data *reg_data,
+-			const struct rockchip_cpuclk_rate_table *rates,
+-			int nrates)
++EXPORT_SYMBOL(rockchip_clk_register_branches);
++
++void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
++				  unsigned int lookup_id,
++				  const char *name, const char *const *parent_names,
++				  u8 num_parents,
++				  const struct rockchip_cpuclk_reg_data *reg_data,
++				  const struct rockchip_cpuclk_rate_table *rates,
++				  int nrates)
  {
-+	struct clk_hw *hw;
- 	struct rockchip_clk_frac *frac;
  	struct clk *clk;
- 	struct clk_gate *gate = NULL;
-@@ -255,11 +257,12 @@ static struct clk *rockchip_clk_register_frac_branch(
- 	div->approximation = rockchip_fractional_approximation;
- 	div_ops = &clk_fractional_divider_ops;
  
--	clk = clk_register_composite(NULL, name, parent_names, num_parents,
--				     NULL, NULL,
--				     &div->hw, div_ops,
--				     gate ? &gate->hw : NULL, gate_ops,
--				     flags | CLK_SET_RATE_UNGATE);
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       NULL, NULL,
-+				       &div->hw, div_ops,
-+				       gate ? &gate->hw : NULL, gate_ops,
-+				       flags | CLK_SET_RATE_UNGATE);
-+	clk = hw->clk;
- 	if (IS_ERR(clk)) {
- 		kfree(frac);
- 		return clk;
-@@ -320,6 +323,7 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
- 		int gate_offset, u8 gate_shift, u8 gate_flags,
- 		unsigned long flags, spinlock_t *lock)
+@@ -593,9 +598,10 @@ void __init rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 
+ 	rockchip_clk_add_lookup(ctx, clk, lookup_id);
+ }
++EXPORT_SYMBOL(rockchip_clk_register_armclk);
+ 
+-void __init rockchip_clk_protect_critical(const char *const clocks[],
+-					  int nclocks)
++void rockchip_clk_protect_critical(const char *const clocks[],
++				   int nclocks)
  {
-+	struct clk_hw *hw;
- 	struct clk *clk;
- 	struct clk_gate *gate = NULL;
- 	struct clk_fixed_factor *fix = NULL;
-@@ -349,10 +353,11 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
- 	fix->mult = mult;
- 	fix->div = div;
+ 	int i;
  
--	clk = clk_register_composite(NULL, name, parent_names, num_parents,
--				     NULL, NULL,
--				     &fix->hw, &clk_fixed_factor_ops,
--				     &gate->hw, &clk_gate_ops, flags);
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       NULL, NULL,
-+				       &fix->hw, &clk_fixed_factor_ops,
-+				       &gate->hw, &clk_gate_ops, flags);
-+	clk = hw->clk;
- 	if (IS_ERR(clk)) {
- 		kfree(fix);
- 		kfree(gate);
+@@ -607,6 +613,7 @@ void __init rockchip_clk_protect_critical(const char *const clocks[],
+ 			clk_prepare_enable(clk);
+ 	}
+ }
++EXPORT_SYMBOL(rockchip_clk_protect_critical);
+ 
+ static void __iomem *rst_base;
+ static unsigned int reg_restart;
+@@ -626,10 +633,10 @@ static struct notifier_block rockchip_restart_handler = {
+ 	.priority = 128,
+ };
+ 
+-void __init
++void
+ rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+-					       unsigned int reg,
+-					       void (*cb)(void))
++				   unsigned int reg,
++				   void (*cb)(void))
+ {
+ 	int ret;
+ 
+@@ -641,3 +648,4 @@ rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 		pr_err("%s: cannot register restart handler, %d\n",
+ 		       __func__, ret);
+ }
++EXPORT_SYMBOL(rockchip_register_restart_notifier);
 -- 
 2.17.1
 
