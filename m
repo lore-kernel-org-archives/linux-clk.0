@@ -2,144 +2,186 @@ Return-Path: <SRS0=xpBS=CL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00334C433E2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DECEC433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D16E920678
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599061136;
-	bh=T6Yn3tddYjoK53UIen+h42dRX/nUCLrBYpMRIo/p/jg=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=qXdL6sIOs9OGYWQN1fhvw/KY9ufXTTCBNIHNL5HlwuXwilNI+Q6PIa7haq49mpgEw
-	 2X8oXdGhKg7J38dP/O7s21QswVwS06O8M823nY7f/OaAD7YII1VQWFyykOZPHXg4bY
-	 lLGVlmEalE7EsMt+E+EVlmKWiGC89xDQdzugaZAA=
+	by mail.kernel.org (Postfix) with ESMTP id 70451207EA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbgIBPiz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:38:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40780 "EHLO mail.kernel.org"
+        id S1726726AbgIBPyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Sep 2020 11:54:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:41322 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbgIBPC5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:02:57 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BCC620773;
-        Wed,  2 Sep 2020 15:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599058974;
-        bh=T6Yn3tddYjoK53UIen+h42dRX/nUCLrBYpMRIo/p/jg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mQl7IDeluJ5si0Krf40peleU/p5DkqAdXabeJfq4UXZPZwSy48Z41gWvswjYvSbx5
-         aCnXwidGvUsRyRp1ZAYL9ne3hMwdL855PygrXIQImnJbPLmSvEDr5qoT6m0s53XQR9
-         keKYV1/Tm/01ybiTAwuDEnp7WfqNPlBD9B1dVyhU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/3] clk: imx: Declare clock init functions in header acessible from mach
-Date:   Wed,  2 Sep 2020 17:02:42 +0200
-Message-Id: <20200902150244.14347-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726173AbgIBPyV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Sep 2020 11:54:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B6B6101E;
+        Wed,  2 Sep 2020 08:54:21 -0700 (PDT)
+Received: from [10.57.40.122] (unknown [10.57.40.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 503B43F66F;
+        Wed,  2 Sep 2020 08:54:19 -0700 (PDT)
+Subject: Re: [PATCH v1 1/6] clk: rockchip: Use clk_hw_register_composite
+ instead of clk_register_composite calls
+To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
+Cc:     huangtao@rock-chips.com, xf@rock-chips.com, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, kever.yang@rock-chips.com,
+        linux-rockchip@lists.infradead.org, xxx@rock-chips.com
+References: <20200902064847.18881-1-zhangqing@rock-chips.com>
+ <20200902064847.18881-2-zhangqing@rock-chips.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <862531c8-9d10-ae3e-e12a-f1ba0ed66d61@arm.com>
+Date:   Wed, 2 Sep 2020 16:54:18 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20200902064847.18881-2-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Multiple files from arch/arm/mach-imx/ use clock init functions which
-are defined in the IMX clock drivers.  Declare them in globally
-accessible header to fix GCC warnings:
+On 2020-09-02 07:48, Elaine Zhang wrote:
+> clk_hw_register_composite it's already exported.
+> Preparation for compilation of rK common clock drivers into modules.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>   drivers/clk/rockchip/clk-half-divider.c | 12 +++++----
+>   drivers/clk/rockchip/clk.c              | 35 ++++++++++++++-----------
+>   2 files changed, 27 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
+> index b333fc28c94b..35db0651ea1d 100644
+> --- a/drivers/clk/rockchip/clk-half-divider.c
+> +++ b/drivers/clk/rockchip/clk-half-divider.c
+> @@ -166,6 +166,7 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
+>   					  unsigned long flags,
+>   					  spinlock_t *lock)
+>   {
+> +	struct clk_hw *hw;
+>   	struct clk *clk;
+>   	struct clk_mux *mux = NULL;
+>   	struct clk_gate *gate = NULL;
+> @@ -212,12 +213,13 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
+>   		div_ops = &clk_half_divider_ops;
+>   	}
+>   
+> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> -				     mux ? &mux->hw : NULL, mux_ops,
+> -				     div ? &div->hw : NULL, div_ops,
+> -				     gate ? &gate->hw : NULL, gate_ops,
+> -				     flags);
+> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +				       mux ? &mux->hw : NULL, mux_ops,
+> +				       div ? &div->hw : NULL, div_ops,
+> +				       gate ? &gate->hw : NULL, gate_ops,
+> +				       flags);
+>   
+> +	clk = hw->clk;
+>   	return clk;
 
-  drivers/clk/imx/clk-imx21.c:122:74: warning: no previous prototype for 'mx21_clocks_init' [-Wmissing-prototypes]
+Nit: there's really no point keeping the "clk" variable here, you could 
+simply "return hw->clk" if registration succeeds - note that you also 
+need the rest of the logic from clk_register_composite() to check that 
+"hw" isn't an error value.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/imx/clk-imx21.c |  1 +
- drivers/clk/imx/clk-imx27.c |  1 +
- drivers/clk/imx/clk-imx31.c |  1 +
- drivers/clk/imx/clk-imx35.c |  1 +
- include/linux/clk/imx.h     | 11 +++++++++++
- 5 files changed, 15 insertions(+)
- create mode 100644 include/linux/clk/imx.h
+>   err_div:
+>   	kfree(gate);
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 546e810c3560..2cfebfb61814 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -43,6 +43,7 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+>   		u8 gate_shift, u8 gate_flags, unsigned long flags,
+>   		spinlock_t *lock)
+>   {
+> +	struct clk_hw *hw;
+>   	struct clk *clk;
+>   	struct clk_mux *mux = NULL;
+>   	struct clk_gate *gate = NULL;
+> @@ -100,12 +101,12 @@ static struct clk *rockchip_clk_register_branch(const char *name,
+>   						: &clk_divider_ops;
+>   	}
+>   
+> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> -				     mux ? &mux->hw : NULL, mux_ops,
+> -				     div ? &div->hw : NULL, div_ops,
+> -				     gate ? &gate->hw : NULL, gate_ops,
+> -				     flags);
+> -
+> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +				       mux ? &mux->hw : NULL, mux_ops,
+> +				       div ? &div->hw : NULL, div_ops,
+> +				       gate ? &gate->hw : NULL, gate_ops,
+> +				       flags);
+> +	clk = hw->clk;
+>   	if (IS_ERR(clk)) {
 
-diff --git a/drivers/clk/imx/clk-imx21.c b/drivers/clk/imx/clk-imx21.c
-index 077b4a7123ce..2105ef57b6bc 100644
---- a/drivers/clk/imx/clk-imx21.c
-+++ b/drivers/clk/imx/clk-imx21.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-+#include <linux/clk/imx.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
-index a3753067fc12..c0d8bcdf0719 100644
---- a/drivers/clk/imx/clk-imx27.c
-+++ b/drivers/clk/imx/clk-imx27.c
-@@ -2,6 +2,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-+#include <linux/clk/imx.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 4bb05e440cdd..25be4c292e44 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -6,6 +6,7 @@
- #include <linux/module.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
-+#include <linux/clk/imx.h>
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/imx/clk-imx35.c b/drivers/clk/imx/clk-imx35.c
-index e595f559907f..baf8d236d6ef 100644
---- a/drivers/clk/imx/clk-imx35.c
-+++ b/drivers/clk/imx/clk-imx35.c
-@@ -5,6 +5,7 @@
- #include <linux/mm.h>
- #include <linux/delay.h>
- #include <linux/clk.h>
-+#include <linux/clk/imx.h>
- #include <linux/io.h>
- #include <linux/clkdev.h>
- #include <linux/of.h>
-diff --git a/include/linux/clk/imx.h b/include/linux/clk/imx.h
-new file mode 100644
-index 000000000000..f6394d1b0a94
---- /dev/null
-+++ b/include/linux/clk/imx.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __LINUX_CLK_IMX_H
-+#define __LINUX_CLK_IMX_H
-+
-+int mx21_clocks_init(unsigned long lref, unsigned long href);
-+int mx27_clocks_init(unsigned long fref);
-+int mx31_clocks_init(unsigned long fref);
-+int mx35_clocks_init(void);
-+
-+#endif /* __LINUX_CLK_IMX_H */
--- 
-2.17.1
+Similar to above, this is totally broken - you need to rework all the 
+error handling in terms of "hw" rather than "clk" - dereferencing an 
+ERR_PTR value does not yield another ERR_PTR value, it yields a crash ;)
 
+Robin.
+
+>   		ret = PTR_ERR(clk);
+>   		goto err_composite;
+> @@ -214,6 +215,7 @@ static struct clk *rockchip_clk_register_frac_branch(
+>   		unsigned long flags, struct rockchip_clk_branch *child,
+>   		spinlock_t *lock)
+>   {
+> +	struct clk_hw *hw;
+>   	struct rockchip_clk_frac *frac;
+>   	struct clk *clk;
+>   	struct clk_gate *gate = NULL;
+> @@ -255,11 +257,12 @@ static struct clk *rockchip_clk_register_frac_branch(
+>   	div->approximation = rockchip_fractional_approximation;
+>   	div_ops = &clk_fractional_divider_ops;
+>   
+> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> -				     NULL, NULL,
+> -				     &div->hw, div_ops,
+> -				     gate ? &gate->hw : NULL, gate_ops,
+> -				     flags | CLK_SET_RATE_UNGATE);
+> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +				       NULL, NULL,
+> +				       &div->hw, div_ops,
+> +				       gate ? &gate->hw : NULL, gate_ops,
+> +				       flags | CLK_SET_RATE_UNGATE);
+> +	clk = hw->clk;
+>   	if (IS_ERR(clk)) {
+>   		kfree(frac);
+>   		return clk;
+> @@ -320,6 +323,7 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
+>   		int gate_offset, u8 gate_shift, u8 gate_flags,
+>   		unsigned long flags, spinlock_t *lock)
+>   {
+> +	struct clk_hw *hw;
+>   	struct clk *clk;
+>   	struct clk_gate *gate = NULL;
+>   	struct clk_fixed_factor *fix = NULL;
+> @@ -349,10 +353,11 @@ static struct clk *rockchip_clk_register_factor_branch(const char *name,
+>   	fix->mult = mult;
+>   	fix->div = div;
+>   
+> -	clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> -				     NULL, NULL,
+> -				     &fix->hw, &clk_fixed_factor_ops,
+> -				     &gate->hw, &clk_gate_ops, flags);
+> +	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +				       NULL, NULL,
+> +				       &fix->hw, &clk_fixed_factor_ops,
+> +				       &gate->hw, &clk_gate_ops, flags);
+> +	clk = hw->clk;
+>   	if (IS_ERR(clk)) {
+>   		kfree(fix);
+>   		kfree(gate);
+> 
