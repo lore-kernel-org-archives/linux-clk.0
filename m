@@ -2,49 +2,49 @@ Return-Path: <SRS0=xpBS=CL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9096CC433E2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB28C43461
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6420B207EA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599061032;
-	bh=aA+PtX6Nad2JFzWaGrJQ2P+Mkq0OmWZKEB6gRo24RH8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=eJJz8Q91eHGXWorZlg0ffgLNYC4L3/5F8wejKvFVDTRXk3OZvQWkLX8w3GDbZpYNM
-	 mByDxe96bbgvW2tnMiur8UIsk8XsUr2eZq1WFKWPiDCdBX39dg+LdcuG6NMtlgwxx1
-	 IQQrFtBEKLFZYmhEkIR0ATt1KqTEe7Q1oHTb5Qg0=
+	by mail.kernel.org (Postfix) with ESMTP id 118FF20678
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 15:38:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="MD6fWbGW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbgIBPgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 11:36:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        id S1726755AbgIBPiN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Sep 2020 11:38:13 -0400
+Received: from vern.gendns.com ([98.142.107.122]:41790 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbgIBPEA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:04:00 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64C4520773;
-        Wed,  2 Sep 2020 15:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599059040;
-        bh=aA+PtX6Nad2JFzWaGrJQ2P+Mkq0OmWZKEB6gRo24RH8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=u8LETQ3giKPlRcn+a/R/eWqA6GUVG4FAiqFYzmRMqn2vlA5UNNO4H+WwjxOb0g8eq
-         hxJeGI+2kXZjju7EZqjBXc+v0aQxSQjU/MShvRjy1dpwcGl3HZ2fXE5lo291Z/ZQ+H
-         XHI1KR/Hg7nXMdGRxmZlmXpmZTqUmUHApR6W5ywQ=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726140AbgIBPiD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Sep 2020 11:38:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1WJCvpUbONxE9kBc4YJDae1soRkUcyCvXmPAxzsFTIo=; b=MD6fWbGWOUaGaH59wnHnjDcs4W
+        aNh3yHFBfOfrIqu1O+qlhQA8tqt7eolRdc5vC2HLpj5AnEYz11vh3TVCBddqu0O3IduFmhrvmS/Uc
+        61yc1cpEOG32hCV4zRBkkZu2DR6ulxgS5rOojmvtgenVcZ5JbdHSrD5usPYUVVpS5JnX29an3dNkO
+        oacsIpSs/3FrVxRkahDLiVsNAfwrQHRWcmfi5Ai7dNRi/2wpzyietRSHLRUhcZNG9XwxmxMR7kfb1
+        OE8tG2aC+1DuCrVNf4RvWjNFNd8c1iy+dxmgYDRFAIal0+Ka06utj44gp6ThyQVggk9pjKqxHMsvM
+        ThLNeGBg==;
+Received: from [2600:1700:4830:165f::19e] (port=47972)
+        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <david@lechnology.com>)
+        id 1kDUpj-0002Sa-Sx; Wed, 02 Sep 2020 11:38:00 -0400
+Subject: Re: [PATCH 10/10] clk: davinci: Simplify with dev_err_probe()
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
-        David Lechner <david@lechnology.com>,
         Sekhar Nori <nsekhar@ti.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -57,44 +57,39 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 01/10] clk: at91: Drop unused at91sam9g45_pcr_layout
-Date:   Wed,  2 Sep 2020 17:03:39 +0200
-Message-Id: <20200902150348.14465-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+References: <20200902150348.14465-1-krzk@kernel.org>
+ <20200902150348.14465-10-krzk@kernel.org>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <c4ebd618-be71-c898-7adb-f88cf81195ac@lechnology.com>
+Date:   Wed, 2 Sep 2020 10:37:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200902150348.14465-10-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The at91sam9g45_pcr_layout is not used so drop it to fix build warning:
+On 9/2/20 10:03 AM, Krzysztof Kozlowski wrote:
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and the error value gets printed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-  drivers/clk/at91/at91sam9g45.c:49:36: warning:
-    'at91sam9g45_pcr_layout' defined but not used [-Wunused-const-variable=]
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/at91/at91sam9g45.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-index c88ee20bee31..cb4a406ed15d 100644
---- a/drivers/clk/at91/at91sam9g45.c
-+++ b/drivers/clk/at91/at91sam9g45.c
-@@ -46,13 +46,6 @@ static const struct {
- 	{ .n = "pck1",  .p = "prog1",    .id = 9 },
- };
- 
--static const struct clk_pcr_layout at91sam9g45_pcr_layout = {
--	.offset = 0x10c,
--	.cmd = BIT(12),
--	.pid_mask = GENMASK(5, 0),
--	.div_mask = GENMASK(17, 16),
--};
--
- struct pck {
- 	char *n;
- 	u8 id;
--- 
-2.17.1
+Reviewed-by: David Lechner <david@lechnology.com>
 
