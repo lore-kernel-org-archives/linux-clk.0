@@ -2,239 +2,91 @@ Return-Path: <SRS0=Hc98=CM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C808C433E2
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 10:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441CFC433E2
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 12:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39B30206E7
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 10:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1A220758
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 12:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbgICKKR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Sep 2020 06:10:17 -0400
-Received: from regular1.263xmail.com ([211.150.70.199]:38748 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbgICKKE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 06:10:04 -0400
-Received: from localhost (unknown [192.168.167.235])
-        by regular1.263xmail.com (Postfix) with ESMTP id 8116DF03;
-        Thu,  3 Sep 2020 18:03:09 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.12.120] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P22906T140608763062016S1599127388444849_;
-        Thu, 03 Sep 2020 18:03:09 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <d3018c1042ed8c5abd5c98892315d0c2>
-X-RL-SENDER: kever.yang@rock-chips.com
-X-SENDER: yk@rock-chips.com
-X-LOGIN-NAME: kever.yang@rock-chips.com
-X-FST-TO: huangtao@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-Subject: Re: [PATCH v2 5/6] clk: rockchip: fix the clk config to support
- module build
-To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com
-References: <20200903063147.10237-1-zhangqing@rock-chips.com>
- <20200903063221.10500-1-zhangqing@rock-chips.com>
-From:   Kever Yang <kever.yang@rock-chips.com>
-Message-ID: <2ee0e288-ae7f-5c6a-a5d4-5cee33a05e9e@rock-chips.com>
-Date:   Thu, 3 Sep 2020 18:03:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728978AbgICMqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Sep 2020 08:46:46 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39757 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728964AbgICMqG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 08:46:06 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r64so2974650oib.6;
+        Thu, 03 Sep 2020 05:45:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ml+p0f4/lZUonascXc6jcxVxCdORbfnV0c6JRtVN0WI=;
+        b=LzRU28HIrkxAkGLDjs76uVr4b+0TLwmDgfebuoIwmRATq6cQ/HKfpcSEsNjnyw2i1S
+         b9iIWk8/Qf6+3gNWDFaRCR8vHymet/vn1IorV5AA+QFxT3QH0IkGp/v7ThVa/tHG3S3w
+         QdN8wqBAp/0YRNcqmx73JKlnnA1mU8BrLzj/Kbtm8BCuaKf7P7N2wsRbpvfKliBChkHC
+         iNd4eX+r/It7H1G6wZY+qMS3s45+GSQLclW0aRoqlQNHaKXYeXbq4LMrjmUilgZI7hAl
+         xLakXTCqWHPd4RZCU1G9l871Z3bhNGWVbwPC3DutXI/9n/yjFu8s3ZDYVJOdVNZ2076r
+         pu4w==
+X-Gm-Message-State: AOAM533lkYUAia/gXXZWtqCny7LydH5gxP9+DuUjgDE7Gdbcgs5hxzAw
+        J+G+HcZ7gSRyYLqA73TzholfhfrQjZhJGf0iFQE6/6Bp
+X-Google-Smtp-Source: ABdhPJwZcz/ujowdJByh5kbHpCBfa3Mpr/OPyUnuyyZK6ceNjumcCEmczP0uPpBwRxXaF/qOFQ+eA/665+uKpJ+OxTA=
+X-Received: by 2002:aca:3402:: with SMTP id b2mr1797687oia.153.1599136958847;
+ Thu, 03 Sep 2020 05:42:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200903063221.10500-1-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200831180312.7453-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200831180312.7453-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 3 Sep 2020 14:42:27 +0200
+Message-ID: <CAMuHMdXWxYgAZx7bCET-U2S9KUo2tAT2gqKn3W5LTTtH-oRS0Q@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r8a7742-cpg-mssr: Add clk entry for VSPR
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 2020/9/3 下午2:32, Elaine Zhang wrote:
-> use CONFIG_COMMON_CLK_ROCKCHIP for Rk common clk drivers.
-> use CONFIG_CLK_RKXX for Rk soc clk driver.
-> Mark configuration to "tristate",
-> to support building Rk SoCs clock driver as module.
+On Mon, Aug 31, 2020 at 8:03 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add clock entry 130 for VSPR (VSP for Resizing) module, so that this module
+> can be used on R8A7742 (RZ/G1H) SoC.
 >
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Alongside rename clock entry "vsp1-sy" to "vsps" (VSP Standard), so that
+> VSP1 clock names are in sync.
+>
+> Note: The entry for VSPR clock was accidentally dropped from RZ/G manual
+> when all the information related to RT were removed.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->   drivers/clk/Kconfig           |  1 +
->   drivers/clk/rockchip/Kconfig  | 78 +++++++++++++++++++++++++++++++++++
->   drivers/clk/rockchip/Makefile | 42 ++++++++++---------
->   3 files changed, 101 insertions(+), 20 deletions(-)
->   create mode 100644 drivers/clk/rockchip/Kconfig
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 4026fac9fac3..b41aaed9bd51 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -373,6 +373,7 @@ source "drivers/clk/meson/Kconfig"
->   source "drivers/clk/mvebu/Kconfig"
->   source "drivers/clk/qcom/Kconfig"
->   source "drivers/clk/renesas/Kconfig"
-> +source "drivers/clk/rockchip/Kconfig"
->   source "drivers/clk/samsung/Kconfig"
->   source "drivers/clk/sifive/Kconfig"
->   source "drivers/clk/sprd/Kconfig"
-> diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
-> new file mode 100644
-> index 000000000000..53a44396bc35
-> --- /dev/null
-> +++ b/drivers/clk/rockchip/Kconfig
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# common clock support for ROCKCHIP SoC family.
-> +
-> +config COMMON_CLK_ROCKCHIP
-> +	tristate "Rockchip clock controller common support"
-> +	depends on ARCH_ROCKCHIP
-> +	default ARCH_ROCKCHIP
-> +	help
-> +	  Say y here to enable common clock controller.
-> +
-> +if COMMON_CLK_ROCKCHIP
-> +config CLK_PX30
-> +	tristate "Rockchip Px30 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Px30 Clock Driver.
-> +
-> +config CLK_RV110X
-> +	tristate "Rockchip Rv110x clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rv110x Clock Driver.
-> +
-> +config CLK_RK3036
-> +	tristate "Rockchip Rk3036 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3036 Clock Driver.
-> +
-> +config CLK_RK312X
-> +	tristate "Rockchip Rk312x clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk312x Clock Driver.
-> +
-> +config CLK_RK3188
-> +	tristate "Rockchip Rk3188 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3188 Clock Driver.
-> +
-> +config CLK_RK322X
-> +	tristate "Rockchip Rk322x clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk322x Clock Driver.
-> +
-> +config CLK_RK3288
-> +	tristate "Rockchip Rk3288 clock controller support"
-> +	depends on ARM
-> +	default y
-> +	help
-> +	  Build the driver for Rk3288 Clock Driver.
-> +
-> +config CLK_RK3308
-> +	tristate "Rockchip Rk3308 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3308 Clock Driver.
-> +
-> +config CLK_RK3328
-> +	tristate "Rockchip Rk3328 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3328 Clock Driver.
-> +
-> +config CLK_RK3368
-> +	tristate "Rockchip Rk3368 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3368 Clock Driver.
-> +
-> +config CLK_RK3399
-> +	tristate "Rockchip Rk3399 clock controller support"
-> +	default y
-> +	help
-> +	  Build the driver for Rk3399 Clock Driver.
-> +endif
-> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-> index 7c5b5813a87c..a99e4d9bbae1 100644
-> --- a/drivers/clk/rockchip/Makefile
-> +++ b/drivers/clk/rockchip/Makefile
-> @@ -3,24 +3,26 @@
->   # Rockchip Clock specific Makefile
->   #
->   
-> -obj-y	+= clk.o
-> -obj-y	+= clk-pll.o
-> -obj-y	+= clk-cpu.o
-> -obj-y	+= clk-half-divider.o
-> -obj-y	+= clk-inverter.o
-> -obj-y	+= clk-mmc-phase.o
-> -obj-y	+= clk-muxgrf.o
-> -obj-y	+= clk-ddr.o
-> -obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
-> +obj-$(CONFIG_COMMON_CLK_ROCKCHIP) += clk-rockchip.o
->   
-> -obj-y	+= clk-px30.o
-> -obj-y	+= clk-rv1108.o
-> -obj-y	+= clk-rk3036.o
-> -obj-y	+= clk-rk3128.o
-> -obj-y	+= clk-rk3188.o
-> -obj-y	+= clk-rk3228.o
-> -obj-y	+= clk-rk3288.o
-> -obj-y	+= clk-rk3308.o
-> -obj-y	+= clk-rk3328.o
-> -obj-y	+= clk-rk3368.o
-> -obj-y	+= clk-rk3399.o
-> +clk-rockchip-y += clk.o
-> +clk-rockchip-y += clk-pll.o
-> +clk-rockchip-y += clk-cpu.o
-> +clk-rockchip-y += clk-half-divider.o
-> +clk-rockchip-y += clk-inverter.o
-> +clk-rockchip-y += clk-mmc-phase.o
-> +clk-rockchip-y += clk-muxgrf.o
-> +clk-rockchip-y += clk-ddr.o
-> +clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
-> +
-> +obj-$(CONFIG_CLK_PX30)          += clk-px30.o
-> +obj-$(CONFIG_CLK_RV110X)        += clk-rv1108.o
-> +obj-$(CONFIG_CLK_RK3036)        += clk-rk3036.o
-> +obj-$(CONFIG_CLK_RK312X)        += clk-rk3128.o
-> +obj-$(CONFIG_CLK_RK3188)        += clk-rk3188.o
-> +obj-$(CONFIG_CLK_RK322X)        += clk-rk3228.o
-> +obj-$(CONFIG_CLK_RK3288)        += clk-rk3288.o
-> +obj-$(CONFIG_CLK_RK3308)        += clk-rk3308.o
-> +obj-$(CONFIG_CLK_RK3328)        += clk-rk3328.o
-> +obj-$(CONFIG_CLK_RK3368)        += clk-rk3368.o
-> +obj-$(CONFIG_CLK_RK3399)        += clk-rk3399.o
+> v1->v2
+> * Alongside renamed "vsp1-sy" to "vsps"
+> * Updated commit message
 
-This looks good to me, so
+Thanks for the update!
 
-Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.10.
 
-Thanks,
+Gr{oetje,eeting}s,
 
-- Kever
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
