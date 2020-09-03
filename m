@@ -2,98 +2,121 @@ Return-Path: <SRS0=Hc98=CM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2117C2D0A8
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 20:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71999C43461
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE94420678
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 20:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599165415;
-	bh=1SAc/pkQ+YvF2FbSZWmb9yACOrCSFl+Cocz2H8qQb9s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=PpsmfFPhtIo8DHUVAmXXgPrfhx6WumjPyMzjziqFt1v2+5ICOKnLtVccRSrxArXHe
-	 d9TiDVwFTPu7B/hdrK29xyfNiv8OS3unlNSstHEI0aOwKyedOcJNqel0zp3o9iBPl2
-	 uwoCcnuhxwNkyrnhLskvsJ50k6dAd/7XHxx5xepY=
+	by mail.kernel.org (Postfix) with ESMTP id 4350120767
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:27:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="PqLGbKMp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbgICUgx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Sep 2020 16:36:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729406AbgICUgr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Sep 2020 16:36:47 -0400
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D424320678;
-        Thu,  3 Sep 2020 20:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599165407;
-        bh=1SAc/pkQ+YvF2FbSZWmb9yACOrCSFl+Cocz2H8qQb9s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GBkpHkU2mNLKVOS/n/yqttR70A8MEzwnA9pn1u05EHDkX4XcWUSfUVZkx7ThPoXOc
-         cOmPUjFm5o0MmRK6kvTOhILNt0h3An0CEiW3YsoWfXt110ZrjP+Rf5jCjnm4Fnjs87
-         8Ex/F7hfg91BygIg8YxrY4JHq3CyVTmZXo0DMmAU=
-Received: by mail-ed1-f50.google.com with SMTP id n13so3986700edo.10;
-        Thu, 03 Sep 2020 13:36:46 -0700 (PDT)
-X-Gm-Message-State: AOAM531RyyFbMZHaVev3FRsiSj78+oZplZI5pzwkXEHdj54bfStT7xvX
-        IwnnzOI/aH30WIeGWD6dLzj7HecBOfF1rMCvpsI=
-X-Google-Smtp-Source: ABdhPJzxpPlGTe4YpW+4SBi3UyLCfVVsjl/2HCF6ABdQkyPpZO/E8Ki7WEbnMMz1NKYFTDSRsOdBqsPbQLS79oRkX0c=
-X-Received: by 2002:a05:6402:1a48:: with SMTP id bf8mr5017832edb.298.1599165405346;
- Thu, 03 Sep 2020 13:36:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200829111800.2786-1-krzk@kernel.org> <20200829111800.2786-6-krzk@kernel.org>
- <20200903164117.GA2922218@bogus>
-In-Reply-To: <20200903164117.GA2922218@bogus>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 3 Sep 2020 22:36:34 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc_abP=YU9cWFfPsFLrnb9N1PBEEbaSWPLLvYHZ_GmsGQ@mail.gmail.com>
-Message-ID: <CAJKOXPc_abP=YU9cWFfPsFLrnb9N1PBEEbaSWPLLvYHZ_GmsGQ@mail.gmail.com>
-Subject: Re: [PATCH 6/7] dt-bindings: i2c: imx: Use unevaluatedProperties
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1729036AbgICW1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Sep 2020 18:27:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53372 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbgICW1N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 18:27:13 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6103C061245
+        for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2020 15:27:12 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id b3so3189020qtg.13
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2020 15:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9SpSwMIgy/0uDv9Hc0PvSjCztNMgh+f4IT2tkCaQkW4=;
+        b=PqLGbKMp2gjiffHSrlocu7l+Z3ajwgMd1X3CxsA+yNf4pwuW1nDh2A5P+x5XtNvX1h
+         goUHuIX34yVxPumhBEKDfmhGjy0yCNAqzPU3XzE8c25pUQZE5R3WWiYaTzaE8MayTTwN
+         d+bw8tnnyR7Gu/EeVMxOJW0QzuHADNhxpJuynXH9pod1M04KRFjIgXdO+L6app7bNmPF
+         oQNDI9cQQwz1Xa1kxrpNhmoTnt7kDoavfajq6JcBKsCUx+XOVrmi0gY1PyVd2+gNVtDO
+         IkaY/TD90aNvonnCrlZIeyI4+su8YfM8rG8CWTeF5lgVbdb+hJJlNmvIFmiJQh844a1G
+         EPWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9SpSwMIgy/0uDv9Hc0PvSjCztNMgh+f4IT2tkCaQkW4=;
+        b=qZq7Rct22mvMvnXIa2kdXdD9nO5NgETJR113mNQuOoaIOGwdjtZSpLd2dD6HwCtNKF
+         nU8lhT/OTP+erjufcUKL8S7+1mtQhPRJ3N22mlpJB6MxocbpDrIdaKtRwtNO68OojbgW
+         3U0Uhp3bfZklA9Co7KfOp82FSkuyEnIuG/kBvvcMrk0r+607dfhLTQjaOwuT9lT8JWjd
+         iP//XfbUReTX0vZc9u122NdXl7q5GTVs9rxyq6YFJWSsiEEJ1JEjFJgGyhVPHNsmzLFB
+         xlUvfuZ/NP/PUiDepdew0nJmS68ILqiBdh6kIBya18rAsGxasHJhI4SiHNbF50kJrI6V
+         cyCA==
+X-Gm-Message-State: AOAM533D20sChzoXZ8zFTifuVdGORZdE3UjVf2Lp0keI2W4tp7MgaUSd
+        tK1gHgAbPoCQgly3wfmrJloiMQ==
+X-Google-Smtp-Source: ABdhPJyX2L6/vlPMY77nburHLozkIx336EIl0ufaIwZ6yu03grC4E5axYN4yguWf2gLAO+aUHM6K/g==
+X-Received: by 2002:ac8:b46:: with SMTP id m6mr5741737qti.72.1599172031736;
+        Thu, 03 Sep 2020 15:27:11 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id y30sm3217157qth.7.2020.09.03.15.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2020 15:27:11 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Wolfram Sang <wolfram@the-dreams.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 0/7] SM8150 and SM8250 dispcc drivers
+Date:   Thu,  3 Sep 2020 18:26:08 -0400
+Message-Id: <20200903222620.27448-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 3 Sep 2020 at 18:41, Rob Herring <robh@kernel.org> wrote:
->
-> On Sat, Aug 29, 2020 at 01:17:59PM +0200, Krzysztof Kozlowski wrote:
-> > Additional properties actually might appear (e.g. power-domains or child
-> > nodes) so use unevaluatedProperties to fix dtbs_check warnings like:
-> >
-> >   arch/arm64/boot/dts/freescale/imx8mn-evk.dt.yaml: i2c@30a20000:
-> >     '#address-cells', '#size-cells', 'pmic@25' do not match any of the regexes: 'pinctrl-[0-9]+'
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/i2c/i2c-imx.yaml | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> NAK. See https://lore.kernel.org/r/CAL_JsqKPXJxsHPS34_TCf9bwgKxZNSV4mvQR-WKRnknQVtGGxQ@mail.gmail.com/
+Add display clock drivers required to get DSI and DP displays working on
+SM8150 and SM8250 SoCs.
 
-I can reference the generic i2c-controller schema and add missing
-properties but what to do with children (pmic@25 and many other)? I
-see that all of the other I2C controller dtschema files solve it by
-skipping "additionalProperties: false". Is this the way to go with I2C
-controllers?
+Derived from downstream drivers. Notable changes compared to downstream:
+ - EDP clks removed (nothing uses these even in downstream it seems)
+ - freq_tbl values for dp_link clk is in Hz and not kHz
 
-Best regards,
-Krzysztof
+v2:
+ - updated dts example to reflect the change (first patch)
+ - updated config_ctl_hi1_val in sm8250 dispcc to latest downstream
+
+Jonathan Marek (7):
+  dt-bindings: clock: sdm845-dispcc: same name for dp_phy clocks as
+    sc7180
+  arm64: dts: qcom: sdm845-dispcc: same name for dp_phy clocks as sc7180
+  dt-bindings: clock: combine qcom,sdm845-dispcc and qcom,sc7180-dispcc
+  dt-bindings: clock: Introduce QCOM SM8150 display clock bindings
+  dt-bindings: clock: Introduce QCOM SM8250 display clock bindings
+  clk: qcom: Add display clock controller driver for SM8150
+  clk: qcom: Add display clock controller driver for SM8250
+
+ ...om,sdm845-dispcc.yaml => qcom,dispcc.yaml} |   30 +-
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    |   86 --
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |    4 +-
+ drivers/clk/qcom/Kconfig                      |   18 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/dispcc-sm8150.c              | 1152 +++++++++++++++++
+ drivers/clk/qcom/dispcc-sm8250.c              | 1100 ++++++++++++++++
+ .../dt-bindings/clock/qcom,dispcc-sm8150.h    |   69 +
+ .../dt-bindings/clock/qcom,dispcc-sm8250.h    |   66 +
+ 9 files changed, 2428 insertions(+), 99 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{qcom,sdm845-dispcc.yaml => qcom,dispcc.yaml} (75%)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm8150.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8150.h
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8250.h
+
+-- 
+2.26.1
+
