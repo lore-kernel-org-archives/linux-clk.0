@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63841C43461
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1922C43461
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 367012098B
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C127520897
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 22:28:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="iuWu0Omi"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="lB0dRU2i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbgICW2I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Sep 2020 18:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53426 "EHLO
+        id S1729543AbgICW2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Sep 2020 18:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729318AbgICW1W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 18:27:22 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BF2C061263
-        for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2020 15:27:21 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id n133so4612077qkn.11
-        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2020 15:27:21 -0700 (PDT)
+        with ESMTP id S1729037AbgICW1T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 18:27:19 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08C8AC061246
+        for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2020 15:27:17 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id b3so3189164qtg.13
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2020 15:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VnL3R1v8CTVriwJIqi1WnqU9teq6FSMSn+l/wAbEFwk=;
-        b=iuWu0OmiFD90d5QkClxiUiwP8APLv0M9gWVOeooMRM2Dxmu1bO0v18LCdbRF225H7O
-         kCio2dfQpuSBWGn7saM3dLwaWBL1/RWFsio/0pqWAafq7mrJRD0CmaW+DktYOSYd/YqV
-         Gy4AYxH/QvM1C/nSKUuhOaNcUr4i+hI/ykSyNzNODnZyLO5Av4J5mrd9MJU1x94Qxgh/
-         cax787yj+UMTSQlm3SfJf2YE6aPyUQHfywq4xKoMtJ3BTjzu7ymnb7d1NxXsSUUueD4x
-         X64zrFU8Dtw0iuCaXcYaNB3VmMkYCNbkoo8k7UZiWfLL96XkuA6uVzS8H2sevRddTQ06
-         AhmQ==
+        bh=9ZybHM4ueHEJokLBLXd4nM7F2mJ3bc1BRSPJWeFhISA=;
+        b=lB0dRU2iaxY3urhTJ7xyjW+EZyJ/qNsFc4WIEHk94PMn79hFIjlsQc6Wzuah18/72f
+         KsO8xvyM38fN2uH0mKolD9G8nF1ruGsDYTFKLymTzIF8FxAejrljkqCg58vlwot6YbmF
+         0ZFTf9666y694sxHuQpjVTyW9YBWVS1QRcXyV2/o+4XUVhhZsPTuPqb2/lzZOTqf9/Nf
+         JlaxEnp9cET+LM70YYOQlVXwlCgk3V6QaLKn3rZD56hD2avy2kd/rs/kveTMg97auuQ+
+         Hh2G9RpHyMT6S7ZrVefTInCuhtUj728jiSKwsvvRlljHF+PDQ1/1NpsCVxaIxkYyZkW6
+         Z19g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VnL3R1v8CTVriwJIqi1WnqU9teq6FSMSn+l/wAbEFwk=;
-        b=heOuti4myCMb54s1yMlVyabIWU+eviWbjL001GTRYDoSIwP7zrudBDFe3cG0ZHLTZA
-         AlEmV4G1kgIEFWbqiXO/u4DaiTCXRupmy9ZaQvfb3cFeda+0DxUor4y/m7HOsdmMc7Rt
-         vOmRjO76Qut6m8rJg4Ek/YHzuVw6PzUXS5+VtUVSPhcQe0J5sNEuutZsyjcvPwnJw/2D
-         k4lvwNkBJekjFCtbXRlbctEkx942ukURJk5QEWW969RksRC15gOvWGEvisD8Ap0AuApi
-         jzdYloImi4/TUC6R5ikyTTAb/NQ1R4EwtEQjNnB6o7cNZdQmW3Wum2ysNLEY0QQfzysv
-         hIOA==
-X-Gm-Message-State: AOAM531xdf2D5xSObY+9UwZSlrQ9MEKMs5wzS4E4rFOlDka4vGSJfkst
-        k9IcNEa0jlTyxrY11uZxlZkkVw==
-X-Google-Smtp-Source: ABdhPJw8qjuV9VdYzh9/7C3jiqur+p4pync+TFIU66TMdPE/HeIFbW3FOqdpEuxhoX+MLStrD/IXjQ==
-X-Received: by 2002:a37:9a85:: with SMTP id c127mr4143330qke.139.1599172040160;
-        Thu, 03 Sep 2020 15:27:20 -0700 (PDT)
+        bh=9ZybHM4ueHEJokLBLXd4nM7F2mJ3bc1BRSPJWeFhISA=;
+        b=m9SWRElrrony36ynefDGPjD+ysEQ9nSrEm76h6ezTRplicegMvXZ3UkyRDofOi1JRj
+         NM7cipJ0Kx1DDtSP0YZXRSrmfmv32HHWcy0ObghuvPG4j5etHKIq5Ne4rfSdkwwEMs5m
+         JgNg+bXqEDIXnj74U0iFQgb+LayyN0UH2G5gLGtV0O7+KMEMbRB4izvlKedPZpPnHHRG
+         j8ziKtxwJdFZJID5Y3UCsIgLZMrwtnk4fkbsCWLg8u2GZXXAHIXgcq5+zCJUkW9vFMYe
+         rcW7jRc8UsW8us6YqHxj4I2lUThe8DgLgDy+j8E5gwkvCdOxzcmck4E6uIE6m2FZ6/d5
+         HMaA==
+X-Gm-Message-State: AOAM530ADg9Yglr35621cl7SlZ61c3f4gcqA7FHIGAheyHNijmhZM+qb
+        9+Epzb/AabjghKnghp5ojuVNLA==
+X-Google-Smtp-Source: ABdhPJwD45K4BVCk5mhpz6khyE4PFI08kECAQkiV/GBhTGALBRwppyF42LPdO2sZly9xX2y2wL84mQ==
+X-Received: by 2002:ac8:1301:: with SMTP id e1mr5928155qtj.136.1599172036184;
+        Thu, 03 Sep 2020 15:27:16 -0700 (PDT)
 Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id y30sm3217157qth.7.2020.09.03.15.27.19
+        by smtp.gmail.com with ESMTPSA id y30sm3217157qth.7.2020.09.03.15.27.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2020 15:27:19 -0700 (PDT)
+        Thu, 03 Sep 2020 15:27:15 -0700 (PDT)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
@@ -68,9 +68,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 5/7] dt-bindings: clock: Introduce QCOM SM8250 display clock bindings
-Date:   Thu,  3 Sep 2020 18:26:13 -0400
-Message-Id: <20200903222620.27448-6-jonathan@marek.ca>
+Subject: [PATCH v2 3/7] dt-bindings: clock: combine qcom,sdm845-dispcc and qcom,sc7180-dispcc
+Date:   Thu,  3 Sep 2020 18:26:11 -0400
+Message-Id: <20200903222620.27448-4-jonathan@marek.ca>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200903222620.27448-1-jonathan@marek.ca>
 References: <20200903222620.27448-1-jonathan@marek.ca>
@@ -81,115 +81,160 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for display clock controller for
-Qualcomm Technology Inc's SM8250 SoCs.
+These two bindings are almost identical, so combine them into one. This
+will make it easier to add the sm8150 and sm8250 dispcc bindings.
 
 Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- .../bindings/clock/qcom,dispcc.yaml           |  4 +-
- .../dt-bindings/clock/qcom,dispcc-sm8250.h    | 66 +++++++++++++++++++
- 2 files changed, 69 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8250.h
+ ...om,sdm845-dispcc.yaml => qcom,dispcc.yaml} | 18 ++--
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    | 86 -------------------
+ 2 files changed, 11 insertions(+), 93 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{qcom,sdm845-dispcc.yaml => qcom,dispcc.yaml} (85%)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
-index 5b5c7fa6375e..0b905a4e9ada 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
+similarity index 85%
+rename from Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+rename to Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
+index ead44705333b..ef0321ace786 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
 +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
-@@ -11,12 +11,13 @@ maintainers:
+@@ -1,23 +1,27 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/clock/qcom,sdm845-dispcc.yaml#
++$id: http://devicetree.org/schemas/clock/qcom,dispcc.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Qualcomm Display Clock & Reset Controller Binding for SDM845
++title: Qualcomm Display Clock & Reset Controller Binding
+ 
+ maintainers:
+   - Taniya Das <tdas@codeaurora.org>
  
  description: |
    Qualcomm display clock control module which supports the clocks, resets and
--  power domains on SDM845/SC7180/SM8150.
-+  power domains on SDM845/SC7180/SM8150/SM8250.
+-  power domains on SDM845.
++  power domains on SDM845/SC7180.
  
-   See also:
-     dt-bindings/clock/qcom,dispcc-sdm845.h
-     dt-bindings/clock/qcom,dispcc-sc7180.h
-     dt-bindings/clock/qcom,dispcc-sm8150.h
-+    dt-bindings/clock/qcom,dispcc-sm8250.h
+-  See also dt-bindings/clock/qcom,dispcc-sdm845.h.
++  See also:
++    dt-bindings/clock/qcom,dispcc-sdm845.h
++    dt-bindings/clock/qcom,dispcc-sc7180.h
  
  properties:
    compatible:
-@@ -24,6 +25,7 @@ properties:
-       - qcom,sdm845-dispcc
-       - qcom,sc7180-dispcc
-       - qcom,sm8150-dispcc
-+      - qcom,sm8250-dispcc
+-    const: qcom,sdm845-dispcc
++    enum:
++      - qcom,sdm845-dispcc
++      - qcom,sc7180-dispcc
  
    # NOTE: sdm845.dtsi existed for quite some time and specified no clocks.
    # The code had to use hardcoded mechanisms to find the input clocks.
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8250.h b/include/dt-bindings/clock/qcom,dispcc-sm8250.h
-new file mode 100644
-index 000000000000..fdaca6ad5c85
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm8250.h
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_SM8250_H
-+#define _DT_BINDINGS_CLK_QCOM_DISP_CC_SM8250_H
-+
-+/* DISP_CC clock registers */
-+#define DISP_CC_MDSS_AHB_CLK			0
-+#define DISP_CC_MDSS_AHB_CLK_SRC		1
-+#define DISP_CC_MDSS_BYTE0_CLK			2
-+#define DISP_CC_MDSS_BYTE0_CLK_SRC		3
-+#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC		4
-+#define DISP_CC_MDSS_BYTE0_INTF_CLK		5
-+#define DISP_CC_MDSS_BYTE1_CLK			6
-+#define DISP_CC_MDSS_BYTE1_CLK_SRC		7
-+#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC		8
-+#define DISP_CC_MDSS_BYTE1_INTF_CLK		9
-+#define DISP_CC_MDSS_DP_AUX1_CLK		10
-+#define DISP_CC_MDSS_DP_AUX1_CLK_SRC		11
-+#define DISP_CC_MDSS_DP_AUX_CLK			12
-+#define DISP_CC_MDSS_DP_AUX_CLK_SRC		13
-+#define DISP_CC_MDSS_DP_LINK1_CLK		14
-+#define DISP_CC_MDSS_DP_LINK1_CLK_SRC		15
-+#define DISP_CC_MDSS_DP_LINK1_DIV_CLK_SRC	16
-+#define DISP_CC_MDSS_DP_LINK1_INTF_CLK		17
-+#define DISP_CC_MDSS_DP_LINK_CLK		18
-+#define DISP_CC_MDSS_DP_LINK_CLK_SRC		19
-+#define DISP_CC_MDSS_DP_LINK_DIV_CLK_SRC	20
-+#define DISP_CC_MDSS_DP_LINK_INTF_CLK		21
-+#define DISP_CC_MDSS_DP_PIXEL1_CLK		22
-+#define DISP_CC_MDSS_DP_PIXEL1_CLK_SRC		23
-+#define DISP_CC_MDSS_DP_PIXEL2_CLK		24
-+#define DISP_CC_MDSS_DP_PIXEL2_CLK_SRC		25
-+#define DISP_CC_MDSS_DP_PIXEL_CLK		26
-+#define DISP_CC_MDSS_DP_PIXEL_CLK_SRC		27
-+#define DISP_CC_MDSS_ESC0_CLK			28
-+#define DISP_CC_MDSS_ESC0_CLK_SRC		29
-+#define DISP_CC_MDSS_ESC1_CLK			30
-+#define DISP_CC_MDSS_ESC1_CLK_SRC		31
-+#define DISP_CC_MDSS_MDP_CLK			32
-+#define DISP_CC_MDSS_MDP_CLK_SRC		33
-+#define DISP_CC_MDSS_MDP_LUT_CLK		34
-+#define DISP_CC_MDSS_NON_GDSC_AHB_CLK		35
-+#define DISP_CC_MDSS_PCLK0_CLK			36
-+#define DISP_CC_MDSS_PCLK0_CLK_SRC		37
-+#define DISP_CC_MDSS_PCLK1_CLK			38
-+#define DISP_CC_MDSS_PCLK1_CLK_SRC		39
-+#define DISP_CC_MDSS_ROT_CLK			40
-+#define DISP_CC_MDSS_ROT_CLK_SRC		41
-+#define DISP_CC_MDSS_RSCC_AHB_CLK		42
-+#define DISP_CC_MDSS_RSCC_VSYNC_CLK		43
-+#define DISP_CC_MDSS_VSYNC_CLK			44
-+#define DISP_CC_MDSS_VSYNC_CLK_SRC		45
-+#define DISP_CC_PLL0				46
-+#define DISP_CC_PLL1				47
-+
-+/* DISP_CC Reset */
-+#define DISP_CC_MDSS_CORE_BCR			0
-+#define DISP_CC_MDSS_RSCC_BCR			1
-+
-+/* DISP_CC GDSCR */
-+#define MDSS_GDSC				0
-+
-+#endif
+@@ -25,8 +29,8 @@ properties:
+   clocks:
+     items:
+       - description: Board XO source
+-      - description: GPLL0 source from GCC
+-      - description: GPLL0 div source from GCC
++      - description: GPLL0 source from GCC (sdm845 only)
++      - description: GPLL0 div source from GCC (sdm845 only)
+       - description: Byte clock from DSI PHY0
+       - description: Pixel clock from DSI PHY0
+       - description: Byte clock from DSI PHY1
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+deleted file mode 100644
+index e94847f92770..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
++++ /dev/null
+@@ -1,86 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0-only
+-%YAML 1.2
+----
+-$id: http://devicetree.org/schemas/clock/qcom,sc7180-dispcc.yaml#
+-$schema: http://devicetree.org/meta-schemas/core.yaml#
+-
+-title: Qualcomm Display Clock & Reset Controller Binding for SC7180
+-
+-maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
+-
+-description: |
+-  Qualcomm display clock control module which supports the clocks, resets and
+-  power domains on SC7180.
+-
+-  See also dt-bindings/clock/qcom,dispcc-sc7180.h.
+-
+-properties:
+-  compatible:
+-    const: qcom,sc7180-dispcc
+-
+-  clocks:
+-    items:
+-      - description: Board XO source
+-      - description: GPLL0 source from GCC
+-      - description: Byte clock from DSI PHY
+-      - description: Pixel clock from DSI PHY
+-      - description: Link clock from DP PHY
+-      - description: VCO DIV clock from DP PHY
+-
+-  clock-names:
+-    items:
+-      - const: bi_tcxo
+-      - const: gcc_disp_gpll0_clk_src
+-      - const: dsi0_phy_pll_out_byteclk
+-      - const: dsi0_phy_pll_out_dsiclk
+-      - const: dp_phy_pll_link_clk
+-      - const: dp_phy_pll_vco_div_clk
+-
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-required:
+-  - compatible
+-  - reg
+-  - clocks
+-  - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+-
+-additionalProperties: false
+-
+-examples:
+-  - |
+-    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
+-    #include <dt-bindings/clock/qcom,rpmh.h>
+-    clock-controller@af00000 {
+-      compatible = "qcom,sc7180-dispcc";
+-      reg = <0x0af00000 0x200000>;
+-      clocks = <&rpmhcc RPMH_CXO_CLK>,
+-               <&gcc GCC_DISP_GPLL0_CLK_SRC>,
+-               <&dsi_phy 0>,
+-               <&dsi_phy 1>,
+-               <&dp_phy 0>,
+-               <&dp_phy 1>;
+-      clock-names = "bi_tcxo",
+-                    "gcc_disp_gpll0_clk_src",
+-                    "dsi0_phy_pll_out_byteclk",
+-                    "dsi0_phy_pll_out_dsiclk",
+-                    "dp_phy_pll_link_clk",
+-                    "dp_phy_pll_vco_div_clk";
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-    };
+-...
 -- 
 2.26.1
 
