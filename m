@@ -2,125 +2,289 @@ Return-Path: <SRS0=Hc98=CM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529FCC43461
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 03:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5250BC433E7
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 04:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 313FA2086A
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 03:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B47B2078E
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 04:00:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iPX3XW+O"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="C61ZUFQH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jlu5Wk0C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgICDYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 23:24:11 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33269 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726526AbgICDXa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Sep 2020 23:23:30 -0400
-X-UUID: 9c0e08a39bc94ba2af09c8d0a8a819ab-20200903
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=+yk96Z/qU4ICJoOFeZO6a1PuxPNlbXgUawAmlp06RSo=;
-        b=iPX3XW+OGUIvHy60a2iFRENXD5ywARJKPfwb7h1eXSDdHrXJ2zSpshltMUp8nAifIV9Fhk0Eb6uvCv3eUxOFbatH/8ZNXtMqaGrbLkXPYTRueyL6SOfaQewub8YDDpIcolUlPe6gHOc5WktdmTSHk99fFbK3XcHBzreg3LyFr6E=;
-X-UUID: 9c0e08a39bc94ba2af09c8d0a8a819ab-20200903
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 621238008; Thu, 03 Sep 2020 11:23:25 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 3 Sep 2020 11:23:23 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 3 Sep 2020 11:23:24 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Wendell Lin <wendell.lin@mediatek.com>
-Subject: [PATCH v3 4/9] dt-bindings: ARM: Mediatek: Document bindings for MT8192 Camera
-Date:   Thu, 3 Sep 2020 11:22:55 +0800
-Message-ID: <1599103380-4155-5-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1599103380-4155-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1599103380-4155-1-git-send-email-weiyi.lu@mediatek.com>
+        id S1726092AbgICEAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Sep 2020 00:00:23 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43691 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725851AbgICEAT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 00:00:19 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 628C85C01DC;
+        Thu,  3 Sep 2020 00:00:18 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 03 Sep 2020 00:00:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm3; bh=9NZLRUSEvG2Aj
+        KPj6CzUWxuEFxOlnTTlN8OQUf8eq3s=; b=C61ZUFQHr4+amzEIU5Gb53hhVvl4n
+        4vs/7ooQ69Ci8WA3EFgNnl+JSv7wdUnWvtQAhJ/JdNI9PVZNQdaQMwQkZt80IWM+
+        v51EpxVFb62BicepANyFFek5AkBWrYaYVDV/EVLUJj5+xe826ahBBC2k+MfVEdr2
+        pY3BtfYlX3PYPRYDFpbNR8vg9zkPX/eaRMfRYaxOcFbppx++mUyi8KpO5gI/jnT9
+        yp0RhXVc0XP+9WaQu7BKs7gFtrt3jXZwam5Zf31tUFWSwSWc1BX1WvNdU5wu/6UP
+        JlzqFTHO1ViJxxMYZzFTpKPMgKXHQ2xCgpj32+MADMpOX5rnp3ZFXENug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=9NZLRUSEvG2AjKPj6CzUWxuEFxOlnTTlN8OQUf8eq3s=; b=Jlu5Wk0C
+        R4dkV//lRtEs6iFZXerlVkP3ONQ1ucO+/dUOLD0xh4J90jYNeqhhoYxCS81W5E9N
+        s70Qyo8TQ8QilyCy7VTIr4SKwZmp3nSeknb52lZXd1LVUgqVC21THOrP6aEw0v3c
+        f2IkqnFsjnNEuovvaB6Nm/PX1rkpLOs/itmE5CRrdt8W9NpGOfoQbwXivSp3bFUm
+        ElA/ro/t5i2AN6IEsz7UKrfJpIo0ePB9mCIz8RByndg1HllgoZqCrwImQ7jHi4bN
+        HMh4LOialFK/gHxPLQwNqeobdbXfipi0FvtUS9m+FRD13p+HKAcVTlLQxwbx7Nf9
+        37+N8FyMmTjU1A==
+X-ME-Sender: <xms:UWpQXx9zPucXl4i-3rNx8OGBcBwRwG8rqyDkPKCME3al8iFx-JpxyQ>
+    <xme:UWpQX1v6jtsI0rSnUKuohJfPOYTkGKzZt1TbYVyOTLdgDvaXrD63bh_s9C5Miumno
+    2aT0ceiot2yP7y7Xg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudegtddgjeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
+    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
+    frrghtthgvrhhnpeduhfejfedvhffgfeehtefghfeiiefgfeehgfdvvdevfeegjeehjedv
+    gfejheeuieenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghn
+    ugdrohhrgh
+X-ME-Proxy: <xmx:UWpQX_CyEp7P3zGa-myKknpKy4Ys4eWTpuwh9JY-OdAW91CsW_rgyg>
+    <xmx:UWpQX1c83XTMXbJmZ7MxbEwJ0gBWz48EFbZsBpMhJMAmmR-OFEIqzQ>
+    <xmx:UWpQX2Of4NSh-o7C6ENxTvfRvh1aJpcwgXZrYp2XMAxwOm3Am1Ylyw>
+    <xmx:UmpQXyDeOqnw0geisM9w9fKsOyqOPGSV8MgBB_fvw4rcsuRSzEIePA>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0253A30600B9;
+        Thu,  3 Sep 2020 00:00:16 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH RESEND 1/2] clk: Implement protected-clocks for all OF clock providers
+Date:   Wed,  2 Sep 2020 23:00:14 -0500
+Message-Id: <20200903040015.5627-2-samuel@sholland.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200903040015.5627-1-samuel@sholland.org>
+References: <20200903040015.5627-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGRzIHRoZSBiaW5kaW5nIGRvY3VtZW50YXRpb24gb2YgY2Ftc3lzLXJhdywN
-CmNhbXN5cyBhbmQgaW1nc3lzIGZvciBNZWRpYXRlayBNVDgxOTIuDQoNClNpZ25lZC1vZmYtYnk6
-IFdlaXlpIEx1IDx3ZWl5aS5sdUBtZWRpYXRlay5jb20+DQotLS0NCiAuLi4vYmluZGluZ3MvYXJt
-L21lZGlhdGVrL21lZGlhdGVrLGNhbXN5cy1yYXcueWFtbCB8IDU0ICsrKysrKysrKysrKysrKysr
-KysrKysNCiAuLi4vYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGNhbXN5cy50eHQgICAg
-ICB8ICAxICsNCiAuLi4vYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltZ3N5cy50eHQg
-ICAgICB8ICAyICsNCiAzIGZpbGVzIGNoYW5nZWQsIDU3IGluc2VydGlvbnMoKykNCiBjcmVhdGUg
-bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRl
-ay9tZWRpYXRlayxjYW1zeXMtcmF3LnlhbWwNCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssY2Ftc3lzLXJhdy55YW1s
-IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRl
-ayxjYW1zeXMtcmF3LnlhbWwNCm5ldyBmaWxlIG1vZGUgMTAwNjQ0DQppbmRleCAwMDAwMDAwLi5l
-YjM5NWZmDQotLS0gL2Rldi9udWxsDQorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGNhbXN5cy1yYXcueWFtbA0KQEAgLTAsMCArMSw1
-NCBAQA0KKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIEJTRC0yLUNsYXVz
-ZSkNCislWUFNTCAxLjINCistLS0NCiskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFz
-L2FybS9tZWRpYXRlay9tZWRpYXRlayxjYW1zeXMtcmF3LnlhbWwjDQorJHNjaGVtYTogaHR0cDov
-L2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQorDQordGl0bGU6IE1lZGlh
-VGVrIENBTVNZUyBSQVcgQ29udHJvbGxlcg0KKw0KK21haW50YWluZXJzOg0KKyAgLSBXZWl5aSBM
-dSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPg0KKw0KK2Rlc2NyaXB0aW9uOg0KKyAgVGhlIE1lZGlh
-dGVrIGNhbXN5cyByYXcgY29udHJvbGxlciBwcm92aWRlcyBmdW5jdGlvbmFsIGNvbmZpZ3VyYXRp
-b25zIGFuZCBjbG9ja3MgdG8gdGhlIHN5c3RlbS4NCisNCitwcm9wZXJ0aWVzOg0KKyAgY29tcGF0
-aWJsZToNCisgICAgaXRlbXM6DQorICAgICAgLSBlbnVtOg0KKyAgICAgICAgICAtIG1lZGlhdGVr
-LG10ODE5Mi1jYW1zeXNfcmF3YQ0KKyAgICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1jYW1zeXNf
-cmF3Yg0KKyAgICAgICAgICAtIG1lZGlhdGVrLG10ODE5Mi1jYW1zeXNfcmF3Yw0KKyAgICAgIC0g
-Y29uc3Q6IHN5c2Nvbg0KKw0KKyAgcmVnOg0KKyAgICBtYXhJdGVtczogMQ0KKw0KKyAgJyNjbG9j
-ay1jZWxscyc6DQorICAgIGNvbnN0OiAxDQorDQorcmVxdWlyZWQ6DQorICAtIGNvbXBhdGlibGUN
-CisgIC0gcmVnDQorDQorZXhhbXBsZXM6DQorICAtIHwNCisgICAgY2Ftc3lzX3Jhd2E6IHN5c2Nv
-bkAxYTA0ZjAwMCB7DQorICAgICAgICBjb21wYXRpYmxlID0gIm1lZGlhdGVrLG10ODE5Mi1jYW1z
-eXNfcmF3YSIsICJzeXNjb24iOw0KKyAgICAgICAgcmVnID0gPDAgMHgxYTA0ZjAwMCAwIDB4MTAw
-MD47DQorICAgICAgICAjY2xvY2stY2VsbHMgPSA8MT47DQorICAgIH07DQorDQorICAtIHwNCisg
-ICAgY2Ftc3lzX3Jhd2I6IHN5c2NvbkAxYTA2ZjAwMCB7DQorICAgICAgICBjb21wYXRpYmxlID0g
-Im1lZGlhdGVrLG10ODE5Mi1jYW1zeXNfcmF3YiIsICJzeXNjb24iOw0KKyAgICAgICAgcmVnID0g
-PDAgMHgxYTA2ZjAwMCAwIDB4MTAwMD47DQorICAgICAgICAjY2xvY2stY2VsbHMgPSA8MT47DQor
-ICAgIH07DQorDQorICAtIHwNCisgICAgY2Ftc3lzX3Jhd2M6IHN5c2NvbkAxYTA4ZjAwMCB7DQor
-ICAgICAgICBjb21wYXRpYmxlID0gIm1lZGlhdGVrLG10ODE5Mi1jYW1zeXNfcmF3YyIsICJzeXNj
-b24iOw0KKyAgICAgICAgcmVnID0gPDAgMHgxYTA4ZjAwMCAwIDB4MTAwMD47DQorICAgICAgICAj
-Y2xvY2stY2VsbHMgPSA8MT47DQorICAgIH07DQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxjYW1zeXMudHh0IGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxjYW1z
-eXMudHh0DQppbmRleCBhMGNlODIwLi4wMDgyZjIxIDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxjYW1zeXMudHh0DQor
-KysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlh
-dGVrLGNhbXN5cy50eHQNCkBAIC05LDYgKzksNyBAQCBSZXF1aXJlZCBQcm9wZXJ0aWVzOg0KIAkt
-ICJtZWRpYXRlayxtdDY3NjUtY2Ftc3lzIiwgInN5c2NvbiINCiAJLSAibWVkaWF0ZWssbXQ2Nzc5
-LWNhbXN5cyIsICJzeXNjb24iDQogCS0gIm1lZGlhdGVrLG10ODE4My1jYW1zeXMiLCAic3lzY29u
-Ig0KKwktICJtZWRpYXRlayxtdDgxOTItY2Ftc3lzIiwgInN5c2NvbiINCiAtICNjbG9jay1jZWxs
-czogTXVzdCBiZSAxDQogDQogVGhlIGNhbXN5cyBjb250cm9sbGVyIHVzZXMgdGhlIGNvbW1vbiBj
-bGsgYmluZGluZyBmcm9tDQpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbWdzeXMudHh0IGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbWdzeXMudHh0DQppbmRl
-eCAxZTFmMDA3Li5iNDMxMmQxIDEwMDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbWdzeXMudHh0DQorKysgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltZ3N5cy50
-eHQNCkBAIC0xNCw2ICsxNCw4IEBAIFJlcXVpcmVkIFByb3BlcnRpZXM6DQogCS0gIm1lZGlhdGVr
-LG10NzYyMy1pbWdzeXMiLCAibWVkaWF0ZWssbXQyNzAxLWltZ3N5cyIsICJzeXNjb24iDQogCS0g
-Im1lZGlhdGVrLG10ODE3My1pbWdzeXMiLCAic3lzY29uIg0KIAktICJtZWRpYXRlayxtdDgxODMt
-aW1nc3lzIiwgInN5c2NvbiINCisJLSAibWVkaWF0ZWssbXQ4MTkyLWltZ3N5cyIsICJzeXNjb24i
-DQorCS0gIm1lZGlhdGVrLG10ODE5Mi1pbWdzeXMyIiwgInN5c2NvbiINCiAtICNjbG9jay1jZWxs
-czogTXVzdCBiZSAxDQogDQogVGhlIGltZ3N5cyBjb250cm9sbGVyIHVzZXMgdGhlIGNvbW1vbiBj
-bGsgYmluZGluZyBmcm9tDQotLSANCjEuOC4xLjEuZGlydHkNCg==
+This is a generic implementation of the "protected-clocks" property from
+the common clock binding. It allows firmware to inform the OS about
+clocks that must not be disabled while the OS is running.
+
+This implementation comes with some caveats:
+
+1) Clocks that have CLK_IS_CRITICAL in their init data are prepared/
+enabled before they are attached to the clock tree. protected-clocks are
+only protected once the clock provider is added, which is generally
+after all of the clocks it provides have been registered. This leaves a
+window of opportunity where something could disable or modify the clock,
+such as a driver running on another CPU, or the clock core itself. There
+is a comment to this effect in __clk_core_init():
+
+  /*
+   * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+   * don't get accidentally disabled when walking the orphan tree and
+   * reparenting clocks
+   */
+
+Similarly, these clocks will be enabled after they are first reparented,
+unlike other CLK_IS_CRITICAL clocks. See the comment in
+clk_core_reparent_orphans_nolock():
+
+  /*
+   * We need to use __clk_set_parent_before() and _after() to
+   * to properly migrate any prepare/enable count of the orphan
+   * clock. This is important for CLK_IS_CRITICAL clocks, which
+   * are enabled during init but might not have a parent yet.
+   */
+
+Ideally we could detect protected clocks before they are reparented, but
+there are two problems with that:
+
+  a) From the clock core's perspective, hw->init is const.
+
+  b) The clock core doesn't see the device_node until __clk_register is
+     called on the first clock.
+
+So the only "race-free" way to detect protected-clocks is to do it in
+the middle of __clk_register, between when core->flags is initialized
+and calling __clk_core_init(). That requires scanning the device tree
+again for each clock, which is part of why I didn't do it that way.
+
+2) __clk_protect needs to be idempotent, for two reasons:
+
+  a) Clocks with CLK_IS_CRITICAL in their init data are already
+     prepared/enabled, and we don't want to prepare/enable them again.
+
+  b) of_clk_set_defaults() is called twice for (at least some) clock
+     controllers registered with CLK_OF_DECLARE. It is called first in
+     of_clk_add_provider()/of_clk_add_hw_provider() inside clk_init_cb,
+     and again afterward in of_clk_init(). The second call in
+     of_clk_init() may be unnecessary, but verifying that would require
+     auditing all users of CLK_OF_DECLARE to ensure they called one of
+     the of_clk_add{,_hw}_provider functions.
+
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ drivers/clk/clk-conf.c | 54 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk.c      | 31 ++++++++++++++++++++++++
+ drivers/clk/clk.h      |  2 ++
+ 3 files changed, 87 insertions(+)
+
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 2ef819606c41..a57d28b0f397 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -11,6 +11,54 @@
+ #include <linux/of.h>
+ #include <linux/printk.h>
+ 
++#include "clk.h"
++
++static int __set_clk_flags(struct device_node *node)
++{
++	struct of_phandle_args clkspec;
++	struct property *prop;
++	int i, index = 0, rc;
++	const __be32 *cur;
++	struct clk *clk;
++	u32 nr_cells;
++
++	rc = of_property_read_u32(node, "#clock-cells", &nr_cells);
++	if (rc < 0) {
++		pr_err("clk: missing #clock-cells property on %pOF\n", node);
++		return rc;
++	}
++
++	clkspec.np         = node;
++	clkspec.args_count = nr_cells;
++
++	of_property_for_each_u32(node, "protected-clocks", prop, cur, clkspec.args[0]) {
++		/* read the remainder of the clock specifier */
++		for (i = 1; i < nr_cells; ++i) {
++			cur = of_prop_next_u32(prop, cur, &clkspec.args[i]);
++			if (!cur) {
++				pr_err("clk: invalid value of protected-clocks"
++				       " property at %pOF\n", node);
++				return -EINVAL;
++			}
++		}
++		clk = of_clk_get_from_provider(&clkspec);
++		if (IS_ERR(clk)) {
++			if (PTR_ERR(clk) != -EPROBE_DEFER)
++				pr_err("clk: couldn't get protected clock"
++				       " %u for %pOF\n", index, node);
++			return PTR_ERR(clk);
++		}
++
++		rc = __clk_protect(clk);
++		if (rc < 0)
++			pr_warn("clk: failed to protect %s: %d\n",
++				__clk_get_name(clk), rc);
++		clk_put(clk);
++		index++;
++	}
++	return 0;
++}
++
+ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ {
+ 	struct of_phandle_args clkspec;
+@@ -135,6 +183,12 @@ int of_clk_set_defaults(struct device_node *node, bool clk_supplier)
+ 	if (!node)
+ 		return 0;
+ 
++	if (clk_supplier) {
++		rc = __set_clk_flags(node);
++		if (rc < 0)
++			return rc;
++	}
++
+ 	rc = __set_clk_parents(node, clk_supplier);
+ 	if (rc < 0)
+ 		return rc;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0a9261a099bd..31fde39f1bda 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4187,6 +4187,37 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
+ 
++/*
++ * clk-conf helpers
++ */
++
++int __clk_protect(struct clk *clk)
++{
++	struct clk_core *core = clk->core;
++	int ret = 0;
++
++	clk_prepare_lock();
++
++	/*
++	 * If CLK_IS_CRITICAL was set in the clock's init data, then
++	 * the clock was already prepared/enabled when it was added.
++	 */
++	if (core->flags & CLK_IS_CRITICAL)
++		goto out;
++
++	core->flags |= CLK_IS_CRITICAL;
++	ret = clk_core_prepare(core);
++	if (ret)
++		goto out;
++
++	ret = clk_core_enable_lock(core);
++
++out:
++	clk_prepare_unlock();
++
++	return ret;
++}
++
+ /*
+  * clkdev helpers
+  */
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 2d801900cad5..367a0f036b13 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -24,6 +24,7 @@ struct clk_hw *clk_find_hw(const char *dev_id, const char *con_id);
+ #ifdef CONFIG_COMMON_CLK
+ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 			      const char *dev_id, const char *con_id);
++int __clk_protect(struct clk *clk);
+ void __clk_put(struct clk *clk);
+ #else
+ /* All these casts to avoid ifdefs in clkdev... */
+@@ -33,6 +34,7 @@ clk_hw_create_clk(struct device *dev, struct clk_hw *hw, const char *dev_id,
+ {
+ 	return (struct clk *)hw;
+ }
++static inline int __clk_protect(struct clk *clk) { return 0; }
+ static inline void __clk_put(struct clk *clk) { }
+ 
+ #endif
+-- 
+2.26.2
 
