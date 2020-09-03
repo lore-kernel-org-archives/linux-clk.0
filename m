@@ -1,130 +1,233 @@
-Return-Path: <SRS0=xpBS=CL=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Hc98=CM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B71C433E2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 19:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1556C433E7
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 01:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9D872137B
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Sep 2020 19:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA8A32072A
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 01:51:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="AJKZvdUd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nYV+dqD/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="pDAJc4nw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgIBTE5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Sep 2020 15:04:57 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:37033 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727894AbgIBTE5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Sep 2020 15:04:57 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 4E724FCA;
-        Wed,  2 Sep 2020 15:04:54 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 02 Sep 2020 15:04:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=UIxnX4c3cvkVCih8WXAhZh++fhZ
-        H2lstxce/AgcyQoQ=; b=AJKZvdUd2hz7jzsHrNCLB8F9hPKLifeW8Ovg5/yFd2t
-        XpN21E5ZqYufX6n8KZ0kv5KMMyz4hSmAGFtAglJUp7rK9mG18PAnhTpJniG9Q+w7
-        yS+fMtG09pybMflubjIvk0ttfxOZ25TMtdhQGuD9NKA47eutv9AV/2d1F8VTTQer
-        VFmjOF5OlugqlHyElkJrA4LYXZiEI10zQp0mh8HVPeQurKwv/avQaYCuC1ohMR3z
-        9LE0+W3KJFALG3IcOPkJSyZR0vf9cx7nbipyIqyVGvvFssXsEguRlsDl7/1XN91H
-        RN0P1wtMijIjMaDhPefcFUAEU1A0ikQlkbPFXmYqThw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=UIxnX4
-        c3cvkVCih8WXAhZh++fhZH2lstxce/AgcyQoQ=; b=nYV+dqD/xqacR59c0aEIVX
-        w21OygFMPvsHZ+wSSwyjfBirfUiycS2DkJ3spPXp5nYrtBXJqdPwiE7TEjHcCQil
-        EbImxL8Zv4F5VsTRuzveasbzzp+AxTMeVyGTjb/d2waBjUJXvKXaSRoo2iI8YvG0
-        sR+4cuAgLW8oJ96cd40QcDWPpF6M5iHKKheE0R9kjKJszZDkSeAK9hhlOsuV0sXw
-        tLa3lHvY/sJzXYwXQhxRPgE+dxc2x65xMzkucVMhKC8TTw8HAugm06UIFxGrfu4s
-        BfCSTVi5Ud96BxPKZdko4QS1gM5r80I3g/lQWmd0WOICHUMmOXf1HXNfijDdXxTQ
-        ==
-X-ME-Sender: <xms:0-xPX81_2pmSYCwjPMBPQbp6-bpPubcFntWpzHUK2Eu0vyb0HIVSdw>
-    <xme:0-xPX3G0zK_pHMTCBs19YydbT96GjrjRkoW3bCtimhgfVLkBQsROJRAzqGaRB4f1Z
-    O1K8OVA1d1Mmj6v3Io>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudefledgudeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheei
-    heegudenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:0-xPX06y0hG23LP7_LMq8pEjF4P4SARltqMy1mQ52XqicUfHZXK96A>
-    <xmx:0-xPX11rsyv1zoMPKj5RWPjcA0KoCItSlmWAGmyF1FPUsHr2bap5CA>
-    <xmx:0-xPX_EI2qk5p6WephGhjAyuB5gZF5IaTDhUKpP9Upks5H_HnqhuTw>
-    <xmx:1exPX5EZ_sCdMNtmrFMDAa6dpLeRkCn7YBKIE3Xn5FYbHnue5VLc7POaFVA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 329EF328005E;
-        Wed,  2 Sep 2020 15:04:51 -0400 (EDT)
-Date:   Wed, 2 Sep 2020 21:04:49 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     Hoegeun Kwon <hoegeun.kwon@samsung.com>, nsaenzjulienne@suse.de,
-        eric@anholt.net, stefan.wahren@i2se.com,
-        dave.stevenson@raspberrypi.com, devicetree@vger.kernel.org,
-        tim.gover@raspberrypi.com, kdasu.kdev@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] clk: bcm: rpi: Add register to control pixel bvb
- clk
-Message-ID: <20200902190449.qoao72lc4hdgv6m2@gilmour.lan>
-References: <20200901040759.29992-1-hoegeun.kwon@samsung.com>
- <CGME20200901040851epcas1p28f443c0e819bea756ebf9296491b32da@epcas1p2.samsung.com>
- <20200901040759.29992-2-hoegeun.kwon@samsung.com>
+        id S1726523AbgICBvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Sep 2020 21:51:00 -0400
+Received: from crapouillou.net ([89.234.176.41]:47324 "EHLO crapouillou.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbgICBu6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Sep 2020 21:50:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1599097856; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=T+uSrpaQChsNKCgzgdveBEoRYzW1erqJPJN6DAR4JzE=;
+        b=pDAJc4nwGhmam1waBxjGznXngPXUC9iG7W9NRvB0+SsXfvmWDSRjQNveuzqDbl+SWaUIAV
+        RaOJluNSDqTgmOQi1xMf0mrs3ykSZgxSzJleHcN+mmrs4ys9ePpbrJU9pEalk3ug0KwM1D
+        /qoj2FDbo0+JM+mz1T9sqmvc9syPkUw=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/5] clk: ingenic: Use to_clk_info() macro for all clocks
+Date:   Thu,  3 Sep 2020 03:50:44 +0200
+Message-Id: <20200903015048.3091523-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="r53kpuqz3egnnm7b"
-Content-Disposition: inline
-In-Reply-To: <20200901040759.29992-2-hoegeun.kwon@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The to_clk_info() previously had a BUG_ON() to check that it was only
+called for PLL clocks. Yet, all the other clocks were doing the exact
+same thing the macro does, in-line.
 
---r53kpuqz3egnnm7b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Move the to_clk_info() macro to the top of the file, remove the
+hardcoded BUG_ON(), and use it everywhere it makes sense.
 
-Hi Stephen, Mike,
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c | 54 +++++++++++----------------------------
+ 1 file changed, 15 insertions(+), 39 deletions(-)
 
-On Tue, Sep 01, 2020 at 01:07:56PM +0900, Hoegeun Kwon wrote:
-> To use QHD or higher, we need to modify the pixel_bvb_clk value. So
-> add register to control this clock.
->=20
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index d7981b670221..12b14286734c 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -21,6 +21,12 @@
+ 
+ #define MHZ (1000 * 1000)
+ 
++static inline const struct ingenic_cgu_clk_info *
++to_clk_info(struct ingenic_clk *clk)
++{
++	return &clk->cgu->clock_info[clk->idx];
++}
++
+ /**
+  * ingenic_cgu_gate_get() - get the value of clock gate register bit
+  * @cgu: reference to the CGU whose registers should be read
+@@ -71,14 +77,13 @@ static unsigned long
+ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	const struct ingenic_cgu_pll_info *pll_info;
+ 	unsigned m, n, od_enc, od;
+ 	bool bypass;
+ 	u32 ctl;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+ 	BUG_ON(clk_info->type != CGU_CLK_PLL);
+ 	pll_info = &clk_info->pll;
+ 
+@@ -144,18 +149,6 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
+ 		n * od);
+ }
+ 
+-static inline const struct ingenic_cgu_clk_info *to_clk_info(
+-		struct ingenic_clk *ingenic_clk)
+-{
+-	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+-
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-	BUG_ON(clk_info->type != CGU_CLK_PLL);
+-
+-	return clk_info;
+-}
+-
+ static long
+ ingenic_pll_round_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		       unsigned long *prate)
+@@ -290,13 +283,11 @@ static const struct clk_ops ingenic_pll_ops = {
+ static u8 ingenic_clk_get_parent(struct clk_hw *hw)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	u32 reg;
+ 	u8 i, hw_idx, idx = 0;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_MUX) {
+ 		reg = readl(cgu->base + clk_info->mux.reg);
+ 		hw_idx = (reg >> clk_info->mux.shift) &
+@@ -318,14 +309,12 @@ static u8 ingenic_clk_get_parent(struct clk_hw *hw)
+ static int ingenic_clk_set_parent(struct clk_hw *hw, u8 idx)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	unsigned long flags;
+ 	u8 curr_idx, hw_idx, num_poss;
+ 	u32 reg, mask;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_MUX) {
+ 		/*
+ 		 * Convert the parent index to the hardware index by adding
+@@ -368,13 +357,11 @@ static unsigned long
+ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	unsigned long rate = parent_rate;
+ 	u32 div_reg, div;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_DIV) {
+ 		div_reg = readl(cgu->base + clk_info->div.reg);
+ 		div = (div_reg >> clk_info->div.shift) &
+@@ -443,12 +430,9 @@ ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		       unsigned long *parent_rate)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+-	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	unsigned int div = 1;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_DIV)
+ 		div = ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
+ 	else if (clk_info->type & CGU_CLK_FIXDIV)
+@@ -462,16 +446,14 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 		     unsigned long parent_rate)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	const unsigned timeout = 100;
+ 	unsigned long rate, flags;
+ 	unsigned int hw_div, div, i;
+ 	u32 reg, mask;
+ 	int ret = 0;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_DIV) {
+ 		div = ingenic_clk_calc_div(clk_info, parent_rate, req_rate);
+ 		rate = DIV_ROUND_UP(parent_rate, div);
+@@ -525,12 +507,10 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ static int ingenic_clk_enable(struct clk_hw *hw)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	unsigned long flags;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_GATE) {
+ 		/* ungate the clock */
+ 		spin_lock_irqsave(&cgu->lock, flags);
+@@ -547,12 +527,10 @@ static int ingenic_clk_enable(struct clk_hw *hw)
+ static void ingenic_clk_disable(struct clk_hw *hw)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	unsigned long flags;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_GATE) {
+ 		/* gate the clock */
+ 		spin_lock_irqsave(&cgu->lock, flags);
+@@ -564,12 +542,10 @@ static void ingenic_clk_disable(struct clk_hw *hw)
+ static int ingenic_clk_is_enabled(struct clk_hw *hw)
+ {
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
++	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+-	const struct ingenic_cgu_clk_info *clk_info;
+ 	int enabled = 1;
+ 
+-	clk_info = &cgu->clock_info[ingenic_clk->idx];
+-
+ 	if (clk_info->type & CGU_CLK_GATE)
+ 		enabled = !ingenic_cgu_gate_get(cgu, &clk_info->gate);
+ 
+-- 
+2.28.0
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Can you merge this patch through the clk tree?
-
-The rest will go through drm
-
-Thanks!
-Maxime
-
---r53kpuqz3egnnm7b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX0/s0QAKCRDj7w1vZxhR
-xSj5AQCqraZ624rX3+422hwzvHAjXebcXXo/k5QtfouULAH9uAEA2hUPPx3QnSzt
-d+sIaCmCMaBIBO9JCuo1qwf1JJ6mAQA=
-=K0vZ
------END PGP SIGNATURE-----
-
---r53kpuqz3egnnm7b--
