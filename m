@@ -2,110 +2,161 @@ Return-Path: <SRS0=Hc98=CM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2526DC433E7
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 08:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF1CC433E2
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 10:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBD01208CA
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 08:26:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ix+8kW94";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P8gZPsEe"
+	by mail.kernel.org (Postfix) with ESMTP id 5D506207EA
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Sep 2020 10:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbgICI0l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Sep 2020 04:26:41 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:45113 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725984AbgICI0l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 04:26:41 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id BB770B12;
-        Thu,  3 Sep 2020 04:26:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 03 Sep 2020 04:26:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=hI/6B60+xqp09996YeQIHZjVKb
-        OZ54NtfhzOMe5IdQM=; b=ix+8kW94mQNH7yAef/mub+NftV1YGRlyFJe8gGRD9a
-        0CwuZ6vh7QtNLpzCxeFjn5vJIUji6p0rw3Tt2NDkuWKR2TpITldq02D6uNsGLgha
-        iOky/fxwWv++qf5PcQhOXRoq5XU/Lu2zxcLt8/+JTwBJYklsUxOkTMIcKbVA8e5y
-        irj6F0vscM6XuwgVXki+xd9A+Qd6VKYyV4h9/CqLi/O72cOWInINqSrC5uAUrdxB
-        x7Aje4DTaJR8ZcG0cqNV9O5bZVE38RhZravIuZk263W2+ITf74BUa0Q7IyUX7nny
-        QWHxwaD7+H8JTfg4RP6a9f2Q/0E94dLnX5Ud08cqyvBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hI/6B60+xqp09996Y
-        eQIHZjVKbOZ54NtfhzOMe5IdQM=; b=P8gZPsEeykGh+sa9AzOgTdv7a0H6e9Kd5
-        jtuBhjXqoMGm7mwiUKn4LvhxKz7fVI2G/T6R9USyzRXQLwsMgWOEaNlsk+IYzq+U
-        r15vn07upScoG/I81pfdj7xz0RNGdkyoMikKQ7+i8qmMY5nvxCgT0rlKhDEbhkQE
-        xQZqe0gZXm0U+BuyK+MoD5qfJZDuqAnXkBaEzpPKt+tf32e8D6x3cirzBPPylziG
-        NQ/91kdP9MP8HT2whv126g5FB9iJ+6lr4/pqBYe7tN7yCrklk61a4KRPQFfvFu9n
-        xkKp+c6E+XI/D8Odn4l5Erw07dK0cc9FZDOWfKX7+6VTb5F6lKpVQ==
-X-ME-Sender: <xms:vqhQX5elHASKnB43ObR1oIy8BFvT3bm1dKgaPZnPGiVj7nsBPGxnwA>
-    <xme:vqhQX3NHIl7HdCOmh7t15BdWAGnMmCrE_mFH05S9F7iI9gIt5brwTS-W8MXFRQiuh
-    5CvsJD9uQOLnpDH-L0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudeguddgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcu
-    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
-    hrnhepjeffheduvddvvdelhfegleelfffgieejvdehgfeijedtieeuteejteefueekjeeg
-    necukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:vqhQXygWLnC82Fjy_i60VTpVxcbdskZHOuLfNUxcH7moW1kQlPIeaw>
-    <xmx:vqhQXy_LSo3mXr08rGMZKMMweQZQuJQfgWLu5qP9bnhaYynbv1-2Zw>
-    <xmx:vqhQX1uB_KhcwfJLcWrFVewhOm9HrDT9kJH0bbq8VjUJ1wvpRngk5A>
-    <xmx:v6hQX2-UyJ2LZYcDbJSyV91ghgJY_sfWZ-CBfnDx5Jk9URYQBGla4A>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 621313280060;
-        Thu,  3 Sep 2020 04:26:38 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH] clk: bcm: dvp: Select the reset framework
-Date:   Thu,  3 Sep 2020 10:26:36 +0200
-Message-Id: <20200903082636.3844629-1-maxime@cerno.tech>
-X-Mailer: git-send-email 2.26.2
+        id S1726967AbgICKKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Sep 2020 06:10:03 -0400
+Received: from regular1.263xmail.com ([211.150.70.203]:54950 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgICKKD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Sep 2020 06:10:03 -0400
+Received: from localhost (unknown [192.168.167.70])
+        by regular1.263xmail.com (Postfix) with ESMTP id B0BA9815;
+        Thu,  3 Sep 2020 18:03:19 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.120] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P24386T139658960819968S1599127397973724_;
+        Thu, 03 Sep 2020 18:03:18 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <ed2ffba5f5a9bb96ee8f8d7b5adea992>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: huangtao@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: Re: [PATCH v2 6/6] clk: rockchip: rk3399: Support module build
+To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
+        xf@rock-chips.com, huangtao@rock-chips.com
+References: <20200903063147.10237-1-zhangqing@rock-chips.com>
+ <20200903063234.10639-1-zhangqing@rock-chips.com>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <dbe40332-12d1-05b2-6ee9-083016003a2a@rock-chips.com>
+Date:   Thu, 3 Sep 2020 18:03:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200903063234.10639-1-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The DVP driver depends both on the RESET_SIMPLE driver but also on the
-reset framework itself. Let's make sure we have it enabled.
 
-Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/bcm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 2020/9/3 下午2:32, Elaine Zhang wrote:
+> support CLK_OF_DECLARE and builtin_platform_driver_probe
+> double clk init method.
+> add module author, description and license to support building
+> Soc Rk3399 clock driver as module.
+>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>   drivers/clk/rockchip/clk-rk3399.c | 55 +++++++++++++++++++++++++++++++
+>   1 file changed, 55 insertions(+)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> index ce1d2446f142..40ff17aee5b6 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -5,9 +5,11 @@
+>    */
+>   
+>   #include <linux/clk-provider.h>
+> +#include <linux/module.h>
+>   #include <linux/io.h>
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+> +#include <linux/of_device.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/regmap.h>
+>   #include <dt-bindings/clock/rk3399-cru.h>
+> @@ -1600,3 +1602,56 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
+>   	rockchip_clk_of_add_provider(np, ctx);
+>   }
+>   CLK_OF_DECLARE(rk3399_cru_pmu, "rockchip,rk3399-pmucru", rk3399_pmu_clk_init);
+> +
+> +struct clk_rk3399_inits {
+> +		void (*inits)(struct device_node *np);
+> +};
+> +
+> +static const struct clk_rk3399_inits clk_rk3399_pmucru_init = {
+> +	.inits = rk3399_pmu_clk_init,
+> +};
+> +
+> +static const struct clk_rk3399_inits clk_rk3399_cru_init = {
+> +	.inits = rk3399_clk_init,
+> +};
+> +
+> +static const struct of_device_id clk_rk3399_match_table[] = {
+> +	{
+> +		.compatible = "rockchip,rk3399-cru",
+> +		.data = &clk_rk3399_cru_init,
+> +	},  {
+> +		.compatible = "rockchip,rk3399-pmucru",
+> +		.data = &clk_rk3399_pmucru_init,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, clk_rk3399_match_table);
+> +
+> +static int __init clk_rk3399_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	const struct of_device_id *match;
+> +	const struct clk_rk3399_inits *init_data;
+> +
+> +	match = of_match_device(clk_rk3399_match_table, &pdev->dev);
+> +	if (!match || !match->data)
+> +		return -EINVAL;
+> +
+> +	init_data = match->data;
+> +	if (init_data->inits)
+> +		init_data->inits(np);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver clk_rk3399_driver = {
+> +	.driver		= {
+> +		.name	= "clk-rk3399",
+> +		.of_match_table = clk_rk3399_match_table,
+> +	},
+> +};
+> +builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
+> +
+> +MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:clk-rk3399");
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index 784f12c72365..ec738f74a026 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -5,6 +5,7 @@ config CLK_BCM2711_DVP
- 	depends on ARCH_BCM2835 ||COMPILE_TEST
- 	depends on COMMON_CLK
- 	default ARCH_BCM2835
-+	select RESET_CONTROLLER
- 	select RESET_SIMPLE
- 	help
- 	  Enable common clock framework support for the Broadcom BCM2711
--- 
-2.26.2
+This looks good to me, so
+
+Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+
+Thanks,
+
+- Kever
+
+
 
