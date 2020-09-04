@@ -2,148 +2,93 @@ Return-Path: <SRS0=GDCy=CN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603C7C43461
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 07:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DE7C43461
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3209320748
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 07:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9760920709
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726171AbgIDHpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Sep 2020 03:45:12 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:44866 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728112AbgIDHpM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2020 03:45:12 -0400
-Received: from localhost (unknown [192.168.167.13])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 70F55A2980;
-        Fri,  4 Sep 2020 15:45:08 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P29633T140716038665984S1599205507913558_;
-        Fri, 04 Sep 2020 15:45:09 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <39d007cf5bc0dc25bd91df7362a9d001>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 6/6] clk: rockchip: rk3399: Support module build
-Date:   Fri,  4 Sep 2020 15:45:05 +0800
-Message-Id: <20200904074505.24917-1-zhangqing@rock-chips.com>
+        id S1729977AbgIDLsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Sep 2020 07:48:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35460 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728118AbgIDLsn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Sep 2020 07:48:43 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41E6C061245
+        for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2020 04:48:41 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by michel.telenet-ops.be with bizsmtp
+        id Pnoh230084C55Sk06nohUf; Fri, 04 Sep 2020 13:48:41 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kEACv-0004ep-6E; Fri, 04 Sep 2020 13:48:41 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kEACv-0007u5-4p; Fri, 04 Sep 2020 13:48:41 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.10
+Date:   Fri,  4 Sep 2020 13:48:38 +0200
+Message-Id: <20200904114838.30339-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200904074405.24439-1-zhangqing@rock-chips.com>
-References: <20200904074405.24439-1-zhangqing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-support CLK_OF_DECLARE and builtin_platform_driver_probe
-double clk init method.
-add module author, description and license to support building
-Soc Rk3399 clock driver as module.
+	Hi Mike, Stephen,
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3399.c | 55 +++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index ce1d2446f142..40ff17aee5b6 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -5,9 +5,11 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <dt-bindings/clock/rk3399-cru.h>
-@@ -1600,3 +1602,56 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
- 	rockchip_clk_of_add_provider(np, ctx);
- }
- CLK_OF_DECLARE(rk3399_cru_pmu, "rockchip,rk3399-pmucru", rk3399_pmu_clk_init);
-+
-+struct clk_rk3399_inits {
-+		void (*inits)(struct device_node *np);
-+};
-+
-+static const struct clk_rk3399_inits clk_rk3399_pmucru_init = {
-+	.inits = rk3399_pmu_clk_init,
-+};
-+
-+static const struct clk_rk3399_inits clk_rk3399_cru_init = {
-+	.inits = rk3399_clk_init,
-+};
-+
-+static const struct of_device_id clk_rk3399_match_table[] = {
-+	{
-+		.compatible = "rockchip,rk3399-cru",
-+		.data = &clk_rk3399_cru_init,
-+	},  {
-+		.compatible = "rockchip,rk3399-pmucru",
-+		.data = &clk_rk3399_pmucru_init,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_rk3399_match_table);
-+
-+static int __init clk_rk3399_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	const struct of_device_id *match;
-+	const struct clk_rk3399_inits *init_data;
-+
-+	match = of_match_device(clk_rk3399_match_table, &pdev->dev);
-+	if (!match || !match->data)
-+		return -EINVAL;
-+
-+	init_data = match->data;
-+	if (init_data->inits)
-+		init_data->inits(np);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver clk_rk3399_driver = {
-+	.driver		= {
-+		.name	= "clk-rk3399",
-+		.of_match_table = clk_rk3399_match_table,
-+	},
-+};
-+builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
-+
-+MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:clk-rk3399");
--- 
-2.17.1
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.10-tag1
 
+for you to fetch changes up to e41cb217932969a20cea9c44299c449236058e43:
+
+  clk: renesas: rcar-gen2: Rename vsp1-(sy|rt) clocks to vsp(s|r) (2020-09-04 09:42:01 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.10
+
+  - Add support for the VSP for Resizing clock on RZ/G1H,
+  - Fix VSP clock names to match corrected hardware documentation.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Lad Prabhakar (2):
+      clk: renesas: r8a7742: Add clk entry for VSPR
+      clk: renesas: rcar-gen2: Rename vsp1-(sy|rt) clocks to vsp(s|r)
+
+ drivers/clk/renesas/r8a7742-cpg-mssr.c  | 3 ++-
+ drivers/clk/renesas/r8a7743-cpg-mssr.c  | 2 +-
+ drivers/clk/renesas/r8a7745-cpg-mssr.c  | 2 +-
+ drivers/clk/renesas/r8a77470-cpg-mssr.c | 2 +-
+ drivers/clk/renesas/r8a7790-cpg-mssr.c  | 4 ++--
+ drivers/clk/renesas/r8a7791-cpg-mssr.c  | 2 +-
+ drivers/clk/renesas/r8a7792-cpg-mssr.c  | 2 +-
+ drivers/clk/renesas/r8a7794-cpg-mssr.c  | 2 +-
+ 8 files changed, 10 insertions(+), 9 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
