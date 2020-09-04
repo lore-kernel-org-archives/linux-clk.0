@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31878C43461
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC47C433E2
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0AF82074D
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A1520772
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599233210;
-	bh=7ETwMr2woIdl6WmCKhWye9ZYfEI514T+ZyzZWn5CT8Q=;
+	s=default; t=1599233213;
+	bh=v4kspojzNvFxtIF19ahKwZXqd6Y9OL3DS8cTRXDb9qo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dDBRg0c4zQMENfyEd0ejbQxfkuSgH3UZZpnkEZecESKWsPhcrHGsgwv12Z9v11kbQ
-	 vIoOhbBnFgY+YA7gAZS7IwJ8a2+bza8LjIeCK45NOSTywXMTqRZNF55JFuAZdU2Syz
-	 aX8f/kIpgfGorzy9j2u9zgPJfQdi31Wk1wzcwKa8=
+	b=Hfb8LzdzfetcklMuaAC1NzGkOQighNERB745joyuhEA9OFWe7Jmeqm59BBCSiv9xR
+	 2oLQZ6pAae3BfJ8o3qsVLtpsWcuG7yd3zVlPgDh/8DRvfheq1JuiFh64xIBoRNhaIy
+	 sT9RnVkfA1d0zTbnME5MG6ZrFJy0tm0N/y4g5I8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbgIDPYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Sep 2020 11:24:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33428 "EHLO mail.kernel.org"
+        id S1730979AbgIDPYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Sep 2020 11:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730991AbgIDPYm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Sep 2020 11:24:42 -0400
+        id S1730938AbgIDPYh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Sep 2020 11:24:37 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD344207EA;
-        Fri,  4 Sep 2020 15:24:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A5552084D;
+        Fri,  4 Sep 2020 15:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599233082;
-        bh=7ETwMr2woIdl6WmCKhWye9ZYfEI514T+ZyzZWn5CT8Q=;
+        s=default; t=1599233077;
+        bh=v4kspojzNvFxtIF19ahKwZXqd6Y9OL3DS8cTRXDb9qo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FoWZJaagfp5IWcPyqFJnSqZN1o7c6hZJr4jH2FTrJjHMmkX8nZUQuGncGh6Z/hRW/
-         CxGHmJjgGM3959BM0hTZqSyUX3MTb6EGY/8QlKZFq3ybiJQws+x21A+nas/DmLp9YQ
-         DOxRgVxFOM6i/y2A621fDktzdpgHjO2OqAPf8dMM=
+        b=z7iZ9wUQJIOXCrS8Q/zfdNYzy5666J8kslGAxJ2kaesaLs6cIEvHykP9AgV35fqYG
+         Rr/V6umH7EEeuBZw/1fohrgXRkmeky2fJrfqCa0zW/jLeUAzK4Rl055vvzWwajE2eg
+         oo1CnqGzgSuo+lMG36bsogYz47AZtQYWgrSKeip8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -53,9 +53,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 05/14] dt-bindings: watchdog: fsl-imx-wdt: Add i.MX 8M compatibles
-Date:   Fri,  4 Sep 2020 17:23:55 +0200
-Message-Id: <20200904152404.20636-6-krzk@kernel.org>
+Subject: [PATCH v3 04/14] dt-bindings: serial: fsl-lpuart: Fix compatible matching
+Date:   Fri,  4 Sep 2020 17:23:54 +0200
+Message-Id: <20200904152404.20636-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200904152404.20636-1-krzk@kernel.org>
 References: <20200904152404.20636-1-krzk@kernel.org>
@@ -64,45 +64,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-to fix dtbs_check warnings like:
+The i.MX 8QXP DTSes use two compatibles so update the binding to fix
+dtbs_check warnings like:
 
-  arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
-    compatible:0: 'fsl,imx8mm-wdt' is not one of ['fsl,imx21-wdt']
-    From schema: Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
+  arch/arm64/boot/dts/freescale/imx8qxp-mek.dt.yaml: serial@5a060000:
+    compatible: ['fsl,imx8qxp-lpuart', 'fsl,imx7ulp-lpuart'] is too long
+    From schema: Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
 
-  arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
-    compatible: ['fsl,imx8mm-wdt', 'fsl,imx21-wdt'] is too long
-
-  arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dt.yaml: watchdog@30280000:
-    compatible: Additional items are not allowed ('fsl,imx21-wdt' was unexpected)
+  arch/arm64/boot/dts/freescale/imx8qxp-mek.dt.yaml: serial@5a060000:
+    compatible: Additional items are not allowed ('fsl,imx7ulp-lpuart' was unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
- .../devicetree/bindings/watchdog/fsl-imx-wdt.yaml     | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-index d96b93b11fad..991b4e33486e 100644
---- a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
-@@ -14,8 +14,15 @@ allOf:
+---
+
+Changes since v2:
+1. Remove moved compatibles.
+
+Changes since v1:
+1. New patch.
+---
+ .../devicetree/bindings/serial/fsl-lpuart.yaml  | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+index e82c2cf9fef7..bd21060d26e0 100644
+--- a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
++++ b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+@@ -14,13 +14,16 @@ allOf:
  
  properties:
    compatible:
 -    enum:
--      - fsl,imx21-wdt
+-      - fsl,vf610-lpuart
+-      - fsl,ls1021a-lpuart
+-      - fsl,ls1028a-lpuart
+-      - fsl,imx7ulp-lpuart
+-      - fsl,imx8qxp-lpuart
+-      - fsl,imx8qm-lpuart
 +    oneOf:
-+      - const: fsl,imx21-wdt
++      - enum:
++          - fsl,vf610-lpuart
++          - fsl,ls1021a-lpuart
++          - fsl,ls1028a-lpuart
++          - fsl,imx7ulp-lpuart
++          - fsl,imx8qm-lpuart
 +      - items:
-+          - enum:
-+              - fsl,imx8mm-wdt
-+              - fsl,imx8mn-wdt
-+              - fsl,imx8mp-wdt
-+              - fsl,imx8mq-wdt
-+          - const: fsl,imx21-wdt
++          - const: fsl,imx8qxp-lpuart
++          - const: fsl,imx7ulp-lpuart
  
    reg:
      maxItems: 1
