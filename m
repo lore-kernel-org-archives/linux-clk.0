@@ -3,57 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BD5C433E2
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FCCC433E2
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74F7E206D4
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 14:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346842074D
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599229842;
-	bh=3S93tF/ignIiM43QgnWujtoIATS7BPwQ6dqnISHKtyA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=pPrWR9gs1qnqIdVGbW3IPykgPSis/1sAIg9RWUgv6UEOPf/+ddaPq8WRlHKMcT3Ty
-	 lkqBUQlGo2wjYEKka4BA1m+OoUokuNfQ9nqd1tojS4k2e62Uh5QE7+dEW/ggcL/z92
-	 dOjnG1EzxQt0axjPEgvrXTYfNf1xQ7ZBX+KYmH0M=
+	s=default; t=1599233062;
+	bh=sKvZCsZobU7Bh4Xu+fGf9ZJCYmD7SquliyFmgqG50Oo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=u7iZi0AaxYDFWAUWj2yJM3n79YgFS/+c8hKmpskAH5G7miHWOviHXzKSZWqiKvFAO
+	 9sKvVPFn6zlnCEy4CpuixVLamlRBrBzHk3jNIQuzjydKEYNilCUGjeap6bDfJKqqpY
+	 Pn+5Wb5aRjHthz52E4TT17Bg+0kyUzxVTNvmOMLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbgIDOak (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Sep 2020 10:30:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38850 "EHLO mail.kernel.org"
+        id S1730921AbgIDPYV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Sep 2020 11:24:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728983AbgIDOaB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Sep 2020 10:30:01 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        id S1730829AbgIDPYU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Sep 2020 11:24:20 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 483C320829;
-        Fri,  4 Sep 2020 14:30:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB3F420770;
+        Fri,  4 Sep 2020 15:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599229800;
-        bh=3S93tF/ignIiM43QgnWujtoIATS7BPwQ6dqnISHKtyA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XV8ablvO+fK4xp0xfyjNshid/tVnEyWkQtkPPPQfeOF4f87nnqaEtvL5J755xhn5Y
-         T5s0H9LmmJLHzNgJaQS/q8PEa6Ex55mnbh205MBq8BwCISmLTIVUN/06P5Lsh1rmmP
-         yVYluI8pZ0Mpv/+/QxVc9jIlMf3kVUZD1gFBL/Jg=
-Received: by mail-ot1-f46.google.com with SMTP id g10so6004397otq.9;
-        Fri, 04 Sep 2020 07:30:00 -0700 (PDT)
-X-Gm-Message-State: AOAM530AW4cqcRMIU7ePwSlzwDFWbMBtrueGzo9sh0y8ixvNppfbL1pP
-        VC4DM44osg+2FGyTtOohiIQsfcH/NqTaYelZbA==
-X-Google-Smtp-Source: ABdhPJy0LBatfFdNSWrwrnthwVqtmbC3ydSQ8JsKPP8Rsx3nxJylJbVfefD5DwCJwyvZvCLpFqLpQJtRkwEJ4gGjHPs=
-X-Received: by 2002:a9d:7f84:: with SMTP id t4mr5794412otp.192.1599229799600;
- Fri, 04 Sep 2020 07:29:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200829111800.2786-1-krzk@kernel.org> <20200829111800.2786-6-krzk@kernel.org>
- <20200903164117.GA2922218@bogus> <CAJKOXPc_abP=YU9cWFfPsFLrnb9N1PBEEbaSWPLLvYHZ_GmsGQ@mail.gmail.com>
-In-Reply-To: <CAJKOXPc_abP=YU9cWFfPsFLrnb9N1PBEEbaSWPLLvYHZ_GmsGQ@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 4 Sep 2020 08:29:47 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKUHZvqT7WH4B=1NZ32o2HJ14-0wL4TYN7sQYx-fyjCsA@mail.gmail.com>
-Message-ID: <CAL_JsqKUHZvqT7WH4B=1NZ32o2HJ14-0wL4TYN7sQYx-fyjCsA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] dt-bindings: i2c: imx: Use unevaluatedProperties
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+        s=default; t=1599233059;
+        bh=sKvZCsZobU7Bh4Xu+fGf9ZJCYmD7SquliyFmgqG50Oo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sV58pfGmmWQn8uohb/hknW48UOzALop3pIk3iQCR4uyFQ0gZyZbkeRJ5Qu8MEqccx
+         Mkiwo6Wf3oJFhnVa4ToV7+vibP0Ihhvq3O5bvcBpigvWvC8sLMGLbJFQuBKgZhExcg
+         M/98mPuaOqB0LDnKCPaiqseidOtLyrZLK/gWkZYU=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -61,46 +51,71 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Wolfram Sang <wolfram@the-dreams.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Guenter Roeck <linux@roeck-us.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 00/14] dt-bindings: Cleanup of i.MX 8
+Date:   Fri,  4 Sep 2020 17:23:50 +0200
+Message-Id: <20200904152404.20636-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 2:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Thu, 3 Sep 2020 at 18:41, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Sat, Aug 29, 2020 at 01:17:59PM +0200, Krzysztof Kozlowski wrote:
-> > > Additional properties actually might appear (e.g. power-domains or child
-> > > nodes) so use unevaluatedProperties to fix dtbs_check warnings like:
-> > >
-> > >   arch/arm64/boot/dts/freescale/imx8mn-evk.dt.yaml: i2c@30a20000:
-> > >     '#address-cells', '#size-cells', 'pmic@25' do not match any of the regexes: 'pinctrl-[0-9]+'
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/i2c/i2c-imx.yaml | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > NAK. See https://lore.kernel.org/r/CAL_JsqKPXJxsHPS34_TCf9bwgKxZNSV4mvQR-WKRnknQVtGGxQ@mail.gmail.com/
->
-> I can reference the generic i2c-controller schema and add missing
-> properties but what to do with children (pmic@25 and many other)? I
-> see that all of the other I2C controller dtschema files solve it by
-> skipping "additionalProperties: false". Is this the way to go with I2C
-> controllers?
+Hi Rob,
 
-If there's a $ref to the i2c schema, then using unevaluatedProperties
-is correct.
+I am resending the series (v3) without actual changes.  You already
+reviewed many of them.  I think that subsystem maintainers are hesitant
+to pick them up, so maybe this could go via your tree (all of them)?
 
-Rob
+Changes against previous revisions are in individual patches.
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (14):
+  dt-bindings: perf: fsl-imx-ddr: Add i.MX 8M compatibles
+  dt-bindings: pwm: imx-pwm: Add i.MX 8M compatibles
+  dt-bindings: serial: fsl-imx-uart: Add i.MX 8M compatibles
+  dt-bindings: serial: fsl-lpuart: Fix compatible matching
+  dt-bindings: watchdog: fsl-imx-wdt: Add i.MX 8M compatibles
+  dt-bindings: reset: fsl,imx7-src: Add i.MX 8M compatibles
+  dt-bindings: thermal: imx8mm-thermal: Add i.MX 8M Nano compatible
+  dt-bindings: nvmem: imx-ocotp: Update i.MX 8M compatibles
+  dt-bindings: mfd: rohm,bd71847-pmic: Correct clock properties
+    requirements
+  dt-bindings: interrupt-controller: fsl,irqsteer: Fix compatible
+    matching
+  dt-bindings: mtd: gpmi-nand: Add i.MX 8M compatibles
+  dt-bindings: mtd: gpmi-nand: Fix matching of clocks on different SoCs
+  dt-bindings: mtd: nand-controller: Fix matching with size-cells==1
+  dt-bindings: clock: imx8m: Integrate duplicated i.MX 8M schemas
+
+ .../bindings/clock/imx8m-clock.yaml           | 125 ++++++++++++++++++
+ .../bindings/clock/imx8mm-clock.yaml          |  68 ----------
+ .../bindings/clock/imx8mn-clock.yaml          |  70 ----------
+ .../bindings/clock/imx8mp-clock.yaml          |  70 ----------
+ .../bindings/clock/imx8mq-clock.yaml          |  72 ----------
+ .../interrupt-controller/fsl,irqsteer.yaml    |   8 +-
+ .../bindings/mfd/rohm,bd71847-pmic.yaml       |   9 +-
+ .../devicetree/bindings/mtd/gpmi-nand.yaml    |  94 ++++++++++---
+ .../bindings/mtd/nand-controller.yaml         |   5 +-
+ .../devicetree/bindings/nvmem/imx-ocotp.yaml  |  38 +++---
+ .../devicetree/bindings/perf/fsl-imx-ddr.yaml |  16 ++-
+ .../devicetree/bindings/pwm/imx-pwm.yaml      |  14 +-
+ .../bindings/reset/fsl,imx7-src.yaml          |  19 ++-
+ .../bindings/serial/fsl-imx-uart.yaml         |   4 +
+ .../bindings/serial/fsl-lpuart.yaml           |  17 ++-
+ .../bindings/thermal/imx8mm-thermal.yaml      |  10 +-
+ .../bindings/watchdog/fsl-imx-wdt.yaml        |  11 +-
+ 17 files changed, 303 insertions(+), 347 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx8mm-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.yaml
+
+-- 
+2.17.1
+
