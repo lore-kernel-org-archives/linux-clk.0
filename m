@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C5BC43461
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C4FC2D0A7
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 861DD2074D
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C48E20C56
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Sep 2020 15:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599233089;
-	bh=85RKMTmKECIMFM6DGRK+YX/4QokPxJS+EKnA8zzJN1U=;
+	s=default; t=1599233128;
+	bh=Dd93FE9oQpev+CVY2ipzNLkXaKzEf3vCB92IiF1lQ2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OpKnxHQAN3gkh5YSFngGQe5SFh6LiMl3dylOrUnK6JZI24Z1tLvnaA+31020pVKLj
-	 DPsgN+Bv3oI/AhZ0shciR44AEIOaRrxM8gNMgwHhaI9eUOmlaktZ08GVRa/vFFdRka
-	 tNlMzlpkAl0IHeZO3ONztJVh2EKO3THAVZpbMmms=
+	b=fQ3hGVUzqTn8Atz4nzTLnd7YM4p+uLRoGt2cBMRhxUxfmUdgU9In4dZbnyYnvJtKl
+	 IhuyyAgnJNz8GBDsIM5RaJ0l8uwE8sRHZ8eJx/NBmClZm1ZayxAdfdgDoKF/bdUaXj
+	 CbdxzHuJ66dMzlj764SoExu5XKymYWRNjD5R1qvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbgIDPYs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Sep 2020 11:24:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
+        id S1731060AbgIDPZ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Sep 2020 11:25:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730993AbgIDPYr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Sep 2020 11:24:47 -0400
+        id S1731051AbgIDPZU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Sep 2020 11:25:20 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.106])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FCE920770;
-        Fri,  4 Sep 2020 15:24:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B200220772;
+        Fri,  4 Sep 2020 15:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599233086;
-        bh=85RKMTmKECIMFM6DGRK+YX/4QokPxJS+EKnA8zzJN1U=;
+        s=default; t=1599233119;
+        bh=Dd93FE9oQpev+CVY2ipzNLkXaKzEf3vCB92IiF1lQ2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HPRO3QqFu2PYgg6UY4MmE1tLVsH2LS6zKrpnuJRGkPidYM9DGoujYsBN/jmljDqPK
-         S3BlGPyw++TbsH0MPLmALrU4qZv+IOMIGR6g7iXVpVpNgBR3Tdq1vyFoA0wI1OlmFX
-         MIPZKtWGqBSM0X/jYuJbbpwTw3VHs4AARoShEoGc=
+        b=G2g6yeunx3Er8BuGMgPm7rLE0oNqNL6t1jPmBNIWE1PGDPRu7FEN7h0TZI6XSmG5D
+         6AMwT61dT9xL6JpEZjcNNzY9aXQ8wqaN9TUkG0S/rpylmqhSB+zNZxptTHmkhEFJiK
+         ndzT/91ejUDsMmTe/jvdUAWhlr5rHwq5tXtYGa7Y=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -53,9 +53,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 06/14] dt-bindings: reset: fsl,imx7-src: Add i.MX 8M compatibles
-Date:   Fri,  4 Sep 2020 17:23:56 +0200
-Message-Id: <20200904152404.20636-7-krzk@kernel.org>
+Subject: [PATCH v3 13/14] dt-bindings: mtd: nand-controller: Fix matching with size-cells==1
+Date:   Fri,  4 Sep 2020 17:24:03 +0200
+Message-Id: <20200904152404.20636-14-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200904152404.20636-1-krzk@kernel.org>
 References: <20200904152404.20636-1-krzk@kernel.org>
@@ -64,55 +64,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-to fix dtbs_check warnings like:
+Most of Freescale/NXP GPMI device trees use size-cells==1 (even when
+actually not needed except few boards).  This fixes dtbs_check warnings
+like:
 
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: reset-controller@30390000:
-    compatible:0: 'fsl,imx8mm-src' is not one of ['fsl,imx7d-src', 'fsl,imx8mq-src', 'fsl,imx8mp-src']
-    From schema: Documentation/devicetree/bindings/reset/fsl,imx7-src.yaml
-
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: reset-controller@30390000:
-    compatible:1: 'syscon' was expected
-
-  arch/arm64/boot/dts/freescale/imx8mm-evk.dt.yaml: reset-controller@30390000:
-    compatible: ['fsl,imx8mm-src', 'fsl,imx8mq-src', 'syscon'] is too long
+    arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dt.yaml: nand-controller@33002000: #size-cells:0:0: 0 was expected
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/reset/fsl,imx7-src.yaml          | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/mtd/nand-controller.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/fsl,imx7-src.yaml b/Documentation/devicetree/bindings/reset/fsl,imx7-src.yaml
-index 569cd3bd3a70..00430e2eabc8 100644
---- a/Documentation/devicetree/bindings/reset/fsl,imx7-src.yaml
-+++ b/Documentation/devicetree/bindings/reset/fsl,imx7-src.yaml
-@@ -22,12 +22,19 @@ description: |
+diff --git a/Documentation/devicetree/bindings/mtd/nand-controller.yaml b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+index 40fc5b0b2b8c..0879e1108837 100644
+--- a/Documentation/devicetree/bindings/mtd/nand-controller.yaml
++++ b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+@@ -34,7 +34,10 @@ properties:
+     const: 1
  
- properties:
-   compatible:
--    items:
--      - enum:
--          - fsl,imx7d-src
--          - fsl,imx8mq-src
--          - fsl,imx8mp-src
--      - const: syscon
-+    oneOf:
-+      - items:
-+          - enum:
-+              - fsl,imx7d-src
-+              - fsl,imx8mq-src
-+              - fsl,imx8mp-src
-+          - const: syscon
-+      - items:
-+          - enum:
-+              - fsl,imx8mm-src
-+              - fsl,imx8mn-src
-+          - const: fsl,imx8mq-src
-+          - const: syscon
+   "#size-cells":
+-    const: 0
++    description:
++      Depends on your controller. Put zero unless you need a mapping between CS
++      lines and dedicated memory regions.
++    enum: [0, 1]
  
-   reg:
-     maxItems: 1
+   ranges: true
+ 
 -- 
 2.17.1
 
