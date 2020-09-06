@@ -2,108 +2,71 @@ Return-Path: <SRS0=pdHH=CP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1147C43461
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 15:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8753DC433E2
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 22:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 790E22078E
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 15:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599406981;
-	bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=XFdF6UduiqEPFM6ihMb6Iv3nnpo+jUIVBsN1EADj1rGhFPu45ekK7lZxnvCqL2Qgj
-	 UbmxwkSxSYYegjlMwyzKp3yOAnTVZhdu+H/nj6sJDCkakt69Axg4cAXfdtk3y8hd1T
-	 k+V2rrC1J9ndX/0JPPnZJx7l3PJiU7/YlozJs9Pc=
+	by mail.kernel.org (Postfix) with ESMTP id 39CAF2145D
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 22:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbgIFPmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Sep 2020 11:42:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
+        id S1726476AbgIFWeK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Sep 2020 18:34:10 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:38258 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729077AbgIFPmA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 6 Sep 2020 11:42:00 -0400
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC587208B3;
-        Sun,  6 Sep 2020 15:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599406920;
-        bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LDXst8xQux98fgwS+DCPPihpnc/EIEY5qjXq28Z6Q+CGRBgcseA42lQoMei/yn6wl
-         7o3dnsXl8KCvWfXAyW6DQN8eWLud2lv08WmDva8Ob3vXhLaa5IAihtkKAgQoSAAx5o
-         w9KubcmigtPzKB26MfUkK97aI+LYQYGo4cwv/I4U=
-Received: by mail-ed1-f54.google.com with SMTP id t16so5493912edw.7;
-        Sun, 06 Sep 2020 08:41:59 -0700 (PDT)
-X-Gm-Message-State: AOAM532nFJQzpVqxCCzLyHyNjM00mgT4uKzwyTV38z3lHJtLKn5tqrbt
-        H0Xk0c8UukToWbW8LN5pcwBz9UUslDOmK+KRoic=
-X-Google-Smtp-Source: ABdhPJxIynhvt9FPtCkCknmoZlm54k/a28/XHX67a2orq3+WSH0hrY9/KZ8SKA/AvmUK58YzhTnGp1wjkPUSp+tg52g=
-X-Received: by 2002:a05:6402:ca7:: with SMTP id cn7mr17583253edb.143.1599406918482;
- Sun, 06 Sep 2020 08:41:58 -0700 (PDT)
+        id S1726165AbgIFWeJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 6 Sep 2020 18:34:09 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1kF3EY-0002WD-Mo; Mon, 07 Sep 2020 00:34:02 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Elaine Zhang <zhangqing@rock-chips.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
+        xf@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [PATCH v3 2/6] clk: rockchip: Export rockchip_clk_register_ddrclk()
+Date:   Mon, 07 Sep 2020 00:34:01 +0200
+Message-ID: <2532557.3DXEvePdfh@diego>
+In-Reply-To: <20200904074405.24439-3-zhangqing@rock-chips.com>
+References: <20200904074405.24439-1-zhangqing@rock-chips.com> <20200904074405.24439-3-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-14-krzk@kernel.org>
- <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
- <CGME20200812091510eucas1p15944eb26bb496e20b9fadd609063a490@eucas1p1.samsung.com>
- <CAK8P3a13u0KY0jzxNLs=irTs6ZSXyObKKTp-8KEmowcOZrZXxQ@mail.gmail.com>
- <8066413c-367d-2f8d-3e7b-dacd954675be@samsung.com> <CAK8P3a1xXe56k5nKuCJ-25h1VqWKRb9JGnFrr=SPg_icay-vZA@mail.gmail.com>
- <6ccf14a9-802f-25b8-494d-e957cafd073d@samsung.com> <20200812133109.GA15697@pi3>
- <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
-In-Reply-To: <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Sun, 6 Sep 2020 17:41:46 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
-Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
-Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with
- prototypes and unify declaration
-To:     Cedric Roux <sed@free.fr>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Lihua Yao <ylhuajnu@outlook.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 27 Aug 2020 at 22:51, Cedric Roux <sed@free.fr> wrote:
->
-> On 8/12/20 3:31 PM, Krzysztof Kozlowski wrote:
-> > Or even more important - is it worth to spend effort and time on this?
-> > If there is no single production system using recent Linux kernel, the
-> > answer should be negative...
->
-> Well, I have a server running on mini2440 with a not-too-young
-> but not-too-old kernel. I don't have much time to test recent
-> kernels though so I guess that doesn't count.
+Am Freitag, 4. September 2020, 09:44:01 CEST schrieb Elaine Zhang:
+> This is used by the Rockchip clk driver, export it to allow that
+> driver to be compiled as a module..
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+> ---
+>  drivers/clk/rockchip/clk-ddr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+> index 9273bce4d7b6..282b6f22eb22 100644
+> --- a/drivers/clk/rockchip/clk-ddr.c
+> +++ b/drivers/clk/rockchip/clk-ddr.c
+> @@ -136,3 +136,4 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+>  
+>  	return clk;
+>  }
+> +EXPORT_SYMBOL(rockchip_clk_register_ddrclk);
 
-Actually good to hear. It counts a little bit :)
+EXPORT_SYMBOL_GPL perhaps?
 
-Best regards,
-Krzysztof
+The rest of clock-framework exports are already the _GPL variant anyway,
+so ours should probably be too.
+
+
+
