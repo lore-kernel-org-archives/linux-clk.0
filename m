@@ -1,113 +1,109 @@
-Return-Path: <SRS0=gran=CO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=pdHH=CP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8FBC43461
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Sep 2020 15:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1147C43461
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 15:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF93720658
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Sep 2020 15:10:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="M7FlobI0"
+	by mail.kernel.org (Postfix) with ESMTP id 790E22078E
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Sep 2020 15:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599406981;
+	bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=XFdF6UduiqEPFM6ihMb6Iv3nnpo+jUIVBsN1EADj1rGhFPu45ekK7lZxnvCqL2Qgj
+	 UbmxwkSxSYYegjlMwyzKp3yOAnTVZhdu+H/nj6sJDCkakt69Axg4cAXfdtk3y8hd1T
+	 k+V2rrC1J9ndX/0JPPnZJx7l3PJiU7/YlozJs9Pc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgIEPKo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Sep 2020 11:10:44 -0400
-Received: from mout.gmx.net ([212.227.17.22]:50047 "EHLO mout.gmx.net"
+        id S1729056AbgIFPmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Sep 2020 11:42:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgIEPKn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 5 Sep 2020 11:10:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1599318628;
-        bh=fYLT42DRAjLGx4SOUkR0adm7dHZTNx1Xf2WMoFCeuKk=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=M7FlobI0lYis+I4ffNGid+M7LxUwAzYemKuG+Ckb18xCBEvgzocHTJtKzU2M9MNYx
-         MELyLM9kMQm1q+YA1JQRa5fOwERaMIqjcv8bhWhuAxEVTTeFmFRL9Xpq7bxmcoTTO9
-         zMml7NR2+4EqDaekplv5I29C3dePPHVO+Nkpp7tU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.195.151]) by mail.gmx.com (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mf0BG-1kktWI2kaw-00gXq6; Sat, 05
- Sep 2020 17:10:28 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: imx: gate2: Fix a few typos
-Date:   Sat,  5 Sep 2020 17:10:16 +0200
-Message-Id: <20200905151017.1086353-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.28.0
+        id S1729077AbgIFPmA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 6 Sep 2020 11:42:00 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC587208B3;
+        Sun,  6 Sep 2020 15:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599406920;
+        bh=r/gOQLwi0vjxIzoJJal9o3e2qU4i0aOboXzVPzBsSr8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LDXst8xQux98fgwS+DCPPihpnc/EIEY5qjXq28Z6Q+CGRBgcseA42lQoMei/yn6wl
+         7o3dnsXl8KCvWfXAyW6DQN8eWLud2lv08WmDva8Ob3vXhLaa5IAihtkKAgQoSAAx5o
+         w9KubcmigtPzKB26MfUkK97aI+LYQYGo4cwv/I4U=
+Received: by mail-ed1-f54.google.com with SMTP id t16so5493912edw.7;
+        Sun, 06 Sep 2020 08:41:59 -0700 (PDT)
+X-Gm-Message-State: AOAM532nFJQzpVqxCCzLyHyNjM00mgT4uKzwyTV38z3lHJtLKn5tqrbt
+        H0Xk0c8UukToWbW8LN5pcwBz9UUslDOmK+KRoic=
+X-Google-Smtp-Source: ABdhPJxIynhvt9FPtCkCknmoZlm54k/a28/XHX67a2orq3+WSH0hrY9/KZ8SKA/AvmUK58YzhTnGp1wjkPUSp+tg52g=
+X-Received: by 2002:a05:6402:ca7:: with SMTP id cn7mr17583253edb.143.1599406918482;
+ Sun, 06 Sep 2020 08:41:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DvrplQMA109kQN0Whs6f25qs5lwi7GOqTpyuGc6sGt0K5Hs6qzM
- fxqXbZj5znIN3zZJlZuR7pPef87/hP+dg78T3T+RqSnYBAEXEbVQdSQ2ayKyIGOMxqFV7bE
- JzaAUuRsPyVkMbhmsW9oR/LhYwXq/S9Tm7gbMVeYalphJ0F8FQzfHJVOA6mov2l5QRt4YJJ
- BJ/y9Qa+4SIvJkKZsvwng==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8qRA+4MO+/g=:vSmJBzjGMKCBm7NMuPT/BJ
- W5KNSEna269gMo1CY3uSN5A9WxxD+8GRXpaWwRV7FpuKzi4J/mn+SNJ62KQqJhv4byoDxyAsX
- CE96OZWbJYbKoa/qQwHq8TULt36pKffZYV0f4tIV+tux1elZzvc0GW9xS0etl82BDp/pVSpj5
- AG78/+Cwz6wbgxtGXK2TgPWAIDYJRs7flNnyCa4lBJQKsnG6pNgtKajEtK1PfH8tv8RvLIhB3
- QHpKhf7yHDzO1N0wtI6uLmMtA3jwLLBy/qzbuTQXEqgwE04USxX2XYg08Xou4pgymcBVxUzgC
- KSEHchLh/XE3Y/0V2XeLEbSHmICL0oL6/CN9reGtPQqCvAa+hYU6huusS7KRagj6Q2ns/J0/x
- yhsKCIqlEOxdctm7qmxs784UCChcMqO1DbFrZaeS5UDkau4R51yhk4IMqyfyzopsogioWjRM+
- b65xI2AYP1/rBKK44l9c+XSl0BrOhMBTXkHNHJ3So5Nvl6lq55e8RWkzjj7j6VWEuIQmv6K7b
- X103jdiIJvzkQ8JdtuoWq9QFk7d8SIqLSRXVGXaz7iHF86EvnwZSTa/K1jw6qmBYDkThFXhdG
- tDf6zteOM/09BhI7eeA/FqPj6QTeTk4/04enhQur/6GjTeKCCmFa1jdK8JiFE0psmpE/HBXek
- NYg5f3USzBDFsdKpzoLbOkUFWOBaadQwE+iy4TJ+s+9ALCG0hg8mN2yca4QOsHKzzYqpRpJKc
- cZuhwIjPfjYnE9ODK3pXlLm+J7yNmxhPEzu/EFaXHJUWcq4jAe0kY8TYow47efcw0kvyhKsUL
- 5hkQWznwGBOn902XubjnXt1dbLgWxvDBjX5uIAmSY9PzXUZRsvEobhNv9IvfKt/PK9lAxZa9n
- Q6sUegzYqnp5Of64vQqsbyxxaS8ASdmmtkfFgmftROAIeEW3iE3K7KxQ7FUf/ZYknWJMHVNIw
- XgKuML/duPoXJUTIsagKYRK8SfIB/K99FShJoY7J2fSu+FLGlWfPSKndTeRM7mANW5T+nXp3x
- 0hMKyD/DOcVokrB4bAEgrQKC26Hk8IR8h7iMNCApSJkfe9yo51QsqhGVOMFnSOMWlczoYhaMn
- bPJzrPLu3X6zAsQqZlDv17BGR2Tjt7cgKNbifzTKyidra81gCPKgN0KxAR3asb5D8s88+4e98
- o5rR6ygSOLxJd1C/ObNAYev9lpLnfFTTrDqZ11sCUWZiFaPJH1XNrgELyYT+JFBHM1bV9Bu2q
- PUcfR/QetRocqHjrSl6nAT53YjIZhJ/MT9J5W6w==
+References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-14-krzk@kernel.org>
+ <159721917443.33733.7919188364233003142@swboyd.mtv.corp.google.com>
+ <CGME20200812091510eucas1p15944eb26bb496e20b9fadd609063a490@eucas1p1.samsung.com>
+ <CAK8P3a13u0KY0jzxNLs=irTs6ZSXyObKKTp-8KEmowcOZrZXxQ@mail.gmail.com>
+ <8066413c-367d-2f8d-3e7b-dacd954675be@samsung.com> <CAK8P3a1xXe56k5nKuCJ-25h1VqWKRb9JGnFrr=SPg_icay-vZA@mail.gmail.com>
+ <6ccf14a9-802f-25b8-494d-e957cafd073d@samsung.com> <20200812133109.GA15697@pi3>
+ <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
+In-Reply-To: <30eb6355-0749-8268-c87a-f389dc4b4f1b@free.fr>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Sun, 6 Sep 2020 17:41:46 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
+Message-ID: <CAJKOXPcrhv=1FKE+9RxuYtCb9ZbmMcLt2N0p5pf_sUTimE5Jtw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] ARM: s3c24xx: camif: include header with
+ prototypes and unify declaration
+To:     Cedric Roux <sed@free.fr>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Lihua Yao <ylhuajnu@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A few words were misspelled in this comment.
+On Thu, 27 Aug 2020 at 22:51, Cedric Roux <sed@free.fr> wrote:
+>
+> On 8/12/20 3:31 PM, Krzysztof Kozlowski wrote:
+> > Or even more important - is it worth to spend effort and time on this?
+> > If there is no single production system using recent Linux kernel, the
+> > answer should be negative...
+>
+> Well, I have a server running on mini2440 with a not-too-young
+> but not-too-old kernel. I don't have much time to test recent
+> kernels though so I guess that doesn't count.
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
-v2:
-- Provide a patch description
+Actually good to hear. It counts a little bit :)
 
-v1:
-- https://lore.kernel.org/lkml/20200308214927.16688-1-j.neuschaefer@gmx.ne=
-t/
-=2D--
- drivers/clk/imx/clk-gate2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-index b87ab3c3ba1ea..cc64713c5e5f4 100644
-=2D-- a/drivers/clk/imx/clk-gate2.c
-+++ b/drivers/clk/imx/clk-gate2.c
-@@ -15,7 +15,7 @@
- #include "clk.h"
-
- /**
-- * DOC: basic gatable clock which can gate and ungate it's ouput
-+ * DOC: basic gateable clock which can gate and ungate its output
-  *
-  * Traits of this clock:
-  * prepare - clk_(un)prepare only ensures parent is (un)prepared
-=2D-
-2.28.0
-
+Best regards,
+Krzysztof
