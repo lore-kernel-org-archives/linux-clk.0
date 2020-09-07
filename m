@@ -2,97 +2,146 @@ Return-Path: <SRS0=Y9Ae=CQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A52C43461
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0A1C433E2
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DEEF216C4
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:58:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k7Tw9jr7"
+	by mail.kernel.org (Postfix) with ESMTP id 249A32166E
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbgIGI6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Sep 2020 04:58:39 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40996 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728292AbgIGI6Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2020 04:58:24 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0878wIkg058766;
-        Mon, 7 Sep 2020 03:58:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1599469098;
-        bh=NPu83n18eUWOYpHbYTl7Ayra0VWy1PJnb+/c14e0kJU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=k7Tw9jr7NzsQrTJ1MZ04dyzaJ2WUrc9Lbjw3JZU1TljcQx4ZbF8edBsYQg4qIeWQi
-         YBONgxTyVV/cJ9TRYoMPxTgwoGMcpdlOcjaH6uj6e/B/bnrx3vXmznJsO0ZRl1ly/w
-         nyicv8BVmS0yjqSFMyqDSsaAGqcxHdoqDWb0VrzA=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0878wIYc095061
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Sep 2020 03:58:18 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 7 Sep
- 2020 03:58:18 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 7 Sep 2020 03:58:18 -0500
-Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0878wBau040828;
-        Mon, 7 Sep 2020 03:58:17 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <ssantosh@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <sboyd@kernel.org>, <mturquette@baylibre.com>
-Subject: [PATCH 3/3] clk: keystone: sci-clk: add 10% slack to set_rate
-Date:   Mon, 7 Sep 2020 11:57:40 +0300
-Message-ID: <20200907085740.1083-4-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200907085740.1083-1-t-kristo@ti.com>
-References: <20200907085740.1083-1-t-kristo@ti.com>
+        id S1728079AbgIGJLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Sep 2020 05:11:43 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47850 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727953AbgIGJLm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Sep 2020 05:11:42 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B34AE200E39;
+        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A6488200D95;
+        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 907C72036B;
+        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
+Date:   Mon, 7 Sep 2020 12:11:40 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 16/17] arm64: dts: imx8mp: Add media_blk_ctrl node
+Message-ID: <20200907091140.xh5vnag342odvmao@fsr-ub1664-175>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
+ <1597406966-13740-17-git-send-email-abel.vesa@nxp.com>
+ <CAA+hA=S_wdoZvCPamW2F1Vs73t4fgnQa8LouUwzq2Vfpz3SDCg@mail.gmail.com>
+ <20200819203734.zbndyvf534xey5xy@fsr-ub1664-175>
+ <CAA+hA=S6j71M-Bjbkm1C+q6Ke7xGUX3K0TosKwWJ=tegFaBGsQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA+hA=S6j71M-Bjbkm1C+q6Ke7xGUX3K0TosKwWJ=tegFaBGsQ@mail.gmail.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently, we request exact clock rates from the firmware to be set with
-set_rate. Due to some rounding errors and internal functionality of the
-firmware itself, this can fail. Thus, add some slack to the set_rate
-functionality so that we are always guaranteed to pass. The firmware
-always attempts to use frequency as close to the target freq as
-possible despite the slack given here.
+On 20-08-20 09:31:27, Dong Aisheng wrote:
+> Hi Rob, Stephen,
+> 
+> On Thu, Aug 20, 2020 at 4:37 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+> >
+> > On 20-08-18 19:34:14, Dong Aisheng wrote:
+> > > On Fri, Aug 14, 2020 at 8:12 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+> > > >
+> > > > Some of the features of the media_ctrl will be used by some
+> > > > different drivers in a way those drivers will know best, so adding the
+> > > > syscon compatible we allow those to do just that. Only the resets
+> > > > and the clocks are registered bit the clk-blk-ctrl driver.
+> > > >
+> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
+> > > >  1 file changed, 16 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > > > index dede0ae..2d6d213 100644
+> > > > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > > > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > > > @@ -736,6 +736,22 @@
+> > > >                         };
+> > > >                 };
+> > > >
+> > > > +               aips4: bus@32c00000 {
+> > > > +                       compatible = "simple-bus";
+> > > > +                       reg = <0x32c00000 0x400000>;
+> > > > +                       #address-cells = <1>;
+> > > > +                       #size-cells = <1>;
+> > > > +                       ranges;
+> > > > +
+> > > > +                       media_blk_ctrl: clock-controller@32ec0000 {
+> > >
+> > > For this combo device, maybe we can directly name it as blk-ctrl@32ec0000.
+> > > Rob, do you think if we can do that?
+> > >
+> >
+> > I think it was Stephen who suggested we change it to clock-controller in the
+> > last's version thread.
+> >
+> > TBH, I agree with you here, since it makes more sense to be called blk-ctrl
+> > provided that this is not really just a clock controller.
+> >
+> 
+> How do you think?
+> 
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/keystone/sci-clk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Stephen, can you give us an argument for leaving it as clock-controller ?
 
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index b6477b08af04..aaf31abe1c8f 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -221,7 +221,8 @@ static int sci_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct sci_clk *clk = to_sci_clk(hw);
- 
- 	return clk->provider->ops->set_freq(clk->provider->sci, clk->dev_id,
--					    clk->clk_id, rate, rate, rate);
-+					    clk->clk_id, rate / 10 * 9, rate,
-+					    rate / 10 * 11);
- }
- 
- /**
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Regards
+> Aisheng
+> 
+> > > > +                               compatible = "fsl,imx8mp-media-blk-ctrl", "syscon";
+> > > > +                               reg = <0x32ec0000 0x10000>;
+> > > > +
+> > >
+> > > Remove unnecessary blank line
+> > >
+> >
+> > Will do.
+> >
+> > > Otherwise:
+> > > Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > >
+> > > Regards
+> > > Aisheng
+> > >
+> > > > +                               #clock-cells = <1>;
+> > > > +                               #reset-cells = <1>;
+> > > > +                       };
+> > > > +               };
+> > > > +
+> > > >                 aips5: bus@30c00000 {
+> > > >                         compatible = "fsl,aips-bus", "simple-bus";
+> > > >                         reg = <0x30c00000 0x400000>;
+> > > > --
+> > > > 2.7.4
+> > > >
