@@ -2,102 +2,124 @@ Return-Path: <SRS0=Y9Ae=CQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D819C433E2
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366BAC433E2
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 250D7215A4
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4D2206D4
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 08:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jmp9cug1"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hDYe3/X1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbgIGI0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Sep 2020 04:26:12 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41822 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbgIGI0J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2020 04:26:09 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0878Q7kW092459;
-        Mon, 7 Sep 2020 03:26:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1599467167;
-        bh=+9IVZ6g+HmgWB90pOJtgDqW8uGH1+adNPd3FFT+Rh0U=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=jmp9cug1TXFaExrVzoA8GibrmHxGhGO6PDRXzZmQWP/a10zzNq0nyIC1qkKJDYr8a
-         LngztxCStsnrrrV0U5fs0EivX4VD7qR08+J73OCofECif2Zp2FgBsgICb1QluoMrRf
-         q16vRUyYCIVTDTva08g6JZmUKrt2ORGtp9Ygxdhw=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0878Q6L3075747
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Sep 2020 03:26:07 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 7 Sep
- 2020 03:26:06 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 7 Sep 2020 03:26:06 -0500
-Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0878Q1YJ087957;
-        Mon, 7 Sep 2020 03:26:05 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>
-CC:     <linux-omap@vger.kernel.org>
-Subject: [PATCH 3/3] clk: ti: dra7: add missing clkctrl register for SHA2 instance
-Date:   Mon, 7 Sep 2020 11:26:00 +0300
-Message-ID: <20200907082600.454-4-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200907082600.454-1-t-kristo@ti.com>
-References: <20200907082600.454-1-t-kristo@ti.com>
+        id S1726741AbgIGIas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Sep 2020 04:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbgIGIaq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2020 04:30:46 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA2A4C061575
+        for <linux-clk@vger.kernel.org>; Mon,  7 Sep 2020 01:30:44 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id g4so14842020wrs.5
+        for <linux-clk@vger.kernel.org>; Mon, 07 Sep 2020 01:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:subject:in-reply-to:date:message-id
+         :mime-version;
+        bh=nxwjXtCfzhbJphkRoaZPGRX8lSLuG3IRQbDMiVfMlTw=;
+        b=hDYe3/X1Fp/nkA8cq5LKQEuabNxEiXDOUvZ6woI5zrDtV/o7pIJt3+dMMm+9HY2TUp
+         cJLd1Ak+4UWRcYyvT80mTkYj6NBmFbmk6wB+qnPxWUc1KaSG9Qn2t56LtE+VGh2qiVzv
+         9JuYo9Vx8HM3XBkFaq+ij9ZViBAHur8hlIbyrkyKrJ7qClw66Dqhb2jwIu0SC9QJzrdf
+         gUGdUHALqoOY+mnDt2IsTPU1QvekYjKaGug1Vdp44Er/RQqCawCgaUylXU1NoaEZKpVP
+         zru4e1SdyZCGOVqvjSWFeF95bi3nh2JfDYBl6ExDbqti5ZIjKFPpjuuV0LG1Bi9HubrM
+         sD+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=nxwjXtCfzhbJphkRoaZPGRX8lSLuG3IRQbDMiVfMlTw=;
+        b=FIDZ7VcipuqMRLxwl0YEd4i76GJWiPmeTnI+c4y8j3P3mbcFCKSr7seUgGvyNdHeaq
+         O+desX8E1mvpbQyaXJ1c5keMz+dfDMVnUyy7oUnpcPGwy6pqwMIYqvfmuQwJXwHuaz2q
+         c2MpKwD3o4rDS4gtYSVxsLOLG2Gtgik0TiYtbyv80kgm8bn96bsOjUogRJWnieeFfXno
+         ZXNqIGQevQGTTx5OhTLCXWaABHgNcoIGjez/jnICd/5HGwzJoIMxyMuaDjAnX3KhPT6o
+         f5873IaKGzvD5wGRPlFsBp7+lfh5zFKwxdoQs3DCsghAwOFdjYTAG/OGqqzC88AD9u6/
+         /C6Q==
+X-Gm-Message-State: AOAM530gw/eoYb1guA/fIeimYMVQsAXz6JnVHaxHF16j3VAKCrF5x0he
+        zBGMrYKqxTVgUkruFQH5JquwLg==
+X-Google-Smtp-Source: ABdhPJzSdXOEuAZoMyzc+6+YubqhNb8xreJ4au8coroTpf3gvY2rMuV8IzBk2Sy9KwE1J2Tz416CKA==
+X-Received: by 2002:a5d:4591:: with SMTP id p17mr20049982wrq.408.1599467443488;
+        Mon, 07 Sep 2020 01:30:43 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id q18sm27461214wre.78.2020.09.07.01.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2020 01:30:42 -0700 (PDT)
+References: <20200902150348.14465-1-krzk@kernel.org> <20200902150348.14465-7-krzk@kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 07/10] clk: meson: Simplify with dev_err_probe()
+In-reply-to: <20200902150348.14465-7-krzk@kernel.org>
+Date:   Mon, 07 Sep 2020 10:30:42 +0200
+Message-ID: <1jsgbuaszx.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DRA7 SoC has two SHA instances. Add the clkctrl entry for the second
-one.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-7xx.c         | 1 +
- include/dt-bindings/clock/dra7.h | 1 +
- 2 files changed, 2 insertions(+)
+On Wed 02 Sep 2020 at 17:03, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index b4cf578a69e1..4e27f88062e7 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -637,6 +637,7 @@ static const struct omap_clkctrl_reg_data dra7_l4sec_clkctrl_regs[] __initconst
- 	{ DRA7_L4SEC_DES_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
- 	{ DRA7_L4SEC_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "l4_root_clk_div" },
- 	{ DRA7_L4SEC_SHAM_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
-+	{ DRA7_L4SEC_SHAM2_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
- 	{ 0 },
- };
- 
-diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
-index 8cec5a1e1806..5ec4137231e3 100644
---- a/include/dt-bindings/clock/dra7.h
-+++ b/include/dt-bindings/clock/dra7.h
-@@ -332,6 +332,7 @@
- #define DRA7_L4SEC_DES_CLKCTRL	DRA7_L4SEC_CLKCTRL_INDEX(0x1b0)
- #define DRA7_L4SEC_RNG_CLKCTRL	DRA7_L4SEC_CLKCTRL_INDEX(0x1c0)
- #define DRA7_L4SEC_SHAM_CLKCTRL	DRA7_L4SEC_CLKCTRL_INDEX(0x1c8)
-+#define DRA7_L4SEC_SHAM2_CLKCTRL DRA7_L4SEC_CLKCTRL_INDEX(0x1f8)
- 
- /* l4per2 clocks */
- #define DRA7_L4PER2_CLKCTRL_OFFSET	0xc
--- 
-2.17.1
+> Common pattern of handling deferred probe can be simplified with
+> dev_err_probe().  Less code and the error value gets printed.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+
+> ---
+>  drivers/clk/meson/axg-audio.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 53715e36326c..dc22b0c45743 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -1509,12 +1509,8 @@ static int devm_clk_get_enable(struct device *dev, char *id)
+>  	int ret;
+>  
+>  	clk = devm_clk_get(dev, id);
+> -	if (IS_ERR(clk)) {
+> -		ret = PTR_ERR(clk);
+> -		if (ret != -EPROBE_DEFER)
+> -			dev_err(dev, "failed to get %s", id);
+> -		return ret;
+> -	}
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get %s", id);
+>  
+>  	ret = clk_prepare_enable(clk);
+>  	if (ret) {
+
