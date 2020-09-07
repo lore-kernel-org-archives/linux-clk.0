@@ -2,146 +2,92 @@ Return-Path: <SRS0=Y9Ae=CQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0A1C433E2
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162A9C433E2
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 249A32166E
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB50C2078E
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Sep 2020 09:38:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mJi1fSz7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbgIGJLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Sep 2020 05:11:43 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47850 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727953AbgIGJLm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Sep 2020 05:11:42 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B34AE200E39;
-        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A6488200D95;
-        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 907C72036B;
-        Mon,  7 Sep 2020 11:11:40 +0200 (CEST)
-Date:   Mon, 7 Sep 2020 12:11:40 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 16/17] arm64: dts: imx8mp: Add media_blk_ctrl node
-Message-ID: <20200907091140.xh5vnag342odvmao@fsr-ub1664-175>
-References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
- <1597406966-13740-17-git-send-email-abel.vesa@nxp.com>
- <CAA+hA=S_wdoZvCPamW2F1Vs73t4fgnQa8LouUwzq2Vfpz3SDCg@mail.gmail.com>
- <20200819203734.zbndyvf534xey5xy@fsr-ub1664-175>
- <CAA+hA=S6j71M-Bjbkm1C+q6Ke7xGUX3K0TosKwWJ=tegFaBGsQ@mail.gmail.com>
+        id S1728411AbgIGJiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Sep 2020 05:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728199AbgIGJiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Sep 2020 05:38:16 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2CCC061574
+        for <linux-clk@vger.kernel.org>; Mon,  7 Sep 2020 02:38:15 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id m6so15103915wrn.0
+        for <linux-clk@vger.kernel.org>; Mon, 07 Sep 2020 02:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q9bP/xoJ+T6gS3ooO5y+uznagdOfHkS2kkQH3P/gVPE=;
+        b=mJi1fSz7M5Lr031HrqOc2vIpZdQEGkG0kniFjTC+Efro5LjGWBiFhbr/W8/CfaGgUL
+         8VC2+kZcZjCsAHUtHRfzdynmLK99Gk68kAUZdqRNt6F/VrUlfhgxBv5sdYZRa1Ok+YxG
+         70oVXdN2vUs7vNwy2fdxiogKZHzniD9lVkijsf8hKWD+2GfEhgS4TuOY3Cnx1HX9riz8
+         kKm4O1vkqHDJSb8/WanZi8DOeK2ALLKVuF0tjKVl9lcmOgS7nA0+TCk4EAKwPHiZaIJ/
+         AP81EU26AHAgVP68NhyrEWf62ZfW5jZ3kxvOvXIEXOK1idHlX74cCb28DF2HAGt3GhK8
+         E3Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q9bP/xoJ+T6gS3ooO5y+uznagdOfHkS2kkQH3P/gVPE=;
+        b=dkkk2T9C/U6MDywrxNBTl1aIkjGU5Vu/O13r8SLhSKVpBpKdXPl/yA5q0ZM09wlXt5
+         jJ75p2sjyV7wPXSytKkm6hm2dc6EWlJH/TxDkOjCxHHFctn6fM5JPWTzPX/frKbp6nnw
+         tGGlbdB7hlv7LvquEud/BIuLU85KO2zs+Fef9IED1Pq7+rDXMjjdvtKTr88nf1uzIGFZ
+         U5Eu1hz52uYpehzjZbT4pIZaQpS2fWeLYe0EyygYP9fCEFId/tMN35TBGiabQO7Cf2jk
+         r6mv/mgEnux+TK9NzzaojEoCfxwa7Fvvaiu0mLrQ+pp5RVU6jKyZkLsiGGEHNMX9RA+p
+         wHFA==
+X-Gm-Message-State: AOAM530IozScinYS0vLIv+9ahw5AXWTlXKQJey+cWqKRTk6zOqlSKGZ+
+        MdFB7C6sKDzBcpTDnGlLkTfZSQ==
+X-Google-Smtp-Source: ABdhPJwanebMcJF3b2wK++MK94YD9JrWiXeqBZFXJwRJfjn+8khXs/yrtoWZ3SVcFI6GcFsVI4vi/w==
+X-Received: by 2002:a5d:570b:: with SMTP id a11mr17548904wrv.139.1599471493555;
+        Mon, 07 Sep 2020 02:38:13 -0700 (PDT)
+Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:5405:9623:e2f1:b2ac])
+        by smtp.gmail.com with ESMTPSA id n17sm25170687wrw.0.2020.09.07.02.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2020 02:38:12 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/4] clk: meson: axg: add clocks for MIPI-DSI support
+Date:   Mon,  7 Sep 2020 11:38:06 +0200
+Message-Id: <20200907093810.6585-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA+hA=S6j71M-Bjbkm1C+q6Ke7xGUX3K0TosKwWJ=tegFaBGsQ@mail.gmail.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-08-20 09:31:27, Dong Aisheng wrote:
-> Hi Rob, Stephen,
-> 
-> On Thu, Aug 20, 2020 at 4:37 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> >
-> > On 20-08-18 19:34:14, Dong Aisheng wrote:
-> > > On Fri, Aug 14, 2020 at 8:12 PM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > > >
-> > > > Some of the features of the media_ctrl will be used by some
-> > > > different drivers in a way those drivers will know best, so adding the
-> > > > syscon compatible we allow those to do just that. Only the resets
-> > > > and the clocks are registered bit the clk-blk-ctrl driver.
-> > > >
-> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > > ---
-> > > >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
-> > > >  1 file changed, 16 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > > > index dede0ae..2d6d213 100644
-> > > > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > > > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > > > @@ -736,6 +736,22 @@
-> > > >                         };
-> > > >                 };
-> > > >
-> > > > +               aips4: bus@32c00000 {
-> > > > +                       compatible = "simple-bus";
-> > > > +                       reg = <0x32c00000 0x400000>;
-> > > > +                       #address-cells = <1>;
-> > > > +                       #size-cells = <1>;
-> > > > +                       ranges;
-> > > > +
-> > > > +                       media_blk_ctrl: clock-controller@32ec0000 {
-> > >
-> > > For this combo device, maybe we can directly name it as blk-ctrl@32ec0000.
-> > > Rob, do you think if we can do that?
-> > >
-> >
-> > I think it was Stephen who suggested we change it to clock-controller in the
-> > last's version thread.
-> >
-> > TBH, I agree with you here, since it makes more sense to be called blk-ctrl
-> > provided that this is not really just a clock controller.
-> >
-> 
-> How do you think?
-> 
+This adds the VPU & VAPB clocks along the MIPI DSI Host clock.
 
-Stephen, can you give us an argument for leaving it as clock-controller ?
+The clock scheme is based on the GXBB & G12A VPU clocks, with a different CTS
+clock output used for MIPI-DSI.
 
-> Regards
-> Aisheng
-> 
-> > > > +                               compatible = "fsl,imx8mp-media-blk-ctrl", "syscon";
-> > > > +                               reg = <0x32ec0000 0x10000>;
-> > > > +
-> > >
-> > > Remove unnecessary blank line
-> > >
-> >
-> > Will do.
-> >
-> > > Otherwise:
-> > > Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > >
-> > > Regards
-> > > Aisheng
-> > >
-> > > > +                               #clock-cells = <1>;
-> > > > +                               #reset-cells = <1>;
-> > > > +                       };
-> > > > +               };
-> > > > +
-> > > >                 aips5: bus@30c00000 {
-> > > >                         compatible = "fsl,aips-bus", "simple-bus";
-> > > >                         reg = <0x30c00000 0x400000>;
-> > > > --
-> > > > 2.7.4
-> > > >
+Neil Armstrong (4):
+  dt-bindings: clk: axg-clkc: add Video Clocks
+  dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
+  clk: meson: axg: add Video Clocks
+  clk: meson: axg: add MIPI DSI Host clock
+
+ drivers/clk/meson/axg.c              | 840 +++++++++++++++++++++++++++
+ drivers/clk/meson/axg.h              |  23 +-
+ include/dt-bindings/clock/axg-clkc.h |  25 +
+ 3 files changed, 887 insertions(+), 1 deletion(-)
+
+-- 
+2.22.0
+
