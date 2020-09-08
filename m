@@ -2,110 +2,90 @@ Return-Path: <SRS0=vkhW=CR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D8EC43461
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94C1C2D0E0
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 17:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C17C2080A
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:51:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599583911;
-	bh=pW1S8wYQ7shAS4VTkFPTvct/ClWzUHOw3xWhbsYQUNo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=AJZzxioMLkxhn7ZF/KIyOXmGq9qAjQpfW23Men8Z0/wdyu+fupi5QTm1j9ybA8GRu
-	 n32EVXaUo+pppABr3glfMwsLhV8rUEFcUwvMtE7Es7Qe8c/s6qsACZBVbobaJH9DFN
-	 L45eKQgoHDnkI8UzTzZYV+sVoIia/EN9/Mp037aU=
+	by mail.kernel.org (Postfix) with ESMTP id 82CF321532
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 17:08:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z7mlioD/";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Z9DY5Mhe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732010AbgIHQvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Sep 2020 12:51:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731909AbgIHQvJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:51:09 -0400
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B576E2137B;
-        Tue,  8 Sep 2020 16:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599583868;
-        bh=pW1S8wYQ7shAS4VTkFPTvct/ClWzUHOw3xWhbsYQUNo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FgS6w9TKkNIumIokoiwznLHegSZ8da9H6/tyCUONyA8D6mS4MC5L9U2z22U5vpbaJ
-         F9LBw9H3U/ZQfNzWt6ceq2QpbMCME12qMJBPAnufXbEXaMdXUN5OQTdjSiBIy0r3bk
-         7U2jnKRg1UiTm9IReOgbeVZRQG6XO2kMrq5x8Ajs=
-Received: by mail-oo1-f51.google.com with SMTP id 4so4091291ooh.11;
-        Tue, 08 Sep 2020 09:51:08 -0700 (PDT)
-X-Gm-Message-State: AOAM5336w4FaUrgkkaZQMHIC9XcoaoO79MmlghHpn2rTwscnyo8U5huj
-        MQjZH4r+nvWe9apsBepBEXfpRVfNTTha4s0nQQ==
-X-Google-Smtp-Source: ABdhPJyVFdSAOgZ7160kEJoAezjYnztio3h9Ino2moi2r5NNuCCiGtHqBpSUtvivi5rsYhCBevOSckk/m/8RpCmF5Go=
-X-Received: by 2002:a4a:d306:: with SMTP id g6mr19090952oos.25.1599583867914;
- Tue, 08 Sep 2020 09:51:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200904152404.20636-1-krzk@kernel.org> <20200904152404.20636-13-krzk@kernel.org>
- <CAL_Jsq+tGQhkqtQszOx7nvr1PR=YFz2p1=OnWQ8JxmSg4qNkHA@mail.gmail.com> <20200907060958.GA4525@kozik-lap>
-In-Reply-To: <20200907060958.GA4525@kozik-lap>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 8 Sep 2020 10:50:56 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
-Message-ID: <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
-Subject: Re: [PATCH v3 12/14] dt-bindings: mtd: gpmi-nand: Fix matching of
- clocks on different SoCs
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1731791AbgIHRH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Sep 2020 13:07:58 -0400
+Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:60154
+        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731353AbgIHRHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Sep 2020 13:07:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599584866;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=JebWk3quLaFS4yWUZICsIfI+TcdkpkejSpl979elzLw=;
+        b=Z7mlioD/ediT13BOhXMY9ka2rBqVbDzd8uKrO8+tRKya0WGtgijKy1fFe6v70CJS
+        lv4BW/hMVBogGngdpvHSSMKlCg/Z56ytYQgXsgFFkz6SmxTyEvLzOfbfWQqz9GlEb7K
+        rhDd7qN7k4gogpKlN0ENLu8vEZUmH4p4iM8i+oXs=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599584866;
+        h=From:To:Cc:Subject:Date:Message-Id:Feedback-ID;
+        bh=JebWk3quLaFS4yWUZICsIfI+TcdkpkejSpl979elzLw=;
+        b=Z9DY5MheA5SxsMwYVQmi12dIDE4Zbf7lDJwtiACvrcA6YNaqGHTAinP9nQr+GAVq
+        PX97TD/s2EOdAAjpbuzDWqmVMw34gFI9iuuhTXQ87Flhw+Qev6GWLaVWEdwY+raaif4
+        /uOangDVPE3Cbdwz6y35+hzeFZyhbLbiEMGqcils=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EA5BC433F0
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/3] Add Camera clock controller driver for SC7180
+Date:   Tue, 8 Sep 2020 17:07:46 +0000
+Message-ID: <010101746eb010a0-c71e2164-60d6-4b15-8860-6b40d85ffec3-000000@us-west-2.amazonses.com>
+X-Mailer: git-send-email 2.7.4
+X-SES-Outgoing: 2020.09.08-54.240.27.188
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 7, 2020 at 12:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Fri, Sep 04, 2020 at 04:36:39PM -0600, Rob Herring wrote:
-> > On Fri, Sep 4, 2020 at 9:25 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > Driver requires different amount of clocks for different SoCs.  Describe
-> > > these requirements properly to fix dtbs_check warnings like:
-> > >
-> > >     arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dt.yaml: nand-controller@33002000: clock-names:1: 'gpmi_apb' was expected
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > >
-> > > ---
-> > >
-> > > Changes since v1:
-> > > 1. Do not require order of clocks (use pattern).
-> >
-> > To the extent that you can, you should fix the order in dts files
-> > first. If we just adjust the schemas to match the dts files, then
-> > what's the point?
->
-> The DTSes do not have mixed order of clocks between each other, as fair
-> as I remember. It was fix after Sasha Hauer comment that order is not
-> necessarily good.
->
-> We have the clock-names property, why enforcing the order?
+[v1]
+ * Add support for Agera PLL which is used in the camera clock controller.
 
-Because DT/OpenFirmware has always had a defined order for property
-values. '*-names' is just extra information.
+ * Add driver support for camera clock controller for SC7180 and also
+   update device tree bindings for the various clocks supported in the
+   clock controller.
 
-Rob
+Taniya Das (3):
+  clk: qcom: clk-alpha-pll: Add support for controlling Agera PLLs
+  dt-bindings: clock: Add YAML schemas for the QCOM Camera clock
+    bindings.
+  clk: qcom: camcc: Add camera clock controller driver for SC7180
+
+ .../bindings/clock/qcom,sc7180-camcc.yaml          |   73 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/camcc-sc7180.c                    | 1737 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |   82 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |    4 +
+ include/dt-bindings/clock/qcom,camcc-sc7180.h      |  121 ++
+ 7 files changed, 2027 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,camcc-sc7180.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
