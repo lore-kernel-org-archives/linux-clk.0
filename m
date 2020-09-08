@@ -2,144 +2,82 @@ Return-Path: <SRS0=vkhW=CR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64445C433E2
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C14C43461
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E6EE20C09
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA9A208C7
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgIHKTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Sep 2020 06:19:06 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47652 "EHLO inva021.nxp.com"
+        id S1729573AbgIHK0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Sep 2020 06:26:39 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:56212 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbgIHKTB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:19:01 -0400
+        id S1729496AbgIHK0I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Sep 2020 06:26:08 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8C889201599;
-        Tue,  8 Sep 2020 12:18:59 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A2CB2011AF;
+        Tue,  8 Sep 2020 12:26:07 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 41D7620158D;
-        Tue,  8 Sep 2020 12:18:59 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 78C302036D;
-        Tue,  8 Sep 2020 12:18:58 +0200 (CEST)
-Date:   Tue, 8 Sep 2020 13:18:58 +0300
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2DDE720119C;
+        Tue,  8 Sep 2020 12:26:07 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 742C420327;
+        Tue,  8 Sep 2020 12:26:06 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
-To:     peng.fan@nxp.com
-Cc:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aisheng.dong@nxp.com
-Subject: Re: [PATCH] clk: imx: lpcg-scu: SW workaround for errata (e10858)
-Message-ID: <20200908101858.kiuzcnc6rolbbyma@fsr-ub1664-175>
-References: <1599556487-31364-1-git-send-email-peng.fan@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1599556487-31364-1-git-send-email-peng.fan@nxp.com>
-User-Agent: NeoMutt/20180622
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>, devicetree@vger.kernel.org
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v3 02/14] dt-bindings: reset: imx8mp: Add audio blk_ctl reset IDs
+Date:   Tue,  8 Sep 2020 13:24:39 +0300
+Message-Id: <1599560691-3763-3-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1599560691-3763-1-git-send-email-abel.vesa@nxp.com>
+References: <1599560691-3763-1-git-send-email-abel.vesa@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-09-08 17:14:47, peng.fan@nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Back-to-back LPCG writes can be ignored by the LPCG register due to
-> a HW bug. The writes need to be separated by at least 4 cycles of
-> the gated clock.
-> 
-> The workaround is implemented as follows:
-> 1. For clocks running greater than or equal to 24MHz, a read
-> followed by the write will provide sufficient delay.
-> 2. For clocks running below 24MHz, add a delay of 4 clock cylces
-> after the write to the LPCG register.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-lpcg-scu.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
-> index 1f0e44f921ae..6ee9d2caedf2 100644
-> --- a/drivers/clk/imx/clk-lpcg-scu.c
-> +++ b/drivers/clk/imx/clk-lpcg-scu.c
-> @@ -6,6 +6,7 @@
->  
->  #include <linux/bits.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/slab.h>
-> @@ -38,6 +39,31 @@ struct clk_lpcg_scu {
->  
->  #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
->  
-> +/* e10858 -LPCG clock gating register synchronization errata */
-> +static void do_lpcg_workaround(u32 rate, void __iomem *reg, u32 val)
-> +{
-> +	writel(val, reg);
-> +
-> +	if (rate >= 24000000 || rate == 0) {
-> +		u32 reg1;
-> +
-> +		/*
-> +		 * The time taken to access the LPCG registers from the AP core
-> +		 * through the interconnect is longer than the minimum delay
-> +		 * of 4 clock cycles required by the errata.
-> +		 * Adding a readl will provide sufficient delay to prevent
-> +		 * back-to-back writes.
-> +		 */
-> +		reg1 = readl(reg);
-> +	} else {
-> +		/*
-> +		 * For clocks running below 24MHz, wait a minimum of
-> +		 * 4 clock cycles.
-> +		 */
-> +		ndelay(4 * (DIV_ROUND_UP(1000000000, rate)));
-> +	}
+These will be used by the imx8mp for blk_ctl driver.
 
-Just to make sure this is totally understood, if the lpcg consumer
-needs to two enables/disables in less than 4 multiplied by the clock
-period, the second enable/disable will be delayed.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ include/dt-bindings/reset/imx8mp-reset.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-If we're fine with this, then here is my R-b.
+diff --git a/include/dt-bindings/reset/imx8mp-reset.h b/include/dt-bindings/reset/imx8mp-reset.h
+index 2e8c910..6c7f17f 100644
+--- a/include/dt-bindings/reset/imx8mp-reset.h
++++ b/include/dt-bindings/reset/imx8mp-reset.h
+@@ -47,4 +47,9 @@
+ 
+ #define IMX8MP_RESET_NUM			38
+ 
++#define IMX8MP_AUDIO_BLK_CTL_EARC_RESET		0
++#define IMX8MP_AUDIO_BLK_CTL_EARC_PHY_RESET	1
++
++#define IMX8MP_AUDIO_BLK_CTL_RESET_NUM		2
++
+ #endif
+-- 
+2.7.4
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-
-> +}
-> +
->  static int clk_lpcg_scu_enable(struct clk_hw *hw)
->  {
->  	struct clk_lpcg_scu *clk = to_clk_lpcg_scu(hw);
-> @@ -54,7 +80,8 @@ static int clk_lpcg_scu_enable(struct clk_hw *hw)
->  		val |= CLK_GATE_SCU_LPCG_HW_SEL;
->  
->  	reg |= val << clk->bit_idx;
-> -	writel(reg, clk->reg);
-> +
-> +	do_lpcg_workaround(clk_hw_get_rate(hw), clk->reg, reg);
->  
->  	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
->  
-> @@ -71,7 +98,7 @@ static void clk_lpcg_scu_disable(struct clk_hw *hw)
->  
->  	reg = readl_relaxed(clk->reg);
->  	reg &= ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
-> -	writel(reg, clk->reg);
-> +	do_lpcg_workaround(clk_hw_get_rate(hw), clk->reg, reg);
->  
->  	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
->  }
-> -- 
-> 2.28.0
-> 
