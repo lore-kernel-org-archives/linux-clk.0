@@ -2,107 +2,109 @@ Return-Path: <SRS0=vkhW=CR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BC7C433E2
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 17:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1345C2BC11
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 18:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A30712087D
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 17:21:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EFRVWrop"
+	by mail.kernel.org (Postfix) with ESMTP id B018B207DE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 18:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbgIHRUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:20:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59584 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731504AbgIHRTl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Sep 2020 13:19:41 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 088HJQcZ002522;
-        Tue, 8 Sep 2020 17:19:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=2kRbRbAPcu65GdZfJ3P4R9UbW3b90s932qN7mt8dNJk=;
- b=EFRVWropmMTv7e+hH7AYaeq+75gW3uXiy1/I34rYI3Rh3lsJwZXVbKOPcFVtBWCX+xbq
- 06vaqz8FnXlxREM+Oa+NXZxfKxaoBBDDmEZ9/2yBsCOj/1XDomkIM0vxy+Xnb73w4msp
- 3jY/K1CTsqWCj4VysZW4I3nWLVTOsFHfB6SWK8NM4HwdCrByDWmy7QrPXobYcuViS8er
- O4Jys2UxvJMVBdR7A5VpFSR8cH7jJR5ewxifJbvy1KvGblkmqTsTNmUTCWh4Y2R0xdDK
- HrRu6Gk6taBY/6yxrslddXCfeziiI/2hBAjdnw/QXgw3hcyzkVWMFhY9aDTTjBVMURZR Xg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 33c23qw1wk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Sep 2020 17:19:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 088HGYKU182705;
-        Tue, 8 Sep 2020 17:19:36 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 33cmkw7hwx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Sep 2020 17:19:36 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 088HJY3G021930;
-        Tue, 8 Sep 2020 17:19:36 GMT
-Received: from [10.74.106.12] (/10.74.106.12)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Sep 2020 10:19:34 -0700
-Subject: Re: [PATCH 0/3] clk: keystone: some minor fixes
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        ssantosh@kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-References: <20200907085740.1083-1-t-kristo@ti.com>
-From:   santosh.shilimkar@oracle.com
-Organization: Oracle Corporation
-Message-ID: <8a594a9d-8e10-6e01-908c-8e59da1d7fbe@oracle.com>
-Date:   Tue, 8 Sep 2020 10:19:32 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.9.0
+        id S1731704AbgIHSIZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Sep 2020 14:08:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57860 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731322AbgIHQLo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:11:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 892F8B74F;
+        Tue,  8 Sep 2020 16:11:39 +0000 (UTC)
+Message-ID: <7367c17489ef7d5bc24c0452c9887663f938344b.camel@suse.de>
+Subject: Re: [PATCH v2 0/4] drm/vc4: Support HDMI QHD or higher output
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Hoegeun Kwon <hoegeun.kwon@samsung.com>, eric@anholt.net,
+        maxime@cerno.tech, stefan.wahren@i2se.com,
+        dave.stevenson@raspberrypi.com
+Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
+        sboyd@kernel.org, mturquette@baylibre.com, kdasu.kdev@gmail.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
+        linux-arm-kernel@lists.infradead.org
+Date:   Tue, 08 Sep 2020 18:11:36 +0200
+In-Reply-To: <20200901040759.29992-1-hoegeun.kwon@samsung.com>
+References: <CGME20200901040850epcas1p2150ea195dfb20b46d6421af63b1f5129@epcas1p2.samsung.com>
+         <20200901040759.29992-1-hoegeun.kwon@samsung.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-KMxdxbhMfC1Bf45kOePp"
+User-Agent: Evolution 3.36.5 
 MIME-Version: 1.0
-In-Reply-To: <20200907085740.1083-1-t-kristo@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9737 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009080163
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
- malwarescore=0 phishscore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009080163
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--=-KMxdxbhMfC1Bf45kOePp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/7/20 1:57 AM, Tero Kristo wrote:
-> Hi Santosh,
-> 
-> This series contains a few fixes for the TI SCI clock driver.
-> - Patch #1 is a clear bug fix, where we missed to parse assigned-clock
->    data properly to detect which clocks are in use on the SoC.
-> - Patch #2 is a performance improvement patch which avoids some
->    unnecessary round trips to firmware side while setting clock
->    frequency.
-> - Patch #3 fixes some issues with set_rate passed to firmware, where the
->    parameters are too strict; namely, firmware fails to handle some cases
->    properly if min,tgt,max values for a clock rate are exactly the same
->    value. Yeah, the firmware is quite weird here but nothing much else we
->    can do from kernel side other than this....
-> 
-Looks fine to me Tero.
+On Tue, 2020-09-01 at 13:07 +0900, Hoegeun Kwon wrote:
+> Hi everyone,
+>=20
+> There is a problem that the output does not work at a resolution
+> exceeding FHD. To solve this, we need to adjust the bvb clock at a
+> resolution exceeding FHD.
+>=20
+> Rebased on top of next-20200708 and [1].
+>=20
+> [1] : [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline (Maxime'=
+s patchset)
+>=20
+> Changes from v1:
+>   - Added dt-bindings documents
+>   - Change patch order, first fix driver and then device tree
+>=20
+> Hoegeun Kwon (4):
+>   clk: bcm: rpi: Add register to control pixel bvb clk
+>   drm/vc4: hdmi: Add pixel bvb clock control
+>   dt-bindings: display: vc4: hdmi: Add bvb clock-names property
+>   ARM: dts: bcm2711: Add bvb clock for hdmi-pixel
+>=20
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml   | 12 ++++++---
+>  arch/arm/boot/dts/bcm2711-rpi-4-b.dts         |  6 +++--
+>  drivers/clk/bcm/clk-raspberrypi.c             |  1 +
+>  drivers/gpu/drm/vc4/vc4_hdmi.c                | 25 +++++++++++++++++++
+>  drivers/gpu/drm/vc4/vc4_hdmi.h                |  1 +
+>  5 files changed, 39 insertions(+), 6 deletions(-)
 
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Small note to anyone reviewing this, patches 3 & 4 where squashed into this
+series: https://lkml.org/lkml/2020/9/3/219
+
+Regards,
+Nicolas
 
 
-Hi Stephen, Mike,
-Can you please pick these fixes via clk tree ?
+--=-KMxdxbhMfC1Bf45kOePp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl9XrTgACgkQlfZmHno8
+x/4bVwf+N7uuI1uhrijPKBHw/kVDjkfpbhhO78uXdO7AwTDOGvasQGmyTwz6rZLo
+nWSHBPD+B8UnmdaSPbBqKpt2b1hDcxCYAh6jdWvd2hwUiX4zzu0dQFrzg+JqVL6n
+7YsL6yIteSo5kBxBnWNZ6XZBCjIsgbXSplVQY2EAEqOhyhD47c1jr9wkam899PE3
+L3s0Qlox7zAGWI9IE9OJoS+pATo2+wyMrUjx8nlSs7ygUP1WCUOnVII6dCJusTXP
+iD5J/IoO/c9VQHa68m9VQUorEW3KG4P0v4I5gCB8dRtSiPXN30bpZZqysWBb1aiv
+uJ0vrxKphu9teKjIoBXxEHl4vBfy0g==
+=2yE8
+-----END PGP SIGNATURE-----
+
+--=-KMxdxbhMfC1Bf45kOePp--
+
