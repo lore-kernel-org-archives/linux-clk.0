@@ -2,32 +2,31 @@ Return-Path: <SRS0=vkhW=CR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B011C43461
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA61C433E2
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40F1F2074B
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF29A2087C
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 10:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbgIHKdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Sep 2020 06:33:35 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44830 "EHLO inva020.nxp.com"
+        id S1729316AbgIHK0d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Sep 2020 06:26:33 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:56116 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729278AbgIHK0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:26:38 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BCEFD1A0335;
-        Tue,  8 Sep 2020 12:26:08 +0200 (CEST)
+        id S1729414AbgIHK0H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Sep 2020 06:26:07 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 960F22014ED;
+        Tue,  8 Sep 2020 12:26:05 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ABEB91A032F;
-        Tue,  8 Sep 2020 12:26:08 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 868BA2011AF;
+        Tue,  8 Sep 2020 12:26:05 +0200 (CEST)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 078FE2036D;
-        Tue,  8 Sep 2020 12:26:07 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D44EE20327;
+        Tue,  8 Sep 2020 12:26:04 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -43,64 +42,64 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v3 04/14] dt-bindings: clock: imx8mp: Add media blk_ctl clock IDs
-Date:   Tue,  8 Sep 2020 13:24:41 +0300
-Message-Id: <1599560691-3763-5-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v3 00/14] Add BLK_CTL support for i.MX8MP
+Date:   Tue,  8 Sep 2020 13:24:37 +0300
+Message-Id: <1599560691-3763-1-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1599560691-3763-1-git-send-email-abel.vesa@nxp.com>
-References: <1599560691-3763-1-git-send-email-abel.vesa@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These will be used by the imx8mp for blk_ctl driver.
+The BLK_CTL according to HW design is basically the wrapper of the entire
+function specific group of IPs and holds GPRs that usually cannot be placed
+into one specific IP from that group. Some of these GPRs are used to control
+some clocks, other some resets, others some very specific function that does
+not fit into clocks or resets. Since the clocks are registered using the i.MX
+clock subsystem API, the driver is placed into the clock subsystem, but it
+also registers the resets. For the other functionalities that other GPRs might
+have, the syscon is used.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- include/dt-bindings/clock/imx8mp-clock.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Changes since v2:
+ * Made the naming consistent with the RM: BLK_CTL (not BLK_CTRL)
+ * fixed the reset set procedure as discussed with Philipp Zabel
+ * removed the patch that includes the imx8mp-reset header in dtsi
+   as there is no user yet.
+ * added i.MX8MP specific blk_ctl driver as suggested by Aisheng Dong
 
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 5fc2c40..12632fa 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -396,4 +396,32 @@
- 
- #define IMX8MP_CLK_AUDIO_BLK_CTL_END			59
- 
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI_PCLK		0
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI_CLKREF	1
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI_PCLK		2
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI_ACLK		3
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_PIXEL		4
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_APB		5
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISI_PROC		6
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISI_APB		7
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_BUS_BLK		8
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI2_PCLK		9
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI2_ACLK		10
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_PIXEL		11
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_APB		12
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_COR		13
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_AXI		14
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_AHB		15
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_COR		16
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_AXI		17
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_AHB		18
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_COR		19
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_AXI		20
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_AHB		21
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI2		22
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_AXI		23
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_AXI		24
-+
-+#define IMX8MP_CLK_MEDIA_BLK_CTL_END			25
-+
- #endif
+Abel Vesa (14):
+  dt-bindings: clocks: imx8mp: Rename audiomix ids clocks to
+    audio_blk_ctl
+  dt-bindings: reset: imx8mp: Add audio blk_ctl reset IDs
+  dt-bindings: clock: imx8mp: Add ids for the audio shared gate
+  dt-bindings: clock: imx8mp: Add media blk_ctl clock IDs
+  dt-bindings: reset: imx8mp: Add media blk_ctl reset IDs
+  dt-bindings: clock: imx8mp: Add hdmi blk_ctl clock IDs
+  dt-bindings: reset: imx8mp: Add hdmi blk_ctl reset IDs
+  clk: imx8mp: Add audio shared gate
+  Documentation: bindings: clk: Add bindings for i.MX BLK_CTL
+  clk: imx: Add generic blk-ctl driver
+  clk: imx: Add blk-ctl driver for i.MX8MP
+  arm64: dts: imx8mp: Add audio_blk_ctl node
+  arm64: dts: imx8mp: Add media_blk_ctl node
+  arm64: dts: imx8mp: Add hdmi_blk_ctl node
+
+ .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml |  60 ++++
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi          |  37 +++
+ drivers/clk/imx/Makefile                           |   2 +-
+ drivers/clk/imx/clk-blk-ctl-imx8mp.c               | 313 +++++++++++++++++++++
+ drivers/clk/imx/clk-blk-ctl.c                      | 297 +++++++++++++++++++
+ drivers/clk/imx/clk-blk-ctl.h                      |  80 ++++++
+ drivers/clk/imx/clk-imx8mp.c                       |  12 +-
+ include/dt-bindings/clock/imx8mp-clock.h           | 200 +++++++++----
+ include/dt-bindings/reset/imx8mp-reset.h           |  45 +++
+ 9 files changed, 983 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+ create mode 100644 drivers/clk/imx/clk-blk-ctl-imx8mp.c
+ create mode 100644 drivers/clk/imx/clk-blk-ctl.c
+ create mode 100644 drivers/clk/imx/clk-blk-ctl.h
+
 -- 
 2.7.4
 
