@@ -2,107 +2,110 @@ Return-Path: <SRS0=vkhW=CR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A86C43461
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D8EC43461
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87C3F21D7A
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C17C2080A
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Sep 2020 16:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599583911;
+	bh=pW1S8wYQ7shAS4VTkFPTvct/ClWzUHOw3xWhbsYQUNo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=AJZzxioMLkxhn7ZF/KIyOXmGq9qAjQpfW23Men8Z0/wdyu+fupi5QTm1j9ybA8GRu
+	 n32EVXaUo+pppABr3glfMwsLhV8rUEFcUwvMtE7Es7Qe8c/s6qsACZBVbobaJH9DFN
+	 L45eKQgoHDnkI8UzTzZYV+sVoIia/EN9/Mp037aU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbgIHQKP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Sep 2020 12:10:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56302 "EHLO mx2.suse.de"
+        id S1732010AbgIHQvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Sep 2020 12:51:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731395AbgIHQJx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:09:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 29CF9ADDB;
-        Tue,  8 Sep 2020 16:09:48 +0000 (UTC)
-Message-ID: <f3d9a4a95e419b2cd67469b4adba4cfe4da71f7a.camel@suse.de>
-Subject: Re: [PATCH v2 1/4] clk: bcm: rpi: Add register to control pixel bvb
- clk
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Hoegeun Kwon <hoegeun.kwon@samsung.com>, eric@anholt.net,
-        maxime@cerno.tech, stefan.wahren@i2se.com,
-        dave.stevenson@raspberrypi.com
-Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
-        sboyd@kernel.org, mturquette@baylibre.com, kdasu.kdev@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 08 Sep 2020 18:09:44 +0200
-In-Reply-To: <20200901040759.29992-2-hoegeun.kwon@samsung.com>
-References: <20200901040759.29992-1-hoegeun.kwon@samsung.com>
-         <CGME20200901040851epcas1p28f443c0e819bea756ebf9296491b32da@epcas1p2.samsung.com>
-         <20200901040759.29992-2-hoegeun.kwon@samsung.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-bRnBewXchSGzBuzQX1iH"
-User-Agent: Evolution 3.36.5 
+        id S1731909AbgIHQvJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:51:09 -0400
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B576E2137B;
+        Tue,  8 Sep 2020 16:51:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599583868;
+        bh=pW1S8wYQ7shAS4VTkFPTvct/ClWzUHOw3xWhbsYQUNo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FgS6w9TKkNIumIokoiwznLHegSZ8da9H6/tyCUONyA8D6mS4MC5L9U2z22U5vpbaJ
+         F9LBw9H3U/ZQfNzWt6ceq2QpbMCME12qMJBPAnufXbEXaMdXUN5OQTdjSiBIy0r3bk
+         7U2jnKRg1UiTm9IReOgbeVZRQG6XO2kMrq5x8Ajs=
+Received: by mail-oo1-f51.google.com with SMTP id 4so4091291ooh.11;
+        Tue, 08 Sep 2020 09:51:08 -0700 (PDT)
+X-Gm-Message-State: AOAM5336w4FaUrgkkaZQMHIC9XcoaoO79MmlghHpn2rTwscnyo8U5huj
+        MQjZH4r+nvWe9apsBepBEXfpRVfNTTha4s0nQQ==
+X-Google-Smtp-Source: ABdhPJyVFdSAOgZ7160kEJoAezjYnztio3h9Ino2moi2r5NNuCCiGtHqBpSUtvivi5rsYhCBevOSckk/m/8RpCmF5Go=
+X-Received: by 2002:a4a:d306:: with SMTP id g6mr19090952oos.25.1599583867914;
+ Tue, 08 Sep 2020 09:51:07 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200904152404.20636-1-krzk@kernel.org> <20200904152404.20636-13-krzk@kernel.org>
+ <CAL_Jsq+tGQhkqtQszOx7nvr1PR=YFz2p1=OnWQ8JxmSg4qNkHA@mail.gmail.com> <20200907060958.GA4525@kozik-lap>
+In-Reply-To: <20200907060958.GA4525@kozik-lap>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 8 Sep 2020 10:50:56 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
+Message-ID: <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/14] dt-bindings: mtd: gpmi-nand: Fix matching of
+ clocks on different SoCs
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Sep 7, 2020 at 12:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Fri, Sep 04, 2020 at 04:36:39PM -0600, Rob Herring wrote:
+> > On Fri, Sep 4, 2020 at 9:25 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > Driver requires different amount of clocks for different SoCs.  Describe
+> > > these requirements properly to fix dtbs_check warnings like:
+> > >
+> > >     arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dt.yaml: nand-controller@33002000: clock-names:1: 'gpmi_apb' was expected
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > >
+> > > ---
+> > >
+> > > Changes since v1:
+> > > 1. Do not require order of clocks (use pattern).
+> >
+> > To the extent that you can, you should fix the order in dts files
+> > first. If we just adjust the schemas to match the dts files, then
+> > what's the point?
+>
+> The DTSes do not have mixed order of clocks between each other, as fair
+> as I remember. It was fix after Sasha Hauer comment that order is not
+> necessarily good.
+>
+> We have the clock-names property, why enforcing the order?
 
---=-bRnBewXchSGzBuzQX1iH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Because DT/OpenFirmware has always had a defined order for property
+values. '*-names' is just extra information.
 
-On Tue, 2020-09-01 at 13:07 +0900, Hoegeun Kwon wrote:
-> To use QHD or higher, we need to modify the pixel_bvb_clk value. So
-> add register to control this clock.
->=20
-> Signed-off-by: Hoegeun Kwon <hoegeun.kwon@samsung.com>
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index 5cc82954e1ce..f89b9cfc4309 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -271,6 +271,7 @@ static int raspberrypi_discover_clocks(struct raspber=
-rypi_clk *rpi,
->  		case RPI_FIRMWARE_CORE_CLK_ID:
->  		case RPI_FIRMWARE_M2MC_CLK_ID:
->  		case RPI_FIRMWARE_V3D_CLK_ID:
-> +		case RPI_FIRMWARE_PIXEL_BVB_CLK_ID:
->  			hw =3D raspberrypi_clk_register(rpi, clks->parent,
->  						      clks->id);
->  			if (IS_ERR(hw))
-
-Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-Regards,
-Nicolas
-
-
---=-bRnBewXchSGzBuzQX1iH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl9XrMgACgkQlfZmHno8
-x/5Piwf8CYoN2PUqTObU8bIxbxLs0x5KdJ0l4F+I0cw3UhAtM8A0+OSU2hOZLEHH
-xgw/OG9Ejn4mG6V32drl5FuTcGuXO1q0z+dJn7B33mtBHFUy2XX9Qk1RdsBcjt38
-wdTxlupb/ggrkqeTEH7wOjVteRHGa/mSsKnGnLUJhNPQd3L5EMRKdQ+wUJnbE0E2
-5nDJ8W0+oIgbDoP5KVhduAV17jWQ9OoAZEffeX9KQ6z+HOs5/rKQRrKw+38Tv2DO
-JuWd8XPDem3+KJ89G8ohVWn6ugsoLX77V+6U5cp8Tp/5WtLBqa7p7Y852GB1jn+T
-IIUkypxQvzYaa6gNlQguSSORoALCxw==
-=VNO1
------END PGP SIGNATURE-----
-
---=-bRnBewXchSGzBuzQX1iH--
-
+Rob
