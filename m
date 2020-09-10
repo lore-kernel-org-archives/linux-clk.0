@@ -2,68 +2,116 @@ Return-Path: <SRS0=OvdJ=CT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98AFC433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 20:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99937C43461
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB83214F1
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 20:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D173221E2
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599770646;
-	bh=j+p+Inr+01436rceX6HgIBOmz1/CWOcyjjR8EinR1do=;
+	s=default; t=1599773297;
+	bh=rxvS6AwOCqkTF8dpA59A+IKXNYafSMKsYQi6sF6t5cY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=eiN5oUqBS0ibCyx+DVWBJBymWsG7aikVbUicwBtm3F1GUbLnh6QSHNA0z/n1KYTSj
-	 sqrXAA6jPRkjvfuQ8J9yH+ismU7TglWxQFmunANRD5kfupUy4waWfRfm1KQL59bgix
-	 jD+j975fmgzBAQbXhzMTzV3r2U62ev+2nxFzvcZM=
+	b=a1sOrfRI1niisacNaYAAx6prABaOwlBgjTRfBKhuetHZr8trZ7ojDBvoWCcslZ78n
+	 2n4xN1BE7sp+E+4y+b79TzhvzJHA3u8t/dywJFOgQfXTVC5HKwpq2MNNgXe/5G+BOR
+	 AezG9DQZT6TjyR5bURrvQpacYST8184ubQUJON8I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgIJUn6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 16:43:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35984 "EHLO mail.kernel.org"
+        id S1726901AbgIJV2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 17:28:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726996AbgIJUnn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:43:43 -0400
+        id S1725828AbgIJV2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 17:28:04 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B63520829;
-        Thu, 10 Sep 2020 20:43:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 391E121D92;
+        Thu, 10 Sep 2020 21:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599770621;
-        bh=j+p+Inr+01436rceX6HgIBOmz1/CWOcyjjR8EinR1do=;
+        s=default; t=1599773283;
+        bh=rxvS6AwOCqkTF8dpA59A+IKXNYafSMKsYQi6sF6t5cY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=P6YCTEGxTcaZP5txtO2xc3RkgLSV1D/91twidLjbvrsAcHLzP4Xco94zzyBeQxFAO
-         f6x+2dYA7bUxehdbkzD5QF1wwD8+4AnxUo7StqDdbJHXu8l9y7sRBUckYFoRxSkgI6
-         SdDk//PFpVAOmT6hQiFZv0jGjNkigaz2FMY5UNxM=
+        b=D8bMlInaMbzmreh8AWVaj6VOCmrieNuNvtw24IhlqGgE3O5WPH1Aay4HThqIRkplf
+         CwO54HfYwM892eVqkcQlyBaWP0JggqtjersZ8bFOzIjOYct8/7WQw/FMmdLzp33a4d
+         wOGyFEl57OAHhuuI1kjZr+/5nQdqrBK9XJpiXNRM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200827141629.101802-1-jingxiangfeng@huawei.com>
-References: <20200827141629.101802-1-jingxiangfeng@huawei.com>
-Subject: Re: [PATCH] clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe()
+In-Reply-To: <20200910162610.GA7008@gerhold.net>
+References: <20200910162610.GA7008@gerhold.net>
+Subject: Re: Qcom clock performance votes on mainline
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jingxiangfeng@huawei.com
-To:     Jing Xiangfeng <jingxiangfeng@huawei.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        tdas@codeaurora.org
-Date:   Thu, 10 Sep 2020 13:43:39 -0700
-Message-ID: <159977061963.2295844.8449018539561172651@swboyd.mtv.corp.google.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Date:   Thu, 10 Sep 2020 14:28:01 -0700
+Message-ID: <159977328190.2295844.1029544710226353839@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jing Xiangfeng (2020-08-27 07:16:29)
-> lpass_core_sc7180_probe() misses to call pm_clk_destroy() and
-> pm_runtime_disable() in error paths. Correct goto target to fix it.
-> This issue is found by code inspection.
+Quoting Stephan Gerhold (2020-09-10 09:26:10)
+> Hi Stephen, Hi Rajendra,
 >=20
-> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
-> ---
+> while working on some MSM8916 things I've been staring at the downstream
+> clock-gcc-8916.c [1] driver a bit. One thing that confuses me are the
+> voltage/performance state votes that are made for certain clocks within
+> the driver. Specifically lines like
+>=20
+>     VDD_DIG_FMAX_MAP2(LOW, 32000000, NOMINAL, 64000000),
+>=20
+> on certain clocks like UART, I2C or SPI. There does not seem to be
+> anything equivalent in the mainline clock driver at the moment.
+>=20
+> As far as I understand from related discussions on mailing lists [2],
+> these performance votes are not supposed to be added to the clock
+> driver(s), but rather as required-opps within OPP tables of all the
+> consumers. Is that correct?
 
-Applied to clk-fixes
+Yes.
+
+>=20
+> As a second question, I'm wondering about one particular case:
+> I've been trying to get CPR / all the CPU frequencies working on MSM8916.
+> For that, I already added performance state votes for VDDMX and CPR as
+> required-opps to the CPU OPP table.
+>=20
+> After a recent discussion [3] with Viresh about where to enable power
+> domains managed by the OPP core, I've been looking at all the
+> performance state votes made in the downstream kernel again.
+>=20
+> Actually, the A53 PLL used for the higher CPU frequencies also has such
+> voltage/performance state votes. The downstream driver declares the
+> clock like [4]:
+>=20
+>                 .vdd_class =3D &vdd_sr2_pll,
+>                 .fmax =3D (unsigned long [VDD_SR2_PLL_NUM]) {
+>                         [VDD_SR2_PLL_SVS] =3D 1000000000,
+>                         [VDD_SR2_PLL_NOM] =3D 1900000000,
+>                 },
+>                 .num_fmax =3D VDD_SR2_PLL_NUM,
+>=20
+> which ends up as votes for the VDDCX power domain.
+>=20
+> Now I'm wondering: Where should I make these votes on mainline?
+> Should I add it as yet another required-opps to the CPU OPP table?
+
+Sounds like the right approach.
+
+>=20
+> It would be a bit of a special case because these votes are only done
+> for the A53 PLL (which is only used for the higher CPU frequencies, not
+> the lower ones)...
+
+Can that be put into the OPP table somehow for only the high
+frequencies? The OPP tables for CPUs sometimes cover the CPU PLL voltage
+requirements too so it doesn't seem like a totally bad idea.
