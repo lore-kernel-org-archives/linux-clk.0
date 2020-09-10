@@ -2,108 +2,112 @@ Return-Path: <SRS0=OvdJ=CT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CDCC433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 15:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C362CC433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 16:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0934A2087C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 15:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 873C520C09
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 16:32:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FMEDkw73"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="HIA+ZBYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731425AbgIJP4P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 11:56:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731513AbgIJPzU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2020 11:55:20 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08AF20KA110560;
-        Thu, 10 Sep 2020 11:18:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=RUjE8geQUfKJdleFxhslp2zP2B33QNPoIINZYifD8iU=;
- b=FMEDkw733leENqm6oVNBrKXrUlkoJX10udLb+AphbqatfaLEA3KgFRC4msJ+iMpDPlZa
- 0+N5Xx28E9/JTDmU9HiExKyuT8T81QDpBTN0onDPC2oZJn/yzvo+N5qiviHDIo+1F4u/
- 16qYfex3vHHgf9hwGfnm86ztj6kyPBQaoM0PZw4GbUXFOZQVL0uUy9+IutDIbV9slfXW
- M9paM6IA2GNodtdoDx6semhD0AR5662XyhCpRbbA6LBproPOOp+xYoxxtq6DsnT3wlts
- CTUAsigwf/ToeNSfItp4vnXL1qdE76O+SzEAZhF8jOz98Som3cPzFjOYWpS6gn09dcTR sA== 
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33fp6ss20d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Sep 2020 11:18:45 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08AFCAE0021779;
-        Thu, 10 Sep 2020 15:18:44 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04dal.us.ibm.com with ESMTP id 33c2a9teqy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Sep 2020 15:18:44 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08AFIe0N47448510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Sep 2020 15:18:40 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 946946E050;
-        Thu, 10 Sep 2020 15:18:43 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 083AA6E053;
-        Thu, 10 Sep 2020 15:18:43 +0000 (GMT)
-Received: from SHADE6A.ibmuc.com (unknown [9.211.140.115])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Sep 2020 15:18:42 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-fsi@lists.ozlabs.org,
-        andrew@aj.id.au, joel@jms.id.au, robh+dt@kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, alistair@popple.id.au,
-        jk@ozlabs.org
-Subject: [PATCH 3/4] dt-bindings: fsi: Aspeed master: Add bus-frequency property
-Date:   Thu, 10 Sep 2020 10:18:39 -0500
-Message-Id: <20200910151840.25333-4-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200910151840.25333-1-eajames@linux.ibm.com>
-References: <20200910151840.25333-1-eajames@linux.ibm.com>
+        id S1726980AbgIJQbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 12:31:55 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:28205 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbgIJQ0Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2020 12:26:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1599755174;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=Message-ID:Subject:Cc:To:From:Date:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=j4d59Y0kBRiNJToFL0y0NnSJVvNdlrKiKeGoVArTf0s=;
+        b=HIA+ZBYA574Emlou3jF1jYGgRGfLuaARiCzmLG5hEsjNclTbbG+yL9/tpa9RzQticQ
+        HHxlevd93LFFM+gOTsd09oke69aN22+OIk5SAGaircSe+vs8oORzzOc0azFLMXlBnRYr
+        Bk8z6blmF1M5nOKcM6hayOtocGHneO6u4nw5jK+249lgeiMcLI79OR632fAKX2g9NH4a
+        N4oPW04bV96nV66BFfMQ01TiOMwR0qHT0Lre3laEp7pKbDmHf3meEV2utV439zIxTQYy
+        5t2DD2mm9fbWk56pen56iPZfqwe1VeO0/1ZiD6OEoSves6Ubyu2zaYaSMs8UR0s+hBwY
+        NYDg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEIdhPgVC7iy9yGr7ESbX"
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+        by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
+        with ESMTPSA id g0b6c1w8AGQDJN6
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Thu, 10 Sep 2020 18:26:13 +0200 (CEST)
+Date:   Thu, 10 Sep 2020 18:26:10 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Qcom clock performance votes on mainline
+Message-ID: <20200910162610.GA7008@gerhold.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-10_04:2020-09-10,2020-09-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=1 spamscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009100130
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the bus-frequency property.
+Hi Stephen, Hi Rajendra,
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt | 1 +
- 1 file changed, 1 insertion(+)
+while working on some MSM8916 things I've been staring at the downstream
+clock-gcc-8916.c [1] driver a bit. One thing that confuses me are the
+voltage/performance state votes that are made for certain clocks within
+the driver. Specifically lines like
 
-diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt b/Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
-index a513e65ec0c9..d84bd19526ca 100644
---- a/Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
-+++ b/Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
-@@ -17,6 +17,7 @@ Optional properties:
- 
-  - fsi-routing-gpios: GPIO for setting the FSI mux (internal or cabled)
-  - fsi-mux-gpios: GPIO for detecting the desired FSI mux state
-+ - bus-frequency: the frequency of the FSI bus
- 
- 
- Examples:
--- 
-2.26.2
+    VDD_DIG_FMAX_MAP2(LOW, 32000000, NOMINAL, 64000000),
 
+on certain clocks like UART, I2C or SPI. There does not seem to be
+anything equivalent in the mainline clock driver at the moment.
+
+As far as I understand from related discussions on mailing lists [2],
+these performance votes are not supposed to be added to the clock
+driver(s), but rather as required-opps within OPP tables of all the
+consumers. Is that correct?
+
+As a second question, I'm wondering about one particular case:
+I've been trying to get CPR / all the CPU frequencies working on MSM8916.
+For that, I already added performance state votes for VDDMX and CPR as
+required-opps to the CPU OPP table.
+
+After a recent discussion [3] with Viresh about where to enable power
+domains managed by the OPP core, I've been looking at all the
+performance state votes made in the downstream kernel again.
+
+Actually, the A53 PLL used for the higher CPU frequencies also has such
+voltage/performance state votes. The downstream driver declares the
+clock like [4]:
+
+		.vdd_class = &vdd_sr2_pll,
+		.fmax = (unsigned long [VDD_SR2_PLL_NUM]) {
+			[VDD_SR2_PLL_SVS] = 1000000000,
+			[VDD_SR2_PLL_NOM] = 1900000000,
+		},
+		.num_fmax = VDD_SR2_PLL_NUM,
+
+which ends up as votes for the VDDCX power domain.
+
+Now I'm wondering: Where should I make these votes on mainline?
+Should I add it as yet another required-opps to the CPU OPP table?
+
+It would be a bit of a special case because these votes are only done
+for the A53 PLL (which is only used for the higher CPU frequencies, not
+the lower ones)...
+
+Thanks in advance!
+Stephan
+
+[1]: https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8916.c?h=LA.BR.1.2.9.1-02310-8x16.0
+[2]: https://lore.kernel.org/linux-arm-msm/20190129015547.213276-1-swboyd@chromium.org/
+[3]: https://lore.kernel.org/linux-pm/20200826093328.88268-1-stephan@gerhold.net/
+[4]: https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8916.c?h=LA.BR.1.2.9.1-02310-8x16.0#n354
