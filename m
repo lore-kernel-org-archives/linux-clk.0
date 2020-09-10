@@ -2,112 +2,119 @@ Return-Path: <SRS0=OvdJ=CT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C362CC433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 16:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A76C07548
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 18:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 873C520C09
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 16:32:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="HIA+ZBYA"
+	by mail.kernel.org (Postfix) with ESMTP id A52A321D40
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 18:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599763114;
+	bh=SRgE3e+cWOee6V2K0Aw2EKLPOh+GtgrkQeeqC/WhKkI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kQSQgjGmvliTO+lGj+aOoAY65sMH6Ob9CbpSMV+4mEmKo6gPWSLtgvH73hm2knIVN
+	 tmxKQav6SCdzxFQY/xy8sY61EC7Gh+S+k9G3wlClLWFbZbJ6vVbmQ/WKobPgd5oxqE
+	 EVubU8n1nSXnG/iYm2RhtVXhluw5qRoJJd3a20cI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgIJQbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 12:31:55 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:28205 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgIJQ0Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2020 12:26:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1599755174;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=Message-ID:Subject:Cc:To:From:Date:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=j4d59Y0kBRiNJToFL0y0NnSJVvNdlrKiKeGoVArTf0s=;
-        b=HIA+ZBYA574Emlou3jF1jYGgRGfLuaARiCzmLG5hEsjNclTbbG+yL9/tpa9RzQticQ
-        HHxlevd93LFFM+gOTsd09oke69aN22+OIk5SAGaircSe+vs8oORzzOc0azFLMXlBnRYr
-        Bk8z6blmF1M5nOKcM6hayOtocGHneO6u4nw5jK+249lgeiMcLI79OR632fAKX2g9NH4a
-        N4oPW04bV96nV66BFfMQ01TiOMwR0qHT0Lre3laEp7pKbDmHf3meEV2utV439zIxTQYy
-        5t2DD2mm9fbWk56pen56iPZfqwe1VeO0/1ZiD6OEoSves6Ubyu2zaYaSMs8UR0s+hBwY
-        NYDg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEIdhPgVC7iy9yGr7ESbX"
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
-        with ESMTPSA id g0b6c1w8AGQDJN6
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Thu, 10 Sep 2020 18:26:13 +0200 (CEST)
-Date:   Thu, 10 Sep 2020 18:26:10 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Qcom clock performance votes on mainline
-Message-ID: <20200910162610.GA7008@gerhold.net>
+        id S1726837AbgIJSfd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 14:35:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726984AbgIJSeb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 14:34:31 -0400
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A1BC2087C;
+        Thu, 10 Sep 2020 18:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599762869;
+        bh=SRgE3e+cWOee6V2K0Aw2EKLPOh+GtgrkQeeqC/WhKkI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iRRR8DCEphKxCESUIOWKSYOGUMgScZXbeOeEcg0yOyRFJbnqmaYlOsiksuwiLjobQ
+         M4uyBus+mshUVHZZ3JgPrAGSIFrgxOqZoEzzZ37YKf8U3tBk8av9U+Y8144ibkRREk
+         PXnrMHTG6GY6MWdGQ00DeKQVPH9cYf3H7WrJDCZw=
+Received: by mail-ej1-f51.google.com with SMTP id z23so10139662ejr.13;
+        Thu, 10 Sep 2020 11:34:29 -0700 (PDT)
+X-Gm-Message-State: AOAM5309MZH2hu7qkldGTU7mIu6vR+EodTzY1BZTBk5+Pn51YJBCdv8c
+        7Oe/ExFWFSLC8z+1Ugwp+aJ3u3mdF3wKah6FmvI=
+X-Google-Smtp-Source: ABdhPJyqKY0eU5W2IUZveRSdHihYXkn66844ltcGWOZGAN2rPhOWdGk7NLfovjoBdKlH8jBLp9/fUyrxxJec5WeF4cE=
+X-Received: by 2002:a17:906:af53:: with SMTP id ly19mr9924685ejb.503.1599762867837;
+ Thu, 10 Sep 2020 11:34:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20200904152404.20636-1-krzk@kernel.org> <20200904152404.20636-13-krzk@kernel.org>
+ <CAL_Jsq+tGQhkqtQszOx7nvr1PR=YFz2p1=OnWQ8JxmSg4qNkHA@mail.gmail.com>
+ <20200907060958.GA4525@kozik-lap> <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJZ=PxDxH-=GUUg7WadZrAKjYbtE0sQ8h9YDGOGx6Ykwg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 10 Sep 2020 20:34:15 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdVDGhdD5hMuXBDBa6XiaYRAK86E2G1gpGZSqnMLiY+Lg@mail.gmail.com>
+Message-ID: <CAJKOXPdVDGhdD5hMuXBDBa6XiaYRAK86E2G1gpGZSqnMLiY+Lg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/14] dt-bindings: mtd: gpmi-nand: Fix matching of
+ clocks on different SoCs
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Hi Rajendra,
+On Tue, 8 Sep 2020 at 18:51, Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Mon, Sep 7, 2020 at 12:10 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Fri, Sep 04, 2020 at 04:36:39PM -0600, Rob Herring wrote:
+> > > On Fri, Sep 4, 2020 at 9:25 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > >
+> > > > Driver requires different amount of clocks for different SoCs.  Describe
+> > > > these requirements properly to fix dtbs_check warnings like:
+> > > >
+> > > >     arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dt.yaml: nand-controller@33002000: clock-names:1: 'gpmi_apb' was expected
+> > > >
+> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > >
+> > > > ---
+> > > >
+> > > > Changes since v1:
+> > > > 1. Do not require order of clocks (use pattern).
+> > >
+> > > To the extent that you can, you should fix the order in dts files
+> > > first. If we just adjust the schemas to match the dts files, then
+> > > what's the point?
+> >
+> > The DTSes do not have mixed order of clocks between each other, as fair
+> > as I remember. It was fix after Sasha Hauer comment that order is not
+> > necessarily good.
+> >
+> > We have the clock-names property, why enforcing the order?
+>
+> Because DT/OpenFirmware has always had a defined order for property
+> values. '*-names' is just extra information.
 
-while working on some MSM8916 things I've been staring at the downstream
-clock-gcc-8916.c [1] driver a bit. One thing that confuses me are the
-voltage/performance state votes that are made for certain clocks within
-the driver. Specifically lines like
+Thanks for the explanation. There are few nonobvious requirements
+about writing schema which seems many (including me) miss. It might be
+a good topic for some conference. Too bad ELCE CFP ended some time
+ago. :)
 
-    VDD_DIG_FMAX_MAP2(LOW, 32000000, NOMINAL, 64000000),
-
-on certain clocks like UART, I2C or SPI. There does not seem to be
-anything equivalent in the mainline clock driver at the moment.
-
-As far as I understand from related discussions on mailing lists [2],
-these performance votes are not supposed to be added to the clock
-driver(s), but rather as required-opps within OPP tables of all the
-consumers. Is that correct?
-
-As a second question, I'm wondering about one particular case:
-I've been trying to get CPR / all the CPU frequencies working on MSM8916.
-For that, I already added performance state votes for VDDMX and CPR as
-required-opps to the CPU OPP table.
-
-After a recent discussion [3] with Viresh about where to enable power
-domains managed by the OPP core, I've been looking at all the
-performance state votes made in the downstream kernel again.
-
-Actually, the A53 PLL used for the higher CPU frequencies also has such
-voltage/performance state votes. The downstream driver declares the
-clock like [4]:
-
-		.vdd_class = &vdd_sr2_pll,
-		.fmax = (unsigned long [VDD_SR2_PLL_NUM]) {
-			[VDD_SR2_PLL_SVS] = 1000000000,
-			[VDD_SR2_PLL_NOM] = 1900000000,
-		},
-		.num_fmax = VDD_SR2_PLL_NUM,
-
-which ends up as votes for the VDDCX power domain.
-
-Now I'm wondering: Where should I make these votes on mainline?
-Should I add it as yet another required-opps to the CPU OPP table?
-
-It would be a bit of a special case because these votes are only done
-for the A53 PLL (which is only used for the higher CPU frequencies, not
-the lower ones)...
-
-Thanks in advance!
-Stephan
-
-[1]: https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8916.c?h=LA.BR.1.2.9.1-02310-8x16.0
-[2]: https://lore.kernel.org/linux-arm-msm/20190129015547.213276-1-swboyd@chromium.org/
-[3]: https://lore.kernel.org/linux-pm/20200826093328.88268-1-stephan@gerhold.net/
-[4]: https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8916.c?h=LA.BR.1.2.9.1-02310-8x16.0#n354
+Best regards,
+Krzysztof
