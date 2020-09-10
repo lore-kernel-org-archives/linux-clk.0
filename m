@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 440B2C43461
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3345CC2BB84
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBA6620872
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE10320809
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599724342;
-	bh=ijucEkauTD7Oq3ltMK6SO/FeIANicHwPTK7VsIGPYl4=;
+	s=default; t=1599724442;
+	bh=n1QBIsVMDUh2m/zhVn8mDBCWWV4HT41M1NSn+x9O4/k=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=aMMaePQOQX+5foE3D4EhVl+b310/gDmwTutbiAvtJBh9F/knWwOFaNFpW/t5QMohK
-	 V/CDTuUuHFBsEOTuciEhbQlHu6OMaps02axONqK3lH4w/ayTW4Vzc1ba/qvIZuBIXu
-	 sZ1mMyugdhTxhWkzHmww5s2I7/c2RDbOD3Bqqyt4=
+	b=UOXXHd5nQyHvffSLPWoG7t1ZiPNmCI9gi2Buw7RHmO8pEXsKvobmGZ6rKrqWvuzYO
+	 JPNH+FsgNzlLyW4OBE2P3iAVeZMybdIlxivUHUGB0NnEN+vHS9bMS1KEQxDJ7437nA
+	 Dk1YDZFiqC79LmsGtfdbJHZVc/JkZ420AUzJIJvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgIJHwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 03:52:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33182 "EHLO mail.kernel.org"
+        id S1730270AbgIJHyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 03:54:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726228AbgIJHwW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Sep 2020 03:52:22 -0400
+        id S1726746AbgIJHxv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 03:53:51 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4208F20809;
-        Thu, 10 Sep 2020 07:52:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0FA120809;
+        Thu, 10 Sep 2020 07:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599724341;
-        bh=ijucEkauTD7Oq3ltMK6SO/FeIANicHwPTK7VsIGPYl4=;
+        s=default; t=1599724431;
+        bh=n1QBIsVMDUh2m/zhVn8mDBCWWV4HT41M1NSn+x9O4/k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LNom3T6QTTA51pYBdbKQ74uZJ5by1QMhxIkfUmDr5vgd+7DNcUvRzfHinj7TCXRN3
-         DRqktnRsVwlfk8KfE23W1oaQaO+P6lala2NVBXFimEPYfIDcvNC0IVBpmI0Bchc40+
-         /ClkcpoeHh/P8J5a0Y2xqQz5+pp88mJu70SE3be0=
+        b=OxHoQQYi0q8l5JFZdwT8LxF7uoGZgi9tb5P8jev3yUfK0jvuu56v1HZT6bafbLQ0t
+         VOs+maEHa/DI79jzqq3XLVQSOSh9axwUBFSSeC6KX/2HLv4srtXZ+siU6XR61aKqP1
+         ESYUQJW39awTHEEcIjGiA4aUuPrPjKB/m+sjcMDc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200828154735.435374-1-jbrunet@baylibre.com>
-References: <20200828154735.435374-1-jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: meson: make shipped controller configurable
+In-Reply-To: <20200903082636.3844629-1-maxime@cerno.tech>
+References: <20200903082636.3844629-1-maxime@cerno.tech>
+Subject: Re: [PATCH] clk: bcm: dvp: Select the reset framework
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 10 Sep 2020 00:52:19 -0700
-Message-ID: <159972433977.2295844.12910258806178190962@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Thu, 10 Sep 2020 00:53:49 -0700
+Message-ID: <159972442943.2295844.14502206270556756528@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-08-28 08:47:35)
-> Add the necessary so bits so unnecessary amlogic clock controllers can be
-
-s/so//
-
-> compiled out. This allows to save a few kB when necessary.
+Quoting Maxime Ripard (2020-09-03 01:26:36)
+> The DVP driver depends both on the RESET_SIMPLE driver but also on the
+> reset framework itself. Let's make sure we have it enabled.
 >=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-fixes
