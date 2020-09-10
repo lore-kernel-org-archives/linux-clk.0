@@ -4,70 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3345CC2BB84
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE29C43461
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE10320809
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F42120872
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 07:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599724442;
-	bh=n1QBIsVMDUh2m/zhVn8mDBCWWV4HT41M1NSn+x9O4/k=;
+	s=default; t=1599724669;
+	bh=4pKISiYZhY3EeSnAyleLcIQNYM/Dt5k93S8IrckrwTs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=UOXXHd5nQyHvffSLPWoG7t1ZiPNmCI9gi2Buw7RHmO8pEXsKvobmGZ6rKrqWvuzYO
-	 JPNH+FsgNzlLyW4OBE2P3iAVeZMybdIlxivUHUGB0NnEN+vHS9bMS1KEQxDJ7437nA
-	 Dk1YDZFiqC79LmsGtfdbJHZVc/JkZ420AUzJIJvE=
+	b=yuUPDjciZfouJoSb5QeKeuiVIYR8fI5YaBDl0/+GrAnysZdnx3sbJGy1yY7uh8vVp
+	 a5QXEkasdN4R12n95bumbNrAkAa9/GZQfiXNoaHSR9eQUG//FFu3RFixZxCLQnWI68
+	 qUCCa/ZNC1UX0QikxsWQOM83v6mTNrZ7Ld4NNhKw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbgIJHyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 03:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
+        id S1726746AbgIJH5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 03:57:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbgIJHxv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Sep 2020 03:53:51 -0400
+        id S1726816AbgIJH5r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 03:57:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0FA120809;
-        Thu, 10 Sep 2020 07:53:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49E4020829;
+        Thu, 10 Sep 2020 07:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599724431;
-        bh=n1QBIsVMDUh2m/zhVn8mDBCWWV4HT41M1NSn+x9O4/k=;
+        s=default; t=1599724667;
+        bh=4pKISiYZhY3EeSnAyleLcIQNYM/Dt5k93S8IrckrwTs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OxHoQQYi0q8l5JFZdwT8LxF7uoGZgi9tb5P8jev3yUfK0jvuu56v1HZT6bafbLQ0t
-         VOs+maEHa/DI79jzqq3XLVQSOSh9axwUBFSSeC6KX/2HLv4srtXZ+siU6XR61aKqP1
-         ESYUQJW39awTHEEcIjGiA4aUuPrPjKB/m+sjcMDc=
+        b=s78HttgmbSoO2M+1IKqaQXEEF0Dz6GoeOC9ac+QJmYnlh01qs9LpethP8h7oZ9lko
+         ++tmd3Dp5vC0lqd6buHZM2iRVZ9kroxrRpQkf8nhB0XsqmCfBaoSy/sDiITQ7JhLMt
+         X5BpSQIUP0JerYjBPciWzDYf+gc4Za0gH0aFuqps=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200903082636.3844629-1-maxime@cerno.tech>
-References: <20200903082636.3844629-1-maxime@cerno.tech>
-Subject: Re: [PATCH] clk: bcm: dvp: Select the reset framework
+In-Reply-To: <20200829175704.GA10998@Kaladin>
+References: <20200829175704.GA10998@Kaladin>
+Subject: Re: [PATCH] clk: versatile: Add of_node_put() before return statement
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 10 Sep 2020 00:53:49 -0700
-Message-ID: <159972442943.2295844.14502206270556756528@swboyd.mtv.corp.google.com>
+Cc:     mturquette@baylibre.com, Julia.Lawall@lip6.fr,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Sumera Priyadarsini <sylphrenadin@gmail.com>,
+        linus.walleij@linaro.org
+Date:   Thu, 10 Sep 2020 00:57:45 -0700
+Message-ID: <159972466586.2295844.9075545722301677556@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-09-03 01:26:36)
-> The DVP driver depends both on the RESET_SIMPLE driver but also on the
-> reset framework itself. Let's make sure we have it enabled.
+Quoting Sumera Priyadarsini (2020-08-29 10:57:04)
+> Every iteration of for_each_available_child_of_node() decrements
+> the reference count of the previous node, however when control is
+> transferred from the middle of the loop, as in the case of a return
+> or break or goto, there is no decrement thus ultimately resulting in
+> a memory leak.
 >=20
-> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> Fix a potential memory leak in clk-impd1.c by inserting
+> of_node_put() before a return statement.
+>=20
+> Issue found with Coccinelle.
+>=20
+> Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
 > ---
 
 Applied to clk-fixes
