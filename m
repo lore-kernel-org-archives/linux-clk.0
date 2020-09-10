@@ -6,112 +6,81 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99937C43461
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787B6C43461
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D173221E2
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350B2221E3
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Sep 2020 21:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599773297;
-	bh=rxvS6AwOCqkTF8dpA59A+IKXNYafSMKsYQi6sF6t5cY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=a1sOrfRI1niisacNaYAAx6prABaOwlBgjTRfBKhuetHZr8trZ7ojDBvoWCcslZ78n
-	 2n4xN1BE7sp+E+4y+b79TzhvzJHA3u8t/dywJFOgQfXTVC5HKwpq2MNNgXe/5G+BOR
-	 AezG9DQZT6TjyR5bURrvQpacYST8184ubQUJON8I=
+	s=default; t=1599773373;
+	bh=Lw1AavgBJDMN0TOVehj0nCFIxgBa9OzPfRDPECT1e+U=;
+	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
+	b=11QAAyVMB4PixxhaO5V1jiD8kY6ctid8R4ojTEAxyT0k2GyhwXqHGpBrsA2QFwcKf
+	 RPXWBsyzZuWcP+yvXicyF27/f9re7rR3CXZZegtP3B0q8m1Rh2eiy5wU1s5Tkc47HO
+	 WPhK4b364yiaB5wYZGiasAMvaagA/iXfe5Eq59tM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgIJV2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:28:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
+        id S1728154AbgIJV3a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 17:29:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbgIJV2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Sep 2020 17:28:04 -0400
+        id S1728201AbgIJV3P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 17:29:15 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 391E121D92;
-        Thu, 10 Sep 2020 21:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9573E221E2;
+        Thu, 10 Sep 2020 21:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599773283;
-        bh=rxvS6AwOCqkTF8dpA59A+IKXNYafSMKsYQi6sF6t5cY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D8bMlInaMbzmreh8AWVaj6VOCmrieNuNvtw24IhlqGgE3O5WPH1Aay4HThqIRkplf
-         CwO54HfYwM892eVqkcQlyBaWP0JggqtjersZ8bFOzIjOYct8/7WQw/FMmdLzp33a4d
-         wOGyFEl57OAHhuuI1kjZr+/5nQdqrBK9XJpiXNRM=
+        s=default; t=1599773354;
+        bh=Lw1AavgBJDMN0TOVehj0nCFIxgBa9OzPfRDPECT1e+U=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=PXJr4h8aRaDGP/eHraHoXO/fHaqKfTlU4e3y75uDNY/gRfRmYTuucjeBalXK54atR
+         hb/xlMEHupurUagfpRPzPlMLJsr8vFxfIBPbeh6GUPCF//g/Arup3Y8X/4CQ645UNp
+         /4wA9n+YxR+54YelCbAEfnorOjqmfOwvodFDXYik=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200910162610.GA7008@gerhold.net>
-References: <20200910162610.GA7008@gerhold.net>
-Subject: Re: Qcom clock performance votes on mainline
+In-Reply-To: <8a594a9d-8e10-6e01-908c-8e59da1d7fbe@oracle.com>
+References: <20200907085740.1083-1-t-kristo@ti.com> <8a594a9d-8e10-6e01-908c-8e59da1d7fbe@oracle.com>
+Subject: Re: [PATCH 0/3] clk: keystone: some minor fixes
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-Date:   Thu, 10 Sep 2020 14:28:01 -0700
-Message-ID: <159977328190.2295844.1029544710226353839@swboyd.mtv.corp.google.com>
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        santosh.shilimkar@oracle.com, ssantosh@kernel.org
+Date:   Thu, 10 Sep 2020 14:29:13 -0700
+Message-ID: <159977335346.2295844.11165311759086345858@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephan Gerhold (2020-09-10 09:26:10)
-> Hi Stephen, Hi Rajendra,
+Quoting santosh.shilimkar@oracle.com (2020-09-08 10:19:32)
 >=20
-> while working on some MSM8916 things I've been staring at the downstream
-> clock-gcc-8916.c [1] driver a bit. One thing that confuses me are the
-> voltage/performance state votes that are made for certain clocks within
-> the driver. Specifically lines like
 >=20
->     VDD_DIG_FMAX_MAP2(LOW, 32000000, NOMINAL, 64000000),
+> On 9/7/20 1:57 AM, Tero Kristo wrote:
+> > Hi Santosh,
+> >=20
+> > This series contains a few fixes for the TI SCI clock driver.
+> > - Patch #1 is a clear bug fix, where we missed to parse assigned-clock
+> >    data properly to detect which clocks are in use on the SoC.
+> > - Patch #2 is a performance improvement patch which avoids some
+> >    unnecessary round trips to firmware side while setting clock
+> >    frequency.
+> > - Patch #3 fixes some issues with set_rate passed to firmware, where the
+> >    parameters are too strict; namely, firmware fails to handle some cas=
+es
+> >    properly if min,tgt,max values for a clock rate are exactly the same
+> >    value. Yeah, the firmware is quite weird here but nothing much else =
+we
+> >    can do from kernel side other than this....
+> >=20
+> Looks fine to me Tero.
 >=20
-> on certain clocks like UART, I2C or SPI. There does not seem to be
-> anything equivalent in the mainline clock driver at the moment.
+> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
 >=20
-> As far as I understand from related discussions on mailing lists [2],
-> these performance votes are not supposed to be added to the clock
-> driver(s), but rather as required-opps within OPP tables of all the
-> consumers. Is that correct?
+>=20
+> Hi Stephen, Mike,
+> Can you please pick these fixes via clk tree ?
 
-Yes.
-
->=20
-> As a second question, I'm wondering about one particular case:
-> I've been trying to get CPR / all the CPU frequencies working on MSM8916.
-> For that, I already added performance state votes for VDDMX and CPR as
-> required-opps to the CPU OPP table.
->=20
-> After a recent discussion [3] with Viresh about where to enable power
-> domains managed by the OPP core, I've been looking at all the
-> performance state votes made in the downstream kernel again.
->=20
-> Actually, the A53 PLL used for the higher CPU frequencies also has such
-> voltage/performance state votes. The downstream driver declares the
-> clock like [4]:
->=20
->                 .vdd_class =3D &vdd_sr2_pll,
->                 .fmax =3D (unsigned long [VDD_SR2_PLL_NUM]) {
->                         [VDD_SR2_PLL_SVS] =3D 1000000000,
->                         [VDD_SR2_PLL_NOM] =3D 1900000000,
->                 },
->                 .num_fmax =3D VDD_SR2_PLL_NUM,
->=20
-> which ends up as votes for the VDDCX power domain.
->=20
-> Now I'm wondering: Where should I make these votes on mainline?
-> Should I add it as yet another required-opps to the CPU OPP table?
-
-Sounds like the right approach.
-
->=20
-> It would be a bit of a special case because these votes are only done
-> for the A53 PLL (which is only used for the higher CPU frequencies, not
-> the lower ones)...
-
-Can that be put into the OPP table somehow for only the high
-frequencies? The OPP tables for CPUs sometimes cover the CPU PLL voltage
-requirements too so it doesn't seem like a totally bad idea.
+Sure. I assume this is -next material and not critical fixes.
