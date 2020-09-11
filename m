@@ -2,121 +2,115 @@ Return-Path: <SRS0=ogEK=CU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3CBC433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 16:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0B2C433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 17:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 749B4221F1
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 16:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C83D22204
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 17:12:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="P9QknNE1"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PJHJwRXr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbgIKQO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Sep 2020 12:14:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35110 "EHLO
+        id S1726194AbgIKRKt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Sep 2020 13:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbgIKPfl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Sep 2020 11:35:41 -0400
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171E1C061795
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 08:35:34 -0700 (PDT)
-Received: by mail-qv1-xf44.google.com with SMTP id ef16so5393557qvb.8
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 08:35:34 -0700 (PDT)
+        with ESMTP id S1726025AbgIKRKh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Sep 2020 13:10:37 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C3BC061573
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 10:10:33 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id z19so7839317pfn.8
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 10:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cznD9PtbdCnTuIZHnsXFM10RQkLCsdUaXijp1Kw5QfM=;
-        b=P9QknNE1aAuC4kFJNTMIPm4V9anpO9ur7O97Qs7oKMmkt40+bLIuzPQjN0Zl5vOGz+
-         X+6xr2KY/T8e2o/ozewC6LMosMmgvAuv08GCSijoV73LImGOoAvXeIQTJuBskZYol3Sr
-         ujgrWNveABiqQP5jWWXxi3/KJFBN86AGXyIKnDIt3kcZ4aVraHsPZDDxKwQNGVslZMZv
-         zBDqqSyQon4hZHF5vDipGydaBniv8+LY7sn/W/kyR6Q5/gWt879m8bbXiTJ5gjw90vp0
-         kuHaTx15m4uYUYu/a3VJhuVAapjZTJ9ld3u3TanELyNr7jBamha4IEY88w425OCV/klN
-         HG7A==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=i2W71MrrzMNYcyB/z7lfhjSe/syd2lqbfSWnk+mqe6k=;
+        b=PJHJwRXr9q+ni6PIu74aQcOfM/Gl7Qd/RuGgGPBdnIh4ZmUSrOh9BEI/iTWgtvVFHl
+         nRj+qkLuIElk8sldSasPp/NSKofad/GikGmmlQ+rQHDNxxLPJOQ5gQw/qJaAuFKtU+xS
+         i/DW3GLj2V1MfalSaa3iJNvwxCWEmQReah/J3+C+VqFxbCQeD4pucFyb3WrDldANR8HA
+         8YWWkFVg+7TTaPVL9ay2wrJZUZOeou50SMQDK5t7e4VqNWozSj0d+rT0unmUK2WfMgLw
+         5UAQ8WT9x8QScwXmP5aPjOQdbP8FW2IVwvPfcIJi+KRFFcszbfBtvxo9jLlhRNsH1yi9
+         KZ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cznD9PtbdCnTuIZHnsXFM10RQkLCsdUaXijp1Kw5QfM=;
-        b=Hpfx7KPb3wYlxN+Hqip53NWEt6wEOhIj22HDaJFXBANYb+2qVL0Z6CFb34Q0lqkrUH
-         e3nq8sWyHTozjHsRtBNbLhxYRQrVlbt+MzyKEPIKi33I2UuLlqd7Yqnh27GGfxaKXSRe
-         XW4qopSepCPLCugvF8RHtBBDAs6ax77YmsR1m9XHx4OxJy1OVKrfpuS++t0PuSUYh+xU
-         wPKy+coNsi1T+h88bxhHIymd40pqK6T3Jj/rVSMnz7UXnqPJkDkA0kO9CA98NWWaoMS5
-         tDyk5jL+kVM1Dbdkusb9lAcnDAUo+lAu9DjFFhqY7GQXrWGIZk4+QDoillmKWgDdmycN
-         P8aA==
-X-Gm-Message-State: AOAM533JoYDfkL0YZUhYGmHiALljQZYbTo6HhCQC1wR6Z/gh6ChKEJkh
-        do4X9b7W9sd5Z74N4yEqjlKuKw==
-X-Google-Smtp-Source: ABdhPJxTYCLs2sh7OCgELR9nztjiEkUmHMHQI/9SBfkIRMDRwjvcrCIR6EZfChEKTL46j879jOzCLA==
-X-Received: by 2002:a0c:f1c5:: with SMTP id u5mr2488860qvl.10.1599838533324;
-        Fri, 11 Sep 2020 08:35:33 -0700 (PDT)
-Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id v16sm3001744qkg.37.2020.09.11.08.35.32
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=i2W71MrrzMNYcyB/z7lfhjSe/syd2lqbfSWnk+mqe6k=;
+        b=C5Mq1XZvLyde4cc4wC+HnmrZeGrQwDQF4IfsuyP8H71ilc3XMaUz0CsulGU1JJobaj
+         xvJ/nRr1aaEVmpZfjbsq02gXlwjdwfET/boAs9Ie7kLi9BAcBKxxb1ZjHuHV+bOhcyYO
+         tNz+ueepyupTYXrBQ8Lz5KkfIgrVmHkNnJnkq4JLcPuj78NXRFXtkds1yl82iYG2s0+u
+         8NHa6oBjaJ+mk7PfWBptHFpJFoj3pB+8MR1RRzt6yefT3CAf+705G6loAmNtZe+a92zm
+         KpXFoYFdKZsHa2vNTYtlgCQDymhKu8gRhuvv2JfIbRAVT+Q0YRgULFxv6uVDFT32nr3/
+         ReGA==
+X-Gm-Message-State: AOAM532LEuW+EZ+gPk22jMAHXhjDKoDVlroddY3ln+oSZ/mSVaLBCepz
+        dljorUVqfSJYcPQxScNRzOOi2kG9pSvoFuj0
+X-Google-Smtp-Source: ABdhPJycx615a/xlcejhPU3i6TW6bxV5D53F0plZu7u8/oXnECZBgQgnYzPAAWChPwnxp/0WDO63qQ==
+X-Received: by 2002:a63:ff06:: with SMTP id k6mr2295126pgi.321.1599844232413;
+        Fri, 11 Sep 2020 10:10:32 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id z28sm3161139pfq.81.2020.09.11.10.10.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2020 08:35:32 -0700 (PDT)
-From:   Jonathan Marek <jonathan@marek.ca>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 1/7] dt-bindings: clock: sdm845-dispcc: same name for dp_phy clocks as sc7180
-Date:   Fri, 11 Sep 2020 11:34:01 -0400
-Message-Id: <20200911153412.21672-2-jonathan@marek.ca>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200911153412.21672-1-jonathan@marek.ca>
-References: <20200911153412.21672-1-jonathan@marek.ca>
+        Fri, 11 Sep 2020 10:10:31 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: meson: axg: add Video Clocks
+In-Reply-To: <6132edc1-0256-8eca-d5fd-8870aed5bb60@baylibre.com>
+References: <20200907093810.6585-1-narmstrong@baylibre.com> <20200907093810.6585-4-narmstrong@baylibre.com> <1jy2li9bym.fsf@starbuckisacylon.baylibre.com> <6132edc1-0256-8eca-d5fd-8870aed5bb60@baylibre.com>
+Date:   Fri, 11 Sep 2020 10:10:31 -0700
+Message-ID: <7hr1r8xmrc.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This makes it easier to combine dt bindings for sdm845/sc7180 dispcc.
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-Note: nothing upstream provides these clocks and the sdm845 dispcc driver
-hasn't switched to using .fw_name for these clocks (these properties are
-ignored), so changing this shouldn't be a problem.
+> On 10/09/2020 12:13, Jerome Brunet wrote:
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- .../devicetree/bindings/clock/qcom,sdm845-dispcc.yaml     | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-index 4a3be733d042..ead44705333b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-@@ -43,8 +43,8 @@ properties:
-       - const: dsi0_phy_pll_out_dsiclk
-       - const: dsi1_phy_pll_out_byteclk
-       - const: dsi1_phy_pll_out_dsiclk
--      - const: dp_link_clk_divsel_ten
--      - const: dp_vco_divided_clk_src_mux
-+      - const: dp_phy_pll_link_clk
-+      - const: dp_phy_pll_vco_div_clk
- 
-   '#clock-cells':
-     const: 1
-@@ -92,8 +92,8 @@ examples:
-                     "dsi0_phy_pll_out_dsiclk",
-                     "dsi1_phy_pll_out_byteclk",
-                     "dsi1_phy_pll_out_dsiclk",
--                    "dp_link_clk_divsel_ten",
--                    "dp_vco_divided_clk_src_mux";
-+                    "dp_phy_pll_link_clk",
-+                    "dp_phy_pll_vco_div_clk";
-       #clock-cells = <1>;
-       #reset-cells = <1>;
-       #power-domain-cells = <1>;
--- 
-2.26.1
+>> Why is NOCACHE ? Is there something poking behind CCF back ? if yes, why
+>> is this required ?
+>
+> I'm surprised you ask this since the situation hasn't changed since I pushed the
+> video clock for GXBB, then G12A.
 
+Even if the situation hasn't changed, providing context is very helpful
+for new reviewers or reviewers who might need a reminder of that
+situation.  I for one had already forgotten the video clock context so I
+had a similiar question as Jerome when I saw the NOCACHE and UNUSED
+flags.
+
+As you know, new usage of those flags is always highly scrutinized, so
+providing the right context and explanation, even if it's repeating
+stuff you've stated elsewhere, can help preempt any questions.  
+
+> The switch to CCF for the VPU is still planned, but until now I was unable to allocate enough
+> time for this huge rework.
+>
+> Since I'm the single DRM driver contributor and lacking any other reviewers, I must deal
+> with new features & bugfixing before moving to CCF.
+
+Not at all a blocker for this patch, but just curious do you have a TODO
+list someplace for this driver in case others might have some time to
+help you with the migration?
+
+> The clock situation is far from perfect, and I'd also like it to be solved at some point.
+>
+> I'll add the same explanation I gave for GXBB in https://lkml.kernel.org/r/1541516257-16157-5-git-send-email-narmstrong@baylibre.com
+
+Yes, that's perfect.
+
+Thanks,
+
+Kevin
