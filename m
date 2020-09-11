@@ -2,105 +2,96 @@ Return-Path: <SRS0=ogEK=CU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40921C433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 01:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D35DC43461
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 01:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D633D21582
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 01:34:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="gEWMwmOr"
+	by mail.kernel.org (Postfix) with ESMTP id 612A821941
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 01:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725355AbgIKBeE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Sep 2020 21:34:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbgIKBeC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Sep 2020 21:34:02 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C84DC061573;
-        Thu, 10 Sep 2020 18:34:02 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id i22so11563147eja.5;
-        Thu, 10 Sep 2020 18:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zul1Nw9Eq2BdOpetRpWHxzz4+/VY91T8rqh4YA+EBic=;
-        b=gEWMwmOrbB/LYJOtJWKIPzwH6SGa/CfYkilzx1UOv3nDPHNrqMURijPx+S+LNyZS9s
-         g5YGaNLua3+1IFMr6UjmNZ+zZB03PYIR4vwT+XMxr1qbXF8Pvz/4BFZeAt54rm+HRZO5
-         z4muUw8+DXycixI0L1n2dJx2KciCMIiDNf05g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zul1Nw9Eq2BdOpetRpWHxzz4+/VY91T8rqh4YA+EBic=;
-        b=dAicJnB07s3h3SjKa8YeZDAFO6GRTmaH4daqTApV4FgnSs39igrACLsrvywjv1zBep
-         UkU8nyP6z42pjTxZvsD5hQZ2rXxSrVHoim2u+t0DRCxzLT56uACRbmH7yXwAjbeK5Jtq
-         0t8XLsegvT5uqfmUiQQHlXtjVtGuvig01U4W9NdTdUbC9RwgHRyDII1/NldXhO2opmas
-         l4ybrzDguO+T8pk90ZS/by4eAD+ivKK0KAT6/gItfYlOdNV+gQD6FdhkKcgqgLCjNsfw
-         sZFI/O4LpCJK1GXM5u46uWK10kLkQ7jEXHJbGobhkQiN1a5iKecittc/o+R0Ao4hNc9T
-         QVzQ==
-X-Gm-Message-State: AOAM5331NRL1nebI3RtP3ylJIRfSNHVcuC6Q5NSgJN+l/exDa+ndQqQy
-        B3lJeEMBekrHa/ZubaJ+3X3IlJBbYtr5ycHbYeQ=
-X-Google-Smtp-Source: ABdhPJx2ir+MlnMFHJUzyxfU0Dt11F/+kuo/3+cMlKIRJNz0n3WGSvpgprWg3nu2Xy48NKFqcDLAQWy5mIVP/T7J0Q4=
-X-Received: by 2002:a17:906:b6d5:: with SMTP id ec21mr11272409ejb.396.1599788040951;
- Thu, 10 Sep 2020 18:34:00 -0700 (PDT)
+        id S1725550AbgIKBiP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Sep 2020 21:38:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35746 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725280AbgIKBiN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Sep 2020 21:38:13 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 66BCEDB7CBFD16C28D5E;
+        Fri, 11 Sep 2020 09:38:11 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Fri, 11 Sep 2020
+ 09:38:01 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Jason Yan <yanaijie@huawei.com>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] clk: qcom: gcc-msm8939: remove defined but not used variables
+Date:   Fri, 11 Sep 2020 09:37:22 +0800
+Message-ID: <20200911013722.1459387-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-References: <20200910151840.25333-1-eajames@linux.ibm.com> <20200910151840.25333-2-eajames@linux.ibm.com>
-In-Reply-To: <20200910151840.25333-2-eajames@linux.ibm.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 11 Sep 2020 01:33:49 +0000
-Message-ID: <CACPK8XcywanG8BN0-0a41CeTJEAb89OR7SnsPRgbddaC01vO-w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: Add AST2600 APLLdivN definition
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        linux-fsi@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alistair Popple <alistair@popple.id.au>,
-        Jeremy Kerr <jk@ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Sep 2020 at 15:18, Eddie James <eajames@linux.ibm.com> wrote:
->
-> Add a new clock definition for the "APLLdivN" as described in the
-> AST2600 specification. This clock is simply the APLL divided by a
-> factor defined in the SCU registers. It is the input to the FSI
-> bus.
+This addresses the following gcc warning with "make W=1":
 
-Ah, that's where the name comes from. Would calling it APLL_DIV make more sense?
+drivers/clk/qcom/gcc-msm8939.c:610:32: warning:
+‘gcc_xo_gpll6_gpll0a_map’ defined but not used
+[-Wunused-const-variable=]
+ static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/clk/qcom/gcc-msm8939.c:598:32: warning: ‘gcc_xo_gpll6_gpll0_map’
+defined but not used [-Wunused-const-variable=]
+ static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
+                                ^~~~~~~~~~~~~~~~~~~~~~
 
->
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
->  include/dt-bindings/clock/ast2600-clock.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-> index 62b9520a00fd..5a9ae0a1d574 100644
-> --- a/include/dt-bindings/clock/ast2600-clock.h
-> +++ b/include/dt-bindings/clock/ast2600-clock.h
-> @@ -87,6 +87,7 @@
->  #define ASPEED_CLK_MAC2RCLK            68
->  #define ASPEED_CLK_MAC3RCLK            69
->  #define ASPEED_CLK_MAC4RCLK            70
-> +#define ASPEED_CLK_APLLN               71
->
->  /* Only list resets here that are not part of a gate */
->  #define ASPEED_RESET_ADC               55
-> --
-> 2.26.2
->
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+---
+ drivers/clk/qcom/gcc-msm8939.c | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
+index 778354f82b1e..39ebb443ae3d 100644
+--- a/drivers/clk/qcom/gcc-msm8939.c
++++ b/drivers/clk/qcom/gcc-msm8939.c
+@@ -595,24 +595,12 @@ static const struct clk_parent_data gcc_xo_gpll1_emclk_sleep_parent_data[] = {
+ 	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
+ };
+ 
+-static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL6, 1 },
+-	{ P_GPLL0, 2 },
+-};
+-
+ static const struct clk_parent_data gcc_xo_gpll6_gpll0_parent_data[] = {
+ 	{ .fw_name = "xo" },
+ 	{ .hw = &gpll6_vote.hw },
+ 	{ .hw = &gpll0_vote.hw },
+ };
+ 
+-static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
+-	{ P_XO, 0 },
+-	{ P_GPLL6, 1 },
+-	{ P_GPLL0_AUX, 2 },
+-};
+-
+ static const struct clk_parent_data gcc_xo_gpll6_gpll0a_parent_data[] = {
+ 	{ .fw_name = "xo" },
+ 	{ .hw = &gpll6_vote.hw },
+-- 
+2.25.4
+
