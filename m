@@ -2,107 +2,125 @@ Return-Path: <SRS0=ogEK=CU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AADDC43461
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59725C433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD5CA206E9
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599838524;
-	bh=6keDr/55ouiXdkOuQjrwwrkDTDmO9FYqVGzhAp2EJok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wQM05GE4XBvMoAtsZfatBAqTxNOXIkAf4T3+gSGYH6o+DRI0FtknfZMv5c89bO3y3
-	 tA/Lb7cwIDfEt2gCYa8RbGtkXATivZgWgho6O6+cye7dXL7u/N0UQTaLCxqrfYS050
-	 ZqqTwOWy7bHLq5O9rMI69jAvu6ZWP4RQvXryUpTM=
+	by mail.kernel.org (Postfix) with ESMTP id 0A2E2206E9
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="CX1ZGntT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgIKPfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Sep 2020 11:35:08 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:34435 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbgIKPev (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Sep 2020 11:34:51 -0400
-Received: by mail-ej1-f65.google.com with SMTP id gr14so14415951ejb.1;
-        Fri, 11 Sep 2020 08:34:45 -0700 (PDT)
+        id S1726542AbgIKPfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Sep 2020 11:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgIKPfj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Sep 2020 11:35:39 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F5EC061757
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 08:35:33 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id p4so10286759qkf.0
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2020 08:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UB/8wNdkDm3ezMOvTd3hwGm2T0KYN22DgvIUjk5dmqk=;
+        b=CX1ZGntTzJQqhGb8UHMy1gSTz3hgRfnUz91q5ex/Yikuwhx7ogSiGkljifjQ7rciTF
+         /y9ZxUah6Bpj3v1rF48I8FPmJw01fNRZoiVw5AQr7GGQ6qQu7G+DorXR5P6mb+Nlji0v
+         biYsfJfCucNUKwB/2NRsdGjNWevVFCkujjR9zibSPNvvd9eWEcdxKAVxNf0vU3lAlEZq
+         suUpseCa4WtCAIS+x0gpjHxl7PmaASJjfLJ7yb12+1cmFinaqDzDT1PXzzqNkHJy0jTL
+         oFZ6RDaODLBBF+oakwbC6Wmfio97RF13uhBeNP41Ft+elXuham5hc7/eX14fkhTxtuVw
+         VR9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rv8Uq4Yh5DeMvinWPQeAnG3AGmpR0//uZ7bahTCq3MA=;
-        b=fBCXLhQwqrOv0pQfJf1y+MYbej+W1b8afBKPcx+bN33I15Jh/Gd2qOk+/GZixNboSs
-         +wVEG3Eh69m8uObPoxKqPrEhbNhjgjVDpDi9qJs38jCoBMt4V+bYIT+FnEUVN0XffPax
-         W1AlwFSK393PL6XaP8SSAsszefrmJk2Mc3U9THxTiIBDPWLNDlqkJltgCFNN4P+4RyYa
-         Yz7wfClH/SeqfTd5ACzbGI0zEm6utDWrXUREo6KHFOwtpna5TvBF7uPRomrLd1cIwEWd
-         KqnMAmfkGugb3dsrdQfsxYxziW7NBWTDkCr1SKlG2fxGwG8XxS+dDO2q0s9Ywg52CW87
-         wILw==
-X-Gm-Message-State: AOAM530Aubek8yJuqH7N77Ne8TZ8gEkUlohpXXRPyqo78Uj+Z5cmu0XX
-        Vc7On/xZBHUpAIlMnLfDkqM=
-X-Google-Smtp-Source: ABdhPJwqMxehrWj5AIk6bwgWo/6J4nFSeUNA+neqTDckmCySfnip8jOFjrj8I8PS1NPWYbv5f2Tj9w==
-X-Received: by 2002:a17:906:7d0d:: with SMTP id u13mr2745908ejo.448.1599838484902;
-        Fri, 11 Sep 2020 08:34:44 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id 16sm1970663edx.72.2020.09.11.08.34.42
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Sep 2020 08:34:43 -0700 (PDT)
-Date:   Fri, 11 Sep 2020 17:34:41 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <agross@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UB/8wNdkDm3ezMOvTd3hwGm2T0KYN22DgvIUjk5dmqk=;
+        b=tzSJkLB5olFnGDWArJtXXq2zN8vUVkRlTh07kNMe1dI2q5x/iQpds29pSpB96OtL04
+         3fxTPpi3wGb1b2RIuMYIKV5wo/weCA/D7lHpy8BXLmiPLqYThBgdZ76Kpd9y/zuyC6P7
+         Cah5KsFDPoI6VGp5FHgIcjiCkvLr8fbPCjQnshopkScFW60Y+2XJyqa3I+3agOdPmrSI
+         zU9bcnLMvtTsoOJIErJBFo+Ii0k+eHq/8Gdwemp05mgD5mJUSEF9H2VrbqQpVP4HO9aM
+         jkBHogMXubmVN8K9t7uzCNRuFlh0PtA76XIjjLHfa+oHWgd6sbr7IXqFFeY6Npb5JPIl
+         sUQA==
+X-Gm-Message-State: AOAM530ha1XDP9nos3x2nPeYHpRz5XODSnyfKAlTcHSACRkM5iRxOXVh
+        L52wVZztQOAaVR4vZdz2JSTe4Q==
+X-Google-Smtp-Source: ABdhPJxIOGuiAqONyI2gDXdvk31GBfSIxJRtYTLqSi8FdF+FkFeWI7j1Afvd0YeNAoz6A05BlulJow==
+X-Received: by 2002:a05:620a:65a:: with SMTP id a26mr1937093qka.424.1599838532062;
+        Fri, 11 Sep 2020 08:35:32 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id v16sm3001744qkg.37.2020.09.11.08.35.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Sep 2020 08:35:31 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 01/10] clk: at91: Drop unused at91sam9g45_pcr_layout
-Message-ID: <20200911153441.GA18190@kozik-lap>
-References: <20200902150348.14465-1-krzk@kernel.org>
- <20200902163558.GA4137028@piout.net>
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/7] SM8150 and SM8250 dispcc drivers
+Date:   Fri, 11 Sep 2020 11:34:00 -0400
+Message-Id: <20200911153412.21672-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200902163558.GA4137028@piout.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 02, 2020 at 06:35:58PM +0200, Alexandre Belloni wrote:
-> On 02/09/2020 17:03:39+0200, Krzysztof Kozlowski wrote:
-> > The at91sam9g45_pcr_layout is not used so drop it to fix build warning:
-> > 
-> >   drivers/clk/at91/at91sam9g45.c:49:36: warning:
-> >     'at91sam9g45_pcr_layout' defined but not used [-Wunused-const-variable=]
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> > ---
-> >  drivers/clk/at91/at91sam9g45.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> > 
+Add display clock drivers required to get DSI and DP displays working on
+SM8150 and SM8250 SoCs.
 
-Hi Stephen,
+Derived from downstream drivers. Notable changes compared to downstream:
+ - EDP clks removed (nothing uses these even in downstream it seems)
+ - freq_tbl values for dp_link clk is in Hz and not kHz
 
-If the dev_err_probe() waits/skips/goes to /dev/null, then how about the
-fixes in the series? This patch and few other?
+v2:
+ - updated dts example to reflect the change (first patch)
+ - updated config_ctl_hi1_val in sm8250 dispcc to latest downstream
 
-Best regards,
-Krzysztof
+v3:
+ - combined dt-binding: "gcc_disp_gpll0_clk_src" is needed by sc7180 too
+ - use the right order in drivers/clk/qcom/Kconfig
+
+Jonathan Marek (7):
+  dt-bindings: clock: sdm845-dispcc: same name for dp_phy clocks as
+    sc7180
+  arm64: dts: qcom: sdm845-dispcc: same name for dp_phy clocks as sc7180
+  dt-bindings: clock: combine qcom,sdm845-dispcc and qcom,sc7180-dispcc
+  dt-bindings: clock: Introduce QCOM SM8150 display clock bindings
+  dt-bindings: clock: Introduce QCOM SM8250 display clock bindings
+  clk: qcom: Add display clock controller driver for SM8150
+  clk: qcom: Add display clock controller driver for SM8250
+
+ ...om,sdm845-dispcc.yaml => qcom,dispcc.yaml} |   32 +-
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    |   86 --
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |    4 +-
+ drivers/clk/qcom/Kconfig                      |   18 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/dispcc-sm8150.c              | 1152 +++++++++++++++++
+ drivers/clk/qcom/dispcc-sm8250.c              | 1100 ++++++++++++++++
+ .../dt-bindings/clock/qcom,dispcc-sm8150.h    |   69 +
+ .../dt-bindings/clock/qcom,dispcc-sm8250.h    |   66 +
+ 9 files changed, 2430 insertions(+), 99 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{qcom,sdm845-dispcc.yaml => qcom,dispcc.yaml} (74%)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm8150.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8150.h
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm8250.h
+
+-- 
+2.26.1
 
