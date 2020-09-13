@@ -2,72 +2,134 @@ Return-Path: <SRS0=Uisa=CW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B44DC43461
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 01:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90EC43461
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 04:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCF1721531
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 01:22:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599960143;
-	bh=y8a3OJP3haDXbzePNeSbyxmT9jkJUYcxakmTJFNOiFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QWiCbKUOlu4pEBUa55FWBUjcL3lm7Om3Csdz0eiCzC7/mbtComZKWoCm1I7e19J3s
-	 L1tve3Ksj69TwxdVw+LyhJSbyeislaOlpesAvGWlrgG2UAtW15M1xZZ5/md76I1ebK
-	 IyQRoi109o7ervgTucKOABzetuzP1yC6xrO8JwtE=
+	by mail.kernel.org (Postfix) with ESMTP id 0714F217BA
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 04:00:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r9Aj14+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbgIMBWV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Sep 2020 21:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbgIMBWU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Sep 2020 21:22:20 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E428E214F1;
-        Sun, 13 Sep 2020 01:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599960140;
-        bh=y8a3OJP3haDXbzePNeSbyxmT9jkJUYcxakmTJFNOiFQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1SQsJkTqqRanoOE3vqLC5laDxtT52IkyVPydZ4ZRPWS2mgmqOnWsYLHUwNeigbAux
-         nr+vN2WxWOUA314kcn/wstn4tn4qOnNtuApd49oXynMRiKcBryBmpw1/ueoSh8/MT1
-         nLTUadGJMZWP59IX8Gl35GDf6vkV76IaFHf2+JH4=
-Date:   Sun, 13 Sep 2020 09:22:14 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: imx: gate2: Fix a few typos
-Message-ID: <20200913012213.GD25109@dragon>
-References: <20200905151017.1086353-1-j.neuschaefer@gmx.net>
+        id S1725924AbgIMEA4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Sep 2020 00:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgIMEAx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Sep 2020 00:00:53 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4B4C061573
+        for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2020 21:00:52 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id x69so13925238oia.8
+        for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2020 21:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Qi5BgYlxZ+ct/MUg8TILEG4D9MjaZLwf9MYNlT0Qzno=;
+        b=r9Aj14+lIdavpJ+NJsWC5vYv24n/3JKlHJXYauYP+KP7wRy0NBwYopDsVwkaJh2/jI
+         4O7ffbUlthukJ/+7JpBwOKJ93Un7onuHbmbYPot5XtgB0Z8Fm4GnsrTPWGZk1EaElfBA
+         uAXX48ChLHVnn9YRpRE7OCCpNmN1ilxu/5apivEkTnrKKoluIxKxKdRDoTRbxHqaXepE
+         8whj2m0loKB+t8CjS/jttbE6Fg/lulMCeHe230kkl/tYy73Yxs/1fYd/pwYzp/nD4OQ+
+         3FuDYHWzIHBGUy3Na5SsTS7EGbuYCoOu+/aokDzh8ENfnyaDNSPne/knkGCwN97gFbwH
+         VtDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Qi5BgYlxZ+ct/MUg8TILEG4D9MjaZLwf9MYNlT0Qzno=;
+        b=ocgAf19+/165tOmDorxe5ntg2J5YyFef+k1jTg7bKIic54FB1MYU/pxE3chcYQTWet
+         qfll7F1olZHXjTkWHm4+XggOsnyZea3Gim6CXULY2YmDrAKuq7V/ef1AC7/3siCCFcGe
+         RHRmvG+22H9B6ctNA18UXEOZb821PLqpl6va+cxEOr1TB8WtTkiRTfq8ehF/LCkTTUKT
+         YVQbyoKRW8mpIbamUE5N4J+xu7KzWC05Kb3rYEQm+SjjIZzeVPD9WmXUbaTXGShBtwcj
+         /esWVKCSmZwqhZ/bl6SpFav9C1Zyj/Ug9RO3QMCRk9M+g5H6LXooFRQPaNm7vykv9NmG
+         3Ezw==
+X-Gm-Message-State: AOAM5309nOPiqmsbIDRyahOCo71N411Jzj8Wk1vkb9YIabl+91/2NmoC
+        3oG/Y4guL6CJjZda5UC7O9n9sw==
+X-Google-Smtp-Source: ABdhPJwNYI3tbmjRhOMPSg1q/E9ENKcpMD3csMUaeIexQSGGM27buobS7pe4XCQ3RS+eggJQ6MS3lg==
+X-Received: by 2002:aca:1a09:: with SMTP id a9mr5074891oia.164.1599969651969;
+        Sat, 12 Sep 2020 21:00:51 -0700 (PDT)
+Received: from yoga ([2605:6000:e5cb:c100:8898:14ff:fe6d:34e])
+        by smtp.gmail.com with ESMTPSA id o108sm1228694ota.25.2020.09.12.21.00.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Sep 2020 21:00:50 -0700 (PDT)
+Date:   Sat, 12 Sep 2020 23:00:48 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jason Yan <yanaijie@huawei.com>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH] clk: qcom: gcc-msm8939: remove defined but not used
+ variables
+Message-ID: <20200913040048.GW3715@yoga>
+References: <20200911013722.1459387-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200905151017.1086353-1-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200911013722.1459387-1-yanaijie@huawei.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Sep 05, 2020 at 05:10:16PM +0200, Jonathan Neuschäfer wrote:
-> A few words were misspelled in this comment.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+On Thu 10 Sep 20:37 CDT 2020, Jason Yan wrote:
 
-Applied, thanks.
+> This addresses the following gcc warning with "make W=1":
+> 
+> drivers/clk/qcom/gcc-msm8939.c:610:32: warning:
+> ‘gcc_xo_gpll6_gpll0a_map’ defined but not used
+> [-Wunused-const-variable=]
+>  static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
+>                                 ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/qcom/gcc-msm8939.c:598:32: warning: ‘gcc_xo_gpll6_gpll0_map’
+> defined but not used [-Wunused-const-variable=]
+>  static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
+>                                 ^~~~~~~~~~~~~~~~~~~~~~
+> 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> ---
+>  drivers/clk/qcom/gcc-msm8939.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
+> index 778354f82b1e..39ebb443ae3d 100644
+> --- a/drivers/clk/qcom/gcc-msm8939.c
+> +++ b/drivers/clk/qcom/gcc-msm8939.c
+> @@ -595,24 +595,12 @@ static const struct clk_parent_data gcc_xo_gpll1_emclk_sleep_parent_data[] = {
+>  	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
+>  };
+>  
+> -static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_GPLL6, 1 },
+> -	{ P_GPLL0, 2 },
+> -};
+> -
+>  static const struct clk_parent_data gcc_xo_gpll6_gpll0_parent_data[] = {
+>  	{ .fw_name = "xo" },
+>  	{ .hw = &gpll6_vote.hw },
+>  	{ .hw = &gpll0_vote.hw },
+>  };
+>  
+> -static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_GPLL6, 1 },
+> -	{ P_GPLL0_AUX, 2 },
+> -};
+> -
+>  static const struct clk_parent_data gcc_xo_gpll6_gpll0a_parent_data[] = {
+>  	{ .fw_name = "xo" },
+>  	{ .hw = &gpll6_vote.hw },
+> -- 
+> 2.25.4
+> 
