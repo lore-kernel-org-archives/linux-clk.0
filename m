@@ -1,135 +1,83 @@
-Return-Path: <SRS0=Uisa=CW=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=A1Rx=CX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A90EC43461
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 04:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A6FC2D0A7
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0714F217BA
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Sep 2020 04:00:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r9Aj14+l"
+	by mail.kernel.org (Postfix) with ESMTP id D263C217BA
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725924AbgIMEA4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Sep 2020 00:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbgIMEAx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Sep 2020 00:00:53 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4B4C061573
-        for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2020 21:00:52 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id x69so13925238oia.8
-        for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2020 21:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Qi5BgYlxZ+ct/MUg8TILEG4D9MjaZLwf9MYNlT0Qzno=;
-        b=r9Aj14+lIdavpJ+NJsWC5vYv24n/3JKlHJXYauYP+KP7wRy0NBwYopDsVwkaJh2/jI
-         4O7ffbUlthukJ/+7JpBwOKJ93Un7onuHbmbYPot5XtgB0Z8Fm4GnsrTPWGZk1EaElfBA
-         uAXX48ChLHVnn9YRpRE7OCCpNmN1ilxu/5apivEkTnrKKoluIxKxKdRDoTRbxHqaXepE
-         8whj2m0loKB+t8CjS/jttbE6Fg/lulMCeHe230kkl/tYy73Yxs/1fYd/pwYzp/nD4OQ+
-         3FuDYHWzIHBGUy3Na5SsTS7EGbuYCoOu+/aokDzh8ENfnyaDNSPne/knkGCwN97gFbwH
-         VtDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Qi5BgYlxZ+ct/MUg8TILEG4D9MjaZLwf9MYNlT0Qzno=;
-        b=ocgAf19+/165tOmDorxe5ntg2J5YyFef+k1jTg7bKIic54FB1MYU/pxE3chcYQTWet
-         qfll7F1olZHXjTkWHm4+XggOsnyZea3Gim6CXULY2YmDrAKuq7V/ef1AC7/3siCCFcGe
-         RHRmvG+22H9B6ctNA18UXEOZb821PLqpl6va+cxEOr1TB8WtTkiRTfq8ehF/LCkTTUKT
-         YVQbyoKRW8mpIbamUE5N4J+xu7KzWC05Kb3rYEQm+SjjIZzeVPD9WmXUbaTXGShBtwcj
-         /esWVKCSmZwqhZ/bl6SpFav9C1Zyj/Ug9RO3QMCRk9M+g5H6LXooFRQPaNm7vykv9NmG
-         3Ezw==
-X-Gm-Message-State: AOAM5309nOPiqmsbIDRyahOCo71N411Jzj8Wk1vkb9YIabl+91/2NmoC
-        3oG/Y4guL6CJjZda5UC7O9n9sw==
-X-Google-Smtp-Source: ABdhPJwNYI3tbmjRhOMPSg1q/E9ENKcpMD3csMUaeIexQSGGM27buobS7pe4XCQ3RS+eggJQ6MS3lg==
-X-Received: by 2002:aca:1a09:: with SMTP id a9mr5074891oia.164.1599969651969;
-        Sat, 12 Sep 2020 21:00:51 -0700 (PDT)
-Received: from yoga ([2605:6000:e5cb:c100:8898:14ff:fe6d:34e])
-        by smtp.gmail.com with ESMTPSA id o108sm1228694ota.25.2020.09.12.21.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Sep 2020 21:00:50 -0700 (PDT)
-Date:   Sat, 12 Sep 2020 23:00:48 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jason Yan <yanaijie@huawei.com>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8939: remove defined but not used
- variables
-Message-ID: <20200913040048.GW3715@yoga>
-References: <20200911013722.1459387-1-yanaijie@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200911013722.1459387-1-yanaijie@huawei.com>
+        id S1726024AbgINCWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Sep 2020 22:22:38 -0400
+Received: from lucky1.263xmail.com ([211.157.147.133]:56882 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbgINCWh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Sep 2020 22:22:37 -0400
+Received: from localhost (unknown [192.168.167.172])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 212E4C94DA;
+        Mon, 14 Sep 2020 10:22:31 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P4753T140065155360512S1600050147471714_;
+        Mon, 14 Sep 2020 10:22:30 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <135c00bb8a199660e075b3fd2738bf78>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
+        xf@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 2/6] clk: rockchip: Export rockchip_clk_register_ddrclk()
+Date:   Mon, 14 Sep 2020 10:22:21 +0800
+Message-Id: <20200914022225.23613-3-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200914022225.23613-1-zhangqing@rock-chips.com>
+References: <20200914022225.23613-1-zhangqing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 10 Sep 20:37 CDT 2020, Jason Yan wrote:
+This is used by the Rockchip clk driver, export it to allow that
+driver to be compiled as a module..
 
-> This addresses the following gcc warning with "make W=1":
-> 
-> drivers/clk/qcom/gcc-msm8939.c:610:32: warning:
-> ‘gcc_xo_gpll6_gpll0a_map’ defined but not used
-> [-Wunused-const-variable=]
->  static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
->                                 ^~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/qcom/gcc-msm8939.c:598:32: warning: ‘gcc_xo_gpll6_gpll0_map’
-> defined but not used [-Wunused-const-variable=]
->  static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
->                                 ^~~~~~~~~~~~~~~~~~~~~~
-> 
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-ddr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+index 9273bce4d7b6..86718c54e56b 100644
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -136,3 +136,4 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+ 
+ 	return clk;
+ }
++EXPORT_SYMBOL_GPL(rockchip_clk_register_ddrclk);
+-- 
+2.17.1
 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> ---
->  drivers/clk/qcom/gcc-msm8939.c | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
-> index 778354f82b1e..39ebb443ae3d 100644
-> --- a/drivers/clk/qcom/gcc-msm8939.c
-> +++ b/drivers/clk/qcom/gcc-msm8939.c
-> @@ -595,24 +595,12 @@ static const struct clk_parent_data gcc_xo_gpll1_emclk_sleep_parent_data[] = {
->  	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
->  };
->  
-> -static const struct parent_map gcc_xo_gpll6_gpll0_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL6, 1 },
-> -	{ P_GPLL0, 2 },
-> -};
-> -
->  static const struct clk_parent_data gcc_xo_gpll6_gpll0_parent_data[] = {
->  	{ .fw_name = "xo" },
->  	{ .hw = &gpll6_vote.hw },
->  	{ .hw = &gpll0_vote.hw },
->  };
->  
-> -static const struct parent_map gcc_xo_gpll6_gpll0a_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL6, 1 },
-> -	{ P_GPLL0_AUX, 2 },
-> -};
-> -
->  static const struct clk_parent_data gcc_xo_gpll6_gpll0a_parent_data[] = {
->  	{ .fw_name = "xo" },
->  	{ .hw = &gpll6_vote.hw },
-> -- 
-> 2.25.4
-> 
+
+
