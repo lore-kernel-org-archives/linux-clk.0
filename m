@@ -2,87 +2,224 @@ Return-Path: <SRS0=A1Rx=CX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7729C43461
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 21:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125CFC43461
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 21:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2CA21741
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 21:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC4A20936
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 21:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600117429;
-	bh=SypjIqhaRAC/Hpu9qoLX8d3WE5HyLBR3TQQ8FVbPLPs=;
+	s=default; t=1600120037;
+	bh=8PZxvVgaIem+ObS75Ajm1eCg61/hz0Kaseh822lWqXM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NxTI43FNbc5QKVpTX9NLQRqVb9YrN1wkaHGxsdAOn3R2+uITGY8Xf5oWDFuTKSBKV
-	 a4txG6hdoH99LP0IkSSB/ws7DAT5ExIualViRU1ZfG8+pS4QHo3mOeQYsbUweN2E0r
-	 zRNzcs9iNWGpd6RZuc1aQ8FwhIMdMdbSdFtPdHLY=
+	b=YvFnIEkM7PtYmbJRbOv+w+n9hKKVXmwT14yGt19NYby/XOdUFYgYW0epn5qUlFw5s
+	 c2ZcYWWP1GCkx4ojPx/FrrX43vklXfv9b8FZR0qVwCnM59HC4fujsz+RZi+n3u2F9p
+	 OmThRbt9OgHC9HlXHJxfsVoxakh5CVIQ9FbQ7cQY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbgINVDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Sep 2020 17:03:48 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35780 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgINVDr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Sep 2020 17:03:47 -0400
-Received: by mail-io1-f65.google.com with SMTP id r9so1711022ioa.2;
-        Mon, 14 Sep 2020 14:03:42 -0700 (PDT)
+        id S1726064AbgINVrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Sep 2020 17:47:01 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42799 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbgINVq6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Sep 2020 17:46:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d6so668410pfn.9;
+        Mon, 14 Sep 2020 14:46:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=42ZSJB4zkHMkV3UxCc9fM8A45SS/gLb4mhmx7e2GiHE=;
-        b=sVlMm+WvtjaH5oEIIaf0/DqQYljdb+pRDyKmag05uAbdXWbzidkyoEsLSRqsMHfYmT
-         SiF8aOw/Wp5W6/bkwMlJ0GAorcy2VTlqiB42mtCpACqakmHH9wdVnZTKiDAyZA2VFrGu
-         B+wRQKbrybSGIJO+PHo+TXfesxPWpDyX9QagpGLwQOJ8vnwTLtzhADlDPB67JptD5/QG
-         FHIG6xGsuCNyfH55d0iuigJ6a0eTyig89BqmbpOkaB/WvGMMMbFm4EifxZoiqEn8KiV2
-         725GMl+tuDyJnskndkhrfEKQSu3cx1Zx7C9D6sez32bna/PPG5EtlQyln/ulhHKdYyh5
-         1FAQ==
-X-Gm-Message-State: AOAM5326Jey7ZYtxu2flcKxtl3OGGcz3G8OS4Ig8PdL/uIBIvMyzIRSR
-        5N2LnAt69FilEG4BVAYHBQ==
-X-Google-Smtp-Source: ABdhPJwjzg08mCm6nZ/yIMnBAmdWCJqdM7CkVBuBB3YWHvxiOIZIJWp6J2ptG5APTZVJw7I+fKcWGA==
-X-Received: by 2002:a6b:d908:: with SMTP id r8mr12833249ioc.21.1600117422535;
-        Mon, 14 Sep 2020 14:03:42 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id y90sm7811685ilk.48.2020.09.14.14.03.40
+        bh=7AxGeCPLtuiXnnosAChk+eah3HeQMSdm+VBaL/8iNeQ=;
+        b=PE1IGej8ryB6qZC0gm0s67u/BL8g1c9KKloVkaCZvj9L7q9ntLp1KRiVfxuYJk1dEr
+         VJhA/M57oZzVLEMvL/Ag1cLSPZZ6ENq4k9Ej4P6yKAH09JTiWtDtQD1ri/NhTic1t2Wj
+         1J7SyL1CBMyZ8t6jjd9IzZDpe7s7H9ICx15MnF6WJFbPd548+2oR/xZDUfj/BlGjxSCH
+         62G3oZdgHcbsveGwDag0Ggb6wIaF5KdAotyaBPzSSM3uDONClE+R5QXmqrC0KBVhRQNo
+         6hRnsDZ7oBVCdAtiBcTpsaGd57jaYa7cq3lwEjHoSNfKilrIgALk0ShJwG6ADAJgtFTe
+         EjHQ==
+X-Gm-Message-State: AOAM533b3qJk4xJEAt3OsHH4rqpGxVkwBZuZ7OdZiyPJL9kME0OV6K/M
+        0iUp+RnfEa9EPKjdzJ+WDWc=
+X-Google-Smtp-Source: ABdhPJxHkRvmRUcHekmZ+kgZRH0hYjaX7QrITTOonjNOAKve5Azd15nHztSaIodnVsvIWpYH7UsTiQ==
+X-Received: by 2002:a62:7c82:0:b029:13c:1611:66b9 with SMTP id x124-20020a627c820000b029013c161166b9mr14506540pfc.4.1600120016849;
+        Mon, 14 Sep 2020 14:46:56 -0700 (PDT)
+Received: from localhost ([2601:647:5b00:1162:1ac0:17a6:4cc6:d1ef])
+        by smtp.gmail.com with ESMTPSA id w203sm11064404pfc.97.2020.09.14.14.46.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 14:03:42 -0700 (PDT)
-Received: (nullmailer pid 244291 invoked by uid 1000);
-        Mon, 14 Sep 2020 21:03:39 -0000
-Date:   Mon, 14 Sep 2020 15:03:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jonathan Marek <jonathan@marek.ca>
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 3/5] dt-bindings: clock: add SM8250 QCOM video clock
- bindings
-Message-ID: <20200914210339.GA244232@bogus>
-References: <20200904030958.13325-1-jonathan@marek.ca>
- <20200904030958.13325-4-jonathan@marek.ca>
+        Mon, 14 Sep 2020 14:46:56 -0700 (PDT)
+Date:   Mon, 14 Sep 2020 14:46:55 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Tom Rix <trix@redhat.com>
+Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+Subject: Re: [PATCH v2 5/6] include: fpga: adi-axi-common.h: add definitions
+ for supported FPGAs
+Message-ID: <20200914214655.GA23848@archbook>
+References: <20200810134252.68614-1-alexandru.ardelean@analog.com>
+ <20200810134252.68614-6-alexandru.ardelean@analog.com>
+ <0f9aa0ed-11a2-cf49-6c5d-ff36ba8ff9eb@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200904030958.13325-4-jonathan@marek.ca>
+In-Reply-To: <0f9aa0ed-11a2-cf49-6c5d-ff36ba8ff9eb@redhat.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 03 Sep 2020 23:09:52 -0400, Jonathan Marek wrote:
-> Add device tree bindings for video clock controller for SM8250 SoCs.
+On Mon, Aug 10, 2020 at 07:07:14AM -0700, Tom Rix wrote:
 > 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  .../bindings/clock/qcom,videocc.yaml          |  8 +++-
->  .../dt-bindings/clock/qcom,videocc-sm8250.h   | 42 +++++++++++++++++++
->  2 files changed, 49 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/qcom,videocc-sm8250.h
+> On 8/10/20 6:42 AM, Alexandru Ardelean wrote:
+> > From: Mircea Caprioru <mircea.caprioru@analog.com>
+> >
+> > All (newer) FPGA IP cores supported by Analog Devices, store information in
+> > the synthesized designs. This information describes various parameters,
+> > including the family of boards on which this is deployed, speed-grade, and
+> > so on.
+> >
+> > Currently, some of these definitions are deployed mostly on Xilinx boards,
+> > but they have been considered also for FPGA boards from other vendors.
+> >
+> > The register definitions are described at this link:
+> >   https://wiki.analog.com/resources/fpga/docs/hdl/regmap
+> > (the 'Base (common to all cores)' section).
+> >
+> > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > 
+> Thanks for changes.
+> 
+> Reviewed-by: Tom Rix <trix@redhat.com>
+> 
+> > ---
+> >  include/linux/fpga/adi-axi-common.h | 103 ++++++++++++++++++++++++++++
+> >  1 file changed, 103 insertions(+)
+> >
+> > diff --git a/include/linux/fpga/adi-axi-common.h b/include/linux/fpga/adi-axi-common.h
+> > index 141ac3f251e6..5c7d212a5d4a 100644
+> > --- a/include/linux/fpga/adi-axi-common.h
+> > +++ b/include/linux/fpga/adi-axi-common.h
+> > @@ -13,6 +13,9 @@
+> >  
+> >  #define ADI_AXI_REG_VERSION			0x0000
+> >  
+> > +#define ADI_AXI_REG_FPGA_INFO			0x001C
+> > +#define ADI_AXI_REG_FPGA_VOLTAGE		0x0140
+> > +
+> >  #define ADI_AXI_PCORE_VER(major, minor, patch)	\
+> >  	(((major) << 16) | ((minor) << 8) | (patch))
+> >  
+> > @@ -20,4 +23,104 @@
+> >  #define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff)
+> >  #define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
+> >  
+> > +#define ADI_AXI_INFO_FPGA_VOLTAGE(val)		((val) & 0xffff)
+> > +
+> > +#define ADI_AXI_INFO_FPGA_TECH(info)		(((info) >> 24) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_FAMILY(info)		(((info) >> 16) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info)	(((info) >> 8) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_DEV_PACKAGE(info)	((info) & 0xff)
+> > +
+> > +/**
+> > + * FPGA Technology definitions
+> > + */
+> > +#define ADI_AXI_FPGA_TECH_XILINX_UNKNOWN 		0
+> > +#define ADI_AXI_FPGA_TECH_XILINS_SERIES7		1
+> > +#define ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE		2
+> > +#define ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE_PLUS	3
+> > +
+> > +#define ADI_AXI_FPGA_TECH_INTEL_UNKNOWN			100
+> > +#define ADI_AXI_FPGA_TECH_INTEL_CYCLONE_5		101
+> > +#define ADI_AXI_FPGA_TECH_INTEL_CYCLONE_10		102
+> > +#define ADI_AXI_FPGA_TECH_INTEL_ARRIA_10		103
+> > +#define ADI_AXI_FPGA_TECH_INTEL_STRATIX_10		104
+> > +
+> > +/**
+> > + * FPGA Family definitions
+> > + */
+> > +#define ADI_AXI_FPGA_FAMILY_UNKNOWN			0
+> > +
+> > +#define ADI_AXI_FPGA_FAMILY_XILINX_ARTIX		1
+> > +#define ADI_AXI_FPGA_FAMILY_XILINX_KINTEX		2
+> > +#define ADI_AXI_FPGA_FAMILY_XILINX_VIRTEX		3
+> > +#define ADI_AXI_FPGA_FAMILY_XILINX_ZYNQ			4
+> > +
+> > +#define ADI_AXI_FPGA_FAMILY_INTEL_SX			1
+> > +#define ADI_AXI_FPGA_FAMILY_INTEL_GX			2
+> > +#define ADI_AXI_FPGA_FAMILY_INTEL_GT			3
+> > +#define ADI_AXI_FPGA_FAMILY_INTEL_GZ			4
+> > +
+> > +/**
+> > + * FPGA Speed-grade definitions
+> > + */
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_UNKNOWN		0
+> > +
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_1		10
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_1L		11
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_1H		12
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_1HV		13
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_1LV		14
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_2		20
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_2L		21
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_2LV		22
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_XILINX_3		30
+> > +
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_1		1
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_2		2
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_3		3
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_4		4
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_5		5
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_6		6
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_7		7
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_8		8
+> > +#define ADI_AXI_FPGA_SPEED_GRADE_INTEL_9		9
+> > +
+> > +/**
+> > + * FPGA Device Package definitions
+> > + */
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_UNKNOWN		0
+> > +
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_RF		1
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FL		2
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FF		3
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FB		4
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_HC		5
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FH		6
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_CS		7
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_CP		8
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FT		9
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FG		10
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_SB		11
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_RB		12
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_RS		13
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_CL		14
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_SF		15
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_BA		16
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FA		17
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FS		18
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_XILINX_FI		19
+> > +
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_BGA		1
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_PGA		2
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_FBGA		3
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_HBGA		4
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_PDIP		5
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_EQFP		6
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_PLCC		7
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_PQFP		8
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_RQFP		9
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_TQFP		10
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_UBGA		11
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_UFBGA		12
+> > +#define ADI_AXI_FPGA_DEV_PACKAGE_INTEL_MBGA		13
+> > +
+> >  #endif /* ADI_AXI_COMMON_H_ */
+> 
+Applied to for-next (with whitespace fix-up),
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks,
+Moritz
