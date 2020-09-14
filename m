@@ -2,149 +2,124 @@ Return-Path: <SRS0=A1Rx=CX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4671CC2D0A7
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C6BC43461
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 08:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F40D21974
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:23:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6663217BA
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 08:12:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Es9faI85"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbgINCXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Sep 2020 22:23:23 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:56468 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbgINCXU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Sep 2020 22:23:20 -0400
-Received: from localhost (unknown [192.168.167.69])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 666A5A4CC5;
-        Mon, 14 Sep 2020 10:23:18 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P25132T140525491451648S1600050196674706_;
-        Mon, 14 Sep 2020 10:23:17 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <df32b991cd3bfc0308031f8f2b6298df>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 6/6] clk: rockchip: rk3399: Support module build
-Date:   Mon, 14 Sep 2020 10:23:16 +0800
-Message-Id: <20200914022316.24045-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200914022225.23613-1-zhangqing@rock-chips.com>
-References: <20200914022225.23613-1-zhangqing@rock-chips.com>
+        id S1726220AbgINIMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Sep 2020 04:12:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgINIMB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Sep 2020 04:12:01 -0400
+Received: from mail-oo1-xc42.google.com (mail-oo1-xc42.google.com [IPv6:2607:f8b0:4864:20::c42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B71E9C06174A;
+        Mon, 14 Sep 2020 01:11:17 -0700 (PDT)
+Received: by mail-oo1-xc42.google.com with SMTP id r10so3819609oor.5;
+        Mon, 14 Sep 2020 01:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BiWoOjbocYfXto48nFLnUJJva/vgzYIMpRgWmcqUVDs=;
+        b=Es9faI85dVSrPMxn0/fxuP7sdWsK/0diEepgIjPk/dolJsGVXyXaJcE84ZAqlfEbG8
+         VOav5EgR/PrSf54d3FbyzU27k2pPhCCGyuRVq8aOq9ZlKv8VczCg7YIkSEpGCtBXZAxn
+         wmvqi/bMDSg6n9YTstMaOB4kWx9bGuAUKl0mOuRS6msZz0vQ18NnAds3hsu4mFjq3lJD
+         bcPZaUVgI3LqfDfOvKhV1V4jH2PvEqAyIodcnKcHZjWog7Dcd6Bb7iBhxVL/amy5OsgA
+         lbdM8oMAVGm9FI37sD7pzz5DifOVGork/yNa+a9cd4WtCGnGth0hZ/oBiZ5ytRVsnhXE
+         VSvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BiWoOjbocYfXto48nFLnUJJva/vgzYIMpRgWmcqUVDs=;
+        b=bLZho3gkzks2LkRmg3fX3XAF7N2plp5MMoGt+nl/Bbc2Ktylkw6b/18aVeZ6RBqLZa
+         qYWbg5jFdkWikzDvAuuEFak8piTpYOEC5L7ca6oWQEjjepcTpbQIPrDL7YwkaBc8g/3J
+         a1BGHAnAwG3vamtWXMJTdxJsKdnv+mKmMWtsVS+zK4VMn8vcz6NZpJerxD1mMYQr6B8z
+         qfxPIW50GZkLCktBCXMN+b4FAKUVWW4dEbaqbF5cP/mcpKki6goAvukkGhZ+xYXNCgMO
+         61KiOBciRsINFlnmyZ7VAbY9WOoOrFIQE/KniPD05+olCr0lu/5IDidG3Qc+Bi5vf7HC
+         uWsQ==
+X-Gm-Message-State: AOAM530qP5SFD238HBGmsoXfopvSS7RTEVBBZNmz/eW3uvN/eiJ0v70/
+        mAJkgGTiBbY6zLEAodRV1jHoVtTxL9uYpW+m0Mw=
+X-Google-Smtp-Source: ABdhPJxZhyRmN42yl3RF+whdW88Pd2by4L0LHlHrWkTJzCU4W1n0q8o+I3PJmU1dSGpY31ECu/Dr7d9iqvYxm9/8VfM=
+X-Received: by 2002:a4a:5403:: with SMTP id t3mr9632108ooa.11.1600071076339;
+ Mon, 14 Sep 2020 01:11:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200810134252.68614-1-alexandru.ardelean@analog.com> <20200810134252.68614-8-alexandru.ardelean@analog.com>
+In-Reply-To: <20200810134252.68614-8-alexandru.ardelean@analog.com>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Mon, 14 Sep 2020 11:11:05 +0300
+Message-ID: <CA+U=Dsr41kKGXmgE1KjdTzAso3rwtNXAEoSy+Li=uym7G=D=Jw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, mturquette@baylibre.com,
+        Stephen Boyd <sboyd@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-support CLK_OF_DECLARE and builtin_platform_driver_probe
-double clk init method.
-add module author, description and license to support building
-Soc Rk3399 clock driver as module.
+On Mon, Aug 10, 2020 at 4:41 PM Alexandru Ardelean
+<alexandru.ardelean@analog.com> wrote:
+>
+> These patches synchronize the driver with the current state in the
+> Analog Devices Linux tree:
+>   https://github.com/analogdevicesinc/linux/
+>
+> They have been in the tree for about 2-3, so they did receive some
+> testing.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
----
- drivers/clk/rockchip/clk-rk3399.c | 56 +++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Ping on this series.
+Do I need to do a re-send?
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index ce1d2446f142..7df2f1e00347 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -5,9 +5,11 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <dt-bindings/clock/rk3399-cru.h>
-@@ -1600,3 +1602,57 @@ static void __init rk3399_pmu_clk_init(struct device_node *np)
- 	rockchip_clk_of_add_provider(np, ctx);
- }
- CLK_OF_DECLARE(rk3399_cru_pmu, "rockchip,rk3399-pmucru", rk3399_pmu_clk_init);
-+
-+struct clk_rk3399_inits {
-+	void (*inits)(struct device_node *np);
-+};
-+
-+static const struct clk_rk3399_inits clk_rk3399_pmucru_init = {
-+	.inits = rk3399_pmu_clk_init,
-+};
-+
-+static const struct clk_rk3399_inits clk_rk3399_cru_init = {
-+	.inits = rk3399_clk_init,
-+};
-+
-+static const struct of_device_id clk_rk3399_match_table[] = {
-+	{
-+		.compatible = "rockchip,rk3399-cru",
-+		.data = &clk_rk3399_cru_init,
-+	},  {
-+		.compatible = "rockchip,rk3399-pmucru",
-+		.data = &clk_rk3399_pmucru_init,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_rk3399_match_table);
-+
-+static int __init clk_rk3399_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	const struct of_device_id *match;
-+	const struct clk_rk3399_inits *init_data;
-+
-+	match = of_match_device(clk_rk3399_match_table, &pdev->dev);
-+	if (!match || !match->data)
-+		return -EINVAL;
-+
-+	init_data = match->data;
-+	if (init_data->inits)
-+		init_data->inits(np);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver clk_rk3399_driver = {
-+	.driver		= {
-+		.name	= "clk-rk3399",
-+		.of_match_table = clk_rk3399_match_table,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
-+
-+MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:clk-rk3399");
--- 
-2.17.1
-
-
-
+>
+> Highlights are:
+> * Add support for fractional dividers (Lars-Peter Clausen)
+> * Enable support for ZynqMP (UltraScale) (Dragos Bogdan)
+> * Support frequency limits for ZynqMP (Mathias Tausen)
+>   - And continued by Mircea Caprioru, to read them from the IP cores
+>
+> Changelog v1 -> v2:
+> - in patch 'include: fpga: adi-axi-common.h: add definitions for supported FPGAs'
+>   * converted enums to #define
+>   * added Intel FPGA definitions
+>   * added Device-Package definitions
+>   * added INTEL / XILINX in the define names
+>  definitions according to:
+>  https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_intel_device_info_enc.tcl
+>  https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_xilinx_device_info_enc.tcl
+>
+> Dragos Bogdan (1):
+>   clk: axi-clkgen: add support for ZynqMP (UltraScale)
+>
+> Lars-Peter Clausen (2):
+>   clk: axi-clkgen: Add support for fractional dividers
+>   clk: axi-clkgen: Set power bits for fractional mode
+>
+> Mathias Tausen (1):
+>   clk: axi-clkgen: Respect ZYNQMP PFD/VCO frequency limits
+>
+> Mircea Caprioru (2):
+>   include: fpga: adi-axi-common.h: add definitions for supported FPGAs
+>   clk: axi-clkgen: Add support for FPGA info
+>
+>  drivers/clk/Kconfig                 |   2 +-
+>  drivers/clk/clk-axi-clkgen.c        | 253 ++++++++++++++++++++++------
+>  include/linux/fpga/adi-axi-common.h | 103 +++++++++++
+>  3 files changed, 302 insertions(+), 56 deletions(-)
+>
+> --
+> 2.17.1
+>
