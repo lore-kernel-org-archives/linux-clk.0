@@ -2,108 +2,84 @@ Return-Path: <SRS0=A1Rx=CX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF6BC43461
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 09:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F03CC433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 12:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C294E2192A
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 09:54:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="3k2dP4R8"
+	by mail.kernel.org (Postfix) with ESMTP id 1AC28207EA
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 12:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgINJx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Sep 2020 05:53:57 -0400
-Received: from www.zeus03.de ([194.117.254.33]:49102 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbgINJx4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Sep 2020 05:53:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=fXUJ5XrONh8vOCCNUuB2z8BMlfPq
-        hb1bOhFt/4k7jA4=; b=3k2dP4R8ITpJB8/JKqdgdgKYYBhyFgPkWvbzZPPSmbcg
-        t3ZIxMp+8DWFhzcY0kQP6YNmlwUZ9vXeazzqx8m4N9Oj1ZXbSeL7zTYO+r3OFjvs
-        VFRHk8F7+mCD9GBTSxN7K0Ic2k2NV8K1kY8MnkZw1Rabcw6W6U0gsrk8Jui5nMo=
-Received: (qmail 1815418 invoked from network); 14 Sep 2020 11:53:54 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2020 11:53:54 +0200
-X-UD-Smtp-Session: l3s3148p1@nHsuA0OvOuIgAwDPXwXYAPlEQEA0NVnc
-Date:   Mon, 14 Sep 2020 11:53:54 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [RFC PATCH] clk: renesas: rcar-gen3: remove stp_ck handling for
- SDHI
-Message-ID: <20200914095354.GB8570@ninjato>
-References: <20200914090426.16022-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdXCQ3LQDWWwOUndkXv15USfX9YFnWtw9JvUcqNyJ7-gBQ@mail.gmail.com>
+        id S1726527AbgINMlf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Sep 2020 08:41:35 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45291 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbgINMlD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Sep 2020 08:41:03 -0400
+Received: by mail-yb1-f196.google.com with SMTP id p81so11681225ybc.12;
+        Mon, 14 Sep 2020 05:41:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pADP6qzUrYMCYvH+CFX4SosBM+qgginkcbgh+0+Vh8g=;
+        b=c/hGNLMrpQ+A40x0ZjivCwqgLxCXQuqGqUeM0NTV5AtN+U7k6U7ZohYrSE+J+uYLxQ
+         s/VhX1mr+dWJkYF7qmTqDNQjHuC7bx216qQ0UomTGDkxA3FeeX+UkninJSJmu1K8pHbU
+         yCbbVeMZ5EQ/96gTV5oJIvx1LJUNFyvsBsfmvk1RsJMgddFq+Kv11xLtcJx2DLDt17ZT
+         rIUxY3uvvB5seOLx5pX1oJNogz7y90bOxQHvrDBRAUt9i2DEOoGXYemGbLqy+PrqAgW1
+         GfGCE5gNuG+sBzX912jrfxk8rsj6Uk289Y6XQgGbgQhnp05tCNXiTHILZv5/Cc7Y6evx
+         8+tQ==
+X-Gm-Message-State: AOAM530ib5E0aqToGlBWVGEAI7qn618Q/0fSRGM2n0Gmj13M8yx+2hl6
+        KBaEoGb3Qg5LKxSJDDlp65tdMwC7/55wv26KdITGUmGvjxQ=
+X-Google-Smtp-Source: ABdhPJw0rS0SECxSrJqxyMZRelj1qSCZeHdheuNXeS8R7ywmxQAb0yM5b9d02qUFIk2ygT1exPjrqXF2qIaoEUmDriM=
+X-Received: by 2002:a9d:5a92:: with SMTP id w18mr8913041oth.145.1600085338477;
+ Mon, 14 Sep 2020 05:08:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXCQ3LQDWWwOUndkXv15USfX9YFnWtw9JvUcqNyJ7-gBQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200911101703.20521-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200911101703.20521-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 14 Sep 2020 14:08:47 +0200
+Message-ID: <CAMuHMdWk+uenHO=4VFQSYdJRew5EWxGfNtamO_OTcdL0g+QZ4Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: Kconfig: Update description for
+ CLK_RCAR_GEN3_CPG config
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Sep 11, 2020 at 12:17 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> rcar-gen3-cpg driver is also used on Renesas RZ/G2 SoC's, update the same
+> to reflect the description for CLK_RCAR_GEN3_CPG config.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
---wzJLGUyc3ArbnUjN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas for v5.10, as:
 
-On Mon, Sep 14, 2020 at 11:35:07AM +0200, Geert Uytterhoeven wrote:
-> Hi Wolfram,
->=20
-> On Mon, Sep 14, 2020 at 11:04 AM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > There is no case (and none forseen) where we would need to disable the
->=20
-> foreseen
+    clk: renesas: rcar-gen3: Update description for RZ/G2
 
-Oops, yes.
+    The rcar-gen3-cpg driver is also used on Renesas RZ/G2 SoC's, update the
+    description for the CLK_RCAR_GEN3_CPG config symbol to reflect this.
 
->=20
-> > SDn clock. So, for simplicity, remove its handling.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >
-> > One paradigm is to stay minimal and remove unneeded things. Another one
-> > is to not change working code unnecessarily. I favor the first one a bit
-> > more, but would understand arguing with the second one.
->=20
-> Indeed.
->=20
-> Does this make the code rely on bootloader setup or reset state?
+Gr{oetje,eeting}s,
 
-Before, we wrote '0' or '1' to that bit depending on 'stp_ck'. After
-removing 'stp_ck', we unconditionally write 0. So, I think we are safe.
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---wzJLGUyc3ArbnUjN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9fPa4ACgkQFA3kzBSg
-KbZR6BAApy5h87MLSbou15R+YabtVtILEz1ZLr+XmSCXQtQrC/1P8P9LB2U7kNaL
-k+R26rYwF1aapqgHLNX3tuR4kzCoyrd6vUNEkn+x0ylKmVA1rGVBWdxT32b3W0Zq
-2yDFK3FSonAaPMcr953HtJmpY4Sr/aJXgRFOI1txp7UjPSr6/kAtSXr0eq6apeoy
-/M9f5A8n37Fj+GTQzhOhVvNg/1IMnZythQobjqOqLhBIeBXglbbn7nZ11rRNa3YJ
-IbGt03mfNrEXELgvebM92S8LFSWWhNJb6JV0X6GRzOGrY0u9lwdJUv0Wu5+CQtiI
-foNx7bZTaNnJ09bDPY8WupKmU7CJkAg4Amaq/nSV0umrXVfTtiBgYcWusFwbzxNl
-6Z+RLqkN7fyUGFdHdlmHdSqDJhAnEQSQOjiSiFFj5T928Yc+maBjzd/ULyhKzdmO
-g0sP3EOoh/kUv9SQGq7Jakma7W2f2P4juIXYcWGssBYaTDwE5GZtoDes+QF6Dmrt
-YUcafMkaCIUwGd2h8OZe3Fy5iOnknlw6wFNS2L7sSvOwVknBRpVWCHPWuLqcJAMW
-LDsa+z/m/yOGIJ8meYbqEAmcpryEn6+JTv1CZMItRET51BNKSXYW8JkP91l9b2Ez
-RthmEungVOxymtcdSf2ObHNGTY0VqlIxOa5OmrLmqZOv7ce02pE=
-=iPTZ
------END PGP SIGNATURE-----
-
---wzJLGUyc3ArbnUjN--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
