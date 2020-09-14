@@ -4,23 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A6FC2D0A7
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16A2C43461
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D263C217BA
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB932168B
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Sep 2020 02:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbgINCWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726003AbgINCWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sun, 13 Sep 2020 22:22:38 -0400
-Received: from lucky1.263xmail.com ([211.157.147.133]:56882 "EHLO
+Received: from lucky1.263xmail.com ([211.157.147.132]:54184 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbgINCWh (ORCPT
+        with ESMTP id S1725997AbgINCWh (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Sep 2020 22:22:37 -0400
 Received: from localhost (unknown [192.168.167.172])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 212E4C94DA;
+        by lucky1.263xmail.com (Postfix) with ESMTP id 5B5B3EF47A;
         Mon, 14 Sep 2020 10:22:31 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -31,7 +31,7 @@ Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P4753T140065155360512S1600050147471714_;
         Mon, 14 Sep 2020 10:22:30 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <135c00bb8a199660e075b3fd2738bf78>
+X-UNIQUE-TAG: <210df35dbb0fec22d1ad2db6c944835a>
 X-RL-SENDER: zhangqing@rock-chips.com
 X-SENDER: zhangqing@rock-chips.com
 X-LOGIN-NAME: zhangqing@rock-chips.com
@@ -47,9 +47,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-kernel@vger.kernel.org, xxx@rock-chips.com,
         xf@rock-chips.com, huangtao@rock-chips.com,
         kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 2/6] clk: rockchip: Export rockchip_clk_register_ddrclk()
-Date:   Mon, 14 Sep 2020 10:22:21 +0800
-Message-Id: <20200914022225.23613-3-zhangqing@rock-chips.com>
+Subject: [PATCH v4 3/6] clk: rockchip: Export rockchip_register_softrst()
+Date:   Mon, 14 Sep 2020 10:22:22 +0800
+Message-Id: <20200914022225.23613-4-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200914022225.23613-1-zhangqing@rock-chips.com>
 References: <20200914022225.23613-1-zhangqing@rock-chips.com>
@@ -64,18 +64,31 @@ driver to be compiled as a module..
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
 ---
- drivers/clk/rockchip/clk-ddr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/rockchip/softrst.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 9273bce4d7b6..86718c54e56b 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -136,3 +136,4 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+diff --git a/drivers/clk/rockchip/softrst.c b/drivers/clk/rockchip/softrst.c
+index 5f1ff5e47c4f..5d07266745b8 100644
+--- a/drivers/clk/rockchip/softrst.c
++++ b/drivers/clk/rockchip/softrst.c
+@@ -77,9 +77,9 @@ static const struct reset_control_ops rockchip_softrst_ops = {
+ 	.deassert	= rockchip_softrst_deassert,
+ };
  
- 	return clk;
- }
-+EXPORT_SYMBOL_GPL(rockchip_clk_register_ddrclk);
+-void __init rockchip_register_softrst(struct device_node *np,
+-				      unsigned int num_regs,
+-				      void __iomem *base, u8 flags)
++void rockchip_register_softrst(struct device_node *np,
++			       unsigned int num_regs,
++			       void __iomem *base, u8 flags)
+ {
+ 	struct rockchip_softrst *softrst;
+ 	int ret;
+@@ -107,3 +107,4 @@ void __init rockchip_register_softrst(struct device_node *np,
+ 		kfree(softrst);
+ 	}
+ };
++EXPORT_SYMBOL_GPL(rockchip_register_softrst);
 -- 
 2.17.1
 
