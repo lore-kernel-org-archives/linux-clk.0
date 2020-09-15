@@ -2,129 +2,132 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBC2C43461
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8308C43461
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9AB2076B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61C77207DE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:34:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CwUZA//b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgIPA0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Sep 2020 20:26:49 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:47999 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726796AbgIOOH7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 10:07:59 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 4C37BD38;
-        Tue, 15 Sep 2020 10:07:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 15 Sep 2020 10:07:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=ZsYljQnhriZe/ZshzGVfV61EVwP
-        l4CB2g24GkCXak0U=; b=Tr+gG+gfXYprfU0dwaniDlSxsm1cdZ/d+T1fGfamgbr
-        T3yrepvmZ2eqIVUZy2JYODBsflm/VbQs6xLHKusvgHBuKhjeQ4zCkIRD1v0tnlc1
-        Gul0bKe3SWvL5qr+qx9IwuPEM4yPJY5LUQYRp6KIqhLC5y1mluDt5Cg/q15tyDCs
-        WyXHn/YipkgZC0Qlt5OgfEsMg+hfoRs66KyXYn7KjA+2iiYLyyt5sFKdevfrsd/7
-        SYqUuF1Fdyh5ETomY3xt9DTrK5UNM/Bb1HP9Kp8yDfB7veUAiGN1XCTtjZqv9cEi
-        HL1o53ZJ+HZQDIek/2xlM+CmVS8ub+22Lb26jvWnpzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ZsYljQ
-        nhriZe/ZshzGVfV61EVwPl4CB2g24GkCXak0U=; b=hCbhARLGkK+x1BhaM8W9/X
-        g7kJu6dWkhLQAYgQ0N1q5Uf9wf03iE71V6snvEwnXbtj9ZI72749qGJigx+7TUKe
-        H9R8cwJ4B/TyrRLz1gA7eGl2R0kos1wqYrFKZ+GhKXfOqy0XsWXTwallDtl+P6Qn
-        yp/pHmegSJkXJnvZG3+xvSGB6x8Xq/i+zRyEaz51GveUPCYfeCWos6EhopsKvxgI
-        iXoer3I7aQ0d6PvFAJRmJVkCbvroY/1TXBBNzaqQklaMH3/2oRGZs9Pq0uU/qC5o
-        Jz24UozgLGkeuYp1NAQfxa/RsxZ2Rry95ceZRH6CNErC+zGAXGVXsgkhOtuwWMdg
-        ==
-X-ME-Sender: <xms:pMpgX1nNBhDOiBG6z-bNsxcpkp2C5VwxJYUEzURkT2QOeXz-LPJzVw>
-    <xme:pMpgXw2BZbPk5cRuCCSNj-SgoCy0yDlwvrLNRKsxRNkULJcunn0DAVGYW2l9NTdX3
-    pqUNTIKerfo6ZJoeY0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrtddtgdegvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeevveefffduveeitdegtefhhfetueffteefffdvheevvdehteethedvleffgfej
-    vdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdeikedrje
-    einecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgr
-    gihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:pMpgX7r4hcm-vqyGS__s1mmB5IJ7zW521wksGaESAjABZp7rNvBJ7g>
-    <xmx:pMpgX1lv3QernoOfTZNQvfcKzyEffLP1u4Q8eD3Dd4ca3VjiBRdUtA>
-    <xmx:pMpgXz0joltblLN4c9i1pzUvD1eUOF3Hyk_qGyq05Az0q89kJ4XW1g>
-    <xmx:pcpgX-Qqbl32c4r3Y75LFDJiTQh2saUkLYAKF56WW2-RlWQ-r3y7RA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 80F82328005D;
-        Tue, 15 Sep 2020 10:07:32 -0400 (EDT)
-Date:   Tue, 15 Sep 2020 16:07:30 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Necip Fazil Yildiran <fazilyildiran@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@pgazz.com, jeho@cs.utexas.edu
-Subject: Re: [PATCH] clk: bcm: fix kconfig dependency warning for
- CLK_BCM2711_DVP
-Message-ID: <20200915140730.37n4q6y5si3evdlx@gilmour.lan>
-References: <20200915103749.38126-1-fazilyildiran@gmail.com>
+        id S1726705AbgIPAep (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Sep 2020 20:34:45 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41292 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbgIONbF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 09:31:05 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915132115euoutp01f25ff469260edcf1b9b8cd7e6259feb9~096mPFIBr2519625196euoutp019
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 13:21:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915132115euoutp01f25ff469260edcf1b9b8cd7e6259feb9~096mPFIBr2519625196euoutp019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600176075;
+        bh=oYjVmJZSlUBjaVFPcJsHxcnXZt+nZprwRiCDpebwd0E=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=CwUZA//bWZCFHEtRlvObcZO22XLuucR6TCWA6mU8k4fxrm004RqjoffcVLjEHqYrU
+         v8lJI22ewkWtOucsqUM01GcaveyHKJ6vOuvuekbfxXWJ0vmaFBUbDFPAz95xV65b4O
+         ER+NrXNr+RQR5j0bP7y3F8KRq2/RL5/SpiwtZ2PE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200915132114eucas1p1e80f0c8f12a98eebafbd31c311ceb418~096l9Y_rm1375113751eucas1p1Q;
+        Tue, 15 Sep 2020 13:21:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id AA.E3.06456.ACFB06F5; Tue, 15
+        Sep 2020 14:21:14 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915132114eucas1p13a20e046ccc5006e0dcb49131fc59eab~096lmu9qs1375513755eucas1p1M;
+        Tue, 15 Sep 2020 13:21:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200915132114eusmtrp2231d8512124355c4bd5a25b549b425d8~096ll169T1231912319eusmtrp2Q;
+        Tue, 15 Sep 2020 13:21:14 +0000 (GMT)
+X-AuditID: cbfec7f2-809ff70000001938-2e-5f60bfca4a41
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E2.1E.06314.ACFB06F5; Tue, 15
+        Sep 2020 14:21:14 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915132113eusmtip142209c1b8e59cda6f5388c840060254f~096kRzyN11813018130eusmtip1Y;
+        Tue, 15 Sep 2020 13:21:13 +0000 (GMT)
+Subject: Re: [PATCH 3/3] clk: samsung: Use cached clk_hws instead of
+ __clk_lookup() calls
+To:     linux-clk@vger.kernel.org
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <6ce620a0-429d-af4a-dd97-6ce5a8fb8aa7@samsung.com>
+Date:   Tue, 15 Sep 2020 15:21:12 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pc36h5bdn5kiukmz"
-Content-Disposition: inline
-In-Reply-To: <20200915103749.38126-1-fazilyildiran@gmail.com>
+In-Reply-To: <20200826171529.23618-3-s.nawrocki@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zln5zicHWfhi5rRKKxQU5M4lVlG4SqijKDQcs52UHFT2fHa
+        jzJES1OLfmSt8FbUXKx0idcuKGuSoqaFyVIDNcwsdKk/rKnteIz893zP5Xvf5+OjMFkf4UUl
+        paSzuhSVRi6W4A3Whd6AzjdxyqChmRCm7u5zgvk0N0EwFZYegrk5NoUxvb21JGMeGyAYe/EI
+        wXxoeSBm7va+FjEmyzDJ9HUeYfJfWUhmaaAOZ4wtDnTQTTE9mE8qmvXDpMJsLBQrXjy6oiit
+        NyLFrNn3lDhaEqZmNUmZrG5neJwkcf7hEpb2Ccs2F1UTuSgPK0IuFNCh8LTEQhQhCSWjDQhs
+        eXYxL8joOQRfroEgzCJwjP0W/0u0Tt0nBeGJM7FoW43bEdxZHnXeS1EedAwYTCf4wHp6I9is
+        C2Leg9FWDIZrqkS8IKaDoeRtKeKxlA4HS+63lZ1weisYpmpX+A10LFg7R3HB4w7v7o2vYBc6
+        DApmTCSPMdoTbOMVIgFvgsafDzB+GNDzJJQvDq0WPQzT1tJV7AHfO+pJAfvAcjMf5gN5CIpb
+        P5PC4ZbzAToqkeDaB0M9/ANQzhHb4XnLToGOgPL8NpyngXaDwZ/uwhJucLuhDBNoKVwvkAnu
+        LfDHWCYSsBfcGF/GbyG5fk01/Zo6+jV19P/nViLciDzZDE6bwHLBKWxWIKfSchkpCYEXU7Vm
+        5PxoXUsdv5rQfH98O6IpJHeVxmUplTJClcnlaNsRUJh8vfRQd1esTKpW5VxidalKXYaG5dqR
+        N4XLPaW7qicvyOgEVTqbzLJprO6fKqJcvHJRfkjyRERoUkD0+Sj1Oiq+0L/JdU/V5a7JA4eK
+        CUNd+9ljVf5BH9veO7ZoOYfpZuM7i+w4OtM/s405ObeXyI4abRb5eDyeDpN+LYzojzytzgs/
+        t7970SE5qn55rC0m7cfI7mebJzSvY2btBZHeblhNUqS95LufyY8pu9pD+Y7id+Q4l6gK3oHp
+        ONVfEorxvGQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7qn9ifEG+zdpmCxccZ6VovrX56z
+        Wsw/co7Vov/xa2aL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8li7ZG77BYXT7latO49wm7x
+        79pGFotVu/4wOvB5vL/Ryu6xc9Zddo9NqzrZPDYvqffo27KK0ePzJrkAtig9m6L80pJUhYz8
+        4hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jK+L/zEXXGeu2NS1iLWB
+        sZm5i5GTQ0LARGL369nsXYxcHEICSxklviy+y9bFyAGUkJKY36IEUSMs8edaFxtEzXtGiUlX
+        7jCD1AgLREusWOsLUiMiICtx69hPsBpmgWPMEjunnGKBaDjIKPH61FomkCo2AUOJ3qN9jCA2
+        r4CdxJGGF2BXsAioSqx4vQEsLioQJ3Gm5wUbRI2gxMmZT1hAbE4BG4m2D2vZQWxmAXWJP/Mu
+        MUPY4hK3nsxngrDlJba/ncM8gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GJDveLE3OLS
+        vHS95PzcTYzACN527OfmHYyXNgYfYhTgYFTi4U0oj48XYk0sK67MPcQowcGsJMLrdPZ0nBBv
+        SmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnA5NLXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTE
+        ktTs1NSC1CKYPiYOTqkGRksF3lb++U9r1h7lWG+ZOk/Qqb/829mjnhpnX7Z+u7UxbcY237b5
+        l7Y6rjrDGrRj96sCG7OlXVu+9nWYT3uzl0eAd4bS1BP97yPiH9Ve+LZ5ZyzH5v3zlTtYr83/
+        2xLv+2PSnoDb3c80Wm1efyjZ8OX89Dd5J5VFCn/O717RyPUta8KEGysi3rApsRRnJBpqMRcV
+        JwIAXmBABPYCAAA=
+X-CMS-MailID: 20200915132114eucas1p13a20e046ccc5006e0dcb49131fc59eab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39
+References: <20200826171529.23618-1-s.nawrocki@samsung.com>
+        <CGME20200826171557eucas1p13c960ad6abc814cf53bc125f5c4d9b39@eucas1p1.samsung.com>
+        <20200826171529.23618-3-s.nawrocki@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 26.08.2020 19:15, Sylwester Nawrocki wrote:
+> For the CPU clock registration two parent clocks are required, these
+> are now being passed as struct clk_hw pointers, rather than by the
+> global scope names. That allows us to avoid  __clk_lookup() calls
+> and simplifies a bit the CPU clock registration function.
+> While at it drop unneeded extern keyword in the function declaration.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---pc36h5bdn5kiukmz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Sep 15, 2020 at 01:37:50PM +0300, Necip Fazil Yildiran wrote:
-> When CLK_BCM2711_DVP is enabled and RESET_CONTROLLER is disabled, it
-> results in the following Kbuild warning:
->=20
-> WARNING: unmet direct dependencies detected for RESET_SIMPLE
->   Depends on [n]: RESET_CONTROLLER [=3Dn]
->   Selected by [y]:
->   - CLK_BCM2711_DVP [=3Dy] && (ARCH_BCM2835 [=3Dn] || COMPILE_TEST [=3Dy]=
-) && COMMON_CLK [=3Dy]
->=20
-> The reason is that CLK_BCM2711_DVP selects RESET_SIMPLE without depending
-> on or selecting RESET_CONTROLLER while RESET_SIMPLE is subordinate to
-> RESET_CONTROLLER.
->=20
-> Honor the kconfig menu hierarchy to remove kconfig dependency warnings.
->=20
-> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-> Signed-off-by: Necip Fazil Yildiran <fazilyildiran@gmail.com>
-
-A similar patch has already been sent (and merged):
-https://lore.kernel.org/linux-clk/20200903082636.3844629-1-maxime@cerno.tec=
-h/
-
-Maxime
-
---pc36h5bdn5kiukmz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX2DKogAKCRDj7w1vZxhR
-xfrJAQCOeDmhakarLsbt+yINpOgCOufsbVA1745++DLY9IndcgD+PojGRoq3d+ha
-hJxZ7ac1zRI6a8uXokgmwIctEEWw1wM=
-=HnS8
------END PGP SIGNATURE-----
-
---pc36h5bdn5kiukmz--
+Applied.
