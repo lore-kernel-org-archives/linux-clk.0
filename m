@@ -2,143 +2,195 @@ Return-Path: <SRS0=RhxI=CY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74573C433E2
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 11:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8ECC433E2
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74EBE218AC
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 11:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB68521655
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AX0wx8x7"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LSMKV9E1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgIOLfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Sep 2020 07:35:05 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49355 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbgIOLes (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 07:34:48 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915113427euoutp012bd22b9a20883664ccb8ff4f7fa2170a~08dWMlOT03053530535euoutp01V
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 11:34:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915113427euoutp012bd22b9a20883664ccb8ff4f7fa2170a~08dWMlOT03053530535euoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600169667;
-        bh=4J9mAIGkWCA1iUY60Uc0okRdlJsBdXs932NxjIHX2UM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=AX0wx8x7qNAa7IH7Ec4T+5d5NsC4REGT4JvlmlvK1IOvfk6gR2sNfgXk7kUpm3zpI
-         DqwtU0KlkQ+eHldWi4tZ6n9vVYUWiOP7ZSAjq8TNMxGBcmQ/+b4dME5vdkJNKT80u0
-         EsLRyPb5XsEgVc8UVlQ00sJNhZzC1eoKRlFvtfgc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200915113426eucas1p2fa91a99c80c62880366254b0f622ca53~08dV8vQnu1150611506eucas1p2h;
-        Tue, 15 Sep 2020 11:34:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 34.3C.05997.2C6A06F5; Tue, 15
-        Sep 2020 12:34:26 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200915113426eucas1p1761f07b2bd25b5f31a6840b2b5046838~08dVXd_RU0665806658eucas1p1X;
-        Tue, 15 Sep 2020 11:34:26 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200915113426eusmtrp209aef5c48bc076dedf5081df36b4b384~08dVQ_iPl1124011240eusmtrp2o;
-        Tue, 15 Sep 2020 11:34:26 +0000 (GMT)
-X-AuditID: cbfec7f4-65dff7000000176d-7c-5f60a6c26788
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D8.4D.06314.2C6A06F5; Tue, 15
-        Sep 2020 12:34:26 +0100 (BST)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200915113425eusmtip2c0eec9c762bf9fd235a50a708adb1bd3~08dUoWe4d2553525535eusmtip2Y;
-        Tue, 15 Sep 2020 11:34:25 +0000 (GMT)
-Subject: Re: [PATCH v3] clk: samsung: Prevent potential endless loop in the
- PLL set_rate ops
-To:     Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com
-Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <c3c40d62-f5bb-6b13-0af9-ce774718eaa6@samsung.com>
-Date:   Tue, 15 Sep 2020 13:34:24 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.0
+        id S1726137AbgIOMsF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Sep 2020 08:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbgIOMrr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 08:47:47 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301D9C061356
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:46:04 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id l9so3320590wme.3
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=LHSM2iu4K745x/v3ZOpzSJ39ii9pvOm29QBeCUqbXig=;
+        b=LSMKV9E1RHvzyFXuIfZParKjQcDPzMHd+HNuG37MfAhMeuciO6NZQUeZ7RvfnR2o8I
+         tBolL7KrYEQOphZRKiQTAIcWGU4SgWclzi6VE7bbcnu/R9jxwRfgBwjqtJwnUumgTHFB
+         DzX7NkyCfMmzrlumnfUV/7em/7/vUQi15L5SLJ912p2vxY9u4bR6d/SmNfejlb3WiT57
+         08CoSBUacR84AMPDP52ukk/2zHu/QX+tuRRl7zX2GrlnykDRz/bPHNfyRJmSIfVRhxXT
+         ieHIfJvOhB5Lxo7UNxPzhNBKIXYLHD4HSkSjHxEpzFN6WGmGUPDh+wwykTSSPz401PPw
+         x3xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=LHSM2iu4K745x/v3ZOpzSJ39ii9pvOm29QBeCUqbXig=;
+        b=m1Ne30OWp+sPju4oWpwqQW4ORxKy2NPbBdw7FpyXB6xImROq70NsZWqS4Kp3E7PezB
+         Prf/I5OUbCglcQgsXyH0H/gHZSeAdgi1SySurHcME1A/KbeLXg1ewrdazxfZScfxGQLX
+         bvsoeLlzYvvVkZTzbjoyzjzsAmfuNiqlTALT/mgj8Y05s+2JEDDk6gnyvZiJF6eNIZZi
+         gze3MdfQ3SGs9WYadQicTWiCflS5S4ddlXjQifSXAlByG5+s1emATlOfNkulWcK9ezYr
+         j4ykpFC2cGTfLkpgOHmplQxP80oy1ZF5viDBh60r6wM8UCeuEgkibAqR11xPRkZocCqI
+         d44A==
+X-Gm-Message-State: AOAM5309X7tX4khvciC4FClf/kI/F/GXiBETtc/sjcm/vPgp37Nbv4eU
+        tiTu2dVDIX1g7CGJqoXqqawJbA==
+X-Google-Smtp-Source: ABdhPJx7awCJQT1ZbKP8GwvwkIGpiaGrgV9tODdJfba635Qj3aWUUkYLeL9InIbQo6ZmEyQ3rtobOA==
+X-Received: by 2002:a7b:c090:: with SMTP id r16mr4677613wmh.56.1600173962213;
+        Tue, 15 Sep 2020 05:46:02 -0700 (PDT)
+Received: from bender.baylibre.local (home.beaume.starnux.net. [82.236.8.43])
+        by smtp.gmail.com with ESMTPSA id q8sm26548589wrx.79.2020.09.15.05.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2020 05:46:01 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH v2 4/4] clk: meson: axg: add MIPI DSI Host clock
+Date:   Tue, 15 Sep 2020 14:45:53 +0200
+Message-Id: <20200915124553.8056-5-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200915124553.8056-1-narmstrong@baylibre.com>
+References: <20200915124553.8056-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <28cd3eeb-816d-b369-11a9-16cd2c1af87c@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djP87qHliXEG9w+pGOxccZ6VovrX56z
-        WnzsucdqcXnXHDaLGef3MVmsPXKX3eLiKVeLf9c2slis2vWH0YHT4/2NVnaPnbPusntsWtXJ
-        5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZh/fMYiq4wVnx+oFLA+MH9i5GTg4JAROJTUcu
-        snUxcnEICaxglNhz5gALSEJI4AujxKTpwRCJz4wSb3dNhOvYc+A5E0RiOaPE5a3rmCGcj4wS
-        79YeYAWpEhaIk1g+Yy0TiC0iYC+x4dh/VpAiZoGDjBLTWnrBEmwChhK9R/sYQWxeATuJ/p3f
-        mUFsFgFViamv/4HdIQo06NipRywQNYISJ2c+AbM5gYY+fj6TDcRmFhCXuPVkPhOELS+x/e0c
-        sIskBA6xSzyb1s8KcbeLxIEle5kgbGGJV8e3QP0jI/F/53wmiIZmRome3bfZIZwJjBL3jy9g
-        hKiylrhz7hfQOg6gFZoS63fpg5gSAo4SX58yQph8EjfeCkLcwCcxadt0Zogwr0RHmxDEDBWJ
-        36umQ10gJdH95D/LBEalWUg+m4Xkm1lIvpmFsHYBI8sqRvHU0uLc9NRio7zUcr3ixNzi0rx0
-        veT83E2MwKR0+t/xLzsYd/1JOsQowMGoxMObUB4fL8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTE
-        yqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQnlqRmp6YWpBbBZJk4OKUaGHWf6CgsiTlRxC3b
-        utC4zLlOdq7vcmbnnFoXq40zkzOFIsTFWMV7nTmPvpXPvfC5mLFn6Vr22hnPG9ZMELa8b/7I
-        bh7HyvuiTn/Obt5Xv/Fj5dkXT+pfLM669tW6Z0lm8j2PlX+YOnpX7Fq+5G/wzvlJxfsOHdjD
-        b79rT5VFgmVgWEH4EfEbDEosxRmJhlrMRcWJAO4zWs9GAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7qHliXEGzw/wmKxccZ6VovrX56z
-        WnzsucdqcXnXHDaLGef3MVmsPXKX3eLiKVeLf9c2slis2vWH0YHT4/2NVnaPnbPusntsWtXJ
-        5tG3ZRWjx+dNcgGsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
-        mWWpRfp2CXoZh/fMYiq4wVnx+oFLA+MH9i5GTg4JAROJPQeeM3UxcnEICSxllJh66AaQwwGU
-        kJKY36IEUSMs8edaFxtEzXtGif/rPzOBJIQF4iSWz1gLZosI2EtsOPafFaSIWeAgo8Sy02eZ
-        IToOM0ocf9TIDFLFJmAo0Xu0jxHE5hWwk+jf+R0sziKgKjH19T8WEFsUaOqZnhdsEDWCEidn
-        PgGLcwJtePx8JlicWUBd4s+8S8wQtrjErSfzmSBseYntb+cwT2AUmoWkfRaSlllIWmYhaVnA
-        yLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMA63Hfu5eQfjpY3BhxgFOBiVeHgTyuPjhVgT
-        y4orcw8xSnAwK4nwOp09HSfEm5JYWZValB9fVJqTWnyI0RTouYnMUqLJ+cAUkVcSb2hqaG5h
-        aWhubG5sZqEkztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgTHIMNKe9cyC+Xf1u+6kly5yUlq0
-        vv9C5gmdAF+JhLNfjCbaLLF48+PDsa8eWlMY/tuqL560633GorSuK/ZT5hx+89naOSiytj16
-        xxHPXqeNNwvOp74rzNe4sXHX99ApS8LEPq7JVKusFJj8ZjO/gEOvcsrSdYzlMsx9Pyo2PrU3
-        WMG+2VO9jk2JpTgj0VCLuag4EQDkFb8e2QIAAA==
-X-CMS-MailID: 20200915113426eucas1p1761f07b2bd25b5f31a6840b2b5046838
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
-References: <CGME20200813095520eucas1p209432599420d62e0e54a5545334c329c@eucas1p2.samsung.com>
-        <20200813095508.7563-1-s.nawrocki@samsung.com>
-        <28cd3eeb-816d-b369-11a9-16cd2c1af87c@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14.08.2020 02:46, Chanwoo Choi wrote:
-> On 8/13/20 6:55 PM, Sylwester Nawrocki wrote:
->> In the .set_rate callback for some PLLs there is a loop polling state
->> of the PLL lock bit and it may become an endless loop when something
->> goes wrong with the PLL. For some PLLs there is already code for polling
->> with a timeout but it uses the ktime API, which doesn't work in some
->> conditions when the set_rate op is called, in particular during
->> initialization of the clk provider before the clocksource initialization
->> has completed. Hence the ktime API cannot be used to reliably detect
->> the PLL locking timeout.
->>
->> This patch adds a common helper function for busy waiting on the PLL lock
->> bit with timeout detection.
+This adds the MIPI DSI Host clock, used to measure the signal timings (ENC VSYNC or
+DW-MIPI-DSI eDPI timings).
 
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->> Changes for v3:
->>  - use busy-loop with udelay() instead of ktime API
->> Changes for v2:
->>  - use common readl_relaxed_poll_timeout_atomic() macro
->> ---
->>  drivers/clk/samsung/clk-pll.c | 94 ++++++++++++++++---------------------------
->>  1 file changed, 34 insertions(+), 60 deletions(-)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/axg.c | 66 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/axg.h |  4 ++-
+ 2 files changed, 69 insertions(+), 1 deletion(-)
 
-> Thanks.
-> 
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index a4e8949297cf..089a81ce2385 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -1703,6 +1703,66 @@ static struct clk_regmap axg_cts_encl = {
+ 	},
+ };
  
-Patch applied, thank you for your comments.
++/* MIPI DSI Host Clock */
++
++static u32 mux_table_axg_vdin_meas[]    = { 0, 1, 2, 3, 6, 7 };
++static const struct clk_parent_data axg_vdin_meas_parent_data[] = {
++	{ .fw_name = "xtal", },
++	{ .hw = &axg_fclk_div4.hw },
++	{ .hw = &axg_fclk_div3.hw },
++	{ .hw = &axg_fclk_div5.hw },
++	{ .hw = &axg_fclk_div2.hw },
++	{ .hw = &axg_fclk_div7.hw },
++};
++
++static struct clk_regmap axg_vdin_meas_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VDIN_MEAS_CLK_CNTL,
++		.mask = 0x7,
++		.shift = 21,
++		.flags = CLK_MUX_ROUND_CLOSEST,
++		.table = mux_table_axg_vdin_meas,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdin_meas_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = axg_vdin_meas_parent_data,
++		.num_parents = ARRAY_SIZE(axg_vdin_meas_parent_data),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_vdin_meas_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VDIN_MEAS_CLK_CNTL,
++		.shift = 12,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdin_meas_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&axg_vdin_meas_sel.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_vdin_meas = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_VDIN_MEAS_CLK_CNTL,
++		.bit_idx = 20,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "vdin_meas",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&axg_vdin_meas_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static u32 mux_table_gen_clk[]	= { 0, 4, 5, 6, 7, 8,
+ 				    9, 10, 11, 13, 14, };
+ static const struct clk_parent_data gen_clk_parent_data[] = {
+@@ -1966,6 +2026,9 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
+ 		[CLKID_VCLK2_DIV12]		= &axg_vclk2_div12.hw,
+ 		[CLKID_CTS_ENCL_SEL]		= &axg_cts_encl_sel.hw,
+ 		[CLKID_CTS_ENCL]		= &axg_cts_encl.hw,
++		[CLKID_VDIN_MEAS_SEL]		= &axg_vdin_meas_sel.hw,
++		[CLKID_VDIN_MEAS_DIV]		= &axg_vdin_meas_div.hw,
++		[CLKID_VDIN_MEAS]		= &axg_vdin_meas.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -2094,6 +2157,9 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_vclk2_div12_en,
+ 	&axg_cts_encl_sel,
+ 	&axg_cts_encl,
++	&axg_vdin_meas_sel,
++	&axg_vdin_meas_div,
++	&axg_vdin_meas,
+ };
+ 
+ static const struct meson_eeclkc_data axg_clkc_data = {
+diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
+index a8787b394a47..481b307ea3cb 100644
+--- a/drivers/clk/meson/axg.h
++++ b/drivers/clk/meson/axg.h
+@@ -158,8 +158,10 @@
+ #define CLKID_VCLK2_DIV6_EN			120
+ #define CLKID_VCLK2_DIV12_EN			121
+ #define CLKID_CTS_ENCL_SEL			132
++#define CLKID_VDIN_MEAS_SEL			134
++#define CLKID_VDIN_MEAS_DIV			135
+ 
+-#define NR_CLKS					134
++#define NR_CLKS					137
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/axg-clkc.h>
+-- 
+2.22.0
+
