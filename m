@@ -2,120 +2,123 @@ Return-Path: <SRS0=RhxI=CY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E88DC43461
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77C7C43461
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E111620684
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B35120936
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 12:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="maBZ3Vb8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FKU64WC5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbgIOM5v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Sep 2020 08:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbgIOMqD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 08:46:03 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BF6C06178B
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:46:00 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id k15so3137482wrn.10
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lY1f6BPUzB++HrA2WRJHkdA8MgAHqDCMG4dVPqyy2dw=;
-        b=maBZ3Vb8DL4XTv3jqb6hlktNtUC+mPnj7ioFAFOv8/3UOIWFfzdKHlgzW2ssBnnwyh
-         6fmP4vBycJ71D5tbvixxeSaGBgX4MjlhCVFc9XsncbxLqnRPUaVbDiysZL5+a9ejIm+9
-         75VZJtf5AsstRbHXqKc4wATG17L5+BfQzRJzGKZyLw3RXp4MZgRZ9hqYNQ8RIYHYOOzK
-         Kh1aSVnWhxbDHFJTA+VTKphT/g3O/5Kt/t+9WPvEv6B0pcUtfIghsiJsx1IvVFn+bvI0
-         7FQDHoCY1S3UHFaQsQJ5krZzE0o+eCIgpPdbtdyY93rgmb/1Z164HA2DY5F05D/OPbud
-         ILJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lY1f6BPUzB++HrA2WRJHkdA8MgAHqDCMG4dVPqyy2dw=;
-        b=XP3LPMYFiJ8DCgK7UOJli2wtjt242r13MfkmmR967s+EGus+ay6DDZMFpyk0GLltFm
-         mCZ+jM5oq2VKq0LPT9RIRJQ82P7Llb+gh09HJMUJmZXeY2VpKcsG2Bs6r0tq9ZDBi+3F
-         3OBSA2kffb082ZDFGzX64tCLAujGrkjdb60VToC5aR4FZaHK5X1uZegTr8L3dRqZG9Co
-         AeRMzsSMRO8YLSheJ9PY0A35LKdXacUkzHXwCkGljcdVSpcvImCgKQ9DRdC+QhfutlFe
-         c69r3jSwE2hMj+KuKLye30KG+DCKO20JsNLuu/CsDRgxZaKpCgSRWvLFdIH2zR21pYC7
-         N8Hw==
-X-Gm-Message-State: AOAM533rTdcd6ipMnSk26/jTnyc8NcEnMOcriyE5yPzvSJFfTJrqcPy5
-        4mDLtQ5s29Xcfl8YflHKmxSpew==
-X-Google-Smtp-Source: ABdhPJy2eRTWQ+g6UmDXlmlM53iqWF2j0sszPGZYETQLzBt+ugwiGbmbWIu+s6aMP/ZkXhMe28KDEg==
-X-Received: by 2002:adf:a35d:: with SMTP id d29mr21433215wrb.307.1600173957934;
-        Tue, 15 Sep 2020 05:45:57 -0700 (PDT)
-Received: from bender.baylibre.local (home.beaume.starnux.net. [82.236.8.43])
-        by smtp.gmail.com with ESMTPSA id q8sm26548589wrx.79.2020.09.15.05.45.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2020 05:45:57 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, devicetree@vger.kernel.org
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 1/4] dt-bindings: clk: axg-clkc: add Video Clocks
-Date:   Tue, 15 Sep 2020 14:45:50 +0200
-Message-Id: <20200915124553.8056-2-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200915124553.8056-1-narmstrong@baylibre.com>
-References: <20200915124553.8056-1-narmstrong@baylibre.com>
+        id S1726509AbgIOM7b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Sep 2020 08:59:31 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54650 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgIOM7B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 08:59:01 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200915125900euoutp015c3254005ad98098e69cf242f7c009e2~09nKwkfrd0534805348euoutp01d
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 12:59:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200915125900euoutp015c3254005ad98098e69cf242f7c009e2~09nKwkfrd0534805348euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600174740;
+        bh=LjMlZqWfN//ybv/ftfoW2nB5Zs+Ze6Pkj/B0htL86fs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=FKU64WC5d23qvrBfaOvxnlGAH0PgRrumuoCL288JdPPCy0sjZ0OgbizXafgmoTaGm
+         vEramRHanFgXMLrnztBRpAYZRWilRIdsCAFGczaZnXRs33xRVMPZ7Tb9qcojT4qX+Y
+         iQPwHIdbGObEcRAohQUT+qpQAMmAm/EKXSp1C54E=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200915125838eucas1p2e5bee0e8a59a2976e843571c254796b2~09m3ID49B2925029250eucas1p2a;
+        Tue, 15 Sep 2020 12:58:38 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id FA.42.06318.E7AB06F5; Tue, 15
+        Sep 2020 13:58:38 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200915125838eucas1p24902fcee351207486d3d8c8be545867a~09m2aji220381803818eucas1p2I;
+        Tue, 15 Sep 2020 12:58:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200915125838eusmtrp192dc79a9638178f890691cfa0ee71375~09m2YFPdy1707317073eusmtrp18;
+        Tue, 15 Sep 2020 12:58:38 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-25-5f60ba7e42ef
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 91.D9.06017.E7AB06F5; Tue, 15
+        Sep 2020 13:58:38 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200915125837eusmtip2b09d22297190411b1251818016054868~09m1Y3pkZ1272112721eusmtip2c;
+        Tue, 15 Sep 2020 12:58:37 +0000 (GMT)
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5420: Add definition of
+ clock ID for mout_sw_aclk_g3d
+To:     linux-clk@vger.kernel.org
+Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <d3d7f0d2-d21b-0b7b-7546-5161db01f44d@samsung.com>
+Date:   Tue, 15 Sep 2020 14:58:36 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200811151251.31613-1-s.nawrocki@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djP87p1uxLiDTb8NLfYOGM9q8X1L89Z
+        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvFv2sbWSxW7frD6MDp8f5GK7vHzll32T02repk
+        8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MK4+bmQr+MlU8u72NvYFxD1MXIyeHhICJxIXj
+        T9i6GLk4hARWMEpc33SBBcL5wijRcm4bK4TzmVFi/8pnQGUcYC2b7leAdAsJLGeUONqVAmF/
+        ZJR49E8IxBYWSJf4dwlig4iArMStYz/BNjALXGOUODRxFRtIgk3AUKL3aB8jiM0rYCfx4/Bb
+        sDiLgKpE387TYHFRgTiJY6cesUDUCEqcnPkEzOYUsJE48/cmWA2zgLjErSfzmSBseYntb+cw
+        gyyTEDjGLjHl2zx2iD9dJGbf3gdlC0u8Or4FypaROD25hwWioZlRomf3bXYIZwKjxP3jCxgh
+        qqwl7pz7BfY+s4CmxPpd+hBhR4mtl+6xQkKFT+LGW0GII/gkJm2bzgwR5pXoaBOCqFaR+L1q
+        OjTYpSS6n/xnmcCoNAvJa7OQvDMLyTuzEPYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpec
+        n7uJEZiUTv87/nUH474/SYcYBTgYlXh4OUrj44VYE8uKK3MPMUpwMCuJ8DqdPR0nxJuSWFmV
+        WpQfX1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTUgtQimCwTB6dUAyO/g9ja3UVprKLSCrun
+        Tr7As07syvszQlE3jqyTNxT5sLtZ0cXh5PRW/h+xcR0f8wxKfiyTagx79OO1qJZm5Sd99cUT
+        0o6YN5zaVcetwHq44qJIulT2/1XLpY1/LnC4lbvjovIcj0OxJq+VKuvv3V76j4c3KeR9mvYE
+        lrA95f0+1+/MD9XP6VNiKc5INNRiLipOBACsyZjnRgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsVy+t/xe7p1uxLiDT5/Z7PYOGM9q8X1L89Z
+        LT723GO1uLxrDpvFjPP7mCzWHrnLbnHxlKvFv2sbWSxW7frD6MDp8f5GK7vHzll32T02repk
+        8+jbsorR4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
+        zLLUIn27BL2MK4+bmQr+MlU8u72NvYFxD1MXIweHhICJxKb7FV2MXBxCAksZJb7ObGKDiEtJ
+        zG9R6mLkBDKFJf5c62IDsYUE3jNKXP8WC2ILC6RL/Ph1nxHEFhGQlbh17CcbyBxmgWuMEsu3
+        bWODGNrPKDHx4EwmkCo2AUOJ3qN9YB28AnYSPw6/BZvKIqAq0bfzNFhcVCBO4kzPCzaIGkGJ
+        kzOfsIDYnAI2Emf+3gSrYRZQl/gz7xIzhC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZ
+        SFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIzCbcd+btnB2PUu+BCjAAejEg9vQnl8
+        vBBrYllxZe4hRgkOZiURXqezp+OEeFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YIPJK4g1N
+        Dc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTAKlx+UZN97Q8WKdeWhKaHR
+        D9pPGW/OeNDZubDUYkrnRL0lv+okxWXK0k34XTdveiThf+uSv1f/+vm7esXZd9g9UjN+J1HB
+        eOa96n5P37kGZ9cU5fgeSF2jP7XUTzT3euLSO0Hake6VlakczSp6t/tOfI9amiDtUbcn67LI
+        iyWWxzf0Tty0arMSS3FGoqEWc1FxIgCjLGV42AIAAA==
+X-CMS-MailID: 20200915125838eucas1p24902fcee351207486d3d8c8be545867a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8
+References: <CGME20200811151259eucas1p19d1f6a21e46ac9382a89cd3d3cb0b6c8@eucas1p1.samsung.com>
+        <20200811151251.31613-1-s.nawrocki@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock IDs for the video clocks.
+On 11.08.2020 17:12, Sylwester Nawrocki wrote:
+> This patch adds ID for the mout_sw_aclk_g3d (SW_CLKMUX_ACLK_G3D) clock,
+> mostly for internal use in the CMU driver. It will allow to avoid the
+> __clk_lookup() call when setting up the clock during the clock provider
+> initialization.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- include/dt-bindings/clock/axg-clkc.h | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
-index fd1f938c38d1..281df3e0f131 100644
---- a/include/dt-bindings/clock/axg-clkc.h
-+++ b/include/dt-bindings/clock/axg-clkc.h
-@@ -72,5 +72,29 @@
- #define CLKID_PCIE_CML_EN1			80
- #define CLKID_MIPI_ENABLE			81
- #define CLKID_GEN_CLK				84
-+#define CLKID_VPU_0_SEL				92
-+#define CLKID_VPU_0				93
-+#define CLKID_VPU_1_SEL				95
-+#define CLKID_VPU_1				96
-+#define CLKID_VPU				97
-+#define CLKID_VAPB_0_SEL			99
-+#define CLKID_VAPB_0				100
-+#define CLKID_VAPB_1_SEL			102
-+#define CLKID_VAPB_1				103
-+#define CLKID_VAPB_SEL				104
-+#define CLKID_VAPB				105
-+#define CLKID_VCLK				106
-+#define CLKID_VCLK2				107
-+#define CLKID_VCLK_DIV1				122
-+#define CLKID_VCLK_DIV2				123
-+#define CLKID_VCLK_DIV4				124
-+#define CLKID_VCLK_DIV6				125
-+#define CLKID_VCLK_DIV12			126
-+#define CLKID_VCLK2_DIV1			127
-+#define CLKID_VCLK2_DIV2			128
-+#define CLKID_VCLK2_DIV4			129
-+#define CLKID_VCLK2_DIV6			130
-+#define CLKID_VCLK2_DIV12			131
-+#define CLKID_CTS_ENCL				133
- 
- #endif /* __AXG_CLKC_H */
--- 
-2.22.0
-
+Applied both patches.
