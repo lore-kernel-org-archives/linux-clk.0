@@ -3,95 +3,181 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F41C43461
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC989C43461
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91342216C4
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AAF6216C4
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600128120;
-	bh=aDtVpbNbbuicIiX3Coqdnk0nSk8LgHP0iQgY2aJiAKg=;
+	s=default; t=1600128423;
+	bh=687u1BUQg/1ZmnPl6dLZ+wNLHLAr+aXXJgaQZx/yQZ4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=m+Vj/PwxSpcPWpesW3S9/janLsIfIsN1K1xuy5F+HrCZeSOeggtbs8IIRB4K9BbnE
-	 phpCzpAAzqKTWWpsSxMmfhzhg3RTHnAcqIXVQ54ofQbDzmiU6ABUmbf1J5dLElCFJn
-	 qHsmQWqijSRkTFpp41J2FeoXrbq5OAMSAPr+i6v4=
+	b=2BwR9XHS7bQfbPM8ZSuOBL9uCc9xXufIFEak3bcL4Nwvx0EFB52qjbPiT6bwSEqRa
+	 OXaUZGuVt0Eg2Oq5qY8xakb738oUvNdWOU88BAx9QrLKmyB+STgg/8ZTGV6OE1gLdr
+	 YK8ZACMM7s4MBkGeWeqwqUnDMS7ivNnOpPH2ur/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbgIOAB7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Sep 2020 20:01:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52264 "EHLO mail.kernel.org"
+        id S1726028AbgIOAHD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Sep 2020 20:07:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgIOAB7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Sep 2020 20:01:59 -0400
+        id S1726013AbgIOAHC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Sep 2020 20:07:02 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5A9720829;
-        Tue, 15 Sep 2020 00:01:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53530208DB;
+        Tue, 15 Sep 2020 00:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600128118;
-        bh=aDtVpbNbbuicIiX3Coqdnk0nSk8LgHP0iQgY2aJiAKg=;
+        s=default; t=1600128421;
+        bh=687u1BUQg/1ZmnPl6dLZ+wNLHLAr+aXXJgaQZx/yQZ4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jxw/TupX0o/bxM+BFImHj3AYgjkwRrhgfN4QNxrlO0/2vP3Y2+qTlBqKSsT/mGNt+
-         Nn2TvfgA1BdnQGrLZiqOBBH2ULH7qVuChk6hhqYaTkE0meClo06iCZOLwzTp0H0C1r
-         8Ko8S1tUiav57sb8GyidbjFjEt0WJXhohKvcYwCA=
+        b=fCupoy2yZi1b6Lon2fshR3NSKREDyGmA8OXZZ7nkc8e9fHSbXXXzzvQWnR27mYkZ/
+         /UXWPHwy7KxvlYyhm8h1QnPCb+Z5SkjR72zmGqznIBzh9OGOI8duUmba83ZR+djuxq
+         wwAib1y1b3pUN10aSoObe7D152uPGBFdt7WsXPvM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200911153441.GA18190@kozik-lap>
-References: <20200902150348.14465-1-krzk@kernel.org> <20200902163558.GA4137028@piout.net> <20200911153441.GA18190@kozik-lap>
-Subject: Re: [PATCH 01/10] clk: at91: Drop unused at91sam9g45_pcr_layout
+In-Reply-To: <1599734644-4791-2-git-send-email-sagar.kadam@sifive.com>
+References: <1599734644-4791-1-git-send-email-sagar.kadam@sifive.com> <1599734644-4791-2-git-send-email-sagar.kadam@sifive.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: fu540: prci: convert PRCI bindings to json-schema
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 14 Sep 2020 17:01:56 -0700
-Message-ID: <160012811662.4188128.10109140799333292326@swboyd.mtv.corp.google.com>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org, thierry.reding@gmail.com,
+        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
+        aou@eecs.berkeley.edu, yash.shah@sifive.com,
+        Sagar Kadam <sagar.kadam@sifive.com>
+To:     Sagar Kadam <sagar.kadam@sifive.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org
+Date:   Mon, 14 Sep 2020 17:07:00 -0700
+Message-ID: <160012842007.4188128.14895985041717484631@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-09-11 08:34:41)
-> On Wed, Sep 02, 2020 at 06:35:58PM +0200, Alexandre Belloni wrote:
-> > On 02/09/2020 17:03:39+0200, Krzysztof Kozlowski wrote:
-> > > The at91sam9g45_pcr_layout is not used so drop it to fix build warnin=
-g:
-> > >=20
-> > >   drivers/clk/at91/at91sam9g45.c:49:36: warning:
-> > >     'at91sam9g45_pcr_layout' defined but not used [-Wunused-const-var=
-iable=3D]
-> > >=20
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> >=20
-> > > ---
-> > >  drivers/clk/at91/at91sam9g45.c | 7 -------
-> > >  1 file changed, 7 deletions(-)
-> > >=20
->=20
-> Hi Stephen,
->=20
-> If the dev_err_probe() waits/skips/goes to /dev/null, then how about the
-> fixes in the series? This patch and few other?
+Quoting Sagar Kadam (2020-09-10 03:44:02)
+> diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.ya=
+ml b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> new file mode 100644
+> index 0000000..49386cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> @@ -0,0 +1,75 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2020 SiFive, Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/sifive/fu540-prci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SiFive FU540 Power Reset Clock Interrupt Controller (PRCI)
+> +
+> +maintainers:
+> +  - Sagar Kadam <sagar.kadam@sifive.com>
+> +  - Paul Walmsley  <paul.walmsley@sifive.com>
+> +
+> +description:
+> +  On the FU540 family of SoCs, most system-wide clock and reset integrat=
+ion
+> +  is via the PRCI IP block.
+> +  The clock consumer should specify the desired clock via the clock ID
+> +  macros defined in include/dt-bindings/clock/sifive-fu540-prci.h.
+> +  These macros begin with PRCI_CLK_.
+> +
+> +  The hfclk and rtcclk nodes are required, and represent physical
+> +  crystals or resonators located on the PCB.  These nodes should be pres=
+ent
+> +  underneath /, rather than /soc.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sifive,fu540-c000-prci
+> +    description:
+> +      Should have "sifive,<soc>-prci", only one value is supported
 
-Yes if dev_err_probe() is superseded by Rob's work then the fixes should
-be fine to pick up. Can you resend the fixes?
+Drop description and have=20
+
+    compatible:
+      const: sifive,fu540-c000-prci
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: Describe the PRCI's register target physical address re=
+gion
+
+Drop description.
+
+> +
+> +  clocks:
+> +    description:
+> +      Should point to the hfclk device tree node and the rtcclk device t=
+ree node.
+
+s/device tree node//g
+
+> +      The RTC clock here is not a time-of-day clock, but is instead a hi=
+gh-stability
+> +      clock source for system timers and cycle counters.
+
+Better to have:
+
+    clocks:
+      items:
+        - const: high frequency clock
+	- const: RTC clock
+
+Can you add clock-names too? Making it optional is OK.
+
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    //hfclk and rtcclk present under /, in PCB-specific DT data
+> +    hfclk: hfclk {
+> +      #clock-cells =3D <0>;
+> +      compatible =3D "fixed-clock";
+> +      clock-frequency =3D <33333333>;
+> +      clock-output-names =3D "hfclk";
+> +    };
+
+Add a newline here?
+
+> +    rtcclk: rtcclk {
+> +      #clock-cells =3D <0>;
+> +      compatible =3D "fixed-clock";
+> +      clock-frequency =3D <1000000>;
+> +      clock-output-names =3D "rtcclk";
+> +    };
+
+These may not be necessary either, just have the clock-controller node
+reference phandles?
+
+> +
+> +    //under /soc, in SoC-specific DT data
+
+Don't think this comment is necessary.
+
+> +    prci: clock-controller@10000000 {
+> +      compatible =3D "sifive,fu540-c000-prci";
+> +      reg =3D <0x10000000 0x1000>;
+> +      clocks =3D <&hfclk>, <&rtcclk>;
+> +      #clock-cells =3D <1>;
+> +    };
