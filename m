@@ -2,101 +2,169 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8902CC433E2
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F34EC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 559A221973
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A749B20770
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 00:47:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vnq12OZ8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HPDnB1Bm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgIOM5v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Sep 2020 08:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbgIOMqD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 08:46:03 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17BE9C061788
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:45:59 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id o5so3107904wrn.13
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 05:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PUcUK8YA7xOYjNtjzxXPOPtmn9lpMNim28eyU9a7Hf4=;
-        b=vnq12OZ8h+snAbmU97iIZz1Xs6BZApGeIO+pwz8ITYX8upAHSJfhj4ZI+YsVyDfd3t
-         78y7H0Qi1P0lHHPn/CMTUbHSCT1uascuXBTiCv+E1xPSeRrOLgGltLj1G9V2aCXe8soZ
-         /rNy2cpnLf6NjM5HZfoEp54Ra+pSLk/xaQvI6aGFFTpiwoBX3WiFVcw7b/AAwE78Xsjh
-         JseJEkm65hME+gZKqdhLAeKhGN8A+PinC+RGE6WtYds9wZvUIt8Z9LHJf5VBdPGC6Wrm
-         hxRF54lld9/K/YjwTC6ECTGJvis46Zk8sfS9pyyTNUJPFZFwIrgex+ljhrkhshLnEjKB
-         6OuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PUcUK8YA7xOYjNtjzxXPOPtmn9lpMNim28eyU9a7Hf4=;
-        b=TEp+sdR3/ZKtMSJUgMh12hODPmETn9m9Ahr3S582OFUTkQZtj0llpolZN2Ex/UnmLT
-         FLg3AoTTBBAvwZ0tsK/6fQRUPdcPBe784QJ9VuNCpnyolDlfhUN0U57QLaYBmwHfjfEe
-         feR/VIFbdG1wt6nHTLLdbK65gUoIHovW05aVcBHkusQ4EVtSbpPXCwO6JRBCOi3m8LCg
-         deBykHOmfwfUanXTZLqCYhR/nSqhNV1XXMn9cscv85lTv1T3mX99x7Dh9Gz1AwCjesEO
-         xrjVZZwxdlmZXJxcX6LqJNPhBJqExUr3VahZ9i2wYPvhyR4/nKA/PcI9izRuEFonfCrc
-         VdIA==
-X-Gm-Message-State: AOAM533YcFF/uzqDV9i10xN+CI/jA6/PCyA6bWv9aPEyhaRdXWNobTNh
-        R4CD1gIOQBAdxCsKkLmCkgwbBg==
-X-Google-Smtp-Source: ABdhPJxwMlDEHZh9fctKaT98W85S9FRLO1xXWLr+E4hFyfBsptLyDwy8SoxnjHKzdeZGkqN83g5/CA==
-X-Received: by 2002:a5d:40c7:: with SMTP id b7mr21519638wrq.300.1600173956444;
-        Tue, 15 Sep 2020 05:45:56 -0700 (PDT)
-Received: from bender.baylibre.local (home.beaume.starnux.net. [82.236.8.43])
-        by smtp.gmail.com with ESMTPSA id q8sm26548589wrx.79.2020.09.15.05.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2020 05:45:55 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 0/4] clk: meson: axg: add clocks for MIPI-DSI support
-Date:   Tue, 15 Sep 2020 14:45:49 +0200
-Message-Id: <20200915124553.8056-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
+        id S1726448AbgIPArx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Sep 2020 20:47:53 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49074 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbgIOMnk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Sep 2020 08:43:40 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200915124309euoutp0220ec429934f737087041eadb36e2321e~09ZVe06Cx1068810688euoutp02G
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 12:43:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200915124309euoutp0220ec429934f737087041eadb36e2321e~09ZVe06Cx1068810688euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600173789;
+        bh=neMABDveNM+YfgI7cV05Snghwve9pnFQDi0Bd3F3O18=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HPDnB1BmilY6EoSn7a4RNJJLtMssnlNE+X7Msu6+KcAcMKeu5M1QHAJtgIq21Z/IC
+         qkSl1ucXIbSL5e2h+z8t5KqZyjopcbyReOKrjqqvHZ2s7Ch49SA+l4b610Kywcy4Yh
+         b8KfUWy8/dCbqWhwkQf2u4iSVKqdeix6fAaMzqT4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200915124309eucas1p13b682cc4f847f2c91923a42edbcb9a14~09ZVSbG4a2565525655eucas1p14;
+        Tue, 15 Sep 2020 12:43:09 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4E.CF.06318.DD6B06F5; Tue, 15
+        Sep 2020 13:43:09 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915124308eucas1p15bfb141a491a564b5b5c6a7683d5b755~09ZU7abAh2613026130eucas1p1k;
+        Tue, 15 Sep 2020 12:43:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200915124308eusmtrp24a17123047471dff714aa7bb71cb488b~09ZU6xzsP2113121131eusmtrp2g;
+        Tue, 15 Sep 2020 12:43:08 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-27-5f60b6ddac80
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A8.C7.06314.CD6B06F5; Tue, 15
+        Sep 2020 13:43:08 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200915124307eusmtip1c61f0a32f8a0bd7c9e2aaf1c8365dac7~09ZT1xIaA2752827528eusmtip1B;
+        Tue, 15 Sep 2020 12:43:07 +0000 (GMT)
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x
+ enabled
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <8d90ada6-ac26-9d7a-6ad5-7f7704cfffc5@samsung.com>
+Date:   Tue, 15 Sep 2020 14:43:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3ba7cf94-1b1f-a500-4c4f-a9769531097b@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djP87p3tyXEG3SfELDYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvF594jjBYzzu9jsljY1MJusfbIXXaLf9c2sjhweqyZt4bRY9OqTjaPvi2r
+        GD0+b5ILYInisklJzcksSy3St0vgyti8ooWloEmgYsWhv6wNjO28XYycHBICJhIrjx1g7GLk
+        4hASWMEosbPlG5TzhVFi4qtpLBDOZ0aJFyu+scC0/D72iBkisZxRYtqXZ1DOR0aJySv3sIFU
+        CQv4S5zcd4IdxGYTMJToPdrHCGKLCHhJHLs1hQ2kgVmgh0libdcmVpAEr4CdxM7Li8EaWARU
+        JVa86gMbJCoQJ3Hs1CMWiBpBiZMzn4DZnAL2EhtX3ALrZRYQl7j1ZD4ThC0vsf3tHGaIU/ex
+        S/zstoOwXSTu7FzMBGELS7w6voUdwpaR+L8TpJcLyG5mlOjZfZsdwpnAKHH/+AJGiCpriTvn
+        fgFdxAG0QVNi/S59iLCjxPR7s5lAwhICfBI33gpC3MAnMWnbdGaIMK9ER5sQRLWKxO9V06FO
+        kJLofvKfZQKj0iwkn81C8s0sJN/MQti7gJFlFaN4amlxbnpqsXFearlecWJucWleul5yfu4m
+        RmBCOv3v+NcdjPv+JB1iFOBgVOLh5SiNjxdiTSwrrsw9xCjBwawkwut09nScEG9KYmVValF+
+        fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYwejzgqdOqW1vZ3yilGqDdN
+        6NJ8EOD+Rrn1wusL5lMKily3Ks85xmt6Rux0iM/PJtZlLLODih8HPNjL+/Mq46H7nwzMw+tF
+        2ernP3xX/Gh/oJn+zm3bxZaGC67kfCyw/Qt33rY2A+O7q5V2rqm437vBfOZc7aTc6Xo5gq83
+        Wk+/+17xY+fbJk8lluKMREMt5qLiRAC/v9goRAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7p3tiXEG2z8Y2ixccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLz71HGC1mnN/HZLGwqYXdYu2Ru+wW/65tZHHg9Fgzbw2jx6ZVnWwefVtW
+        MXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
+        b5egl7F5RQtLQZNAxYpDf1kbGNt5uxg5OSQETCR+H3vEDGILCSxllHj83LiLkQMoLiUxv0UJ
+        okRY4s+1LrYuRi6gkveMEo0Xv7KCJIQFfCX6Ni0Cs9kEDCV6j/YxgtgiAl4Sx25NAWtgFuhj
+        kriz9worRPcsZonlXx6wgVTxCthJ7Ly8mB3EZhFQlVjxqg8sLioQJ3Gm5wVUjaDEyZlPWEBs
+        TgF7iY0rboFtYxZQl/gz7xIzhC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKs
+        YhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIy/bcd+bt7BeGlj8CFGAQ5GJR7ehPL4eCHWxLLi
+        ytxDjBIczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4wNeSVxBuaGppbWBqa
+        G5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamAM6NAN7yzqrU2y81R9uduoawrve5XV
+        GstbHi1ddHBLacJPgbsmC2aeLXwiseTylx0nlOrOdRf0Nks8mFX32pL/X+xNkX99Pe8XfLoy
+        mfmPf6/8xMUdc1uW2gadNt9+Xv6xUGfiFl/l+Yc4J76Zzn4h9HjMnrxVHROrVc/6cbG8MWCq
+        UfU8ufuDEktxRqKhFnNRcSIAVl9vgNUCAAA=
+X-CMS-MailID: 20200915124308eucas1p15bfb141a491a564b5b5c6a7683d5b755
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
+        <20200807133143.22748-1-m.szyprowski@samsung.com>
+        <159780685238.334488.5802955284004610550@swboyd.mtv.corp.google.com>
+        <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org>
+        <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org>
+        <20200824103123.GD25860@kozik-lap>
+        <3ba7cf94-1b1f-a500-4c4f-a9769531097b@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the VPU & VAPB clocks along the MIPI DSI Host clock.
+On 02.09.2020 11:24, Sylwester Nawrocki wrote:
+> On 24.08.2020 12:31, Krzysztof Kozlowski wrote:
+>> On Mon, Aug 24, 2020 at 12:28:51PM +0200, Sylwester Nawrocki wrote:
+>>> On 8/23/20 12:12, Sylwester Nawrocki wrote:
+>>>> On 8/19/20 05:14, Stephen Boyd wrote:
+>>>>> Quoting Marek Szyprowski (2020-08-07 06:31:43)
+>>>>>> BPLL clock must not be disabled because it is needed for proper DRAM
+>>>>>> operation. This is normally handled by respective memory devfreq driver,
+>>>>>> but when that driver is not yet probed or its probe has been
+>>>>>> deferred the
+>>>>>> clock might got disabled what causes board hang. Fix this by calling
+>>>>>> clk_prepare_enable() directly from the clock provider driver.
+>>>>>>
+>>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>>> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+>>>>>> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+>>>>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>>>> ---
+>>>>>
+>>>>> Can I pick this up for clk-fixes?
+>>>>
+>>>> Sure, thanks for taking care of this.
+>>>
+>>> OTOH, I planned to queue that patch for next merged window, together 
+>>> with a patch that depends on that one, since the fix is not for an issue
+>>> introduced in the last merge window.
+>>> I guess it's better to avoid pulling (part of) the clk-fixes branch to
+>>> the clk/samsung tree for next merge window?
+>>
+>> All current multi_v7 and some of exynos defconfig boots fail on Odroid
+>> XU3-family, starting from v5.9-rc1. On kernelci and my boot systems. If
+>> I understand correctly, this is a fix for this issue, so it should go as
+>> fast as possible to v5.9 cycle.
+>>
+>> Otherwise we cannot test anything. The current v5.9 RC is then simply
+>> broken.
+> 
+> Right, we need that patch in v5.9. Stephen, can you please apply
+> the patch to your clk-fixes?
 
-The clock scheme is based on the GXBB & G12A VPU clocks, with a different CTS
-clock output used for MIPI-DSI.
-
-Changes since v1 at [1]:
-- update patch 3 commit message to reflect drm driver state
-- added comments in patch 3 for clock specificities
-- removed useless parents comments in patch 2
-- fixed bad flags in patch 4
-- removed holes in axg_vdin_meas_parent_data in patch 4
-
-[1] https://lkml.kernel.org/r/20200907093810.6585-1-narmstrong@baylibre.com
-
-Neil Armstrong (4):
-  dt-bindings: clk: axg-clkc: add Video Clocks
-  dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
-  clk: meson: axg: add Video Clocks
-  clk: meson: axg: add MIPI DSI Host clock
-
- drivers/clk/meson/axg.c              | 819 +++++++++++++++++++++++++++
- drivers/clk/meson/axg.h              |  23 +-
- include/dt-bindings/clock/axg-clkc.h |  25 +
- 3 files changed, 866 insertions(+), 1 deletion(-)
+So I applied the patch to my tree and sent you a pull request
+instead... :) I thought it will handling subsequent patches
+that depend on that one more straightforward.
 
 -- 
-2.22.0
-
+Regards,
+Sylwester
