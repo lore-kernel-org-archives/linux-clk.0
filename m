@@ -2,93 +2,92 @@ Return-Path: <SRS0=RhxI=CY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8456EC43461
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8993C43461
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 01:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4432521741
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 00:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600130717;
-	bh=pKdQVJjnWdHPks2U7fV5zrwIH3JNHsSVYFB3BBYhmLc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=FD1JdNJnsASpQ6v8jN4hYkm5OgSuijo9rootL/9UWOPyWyzmqd2swyK7jLh4LVZmW
-	 t9auMfoH/t7wC6iTmfrXUFeUUzkY9rZg2DBkjdxNTbMGuRdJAwR1Y88hi8HkmHPcjB
-	 OJgHwXeZB3ix12e/+TxzT/+JDyPXinSZ0oBAitmI=
+	by mail.kernel.org (Postfix) with ESMTP id 806B220738
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Sep 2020 01:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbgIOApQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Sep 2020 20:45:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726024AbgIOApO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Sep 2020 20:45:14 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA441212CC;
-        Tue, 15 Sep 2020 00:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600130713;
-        bh=pKdQVJjnWdHPks2U7fV5zrwIH3JNHsSVYFB3BBYhmLc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Uzamz8KnA4jUuOvHuRW4DNtTFoAFkGIgDB1dijjt4w7BuITnoGME8UDWm8nr0rYdy
-         JwQcMq7kMpEFoZ2lu7YPYCcyeVJbp1tDKU8V9DXgjQ0zaaDegMc7SFKcYIknlZqX8i
-         75z43TNjN7LSl07uaYX33tH/STjkYNI/GXz6ljvc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200831161436.134186-1-jagan@amarulasolutions.com>
-References: <20200831161436.134186-1-jagan@amarulasolutions.com>
-Subject: Re: [PATCH] clk: rockchip: Fix overflow rate during fractional approximation
-From:   Stephen Boyd <sboyd@kernel.org>
+        id S1726134AbgIOB2M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Sep 2020 21:28:12 -0400
+Received: from regular1.263xmail.com ([211.150.70.204]:41090 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbgIOB2J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Sep 2020 21:28:09 -0400
+X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Sep 2020 21:28:02 EDT
+Received: from localhost (unknown [192.168.167.69])
+        by regular1.263xmail.com (Postfix) with ESMTP id 3D3F428C;
+        Tue, 15 Sep 2020 09:20:03 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.16] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P25131T140525883344640S1600132800964193_;
+        Tue, 15 Sep 2020 09:20:01 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <7bddcb6fbd4704eefeb78d86297b99a4>
+X-RL-SENDER: xf@rock-chips.com
+X-SENDER: xf@rock-chips.com
+X-LOGIN-NAME: xf@rock-chips.com
+X-FST-TO: linux-amarula@amarulasolutions.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: Re: [PATCH] clk: rockchip: Fix overflow rate during fractional
+ approximation
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        =?UTF-8?B?5byg5pm0?= <elaine.zhang@rock-chips.com>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 14 Sep 2020 17:45:11 -0700
-Message-ID: <160013071168.4188128.10518912964578839607@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        linux-amarula <linux-amarula@amarulasolutions.com>
+References: <20200831161436.134186-1-jagan@amarulasolutions.com>
+From:   Finley Xiao <finley.xiao@rock-chips.com>
+Message-ID: <6d3de17f-1922-e565-6a6d-b11b2f4be04b@rock-chips.com>
+Date:   Tue, 15 Sep 2020 09:20:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <20200831161436.134186-1-jagan@amarulasolutions.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jagan Teki (2020-08-31 09:14:36)
+
+在 2020/9/1 上午12:14, Jagan Teki 写道:
 > The current rockchip fractional approximation overflow the desired
 > rate if parent rate is lower than the (rate * 20) for few clocks like
 > dclk_vopb_frac.
->=20
+>
 > The overflow condition has observed in px30 for dclk_vopb_frac
 > clock with an input rate of 71.1MHz and parent rate of 24MHz is,
->=20
-> [    2.543280] rockchip-drm display-subsystem: bound ff460000.vop (ops vo=
-p_component_ops)
-
-Can you remove timestamps?
-
-> [    2.557313] rockchip-drm display-subsystem: bound ff470000.vop (ops vo=
-p_component_ops)
-> [    2.566356] rockchip-drm display-subsystem: bound ff140000.syscon:lvds=
- (ops rockchip_lvds_component_ops)
+>
+> [    2.543280] rockchip-drm display-subsystem: bound ff460000.vop (ops vop_component_ops)
+> [    2.557313] rockchip-drm display-subsystem: bound ff470000.vop (ops vop_component_ops)
+> [    2.566356] rockchip-drm display-subsystem: bound ff140000.syscon:lvds (ops rockchip_lvds_component_ops)
 > [    2.576999] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
 > [    2.592177] Unexpected kernel BRK exception at EL1
-> [    2.597551] Internal error: ptrace BRK handler: f20003e8 [#1] PREEMPT =
-SMP
+> [    2.597551] Internal error: ptrace BRK handler: f20003e8 [#1] PREEMPT SMP
 > [    2.605143] Modules linked in:
-> [    2.608566] CPU: 1 PID: 31 Comm: kworker/1:1 Tainted: G     U         =
-   5.8.0-rc1-15632-g97edd822b844 #30
-> [    2.619363] Hardware name: Engicam PX30.Core C.TOUCH 2.0 10.1" Open Fr=
-ame (DT)
+> [    2.608566] CPU: 1 PID: 31 Comm: kworker/1:1 Tainted: G     U            5.8.0-rc1-15632-g97edd822b844 #30
+> [    2.619363] Hardware name: Engicam PX30.Core C.TOUCH 2.0 10.1" Open Frame (DT)
 > [    2.627460] Workqueue: events deferred_probe_work_func
-> [    2.633209] pstate: 20000005 (nzCv daif -PAN -UAO BTYPE=3D--)
+> [    2.633209] pstate: 20000005 (nzCv daif -PAN -UAO BTYPE=--)
 > [    2.639445] pc : rational_best_approximation+0xc4/0xd0
 > [    2.645194] lr : rockchip_fractional_approximation+0xa8/0xe0
 > [    2.651520] sp : ffff800011ea31c0
@@ -156,38 +155,122 @@ ame (DT)
 > [    2.974166]  worker_thread+0x208/0x480
 > [    2.978358]  kthread+0x150/0x160
 > [    2.981968]  ret_from_fork+0x10/0x18
-
-Wow this stack is huge.
-
 > [    2.985970] Code: d65f03c0 d2800008 d2800027 17ffffe8 (d4207d00)
->=20
+>
 > This happened because the fractional divider does not apply if parent_rate
 > is lower than (rate * 20).
->=20
+>
 > So, this patch is trying to fix that overflow clock and switch to half-div
 > instead computing fractioanl approximation.
->=20
+>
 > Some part of the patch is referenced from below BSP commit:
->=20
+>
 > commit <88a5404a2277> ("clk: rockchip: fix up the
 > rockchip_fractional_approximation")
->=20
+>
 > commit <4186a0e4239b> ("clk: rockchip: Add supprot to limit input rate
 > for fractional divider")
-
-Not sure what these are. Do we need random commit hashes in the log that
-reference not-upstream patches? Seems like it could be left below the
-triple dash and anyone can reference the mailing list if they really
-care.
-
->=20
+>
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
 > ---
-
-Any Fixes tag?
-
->  drivers/clk/rockchip/clk-px30.c | 12 ++++++------
->  drivers/clk/rockchip/clk.c      |  9 +++++++++
->  2 files changed, 15 insertions(+), 6 deletions(-)
+>   drivers/clk/rockchip/clk-px30.c | 12 ++++++------
+>   drivers/clk/rockchip/clk.c      |  9 +++++++++
+>   2 files changed, 15 insertions(+), 6 deletions(-)
 >
+> diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
+> index 6fb9c98b7d24..06d3ff39d12f 100644
+> --- a/drivers/clk/rockchip/clk-px30.c
+> +++ b/drivers/clk/rockchip/clk-px30.c
+> @@ -660,7 +660,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+>   	COMPOSITE(SCLK_UART1_SRC, "clk_uart1_src", mux_uart_src_p, CLK_SET_RATE_NO_REPARENT,
+>   			PX30_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(10), 12, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", CLK_SET_RATE_PARENT,
+>   			PX30_CLKSEL_CON(35), 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(10), 13, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
+> @@ -673,7 +673,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+>   	COMPOSITE(SCLK_UART2_SRC, "clk_uart2_src", mux_uart_src_p, 0,
+>   			PX30_CLKSEL_CON(37), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 0, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", CLK_SET_RATE_PARENT,
+>   			PX30_CLKSEL_CON(38), 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 1, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
+> @@ -686,7 +686,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+>   	COMPOSITE(0, "clk_uart3_src", mux_uart_src_p, 0,
+>   			PX30_CLKSEL_CON(40), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 4, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", CLK_SET_RATE_PARENT,
+>   			PX30_CLKSEL_CON(41), 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 5, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
+> @@ -699,7 +699,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+>   	COMPOSITE(0, "clk_uart4_src", mux_uart_src_p, 0,
+>   			PX30_CLKSEL_CON(43), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 8, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", CLK_SET_RATE_PARENT,
+>   			PX30_CLKSEL_CON(44), 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 9, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
+> @@ -712,7 +712,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+>   	COMPOSITE(0, "clk_uart5_src", mux_uart_src_p, 0,
+>   			PX30_CLKSEL_CON(46), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 12, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", CLK_SET_RATE_PARENT,
+>   			PX30_CLKSEL_CON(47), 0, 5, DFLAGS,
+>   			PX30_CLKGATE_CON(11), 13, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
+> @@ -934,7 +934,7 @@ static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
+>   	COMPOSITE(0, "clk_uart0_pmu_src", mux_uart_src_p, 0,
+>   			PX30_PMU_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 5, DFLAGS,
+>   			PX30_PMU_CLKGATE_CON(1), 0, GFLAGS),
+> -	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", 0,
+> +	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
+>   			PX30_PMU_CLKSEL_CON(4), 0, 5, DFLAGS,
+>   			PX30_PMU_CLKGATE_CON(1), 1, GFLAGS),
+>   	COMPOSITE_FRACMUX(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 546e810c3560..38d032faa05e 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -190,6 +190,15 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
+>   		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
+>   		p_parent_rate = clk_hw_get_rate(p_parent);
+>   		*parent_rate = p_parent_rate;
+> +
+> +		/* fractional divider not apply if parent_rate is lower than (rate * 20) */
+> +		if (*parent_rate < rate * 20) {
+> +			pr_warn("%s: %s fractional div is not allowed, so use half-div\n",
+> +				__func__, clk_hw_get_name(hw));
+> +			*m = 0;
+> +			*n = 1;
+> +			return;
+> +		}
+
+This is a public file, please submit separately.
+
+And there are no half-div on some rockchip platforms.
+
+>   	}
+>   
+>   	/*
+
+-- 
+Best Regards
+肖锋
+Finley Xiao
+福州瑞芯微电子股份有限公司
+Fuzhou Rockchip Electronics Co.Ltd
+福建省福州市铜盘路软件大道89号软件园A区21号楼 (350003)
+No. 21 Building, A District, No.89,software Boulevard Fuzhou,Fujian,PRC
+TEL: 0591-83991906-8602 Mobile: 18506057603
+
+
+
