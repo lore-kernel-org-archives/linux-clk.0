@@ -2,95 +2,128 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABFCC43461
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 01:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490A9C433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 03:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D37A20BED
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 01:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600221490;
-	bh=Rg81xqpyLSJsqQIYCQLlfYC0tHPrrN2Eh9YQQF6u6+A=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=xT8nU6XSthp3lkZaC7ifvSFYcS9iDXw8f+8Vv7nQ/C1KElYy3XIHFGkRWeM4FF2Wv
-	 lsNdxdB+uq3FT7ovxBnmuzYTENi6G8+liggo/p9Yy2CMOaZxC3VDQMKP9jEUQ/A5/e
-	 X8b42UeRmnN0ycbSEhyBSZNN2fjRM8xmPbBbR04o=
+	by mail.kernel.org (Postfix) with ESMTP id 1FFEB221E3
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 03:49:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbgIPB6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Sep 2020 21:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48292 "EHLO mail.kernel.org"
+        id S1726507AbgIPDtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Sep 2020 23:49:00 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45670 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbgIPB6J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Sep 2020 21:58:09 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295D12087D;
-        Wed, 16 Sep 2020 01:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600221489;
-        bh=Rg81xqpyLSJsqQIYCQLlfYC0tHPrrN2Eh9YQQF6u6+A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Dk709+8guA/2Iht317EAtpnLe3Tm1x8fFtoTrh8Ffkru3PDSfeAwbgsu0aP8SQxqG
-         CFm4+qEcTk+0D6YJiDH7ga0isTrRAy8kRBrSbamiw8IdJBD+uH/qUHB5++VQFEDBh1
-         EmGUv58uhY4mgCRoHX5RaCyABVEnNiXn9V2ytbQk=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.9-rc5
-Date:   Tue, 15 Sep 2020 18:58:08 -0700
-Message-Id: <20200916015808.3287134-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.28.0.618.gf4bc123cb7-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726486AbgIPDs4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 15 Sep 2020 23:48:56 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 095602008D0;
+        Wed, 16 Sep 2020 05:48:54 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9905B2008BD;
+        Wed, 16 Sep 2020 05:48:50 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 105C14035E;
+        Wed, 16 Sep 2020 05:11:22 +0200 (CEST)
+From:   Qiang Zhao <qiang.zhao@nxp.com>
+To:     shawnguo@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com
+Cc:     andy.tang@nxp.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Zhao Qiang <qiang.zhao@nxp.com>
+Subject: [PATCH 2/2] arm64: dts: layerscape: modify clocks divider to 32 for wdt
+Date:   Wed, 16 Sep 2020 11:03:11 +0800
+Message-Id: <20200916030311.17280-2-qiang.zhao@nxp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916030311.17280-1-qiang.zhao@nxp.com>
+References: <20200916030311.17280-1-qiang.zhao@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
+From: Zhao Qiang <qiang.zhao@nxp.com>
 
-  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+On LX2088A, wdt's clock are get from clockgen divided by 32,
+so modify clocks in device tree.
 
-are available in the Git repository at:
+Signed-off-by: Zhao Qiang <qiang.zhao@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to d2249bf25c565b6e310453962fef63f8d38677a6:
-
-  clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe() (2020-09-10 13:42:35 -0700)
-
-----------------------------------------------------------------
-A handful of clk driver fixes. Mostly they're for error paths or
-improper memory allocations sizes. Nothing as exciting as a wildfire.
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      clk: davinci: Use the correct size when allocating memory
-
-Jing Xiangfeng (1):
-      clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe()
-
-Maxime Ripard (1):
-      clk: bcm: dvp: Select the reset framework
-
-Nathan Chancellor (1):
-      clk: rockchip: Fix initialization of mux_pll_src_4plls_p
-
-Sumera Priyadarsini (1):
-      clk: versatile: Add of_node_put() before return statement
-
- drivers/clk/bcm/Kconfig               | 1 +
- drivers/clk/davinci/pll.c             | 2 +-
- drivers/clk/qcom/lpasscorecc-sc7180.c | 7 ++++---
- drivers/clk/rockchip/clk-rk3228.c     | 2 +-
- drivers/clk/versatile/clk-impd1.c     | 4 +++-
- 5 files changed, 10 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index 7016791..de6c751 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -194,56 +194,56 @@
+ 		cluster1_core0_watchdog: wdt@c000000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc000000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster1_core1_watchdog: wdt@c010000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc010000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster2_core0_watchdog: wdt@c100000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc100000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster2_core1_watchdog: wdt@c110000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc110000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster3_core0_watchdog: wdt@c200000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc200000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster3_core1_watchdog: wdt@c210000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc210000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster4_core0_watchdog: wdt@c300000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc300000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
+ 		cluster4_core1_watchdog: wdt@c310000 {
+ 			compatible = "arm,sp805-wdt", "arm,primecell";
+ 			reg = <0x0 0xc310000 0x0 0x1000>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 31>, <&clockgen 4 31>;
+ 			clock-names = "apb_pclk", "wdog_clk";
+ 		};
+ 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+2.7.4
+
