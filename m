@@ -2,98 +2,129 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F4BC35263
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55DFC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAF19221E5
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55DDC206BE
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600289325;
-	bh=dSNpGQ0mWKF9wKmXD2Ucm0zykyxGN3p0wNIaxZJV8Io=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KY3qX3BL4MAtNEtxQGh5urXkOgIBf79EJMgXQ5dtlWFGM8LHMXYHwApQQrB+b+vYV
-	 h5zXCjuTd0rKOXW2eKvdSIXTeUwKoBJqBqRvQjGHK6EkZz/ICvF4f8stm35UgdX5I+
-	 d/bJ55RLS4bfdvMsCsUgR5YoRwHdsmVTuYIXTCFU=
+	s=default; t=1600289390;
+	bh=KParYTLLH5J9IJ3HJLgOl1sALXhET5Wd3H/RAGT5AU0=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=FJ5OHyY7W2YKz5kokUo9t7dKhWBLm1rwV2OeS8vXxICpAlrCGoiLctKLf8tlSbxJ5
+	 Xjdn1EscvHfzZX/QtWUu/6sdRAHgBCZXUiuT+ZagFwgE8uV9lHpkS44kQWNrSEcC3A
+	 YnC8iU4mPhEM4yMV1/+dCDbLQIvXykY8U9gOHri8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbgIPUsp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55592 "EHLO mail.kernel.org"
+        id S1727957AbgIPUtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 16:49:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbgIPRAx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:00:53 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
+        id S1726827AbgIPUtg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Sep 2020 16:49:36 -0400
+Received: from [10.0.0.30] (cpe-70-114-140-30.austin.res.rr.com [70.114.140.30])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAC1F22597;
-        Wed, 16 Sep 2020 16:17:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14CE7206BE;
+        Wed, 16 Sep 2020 20:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273079;
-        bh=dSNpGQ0mWKF9wKmXD2Ucm0zykyxGN3p0wNIaxZJV8Io=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=viVZyB+wDRwY1ciL2+gA9+KgFhjlpQqg/W9lnYVB4gOk7RbmAAAvaQ27FGmrqlW7/
-         +I1NXf4LQ0ffvZem9VB5Mv/1cUPkVduhsDrViP689a7qii1kL3VwuxeOOQb1sRqNPp
-         m1gB5VYdy2ohl3tc7TCDiPae8Dxc3vYgU6hDJ19c=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Heiko Stuebner <heiko@sntech.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4/6] clk: mmp: pxa1928: drop unused 'clk' variable
-Date:   Wed, 16 Sep 2020 18:17:38 +0200
-Message-Id: <20200916161740.14173-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916161740.14173-1-krzk@kernel.org>
-References: <20200916161740.14173-1-krzk@kernel.org>
+        s=default; t=1600289375;
+        bh=KParYTLLH5J9IJ3HJLgOl1sALXhET5Wd3H/RAGT5AU0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dLv0aQIxzGfC2LtPyL//mPfq8mMrRNj0eEoUQvACnl5m/e15zRI30znyaN4vhQhtN
+         /r55Y7zcFYlfVCWAs75lr1RBzMVLcx/rGENCNU57h+D6zj6t/neFtleenO3MT8lWyh
+         PMgvaiRCN1kHV2RPdppoc8WwACDeVOfLPkW/+1K8=
+Subject: Re: [PATCH] clk: socfpga: stratix10: fix the divider for the
+ emac_ptp_free_clk
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20200831202657.8224-1-dinguyen@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b3618437-74d6-4c9a-3630-da07fea1c9fc@kernel.org>
+Date:   Wed, 16 Sep 2020 15:49:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200831202657.8224-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-'clk' is assigned but never read:
+Ping?
 
-  drivers/clk/mmp/clk-of-pxa1928.c: In function ‘pxa1928_pll_init’:
-  drivers/clk/mmp/clk-of-pxa1928.c:71:14: warning: variable ‘clk’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/mmp/clk-of-pxa1928.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mmp/clk-of-pxa1928.c b/drivers/clk/mmp/clk-of-pxa1928.c
-index cede7b4ca3b9..998fc4207b0e 100644
---- a/drivers/clk/mmp/clk-of-pxa1928.c
-+++ b/drivers/clk/mmp/clk-of-pxa1928.c
-@@ -68,7 +68,6 @@ static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
- 
- static void pxa1928_pll_init(struct pxa1928_clk_unit *pxa_unit)
- {
--	struct clk *clk;
- 	struct mmp_clk_unit *unit = &pxa_unit->unit;
- 
- 	mmp_register_fixed_rate_clks(unit, fixed_rate_clks,
-@@ -77,7 +76,7 @@ static void pxa1928_pll_init(struct pxa1928_clk_unit *pxa_unit)
- 	mmp_register_fixed_factor_clks(unit, fixed_factor_clks,
- 					ARRAY_SIZE(fixed_factor_clks));
- 
--	clk = mmp_clk_register_factor("uart_pll", "pll1_416",
-+	mmp_clk_register_factor("uart_pll", "pll1_416",
- 				CLK_SET_RATE_PARENT,
- 				pxa_unit->mpmu_base + MPMU_UART_PLL,
- 				&uart_factor_masks, uart_factor_tbl,
--- 
-2.17.1
-
+On 8/31/20 3:26 PM, Dinh Nguyen wrote:
+> The fixed divider the emac_ptp_free_clk should be 2, not 4.
+> 
+> Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+> Stratix10 platform")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+>  drivers/clk/socfpga/clk-s10.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+> index c1dfc9b34e4e..661a8e9bfb9b 100644
+> --- a/drivers/clk/socfpga/clk-s10.c
+> +++ b/drivers/clk/socfpga/clk-s10.c
+> @@ -209,7 +209,7 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
+>  	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
+>  	  0, 0, 2, 0xB0, 1},
+>  	{ STRATIX10_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
+> -	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 4, 0xB0, 2},
+> +	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 2, 0xB0, 2},
+>  	{ STRATIX10_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
+>  	  ARRAY_SIZE(gpio_db_free_mux), 0, 0, 0, 0xB0, 3},
+>  	{ STRATIX10_SDMMC_FREE_CLK, "sdmmc_free_clk", NULL, sdmmc_free_mux,
+> 
