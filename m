@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D3FC433E2
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 16:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFD2C433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 17:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE319222C3
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 16:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B527F222BA
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 17:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600273608;
-	bh=d96KYZZMydcJHEl9ntD8CVmSDdqIiH31PsoEq+mfyUQ=;
+	s=default; t=1600276561;
+	bh=EHjGZUuZJT8P4Fu0wZHtU4bWPefvl/SobBpWptZnDPA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DqFLEXTqXecL26GfTPT2eRN27BsZFA72gjtUEZJOM/Qny/tGmOH8HDWMsI2JU/1rw
-	 biWDj91GBQ4GaB4bOMD+rKConjSnSYHMG9UFE8m/PKBxAZ2MMjEjYoY5bROCnjCRvz
-	 bqpKO+FC8L4wchP+UP+3nGbvwGgUqVbexAx+N1i8=
+	b=IbLyihK7RjfcvPOAv+cbrxQB09hDCeeRxZRDR56hbw3YtF0NmULX5T+LGzz+jQM61
+	 beinAytwvQhjtuYE0mIRObQ3A6X85Ca2yy2LrDBgnsPjKUtFtG0/ky2v5PysPXGMqO
+	 lqwPHJDXu3BlwWcvPMXtWur7reHfOM8NMDQ6Y8ms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgIPQ0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 12:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
+        id S1726964AbgIPRPD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 13:15:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbgIPQT5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:19:57 -0400
+        id S1726303AbgIPRN6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:13:58 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B30122955;
-        Wed, 16 Sep 2020 16:18:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2356722838;
+        Wed, 16 Sep 2020 16:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600273093;
-        bh=d96KYZZMydcJHEl9ntD8CVmSDdqIiH31PsoEq+mfyUQ=;
+        s=default; t=1600273075;
+        bh=EHjGZUuZJT8P4Fu0wZHtU4bWPefvl/SobBpWptZnDPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uad7FDK4a+Ne5IYmZfeU+1YD99kDHHrIlZutKKrYvUTLFZmBTRwlLmBx02L+gdKmT
-         MTXHEXjysUHsNp9b6pr/mXmJg4XB4MRZhGPeFw02cwXudkz35qpubMtJJ9zQtzjhi9
-         45bZmPAi3H4zojr6wkUQO4eJoHTiNA7QT5KWRctY=
+        b=LD3VU4pDXDvILOHtDKFxURYvXgyTB8ACfXbibwSPYo+xFQOia2LymDneAbApJiQI+
+         cxMskXpjhQluQQ38YUTirUoMLw+iYwfvr6P2NtTXqT+FcFsXJrGB1IXP4lwyxHTKqy
+         spD0X0DFb9IkH1cUnIo4Nk8zrl19XU+gqpBDxf0A=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -49,42 +49,39 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 6/6] clk: rockchip: rk3308: drop unused mux_timer_src_p
-Date:   Wed, 16 Sep 2020 18:17:40 +0200
-Message-Id: <20200916161740.14173-6-krzk@kernel.org>
+Subject: [PATCH 3/6] clk: davinci: add missing kerneldoc
+Date:   Wed, 16 Sep 2020 18:17:37 +0200
+Message-Id: <20200916161740.14173-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916161740.14173-1-krzk@kernel.org>
 References: <20200916161740.14173-1-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The parent names 'mux_timer_src_p' is not used:
+Add missing kerneldoc to fix compile warning:
 
-  In file included from drivers/clk/rockchip/clk-rk3308.c:13:0:
-  drivers/clk/rockchip/clk-rk3308.c:136:7: warning: ‘mux_timer_src_p’ defined but not used [-Wunused-const-variable=]
+  drivers/clk/davinci/da8xx-cfgchip.c:578: warning: Function parameter or member 'dev' not described in 'da8xx_cfgchip_register_usb1_clk48'
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/rockchip/clk-rk3308.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/davinci/da8xx-cfgchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
-index b0baf87a283e..5bf15f2a44b7 100644
---- a/drivers/clk/rockchip/clk-rk3308.c
-+++ b/drivers/clk/rockchip/clk-rk3308.c
-@@ -133,7 +133,6 @@ PNAME(mux_uart1_p)		= { "clk_uart1_src", "dummy", "clk_uart1_frac" };
- PNAME(mux_uart2_p)		= { "clk_uart2_src", "dummy", "clk_uart2_frac" };
- PNAME(mux_uart3_p)		= { "clk_uart3_src", "dummy", "clk_uart3_frac" };
- PNAME(mux_uart4_p)		= { "clk_uart4_src", "dummy", "clk_uart4_frac" };
--PNAME(mux_timer_src_p)		= { "xin24m", "clk_rtc32k" };
- PNAME(mux_dclk_vop_p)		= { "dclk_vop_src", "dclk_vop_frac", "xin24m" };
- PNAME(mux_nandc_p)		= { "clk_nandc_div", "clk_nandc_div50" };
- PNAME(mux_sdmmc_p)		= { "clk_sdmmc_div", "clk_sdmmc_div50" };
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index bdc52364b421..77d18276bfe8 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -571,6 +571,7 @@ static const struct clk_ops da8xx_usb1_clk48_ops = {
+ 
+ /**
+  * da8xx_cfgchip_register_usb1_clk48 - Register a new USB 1.1 PHY clock
++ * @dev: The device
+  * @regmap: The CFGCHIP regmap
+  */
+ static struct da8xx_usb1_clk48 *
 -- 
 2.17.1
 
