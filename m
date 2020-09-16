@@ -2,119 +2,89 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B05C2BB84
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 09:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D3FC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 16:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5886721D24
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 09:07:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7I6N1Xx"
+	by mail.kernel.org (Postfix) with ESMTP id BE319222C3
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 16:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600273608;
+	bh=d96KYZZMydcJHEl9ntD8CVmSDdqIiH31PsoEq+mfyUQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DqFLEXTqXecL26GfTPT2eRN27BsZFA72gjtUEZJOM/Qny/tGmOH8HDWMsI2JU/1rw
+	 biWDj91GBQ4GaB4bOMD+rKConjSnSYHMG9UFE8m/PKBxAZ2MMjEjYoY5bROCnjCRvz
+	 bqpKO+FC8L4wchP+UP+3nGbvwGgUqVbexAx+N1i8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbgIPJHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 05:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbgIPJGy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Sep 2020 05:06:54 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA3D9C061788
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2020 02:06:53 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 67so3502683pgd.12
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2020 02:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ttZkZx1LzxLGYFhW4zTKYKYiQwvfjDiSjvWqnbF0vHk=;
-        b=Z7I6N1XxqCqBifMW2RwOmCjaR7e0Mnw+2vjVnacAqGC0CEBgiJkfWus2y6dGywgVUe
-         FYeiY2d+d+2KX0av8QlogjDPyiewesxjJSLdXGSr29TuUi22NJ3sYmq6f1kJQDfY7woi
-         hwSCxoweIjXUcOEBxQOScVoueGh+uTb7HP/7scp5C7Sesz3XbyHXBjoHfRfHL54l4xYT
-         gDsv6VCSw2SFx7xD84WpA64KYk1/bLFrSMHtZNNg2NfXby9cFK4yspALSuY+DzByxaFo
-         dXKWkfjfCfHM3ZI5px5ISyExcyo49ojgI62wdWNIe5JGJ5twMDHayuXR60h4zFHB8VSo
-         X6VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ttZkZx1LzxLGYFhW4zTKYKYiQwvfjDiSjvWqnbF0vHk=;
-        b=nX1po2ILe9HSuQocfFZYYleF6lhfhi6R69powZzBraJgb4ic2LbKBHiwHF7yR2oq+b
-         vAM8+JHUTY3mHD/zHg2hSAs27exzdk7dLoDovpwxfFx7R4RuxJUZ7CYK2kVhFFLnWcov
-         nN0mTvy4VzMDnyilippOwewDyFigL8tbZFSSxC88PWtfaGhxJ9kG8eSqiShc/ENfJW8b
-         0zKtHhOE1dI+y4GCOMtMFQal3qqU/KYE8hUus+22syy6mvHe598ZH8z2z0hgK6qLOoLQ
-         fpjpFK+1FUQcVgIWhEGPVbUc1hxANn42Kv+aZxBVcVM2l/QsgmgWaWmp4/M287hry9bg
-         Pb5A==
-X-Gm-Message-State: AOAM532YAqxs4G2MJLVATVuPSfMfhTtQuo1g5u9/dV9vNEBGkflGPxxv
-        bayVrNOCpeBAFWp8nhXzfx2Eeg==
-X-Google-Smtp-Source: ABdhPJxaex4WXIf49yTDWeyTvhfkQ16nkldb65p5CHOJKBKiFPs1J1w8fAlogBZCbdj68MzDmDyP2w==
-X-Received: by 2002:a62:7c82:0:b029:13c:1611:6525 with SMTP id x124-20020a627c820000b029013c16116525mr22021122pfc.5.1600247210609;
-        Wed, 16 Sep 2020 02:06:50 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id z1sm11903216pfq.102.2020.09.16.02.06.49
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Sep 2020 02:06:49 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 14:36:37 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: Unable to handle kernel paging request at virtual address dead -
- __clk_put
-Message-ID: <20200916090637.fvyangrcc7ao4gye@vireshk-i7>
-References: <CA+G9fYvYEsxjU_cnm6oWFgOrU4x0T1CMoN-L2SHLGeJC6MF54Q@mail.gmail.com>
- <CAPDyKFqVB_hgDghaYU1B1BbWUuL6GHhWMbZEYM-cXDQ8T8ThfQ@mail.gmail.com>
- <20200916052239.7c5z4wqqrdpauti4@vireshk-i7>
- <CAPDyKFrxrKRuJec0pDLooovV3BJBVvmDizoL6N4eb+hv1D0NgA@mail.gmail.com>
- <20200916080728.ajqzw75spcmbbwsc@vireshk-i7>
- <20200916082042.ejzaje62k4bl2hhy@vireshk-i7>
+        id S1726260AbgIPQ0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 12:26:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726566AbgIPQT5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Sep 2020 12:19:57 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B30122955;
+        Wed, 16 Sep 2020 16:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600273093;
+        bh=d96KYZZMydcJHEl9ntD8CVmSDdqIiH31PsoEq+mfyUQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uad7FDK4a+Ne5IYmZfeU+1YD99kDHHrIlZutKKrYvUTLFZmBTRwlLmBx02L+gdKmT
+         MTXHEXjysUHsNp9b6pr/mXmJg4XB4MRZhGPeFw02cwXudkz35qpubMtJJ9zQtzjhi9
+         45bZmPAi3H4zojr6wkUQO4eJoHTiNA7QT5KWRctY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Heiko Stuebner <heiko@sntech.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 6/6] clk: rockchip: rk3308: drop unused mux_timer_src_p
+Date:   Wed, 16 Sep 2020 18:17:40 +0200
+Message-Id: <20200916161740.14173-6-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916161740.14173-1-krzk@kernel.org>
+References: <20200916161740.14173-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916082042.ejzaje62k4bl2hhy@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16-09-20, 13:50, Viresh Kumar wrote:
-> On 16-09-20, 13:37, Viresh Kumar wrote:
-> > On 16-09-20, 09:37, Ulf Hansson wrote:
-> > > I have the board as well. If you need some help with testing, just let me know.
-> > > 
-> > > In any case, I will try the revert and see how that changes things.
-> > 
-> > I am testing this with help of Naresh currently, will try to update
-> > back today itself.
-> 
-> I think I have found the issue and it is with a new patch from the opp
-> tree (which isn't merged upstream yet):
-> 
-> commit 99f1c7ff37b0 ("opp: Handle multiple calls for same OPP table in
-> _of_add_opp_table_v1()")
-> 
-> I have asked Naresh to run it again, lets see.
+The parent names 'mux_timer_src_p' is not used:
 
-https://lkft.validation.linaro.org/scheduler/job/1770973
+  In file included from drivers/clk/rockchip/clk-rk3308.c:13:0:
+  drivers/clk/rockchip/clk-rk3308.c:136:7: warning: ‘mux_timer_src_p’ defined but not used [-Wunused-const-variable=]
 
-Got fixed.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/rockchip/clk-rk3308.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I will update my branch and push it.
-
-Ulf, you don't need to do anything.
-
-Naresh, Thanks a lot for testing this stuff out.
-
+diff --git a/drivers/clk/rockchip/clk-rk3308.c b/drivers/clk/rockchip/clk-rk3308.c
+index b0baf87a283e..5bf15f2a44b7 100644
+--- a/drivers/clk/rockchip/clk-rk3308.c
++++ b/drivers/clk/rockchip/clk-rk3308.c
+@@ -133,7 +133,6 @@ PNAME(mux_uart1_p)		= { "clk_uart1_src", "dummy", "clk_uart1_frac" };
+ PNAME(mux_uart2_p)		= { "clk_uart2_src", "dummy", "clk_uart2_frac" };
+ PNAME(mux_uart3_p)		= { "clk_uart3_src", "dummy", "clk_uart3_frac" };
+ PNAME(mux_uart4_p)		= { "clk_uart4_src", "dummy", "clk_uart4_frac" };
+-PNAME(mux_timer_src_p)		= { "xin24m", "clk_rtc32k" };
+ PNAME(mux_dclk_vop_p)		= { "dclk_vop_src", "dclk_vop_frac", "xin24m" };
+ PNAME(mux_nandc_p)		= { "clk_nandc_div", "clk_nandc_div50" };
+ PNAME(mux_sdmmc_p)		= { "clk_sdmmc_div", "clk_sdmmc_div50" };
 -- 
-viresh
+2.17.1
+
