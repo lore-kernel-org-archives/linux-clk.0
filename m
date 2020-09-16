@@ -2,110 +2,94 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C8AC43461
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0A6C433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEA921582
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE13221941
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600288004;
-	bh=27sYm41mDiVDnZrWbm0QPVBaPRpD52EfmzkcCrZV80c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0oiTLRW996U9KbArHTyWbUWHeT2OiRoMlDdwD/XGRkt2pM4lL8myUVpcgyVgs9W/m
-	 ZP7+DYZqSvAoNfJsOkj8XdNFrqOP6OSPwTeko59h5zTJTwFnlpg+7m3/Hpy3HvTfqb
-	 m3Q0WsYcAtTtZbou9d7dCDxUwM8PY//t23NKFnxI=
+	s=default; t=1600288224;
+	bh=rDklET3URHRDBZEvF6OLfVutgrEE+P7xngbDw3ovJPk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=deq/iTuL8PuB6wJ0gtRd0y8JJu7xw2jly5lnkqfMlvEW/EA4vDybyELCAq0OLuLzE
+	 elQacYBnOv6I+CQfIr4rAcGMoOWxdMrBGgwrwgXGklLkyz7igchDdXONlVblDjdwcM
+	 UerzW7nQzZwLt/1zOLr1+rE20h8KOScKIGJ1Mqh0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbgIPRZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:25:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41104 "EHLO mail.kernel.org"
+        id S1727209AbgIPUaS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 16:30:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727021AbgIPRZi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:25:38 -0400
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+        id S1726840AbgIPRM6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:12:58 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94C452222E;
-        Wed, 16 Sep 2020 16:15:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D510222596;
+        Wed, 16 Sep 2020 16:17:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600272952;
-        bh=27sYm41mDiVDnZrWbm0QPVBaPRpD52EfmzkcCrZV80c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pqNRMaP0X9Blp3xQCD3Zk+PlqjNSI+5urM1u/88kqjNllpJCcNBf7qN2LPn3/BTT2
-         dRyX2kVPw+lPv64et2CISd3l4nVeoM+yFS2ajeTC1WSNblvCbW7Trl4WMuBEPkg7hD
-         k/UqtCkwJCii1ROu6m15flANY9Y6NmenSXuaxsbw=
-Received: by mail-ej1-f47.google.com with SMTP id p9so11151659ejf.6;
-        Wed, 16 Sep 2020 09:15:52 -0700 (PDT)
-X-Gm-Message-State: AOAM531YawbGDMzodTmV2YlokpruOKg3Bsvon+RzTPVkEgssTkV2K/pB
-        B3dthBoKPV9FGnQvzp0vCAB/kz4sD6yR0KJo3N0=
-X-Google-Smtp-Source: ABdhPJxEK6ZjXsdxLcZySzuz0z9lSyaAmd9P0gRxYMJTfHrR5KxRYZH+Asvudz0vhNq7zAjPO6GX+HHY/5crRL//S3M=
-X-Received: by 2002:a17:906:8401:: with SMTP id n1mr25499511ejx.215.1600272951032;
- Wed, 16 Sep 2020 09:15:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200902150348.14465-1-krzk@kernel.org> <20200902163558.GA4137028@piout.net>
- <20200911153441.GA18190@kozik-lap> <160012811662.4188128.10109140799333292326@swboyd.mtv.corp.google.com>
-In-Reply-To: <160012811662.4188128.10109140799333292326@swboyd.mtv.corp.google.com>
+        s=default; t=1600273084;
+        bh=rDklET3URHRDBZEvF6OLfVutgrEE+P7xngbDw3ovJPk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=c2qzRyizp/VEct8ssgms7hbJXVwjVImM85Q7xFsmmmORaJJoUfwUgoBGEFqi0by2T
+         G5IZj2iDxNypoGC+dc+C7hgmzL2KBMi2fi4175i+oyaRfPHYbrPLSGxuuLOR8gaieR
+         ArI/ZIcqrnWAWOtZotaHfvbhZ+dh7bfZdpN9lSwo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 16 Sep 2020 18:15:39 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdjyETBwDqC+C75giz2bD0Gie-G4Yd_svpc-vYccywy_Q@mail.gmail.com>
-Message-ID: <CAJKOXPdjyETBwDqC+C75giz2bD0Gie-G4Yd_svpc-vYccywy_Q@mail.gmail.com>
-Subject: Re: [PATCH 01/10] clk: at91: Drop unused at91sam9g45_pcr_layout
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sekhar Nori <nsekhar@ti.com>, Heiko Stuebner <heiko@sntech.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 5/6] clk: si5341: drop unused 'err' variable
+Date:   Wed, 16 Sep 2020 18:17:39 +0200
+Message-Id: <20200916161740.14173-5-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916161740.14173-1-krzk@kernel.org>
+References: <20200916161740.14173-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Sep 2020 at 02:01, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Krzysztof Kozlowski (2020-09-11 08:34:41)
-> > On Wed, Sep 02, 2020 at 06:35:58PM +0200, Alexandre Belloni wrote:
-> > > On 02/09/2020 17:03:39+0200, Krzysztof Kozlowski wrote:
-> > > > The at91sam9g45_pcr_layout is not used so drop it to fix build warning:
-> > > >
-> > > >   drivers/clk/at91/at91sam9g45.c:49:36: warning:
-> > > >     'at91sam9g45_pcr_layout' defined but not used [-Wunused-const-variable=]
-> > > >
-> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > >
-> > > > ---
-> > > >  drivers/clk/at91/at91sam9g45.c | 7 -------
-> > > >  1 file changed, 7 deletions(-)
-> > > >
-> >
-> > Hi Stephen,
-> >
-> > If the dev_err_probe() waits/skips/goes to /dev/null, then how about the
-> > fixes in the series? This patch and few other?
->
-> Yes if dev_err_probe() is superseded by Rob's work then the fixes should
-> be fine to pick up. Can you resend the fixes?
+'err' is assigned but never read:
 
-Sure, I will send the fixes only.
+  /drivers/clk/clk-si5341.c: In function ‘si5341_output_get_parent’:
+  drivers/clk/clk-si5341.c:886:6: warning: variable ‘err’ set but not used [-Wunused-but-set-variable]
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk-si5341.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 3d7acab9d280..e0446e66fa64 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -883,11 +883,9 @@ static int si5341_output_set_parent(struct clk_hw *hw, u8 index)
+ static u8 si5341_output_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_si5341_output *output = to_clk_si5341_output(hw);
+-	int err;
+ 	u32 val;
+ 
+-	err = regmap_read(output->data->regmap,
+-			SI5341_OUT_MUX_SEL(output), &val);
++	regmap_read(output->data->regmap, SI5341_OUT_MUX_SEL(output), &val);
+ 
+ 	return val & 0x7;
+ }
+-- 
+2.17.1
+
