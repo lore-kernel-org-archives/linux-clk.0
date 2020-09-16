@@ -2,67 +2,110 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C381FC433E2
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C8AC43461
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 745F721973
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CEA921582
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600282895;
-	bh=A0COw23VAj/7TeyF+lOZCD1BRT1u+Crud34kvluH1WU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=o2mbX3BFMtruTQiaUd6lcFYaym1ijtrFyGARuDiVjZ9SWSCTd1IYRubR8Qa8Xi/16
-	 SHH3cIwJReWX3y3eI3N2kMS3KFgi5U9KtbZCIscyNfA0/hkXEqh5VvsCboPqilbmkX
-	 XDpAKBjKQgaXMZN+DOGX8m5z0uG+D8MjLO5b2/OY=
+	s=default; t=1600288004;
+	bh=27sYm41mDiVDnZrWbm0QPVBaPRpD52EfmzkcCrZV80c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0oiTLRW996U9KbArHTyWbUWHeT2OiRoMlDdwD/XGRkt2pM4lL8myUVpcgyVgs9W/m
+	 ZP7+DYZqSvAoNfJsOkj8XdNFrqOP6OSPwTeko59h5zTJTwFnlpg+7m3/Hpy3HvTfqb
+	 m3Q0WsYcAtTtZbou9d7dCDxUwM8PY//t23NKFnxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbgIPTBB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:01:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54424 "EHLO mail.kernel.org"
+        id S1727034AbgIPRZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 13:25:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbgIPTA2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Sep 2020 15:00:28 -0400
-Subject: Re: [GIT PULL] clk fixes for v5.9-rc5
+        id S1727021AbgIPRZi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:25:38 -0400
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94C452222E;
+        Wed, 16 Sep 2020 16:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600282828;
-        bh=A0COw23VAj/7TeyF+lOZCD1BRT1u+Crud34kvluH1WU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=I1d0oaNyD4CFcPMEMXptur7R5BzpzGighwtW0s0X+QT4Cr+v44r3B+VCi+pYkTGy/
-         YxcAGATKqjk6SVYrIu3/uc66hfY9NMXhOUvT/C1nzJ+lwgXJ7X2Uw4GAkajT+dibjy
-         S3binjYNf3qV0GRJb1wav/HQexikORGgylbg0sYM=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200916015808.3287134-1-sboyd@kernel.org>
-References: <20200916015808.3287134-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200916015808.3287134-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: d2249bf25c565b6e310453962fef63f8d38677a6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 05da40eb47cdbc9c18bc2d7256a760931914041e
-Message-Id: <160028282804.10105.13430645486798839959.pr-tracker-bot@kernel.org>
-Date:   Wed, 16 Sep 2020 19:00:28 +0000
+        s=default; t=1600272952;
+        bh=27sYm41mDiVDnZrWbm0QPVBaPRpD52EfmzkcCrZV80c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pqNRMaP0X9Blp3xQCD3Zk+PlqjNSI+5urM1u/88kqjNllpJCcNBf7qN2LPn3/BTT2
+         dRyX2kVPw+lPv64et2CISd3l4nVeoM+yFS2ajeTC1WSNblvCbW7Trl4WMuBEPkg7hD
+         k/UqtCkwJCii1ROu6m15flANY9Y6NmenSXuaxsbw=
+Received: by mail-ej1-f47.google.com with SMTP id p9so11151659ejf.6;
+        Wed, 16 Sep 2020 09:15:52 -0700 (PDT)
+X-Gm-Message-State: AOAM531YawbGDMzodTmV2YlokpruOKg3Bsvon+RzTPVkEgssTkV2K/pB
+        B3dthBoKPV9FGnQvzp0vCAB/kz4sD6yR0KJo3N0=
+X-Google-Smtp-Source: ABdhPJxEK6ZjXsdxLcZySzuz0z9lSyaAmd9P0gRxYMJTfHrR5KxRYZH+Asvudz0vhNq7zAjPO6GX+HHY/5crRL//S3M=
+X-Received: by 2002:a17:906:8401:: with SMTP id n1mr25499511ejx.215.1600272951032;
+ Wed, 16 Sep 2020 09:15:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200902150348.14465-1-krzk@kernel.org> <20200902163558.GA4137028@piout.net>
+ <20200911153441.GA18190@kozik-lap> <160012811662.4188128.10109140799333292326@swboyd.mtv.corp.google.com>
+In-Reply-To: <160012811662.4188128.10109140799333292326@swboyd.mtv.corp.google.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 16 Sep 2020 18:15:39 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdjyETBwDqC+C75giz2bD0Gie-G4Yd_svpc-vYccywy_Q@mail.gmail.com>
+Message-ID: <CAJKOXPdjyETBwDqC+C75giz2bD0Gie-G4Yd_svpc-vYccywy_Q@mail.gmail.com>
+Subject: Re: [PATCH 01/10] clk: at91: Drop unused at91sam9g45_pcr_layout
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Tue, 15 Sep 2020 18:58:08 -0700:
+On Tue, 15 Sep 2020 at 02:01, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Krzysztof Kozlowski (2020-09-11 08:34:41)
+> > On Wed, Sep 02, 2020 at 06:35:58PM +0200, Alexandre Belloni wrote:
+> > > On 02/09/2020 17:03:39+0200, Krzysztof Kozlowski wrote:
+> > > > The at91sam9g45_pcr_layout is not used so drop it to fix build warning:
+> > > >
+> > > >   drivers/clk/at91/at91sam9g45.c:49:36: warning:
+> > > >     'at91sam9g45_pcr_layout' defined but not used [-Wunused-const-variable=]
+> > > >
+> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > >
+> > > > ---
+> > > >  drivers/clk/at91/at91sam9g45.c | 7 -------
+> > > >  1 file changed, 7 deletions(-)
+> > > >
+> >
+> > Hi Stephen,
+> >
+> > If the dev_err_probe() waits/skips/goes to /dev/null, then how about the
+> > fixes in the series? This patch and few other?
+>
+> Yes if dev_err_probe() is superseded by Rob's work then the fixes should
+> be fine to pick up. Can you resend the fixes?
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Sure, I will send the fixes only.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/05da40eb47cdbc9c18bc2d7256a760931914041e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Best regards,
+Krzysztof
