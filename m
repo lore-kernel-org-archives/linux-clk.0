@@ -2,64 +2,66 @@ Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F23C43461
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 05:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7906EC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 07:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7693E221E7
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 05:22:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28AC8208E4
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 07:38:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fcV2xPoS"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QgYllN+s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgIPFWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 01:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60472 "EHLO
+        id S1726384AbgIPHiL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Sep 2020 03:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgIPFWs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Sep 2020 01:22:48 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9BC4C06178A
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 22:22:47 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id d6so3272521pfn.9
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2020 22:22:47 -0700 (PDT)
+        with ESMTP id S1726470AbgIPHiF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Sep 2020 03:38:05 -0400
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B183C06178A
+        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2020 00:38:04 -0700 (PDT)
+Received: by mail-vs1-xe43.google.com with SMTP id a16so3435540vsp.12
+        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2020 00:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3E9hVNUS9hl+g/ET5NtLbC6kuy/hmmqxMhC6YHOdByw=;
-        b=fcV2xPoStd0Jn5pPKp3sCxVRkz/56UAIYT0bsxaoNxh2FLpr8rJZN5ZU+VpIQUNERk
-         WsQppsQ4ijBd5yX1qcgrmmXFUar4JbQA1T5zqOhnE0stGPnTpDNjRwOvnqJLigQ3OeLy
-         oMJk20S06LNCDNUI8X9ZoOhnIg8gxMyB1b9GuZhO5Awr3Oig4O3IucSBOhO8ZirA/74G
-         XUY7p4/a0OSNdoac/xenlTVsJOoOyJ0WhwngqbwPI7IZW6NokDt1rh4ST39IEj/wW5Q6
-         Du7IlGFziG/Ume1AEtCk9UiZmXMchMwUNrep69xtWxKJk6z+x2nISbLpQ+STql8gAWJC
-         gjTQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ql2HHk7xdYd1gFzJiNUYKj4+ShA64J5FO0Fpo9subGg=;
+        b=QgYllN+sJMUY6IuNH3kRCFQJNCcrUIoyn7TfP6oEUs9aB7Viis3UfjVfm0FgBAWKGl
+         KZd2QiAmyOgSQIGoOTBCmxo7ZNqGOeSB9+YduMA+OMvsz/nozc8AlVILEqePedlRO9Oi
+         xbwztFePw6scCBRSjrjy6+9YPVews1dXkVvMwrfJ6jE03z+wVLIb7o1RG5Y1gQjLnZRQ
+         PQhnOnh7YQTIye1jVY60amlekjqk3pAP3wJW9CDNvyh4SO8J8Y+02FXlLuKQb6hTJ0JJ
+         FuzrJ7Aiyn+2Rc/1PAwqspdf8C9MBZeZKFXF1vDshGiWGlgJ+K/Ng0eMIGOAYXzceky0
+         SuJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3E9hVNUS9hl+g/ET5NtLbC6kuy/hmmqxMhC6YHOdByw=;
-        b=kbUHivqDdNeMIhUhMp/jNu9kitEtuZP5q64B0o5llELBxiOtqVhC2GIoVvgSqKOhyG
-         qpFngU089L0UAxSWRkACykY/u472g3lugTmCZzSKtkGzUqenJ4N5o5F/Ua0aH7wnKBgz
-         /aE7caKOE8wabyqgtBoOR4qRuAeTrC1zax0Nc4bmiXXULPibSSO/dYFEn+aRZNGdcDJe
-         pe0E/FqSYYLNjLcRg28NAOC1d2eyhhsZwz4nCEqH+CGgyTzHsfhaM3MMeKJhN6KLRGAJ
-         De5XObzUD8pv4Nmen1R//JWliIP231PJJWklSivm4C3Rng+d6RZLj1lNbNIEesSDCLkR
-         sfJg==
-X-Gm-Message-State: AOAM531RxSoO5Yvlxjxd7zzZ8Ii9vnxXuao7y0Isbv+2wO535p7MLhFL
-        3L0HKX6DFNbW5H3pRqzbCSX5ag==
-X-Google-Smtp-Source: ABdhPJxKq1C236x3+23o+hcAe7HflPw0SBB+cNtPfrUaShA9EQ6maxUaLlboG3PLt7jZEI//3f0wHA==
-X-Received: by 2002:a63:6dc2:: with SMTP id i185mr16080585pgc.297.1600233767068;
-        Tue, 15 Sep 2020 22:22:47 -0700 (PDT)
-Received: from localhost ([122.181.54.133])
-        by smtp.gmail.com with ESMTPSA id q198sm12478343pfq.185.2020.09.15.22.22.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Sep 2020 22:22:46 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 10:52:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ql2HHk7xdYd1gFzJiNUYKj4+ShA64J5FO0Fpo9subGg=;
+        b=WfJfkuwU9/ctiRtSmvmI+3h6sGRnkZcNubdJObla7+tOAXz+j+KLbzmtsVob/rhlSc
+         BmkadFXP4nDOl3rs27eKab9UsMufsqhCGtP3oeIIGjfGUu/dc/0a1FLQpyncDpar+/HO
+         fhpKncJOHHUDiG47y+Eelu0hIevDyVme8/vuVKVwDQHg2VgjhVBbJ+3aTMFM4v9cMuqd
+         seBtgme0CGGPVeQYmmjouq+b3RwgxhF9ICqKDS+e2iTG3J9iHHL1+ZJuGh4tN1IUsgiM
+         6AM+ud+1BV05rY3Lb5fiXC09qQpEOIDCQ9Ts7xK0xLlJwOOd9D5n2nTa14nDXD+dP2UU
+         Wo5g==
+X-Gm-Message-State: AOAM531TgaHNtrdmhbiYktioZJGsMeTTRgcjwJV2i+1FLqaDhmuLGxP0
+        +FoH+gZJIPJfnl6z+bMgykfGrNsJl3d0d+GpnJSNlw==
+X-Google-Smtp-Source: ABdhPJwAIVZFHEuYzqUsbgel+CzL0Ssqkp0Twb2u8HkeHT4/zRLDF7InSMgI7svCSj8PI2ql/cmeOzBtl2N8qyWrEDw=
+X-Received: by 2002:a67:2e54:: with SMTP id u81mr3713148vsu.55.1600241882142;
+ Wed, 16 Sep 2020 00:38:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <CA+G9fYvYEsxjU_cnm6oWFgOrU4x0T1CMoN-L2SHLGeJC6MF54Q@mail.gmail.com>
+ <CAPDyKFqVB_hgDghaYU1B1BbWUuL6GHhWMbZEYM-cXDQ8T8ThfQ@mail.gmail.com> <20200916052239.7c5z4wqqrdpauti4@vireshk-i7>
+In-Reply-To: <20200916052239.7c5z4wqqrdpauti4@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 16 Sep 2020 09:37:26 +0200
+Message-ID: <CAPDyKFrxrKRuJec0pDLooovV3BJBVvmDizoL6N4eb+hv1D0NgA@mail.gmail.com>
+Subject: Re: Unable to handle kernel paging request at virtual address dead - __clk_put
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
         open list <linux-kernel@vger.kernel.org>,
         linux-mmc <linux-mmc@vger.kernel.org>,
@@ -69,141 +71,141 @@ Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: Re: Unable to handle kernel paging request at virtual address dead -
- __clk_put
-Message-ID: <20200916052239.7c5z4wqqrdpauti4@vireshk-i7>
-References: <CA+G9fYvYEsxjU_cnm6oWFgOrU4x0T1CMoN-L2SHLGeJC6MF54Q@mail.gmail.com>
- <CAPDyKFqVB_hgDghaYU1B1BbWUuL6GHhWMbZEYM-cXDQ8T8ThfQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqVB_hgDghaYU1B1BbWUuL6GHhWMbZEYM-cXDQ8T8ThfQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15-09-20, 23:39, Ulf Hansson wrote:
-> On Tue, 15 Sep 2020 at 16:33, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+On Wed, 16 Sep 2020 at 07:22, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 15-09-20, 23:39, Ulf Hansson wrote:
+> > On Tue, 15 Sep 2020 at 16:33, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > >
+> > > arm64 dragonboard-410c boot failed while running linux next 2020915 due to
+> > > the kernel crash.
+> > >
+> > > metadata:
+> > >   git branch: master
+> > >   git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+> > >   git describe: next-20200915
+> > >   make_kernelversion: 5.9.0-rc5
+> > >   kernel-config:
+> > > https://builds.tuxbuild.com/J5oDTkph2aj855oeGOd45Q/kernel.config
+> > >
+> > >
+> > > crash log:
+> > > -------------
+> > > [    3.517615] Synopsys Designware Multimedia Card Interface Driver
+> > > [    3.524258] sdhci-pltfm: SDHCI platform and OF driver helper
+> > > [    3.531302] Unable to handle kernel paging request at virtual
+> > > address dead000000000108
+> > > [    3.531396] Mem abort info:
+> > > [    3.531460] sdhci_msm 7864900.sdhci: Got CD GPIO
+> > > [    3.539182]   ESR = 0x96000044
+> > > [    3.541953] ledtrig-cpu: registered to indicate activity on CPUs
+> > > [    3.546692]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > > [    3.546701]   SET = 0, FnV = 0
+> > > [    3.555694] usbcore: registered new interface driver usbhid
+> > > [    3.555703] usbhid: USB HID core driver
+> > > [    3.561638] genirq: irq_chip msmgpio did not update eff. affinity
+> > > mask of irq 75
+> > > [    3.563908]   EA = 0, S1PTW = 0
+> > > [    3.580792] Data abort info:
+> > > [    3.583673]   ISV = 0, ISS = 0x00000044
+> > > [    3.583900] NET: Registered protocol family 10
+> > > [    3.586785]   CM = 0, WnR = 1
+> > > [    3.586794] [dead000000000108] address between user and kernel address ranges
+> > > [    3.586806] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+> > > [    3.591869] Segment Routing with IPv6
+> > > [    3.594829] Modules linked in:
+> > > [    3.594841] CPU: 2 PID: 7 Comm: kworker/u8:0 Not tainted
+> > > 5.9.0-rc5-next-20200915 #1
+> > > [    3.594844] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+> > > [    3.594862] Workqueue: events_unbound async_run_entry_fn
+> > > [    3.597959] NET: Registered protocol family 17
+> > > [    3.604991] pstate: 60000005 (nZCv daif -PAN -UAO BTYPE=--)
+> > > [    3.605000] pc : __clk_put+0x40/0x140
+> > > [    3.605009] lr : __clk_put+0x2c/0x140
+> > > [    3.610613] 9pnet: Installing 9P2000 support
+> > > [    3.614183] sp : ffff80001005bbe0
+> > > [    3.614189] x29: ffff80001005bbe0
+> > > [    3.617233] Key type dns_resolver registered
+> > > [    3.624696] x28: 000000000000002e
+> > > [    3.624701] x27: ffff00003b620a68 x26: ffff800011496568
+> > > [    3.624708] x25: ffff00003fcfe8f8 x24: ffff00003d30c410
+> > > [    3.632518] registered taskstats version 1
+> > > [    3.636931] x23: ffff800011495cf8 x22: ffff00003b620a40
+> > > [    3.636938] x21: ffff00003d30c400 x20: ffff00003b620580
+> > > [    3.636945] x19: ffff00003b64f380 x18: 0000000007824000
+> > > [    3.636951] x17: ffff00003b620a00 x16: ffff00003b6205d0
+> > > [    3.636958] x15: ffff8000119929f8 x14: ffffffffffffffff
+> > > [    3.636965] x13: ffff800012947000 x12: ffff800012947000
+> > > [    3.636975] x11: 0000000000000020
+> > > [    3.641233] Loading compiled-in X.509 certificates
+> > > [    3.646650] x10: 0101010101010101
+> > > [    3.646654] x9 : ffff8000107b4c84 x8 : 7f7f7f7f7f7f7f7f
+> > > [    3.646661] x7 : ffff000009fe5880 x6 : 0000000000000000
+> > > [    3.646668] x5 : 0000000000000000 x4 : ffff000009fe5880
+> > > [    3.646674] x3 : ffff80001250d7a0 x2 : ffff000009fe5880
+> > > [    3.746653] x1 : ffff00003b64f680 x0 : dead000000000100
+> > > [    3.751949] Call trace:
+> > > [    3.757243]  __clk_put+0x40/0x140
+> > > [    3.759413]  clk_put+0x18/0x28
+> > > [    3.762885]  dev_pm_opp_put_clkname+0x30/0x58
+> > > [    3.765837]  sdhci_msm_probe+0x288/0x9a8
+> > > [    3.770265]  platform_drv_probe+0x5c/0xb0
+> > > [    3.774258]  really_probe+0xf0/0x4d8
+> > > [    3.778163]  driver_probe_device+0xfc/0x168
+> > > [    3.781810]  __driver_attach_async_helper+0xbc/0xc8
+> > > [    3.785717]  async_run_entry_fn+0x4c/0x1b0
+> > > [    3.790575]  process_one_work+0x1c8/0x498
+> > > [    3.794741]  worker_thread+0x54/0x428
+> > > [    3.798822]  kthread+0x120/0x158
+> > > [    3.802467]  ret_from_fork+0x10/0x30
+> > > [    3.805771] Code: 35000720 a9438660 f9000020 b4000040 (f9000401)
+> > > [    3.809334] ---[ end trace 1a607a5ea6891b9f ]---
+> > >
+> > > full test log link,
+> > > https://lkft.validation.linaro.org/scheduler/job/1765840#L2014
+> > > https://lkft.validation.linaro.org/scheduler/job/1765842#L1960
+> > >
+> > > --
+> > > Linaro LKFT
+> > > https://lkft.linaro.org
 > >
-> > arm64 dragonboard-410c boot failed while running linux next 2020915 due to
-> > the kernel crash.
+> > Naresh, thanks for reporting!
 > >
-> > metadata:
-> >   git branch: master
-> >   git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> >   git describe: next-20200915
-> >   make_kernelversion: 5.9.0-rc5
-> >   kernel-config:
-> > https://builds.tuxbuild.com/J5oDTkph2aj855oeGOd45Q/kernel.config
-> >
-> >
-> > crash log:
-> > -------------
-> > [    3.517615] Synopsys Designware Multimedia Card Interface Driver
-> > [    3.524258] sdhci-pltfm: SDHCI platform and OF driver helper
-> > [    3.531302] Unable to handle kernel paging request at virtual
-> > address dead000000000108
-> > [    3.531396] Mem abort info:
-> > [    3.531460] sdhci_msm 7864900.sdhci: Got CD GPIO
-> > [    3.539182]   ESR = 0x96000044
-> > [    3.541953] ledtrig-cpu: registered to indicate activity on CPUs
-> > [    3.546692]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [    3.546701]   SET = 0, FnV = 0
-> > [    3.555694] usbcore: registered new interface driver usbhid
-> > [    3.555703] usbhid: USB HID core driver
-> > [    3.561638] genirq: irq_chip msmgpio did not update eff. affinity
-> > mask of irq 75
-> > [    3.563908]   EA = 0, S1PTW = 0
-> > [    3.580792] Data abort info:
-> > [    3.583673]   ISV = 0, ISS = 0x00000044
-> > [    3.583900] NET: Registered protocol family 10
-> > [    3.586785]   CM = 0, WnR = 1
-> > [    3.586794] [dead000000000108] address between user and kernel address ranges
-> > [    3.586806] Internal error: Oops: 96000044 [#1] PREEMPT SMP
-> > [    3.591869] Segment Routing with IPv6
-> > [    3.594829] Modules linked in:
-> > [    3.594841] CPU: 2 PID: 7 Comm: kworker/u8:0 Not tainted
-> > 5.9.0-rc5-next-20200915 #1
-> > [    3.594844] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > [    3.594862] Workqueue: events_unbound async_run_entry_fn
-> > [    3.597959] NET: Registered protocol family 17
-> > [    3.604991] pstate: 60000005 (nZCv daif -PAN -UAO BTYPE=--)
-> > [    3.605000] pc : __clk_put+0x40/0x140
-> > [    3.605009] lr : __clk_put+0x2c/0x140
-> > [    3.610613] 9pnet: Installing 9P2000 support
-> > [    3.614183] sp : ffff80001005bbe0
-> > [    3.614189] x29: ffff80001005bbe0
-> > [    3.617233] Key type dns_resolver registered
-> > [    3.624696] x28: 000000000000002e
-> > [    3.624701] x27: ffff00003b620a68 x26: ffff800011496568
-> > [    3.624708] x25: ffff00003fcfe8f8 x24: ffff00003d30c410
-> > [    3.632518] registered taskstats version 1
-> > [    3.636931] x23: ffff800011495cf8 x22: ffff00003b620a40
-> > [    3.636938] x21: ffff00003d30c400 x20: ffff00003b620580
-> > [    3.636945] x19: ffff00003b64f380 x18: 0000000007824000
-> > [    3.636951] x17: ffff00003b620a00 x16: ffff00003b6205d0
-> > [    3.636958] x15: ffff8000119929f8 x14: ffffffffffffffff
-> > [    3.636965] x13: ffff800012947000 x12: ffff800012947000
-> > [    3.636975] x11: 0000000000000020
-> > [    3.641233] Loading compiled-in X.509 certificates
-> > [    3.646650] x10: 0101010101010101
-> > [    3.646654] x9 : ffff8000107b4c84 x8 : 7f7f7f7f7f7f7f7f
-> > [    3.646661] x7 : ffff000009fe5880 x6 : 0000000000000000
-> > [    3.646668] x5 : 0000000000000000 x4 : ffff000009fe5880
-> > [    3.646674] x3 : ffff80001250d7a0 x2 : ffff000009fe5880
-> > [    3.746653] x1 : ffff00003b64f680 x0 : dead000000000100
-> > [    3.751949] Call trace:
-> > [    3.757243]  __clk_put+0x40/0x140
-> > [    3.759413]  clk_put+0x18/0x28
-> > [    3.762885]  dev_pm_opp_put_clkname+0x30/0x58
-> > [    3.765837]  sdhci_msm_probe+0x288/0x9a8
-> > [    3.770265]  platform_drv_probe+0x5c/0xb0
-> > [    3.774258]  really_probe+0xf0/0x4d8
-> > [    3.778163]  driver_probe_device+0xfc/0x168
-> > [    3.781810]  __driver_attach_async_helper+0xbc/0xc8
-> > [    3.785717]  async_run_entry_fn+0x4c/0x1b0
-> > [    3.790575]  process_one_work+0x1c8/0x498
-> > [    3.794741]  worker_thread+0x54/0x428
-> > [    3.798822]  kthread+0x120/0x158
-> > [    3.802467]  ret_from_fork+0x10/0x30
-> > [    3.805771] Code: 35000720 a9438660 f9000020 b4000040 (f9000401)
-> > [    3.809334] ---[ end trace 1a607a5ea6891b9f ]---
-> >
-> > full test log link,
-> > https://lkft.validation.linaro.org/scheduler/job/1765840#L2014
-> > https://lkft.validation.linaro.org/scheduler/job/1765842#L1960
-> >
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
-> 
-> Naresh, thanks for reporting!
-> 
-> There have been regressions related to the opp library this cycle, so
-> I am wondering if Viresh may have any ideas, before going into more
-> details.
+> > There have been regressions related to the opp library this cycle, so
+> > I am wondering if Viresh may have any ideas, before going into more
+> > details.
+>
+> I am really pissed at this. This is the exact bug we got earlier,
+> which Naresh also confirmed as being fixed after the patches I
+> proposed.
 
-I am really pissed at this. This is the exact bug we got earlier,
-which Naresh also confirmed as being fixed after the patches I
-proposed.
+No worries, let's just fix it, again. :-)
 
-> One thing that also changed from the sdhci-msm point of view, is that
-> we enabled async probe [1]. This could be the thing that triggers an
-> untested error path of the probe?
+>
+> > One thing that also changed from the sdhci-msm point of view, is that
+> > we enabled async probe [1]. This could be the thing that triggers an
+> > untested error path of the probe?
+>
+> Maybe, but I am not sure if this will cause such an issue. At max it
+> should cause issues for other stuff that depends on sdhci.
+>
+> > Otherwise we can always try to revert "mmc: sdhci-msm: Unconditionally
+> > call dev_pm_opp_of_remove_table()", which I recently applied again
+> > after the earlier errors.
+>
+> Yeah, that's the easiest of all.
+>
+> I am trying to find someone with local 410c who can help me fix it in
+> realtime. Lets see.
 
-Maybe, but I am not sure if this will cause such an issue. At max it
-should cause issues for other stuff that depends on sdhci.
+I have the board as well. If you need some help with testing, just let me know.
 
-> Otherwise we can always try to revert "mmc: sdhci-msm: Unconditionally
-> call dev_pm_opp_of_remove_table()", which I recently applied again
-> after the earlier errors.
+In any case, I will try the revert and see how that changes things.
 
-Yeah, that's the easiest of all.
-
-I am trying to find someone with local 410c who can help me fix it in
-realtime. Lets see.
-
--- 
-viresh
+Kind regards
+Uffe
