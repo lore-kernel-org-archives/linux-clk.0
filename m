@@ -1,130 +1,147 @@
-Return-Path: <SRS0=aoxw=CZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=whDF=C2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55DFC433E2
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395CDC43461
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Sep 2020 10:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55DDC206BE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600289390;
-	bh=KParYTLLH5J9IJ3HJLgOl1sALXhET5Wd3H/RAGT5AU0=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=FJ5OHyY7W2YKz5kokUo9t7dKhWBLm1rwV2OeS8vXxICpAlrCGoiLctKLf8tlSbxJ5
-	 Xjdn1EscvHfzZX/QtWUu/6sdRAHgBCZXUiuT+ZagFwgE8uV9lHpkS44kQWNrSEcC3A
-	 YnC8iU4mPhEM4yMV1/+dCDbLQIvXykY8U9gOHri8=
+	by mail.kernel.org (Postfix) with ESMTP id C4F4F2087D
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Sep 2020 10:21:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vs4C2WUF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgIPUtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:49:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbgIPUtg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Sep 2020 16:49:36 -0400
-Received: from [10.0.0.30] (cpe-70-114-140-30.austin.res.rr.com [70.114.140.30])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14CE7206BE;
-        Wed, 16 Sep 2020 20:49:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600289375;
-        bh=KParYTLLH5J9IJ3HJLgOl1sALXhET5Wd3H/RAGT5AU0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dLv0aQIxzGfC2LtPyL//mPfq8mMrRNj0eEoUQvACnl5m/e15zRI30znyaN4vhQhtN
-         /r55Y7zcFYlfVCWAs75lr1RBzMVLcx/rGENCNU57h+D6zj6t/neFtleenO3MT8lWyh
-         PMgvaiRCN1kHV2RPdppoc8WwACDeVOfLPkW/+1K8=
-Subject: Re: [PATCH] clk: socfpga: stratix10: fix the divider for the
- emac_ptp_free_clk
-To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20200831202657.8224-1-dinguyen@kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b3618437-74d6-4c9a-3630-da07fea1c9fc@kernel.org>
-Date:   Wed, 16 Sep 2020 15:49:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726705AbgIQKVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Sep 2020 06:21:06 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44142 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbgIQKU5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Sep 2020 06:20:57 -0400
+X-Greylist: delayed 382 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 06:20:56 EDT
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200917102053euoutp01a0c7e0e0ada5d9cc2e4782bc8f21e233~1ivsEzjQY0107001070euoutp01U
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2020 10:20:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200917102053euoutp01a0c7e0e0ada5d9cc2e4782bc8f21e233~1ivsEzjQY0107001070euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600338053;
+        bh=+soWB7T32AfnQiLAfNmy+TnWJJXergXGZL/ibpvdNLc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Vs4C2WUFR76REJL2l+B2qQuzWUzK/SZjuI5gpKCf2u2MUFVCfKe6uXlPU0IJZBKux
+         zPFdVJ1Qz+wT9SxlIBR55lImZHDpU7nVSO2/IS2i/NUMXxcsyqSqSiK780yDdYVnLq
+         Ls4pNwEbMznzoz2z7H3zPP6AXR1ajKkMNhmcqyWs=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200917102053eucas1p16c5a1bcd7329aecd78b56d57a79a2983~1ivr0zz2t0234902349eucas1p17;
+        Thu, 17 Sep 2020 10:20:53 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 17.F8.06318.488336F5; Thu, 17
+        Sep 2020 11:20:52 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200917102052eucas1p1baf4933226fe43fadd82ec5ccb51036a~1ivrbhp-N0243702437eucas1p18;
+        Thu, 17 Sep 2020 10:20:52 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200917102052eusmtrp206a2711693fabd35d17badf571cc0daf~1ivra3BZA1192211922eusmtrp27;
+        Thu, 17 Sep 2020 10:20:52 +0000 (GMT)
+X-AuditID: cbfec7f5-371ff700000018ae-44-5f6338848cca
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id CF.AE.06314.488336F5; Thu, 17
+        Sep 2020 11:20:52 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200917102051eusmtip28df2ee4b1ba88206b4bab3e23003e2b4~1ivqphxjD2885528855eusmtip2C;
+        Thu, 17 Sep 2020 10:20:51 +0000 (GMT)
+Subject: Re: [PATCH v3] clk: samsung: Prevent potential endless loop in the
+ PLL set_rate ops
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com
+Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com
+Message-ID: <70db322d-4b8d-be69-0434-b1d1b3764340@samsung.com>
+Date:   Thu, 17 Sep 2020 12:20:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200831202657.8224-1-dinguyen@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c3c40d62-f5bb-6b13-0af9-ce774718eaa6@samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: linux-clk-owner@vger.kernel.org
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7djP87otFsnxBnuvW1psnLGe1eL6l+es
+        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi37WNLBardv1hdOD0eH+jld1j56y77B6bVnWy
+        efRtWcXo8XmTXABrFJdNSmpOZllqkb5dAldG09GTbAXruStu3tzD0sC4jLOLkZNDQsBEYubH
+        y0xdjFwcQgIrGCW+n1jKCuF8YZRYtOQmO4TzmVFi7s07bDAtfw8fYYFILGeUOLKsjw3C+cgo
+        cW/tDXaQKmGBOInlM9YygdhsAoYSvUf7GEFsEQF7iQ3H/oPtYBY4yCgxraUXrIhXwE5i7p5T
+        YEUsAqoSN05PBYuLAg06duoRC0SNoMTJmU/AbE6gQQ8OzwSrYRYQl7j1ZD6ULS+x/e0cZohT
+        D7FL7J3qBWG7SKz6NJkJwhaWeHV8CzuELSPxf+d8cAhICDQzSvTsvs0O4UxglLh/fAEjRJW1
+        xJ1zv4D+5ADaoCmxfpc+iCkh4Cjx9SkjhMknceOtIMQJfBKTtk1nhgjzSnS0CUHMUJH4vWo6
+        1AVSEt1P/rNMYFSaheSxWUiemYXkmVkIaxcwsqxiFE8tLc5NTy02zkst1ytOzC0uzUvXS87P
+        3cQITEun/x3/uoNx35+kQ4wCHIxKPLwcEknxQqyJZcWVuYcYJTiYlUR4nc6ejhPiTUmsrEot
+        yo8vKs1JLT7EKM3BoiTOa7zoZayQQHpiSWp2ampBahFMlomDU6qBcYrTQx6JjgSzVMsIud/n
+        lpzU21dovrnVaHnhEuE9e448aZW5qfky+9FbkwPClldv61/ZHLdjn8LOb09qdS7O1fn+Mf7I
+        Hu4UttVS5ueNZ1uumD6vi//b+dt7er/m6fyt+S0+R+q1a78ly93/zeExbhVL044xLXN8ekPE
+        K7JQQ8Phi5Pj8tqiFCWW4oxEQy3mouJEABJXzDZHAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7otFsnxBptOq1hsnLGe1eL6l+es
+        Fh977rFaXN41h81ixvl9TBZrj9xlt7h4ytXi37WNLBardv1hdOD0eH+jld1j56y77B6bVnWy
+        efRtWcXo8XmTXABrlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
+        Zllqkb5dgl5G09GTbAXruStu3tzD0sC4jLOLkZNDQsBE4u/hIyxdjFwcQgJLGSVOfF/K1sXI
+        AZSQkpjfogRRIyzx51oXG0TNe0aJ2w09LCAJYYE4ieUz1jKB2GwChhK9R/sYQWwRAXuJDcf+
+        s4I0MAscZJRYdvosM0T3D0aJGRM72UGqeAXsJObuOQXWwSKgKnHj9FSwSaJAU8/0vGCDqBGU
+        ODnzCdg2TqCpDw7PBKthFlCX+DPvEjOELS5x68l8qLi8xPa3c5gnMArNQtI+C0nLLCQts5C0
+        LGBkWcUoklpanJueW2yoV5yYW1yal66XnJ+7iREYiduO/dy8g/HSxuBDjAIcjEo8vBtEk+KF
+        WBPLiitzDzFKcDArifA6nT0dJ8SbklhZlVqUH19UmpNafIjRFOi5icxSosn5wCSRVxJvaGpo
+        bmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qB0ZU5fm3Nw949t1ZyTLvjZtNz
+        s2HBWR6ehqD4+z83slq8sJN3Zl3ec+9orcoH9SveAsb78/Tjfq8Iay6qO2A38Ufs7dS7yzdF
+        pkrYLX4xgY9p6qZ139Z7PU7ryuXZUPo9Lv7PqsutM6W+yn+/J/l3+xnrx3qKcj1X4xQPVEjc
+        mi17banQ6wL3a0osxRmJhlrMRcWJAD0p34LaAgAA
+X-CMS-MailID: 20200917102052eucas1p1baf4933226fe43fadd82ec5ccb51036a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200813095520eucas1p209432599420d62e0e54a5545334c329c
+References: <CGME20200813095520eucas1p209432599420d62e0e54a5545334c329c@eucas1p2.samsung.com>
+        <20200813095508.7563-1-s.nawrocki@samsung.com>
+        <28cd3eeb-816d-b369-11a9-16cd2c1af87c@samsung.com>
+        <c3c40d62-f5bb-6b13-0af9-ce774718eaa6@samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping?
+On 15.09.2020 13:34, Sylwester Nawrocki wrote:
+> On 14.08.2020 02:46, Chanwoo Choi wrote:
+>> On 8/13/20 6:55 PM, Sylwester Nawrocki wrote:
+>>> In the .set_rate callback for some PLLs there is a loop polling state
+>>> of the PLL lock bit and it may become an endless loop when something
+>>> goes wrong with the PLL. For some PLLs there is already code for polling
+>>> with a timeout but it uses the ktime API, which doesn't work in some
+>>> conditions when the set_rate op is called, in particular during
+>>> initialization of the clk provider before the clocksource initialization
+>>> has completed. Hence the ktime API cannot be used to reliably detect
+>>> the PLL locking timeout.
+>>>
+>>> This patch adds a common helper function for busy waiting on the PLL lock
+>>> bit with timeout detection.
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> ---
+>>> Changes for v3:
+>>>  - use busy-loop with udelay() instead of ktime API
+>>> Changes for v2:
+>>>  - use common readl_relaxed_poll_timeout_atomic() macro
+>>> ---
+>>>  drivers/clk/samsung/clk-pll.c | 94 ++++++++++++++++---------------------------
+>>>  1 file changed, 34 insertions(+), 60 deletions(-)
+>> Thanks.
+>>
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>  
+> Patch applied, thank you for your comments.
 
-On 8/31/20 3:26 PM, Dinh Nguyen wrote:
-> The fixed divider the emac_ptp_free_clk should be 2, not 4.
-> 
-> Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
-> Stratix10 platform")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
->  drivers/clk/socfpga/clk-s10.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-> index c1dfc9b34e4e..661a8e9bfb9b 100644
-> --- a/drivers/clk/socfpga/clk-s10.c
-> +++ b/drivers/clk/socfpga/clk-s10.c
-> @@ -209,7 +209,7 @@ static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
->  	{ STRATIX10_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux, ARRAY_SIZE(emacb_free_mux),
->  	  0, 0, 2, 0xB0, 1},
->  	{ STRATIX10_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL, emac_ptp_free_mux,
-> -	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 4, 0xB0, 2},
-> +	  ARRAY_SIZE(emac_ptp_free_mux), 0, 0, 2, 0xB0, 2},
->  	{ STRATIX10_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
->  	  ARRAY_SIZE(gpio_db_free_mux), 0, 0, 0, 0xB0, 3},
->  	{ STRATIX10_SDMMC_FREE_CLK, "sdmmc_free_clk", NULL, sdmmc_free_mux,
-> 
+And dropped now as it causes issues on arm64. As reported by Marek
+it seems udelay() doesn't work before the system timer is initialized.
