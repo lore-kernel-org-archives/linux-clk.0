@@ -2,100 +2,114 @@ Return-Path: <SRS0=+/+o=C3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B62CC43463
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 09:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD464C43464
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD62721973
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 09:39:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ECBE2311A
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgIRJj4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Sep 2020 05:39:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13300 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726109AbgIRJj4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 18 Sep 2020 05:39:56 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 08A9883A1F34AC7756F9;
-        Fri, 18 Sep 2020 17:39:55 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.487.0; Fri, 18 Sep 2020
- 17:39:50 +0800
-From:   Qilong Zhang <zhangqilong3@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH -next] clk: tegra: clk-dfll: indicate correct error reason in tegra_dfll_register
-Date:   Fri, 18 Sep 2020 17:46:42 +0800
-Message-ID: <20200918094642.108070-1-zhangqilong3@huawei.com>
-X-Mailer: git-send-email 2.26.0.106.g9fadedd
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+        id S1726815AbgIRMsZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Sep 2020 08:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbgIRMsW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Sep 2020 08:48:22 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87A5C061756
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2020 05:48:21 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by michel.telenet-ops.be with bizsmtp
+        id VQoL2300A4C55Sk06QoLd2; Fri, 18 Sep 2020 14:48:20 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kJFoK-00025R-Em; Fri, 18 Sep 2020 14:48:20 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kJFoK-00045S-D6; Fri, 18 Sep 2020 14:48:20 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.10 (take two)
+Date:   Fri, 18 Sep 2020 14:48:19 +0200
+Message-Id: <20200918124819.15652-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Zhang Qilong <zhangqilong3@huawei.com>
+	Hi Mike, Stephen,
 
-Calling devm_ioremap means getting devices resource have been
-successful. When remap operation failed, we should return '-ENOMEM'
-instead of '-ENODEV' to differentiate between getting resource and
-mapping memory for reminding callers. Moreover, it is not consistent
-with devm_kzalloc operation.
+The following changes since commit e41cb217932969a20cea9c44299c449236058e43:
 
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
----
- drivers/clk/tegra/clk-dfll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+  clk: renesas: rcar-gen2: Rename vsp1-(sy|rt) clocks to vsp(s|r) (2020-09-04 09:42:01 +0200)
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index cfbaa90c7adb..6637b73be9f1 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1993,7 +1993,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
- 	if (!td->base) {
- 		dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
--		return -ENODEV;
-+		return -ENOMEM;
- 	}
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-@@ -2005,7 +2005,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	td->i2c_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
- 	if (!td->i2c_base) {
- 		dev_err(td->dev, "couldn't ioremap i2c_base resource\n");
--		return -ENODEV;
-+		return -ENOMEM;
- 	}
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
-@@ -2019,7 +2019,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	if (!td->i2c_controller_base) {
- 		dev_err(td->dev,
- 			"couldn't ioremap i2c_controller_base resource\n");
--		return -ENODEV;
-+		return -ENOMEM;
- 	}
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 3);
-@@ -2032,7 +2032,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	if (!td->lut_base) {
- 		dev_err(td->dev,
- 			"couldn't ioremap lut_base resource\n");
--		return -ENODEV;
-+		return -ENOMEM;
- 	}
- 
- 	ret = dfll_init_clks(td);
--- 
-2.17.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.10-tag2
+
+for you to fetch changes up to 15d683e61bdded719e6202fed2c7401f4dcd95ab:
+
+  clk: renesas: rcar-gen3: Update description for RZ/G2 (2020-09-17 15:32:25 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.10 (take two)
+
+  - Add support for the new R-Car V3U (R8A779A0) SoC,
+  - Minor fixes and improvements.
+
+Note that the new Renesas R-Car V3U DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 1/4] Renesas ARM DT updates for v5.10 (take two)" (for
+    arm-soc),
+  - "[GIT PULL 3/4] Renesas driver updates for v5.10 (take two)" (for
+    arm-soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.10 (take two)" (for clk).
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r8a779a0-dt-binding-defs-tag' into clk-renesas-for-v5.10
+
+Lad Prabhakar (1):
+      clk: renesas: rcar-gen3: Update description for RZ/G2
+
+Yoshihiro Shimoda (6):
+      dt-bindings: power: Add r8a779a0 SYSC power domain definitions
+      dt-bindings: clock: Add r8a779a0 CPG Core Clock Definitions
+      dt-bindings: clock: renesas,cpg-mssr: Document r8a779a0
+      clk: renesas: cpg-mssr: Use enum clk_reg_layout instead of a boolean flag
+      clk: renesas: cpg-mssr: Add register pointers into struct cpg_mssr_priv
+      clk: renesas: cpg-mssr: Add support for R-Car V3U
+
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ drivers/clk/renesas/Kconfig                        |   7 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |   2 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            | 276 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 136 ++++++----
+ drivers/clk/renesas/renesas-cpg-mssr.h             |  14 +-
+ include/dt-bindings/clock/r8a779a0-cpg-mssr.h      |  55 ++++
+ include/dt-bindings/power/r8a779a0-sysc.h          |  59 +++++
+ 9 files changed, 498 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a779a0-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a779a0-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a779a0-sysc.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
