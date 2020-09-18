@@ -2,322 +2,103 @@ Return-Path: <SRS0=+/+o=C3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDF3C43465
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 13:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DF8C43464
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 17:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F41123719
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 13:23:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="o9jAl37R"
+	by mail.kernel.org (Postfix) with ESMTP id D489B21707
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 17:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600450177;
+	bh=vpvMxvgeDCaZd1cVHCkXkhYKHHyZnq0WW7CjmeiD7ek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tjOL9jXJycPUHCHtH5tLRb0teOpx+Y2r9k6q0C97VFR6FICdvm+Nzn4LvkSHHipbV
+	 +s4yRNdys68WGvffaPHFzj/S8xqPuq6LszWzifGkv1SFmXjmUCT3pjt7FQhi/Y3rab
+	 kdIcetAjxoohwlhrYlbsQciszQld29Kml8Dg/wqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbgIRNXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Sep 2020 09:23:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbgIRNXK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Sep 2020 09:23:10 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E7DC061756
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2020 06:23:09 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id w5so5608840wrp.8
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2020 06:23:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E+2fT5wM+IZ7ws6Rc2lCDmiMKB5AnOCmm2bmSr1dNrg=;
-        b=o9jAl37RrSFdIChE9ReD+aXUZk7+TRgDEmYW6GLhpBpcJSxeteQIYXE7n1HoKJWZaU
-         Oj/TWQo2EwXJ5quAP/MiWefyKx3Iba5vCmrqCQXsvgtMy30503kYtXv8NOUKZUj8605G
-         9Tj5sVVVs/XRGPskbLX6IDgvHxMZQvaFnGuP6jgwosSYw2E6LOyU9/hz7oQnb1rKDLWT
-         3P3Tl9Gi5RvkvOX1ILGr6yigR+MI3pKHxjWgls5h/QgTaTofnn6nDvL7a5y8Vpr66AH5
-         hB5yTNRLXAH+giirpMgDm6t0784wwhr+I0yE1uqs62SkknrNaxFDX3w+7mRMYlJAPMEZ
-         BFMA==
+        id S1726541AbgIRR3h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Sep 2020 13:29:37 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:43315 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgIRR3V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Sep 2020 13:29:21 -0400
+Received: by mail-il1-f193.google.com with SMTP id a19so6968845ilq.10;
+        Fri, 18 Sep 2020 10:29:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E+2fT5wM+IZ7ws6Rc2lCDmiMKB5AnOCmm2bmSr1dNrg=;
-        b=M6WqGys+V58SMNlgZxNOfemC7oMHCs9euXG8lsa9dwGN1L49uHVUP0WsMH7xOowbAk
-         fChsSlsh7NQZrrUFZsUzSjvBA4RIusHAn0/2l1B2ey+drIq1Ink73AR5fiE6uZ/wznHR
-         yiKgD56GPd3nPjcXXApuc2+4ooWaexCEyY4napu6IJPhYIZn1RHI9hn05z7fN3/yzatJ
-         d0c1Vz4pNLf+l5ZPluTRSOSineU997zjRGyd+hVdSuB6bU+USyBITMcCd9TDmdIWbbMj
-         gF3FBtk6KHCl3qpCMA7tdGPXjZJHqFlahxNkrs3mpenQhB9WK7ULMiUk/XGrMgXNlGyu
-         VzZA==
-X-Gm-Message-State: AOAM532JZFWrNkotJXNTvYgvtkydwB6SswwsfLp3gVhz1ahRQ86Vdgrw
-        doquelPjlp5WGLoQmJYY8MulsQ==
-X-Google-Smtp-Source: ABdhPJzESeyjG/+3tK6kmvqZJQ+SOr4mqJxfDabzZh8KvcLlOtPJE4OmYFxENnG6q/vl5mlUx6bxbQ==
-X-Received: by 2002:a05:6000:1c4:: with SMTP id t4mr39179259wrx.350.1600435388245;
-        Fri, 18 Sep 2020 06:23:08 -0700 (PDT)
-Received: from localhost.localdomain (156.18.23.93.rev.sfr.net. [93.23.18.156])
-        by smtp.gmail.com with ESMTPSA id c16sm5917048wrx.31.2020.09.18.06.23.06
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Zp/UgCO4yesf32LjMFW5Twkm/7ZCg9X5k+hMqt07GWE=;
+        b=mAweGh+Mi8cf0Mh95dGkIFAFAvWVyVKcAv+xi4oN5e3O/sakqvuaiWQsRP8TmzNZIe
+         lVSn1Bfjv7dLJk2SOi1t02wIK42/ZtMT6VJWNkYEgjmi37mm3iqPyLLmRx5WjSqMxMVp
+         ABHXlyWRplAyfol5YHk9/QK/GkEICuiae2sQX4LrXXeIdbY6lvLXkNEffnxhYcL+fkwI
+         w/WpVzdJyAq+1+C1I/rJCEa33hT5Gl/UuhSzod8nDTeWdM/O4FxCnaUi03+j9L2Y3/io
+         3f7qaK2jtnnFl8sROiQE3MKU7rOBbpcVWI4IcBfw0dvKy2pjMtVn4K18np827wNaNZez
+         hO3w==
+X-Gm-Message-State: AOAM532pJ8zjqyawnMDX2HFu8zSZtt9q/ZOFVl48D+sp8bAX0c9vL4i+
+        MqAziB4IhACrucBXrhJ96Yz6dGHbID8k
+X-Google-Smtp-Source: ABdhPJxjQh+EEtw5uCfwtCt8JutOTg7mAqFPtFABcDPIUIAA/b1d2ssI/Aef7xdXn145949h96YVLg==
+X-Received: by 2002:a92:d48b:: with SMTP id p11mr26390866ilg.69.1600450159255;
+        Fri, 18 Sep 2020 10:29:19 -0700 (PDT)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id o15sm1899367ilc.41.2020.09.18.10.29.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2020 06:23:07 -0700 (PDT)
-From:   Fabien Parent <fparent@baylibre.com>
-To:     linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     krzk@kernel.org, masahiroy@kernel.org, ck.hu@mediatek.com,
-        macpaul.lin@mediatek.com, owen.chen@mediatek.com,
-        matthias.bgg@gmail.com, sboyd@kernel.org,
-        Fabien Parent <fparent@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/2] dt-bindings: clock: mediatek: add bindings for MT8167 clocks
-Date:   Fri, 18 Sep 2020 15:23:02 +0200
-Message-Id: <20200918132303.2831815-1-fparent@baylibre.com>
-X-Mailer: git-send-email 2.28.0
+        Fri, 18 Sep 2020 10:29:18 -0700 (PDT)
+Received: (nullmailer pid 3827355 invoked by uid 1000);
+        Fri, 18 Sep 2020 17:29:17 -0000
+Date:   Fri, 18 Sep 2020 11:29:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        bjorn.andersson@linaro.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: Add support for LPASS Audio
+ Clock Controller
+Message-ID: <20200918172917.GA3827183@bogus>
+References: <20200917132850.7730-1-srinivas.kandagatla@linaro.org>
+ <20200917132850.7730-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200917132850.7730-2-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding documentation for topckgen, apmixedsys, infracfg, audsys,
-imgsys, mfgcfg, vdecsys on MT8167 SoC.
+On Thu, 17 Sep 2020 14:28:47 +0100, Srinivas Kandagatla wrote:
+> Audio Clock controller is a block inside LPASS which controls
+> 2 Glitch free muxes to LPASS codec Macros.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/clock/qcom,audiocc-sm8250.yaml   | 58 +++++++++++++++++++
+>  .../clock/qcom,sm8250-lpass-audiocc.h         | 13 +++++
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> 
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
 
-ChangeLog:
-	V2: no changes
+My bot found errors running 'make dt_binding_check' on your patch:
 
- .../arm/mediatek/mediatek,apmixedsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt |   1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt |   1 +
- .../arm/mediatek/mediatek,infracfg.txt        |   1 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt |   1 +
- .../arm/mediatek/mediatek,topckgen.txt        |   1 +
- .../arm/mediatek/mediatek,vdecsys.txt         |   1 +
- include/dt-bindings/clock/mt8167-clk.h        | 131 ++++++++++++++++++
- 8 files changed, 138 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt8167-clk.h
+Error: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dts:25.30-31 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1366: dt_binding_check] Error 2
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index bd7a0fa5801b..ea827e8763de 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -15,6 +15,7 @@ Required Properties:
- 	- "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
- 	- "mediatek,mt7629-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
-+	- "mediatek,mt8167-apmixedsys", "syscon"
- 	- "mediatek,mt8173-apmixedsys"
- 	- "mediatek,mt8183-apmixedsys", "syscon"
- 	- "mediatek,mt8516-apmixedsys"
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-index 38309db115f5..b32d374193c7 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-@@ -11,6 +11,7 @@ Required Properties:
- 	- "mediatek,mt6779-audio", "syscon"
- 	- "mediatek,mt7622-audsys", "syscon"
- 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
-+	- "mediatek,mt8167-audiosys", "syscon"
- 	- "mediatek,mt8183-audiosys", "syscon"
- 	- "mediatek,mt8516-audsys", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index 1e1f00718a7d..dce4c9241932 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -12,6 +12,7 @@ Required Properties:
- 	- "mediatek,mt6779-imgsys", "syscon"
- 	- "mediatek,mt6797-imgsys", "syscon"
- 	- "mediatek,mt7623-imgsys", "mediatek,mt2701-imgsys", "syscon"
-+	- "mediatek,mt8167-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
- 	- "mediatek,mt8183-imgsys", "syscon"
- - #clock-cells: Must be 1
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index 49a968be1a80..eb3523c7a7be 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -16,6 +16,7 @@ Required Properties:
- 	- "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
- 	- "mediatek,mt7629-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
-+	- "mediatek,mt8167-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
- 	- "mediatek,mt8183-infracfg", "syscon"
- 	- "mediatek,mt8516-infracfg", "syscon"
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-index ad5f9d2f6818..054424fb64b4 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-@@ -8,6 +8,7 @@ Required Properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2712-mfgcfg", "syscon"
- 	- "mediatek,mt6779-mfgcfg", "syscon"
-+	- "mediatek,mt8167-mfgcfg", "syscon"
- 	- "mediatek,mt8183-mfgcfg", "syscon"
- - #clock-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index 9b0394cbbdc9..5ce7578cf274 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -15,6 +15,7 @@ Required Properties:
- 	- "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
- 	- "mediatek,mt7629-topckgen"
- 	- "mediatek,mt8135-topckgen"
-+	- "mediatek,mt8167-topckgen", "syscon"
- 	- "mediatek,mt8173-topckgen"
- 	- "mediatek,mt8183-topckgen", "syscon"
- 	- "mediatek,mt8516-topckgen"
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 7894558b7a1c..98195169176a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -11,6 +11,7 @@ Required Properties:
- 	- "mediatek,mt6779-vdecsys", "syscon"
- 	- "mediatek,mt6797-vdecsys", "syscon"
- 	- "mediatek,mt7623-vdecsys", "mediatek,mt2701-vdecsys", "syscon"
-+	- "mediatek,mt8167-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
- 	- "mediatek,mt8183-vdecsys", "syscon"
- - #clock-cells: Must be 1
-diff --git a/include/dt-bindings/clock/mt8167-clk.h b/include/dt-bindings/clock/mt8167-clk.h
-new file mode 100644
-index 000000000000..a96158edd817
---- /dev/null
-+++ b/include/dt-bindings/clock/mt8167-clk.h
-@@ -0,0 +1,131 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2020 MediaTek Inc.
-+ * Copyright (c) 2020 BayLibre, SAS.
-+ * Author: James Liao <jamesjj.liao@mediatek.com>
-+ *         Fabien Parent <fparent@baylibre.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MT8167_H
-+#define _DT_BINDINGS_CLK_MT8167_H
-+
-+/* MT8167 is based on MT8516 */
-+#include <dt-bindings/clock/mt8516-clk.h>
-+
-+/* APMIXEDSYS */
-+
-+#define CLK_APMIXED_TVDPLL		(CLK_APMIXED_NR_CLK + 0)
-+#define CLK_APMIXED_LVDSPLL		(CLK_APMIXED_NR_CLK + 1)
-+#define CLK_APMIXED_HDMI_REF		(CLK_APMIXED_NR_CLK + 2)
-+#define MT8167_CLK_APMIXED_NR_CLK	(CLK_APMIXED_NR_CLK + 3)
-+
-+/* TOPCKGEN */
-+
-+#define CLK_TOP_DSI0_LNTC_DSICK		(CLK_TOP_NR_CLK + 0)
-+#define CLK_TOP_VPLL_DPIX		(CLK_TOP_NR_CLK + 1)
-+#define CLK_TOP_LVDSTX_CLKDIG_CTS	(CLK_TOP_NR_CLK + 2)
-+#define CLK_TOP_HDMTX_CLKDIG_CTS	(CLK_TOP_NR_CLK + 3)
-+#define CLK_TOP_LVDSPLL			(CLK_TOP_NR_CLK + 4)
-+#define CLK_TOP_LVDSPLL_D2		(CLK_TOP_NR_CLK + 5)
-+#define CLK_TOP_LVDSPLL_D4		(CLK_TOP_NR_CLK + 6)
-+#define CLK_TOP_LVDSPLL_D8		(CLK_TOP_NR_CLK + 7)
-+#define CLK_TOP_MIPI_26M		(CLK_TOP_NR_CLK + 8)
-+#define CLK_TOP_TVDPLL			(CLK_TOP_NR_CLK + 9)
-+#define CLK_TOP_TVDPLL_D2		(CLK_TOP_NR_CLK + 10)
-+#define CLK_TOP_TVDPLL_D4		(CLK_TOP_NR_CLK + 11)
-+#define CLK_TOP_TVDPLL_D8		(CLK_TOP_NR_CLK + 12)
-+#define CLK_TOP_TVDPLL_D16		(CLK_TOP_NR_CLK + 13)
-+#define CLK_TOP_PWM_MM			(CLK_TOP_NR_CLK + 14)
-+#define CLK_TOP_CAM_MM			(CLK_TOP_NR_CLK + 15)
-+#define CLK_TOP_MFG_MM			(CLK_TOP_NR_CLK + 16)
-+#define CLK_TOP_SPM_52M			(CLK_TOP_NR_CLK + 17)
-+#define CLK_TOP_MIPI_26M_DBG		(CLK_TOP_NR_CLK + 18)
-+#define CLK_TOP_SCAM_MM			(CLK_TOP_NR_CLK + 19)
-+#define CLK_TOP_SMI_MM			(CLK_TOP_NR_CLK + 20)
-+#define CLK_TOP_26M_HDMI_SIFM		(CLK_TOP_NR_CLK + 21)
-+#define CLK_TOP_26M_CEC			(CLK_TOP_NR_CLK + 22)
-+#define CLK_TOP_32K_CEC			(CLK_TOP_NR_CLK + 23)
-+#define CLK_TOP_GCPU_B			(CLK_TOP_NR_CLK + 24)
-+#define CLK_TOP_RG_VDEC			(CLK_TOP_NR_CLK + 25)
-+#define CLK_TOP_RG_FDPI0		(CLK_TOP_NR_CLK + 26)
-+#define CLK_TOP_RG_FDPI1		(CLK_TOP_NR_CLK + 27)
-+#define CLK_TOP_RG_AXI_MFG		(CLK_TOP_NR_CLK + 28)
-+#define CLK_TOP_RG_SLOW_MFG		(CLK_TOP_NR_CLK + 29)
-+#define CLK_TOP_GFMUX_EMI1X_SEL		(CLK_TOP_NR_CLK + 30)
-+#define CLK_TOP_CSW_MUX_MFG_SEL		(CLK_TOP_NR_CLK + 31)
-+#define CLK_TOP_CAMTG_MM_SEL		(CLK_TOP_NR_CLK + 32)
-+#define CLK_TOP_PWM_MM_SEL		(CLK_TOP_NR_CLK + 33)
-+#define CLK_TOP_SPM_52M_SEL		(CLK_TOP_NR_CLK + 34)
-+#define CLK_TOP_MFG_MM_SEL		(CLK_TOP_NR_CLK + 35)
-+#define CLK_TOP_SMI_MM_SEL		(CLK_TOP_NR_CLK + 36)
-+#define CLK_TOP_SCAM_MM_SEL		(CLK_TOP_NR_CLK + 37)
-+#define CLK_TOP_VDEC_MM_SEL		(CLK_TOP_NR_CLK + 38)
-+#define CLK_TOP_DPI0_MM_SEL		(CLK_TOP_NR_CLK + 39)
-+#define CLK_TOP_DPI1_MM_SEL		(CLK_TOP_NR_CLK + 40)
-+#define CLK_TOP_AXI_MFG_IN_SEL		(CLK_TOP_NR_CLK + 41)
-+#define CLK_TOP_SLOW_MFG_SEL		(CLK_TOP_NR_CLK + 42)
-+#define MT8167_CLK_TOP_NR_CLK		(CLK_TOP_NR_CLK + 43)
-+
-+/* MFGCFG */
-+
-+#define CLK_MFG_BAXI			0
-+#define CLK_MFG_BMEM			1
-+#define CLK_MFG_BG3D			2
-+#define CLK_MFG_B26M			3
-+#define CLK_MFG_NR_CLK			4
-+
-+/* MMSYS */
-+
-+#define CLK_MM_SMI_COMMON		0
-+#define CLK_MM_SMI_LARB0		1
-+#define CLK_MM_CAM_MDP			2
-+#define CLK_MM_MDP_RDMA			3
-+#define CLK_MM_MDP_RSZ0			4
-+#define CLK_MM_MDP_RSZ1			5
-+#define CLK_MM_MDP_TDSHP		6
-+#define CLK_MM_MDP_WDMA			7
-+#define CLK_MM_MDP_WROT			8
-+#define CLK_MM_FAKE_ENG			9
-+#define CLK_MM_DISP_OVL0		10
-+#define CLK_MM_DISP_RDMA0		11
-+#define CLK_MM_DISP_RDMA1		12
-+#define CLK_MM_DISP_WDMA		13
-+#define CLK_MM_DISP_COLOR		14
-+#define CLK_MM_DISP_CCORR		15
-+#define CLK_MM_DISP_AAL			16
-+#define CLK_MM_DISP_GAMMA		17
-+#define CLK_MM_DISP_DITHER		18
-+#define CLK_MM_DISP_UFOE		19
-+#define CLK_MM_DISP_PWM_MM		20
-+#define CLK_MM_DISP_PWM_26M		21
-+#define CLK_MM_DSI_ENGINE		22
-+#define CLK_MM_DSI_DIGITAL		23
-+#define CLK_MM_DPI0_ENGINE		24
-+#define CLK_MM_DPI0_PXL			25
-+#define CLK_MM_LVDS_PXL			26
-+#define CLK_MM_LVDS_CTS			27
-+#define CLK_MM_DPI1_ENGINE		28
-+#define CLK_MM_DPI1_PXL			29
-+#define CLK_MM_HDMI_PXL			30
-+#define CLK_MM_HDMI_SPDIF		31
-+#define CLK_MM_HDMI_ADSP_BCK		32
-+#define CLK_MM_HDMI_PLL			33
-+#define CLK_MM_NR_CLK			34
-+
-+/* IMGSYS */
-+
-+#define CLK_IMG_LARB1_SMI		0
-+#define CLK_IMG_CAM_SMI			1
-+#define CLK_IMG_CAM_CAM			2
-+#define CLK_IMG_SEN_TG			3
-+#define CLK_IMG_SEN_CAM			4
-+#define CLK_IMG_VENC			5
-+#define CLK_IMG_NR_CLK			6
-+
-+/* VDECSYS */
-+
-+#define CLK_VDEC_CKEN			0
-+#define CLK_VDEC_LARB1_CKEN		1
-+#define CLK_VDEC_NR_CLK			2
-+
-+#endif /* _DT_BINDINGS_CLK_MT8167_H */
--- 
-2.28.0
+
+See https://patchwork.ozlabs.org/patch/1366127
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
 
