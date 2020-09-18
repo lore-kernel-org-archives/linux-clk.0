@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64534C43464
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DCFC43465
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ECCA23444
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC2E235F8
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600397232;
-	bh=eZDc5ObhMHtmYpVYSId1z6YNr6xNx6COQw+PeGTLRM8=;
+	s=default; t=1600397501;
+	bh=rc12dbAf/EcJVbkGg4lUytsW5oyYLwKajNJbdmO3Wpw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wl+leeH+pWGPMxgEI05Q9NbB7mThV1idD6DQQKG6i10jYHsGANBrjpwhkKevPrv6m
-	 DDdyy66wiSRpICpxur0qgJQIByqcWzFktL8XnXrP2vssWeJrL4oyib6nr/tJfL1wFy
-	 0IfY3DEDmhvOpXM8JWwJOlcDrofyttnWaYOD4HGE=
+	b=Rt6ePVteOKxAsmNY7JzLqtSb3uuc6MyHfUv0euz3RrxPtoOVUgZ4gIwIxcK9P07Y/
+	 9pwxmGZoM+zPnoXMF4QkigG48y2WGNWZYiVXmcERvSWr9wR9vGzHYA3bFeKLVSsAzm
+	 5tPW59tqDdtIpKQx3y1W0eRCf1K1yyR2KQT41lt4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbgIRCJl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Sep 2020 22:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33408 "EHLO mail.kernel.org"
+        id S1729078AbgIRCv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Sep 2020 22:51:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728319AbgIRCJh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:09:37 -0400
+        id S1728090AbgIRCIZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:08:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BBB92389E;
-        Fri, 18 Sep 2020 02:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F425238E3;
+        Fri, 18 Sep 2020 02:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394977;
-        bh=eZDc5ObhMHtmYpVYSId1z6YNr6xNx6COQw+PeGTLRM8=;
+        s=default; t=1600394905;
+        bh=rc12dbAf/EcJVbkGg4lUytsW5oyYLwKajNJbdmO3Wpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IVz013wVnYZniGmzZHjJioGg+gzkXBYrJIh6HgTBOuDx18XUdNMCUOPovyJ58syTK
-         gPmHAuiNfeSiyFSm7WK8mCZ2SkE628pgwzhZBEc9UOZeSBiATLEBTpvMNw7xkfE8Z7
-         XUjmp8GfSDcp0fkcdqVknN+msDVHfeY+cDWRLE+4=
+        b=ZffGPIha21vMTnjptGx3wIZH648F3vcnUTpCRKesayAU+gZdposrGe9TNyIgsIFuq
+         dkBo+mXfyI/BBLC4b8KaqhxC9CLcTSiXhMk/HkUK8+KPAlzOooDDuv5h4/tRfHl3/f
+         ehkfjZ+9HFEilMtntjCOLIBdAAjg+uKPgZk9UBZc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 077/206] clk: stratix10: use do_div() for 64-bit calculation
-Date:   Thu, 17 Sep 2020 22:05:53 -0400
-Message-Id: <20200918020802.2065198-77-sashal@kernel.org>
+Cc:     Stephen Kitt <steve@sk2.org>, Tony Lindgren <tony@atomide.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 018/206] clk/ti/adpll: allocate room for terminating null
+Date:   Thu, 17 Sep 2020 22:04:54 -0400
+Message-Id: <20200918020802.2065198-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200918020802.2065198-1-sashal@kernel.org>
 References: <20200918020802.2065198-1-sashal@kernel.org>
@@ -56,36 +58,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: Stephen Kitt <steve@sk2.org>
 
-[ Upstream commit cc26ed7be46c5f5fa45f3df8161ed7ca3c4d318c ]
+[ Upstream commit 7f6ac72946b88b89ee44c1c527aa8591ac5ffcbe ]
 
-do_div() macro to perform u64 division and guards against overflow if
-the result is too large for the unsigned long return type.
+The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+terminating null. This patch switches to devm_kasprintf to avoid
+overflowing.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Link: https://lkml.kernel.org/r/20200114160726.19771-1-dinguyen@kernel.org
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+Link: https://lkml.kernel.org/r/20191019140634.15596-1-steve@sk2.org
+Acked-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/socfpga/clk-pll-s10.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/ti/adpll.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index c4d0b6f6abf2e..fc2e2839fe570 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -38,7 +38,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 	/* read VCO1 reg for numerator and denominator */
- 	reg = readl(socfpgaclk->hw.reg);
- 	refdiv = (reg & SOCFPGA_PLL_REFDIV_MASK) >> SOCFPGA_PLL_REFDIV_SHIFT;
--	vco_freq = (unsigned long long)parent_rate / refdiv;
-+
-+	vco_freq = parent_rate;
-+	do_div(vco_freq, refdiv);
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index 688e403333b91..14926e07d09ae 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -193,15 +193,8 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
+ 		if (err)
+ 			return NULL;
+ 	} else {
+-		const char *base_name = "adpll";
+-		char *buf;
+-
+-		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
+-				    strlen(postfix), GFP_KERNEL);
+-		if (!buf)
+-			return NULL;
+-		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
+-		name = buf;
++		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.adpll.%s",
++				      d->pa, postfix);
+ 	}
  
- 	/* Read mdiv and fdiv from the fdbck register */
- 	reg = readl(socfpgaclk->hw.reg + 0x4);
+ 	return name;
 -- 
 2.25.1
 
