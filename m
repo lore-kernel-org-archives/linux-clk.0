@@ -1,108 +1,119 @@
-Return-Path: <SRS0=whDF=C2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=+/+o=C3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA23C43461
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Sep 2020 13:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D6C43467
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2FA21582
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Sep 2020 13:49:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j1Ewtdfm"
+	by mail.kernel.org (Postfix) with ESMTP id C0C4F23730
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Sep 2020 02:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600394671;
+	bh=Adt6RvK5imwNgQL791a9n50jRKgHUDzZKp9JlfVyb6k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Svrif8vcQFbvfo1nwfrOozYtnBmttFiAGj6f6NN4GZGQ3xU3vOB62BKaLgvCHpbsh
+	 UcbOhNPrqaavfTlIUVRsEa9cLdaeibnpM0nP7OKMNtYvQLQscpUynatP3P8N7lMZi8
+	 j3xkbXoOq//AXyboTQv8LYFQxev9E8GtiZi/fPgM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbgIQN3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Sep 2020 09:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbgIQN3L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Sep 2020 09:29:11 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10836C061351
-        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2020 06:28:58 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id t10so2097014wrv.1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2020 06:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XLbqqZ/vpJpcdXaFd7VC2pcNFTGY4Iy4LUzor+NVcxg=;
-        b=j1Ewtdfm6q53Q0PWp1kjz54MdZK6+8duFS/Rm1nvXupcPFqa5lJGyQfshtwmUPbmpD
-         9wrB+PtDcm7gvGgJF9xsckuIV14q5YPCh1LFfSpJVfJjfXZ352DVACm1ZyzWzXKI3l44
-         UhbIKHf6FGlCYxLYvTmCXJXzzLVXL3chdpMh1GA3d0wOYgwsPdpL9/P6Nvgo6tHw43ji
-         JGqyWSHQ008Zubvbp7XuON2nTFcoIq63W1b5c09bmu3jVsicdkHNOrDVp5IW9hVab9KC
-         BU4RjO+eBxzaWf5bAqaU3HqCGiNJbNEslZOlXfQ7QTuoPCssCbFFarFLtJFHT69jbMnX
-         dfcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XLbqqZ/vpJpcdXaFd7VC2pcNFTGY4Iy4LUzor+NVcxg=;
-        b=hZXBM0zpWNE+0cQejvAC5elRHf6CVPwhlbHgWg3DBOxRMKKY/Tzg4iR52BrObnQFop
-         338snpNVqknZNiXTEogfQlSslGTOcVZ1AWLDwBWogs5bwh15DqkuOiKgpQOIcrOjRfQ9
-         MkXgOUWDWorgFmd8/QKBzMkaNCdoUgHLvL2gEmuNzSoW2+qiJh6WckiRW5jeqLhQ+HS5
-         GmPYDjFpx5KqtFO0uzi/SStqMk3bNUmW9Ad0z9DHi2TeTjqg8J6AnVjNlbwJex0dxT5p
-         LTHPbQUehVK2wboM1HaNpJgII3FTxuNdJMpGfYsORSWf7PH/jeaIPK0M+0lQv7vZdJEI
-         1tVQ==
-X-Gm-Message-State: AOAM531hLUvgxID0j83lBV3ZaS1nHiI5jX/F0tTQn5ix+nXSG0ZP316L
-        GyyJ8cHyjxP8PcmPxUe4uzIJwQ==
-X-Google-Smtp-Source: ABdhPJxIxoY8/oezHyrHk5clz6STxjXu6oZ+2wLqR+YmY169D2v/URS3C6DnnrbMi+fUKqOGeugFhQ==
-X-Received: by 2002:adf:e289:: with SMTP id v9mr32408611wri.14.1600349336204;
-        Thu, 17 Sep 2020 06:28:56 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.gmail.com with ESMTPSA id n10sm11486910wmk.7.2020.09.17.06.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 06:28:55 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 0/4] clk: qcom : add sm8250 LPASS GFM drivers
-Date:   Thu, 17 Sep 2020 14:28:46 +0100
-Message-Id: <20200917132850.7730-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        id S1727323AbgIRCEa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Sep 2020 22:04:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727264AbgIRCE3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:04:29 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7984723787;
+        Fri, 18 Sep 2020 02:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600394668;
+        bh=Adt6RvK5imwNgQL791a9n50jRKgHUDzZKp9JlfVyb6k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dxYEuqAwsa/EBYtGiFrBhRJ9GCYx8/GlxzTEdxKVq+uaWI95POnpMeaiObce1ECyn
+         nV1bWvN0QTKSBkgzzqSCWL0vd39+l5UWvF8ElB26wkULujvVWd1FNW5lr/2w1fySfH
+         JhWGupSzPfUHTngb3SPGNk+rWvkL8WyecCXBX58s=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 161/330] clk: imx: Fix division by zero warning on pfdv2
+Date:   Thu, 17 Sep 2020 21:58:21 -0400
+Message-Id: <20200918020110.2063155-161-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
+References: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset adds support for GFM Muxes found in LPASS
-(Low Power Audio SubSystem) IP in Audio Clock Controller
-and Always ON clock controller.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Clocks derived from these muxes are consumed by LPASS Digital Codec.
-Currently the driver for Audio and Always ON clock controller only
-supports GFM Muxes, however it should be easy to add more clock
-support when required.
+[ Upstream commit 28b2f82e0383e27476be8a5e13d2aea07ebeb275 ]
 
-Srinivas Kandagatla (4):
-  dt-bindings: clock: Add support for LPASS Audio Clock Controller
-  dt-bindings: clock: Add support for LPASS Always ON Controller
-  clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks
-  clk: qcom: Add support to LPASS AON_CC Glitch Free Mux clocks
+Fix below division by zero warning:
 
- .../bindings/clock/qcom,aoncc-sm8250.yaml     |  58 ++++
- .../bindings/clock/qcom,audiocc-sm8250.yaml   |  58 ++++
- drivers/clk/qcom/Kconfig                      |   7 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/lpass-gfm-sm8250.c           | 296 ++++++++++++++++++
- .../clock/qcom,sm8250-lpass-aoncc.h           |  11 +
- .../clock/qcom,sm8250-lpass-audiocc.h         |  13 +
- 7 files changed, 444 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
- create mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
- create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
- create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+[    3.176443] Division by zero in kernel.
+[    3.181809] CPU: 0 PID: 88 Comm: kworker/0:2 Not tainted 5.3.0-rc2-next-20190730-63758-ge08da51-dirty #124
+[    3.191817] Hardware name: Freescale i.MX7ULP (Device Tree)
+[    3.197821] Workqueue: events dbs_work_handler
+[    3.202849] [<c01127d8>] (unwind_backtrace) from [<c010cd80>] (show_stack+0x10/0x14)
+[    3.211058] [<c010cd80>] (show_stack) from [<c0c77e68>] (dump_stack+0xd8/0x110)
+[    3.218820] [<c0c77e68>] (dump_stack) from [<c0c753c0>] (Ldiv0_64+0x8/0x18)
+[    3.226263] [<c0c753c0>] (Ldiv0_64) from [<c05984b4>] (clk_pfdv2_set_rate+0x54/0xac)
+[    3.234487] [<c05984b4>] (clk_pfdv2_set_rate) from [<c059192c>] (clk_change_rate+0x1a4/0x698)
+[    3.243468] [<c059192c>] (clk_change_rate) from [<c0591a08>] (clk_change_rate+0x280/0x698)
+[    3.252180] [<c0591a08>] (clk_change_rate) from [<c0591fc0>] (clk_core_set_rate_nolock+0x1a0/0x278)
+[    3.261679] [<c0591fc0>] (clk_core_set_rate_nolock) from [<c05920c8>] (clk_set_rate+0x30/0x64)
+[    3.270743] [<c05920c8>] (clk_set_rate) from [<c089cb88>] (imx7ulp_set_target+0x184/0x2a4)
+[    3.279501] [<c089cb88>] (imx7ulp_set_target) from [<c0896358>] (__cpufreq_driver_target+0x188/0x514)
+[    3.289196] [<c0896358>] (__cpufreq_driver_target) from [<c0899b0c>] (od_dbs_update+0x130/0x15c)
+[    3.298438] [<c0899b0c>] (od_dbs_update) from [<c089a5d0>] (dbs_work_handler+0x2c/0x5c)
+[    3.306914] [<c089a5d0>] (dbs_work_handler) from [<c0156858>] (process_one_work+0x2ac/0x704)
+[    3.315826] [<c0156858>] (process_one_work) from [<c0156cdc>] (worker_thread+0x2c/0x574)
+[    3.324404] [<c0156cdc>] (worker_thread) from [<c015cfe8>] (kthread+0x134/0x148)
+[    3.332278] [<c015cfe8>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+[    3.339858] Exception stack(0xe82d5fb0 to 0xe82d5ff8)
+[    3.345314] 5fa0:                                     00000000 00000000 00000000 00000000
+[    3.353926] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    3.362519] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
 
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/imx/clk-pfdv2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+index a03bbed662c6b..2a46b9b61b466 100644
+--- a/drivers/clk/imx/clk-pfdv2.c
++++ b/drivers/clk/imx/clk-pfdv2.c
+@@ -139,6 +139,12 @@ static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 val;
+ 	u8 frac;
+ 
++	if (!rate)
++		return -EINVAL;
++
++	/* PFD can NOT change rate without gating */
++	WARN_ON(clk_pfdv2_is_enabled(hw));
++
+ 	tmp = tmp * 18 + rate / 2;
+ 	do_div(tmp, rate);
+ 	frac = tmp;
 -- 
-2.21.0
+2.25.1
 
