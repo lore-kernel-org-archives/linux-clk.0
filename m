@@ -1,103 +1,95 @@
-Return-Path: <SRS0=4MIy=C4=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=kAlf=C5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DBFC43463
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Sep 2020 14:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E9EC43465
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Sep 2020 11:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4F2F21741
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Sep 2020 14:25:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600525515;
-	bh=kHRkKnYP82SMnFqUKvGenb2khehyXzI7WLF+nQ+tzgw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MjYiABPSWeLhZ5OXeGp6o9OMfFdkN366LxT5jMTgAqDh8IvxAJQUuAtrqoX3iKtWV
-	 qFEXkjuIfKaDUy/4gdR5R1xhwyR/yYhiEv/K2Anpe86eAzpoBSvKc4UwPnQ+qlEZUD
-	 DKhnWHoQQHbgppRGeoU/QAPQCl0WHNfwVRlHPHpc=
+	by mail.kernel.org (Postfix) with ESMTP id D533D20EDD
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Sep 2020 11:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgISOZK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Sep 2020 10:25:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbgISOZK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 Sep 2020 10:25:10 -0400
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E4D21582;
-        Sat, 19 Sep 2020 14:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600525509;
-        bh=kHRkKnYP82SMnFqUKvGenb2khehyXzI7WLF+nQ+tzgw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=2oYZ4BVC2fLdI6wdQldYFviXX+QrY8yA0ESlee7qs0Kg3rxm+3/6PF7RDdoanWhzk
-         7SCrbarFFlCxPmeN8jVVYZ6eN2Dx0WuxN9pBX7Bej1bF3XrffumU+pypQxtnac8AZo
-         1o0OYgAJM/AzKyeyqbeC+5fYnJHhdKDn1nORlUAE=
-Received: by mail-ej1-f50.google.com with SMTP id r7so11824075ejs.11;
-        Sat, 19 Sep 2020 07:25:09 -0700 (PDT)
-X-Gm-Message-State: AOAM532oRJHdcR+yYRD/+FzSvaJSpRXr9lctERxcnRkNsxrPBQ9JP2RJ
-        cRn2Nzdz5QLi/RRmIX6NtWC3RAaQZv6d2xxPMe0=
-X-Google-Smtp-Source: ABdhPJxqLwyyHgA5Kx4Q6V81m6PRoMJ6U0hi/KURq0qDLpn+NftnXz1sAVg2ynpJvB3sE/6Veg68lbEq0jaBtPYIvhc=
-X-Received: by 2002:a17:906:4046:: with SMTP id y6mr43178032ejj.148.1600525507972;
- Sat, 19 Sep 2020 07:25:07 -0700 (PDT)
+        id S1726402AbgITLMX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Sep 2020 07:12:23 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:53280 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbgITLMX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Sep 2020 07:12:23 -0400
+X-Greylist: delayed 522 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Sep 2020 07:12:21 EDT
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 826848030865;
+        Sun, 20 Sep 2020 11:03:38 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Bjp3YX6FKhWw; Sun, 20 Sep 2020 14:03:38 +0300 (MSK)
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        <linux-mips@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: baikal-t1: Mark Ethernet PLL as critical
+Date:   Sun, 20 Sep 2020 14:03:35 +0300
+Message-ID: <20200920110335.18034-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-References: <20200904152404.20636-1-krzk@kernel.org> <20200904152404.20636-8-krzk@kernel.org>
- <81a8248f-0d02-5646-36b2-5d4c3a7c4211@linaro.org>
-In-Reply-To: <81a8248f-0d02-5646-36b2-5d4c3a7c4211@linaro.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Sat, 19 Sep 2020 16:24:56 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdJhfUsTqrTCouF+xQ1ChBWipBc6UaOBbewSPfrEw9Mtg@mail.gmail.com>
-Message-ID: <CAJKOXPdJhfUsTqrTCouF+xQ1ChBWipBc6UaOBbewSPfrEw9Mtg@mail.gmail.com>
-Subject: Re: [PATCH v3 07/14] dt-bindings: thermal: imx8mm-thermal: Add i.MX
- 8M Nano compatible
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 19 Sep 2020 at 13:48, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> On 04/09/2020 17:23, Krzysztof Kozlowski wrote:
-> > DTSes with new i.MX 8M SoCs introduce their own compatibles so add them
-> > to fix dtbs_check warnings like:
-> >
-> >   arch/arm64/boot/dts/freescale/imx8mn-evk.dt.yaml: tmu@30260000:
-> >     compatible:0: 'fsl,imx8mn-tmu' is not one of ['fsl,imx8mm-tmu', 'fsl,imx8mp-tmu']
-> >     From schema: Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml
-> >
-> >   arch/arm64/boot/dts/freescale/imx8mn-evk.dt.yaml: tmu@30260000:
-> >     compatible: ['fsl,imx8mn-tmu', 'fsl,imx8mm-tmu'] is too long
-> >
-> >   arch/arm64/boot/dts/freescale/imx8mn-evk.dt.yaml: tmu@30260000:
-> >     compatible: Additional items are not allowed ('fsl,imx8mm-tmu' was unexpected)
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
->
-> Shall I pick this patch separately or did you merge the entire series ?
+We've discovered that disabling the so called Ethernet PLL causes reset of
+the devices consuming its outgoing clock. The resets happen automatically
+even if each underlying clock gate is turned off. Due to that we can't
+disable the Ethernet PLL until the kernel is prepared for the corresponding
+resets. So for now just mark the PLL clock provider as critical.
 
-Thanks. Rob already picked this up.
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: linux-mips@vger.kernel.org
+---
+ drivers/clk/baikal-t1/clk-ccu-pll.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/baikal-t1/clk-ccu-pll.c b/drivers/clk/baikal-t1/clk-ccu-pll.c
+index 1eec8c0b8f50..2445d4b12baf 100644
+--- a/drivers/clk/baikal-t1/clk-ccu-pll.c
++++ b/drivers/clk/baikal-t1/clk-ccu-pll.c
+@@ -51,11 +51,13 @@ struct ccu_pll_info {
+ };
+ 
+ /*
+- * Mark as critical all PLLs except Ethernet one. CPU and DDR PLLs are sources
+- * of CPU cores and DDR controller reference clocks, due to which they
+- * obviously shouldn't be ever gated. SATA and PCIe PLLs are the parents of
+- * APB-bus and DDR controller AXI-bus clocks. If they are gated the system will
+- * be unusable.
++ * Alas we have to mark all PLLs as critical. CPU and DDR PLLs are sources of
++ * CPU cores and DDR controller reference clocks, due to which they obviously
++ * shouldn't be ever gated. SATA and PCIe PLLs are the parents of APB-bus and
++ * DDR controller AXI-bus clocks. If they are gated the system will be
++ * unusable. Moreover disabling SATA and Ethernet PLLs causes automatic reset
++ * of the corresponding subsystems. So until we aren't ready to re-initialize
++ * all the devices consuming those PLLs, they will be marked as critical too.
+  */
+ static const struct ccu_pll_info pll_info[] = {
+ 	CCU_PLL_INFO(CCU_CPU_PLL, "cpu_pll", "ref_clk", CCU_CPU_PLL_BASE,
+@@ -67,7 +69,7 @@ static const struct ccu_pll_info pll_info[] = {
+ 	CCU_PLL_INFO(CCU_PCIE_PLL, "pcie_pll", "ref_clk", CCU_PCIE_PLL_BASE,
+ 		     CLK_IS_CRITICAL),
+ 	CCU_PLL_INFO(CCU_ETH_PLL, "eth_pll", "ref_clk", CCU_ETH_PLL_BASE,
+-		     CLK_SET_RATE_GATE)
++		     CLK_IS_CRITICAL | CLK_SET_RATE_GATE)
+ };
+ 
+ struct ccu_pll_data {
+-- 
+2.27.0
+
