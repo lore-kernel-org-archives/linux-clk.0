@@ -7,73 +7,77 @@ X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F31CC4363C
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 20:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F8C46466
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 20:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57D602395B
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 20:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D660123A51
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 20:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600721534;
-	bh=caz+2H2w7wsl/UXxZawljT6slmiD8Hkcm44uMUYbu8s=;
+	s=default; t=1600721635;
+	bh=oVPiemudKAENmdJztZvZi1Nm9NdDx7SdlYswo3G3U1w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=n7shC6V6wp8QpMeWgyqDFbeByhxh2I9sBh3xhO9wP9xt/04UCre7jArOTrRxcGmEK
-	 FDco0AdCy4CHMSywtHuHNXXbYLfpTdXpiOPyOa0daaaAniU0dvZ2c70XJT/oHGjeuG
-	 5DQTTeN8i2UGuQJccwuMhNDaL2yyINoNkE+1nIbU=
+	b=G6BzxnCDs7CsStGo4fGF6MxiWtybZV47hO1I9wfhat0Bhs3RExosBJfgPIn1OHKqB
+	 jdkskSnmAmCxRBGGR+udiKsqNLRem/sKUops5D3rZifBNPj2rZGtTp+YYm41rJzmz5
+	 9FmtO1MJZ4e5Il++HgVOHIb9bCEPrrjYvNUhBeSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbgIUUwO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Sep 2020 16:52:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58110 "EHLO mail.kernel.org"
+        id S1727760AbgIUUxz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Sep 2020 16:53:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727808AbgIUUwN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Sep 2020 16:52:13 -0400
+        id S1726727AbgIUUxz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 Sep 2020 16:53:55 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5234E238E2;
-        Mon, 21 Sep 2020 20:52:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C066623A1D;
+        Mon, 21 Sep 2020 20:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600721533;
-        bh=caz+2H2w7wsl/UXxZawljT6slmiD8Hkcm44uMUYbu8s=;
+        s=default; t=1600721634;
+        bh=oVPiemudKAENmdJztZvZi1Nm9NdDx7SdlYswo3G3U1w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iTc6oy1GIyiCkxQr/YO+/rVQlFP285rKfLmhOyVUXk4nqg6dsdZdstwJCKKbsl/2x
-         wPi+F1p9fIi2vfeWqWCmNntTjG51FV9VN0X1SJ9wVhLVCx3E4XMrXMf5Lk3vu5dXsm
-         YCwbn55P6Q2MvModwxgQFLUeMHfvP/c846rpvmK8=
+        b=IPuYeoyMCSEqMF4qIinMwsHowWTaapqYrasDcXmfWtKxwsUZ0LX+0ya5dMJbRPmzW
+         LHU92400fJhHhyHfsK3u7ze7leGoRzZgf/mULLowCov/61IMdTt9OTCrEvKrGqbStX
+         gbWOkjgUzdjRECv5j9BC2VM/ReykD4Hr782akHWk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200918124819.15652-1-geert+renesas@glider.be>
-References: <20200918124819.15652-1-geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.10 (take two)
+In-Reply-To: <1jd02ob7bf.fsf@starbuckisacylon.baylibre.com>
+References: <1jd02ob7bf.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL] clk: meson: updates for v5.10
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 21 Sep 2020 13:52:11 -0700
-Message-ID: <160072153199.4188128.14560622973384403988@swboyd.mtv.corp.google.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Date:   Mon, 21 Sep 2020 13:53:53 -0700
+Message-ID: <160072163362.4188128.18302366911770748384@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-09-18 05:48:19)
->         Hi Mike, Stephen,
+Quoting Jerome Brunet (2020-09-14 10:24:04)
+> Hi Stephen,
 >=20
-> The following changes since commit e41cb217932969a20cea9c44299c449236058e=
-43:
+> Here are the Amlogic clock changes for v5.10
+> Please pull.
 >=20
->   clk: renesas: rcar-gen2: Rename vsp1-(sy|rt) clocks to vsp(s|r) (2020-0=
-9-04 09:42:01 +0200)
+> Cheers
+> Jerome
+>=20
+> The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bb=
+f5:
+>=20
+>   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v5.10-tag2
+>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.10-1
 >=20
-> for you to fetch changes up to 15d683e61bdded719e6202fed2c7401f4dcd95ab:
+> for you to fetch changes up to 7b5c5720a3689c2c16968ee276b7c47edb64ce0f:
 >=20
->   clk: renesas: rcar-gen3: Update description for RZ/G2 (2020-09-17 15:32=
-:25 +0200)
+>   clk: meson: make shipped controller configurable (2020-09-10 11:47:33 +=
+0200)
 >=20
 > ----------------------------------------------------------------
 
