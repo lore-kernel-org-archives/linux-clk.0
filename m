@@ -2,72 +2,103 @@ Return-Path: <SRS0=TK4h=C6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3ACC43465
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 14:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEFAC4346E
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 14:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E77DB221EC
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 14:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0718235F8
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 14:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600699437;
+	bh=hlCTEfeCQncgpBOMjD101cTzGYTMWM+Cj52a8KqvpF4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=1YpJfwJPQN1MG6gbbNwsaekiZLALFI9dHNZ/oCG3ghHlsK2Pel/y5lb/YaZtZjUyG
+	 9gh3NuP2eVpMcJbHe12mvsG2f8BekY9m194VbHzrp7O4IYCDZno3r4q1QcNJXDgg/E
+	 7bbrpSzUcpNtIJDT4Ym306LXy2/yQPd/H7Cj7a+k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbgIUO0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Sep 2020 10:26:54 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13814 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726341AbgIUO0y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Sep 2020 10:26:54 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8E7E3B538FE0CB5D357E;
-        Mon, 21 Sep 2020 22:26:51 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Mon, 21 Sep 2020
- 22:26:40 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <sivaprak@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] clk: qcom: ipq8074: make pcie0_rchng_clk_src static
-Date:   Mon, 21 Sep 2020 22:27:50 +0800
-Message-ID: <20200921142750.875142-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.25.4
+        id S1727788AbgIUOkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Sep 2020 10:40:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727499AbgIUOkg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 Sep 2020 10:40:36 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBABB23718;
+        Mon, 21 Sep 2020 14:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600699235;
+        bh=hlCTEfeCQncgpBOMjD101cTzGYTMWM+Cj52a8KqvpF4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U8O9W0WTbXKk5tbDZC+Rm7geFkXvURdAtwNzJ02go78CprNUhXBicFKk7Fp7ZO5An
+         lkRM8M5RvS4j4KRvoX+m1O5y0nMlCX1O7Jcu7m7mUpUDYmT/hFsqN42W6MmLA9LpBU
+         8u/wqTTpLup1E8wY6LufG4bw0ga93+RGVhTqp6T0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sumera Priyadarsini <sylphrenadin@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.8 06/20] clk: versatile: Add of_node_put() before return statement
+Date:   Mon, 21 Sep 2020 10:40:13 -0400
+Message-Id: <20200921144027.2135390-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200921144027.2135390-1-sashal@kernel.org>
+References: <20200921144027.2135390-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This addresses the following sparse warning:
+From: Sumera Priyadarsini <sylphrenadin@gmail.com>
 
-drivers/clk/qcom/gcc-ipq8074.c:4325:17: warning: symbol
-'pcie0_rchng_clk_src' was not declared. Should it be static?
+[ Upstream commit da9c43dc0e2ec5c42a3d414e389feb30467000e2 ]
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Every iteration of for_each_available_child_of_node() decrements
+the reference count of the previous node, however when control is
+transferred from the middle of the loop, as in the case of a return
+or break or goto, there is no decrement thus ultimately resulting in
+a memory leak.
+
+Fix a potential memory leak in clk-impd1.c by inserting
+of_node_put() before a return statement.
+
+Issue found with Coccinelle.
+
+Signed-off-by: Sumera Priyadarsini <sylphrenadin@gmail.com>
+Link: https://lore.kernel.org/r/20200829175704.GA10998@Kaladin
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-ipq8074.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/versatile/clk-impd1.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index ef2c9c4cf9ab..108fe27bee10 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4322,7 +4322,7 @@ static const struct freq_tbl ftbl_pcie_rchng_clk_src[] = {
- 	{ }
- };
+diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
+index ca798249544d0..85c395df9c008 100644
+--- a/drivers/clk/versatile/clk-impd1.c
++++ b/drivers/clk/versatile/clk-impd1.c
+@@ -109,8 +109,10 @@ static int integrator_impd1_clk_probe(struct platform_device *pdev)
  
--struct clk_rcg2 pcie0_rchng_clk_src = {
-+static struct clk_rcg2 pcie0_rchng_clk_src = {
- 	.cmd_rcgr = 0x75070,
- 	.freq_tbl = ftbl_pcie_rchng_clk_src,
- 	.hid_width = 5,
+ 	for_each_available_child_of_node(np, child) {
+ 		ret = integrator_impd1_clk_spawn(dev, np, child);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			break;
++		}
+ 	}
+ 
+ 	return ret;
 -- 
-2.25.4
+2.25.1
 
