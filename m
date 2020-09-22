@@ -1,320 +1,173 @@
-Return-Path: <SRS0=TK4h=C6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B0AC4363C
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 21:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F72C2D0E2
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 07:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF1B323A5F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Sep 2020 21:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600723614;
-	bh=IV7PGDUgLEoCRfexj4agX3MDocOIODP3V/aEU9GbhMw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=RgspZuSp3ce+OtrPJ+3WocIjRJuIrA0KL97RUOEeIQvU93Mw51clwhHJsTUXxhBHv
-	 A+Mvi+tnwtTezDIjl/0SOYHynd9NfAC+Zt6jQHqXOkOM/ePSOVb2Lw4H97laZb3ir7
-	 TPW2yLO0jEttXsTz9wdcFS0ppbS+QCLxj/zxWtLA=
+	by mail.kernel.org (Postfix) with ESMTP id AC3BE2396D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 07:39:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GH/1YIVb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbgIUV0x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Sep 2020 17:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52288 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727361AbgIUV0x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Sep 2020 17:26:53 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F270A23A5D;
-        Mon, 21 Sep 2020 21:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600723613;
-        bh=IV7PGDUgLEoCRfexj4agX3MDocOIODP3V/aEU9GbhMw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ybOrtx2xpLaqhS5nTFaAqTrS1S6QjwWw5WMKBdLLbvFzg0I3lx+0GwSbWf0MeXa1L
-         qxbsmQyDIf2yfvQTkLqDju6BRC42pt+k8QF8IIcEpsvMpldJhf7LMtKwCe1m99AH8B
-         f2fb3IBbwQ7l79feNMyekvyYCmLRkJr2QSQF7Daw=
-Content-Type: text/plain; charset="utf-8"
+        id S1730065AbgIVHjn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 03:39:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729954AbgIVHjn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 03:39:43 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010F0C061755;
+        Tue, 22 Sep 2020 00:39:43 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id r7so21368484ejs.11;
+        Tue, 22 Sep 2020 00:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iNB02nMhO/yY3S3WrdWHbEn36nrUty39nxVbBmybPc8=;
+        b=GH/1YIVb/RwRait0Z50dxTQFexs4w1fwnq6NzYFAXIJ87jgj9wJpzXNEvSd4LOKovJ
+         D4lu5Gign6siYcwqZvIfCT+f1ZChkeLrfFmLovZxEFk0/lQpV/bY6R/WZyMx/Fp25Idr
+         tzOXPPkGd/F8ywl+fHxlng9HSvmTv616eU8xqEkZmgCuEH9enGCbHimkXMEZPTz9TAJE
+         498A0cqRqxh1lZBWlRnmGtFE1ARCqMXqiWG7VFMLD/cNwzzXhltbDA21o1MU+gdom4o9
+         JXXnK8XUOtoZWnkprlHQUWYXcwGgIPH3PkZj1Vd3FYvCdcFVlvlHw1kUeH1QMVTMEa0H
+         l6EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iNB02nMhO/yY3S3WrdWHbEn36nrUty39nxVbBmybPc8=;
+        b=LcFMM6UkliMWHifP4ga1BxSv5f19zsf181qtSNq3SiDWcDWHo3RWkcX2psWODR6Z7u
+         wlhEkf8wscw/jTKkytJ7g/V4XYiEPiurQV89e+y4Ewbw9UCwTRvALKrEMhA0Ms1kT0vj
+         DH/zPq62n/vMVoeRLW5OawuPnS1HqidGv8l46vVOkWEmzQ8rbjg5DRXwYg4fwdcgv/zw
+         A/trt5cVc1dMJKb1KTQgJUB4pHLlofqJRACEHjVCDhaFnHy3AF9fG/AqhCbPk85Vz/CD
+         dXn89rF7Sj7lPEYrHBOph/LbuT4VMCn3AnF347xPEYE2dan59UXriOBwhHmr6ZD4E/Uf
+         +k0g==
+X-Gm-Message-State: AOAM531xoCTkiESVcpV2CgASbLdLee5OU5jgYiZrFZ6LHTozqY+lKduD
+        +omoWb/bMj5/0w97C76d0hDGeuN5ZtA=
+X-Google-Smtp-Source: ABdhPJxNAQfwpUmcZcdaE8iolL+TMRo6yDI0pQHQslKRtbvdxivNTMXjNUpdr2kUR80nTK/gIVhMwg==
+X-Received: by 2002:a17:907:432b:: with SMTP id ob19mr3564676ejb.400.1600760381612;
+        Tue, 22 Sep 2020 00:39:41 -0700 (PDT)
+Received: from localhost (pd9e51aa4.dip0.t-ipconnect.de. [217.229.26.164])
+        by smtp.gmail.com with ESMTPSA id p12sm10784978ejb.42.2020.09.22.00.39.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2020 00:39:40 -0700 (PDT)
+Date:   Tue, 22 Sep 2020 09:39:39 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.10-rc1
+Message-ID: <20200922073939.GA3994831@ulmo>
+References: <20200921121628.3954746-1-thierry.reding@gmail.com>
+ <20200921121842.GQ3950626@ulmo>
+ <160072205823.4188128.2973025738875931354@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1598621996-31040-5-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1598621996-31040-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1598621996-31040-5-git-send-email-shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH v6 4/8] clk: clock-wizard: Add support for dynamic reconfiguration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, robh+dt@kernel.org,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Chirag Parekh <chirag.parekh@xilinx.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org
-Date:   Mon, 21 Sep 2020 14:26:51 -0700
-Message-ID: <160072361167.310579.5552787788001872119@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Disposition: inline
+In-Reply-To: <160072205823.4188128.2973025738875931354@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2020-08-28 06:39:52)
-> The patch adds support for dynamic reconfiguration of clock output rate.
-> Output clocks are registered as dividers and set rate callback function
-> is used for dynamic reconfiguration.
+
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 21, 2020 at 02:00:58PM -0700, Stephen Boyd wrote:
+> Quoting Thierry Reding (2020-09-21 05:18:42)
+> > On Mon, Sep 21, 2020 at 02:16:28PM +0200, Thierry Reding wrote:
+> > > Hi Mike, Stephen,
+> > >=20
+> > > The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f=
+80bbf5:
+> > >=20
+> > >   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+> > >=20
+> > > are available in the Git repository at:
+> > >=20
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/=
+for-5.10-clk
+> > >=20
+> > > for you to fetch changes up to 2f878d04218c8b26f6d0ab26955ca6b03848a1=
+ad:
+> > >=20
+> > >   clk: tegra: Fix missing prototype for tegra210_clk_register_emc() (=
+2020-09-21 14:09:10 +0200)
+> > >=20
+> > > Thanks,
+> > > Thierry
+> > >=20
+> > > ----------------------------------------------------------------
+> > > clk: tegra: Changes for v5.10-rc1
+> > >=20
+> > > This is a set of small fixes for the Tegra clock driver.
+> > >=20
+> > > ----------------------------------------------------------------
+> > > Thierry Reding (3):
+> > >       clk: tegra: Capitalization fixes
+> > >       clk: tegra: Always program PLL_E when enabled
+> > >       clk: tegra: Fix missing prototype for tegra210_clk_register_emc=
+()
+> > >=20
+> > >  drivers/clk/tegra/clk-pll.c          | 7 ++-----
+> > >  drivers/clk/tegra/clk-tegra210-emc.c | 2 ++
+> > >  2 files changed, 4 insertions(+), 5 deletions(-)
+> >=20
+> > I just realized after sending this out that this is all really tiny and
+> > minor fixes, so perhaps it makes sense to even apply this for v5.9?
+> >=20
 >=20
-> Based on the initial work from Chirag.
->=20
-> Signed-off-by: Chirag Parekh <chirag.parekh@xilinx.com>
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
+> Is something critical? If so then it's OK to merge for v5.9, otherwise
+> I'd rather let it cook in -next for a while. Being small doesn't really
+> make a difference here. What matters is that it fixes some critical
+> problem, preferably introduced this merge window but if it's annoying
+> enough that rule can be broken.
 
-A lot of the same comments apply here.
+This is actually a subset of a set of patches that I had sitting on a
+for-5.9/clk branch but for which I forgot to send a pull request. This
+was pointed out to me on IRC yesterday. So this should already be soft-
+boiled.
 
-> v6:
-> Remove the typecast.
-> use min for capping frequency.
-> use polled timeout
->=20
->  drivers/clk/clk-xlnx-clock-wizard.c | 185 ++++++++++++++++++++++++++++++=
-++++--
->  1 file changed, 179 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-c=
-lock-wizard.c
-> index d6577c8..8dfcec8 100644
-> --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> @@ -31,8 +32,23 @@
->  #define WZRD_DIVCLK_DIVIDE_SHIFT       0
->  #define WZRD_DIVCLK_DIVIDE_MASK                (0xff << WZRD_DIVCLK_DIVI=
-DE_SHIFT)
->  #define WZRD_CLKOUT_DIVIDE_SHIFT       0
-> +#define WZRD_CLKOUT_DIVIDE_WIDTH       8
->  #define WZRD_CLKOUT_DIVIDE_MASK                (0xff << WZRD_DIVCLK_DIVI=
-DE_SHIFT)
-> =20
-> +#define WZRD_DR_MAX_INT_DIV_VALUE      255
-> +#define WZRD_DR_NUM_RETRIES            10000
-> +#define WZRD_DR_STATUS_REG_OFFSET      0x04
-> +#define WZRD_DR_LOCK_BIT_MASK          0x00000001
-> +#define WZRD_DR_INIT_REG_OFFSET                0x25C
-> +#define WZRD_DR_DIV_TO_PHASE_OFFSET    4
-> +#define WZRD_DR_BEGIN_DYNA_RECONF      0x03
-> +
-> +/* Get the mask from width */
-> +#define div_mask(width)                        ((1 << (width)) - 1)
-> +
-> +/* Extract divider instance from clock hardware instance */
-> +#define to_clk_wzrd_divider(_hw) container_of(_hw, struct clk_wzrd_divid=
-er, hw)
-> +
->  enum clk_wzrd_int_clks {
->         wzrd_clk_mul,
->         wzrd_clk_mul_div,
-> @@ -73,6 +112,136 @@ static const unsigned long clk_wzrd_max_freq[] =3D {
->         1066000000UL
->  };
-> =20
-> +/* spin lock variable for clk_wzrd */
-> +static DEFINE_SPINLOCK(clkwzrd_lock);
+The first patch is just a tiny bit of cleanup, but the second patch
+fixes a real problem with SATA that can happen depending on how the
+bootloader has set up the PLL_E. The third patch fixes a build
+warning, which admittedly isn't critical, but certainly nice to have.
+Given that the latter two are the only known issues with the clock
+driver I think it would be nice to have them in v5.9, especially since
+that's going to be an LTS and we'll end up back-porting at least two of
+these patches to it anyway.
 
-What is it protecting?
+Thierry
 
-> +
-> +static unsigned long clk_wzrd_recalc_rate(struct clk_hw *hw,
-> +                                         unsigned long parent_rate)
-> +{
-> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> +       void __iomem *div_addr =3D divider->base + divider->offset;
-> +       unsigned int val;
-> +
-> +       val =3D readl(div_addr) >> divider->shift;
-> +       val &=3D div_mask(divider->width);
-> +
-> +       return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> +                       divider->flags, divider->width);
-> +}
-> +
-> +static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long ra=
-te,
-> +                                    unsigned long parent_rate)
-> +{
-> +       int err =3D 0;
-> +       u32 value;
-> +       struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> +       void __iomem *div_addr =3D divider->base + divider->offset;
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Shouldn't the lock be held here?
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +       value =3D DIV_ROUND_CLOSEST(parent_rate, rate);
-> +
-> +       /* Cap the value to max */
-> +       min(value, (u32)WZRD_DR_MAX_INT_DIV_VALUE);
-> +
-> +       /* Set divisor and clear phase offset */
-> +       writel(value, div_addr);
-> +       writel(0x00, div_addr + WZRD_DR_DIV_TO_PHASE_OFFSET);
-> +
-> +       /* Check status register */
-> +       err =3D readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFF=
-SET, value,
-> +                               value & WZRD_DR_LOCK_BIT_MASK,
-> +                               WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-> +       if (err)
-> +               return err;
-> +
-> +       /* Initiate reconfiguration */
-> +       writel(WZRD_DR_BEGIN_DYNA_RECONF,
-> +              divider->base + WZRD_DR_INIT_REG_OFFSET);
-> +
-> +       /* Check status register */
-> +       err =3D readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFF=
-SET, value,
-> +                               value & WZRD_DR_LOCK_BIT_MASK,
-> +                               WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-> +
-> +       return err;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9pqjkACgkQ3SOs138+
+s6GmJQ//fnWhzFOGe3z9wN686sMGqACLkOBLlADl3u8Im1ELojq8IB/swUUJdYen
+IMJZG6ZXRNPm0HWh7GWkzYYhsivbwvJpFtZUqgcGIvLb++iH8cMNR0RObN+iQ8Qs
+5RBs8hU8oRXXOsQXsJ7HzUziQNDRhCy2Kd47VHzWnbEbVaNSDgBdmFgd3livmh1v
+U2Igk8kWGWBZEnGArG2tRnYRWiHSfeu9UknTgjI4lPDi5diGDA1TI8QOOD8ZPo7V
+OeyP/5Fbz4RX7MutIPCx5l/hZZyIiDbsqcYz0q+atDGHdW7QtL5X5p9+xfpKX1IG
+sO9KuxPF7hW/sBK3OtnU/kW7S7rdpIlfNmwQ4CNvOAzoAZd5hi2Uicaj9G6KzICk
+S3KEE3EzgtXgA7JiF90zC5pnWgv010vJqB31tlTEUmJCFMlTWEX6j7DHC4MQ/7C0
+4H8cMo/6RRanD0Yp1hJuf3fqDnS+QH8lbsy6rLNHT9aGZIGHjvCaiPNFol1ek3ry
+udhM4JUhRQH8qAQWwuGovWnUV6z2uYZv/JLeIVMqH42cikLNkrIqj9OcOj3qYkhv
+P8MCBkmUb/jmkG7ZSLHwolgWTa7vQZkyTdZMcVxwWYkN+7SuOm8X7MHPjZlBSfBE
+fIIlsTGLn8InGIaeoupXPOf1ISQ07KgDYc1ZLNLuardKTikiZEw=
+=B6Rr
+-----END PGP SIGNATURE-----
 
-return readl_poll_timeout().
-
-> +}
-> +
-> +static long clk_wzrd_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long *prate)
-> +{
-> +       u8 div;
-> +
-> +       /*
-> +        * since we don't change parent rate we just round rate to closest
-> +        * achievable
-> +        */
-> +       div =3D DIV_ROUND_CLOSEST(*prate, rate);
-> +
-> +       return (*prate / div);
-
-Drop useless parens please.
-
-> +}
-> +
-> +static const struct clk_ops clk_wzrd_clk_divider_ops =3D {
-> +       .round_rate =3D clk_wzrd_round_rate,
-> +       .set_rate =3D clk_wzrd_dynamic_reconfig,
-> +       .recalc_rate =3D clk_wzrd_recalc_rate,
-> +};
-> +
-> +static struct clk *clk_wzrd_register_divider(struct device *dev,
-> +                                            const char *name,
-> +                                            const char *parent_name,
-> +                                            unsigned long flags,
-> +                                            void __iomem *base, u16 offs=
-et,
-> +                                            u8 shift, u8 width,
-> +                                            u8 clk_divider_flags,
-> +                                            const struct clk_div_table *=
-table,
-> +                                            spinlock_t *lock)
-> +{
-> +       struct clk_wzrd_divider *div;
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init;
-> +       int ret;
-> +
-> +       if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-
-Is it used?
-
-> +               if (width + shift > 16) {
-> +                       pr_warn("divider value exceeds LOWORD field\n");
-> +                       return ERR_PTR(-EINVAL);
-> +               }
-> +       }
-> +
-> +       /* allocate the divider */
-> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
-> +       if (!div)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D name;
-> +       if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
-
-Is this used?
-
-> +               init.ops =3D &clk_divider_ro_ops;
-> +       else
-> +               init.ops =3D &clk_wzrd_clk_divider_ops;
-> +       init.flags =3D flags;
-> +       init.parent_names =3D (parent_name ? &parent_name : NULL);
-> +       init.num_parents =3D (parent_name ? 1 : 0);
-
-Doesn't it always have a parent?
-
-> +
-> +       /* struct clk_divider assignments */
-
-Drop useless comments please.
-
-> +       div->base =3D base;
-> +       div->offset =3D offset;
-> +       div->shift =3D shift;
-> +       div->width =3D width;
-> +       div->flags =3D clk_divider_flags;
-> +       div->lock =3D lock;
-> +       div->hw.init =3D &init;
-> +       div->table =3D table;
-> +
-> +       /* register the clock */
-> +       hw =3D &div->hw;
-> +       ret =3D clk_hw_register(dev, hw);
-
-devm_clk_hw_register()?
-
-> +       if (ret) {
-> +               kfree(div);
-
-Why not a devm_kzalloc() and then drop this?
-
-> +               hw =3D ERR_PTR(ret);
-> +       }
-> +
-> +       return hw->clk;
-> +}
-> +
->  static int clk_wzrd_clk_notifier(struct notifier_block *nb, unsigned lon=
-g event,
->                                  void *data)
->  {
-> @@ -243,11 +413,14 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
->                         ret =3D -EINVAL;
->                         goto err_rm_int_clks;
->                 }
-> -               reg =3D readl(clk_wzrd->base + WZRD_CLK_CFG_REG(2) + i * =
-12);
-> -               reg &=3D WZRD_CLKOUT_DIVIDE_MASK;
-> -               reg >>=3D WZRD_CLKOUT_DIVIDE_SHIFT;
-> -               clk_wzrd->clkout[i] =3D clk_register_fixed_factor
-> -                       (&pdev->dev, clkout_name, clk_name, 0, 1, reg);
-> +               clk_wzrd->clkout[i] =3D clk_wzrd_register_divider(&pdev->=
-dev,
-> +                                                               clkout_na=
-me,
-> +                               clk_name, 0,
-> +                               clk_wzrd->base, (WZRD_CLK_CFG_REG(2) + i =
-* 12),
-> +                               WZRD_CLKOUT_DIVIDE_SHIFT,
-> +                               WZRD_CLKOUT_DIVIDE_WIDTH,
-> +                               CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW=
-_ZERO,
-> +                               NULL, &clkwzrd_lock);
-
-Also wonder if we could have a clk_wzrd_register_divider() API that
-knows most of these things and just takes a number indicating which clk
-it is? Then the caller isn't a bunch of lines of code that has to be
-mentally carried to the callee.
-
->                 if (IS_ERR(clk_wzrd->clkout[i])) {
->                         int j;
->
+--YiEDa0DAkWCtVeE4--
