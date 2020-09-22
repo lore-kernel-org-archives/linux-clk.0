@@ -2,124 +2,88 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21ADEC4363D
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684D1C4363D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF0D923600
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 241162071A
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600801727;
-	bh=4J/w3Vkxg+HuqQSVYaDRFa+rb6aMDW8KUCGejb/V2A0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=h6jcluz28hGObOWgBxW576KZlIbE05/9ca7jhITx1CwUwyNyxW6timnDGAQy1CbOw
-	 qIAUo8CATStJsE75Jvnz5v9hlU7YDkAS2IMtC1AW7IHf9x3RkV2K24tx7Af1BqlHbB
-	 c4FI5nQYOcSEzyP8/cDyEnOjITZU8mI9taH2Hdl8=
+	s=default; t=1600802203;
+	bh=xFAegshdal4oOFaZe0xOh2NNgkqPJPvZzLl0b11jFcw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=l9GyhgUfCahvCz5oCMWfkmH7cAOFFiBVhhKVIqikiAC/BpURqC77UfLSbGe+PDUd4
+	 /EjLQ/SNets1jNDZE0hiVxTFToDS1OxEmhdAABrl3rGDJ6xPSewjTziUikXX5zfEoZ
+	 6cAykoGUY5mvuZc7jIJldS6EjRfeSTxtgALU1zNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgIVTIr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:08:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48834 "EHLO mail.kernel.org"
+        id S1726676AbgIVTQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:16:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbgIVTIr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:08:47 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726641AbgIVTQm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:16:42 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FD032311C;
-        Tue, 22 Sep 2020 19:08:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34713206FC;
+        Tue, 22 Sep 2020 19:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600801727;
-        bh=4J/w3Vkxg+HuqQSVYaDRFa+rb6aMDW8KUCGejb/V2A0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=n5+ZnjhvGUjMfCK/7E4TCdk1S6XvvPqu8PeZ4igOaV3VnkLR0HyWjqSnsdYfA5XC1
-         HSEWzxMU1RQnxcoVQSJqLwTZr7Ou7PUJ9iY4R91lrrOlhc2+OXi90BFP9XahZuEF81
-         NU7iDaLcLuzK5yZ2B3unQL2Vl5hCJRrU8Bcyd064=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200922073939.GA3994831@ulmo>
-References: <20200921121628.3954746-1-thierry.reding@gmail.com> <20200921121842.GQ3950626@ulmo> <160072205823.4188128.2973025738875931354@swboyd.mtv.corp.google.com> <20200922073939.GA3994831@ulmo>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v5.10-rc1
+        s=default; t=1600802202;
+        bh=xFAegshdal4oOFaZe0xOh2NNgkqPJPvZzLl0b11jFcw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sPqHsK5xTBVlrFS5V8D8Wi7xnOOszj7cfZKZAUpMFKFHJYJO+CoJxpfvQJ2l44+W4
+         HktAjslwLIrurrpF1cgwjH6Ut/AVl+/sN3o0E/WjGTL3d8OCtxPV7OGXZfrrm6zTWc
+         BWYJPnWpg2oYkKk9Lb/DRhYboZ0my/m5MGUmhEpw=
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-To:     Thierry Reding <thierry.reding@gmail.com>
-Date:   Tue, 22 Sep 2020 12:08:45 -0700
-Message-ID: <160080172593.310579.8671366820158880157@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH] clk: tegra: Drop !provider check in tegra210_clk_emc_set_rate()
+Date:   Tue, 22 Sep 2020 12:16:41 -0700
+Message-Id: <20200922191641.2305144-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2020-09-22 00:39:39)
-> On Mon, Sep 21, 2020 at 02:00:58PM -0700, Stephen Boyd wrote:
-> > Quoting Thierry Reding (2020-09-21 05:18:42)
-> > > On Mon, Sep 21, 2020 at 02:16:28PM +0200, Thierry Reding wrote:
-> > > > Hi Mike, Stephen,
-> > > >=20
-> > > > The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c=
-2f80bbf5:
-> > > >=20
-> > > >   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
-> > > >=20
-> > > > are available in the Git repository at:
-> > > >=20
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tag=
-s/for-5.10-clk
-> > > >=20
-> > > > for you to fetch changes up to 2f878d04218c8b26f6d0ab26955ca6b03848=
-a1ad:
-> > > >=20
-> > > >   clk: tegra: Fix missing prototype for tegra210_clk_register_emc()=
- (2020-09-21 14:09:10 +0200)
-> > > >=20
-> > > > Thanks,
-> > > > Thierry
-> > > >=20
-> > > > ----------------------------------------------------------------
-> > > > clk: tegra: Changes for v5.10-rc1
-> > > >=20
-> > > > This is a set of small fixes for the Tegra clock driver.
-> > > >=20
-> > > > ----------------------------------------------------------------
-> > > > Thierry Reding (3):
-> > > >       clk: tegra: Capitalization fixes
-> > > >       clk: tegra: Always program PLL_E when enabled
-> > > >       clk: tegra: Fix missing prototype for tegra210_clk_register_e=
-mc()
-> > > >=20
-> > > >  drivers/clk/tegra/clk-pll.c          | 7 ++-----
-> > > >  drivers/clk/tegra/clk-tegra210-emc.c | 2 ++
-> > > >  2 files changed, 4 insertions(+), 5 deletions(-)
-> > >=20
-> > > I just realized after sending this out that this is all really tiny a=
-nd
-> > > minor fixes, so perhaps it makes sense to even apply this for v5.9?
-> > >=20
-> >=20
-> > Is something critical? If so then it's OK to merge for v5.9, otherwise
-> > I'd rather let it cook in -next for a while. Being small doesn't really
-> > make a difference here. What matters is that it fixes some critical
-> > problem, preferably introduced this merge window but if it's annoying
-> > enough that rule can be broken.
->=20
-> This is actually a subset of a set of patches that I had sitting on a
-> for-5.9/clk branch but for which I forgot to send a pull request. This
-> was pointed out to me on IRC yesterday. So this should already be soft-
-> boiled.
->=20
-> The first patch is just a tiny bit of cleanup, but the second patch
-> fixes a real problem with SATA that can happen depending on how the
-> bootloader has set up the PLL_E. The third patch fixes a build
-> warning, which admittedly isn't critical, but certainly nice to have.
-> Given that the latter two are the only known issues with the clock
-> driver I think it would be nice to have them in v5.9, especially since
-> that's going to be an LTS and we'll end up back-porting at least two of
-> these patches to it anyway.
->=20
+The provider variable is already dereferenced earlier in this function.
+Drop the check for NULL as it is impossible.
 
-Ok. Is the bootloader problem happening right now?
+Found with smatch
+
+drivers/clk/tegra/clk-tegra210-emc.c:131 tegra210_clk_emc_set_rate() warn: variable dereferenced before check 'provider' (see line 124)
+
+Cc: Joseph Lo <josephl@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Fixes: 0ac65fc946d3 ("clk: tegra: Implement Tegra210 EMC clock")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra210-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
+index 352a2c3fc374..971c919b2994 100644
+--- a/drivers/clk/tegra/clk-tegra210-emc.c
++++ b/drivers/clk/tegra/clk-tegra210-emc.c
+@@ -126,7 +126,7 @@ static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned int i;
+ 	int err;
+ 
+-	if (!provider || !provider->configs || provider->num_configs == 0)
++	if (!provider->configs || provider->num_configs == 0)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < provider->num_configs; i++) {
+
+base-commit: 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+
