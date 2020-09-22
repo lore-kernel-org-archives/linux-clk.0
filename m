@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9173EC2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C9FC2D0E2
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21186238A1
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A862C238A1
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600804829;
-	bh=Xp/dnmXZpQ5oF4+Hs+C3y4T4YnmtYpP9tKcrSJlBSnM=;
+	s=default; t=1600804836;
+	bh=ZwnUe3Xjef2czjP4zjDspy9BSZFwXa1PlWeADD6pcZ0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=t2I2YNdu3pPxMuwCfsG2Bt6SQ0S0arBBAkskMemsnK7fuQDtuhfFfhCNRxFfH8TVR
-	 DRTwuicpVaVNAqrS/TJ9D8mzo7W+V6uOGNv9bmlVQjpJqvzU5E17IwU7PBChR/HhO5
-	 PHnsC6TS3fjN0H2Lpmlu04anGOb3yX6HBFF2xre8=
+	b=gT+tf0l7iT9NyNitLUQ+WLeBjqqz0bzlrieIt9FQseqB8yYZoFrrW5gwz2BYRF74L
+	 /bsS6cYNmaQG5HLC6yNyiiLQQiYpalvR2MBAoR51hyA6BpwkDpc/ChVIj8V4VZSgs+
+	 2eMvMSwKOrecI+w4t1O8oj5sgtUZRbLSQbllMb2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgIVUA2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 16:00:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59178 "EHLO mail.kernel.org"
+        id S1726685AbgIVUAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 16:00:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbgIVUA2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 16:00:28 -0400
+        id S1726563AbgIVUAg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 16:00:36 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04AE1221E8;
-        Tue, 22 Sep 2020 20:00:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B56B220715;
+        Tue, 22 Sep 2020 20:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600804828;
-        bh=Xp/dnmXZpQ5oF4+Hs+C3y4T4YnmtYpP9tKcrSJlBSnM=;
+        s=default; t=1600804835;
+        bh=ZwnUe3Xjef2czjP4zjDspy9BSZFwXa1PlWeADD6pcZ0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XGT3AHSXzEdKilBX/b6qPwmWNSAilxpVJqiSckyLA13gcrYlr15ba0g3mCqVUpf1V
-         n/LEMD4KFrRp/V4qnH7C0DQWyBKOJ7rfUzPR9KBOBx6V9fd8EjqY1s1zIOjoxAiYbY
-         VJsnBJeAOTvCiXqlcLb6afKbsbxiWmIhSeTwXpUI=
+        b=xVSs22pd66z/MbeOQjkT5niUDP48fUg0NpYDpOWslX8d0KJ4DrUsvdjQYF6v5u/nN
+         JcuRW35923uC4ZnK61Kh5eI5USLwiZbHJCFBwV3we+qQkA3RGCqCtZ18C0P3xXWcOB
+         0gxbTvwUTS4qC57w12ouGg2FV0OY11CWxurqrwOs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200907082600.454-2-t-kristo@ti.com>
-References: <20200907082600.454-1-t-kristo@ti.com> <20200907082600.454-2-t-kristo@ti.com>
-Subject: Re: [PATCH 1/3] clk: ti: autoidle: add checks against NULL pointer reference
+In-Reply-To: <20200907082600.454-3-t-kristo@ti.com>
+References: <20200907082600.454-1-t-kristo@ti.com> <20200907082600.454-3-t-kristo@ti.com>
+Subject: Re: [PATCH 2/3] clk: ti: clockdomain: fix static checker warning
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-omap@vger.kernel.org
 To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
-Date:   Tue, 22 Sep 2020 13:00:26 -0700
-Message-ID: <160080482662.310579.152362626058257826@swboyd.mtv.corp.google.com>
+Date:   Tue, 22 Sep 2020 13:00:34 -0700
+Message-ID: <160080483454.310579.2053719972531270257@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2020-09-07 01:25:58)
-> The clk pointer passed to omap2_clk_(deny|allow)_idle can be NULL, so
-> add checks for this.
+Quoting Tero Kristo (2020-09-07 01:25:59)
+> Fix a memory leak induced by not calling clk_put after doing of_clk_get.
 >=20
 > Reported-by: Dan Murphy <dmurphy@ti.com>
 > Signed-off-by: Tero Kristo <t-kristo@ti.com>
