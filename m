@@ -2,95 +2,154 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 778DBC2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 09:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0036C4727E
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 10:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FEA120BED
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 09:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6077B2395B
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 10:02:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dTQbnJI6"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Xn2QaT8U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbgIVJR0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 05:17:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44304 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbgIVJR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 05:17:26 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08M9F9Bv058619;
-        Tue, 22 Sep 2020 09:17:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=0LlcmxUgv23UmLo9kyhfbOkV0pFyrGTGgW1VdjwNSd4=;
- b=dTQbnJI6UN0bN/BwmreesITbFiCsz3PgN3opYy6YmGmla1B8XM02BDPYf6pyJyxpjhoy
- Ie9XX0T44dfmJKiK/B7ANDTYMOEqWl5UAxNGs4qTqK6CkPnIz669nzPdP257xkTBzp9o
- a2sNw0KRPP7g5BkBrXw3rh5RD63Y013y0hEO2ayOLffOQZmkV6OFEFEpexkr66J8bYmL
- EO+joaP1Vck0URLRVJtJVbm/7ZSzmf69/CTXRJM3jHa72dh+Lg3fi2Pndh9LYn4/ZeDr
- XnJ5JRdx15xoop8ugb6aye6BxQ4wMJEZ7P00Jgh/usHBYmS5VOF9Ev7qLR6ffkI03wDI 0g== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 33q5rga2ny-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Sep 2020 09:17:21 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08M9FqbA139159;
-        Tue, 22 Sep 2020 09:17:21 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 33nuw3bvpx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Sep 2020 09:17:20 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08M9HH2C009085;
-        Tue, 22 Sep 2020 09:17:18 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 22 Sep 2020 02:17:17 -0700
-Date:   Tue, 22 Sep 2020 12:17:09 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     linux-clk@vger.kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v6 5/8] clk: clock-wizard: Add support for fractional
- support
-Message-ID: <20200922091709.GD4282@kadam>
-References: <1598621996-31040-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1598621996-31040-6-git-send-email-shubhrajyoti.datta@xilinx.com>
+        id S1726563AbgIVKCi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 06:02:38 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55617 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbgIVKCh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 06:02:37 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200922100236euoutp02051e167b9599887e104f56a49405f4c4~3EuJylZ-p2917029170euoutp026
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2020 10:02:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200922100236euoutp02051e167b9599887e104f56a49405f4c4~3EuJylZ-p2917029170euoutp026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600768956;
+        bh=9h+/bNjJQklf4fdz2sAkI4M13yllHVeThUPf7uDwHVk=;
+        h=From:Subject:To:Cc:Date:References:From;
+        b=Xn2QaT8UfBkd0J41m27GFq1EuGHy0x5yOYZsi7p03XaeJL1T9QDN//gRJ7sRzWTcX
+         KrFZMfhhDBYPP41N9dhrgHmvql8F81ubuv3TM3dwGrbTnbzFnQlQ8MtMS/KwM/5WT3
+         3vWJdapGKzMIQTRddqvVAKTpXXiBwW1RdSjgFcdw=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200922100236eucas1p273b07fe175bb2312a7c2a0ee83b88c55~3EuJeKZGr0641906419eucas1p2L;
+        Tue, 22 Sep 2020 10:02:36 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6A.44.06456.BBBC96F5; Tue, 22
+        Sep 2020 11:02:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df~3EuJJliU-1452214522eucas1p2c;
+        Tue, 22 Sep 2020 10:02:35 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200922100235eusmtrp1ad1fe73f99568720c474fc686c8b1f53~3EuJI-69B1481214812eusmtrp1k;
+        Tue, 22 Sep 2020 10:02:35 +0000 (GMT)
+X-AuditID: cbfec7f2-7efff70000001938-98-5f69cbbb5865
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id F8.97.06314.BBBC96F5; Tue, 22
+        Sep 2020 11:02:35 +0100 (BST)
+Received: from [106.210.123.115] (unknown [106.210.123.115]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200922100235eusmtip2e517a4c7de3823b6b1a7c81b65a0815e~3EuIp5D9s1803618036eusmtip28;
+        Tue, 22 Sep 2020 10:02:35 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk: samsung: Updates for v5.10
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Message-ID: <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
+Date:   Tue, 22 Sep 2020 12:02:34 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1598621996-31040-6-git-send-email-shubhrajyoti.datta@xilinx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9751 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009220078
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9751 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 impostorscore=0
- clxscore=1011 suspectscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009220078
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djP87q7T2fGG/x5aGGxccZ6VovrX56z
+        WnzsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZa
+        pG+XwJUxtekhS8Fb3oq+3a9ZGxg3cncxcnJICJhILGnbztbFyMUhJLCCUWJu1292COcLo0Tv
+        4k9QzmdGiUMb/7LCtEyf/5wVIrGcUWLixE9MEM5HoJbJq5lBqtgEDCV6j/YxgtjCAsYSrya2
+        s4HYIgJBEnf614ItZBY4xCixZNdtsAZeATuJHw8PgdksAqoSK253s4DYogJxEsdOPWKBqBGU
+        ODnzCZjNLCAucevJfCYIW15i+9s5zCBDJQS62SW2fbjDBHGri8S1L3Oh7haWeHV8CzuELSNx
+        enIPC0RDM6NEz+7b7BDOBEaJ+8cXMEJUWUvcOfcL6FYOoBWaEut36UOEHSWantxnAQlLCPBJ
+        3HgrCHEEn8SkbdOZIcK8Eh1tQhDVKhK/V02HOkdKovvJfxYI20Pi0uKJTBMYFWcheW0Wktdm
+        IXltFsINCxhZVjGKp5YW56anFhvmpZbrFSfmFpfmpesl5+duYgSmnNP/jn/awfj1UtIhRgEO
+        RiUe3gNTM+KFWBPLiitzgUHOwawkwut09nScEG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9j
+        hQTSE0tSs1NTC1KLYLJMHJxSDYzGNzlf375fsJ7n2oK/vwVe1PVsCDvTdtNq0l31O60VFhu6
+        D/MEpd1nTWMtTFyVc4P9/Ov7fxfMVFr7adrVHs2Nh9nmKn6unMH55n1GfP/Mi3omnpPMMlUd
+        FudPDTTynnJJ4YvGzCo71xnvpx6eLHl4oknE6og4//mFxgIWAqXPHrxw9OTkX3haiaU4I9FQ
+        i7moOBEAtx0NJTUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xe7q7T2fGG9z/oGKxccZ6VovrX56z
+        WnzsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASpWdTlF9akqqQ
+        kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJcxtekhS8Fb3oq+3a9Z
+        Gxg3cncxcnJICJhITJ//nLWLkYtDSGApo8TFK3fYuhg5gBJSEvNblCBqhCX+XOtig6h5zyjR
+        /ekjG0iCTcBQovdoHyOILSxgLPFqYjtYXEQgSOLXnntgQ5kFDjFKXGnZxgyS4BWwk/jx8BCY
+        zSKgKrHidjcLiC0qECdxpucFG0SNoMTJmU/A4swC6hJ/5l1ihrDFJW49mc8EYctLbH87h3kC
+        o8AsJC2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIHxsu3Yz807GC9t
+        DD7EKMDBqMTDe2BqRrwQa2JZcWUu0CMczEoivE5nT8cJ8aYkVlalFuXHF5XmpBYfYjQFemgi
+        s5Rocj4wlvNK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTCqs1XJ
+        uzBaWFl7bxF7lZ+kwpl26PqbOrePBya5dvW2dGmXasyZe57R9LT0NP3GVUuijl3OmW4pmzFv
+        2YP4/d22OX2hc3jdL3Vr7jgmddV717K0/+E8biJfv270b6io8JdkUGVnZXS8VL6ay+qElfTF
+        y/NO3a2dMaHtirhC15YV9Uuaknx1tiixFGckGmoxFxUnAgDpEBIJrQIAAA==
+X-CMS-MailID: 20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df
+References: <CGME20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 07:09:53PM +0530, Shubhrajyoti Datta wrote:
-> +
-> +	/* Check status register */
-> +	err= readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
-> +				value & WZRD_DR_LOCK_BIT_MASK,
-> +				WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+Hi Stephen, Mike,
 
-Checkpatch will catch the missing space in "err= readl_".
 
-regards,
-dan carpenter
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.10-samsung
+
+for you to fetch changes up to ff8e0ff9b99643a32f7e33a96867e76d0fa10f76:
+
+  clk: samsung: Use cached clk_hws instead of __clk_lookup() calls (2020-09-17 12:05:18 +0200)
+
+----------------------------------------------------------------
+clk/samsung updates for 5.10
+
+Minor refactoring removing most of the __clk_lookup() calls.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      clk: samsung: Keep top BPLL mux on Exynos542x enabled
+
+Sylwester Nawrocki (5):
+      clk: samsung: exynos5420: Add definition of clock ID for mout_sw_aclk_g3d
+      clk: samsung: exynos5420: Avoid __clk_lookup() calls when enabling clocks
+      clk: samsung: Add clk ID definitions for the CPU parent clocks
+      clk: samsung: exynos5420/5250: Add IDs to the CPU parent clk definitions
+      clk: samsung: Use cached clk_hws instead of __clk_lookup() calls
+
+ drivers/clk/samsung/clk-cpu.c          | 37 +++++++++++---------------
+ drivers/clk/samsung/clk-cpu.h          |  6 ++---
+ drivers/clk/samsung/clk-exynos3250.c   |  6 +++--
+ drivers/clk/samsung/clk-exynos4.c      |  7 +++--
+ drivers/clk/samsung/clk-exynos5250.c   |  8 +++---
+ drivers/clk/samsung/clk-exynos5420.c   | 30 +++++++++++++--------
+ drivers/clk/samsung/clk-exynos5433.c   | 10 +++++--
+ include/dt-bindings/clock/exynos5250.h |  4 ++-
+ include/dt-bindings/clock/exynos5420.h |  6 +++++
+ 9 files changed, 68 insertions(+), 46 deletions(-)
+
+-- 
+Regards,
+Sylwester
