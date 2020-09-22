@@ -2,226 +2,315 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9194DC4727D
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E454C2D0E2
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 21:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6752376F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600807042;
-	bh=ldv1T+AqMs/l5wWHQFVyIGGpu/m8yQ+EMXLI9bmnsu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kpbbZhrZrFxuPCJoVpaSdWH/IKxsyKshbuCGfkWOGLYwK/hVL7QG1wCirWqVPawcw
-	 S+KSZ88vUtsnAH+Db2hUlBzwX7TrXHfbd9gJxADioCDIpxM7lT8XqyskgheG1HtT5J
-	 LwBEGbuD2ovmpctn09srXlsU1GlcLnaFWLt/MWEg=
+	by mail.kernel.org (Postfix) with ESMTP id 275352371F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 21:45:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HK8hKMne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbgIVUhS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 16:37:18 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33396 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgIVUhS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 16:37:18 -0400
-Received: by mail-il1-f193.google.com with SMTP id y2so7955719ila.0;
-        Tue, 22 Sep 2020 13:37:17 -0700 (PDT)
+        id S1726576AbgIVVpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 17:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbgIVVpL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 17:45:11 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107EBC0613D0
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2020 14:45:11 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id a17so18672540wrn.6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2020 14:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w4Sr3PY5vsv9Crdbf5k5DOz31reA+305B7dkZ8nMiGE=;
+        b=HK8hKMneHf+mU9w7jeszAsV8T0xOUCYx0LE8Eh+nEmEHpN10lcFSa8/QjiavuNtoe8
+         CL7JYhCGkszVRUclBZ9/aDVP/7/iSstEE9Nll2A1uqmFTXByh9O7MMoZS1C0S6W4S9GJ
+         iath+ngQFTdiCpYU5mYPxTfgpfT3TM+0gT8//EAMs57VuLcnmFA4CQyCS0pyWUHOX6Yl
+         /xjQTYFYMqRK0kUbU5ab84cxCq6KS6vTnB7DMyiGVV3LLYtaxDWvb/Z0JU3uDZ80lNM1
+         Zg9fbkAVQrVH8PvYMegSKed46At+ubsGy+HUF7Yg5g1SPGINH14Ik2W94kFBvDkKsUB1
+         0MeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b6PLDdi8fxcl5wdYEMizGD4y37EzcneWERt48cXIEcA=;
-        b=kjMHJFuvt/NlRCAY7o7+W1sZhc0iS7/vCKM63sAy+TJTQ5m7Tpy+HqiMVC8+2qQgPJ
-         m2Hk0YpHWmLg74lxHIZ6H5hWsKhdvnfgmvQn55KeDse9RBUeY2o6qJqDfe/qCjdM5WM4
-         CRDOnessCFzzFNu3PXBdNZPKEgizSX439bktacTlUP8lDLZCGcgrjKMSOqH8jorUNWou
-         khoYwtPeFwuFT5nqJAiG4xedsDgShMLjSOmVa8RueKdqUJf2V7hNBIV/jLQbbGPxBx+F
-         m2ZAY5S/ksPO+W3Nwn2n1fL/Dj3eTN5ZUmvwnUlGQMi+S0AQ32ls5vG9mVKn4jmt/Az8
-         Eg9g==
-X-Gm-Message-State: AOAM531TYBob4OkUqJdwIQ0L8qhXOOSq/JpHEgWD6wg2fYoJdk6ibsVQ
-        PRWw9JThhGrPbLF86Qs72w==
-X-Google-Smtp-Source: ABdhPJxILOHU26JjUwj1e2C2a7BUhOjbr/XE/OtmvaSBy6NijsR8Rg+QvKohpCO4W6NfvHoCKokbPw==
-X-Received: by 2002:a92:bf0e:: with SMTP id z14mr5944896ilh.288.1600807036582;
-        Tue, 22 Sep 2020 13:37:16 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id i10sm7935475ioi.39.2020.09.22.13.37.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2020 13:37:15 -0700 (PDT)
-Received: (nullmailer pid 3199568 invoked by uid 1000);
-        Tue, 22 Sep 2020 20:37:14 -0000
-Date:   Tue, 22 Sep 2020 14:37:14 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sagar Kadam <sagar.kadam@sifive.com>
-Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-        tglx@linutronix.de, jason@lakedaemon.net, maz@kernel.org,
-        thierry.reding@gmail.com, u.kleine-koenig@pengutronix.de,
-        lee.jones@linaro.org, aou@eecs.berkeley.edu, yash.shah@sifive.com
-Subject: Re: [PATCH v1 3/3] dt-bindings: riscv: convert pwm bindings to
- json-schema
-Message-ID: <20200922203714.GA3195489@bogus>
-References: <1599734644-4791-1-git-send-email-sagar.kadam@sifive.com>
- <1599734644-4791-4-git-send-email-sagar.kadam@sifive.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w4Sr3PY5vsv9Crdbf5k5DOz31reA+305B7dkZ8nMiGE=;
+        b=VkokZLWPtNWQe+WH9NCdrYpVxIa1Z7LZADIidnHXNGJxl3kk12V9wod2cl5z+dhl4g
+         kQBlZocBuN6WWsSH3nf0cGgPfiIcJi0a5NPP/oS4CF/NmX2rsuNkRii8ZOmyvn6U/oFT
+         VQf3aAhs3bCqoapNAhFlwsx0SN6Se8qp0Af7u/vyEHBkVTtRHicTd30PHrm/OPQWbXaW
+         uIwOJEv7bP8pLAvKjouQ+xlvL88wU7c2izASV6hWbP/HfYN9P28Vn9DLSoO9VH+KEzrj
+         DzVx259BrXrI7mfo+RFFmkO+SkDcpS+UkB2s3FrcFjDY2CyF7LtenaywP7NRRuFxMVeN
+         bc9w==
+X-Gm-Message-State: AOAM533tinQnV2whJ3ITR6ocfpzeBgAI93f55lZvDX1JdXWUBntYVJ97
+        nSlgwiS1oJhFxbE2f7BJB4iPYgEk67AlVQ==
+X-Google-Smtp-Source: ABdhPJxt5E3Wtt6wVHjC7mW21UW8kyk9EDeLzo/ZDWev4V+ta9a/FIhp6YB3Xcf6TtXu4TxjUzFRxA==
+X-Received: by 2002:adf:a1d6:: with SMTP id v22mr7764439wrv.185.1600811109572;
+        Tue, 22 Sep 2020 14:45:09 -0700 (PDT)
+Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
+        by smtp.googlemail.com with ESMTPSA id v128sm6014927wme.2.2020.09.22.14.45.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Sep 2020 14:45:08 -0700 (PDT)
+Subject: Re: [PATCH 3/4] clk: qcom: Add support to LPASS AUDIO_CC Glitch Free
+ Mux clocks
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200917132850.7730-1-srinivas.kandagatla@linaro.org>
+ <20200917132850.7730-4-srinivas.kandagatla@linaro.org>
+ <160080010215.310579.4526434246523292987@swboyd.mtv.corp.google.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a8713637-d240-d22d-02a7-f15080620467@linaro.org>
+Date:   Tue, 22 Sep 2020 22:45:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1599734644-4791-4-git-send-email-sagar.kadam@sifive.com>
+In-Reply-To: <160080010215.310579.4526434246523292987@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 04:14:04PM +0530, Sagar Kadam wrote:
-> Convert device tree bindings for SiFive's PWM controller to YAML
-> format.
+Thanks Stephen for review,
+
+On 22/09/2020 19:41, Stephen Boyd wrote:
+> Quoting Srinivas Kandagatla (2020-09-17 06:28:49)
+>> GFM Muxes in AUDIO_CC control clocks to LPASS WSA and RX Codec Macros.
+>> This patch adds support to these muxes.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig            |   7 +
+>>   drivers/clk/qcom/Makefile           |   1 +
+>>   drivers/clk/qcom/lpass-gfm-sm8250.c | 235 ++++++++++++++++++++++++++++
+>>   3 files changed, 243 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 2eda63b7c46c..4e46fd339e62 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -494,4 +494,11 @@ config KRAITCC
+>>            Support for the Krait CPU clocks on Qualcomm devices.
+>>            Say Y if you want to support CPU frequency scaling.
+>>   
+>> +config CLK_GFM_LPASS_SM8250
+>> +       tristate "GFM LPASS Clocks"
+>> +       depends on SND_SOC_QDSP6_COMMON
 > 
-> Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ----------
->  .../devicetree/bindings/pwm/pwm-sifive.yaml        | 72 ++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 33 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+> What is the depends for?
+I think I forgot to remove this!
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> deleted file mode 100644
-> index 3d1dd7b0..0000000
-> --- a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -SiFive PWM controller
-> -
-> -Unlike most other PWM controllers, the SiFive PWM controller currently only
-> -supports one period for all channels in the PWM. All PWMs need to run at
-> -the same period. The period also has significant restrictions on the values
-> -it can achieve, which the driver rounds to the nearest achievable period.
-> -PWM RTL that corresponds to the IP block version numbers can be found
-> -here:
-> -
-> -https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-> -
-> -Required properties:
-> -- compatible: Should be "sifive,<chip>-pwm" and "sifive,pwm<version>".
-> -  Supported compatible strings are: "sifive,fu540-c000-pwm" for the SiFive
-> -  PWM v0 as integrated onto the SiFive FU540 chip, and "sifive,pwm0" for the
-> -  SiFive PWM v0 IP block with no chip integration tweaks.
-> -  Please refer to sifive-blocks-ip-versioning.txt for details.
-> -- reg: physical base address and length of the controller's registers
-> -- clocks: Should contain a clock identifier for the PWM's parent clock.
-> -- #pwm-cells: Should be 3. See pwm.yaml in this directory
-> -  for a description of the cell format.
-> -- interrupts: one interrupt per PWM channel
-> -
-> -Examples:
-> -
-> -pwm:  pwm@10020000 {
-> -	compatible = "sifive,fu540-c000-pwm", "sifive,pwm0";
-> -	reg = <0x0 0x10020000 0x0 0x1000>;
-> -	clocks = <&tlclk>;
-> -	interrupt-parent = <&plic>;
-> -	interrupts = <42 43 44 45>;
-> -	#pwm-cells = <3>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-> new file mode 100644
-> index 0000000..415d053
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2020 SiFive, Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/pwm-sifive.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SiFive PWM controller
-> +
-> +maintainers:
-> +  - Yash Shah <yash.shah@sifive.com>
-> +  - Sagar Kadam <sagar.kadam@sifive.com>
-> +  - Paul Walmsley <paul.walmsley@sifive.com>
-> +
-> +description:
-> +  Unlike most other PWM controllers, the SiFive PWM controller currently
-> +  only supports one period for all channels in the PWM. All PWMs need to
-> +  run at the same period. The period also has significant restrictions on
-> +  the values it can achieve, which the driver rounds to the nearest
-> +  achievable period. PWM RTL that corresponds to the IP block version
-> +  numbers can be found here -
-> +
-> +  https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: sifive,fu540-c000-pwm
-> +      - const: sifive,pwm0
-> +    description:
-> +      Should be "sifive,<chip>-pwm" and "sifive,pwm<version>". Supported
-> +      compatible strings are "sifive,fu540-c000-pwm" for the SiFive PWM v0
-> +      as integrated onto the SiFive FU540 chip, and "sifive,pwm0" for the
-> +      SiFive PWM v0 IP block with no chip integration tweaks.
-> +      Please refer to sifive-blocks-ip-versioning.txt for details.
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: Physical base address and length of the controller's registers
+>> +       help
+>> +         Support for the GFM Glitch Free Mux LPASS clock. Say Y
+>> +         if you want to support GFM Clocks on LPASS for SM8250 SoC.
+>> +
+>>   endif
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index 8eb395d02a32..c18e4ead6c9e 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -74,3 +74,4 @@ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+>>   obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+>>   obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+>>   obj-$(CONFIG_KRAITCC) += krait-cc.o
+>> +obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
+> 
+> I don't know but probably this should be sorted by Kconfig instead of
+> tacked onto the end here.
+> 
+>> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
+>> new file mode 100644
+>> index 000000000000..2d5c41ae4969
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
+>> @@ -0,0 +1,235 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/io.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/err.h>
+>> +#include <linux/notifier.h>
+>> +#include <linux/device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/of_device.h>
+>> +#include <dt-bindings/clock/qcom,sm8250-lpass-audiocc.h>
+>> +
+>> +struct lpass_gfm {
+>> +       struct device *dev;
+>> +       void __iomem *base;
+>> +       struct clk *core_vote;
+>> +       struct clk *bus_clk;
+>> +};
+>> +
+>> +struct clk_gfm {
+>> +       unsigned int mux_reg;
+>> +       unsigned int mux_mask;
+>> +       struct clk_hw   hw;
+>> +       struct lpass_gfm *priv;
+>> +       void __iomem *gfm_mux;
+>> +};
+>> +
+...
+>> +static struct clk_gfm lpass_gfm_rx_npl = {
+>> +       .mux_reg = 0x240d8,
+>> +       .mux_mask = BIT(0),
+>> +       .hw.init = &(struct clk_init_data) {
+>> +               .name = "RX_NPL",
+>> +               .ops = &clk_gfm_ops,
+>> +               .flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+>> +               .parent_names = (const char *[]){
+>> +                       "LPASS_CLK_ID_TX_CORE_NPL_MCLK",
+>> +                       "LPASS_CLK_ID_RX_CORE_NPL_MCLK",
+>> +               },
+>> +               .parent_data = (const struct clk_parent_data[]){
+>> +                               { .index = 0 },
+>> +                               { .index = 1 },
+>> +               },
+> 
+> Please use parent_data instead of parent_names. The name can go in the
+> parent_data struct.
 
-Drop description.
+Ah.. I missed that, will fix that in next version!
 
-> +
-> +  clocks:
-> +    description: Should contain a clock identifier for the PWM's parent clock.
+> 
+>> +               .num_parents = 2,
+>> +       },
+>> +};
+>> +
+>> +static struct clk_gfm *audiocc_gfm_clks[] = {
+>> +       [LPASS_CDC_WSA_NPL]             = &lpass_gfm_wsa_npl,
+>> +       [LPASS_CDC_WSA_MCLK]            = &lpass_gfm_wsa_mclk,
+>> +       [LPASS_CDC_RX_NPL]              = &lpass_gfm_rx_npl,
+>> +       [LPASS_CDC_RX_MCLK_MCLK2]       = &lpass_gfm_rx_mclk_mclk2,
+>> +};
+>> +
+>> +static struct clk_hw_onecell_data audiocc_hw_onecell_data = {
+>> +       .hws = {
+>> +               [LPASS_CDC_WSA_NPL]     = &lpass_gfm_wsa_npl.hw,
+>> +               [LPASS_CDC_WSA_MCLK]    = &lpass_gfm_wsa_mclk.hw,
+>> +               [LPASS_CDC_RX_NPL]      = &lpass_gfm_rx_npl.hw,
+>> +               [LPASS_CDC_RX_MCLK_MCLK2] = &lpass_gfm_rx_mclk_mclk2.hw,
+>> +       },
+>> +       .num = ARRAY_SIZE(audiocc_gfm_clks),
+>> +};
+>> +
+>> +struct lpass_gfm_data {
+>> +       struct clk_hw_onecell_data *onecell_data;
+>> +       struct clk_gfm **gfm_clks;
+>> +};
+>> +
+>> +static struct lpass_gfm_data audiocc_data = {
+>> +       .onecell_data = &audiocc_hw_onecell_data,
+>> +       .gfm_clks = audiocc_gfm_clks,
+>> +};
+>> +
+>> +static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct lpass_gfm_data *data;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct resource *res;
+>> +       struct clk_gfm *gfm;
+>> +       struct lpass_gfm *cc;
+>> +       int err, i;
+>> +
+>> +       cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+>> +       if (!cc)
+>> +               return -ENOMEM;
+>> +
+>> +       cc->core_vote = devm_clk_get(&pdev->dev, "core");
+>> +       if (IS_ERR(cc->core_vote)) {
+>> +               dev_dbg(dev, "Failed to get lpass core clk\n");
+>> +               return PTR_ERR(cc->core_vote);
+>> +       }
+> 
+> Can this use the pm_clk stuff?
 
-How many clocks?
+you mean add runtime pm support or something else?
 
-> +
-> +  "#pwm-cells":
-> +    const: 3
-> +    description:
-> +      Should be 3. See pwm.yaml in this directory for a description of the
-> +      cell format.
+I can give it a go and see!
 
-Drop.
 
-> +
-> +  interrupts:
-> +    maxItems: 1
+> 
+>> +
+>> +       data = of_device_get_match_data(dev);
+> 
+> What if data is NULL?
+It should not be here if there is no match of compatible string, so data 
+should not be NULL!
 
-Is it 1 or...
+> 
+>> +       cc->bus_clk = devm_clk_get(&pdev->dev, "bus");
+>> +       if (IS_ERR(cc->bus_clk)) {
+>> +               dev_dbg(dev, "Failed to get lpass bus clk\n");
+>> +               return PTR_ERR(cc->bus_clk);
+>> +       }
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       cc->base = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(cc->base))
+>> +               return PTR_ERR(cc->base);
+>> +
+>> +       clk_prepare_enable(cc->core_vote);
+>> +       clk_prepare_enable(cc->bus_clk);
+> 
+> These will always be left enabled if the probe function bails out after here.
+> 
+I agree, Will add some error handling
+>> +
+>> +       for (i = 0; i < data->onecell_data->num; i++) {
+>> +               if (!data->gfm_clks[i])
+>> +                       continue;
+>> +
+>> +               gfm = data->gfm_clks[i];
+>> +               gfm->priv = cc;
+>> +               gfm->gfm_mux = cc->base;
+>> +               gfm->gfm_mux = gfm->gfm_mux + data->gfm_clks[i]->mux_reg;
+>> +
+>> +               err = devm_clk_hw_register(dev, &data->gfm_clks[i]->hw);
+>> +               if (err)
+>> +                       return err;
+>> +
+>> +       }
+>> +
+>> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>> +                                          data->onecell_data);
+>> +}
+>> +
+>> +static const struct of_device_id lpass_gfm_clk_match_table[] = {
+>> +       {
+>> +               .compatible = "qcom,sm8250-lpass-audiocc",
+>> +               .data = &audiocc_data,
+>> +       },
+>> +       { }
+>> +};
+>> +
+>> +static struct platform_driver lpass_gfm_clk_driver = {
+>> +       .probe          = lpass_gfm_clk_driver_probe,
+>> +       .driver         = {
+>> +               .name   = "lpass-gfm-clk",
+>> +               .of_match_table = lpass_gfm_clk_match_table,
+>> +       },
+>> +};
+>> +builtin_platform_driver(lpass_gfm_clk_driver);
+> 
+> Should be module_platform_driver()?
+sure, will do that!
 
-> +    description: One interrupt per PWM channel.
-
-one per channel?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - "#pwm-cells"
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pwm:  pwm@10020000 {
-> +      compatible = "sifive,fu540-c000-pwm", "sifive,pwm0";
-> +      reg = <0x10020000 0x1000>;
-> +      clocks = <&tlclk>;
-> +      interrupt-parent = <&plic>;
-> +      interrupts = <42 43 44 45>;
-
-Split entries:
-
-interrupts = <42>, <43>, <44>, <45>;
-
-> +      #pwm-cells = <3>;
-> +    };
-> -- 
-> 2.7.4
 > 
