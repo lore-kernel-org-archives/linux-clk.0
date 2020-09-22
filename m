@@ -2,142 +2,103 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0509C2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 12:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C042C4727E
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 12:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA592395C
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 12:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C449023A5F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 12:09:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="38EgKSaM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqcBVJ7U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgIVMH0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 08:07:26 -0400
-Received: from www.zeus03.de ([194.117.254.33]:33978 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbgIVMHZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 08:07:25 -0400
-X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Sep 2020 08:07:24 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=pVIIA1FPAVeoonehKiIdJh48Aty
-        H9quaTa2lPSi/Lu0=; b=38EgKSaMTTIrg38uDYp0AL65NKL6eCzvEsi6nmBvP00
-        zD7jW9XqVDgtjPlbE90xkCcUarZlJZgc7o6m8dTNRXaLrzID7nFJ2BOKmZxcB99+
-        xBCRghrVGwrSMAuhzPBqe+QITY32EjRv4xDeW3cHdkOXAh1yR/boc2tR3C8zte2o
-        =
-Received: (qmail 207324 invoked from network); 22 Sep 2020 14:00:42 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Sep 2020 14:00:42 +0200
-X-UD-Smtp-Session: l3s3148p1@UMZnt+WvsOMgAwDPXw2nAFbEEsRzXAbg
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] clk: renesas: rcar-gen3: remove stp_ck handling for SDHI
-Date:   Tue, 22 Sep 2020 14:00:36 +0200
-Message-Id: <20200922120036.10298-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726562AbgIVMJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 08:09:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbgIVMJQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 08:09:16 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B449DC061755;
+        Tue, 22 Sep 2020 05:09:15 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id r7so22451405ejs.11;
+        Tue, 22 Sep 2020 05:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=steyxlT4LVPBsfe8IJH2NOc1f2Mr0MYY3HiC50X/c/0=;
+        b=PqcBVJ7UteV28rSmL9CuvhOhID/Uowd4Vi5TEe7GA2bzJUzqbTmmZm7SWjiPB2GWLl
+         Zl8QrP2PohhWHRpBtKC0fYkFrUo2P40E0n0SjX/zq5YKu7gSpNmgKTPEGxMy5yEeu8dB
+         m1C4jOnOFn9Kdc1XxkKDBXNa+VCReqLMFADIZjD/gyAGo/I+3Ees8nlVC+00UJ+9KGi7
+         6eVmzJV6g5GaH2rmaFYxhC56lyJt//9Ct3th439Vw0eY6AIwMrEVnCIHORO9e6pRPAvF
+         2m6xbPbL8r35BI85U4lbUH9Z1LGOsHYHeWBQ/FOi1FopTp+Nlj8hqPSnDaAQHPLKN6SO
+         HZBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=steyxlT4LVPBsfe8IJH2NOc1f2Mr0MYY3HiC50X/c/0=;
+        b=fTkiT/GVD5Z311TMhJZp3EbFLYyTuRlExLNsjRTQ0uh016p+ftRHcuUC04v0vKuV7r
+         f9SvRMnBf00qMRuG0X6sS/06yaVUAtnZxtJIo6oQJi8jGf02fRUCCtx+VJOH0LbBVi5l
+         mi+VBF7m4WLrSvOMJcjLB+2o6K310igUoBnnnU871k2pU7ohaTjNcl5Oqifx3y+NJCyv
+         qNxlcchFwiPvQqpg05xOCj9SfrxiVYXye+FJkz2clYcnl9RcEGKC4GB7jOXYOLUGYoXJ
+         23G2EONnPWchq1e4O60FEnwhtktXHY91acnAI4abrvDF5UXOJd/4/cJV1k0Nss7S2ivx
+         aPKQ==
+X-Gm-Message-State: AOAM533cDZq3TZsOfGbpE/fgEuubLV4+5bj8ZBSlpBoTAaEnJHOOt9t9
+        +xkZ3zkjROwmoAkaE6V9A4Q=
+X-Google-Smtp-Source: ABdhPJzlCM3Uyjl7gfhzf06ug/kOBwEhcs+oi+eQu3ZTZlZOD1QO+qA+foqWGCToItKWcrF5S8Bsgg==
+X-Received: by 2002:a17:906:474f:: with SMTP id j15mr4786337ejs.468.1600776554474;
+        Tue, 22 Sep 2020 05:09:14 -0700 (PDT)
+Received: from localhost.localdomain (abab42.neoplus.adsl.tpnet.pl. [83.6.165.42])
+        by smtp.googlemail.com with ESMTPSA id c25sm3575013ejd.88.2020.09.22.05.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2020 05:09:13 -0700 (PDT)
+From:   Konrad Dybcio <konradybcio@gmail.com>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Konrad Dybcio <konradybcio@gmail.com>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-sdm660: Fix wrong parent_map
+Date:   Tue, 22 Sep 2020 14:09:09 +0200
+Message-Id: <20200922120909.97203-1-konradybcio@gmail.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no case (and none foreseen) where we would need to disable the
-SDn clock. So, for simplicity, remove its handling.
+This was likely overlooked while porting the driver upstream.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reported-by: Pavel Dubrova <pashadubrova@gmail.com>
+Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 ---
+ drivers/clk/qcom/gcc-sdm660.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Geert seems to favor simplicity, too. So, now this patch leaves RFC
-status.
-
-Change since RFC: * fixed typo in commit message
-
- drivers/clk/renesas/rcar-gen3-cpg.c | 51 ++++++++++++++---------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 488f8b3980c5..a7debddf7d09 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -224,10 +224,9 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- #define CPG_SD_STP_MASK		(CPG_SD_STP_HCK | CPG_SD_STP_CK)
- #define CPG_SD_FC_MASK		(0x7 << 2 | 0x3 << 0)
- 
--#define CPG_SD_DIV_TABLE_DATA(stp_hck, stp_ck, sd_srcfc, sd_fc, sd_div) \
-+#define CPG_SD_DIV_TABLE_DATA(stp_hck, sd_srcfc, sd_fc, sd_div) \
- { \
- 	.val = ((stp_hck) ? CPG_SD_STP_HCK : 0) | \
--	       ((stp_ck) ? CPG_SD_STP_CK : 0) | \
- 	       ((sd_srcfc) << 2) | \
- 	       ((sd_fc) << 0), \
- 	.div = (sd_div), \
-@@ -247,36 +246,36 @@ struct sd_clock {
- };
- 
- /* SDn divider
-- *                     sd_srcfc   sd_fc   div
-- * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
-- *-------------------------------------------------------------------
-- *  0         0         0 (1)      1 (4)      4 : SDR104 / HS200 / HS400 (8 TAP)
-- *  0         0         1 (2)      1 (4)      8 : SDR50
-- *  1         0         2 (4)      1 (4)     16 : HS / SDR25
-- *  1         0         3 (8)      1 (4)     32 : NS / SDR12
-- *  1         0         4 (16)     1 (4)     64
-- *  0         0         0 (1)      0 (2)      2
-- *  0         0         1 (2)      0 (2)      4 : SDR104 / HS200 / HS400 (4 TAP)
-- *  1         0         2 (4)      0 (2)      8
-- *  1         0         3 (8)      0 (2)     16
-- *  1         0         4 (16)     0 (2)     32
-+ *           sd_srcfc   sd_fc   div
-+ * stp_hck   (div)      (div)     = sd_srcfc x sd_fc
-+ *---------------------------------------------------------
-+ *  0         0 (1)      1 (4)      4 : SDR104 / HS200 / HS400 (8 TAP)
-+ *  0         1 (2)      1 (4)      8 : SDR50
-+ *  1         2 (4)      1 (4)     16 : HS / SDR25
-+ *  1         3 (8)      1 (4)     32 : NS / SDR12
-+ *  1         4 (16)     1 (4)     64
-+ *  0         0 (1)      0 (2)      2
-+ *  0         1 (2)      0 (2)      4 : SDR104 / HS200 / HS400 (4 TAP)
-+ *  1         2 (4)      0 (2)      8
-+ *  1         3 (8)      0 (2)     16
-+ *  1         4 (16)     0 (2)     32
-  *
-  *  NOTE: There is a quirk option to ignore the first row of the dividers
-  *  table when searching for suitable settings. This is because HS400 on
-  *  early ES versions of H3 and M3-W requires a specific setting to work.
-  */
- static const struct sd_div_table cpg_sd_div_table[] = {
--/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
--	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
-+/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  sd_srcfc,   sd_fc,  sd_div) */
-+	CPG_SD_DIV_TABLE_DATA(0,        0,          1,        4),
-+	CPG_SD_DIV_TABLE_DATA(0,        1,          1,        8),
-+	CPG_SD_DIV_TABLE_DATA(1,        2,          1,       16),
-+	CPG_SD_DIV_TABLE_DATA(1,        3,          1,       32),
-+	CPG_SD_DIV_TABLE_DATA(1,        4,          1,       64),
-+	CPG_SD_DIV_TABLE_DATA(0,        0,          0,        2),
-+	CPG_SD_DIV_TABLE_DATA(0,        1,          0,        4),
-+	CPG_SD_DIV_TABLE_DATA(1,        2,          0,        8),
-+	CPG_SD_DIV_TABLE_DATA(1,        3,          0,       16),
-+	CPG_SD_DIV_TABLE_DATA(1,        4,          0,       32),
- };
- 
- #define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index 3cffadc77bce..1a5e98e5c965 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -666,7 +666,7 @@ static struct clk_rcg2 hmss_rbcpr_clk_src = {
+ 	.cmd_rcgr = 0x48044,
+ 	.mnd_width = 0,
+ 	.hid_width = 5,
+-	.parent_map = gcc_parent_map_xo_gpll0_gpll0_early_div,
++	.parent_map = gcc_parent_map_xo_gpll0,
+ 	.freq_tbl = ftbl_hmss_rbcpr_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "hmss_rbcpr_clk_src",
 -- 
-2.20.1
+2.28.0
 
