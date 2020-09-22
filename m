@@ -2,74 +2,69 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EE9C4363D
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B60BC4727C
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1ECB23600
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5662A23600
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600801497;
-	bh=4+a97TEFTL8Ui/E62HTylJNTMr2hyxwIHdDxIMr1+No=;
+	s=default; t=1600801657;
+	bh=k3AY4xiVKzdMo94OTDSd61+F+ugh2rG2QE3WMwuqBZ4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=W33XAs/PQqHjHUsT2yAng6Lie78xaKV1zwDEkpdzaJwU0pqrOAJ9W3jlMpRuaENMk
-	 VNaq5Wbc7XEQfYF3N3klNnB68Z2HAs+DbglJ+zDn5yf2Z5eXzDitDmjjW4HtUixU6x
-	 dx2Z1LiHAmjs5/Jzfu5BeAiwtYEaKDOIXsxTtN2g=
+	b=NEEsOFkQ4pw6644mdQ+G3hCuxLCObVoKHayqy4D4s20hSYnZrMUv+wCxNdk/AnQNt
+	 PjYafklau67E06I1rvgzy4yP8ojgf0R08X8/Z+YZ8WTpDbwotfDWl3renADj6jruud
+	 UnCM6EQtTZSc7u9FcpomUicTTGx0GHLu15uQZGTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgIVTE5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:04:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44952 "EHLO mail.kernel.org"
+        id S1726603AbgIVTHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:07:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbgIVTE5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:04:57 -0400
+        id S1726563AbgIVTHb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:07:31 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8D202311C;
-        Tue, 22 Sep 2020 19:04:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 656622311C;
+        Tue, 22 Sep 2020 19:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600801496;
-        bh=4+a97TEFTL8Ui/E62HTylJNTMr2hyxwIHdDxIMr1+No=;
+        s=default; t=1600801651;
+        bh=k3AY4xiVKzdMo94OTDSd61+F+ugh2rG2QE3WMwuqBZ4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CA1G9jneTexNOCk/1jxpR71DTk/JQzbR7hoy0xz1uN6tacPvUo1UjAkgYfQbxUDS6
-         wrisuapns7EzfLOaPvKL9zBu4RR18f9D/nmylDowpJk7NDb6u93SYROwfxMyG/bdD5
-         3IA6NtkO7/4DtsrFSoKDF3gTNVdCrMKN8xpqMJ5Y=
+        b=B0KLkGRkwJ/hH7sCjBG6h2GkT62TVOrlsmL7+K1CkJYbp+vOZhb4/QSU4A68K/7I+
+         9t5fFjrhYOcYVh8NU76XtYf+v79qRgs/4hGHJeTeBZImfMLFdx3hbBB1m2K3FC0iWL
+         8gq1Hxryll2Bm8vRQ9gxtCSCv8Xv6+IIgknUua08=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200911153412.21672-7-jonathan@marek.ca>
-References: <20200911153412.21672-1-jonathan@marek.ca> <20200911153412.21672-7-jonathan@marek.ca>
-Subject: Re: [PATCH v3 6/7] clk: qcom: Add display clock controller driver for SM8150
+In-Reply-To: <CAMS8qEUNGV5YgAc1D054JToe2ybPX8o4kPC8zgDc1=O0cqY0_A@mail.gmail.com>
+References: <20200922120909.97203-1-konradybcio@gmail.com> <160079963957.310579.17971187414769458107@swboyd.mtv.corp.google.com> <CAMS8qEUNGV5YgAc1D054JToe2ybPX8o4kPC8zgDc1=O0cqY0_A@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-sdm660: Fix wrong parent_map
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Date:   Tue, 22 Sep 2020 12:04:55 -0700
-Message-ID: <160080149549.310579.17453759593211612997@swboyd.mtv.corp.google.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Konrad Dybcio <konradybcio@gmail.com>
+Date:   Tue, 22 Sep 2020 12:07:30 -0700
+Message-ID: <160080165013.310579.5646553601425176923@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Marek (2020-09-11 08:34:06)
-> Add support for the display clock controller found on SM8150
-> based devices. This would allow display drivers to probe and
-> control their clocks.
+Quoting Konrad Dybcio (2020-09-22 11:35:14)
+> Sheesh, I cannot stop forgetting these...
 >=20
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/clk/qcom/Kconfig         |    9 +
->  drivers/clk/qcom/Makefile        |    1 +
->  drivers/clk/qcom/dispcc-sm8150.c | 1152 ++++++++++++++++++++++++++++++
->  3 files changed, 1162 insertions(+)
->  create mode 100644 drivers/clk/qcom/dispcc-sm8150.c
+> Fixes: f2a76a2955c0 (clk: qcom: Add Global Clock controller (GCC)
+> driver for SDM660)
+>=20
 
-If the bindings are the same for these two drivers I wonder if there is
-anything different between the two. Maybe the two drivers can be one
-driver?
+Ok. Applied to clk-next.
