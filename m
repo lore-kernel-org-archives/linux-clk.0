@@ -4,78 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62997C4363D
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C48FC4363D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11DC12388B
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3F272388B
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600802638;
-	bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+	s=default; t=1600802651;
+	bh=PJ/4iefFRuXhQeA0JC77TmOv3xq0oTelHXU57U159cI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=UirOyjMSEpamP6v8Qja8ddeZnjnSxGXqaZjLup8UtcN1/HoKs9FLGdhv/rGlG6vI3
-	 gphN2IJT9Ct5/FqhrlqMk8wuW5m9EjPz32eB5ZPnOvo2ZBFM/mEr2RiF/ykCWHuL8M
-	 PiIFrM6IHXFgg90uqI2jY9c5PspB+cReFXS6hfkQ=
+	b=0P0zW+7o18XHESbRA9eDIp5EJ/9aVgM7vPXVSCY4uo/fJRv8a9mKrnvNR0drVosHe
+	 S3honrlwQglAoxxAsN/D+8cC8nu2YzjhtJctCB+H4OFocT2uwgT99nb2VSslndyLmh
+	 Pmo8gJCXY/KhdT4ydlpKhW62iDohKxZ4myXz78F4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgIVTX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:23:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
+        id S1726550AbgIVTYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:24:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbgIVTX5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:23:57 -0400
+        id S1726448AbgIVTYL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:24:11 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2669A2376F;
-        Tue, 22 Sep 2020 19:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EA8423787;
+        Tue, 22 Sep 2020 19:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600802637;
-        bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+        s=default; t=1600802651;
+        bh=PJ/4iefFRuXhQeA0JC77TmOv3xq0oTelHXU57U159cI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vBRTd+eD7aMY/3tF3qsYB7xdIKSMn4y6HQjsGwJ9XVyOboxdoL1Wcst0OG3Nl/e6s
-         ttpYTIsWDp9bluVo81IXUnG1XYOnS/whlmS0nagPObYmGA6ngk861u2R9CX5wlLiiE
-         9ApY54zv8nmixZTwEvnem6NQyt/s8Kj/SrQMcPXk=
+        b=BlMVvSzaNynA5B3RTQ+IYAFpQGNaYLv1Fc309MiaB1bYOQvL7kFZiD7f0b6Ryaz1W
+         t4wvMWtpqrQhMwNa5DVmQL4X69kaNzGnC3LppVFVkYAGEB8cLwB1LHVxrnoBlazz1n
+         Wf8Sq07Fg1ac5xCZ/A5s+zMTMuLaVfuJrW+UOJAs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
-References: <CGME20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df@eucas1p2.samsung.com> <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
-Subject: Re: [GIT PULL] clk: samsung: Updates for v5.10
+In-Reply-To: <20200922090221.GA17284@dragon>
+References: <20200922090221.GA17284@dragon>
+Subject: Re: [GIT PULL] i.MX clock change for 5.10
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date:   Tue, 22 Sep 2020 12:23:55 -0700
-Message-ID: <160080263573.310579.13874284932570545017@swboyd.mtv.corp.google.com>
+Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Shawn Guo <shawnguo@kernel.org>
+Date:   Tue, 22 Sep 2020 12:24:09 -0700
+Message-ID: <160080264981.310579.17613616967144660880@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2020-09-22 03:02:34)
-> Hi Stephen, Mike,
->=20
->=20
+Quoting Shawn Guo (2020-09-22 02:02:22)
 > The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bb=
 f5:
 >=20
 >   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 >=20
-> are available in the git repository at:
+> are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
-clk-v5.10-samsung
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/c=
+lk-imx-5.10
 >=20
-> for you to fetch changes up to ff8e0ff9b99643a32f7e33a96867e76d0fa10f76:
+> for you to fetch changes up to 805837740d0142c38ab94b2269ca28da3890ae68:
 >=20
->   clk: samsung: Use cached clk_hws instead of __clk_lookup() calls (2020-=
-09-17 12:05:18 +0200)
+>   clk: imx: imx21: Remove clock driver (2020-09-22 14:09:19 +0800)
 >=20
 > ----------------------------------------------------------------
 
