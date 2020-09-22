@@ -2,88 +2,81 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 684D1C4363D
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62997C4363D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 241162071A
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DC12388B
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600802203;
-	bh=xFAegshdal4oOFaZe0xOh2NNgkqPJPvZzLl0b11jFcw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=l9GyhgUfCahvCz5oCMWfkmH7cAOFFiBVhhKVIqikiAC/BpURqC77UfLSbGe+PDUd4
-	 /EjLQ/SNets1jNDZE0hiVxTFToDS1OxEmhdAABrl3rGDJ6xPSewjTziUikXX5zfEoZ
-	 6cAykoGUY5mvuZc7jIJldS6EjRfeSTxtgALU1zNA=
+	s=default; t=1600802638;
+	bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=UirOyjMSEpamP6v8Qja8ddeZnjnSxGXqaZjLup8UtcN1/HoKs9FLGdhv/rGlG6vI3
+	 gphN2IJT9Ct5/FqhrlqMk8wuW5m9EjPz32eB5ZPnOvo2ZBFM/mEr2RiF/ykCWHuL8M
+	 PiIFrM6IHXFgg90uqI2jY9c5PspB+cReFXS6hfkQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgIVTQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:16:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
+        id S1726654AbgIVTX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:23:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbgIVTQm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:16:42 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726448AbgIVTX5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:23:57 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34713206FC;
-        Tue, 22 Sep 2020 19:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2669A2376F;
+        Tue, 22 Sep 2020 19:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600802202;
-        bh=xFAegshdal4oOFaZe0xOh2NNgkqPJPvZzLl0b11jFcw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sPqHsK5xTBVlrFS5V8D8Wi7xnOOszj7cfZKZAUpMFKFHJYJO+CoJxpfvQJ2l44+W4
-         HktAjslwLIrurrpF1cgwjH6Ut/AVl+/sN3o0E/WjGTL3d8OCtxPV7OGXZfrrm6zTWc
-         BWYJPnWpg2oYkKk9Lb/DRhYboZ0my/m5MGUmhEpw=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH] clk: tegra: Drop !provider check in tegra210_clk_emc_set_rate()
-Date:   Tue, 22 Sep 2020 12:16:41 -0700
-Message-Id: <20200922191641.2305144-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
+        s=default; t=1600802637;
+        bh=HE3FPRd/RHytxOWMqvWVJQBApbrarbBnl7sA2NPA458=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=vBRTd+eD7aMY/3tF3qsYB7xdIKSMn4y6HQjsGwJ9XVyOboxdoL1Wcst0OG3Nl/e6s
+         ttpYTIsWDp9bluVo81IXUnG1XYOnS/whlmS0nagPObYmGA6ngk861u2R9CX5wlLiiE
+         9ApY54zv8nmixZTwEvnem6NQyt/s8Kj/SrQMcPXk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
+References: <CGME20200922100235eucas1p29e2d2b543dee8504a69cd059db78a4df@eucas1p2.samsung.com> <f086a2ed-3825-bdb7-1ed6-02f2978713c2@samsung.com>
+Subject: Re: [GIT PULL] clk: samsung: Updates for v5.10
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 22 Sep 2020 12:23:55 -0700
+Message-ID: <160080263573.310579.13874284932570545017@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The provider variable is already dereferenced earlier in this function.
-Drop the check for NULL as it is impossible.
+Quoting Sylwester Nawrocki (2020-09-22 03:02:34)
+> Hi Stephen, Mike,
+>=20
+>=20
+> The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bb=
+f5:
+>=20
+>   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+>=20
+> are available in the git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
+clk-v5.10-samsung
+>=20
+> for you to fetch changes up to ff8e0ff9b99643a32f7e33a96867e76d0fa10f76:
+>=20
+>   clk: samsung: Use cached clk_hws instead of __clk_lookup() calls (2020-=
+09-17 12:05:18 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Found with smatch
-
-drivers/clk/tegra/clk-tegra210-emc.c:131 tegra210_clk_emc_set_rate() warn: variable dereferenced before check 'provider' (see line 124)
-
-Cc: Joseph Lo <josephl@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Fixes: 0ac65fc946d3 ("clk: tegra: Implement Tegra210 EMC clock")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 352a2c3fc374..971c919b2994 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -126,7 +126,7 @@ static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned int i;
- 	int err;
- 
--	if (!provider || !provider->configs || provider->num_configs == 0)
-+	if (!provider->configs || provider->num_configs == 0)
- 		return -EINVAL;
- 
- 	for (i = 0; i < provider->num_configs; i++) {
-
-base-commit: 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-
+Thanks. Pulled into clk-next
