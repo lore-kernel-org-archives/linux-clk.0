@@ -2,63 +2,80 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EDBC2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956D7C2D0E2
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12C582388B
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300A823787
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 20:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600804844;
-	bh=VhS/TRefYKw6GN+wQDAFW0oV/d7n6r8BMYeyrgSJXK0=;
+	s=default; t=1600805231;
+	bh=8iswYPu27PYcGlTr8O09zocLUcfIkTWGoqABqHa5FAo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=kz0FkN6Xk75ZYyx1Ii/QDDWrbHcCaFP4enRE0bOrGSipbXD+Cdl+ATrlQpajhgsSq
-	 0bhqy1iwjuLfmIwy5EN6nkkR0O+PUuVxYG5wThLBekaEaJRXODVQsr4QTtQVfoJLjP
-	 u9QVm6CWahsg16NSo1aEW+zlG4lZkm76MM+l/+p8=
+	b=2OHRSg28sk6Jt9h+gh18hDzfy5L71L0F4yUqMRwhHaq9j7OhQN9eKD5MpSedLR2wL
+	 OqpI/kUwUSWzHXekpnFl/vqQZuZG1R5RoJsnbOL8xZpevLtXjjcLl7fUsFnItDx2lL
+	 PfoWd7N2anhpnzBxTT6jY9z1EyFfBHYkVWUr+ybQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgIVUAn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 16:00:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60054 "EHLO mail.kernel.org"
+        id S1726589AbgIVUHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 16:07:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbgIVUAn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 16:00:43 -0400
+        id S1726567AbgIVUHK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 16:07:10 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 180CD20715;
-        Tue, 22 Sep 2020 20:00:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEC17221E7;
+        Tue, 22 Sep 2020 20:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600804843;
-        bh=VhS/TRefYKw6GN+wQDAFW0oV/d7n6r8BMYeyrgSJXK0=;
+        s=default; t=1600805230;
+        bh=8iswYPu27PYcGlTr8O09zocLUcfIkTWGoqABqHa5FAo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tDhRFh/pzfluhMue8q3VhQnQwbteqean6Z2kzZpKY5qlVFbeLUn8q1oHnqh/YW/Bw
-         8n4rDDsSdfu83ifKWHde1GOZRCJ4fSTxQcMpwfQ3zZuHKwsFRLm1St5m+C+3otImq3
-         bdZZWz5TImvo3U8fgso4dY4GG7GV1nxL3Njghw9Q=
+        b=VIRKZd4PdH0+ucDTB4Q/dOS3oU9+8o3xpAM0FhwQSjwV5l+KfZlSxXS834A8vSZBM
+         X3vy5kUH20IJYJhiBIyY7Ac84msnjfdZH+E5XqVCqPY4OSiDlk0sPrUmLhX1nqg8WA
+         3W/SU6MydX6Yo5r7evQmlC5WT4nkmZHeysC3oQwY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200907082600.454-4-t-kristo@ti.com>
-References: <20200907082600.454-1-t-kristo@ti.com> <20200907082600.454-4-t-kristo@ti.com>
-Subject: Re: [PATCH 3/3] clk: ti: dra7: add missing clkctrl register for SHA2 instance
+In-Reply-To: <1599684288-20917-1-git-send-email-amit.sunil.dhamne@xilinx.com>
+References: <1599684288-20917-1-git-send-email-amit.sunil.dhamne@xilinx.com>
+Subject: Re: [PATCH v4 0/3] clk: zynqmp: Add firmware specific clock flags
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
-Date:   Tue, 22 Sep 2020 13:00:41 -0700
-Message-ID: <160080484170.310579.14951972976549025978@swboyd.mtv.corp.google.com>
+Cc:     rajanv@xilinx.com, jollys@xilinx.com, tejasp@xilinx.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
+To:     Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>,
+        linux-clk@vger.kernel.org, m.tretter@pengutronix.de,
+        mark.rutland@arm.com, michal.simek@xilinx.com,
+        mturquette@baylibre.com
+Date:   Tue, 22 Sep 2020 13:07:08 -0700
+Message-ID: <160080522837.310579.7160115709529621594@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2020-09-07 01:26:00)
-> DRA7 SoC has two SHA instances. Add the clkctrl entry for the second
-> one.
+Quoting Amit Sunil Dhamne (2020-09-09 13:44:45)
+> Currently firmware is maintaining CCF specific flags and provides to
+> CCF as it is. But CCF flag numbers may change and that shouldn't mean
+> that the firmware needs to change. The firmware should have its own
+> 'flag number space' that is distinct from the common clk framework's
+> 'flag number space'. So use firmware specific clock flags in ZynqMP
+> clock driver instead of CCF flags.
 >=20
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
+> Changes in v4:
+>  - Use if condition instead of ternary operator.
+>=20
 
-Applied to clk-next
+Thanks. This patch series doesn't apply for me though. What is the base
+of the patches? Can you use the --base option when formatting patches
+with git format-patch? That would help me.
+
+Also, I think your MUA or SMTP server is mangling the format. I had
+trouble trying to apply the patches from my local copy so I had to
+fallback to lore but even that didn't work.
+
+Please resend.
