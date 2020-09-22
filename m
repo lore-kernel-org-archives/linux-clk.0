@@ -2,160 +2,144 @@ Return-Path: <SRS0=iadI=C7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF8AC2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 08:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57400C4727E
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 09:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFB123A1B
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 08:10:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dF+Dqn99"
+	by mail.kernel.org (Postfix) with ESMTP id 1EA472396D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 09:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600765349;
+	bh=Yt2qtVQ+9GNF9betp7d1523don1oG5OlO7coLyPAX5I=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=ybESBh7l8yjS+5sbjepCldGgZRBQRIDuHSd9uaW9f7U/+Cj6W1nRKfRmo7J8w8wOj
+	 CC72LWsz7v4fwgdw6lh2J+RDxwANlTk05nZit7T3xHf0dyEzmf9addB7+nI8XcK6bK
+	 sXonNgXSra69mIecdNxn4Gdr/WiJrEdtRek3f7w0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbgIVIKX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 04:10:23 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33291 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgIVIKX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 04:10:23 -0400
-X-Greylist: delayed 349 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Sep 2020 04:10:22 EDT
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200922080432euoutp0199ddb58c1f4c414d5f1159659547a5e7~3DHEXF2Pu3234432344euoutp01t
-        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2020 08:04:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200922080432euoutp0199ddb58c1f4c414d5f1159659547a5e7~3DHEXF2Pu3234432344euoutp01t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600761872;
-        bh=t5JgHuaA0LpHPq4LbftovBXGuGuzQ1cQIB+yPo9jjcs=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=dF+Dqn99CopSxq1ozccMHygJgkX9xFlCP23wGeXqtrS5UeMsxhJMFW6R7ljaeCwFs
-         VnUqqKUREeeFzTOpWEhH0Y0hCcNFR5l7jk7jFoyJ5QBk6FwJIBws86b7gVizntUofB
-         Fw+kr57Ksb+jtcfsi4fk4XKXNcoxuPThG/hnbCHM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200922080432eucas1p2937967313737d3aacd37477a069791f9~3DHEHaiiS2319723197eucas1p2b;
-        Tue, 22 Sep 2020 08:04:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 76.DC.06318.F00B96F5; Tue, 22
-        Sep 2020 09:04:31 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200922080431eucas1p23ff07fa3bb202e7d3ab90a55aa833d48~3DHDqRS-x0085000850eucas1p2v;
-        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200922080431eusmtrp1d7fab84d77fa82174f81f89cb23a7f5e~3DHDplAdy1146911469eusmtrp1V;
-        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
-X-AuditID: cbfec7f5-38bff700000018ae-49-5f69b00f8bbf
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 39.71.06314.F00B96F5; Tue, 22
-        Sep 2020 09:04:31 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200922080431eusmtip1759b71075b7ca2ba90c31bf9521834c9~3DHDLncnh0969309693eusmtip1O;
-        Tue, 22 Sep 2020 08:04:31 +0000 (GMT)
-Subject: Re: [PATCH] clk: s2mps11: initialize driver via
- module_platform_driver
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <fc06b97d-a2b4-f263-fba4-505dfc75c43f@samsung.com>
-Date:   Tue, 22 Sep 2020 10:04:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.12.0
+        id S1726547AbgIVJC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 05:02:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbgIVJC2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 05:02:28 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB301208A9;
+        Tue, 22 Sep 2020 09:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600765348;
+        bh=Yt2qtVQ+9GNF9betp7d1523don1oG5OlO7coLyPAX5I=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mzgTDzn+zEoexk2pE34YqwLjEsZTA8YuEESSEtGECqWT48lFOdfbEWrr2LVfFBisz
+         yX6pkMZ2i2h/qqWIvoxXPBoGmtO5FP2cV2IBiybmB+OBI8D18DK9wPrLSPZTStOgZ7
+         SVubZDBQhKtizjNjbcEeJk/LujXYRIHg2Ay4+pmI=
+Date:   Tue, 22 Sep 2020 17:02:22 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] i.MX clock change for 5.10
+Message-ID: <20200922090221.GA17284@dragon>
 MIME-Version: 1.0
-In-Reply-To: <20200921203558.19554-1-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djP87r8GzLjDX5usbbYOGM9q8X58xvY
-        LT723GO1uLxrDpvFjPP7mCwunnK1uLjiC5PFv2sbWRw4PN7faGX32LSqk82jb8sqRo/Pm+QC
-        WKK4bFJSczLLUov07RK4Mr5fnMRU0MtTceXTHtYGxhlcXYycHBICJhKHnu1jA7GFBFYwSrQ2
-        mELYXxglnq2Wh7A/M0rsOK4MU79jRSN7FyMXUHw5o8TuZetZIZz3jBKHv35jBKkSFgiU+H3s
-        OhNIQkRgK5PExhmdYCvYBAwlut52gdm8AnYSkw9sZAKxWQRUJZZc6gFrFhWIkzh26hELRI2g
-        xMmZT4BsDg5OAVOJHe85QcLMAvIS29/OYYawxSVuPZkPtktCYBW7xOPj71khTnWRuLRnBROE
-        LSzx6vgWdghbRuL05B4WiIZmRomH59ayQzg9jBKXm2YwQlRZS9w594sNZDOzgKbE+l36EGFH
-        iWfPvjKDhCUE+CRuvBWEOIJPYtK26VBhXomONiGIajWJWcfXwa09eOESVImHxN17BRMYFWch
-        eXIWks9mIflsFsIJCxhZVjGKp5YW56anFhvnpZbrFSfmFpfmpesl5+duYgQmn9P/jn/dwbjv
-        T9IhRgEORiUe3gNTM+KFWBPLiitzDzFKcDArifA6nT0dJ8SbklhZlVqUH19UmpNafIhRmoNF
-        SZzXeNHLWCGB9MSS1OzU1ILUIpgsEwenVAOjaefe5nA9bbf/6cfyZa6ybeBmUN7uvfnkjnv6
-        t69vWvP0g+3qx8obdjNMuZn+7Py3vGntH9QZHktsN27btin9985V+R55c3z87q3w0v+TNSNs
-        gZNatnPdtAVXgty5St9JWjIftZhtFtC222E7g5qs66vFtdF1G3eYbbKNDshuM16R27bHlddM
-        iaU4I9FQi7moOBEAqLuKzjoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t/xu7r8GzLjDab/UrHYOGM9q8X58xvY
-        LT723GO1uLxrDpvFjPP7mCwunnK1uLjiC5PFv2sbWRw4PN7faGX32LSqk82jb8sqRo/Pm+QC
-        WKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mr5f
-        nMRU0MtTceXTHtYGxhlcXYycHBICJhI7VjSydzFycQgJLGWU+Hb1PhtEQkbi5LQGVghbWOLP
-        tS42iKK3jBLTf+xnBkkICwRK/D52nQkkISKwlUmib3c7WEJIoINRYv87FxCbTcBQouttF9hU
-        XgE7ickHNjKB2CwCqhJLLvUwgtiiAnESZ3peQNUISpyc+YSli5GDg1PAVGLHe06QMLOAmcS8
-        zQ+ZIWx5ie1v50DZ4hK3nsxnmsAoOAtJ9ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5x
-        aV66XnJ+7iZGYGxtO/Zz8w7GSxuDDzEKcDAq8fAemJoRL8SaWFZcmXuIUYKDWUmE1+ns6Tgh
-        3pTEyqrUovz4otKc1OJDjKZAv01klhJNzgfGfV5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0
-        xJLU7NTUgtQimD4mDk6pBsYJ33327vCdM3PuB9MPWeI7mI9e/xe52+yw4PziKdmpAaXWB6zC
-        9kYefBN86ocIS9cc1SfCZTm3w7ZLXDL12VdnI1XivP9w0cVfbgeSp3VUPN3dfC/I9LehqtWP
-        bZO6eJYmazQFvjrjO+/jjlLDXEFnUXGRhl7OV/6nmxJjt8pOWOToNM0qea4SS3FGoqEWc1Fx
-        IgC1xMfPwwIAAA==
-X-CMS-MailID: 20200922080431eucas1p23ff07fa3bb202e7d3ab90a55aa833d48
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a
-References: <CGME20200921203614eucas1p19b9203eb6bbd7b80647f7e48705c731a@eucas1p1.samsung.com>
-        <20200921203558.19554-1-krzk@kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
-On 21.09.2020 22:35, Krzysztof Kozlowski wrote:
-> The driver was using subsys_initcall() because in old times deferred
-> probe was not supported everywhere and specific ordering was needed.
-> Since probe deferral works fine and specific ordering is discouraged
-> (hides dependencies between drivers and couples their boot order), the
-> driver can be converted to regular module_platform_driver.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/clk/clk-s2mps11.c | 13 +------------
->   1 file changed, 1 insertion(+), 12 deletions(-)
->
-> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-> index 2ce370c804aa..aa21371f9104 100644
-> --- a/drivers/clk/clk-s2mps11.c
-> +++ b/drivers/clk/clk-s2mps11.c
-> @@ -267,18 +267,7 @@ static struct platform_driver s2mps11_clk_driver = {
->   	.remove = s2mps11_clk_remove,
->   	.id_table = s2mps11_clk_id,
->   };
-> -
-> -static int __init s2mps11_clk_init(void)
-> -{
-> -	return platform_driver_register(&s2mps11_clk_driver);
-> -}
-> -subsys_initcall(s2mps11_clk_init);
-> -
-> -static void __exit s2mps11_clk_cleanup(void)
-> -{
-> -	platform_driver_unregister(&s2mps11_clk_driver);
-> -}
-> -module_exit(s2mps11_clk_cleanup);
-> +module_platform_driver(s2mps11_clk_driver);
->   
->   MODULE_DESCRIPTION("S2MPS11 Clock Driver");
->   MODULE_AUTHOR("Yadwinder Singh Brar <yadi.brar@samsung.com>");
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-5.10
+
+for you to fetch changes up to 805837740d0142c38ab94b2269ca28da3890ae68:
+
+  clk: imx: imx21: Remove clock driver (2020-09-22 14:09:19 +0800)
+
+----------------------------------------------------------------
+i.MX clock change for 5.10:
+
+- A series from Anson Huang to support building i.MX ARMv8 platforms
+  clock driver as module.
+- Remove i.MX21 clock driver, as i.MX21 platform support is being
+  dropped.
+- A couple of minor imx8mp clock correction from Jacky Bai.
+- Add clock for CRC block found on vf610 SoC.
+- A couple of clock flag fix-up from Peng Fan.
+- Minor kerneldoc fix-up for i.MX clock drivers.
+
+----------------------------------------------------------------
+Anson Huang (7):
+      clk: imx6sl: Use BIT(x) to avoid shifting signed 32-bit value by 31 bits
+      clk: composite: Export clk_hw_register_composite()
+      clk: imx: Support building i.MX common clock driver as module
+      clk: imx: Add clock configuration for ARMv7 platforms
+      clk: imx8m: Support module build
+      clk: imx8qxp: Support building i.MX8QXP clock driver as module
+      clk: imx: Explicitly include bits.h
+
+Fabio Estevam (1):
+      clk: imx: imx21: Remove clock driver
+
+Jacky Bai (2):
+      clk: imx: Correct the root clk of media ldb on imx8mp
+      clk: imx: Correct the memrepair clock on imx8mp
+
+Jonathan Neuschäfer (1):
+      clk: imx: gate2: Fix a few typos
+
+Krzysztof Kozlowski (2):
+      clk: imx: vf610: Add CRC clock
+      clk: imx: Fix and update kerneldoc
+
+Peng Fan (2):
+      clk: imx: fix composite peripheral flags
+      clk: imx: fix i.MX7D peripheral clk mux flags
+
+ drivers/clk/clk-composite.c              |   1 +
+ drivers/clk/imx/Kconfig                  |  90 +++++++++++++---
+ drivers/clk/imx/Makefile                 |  78 +++++++-------
+ drivers/clk/imx/clk-busy.c               |   1 +
+ drivers/clk/imx/clk-composite-7ulp.c     |   1 +
+ drivers/clk/imx/clk-composite-8m.c       |   3 +
+ drivers/clk/imx/clk-cpu.c                |   2 +
+ drivers/clk/imx/clk-fixup-mux.c          |   1 +
+ drivers/clk/imx/clk-frac-pll.c           |   2 +
+ drivers/clk/imx/clk-gate2.c              |   4 +-
+ drivers/clk/imx/clk-imx21.c              | 171 -------------------------------
+ drivers/clk/imx/clk-imx6q.c              |   1 +
+ drivers/clk/imx/clk-imx6sl.c             |  15 +--
+ drivers/clk/imx/clk-imx6sx.c             |   1 +
+ drivers/clk/imx/clk-imx7d.c              | 132 ++++++++++++------------
+ drivers/clk/imx/clk-imx8mm.c             |   4 +
+ drivers/clk/imx/clk-imx8mn.c             |   4 +
+ drivers/clk/imx/clk-imx8mp.c             |  28 +++--
+ drivers/clk/imx/clk-imx8mq.c             |   4 +
+ drivers/clk/imx/clk-imx8qxp-lpcg.c       |   4 +
+ drivers/clk/imx/clk-imx8qxp.c            |   4 +
+ drivers/clk/imx/clk-lpcg-scu.c           |   1 +
+ drivers/clk/imx/clk-pfd.c                |   2 +-
+ drivers/clk/imx/clk-pfdv2.c              |   2 +-
+ drivers/clk/imx/clk-pll14xx.c            |   7 +-
+ drivers/clk/imx/clk-pllv1.c              |   1 +
+ drivers/clk/imx/clk-pllv3.c              |   5 +-
+ drivers/clk/imx/clk-pllv4.c              |   1 +
+ drivers/clk/imx/clk-sscg-pll.c           |   2 +
+ drivers/clk/imx/clk-vf610.c              |   2 +
+ drivers/clk/imx/clk.c                    |  18 +++-
+ drivers/clk/imx/clk.h                    |   7 ++
+ include/dt-bindings/clock/imx8mp-clock.h |   2 +-
+ include/dt-bindings/clock/vf610-clock.h  |   3 +-
+ 34 files changed, 281 insertions(+), 323 deletions(-)
+ delete mode 100644 drivers/clk/imx/clk-imx21.c
