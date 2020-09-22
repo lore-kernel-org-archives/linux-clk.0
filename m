@@ -4,46 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550F6C2D0E2
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF108C4727D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFB6238D6
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF372395B
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Sep 2020 19:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600803903;
-	bh=yBAsRkgb+YjtLB+er/pY3xx7d5wgjjdSRJG+VAjtO3I=;
+	s=default; t=1600803911;
+	bh=tA8MmDdsznvvUpaNUlFhuy1kR5m9EsbeClJ1SsYWScE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=QFgHusbnGpkuioGyzbYx4LI9SbSqeHwFHe1akyC2T1oDAH77QvYF4EOrayJNPYiBJ
-	 1BNaH6eP1xCAqMeqVqUmu1YC9CqJeNysJ78c7U989Ro4Ggw0SZWZ93wAvcGMlY6mAd
-	 BoUb95qk2Ya8/Ol2n8+mq0k0EF/cRui9eCiLCd68=
+	b=NlLJNR+oH1qMD+VfSMN5OzR+rS3eW4FJ1zvxaNXGOVUh9nTvWUdIgg8abPG5M+htT
+	 oLEx/WJ3do5zBe2Yq7/HPQFqpFYHniX1kwOUC/T6demt6mapJYL5ktNgj8AZALyC1n
+	 NitMSKqia33NPW8MTdKikpTQovO8W8FVT70dM24A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgIVTpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 15:45:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60154 "EHLO mail.kernel.org"
+        id S1726629AbgIVTpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 15:45:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726629AbgIVTpC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 15:45:02 -0400
+        id S1726563AbgIVTpL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:45:11 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34FFF23787;
-        Tue, 22 Sep 2020 19:45:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99BE5238A1;
+        Tue, 22 Sep 2020 19:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600803902;
-        bh=yBAsRkgb+YjtLB+er/pY3xx7d5wgjjdSRJG+VAjtO3I=;
+        s=default; t=1600803910;
+        bh=tA8MmDdsznvvUpaNUlFhuy1kR5m9EsbeClJ1SsYWScE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fw/WQkx9C1Hvt3/1k76ShL8h+i2T8H6yk9lS8zStPVeK8XwJpRz0iZt5TWD7789J8
-         XlWtlnXD9KzrcI6IDwKDB4ozCiHLBRUxgSlCr0MLRTEdj1RpaT/Tw2RoKRPGxJBnHw
-         O8Y9H1u0nk5gMEvulPnojcfbWlUQrjir5I+n7Mes=
+        b=d8H1E695Gu/6np9d7kKWOPnK7Y+psySwubSEINTKXUvlljyh6CnmFSzY/ArkW2xPH
+         k4yn7N9P8d9OItRJNEvoR13HOXURJeH7XO7KS3I868o4jCIgs5NbzOMWNKX1Ma1DBs
+         tJ1+uYCldJfZgd1jRepZwlOGXpaIfi1gA/ncGrno=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200916161740.14173-3-krzk@kernel.org>
-References: <20200916161740.14173-1-krzk@kernel.org> <20200916161740.14173-3-krzk@kernel.org>
-Subject: Re: [PATCH 3/6] clk: davinci: add missing kerneldoc
+In-Reply-To: <20200916161740.14173-4-krzk@kernel.org>
+References: <20200916161740.14173-1-krzk@kernel.org> <20200916161740.14173-4-krzk@kernel.org>
+Subject: Re: [PATCH 4/6] clk: mmp: pxa1928: drop unused 'clk' variable
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -56,21 +55,22 @@ To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sekhar Nori <nsekhar@ti.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Date:   Tue, 22 Sep 2020 12:45:00 -0700
-Message-ID: <160080390093.310579.11470222037564752365@swboyd.mtv.corp.google.com>
+Date:   Tue, 22 Sep 2020 12:45:09 -0700
+Message-ID: <160080390943.310579.10285589771843324355@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-09-16 09:17:37)
-> Add missing kerneldoc to fix compile warning:
+Quoting Krzysztof Kozlowski (2020-09-16 09:17:38)
+> 'clk' is assigned but never read:
 >=20
->   drivers/clk/davinci/da8xx-cfgchip.c:578: warning: Function parameter or=
- member 'dev' not described in 'da8xx_cfgchip_register_usb1_clk48'
+>   drivers/clk/mmp/clk-of-pxa1928.c: In function =E2=80=98pxa1928_pll_init=
+=E2=80=99:
+>   drivers/clk/mmp/clk-of-pxa1928.c:71:14: warning: variable =E2=80=98clk=
+=E2=80=99 set but not used [-Wunused-but-set-variable]
 >=20
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: David Lechner <david@lechnology.com>
 > ---
 
 Applied to clk-next
