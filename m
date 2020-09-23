@@ -2,107 +2,86 @@ Return-Path: <SRS0=lMr4=DA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E70C2D0A8
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 08:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2421C4727D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 08:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9677323899
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 08:23:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ahesYUWY"
+	by mail.kernel.org (Postfix) with ESMTP id 56D45238A1
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 08:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbgIWIXy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Sep 2020 04:23:54 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2339 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWIXy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Sep 2020 04:23:54 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f6b05eb0001>; Wed, 23 Sep 2020 01:23:07 -0700
-Received: from localhost (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 23 Sep
- 2020 08:23:53 +0000
-Date:   Wed, 23 Sep 2020 10:23:50 +0200
-From:   Thierry Reding <treding@nvidia.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Drop !provider check in
- tegra210_clk_emc_set_rate()
-Message-ID: <20200923082350.GA1203543@ulmo>
-References: <20200922191641.2305144-1-sboyd@kernel.org>
+        id S1726253AbgIWId0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Sep 2020 04:33:26 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38060 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgIWIdZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Sep 2020 04:33:25 -0400
+Received: by mail-ot1-f65.google.com with SMTP id y5so18208997otg.5;
+        Wed, 23 Sep 2020 01:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NITkniv1dkvmRSuRBeUNrBk2YIIlyBX21LGDwAcpHhY=;
+        b=HlTKSuH7icg+4IC3Ia/kAVqQrMrN88KS56wCdkOQpxpu5FmaeMzZlcVnB3DCpcRmDM
+         ylOKCufc3W/thVFLbCD6/uJAlvQBLmKf2CSCl+ndeO+3h9NOUk5vAv35ZNIGl9qGoSCp
+         Bo3YfKoZip7VERAg+SGopovQDva8pPKgMB85msi+mXvfo2Ngtq7nA9Dsd3aim2tKc5b1
+         FNjcneGe8baT7XRAqO4/EybA8r4HRmHj/e2XbEBR3GRLqteav9LdVww5MAOY0WQ08UWv
+         e0wDuxyOiVJIbenZqq32WDnYXBsIHOMsJDE9cANaWgijgozK2kFKAv5mX1WBBP3hRXNd
+         VVTg==
+X-Gm-Message-State: AOAM532wSbJgAS/ZlknlDnPDVEgi0Rf7FNt9tvCYc4CD97zUiYZhUGZB
+        2wt1S2RttSB2Vr7+3hqcckqoA0aWcfQQZmwXyWBb6kq49KM=
+X-Google-Smtp-Source: ABdhPJwNATaaR/XWq0u61HTBnLI7iEBIp/bua4xreJw0IJku1xnl8XiT/de0zsN5uPtij9nGsAt2io8njzM0YG5+gfY=
+X-Received: by 2002:a05:6830:1008:: with SMTP id a8mr5033590otp.107.1600850004987;
+ Wed, 23 Sep 2020 01:33:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
-Content-Disposition: inline
-In-Reply-To: <20200922191641.2305144-1-sboyd@kernel.org>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.14.7 (2020-08-29)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1600849387; bh=rw6XyC6D0Wn/tIYkzkI1BvwS8429JZzAsGLs0aTeYn8=;
-        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Disposition:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=ahesYUWYSFiid8Exz4lMCERtcxoH/fU5PGE3AVzFpjhRN2wVIGvu0Z2NIw05VPls0
-         J8x8GOQ1P1+lQpwsZHttz2T+PD3lajtZQIaY57XwF7825N1D617712cOKR+Wn8Gvpq
-         JLJOAiCvbd32IH+UcUysAj8Is8C65inheJieZ6M7OZpZKuTOd9D40QssZ14DUaG2yd
-         P+9gj1SFmd9fiTQLaRaOH9+wMdZQ2nXm6LAFhneGAZRpbrV6x8avaI290O88xvBX1A
-         MWRkTZnX0WSt7YKD8xBIt0do5odX3CwZFHQdye/iK+/kByTBxzOZstIBgoMVUpxpqt
-         Oh2md+BeNFxVQ==
+References: <20200922120036.10298-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20200922120036.10298-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Sep 2020 10:33:13 +0200
+Message-ID: <CAMuHMdUw99vAgBevAHmthEUgGQepTof9skjAeBNwxiHHbMk-5w@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: remove stp_ck handling for SDHI
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Wolfram,
 
-On Tue, Sep 22, 2020 at 12:16:41PM -0700, Stephen Boyd wrote:
-> The provider variable is already dereferenced earlier in this function.
-> Drop the check for NULL as it is impossible.
->=20
-> Found with smatch
->=20
-> drivers/clk/tegra/clk-tegra210-emc.c:131 tegra210_clk_emc_set_rate() warn=
-: variable dereferenced before check 'provider' (see line 124)
->=20
-> Cc: Joseph Lo <josephl@nvidia.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Fixes: 0ac65fc946d3 ("clk: tegra: Implement Tegra210 EMC clock")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+On Tue, Sep 22, 2020 at 2:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> There is no case (and none foreseen) where we would need to disable the
+> SDn clock. So, for simplicity, remove its handling.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  drivers/clk/tegra/clk-tegra210-emc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Geert seems to favor simplicity, too. So, now this patch leaves RFC
+> status.
+>
+> Change since RFC: * fixed typo in commit message
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Thanks for the update!
 
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.11.
 
------BEGIN PGP SIGNATURE-----
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+(on Salvator-X(S) with R-Car H3 ES1.0 and ES2.0, M3-W ES1.0, M3-N ES1.0,
+ and on Ebisu-4D with R-Car E3 ES1.0).
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl9rBhYACgkQ3SOs138+
-s6EaAA//Y5DplW5lffkHg6ZLa50L/fr/LxCD6tJax+aU2QFvKGVFzPx6JLU7/My9
-LR2zhjV4Q0VceG+FYZuVVoIoFMbrDvlyPEwYWWjlyJLMkp9t/rwZEo9jdpdE9Icc
-+QhbseF1SV4fVCQLHnynUnQqGieZt0zyOMNDw6h8kqiGqfGs9B2pqedK1XcfmfBd
-qM7juy+MpaOWS6rVg9hbM0ZKscbLUgPYJyrejbaMMDuBTYP7sVjW5vPhFHmBKyPl
-2AgwpYIsrmZB234KxjeoToibt5hL2fJwNJ8folMA2WYfBVyoQfIwbmUUyihy0269
-OOauVdb5zv6qn7Axsim5mZxQAfsVT4ILgyqFHhdKwg2HWjZeGC9CQp1ykK9x7p0C
-mRJmnZLpsB8251vrXRp0GV07EQjOmzUKmJPb7Wv+LYjjwsFAIzfK2iw3NE38bDlk
-GNcNORN+EQM3jP6WvGgWLDKN/HB4GrhqXCwYTB4PoJzF6gjcls80j4w6xM6TMxoQ
-9UpeG1hptfusU+zc8k2lLpbnK/sg71n/nWUcLLHZLg9QXtOtyg+I7DZB1bIL4z3X
-C3m88zLMZnl1nmdZoOXiv3ixYEC1Rn2jJrN6oFDuH7pWZGfFp7og7Csttdk0k1rs
-3V35PwJ6yNosa5NbPy3uVMt57sirjnSY+Ufpf820/hCBpfTEQlw=
-=OQhr
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---r5Pyd7+fXNt84Ff3--
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
