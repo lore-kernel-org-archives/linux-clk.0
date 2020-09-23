@@ -2,91 +2,113 @@ Return-Path: <SRS0=lMr4=DA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A8FC4363D
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 22:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06D0C4363D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6605B20888
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 22:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B005920C09
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600903711;
+	bh=jD9FzPY9npLBXMykAm0YVS2Sn9WihPKnudR+sOe4IzY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=DnJhYV71yOqhhRGw72us4ncPsUL7gNHmOJcBWPZGBmpsgcW2oW70Jimn9vu25ZcrR
+	 ubeawrnOMCW9y8/DOOd+TZOHtrN0LYAW0pAhbkfQBvu9kAKDfaHFhzWx3WzxvwI9DQ
+	 6YhIcGFo0MDd0FGkijb+XeoXycYiQXJvZkNzLqmo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgIWWUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Sep 2020 18:20:42 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:49898 "EHLO gloria.sntech.de"
+        id S1726694AbgIWX22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Sep 2020 19:28:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbgIWWUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 23 Sep 2020 18:20:42 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1kLD7v-0001h5-0F; Thu, 24 Sep 2020 00:20:39 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 5.10
-Date:   Thu, 24 Sep 2020 00:20:38 +0200
-Message-ID: <2431097.4Q4uIW3KjO@diego>
+        id S1726466AbgIWX2Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 23 Sep 2020 19:28:24 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8F2620BED;
+        Wed, 23 Sep 2020 23:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600903703;
+        bh=jD9FzPY9npLBXMykAm0YVS2Sn9WihPKnudR+sOe4IzY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=F/ThN3TDt9u2tC6CIY6JBC9Ziz663ISP5KiCPLR6bwB5nHubXblTyllGdJFHsSahx
+         /SzDx6/4Nr9hv14n8qhZQTDqha+RgmRzh+mjkiPyTR9udIJgyyxoqFEedgG4Z2AEDa
+         5luFdzuKS6Or7kkTZfT3SpWu5aM08MMna/EiaJfc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a8713637-d240-d22d-02a7-f15080620467@linaro.org>
+References: <20200917132850.7730-1-srinivas.kandagatla@linaro.org> <20200917132850.7730-4-srinivas.kandagatla@linaro.org> <160080010215.310579.4526434246523292987@swboyd.mtv.corp.google.com> <a8713637-d240-d22d-02a7-f15080620467@linaro.org>
+Subject: Re: [PATCH 3/4] clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Date:   Wed, 23 Sep 2020 16:28:22 -0700
+Message-ID: <160090370240.310579.7670305169509496614@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+Quoting Srinivas Kandagatla (2020-09-22 14:45:07)
+> Thanks Stephen for review,
+>=20
+> On 22/09/2020 19:41, Stephen Boyd wrote:
+> > Quoting Srinivas Kandagatla (2020-09-17 06:28:49)
+> >> diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lp=
+ass-gfm-sm8250.c
+> >> new file mode 100644
+> >> index 000000000000..2d5c41ae4969
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
+> >> @@ -0,0 +1,235 @@
+[...]
+> >> +};
+> >> +
+> >> +static int lpass_gfm_clk_driver_probe(struct platform_device *pdev)
+> >> +{
+> >> +       const struct lpass_gfm_data *data;
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       struct resource *res;
+> >> +       struct clk_gfm *gfm;
+> >> +       struct lpass_gfm *cc;
+> >> +       int err, i;
+> >> +
+> >> +       cc =3D devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+> >> +       if (!cc)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       cc->core_vote =3D devm_clk_get(&pdev->dev, "core");
+> >> +       if (IS_ERR(cc->core_vote)) {
+> >> +               dev_dbg(dev, "Failed to get lpass core clk\n");
+> >> +               return PTR_ERR(cc->core_vote);
+> >> +       }
+> >=20
+> > Can this use the pm_clk stuff?
+>=20
+> you mean add runtime pm support or something else?
+>=20
+> I can give it a go and see!
+>=20
 
-please find below Rockchip clock changes for 5.10
-I gave the module rework a spin in a number of different Rockchip socs
-and all were happy so far.
+Yes use the runtime PM support and pm_clk APIs. There are some examples
+in this directory already.
 
+>=20
+> >=20
+> >> +
+> >> +       data =3D of_device_get_match_data(dev);
+> >=20
+> > What if data is NULL?
+> It should not be here if there is no match of compatible string, so data =
 
-Please pull, thanks
-Heiko
+> should not be NULL!
 
-
-The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
-
-  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.10-rockchip-clk1
-
-for you to fetch changes up to 70d839e2761d22eba6facdb3b65faea4d57f355d:
-
-  clk: rockchip: rk3399: Support module build (2020-09-22 15:16:54 +0200)
-
-----------------------------------------------------------------
-Ability to build the clock driver as module and removal
-of an unused parent-names struct.
-
-----------------------------------------------------------------
-Elaine Zhang (6):
-      clk: rockchip: Use clk_hw_register_composite instead of clk_register_composite calls
-      clk: rockchip: Export rockchip_clk_register_ddrclk()
-      clk: rockchip: Export rockchip_register_softrst()
-      clk: rockchip: Export some clock common APIs for module drivers
-      clk: rockchip: fix the clk config to support module build
-      clk: rockchip: rk3399: Support module build
-
-Krzysztof Kozlowski (1):
-      clk: rockchip: rk3308: drop unused mux_timer_src_p
-
- drivers/clk/Kconfig                     |   1 +
- drivers/clk/rockchip/Kconfig            |  78 ++++++++++++++++++++++
- drivers/clk/rockchip/Makefile           |  42 ++++++------
- drivers/clk/rockchip/clk-ddr.c          |   1 +
- drivers/clk/rockchip/clk-half-divider.c |  18 ++---
- drivers/clk/rockchip/clk-rk3308.c       |   1 -
- drivers/clk/rockchip/clk-rk3399.c       |  56 ++++++++++++++++
- drivers/clk/rockchip/clk.c              | 113 +++++++++++++++++---------------
- drivers/clk/rockchip/softrst.c          |   7 +-
- 9 files changed, 232 insertions(+), 85 deletions(-)
- create mode 100644 drivers/clk/rockchip/Kconfig
-
-
-
+Ok sure but it always makes me feel better if we check for a valid
+pointer with this API.
