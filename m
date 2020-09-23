@@ -2,120 +2,118 @@ Return-Path: <SRS0=lMr4=DA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04126C4363D
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 03:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F558C4363D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 06:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC14B2084C
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 03:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D36221F0
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 06:22:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YS/aemuJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgIWDBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 23:01:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14215 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726448AbgIWDBn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Sep 2020 23:01:43 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EBA57E8C529B61E690BB;
-        Wed, 23 Sep 2020 11:01:40 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Wed, 23 Sep 2020
- 11:01:40 +0800
-From:   Qilong Zhang <zhangqilong3@huawei.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH -next v2] clk: tegra: clk-dfll: indicate correct error reason in tegra_dfll_register
-Date:   Wed, 23 Sep 2020 11:08:32 +0800
-Message-ID: <20200923030832.79105-1-zhangqilong3@huawei.com>
-X-Mailer: git-send-email 2.26.0.106.g9fadedd
+        id S1726550AbgIWGWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Sep 2020 02:22:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43342 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgIWGWp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Sep 2020 02:22:45 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D8EC061755;
+        Tue, 22 Sep 2020 23:22:45 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id m7so23899020oie.0;
+        Tue, 22 Sep 2020 23:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y1PEerqJBDKeVBRTs0AFfG0uBufIRHhe7sa6qP1v9O8=;
+        b=YS/aemuJmv/c98UY/vzAb87zvn86VHm7Ri3vNiPv8JzhSK8AaATSbok0ic2zQLyt+u
+         kFkFnE+BNTgaLhipZnw2rZyCJ6QPbjCt6QX9vMSkksp3Oxe1YpEgKG7WCabf5I8QBC3+
+         Th3BYcf+C4bgheq+FcoGXu7hDDZlOnf2QGQL0xQwPKlP6dYoM1neskoXuuibwd2LGG87
+         P5OM0bx5UTVpukbmf5UQVnMPkP18gPGcpqpwK/3EmUtZJ/BgGgqEPIkNpibm2dABO2r7
+         fV0WNcujZueluOJaLTFljW8JpGs8BDvAx7Gc/QPLA7McpJuFED0oWVusKZijXj45zi7B
+         dXow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y1PEerqJBDKeVBRTs0AFfG0uBufIRHhe7sa6qP1v9O8=;
+        b=AKEyNWeJu/Wq7HYcU5niGQZ3gfQWa5UeUlrJMZ/BEpzPwLtHUhCrv7TwvILx6KX5dN
+         oH6VHNOOjwn8rB2+1nmXSFlpj6Ye00bfQerKDjwgYHGrHyQZwIPyx0HXcKQYIae1ygh1
+         Wb4nvou/X1stG+N0UTvsSv5X+xx4kqzCp8PS8BIbkumCp4gzZjwxmayk2UsRXCbZrxV6
+         ckogoM8ZJwkOmjeH6H5NPnJzJYsnsCpBpCTvR0Qodf5HSBu4EILGF3ZkughEd1og5JP8
+         irhUK6cIbVCtQbBO7cQJOo/EhMEwEOTl7qzolrFxNdB4kzLUjC2sfu3RS6FNcS5SvJHT
+         MVhA==
+X-Gm-Message-State: AOAM530RTbrQ88f5jPlOli4sxIaJxVXVjE/a+kvO38Cc5QpVBA63a8Kn
+        WBTO6BnXlajaXo5CPAInZHSZcQpTmQkAk7Zn8r0=
+X-Google-Smtp-Source: ABdhPJzBfZX320BL45BvcOhOnTnM/7E23YnE6sTcmqXS2fzz6pc8bMuZV+vlMXfm2TGf+eV4hjTGE3sl2sdSX5C7fJ8=
+X-Received: by 2002:aca:72ca:: with SMTP id p193mr4684049oic.124.1600842164940;
+ Tue, 22 Sep 2020 23:22:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+References: <20200810134252.68614-1-alexandru.ardelean@analog.com>
+ <20200810134252.68614-8-alexandru.ardelean@analog.com> <CA+U=Dsr41kKGXmgE1KjdTzAso3rwtNXAEoSy+Li=uym7G=D=Jw@mail.gmail.com>
+ <20200915024138.GA1827@epycbox.lan> <160080374459.310579.14438590389388419207@swboyd.mtv.corp.google.com>
+In-Reply-To: <160080374459.310579.14438590389388419207@swboyd.mtv.corp.google.com>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Wed, 23 Sep 2020 09:22:33 +0300
+Message-ID: <CA+U=DsrRo0t0Zit8ay5jytmCd5n=BcMHHbXpJMW90oAiur32+w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Zhang Qilong <zhangqilong3@huawei.com>
+On Tue, Sep 22, 2020 at 10:42 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Moritz Fischer (2020-09-14 19:41:38)
+> > On Mon, Sep 14, 2020 at 11:11:05AM +0300, Alexandru Ardelean wrote:
+> > > On Mon, Aug 10, 2020 at 4:41 PM Alexandru Ardelean
+> > > <alexandru.ardelean@analog.com> wrote:
+> > > >
+> > > > These patches synchronize the driver with the current state in the
+> > > > Analog Devices Linux tree:
+> > > >   https://github.com/analogdevicesinc/linux/
+> > > >
+> > > > They have been in the tree for about 2-3, so they did receive some
+> > > > testing.
+> > >
+> > > Ping on this series.
+> > > Do I need to do a re-send?
+>
+> I got this patch series twice. Not sure why.
 
-Calling devm_ioremap means getting devices resource have been
-successful. When remap operation failed, we should return '-ENOMEM'
-instead of '-ENODEV' to differentiate between getting resource and
-mapping memory for reminding callers. Moreover, it is not consistent
-with devm_kzalloc operation.
+My fault here.
+Some Ctrl + R usage and not being attentive with the arguments.
+I think I added "*.patch" twice on the send-mail command.
+I did something similar [by accident] for some DMA patches.
+Apologies.
 
-v2: Remove useless dev_err()
+I can do a re-send for this, if it helps.
 
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
----
- drivers/clk/tegra/clk-dfll.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
+>
+> >
+> > I've applied the FPGA one, the other ones should go through the clock
+> > tree I think?
+>
+> Doesn't patch 6 rely on the FPGA patch? How can that driver build
+> without the header file?
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index cfbaa90c7adb..3866dce054d0 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1991,10 +1991,8 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	}
- 
- 	td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
--	if (!td->base) {
--		dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
--		return -ENODEV;
--	}
-+	if (!td->base)
-+		return -ENOMEM;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	if (!mem) {
-@@ -2003,10 +2001,8 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	}
- 
- 	td->i2c_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
--	if (!td->i2c_base) {
--		dev_err(td->dev, "couldn't ioremap i2c_base resource\n");
--		return -ENODEV;
--	}
-+	if (!td->i2c_base)
-+		return -ENOMEM;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
- 	if (!mem) {
-@@ -2016,11 +2012,8 @@ int tegra_dfll_register(struct platform_device *pdev,
- 
- 	td->i2c_controller_base = devm_ioremap(td->dev, mem->start,
- 					       resource_size(mem));
--	if (!td->i2c_controller_base) {
--		dev_err(td->dev,
--			"couldn't ioremap i2c_controller_base resource\n");
--		return -ENODEV;
--	}
-+	if (!td->i2c_controller_base)
-+		return -ENOMEM;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 3);
- 	if (!mem) {
-@@ -2029,11 +2022,8 @@ int tegra_dfll_register(struct platform_device *pdev,
- 	}
- 
- 	td->lut_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
--	if (!td->lut_base) {
--		dev_err(td->dev,
--			"couldn't ioremap lut_base resource\n");
--		return -ENODEV;
--	}
-+	if (!td->lut_base)
-+		return -ENOMEM;
- 
- 	ret = dfll_init_clks(td);
- 	if (ret) {
--- 
-2.17.1
-
+Yes it does depend on the FPGA patch.
+We can drop patch 6 for now, pending a merge to Linus' tree and then
+wait for the trickle-down.
+I don't mind waiting for these patches.
+I have plenty of backlog that I want to run through, and cleanup and
+then upstream.
+So, there is no hurry.
