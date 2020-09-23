@@ -2,80 +2,120 @@ Return-Path: <SRS0=lMr4=DA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899C9C4727D
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 01:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04126C4363D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 03:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49D6C238A1
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 01:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600824684;
-	bh=i4tZfSqw94NKD65DV4whII+pFoJzIdZuM8ZEQhDRTiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RZ6KpofVHv/zQmBIlJb9WsXe03ff8j8YkEXWZaPsCSMaWKdI+vzLnLynl0ajK+n5A
-	 gfjakGb7pNDOSvTb6HWIMqmLu+JUMVRp2PwqYxROVvztdNcPqJZMV9+276TbUsSPF2
-	 FM2/jSFz0Erq3PZB4NbS5T6qXnRWzZYKcSXOGC9k=
+	by mail.kernel.org (Postfix) with ESMTP id AC14B2084C
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 03:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgIWBbY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Sep 2020 21:31:24 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:34529 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbgIWBbX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Sep 2020 21:31:23 -0400
-Received: by mail-il1-f193.google.com with SMTP id q5so12717160ilj.1;
-        Tue, 22 Sep 2020 18:31:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=RgBQCzMtQmwIMiimJ3o9lxyQbCmVqCdm6KoNh0i+4hs=;
-        b=UqIY1AAV0BDtmux3NO+7myGVz13FXPJNRJQvEdG7xlmpAkP8WoqLvF35qOm9vyfP5O
-         f6nlPHG2t74G0A7uLv2TWZOs41hGRjsiS0YUx0LYbZ7YFCVZ/N9ztcVCxK37V+abCYSl
-         YbroZzgMU4QxkifDMDiMzt9tcKNoBEZeYgyPV60KqFhBiNeGnQKdI67tO35OddJcLdYW
-         JrzJkpo5/XEcjik/oCddZ9te0YbYOfN+k+jHToBxnJE26q+FNVVm5LbhNlvix2PfQhw+
-         sbNyiNBjjqjUc7f6dM4tqCtz0jobK8824uREIJGHktfgTJzVmwWz177U88Cv6nZdo7VS
-         6oXw==
-X-Gm-Message-State: AOAM530RbS2hVwn4r4gN90rTej9Lrf3KuBA2jurRtkWdkjAXbt7Q1vtw
-        0Sa2Nvo8Vc43FH3t7+do8g==
-X-Google-Smtp-Source: ABdhPJwkK9aKoaJcCfiMhweECt8pD8K2e3ZKf7ZMIpCNkj3hN+SJ+lK+lcS4U58qgAFe+INSDKmhmA==
-X-Received: by 2002:a92:8501:: with SMTP id f1mr6672836ilh.54.1600824682737;
-        Tue, 22 Sep 2020 18:31:22 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id g23sm8292465ioe.45.2020.09.22.18.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2020 18:31:22 -0700 (PDT)
-Received: (nullmailer pid 3661228 invoked by uid 1000);
-        Wed, 23 Sep 2020 01:31:21 -0000
-Date:   Tue, 22 Sep 2020 19:31:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: clk: axg-clkc: add MIPI DSI Host
- clock binding
-Message-ID: <20200923013121.GA3661177@bogus>
-References: <20200915124553.8056-1-narmstrong@baylibre.com>
- <20200915124553.8056-3-narmstrong@baylibre.com>
+        id S1726773AbgIWDBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Sep 2020 23:01:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14215 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726448AbgIWDBn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Sep 2020 23:01:43 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EBA57E8C529B61E690BB;
+        Wed, 23 Sep 2020 11:01:40 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Wed, 23 Sep 2020
+ 11:01:40 +0800
+From:   Qilong Zhang <zhangqilong3@huawei.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH -next v2] clk: tegra: clk-dfll: indicate correct error reason in tegra_dfll_register
+Date:   Wed, 23 Sep 2020 11:08:32 +0800
+Message-ID: <20200923030832.79105-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.26.0.106.g9fadedd
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915124553.8056-3-narmstrong@baylibre.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Sep 2020 14:45:51 +0200, Neil Armstrong wrote:
-> Add the clock ID for the MIPI DSI Host clock.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  include/dt-bindings/clock/axg-clkc.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
+From: Zhang Qilong <zhangqilong3@huawei.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Calling devm_ioremap means getting devices resource have been
+successful. When remap operation failed, we should return '-ENOMEM'
+instead of '-ENODEV' to differentiate between getting resource and
+mapping memory for reminding callers. Moreover, it is not consistent
+with devm_kzalloc operation.
+
+v2: Remove useless dev_err()
+
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+ drivers/clk/tegra/clk-dfll.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index cfbaa90c7adb..3866dce054d0 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1991,10 +1991,8 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 	}
+ 
+ 	td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
+-	if (!td->base) {
+-		dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
+-		return -ENODEV;
+-	}
++	if (!td->base)
++		return -ENOMEM;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	if (!mem) {
+@@ -2003,10 +2001,8 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 	}
+ 
+ 	td->i2c_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
+-	if (!td->i2c_base) {
+-		dev_err(td->dev, "couldn't ioremap i2c_base resource\n");
+-		return -ENODEV;
+-	}
++	if (!td->i2c_base)
++		return -ENOMEM;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+ 	if (!mem) {
+@@ -2016,11 +2012,8 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 
+ 	td->i2c_controller_base = devm_ioremap(td->dev, mem->start,
+ 					       resource_size(mem));
+-	if (!td->i2c_controller_base) {
+-		dev_err(td->dev,
+-			"couldn't ioremap i2c_controller_base resource\n");
+-		return -ENODEV;
+-	}
++	if (!td->i2c_controller_base)
++		return -ENOMEM;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 3);
+ 	if (!mem) {
+@@ -2029,11 +2022,8 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 	}
+ 
+ 	td->lut_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
+-	if (!td->lut_base) {
+-		dev_err(td->dev,
+-			"couldn't ioremap lut_base resource\n");
+-		return -ENODEV;
+-	}
++	if (!td->lut_base)
++		return -ENOMEM;
+ 
+ 	ret = dfll_init_clks(td);
+ 	if (ret) {
+-- 
+2.17.1
+
