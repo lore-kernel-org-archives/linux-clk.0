@@ -2,96 +2,111 @@ Return-Path: <SRS0=lMr4=DA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AD9C2D0A8
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0177AC4727E
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C22E220C56
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB476235FC
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Sep 2020 23:58:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600903970;
-	bh=Yg/Me69uBYD13Mn8efledK3VngdYrBerIus1mk2+1QE=;
+	s=default; t=1600905515;
+	bh=LN6CPAC6BCflrmJR9bhTiAiupB3OJMrSeNoGHcSpR38=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ZWXgkXY2ncH9KTqksQp0RqiQ6iONL7PMoWDf9OoZZl9IjsBjtEtkjJOQf9gEQzpnD
-	 WjNC08SfAe3FLeL8TA2elGSsioC7IrjDgpQbSmQonlIba/bab+EHrwNzkCEaycUQ/F
-	 P2BUYIC385LJCCjhQHFsnNnHvZ+FIOjXgLsJOc+I=
+	b=sOOM1x1mlBN5v57sFI7DPQe1IMhemQKg17q5ohZJi9FruldLbWwuNgx7RGTsFfyYY
+	 e3E1sicoqwVFtW1w10DYH+r0zDEtcRgsANIv0czsX3ybxdUOq5Q1dgiuDp4oEyxFkp
+	 KmOElX8huh8ib80942JviTStdzB1f9TvJs83+pxU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbgIWXcq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Sep 2020 19:32:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
+        id S1726572AbgIWX6f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Sep 2020 19:58:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgIWXcm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 23 Sep 2020 19:32:42 -0400
+        id S1726562AbgIWX6f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 23 Sep 2020 19:58:35 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8417020888;
-        Wed, 23 Sep 2020 23:32:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D2B8214F1;
+        Wed, 23 Sep 2020 23:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600903961;
-        bh=Yg/Me69uBYD13Mn8efledK3VngdYrBerIus1mk2+1QE=;
+        s=default; t=1600905514;
+        bh=LN6CPAC6BCflrmJR9bhTiAiupB3OJMrSeNoGHcSpR38=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oUfByonS470Iaxt4tw5Whk/Lgkn68mnnQ50tDW/oB3+b6c8EFj5BBoyd2MqEKQ7Mf
-         JwVpJ52+yH0lRxWFy0LB3LQ9m5PaLvRrcn0XDHCgI7J5HmYT0c8isasMlE9hrR3m25
-         XroRCggbxRkXY2WgOZWOLaDHXR8IW0YHkq3NrdCI=
+        b=XLwsMBNz9F3ph/7uyntu0PYtN9X9f0qJBVSKc5HOA+UW5JYCZydQTYJpWP/0m9Ql4
+         IEvCoE/wjQ6gCd0nr+hYjbwDWwMo0iyadE+Lva3XSgcALk7wh3k3RlhP7Q8o0SFyDv
+         YU1NbBsnwCANEO3r1in3tP30G446QJ2lQvZUetqY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200923081654.GC1110498@ulmo>
-References: <20200918094642.108070-1-zhangqilong3@huawei.com> <160080466654.310579.9823605565645488149@swboyd.mtv.corp.google.com> <20200923081654.GC1110498@ulmo>
-Subject: Re: [PATCH -next] clk: tegra: clk-dfll: indicate correct error reason in tegra_dfll_register
+In-Reply-To: <CA+U=DsrRo0t0Zit8ay5jytmCd5n=BcMHHbXpJMW90oAiur32+w@mail.gmail.com>
+References: <20200810134252.68614-1-alexandru.ardelean@analog.com> <20200810134252.68614-8-alexandru.ardelean@analog.com> <CA+U=Dsr41kKGXmgE1KjdTzAso3rwtNXAEoSy+Li=uym7G=D=Jw@mail.gmail.com> <20200915024138.GA1827@epycbox.lan> <160080374459.310579.14438590389388419207@swboyd.mtv.corp.google.com> <CA+U=DsrRo0t0Zit8ay5jytmCd5n=BcMHHbXpJMW90oAiur32+w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Qilong Zhang <zhangqilong3@huawei.com>, mturquette@baylibre.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.com,
-        linux-clk@vger.kernel.org
-To:     Thierry Reding <thierry.reding@gmail.com>
-Date:   Wed, 23 Sep 2020 16:32:40 -0700
-Message-ID: <160090396030.310579.9633354457476529250@swboyd.mtv.corp.google.com>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Wed, 23 Sep 2020 16:58:33 -0700
+Message-ID: <160090551301.310579.3934488165908158116@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2020-09-23 01:16:54)
-> On Tue, Sep 22, 2020 at 12:57:46PM -0700, Stephen Boyd wrote:
-> > Quoting Qilong Zhang (2020-09-18 02:46:42)
-> > > From: Zhang Qilong <zhangqilong3@huawei.com>
-> > >=20
-> > > Calling devm_ioremap means getting devices resource have been
-> > > successful. When remap operation failed, we should return '-ENOMEM'
-> > > instead of '-ENODEV' to differentiate between getting resource and
-> > > mapping memory for reminding callers. Moreover, it is not consistent
-> > > with devm_kzalloc operation.
-> > >=20
-> > > Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
-> > > ---
-> > >  drivers/clk/tegra/clk-dfll.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfl=
-l.c
-> > > index cfbaa90c7adb..6637b73be9f1 100644
-> > > --- a/drivers/clk/tegra/clk-dfll.c
-> > > +++ b/drivers/clk/tegra/clk-dfll.c
-> > > @@ -1993,7 +1993,7 @@ int tegra_dfll_register(struct platform_device =
-*pdev,
-> > >         td->base =3D devm_ioremap(td->dev, mem->start, resource_size(=
-mem));
-> > >         if (!td->base) {
-> > >                 dev_err(td->dev, "couldn't ioremap DFLL control regis=
-ters\n");
-> > > -               return -ENODEV;
-> > > +               return -ENOMEM;
-> >=20
-> > Can you remove the dev_err() lines too? They're pretty much useless.
+Quoting Alexandru Ardelean (2020-09-22 23:22:33)
+> On Tue, Sep 22, 2020 at 10:42 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Moritz Fischer (2020-09-14 19:41:38)
+> > > On Mon, Sep 14, 2020 at 11:11:05AM +0300, Alexandru Ardelean wrote:
+> > > > On Mon, Aug 10, 2020 at 4:41 PM Alexandru Ardelean
+> > > > <alexandru.ardelean@analog.com> wrote:
+> > > > >
+> > > > > These patches synchronize the driver with the current state in the
+> > > > > Analog Devices Linux tree:
+> > > > >   https://github.com/analogdevicesinc/linux/
+> > > > >
+> > > > > They have been in the tree for about 2-3, so they did receive some
+> > > > > testing.
+> > > >
+> > > > Ping on this series.
+> > > > Do I need to do a re-send?
+> >
+> > I got this patch series twice. Not sure why.
 >=20
-> I find them somewhat useful because they indicate which particular
-> resource wasn't properly mapped. If we get an -ENOMEM without the error
-> message, we'll have to go and guess which one it is.
+> My fault here.
+> Some Ctrl + R usage and not being attentive with the arguments.
+> I think I added "*.patch" twice on the send-mail command.
+> I did something similar [by accident] for some DMA patches.
+> Apologies.
 >=20
+> I can do a re-send for this, if it helps.
 
-Doesn't that print the stacktrace when we run out of memory?
+Sure. Please resend it.
+
+>=20
+> >
+> > >
+> > > I've applied the FPGA one, the other ones should go through the clock
+> > > tree I think?
+> >
+> > Doesn't patch 6 rely on the FPGA patch? How can that driver build
+> > without the header file?
+>=20
+> Yes it does depend on the FPGA patch.
+> We can drop patch 6 for now, pending a merge to Linus' tree and then
+> wait for the trickle-down.
+> I don't mind waiting for these patches.
+> I have plenty of backlog that I want to run through, and cleanup and
+> then upstream.
+> So, there is no hurry.
+
+Can you send me a signed tag with that patch? I can base this patch
+series on top of that. Or I can just apply it to clk tree and if nobody
+changes it in the meantime merge should work out in linux-next and
+linus' tree upstream.
