@@ -4,95 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658C5C4346E
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 08:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815B2C4363D
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 11:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2184D23600
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 08:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 445B42388A
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 11:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgIXIpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Sep 2020 04:45:38 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:57230 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726387AbgIXIpi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 04:45:38 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08O6kf55024739;
-        Thu, 24 Sep 2020 02:50:41 -0400
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 33r5p6b12d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Sep 2020 02:50:41 -0400
-Received: from ASHBMBX9.ad.analog.com (ashbmbx9.ad.analog.com [10.64.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 08O6oeH2035473
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 24 Sep 2020 02:50:40 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Thu, 24 Sep
- 2020 02:50:39 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 24 Sep 2020 02:50:38 -0400
-Received: from saturn.ad.analog.com ([10.48.65.107])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 08O6oSlU022302;
-        Thu, 24 Sep 2020 02:50:36 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-clk@vger.kernel.org>, <linux-fpga@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <mdf@kernel.org>,
-        <ardeleanalex@gmail.com>, <mircea.caprioru@analog.com>,
-        <alexandru.ardelean@analog.com>,
-        Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: [PATCH v3 3/6] clk: axi-clkgen: add support for ZynqMP (UltraScale)
-Date:   Thu, 24 Sep 2020 09:50:09 +0300
-Message-ID: <20200924065012.59605-4-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200924065012.59605-1-alexandru.ardelean@analog.com>
-References: <20200924065012.59605-1-alexandru.ardelean@analog.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-24_02:2020-09-24,2020-09-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 spamscore=0 mlxlogscore=558 impostorscore=0 clxscore=1015
- suspectscore=0 malwarescore=0 mlxscore=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009240052
+        id S1727398AbgIXLSS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Sep 2020 07:18:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbgIXLSP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 07:18:15 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F06C0613CE
+        for <linux-clk@vger.kernel.org>; Thu, 24 Sep 2020 04:18:14 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id XnJB2300m4C55Sk06nJBmW; Thu, 24 Sep 2020 13:18:12 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kLPGN-0006cT-SV; Thu, 24 Sep 2020 13:18:11 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kLPGN-00040R-QH; Thu, 24 Sep 2020 13:18:11 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779a0: Make rcar_r8a779a0_cpg_clk_register() static
+Date:   Thu, 24 Sep 2020 13:18:08 +0200
+Message-Id: <20200924111808.15358-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dragos Bogdan <dragos.bogdan@analog.com>
+When compiling with clang:
 
-This IP core also works and is supported on the Xilinx ZynqMP (UltraScale)
-FPGA boards.
-This patch enables the driver to be available on these platforms as well.
+    drivers/clk/renesas/r8a779a0-cpg-mssr.c:156:21: warning: no previous prototype for function 'rcar_r8a779a0_cpg_clk_register' [-Wmissing-prototypes]
+    struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
+			   ^
+    drivers/clk/renesas/r8a779a0-cpg-mssr.c:156:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+    struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
+    ^
+    static
 
-Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Similarly, with sparse:
+
+    drivers/clk/renesas/r8a779a0-cpg-mssr.c:156:12: warning: symbol 'rcar_r8a779a0_cpg_clk_register' was not declared. Should it be static?
+
+There are no users of rcar_r8a779a0_cpg_clk_register() outside this
+file, so it should be static.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: c07439dea94050b6 ("clk: renesas: cpg-mssr: Add support for R-Car V3U")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/Kconfig | 2 +-
+If you think this should be fast-tracked for v5.10, please take it
+directly.  Else I will queue this in clk-renesas for v5.11.
+
+Thanks!
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4026fac9fac3..44353f257fe2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -239,7 +239,7 @@ config CLK_TWL6040
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index 17ebbac7ddfb4925..7e25b3b8945bd76b 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -153,7 +153,7 @@ static const struct rcar_r8a779a0_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
+ static u32 cpg_mode __initdata;
  
- config COMMON_CLK_AXI_CLKGEN
- 	tristate "AXI clkgen driver"
--	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
-+	depends on ARCH_ZYNQ || ARCH_ZYNQMP || MICROBLAZE || COMPILE_TEST
- 	help
- 	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
- 	  FPGAs. It is commonly used in Analog Devices' reference designs.
+-struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
++static struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base,
+ 	struct raw_notifier_head *notifiers)
 -- 
-2.25.1
+2.17.1
 
