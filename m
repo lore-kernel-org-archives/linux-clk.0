@@ -2,154 +2,85 @@ Return-Path: <SRS0=Q/QO=DB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B980C4346E
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 05:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1A9C4346E
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC7F23741
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 05:41:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTmr1jjT"
+	by mail.kernel.org (Postfix) with ESMTP id BDB9B20702
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600928159;
+	bh=FYKhygRGLCFyNdkjnICFM64KAKwmd6wBhNdDogeSdRA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=UoUm70e+gK7m/rMTfN1WmtARZjUtmoLQMJ/DYcbBSCC0m3eLrNZ/kZnDfxoGTzpM6
+	 M1AjPbfh8cNS3+ObCIQlrF2Bnq4LVCwD3+IFY0Pu5Cp8nQynyOnPdreVPtB6Ykks/b
+	 +mp6h2zpXdgvth8DLiL0Dg/h0LZcPwTyTChHf7JQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgIXFls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Sep 2020 01:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbgIXFls (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 01:41:48 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769CAC0613CE;
-        Wed, 23 Sep 2020 22:41:48 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id 185so2414488oie.11;
-        Wed, 23 Sep 2020 22:41:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BqoX/qWwWn9TAGtuNC2Hh+7x/VKXLyD4Jf3sDc3Y86s=;
-        b=QTmr1jjT/WwYzJXthPpU4hBlgutTF3Yidgj25xfvh5MeWlPlMIAAKbE5Wox6PRbTzD
-         dzsGzU9vyjC937mGliSOQ6PtvaD1+P1xRTIs1xfpaaVGn5slefZQ+xyQFq1kFtSqWlRw
-         gqF3AzvRYyieg4tlQ67D7qpxHN5QFVDIt64gnETIiXD5B/WuAsUE31hnWXggCUglTHvl
-         Yws+HqYCicHqrbug7LxIZaqSDWot7POogewmqeiGNuode42HdHVB5PT6t5kYcdNe81xX
-         cSIQy6ar/Qd40otaYqD7MAXXT8umy85t38JtUe1BkNtZsBktNPMOTPCqm/DDIkPL4oEw
-         /UEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BqoX/qWwWn9TAGtuNC2Hh+7x/VKXLyD4Jf3sDc3Y86s=;
-        b=tOhesUWDAOLpXbpzt7ciAesDmeScFxr3grVeUmx6L0irU/R2JX9+ee2X//e84uXwDm
-         txPPkem84Et9rnle6nY9T0ms2/CP60Qp8MRhI9lKzcy6a+gO2h3gF9VEHUrCbqXg6j3+
-         NcU1hDD3167PeYaP5GIL33DCHkMIIv5hfZNFLS5QcLkggbWvqNmPNCq6w1yrlKdYQPTZ
-         b52ISyy8iLqdMvm6Tp7exMkZR3S6hUdlV+Q84DUaI6Hon3lixctgEvFG2NHNYICWDeCA
-         YECirsARxv/6LDKe0HyNk9BtZ1dXB4goCNOH33TCPDkZhMlvm8IM1W6c54ZjAYunx9OQ
-         HhpA==
-X-Gm-Message-State: AOAM532mgDnOFCpfxhzffIah/IYxihQx16iMZBsddJTbj4JOqvFnjeqE
-        TK/6RLkDYLh7s0J3OAPoTTinI21AmGShqtak0Xo=
-X-Google-Smtp-Source: ABdhPJw97YNhY3K70Whn/AYEDGpriLraB3VqIsCpZxmt2xpG3bhQUx6dxht1Eore5lxBP06DC3pmKxu70V8WKD3vA9g=
-X-Received: by 2002:aca:72ca:: with SMTP id p193mr1567487oic.124.1600926107739;
- Wed, 23 Sep 2020 22:41:47 -0700 (PDT)
+        id S1726850AbgIXGP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Sep 2020 02:15:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726683AbgIXGP7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Sep 2020 02:15:59 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D792320702;
+        Thu, 24 Sep 2020 06:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600928157;
+        bh=FYKhygRGLCFyNdkjnICFM64KAKwmd6wBhNdDogeSdRA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=tBPrve2+kzsKJDkJf38NlVKLW0rdEu2RDr/cs94SHAxvR2xvoc2w5BP3S6WaAO/tP
+         rTQABPuLF/xzC3xpI68MXTLZz7ctRgq3rQEqzY3I87gSo0cWwe6oZIs+rl4RHPP+4M
+         04oW8KDkdd4nHzwjyrCfAvENgY0DyC0fZORGr7tA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200810134252.68614-1-alexandru.ardelean@analog.com>
- <20200810134252.68614-8-alexandru.ardelean@analog.com> <CA+U=Dsr41kKGXmgE1KjdTzAso3rwtNXAEoSy+Li=uym7G=D=Jw@mail.gmail.com>
- <20200915024138.GA1827@epycbox.lan> <160080374459.310579.14438590389388419207@swboyd.mtv.corp.google.com>
- <CA+U=DsrRo0t0Zit8ay5jytmCd5n=BcMHHbXpJMW90oAiur32+w@mail.gmail.com>
- <160090551301.310579.3934488165908158116@swboyd.mtv.corp.google.com> <20200924045314.GA91389@epycbox.lan>
-In-Reply-To: <20200924045314.GA91389@epycbox.lan>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Thu, 24 Sep 2020 08:41:36 +0300
-Message-ID: <CA+U=DsrSE=NdAYP46vEfrOAqnr7EhNfrEE5DhG64XY5VsQGTnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3370cff3-9296-74fc-8e7d-ff93c3978351@marek.ca>
+References: <20200911153412.21672-1-jonathan@marek.ca> <20200911153412.21672-7-jonathan@marek.ca> <160080149549.310579.17453759593211612997@swboyd.mtv.corp.google.com> <3370cff3-9296-74fc-8e7d-ff93c3978351@marek.ca>
+Subject: Re: [PATCH v3 6/7] clk: qcom: Add display clock controller driver for SM8150
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Date:   Wed, 23 Sep 2020 23:15:55 -0700
+Message-ID: <160092815523.310579.15502532225598451868@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 7:53 AM Moritz Fischer <mdf@kernel.org> wrote:
->
-> Hi Stephen,
->
-> On Wed, Sep 23, 2020 at 04:58:33PM -0700, Stephen Boyd wrote:
-> > Quoting Alexandru Ardelean (2020-09-22 23:22:33)
-> > > On Tue, Sep 22, 2020 at 10:42 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Moritz Fischer (2020-09-14 19:41:38)
-> > > > > On Mon, Sep 14, 2020 at 11:11:05AM +0300, Alexandru Ardelean wrote:
-> > > > > > On Mon, Aug 10, 2020 at 4:41 PM Alexandru Ardelean
-> > > > > > <alexandru.ardelean@analog.com> wrote:
-> > > > > > >
-> > > > > > > These patches synchronize the driver with the current state in the
-> > > > > > > Analog Devices Linux tree:
-> > > > > > >   https://github.com/analogdevicesinc/linux/
-> > > > > > >
-> > > > > > > They have been in the tree for about 2-3, so they did receive some
-> > > > > > > testing.
-> > > > > >
-> > > > > > Ping on this series.
-> > > > > > Do I need to do a re-send?
-> > > >
-> > > > I got this patch series twice. Not sure why.
-> > >
-> > > My fault here.
-> > > Some Ctrl + R usage and not being attentive with the arguments.
-> > > I think I added "*.patch" twice on the send-mail command.
-> > > I did something similar [by accident] for some DMA patches.
-> > > Apologies.
-> > >
-> > > I can do a re-send for this, if it helps.
-> >
-> > Sure. Please resend it.
-> >
-> > >
-> > > >
-> > > > >
-> > > > > I've applied the FPGA one, the other ones should go through the clock
-> > > > > tree I think?
-> > > >
-> > > > Doesn't patch 6 rely on the FPGA patch? How can that driver build
-> > > > without the header file?
-> > >
-> > > Yes it does depend on the FPGA patch.
-> > > We can drop patch 6 for now, pending a merge to Linus' tree and then
-> > > wait for the trickle-down.
-> > > I don't mind waiting for these patches.
-> > > I have plenty of backlog that I want to run through, and cleanup and
-> > > then upstream.
-> > > So, there is no hurry.
-> >
-> > Can you send me a signed tag with that patch? I can base this patch
-> > series on top of that. Or I can just apply it to clk tree and if nobody
-> > changes it in the meantime merge should work out in linux-next and
-> > linus' tree upstream.
->
-> Long story short I messed up my pull-request to Greg and had to back out
-> the patch anyways. In retrospect I think the patch should have gone
-> through your tree anyways, so here's our chance to get it right.
->
-> Feel free to take it with the rest of the changes through your tree.
->
-> Note: When I applied the patch I fixed up the whitespace that checkpatch
-> complained about so you might want to do that (or ask Alexandru to
-> resend the patch).
->
+Quoting Jonathan Marek (2020-09-23 09:24:04)
+> On 9/22/20 3:04 PM, Stephen Boyd wrote:
+> > Quoting Jonathan Marek (2020-09-11 08:34:06)
+> >> Add support for the display clock controller found on SM8150
+> >> based devices. This would allow display drivers to probe and
+> >> control their clocks.
+> >>
+> >> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> >> ---
+> >>   drivers/clk/qcom/Kconfig         |    9 +
+> >>   drivers/clk/qcom/Makefile        |    1 +
+> >>   drivers/clk/qcom/dispcc-sm8150.c | 1152 ++++++++++++++++++++++++++++=
+++
+> >>   3 files changed, 1162 insertions(+)
+> >>   create mode 100644 drivers/clk/qcom/dispcc-sm8150.c
+> >=20
+> > If the bindings are the same for these two drivers I wonder if there is
+> > anything different between the two. Maybe the two drivers can be one
+> > driver?
+> >=20
+>=20
+> Possibly, the biggest difference seems to be the plls (trion vs lucid,=20
+> different config), which could be resolved in the probe() function. If=20
+> you think combining the drivers is the right thing to do then I can do th=
+at.
 
-I'll fixup the checkpatch stuff, re-send as a V3, and add your Acked-by.
-Thanks & apologies for the mess-up on my part.
-
-> Acked-by: Moritz Fischer <mdf@kernel.org>
->
-> Sorry for the confusion and let me know if you still prefer a signed
-> tag.
->
-> - Moritz
+If that's the main difference then it sounds OK to merge the two.
