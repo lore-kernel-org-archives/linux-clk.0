@@ -2,85 +2,104 @@ Return-Path: <SRS0=Q/QO=DB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AC6C2D0E2
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E1EC4346E
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDE8E2388A
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:41:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D51C23772
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 06:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgIXGlm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Sep 2020 02:41:42 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:52818 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbgIXGll (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Sep 2020 02:41:41 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1kLKwi-00048m-KT; Thu, 24 Sep 2020 08:41:36 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH] clk: rockchip: Initialize hw to error to avoid undefined behavior
-Date:   Thu, 24 Sep 2020 08:41:36 +0200
-Message-ID: <1741951.WK9IEl5h0a@diego>
-In-Reply-To: <20200924004441.1476015-1-sboyd@kernel.org>
-References: <20200924004441.1476015-1-sboyd@kernel.org>
+        id S1726970AbgIXGzP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Sep 2020 02:55:15 -0400
+Received: from m17618.mail.qiye.163.com ([59.111.176.18]:47721 "EHLO
+        m17618.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbgIXGzP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 02:55:15 -0400
+Received: from vivo-HP-ProDesk-680-G4-PCI-MT.vivo.xyz (unknown [58.251.74.231])
+        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id A86434E1856;
+        Thu, 24 Sep 2020 14:55:12 +0800 (CST)
+From:   Wang Qing <wangqing@vivo.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Wang Qing <wangqing@vivo.com>
+Subject: [PATCH] clk/qcom: fix spelling typo
+Date:   Thu, 24 Sep 2020 14:55:04 +0800
+Message-Id: <1600930506-394-1-git-send-email-wangqing@vivo.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+        oVCBIfWUFZSBhJHxlIH0hOSk8eVkpNS0tCSEtOSkhLSUJVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWU
+        FZT0tIVUpKS0hKTFVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pgw6Pjo5Cj8eLAMsOgkqSRUV
+        SRMwC0lVSlVKTUtLQkhLTkpIT05DVTMWGhIXVQwaFRwKEhUcOw0SDRRVGBQWRVlXWRILWUFZTkNV
+        SU5KVUxPVUlISllXWQgBWUFISUxJNwY+
+X-HM-Tid: 0a74bee5003b9376kuwsa86434e1856
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Donnerstag, 24. September 2020, 02:44:41 CEST schrieb Stephen Boyd:
-> We can get down to this return value from ERR_CAST() without
-> initializing hw. Set it to -ENOMEM so that we always return something
-> sane.
-> 
-> Fixes the following smatch warning:
-> 
-> drivers/clk/rockchip/clk-half-divider.c:228 rockchip_clk_register_halfdiv() error: uninitialized symbol 'hw'.
-> drivers/clk/rockchip/clk-half-divider.c:228 rockchip_clk_register_halfdiv() warn: passing zero to 'ERR_CAST'
-> 
-> Cc: Elaine Zhang <zhangqing@rock-chips.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Fixes: 956060a52795 ("clk: rockchip: add support for half divider")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Modify the comment typo: "compliment" -> "complement".
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Wang Qing <wangqing@vivo.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-
-> ---
->  drivers/clk/rockchip/clk-half-divider.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-> index e97fd3dfbae7..ccd5c270c213 100644
-> --- a/drivers/clk/rockchip/clk-half-divider.c
-> +++ b/drivers/clk/rockchip/clk-half-divider.c
-> @@ -166,7 +166,7 @@ struct clk *rockchip_clk_register_halfdiv(const char *name,
->  					  unsigned long flags,
->  					  spinlock_t *lock)
->  {
-> -	struct clk_hw *hw;
-> +	struct clk_hw *hw = ERR_PTR(-ENOMEM);
->  	struct clk_mux *mux = NULL;
->  	struct clk_gate *gate = NULL;
->  	struct clk_divider *div = NULL;
-> 
-> base-commit: ca52a47af60f791b08a540a8e14d8f5751ee63e9
-> 
-
-
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 26139ef..5644311
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -609,7 +609,7 @@ static unsigned long
+ alpha_huayra_pll_calc_rate(u64 prate, u32 l, u32 a)
+ {
+ 	/*
+-	 * a contains 16 bit alpha_val in two’s compliment number in the range
++	 * a contains 16 bit alpha_val in two’s complement number in the range
+ 	 * of [-0.5, 0.5).
+ 	 */
+ 	if (a >= BIT(PLL_HUAYRA_ALPHA_WIDTH - 1))
+@@ -641,7 +641,7 @@ alpha_huayra_pll_round_rate(unsigned long rate, unsigned long prate,
+ 		quotient++;
+ 
+ 	/*
+-	 * alpha_val should be in two’s compliment number in the range
++	 * alpha_val should be in two’s complement number in the range
+ 	 * of [-0.5, 0.5) so if quotient >= 0.5 then increment the l value
+ 	 * since alpha value will be subtracted in this case.
+ 	 */
+@@ -666,7 +666,7 @@ alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &alpha);
+ 		/*
+ 		 * Depending upon alpha_mode, it can be treated as M/N value or
+-		 * as a two’s compliment number. When alpha_mode=1,
++		 * as a two’s complement number. When alpha_mode=1,
+ 		 * pll_alpha_val<15:8>=M and pll_apla_val<7:0>=N
+ 		 *
+ 		 *		Fout=FIN*(L+(M/N))
+@@ -674,12 +674,12 @@ alpha_pll_huayra_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 		 * M is a signed number (-128 to 127) and N is unsigned
+ 		 * (0 to 255). M/N has to be within +/-0.5.
+ 		 *
+-		 * When alpha_mode=0, it is a two’s compliment number in the
++		 * When alpha_mode=0, it is a two’s complement number in the
+ 		 * range [-0.5, 0.5).
+ 		 *
+ 		 *		Fout=FIN*(L+(alpha_val)/2^16)
+ 		 *
+-		 * where alpha_val is two’s compliment number.
++		 * where alpha_val is two’s complement number.
+ 		 */
+ 		if (!(ctl & PLL_ALPHA_MODE))
+ 			return alpha_huayra_pll_calc_rate(rate, l, alpha);
+-- 
+2.7.4
 
