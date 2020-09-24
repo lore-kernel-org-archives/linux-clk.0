@@ -2,126 +2,147 @@ Return-Path: <SRS0=Q/QO=DB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93451C4363D
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 00:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D6FC4346E
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 04:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F15823119
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 00:56:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="gP6k2LuQ"
+	by mail.kernel.org (Postfix) with ESMTP id 586C7235F7
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 04:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600923197;
+	bh=YwSNg6u/rZzAeyCKAca0N50cn5j0Ugk0P09QkMPjvIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2nTcANeuY7aWAueziy679/Mhm4mMhmqir1KbXcG+/p5Nvp9/b+BZZuCEUq0MUHyOP
+	 1/5mh3DzhnIZmh5NtwdHJRba4YhV44cxYI28EW/VALzWZNR7YSv9ioJ7sXf5RwkBpx
+	 q9spgYLCDPt2wQsv8wdHgjpBzJq0GbM5arPmPT3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbgIXA4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Sep 2020 20:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45472 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbgIXA4a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Sep 2020 20:56:30 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08083C0613CE
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2020 17:56:30 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id t138so1722574qka.0
-        for <linux-clk@vger.kernel.org>; Wed, 23 Sep 2020 17:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4m4w+Ywq7BaCVSVWBYAbvGB8+AqmqBDmtowl+8MplpM=;
-        b=gP6k2LuQqHYL3LJIMbEuX3uzH0S3s6FMSUtihtfRAolAmLVudW0oJC4sXKs/jh0OoK
-         QfASk2ZwwETwgqRC2pPPvOFs9Tg+AFO3IlgszTjepDZkvY2GfapLMHU24Pj1WZWFHDil
-         xY6dYYe3ZE2fbJ7l3S2fyG3x/Sdn+Dc4+rA2e9YrB0F9zmpZoqSH6ydKfWgnOY8H3Yaz
-         OQOBb+QmI077pGw6AanTWw1UUHzApXD0pRBhqNObFAcrmNw31JaqpGCOV/TLdn/C5rcB
-         gx+oAuGK59j/veHq2QSbL6KQsVk4k5gInLw3F3wJOog0fcl+i7d0dCdM1UpY3Y0/HMQB
-         sLGA==
+        id S1726684AbgIXExQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Sep 2020 00:53:16 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:50961 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbgIXExQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 00:53:16 -0400
+Received: by mail-pj1-f68.google.com with SMTP id fa1so1011038pjb.0;
+        Wed, 23 Sep 2020 21:53:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4m4w+Ywq7BaCVSVWBYAbvGB8+AqmqBDmtowl+8MplpM=;
-        b=CE8mA0zCcWnU4yCMg/vB6isNkEEGDEI8HOJc7C8C7tZ/wOVjPUgdmIrSoltXFkFCPF
-         QnQn+9nCnNf1QMzZ5KcvsfJIZ6ApkNodUSktQiEOq+L2oGGFDaZr1ZE6MUl/SU4bY8+Q
-         LwjGaJ6aw847ew1NenOfC67mSaWAhmrr0AVPE5UW6n4ZFT53/mhS7vzmwViEvSEm3TqK
-         eWDzanKl74mXQFvApti/QaY0pAY14Y+STooEg17dvzmtd6rCT7J6YqUyvg57yeMa87aP
-         oOVl+4rEKlL3iMVK7NGGgP+YGXLJm88LyUF2592jr6HDZ4yZWAdt+1Wy+EcUdxENRKrV
-         OUXg==
-X-Gm-Message-State: AOAM532/a1Whd28e5WLk/YlR7chV2ASo+BccRl2gsrv/sXpSmAct+xbe
-        PV/B5YvS679JAfZ/9x2PnjmZ7b9IdiO67h+SayQ=
-X-Google-Smtp-Source: ABdhPJxWKoryUyrPE2o58ZX+HOKq4A+VggQTBi1+/RDEpKIZntnYAdXUiWef1AsEUtBG9B/yIKDnBw==
-X-Received: by 2002:a05:620a:40d0:: with SMTP id g16mr2551371qko.282.1600908988803;
-        Wed, 23 Sep 2020 17:56:28 -0700 (PDT)
-Received: from [192.168.0.189] ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id w44sm1147494qth.9.2020.09.23.17.56.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2020 17:56:28 -0700 (PDT)
-Subject: Re: [PATCH v2 5/5] clk: qcom: add video clock controller driver for
- SM8250
-To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qpLQEylf7V9Nzutns+p3Vp5V52QPP2PMMRwKiRQia2s=;
+        b=Yi69gGUpPHe1ZEu5ltGpFwnmfHpLuu2CEeGDJNUGOGjp21FQwiEIkdHTfX1CwNBeUy
+         +gMWn/IB3rjkjjVMDIvGYoxsxHL6ylElNgOdNuz9YWSr1ujGtEKvUWdGTZ49gYU1cZP9
+         TrLakcGfnDEjs/7rrrCFAg7GTuc9A0hrqv7YoKWx+jAc9+8SrayupuKXeLw+9IZ4gR0w
+         vXwQ9EMayWKMIMfkBBsMqqtaFYux1QoSBH3vlb+sMi/J4tJt5Xkc+Q6n7sGf79XTkqEp
+         5WWE/M11v+oZlp93CESVCA2OEPlSKIr/9KGoRVyyG/y1ljP4tQDtIUeWvDSJbLbaNmMc
+         qBFA==
+X-Gm-Message-State: AOAM531/+6A4j2FgiTWHX+SH6R4jyC7b06ir+QyVLdFzWfp1Wb1bes5T
+        utO20aaxvEoMTJABdmySf72N5XClxAE=
+X-Google-Smtp-Source: ABdhPJzmb6rbFEmYm35Cp2vNybbyYDMin/HM/I8ORcRPZ3twGtzYy1P/Z6qvngNyY44jbF/TI4DdxA==
+X-Received: by 2002:a17:90a:de92:: with SMTP id n18mr2323271pjv.35.1600923195618;
+        Wed, 23 Sep 2020 21:53:15 -0700 (PDT)
+Received: from localhost ([2601:647:5b00:1161:a4cc:eef9:fbc0:2781])
+        by smtp.gmail.com with ESMTPSA id il14sm880444pjb.54.2020.09.23.21.53.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2020 21:53:14 -0700 (PDT)
+Date:   Wed, 23 Sep 2020 21:53:14 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20200904030958.13325-1-jonathan@marek.ca>
- <20200904030958.13325-6-jonathan@marek.ca>
- <160080040123.310579.8471841951357841843@swboyd.mtv.corp.google.com>
- <0ce9fdb6-e224-ced7-ec32-fe67b2ca6127@marek.ca>
- <160090383364.310579.1979253418505275623@swboyd.mtv.corp.google.com>
-From:   Jonathan Marek <jonathan@marek.ca>
-Message-ID: <d7207c1c-c4e4-f994-cacb-bdfb7952732b@marek.ca>
-Date:   Wed, 23 Sep 2020 20:54:59 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mircea Caprioru <mircea.caprioru@analog.com>
+Subject: Re: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
+Message-ID: <20200924045314.GA91389@epycbox.lan>
+References: <20200810134252.68614-1-alexandru.ardelean@analog.com>
+ <20200810134252.68614-8-alexandru.ardelean@analog.com>
+ <CA+U=Dsr41kKGXmgE1KjdTzAso3rwtNXAEoSy+Li=uym7G=D=Jw@mail.gmail.com>
+ <20200915024138.GA1827@epycbox.lan>
+ <160080374459.310579.14438590389388419207@swboyd.mtv.corp.google.com>
+ <CA+U=DsrRo0t0Zit8ay5jytmCd5n=BcMHHbXpJMW90oAiur32+w@mail.gmail.com>
+ <160090551301.310579.3934488165908158116@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <160090383364.310579.1979253418505275623@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <160090551301.310579.3934488165908158116@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/23/20 7:30 PM, Stephen Boyd wrote:
-> Quoting Jonathan Marek (2020-09-23 09:07:16)
->> On 9/22/20 2:46 PM, Stephen Boyd wrote:
->>> Quoting Jonathan Marek (2020-09-03 20:09:54)
->>>
->>>> +                       .ops = &clk_branch2_ops,
->>>> +               },
->>>> +       },
->>>> +};
->>>> +
->>>> +static struct clk_branch video_cc_mvs0_clk = {
->>>> +       .halt_reg = 0xd34,
->>>> +       .halt_check = BRANCH_HALT_SKIP, /* TODO: hw gated ? */
->>>
->>> Is this resolved?
->>>
->>
->> Downstream has this clock as BRANCH_HALT_VOTED, but with the upstream
->> venus driver (with patches to enable sm8250), that results in a
->> "video_cc_mvs0_clk status stuck at 'off" error. AFAIK venus
->> enables/disables this clock on its own (venus still works without
->> touching this clock), but I didn't want to remove this in case it might
->> be needed. I removed these clocks in the v3 I just sent.
->>
+Hi Stephen,
+
+On Wed, Sep 23, 2020 at 04:58:33PM -0700, Stephen Boyd wrote:
+> Quoting Alexandru Ardelean (2020-09-22 23:22:33)
+> > On Tue, Sep 22, 2020 at 10:42 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Moritz Fischer (2020-09-14 19:41:38)
+> > > > On Mon, Sep 14, 2020 at 11:11:05AM +0300, Alexandru Ardelean wrote:
+> > > > > On Mon, Aug 10, 2020 at 4:41 PM Alexandru Ardelean
+> > > > > <alexandru.ardelean@analog.com> wrote:
+> > > > > >
+> > > > > > These patches synchronize the driver with the current state in the
+> > > > > > Analog Devices Linux tree:
+> > > > > >   https://github.com/analogdevicesinc/linux/
+> > > > > >
+> > > > > > They have been in the tree for about 2-3, so they did receive some
+> > > > > > testing.
+> > > > >
+> > > > > Ping on this series.
+> > > > > Do I need to do a re-send?
+> > >
+> > > I got this patch series twice. Not sure why.
+> > 
+> > My fault here.
+> > Some Ctrl + R usage and not being attentive with the arguments.
+> > I think I added "*.patch" twice on the send-mail command.
+> > I did something similar [by accident] for some DMA patches.
+> > Apologies.
+> > 
+> > I can do a re-send for this, if it helps.
 > 
-> Hmm. Does downstream use these clks? There have been some clk stuck
-> problems with venus recently that were attributed to improperly enabling
-> clks before enabling interconnects and power domains. Maybe it's the
-> same problem.
+> Sure. Please resend it.
 > 
+> > 
+> > >
+> > > >
+> > > > I've applied the FPGA one, the other ones should go through the clock
+> > > > tree I think?
+> > >
+> > > Doesn't patch 6 rely on the FPGA patch? How can that driver build
+> > > without the header file?
+> > 
+> > Yes it does depend on the FPGA patch.
+> > We can drop patch 6 for now, pending a merge to Linus' tree and then
+> > wait for the trickle-down.
+> > I don't mind waiting for these patches.
+> > I have plenty of backlog that I want to run through, and cleanup and
+> > then upstream.
+> > So, there is no hurry.
+> 
+> Can you send me a signed tag with that patch? I can base this patch
+> series on top of that. Or I can just apply it to clk tree and if nobody
+> changes it in the meantime merge should work out in linux-next and
+> linus' tree upstream.
 
-Yes, downstream uses these clks.
+Long story short I messed up my pull-request to Greg and had to back out
+the patch anyways. In retrospect I think the patch should have gone
+through your tree anyways, so here's our chance to get it right.
 
-The "stuck" problem still happens if GSDCS/interconnects are always on, 
-and like I mentioned, venus works even with these clocks completely 
-removed.
+Feel free to take it with the rest of the changes through your tree.
 
-I think venus controls these clocks (and downstream just happens to try 
-enabling it at a point where venus has already enabled it?). I'm not too 
-sure about this, it might have something to do with the GDSC having the 
-HW_CTRL flag too..
+Note: When I applied the patch I fixed up the whitespace that checkpatch
+complained about so you might want to do that (or ask Alexandru to
+resend the patch).
+
+Acked-by: Moritz Fischer <mdf@kernel.org>
+
+Sorry for the confusion and let me know if you still prefer a signed
+tag.
+
+- Moritz
