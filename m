@@ -1,218 +1,173 @@
-Return-Path: <SRS0=Q/QO=DB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=RzHG=DC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD63C2D0E2
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 14:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3094C4363D
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Sep 2020 10:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B59D2311A
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Sep 2020 14:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA970221E5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Sep 2020 10:31:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsdFrQRB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ccC+FV4b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbgIXOyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Sep 2020 10:54:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
+        id S1728149AbgIYKbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Sep 2020 06:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727859AbgIXOyL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Sep 2020 10:54:11 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688EEC0613CE;
-        Thu, 24 Sep 2020 07:54:11 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id a2so3362020otr.11;
-        Thu, 24 Sep 2020 07:54:11 -0700 (PDT)
+        with ESMTP id S1728056AbgIYKbi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Sep 2020 06:31:38 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8CE6C0613DB
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2020 03:31:36 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id a9so2729544wmm.2
+        for <linux-clk@vger.kernel.org>; Fri, 25 Sep 2020 03:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AN04ZI3/fnyZPlEv/Hon+vuzpKMD4d8FN7QLN5Emzqo=;
-        b=SsdFrQRB14hZj0kgjY0fCf4we4oTXJDB+lkNcJGOn12Hbna3LXXI1frb841MgSIfzm
-         7se27U17y2iA2H4hyeFNnOGKoDKkVnPfcs6ropOYYFXZcPmB8QBbOT3Lbco5hQWgwzlD
-         PGe8+ngiIeCq2bEaCtDYwkP6igZvKec31TlVwQ5XxGPw6Oe/sEMIoFv1IdPdOvrqI5m6
-         cW5HA8VjiPtiDukUIBi4763le193N5Q7Z9sfNed4jgQj8hezplrxWNoRITGyyAlEMEsG
-         ZCXPaVyPpKyFz9q66zzdfZWTSEG7xndj099BuLihXEmHRZPdRZV7GM/AUlVQygyDgkTW
-         STvA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kTQ3e0/LCgzSJvFHZrL2OGlp6ZdNfQa4Pg2C/+kTcwM=;
+        b=ccC+FV4be/e/5Po5TekeLpAkwVM1euxvcfPbP70FAx2wCSw6ESROzfia0AZE2cTk2R
+         APJkVFeyBykdc5ipLi5DPjb+octeugFkbWC5lvSKp7IzLewRFy3YCIur0LqydsI9qzF9
+         OGvReI8/v9E4H+oOHlrWFYpKPz3cDODe2x2mxPQQMilXsfvJxoBAk51dwyBJEpC5BiFB
+         z1lPvG3fW7tKuwba3Katol8XFuAcMFQakuS1lI4jBkHBEX2XXm+rBxSpvlfqIcSADyXN
+         BNmsyJT2hS1zi7o9KtC0Z1N759CNs604ILUehTsffiqWHzBtUCfSijakzdlxc5mp6XCG
+         J6kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AN04ZI3/fnyZPlEv/Hon+vuzpKMD4d8FN7QLN5Emzqo=;
-        b=gXExDjfzVbwTBgY/EZhP4ZmrZOFJRxHbrsaWGsPEzaSAYo/2s/SMF2SbL1OsY/M2Cs
-         ZstueNmkx+RZov+ccEPwsp7fy1LaoIUPeX4lKGe/yeuBVyKHMaJOd8kh8FcMPkBy/s60
-         bscTnjpJMzhmIFSCP6zb6IKSAZKXN0SdJv6RmB68JYAFJ+LTvv5db7RLQvxDWG5mgS2i
-         cgLtb155BKDk/c+pyfOL/hrJhNYrpZfB/PxsZIrvqkflYsC5ijC1PUT+e4aJDSF8XM1Y
-         x1MFDXzHBiL8wft/OBMHHlsMlVvgrYXudGUxdxoi22zaaDUnL8Y/V+jP7ZCi7GzCS0+G
-         gayg==
-X-Gm-Message-State: AOAM530Vx1Es6Uj3Mw1DBpXbJdhbEjxBpH3WCOX1nOas8zk3OPN4l/Iw
-        eDXkKV2kDz9HJQ31Y51hGMFlODEmTjGLMb3xnznomUaCcrqee1s/
-X-Google-Smtp-Source: ABdhPJxc5PRt2xQ8XjuX6wuaCXgNyCMZ0I9s05pK6Xdx59CZri0Qrl5ywekA3HgFWyWeuvM2DvMiILRYEvASQOY5VDc=
-X-Received: by 2002:a9d:7095:: with SMTP id l21mr36456otj.224.1600959250713;
- Thu, 24 Sep 2020 07:54:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kTQ3e0/LCgzSJvFHZrL2OGlp6ZdNfQa4Pg2C/+kTcwM=;
+        b=BSXkVXHjfvFEOeVF3fBD8GW65OhILE5LkZBOrU/7VcejL/Ffe17HDMaBvftv8is0y/
+         1EBHXpSxpn2XnKw0mgxT8iXtDLz2ngY/1fBpYZmZ/jD9i8GnOdIXDb9Qgz73qri9Xy7z
+         WPH0ATDxZGNpGWlRnrpENgj2twOZwPjgCvY5p9exmtPcqw9I+V7GVo4o9EYN/0l/k1sn
+         7xCyH8S/hhjN7fxqm3OrYfAjDnPG1CKHpIp97qOacC63SewkmPZt/2AqmgTD0fDXsmK+
+         z7As0lykt3JOgQYH2o8YULEP8TA4SNmmgTGOVsBoTTJY+S8CfSPJUOeXYQQdO0e/KcuW
+         4xLg==
+X-Gm-Message-State: AOAM533iInLuliU4SUSOrg955LCDsc0u4PwHayfLFqjW5B2872HBumpk
+        H3et4xRBEE1nia+Ullm8QauEcw==
+X-Google-Smtp-Source: ABdhPJxErtQikbHjqQn6fHN+5dV5Wp8EDhlBXkKec0vOuPfEwXGFI7L0lw9wl7gmVe26iB/5RJ5plA==
+X-Received: by 2002:a1c:6487:: with SMTP id y129mr2496832wmb.90.1601029895413;
+        Fri, 25 Sep 2020 03:31:35 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
+        by smtp.gmail.com with ESMTPSA id 11sm2354907wmi.14.2020.09.25.03.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2020 03:31:34 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 2/4] dt-bindings: clock: Add support for LPASS Always ON Controller
+Date:   Fri, 25 Sep 2020 11:31:13 +0100
+Message-Id: <20200925103115.15191-3-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20200925103115.15191-1-srinivas.kandagatla@linaro.org>
+References: <20200925103115.15191-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-References: <20200924065012.59605-1-alexandru.ardelean@analog.com>
- <20200924065012.59605-7-alexandru.ardelean@analog.com> <20200924142108.GA60306@archbook>
-In-Reply-To: <20200924142108.GA60306@archbook>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Thu, 24 Sep 2020 17:53:59 +0300
-Message-ID: <CA+U=Dsqujj=Mf6ES0zt+atEO835eRB+xV29X_68Ah1hTo-pysw@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] clk: axi-clkgen: Add support for FPGA info
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 5:21 PM Moritz Fischer <mdf@kernel.org> wrote:
->
-> On Thu, Sep 24, 2020 at 09:50:12AM +0300, Alexandru Ardelean wrote:
-> > From: Mircea Caprioru <mircea.caprioru@analog.com>
-> >
-> > This patch adds support for vco maximum and minimum ranges in accordance
-> > with fpga speed grade, voltage, device package, technology and family. This
-> > new information is extracted from two new registers implemented in the ip
-> > core: ADI_REG_FPGA_INFO and ADI_REG_FPGA_VOLTAGE, which are stored in the
-> > 'include/linux/fpga/adi-axi-common.h' file as they are common to all ADI
-> > FPGA cores.
-> >
-> > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > ---
-> >  drivers/clk/clk-axi-clkgen.c | 67 +++++++++++++++++++++++++++++++-----
-> >  1 file changed, 59 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> > index 6ffc19e9d850..b03ea28270cb 100644
-> > --- a/drivers/clk/clk-axi-clkgen.c
-> > +++ b/drivers/clk/clk-axi-clkgen.c
-> > @@ -8,6 +8,7 @@
-> >
-> >  #include <linux/platform_device.h>
-> >  #include <linux/clk-provider.h>
-> > +#include <linux/fpga/adi-axi-common.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/io.h>
-> >  #include <linux/of.h>
-> > @@ -49,6 +50,7 @@
-> >  struct axi_clkgen {
-> >       void __iomem *base;
-> >       struct clk_hw clk_hw;
-> > +     unsigned int pcore_version;
-> >  };
-> >
-> >  static uint32_t axi_clkgen_lookup_filter(unsigned int m)
-> > @@ -101,15 +103,15 @@ static uint32_t axi_clkgen_lookup_lock(unsigned int m)
-> >  }
-> >
-> >  #ifdef ARCH_ZYNQMP
-> > -static const unsigned int fpfd_min = 10000;
-> > -static const unsigned int fpfd_max = 450000;
-> > -static const unsigned int fvco_min = 800000;
-> > -static const unsigned int fvco_max = 1600000;
-> > +static unsigned int fpfd_min = 10000;
-> > +static unsigned int fpfd_max = 450000;
-> > +static unsigned int fvco_min = 800000;
-> > +static unsigned int fvco_max = 1600000;
-> >  #else
-> > -static const unsigned int fpfd_min = 10000;
-> > -static const unsigned int fpfd_max = 300000;
-> > -static const unsigned int fvco_min = 600000;
-> > -static const unsigned int fvco_max = 1200000;
-> > +static unsigned int fpfd_min = 10000;
-> > +static unsigned int fpfd_max = 300000;
-> > +static unsigned int fvco_min = 600000;
-> > +static unsigned int fvco_max = 1200000;
-> >  #endif
-> Instead of modifying those wouldn't you want those to be part of your
-> struct axi_clkgen? I understand that they're technically properties of the
-> fabric you're implementing this IP block in, but are you sure you'll
-> never have a system with more than one of those in two different FPGAs,
-> are you never gonna use this beyond ARCH_ZYNQ/ZYNQMP/MICROBLAZE?
->
-> What about a PCIe plugin card for a ZynqMP system with a Zynq on it?
+Always ON Clock controller is a block inside LPASS which controls
+1 Glitch free muxes to LPASS codec Macros.
 
-That is a good point.
-Will think about this, and re-implement it per axi_clkgen.
-These FPGA can be combined in complex [sometimes weird] ways.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ .../bindings/clock/qcom,aoncc-sm8250.yaml     | 58 +++++++++++++++++++
+ .../clock/qcom,sm8250-lpass-aoncc.h           | 11 ++++
+ 2 files changed, 69 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
 
-> >
-> >  static void axi_clkgen_calc_params(unsigned long fin, unsigned long fout,
-> > @@ -229,6 +231,49 @@ static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
-> >       *val = readl(axi_clkgen->base + reg);
-> >  }
-> >
-> > +static void axi_clkgen_setup_ranges(struct axi_clkgen *axi_clkgen)
-> > +{
-> > +     unsigned int reg_value;
-> > +     unsigned int tech, family, speed_grade, voltage;
-> > +
-> > +     axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_INFO, &reg_value);
-> > +     tech = ADI_AXI_INFO_FPGA_TECH(reg_value);
-> > +     family = ADI_AXI_INFO_FPGA_FAMILY(reg_value);
-> > +     speed_grade = ADI_AXI_INFO_FPGA_SPEED_GRADE(reg_value);
-> > +
-> > +     axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_VOLTAGE, &reg_value);
-> > +     voltage = ADI_AXI_INFO_FPGA_VOLTAGE(reg_value);
-> > +
-> > +     switch (speed_grade) {
-> > +     case ADI_AXI_FPGA_SPEED_GRADE_XILINX_1 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_1LV:
-> > +             fvco_max = 1200000;
-> > +             fpfd_max = 450000;
-> > +             break;
-> > +     case ADI_AXI_FPGA_SPEED_GRADE_XILINX_2 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_2LV:
-> > +             fvco_max = 1440000;
-> > +             fpfd_max = 500000;
-> > +             if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
-> > +                 (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
-> > +                     if (voltage < 950) {
-> > +                             fvco_max = 1200000;
-> > +                             fpfd_max = 450000;
-> > +                     }
-> > +             }
-> > +             break;
-> > +     case ADI_AXI_FPGA_SPEED_GRADE_XILINX_3:
-> > +             fvco_max = 1600000;
-> > +             fpfd_max = 550000;
-> > +             break;
-> > +     default:
-> > +             break;
-> > +     };
-> > +
-> > +     if (tech == ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE_PLUS) {
-> > +             fvco_max = 1600000;
-> > +             fvco_min = 800000;
-> > +     }
-> > +}
-> > +
-> >  static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
-> >  {
-> >       unsigned int timeout = 10000;
-> > @@ -524,6 +569,12 @@ static int axi_clkgen_probe(struct platform_device *pdev)
-> >       if (IS_ERR(axi_clkgen->base))
-> >               return PTR_ERR(axi_clkgen->base);
-> >
-> > +     axi_clkgen_read(axi_clkgen, ADI_AXI_REG_VERSION,
-> > +                     &axi_clkgen->pcore_version);
-> > +
-> > +     if (ADI_AXI_PCORE_VER_MAJOR(axi_clkgen->pcore_version) > 0x04)
-> > +             axi_clkgen_setup_ranges(axi_clkgen);
-> > +
-> >       init.num_parents = of_clk_get_parent_count(pdev->dev.of_node);
-> >       if (init.num_parents < 1 || init.num_parents > 2)
-> >               return -EINVAL;
-> > --
-> > 2.25.1
-> >
-> Thanks,
-> Moritz
+diff --git a/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+new file mode 100644
+index 000000000000..c40a74b5d672
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,aoncc-sm8250.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Clock bindings for LPASS Always ON Clock Controller on SM8250 SoCs
++
++maintainers:
++  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
++
++description: |
++  The clock consumer should specify the desired clock by having the clock
++  ID in its "clocks" phandle cell.
++  See include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h for the full list
++  of Audio Clock controller clock IDs.
++
++properties:
++  compatible:
++    const: qcom,sm8250-lpass-aon
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    items:
++      - description: LPASS Core voting clock
++      - description: Glitch Free Mux register clock
++
++  clock-names:
++    items:
++      - const: core
++      - const: bus
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,sm8250-lpass-aoncc.h>
++    #include <dt-bindings/sound/qcom,q6afe.h>
++    clock-controller@3800000 {
++      #clock-cells = <1>;
++      compatible = "qcom,sm8250-lpass-aon";
++      reg = <0x03380000 0x40000>;
++      clocks = <&q6afecc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
++               <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
++      clock-names = "core", "bus";
++    };
+diff --git a/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h b/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+new file mode 100644
+index 000000000000..f5a1cfac8612
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
++#define _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H
++
++/* from AOCC */
++#define LPASS_CDC_VA_MCLK				0
++#define LPASS_CDC_TX_NPL				1
++#define LPASS_CDC_TX_MCLK				2
++
++#endif /* _DT_BINDINGS_CLK_LPASS_AONCC_SM8250_H */
+-- 
+2.21.0
+
