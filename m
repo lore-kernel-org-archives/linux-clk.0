@@ -2,66 +2,108 @@ Return-Path: <SRS0=4QiE=DF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE82C4727E
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 07:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52665C2D0A8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 08:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB0AE2080C
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 07:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CBE921531
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 08:48:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tW1BN7cy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgI1HTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Sep 2020 03:19:33 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:27870 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgI1HTd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2020 03:19:33 -0400
-Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
-        by twspam01.aspeedtech.com with ESMTP id 08S6gdVU009890
-        for <linux-clk@vger.kernel.org>; Mon, 28 Sep 2020 14:42:39 +0800 (GMT-8)
-        (envelope-from ryan_chen@aspeedtech.com)
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 08S6fvxN009735;
-        Mon, 28 Sep 2020 14:41:57 +0800 (GMT-8)
-        (envelope-from ryan_chen@aspeedtech.com)
-Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 28 Sep
- 2020 15:01:12 +0800
-From:   Ryan Chen <ryan_chen@aspeedtech.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <bmc-sw@aspeedtech.com>
-CC:     Ryan Chen <ryan_chen@aspeedtech.com>
-Subject: [PATCH 0/1] Modify ASPEED SoC some default clks are critical
-Date:   Mon, 28 Sep 2020 15:01:07 +0800
-Message-ID: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
+        id S1726497AbgI1IsA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Sep 2020 04:48:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbgI1IsA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2020 04:48:00 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942E8C0613CE
+        for <linux-clk@vger.kernel.org>; Mon, 28 Sep 2020 01:48:00 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id mn7so230906pjb.5
+        for <linux-clk@vger.kernel.org>; Mon, 28 Sep 2020 01:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=wY/Phh7haMCfrTDSqngzJDGR4pk8ZSUHFlVi1FrntNA=;
+        b=tW1BN7cydHn8bciyQaMKZ51ecy0MhjdVxSWTovppv/D74ZDTobDVJ2HUeOgH6w+c/j
+         U4S6rFlt/0Ym+XqpJ4b9S+ygvml27p3t1rLCUrAiAePqVGfvdgO85F/5H2m1GIpLqJJm
+         sK2jICuluuxBGOtDL5twBNxIQqclFgY9q/TyrzlRDxR1pwJEcxBzP0aWgtItW7RF8A7R
+         aTbasQaNJ2ffSJ6wudKkStpLWuBppzIf8gPBcpFF+ygNay8/5SGAGoQFSNQhUSs6quPh
+         cQSddtkGeY7gWkn6mE85GMYYvZLeNqifBIknRvD+C+1YpdIhJamerVYyxiAtrrH2Eei+
+         GM6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wY/Phh7haMCfrTDSqngzJDGR4pk8ZSUHFlVi1FrntNA=;
+        b=q4CPR0CEqtBbE4mSg12ZPFa4iUzNd0W3cc6RjD47D/jF4gfmNMW3laqsc1oLZXcgPA
+         kwmZ4i2sRhtR5zI9ZaSmIFWQVz0wuHRAj4D+aoqeuvxMdzMwZuHhVPU/tNEFAWAKBdL8
+         oTeemyVLk9bIjtos3vMNnujPc9QGlNLGG7nswG827XqCt9emBWrpXPuZB7zr+hh6uYTL
+         9xpHq3goLNtyv8jRlYr3Ne2KceuthvSMM0IiswcaQ66e5Od2oFlLDCDko6XPWKgCSVQk
+         rTshjIqWJWJooXYASqUvM7FQZu88uZQufqtgzj2Pd2D2wWRP36bAjcHQHPqjoDR+SKMp
+         mUqg==
+X-Gm-Message-State: AOAM531MBYucAMNzoMIzERdBBrZOqw4Lp9tnLdskvbFAqUdEzIgKsM6u
+        PNKJdl3sLTzAD0LavdeHatSUew==
+X-Google-Smtp-Source: ABdhPJye6u3HOi8ZQVN02jipYNmuwO9krjvzCg+PZj+Fb/NHiBRugHZMXouOiOECLimIC0oDDjZmzA==
+X-Received: by 2002:a17:90a:9505:: with SMTP id t5mr380570pjo.121.1601282880163;
+        Mon, 28 Sep 2020 01:48:00 -0700 (PDT)
+Received: from localhost.localdomain (li519-153.members.linode.com. [66.175.222.153])
+        by smtp.gmail.com with ESMTPSA id u18sm623181pgk.18.2020.09.28.01.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2020 01:47:59 -0700 (PDT)
+From:   Jun Nie <jun.nie@linaro.org>
+To:     sboyd@codeaurora.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Cc:     shawn.guo@linaro.org, Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH] clk: emit warning if fail to get parent clk
+Date:   Mon, 28 Sep 2020 16:47:44 +0800
+Message-Id: <20200928084744.32478-1-jun.nie@linaro.org>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.10.9]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 08S6fvxN009735
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch is modify for ASPEED SoC some default clks can't disable
-need keep default clk on.
+Emit warning if fail to get parent clk to expose potential issue earlier.
+For example, clk_hw_get_rate() will return 0 for a clock without parent core
+while parent number is not zero. This cause opp always think it is switching
+frequency from 0 to some other frequency. Crash may happen if we switch
+from high frequency to low frequency and lower CPU voltage before clk rate
+switching.
 
-Ryan Chen (1):
-  clk: aspeed: modify some default clks are critical
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+ drivers/clk/clk.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- drivers/clk/clk-aspeed.c  | 8 ++++----
- drivers/clk/clk-ast2600.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1a27e99ccb17..78b21b888e56 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -424,6 +424,7 @@ static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
+ {
+ 	struct clk_parent_map *entry = &core->parents[index];
+ 	struct clk_core *parent = ERR_PTR(-ENOENT);
++	int emit_warn = 0;
+ 
+ 	if (entry->hw) {
+ 		parent = entry->hw->core;
+@@ -443,6 +444,12 @@ static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
+ 	/* Only cache it if it's not an error */
+ 	if (!IS_ERR(parent))
+ 		entry->core = parent;
++	else if (parent != ERR_PTR(-EPROBE_DEFER))
++		emit_warn = 1;
++
++	if (emit_warn || (!parent && core->num_parents))
++		pr_warn("Fail to get indexed %d parent for clk %s.",
++			index, core->name);
+ }
+ 
+ static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
 -- 
 2.17.1
 
