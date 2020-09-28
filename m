@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C4C2D0A8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 05:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FABAC2D0A8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 05:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2EF239EB
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 05:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3668D239EE
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 05:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="f9VzYReF"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="C+J407jm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbgI1F23 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Sep 2020 01:28:29 -0400
-Received: from z5.mailgun.us ([104.130.96.5]:28025 "EHLO z5.mailgun.us"
+        id S1726485AbgI1F2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Sep 2020 01:28:42 -0400
+Received: from m42-4.mailgun.net ([69.72.42.4]:57369 "EHLO m42-4.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726380AbgI1F22 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Sep 2020 01:28:28 -0400
+        id S1726420AbgI1F2m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Sep 2020 01:28:42 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1601270907; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1601270921; h=References: In-Reply-To: Message-Id: Date:
  Subject: To: From: Sender;
- bh=V51Epr/y0HF+ODDtXBu9xYLHDN3krnTRsdOZ7cYId3U=; b=f9VzYReFdxtOB54zXoHE7SLyBtfyuH26WdxVJSxJdHbEGw0IAX5cEIuIXNLR/ivH/qbwIpO5
- q6gDT9jcQ8Xq/O1gtQ6gMq2BjZ7h3FXSL+lzbjFrrYIEbcOSB3SNvI1INttlMdfrLB20+Dk1
- zdtXeesqITqF/N24cmgeRQLLe7g=
-X-Mailgun-Sending-Ip: 104.130.96.5
+ bh=+MfRKre5C0LNYQrgQP9hoA5wIXUvNOba50ZAPC32VH8=; b=C+J407jmdWMydpRARTdL+TZJlWkpeVUjhPdVPnA8kSLMBIBFNf5N26uFiqV0YZ7oDTm9EK9r
+ yiDIlzIGGexD14Azg6OUVMkj0U5OBsGXzNWiOWqKML8ecuZmyxQK8wWxXFAME9KTdxbHpgdt
+ CdhNQ77CL2iZ+Ey8QhqW6m6vUuQ=
+X-Mailgun-Sending-Ip: 69.72.42.4
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 5f7171c1a965393f18633583 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 28 Sep 2020 05:16:49
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5f7171d889f51cb4f1661175 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 28 Sep 2020 05:17:12
  GMT
 Sender: varada=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 670E4C43385; Mon, 28 Sep 2020 05:16:48 +0000 (UTC)
+        id 4B389C433B2; Mon, 28 Sep 2020 05:17:11 +0000 (UTC)
 Received: from varda-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: varada)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0CA65C433CB;
-        Mon, 28 Sep 2020 05:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CA65C433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C56E9C433F1;
+        Mon, 28 Sep 2020 05:17:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C56E9C433F1
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=varada@codeaurora.org
 From:   Varadarajan Narayanan <varada@codeaurora.org>
@@ -56,9 +56,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, sricharan@codeaurora.org
-Subject: [PATCH 2/7] dt-bindings: arm64: ipq5018: Add binding descriptions for clock and reset
-Date:   Mon, 28 Sep 2020 10:45:35 +0530
-Message-Id: <1601270140-4306-3-git-send-email-varada@codeaurora.org>
+Subject: [PATCH 6/7] arm64: dts: Add ipq5018 SoC and MP03 board support
+Date:   Mon, 28 Sep 2020 10:45:39 +0530
+Message-Id: <1601270140-4306-7-git-send-email-varada@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
 References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
@@ -66,353 +66,306 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds support for the global clock controller found on
-the IPQ5018 based devices.
+Add initial device tree support for the Qualcomm IPQ5018 SoC and
+MP03.1-C2 board.
 
 Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 ---
- .../devicetree/bindings/clock/qcom,gcc.yaml        |   3 +
- include/dt-bindings/clock/qcom,gcc-ipq5018.h       | 183 +++++++++++++++++++++
- include/dt-bindings/reset/qcom,gcc-ipq5018.h       | 119 ++++++++++++++
- 3 files changed, 305 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq5018.h
- create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq5018.h
+ Documentation/devicetree/bindings/arm/qcom.yaml |   7 +
+ arch/arm64/boot/dts/qcom/Makefile               |   1 +
+ arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts  |  30 ++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi           | 201 ++++++++++++++++++++++++
+ 4 files changed, 239 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018.dtsi
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-index ee0467f..74d67fc 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-@@ -18,6 +18,8 @@ description: |
-   - dt-bindings/clock/qcom,gcc-apq8084.h
-   - dt-bindings/reset/qcom,gcc-apq8084.h
-   - dt-bindings/clock/qcom,gcc-ipq4019.h
-+  - dt-bindings/clock/qcom,gcc-ipq5018.h
-+  - dt-bindings/reset/qcom,gcc-ipq5018.h
-   - dt-bindings/clock/qcom,gcc-ipq6018.h
-   - dt-bindings/reset/qcom,gcc-ipq6018.h
-   - dt-bindings/clock/qcom,gcc-ipq806x.h (qcom,gcc-ipq8064)
-@@ -39,6 +41,7 @@ properties:
-     enum:
-       - qcom,gcc-apq8084
-       - qcom,gcc-ipq4019
-+      - qcom,gcc-ipq5018
-       - qcom,gcc-ipq6018
-       - qcom,gcc-ipq8064
-       - qcom,gcc-msm8660
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq5018.h b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index 6031aee..694063f 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -28,6 +28,7 @@ description: |
+         apq8074
+         apq8084
+         apq8096
++        ipq5018
+         ipq6018
+         ipq8074
+         mdm9615
+@@ -49,6 +50,7 @@ description: |
+         hk01
+         idp
+         liquid
++        mp03
+         mtp
+         qrd
+         sbc
+@@ -142,6 +144,11 @@ properties:
+ 
+       - items:
+           - enum:
++              - qcom,ipq5018-mp03
++          - const: qcom,ipq5018
++
++      - items:
++          - enum:
+               - qcom,ipq8064-ap148
+           - const: qcom,ipq8064
+ 
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index d8f1466..3873970 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
+ dtb-$(CONFIG_ARCH_QCOM) += apq8096-ifc6640.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.1-c2.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8150.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-samsung-a3u-eur.dtb
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
 new file mode 100644
-index 00000000..069165f
+index 00000000..41bb3b3
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
-@@ -0,0 +1,183 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++++ b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/*
++ * IPQ5018 CP01 board device tree source
++ *
++ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ */
 +
-+#ifndef _DT_BINDINGS_CLOCK_IPQ_GCC_5018_H
-+#define _DT_BINDINGS_CLOCK_IPQ_GCC_5018_H
++/dts-v1/;
 +
-+#define GPLL0_MAIN					0
-+#define GPLL0						1
-+#define GPLL2_MAIN					2
-+#define GPLL2						3
-+#define GPLL4_MAIN					4
-+#define GPLL4						5
-+#define UBI32_PLL_MAIN					6
-+#define UBI32_PLL					7
-+#define APSS_AHB_CLK_SRC				9
-+#define APSS_AHB_POSTDIV_CLK_SRC			10
-+#define APSS_AXI_CLK_SRC				11
-+#define BLSP1_QUP1_I2C_APPS_CLK_SRC			12
-+#define BLSP1_QUP1_SPI_APPS_CLK_SRC			13
-+#define BLSP1_QUP2_I2C_APPS_CLK_SRC			14
-+#define BLSP1_QUP2_SPI_APPS_CLK_SRC			15
-+#define BLSP1_QUP3_I2C_APPS_CLK_SRC			16
-+#define BLSP1_QUP3_SPI_APPS_CLK_SRC			17
-+#define BLSP1_UART1_APPS_CLK_SRC			18
-+#define BLSP1_UART2_APPS_CLK_SRC			19
-+#define CRYPTO_CLK_SRC					20
-+#define GCC_APSS_AHB_CLK				23
-+#define GCC_APSS_AXI_CLK				24
-+#define GCC_BLSP1_AHB_CLK				25
-+#define GCC_BLSP1_QUP1_I2C_APPS_CLK			26
-+#define GCC_BLSP1_QUP1_SPI_APPS_CLK			27
-+#define GCC_BLSP1_QUP2_I2C_APPS_CLK			28
-+#define GCC_BLSP1_QUP2_SPI_APPS_CLK			29
-+#define GCC_BLSP1_QUP3_I2C_APPS_CLK			30
-+#define GCC_BLSP1_QUP3_SPI_APPS_CLK			31
-+#define GCC_BLSP1_UART1_APPS_CLK			33
-+#define GCC_BLSP1_UART2_APPS_CLK			34
-+#define GCC_BTSS_LPO_CLK				36
-+#define GCC_CMN_BLK_AHB_CLK				40
-+#define GCC_CMN_BLK_SYS_CLK				41
-+#define GCC_CRYPTO_AHB_CLK				44
-+#define GCC_CRYPTO_AXI_CLK				45
-+#define GCC_CRYPTO_CLK					46
-+#define GCC_CRYPTO_PPE_CLK				47
-+#define GCC_DCC_CLK					48
-+#define GCC_GEPHY_RX_CLK				53
-+#define GCC_GEPHY_TX_CLK				54
-+#define GCC_GMAC0_CFG_CLK				55
-+#define GCC_GMAC0_PTP_CLK				56
-+#define GCC_GMAC0_RX_CLK				57
-+#define GCC_GMAC0_SYS_CLK				58
-+#define GCC_GMAC0_TX_CLK				59
-+#define GCC_GMAC1_CFG_CLK				60
-+#define GCC_GMAC1_PTP_CLK				61
-+#define GCC_GMAC1_RX_CLK				62
-+#define GCC_GMAC1_SYS_CLK				63
-+#define GCC_GMAC1_TX_CLK				64
-+#define GCC_GP1_CLK					65
-+#define GCC_GP2_CLK					66
-+#define GCC_GP3_CLK					67
-+#define GCC_LPASS_CORE_AXIM_CLK				69
-+#define GCC_LPASS_SWAY_CLK				70
-+#define GCC_MDIO0_AHB_CLK				71
-+#define GCC_MDIO1_AHB_CLK				72
-+#define GCC_PCIE0_AHB_CLK				74
-+#define GCC_PCIE0_AUX_CLK				75
-+#define GCC_PCIE0_AXI_M_CLK				76
-+#define GCC_PCIE0_AXI_S_BRIDGE_CLK			77
-+#define GCC_PCIE0_AXI_S_CLK				78
-+#define GCC_PCIE1_AHB_CLK				79
-+#define GCC_PCIE1_AUX_CLK				80
-+#define GCC_PCIE1_AXI_M_CLK				81
-+#define GCC_PCIE1_AXI_S_BRIDGE_CLK			82
-+#define GCC_PCIE1_AXI_S_CLK				83
-+#define GCC_PRNG_AHB_CLK				84
-+#define GCC_Q6_AXIM_CLK					85
-+#define GCC_Q6_AXIM2_CLK				86
-+#define GCC_Q6_AXIS_CLK					87
-+#define GCC_Q6_AHB_CLK					88
-+#define GCC_Q6_AHB_S_CLK				89
-+#define GCC_Q6_TSCTR_1TO2_CLK				90
-+#define GCC_Q6SS_ATBM_CLK				91
-+#define GCC_Q6SS_PCLKDBG_CLK				92
-+#define GCC_Q6SS_TRIG_CLK				93
-+#define GCC_QDSS_AT_CLK					94
-+#define GCC_QDSS_CFG_AHB_CLK				95
-+#define GCC_QDSS_DAP_AHB_CLK				96
-+#define GCC_QDSS_DAP_CLK				97
-+#define GCC_QDSS_ETR_USB_CLK				98
-+#define GCC_QDSS_EUD_AT_CLK				99
-+#define GCC_QDSS_STM_CLK				100
-+#define GCC_QDSS_TRACECLKIN_CLK				101
-+#define GCC_QDSS_TSCTR_DIV8_CLK				102
-+#define GCC_QPIC_AHB_CLK				103
-+#define GCC_QPIC_CLK					104
-+#define GCC_QPIC_IO_MACRO_CLK				105
-+#define GCC_SDCC1_AHB_CLK				107
-+#define GCC_SDCC1_APPS_CLK				108
-+#define GCC_SLEEP_CLK_SRC				109
-+#define GCC_SNOC_GMAC0_AHB_CLK				110
-+#define GCC_SNOC_GMAC0_AXI_CLK				111
-+#define GCC_SNOC_GMAC1_AHB_CLK				112
-+#define GCC_SNOC_GMAC1_AXI_CLK				113
-+#define GCC_SNOC_LPASS_AXIM_CLK				114
-+#define GCC_SNOC_LPASS_SWAY_CLK				115
-+#define GCC_SNOC_UBI0_AXI_CLK				118
-+#define GCC_SYS_NOC_PCIE0_AXI_CLK			119
-+#define GCC_SYS_NOC_PCIE1_AXI_CLK			120
-+#define GCC_SYS_NOC_QDSS_STM_AXI_CLK			121
-+#define GCC_SYS_NOC_USB0_AXI_CLK			123
-+#define GCC_SYS_NOC_WCSS_AHB_CLK			124
-+#define GCC_UBI0_AXI_CLK				128
-+#define GCC_UBI0_CFG_CLK				129
-+#define GCC_UBI0_CORE_CLK				130
-+#define GCC_UBI0_DBG_CLK				131
-+#define GCC_UBI0_NC_AXI_CLK				132
-+#define GCC_UBI0_UTCM_CLK				133
-+#define GCC_UNIPHY_AHB_CLK				134
-+#define GCC_UNIPHY_RX_CLK				135
-+#define GCC_UNIPHY_SYS_CLK				136
-+#define GCC_UNIPHY_TX_CLK				137
-+#define GCC_USB0_AUX_CLK				138
-+#define GCC_USB0_EUD_AT_CLK				139
-+#define GCC_USB0_LFPS_CLK				140
-+#define GCC_USB0_MASTER_CLK				141
-+#define GCC_USB0_MOCK_UTMI_CLK				142
-+#define GCC_USB0_PHY_CFG_AHB_CLK			143
-+#define GCC_USB0_SLEEP_CLK				144
-+#define GCC_WCSS_ACMT_CLK				145
-+#define GCC_WCSS_AHB_S_CLK				146
-+#define GCC_WCSS_AXI_M_CLK				147
-+#define GCC_WCSS_AXI_S_CLK				148
-+#define GCC_WCSS_DBG_IFC_APB_BDG_CLK			149
-+#define GCC_WCSS_DBG_IFC_APB_CLK			150
-+#define GCC_WCSS_DBG_IFC_ATB_BDG_CLK			151
-+#define GCC_WCSS_DBG_IFC_ATB_CLK			152
-+#define GCC_WCSS_DBG_IFC_DAPBUS_BDG_CLK			153
-+#define GCC_WCSS_DBG_IFC_DAPBUS_CLK			154
-+#define GCC_WCSS_DBG_IFC_NTS_BDG_CLK			155
-+#define GCC_WCSS_DBG_IFC_NTS_CLK			156
-+#define GCC_WCSS_ECAHB_CLK				157
-+#define GCC_XO_CLK					158
-+#define GCC_XO_CLK_SRC					159
-+#define GMAC0_RX_CLK_SRC				161
-+#define GMAC0_TX_CLK_SRC				162
-+#define GMAC1_RX_CLK_SRC				163
-+#define GMAC1_TX_CLK_SRC				164
-+#define GMAC_CLK_SRC					165
-+#define GP1_CLK_SRC					166
-+#define GP2_CLK_SRC					167
-+#define GP3_CLK_SRC					168
-+#define LPASS_AXIM_CLK_SRC				169
-+#define LPASS_SWAY_CLK_SRC				170
-+#define PCIE0_AUX_CLK_SRC				171
-+#define PCIE0_AXI_CLK_SRC				172
-+#define PCIE1_AUX_CLK_SRC				173
-+#define PCIE1_AXI_CLK_SRC				174
-+#define PCNOC_BFDCD_CLK_SRC				175
-+#define Q6_AXI_CLK_SRC					176
-+#define QDSS_AT_CLK_SRC					177
-+#define QDSS_STM_CLK_SRC				178
-+#define QDSS_TSCTR_CLK_SRC				179
-+#define QDSS_TRACECLKIN_CLK_SRC				180
-+#define QPIC_IO_MACRO_CLK_SRC				181
-+#define SDCC1_APPS_CLK_SRC				182
-+#define SYSTEM_NOC_BFDCD_CLK_SRC			184
-+#define UBI0_AXI_CLK_SRC				185
-+#define UBI0_CORE_CLK_SRC				186
-+#define USB0_AUX_CLK_SRC				187
-+#define USB0_LFPS_CLK_SRC				188
-+#define USB0_MASTER_CLK_SRC				189
-+#define USB0_MOCK_UTMI_CLK_SRC				190
-+#define WCSS_AHB_CLK_SRC				191
-+#define PCIE0_PIPE_CLK_SRC				192
-+#define PCIE1_PIPE_CLK_SRC				193
-+#define GCC_PCIE0_PIPE_CLK				194
-+#define GCC_PCIE1_PIPE_CLK				195
-+#define USB0_PIPE_CLK_SRC				196
-+#define GCC_USB0_PIPE_CLK				197
-+#define GMAC0_RX_DIV_CLK_SRC				198
-+#define GMAC0_TX_DIV_CLK_SRC				199
-+#define GMAC1_RX_DIV_CLK_SRC				200
-+#define GMAC1_TX_DIV_CLK_SRC				201
-+#endif
-diff --git a/include/dt-bindings/reset/qcom,gcc-ipq5018.h b/include/dt-bindings/reset/qcom,gcc-ipq5018.h
++#include "ipq5018.dtsi"
++
++/ {
++	model = "Qualcomm Technologies, Inc. IPQ5018/AP-MP03-C2";
++	compatible = "qcom,ipq5018-mp03", "qcom,ipq5018";
++
++	aliases {
++		serial0 = &blsp1_uart1;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++		bootargs-append = " swiotlb=1";
++	};
++};
++
++&blsp1_uart1 {
++	pinctrl-0 = <&serial_1_pins>;
++	pinctrl-names = "default";
++	status = "ok";
++};
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
 new file mode 100644
-index 00000000..cd9c4e1
+index 00000000..12492a4
 --- /dev/null
-+++ b/include/dt-bindings/reset/qcom,gcc-ipq5018.h
-@@ -0,0 +1,119 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/*
++ * IPQ5018 SoC device tree source
++ *
++ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ */
 +
-+#ifndef _DT_BINDINGS_RESET_IPQ_GCC_5018_H
-+#define _DT_BINDINGS_RESET_IPQ_GCC_5018_H
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-ipq5018.h>
++#include <dt-bindings/reset/qcom,gcc-ipq5018.h>
 +
-+#define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	0
-+#define	GCC_BLSP1_BCR				1
-+#define GCC_BLSP1_QUP1_BCR			2
-+#define	GCC_BLSP1_QUP2_BCR			3
-+#define	GCC_BLSP1_QUP3_BCR			4
-+#define	GCC_BLSP1_UART1_BCR			5
-+#define	GCC_BLSP1_UART2_BCR			6
-+#define	GCC_BOOT_ROM_BCR			7
-+#define	GCC_BTSS_BCR				8
-+#define	GCC_CMN_BLK_BCR				9
-+#define	GCC_CMN_LDO_BCR				10
-+#define	GCC_CE_BCR				11
-+#define	GCC_CRYPTO_BCR				12
-+#define	GCC_DCC_BCR				13
-+#define	GCC_DCD_BCR				14
-+#define	GCC_DDRSS_BCR				15
-+#define	GCC_EDPD_BCR				16
-+#define	GCC_GEPHY_BCR				17
-+#define	GCC_GEPHY_MDC_SW_ARES			18
-+#define	GCC_GEPHY_DSP_HW_ARES			19
-+#define	GCC_GEPHY_RX_ARES			20
-+#define	GCC_GEPHY_TX_ARES			21
-+#define	GCC_GMAC0_BCR				22
-+#define	GCC_GMAC0_CFG_ARES			23
-+#define	GCC_GMAC0_SYS_ARES			24
-+#define	GCC_GMAC1_BCR				25
-+#define	GCC_GMAC1_CFG_ARES			26
-+#define	GCC_GMAC1_SYS_ARES			27
-+#define	GCC_IMEM_BCR				28
-+#define	GCC_LPASS_BCR				29
-+#define	GCC_MDIO0_BCR				30
-+#define	GCC_MDIO1_BCR				31
-+#define	GCC_MPM_BCR				32
-+#define	GCC_PCIE0_BCR				33
-+#define	GCC_PCIE0_LINK_DOWN_BCR			34
-+#define	GCC_PCIE0_PHY_BCR			35
-+#define	GCC_PCIE0PHY_PHY_BCR			36
-+#define	GCC_PCIE0_PIPE_ARES			37
-+#define	GCC_PCIE0_SLEEP_ARES			38
-+#define	GCC_PCIE0_CORE_STICKY_ARES		39
-+#define	GCC_PCIE0_AXI_MASTER_ARES		40
-+#define	GCC_PCIE0_AXI_SLAVE_ARES		41
-+#define	GCC_PCIE0_AHB_ARES			42
-+#define	GCC_PCIE0_AXI_MASTER_STICKY_ARES	43
-+#define	GCC_PCIE0_AXI_SLAVE_STICKY_ARES		44
-+#define	GCC_PCIE1_BCR				45
-+#define	GCC_PCIE1_LINK_DOWN_BCR			46
-+#define	GCC_PCIE1_PHY_BCR			47
-+#define	GCC_PCIE1PHY_PHY_BCR			48
-+#define	GCC_PCIE1_PIPE_ARES			49
-+#define	GCC_PCIE1_SLEEP_ARES			50
-+#define	GCC_PCIE1_CORE_STICKY_ARES		51
-+#define	GCC_PCIE1_AXI_MASTER_ARES		52
-+#define	GCC_PCIE1_AXI_SLAVE_ARES		53
-+#define	GCC_PCIE1_AHB_ARES			54
-+#define	GCC_PCIE1_AXI_MASTER_STICKY_ARES	55
-+#define	GCC_PCIE1_AXI_SLAVE_STICKY_ARES		56
-+#define	GCC_PCNOC_BCR				57
-+#define	GCC_PCNOC_BUS_TIMEOUT0_BCR		58
-+#define	GCC_PCNOC_BUS_TIMEOUT1_BCR		59
-+#define	GCC_PCNOC_BUS_TIMEOUT2_BCR		60
-+#define	GCC_PCNOC_BUS_TIMEOUT3_BCR		61
-+#define	GCC_PCNOC_BUS_TIMEOUT4_BCR		62
-+#define	GCC_PCNOC_BUS_TIMEOUT5_BCR		63
-+#define	GCC_PCNOC_BUS_TIMEOUT6_BCR		64
-+#define	GCC_PCNOC_BUS_TIMEOUT7_BCR		65
-+#define	GCC_PCNOC_BUS_TIMEOUT8_BCR		66
-+#define	GCC_PCNOC_BUS_TIMEOUT9_BCR		67
-+#define	GCC_PCNOC_BUS_TIMEOUT10_BCR		68
-+#define	GCC_PCNOC_BUS_TIMEOUT11_BCR		69
-+#define	GCC_PRNG_BCR				70
-+#define	GCC_Q6SS_DBG_ARES			71
-+#define	GCC_Q6_AHB_S_ARES			72
-+#define	GCC_Q6_AHB_ARES				73
-+#define	GCC_Q6_AXIM2_ARES			74
-+#define	GCC_Q6_AXIM_ARES			75
-+#define	GCC_Q6_AXIS_ARES			76
-+#define	GCC_QDSS_BCR				77
-+#define	GCC_QPIC_BCR				78
-+#define	GCC_QUSB2_0_PHY_BCR			79
-+#define	GCC_SDCC1_BCR				80
-+#define	GCC_SEC_CTRL_BCR			81
-+#define	GCC_SPDM_BCR				82
-+#define	GCC_SYSTEM_NOC_BCR			83
-+#define	GCC_TCSR_BCR				84
-+#define	GCC_TLMM_BCR				85
-+#define	GCC_UBI0_AXI_ARES			86
-+#define	GCC_UBI0_AHB_ARES			87
-+#define	GCC_UBI0_NC_AXI_ARES			88
-+#define	GCC_UBI0_DBG_ARES			89
-+#define	GCC_UBI0_UTCM_ARES			90
-+#define	GCC_UBI0_CORE_ARES			91
-+#define	GCC_UBI32_BCR				92
-+#define	GCC_UNIPHY_BCR				93
-+#define	GCC_UNIPHY_AHB_ARES			94
-+#define	GCC_UNIPHY_SYS_ARES			95
-+#define	GCC_UNIPHY_RX_ARES			96
-+#define	GCC_UNIPHY_TX_ARES			97
-+#define	GCC_USB0_BCR				98
-+#define	GCC_USB0_PHY_BCR			99
-+#define	GCC_WCSS_BCR				100
-+#define	GCC_WCSS_DBG_ARES			101
-+#define	GCC_WCSS_ECAHB_ARES			102
-+#define	GCC_WCSS_ACMT_ARES			103
-+#define	GCC_WCSS_DBG_BDG_ARES			104
-+#define	GCC_WCSS_AHB_S_ARES			105
-+#define	GCC_WCSS_AXI_M_ARES			106
-+#define	GCC_WCSS_AXI_S_ARES			107
-+#define	GCC_WCSS_Q6_BCR				108
-+#define	GCC_WCSSAON_RESET			109
-+#define	GCC_UNIPHY_SOFT_RESET			110
-+#define	GCC_GEPHY_MISC_ARES			111
++/ {
++	#address-cells = <2>;
++	#size-cells = <2>;
++	interrupt-parent = <&intc>;
 +
-+#endif
++	clocks {
++		sleep_clk: sleep-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++			#clock-cells = <0>;
++		};
++
++		xo: xo {
++			compatible = "fixed-clock";
++			clock-frequency = <24000000>;
++			#clock-cells = <0>;
++		};
++	};
++
++	cpus: cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x1>;
++			next-level-cache = <&L2_0>;
++		};
++
++		L2_0: l2-cache {
++			compatible = "cache";
++			cache-level = <0x2>;
++		};
++	};
++
++	pmuv8: pmu {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) |
++					 IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	psci: psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		tz: tz@4ac00000 {
++			reg = <0x0 0x4ac00000 0x0 0x00400000>;
++			no-map;
++		};
++	};
++
++	soc: soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0 0xffffffff>;
++		dma-ranges;
++		compatible = "simple-bus";
++
++		tlmm: pinctrl@1000000 {
++			compatible = "qcom,ipq5018-pinctrl";
++			reg = <0x01000000 0x300000>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&tlmm 0 80>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++
++			serial_1_pins: serial1-pinmux {
++				pins = "gpio31", "gpio32", "gpio33", "gpio34";
++				function = "blsp1_uart1";
++				drive-strength = <8>;
++				bias-pull-down;
++			};
++		};
++
++		gcc: gcc@1800000 {
++			compatible = "qcom,gcc-ipq5018";
++			reg = <0x01800000 0x80000>;
++			clocks = <&xo>, <&sleep_clk>;
++			clock-names = "xo", "sleep_clk";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		blsp1_uart1: serial@78af000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x078af000 0x200>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
++		intc: interrupt-controller@b000000 {
++			compatible = "qcom,msm-qgic2";
++			interrupt-controller;
++			#interrupt-cells = <0x3>;
++			reg =   <0x0b000000 0x1000>,  /*GICD*/
++				<0x0b002000 0x1000>,  /*GICC*/
++				<0x0b001000 0x1000>,  /*GICH*/
++				<0x0b004000 0x1000>;  /*GICV*/
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		timer@b120000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			compatible = "arm,armv7-timer-mem";
++			reg = <0x0b120000 0x1000>;
++			clock-frequency = <19200000>;
++
++			frame@b120000 {
++				frame-number = <0>;
++				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b121000 0x1000>,
++				      <0x0b122000 0x1000>;
++			};
++
++			frame@b123000 {
++				frame-number = <1>;
++				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0xb123000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b124000 {
++				frame-number = <2>;
++				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b124000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b125000 {
++				frame-number = <3>;
++				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b125000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b126000 {
++				frame-number = <4>;
++				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b126000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b127000 {
++				frame-number = <5>;
++				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b127000 0x1000>;
++				status = "disabled";
++			};
++
++			frame@b128000 {
++				frame-number = <6>;
++				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++				reg = <0x0b128000 0x1000>;
++				status = "disabled";
++			};
++		};
++	};
++};
 -- 
 2.7.4
 
