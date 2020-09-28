@@ -2,98 +2,102 @@ Return-Path: <SRS0=4QiE=DF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2C8C2D0A8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 17:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A75EC2D0A8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 18:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27E00214D8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 17:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02C55208D5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Sep 2020 18:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601313966;
-	bh=DjNexf3JpZhgqpp3mo9HRkS9yeEezdgB+DeG/qxchO4=;
+	s=default; t=1601316623;
+	bh=4LVt1WLE5bp5bHzc79d7hz4gDaOGzBz/df7Jm4anTak=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fBRx1w8ENbfj+gOi1baPR8T564bMu9Q2DQnH5huRE5h+EUQj8A6jE7Z+S7yDi894n
-	 fGkRkH4D3Iz9hiVP3Lecyct5Paf9ns5ljpsYnkGdvtzrODDPzMcnLq+FST7M7j67PI
-	 bGwn7zlYACW0Dd11AoXXeGvPFJrHvPPwQ++SC6dI=
+	b=v91HFVTtpv27Czb7NW00jw/Xv5VOi94k5L+WF5ncOe0x6BuRYg90SVbAhu2stW60I
+	 5jPT6uTA554fM8urNm3ZLSMfNIixxx6HcqYMhiUEnRd1HibzscKjtT1U3J3cTcEODj
+	 e87A40RH5jR1eAJsIZ5LKJscApvu5929YNlWrlpM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbgI1R0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Sep 2020 13:26:03 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33916 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbgI1R0C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2020 13:26:02 -0400
-Received: by mail-oi1-f193.google.com with SMTP id n2so2201667oij.1;
-        Mon, 28 Sep 2020 10:26:02 -0700 (PDT)
+        id S1726682AbgI1SKW convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Sep 2020 14:10:22 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38578 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbgI1SKW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2020 14:10:22 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 26so2351110ois.5;
+        Mon, 28 Sep 2020 11:10:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HloElYYvYC1E1YQK+ED9h3Lv0ZR4LSLurL4goAyk4Hk=;
-        b=pLFYHDdASG/dPnhn2c8wt0o6qmlYSDcBbeF2f/EUCCE/LwlJwADL4ssbrkpwlZk8GL
-         mpKFbSG9NZUEemKr1teuVwnrquULr1IPXS/Ny8hlNzhl4fRzDM/aqCbZ4KGhLwjfwead
-         v1MACYwUB2ERLaUoK7qSockU9xkZaumXe0Ifo4MF3ruKfqqQQlk4OLjpG6/skTI2pCgH
-         6Flk58A4OIQO/HHfuNEQyn5S81Q9DxzAxCklxdQ/SOpbsY1gG6rOcQ7g3e9cYHkoT9GQ
-         eTLQ2Iq4gJkIs8lSOjkQ+Iq5cp/ufl4JBgb8QL36GiDj2g/QI42pbc6kjwnT+cI0RMxO
-         SVfg==
-X-Gm-Message-State: AOAM533tePkTZvV0hwu072WPonQNggo6M45deiQ4LOTsluduNkI6Ev3S
-        T/OwkHqLnVWywTxDFLsx9w==
-X-Google-Smtp-Source: ABdhPJySKUlY/EdH9Kz+XTJL/0MRpMu/N57VNY+hnl6b5Pp35NWL85Hf9qx/i6OfGKk8Avb/lUq9vA==
-X-Received: by 2002:aca:b4c4:: with SMTP id d187mr1582908oif.21.1601313961816;
-        Mon, 28 Sep 2020 10:26:01 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=c8OTkICxYAnO1Kcuxg8o2SQ0d26wTplGzJA4OxH5SbM=;
+        b=q9QaVrKJPG9RDtNKumWOX+sI2st7faSQJygpHN7uqqTCBZAz2r94KRG+ZwIabeGBAh
+         8rYck6ntihm17OT+jZtz2Wfl34ci2yT8wgaCMQR3oIm1xqii7mh2uFF/5dDqwE7pWrzT
+         3riYZC7W9K+82IuA8kS4tqdtRH3a2ACMqD7Wf0pE85utwj1161wFYhiNxKiFf98aaIuW
+         jPqb4ssgqkrB+ececVnvoFSqovPVtc25MMmE1TizqEbbHf4s4RBgV01vk2hSFCMyobjM
+         q6lyx3w0Dcng+Q9+X/HvcnYQqkU+O7CkJNYAgVur1hPLzWmD7Zp7QxlNo8XEPCT65Ynu
+         5hdg==
+X-Gm-Message-State: AOAM532k8xpk6CJS8hc7xRg/n4WivUdphx6YefuMgiyry13yqG2bFaUP
+        lIC6RVfkQgmLdkPhrkeahQ==
+X-Google-Smtp-Source: ABdhPJwbjlzyIrzfHy8hq3FM8CnK9putnHHMWJurndbyd6KVwpjZccdGF88BnxQ5LBnm0IUP+99Rhw==
+X-Received: by 2002:a05:6808:3d6:: with SMTP id o22mr76150oie.150.1601316620125;
+        Mon, 28 Sep 2020 11:10:20 -0700 (PDT)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j1sm347389oig.45.2020.09.28.10.26.00
+        by smtp.gmail.com with ESMTPSA id e30sm397591otf.49.2020.09.28.11.10.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2020 10:26:01 -0700 (PDT)
-Received: (nullmailer pid 2932956 invoked by uid 1000);
-        Mon, 28 Sep 2020 17:26:00 -0000
-Date:   Mon, 28 Sep 2020 12:26:00 -0500
+        Mon, 28 Sep 2020 11:10:19 -0700 (PDT)
+Received: (nullmailer pid 3008460 invoked by uid 1000);
+        Mon, 28 Sep 2020 18:10:18 -0000
+Date:   Mon, 28 Sep 2020 13:10:18 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        sboyd@kernel.org, robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com
-Subject: Re: [PATCH v2 2/4] dt-bindings: clock: Add support for LPASS Always
- ON Controller
-Message-ID: <20200928172600.GA2932700@bogus>
-References: <20200925103115.15191-1-srinivas.kandagatla@linaro.org>
- <20200925103115.15191-3-srinivas.kandagatla@linaro.org>
+To:     Varadarajan Narayanan <varada@codeaurora.org>
+Cc:     mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, nsekar@codeaurora.org,
+        linux-gpio@vger.kernel.org, p.zabel@pengutronix.de,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        sricharan@codeaurora.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, will@kernel.org,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH 4/7] dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl
+ bindings
+Message-ID: <20200928181018.GA3007757@bogus>
+References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
+ <1601270140-4306-5-git-send-email-varada@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200925103115.15191-3-srinivas.kandagatla@linaro.org>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1601270140-4306-5-git-send-email-varada@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 25 Sep 2020 11:31:13 +0100, Srinivas Kandagatla wrote:
-> Always ON Clock controller is a block inside LPASS which controls
-> 1 Glitch free muxes to LPASS codec Macros.
+On Mon, 28 Sep 2020 10:45:37 +0530, Varadarajan Narayanan wrote:
+> Add device tree binding Documentation details for ipq5018
+> pinctrl driver.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 > ---
->  .../bindings/clock/qcom,aoncc-sm8250.yaml     | 58 +++++++++++++++++++
->  .../clock/qcom,sm8250-lpass-aoncc.h           | 11 ++++
->  2 files changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+>  .../bindings/pinctrl/qcom,ipq5018-pinctrl.yaml     | 143 +++++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
-Error: Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.example.dts:25.30-31 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1366: dt_binding_check] Error 2
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.example.dt.yaml: pinctrl@1000000: serial3-pinmux:function:0: 'blsp2_uart' is not one of ['atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'audio_pdm0', 'audio_pdm1', 'audio_rxbclk', 'audio_rxd', 'audio_rxfsync', 'audio_rxmclk', 'audio_txbclk', 'audio_txd', 'audio_txfsync', 'audio_txmclk', 'blsp0_i2c', 'blsp0_spi', 'blsp0_uart0', 'blsp0_uart1', 'blsp1_i2c0', 'blsp1_i2c1', 'blsp1_spi0', 'blsp1_spi1', 'blsp1_uart0', 'blsp1_uart1', 'blsp1_uart2', 'blsp2_i2c0', 'blsp2_i2c1', 'blsp2_spi', 'blsp2_spi0', 'blsp2_spi1', 'btss0', 'btss1', 'btss10', 'btss11', 'btss12', 'btss13', 'btss2', 'btss3', 'btss4', 'btss5', 'btss6', 'btss7', 'btss8', 'btss9', 'burn0', 'burn1', 'cri_trng', 'cri_trng0', 'cri_trng1', 'cxc_clk', 'cxc_data', 'dbg_out', 'eud_gpio', 'gcc_plltest', 'gcc_tlmm', 'gpio', 'mac0', 'mac1', 'mdc', 'mdio', 'pcie0_clk', 'pcie0_wake', 'pcie1_clk', 'pcie1_wake', 'pll_te
+ st', 'prng_rosc', 'pwm0', 'pwm1', 'pwm2', 'pwm3', 'qdss_cti_trig_in_a0', 'qdss_cti_trig_in_a1', 'qdss_cti_trig_in_b0', 'qdss_cti_trig_in_b1', 'qdss_cti_trig_out_a0', 'qdss_cti_trig_out_a1', 'qdss_cti_trig_out_b0', 'qdss_cti_trig_out_b1', 'qdss_traceclk_a', 'qdss_traceclk_b', 'qdss_tracectl_a', 'qdss_tracectl_b', 'qdss_tracedata_a', 'qdss_tracedata_b', 'qspi_clk', 'qspi_cs', 'qspi0', 'qspi1', 'qspi2', 'qspi3', 'reset_out', 'sdc1_clk', 'sdc1_cmd', 'sdc10', 'sdc11', 'sdc12', 'sdc13', 'wci0', 'wci1', 'wci2', 'wci3', 'wci4', 'wci5', 'wci6', 'wci7', 'wsa_swrm', 'wsi_clk3', 'wsi_data3', 'wsis_reset', 'xfem0', 'xfem1', 'xfem2', 'xfem3', 'xfem4', 'xfem5', 'xfem6', 'xfem7']
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
 
 
-See https://patchwork.ozlabs.org/patch/1371159
+See https://patchwork.ozlabs.org/patch/1372367
 
 If you already ran 'make dt_binding_check' and didn't see the above
 error(s), then make sure dt-schema is up to date:
