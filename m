@@ -2,66 +2,68 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6703FC4727F
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 19:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E79C4727C
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 20:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09619207F7
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 19:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47E920848
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 20:09:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cd5lM82c"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K1E/qbeW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbgI2Tlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Sep 2020 15:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728771AbgI2Tlj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Sep 2020 15:41:39 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0788BC061755;
-        Tue, 29 Sep 2020 12:41:39 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id j2so7703036eds.9;
-        Tue, 29 Sep 2020 12:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zlMyFBmbzW5FxZuomqtfTXpo4COGWABRi6GcA0YobZY=;
-        b=Cd5lM82ciKx1rQ9ZAa5+VHQDFS9b7Hr2lPGd1nCNi+hdwpVC2TzwJHrXh9SXqU0TB6
-         +9NJGVGAR2AxmBzR6Wab4CDPfAruI2OaHEFX+N/zdHrGTkshhuMTKR6K7a8Os/25p/3e
-         q0dusZdlgCNYwXjo40vizlTEIsERLS3KCWUpETKFK7OPtSxT079CfJvobR8r+Q4LjMx6
-         XFMlyExn35/PnDRDcZ+Es5SNzsXf2bPJw+bEbEBGLDIfvC+p+l87VdtqmiavK4b+Cjva
-         jvVajofBhvcM/srNfXlN7Q4OF4md/v87pTomvgd9zDOYcKojDDURG2eBvaPcxsKql3HR
-         k3cA==
+        id S1728709AbgI2UJE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Sep 2020 16:09:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38250 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728673AbgI2UJE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Sep 2020 16:09:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601410142;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DIFs8gwwhpj/DqI+8uOPe6RCPJDRMKj5Nu/3ABZ3BbQ=;
+        b=K1E/qbeWeKf1Kk+NhXCis7T05dado5pKw1+DywyaMypRQK62wkUlaR/6MeOEzgIzeUv4IF
+        sFTO5qwK8US3WYrX0RiXaKeU11fPfLCLRQP3c+hqf901Bhi5CraO0Cua1o2DMWy4x/cPHs
+        l751AYjyMw7PNNAtjdsaq2fG+7t30WQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-3-Tb0ZrjQtNrKYpnesRKx-tQ-1; Tue, 29 Sep 2020 16:09:00 -0400
+X-MC-Unique: Tb0ZrjQtNrKYpnesRKx-tQ-1
+Received: by mail-ej1-f69.google.com with SMTP id w27so2382917ejb.12
+        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2020 13:09:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=zlMyFBmbzW5FxZuomqtfTXpo4COGWABRi6GcA0YobZY=;
-        b=DGks0JjXEC/24lEcQrTSOF5Wtg98k0QuEXE0ndRW1QEtuV3q1IUyYVJckTFfTx+Mk9
-         fVJdKaPRqYCi43waqXaJQ0Mtn4+YEWol08Qvg2Kq0QLpGvCPlEuRwKKzvsEhymcChkY3
-         aRzqwyikophhhl+LrHMDot50ZAlcxDGjFGHWnZ+dKh975BY/bDYfKMkjgWdFRUsVezKP
-         lL5UxEuKngjkjZtroFvaEBi9rZWYGcvfGIRr0ytTG5MjN4FEQUiYntvM9Zdw2rRDvMT/
-         S+frcGCRlQu3ZQdfRDMLzRJdKyIrNffTFzG+9hSkM47qGMsS39Q+8D4tGwF5D1ZigLqs
-         NJow==
-X-Gm-Message-State: AOAM530oaxBZtsK3cI0gshZvJWpV1ODPahy1kGzK7P7dkIfvjv4wONvL
-        NrXdU9Ssreh8VkzWoDFepNaR+Mg4Kd0=
-X-Google-Smtp-Source: ABdhPJxdVWjR59wJqVzYNb1ZZnoTGAQscivoC0mSo/iFa5jzBzOV1HbJcpA8SV3Sht9E2bdk2e97EA==
-X-Received: by 2002:aa7:cb83:: with SMTP id r3mr4946860edt.35.1601408497156;
-        Tue, 29 Sep 2020 12:41:37 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f00:6a00:f1df:74ef:35e5:214d? (p200300ea8f006a00f1df74ef35e5214d.dip0.t-ipconnect.de. [2003:ea:8f00:6a00:f1df:74ef:35e5:214d])
-        by smtp.googlemail.com with ESMTPSA id b6sm6797989eds.46.2020.09.29.12.41.36
+        bh=DIFs8gwwhpj/DqI+8uOPe6RCPJDRMKj5Nu/3ABZ3BbQ=;
+        b=d8/EoivQVDQWzoYCOPcvDDwo8DdYnb4onxOXhmM4Run2CxphpEaouSiEwddsrNiYWe
+         QgtA9TrDKr72qYYnUOFJgRrhH4Re4mAshKoN2vCm1iFRf9U+NJdgH0ADyXxl2x20YE/r
+         NBTYfJpNl7zDB0DBiOoajxefmd5Q/6DkCRkkVyZFWhInjLIAh+K4bXLiYeR9sWZSUKbN
+         13N+II46zXaPytUuXgObwVAMX7TKpDY1EI9oLhghndjaFp/dwCpq54/DNZN5Hr8KQvme
+         vkJlaJCoA+MY/ISeScaeM92hHB/xy0gb6HNXj6WPpX3osOEI3zOAOdT10X7r13nPHr+2
+         zbRQ==
+X-Gm-Message-State: AOAM532utR86AdiN1SHveGI68fKdZ896KXOL+Xl12q2a8ATi/ES7EHCN
+        LYMDpC5PJ2DqPTsCJKdUaiwRKlm1WhmwWAYiqhPqyLzf4UJW0VR3thbfFJ8VCnhKwwLKctnrurZ
+        n9BCt6sBidOdhEal7DUYI
+X-Received: by 2002:aa7:d7ca:: with SMTP id e10mr4997295eds.191.1601410138396;
+        Tue, 29 Sep 2020 13:08:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxdlupj0rWyWlmi7WbM8az+cVEse/WZopI/TMy1ObLC9oj26r790A2vxzo13SG7WLtJegZNNA==
+X-Received: by 2002:aa7:d7ca:: with SMTP id e10mr4997270eds.191.1601410137989;
+        Tue, 29 Sep 2020 13:08:57 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id bt19sm5801516ejb.44.2020.09.29.13.08.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2020 12:41:36 -0700 (PDT)
+        Tue, 29 Sep 2020 13:08:57 -0700 (PDT)
 Subject: Re: RTL8402 stops working after hibernate/resume
 To:     Petr Tesarik <ptesarik@suse.cz>,
-        Hans de Goede <hdegoede@redhat.com>
+        Heiner Kallweit <hkallweit1@gmail.com>
 Cc:     Realtek linux nic maintainers <nic_swsd@realtek.com>,
         netdev@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20200715102820.7207f2f8@ezekiel.suse.cz>
@@ -79,45 +81,53 @@ References: <20200715102820.7207f2f8@ezekiel.suse.cz>
  <20200925145608.66a89e73@ezekiel.suse.cz>
  <30969885-9611-06d8-d50a-577897fcab29@gmail.com>
  <20200929210737.7f4a6da7@ezekiel.suse.cz>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <3132f91a-505d-6e56-be97-334593f8ca12@gmail.com>
-Date:   Tue, 29 Sep 2020 21:41:31 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <217ae37d-f2b0-1805-5696-11644b058819@redhat.com>
+Date:   Tue, 29 Sep 2020 22:08:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
 In-Reply-To: <20200929210737.7f4a6da7@ezekiel.suse.cz>
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29.09.2020 21:07, Petr Tesarik wrote:
+Hi,
+
+On 9/29/20 9:07 PM, Petr Tesarik wrote:
 > Hi Heiner (and now also Hans)!
 > 
 > @Hans: I'm adding you to this conversation, because you're the author
 > of commit b1e3454d39f99, which seems to break the r8169 driver on a
 > laptop of mine.
-> 
+
+Erm, no, as you bi-sected yourself already commit 9f0b54cd167219
+("r8169: move switching optional clock on/off to pll power functions")
+
+Broke your laptop, commit b1e3454d39f99 ("clk: x86: add "ether_clk" alias
+for Bay Trail / Cherry Trail") is about 18 months older.
+
 > On Fri, 25 Sep 2020 16:47:54 +0200
 > Heiner Kallweit <hkallweit1@gmail.com> wrote:
 > 
 >> On 25.09.2020 14:56, Petr Tesarik wrote:
 >>> On Fri, 25 Sep 2020 11:52:41 +0200
 >>> Petr Tesarik <ptesarik@suse.cz> wrote:
->>>   
+>>>    
 >>>> On Fri, 25 Sep 2020 11:44:09 +0200
 >>>> Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>  
->>>>> On 25.09.2020 10:54, Petr Tesarik wrote:    
->>>> [...]  
+>>>>   
+>>>>> On 25.09.2020 10:54, Petr Tesarik wrote:
+>>>> [...]
 >>>>>> Does it make sense to bisect the change that broke the driver for me, or should I rather dispose of this waste^Wlaptop in an environmentally friendly manner? I mean, would you eventually accept a workaround for a few machines with a broken BIOS?
->>>>>>       
+>>>>>>        
 >>>>> If the workaround is small and there's little chance to break other stuff: then usually yes.
->>>>> If you can spend the effort to bisect the issue, this would be appreciated.    
+>>>>> If you can spend the effort to bisect the issue, this would be appreciated.
 >>>>
->>>> OK, then I'm going to give it a try.  
+>>>> OK, then I'm going to give it a try.
 >>>
 >>> Done. The system freezes when this commit is applied:
 >>>
@@ -125,40 +135,41 @@ On 29.09.2020 21:07, Petr Tesarik wrote:
 >>> Author: Heiner Kallweit <hkallweit1@gmail.com>
 >>> Date:   Wed Jun 17 22:55:40 2020 +0200
 >>>
->>>     r8169: move switching optional clock on/off to pll power functions
->>>   
->> This sounds weird. On your system tp->clk should be NULL, making
+>>>      r8169: move switching optional clock on/off to pll power functions
+>>>    
+>> This sounds weird. On your system tp->clk should be NULL,
+
+Heiner, why do you say that tp->clk should be NULL on Petr's
+system? Because it is an x86 based system?
+
+Some X86 SoCs, specifically, the more tablet oriented Bay and Cherry
+Trail SoCs, which are much more ARM SoC like then other X86 SoCs do
+also use the clock framework and the SoC has a number of external clk
+pins which are typically used by audio codecs and by ethernet chips.
+
+>> making
 >> clk_prepare_enable() et al no-ops. Please check whether tp->clk
 >> is NULL after the call to rtl_get_ether_clk().
 > 
 > This might be part of the issue. On my system tp->clk is definitely not
 > NULL:
 > 
-OK, interesting. The referenced patch changes driver behavior in a way
-that ether_clk is disabled again in probe(), and only re-enabled
-in ndo_open(). This should be helpful from a power-saving perspective
-because before that we enabled the clock even if the network device
-wasn't used.
-It seems however that disabling ether_clk has (at least on your system)
-side effects causing a system freeze. That's a best guess from my side
-however, and not really something I can comment on.
-
 > crash> *rtl8169_private.clk 0xffff9277aca58940
->   clk = 0xffff9277ac2c82a0
+>    clk = 0xffff9277ac2c82a0
 > 
 > crash> *clk 0xffff9277ac2c82a0
 > struct clk {
->   core = 0xffff9277aef65d00, 
->   dev = 0xffff9277aed000b0, 
->   dev_id = 0xffff9277aec60c00 "0000:03:00.2", 
->   con_id = 0xffff9277ad04b080 "ether_clk", 
->   min_rate = 0, 
->   max_rate = 18446744073709551615, 
->   exclusive_count = 0, 
->   clks_node = {
->     next = 0xffff9277ad2428d8, 
->     pprev = 0xffff9277aef65dc8
->   }
+>    core = 0xffff9277aef65d00,
+>    dev = 0xffff9277aed000b0,
+>    dev_id = 0xffff9277aec60c00 "0000:03:00.2",
+>    con_id = 0xffff9277ad04b080 "ether_clk",
+>    min_rate = 0,
+>    max_rate = 18446744073709551615,
+>    exclusive_count = 0,
+>    clks_node = {
+>      next = 0xffff9277ad2428d8,
+>      pprev = 0xffff9277aef65dc8
+>    }
 > }
 > 
 > The dev_id corresponds to the Ethernet controller:
@@ -168,20 +179,96 @@ however, and not really something I can comment on.
 > Looking at clk_find(), it matches this entry in clocks:
 > 
 > struct clk_lookup {
->   node = {
->     next = 0xffffffffbc702f40, 
->     prev = 0xffff9277bf7190c0
->   }, 
->   dev_id = 0x0, 
->   con_id = 0xffff9277bf719524 "ether_clk", 
->   clk = 0x0, 
->   clk_hw = 0xffff9277ad2427f8
+>    node = {
+>      next = 0xffffffffbc702f40,
+>      prev = 0xffff9277bf7190c0
+>    },
+>    dev_id = 0x0,
+>    con_id = 0xffff9277bf719524 "ether_clk",
+>    clk = 0x0,
+>    clk_hw = 0xffff9277ad2427f8
 > }
 > 
 > That's because this kernel is built with CONFIG_PMC_ATOM=y, and looking
 > at the platform initialization code, the "ether_clk" alias is created
 > unconditionally. Hans already added.
-> 
-> Petr T
-> 
+
+Petr, unconditionally is not really correct here, just as claiming
+above that my commit broke things was not really correct either.
+
+I guess this is mostly semantics, but I don't appreciate
+the accusatory tone here.
+
+The code in question binds to a clk-pmc-atom platform_device which
+gets instantiated by drivers/platform/x86/pmc_atom.c. Which in turn
+binds to a PCI device which is only present on Bay Trail and Cherry
+Trail SoCs.
+
+IOW the commit operates as advertised in its Subject:
+"clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail"
+
+So with that all clarified lets try to see if we can figure out
+*why* this is actually happening.
+
+Petr, can you describe your hardware in some more detail,
+in the bits quoted when you first Cc-ed me there is not that
+much detail. What is the vendor and model of your laptop?
+
+Looking closer at commit 9f0b54cd167219
+("r8169: move switching optional clock on/off to pll power functions")
+I notice that the functions which now enable/disable the clock:
+rtl_pll_power_up() and rtl_pll_power_down()
+
+Only run when the interface is up during suspend/resume.
+Petr, I guess the laptop is not connected to ethernet when you
+hibernate it?
+
+That means that on resume the clock will not be re-enabled.
+
+This is a subtle but important change and I believe that
+this is what is breaking things. I guess that the PLL which
+rtl_pll_power_up() / rtl_pll_power_down() controls is only
+used for ethernet-timing.  But the external clock controlled
+through pt->clk is a replacement for using an external
+crystal with the r8169 chip. So with it disabled, the entire
+chip does not have a clock and is essentially dead.
+It can then e.g. not respond to any pci-e reads/writes done
+to it.
+
+So I believe that the proper fix for this is to revert
+commit 9f0b54cd167219
+("r8169: move switching optional clock on/off to pll power functions")
+
+As that caused the whole chip's clock to be left off after
+a suspend/resume while the interface is down.
+
+Also some remarks about this while I'm being a bit grumpy about
+all this anyways (sorry):
+
+1. 9f0b54cd167219 ("r8169: move switching optional clock on/off
+to pll power functions") commit's message does not seem to really
+explain why this change was made...
+
+2. If a git blame would have been done to find the commit adding
+the clk support: commit c2f6f3ee7f22 ("r8169: Get and enable optional ether_clk clock")
+then you could have known that the clk in question is an external
+clock for the entire chip, the commit message pretty clearly states
+this (although "the entire" part is implied only) :
+
+"On some boards a platform clock is used as clock for the r8169 chip,
+this commit adds support for getting and enabling this clock (assuming
+it has an "ether_clk" alias set on it).
+
+This is related to commit d31fd43c0f9a ("clk: x86: Do not gate clocks
+enabled by the firmware") which is a previous attempt to fix this for some
+x86 boards, but this causes all Cherry Trail SoC using boards to not reach
+there lowest power states when suspending.
+
+This commit (together with an atom-pmc-clk driver commit adding the alias)
+fixes things properly by making the r8169 get the clock and enable it when
+it needs it."
+
+Regards,
+
+Hans
 
