@@ -2,229 +2,163 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD545C4741F
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 15:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DABC4727C
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 19:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64C7121531
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 15:33:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=sifive.com header.i=@sifive.com header.b="JcvSrAfs"
+	by mail.kernel.org (Postfix) with ESMTP id D6A6120774
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 19:07:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbgI2Pdp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Sep 2020 11:33:45 -0400
-Received: from mail-bn7nam10on2048.outbound.protection.outlook.com ([40.107.92.48]:5633
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725497AbgI2Pdo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Sep 2020 11:33:44 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cjpv92j2oo3ZdGNqg/LcfOJsCjgvs8e5JM5Jyow7/aUyt1SJRNo5buR5DeisX8QAcb3D1twXwfUA7TXXN1RTw5mu4+8iF1tnPGWv09pfh29FkEKPUXpGAJYZms1A3qkRdkgaN8skMLiryi2llsGxBXEn069IiURCsNomQNn5TSyACkOkB46EU1CMGrQoFU9A23vIBwaf7g2J/De2NSNHSsY97HVG9NUxFGtpIWNlPSdygw+H9j9Z83qUtpcKezhE1d98C1g3K8UehNW2KQ0YmaewMZPA9Nbnq+Rk3DCCZ9eZTTrDkZxgT7gmthyQqERTtv5tY4OSkwaRo7tkvBAIDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u3Ulm3ee2XLjQQ6jk3sWu1TMLDoYUWn2nb7NWclCEnU=;
- b=aD76apwZAa2eWLq3i5rnPefnHfNJ4fpBeIgBrQyDnD8MDokJDv3zYL6lf9Zar25eXQQvf5SS69aoHh7N5LqPq8U7wCxW2NFsmcLtoxF31+8uavxAbKUD3DHHhveqr13xn2S2HDEzOrXNWGvU/peLLXkbPMxRlgDy7gELrRKg0bWhqQDv7tcjgNaay49P0DqBXYwxLjF5rHbXqsGqhvj1sUTFAT7+V9l5OK5GrSQKdHb5enHnJmx1rReXW+rjSRN5WUFyJZo/mM4+KBxxGVwdkQnLc6inbni2JPAoK+Ha6IUG0P0Lsspp8FghpGHqXNHdAA+6FzZFtVY6uI0Sj8/zdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=openfive.com; dmarc=pass action=none header.from=sifive.com;
- dkim=pass header.d=sifive.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sifive.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u3Ulm3ee2XLjQQ6jk3sWu1TMLDoYUWn2nb7NWclCEnU=;
- b=JcvSrAfsqK0otYPTY1hjikjfQbOPRP4lOvRm4T3NIurJc/WjY39SIxPFhrzo6fclW1XTidhoLOPe0BfvqlXJ/1sCcoEFVo/4XNDZ/sH5b7BdPPMAV6foM1kcym84UIbEfmg/nOZaUbxFNm3PRfgEVD+GNMoke8HoU5oEtkWB2wE=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=sifive.com;
-Received: from DM6PR13MB3451.namprd13.prod.outlook.com (2603:10b6:5:1c3::10)
- by DM6PR13MB2412.namprd13.prod.outlook.com (2603:10b6:5:c3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.14; Tue, 29 Sep
- 2020 15:33:41 +0000
-Received: from DM6PR13MB3451.namprd13.prod.outlook.com
- ([fe80::a48a:1f7c:267c:876]) by DM6PR13MB3451.namprd13.prod.outlook.com
- ([fe80::a48a:1f7c:267c:876%7]) with mapi id 15.20.3433.032; Tue, 29 Sep 2020
- 15:33:41 +0000
-From:   Sagar Kadam <sagar.kadam@sifive.com>
-To:     linux-clk@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        palmer@dabbelt.com, paul.walmsley@sifive.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, lee.jones@linaro.org,
-        aou@eecs.berkeley.edu, yash.shah@sifive.com,
-        Sagar Kadam <sagar.kadam@sifive.com>
-Subject: [PATCH v2 3/3] dt-bindings: riscv: convert pwm bindings to json-schema
-Date:   Tue, 29 Sep 2020 21:02:11 +0530
-Message-Id: <1601393531-2402-4-git-send-email-sagar.kadam@sifive.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1601393531-2402-1-git-send-email-sagar.kadam@sifive.com>
-References: <1601393531-2402-1-git-send-email-sagar.kadam@sifive.com>
-Content-Type: text/plain
-X-Originating-IP: [159.117.144.156]
-X-ClientProxiedBy: SG2PR02CA0101.apcprd02.prod.outlook.com
- (2603:1096:4:92::17) To DM6PR13MB3451.namprd13.prod.outlook.com
- (2603:10b6:5:1c3::10)
+        id S1728215AbgI2THn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Sep 2020 15:07:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55708 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727740AbgI2THn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Sep 2020 15:07:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BF19AAFAA;
+        Tue, 29 Sep 2020 19:07:41 +0000 (UTC)
+Date:   Tue, 29 Sep 2020 21:07:37 +0200
+From:   Petr Tesarik <ptesarik@suse.cz>
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        netdev@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: RTL8402 stops working after hibernate/resume
+Message-ID: <20200929210737.7f4a6da7@ezekiel.suse.cz>
+In-Reply-To: <30969885-9611-06d8-d50a-577897fcab29@gmail.com>
+References: <20200715102820.7207f2f8@ezekiel.suse.cz>
+        <d742082e-42a1-d904-8a8f-4583944e88e1@gmail.com>
+        <20200716105835.32852035@ezekiel.suse.cz>
+        <e1c7a37f-d8d0-a773-925c-987b92f12694@gmail.com>
+        <20200903104122.1e90e03c@ezekiel.suse.cz>
+        <7e6bbb75-d8db-280d-ac5b-86013af39071@gmail.com>
+        <20200924211444.3ba3874b@ezekiel.suse.cz>
+        <a10f658b-7fdf-2789-070a-83ad5549191a@gmail.com>
+        <20200925093037.0fac65b7@ezekiel.suse.cz>
+        <20200925105455.50d4d1cc@ezekiel.suse.cz>
+        <aa997635-a5b5-75e3-8a30-a77acb2adf35@gmail.com>
+        <20200925115241.3709caf6@ezekiel.suse.cz>
+        <20200925145608.66a89e73@ezekiel.suse.cz>
+        <30969885-9611-06d8-d50a-577897fcab29@gmail.com>
+Organization: SUSE Linux, s.r.o.
+X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from osubuntu003.open-silicon.com (159.117.144.156) by SG2PR02CA0101.apcprd02.prod.outlook.com (2603:1096:4:92::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3433.32 via Frontend Transport; Tue, 29 Sep 2020 15:33:34 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 39f21467-2767-4cf2-259f-08d8648d0aaf
-X-MS-TrafficTypeDiagnostic: DM6PR13MB2412:
-X-LD-Processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR13MB2412E18C4139CFCB54A0DE3D97320@DM6PR13MB2412.namprd13.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xyKLjQnNOW1/MqAb8gRuzDsxVBaNrV6Qlm3IFTcJ/Yo5fTJLLv4S8xYZO/wsy/cg4VBZ+l7+Qma8mFpimBScUqnQkxregIO1+4TGD8d9iaHTq8PKsFQFhunx3EirTEAc/oR9Yjwba19ZyKlHiIa8k2XsFjgalSzP6lS28nddbcHF1e5dpBwobU10Vnv0BWe3pOOnzR4Vib5JZ9azAhsBdnsqMfwWF1L0TheZ5yChop4vv0G2MNNG268KleScnLFfU38prJQrsU6A0YyQEz35DJb2S2f07elKF45UBUcv3IK8l78y09UPIA2ZveWvdHeicqIX2ApdVEfObVu3UIWLolo3Giyg5Egu1SiadfFTqcVQGQWS8cz1CjFXgmDhTuqMsCCK3sA3Gn6SiVG8VxBVhA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR13MB3451.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(366004)(396003)(346002)(376002)(39850400004)(6512007)(966005)(44832011)(83380400001)(4326008)(66946007)(7416002)(52116002)(8676002)(83080400001)(2906002)(5660300002)(107886003)(6506007)(66476007)(66556008)(83170400001)(6666004)(36756003)(8936002)(2616005)(478600001)(6486002)(956004)(316002)(186003)(16526019)(26005)(42882007)(6916009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: ZsBFYqPpdmZxxdGC2lnOVLn6r/VS4QRy/wcw/c8D1WLrG56onY0AWMk4swRRldhV4zcUXoKLFZaSYTMeOfbr+iMxdYPBECX7jTi6ZeRVVdUSOXsyumtLJaMFPWGw0JC3BARXKY6RwNTfvLnVzsmd3TSnatIKYUZRDnj7o0koUfIOQCTdDYdSwLYfIf1ND2baLOTiWKzWgtgLeSz8VA67CPCH4F2PhV8+wYyilii/iiH+XLxs9D28uyc61QDhRzv9Bzlr5zdnUjww8422cnApxF3nRxFq6HJMdaXfJa4G0k3B2XSku4BqCz1KzAl9L31qsw7BeLPasEKNXhs9qYgr/jyJX3Vd8fLT52C7DTk0UPeiZ8Q81YXSR88jrISz5w1ZKZIxwds+999pVDKcsCL3o3K24XfZXcAbL7wx5KfptxGjsq5UTzWc/He3jg/2UVi62QoLEIVlPE8DGHIFWiG8Y81kx8e5pDlwEu6yZbxliQiu/qLlI+UCJUKh47KITgbdCnBsRzlpLJ3evd40ZnqHc2QTvlEQ9jghVAZvDMDSorvSGQ9CP8YQFQz8nzmkZXk1NVSnz++C+ywAr1QyDj0HRooAaKrAzUzx7g5JPWkSOYZANu83a/LqtzIZF5gmkL8Zk7+cjrVtY3egaP9ipC39TA==
-X-OriginatorOrg: sifive.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39f21467-2767-4cf2-259f-08d8648d0aaf
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR13MB3451.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2020 15:33:40.8300
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: snonmJ+CmwWVMKYBqLN3NUxQWzQ1WxZ31NpJQ98DByYbJEHhp2KEDNm40AY3YkF1ML4UxVUnCkY+6jiZ6q03SA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR13MB2412
+Content-Type: multipart/signed; boundary="Sig_/5NIX3CuMdDx9m3Ed8bZcLEz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert device tree bindings for SiFive's PWM controller to YAML
-format.
+--Sig_/5NIX3CuMdDx9m3Ed8bZcLEz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
----
- .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 -----------
- .../devicetree/bindings/pwm/pwm-sifive.yaml        | 69 ++++++++++++++++++++++
- 2 files changed, 69 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
+Hi Heiner (and now also Hans)!
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-deleted file mode 100644
-index 3d1dd7b0..0000000
---- a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--SiFive PWM controller
--
--Unlike most other PWM controllers, the SiFive PWM controller currently only
--supports one period for all channels in the PWM. All PWMs need to run at
--the same period. The period also has significant restrictions on the values
--it can achieve, which the driver rounds to the nearest achievable period.
--PWM RTL that corresponds to the IP block version numbers can be found
--here:
--
--https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
--
--Required properties:
--- compatible: Should be "sifive,<chip>-pwm" and "sifive,pwm<version>".
--  Supported compatible strings are: "sifive,fu540-c000-pwm" for the SiFive
--  PWM v0 as integrated onto the SiFive FU540 chip, and "sifive,pwm0" for the
--  SiFive PWM v0 IP block with no chip integration tweaks.
--  Please refer to sifive-blocks-ip-versioning.txt for details.
--- reg: physical base address and length of the controller's registers
--- clocks: Should contain a clock identifier for the PWM's parent clock.
--- #pwm-cells: Should be 3. See pwm.yaml in this directory
--  for a description of the cell format.
--- interrupts: one interrupt per PWM channel
--
--Examples:
--
--pwm:  pwm@10020000 {
--	compatible = "sifive,fu540-c000-pwm", "sifive,pwm0";
--	reg = <0x0 0x10020000 0x0 0x1000>;
--	clocks = <&tlclk>;
--	interrupt-parent = <&plic>;
--	interrupts = <42 43 44 45>;
--	#pwm-cells = <3>;
--};
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-new file mode 100644
-index 0000000..5ac2527
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2020 SiFive, Inc.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/pwm-sifive.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: SiFive PWM controller
-+
-+maintainers:
-+  - Yash Shah <yash.shah@sifive.com>
-+  - Sagar Kadam <sagar.kadam@sifive.com>
-+  - Paul Walmsley <paul.walmsley@sifive.com>
-+
-+description:
-+  Unlike most other PWM controllers, the SiFive PWM controller currently
-+  only supports one period for all channels in the PWM. All PWMs need to
-+  run at the same period. The period also has significant restrictions on
-+  the values it can achieve, which the driver rounds to the nearest
-+  achievable period. PWM RTL that corresponds to the IP block version
-+  numbers can be found here -
-+
-+  https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: sifive,fu540-c000-pwm
-+      - const: sifive,pwm0
-+    description:
-+      Should be "sifive,<chip>-pwm" and "sifive,pwm<version>". Supported
-+      compatible strings are "sifive,fu540-c000-pwm" for the SiFive PWM v0
-+      as integrated onto the SiFive FU540 chip, and "sifive,pwm0" for the
-+      SiFive PWM v0 IP block with no chip integration tweaks.
-+      Please refer to sifive-blocks-ip-versioning.txt for details.
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  "#pwm-cells":
-+    const: 3
-+
-+  interrupts:
-+    maxItems: 4
-+    description:
-+      Each PWM instance in FU540-C000 has 4 comparators. One interrupt per comparator.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#pwm-cells"
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwm:  pwm@10020000 {
-+      compatible = "sifive,fu540-c000-pwm", "sifive,pwm0";
-+      reg = <0x10020000 0x1000>;
-+      clocks = <&tlclk>;
-+      interrupt-parent = <&plic>;
-+      interrupts = <42>, <43>, <44>, <45>;
-+      #pwm-cells = <3>;
-+    };
--- 
-2.7.4
+@Hans: I'm adding you to this conversation, because you're the author
+of commit b1e3454d39f99, which seems to break the r8169 driver on a
+laptop of mine.
 
+On Fri, 25 Sep 2020 16:47:54 +0200
+Heiner Kallweit <hkallweit1@gmail.com> wrote:
+
+> On 25.09.2020 14:56, Petr Tesarik wrote:
+> > On Fri, 25 Sep 2020 11:52:41 +0200
+> > Petr Tesarik <ptesarik@suse.cz> wrote:
+> >  =20
+> >> On Fri, 25 Sep 2020 11:44:09 +0200
+> >> Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >> =20
+> >>> On 25.09.2020 10:54, Petr Tesarik wrote:   =20
+> >> [...] =20
+> >>>> Does it make sense to bisect the change that broke the driver for me=
+, or should I rather dispose of this waste^Wlaptop in an environmentally fr=
+iendly manner? I mean, would you eventually accept a workaround for a few m=
+achines with a broken BIOS?
+> >>>>      =20
+> >>> If the workaround is small and there's little chance to break other s=
+tuff: then usually yes.
+> >>> If you can spend the effort to bisect the issue, this would be apprec=
+iated.   =20
+> >>
+> >> OK, then I'm going to give it a try. =20
+> >=20
+> > Done. The system freezes when this commit is applied:
+> >=20
+> > commit 9f0b54cd167219266bd3864570ae8f4987b57520
+> > Author: Heiner Kallweit <hkallweit1@gmail.com>
+> > Date:   Wed Jun 17 22:55:40 2020 +0200
+> >=20
+> >     r8169: move switching optional clock on/off to pll power functions
+> >  =20
+> This sounds weird. On your system tp->clk should be NULL, making
+> clk_prepare_enable() et al no-ops. Please check whether tp->clk
+> is NULL after the call to rtl_get_ether_clk().
+
+This might be part of the issue. On my system tp->clk is definitely not
+NULL:
+
+crash> *rtl8169_private.clk 0xffff9277aca58940
+  clk =3D 0xffff9277ac2c82a0
+
+crash> *clk 0xffff9277ac2c82a0
+struct clk {
+  core =3D 0xffff9277aef65d00,=20
+  dev =3D 0xffff9277aed000b0,=20
+  dev_id =3D 0xffff9277aec60c00 "0000:03:00.2",=20
+  con_id =3D 0xffff9277ad04b080 "ether_clk",=20
+  min_rate =3D 0,=20
+  max_rate =3D 18446744073709551615,=20
+  exclusive_count =3D 0,=20
+  clks_node =3D {
+    next =3D 0xffff9277ad2428d8,=20
+    pprev =3D 0xffff9277aef65dc8
+  }
+}
+
+The dev_id corresponds to the Ethernet controller:
+
+03:00.2 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL810xE PCI E=
+xpress Fast Ethernet controller (rev 06)
+
+Looking at clk_find(), it matches this entry in clocks:
+
+struct clk_lookup {
+  node =3D {
+    next =3D 0xffffffffbc702f40,=20
+    prev =3D 0xffff9277bf7190c0
+  },=20
+  dev_id =3D 0x0,=20
+  con_id =3D 0xffff9277bf719524 "ether_clk",=20
+  clk =3D 0x0,=20
+  clk_hw =3D 0xffff9277ad2427f8
+}
+
+That's because this kernel is built with CONFIG_PMC_ATOM=3Dy, and looking
+at the platform initialization code, the "ether_clk" alias is created
+unconditionally. Hans already added.
+
+Petr T
+
+--Sig_/5NIX3CuMdDx9m3Ed8bZcLEz
+Content-Type: application/pgp-signature
+Content-Description: Digitální podpis OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEHl2YIZkIo5VO2MxYqlA7ya4PR6cFAl9zhfkACgkQqlA7ya4P
+R6dRrggAtS8yhdmtAZwoaP0L4XoTFwCaIdxFpl40AbCb0KPPHue+FMWQoph7Rljt
+K1gRwCD1xTQcR2CTXM1H4M95mIR+wLSGtkqkKSp71MSHZ+K1kp9nycfU7ew0bHrm
+gDrov/5CrAedi3uNOoVeMW5y+qfawjNewX+92hU+wy1QGuZA4yYjy2nUfBrk1d/i
+/4+yAUQJDgiNXfdCct6BzLLVj1HOPS1COCcAgY3n9hKIOlHia3N7IzQis91MbBoK
+2oI+t5mi1S1fEPXJYFs3ULHXcaIQKOcV1U2xMckv6RlrWIPTSC8KWf4m2TCGFU/l
+ed6zYz4Lqw2TLzINiaY1RU6V3m6+rw==
+=D/V5
+-----END PGP SIGNATURE-----
+
+--Sig_/5NIX3CuMdDx9m3Ed8bZcLEz--
