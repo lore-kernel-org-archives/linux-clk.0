@@ -2,65 +2,96 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF2CC4727C
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 00:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32339C47420
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 00:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F277E2100A
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 00:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601338357;
-	bh=+E1H/rqziA9SnWCpHRpFK/oBRhY8RA2SM+Ifg0y2sDA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=H0Z4PYLvnfCAirkbEhSjT6JsXvyBZQvvhMCpO3o9cKDU+letOAzRdZa5imezsGxoS
-	 WK807ZeTIdJDOYSDACXxxABg2BPsINd4LTblzMmC8bBk/DY9J78c1DDzInThhvSB9E
-	 UyUkua1D0i0Qgwa0qR8ZTbkSGl/8njbOp4dgE2iQ=
+	by mail.kernel.org (Postfix) with ESMTP id 03BE321D41
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 00:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgI2AMg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Sep 2020 20:12:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727073AbgI2AMg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Sep 2020 20:12:36 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5CB120809;
-        Tue, 29 Sep 2020 00:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601338355;
-        bh=+E1H/rqziA9SnWCpHRpFK/oBRhY8RA2SM+Ifg0y2sDA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=j2i8k4IbsHXT8qMYLIYFH3OeUCpG9gbDt+AtqRMYvVbsGZrvr+TXTO7mgoa+ltnv3
-         a1mt2Za4WMffcLgQ33UPzTwwC9DI6urtK5sMC73inaOPizHb4IDOKobp32AL2XJorG
-         DKVcvOt9/qsf/G6JFGclRgD9SgdRNWiPRaa7G5PY=
-Content-Type: text/plain; charset="utf-8"
+        id S1727136AbgI2Apa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Sep 2020 20:45:30 -0400
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:56402 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726698AbgI2Apa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Sep 2020 20:45:30 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 780A9100E7B40;
+        Tue, 29 Sep 2020 00:45:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: self77_011759527186
+X-Filterd-Recvd-Size: 2723
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 29 Sep 2020 00:45:25 +0000 (UTC)
+Message-ID: <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
+Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
+ statements
+From:   Joe Perches <joe@perches.com>
+To:     Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+        Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
+        openipmi-developer@lists.sourceforge.net,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-wireless@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Date:   Mon, 28 Sep 2020 17:45:24 -0700
+In-Reply-To: <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+         <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200925110713.2652-1-geert+renesas@glider.be>
-References: <20200925110713.2652-1-geert+renesas@glider.be>
-Subject: Re: [PATCH] MAINTAINERS: Update git repo for Renesas clock drivers
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 28 Sep 2020 17:12:34 -0700
-Message-ID: <160133835461.310579.12825711875902427078@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-09-25 04:07:13)
-> Align the clock branch name with other renesas-* branches pulled by
-> subsystem maintainers.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+On Mon, 2020-09-28 at 20:35 +0100, Mark Brown wrote:
+> On Sun, 27 Sep 2020 21:12:10 +0200, Julia Lawall wrote:
+> > These patches replace commas by semicolons.  This was done using the
+> > Coccinelle semantic patch (http://coccinelle.lip6.fr/) shown below.
+> > 
+> > This semantic patch ensures that commas inside for loop headers will not be
+> > transformed.  It also doesn't touch macro definitions.
+> > 
+> > Coccinelle ensures that braces are added as needed when a single-statement
+> > branch turns into a multi-statement one.
+> > 
+> > [...]
+> 
+> Applied to
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+> 
+> Thanks!
+> 
+> [1/1] regmap: debugfs: use semicolons rather than commas to separate statements
+>       commit: 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Hi Mark.
+
+Rather than replying to the 0/n cover letter to a patch
+series, can you reply to each of the specific patches in
+the patch series you are applying?
+
+Otherwise, it's a bit difficult to figure out which patches
+you are applying.
+
+thanks
+
