@@ -2,139 +2,133 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98168C47425
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 13:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB54DC4727C
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 14:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 439A3208FE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 13:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601386975;
-	bh=5RO0FIB4An+8TnRMhDir9GmpZkMdliSjg1+FOgj7wuU=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=lUapfrEKDkI7DqLsV2+wwVqYyqSXd1xZ/JYV7VKrYVWjXlHbkwKagSb6nOGKEcMv4
-	 BqmPg6iNHfIBNAk/uolOyuxZcPU0xsWLEd2uR/H1y1fryT7/VpgTb8K6fB4Z3VbZyv
-	 OE1vRj6UALOq2QoqGA6gvKe22ZPdCJfE0j5CdHvY=
+	by mail.kernel.org (Postfix) with ESMTP id 8A3C52074B
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 14:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730359AbgI2Nmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Sep 2020 09:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730863AbgI2Nmw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Sep 2020 09:42:52 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F12FC0613D0
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2020 06:42:52 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id y5so4457652otg.5
-        for <linux-clk@vger.kernel.org>; Tue, 29 Sep 2020 06:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7Re7sYUHoP/OO8RJy6m0dCE8FjQyDvN9idLxneZjSGs=;
-        b=Z34rZ/ds72mfUVTwVAO13Bpz4khcxmzLmZRTJ6BeCzZVGwvFQBFtfTqV+Mw0LWRYNM
-         uCrAI5JhrSTo6VZxNGORq4+uDlbuWvNn0BzZwcj+1vO5F++bvuicz0Q+A30JgXV/f7rA
-         Rk9jpCrpw+utP3CvREty99qb9cv8smpJnWoLw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7Re7sYUHoP/OO8RJy6m0dCE8FjQyDvN9idLxneZjSGs=;
-        b=R5tNYhSIEDtCrHL+4xqpSML0kv+4JRmGRY7Qn5k7rzjMYTcBP+5nkSDGcejyrGJR3T
-         jzOaJpNWAbiF4k1RqQoeUFMqHCpmXYiab79zo+9PQUzy3qP+nRuI+kt2FbVeKXBjDqkI
-         zZiAJdqbS3IxunegMcS9JAlFEfmL5FHmHHL9naPdZjE9GHgVgLbhqBXDM15XJYxxsOz+
-         Rkundhih9LeRSlJ9QeBtzrZkRdbOcIEweBPTfzF0Gywvw8wpW7cPZhREnfUXb1s8406K
-         R2WNpnsiFQiZjYEz+rGB1rik0/VuVpbe0GK2z6UcLeZixNB0tyS3+w9GcKFCaWG/zFC3
-         kmTA==
-X-Gm-Message-State: AOAM530yYvLHtOQffrU6IEUlHKggCeQGj6XxEHxUiqX2qZeWo8uKkmMK
-        RM20nwzjBuWEE368N+L8Kj7tXA==
-X-Google-Smtp-Source: ABdhPJxomgEcCkXHcyd2u2LBzXalo3/5KY6BNqNVB1FRlJIPPq8bhwRXFJ9dfNYvva75m6zRbuIoZQ==
-X-Received: by 2002:a05:6830:196:: with SMTP id q22mr2688536ota.221.1601386971432;
-        Tue, 29 Sep 2020 06:42:51 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id l4sm993642oie.25.2020.09.29.06.42.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2020 06:42:50 -0700 (PDT)
-Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
- statements
-To:     Joe Perches <joe@perches.com>,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-iio@vger.kernel.org,
-        drbd-dev@tron.linbit.com,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        David Lechner <david@lechnology.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-wireless@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
- <CAMj1kXGh+CzuXkAnqsoMO2A3T1p=D6uFOV347Ym5+VFn5U1gWg@mail.gmail.com>
- <20200929124108.GY4282@kadam>
- <alpine.DEB.2.22.394.2009291445050.2808@hadrien>
- <5f0d2b20f5088281363bb4a35c5652a2c087f159.camel@perches.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
-Date:   Tue, 29 Sep 2020 07:42:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728607AbgI2Oj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Sep 2020 10:39:58 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:27462 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728446AbgI2Oj6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Sep 2020 10:39:58 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08TEbS09004451;
+        Tue, 29 Sep 2020 10:39:55 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 33t2j4kefw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 29 Sep 2020 10:39:55 -0400
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 08TEdrbf041842
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Tue, 29 Sep 2020 10:39:53 -0400
+Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 29 Sep 2020 07:39:45 -0700
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 29 Sep 2020 07:39:45 -0700
+Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Tue, 29 Sep 2020 07:39:45 -0700
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 08TEdkbr028450;
+        Tue, 29 Sep 2020 10:39:46 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <linux-fpga@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <mdf@kernel.org>,
+        <ardeleanalex@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v4 0/7] clk: axi-clk-gen: misc updates to the driver
+Date:   Tue, 29 Sep 2020 17:44:02 +0300
+Message-ID: <20200929144417.89816-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <5f0d2b20f5088281363bb4a35c5652a2c087f159.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-29_07:2020-09-29,2020-09-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009290130
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/29/20 7:34 AM, Joe Perches wrote:
-> On Tue, 2020-09-29 at 14:47 +0200, Julia Lawall wrote:
->> On Tue, 29 Sep 2020, Dan Carpenter wrote:
->>> The times where commas are used deliberately to replace curly braces are
->>> just evil.  Either way the code is cleaner with semi-colons.
->>
->> I also found exaamples like the following to be particularly unforunate:
->>
->>                                  fprintf(stderr,
->>                                          "page_nr %lu wrong count %Lu %Lu\n",
->>                                         page_nr, count,
->>                                         count_verify[page_nr]), exit(1);
->>
->> The exit is very hard to see, unless you know to look for it.
-> 
-> I sent that patch last month.
-> https://patchwork.kernel.org/patch/11734877/
-> 
+These patches synchronize the driver with the current state in the
+Analog Devices Linux tree:
+  https://github.com/analogdevicesinc/linux/
 
-I see what happened. This patch touches lib, cpupower, and selftests.
-Guess lost in the limbo of who takes it.
+They have been in the tree for about 2-3, so they did receive some
+testing.
 
-  tools/lib/subcmd/help.c                    |  10 +-
-  tools/power/cpupower/utils/cpufreq-set.c   |  14 +-
-  tools/testing/selftests/vm/gup_benchmark.c |  18 +-
-  tools/testing/selftests/vm/userfaultfd.c   | 296 +++++++++++++--------
-  4 files changed, 210 insertions(+), 128 deletions(-)
+Highlights are:
+* Add support for fractional dividers (Lars-Peter Clausen)
+* Enable support for ZynqMP (UltraScale) (Dragos Bogdan)
+* Support frequency limits for ZynqMP (Mathias Tausen)
+  - And continued by Mircea Caprioru, to read them from the IP cores
 
-I can take it through one of my trees.
+Changelog v3 -> v4:
+* added patch 'clk: axi-clkgen: wrap limits in a struct and keep copy on the state object'
+  this resets the rest of the patch-set to adapt to adjusting the limits
+  on per-clock instance versus being global to the entire driver
+  Recommended-by: Moritz Fischer <mdf@kernel.org>
+    https://lore.kernel.org/linux-clk/20200924142108.GA60306@archbook/
 
-thanks,
--- Shuah
+Changelog v2 -> v3:
+* https://lore.kernel.org/linux-clk/20200924065012.59605-1-alexandru.ardelean@analog.com/
+* for patch 'include: fpga: adi-axi-common.h: add definitions for supported FPGAs'
+  - fix whitespace found by checkpatch
+  - add 'Acked-by: Moritz Fischer <mdf@kernel.org>'
+
+Changelog v1 -> v2:
+- https://lore.kernel.org/linux-clk/20200804110658.40911-1-alexandru.ardelean@analog.com/
+- in patch 'include: fpga: adi-axi-common.h: add definitions for supported FPGAs'
+  * converted enums to #define
+  * added Intel FPGA definitions
+  * added Device-Package definitions
+  * added INTEL / XILINX in the define names
+ definitions according to:
+ https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_intel_device_info_enc.tcl
+ https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_xilinx_device_info_enc.tcl
+
+
+Alexandru Ardelean (1):
+  clk: axi-clkgen: wrap limits in a struct and keep copy on the state
+    object
+
+Dragos Bogdan (1):
+  clk: axi-clkgen: add support for ZynqMP (UltraScale)
+
+Lars-Peter Clausen (2):
+  clk: axi-clkgen: Add support for fractional dividers
+  clk: axi-clkgen: Set power bits for fractional mode
+
+Mathias Tausen (1):
+  clk: axi-clkgen: Respect ZYNQMP PFD/VCO frequency limits
+
+Mircea Caprioru (2):
+  include: fpga: adi-axi-common.h: add definitions for supported FPGAs
+  clk: axi-clkgen: Add support for FPGA info
+
+ drivers/clk/Kconfig                 |   2 +-
+ drivers/clk/clk-axi-clkgen.c        | 283 ++++++++++++++++++++++------
+ include/linux/fpga/adi-axi-common.h | 103 ++++++++++
+ 3 files changed, 326 insertions(+), 62 deletions(-)
+
+-- 
+2.17.1
+
