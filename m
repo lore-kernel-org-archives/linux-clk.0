@@ -2,156 +2,153 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1845C4346E
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C0FC47420
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0701620936
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14E7F20773
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="MjqLYoEE"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="O3DbuC2x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgI2IES (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Sep 2020 04:04:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbgI2IES (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Sep 2020 04:04:18 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FFC1C061755;
-        Tue, 29 Sep 2020 01:04:18 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id nw23so13705799ejb.4;
-        Tue, 29 Sep 2020 01:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UUa+xvZy/7cB0wwXcdXBfj8jGK+yRtDAUkUhMRWpR4o=;
-        b=MjqLYoEE+qBSg/GzATHWw9GBatBo9v4SP5jOwtI0jwd2c5/87LSVOJPLIhWmJPu5Bb
-         BjV4QwVm6Hd8uRdNydG2qxRrHXeQVlOGphsDLJH0Jv976yNEovylTs9cm+rH5PA0+DVn
-         6w4vf14iFU+t7q3Hr95x8Z8N7SGTwg097ndN8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UUa+xvZy/7cB0wwXcdXBfj8jGK+yRtDAUkUhMRWpR4o=;
-        b=s0VELAV9NqfHacOB7EXnCzl+7Mk78UJ+Rg7jlByDA61PDa3cGxlkJ9cGetLoIeqiWu
-         RlFZ+NBWud7G1SSvu8CbMs+8e3be1ZY9/mWLdb0I++FmC1Th9ClVCXaKy9ic3i363Kvj
-         6dLR0Ywr5dI43iILD/joUpiZP3DHIwjZfX9Y5CNVfKqvUKb85LSgiEWwbpIGcro3bNMp
-         H2v4f5qCoQ5vXeJLA4L5aGfSKy1uuZWRBnj50ESw8XEB7ZRva9xW32cYBqKYadD6iZEd
-         vIOzxfu6k6Km/vg8QlrVfuSMEbtwnh8moGB49lQ6F93CkBzPM4LGZOHYpVApAJpkMZaz
-         iYGA==
-X-Gm-Message-State: AOAM531ZkPFFiH79/TcM1BcTzprb8n+9nitg30lNXkx+wa0LeATNNFqI
-        6y3UB7DLZB5Gk6vaKgSyDzWthJElN7J1SVdxJuqAqLufMCk=
-X-Google-Smtp-Source: ABdhPJxEODavPJEfXr23rNjBTzc8oqyeWOJt3o9hhYbv3h/UzopdrVvnBL6Foc1EMWfAe7OigZ3oD9sHc8JF/HOuqbc=
-X-Received: by 2002:a17:906:4cd6:: with SMTP id q22mr2567547ejt.139.1601366656755;
- Tue, 29 Sep 2020 01:04:16 -0700 (PDT)
+        id S1725774AbgI2IFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Sep 2020 04:05:08 -0400
+Received: from z5.mailgun.us ([104.130.96.5]:42043 "EHLO z5.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727521AbgI2IFH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Sep 2020 04:05:07 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1601366706; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=r+8Y1/iTY5V2CVTSF4MuhfKKHmbWKG8EGomgri5/hVc=; b=O3DbuC2xKXPAB+i4l0uoimizHY13XvnB3NCGvJwleUuaAOkqhH6JVmISO32yNl2nqjjR5wBZ
+ Ji8jVUQv58kM260Y/azMXMc8+ZzKygyc2i6pSvdc/r3/H+056ZqmpVwlFX2uBzRI7b+1fzE2
+ SWIaCaE3vlvUx65nvApUW9CBEdE=
+X-Mailgun-Sending-Ip: 104.130.96.5
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 5f72ea9559892db41f51d013 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 29 Sep 2020 08:04:37
+ GMT
+Sender: varada=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9616AC4339C; Tue, 29 Sep 2020 08:04:36 +0000 (UTC)
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: varada)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2D953C433CA;
+        Tue, 29 Sep 2020 08:04:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D953C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=varada@codeaurora.org
+Date:   Tue, 29 Sep 2020 13:34:26 +0530
+From:   Varadarajan Narayanan <varada@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
+        nsekar@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, sricharan@codeaurora.org
+Subject: Re: [PATCH 5/7] pinctrl: qcom: Add IPQ5018 pinctrl driver
+Message-ID: <20200929080425.GA21805@codeaurora.org>
+References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
+ <1601270140-4306-6-git-send-email-varada@codeaurora.org>
+ <20200928184322.GB71055@builder.lan>
 MIME-Version: 1.0
-References: <20200928070108.14040-1-ryan_chen@aspeedtech.com> <20200928070108.14040-2-ryan_chen@aspeedtech.com>
-In-Reply-To: <20200928070108.14040-2-ryan_chen@aspeedtech.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 29 Sep 2020 08:04:04 +0000
-Message-ID: <CACPK8XcjmxBGUfDxE2WB3zBgG8OCoRMogfG=Fk5f+wNZu0pjMg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
-To:     Ryan Chen <ryan_chen@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bmc-sw@aspeedtech.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200928184322.GB71055@builder.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 28 Sep 2020 at 07:01, Ryan Chen <ryan_chen@aspeedtech.com> wrote:
+On Mon, Sep 28, 2020 at 01:43:22PM -0500, Bjorn Andersson wrote:
+> On Mon 28 Sep 00:15 CDT 2020, Varadarajan Narayanan wrote:
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5018.c b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
+> [..]
+> > +static const struct msm_function ipq5018_functions[] = {
+> [..]
+> > +	FUNCTION(qspi_clk),
+> > +	FUNCTION(qspi_cs),
+> > +	FUNCTION(qspi0),
+> > +	FUNCTION(qspi1),
+> > +	FUNCTION(qspi2),
+> > +	FUNCTION(qspi3),
 >
-> In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2 are
-> default for Host SuperIO UART device, eSPI clk for Host eSPI bus access
-> eSPI slave channel, those clks can't be disable should keep default,
-> otherwise will affect Host side access SuperIO and SPI slave device.
+> Instead of having one function name per pin it typically leads to
+> cleaner DT if you group these under the same name (i.e. "qspi")
+
+Ok.
+
+> Same seems to apply to sdc, wci, xfem at least.
 >
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  drivers/clk/clk-aspeed.c  | 8 ++++----
->  drivers/clk/clk-ast2600.c | 8 ++++----
->  2 files changed, 8 insertions(+), 8 deletions(-)
+> > +	FUNCTION(reset_out),
+> > +	FUNCTION(sdc1_clk),
+> > +	FUNCTION(sdc1_cmd),
+> > +	FUNCTION(sdc10),
+> > +	FUNCTION(sdc11),
+> > +	FUNCTION(sdc12),
+> > +	FUNCTION(sdc13),
+> > +	FUNCTION(wci0),
+> > +	FUNCTION(wci1),
+> > +	FUNCTION(wci2),
+> > +	FUNCTION(wci3),
+> > +	FUNCTION(wci4),
+> > +	FUNCTION(wci5),
+> > +	FUNCTION(wci6),
+> > +	FUNCTION(wci7),
+> > +	FUNCTION(wsa_swrm),
+> > +	FUNCTION(wsi_clk3),
+> > +	FUNCTION(wsi_data3),
+> > +	FUNCTION(wsis_reset),
+> > +	FUNCTION(xfem0),
+> > +	FUNCTION(xfem1),
+> > +	FUNCTION(xfem2),
+> > +	FUNCTION(xfem3),
+> > +	FUNCTION(xfem4),
+> > +	FUNCTION(xfem5),
+> > +	FUNCTION(xfem6),
+> > +	FUNCTION(xfem7),
+> > +};
+
+Ok.
+
+> > +static const struct msm_pingroup ipq5018_groups[] = {
+> > +	PINGROUP(0, atest_char0, _, qdss_cti_trig_out_a0, wci0, wci0, xfem0,
 >
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 411ff5fb2c07..d348c4fd3f9f 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -54,15 +54,15 @@ static const struct aspeed_gate_data aspeed_gates[] = {
->         [ASPEED_CLK_GATE_DCLK] =        {  5, -1, "dclk-gate",          NULL,   CLK_IS_CRITICAL }, /* DAC */
->         [ASPEED_CLK_GATE_REFCLK] =      {  6, -1, "refclk-gate",        "clkin", CLK_IS_CRITICAL },
->         [ASPEED_CLK_GATE_USBPORT2CLK] = {  7,  3, "usb-port2-gate",     NULL,   0 }, /* USB2.0 Host port 2 */
-> -       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",          NULL,   0 }, /* LPC */
-> +       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",          NULL,   CLK_IS_CRITICAL }, /* LPC */
->         [ASPEED_CLK_GATE_USBUHCICLK] =  {  9, 15, "usb-uhci-gate",      NULL,   0 }, /* USB1.1 (requires port 2 enabled) */
->         [ASPEED_CLK_GATE_D1CLK] =       { 10, 13, "d1clk-gate",         NULL,   0 }, /* GFX CRT */
->         [ASPEED_CLK_GATE_YCLK] =        { 13,  4, "yclk-gate",          NULL,   0 }, /* HAC */
->         [ASPEED_CLK_GATE_USBPORT1CLK] = { 14, 14, "usb-port1-gate",     NULL,   0 }, /* USB2 hub/USB2 host port 1/USB1.1 dev */
-> -       [ASPEED_CLK_GATE_UART1CLK] =    { 15, -1, "uart1clk-gate",      "uart", 0 }, /* UART1 */
-> -       [ASPEED_CLK_GATE_UART2CLK] =    { 16, -1, "uart2clk-gate",      "uart", 0 }, /* UART2 */
-> +       [ASPEED_CLK_GATE_UART1CLK] =    { 15, -1, "uart1clk-gate",      "uart", CLK_IS_CRITICAL }, /* UART1 */
-> +       [ASPEED_CLK_GATE_UART2CLK] =    { 16, -1, "uart2clk-gate",      "uart", CLK_IS_CRITICAL }, /* UART2 */
->         [ASPEED_CLK_GATE_UART5CLK] =    { 17, -1, "uart5clk-gate",      "uart", 0 }, /* UART5 */
-> -       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",       NULL,   0 }, /* eSPI */
-> +       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",       NULL,   CLK_IS_CRITICAL }, /* eSPI */
+> What's up with wci0 being both function 4 and 5?
 
-This is fine for systems that have eSPI. For systems that do not use
-eSPI, the clocks are not "required".
+Will check this.
 
-I was sent a similar patch by Jae some time ago:
-
- https://lore.kernel.org/openbmc/697a184b-ef99-a46e-bf98-4d339b3aafd8@linux.intel.com/
-
-Better is to associate drivers with these clocks, and those drivers
-will ensure they are left enabled.
-
-Alternatively, we will need to come up with a device tree binding to
-describe the hardware requirement that these clocks are left on.
-
-Cheers,
-
-Joel
-
->         [ASPEED_CLK_GATE_MAC1CLK] =     { 20, 11, "mac1clk-gate",       "mac",  0 }, /* MAC1 */
->         [ASPEED_CLK_GATE_MAC2CLK] =     { 21, 12, "mac2clk-gate",       "mac",  0 }, /* MAC2 */
->         [ASPEED_CLK_GATE_RSACLK] =      { 24, -1, "rsaclk-gate",        NULL,   0 }, /* RSA */
-> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-> index bbacaccad554..6802a2d5bbe2 100644
-> --- a/drivers/clk/clk-ast2600.c
-> +++ b/drivers/clk/clk-ast2600.c
-> @@ -86,8 +86,8 @@ static const struct aspeed_gate_data aspeed_g6_gates[] = {
->         /* Reserved 26 */
->         [ASPEED_CLK_GATE_EMMCCLK]       = { 27, 16, "emmcclk-gate",     NULL,    0 },   /* For card clk */
->         /* Reserved 28/29/30 */
-> -       [ASPEED_CLK_GATE_LCLK]          = { 32, 32, "lclk-gate",        NULL,    0 }, /* LPC */
-> -       [ASPEED_CLK_GATE_ESPICLK]       = { 33, -1, "espiclk-gate",     NULL,    0 }, /* eSPI */
-> +       [ASPEED_CLK_GATE_LCLK]          = { 32, 32, "lclk-gate",        NULL,    CLK_IS_CRITICAL }, /* LPC */
-> +       [ASPEED_CLK_GATE_ESPICLK]       = { 33, -1, "espiclk-gate",     NULL,    CLK_IS_CRITICAL }, /* eSPI */
->         [ASPEED_CLK_GATE_REF1CLK]       = { 34, -1, "ref1clk-gate",     "clkin", CLK_IS_CRITICAL },
->         /* Reserved 35 */
->         [ASPEED_CLK_GATE_SDCLK]         = { 36, 56, "sdclk-gate",       NULL,    0 },   /* SDIO/SD */
-> @@ -102,8 +102,8 @@ static const struct aspeed_gate_data aspeed_g6_gates[] = {
->         [ASPEED_CLK_GATE_I3C5CLK]       = { 45,  45, "i3c5clk-gate",    NULL,    0 },   /* I3C5 */
->         [ASPEED_CLK_GATE_I3C6CLK]       = { 46,  46, "i3c6clk-gate",    NULL,    0 },   /* I3C6 */
->         [ASPEED_CLK_GATE_I3C7CLK]       = { 47,  47, "i3c7clk-gate",    NULL,    0 },   /* I3C7 */
-> -       [ASPEED_CLK_GATE_UART1CLK]      = { 48,  -1, "uart1clk-gate",   "uart",  0 },   /* UART1 */
-> -       [ASPEED_CLK_GATE_UART2CLK]      = { 49,  -1, "uart2clk-gate",   "uart",  0 },   /* UART2 */
-> +       [ASPEED_CLK_GATE_UART1CLK]      = { 48,  -1, "uart1clk-gate",   "uart",  CLK_IS_CRITICAL },     /* UART1 */
-> +       [ASPEED_CLK_GATE_UART2CLK]      = { 49,  -1, "uart2clk-gate",   "uart",  CLK_IS_CRITICAL },     /* UART2 */
->         [ASPEED_CLK_GATE_UART3CLK]      = { 50,  -1, "uart3clk-gate",   "uart",  0 },   /* UART3 */
->         [ASPEED_CLK_GATE_UART4CLK]      = { 51,  -1, "uart4clk-gate",   "uart",  0 },   /* UART4 */
->         [ASPEED_CLK_GATE_MAC3CLK]       = { 52,  52, "mac3clk-gate",    "mac34", 0 },   /* MAC3 */
-> --
-> 2.17.1
+> > +		 _, _, _),
+> > +	PINGROUP(1, atest_char1, _, qdss_cti_trig_in_a0, wci1, wci1, xfem1,
+> > +		 _, _, _),
 >
+> Please don't like break these, better blow the line length limit in
+> favor or readability.
+>
+> > +	PINGROUP(2, atest_char2, _, qdss_cti_trig_out_a1, wci2, wci2, xfem2,
+> > +		 _, _, _),
+> > +	PINGROUP(3, atest_char3, _, qdss_cti_trig_in_a1, wci3, wci3, xfem3,
+> > +		 _, _, _),
+
+Ok.
+
+> Regards,
+> Bjorn
+
+Will post updated patches soon.
+
+Thanks
+Varada
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
