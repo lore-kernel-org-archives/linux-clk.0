@@ -2,153 +2,135 @@ Return-Path: <SRS0=VSe3=DG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C0FC47420
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8F8C4727F
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E7F20773
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1691220773
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Sep 2020 08:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="O3DbuC2x"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="p0/Xaagi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbgI2IFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Sep 2020 04:05:08 -0400
-Received: from z5.mailgun.us ([104.130.96.5]:42043 "EHLO z5.mailgun.us"
+        id S1726064AbgI2IQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Sep 2020 04:16:04 -0400
+Received: from m42-4.mailgun.net ([69.72.42.4]:62740 "EHLO m42-4.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727521AbgI2IFH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Sep 2020 04:05:07 -0400
+        id S1727716AbgI2IQB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Sep 2020 04:16:01 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1601366706; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=r+8Y1/iTY5V2CVTSF4MuhfKKHmbWKG8EGomgri5/hVc=; b=O3DbuC2xKXPAB+i4l0uoimizHY13XvnB3NCGvJwleUuaAOkqhH6JVmISO32yNl2nqjjR5wBZ
- Ji8jVUQv58kM260Y/azMXMc8+ZzKygyc2i6pSvdc/r3/H+056ZqmpVwlFX2uBzRI7b+1fzE2
- SWIaCaE3vlvUx65nvApUW9CBEdE=
-X-Mailgun-Sending-Ip: 104.130.96.5
+ s=smtp; t=1601367360; h=In-Reply-To: Content-Transfer-Encoding:
+ Content-Type: MIME-Version: References: Message-ID: Subject: Cc: To:
+ From: Date: Sender; bh=C9y1LdO+aWy0JAGGyfzZqhHPFniLyfb2PM4PGoHOs1Q=; b=p0/Xaagi2yWW3onEDtX5TG/6f7AvOVsMAMPKwA+3k1C3RGPBGliHEDnhEmOjwyRyk4CQhNTb
+ I2XH+cgtkxL6GVs4Q3Moxe9BKIHGx0OTS3586oaOgWfkwKrl61uixWWPv4e0B3UsFqibXV3p
+ kvzSIGrVTiUrflTwHXyIRGmypbk=
+X-Mailgun-Sending-Ip: 69.72.42.4
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5f72ea9559892db41f51d013 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 29 Sep 2020 08:04:37
+ smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
+ 5f72ed3f1fdd3a1390fb68ac (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 29 Sep 2020 08:15:59
  GMT
 Sender: varada=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 9616AC4339C; Tue, 29 Sep 2020 08:04:36 +0000 (UTC)
+        id C9530C43387; Tue, 29 Sep 2020 08:15:58 +0000 (UTC)
 Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: varada)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2D953C433CA;
-        Tue, 29 Sep 2020 08:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D953C433CA
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C8B20C433FF;
+        Tue, 29 Sep 2020 08:15:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8B20C433FF
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=varada@codeaurora.org
-Date:   Tue, 29 Sep 2020 13:34:26 +0530
+Date:   Tue, 29 Sep 2020 13:45:47 +0530
 From:   Varadarajan Narayanan <varada@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     agross@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com,
+To:     Rob Herring <robh@kernel.org>
+Cc:     mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, nsekar@codeaurora.org,
+        linux-gpio@vger.kernel.org, p.zabel@pengutronix.de,
         sboyd@kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        nsekar@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, sricharan@codeaurora.org
-Subject: Re: [PATCH 5/7] pinctrl: qcom: Add IPQ5018 pinctrl driver
-Message-ID: <20200929080425.GA21805@codeaurora.org>
+        sricharan@codeaurora.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, will@kernel.org,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH 4/7] dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl
+ bindings
+Message-ID: <20200929081547.GA11411@codeaurora.org>
 References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
- <1601270140-4306-6-git-send-email-varada@codeaurora.org>
- <20200928184322.GB71055@builder.lan>
+ <1601270140-4306-5-git-send-email-varada@codeaurora.org>
+ <20200928181018.GA3007757@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200928184322.GB71055@builder.lan>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200928181018.GA3007757@bogus>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 01:43:22PM -0500, Bjorn Andersson wrote:
-> On Mon 28 Sep 00:15 CDT 2020, Varadarajan Narayanan wrote:
-> > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5018.c b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-> [..]
-> > +static const struct msm_function ipq5018_functions[] = {
-> [..]
-> > +	FUNCTION(qspi_clk),
-> > +	FUNCTION(qspi_cs),
-> > +	FUNCTION(qspi0),
-> > +	FUNCTION(qspi1),
-> > +	FUNCTION(qspi2),
-> > +	FUNCTION(qspi3),
+On Mon, Sep 28, 2020 at 01:10:18PM -0500, Rob Herring wrote:
+> On Mon, 28 Sep 2020 10:45:37 +0530, Varadarajan Narayanan wrote:
+> > Add device tree binding Documentation details for ipq5018
+> > pinctrl driver.
+> >
+> > Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> > ---
+> >  .../bindings/pinctrl/qcom,ipq5018-pinctrl.yaml     | 143 +++++++++++++=
+++++++++
+> >  1 file changed, 143 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5=
+018-pinctrl.yaml
+> >
 >
-> Instead of having one function name per pin it typically leads to
-> cleaner DT if you group these under the same name (i.e. "qspi")
-
-Ok.
-
-> Same seems to apply to sdc, wci, xfem at least.
 >
-> > +	FUNCTION(reset_out),
-> > +	FUNCTION(sdc1_clk),
-> > +	FUNCTION(sdc1_cmd),
-> > +	FUNCTION(sdc10),
-> > +	FUNCTION(sdc11),
-> > +	FUNCTION(sdc12),
-> > +	FUNCTION(sdc13),
-> > +	FUNCTION(wci0),
-> > +	FUNCTION(wci1),
-> > +	FUNCTION(wci2),
-> > +	FUNCTION(wci3),
-> > +	FUNCTION(wci4),
-> > +	FUNCTION(wci5),
-> > +	FUNCTION(wci6),
-> > +	FUNCTION(wci7),
-> > +	FUNCTION(wsa_swrm),
-> > +	FUNCTION(wsi_clk3),
-> > +	FUNCTION(wsi_data3),
-> > +	FUNCTION(wsis_reset),
-> > +	FUNCTION(xfem0),
-> > +	FUNCTION(xfem1),
-> > +	FUNCTION(xfem2),
-> > +	FUNCTION(xfem3),
-> > +	FUNCTION(xfem4),
-> > +	FUNCTION(xfem5),
-> > +	FUNCTION(xfem6),
-> > +	FUNCTION(xfem7),
-> > +};
-
-Ok.
-
-> > +static const struct msm_pingroup ipq5018_groups[] = {
-> > +	PINGROUP(0, atest_char0, _, qdss_cti_trig_out_a0, wci0, wci0, xfem0,
+> My bot found errors running 'make dt_binding_check' on your patch:
 >
-> What's up with wci0 being both function 4 and 5?
-
-Will check this.
-
-> > +		 _, _, _),
-> > +	PINGROUP(1, atest_char1, _, qdss_cti_trig_in_a0, wci1, wci1, xfem1,
-> > +		 _, _, _),
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinc=
+trl/qcom,ipq5018-pinctrl.example.dt.yaml: pinctrl@1000000: serial3-pinmux:f=
+unction:0: 'blsp2_uart' is not one of ['atest_char', 'atest_char0', 'atest_=
+char1', 'atest_char2', 'atest_char3', 'audio_pdm0', 'audio_pdm1', 'audio_rx=
+bclk', 'audio_rxd', 'audio_rxfsync', 'audio_rxmclk', 'audio_txbclk', 'audio=
+_txd', 'audio_txfsync', 'audio_txmclk', 'blsp0_i2c', 'blsp0_spi', 'blsp0_ua=
+rt0', 'blsp0_uart1', 'blsp1_i2c0', 'blsp1_i2c1', 'blsp1_spi0', 'blsp1_spi1'=
+, 'blsp1_uart0', 'blsp1_uart1', 'blsp1_uart2', 'blsp2_i2c0', 'blsp2_i2c1', =
+'blsp2_spi', 'blsp2_spi0', 'blsp2_spi1', 'btss0', 'btss1', 'btss10', 'btss1=
+1', 'btss12', 'btss13', 'btss2', 'btss3', 'btss4', 'btss5', 'btss6', 'btss7=
+', 'btss8', 'btss9', 'burn0', 'burn1', 'cri_trng', 'cri_trng0', 'cri_trng1'=
+, 'cxc_clk', 'cxc_data', 'dbg_out', 'eud_gpio', 'gcc_plltest', 'gcc_tlmm', =
+'gpio', 'mac0', 'mac1', 'mdc', 'mdio', 'pcie0_clk', 'pcie0_wake', 'pcie1_cl=
+k', 'pcie1_wake', 'pll_test', 'prng_rosc', 'pwm0', 'pwm1', 'pwm2', 'pwm3', =
+'qdss_cti_trig_in_a0', 'qdss_cti_trig_in_a1', 'qdss_cti_trig_in_b0', 'qdss_=
+cti_trig_in_b1', 'qdss_cti_trig_out_a0', 'qdss_cti_trig_out_a1', 'qdss_cti_=
+trig_out_b0', 'qdss_cti_trig_out_b1', 'qdss_traceclk_a', 'qdss_traceclk_b',=
+ 'qdss_tracectl_a', 'qdss_tracectl_b', 'qdss_tracedata_a', 'qdss_tracedata_=
+b', 'qspi_clk', 'qspi_cs', 'qspi0', 'qspi1', 'qspi2', 'qspi3', 'reset_out',=
+ 'sdc1_clk', 'sdc1_cmd', 'sdc10', 'sdc11', 'sdc12', 'sdc13', 'wci0', 'wci1'=
+, 'wci2', 'wci3', 'wci4', 'wci5', 'wci6', 'wci7', 'wsa_swrm', 'wsi_clk3', '=
+wsi_data3', 'wsis_reset', 'xfem0', 'xfem1', 'xfem2', 'xfem3', 'xfem4', 'xfe=
+m5', 'xfem6', 'xfem7']
+> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree=
+/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
 >
-> Please don't like break these, better blow the line length limit in
-> favor or readability.
 >
-> > +	PINGROUP(2, atest_char2, _, qdss_cti_trig_out_a1, wci2, wci2, xfem2,
-> > +		 _, _, _),
-> > +	PINGROUP(3, atest_char3, _, qdss_cti_trig_in_a1, wci3, wci3, xfem3,
-> > +		 _, _, _),
+> See https://patchwork.ozlabs.org/patch/1372367
+>
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure dt-schema is up to date:
+>
+> pip3 install git+https://github.com/devicetree-org/dt-schema.git@master -=
+-upgrade
+>
+> Please check and re-submit.
 
-Ok.
+Ok, will check and post updated patches
 
-> Regards,
-> Bjorn
-
-Will post updated patches soon.
-
-Thanks
-Varada
 --
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member o=
+f Code Aurora Forum, hosted by The Linux Foundation
