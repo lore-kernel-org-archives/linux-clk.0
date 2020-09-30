@@ -2,90 +2,67 @@ Return-Path: <SRS0=xwbt=DH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9483AC47427
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 19:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C48C4363D
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 21:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48D872075F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 19:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7EC720759
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 21:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601501116;
+	bh=IPmfasutbeRBO7EQPty94YQ8ASvFaxE2VNLEXAUvknQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=tBVgsAmVJR3e6aATyGzk3dWl0fvQiIVLv7So4TWJrE7VToZCmpdBXslo4wrsYTozT
+	 dxkn1NSonlxtK1jvPAiIX9kPgRyVq08Uh5NIRlh+WyNqvnLPidwN5UZ/1+o4+3KxE9
+	 ipFmNVFwve1ja6HiN0EN7nWdRyAMqArd6DwBebhg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbgI3Tdr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Sep 2020 15:33:47 -0400
-Received: from smtprelay0007.hostedemail.com ([216.40.44.7]:56070 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725799AbgI3Tdr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Sep 2020 15:33:47 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 97B421801EC3E;
-        Wed, 30 Sep 2020 19:33:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bag86_060c7b527195
-X-Filterd-Recvd-Size: 2698
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 30 Sep 2020 19:33:41 +0000 (UTC)
-Message-ID: <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
-Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
- statements
-From:   Joe Perches <joe@perches.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-crypto@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>,
-        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
-        openipmi-developer@lists.sourceforge.net,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-wireless@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Date:   Wed, 30 Sep 2020 12:33:39 -0700
-In-Reply-To: <20200929113745.GB4799@sirena.org.uk>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
-         <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
-         <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
-         <20200929113745.GB4799@sirena.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.4-0ubuntu1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729742AbgI3VZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Sep 2020 17:25:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725814AbgI3VZP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Sep 2020 17:25:15 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.9-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601501115;
+        bh=IPmfasutbeRBO7EQPty94YQ8ASvFaxE2VNLEXAUvknQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=e3/2fufX0JXB22vBKRYiEnNuftbBZM8UKNQ+iqHnIKjmZd77lTyzeEqQqtLv5vSRz
+         RDOd6Z0hZRFio9v19wDLM8ZOJGGGaAk7ml01HBxr/qGEwum7PNX6Us64dUv8hwL+3b
+         lxoZVgQsfTfkfQMbxxkQq29E29fUQQKadJUHatu8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200930185742.4044166-1-sboyd@kernel.org>
+References: <20200930185742.4044166-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200930185742.4044166-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: b02cf0c4736c65c6667f396efaae6b5521e82abf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 60e720931556fc1034d0981460164dcf02697679
+Message-Id: <160150111550.18084.9295712272651735321.pr-tracker-bot@kernel.org>
+Date:   Wed, 30 Sep 2020 21:25:15 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2020-09-29 at 12:37 +0100, Mark Brown wrote:
-> On Mon, Sep 28, 2020 at 05:45:24PM -0700, Joe Perches wrote:
-> > On Mon, 2020-09-28 at 20:35 +0100, Mark Brown wrote:
-> > > [1/1] regmap: debugfs: use semicolons rather than commas to separate statements
-> > >       commit: 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
-> > Rather than replying to the 0/n cover letter to a patch
-> > series, can you reply to each of the specific patches in
-> > the patch series you are applying?
-> > Otherwise, it's a bit difficult to figure out which patches
-> > you are applying.
-> 
-> Feel free to submit patches to b4.
+The pull request you sent on Wed, 30 Sep 2020 11:57:42 -0700:
 
-Have you tried the existing option to send
-thank you's on a specific ranges of patches?
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-b4 ty
-~~~~~
-usage:
-  b4 ty [-h] [-g GITDIR] [-o OUTDIR] [-l] [-s SEND [SEND ...]] [-d DISCARD [DISCARD ...]] [-a] [-b BRANCH] [--since SINCE]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/60e720931556fc1034d0981460164dcf02697679
 
-[]
- -s SEND, --send SEND  Generate thankyous for specific entries from -l (e.g.: 1,3-5,7-; or "all")
+Thank you!
 
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
