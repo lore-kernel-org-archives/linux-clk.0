@@ -2,129 +2,98 @@ Return-Path: <SRS0=xwbt=DH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CF6C4727C
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7BBC4727E
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED87220791
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C71B920791
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601492264;
+	bh=7DBLzj0AFFlixJiM06qjIevaCnAyUlyySzwLvB3SMq8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=BzaugGXBq4vokXALvaHRNYoksYNzMcRktWGKIRrmPrIMKf01pQ3+iLHRO9b+FENLt
+	 WV2vU4D8ouHveQqmlATltcPEX0C6IiXT7kyth9NpPX6xZRPV7vdRF0dcxv6j+2+eM/
+	 r46s3p//CU674wKP20qnhR+bpS9E15xriB0vGyNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbgI3SK7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Sep 2020 14:10:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36382 "EHLO mx2.suse.de"
+        id S1730128AbgI3S5o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Sep 2020 14:57:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbgI3SK7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Sep 2020 14:10:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1A30AB26F;
-        Wed, 30 Sep 2020 18:10:57 +0000 (UTC)
-Date:   Wed, 30 Sep 2020 20:10:53 +0200
-From:   Petr Tesarik <ptesarik@suse.cz>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: RTL8402 stops working after hibernate/resume
-Message-ID: <20200930201053.02a3b835@ezekiel.suse.cz>
-In-Reply-To: <8a82a023-e361-79db-7127-769e4f6e0d1b@gmail.com>
-References: <20200715102820.7207f2f8@ezekiel.suse.cz>
-        <d742082e-42a1-d904-8a8f-4583944e88e1@gmail.com>
-        <20200716105835.32852035@ezekiel.suse.cz>
-        <e1c7a37f-d8d0-a773-925c-987b92f12694@gmail.com>
-        <20200903104122.1e90e03c@ezekiel.suse.cz>
-        <7e6bbb75-d8db-280d-ac5b-86013af39071@gmail.com>
-        <20200924211444.3ba3874b@ezekiel.suse.cz>
-        <a10f658b-7fdf-2789-070a-83ad5549191a@gmail.com>
-        <20200925093037.0fac65b7@ezekiel.suse.cz>
-        <20200925105455.50d4d1cc@ezekiel.suse.cz>
-        <aa997635-a5b5-75e3-8a30-a77acb2adf35@gmail.com>
-        <20200925115241.3709caf6@ezekiel.suse.cz>
-        <20200925145608.66a89e73@ezekiel.suse.cz>
-        <30969885-9611-06d8-d50a-577897fcab29@gmail.com>
-        <20200929210737.7f4a6da7@ezekiel.suse.cz>
-        <217ae37d-f2b0-1805-5696-11644b058819@redhat.com>
-        <5f2d3d48-9d1d-e9fe-49bc-d1feeb8a92eb@gmail.com>
-        <1c2d888a-5702-cca9-195c-23c3d0d936b9@redhat.com>
-        <8a82a023-e361-79db-7127-769e4f6e0d1b@gmail.com>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1730117AbgI3S5o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Sep 2020 14:57:44 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8869420708;
+        Wed, 30 Sep 2020 18:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601492263;
+        bh=7DBLzj0AFFlixJiM06qjIevaCnAyUlyySzwLvB3SMq8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BAfMb8awL1XSSox57K+L81UtE9Cfh84GFPeDCXMiY+kTCOmF/2W3TxeOQtj3gSgnM
+         gGTkrGlZjwHp3/l2sjRdtUijcat5FlLnmMaS8yExI8x16/uKepDsNbL0RQQoRdH+nm
+         kVFlvOWP/MakWcvdL3c2spY2xJFDTmFsUamwRqeg=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.9-rc7
+Date:   Wed, 30 Sep 2020 11:57:42 -0700
+Message-Id: <20200930185742.4044166-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.28.0.709.gb0816b6eb0-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/akZ6/zfUjEjU8n0sdptnAwv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/akZ6/zfUjEjU8n0sdptnAwv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit d2249bf25c565b6e310453962fef63f8d38677a6:
 
-On Wed, 30 Sep 2020 17:47:15 +0200
-Heiner Kallweit <hkallweit1@gmail.com> wrote:
+  clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe() (2020-09-10 13:42:35 -0700)
 
->[...]
-> Petr,
-> in the following I send two patches. First one is supposed to fix the fre=
-eze.
-> It also fixes another issue that existed before my ether_clk change:
-> ether_clk was disabled on suspend even if WoL is enabled. And the network
-> chip most likely needs the clock to check for WoL packets.
-> Please let me know whether it fixes the freeze, then I'll add your Tested=
--by.
->=20
-> Second patch is a re-send of the one I sent before, it should fix
-> the rx issues after resume from suspend for you.
->=20
->[...]
->=20
-> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethe=
-rnet/realtek/r8169_main.c
-> index 9e4e6a883..4fb49fd0d 100644
-> --- a/drivers/net/ethernet/realtek/r8169_main.c
-> +++ b/drivers/net/ethernet/realtek/r8169_main.c
-> @@ -4837,6 +4837,10 @@ static int rtl8169_resume(struct device *device)
-> =20
->  	rtl_rar_set(tp, tp->dev->dev_addr);
-> =20
-> +	/* Reportedly at least Asus X453MA corrupts packets otherwise */
+are available in the Git repository at:
 
-Just a nitpick: The incoming packets are not corrupted, they are truncated:
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-+	/* Reportedly at least Asus X453MA truncates packets otherwise */
+for you to fetch changes up to b02cf0c4736c65c6667f396efaae6b5521e82abf:
 
-Other than that, like I have already written in another part of the thread:
+  clk: socfpga: stratix10: fix the divider for the emac_ptp_free_clk (2020-09-22 12:54:41 -0700)
 
-Tested-by: Petr Tesarik <ptesarik@suse.com>
+----------------------------------------------------------------
+Another batch of clk driver fixes
 
-> +	if (tp->mac_version =3D=3D RTL_GIGA_MAC_VER_37)
-> +		rtl_init_rxcfg(tp);
-> +
->  	if (tp->TxDescArray)
->  		rtl8169_up(tp);
-> =20
-> --=20
-> 2.28.0
->=20
+ - Make sure DRAM and ChipID region doesn't get disabled on Exynos
+ - Fix a SATA failure on Tegra
+ - Fix the emac_ptp clk divider on stratix10
 
---Sig_/akZ6/zfUjEjU8n0sdptnAwv
-Content-Type: application/pgp-signature
-Content-Description: Digitální podpis OpenPGP
+----------------------------------------------------------------
+Dinh Nguyen (1):
+      clk: socfpga: stratix10: fix the divider for the emac_ptp_free_clk
 
------BEGIN PGP SIGNATURE-----
+Marek Szyprowski (2):
+      clk: samsung: Keep top BPLL mux on Exynos542x enabled
+      clk: samsung: exynos4: mark 'chipid' clock as CLK_IGNORE_UNUSED
 
-iQEzBAEBCAAdFiEEHl2YIZkIo5VO2MxYqlA7ya4PR6cFAl90yi0ACgkQqlA7ya4P
-R6cJlAf/VedwPuX55jL7gHEpYR6OY4i30Qri47TNzoM5z5tTwuwTicWzkOdphNHj
-81jdXfa9A3NFL/Cj+LAYrwJ1bzV++FzeZ3r4D/zr7FlOwYlswW1LR0j6GVSvavSv
-BaoMSJ/aYCZyP8me73Ci8HFWg0y43Z1/We6G7TYblhkRF2QFWlXIJUnVmCWM5ryc
-F6IxKL7NYNDSFzz7di0UTNxbQT8hHQeZGPERtsrphmf9oZRpGRPq4YImANOMd0Fq
-Ae7ZO0Vul7ZnmQ9Nt/P2RyE8rkHm9wSt14DZ/GNc6wR68Q7ZhQ/RnxmylbaWFHA8
-HzOHcqoK/QaqGzRfQ1Rn34MonuWQ4Q==
-=q+Mq
------END PGP SIGNATURE-----
+Stephen Boyd (2):
+      Merge tag 'v5.9-clk-samsung-fixes' of https://git.kernel.org/.../snawrocki/clk into clk-fixes
+      Merge tag 'for-5.10-clk' of git://git.kernel.org/.../tegra/linux into clk-fixes
 
---Sig_/akZ6/zfUjEjU8n0sdptnAwv--
+Thierry Reding (3):
+      clk: tegra: Capitalization fixes
+      clk: tegra: Always program PLL_E when enabled
+      clk: tegra: Fix missing prototype for tegra210_clk_register_emc()
+
+ drivers/clk/samsung/clk-exynos4.c    | 4 ++--
+ drivers/clk/samsung/clk-exynos5420.c | 5 +++++
+ drivers/clk/socfpga/clk-s10.c        | 2 +-
+ drivers/clk/tegra/clk-pll.c          | 7 ++-----
+ drivers/clk/tegra/clk-tegra210-emc.c | 2 ++
+ 5 files changed, 12 insertions(+), 8 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
