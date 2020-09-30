@@ -2,98 +2,90 @@ Return-Path: <SRS0=xwbt=DH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7BBC4727E
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9483AC47427
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 19:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C71B920791
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 18:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601492264;
-	bh=7DBLzj0AFFlixJiM06qjIevaCnAyUlyySzwLvB3SMq8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=BzaugGXBq4vokXALvaHRNYoksYNzMcRktWGKIRrmPrIMKf01pQ3+iLHRO9b+FENLt
-	 WV2vU4D8ouHveQqmlATltcPEX0C6IiXT7kyth9NpPX6xZRPV7vdRF0dcxv6j+2+eM/
-	 r46s3p//CU674wKP20qnhR+bpS9E15xriB0vGyNU=
+	by mail.kernel.org (Postfix) with ESMTP id 48D872075F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Sep 2020 19:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbgI3S5o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Sep 2020 14:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730117AbgI3S5o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Sep 2020 14:57:44 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8869420708;
-        Wed, 30 Sep 2020 18:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601492263;
-        bh=7DBLzj0AFFlixJiM06qjIevaCnAyUlyySzwLvB3SMq8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BAfMb8awL1XSSox57K+L81UtE9Cfh84GFPeDCXMiY+kTCOmF/2W3TxeOQtj3gSgnM
-         gGTkrGlZjwHp3/l2sjRdtUijcat5FlLnmMaS8yExI8x16/uKepDsNbL0RQQoRdH+nm
-         kVFlvOWP/MakWcvdL3c2spY2xJFDTmFsUamwRqeg=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.9-rc7
-Date:   Wed, 30 Sep 2020 11:57:42 -0700
-Message-Id: <20200930185742.4044166-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.28.0.709.gb0816b6eb0-goog
+        id S1728270AbgI3Tdr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Sep 2020 15:33:47 -0400
+Received: from smtprelay0007.hostedemail.com ([216.40.44.7]:56070 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725799AbgI3Tdr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Sep 2020 15:33:47 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 97B421801EC3E;
+        Wed, 30 Sep 2020 19:33:45 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bag86_060c7b527195
+X-Filterd-Recvd-Size: 2698
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 30 Sep 2020 19:33:41 +0000 (UTC)
+Message-ID: <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
+Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
+ statements
+From:   Joe Perches <joe@perches.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
+        openipmi-developer@lists.sourceforge.net,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-wireless@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Date:   Wed, 30 Sep 2020 12:33:39 -0700
+In-Reply-To: <20200929113745.GB4799@sirena.org.uk>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+         <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+         <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
+         <20200929113745.GB4799@sirena.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit d2249bf25c565b6e310453962fef63f8d38677a6:
+On Tue, 2020-09-29 at 12:37 +0100, Mark Brown wrote:
+> On Mon, Sep 28, 2020 at 05:45:24PM -0700, Joe Perches wrote:
+> > On Mon, 2020-09-28 at 20:35 +0100, Mark Brown wrote:
+> > > [1/1] regmap: debugfs: use semicolons rather than commas to separate statements
+> > >       commit: 7f4a122d0b50b40c64d24a5cf7aafe26dd9487ee
+> > Rather than replying to the 0/n cover letter to a patch
+> > series, can you reply to each of the specific patches in
+> > the patch series you are applying?
+> > Otherwise, it's a bit difficult to figure out which patches
+> > you are applying.
+> 
+> Feel free to submit patches to b4.
 
-  clk: qcom: lpass: Correct goto target in lpass_core_sc7180_probe() (2020-09-10 13:42:35 -0700)
+Have you tried the existing option to send
+thank you's on a specific ranges of patches?
 
-are available in the Git repository at:
+b4 ty
+~~~~~
+usage:
+  b4 ty [-h] [-g GITDIR] [-o OUTDIR] [-l] [-s SEND [SEND ...]] [-d DISCARD [DISCARD ...]] [-a] [-b BRANCH] [--since SINCE]
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+[]
+ -s SEND, --send SEND  Generate thankyous for specific entries from -l (e.g.: 1,3-5,7-; or "all")
 
-for you to fetch changes up to b02cf0c4736c65c6667f396efaae6b5521e82abf:
 
-  clk: socfpga: stratix10: fix the divider for the emac_ptp_free_clk (2020-09-22 12:54:41 -0700)
 
-----------------------------------------------------------------
-Another batch of clk driver fixes
-
- - Make sure DRAM and ChipID region doesn't get disabled on Exynos
- - Fix a SATA failure on Tegra
- - Fix the emac_ptp clk divider on stratix10
-
-----------------------------------------------------------------
-Dinh Nguyen (1):
-      clk: socfpga: stratix10: fix the divider for the emac_ptp_free_clk
-
-Marek Szyprowski (2):
-      clk: samsung: Keep top BPLL mux on Exynos542x enabled
-      clk: samsung: exynos4: mark 'chipid' clock as CLK_IGNORE_UNUSED
-
-Stephen Boyd (2):
-      Merge tag 'v5.9-clk-samsung-fixes' of https://git.kernel.org/.../snawrocki/clk into clk-fixes
-      Merge tag 'for-5.10-clk' of git://git.kernel.org/.../tegra/linux into clk-fixes
-
-Thierry Reding (3):
-      clk: tegra: Capitalization fixes
-      clk: tegra: Always program PLL_E when enabled
-      clk: tegra: Fix missing prototype for tegra210_clk_register_emc()
-
- drivers/clk/samsung/clk-exynos4.c    | 4 ++--
- drivers/clk/samsung/clk-exynos5420.c | 5 +++++
- drivers/clk/socfpga/clk-s10.c        | 2 +-
- drivers/clk/tegra/clk-pll.c          | 7 ++-----
- drivers/clk/tegra/clk-tegra210-emc.c | 2 ++
- 5 files changed, 12 insertions(+), 8 deletions(-)
-
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
