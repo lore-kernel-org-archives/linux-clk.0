@@ -2,65 +2,63 @@ Return-Path: <SRS0=maUV=DI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B38FC4727C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 14:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FD8C4727C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 14:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E025820796
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 14:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7D532087D
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 14:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oMhrCQWA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ditlDCKK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbgJAOPu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Oct 2020 10:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55840 "EHLO
+        id S1732420AbgJAORZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Oct 2020 10:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732339AbgJAOPu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2020 10:15:50 -0400
+        with ESMTP id S1732104AbgJAORZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2020 10:17:25 -0400
 Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B53EBC0613D0;
-        Thu,  1 Oct 2020 07:15:48 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id m6so5982277wrn.0;
-        Thu, 01 Oct 2020 07:15:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE220C0613D0;
+        Thu,  1 Oct 2020 07:17:24 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id w5so5968287wrp.8;
+        Thu, 01 Oct 2020 07:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BEVeioAblvOjShBbM1jBg6agZyVGfRoTs/GtPxjBCbI=;
-        b=oMhrCQWAOHqG6HxVMBmqVZPYxMru6FIXm3mJvAbc8rbL7tactK29OZk+GvNiM5PZk8
-         rF6p5qi0AyXKRjNx+f23OJ8VJ+FleD7gQP9lLRLq2Y4dXvx012uxiiO1b7fpiRntPsoI
-         PI0IvzVtjor7xv0a/TguOEJumonWGlfE65S4PwSOaNJs2XyLk4l1P2ZKGnjoloQnXwyz
-         6CDkgfu187Eq4Lf2dvoi1cHfzHjCKVZhmf5NrBoC9ZlJVUhX8aK9BA+/KWZFgHuk8Wxl
-         7frfWbzrA5r6wEJBfZ+pXNAGHzjb8U3WB0CfY06Dbqb+2MmXIltXnqleTmlcDnjvc9Mi
-         EFtg==
+        bh=wrgbpSMujaBkBPxDtAAR67AoZk1S06YHAzySi1MsGYU=;
+        b=ditlDCKKU9HqUqfVFjYSDHW942T4w9nZZt0RWGaRFgLJpwzM/pfBUyuBv6Hr7U1IqS
+         XwvJR3w41IgTU938MCI3AljNPScbvZwirGpmDJ/G1Cedh1aBe/G0pKvI5/8SGRZ4flmw
+         kmZvBd9+rPUXAIUdjD9DwXvigTmnENGDrAZqOdMylnHxeeyczkUP8Gsrnf0BzVV839gr
+         KkhhIFhS1U+qriLRT7hCK6/tbMR/mAyq4+pKDlTt4tVViPzN7N/Y0uSZbdh2S9LKtDiM
+         KyKSJD7gjLnIMjaOFnIHJVCDbLC03ioXlGgkC7LzMHTEXLNwxPQ204Nt4s+Ue4UcYMrn
+         dejw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BEVeioAblvOjShBbM1jBg6agZyVGfRoTs/GtPxjBCbI=;
-        b=HbEo7gVGRlw2ugI3ZSZ3AWHARrqmWTTmInCljAwWrPb4rEdmRzMDF5udluFCZnoZ+U
-         mQNkfG3gdCx616tVTzvlUGT2/GQ/ttRe/rXtxQ/VuZPpjNYBWRsKNhIDanlIcWonJMWa
-         g1IVnq1DmYrnLFZ1ZQjonvwehEY3FnxSnR9fFCJSYaf/ERo8vrXkryWsjAAYDbHnuaCl
-         AI3Xe/urnrBk9TWFs9J6YEUafb3dkDtrK0gnPJNBLc7VCR4XOeGQmxJy8CbbR7Zq+LRz
-         arD8eqymjDgDxRAqb/4+AoGKfK3YUGzDSGrg/sfIMLAs1oTcawtZTOu+Bl5FqPD7OVu4
-         iH5A==
-X-Gm-Message-State: AOAM533dlyHIlXQz1c46N7XkXL4oVuk6GzYb0gju21XFub9y5Fle4dTD
-        DHBMGeQ1Fc5iMgNRX6rQntc=
-X-Google-Smtp-Source: ABdhPJwUjBFOW1XPUuWU4ekSqDncW2iPM/Z45iswZFbsIeOrE+yuHZU3Vu24DSJPTVO2+ih9PwthHw==
-X-Received: by 2002:adf:e4cf:: with SMTP id v15mr9174610wrm.174.1601561747382;
-        Thu, 01 Oct 2020 07:15:47 -0700 (PDT)
+        bh=wrgbpSMujaBkBPxDtAAR67AoZk1S06YHAzySi1MsGYU=;
+        b=L0jYAsy5h+5Yu6kvryB4O1X9obifeemPOccotez3ZSJjK4YmvOa5fs8iNjLXnk5pvq
+         hrdQ/2cjga30QhKEtihkzct4ILUDVt0oW3NyEkJi2+tg+P3I5Ckvcx27zK8kj5OL1MbU
+         5TgsNbGRAIEPv+U/qytlX8kNyky8rvrnhLnh0JnXWLcGjXMEVZMIwKzkg6z6UGB/XXfa
+         8X/YmHgTSRQBUEdhnTzHSal9MugdtBvgD6iy0xKNE2IOrkgzV/U8wIBr25g8DZUxR3fT
+         6r+5hQlTjxoscYQA4BZdvzHh+96T025f/gIg1UKFB+Ijtx+PDRFGap11Tb5zAAe8kQdE
+         V90Q==
+X-Gm-Message-State: AOAM533VgF0MW+usedIP9feyirG1Jt9msVRRR2vVwtO7uXXH8irkS2DZ
+        AEGuX1zzcr6brvkLemwoD1w=
+X-Google-Smtp-Source: ABdhPJzDdMobU6yFcAy6Zrkvz4ePQZ4w54ThvdXfXBqTNiIkY00AycivITxuDsvIy9DNgXukDplFXw==
+X-Received: by 2002:a5d:43cb:: with SMTP id v11mr9707751wrr.188.1601561843371;
+        Thu, 01 Oct 2020 07:17:23 -0700 (PDT)
 Received: from ziggy.stardust ([213.195.119.110])
-        by smtp.gmail.com with ESMTPSA id v4sm96564wml.46.2020.10.01.07.15.44
+        by smtp.gmail.com with ESMTPSA id h3sm10070951wrq.0.2020.10.01.07.17.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Oct 2020 07:15:45 -0700 (PDT)
-Subject: Re: [PATCH v3 7/9] clk: mediatek: Fix asymmetrical PLL enable and
- disable control
+        Thu, 01 Oct 2020 07:17:22 -0700 (PDT)
+Subject: Re: [PATCH v3 0/9] Mediatek MT8192 clock support
 To:     Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>
@@ -69,14 +67,13 @@ Cc:     James Liao <jamesjj.liao@mediatek.com>,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         srv_heupstream@mediatek.com, Wendell Lin <wendell.lin@mediatek.com>
 References: <1599103380-4155-1-git-send-email-weiyi.lu@mediatek.com>
- <1599103380-4155-8-git-send-email-weiyi.lu@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <516a5f5b-f5af-0362-a73e-97b3db7300aa@gmail.com>
-Date:   Thu, 1 Oct 2020 16:15:43 +0200
+Message-ID: <206e01ba-24a6-57b1-6768-b6629d713eb7@gmail.com>
+Date:   Thu, 1 Oct 2020 16:17:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <1599103380-4155-8-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1599103380-4155-1-git-send-email-weiyi.lu@mediatek.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -84,58 +81,134 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
+Hi Weiyi,
 
 On 03/09/2020 05:22, Weiyi Lu wrote:
-> The en_mask actually is a combination of divider enable mask
-> and pll enable bit(bit0).
-> Before this patch, we enabled both divider mask and bit0 in prepare(),
-> but only cleared the bit0 in unprepare().
-> Now, setting the enable register(CON0) in 2 steps: first divider mask,
-> then bit0 during prepare(), vice versa.
-> Hence, en_mask will only be used as divider enable mask.
-> Meanwhile, all the SoC PLL data are updated.
+> This series is based on v5.9-rc1 and MT8192 dts[1].
 > 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->   drivers/clk/mediatek/clk-mt2701.c | 26 +++++++++++++-------------
->   drivers/clk/mediatek/clk-mt2712.c | 30 +++++++++++++++---------------
->   drivers/clk/mediatek/clk-mt6765.c | 20 ++++++++++----------
->   drivers/clk/mediatek/clk-mt6779.c | 24 ++++++++++++------------
->   drivers/clk/mediatek/clk-mt6797.c | 20 ++++++++++----------
->   drivers/clk/mediatek/clk-mt7622.c | 18 +++++++++---------
->   drivers/clk/mediatek/clk-mt7629.c | 12 ++++++------
->   drivers/clk/mediatek/clk-mt8173.c | 28 ++++++++++++++--------------
->   drivers/clk/mediatek/clk-mt8183.c | 22 +++++++++++-----------
->   drivers/clk/mediatek/clk-pll.c    | 16 ++++++++++++----
->   10 files changed, 112 insertions(+), 104 deletions(-)
+> [1] https://patchwork.kernel.org/cover/11713555/
 > 
-[...]
->   
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index f440f2cd..e0b00bc 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -247,10 +247,14 @@ static int mtk_pll_prepare(struct clk_hw *hw)
->   	writel(r, pll->pwr_addr);
->   	udelay(1);
->   
-> -	r = readl(pll->base_addr + REG_CON0);
-> -	r |= pll->data->en_mask;
-> +	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
->   	writel(r, pll->base_addr + REG_CON0);
->   
-> +	if (pll->data->en_mask) {
-> +		r = readl(pll->base_addr + REG_CON0) | pll->data->en_mask;
-> +		writel(r, pll->base_addr + REG_CON0);
-> +	}
-> +
+> changes since v2:
+> - update and split dt-binding documents by functionalities
+> - add error checking in probe() function
+> - fix incorrect clock relation and add critical clocks
+> - update license identifier and minor fix of coding style
+> 
+> changes since v1:
+> - fix asymmetrical control of PLL
+> - have en_mask used as divider enable mask on all MediaTek SoC
+> 
+> Weiyi Lu (9):
+>    dt-bindings: ARM: Mediatek: Document bindings for MT8192 BSP
+>    dt-bindings: ARM: Mediatek: Document bindings for MT8192 Audio
+>    dt-bindings: ARM: Mediatek: Document bindings for MT8192 Multimedia
+>    dt-bindings: ARM: Mediatek: Document bindings for MT8192 Camera
+>    dt-bindings: ARM: Mediatek: Document bindings for MT8192 APU and GPU
+>    clk: mediatek: Add dt-bindings for MT8192 clocks
+>    clk: mediatek: Fix asymmetrical PLL enable and disable control
+>    clk: mediatek: Add configurable enable control to mtk_pll_data
+>    clk: mediatek: Add MT8192 clock support
 
-I think a better approach here would be to add a flag to mtk_pll_data instead of 
-changing all drivers in one big patch. This will allow you to add the driver 
-that needs to write the en_mask after writing CON0_BASE_EN more easily. And it 
-will later allow you to change the remaining driver one by one until all are 
-using the new flag.
+This looks like a big mix of different changes and I don't see the relation 
+between them.
+To help facilitate the review process, I'd propose:
+Any new binding with a new yaml file should be a single patch. Don't mix just 
+adding one string with adding a new binding file in the same patch.
+
+Split patch 9/9 into different patches, one for each driver. Otherwise it is 
+nearly impossible to review such a big chunk of code.
 
 Regards,
 Matthias
+
+> 
+>   .../arm/mediatek/mediatek,apmixedsys.txt      |    1 +
+>   .../bindings/arm/mediatek/mediatek,audsys.txt |    1 +
+>   .../arm/mediatek/mediatek,camsys-raw.yaml     |   54 +
+>   .../bindings/arm/mediatek/mediatek,camsys.txt |    1 +
+>   .../bindings/arm/mediatek/mediatek,imgsys.txt |    2 +
+>   .../arm/mediatek/mediatek,imp_iic_wrap.yaml   |   78 +
+>   .../arm/mediatek/mediatek,infracfg.txt        |    1 +
+>   .../bindings/arm/mediatek/mediatek,ipesys.txt |    1 +
+>   .../arm/mediatek/mediatek,mdpsys.yaml         |   38 +
+>   .../bindings/arm/mediatek/mediatek,mfgcfg.txt |    1 +
+>   .../bindings/arm/mediatek/mediatek,mmsys.txt  |    1 +
+>   .../bindings/arm/mediatek/mediatek,msdc.yaml  |   46 +
+>   .../arm/mediatek/mediatek,pericfg.yaml        |    1 +
+>   .../arm/mediatek/mediatek,scp-adsp.yaml       |   38 +
+>   .../arm/mediatek/mediatek,topckgen.txt        |    1 +
+>   .../arm/mediatek/mediatek,vdecsys-soc.yaml    |   38 +
+>   .../arm/mediatek/mediatek,vdecsys.txt         |    1 +
+>   .../arm/mediatek/mediatek,vencsys.txt         |    1 +
+>   drivers/clk/mediatek/Kconfig                  |  146 ++
+>   drivers/clk/mediatek/Makefile                 |   24 +
+>   drivers/clk/mediatek/clk-mt2701.c             |   26 +-
+>   drivers/clk/mediatek/clk-mt2712.c             |   30 +-
+>   drivers/clk/mediatek/clk-mt6765.c             |   20 +-
+>   drivers/clk/mediatek/clk-mt6779.c             |   24 +-
+>   drivers/clk/mediatek/clk-mt6797.c             |   20 +-
+>   drivers/clk/mediatek/clk-mt7622.c             |   18 +-
+>   drivers/clk/mediatek/clk-mt7629.c             |   12 +-
+>   drivers/clk/mediatek/clk-mt8173.c             |   28 +-
+>   drivers/clk/mediatek/clk-mt8183.c             |   22 +-
+>   drivers/clk/mediatek/clk-mt8192-aud.c         |  118 ++
+>   drivers/clk/mediatek/clk-mt8192-cam.c         |   72 +
+>   drivers/clk/mediatek/clk-mt8192-cam_rawa.c    |   59 +
+>   drivers/clk/mediatek/clk-mt8192-cam_rawb.c    |   59 +
+>   drivers/clk/mediatek/clk-mt8192-cam_rawc.c    |   59 +
+>   drivers/clk/mediatek/clk-mt8192-img.c         |   60 +
+>   drivers/clk/mediatek/clk-mt8192-img2.c        |   62 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_c.c  |   61 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_e.c  |   58 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_n.c  |   59 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_s.c  |   60 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_w.c  |   58 +
+>   .../clk/mediatek/clk-mt8192-imp_iic_wrap_ws.c |   60 +
+>   drivers/clk/mediatek/clk-mt8192-ipe.c         |   64 +
+>   drivers/clk/mediatek/clk-mt8192-mdp.c         |   89 ++
+>   drivers/clk/mediatek/clk-mt8192-mfg.c         |   57 +
+>   drivers/clk/mediatek/clk-mt8192-mm.c          |  108 ++
+>   drivers/clk/mediatek/clk-mt8192-msdc.c        |   57 +
+>   drivers/clk/mediatek/clk-mt8192-msdc_top.c    |   71 +
+>   drivers/clk/mediatek/clk-mt8192-scp_adsp.c    |   57 +
+>   drivers/clk/mediatek/clk-mt8192-vdec.c        |   82 +
+>   drivers/clk/mediatek/clk-mt8192-vdec_soc.c    |   82 +
+>   drivers/clk/mediatek/clk-mt8192-venc.c        |   60 +
+>   drivers/clk/mediatek/clk-mt8192.c             | 1340 +++++++++++++++++
+>   drivers/clk/mediatek/clk-mtk.h                |    2 +
+>   drivers/clk/mediatek/clk-mux.h                |   15 +
+>   drivers/clk/mediatek/clk-pll.c                |   28 +-
+>   include/dt-bindings/clock/mt8192-clk.h        |  592 ++++++++
+>   57 files changed, 4116 insertions(+), 108 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys-raw.yaml
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mdpsys.yaml
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,msdc.yaml
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,scp-adsp.yaml
+>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys-soc.yaml
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-aud.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-cam.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-cam_rawa.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-cam_rawb.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-cam_rawc.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-img.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-img2.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_c.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_e.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_n.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_s.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_w.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-imp_iic_wrap_ws.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-ipe.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-mdp.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-mfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-mm.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-msdc.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-msdc_top.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-scp_adsp.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-vdec.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-vdec_soc.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192-venc.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt8192.c
+>   create mode 100644 include/dt-bindings/clock/mt8192-clk.h
+> 
