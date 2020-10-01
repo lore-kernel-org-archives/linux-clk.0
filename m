@@ -2,366 +2,176 @@ Return-Path: <SRS0=maUV=DI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6776C4727E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 16:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D585EC4727E
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 19:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6707820872
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 16:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FBF5208A9
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 19:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601571433;
-	bh=Hf8SKH/mhCHSQXjDIXdh7bnEag8LgBD+yG95nBrWCSA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=04wRtXKGYE33fS66n/fhv2tzT9O1I84i+u4gfjZBwdzxiinfokjGH6QKPAjIEkzjE
-	 MhiQHdW1mwHx7JXr0yM0vkaTqYoCZLf0AQHHXNQMmKfJp2jh4/4pjxU9Ia2cRkI7qP
-	 Stdh7WCsSbWk0xFw9NWTxoEy/ZeWmPvfgStk0ljE=
+	s=default; t=1601579335;
+	bh=CkDivQ+Tx0gIZqzUiX2AGChPpuiUHaQ7vT21coFX7Sw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=s5dttdkaVhP/I+UAd5HfDL/WwUAuzURT/8ks+pFskBrplRlkAJIwCVtW25h1+jM9G
+	 wmB0GWcQQXE8+wNzDNdnQXXQUHLu+a6mmD6/Z6Cu/v7qR+o2iNlSfmy6iaWfgO8u4T
+	 6nhwDFt/0ISB374w72ITw1eTUzw+YVdd7prkZf4k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732642AbgJAQ5M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Oct 2020 12:57:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732622AbgJAQ5M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Oct 2020 12:57:12 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B38AF20897;
-        Thu,  1 Oct 2020 16:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601571431;
-        bh=Hf8SKH/mhCHSQXjDIXdh7bnEag8LgBD+yG95nBrWCSA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SRq/PxV5Oc0vAmZGwxuh5exfKDRrruSn0O7vXkZ54ef6Ekcqx9OfhFgEV6+lNfhWW
-         wPxyLyOvRlv8bTNco6dNiC/gnBhgNvkP5efB3aTMr/fprW/66sf7ncpl8OmEbecVeS
-         /kN2YS0eg64K6Ee066xXhBdwjj8Z4zwtbSxBwe0w=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S1730045AbgJATIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Oct 2020 15:08:55 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:54661 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729418AbgJATIz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2020 15:08:55 -0400
+Received: by mail-pj1-f67.google.com with SMTP id j19so2521096pjl.4;
+        Thu, 01 Oct 2020 12:08:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/ZLkWSujX7jWnugEZQTqIhwyIUES1ySLBrdFnfFWe2Y=;
+        b=RHr9uc/IUQKIQP6csQQ+b1rv/cTACiLcO8waNroP6RjIBfFkgE+IjxFCwVXCCFm5HR
+         31C3MWpMMVhKYYH9myldwpOnk2cHyscGxWk5Dj/kDR5Wq0xsj9td/5Lw0W65H5z9GbSZ
+         jVy3X6MUObjB6vehnQMMkDrQ0DSseIj7a6YFxUvQ1lNC+bOfnCB/YYYNoFsf0NVgbr0a
+         ZACK5Al3bcmfXnGwkn31v/aEhfAnWsxy2xB0pCmarp2TeGAypKBa1c3afd4RMylt8Dxz
+         gGmBN1bLqu9paubcGaKiO/+yyYh6rAor0DK03t+pC1eLU5K4OOM7PqwnKadMjKV2VrUa
+         6jvg==
+X-Gm-Message-State: AOAM530CUprg6wPcTa3dGfRuYYZGuDCd2D2EIt81djITgMX8k8Oq6I2h
+        qZjkeVnzTKED7q6csGqUhpU=
+X-Google-Smtp-Source: ABdhPJxzY2rHqgv6i+7QwwFXStNiGA11JiUI+CplH1qGeVnrhKi67tLaYkDY6T4NY9EIk0ce4/SyWA==
+X-Received: by 2002:a17:90a:6b04:: with SMTP id v4mr1362413pjj.101.1601579334156;
+        Thu, 01 Oct 2020 12:08:54 -0700 (PDT)
+Received: from localhost ([2601:647:5b00:1162:1ac0:17a6:4cc6:d1ef])
+        by smtp.gmail.com with ESMTPSA id i36sm6084425pgm.43.2020.10.01.12.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Oct 2020 12:08:53 -0700 (PDT)
+Date:   Thu, 1 Oct 2020 12:08:52 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] clk: samsung: exynos-clkout: convert to module driver
-Date:   Thu,  1 Oct 2020 18:56:46 +0200
-Message-Id: <20201001165646.32279-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201001165646.32279-1-krzk@kernel.org>
-References: <20201001165646.32279-1-krzk@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Mathias Tausen <mta@gomspace.com>
+Subject: Re: [PATCH v4 5/7] clk: axi-clkgen: Respect ZYNQMP PFD/VCO frequency
+ limits
+Message-ID: <20201001190852.GE121420@archbook>
+References: <20200929144417.89816-1-alexandru.ardelean@analog.com>
+ <20200929144417.89816-14-alexandru.ardelean@analog.com>
+ <20200929153040.GA114067@archbook>
+ <CA+U=DspZ8cZzDDJWdbS=RkLifJRr7sjwQ9-ytMWkCqpfoCX6=w@mail.gmail.com>
+ <20200930171607.GA121420@archbook>
+ <CA+U=DsruOC=uyDVDLz0HCO06_7AGfQEpD=YoYddf3S-3Gs3QiA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+U=DsruOC=uyDVDLz0HCO06_7AGfQEpD=YoYddf3S-3Gs3QiA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Exynos clkout driver depends on board input clock (typically XXTI or
-XUSBXTI), however on Exynos4 boards these clocks were modeled as part of
-SoC clocks (Exynos4 clocks driver).  Obviously this is not proper, but
-correcting it would break DT backward compatibility.
+On Thu, Oct 01, 2020 at 08:18:59AM +0300, Alexandru Ardelean wrote:
+> On Wed, Sep 30, 2020 at 8:16 PM Moritz Fischer <mdf@kernel.org> wrote:
+> >
+> > On Wed, Sep 30, 2020 at 08:22:23AM +0300, Alexandru Ardelean wrote:
+> > > On Tue, Sep 29, 2020 at 6:30 PM Moritz Fischer <mdf@kernel.org> wrote:
+> > > >
+> > > > Hi Alexandru,
+> > > >
+> > > > On Tue, Sep 29, 2020 at 05:44:15PM +0300, Alexandru Ardelean wrote:
+> > > > > From: Mathias Tausen <mta@gomspace.com>
+> > > > >
+> > > > > Since axi-clkgen is now supported on ZYNQMP, make sure the max/min
+> > > > > frequencies of the PFD and VCO are respected.
+> > > > >
+> > > > > Signed-off-by: Mathias Tausen <mta@gomspace.com>
+> > > > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> > > >
+> > > > This patch still does not cover the PCIe Zynq plugged into ZynqMP linux
+> > > > machine case.
+> > > >
+> > > > > ---
+> > > > >  drivers/clk/clk-axi-clkgen.c | 9 +++++++++
+> > > > >  1 file changed, 9 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> > > > > index 4342b7735590..2319bb1c5c08 100644
+> > > > > --- a/drivers/clk/clk-axi-clkgen.c
+> > > > > +++ b/drivers/clk/clk-axi-clkgen.c
+> > > > > @@ -108,12 +108,21 @@ static uint32_t axi_clkgen_lookup_lock(unsigned int m)
+> > > > >       return 0x1f1f00fa;
+> > > > >  }
+> > > > >
+> > > > > +#ifdef ARCH_ZYNQMP
+> > > > > +static const struct axi_clkgen_limits axi_clkgen_default_limits = {
+> > > > > +     .fpfd_min = 10000,
+> > > > > +     .fpfd_max = 450000,
+> > > > > +     .fvco_min = 800000,
+> > > > > +     .fvco_max = 1600000,
+> > > > > +};
+> > > > > +#else
+> > > > >  static const struct axi_clkgen_limits axi_clkgen_default_limits = {
+> > > > >       .fpfd_min = 10000,
+> > > > >       .fpfd_max = 300000,
+> > > > >       .fvco_min = 600000,
+> > > > >       .fvco_max = 1200000,
+> > > > >  };
+> > > > > +#endif
+> > > >
+> > > > I still don't understand this. You have a way to determine which fabric
+> > > > you are looking at with the FPGA info. Why not:
+> > > >
+> > > > [..] axi_clkgen_zynqmp_default_limits = {
+> > > > };
+> > > >
+> > > > [..] axi_clkgen_default_limits = {
+> > > > };
+> > > >
+> > > > Set them based on what you read back, i.e. determine which fabric you
+> > > > are looking at *per clock gen* and use that info, rather than making a
+> > > > compile time decision to support only one of them.
+> > > >
+> > > > Generally speaking #ifdef $ARCH should be a last resort solution.
+> > >
+> > > The support for reading back the fabric parameters is implemented in
+> > > the AXI CLKGEN PCORE version starting with 5.0.a
+> > > Links:
+> > > https://github.com/analogdevicesinc/hdl/commits/master/library/common/up_clkgen.v
+> > > https://github.com/analogdevicesinc/hdl/commit/66823682b63c1037abdc3fc1dd4d4e63d3cfbc1a
+> > > https://github.com/analogdevicesinc/hdl/commit/7dcb2050c7946fab5ea5a273eda7c53ea7b969a6
+> > >
+> > > Before that version, these details aren't there, so the best you can
+> > > do is assume compile-time ARCH defaults.
+> >
+> > This is a property of the instance and not of the driver. If you can't
+> > query the hardware to figure out what you're looking at, but have
+> > different behaviours, please use different compatible strings and make
+> > the default limits platform data.
+> >
+> > Something like this:
+> >
+> > static const struct of_device_id axi_clkgen_ids[] = {
+> >         {
+> >                 .compatible = "foo-zynqmp",
+> >                 .data = &zynqmp_default_limits,
+> >         },
+> >         {
+> >                 .compatible = "bar-zynq",
+> >                 .data = &zynq_default_limits,
+> >         },
+> >
+> >         { },
+> > };
+> >
+> 
+> oh, apologies for not thinking about this;
+> i'll spin this up
 
-Both drivers - clkout and Exynos4 clocks - register the clock providers
-with CLK_OF_DECLARE/OF_DECLARE_1 so their order is fragile (in the
-Makefile clkout is behind Exynos4 clock).  It will work only if the
-Exynos4 clock driver comes up before clkout.
+No worries :) 
 
-A change in DTS adding input clock reference to Exynos4 clocks input
-PLL, see reverted commit eaf2d2f6895d ("ARM: dts: exynos: add input
-clock to CMU in Exynos4412 Odroid"), caused probe reorder: the clkout
-appeared before Exynos4 clock provider.  Since clkout depends on Exynos4
-clocks and does not support deferred probe, this did not work and caused
-later failure of usb3503 USB hub probe which needs clkout:
-
-    [    5.007442] usb3503 0-0008: unable to request refclk (-517)
-
-The Exynos clkout driver is not a critical/core clock so there is
-actually no problem in instantiating it later, as a regular module.
-This removes specific probe ordering and adds support for probe
-deferral.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 198 +++++++++++++++++-------
- 1 file changed, 141 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 34ccb1d23bc3..68af082d4716 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -9,10 +9,13 @@
- #include <linux/slab.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
- 
- #define EXYNOS_CLKOUT_NR_CLKS		1
- #define EXYNOS_CLKOUT_PARENTS		32
-@@ -28,41 +31,103 @@ struct exynos_clkout {
- 	struct clk_mux mux;
- 	spinlock_t slock;
- 	void __iomem *reg;
-+	struct device_node *np;
- 	u32 pmu_debug_save;
- 	struct clk_hw_onecell_data data;
- };
- 
--static struct exynos_clkout *clkout;
-+struct exynos_clkout_variant {
-+	u32 mux_mask;
-+};
- 
--static int exynos_clkout_suspend(void)
--{
--	clkout->pmu_debug_save = readl(clkout->reg + EXYNOS_PMU_DEBUG_REG);
-+static const struct exynos_clkout_variant exynos_clkout_exynos4 = {
-+	.mux_mask	= EXYNOS4_CLKOUT_MUX_MASK,
-+};
- 
--	return 0;
--}
-+static const struct exynos_clkout_variant exynos_clkout_exynos5 = {
-+	.mux_mask	= EXYNOS5_CLKOUT_MUX_MASK,
-+};
- 
--static void exynos_clkout_resume(void)
-+static const struct of_device_id exynos_clkout_ids[] = {
-+	{
-+		.compatible = "samsung,exynos3250-pmu",
-+		.data = &exynos_clkout_exynos4,
-+	}, {
-+		.compatible = "samsung,exynos4210-pmu",
-+		.data = &exynos_clkout_exynos4,
-+	}, {
-+		.compatible = "samsung,exynos4412-pmu",
-+		.data = &exynos_clkout_exynos4,
-+	}, {
-+		.compatible = "samsung,exynos5250-pmu",
-+		.data = &exynos_clkout_exynos5,
-+	}, {
-+		.compatible = "samsung,exynos5410-pmu",
-+		.data = &exynos_clkout_exynos5,
-+	}, {
-+		.compatible = "samsung,exynos5420-pmu",
-+		.data = &exynos_clkout_exynos5,
-+	}, {
-+		.compatible = "samsung,exynos5433-pmu",
-+		.data = &exynos_clkout_exynos5,
-+	}, { }
-+};
-+
-+/*
-+ * Device will be instantiated as child of PMU device without its own
-+ * device node.  Therefore match compatibles against parent.
-+ */
-+static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
- {
--	writel(clkout->pmu_debug_save, clkout->reg + EXYNOS_PMU_DEBUG_REG);
--}
-+	const struct exynos_clkout_variant *variant;
-+	const struct of_device_id *match;
- 
--static struct syscore_ops exynos_clkout_syscore_ops = {
--	.suspend = exynos_clkout_suspend,
--	.resume = exynos_clkout_resume,
--};
-+	if (!dev->parent) {
-+		dev_err(dev, "not instantiated from MFD\n");
-+		return -EINVAL;
-+	}
-+
-+	match = of_match_device(exynos_clkout_ids, dev->parent);
-+	if (!match) {
-+		dev_err(dev, "cannot match parent device\n");
-+		return -EINVAL;
-+	}
-+	variant = match->data;
-+
-+	*mux_mask = variant->mux_mask;
-+	dev_err(dev, "MATCH: %x\n", variant->mux_mask);
-+
-+	return 0;
-+}
- 
--static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
-+static int exynos_clkout_probe(struct platform_device *pdev)
- {
- 	const char *parent_names[EXYNOS_CLKOUT_PARENTS];
- 	struct clk *parents[EXYNOS_CLKOUT_PARENTS];
--	int parent_count;
--	int ret;
--	int i;
-+	struct exynos_clkout *clkout;
-+	int parent_count, ret, i;
-+	u32 mux_mask;
- 
--	clkout = kzalloc(struct_size(clkout, data.hws, EXYNOS_CLKOUT_NR_CLKS),
--			 GFP_KERNEL);
-+	clkout = devm_kzalloc(&pdev->dev,
-+			      struct_size(clkout, data.hws, EXYNOS_CLKOUT_NR_CLKS),
-+			      GFP_KERNEL);
- 	if (!clkout)
--		return;
-+		return -ENOMEM;
-+
-+	ret = exynos_clkout_match_parent_dev(&pdev->dev, &mux_mask);
-+	if (ret)
-+		return ret;
-+
-+	clkout->np = pdev->dev.of_node;
-+	if (!clkout->np) {
-+		/*
-+		 * pdev->dev.parent was checked by exynos_clkout_match_parent_dev()
-+		 * so it is not NULL.
-+		 */
-+		clkout->np = pdev->dev.parent->of_node;
-+	}
-+
-+	platform_set_drvdata(pdev, clkout);
- 
- 	spin_lock_init(&clkout->slock);
- 
-@@ -71,7 +136,7 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 		char name[] = "clkoutXX";
- 
- 		snprintf(name, sizeof(name), "clkout%d", i);
--		parents[i] = of_clk_get_by_name(node, name);
-+		parents[i] = of_clk_get_by_name(clkout->np, name);
- 		if (IS_ERR(parents[i])) {
- 			parent_names[i] = "none";
- 			continue;
-@@ -82,11 +147,13 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	}
- 
- 	if (!parent_count)
--		goto free_clkout;
-+		return -EINVAL;
- 
--	clkout->reg = of_iomap(node, 0);
--	if (!clkout->reg)
-+	clkout->reg = of_iomap(clkout->np, 0);
-+	if (!clkout->reg) {
-+		ret = -ENODEV;
- 		goto clks_put;
-+	}
- 
- 	clkout->gate.reg = clkout->reg + EXYNOS_PMU_DEBUG_REG;
- 	clkout->gate.bit_idx = EXYNOS_CLKOUT_DISABLE_SHIFT;
-@@ -103,17 +170,17 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
- 				&clk_gate_ops, CLK_SET_RATE_PARENT
- 				| CLK_SET_RATE_NO_REPARENT);
--	if (IS_ERR(clkout->data.hws[0]))
-+	if (IS_ERR(clkout->data.hws[0])) {
-+		ret = PTR_ERR(clkout->data.hws[0]);
- 		goto err_unmap;
-+	}
- 
- 	clkout->data.num = EXYNOS_CLKOUT_NR_CLKS;
--	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, &clkout->data);
-+	ret = of_clk_add_hw_provider(clkout->np, of_clk_hw_onecell_get, &clkout->data);
- 	if (ret)
- 		goto err_clk_unreg;
- 
--	register_syscore_ops(&exynos_clkout_syscore_ops);
--
--	return;
-+	return 0;
- 
- err_clk_unreg:
- 	clk_hw_unregister(clkout->data.hws[0]);
-@@ -123,38 +190,55 @@ static void __init exynos_clkout_init(struct device_node *node, u32 mux_mask)
- 	for (i = 0; i < EXYNOS_CLKOUT_PARENTS; ++i)
- 		if (!IS_ERR(parents[i]))
- 			clk_put(parents[i]);
--free_clkout:
--	kfree(clkout);
- 
--	pr_err("%s: failed to register clkout clock\n", __func__);
-+	dev_err(&pdev->dev, "failed to register clkout clock\n");
-+
-+	return ret;
- }
- 
--/*
-- * We use CLK_OF_DECLARE_DRIVER initialization method to avoid setting
-- * the OF_POPULATED flag on the pmu device tree node, so later the
-- * Exynos PMU platform device can be properly probed with PMU driver.
-- */
-+static int exynos_clkout_remove(struct platform_device *pdev)
-+{
-+	struct exynos_clkout *clkout = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(clkout->np);
-+	clk_hw_unregister(clkout->data.hws[0]);
-+	iounmap(clkout->reg);
- 
--static void __init exynos4_clkout_init(struct device_node *node)
-+	return 0;
-+}
-+static int exynos_clkout_suspend(struct device *dev)
- {
--	exynos_clkout_init(node, EXYNOS4_CLKOUT_MUX_MASK);
-+	struct exynos_clkout *clkout = dev_get_drvdata(dev);
-+
-+	clkout->pmu_debug_save = readl(clkout->reg + EXYNOS_PMU_DEBUG_REG);
-+
-+	return 0;
- }
--CLK_OF_DECLARE_DRIVER(exynos4210_clkout, "samsung,exynos4210-pmu",
--		exynos4_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos4412_clkout, "samsung,exynos4412-pmu",
--		exynos4_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos3250_clkout, "samsung,exynos3250-pmu",
--		exynos4_clkout_init);
--
--static void __init exynos5_clkout_init(struct device_node *node)
-+
-+static int exynos_clkout_resume(struct device *dev)
- {
--	exynos_clkout_init(node, EXYNOS5_CLKOUT_MUX_MASK);
-+	struct exynos_clkout *clkout = dev_get_drvdata(dev);
-+
-+	writel(clkout->pmu_debug_save, clkout->reg + EXYNOS_PMU_DEBUG_REG);
-+
-+	return 0;
- }
--CLK_OF_DECLARE_DRIVER(exynos5250_clkout, "samsung,exynos5250-pmu",
--		exynos5_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos5410_clkout, "samsung,exynos5410-pmu",
--		exynos5_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos5420_clkout, "samsung,exynos5420-pmu",
--		exynos5_clkout_init);
--CLK_OF_DECLARE_DRIVER(exynos5433_clkout, "samsung,exynos5433-pmu",
--		exynos5_clkout_init);
-+
-+static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
-+			 exynos_clkout_resume);
-+
-+static struct platform_driver exynos_clkout_driver = {
-+	.driver = {
-+		.name = "exynos-clkout",
-+		.of_match_table = exynos_clkout_ids,
-+		.pm = &exynos_clkout_pm_ops,
-+	},
-+	.probe = exynos_clkout_probe,
-+	.remove = exynos_clkout_remove,
-+};
-+module_platform_driver(exynos_clkout_driver);
-+
-+MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
-+MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
-+MODULE_DESCRIPTION("Samsung Exynos clock output driver");
-+MODULE_LICENSE("GPL");
--- 
-2.17.1
-
+Moritz
