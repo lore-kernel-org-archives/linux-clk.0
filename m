@@ -2,378 +2,109 @@ Return-Path: <SRS0=maUV=DI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB36FC47423
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 08:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6C5C4727C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 11:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C60721531
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 08:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC3221707
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 11:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601550171;
+	bh=xYiMC3INrKF34oEyrsmUUrqjbwI/zSijaQlQHN9HorA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WdXBg44QbL3mzbl5e2SlyvGHxLK6CWxAFUnGr6cYMGQlijNd6ZH9wesLLMTVDj/Hk
+	 MJNJerJVXtAfRUmgNIRIWTGHnSJaUOV/N4g8UUrLJl+ZSHpMgFQxs4VGK/y0JfETZE
+	 a1PebivCHlXDBb+4wzUZKprpKHi05+oLZGnfcNhc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbgJAIzo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Oct 2020 04:55:44 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:7926 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbgJAIzn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2020 04:55:43 -0400
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0918nSbg004819;
-        Thu, 1 Oct 2020 04:55:29 -0400
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-        by mx0a-00128a01.pphosted.com with ESMTP id 33syg6adms-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Oct 2020 04:55:29 -0400
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 0918tRJ1056104
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Thu, 1 Oct 2020 04:55:27 -0400
-Received: from SCSQCASHYB7.ad.analog.com (10.77.17.133) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 1 Oct 2020 01:55:17 -0700
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by
- SCSQCASHYB7.ad.analog.com (10.77.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Thu, 1 Oct 2020 01:55:17 -0700
-Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Thu, 1 Oct 2020 01:55:17 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 0918tM1n016001;
-        Thu, 1 Oct 2020 04:55:23 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <lars@metafoo.de>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <mdf@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 1/2] clk: axi-clkgen: Add support for fractional dividers
-Date:   Thu, 1 Oct 2020 11:59:47 +0300
-Message-ID: <20201001085948.21412-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
+        id S1731791AbgJALCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Oct 2020 07:02:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731131AbgJALCv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Oct 2020 07:02:51 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D93AE20B1F;
+        Thu,  1 Oct 2020 11:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601550170;
+        bh=xYiMC3INrKF34oEyrsmUUrqjbwI/zSijaQlQHN9HorA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KEei53PbBIIkdzQLDb/7K/52YSbflBQYn3bG/m713eKa8/9nV0fPPDI4yq6H+/fvV
+         xVqht4hR38nzz4Qgnh/AAp0mk+5WyFzIOOYfEFPMoUP75ral06RLc43LxHUnNG4hb1
+         tZZP4hijlYOR/icBsCoZV1jH7RB2VuKegMZKFfws=
+Date:   Thu, 1 Oct 2020 12:01:50 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-iio@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-acpi@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        kernel-janitors@vger.kernel.org, drbd-dev@lists.linbit.com,
+        openipmi-developer@lists.sourceforge.net,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-ide@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-wireless@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
+ statements
+Message-ID: <20201001110150.GA6715@sirena.org.uk>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+ <160132172369.55460.9237357219623604216.b4-ty@kernel.org>
+ <b1174f9be2ce65f6b5ebefcba0b48e792926abbc.camel@perches.com>
+ <20200929113745.GB4799@sirena.org.uk>
+ <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-01_02:2020-10-01,2020-10-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2010010078
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <db26d49401dc0bd6b9013a603a155f9827f404a4.camel@perches.com>
+X-Cookie: Stay away from flying saucers today.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
 
-The axi-clkgen has (optional) fractional dividers on the output clock
-divider and feedback clock divider path. Utilizing the fractional dividers
-allows for a better resolution of the output clock, being able to
-synthesize more frequencies.
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Rework the driver support to support the fractional register fields, both
-for setting a new rate as well as reading back the current rate from the
-hardware.
+On Wed, Sep 30, 2020 at 12:33:39PM -0700, Joe Perches wrote:
+> On Tue, 2020-09-29 at 12:37 +0100, Mark Brown wrote:
 
-For setting the rate if no perfect divider settings were found in
-non-fractional mode try again in fractional mode and see if better settings
-can be found. This appears to be the recommended mode of operation.
+> > Feel free to submit patches to b4.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
+> Have you tried the existing option to send
+> thank you's on a specific ranges of patches?
 
-Series split away from [1]:
-  https://lore.kernel.org/linux-clk/20200929144417.89816-9-alexandru.ardelean@analog.com/T/#t
+I am relying on b4 to identify which patches that I've downloaded are in
+the pushed branches.  Given that it explicitly lists the patches that
+are applied it appears to be doing an OK job here.
 
-After a review on that, it was concluded that dt-binding conversion to
-yaml format would be a good idea.
-The conversion went out via:
-  https://lore.kernel.org/linux-clk/20201001085035.82938-1-alexandru.ardelean@analog.com/T/#u
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It will be reviewed by Rob Herring when he can get to it.
-The first 2 patches from the series [1] are independent from dt-binding
-context.
+-----BEGIN PGP SIGNATURE-----
 
- drivers/clk/clk-axi-clkgen.c | 180 +++++++++++++++++++++++++----------
- 1 file changed, 129 insertions(+), 51 deletions(-)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl91tx4ACgkQJNaLcl1U
+h9D1IAf/a6Dh+mjW+LjpuCd+hkWCJa8iJTLmYSy9suf32mX9fM1T/gbOLQ1RJtu4
+ZQP0A5w52htIbRIWtYHrgtZQGXrq2SIm+peRmnKP0DXly+Fj0/G0zxg4lqxKzXtV
++XpQjLbvcjF6JIV1ok5ScRg5HH8bfLJQvbGBbpmL9pvI+WniF4smB5bQRwd3qWEf
+MrBNI79S+kr1Cvjxnya+/TP7O4TtOQzzpB695ejEGvqxlTJQM5GGaZTLNJlBivOz
+ygXvOFlrffOajvN1K7URe41xznaDG4+c8pfziFXllSoEGp3yzANBNTtCGEvny0SY
+Nx0W3O8/sebfFJPHQ89w2atWG/nVEQ==
+=onQ8
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 96f351785b41..1df03cc6d089 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -27,8 +27,10 @@
- 
- #define AXI_CLKGEN_V2_DRP_STATUS_BUSY	BIT(16)
- 
-+#define MMCM_REG_CLKOUT5_2	0x07
- #define MMCM_REG_CLKOUT0_1	0x08
- #define MMCM_REG_CLKOUT0_2	0x09
-+#define MMCM_REG_CLKOUT6_2	0x13
- #define MMCM_REG_CLK_FB1	0x14
- #define MMCM_REG_CLK_FB2	0x15
- #define MMCM_REG_CLK_DIV	0x16
-@@ -40,6 +42,7 @@
- 
- #define MMCM_CLKOUT_NOCOUNT	BIT(6)
- 
-+#define MMCM_CLK_DIV_DIVIDE	BIT(11)
- #define MMCM_CLK_DIV_NOCOUNT	BIT(12)
- 
- struct axi_clkgen {
-@@ -107,6 +110,8 @@ static void axi_clkgen_calc_params(unsigned long fin, unsigned long fout,
- 	unsigned long d, d_min, d_max, _d_min, _d_max;
- 	unsigned long m, m_min, m_max;
- 	unsigned long f, dout, best_f, fvco;
-+	unsigned long fract_shift = 0;
-+	unsigned long fvco_min_fract, fvco_max_fract;
- 
- 	fin /= 1000;
- 	fout /= 1000;
-@@ -119,42 +124,89 @@ static void axi_clkgen_calc_params(unsigned long fin, unsigned long fout,
- 	d_min = max_t(unsigned long, DIV_ROUND_UP(fin, fpfd_max), 1);
- 	d_max = min_t(unsigned long, fin / fpfd_min, 80);
- 
--	m_min = max_t(unsigned long, DIV_ROUND_UP(fvco_min, fin) * d_min, 1);
--	m_max = min_t(unsigned long, fvco_max * d_max / fin, 64);
-+again:
-+	fvco_min_fract = fvco_min << fract_shift;
-+	fvco_max_fract = fvco_max << fract_shift;
-+
-+	m_min = max_t(unsigned long, DIV_ROUND_UP(fvco_min_fract, fin) * d_min, 1);
-+	m_max = min_t(unsigned long, fvco_max_fract * d_max / fin, 64 << fract_shift);
- 
- 	for (m = m_min; m <= m_max; m++) {
--		_d_min = max(d_min, DIV_ROUND_UP(fin * m, fvco_max));
--		_d_max = min(d_max, fin * m / fvco_min);
-+		_d_min = max(d_min, DIV_ROUND_UP(fin * m, fvco_max_fract));
-+		_d_max = min(d_max, fin * m / fvco_min_fract);
- 
- 		for (d = _d_min; d <= _d_max; d++) {
- 			fvco = fin * m / d;
- 
- 			dout = DIV_ROUND_CLOSEST(fvco, fout);
--			dout = clamp_t(unsigned long, dout, 1, 128);
-+			dout = clamp_t(unsigned long, dout, 1, 128 << fract_shift);
- 			f = fvco / dout;
- 			if (abs(f - fout) < abs(best_f - fout)) {
- 				best_f = f;
- 				*best_d = d;
--				*best_m = m;
--				*best_dout = dout;
-+				*best_m = m << (3 - fract_shift);
-+				*best_dout = dout << (3 - fract_shift);
- 				if (best_f == fout)
- 					return;
- 			}
- 		}
- 	}
-+
-+	/* Lets see if we find a better setting in fractional mode */
-+	if (fract_shift == 0) {
-+		fract_shift = 3;
-+		goto again;
-+	}
- }
- 
--static void axi_clkgen_calc_clk_params(unsigned int divider, unsigned int *low,
--	unsigned int *high, unsigned int *edge, unsigned int *nocount)
-+struct axi_clkgen_div_params {
-+	unsigned int low;
-+	unsigned int high;
-+	unsigned int edge;
-+	unsigned int nocount;
-+	unsigned int frac_en;
-+	unsigned int frac;
-+	unsigned int frac_wf_f;
-+	unsigned int frac_wf_r;
-+	unsigned int frac_phase;
-+};
-+
-+static void axi_clkgen_calc_clk_params(unsigned int divider,
-+	unsigned int frac_divider, struct axi_clkgen_div_params *params)
- {
--	if (divider == 1)
--		*nocount = 1;
--	else
--		*nocount = 0;
- 
--	*high = divider / 2;
--	*edge = divider % 2;
--	*low = divider - *high;
-+	memset(params, 0x0, sizeof(*params));
-+
-+	if (divider == 1) {
-+		params->nocount = 1;
-+		return;
-+	}
-+
-+	if (frac_divider == 0) {
-+		params->high = divider / 2;
-+		params->edge = divider % 2;
-+		params->low = divider - params->high;
-+	} else {
-+		params->frac_en = 1;
-+		params->frac = frac_divider;
-+
-+		params->high = divider / 2;
-+		params->edge = divider % 2;
-+		params->low = params->high;
-+
-+		if (params->edge == 0) {
-+			params->high--;
-+			params->frac_wf_r = 1;
-+		}
-+
-+		if (params->edge == 0 || frac_divider == 1)
-+			params->low--;
-+		if (((params->edge == 0) ^ (frac_divider == 1)) ||
-+			(divider == 2 && frac_divider == 1))
-+			params->frac_wf_f = 1;
-+
-+		params->frac_phase = params->edge * 4 + frac_divider / 2;
-+	}
- }
- 
- static void axi_clkgen_write(struct axi_clkgen *axi_clkgen,
-@@ -246,15 +298,28 @@ static struct axi_clkgen *clk_hw_to_axi_clkgen(struct clk_hw *clk_hw)
- 	return container_of(clk_hw, struct axi_clkgen, clk_hw);
- }
- 
-+static void axi_clkgen_set_div(struct axi_clkgen *axi_clkgen,
-+	unsigned int reg1, unsigned int reg2, unsigned int reg3,
-+	struct axi_clkgen_div_params *params)
-+{
-+	axi_clkgen_mmcm_write(axi_clkgen, reg1,
-+		(params->high << 6) | params->low, 0xefff);
-+	axi_clkgen_mmcm_write(axi_clkgen, reg2,
-+		(params->frac << 12) | (params->frac_en << 11) |
-+		(params->frac_wf_r << 10) | (params->edge << 7) |
-+		(params->nocount << 6), 0x7fff);
-+	if (reg3 != 0) {
-+		axi_clkgen_mmcm_write(axi_clkgen, reg3,
-+			(params->frac_phase << 11) | (params->frac_wf_f << 10), 0x3c00);
-+	}
-+}
-+
- static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
- 	unsigned long rate, unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	unsigned int d, m, dout;
--	unsigned int nocount;
--	unsigned int high;
--	unsigned int edge;
--	unsigned int low;
-+	struct axi_clkgen_div_params params;
- 	uint32_t filter;
- 	uint32_t lock;
- 
-@@ -269,21 +334,18 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
- 	filter = axi_clkgen_lookup_filter(m - 1);
- 	lock = axi_clkgen_lookup_lock(m - 1);
- 
--	axi_clkgen_calc_clk_params(dout, &low, &high, &edge, &nocount);
--	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLKOUT0_1,
--		(high << 6) | low, 0xefff);
--	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLKOUT0_2,
--		(edge << 7) | (nocount << 6), 0x03ff);
-+	axi_clkgen_calc_clk_params(dout >> 3, dout & 0x7, &params);
-+	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLKOUT0_1, MMCM_REG_CLKOUT0_2,
-+		MMCM_REG_CLKOUT5_2, &params);
- 
--	axi_clkgen_calc_clk_params(d, &low, &high, &edge, &nocount);
-+	axi_clkgen_calc_clk_params(d, 0, &params);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLK_DIV,
--		(edge << 13) | (nocount << 12) | (high << 6) | low, 0x3fff);
-+		(params.edge << 13) | (params.nocount << 12) |
-+		(params.high << 6) | params.low, 0x3fff);
- 
--	axi_clkgen_calc_clk_params(m, &low, &high, &edge, &nocount);
--	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLK_FB1,
--		(high << 6) | low, 0xefff);
--	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLK_FB2,
--		(edge << 7) | (nocount << 6), 0x03ff);
-+	axi_clkgen_calc_clk_params(m >> 3, m & 0x7, &params);
-+	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLK_FB1, MMCM_REG_CLK_FB2,
-+		MMCM_REG_CLKOUT6_2, &params);
- 
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK1, lock & 0x3ff, 0x3ff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK2,
-@@ -313,35 +375,51 @@ static long axi_clkgen_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return min_t(unsigned long long, tmp, LONG_MAX);
- }
- 
-+static unsigned int axi_clkgen_get_div(struct axi_clkgen *axi_clkgen,
-+	unsigned int reg1, unsigned int reg2)
-+{
-+	unsigned int val1, val2;
-+	unsigned int div;
-+
-+	axi_clkgen_mmcm_read(axi_clkgen, reg2, &val2);
-+	if (val2 & MMCM_CLKOUT_NOCOUNT)
-+		return 8;
-+
-+	axi_clkgen_mmcm_read(axi_clkgen, reg1, &val1);
-+
-+	div = (val1 & 0x3f) + ((val1 >> 6) & 0x3f);
-+	div <<= 3;
-+
-+	if (val2 & MMCM_CLK_DIV_DIVIDE) {
-+		if ((val2 & BIT(7)) && (val2 & 0x7000) != 0x1000)
-+			div += 8;
-+		else
-+			div += 16;
-+
-+		div += (val2 >> 12) & 0x7;
-+	}
-+
-+	return div;
-+}
-+
- static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
- 	unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	unsigned int d, m, dout;
--	unsigned int reg;
- 	unsigned long long tmp;
-+	unsigned int val;
- 
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_2, &reg);
--	if (reg & MMCM_CLKOUT_NOCOUNT) {
--		dout = 1;
--	} else {
--		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
--		dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
--	}
-+	dout = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLKOUT0_1,
-+		MMCM_REG_CLKOUT0_2);
-+	m = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLK_FB1,
-+		MMCM_REG_CLK_FB2);
- 
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &reg);
--	if (reg & MMCM_CLK_DIV_NOCOUNT)
-+	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &val);
-+	if (val & MMCM_CLK_DIV_NOCOUNT)
- 		d = 1;
- 	else
--		d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
--
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB2, &reg);
--	if (reg & MMCM_CLKOUT_NOCOUNT) {
--		m = 1;
--	} else {
--		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
--		m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
--	}
-+		d = (val & 0x3f) + ((val >> 6) & 0x3f);
- 
- 	if (d == 0 || dout == 0)
- 		return 0;
--- 
-2.17.1
-
+--CE+1k2dSO48ffgeK--
