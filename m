@@ -1,177 +1,160 @@
-Return-Path: <SRS0=maUV=DI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=btwS=DJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D585EC4727E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 19:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D25C35257
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Oct 2020 16:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FBF5208A9
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Oct 2020 19:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D4620758
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Oct 2020 16:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601579335;
-	bh=CkDivQ+Tx0gIZqzUiX2AGChPpuiUHaQ7vT21coFX7Sw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=s5dttdkaVhP/I+UAd5HfDL/WwUAuzURT/8ks+pFskBrplRlkAJIwCVtW25h1+jM9G
-	 wmB0GWcQQXE8+wNzDNdnQXXQUHLu+a6mmD6/Z6Cu/v7qR+o2iNlSfmy6iaWfgO8u4T
-	 6nhwDFt/0ISB374w72ITw1eTUzw+YVdd7prkZf4k=
+	s=default; t=1601657245;
+	bh=C5WPK5CZPKLO2lWVgIHLaU7b38EYaryCUeyxv2/Hv/I=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=gg8ypG/Mgcai5yyC2JPLPMxoW+yihqq1c3LxQBM2bwaFIb6SWernHxauYsGMQJ5aL
+	 cqdbJR75c/hEBA6amxYNv/p11s1xEukBBheCmmiyP6Zve4WJw1WA7rtqedRd7pc2zH
+	 Uz0To+kFGId0L1yH4lgu8PgBEr9/yxR5rN3IiaGg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730045AbgJATIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Oct 2020 15:08:55 -0400
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:54661 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729418AbgJATIz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Oct 2020 15:08:55 -0400
-Received: by mail-pj1-f67.google.com with SMTP id j19so2521096pjl.4;
-        Thu, 01 Oct 2020 12:08:54 -0700 (PDT)
+        id S2387789AbgJBQrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Oct 2020 12:47:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388074AbgJBQrR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Oct 2020 12:47:17 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00686C0613E5
+        for <linux-clk@vger.kernel.org>; Fri,  2 Oct 2020 09:47:16 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id y74so2209123iof.12
+        for <linux-clk@vger.kernel.org>; Fri, 02 Oct 2020 09:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Li4M3GK5y6x0SzTfqjxLLA9AT+ROiUGVRcFqRzm5Djg=;
+        b=a1gXL5toNpXLmacnL7yhtJtYu+HmO+zq2HSfVRcyZ9z5aGYPOUMcOsxSjRxLjTiwhj
+         zJBgESeE1qI3ToOAsK8MZWwKmHt51a3nMoD6FLDGupRKEjHEktpPC4yX8sNz7w/nKYtr
+         hL0t3LhSNNDXOlNOrlInWA796iaMFGVw4FjQQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/ZLkWSujX7jWnugEZQTqIhwyIUES1ySLBrdFnfFWe2Y=;
-        b=RHr9uc/IUQKIQP6csQQ+b1rv/cTACiLcO8waNroP6RjIBfFkgE+IjxFCwVXCCFm5HR
-         31C3MWpMMVhKYYH9myldwpOnk2cHyscGxWk5Dj/kDR5Wq0xsj9td/5Lw0W65H5z9GbSZ
-         jVy3X6MUObjB6vehnQMMkDrQ0DSseIj7a6YFxUvQ1lNC+bOfnCB/YYYNoFsf0NVgbr0a
-         ZACK5Al3bcmfXnGwkn31v/aEhfAnWsxy2xB0pCmarp2TeGAypKBa1c3afd4RMylt8Dxz
-         gGmBN1bLqu9paubcGaKiO/+yyYh6rAor0DK03t+pC1eLU5K4OOM7PqwnKadMjKV2VrUa
-         6jvg==
-X-Gm-Message-State: AOAM530CUprg6wPcTa3dGfRuYYZGuDCd2D2EIt81djITgMX8k8Oq6I2h
-        qZjkeVnzTKED7q6csGqUhpU=
-X-Google-Smtp-Source: ABdhPJxzY2rHqgv6i+7QwwFXStNiGA11JiUI+CplH1qGeVnrhKi67tLaYkDY6T4NY9EIk0ce4/SyWA==
-X-Received: by 2002:a17:90a:6b04:: with SMTP id v4mr1362413pjj.101.1601579334156;
-        Thu, 01 Oct 2020 12:08:54 -0700 (PDT)
-Received: from localhost ([2601:647:5b00:1162:1ac0:17a6:4cc6:d1ef])
-        by smtp.gmail.com with ESMTPSA id i36sm6084425pgm.43.2020.10.01.12.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2020 12:08:53 -0700 (PDT)
-Date:   Thu, 1 Oct 2020 12:08:52 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Alexandru Ardelean <ardeleanalex@gmail.com>
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mathias Tausen <mta@gomspace.com>
-Subject: Re: [PATCH v4 5/7] clk: axi-clkgen: Respect ZYNQMP PFD/VCO frequency
- limits
-Message-ID: <20201001190852.GE121420@archbook>
-References: <20200929144417.89816-1-alexandru.ardelean@analog.com>
- <20200929144417.89816-14-alexandru.ardelean@analog.com>
- <20200929153040.GA114067@archbook>
- <CA+U=DspZ8cZzDDJWdbS=RkLifJRr7sjwQ9-ytMWkCqpfoCX6=w@mail.gmail.com>
- <20200930171607.GA121420@archbook>
- <CA+U=DsruOC=uyDVDLz0HCO06_7AGfQEpD=YoYddf3S-3Gs3QiA@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Li4M3GK5y6x0SzTfqjxLLA9AT+ROiUGVRcFqRzm5Djg=;
+        b=QCGel29zoMo2j9+27uqtYYT84756blUyNAJEPiJEbShAqluL80a/ry1hrr/Qg5tUF3
+         6lM9rR8DydoTmET3xAwsTKKqS1fJGnSqn3ivdIxPUSbnU9M+pWZ+f7gz8qqbrHCY5CCM
+         /y5eH5V9UqlY8jJnh2LgYoKV8UzixOHrIh8TY8nfecpvzCe0iptxhzQ9Ya7Y7jr/0ngn
+         9w5IGKiZNovfqICEOU4e+nDYEeS4Ygu++S+y4IHddPUndngg3WH1+DlqgUjLO9pQ3CKh
+         m+dLmh2tvM+yaX8QpxM0TyM3F8NdGdYn0KXCP6DKCVdTK16vI94ISGAKrgyqg3hDPEIS
+         hoaA==
+X-Gm-Message-State: AOAM531wobSFhFgvZyMBNOZ2UPRz32QHV/scBcckxiuwtjbretAgTvq4
+        96iUSe7U/beAmQHtvtg7PwTGPg==
+X-Google-Smtp-Source: ABdhPJzrfRpNIYzV2uFrhJdCHt/QTSYBKDnpK2pS6zKI5Da6BP91uaqOQt3S2LEYZ+yKmaDKjo66AQ==
+X-Received: by 2002:a05:6638:10e9:: with SMTP id g9mr2960820jae.139.1601657236070;
+        Fri, 02 Oct 2020 09:47:16 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id h2sm932771ioj.5.2020.10.02.09.47.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Oct 2020 09:47:15 -0700 (PDT)
+Subject: Re: [PATCH 00/18] use semicolons rather than commas to separate
+ statements
+To:     Joe Perches <joe@perches.com>,
+        Julia Lawall <julia.lawall@inria.fr>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-iio@vger.kernel.org,
+        drbd-dev@tron.linbit.com,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        David Lechner <david@lechnology.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-clk@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr>
+ <CAMj1kXGh+CzuXkAnqsoMO2A3T1p=D6uFOV347Ym5+VFn5U1gWg@mail.gmail.com>
+ <20200929124108.GY4282@kadam>
+ <alpine.DEB.2.22.394.2009291445050.2808@hadrien>
+ <5f0d2b20f5088281363bb4a35c5652a2c087f159.camel@perches.com>
+ <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <81b94c3a-43d6-c9f5-0bc0-43bf65b3d5fc@linuxfoundation.org>
+Date:   Fri, 2 Oct 2020 10:47:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+U=DsruOC=uyDVDLz0HCO06_7AGfQEpD=YoYddf3S-3Gs3QiA@mail.gmail.com>
+In-Reply-To: <cd75e2d1-9923-b725-78cd-fd5611431584@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 08:18:59AM +0300, Alexandru Ardelean wrote:
-> On Wed, Sep 30, 2020 at 8:16 PM Moritz Fischer <mdf@kernel.org> wrote:
-> >
-> > On Wed, Sep 30, 2020 at 08:22:23AM +0300, Alexandru Ardelean wrote:
-> > > On Tue, Sep 29, 2020 at 6:30 PM Moritz Fischer <mdf@kernel.org> wrote:
-> > > >
-> > > > Hi Alexandru,
-> > > >
-> > > > On Tue, Sep 29, 2020 at 05:44:15PM +0300, Alexandru Ardelean wrote:
-> > > > > From: Mathias Tausen <mta@gomspace.com>
-> > > > >
-> > > > > Since axi-clkgen is now supported on ZYNQMP, make sure the max/min
-> > > > > frequencies of the PFD and VCO are respected.
-> > > > >
-> > > > > Signed-off-by: Mathias Tausen <mta@gomspace.com>
-> > > > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > > >
-> > > > This patch still does not cover the PCIe Zynq plugged into ZynqMP linux
-> > > > machine case.
-> > > >
-> > > > > ---
-> > > > >  drivers/clk/clk-axi-clkgen.c | 9 +++++++++
-> > > > >  1 file changed, 9 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> > > > > index 4342b7735590..2319bb1c5c08 100644
-> > > > > --- a/drivers/clk/clk-axi-clkgen.c
-> > > > > +++ b/drivers/clk/clk-axi-clkgen.c
-> > > > > @@ -108,12 +108,21 @@ static uint32_t axi_clkgen_lookup_lock(unsigned int m)
-> > > > >       return 0x1f1f00fa;
-> > > > >  }
-> > > > >
-> > > > > +#ifdef ARCH_ZYNQMP
-> > > > > +static const struct axi_clkgen_limits axi_clkgen_default_limits = {
-> > > > > +     .fpfd_min = 10000,
-> > > > > +     .fpfd_max = 450000,
-> > > > > +     .fvco_min = 800000,
-> > > > > +     .fvco_max = 1600000,
-> > > > > +};
-> > > > > +#else
-> > > > >  static const struct axi_clkgen_limits axi_clkgen_default_limits = {
-> > > > >       .fpfd_min = 10000,
-> > > > >       .fpfd_max = 300000,
-> > > > >       .fvco_min = 600000,
-> > > > >       .fvco_max = 1200000,
-> > > > >  };
-> > > > > +#endif
-> > > >
-> > > > I still don't understand this. You have a way to determine which fabric
-> > > > you are looking at with the FPGA info. Why not:
-> > > >
-> > > > [..] axi_clkgen_zynqmp_default_limits = {
-> > > > };
-> > > >
-> > > > [..] axi_clkgen_default_limits = {
-> > > > };
-> > > >
-> > > > Set them based on what you read back, i.e. determine which fabric you
-> > > > are looking at *per clock gen* and use that info, rather than making a
-> > > > compile time decision to support only one of them.
-> > > >
-> > > > Generally speaking #ifdef $ARCH should be a last resort solution.
-> > >
-> > > The support for reading back the fabric parameters is implemented in
-> > > the AXI CLKGEN PCORE version starting with 5.0.a
-> > > Links:
-> > > https://github.com/analogdevicesinc/hdl/commits/master/library/common/up_clkgen.v
-> > > https://github.com/analogdevicesinc/hdl/commit/66823682b63c1037abdc3fc1dd4d4e63d3cfbc1a
-> > > https://github.com/analogdevicesinc/hdl/commit/7dcb2050c7946fab5ea5a273eda7c53ea7b969a6
-> > >
-> > > Before that version, these details aren't there, so the best you can
-> > > do is assume compile-time ARCH defaults.
-> >
-> > This is a property of the instance and not of the driver. If you can't
-> > query the hardware to figure out what you're looking at, but have
-> > different behaviours, please use different compatible strings and make
-> > the default limits platform data.
-> >
-> > Something like this:
-> >
-> > static const struct of_device_id axi_clkgen_ids[] = {
-> >         {
-> >                 .compatible = "foo-zynqmp",
-> >                 .data = &zynqmp_default_limits,
-> >         },
-> >         {
-> >                 .compatible = "bar-zynq",
-> >                 .data = &zynq_default_limits,
-> >         },
-> >
-> >         { },
-> > };
-> >
+On 9/29/20 7:42 AM, Shuah Khan wrote:
+> On 9/29/20 7:34 AM, Joe Perches wrote:
+>> On Tue, 2020-09-29 at 14:47 +0200, Julia Lawall wrote:
+>>> On Tue, 29 Sep 2020, Dan Carpenter wrote:
+>>>> The times where commas are used deliberately to replace curly braces 
+>>>> are
+>>>> just evil.  Either way the code is cleaner with semi-colons.
+>>>
+>>> I also found exaamples like the following to be particularly unforunate:
+>>>
+>>>                                  fprintf(stderr,
+>>>                                          "page_nr %lu wrong count %Lu 
+>>> %Lu\n",
+>>>                                         page_nr, count,
+>>>                                         count_verify[page_nr]), exit(1);
+>>>
+>>> The exit is very hard to see, unless you know to look for it.
+>>
+>> I sent that patch last month.
+>> https://patchwork.kernel.org/patch/11734877/
+>>
 > 
-> oh, apologies for not thinking about this;
-> i'll spin this up
+> I see what happened. This patch touches lib, cpupower, and selftests.
+> Guess lost in the limbo of who takes it.
+> 
+>   tools/lib/subcmd/help.c                    |  10 +-
+>   tools/power/cpupower/utils/cpufreq-set.c   |  14 +-
+>   tools/testing/selftests/vm/gup_benchmark.c |  18 +-
+>   tools/testing/selftests/vm/userfaultfd.c   | 296 +++++++++++++--------
+>   4 files changed, 210 insertions(+), 128 deletions(-)
+> 
+> I can take it through one of my trees.
+> 
 
-No worries :) 
+Rafael, Andrew,
 
-Moritz
+This patch is now applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
+fixes branch.
+
+This spans pm, kselftest-mm tests and tools/lib and has been
+in limbo for a few weeks for that reason.
+
+I decided to take this through kselftest tree to avoid having
+Joe split the patches.
+
+thanks,
+-- Shuah
+
+
+
+
