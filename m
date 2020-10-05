@@ -2,161 +2,93 @@ Return-Path: <SRS0=hOJu=DM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5118FC4727D
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Oct 2020 20:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC8BC4727E
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Oct 2020 22:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 243922078E
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Oct 2020 20:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1601931355;
-	bh=RauhoP+lY6PB4M6PjyFmPFjt0my1MIgv0r1A7kpjI2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=o3BwCXJahF5qP4PI3JybJnQYd7GgOERw9T9m5Gfu/jW5fYb1SjI166BW192rjdQfH
-	 bNkHxokD6KeoPE5n1IIYnGeQl9MG5P02OwMDKDJY8BwkFIoXO0x3C2EEsK6kayxFz0
-	 /Gg9IWPCB2wHMxOmsl8gBu4JbD2xYXAWRzqkhcEo=
+	by mail.kernel.org (Postfix) with ESMTP id 3B4FC2078A
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Oct 2020 22:59:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="whkj1phY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgJEUzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Oct 2020 16:55:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbgJEUzt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:55:49 -0400
-Received: from earth.universe (dyndsl-095-033-158-146.ewe-ip-backbone.de [95.33.158.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8DB5207EA;
-        Mon,  5 Oct 2020 20:55:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601931347;
-        bh=RauhoP+lY6PB4M6PjyFmPFjt0my1MIgv0r1A7kpjI2k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HkOPmEqswDfagOwa/8h6eYeJ28nUpx4kzUzMEiO5C2WpZ/JyxwPsMpOCvfalXuv/N
-         SHdwGJl0wavO+zZoAFWHwvQtMiirhu1+TeuQnuYzBjE+S+5qOuOKtkPXd2EjrwLySS
-         ddJlXztUaG/j988mXtEhLvSqV8GY7zi9RJGnOy4s=
-Received: by earth.universe (Postfix, from userid 1000)
-        id B9D193C0C87; Mon,  5 Oct 2020 22:55:45 +0200 (CEST)
-Date:   Mon, 5 Oct 2020 22:55:45 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>, dmaengine@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Richard Weinberger <richard@nod.at>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        id S1726944AbgJEW7Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Oct 2020 18:59:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgJEW7X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Oct 2020 18:59:23 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF70C0613CE
+        for <linux-clk@vger.kernel.org>; Mon,  5 Oct 2020 15:59:21 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id p15so4668373ljj.8
+        for <linux-clk@vger.kernel.org>; Mon, 05 Oct 2020 15:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4RasjbO/aKL6xgHWeTfDO4Z62vB2SneSkIEF2/wi8pU=;
+        b=whkj1phYySdBon7CnDUEmBOZ/0aFMH4iuzdzxXQrlukCooJC8YCyB5sjsU4hzII5VE
+         jvV0bGnoU4ArFEptzrwTQA4tYpKxrdCSHnyknjRoH4asygTJqTQaFLCGXELxgWm92kSo
+         rrIwzybdmh6RzFA+WAijGaQjBd4LC64dHsZcVr+eLMndehAcC2LQmP+H0ES8A90JSSOJ
+         SCjqs/+2RLbdIXbBTn3ibyLKerUiHNynDx2CEk+Ut2gJb6HkbXdscitVUUlDcX6Oloq0
+         VZ15/uMjQ6od6QR7aNQo2UNG4G8LE+Sf8svm0wE47nmq6Cv5dYuvUBGWtk2DsksUCJmj
+         JZkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4RasjbO/aKL6xgHWeTfDO4Z62vB2SneSkIEF2/wi8pU=;
+        b=bUEWIZnh625oe/bH1nW49uz78uqArfTfg3gqrMu17OlanBd02evEdv9xsxaeKKWIpb
+         s/aCtQ2He2CrZqOsF5JuojM4s7nSxqXuF6bWipX8Y2QzrW/xynaDxC1iY1T7KKRrzYLk
+         0biVRSbkfIoDm2wtz2DBzcMgrNKsms8Cpo7mTn6ulZOzj8SN8L2zkaHs7GadeSOQqEwI
+         slTgv0fc+395x7NwUzoNdKPnWU7YTCvuwNJjj/Fympuk4pbZzKkwAX1qws9QONL8cehZ
+         cpFBNNEO9qG4xYA+NdFJqKxicJJFxW6dIitOOs+bWY115NAPO0cVD1wum6dWU0Xfr/Lo
+         H/Eg==
+X-Gm-Message-State: AOAM530YUE+Z1yqh1oSZOxqgH/lJ8hIkwtZqR9ow3wIXpEJAP9RvBeSv
+        b/Zk3NHz4MsY/DeUs/HOgC8YFg==
+X-Google-Smtp-Source: ABdhPJzMqwVqhWMjmTzL/sA2ceLh7lj7NhlAzV1bg48rIU9irVM3XDrI79l7ijRYojZaxg4YJVgFSw==
+X-Received: by 2002:a2e:b167:: with SMTP id a7mr644524ljm.359.1601938760189;
+        Mon, 05 Oct 2020 15:59:20 -0700 (PDT)
+Received: from eriador.lan ([188.162.64.219])
+        by smtp.gmail.com with ESMTPSA id x4sm353831ljc.80.2020.10.05.15.59.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Oct 2020 15:59:19 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: Explicitly allow additional properties
- in common schemas
-Message-ID: <20201005205545.sqvohrh7jpt7w63w@earth.universe>
-References: <20201005183830.486085-1-robh@kernel.org>
- <20201005183830.486085-5-robh@kernel.org>
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v1 0/3] clk: qcom: handle power domains supplies for GDSC
+Date:   Tue,  6 Oct 2020 01:59:11 +0300
+Message-Id: <20201005225914.315852-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7db5qni5yh4rtlce"
-Content-Disposition: inline
-In-Reply-To: <20201005183830.486085-5-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On SM8250 MDSS_GDSC (and the rest of display clock controller) is
+supplied power by MMCX power domain. Handle this link in GDSC code by
+binding the power domain in dts file.
 
---7db5qni5yh4rtlce
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset depends on [1]
 
-Hi,
+Changes since RFC:
+ - Fix naming of gdsc_supply_on/gdsc_supply_off functions
+ - Fix detaching of solo gdsc's power domain in error handling code
+ - Drop the dts patch, as respective display nodes are still not
+   submitted to the mailing list.
 
-On Mon, Oct 05, 2020 at 01:38:30PM -0500, Rob Herring wrote:
-> In order to add meta-schema checks for additional/unevaluatedProperties
-> being present, all schema need to make this explicit. As common/shared
-> schema are included by other schemas, they should always allow for
-> additionalProperties.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  [...]
->  .../devicetree/bindings/power/supply/power-supply.yaml       | 2 ++
->  [...]
+[1] https://lore.kernel.org/linux-arm-msm/20200927190653.13876-1-jonathan@marek.ca/
 
-Acked-by: Sebastian Reichel <sre@kernel.org>
 
--- Sebastian
-
---7db5qni5yh4rtlce
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl97iEsACgkQ2O7X88g7
-+pr9vg//fpVYpKsaZc4pw203Kmzwve+W4z3OPaQS7g1Y93QHWykKxFYpCgOrbmA7
-Ikwy3xwBLfMhPIUs8KZDsiaLVkKTi9XJifhEKiG4Uz772vFOZqAPgskcT6Sx4+iN
-4lqd7WmgV3hGelDss8qw6dQ1FY0/MHuMXvoDeNHTvqi0ZhttRrQmOEO6spkWL1io
-39Au/Pxbh2dK06Y7Y0qoKlqCKxnL4fWlUjFqJkJI+d4LjK/XYvukOTPmAhEYfP2H
-tZ38WZd/3SxwQD+Nh6ZJCfKC54D00G54g+fkxhaiypSSgI1IPWfIsrqPfPnVMowq
-wI2fo/C10LMZ1kqUi/LCW+OET8aePRkYjUMWZ2GBNRY9MJCJH/WkOPy7PaKHrOfU
-EdJx9OH7guvFWaEJGhClazwYS6QkM8CEKy7Nd5nJTeQOBEg/p2Lb2etNPNq34nju
-o9euArIjrnqbHK5X9Ijyvhaqw3bxsVPmPkOGUayDMB44UtwHNFqIosmboJnkJ6bt
-BGS1zVnJs2sdLMqMZcCwfHGoX00rThZgvCACDas7fVEdsZgtaEnCW8aySbWCKPdY
-1gtR+xdosJheKba+kMxfhmR0nm62rAmJvS9XOZaBY+cveye5NtC3kvk+Al5ixucd
-jYmH3Iudn+0hC44ZPGUl49YUa5cwsX8NZlyh8ItyWm/x+WiVyb8=
-=9y9P
------END PGP SIGNATURE-----
-
---7db5qni5yh4rtlce--
