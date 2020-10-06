@@ -7,59 +7,60 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44312C4727F
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Oct 2020 09:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090F5C47426
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Oct 2020 09:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E689A2100A
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Oct 2020 09:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF32F208FE
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Oct 2020 09:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMV78gRf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sl5DvJTU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725912AbgJFJN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Oct 2020 05:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43402 "EHLO
+        id S1726323AbgJFJNk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Oct 2020 05:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbgJFJNY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Oct 2020 05:13:24 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F67C0613A7
-        for <linux-clk@vger.kernel.org>; Tue,  6 Oct 2020 02:13:18 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id j21so1646024uak.5
-        for <linux-clk@vger.kernel.org>; Tue, 06 Oct 2020 02:13:17 -0700 (PDT)
+        with ESMTP id S1726304AbgJFJNf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Oct 2020 05:13:35 -0400
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D42AC0613DB
+        for <linux-clk@vger.kernel.org>; Tue,  6 Oct 2020 02:13:33 -0700 (PDT)
+Received: by mail-vs1-xe44.google.com with SMTP id w25so5711467vsk.9
+        for <linux-clk@vger.kernel.org>; Tue, 06 Oct 2020 02:13:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8dDgYnCSpFzq6wD68V8dBs1dGtEohkus4tfFLo0MV6k=;
-        b=mMV78gRfUiTX0Fhq7sbtPeAZE51FANqXe2ffb+yEjr5QoeawgMMwQ8XSrhilmLvHtx
-         sEQF9fUq5Cmu8qOzxjbqa7RQXLkqpoqkoe++HcWkcaLYHbckkwjq/ue7xT3XAD7Uwx43
-         V06RGxgjHInxMdw3DBkk+/9rjGYrV+FnbFAksujQ3/k0njBC0ztFm62WAFNts1zyT9yx
-         oCohLIW+tNgNLvhP4H4CyiMr4WGBCs1Zex5WjzDVN9v47A0drQeaNuCYVRG5QCA6OMto
-         TQSAPGix4TPbAEDvrfDxLrnk+h7EjMNps8LmL2KLypfVwnIUdvEC6slFmF9jTy6w85lq
-         wAsw==
+        bh=9zZ3JqKuAucMkJsBK3uQ6oqn08Q8o246NeeOkBUzIpE=;
+        b=sl5DvJTU8XoKckrDy72v6SE14TnVpy4Bt91zBzW0shyY1MAQ6mAh44/03XDifpnVyT
+         4w+72PUsHJIIJhKHPRrCT8pTCi2CZ3lYrznO931Zy9GGzbJgV3AbLMDW/WTkvZw1ySi0
+         xZ8mKac9WB616FWJmzh+4pR4DO2W+qMrWvhETvIhmdmS6svN/TirR+Lk59vHi5nED0Fw
+         UNsL0wfC4tJEer6UJgLfY8iJyldfPPnH6zruIDXY8NS9LaxnxiZNZZ15iF6VLc8jtGT7
+         kw77Swrlk5F0D0JlHVpGszmJH8RyljctW41ctPimXYx2UDZ6rbS2tZM9fINpQJUVuEtk
+         CGiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8dDgYnCSpFzq6wD68V8dBs1dGtEohkus4tfFLo0MV6k=;
-        b=I0l6Tt7vTQcFGuKU6UlKZxY/x2nEXGfzKsNCnJJTdHCtmP//LWkCVH0ZPMfEKdcTuJ
-         kwH1K6Ikb+LseJtUAmF3wx1GREqXYdk6i62alXwZJ64bvRvSmc36Z37+hZ7DmKx/thkp
-         P2L+EVAORllgaG8eCKurX897gZnaMOnm1ZWugjbBW6HwO/IpJgz4U5YFHBE0WDvRv/B8
-         uyzReqtpOl586TFqEDG7hc1SBSSpz8DieRxovZE+2HFzkqPlcwyw517omab+pY0pRNgd
-         Z+qlI7RLI1GVSkea3xjxZ00GFGTs5N3IZAnQMiJUC+ZF9pPRdOmiB87W/19M8F+zHIV/
-         +JlA==
-X-Gm-Message-State: AOAM531RnkjdV+8ImiAkn4sWwaQ973yA2XnIxJFE52dGdaOUYUChH9wg
-        y6QEC51DcLnv+9DLvl/dXZiRE+GKJ8EFX8TUFVxEGQ==
-X-Google-Smtp-Source: ABdhPJyShwqC7yW6UgNo8q98koC+vDiOR29TMFNqADEMu067y863m4dqGu1r37N7vNMGC6BIcV2u4BNvWr4WQc/Y4R4=
-X-Received: by 2002:ab0:130a:: with SMTP id g10mr2309765uae.100.1601975596602;
- Tue, 06 Oct 2020 02:13:16 -0700 (PDT)
+        bh=9zZ3JqKuAucMkJsBK3uQ6oqn08Q8o246NeeOkBUzIpE=;
+        b=HBgYH+/RlKq6f5+0a2HkRVtV2CbjrwFvuGssp20mT22lG9AYOudaUtweQjv4IAeVjW
+         aZJgbA7gLg54AN/isGH7B1vcezbJjSj6YsaNVVKgYDecrquDBBArYd2MiEQ/byvqWR6A
+         BvO2aBJUngy5rYU0xUaPBTUEGXsFSTUD3xU2dIRc0C7Xwm3ePy5ZppGB/GUEcOcFdcUu
+         rtZxljmdOdsS6u7ZC5Lo69K9ZkJ9BcdpYW/1uhtv6ptbQp83SmZ0Ptb7xisZ4NAF9rvB
+         mGkpmXB6hnD0Vngk1nb33C1GS0ynMw3X7mfmQTruHjEpvewnQQXDgA2glf9iPrHqkHJv
+         hoeQ==
+X-Gm-Message-State: AOAM531aAp4VtQGU6DJVV6LuLDNefSOuDVnDiA/NV2dobCn8G33K+gdj
+        BGFnnXUXTPwAXTSB+i6CQCb3iA73X67UIUmNKH06oA==
+X-Google-Smtp-Source: ABdhPJw+U5yOHue/Ytd8RPqMjT92IYE0mZoO7yO1YIY/4s+p2JNLru501tVYMlY3tURTLHPZrBHXQO8va9HmuomgCis=
+X-Received: by 2002:a67:6b07:: with SMTP id g7mr2713184vsc.48.1601975612161;
+ Tue, 06 Oct 2020 02:13:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201005183830.486085-1-robh@kernel.org> <20201005183830.486085-2-robh@kernel.org>
-In-Reply-To: <20201005183830.486085-2-robh@kernel.org>
+References: <20201005183830.486085-1-robh@kernel.org> <20201005183830.486085-5-robh@kernel.org>
+In-Reply-To: <20201005183830.486085-5-robh@kernel.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 6 Oct 2020 11:12:39 +0200
-Message-ID: <CAPDyKFqMic9_3OBvSWrdrXonDjeC+8kjDobTunijxvL6gYDPjQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: Add missing 'unevaluatedProperties'
+Date:   Tue, 6 Oct 2020 11:12:55 +0200
+Message-ID: <CAPDyKFoxg_i8tcRjV_htv9s1Z=gxYzJtxPAnCqRR9gzR2hkG0w@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dt-bindings: Explicitly allow additional properties
+ in common schemas
 To:     Rob Herring <robh@kernel.org>
 Cc:     DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -132,33 +133,25 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 5 Oct 2020 at 20:38, Rob Herring <robh@kernel.org> wrote:
 >
-> This doesn't yet do anything in the tools, but make it explicit so we can
-> check either 'unevaluatedProperties' or 'additionalProperties' is present
-> in schemas.
->
-> 'unevaluatedProperties' is appropriate when including another schema (via
-> '$ref') and all possible properties and/or child nodes are not
-> explicitly listed in the schema with the '$ref'.
->
-> This is in preparation to add a meta-schema to check for missing
-> 'unevaluatedProperties' or 'additionalProperties'. This has been a
-> constant source of review issues.
+> In order to add meta-schema checks for additional/unevaluatedProperties
+> being present, all schema need to make this explicit. As common/shared
+> schema are included by other schemas, they should always allow for
+> additionalProperties.
 >
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 
 [...]
 
->  .../devicetree/bindings/mmc/amlogic,meson-mx-sdhc.yaml       | 2 ++
->  Documentation/devicetree/bindings/mmc/cdns,sdhci.yaml        | 2 ++
->  Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml       | 2 ++
->  Documentation/devicetree/bindings/mmc/owl-mmc.yaml           | 2 ++
->  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml  | 2 ++
->  Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml         | 2 ++
->  .../devicetree/bindings/mmc/socionext,uniphier-sd.yaml       | 2 ++
->  Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.yaml  | 2 ++
+>  Documentation/devicetree/bindings/mmc/mmc-controller.yaml    | 2 ++
+>  .../devicetree/bindings/mmc/synopsys-dw-mshc-common.yaml     | 2 ++
+>  Documentation/devicetree/bindings/mtd/nand-controller.yaml   | 2 ++
 
-For mmc:
+[...]
+
+>  Documentation/devicetree/bindings/power/power-domain.yaml    | 2 ++
+
+For mmc and power-domain:
 
 Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
