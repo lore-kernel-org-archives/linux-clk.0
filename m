@@ -2,158 +2,176 @@ Return-Path: <SRS0=cffc=DO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAD5C4363C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Oct 2020 03:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796E7C4363D
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Oct 2020 11:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9846C214DB
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Oct 2020 03:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F38620789
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Oct 2020 11:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=osportal.onmicrosoft.com header.i=@osportal.onmicrosoft.com header.b="ZENTqp38"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="nej5WNcI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgJGDig (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Oct 2020 23:38:36 -0400
-Received: from mail-eopbgr770055.outbound.protection.outlook.com ([40.107.77.55]:6373
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725981AbgJGDig (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Oct 2020 23:38:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PPjIw77wqA6rQ7r42kqtrsuvJ8WJLwIXQKJb01eEvn6gH998YlBd69QOrZmOqi9derUfijGSDnsKdj7OxI3liyxv9H2OdMHzBTerpdefeHClwjX2VM/sPAnv0vTrh0lUZ57AY3PV+DHq+dHHyprJH6UnNWVhjggHsX9qZdnXrnjb+nvFPldDzc24jdosf48FwbAu3GVGHcepPE6WV9R7GierOd5ZZwejcIj78XDQbNEdkGi/49YskKKJZ/1a12R2CNjxuWI7dGOrYS5R6qJMqv7ZPMVHA3hDsIrzZZyGnALDtcyuopdtBhwq2gR0602ThtineIA434WtpkreaB/7gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TmdJXpH+QuLU3HRTbQ5xGn0KmliMiR+6xZpCscNTlH8=;
- b=A/uNAlrAJjyT+HinOFdtse+u3iEDZO3L6XjTaytqNt5mOF3wKQlsxa4/a/6aTVrvqtbZ5Q56A+ccRI+uRUWMjt8UEHi1BDMfxQB3OYbBV2WI4h28p+52XyZEnNoYhTCKmHKZIZES+qHqSpTBQ6M+XLq5v8gf+WuTngLOTdwBeaFVdPujki1g3YmStxgmGZRLU1CM1lKVMc1KwsslrEOv/DnpmYKyDWG8Lvkj7jVT+9pTZYql8aQBcLbYgHZ0DnBZMVPk9a7K18c7IbSU/T4jx74Cn9dBEPA2x8HDK0MJzorCq3qgh/iY3TC0yY88C5sRxNQMB/uNQPdkIl7oyKk0pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=openfive.com; dmarc=pass action=none header.from=openfive.com;
- dkim=pass header.d=openfive.com; arc=none
+        id S1727685AbgJGLe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Oct 2020 07:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbgJGLeO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Oct 2020 07:34:14 -0400
+Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA2EC061755;
+        Wed,  7 Oct 2020 04:34:14 -0700 (PDT)
+Received: by mail-qv1-xf42.google.com with SMTP id bl9so901048qvb.10;
+        Wed, 07 Oct 2020 04:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=osportal.onmicrosoft.com; s=selector2-osportal-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TmdJXpH+QuLU3HRTbQ5xGn0KmliMiR+6xZpCscNTlH8=;
- b=ZENTqp384Hj5gqA1fdUsOhtnmdnZKP7D7/NaT77ARuVp7B08Gkg04fD/+NaF4LlCck4QxMp7ISC+t+TTN16B/CDK7PoeSrA59Ll3ncpcPshedIPcMX5i5gDxAo4wmXviFEDCHO9K4vQRbqSV5zC6QxIcYnIdjBRCDLCBta9uts8=
-Received: from DM6PR13MB3451.namprd13.prod.outlook.com (2603:10b6:5:1c3::10)
- by DM6PR13MB2524.namprd13.prod.outlook.com (2603:10b6:5:ca::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3455.13; Wed, 7 Oct
- 2020 03:38:32 +0000
-Received: from DM6PR13MB3451.namprd13.prod.outlook.com
- ([fe80::a48a:1f7c:267c:876]) by DM6PR13MB3451.namprd13.prod.outlook.com
- ([fe80::a48a:1f7c:267c:876%7]) with mapi id 15.20.3455.021; Wed, 7 Oct 2020
- 03:38:32 +0000
-From:   Sagar Kadam <sagar.kadam@openfive.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        Yash Shah <yash.shah@openfive.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Paul Walmsley ( Sifive)" <paul.walmsley@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: RE: [PATCH v2 1/3] dt-bindings: fu540: prci: convert PRCI bindings to
- json-schema
-Thread-Topic: [PATCH v2 1/3] dt-bindings: fu540: prci: convert PRCI bindings
- to json-schema
-Thread-Index: AQHWlnXeXXLTxHlPR0agfuqgQBIFramK9AgAgACUlnA=
-Date:   Wed, 7 Oct 2020 03:38:32 +0000
-Message-ID: <DM6PR13MB345196DCD0894CD0C77DCFC6970A0@DM6PR13MB3451.namprd13.prod.outlook.com>
-References: <1601393531-2402-1-git-send-email-sagar.kadam@sifive.com>
- <1601393531-2402-2-git-send-email-sagar.kadam@sifive.com>
- <20201006184244.GA2610231@bogus>
-In-Reply-To: <20201006184244.GA2610231@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=openfive.com;
-x-originating-ip: [116.74.151.16]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7169d408-cc5a-414e-c4a0-08d86a7276fe
-x-ms-traffictypediagnostic: DM6PR13MB2524:
-x-ld-processed: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR13MB25244DF2231D452805E983E3970A0@DM6PR13MB2524.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1332;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: HbY5C1zHFTvz2Gnra3wtAI5JFk/PUuogKW6aGdLPb2XqJDgRWNyn8qv+iGKISelPODXvRsHghE7oud5GSpjvDF+TY9HCVg+QR6sEv5xwNoBsjya9hGDhFhsgUdCNjVDwqpuxvxFU0FvJr99DphWuKj0HdP6rmb8FmNsEz8E5Q6tPJoV8FOP5mH6mVlNmeFGluhg1VHL77ykaFV6pwzLbjevSZAAY+IQUJJWPqXR5TF0IK9+c6H9JSA8sARpqNtN9gKNGH27RQ2cFqp8V9dxos25cc4vhZN2TCM6gLpZPTp4qSkqE346+3M2AEbylua0hAncHkdlwdzcdehTiD4ENKQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR13MB3451.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(346002)(396003)(366004)(136003)(39850400004)(8676002)(7696005)(4326008)(86362001)(478600001)(44832011)(26005)(55236004)(6506007)(53546011)(33656002)(186003)(9686003)(64756008)(8936002)(66446008)(55016002)(316002)(71200400001)(6916009)(54906003)(52536014)(5660300002)(66556008)(66476007)(7416002)(2906002)(66946007)(83380400001)(76116006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: nby6Dx2z2LLxqwlFCU7sknVZUM4Hc1gOPxs5KAHXVt/09QOK4C9sl7HKBM1sRZwIuYJCimwJQZK6tHzdPDZO5b3A7GPf/pNh/xd+4CPxAC6zgf9Q77De1oDn43qnN1q4qLUCgOlXjpGrkGoHAfz3p6JPiGY96XLig9Hn1iZYkREpj/R8b9XGfyFn5Qf0YlZ68kBHNM6wZsRZoO3bzqLqeCCPtn+dEzSYLzLPrKahtHMfffW4ulzq1gc3+0OEgpTpnkT4Oy/PzGmWvft7XK7z3yWrfiR8Rt/DA8k19Fz4C466I5DsM5fU+EusCfq9q6bnLvXHne4ElFSXPcCHKWRHyfqH2wnpvKgaK5IHp3N6B8sobyRN1u5To0BJ9phGGlInDkLkaf+p/kikR2xuHt2g5dtIXnVzmC32c2QODfXvNtACFj/2Yd7qljxH0zVlIMmXkauDN5UN6ISTkR2QSFhfLf0JY07aImQo0DaD9TbHhGqI1UG6KFrRvPEtOXbzYJGk7DY1HyXEpQ3nS/yP/PuFTBWB4JmcTR2BLn+n66tMLAK01NGau2vCcHgK6Jm8OjCO28XnFq4/i+ewR+b0bR0YmvGbnPY6dnKmIsFRPmWiyMTxQ5EcPobY3rx2wWCoyBuG/WQipqQUcx1lW/nVExP+fQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5gd24hGze2dlKa1wOLIr4c2viYI7MlJtHZphDgoFUVs=;
+        b=nej5WNcIK56SyOCybSZumZqJf6A/JHEfjj+e5VIiFKbJBj6j7UWT81hQlpCTN37QGo
+         NvnDzREDJxVx9252ux3ihNf+AC2FgEuJhUyjBIjDG909ls7E6QR5TTMewcZStskxnYXc
+         k9OsItoE1oB7RI1mFp0plZooxsP2BJhrpy17w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5gd24hGze2dlKa1wOLIr4c2viYI7MlJtHZphDgoFUVs=;
+        b=i2j5ZPFca502knq7LRCLWNdZkX9dHE+ofl8ZruLHpQQRNInQgFbCuBizhcfMi9NK9l
+         O4X2rr2gl1NXKu2hI0bLxvuZbua7SjJ1v0HKP0JFtL+GjM47pzJRuZxODP+6rQqrWtVF
+         suKdOlIgeXrGlWSdfmVdctKPhq1WZNsP14oosFKON817eX+R7MfzzDPtyvXX+Fwk67Tx
+         auRQKjgQUXtJeNjSjAjO87LPmFakLkNUnD9KygyePofZ7IAs3cSDf/Kph+/FTZ4/1yT7
+         9OG6dMyv03DhRVu3ylCyZSCbFjIETOi2I63hKVR9QIn/UnTDb53S/IuKuIjmjFDMe2hp
+         Zw7g==
+X-Gm-Message-State: AOAM533kC8NQp1dPbO1HDaDJIoG4wC6wuViN8CBRSkInL2IY13tK2MxL
+        WR1WIsQp3uVraBUCWrcNndaoBm7AgPWwAqyHxVA=
+X-Google-Smtp-Source: ABdhPJxHGdLEOTYZ/YuiJaeWNOoKwHPMWh2RBpBkOnkUGWbXX9IQhzyjEUxAW3FfGri+qbzFdcHFn6OEjIS9aoHCpWo=
+X-Received: by 2002:ad4:51c6:: with SMTP id p6mr2793618qvq.18.1602070453395;
+ Wed, 07 Oct 2020 04:34:13 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: openfive.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR13MB3451.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7169d408-cc5a-414e-c4a0-08d86a7276fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2020 03:38:32.4361
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 22f88e9d-ae0d-4ed9-b984-cdc9be1529f1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lX4sV84yOcFmF7Fx9F5sCnrQcCK6nSghDpmgUrOR42fApFl6MlJqVRVxeIhDGGc6Y36NVBHn47MSbhShQp80nQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR13MB2524
+References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
+ <20200928070108.14040-2-ryan_chen@aspeedtech.com> <CACPK8XcjmxBGUfDxE2WB3zBgG8OCoRMogfG=Fk5f+wNZu0pjMg@mail.gmail.com>
+ <HK0PR06MB338059A24B66C14675298D0BF2320@HK0PR06MB3380.apcprd06.prod.outlook.com>
+In-Reply-To: <HK0PR06MB338059A24B66C14675298D0BF2320@HK0PR06MB3380.apcprd06.prod.outlook.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 7 Oct 2020 11:34:01 +0000
+Message-ID: <CACPK8XdBmkhZ8mcSFmDAFV8k7Qj7ajBL8TVKfK8c+5aneUMHZw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
+To:     Ryan Chen <ryan_chen@aspeedtech.com>
+Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BMC-SW <BMC-SW@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Wednesday, October 7, 2020 12:13 AM
-> To: Sagar Kadam <sagar.kadam@openfive.com>
-> Cc: aou@eecs.berkeley.edu; linux-riscv@lists.infradead.org;
-> tglx@linutronix.de; linux-pwm@vger.kernel.org; palmer@dabbelt.com;
-> jason@lakedaemon.net; Yash Shah <yash.shah@openfive.com>;
-> thierry.reding@gmail.com; lee.jones@linaro.org; u.kleine-
-> koenig@pengutronix.de; robh+dt@kernel.org; Paul Walmsley ( Sifive)
-> <paul.walmsley@sifive.com>; linux-kernel@vger.kernel.org; linux-
-> clk@vger.kernel.org; maz@kernel.org; mturquette@baylibre.com;
-> devicetree@vger.kernel.org; sboyd@kernel.org
-> Subject: Re: [PATCH v2 1/3] dt-bindings: fu540: prci: convert PRCI bindin=
-gs to
-> json-schema
->=20
-> [External Email] Do not click links or attachments unless you recognize t=
-he
-> sender and know the content is safe
->=20
-> On Tue, 29 Sep 2020 21:02:09 +0530, Sagar Kadam wrote:
-> > FU540-C000 SoC from SiFive has a PRCI block, here we convert the
-> > device tree bindings from txt to YAML.
+On Tue, 29 Sep 2020 at 08:40, Ryan Chen <ryan_chen@aspeedtech.com> wrote:
+>
+> > From: Joel Stanley <joel@jms.id.au>
+> > Sent: Tuesday, September 29, 2020 4:04 PM
+> > To: Ryan Chen <ryan_chen@aspeedtech.com>; Jae Hyun Yoo
+> > <jae.hyun.yoo@linux.intel.com>; Andrew Jeffery <andrew@aj.id.au>
+> > Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > <sboyd@kernel.org>; linux-clk@vger.kernel.org; Linux ARM
+> > <linux-arm-kernel@lists.infradead.org>; linux-aspeed
+> > <linux-aspeed@lists.ozlabs.org>; Linux Kernel Mailing List
+> > <linux-kernel@vger.kernel.org>; BMC-SW <BMC-SW@aspeedtech.com>
+> > Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
 > >
-> > Signed-off-by: Sagar Kadam <sagar.kadam@sifive.com>
-> > ---
-> >  .../bindings/clock/sifive/fu540-prci.txt           | 46 --------------=
----
-> >  .../bindings/clock/sifive/fu540-prci.yaml          | 60
-> ++++++++++++++++++++++
-> >  2 files changed, 60 insertions(+), 46 deletions(-)  delete mode
-> > 100644 Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/sifive/fu540-prci.yaml
+> > On Mon, 28 Sep 2020 at 07:01, Ryan Chen <ryan_chen@aspeedtech.com>
+> > wrote:
+> > >
+> > > In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2
+> > > are default for Host SuperIO UART device, eSPI clk for Host eSPI bus
+> > > access eSPI slave channel, those clks can't be disable should keep
+> > > default, otherwise will affect Host side access SuperIO and SPI slave device.
+> > >
+> > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > ---
+> > >  drivers/clk/clk-aspeed.c  | 8 ++++----  drivers/clk/clk-ast2600.c | 8
+> > > ++++----
+> > >  2 files changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c index
+> > > 411ff5fb2c07..d348c4fd3f9f 100644
+> > > --- a/drivers/clk/clk-aspeed.c
+> > > +++ b/drivers/clk/clk-aspeed.c
+> > > @@ -54,15 +54,15 @@ static const struct aspeed_gate_data aspeed_gates[]
+> > = {
+> > >         [ASPEED_CLK_GATE_DCLK] =        {  5, -1, "dclk-gate",
+> > NULL,   CLK_IS_CRITICAL }, /* DAC */
+> > >         [ASPEED_CLK_GATE_REFCLK] =      {  6, -1, "refclk-gate",
+> > "clkin", CLK_IS_CRITICAL },
+> > >         [ASPEED_CLK_GATE_USBPORT2CLK] = {  7,  3, "usb-port2-gate",
+> > NULL,   0 }, /* USB2.0 Host port 2 */
+> > > -       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",
+> > NULL,   0 }, /* LPC */
+> > > +       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",
+> > NULL,   CLK_IS_CRITICAL }, /* LPC */
+> > >         [ASPEED_CLK_GATE_USBUHCICLK] =  {  9, 15, "usb-uhci-gate",
+> > NULL,   0 }, /* USB1.1 (requires port 2 enabled) */
+> > >         [ASPEED_CLK_GATE_D1CLK] =       { 10, 13, "d1clk-gate",
+> > NULL,   0 }, /* GFX CRT */
+> > >         [ASPEED_CLK_GATE_YCLK] =        { 13,  4, "yclk-gate",
+> > NULL,   0 }, /* HAC */
+> > >         [ASPEED_CLK_GATE_USBPORT1CLK] = { 14, 14, "usb-port1-gate",
+> > NULL,   0 }, /* USB2 hub/USB2 host port 1/USB1.1 dev */
+> > > -       [ASPEED_CLK_GATE_UART1CLK] =    { 15, -1, "uart1clk-gate",
+> > "uart", 0 }, /* UART1 */
+> > > -       [ASPEED_CLK_GATE_UART2CLK] =    { 16, -1, "uart2clk-gate",
+> > "uart", 0 }, /* UART2 */
+> > > +       [ASPEED_CLK_GATE_UART1CLK] =    { 15, -1, "uart1clk-gate",
+> > "uart", CLK_IS_CRITICAL }, /* UART1 */
+> > > +       [ASPEED_CLK_GATE_UART2CLK] =    { 16, -1, "uart2clk-gate",
+> > "uart", CLK_IS_CRITICAL }, /* UART2 */
+> > >         [ASPEED_CLK_GATE_UART5CLK] =    { 17, -1, "uart5clk-gate",
+> > "uart", 0 }, /* UART5 */
+> > > -       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",
+> > NULL,   0 }, /* eSPI */
+> > > +       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",
+> > NULL,   CLK_IS_CRITICAL }, /* eSPI */
 > >
->=20
-> Applied, thanks!
+> > This is fine for systems that have eSPI. For systems that do not use eSPI, the
+> > clocks are not "required".
+> >
+> > I was sent a similar patch by Jae some time ago:
+> >
+> >
+> > https://lore.kernel.org/openbmc/697a184b-ef99-a46e-bf98-4d339b3aafd8@lin
+> > ux.intel.com/
+> >
+> > Better is to associate drivers with these clocks, and those drivers will ensure
+> > they are left enabled.
+> >
+> > Alternatively, we will need to come up with a device tree binding to describe
+> > the hardware requirement that these clocks are left on.
+> >
+> ASPEED BMC SoC have SuperIO device that default enable, even without BMC fw boot.
+> Host can use SUART1/SUART2/GPIO....
+> That the reason even Linux kernel boot should not change the SoC default clk, that is the impact.
 
-Thanks Rob for applying these patches.
+Ok, that makes sense. Linux will not enable these clocks if a driver
+is loaded for them though, so we should load a driver for them.
 
-BR,
-Sagar
+ESPI: We do not have an upstream driver for eSPI, but once you submit
+one this will solve the eSPI issue.
+
+LPC: The existing LPC driver will enable the clock, so by loading that
+this clock will be left enabled.
+
+UART1/UART2: This is harder, as the SUART mode means the BMC does not
+load a driver for these devices. We could add a property to the device
+tree to describe the clocks that must be left on?
+
+Cheers,
+
+Joel
