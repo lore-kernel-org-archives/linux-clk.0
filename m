@@ -4,73 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C64C4363D
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Oct 2020 01:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C319CC4363D
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Oct 2020 02:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5674520B1F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Oct 2020 01:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D172145D
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Oct 2020 02:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602122048;
-	bh=lV3i+9ypzLKkJz3H47NnyJWPoQ8C3bvpjkcCNkKvoKY=;
+	s=default; t=1602122411;
+	bh=wyBO4zvjEjDcbx6nOHG1RJNNWIaPg0x7TNYULJRlR6Y=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=WTCSnd3t21CdYnZ2u1Pm3LD3WKuVoHVLOTfEFLkiaiyk4TnsGw5Hvg0asGJCGkvJc
-	 YEXc2JMSIux8W40g6B88ivDPAmAYuhrMY28wsIF99gH+UqoB9kg50J2XzzIc/0LiHa
-	 f5Y/7jsYdjqMOO30y3tP7fvfWgWPTmRds6NvzlR0=
+	b=d0QoyIUlWH2WWgrWPndbN9RYs8hG55L5Cfo9v/nFbZ7EYmyzdXyc85c3l871qrplQ
+	 YcXb4GLJwY8cOtF6eesHGIPJOlqYhx43M8a59952EitjrQXtbz8mgMEi5H/Bwd+wgq
+	 gEQSCpbccZdEiUZyIlq+K/ZUIQGu09BbzTZbk9Gw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbgJHByI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Oct 2020 21:54:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50560 "EHLO mail.kernel.org"
+        id S1726520AbgJHCAK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Oct 2020 22:00:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbgJHByH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Oct 2020 21:54:07 -0400
+        id S1726009AbgJHCAK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Oct 2020 22:00:10 -0400
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48551207C3;
-        Thu,  8 Oct 2020 01:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 106A5207C3;
+        Thu,  8 Oct 2020 02:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602122047;
-        bh=lV3i+9ypzLKkJz3H47NnyJWPoQ8C3bvpjkcCNkKvoKY=;
+        s=default; t=1602122410;
+        bh=wyBO4zvjEjDcbx6nOHG1RJNNWIaPg0x7TNYULJRlR6Y=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=reB3SrSx28A7TStUli82aUX7kqaxX8dn4Tyzi2zMW4h5WyU5q8Sb5G3rVUlrulvej
-         5xtI72kTaGPUPpqEVuyn7CTxcceuA4nthzbJ93gBCeu1A/MQtr9t3s1JEPDQuWuWpY
-         8HSCRDDRMib1C0z9vqfefCQkh0IBxsBo/y2OCPKE=
+        b=lojukMi8qd73ZjRWlJfe4shDOCavAlS2irrvtYg9a7bFgxx0405b5a+p0BNBiIyPG
+         23BFJG6rabPwBbMOCSgfPq2NI9wiSvs5JtYuoeQYH0RT925UM9P9P8WV/OoPtwEvc4
+         UQNgGBK9QBtOkvUDfWr1oyopSAuTbflq2dgX0sdU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j1rimjkr7.fsf@starbuckisacylon.baylibre.com>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr> <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr> <1j1rimjkr7.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH 10/18] clk: meson: use semicolons rather than commas to separate statements
+In-Reply-To: <1601719607.774.1.camel@mtkswgap22>
+References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com> <1596115816-11758-4-git-send-email-hanks.chen@mediatek.com> <1599546314.24690.3.camel@mtkswgap22> <1601719607.774.1.camel@mtkswgap22>
+Subject: Re: [PATCH v10 3/3] clk: mediatek: add UART0 clock support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Valdis =?utf-8?q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Joe Perches <joe@perches.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kernel-janitors@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Date:   Wed, 07 Oct 2020 18:54:05 -0700
-Message-ID: <160212204583.310579.15787381299278211019@swboyd.mtv.corp.google.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        devicetree@vger.kernel.org, CC Hwang <cc.hwang@mediatek.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Loda Chou <loda.chou@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org
+To:     Hanks Chen <hanks.chen@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Wed, 07 Oct 2020 19:00:08 -0700
+Message-ID: <160212240863.310579.5253840355657757088@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-09-28 02:47:24)
+Quoting Hanks Chen (2020-10-03 03:06:47)
+> Hi Michael & Stephen,
 >=20
-> On Sun 27 Sep 2020 at 21:12, Julia Lawall <Julia.Lawall@inria.fr> wrote:
->=20
-> Hi Stephen,
->=20
-> Do you want to take all the clock related patches directly ?
->=20
+> Please kindly let me know your comments about this patch.
+> Thanks
 >=20
 
-Sure that's fine.
+What's the base for this patch? I tried applying to v5.9-rc1 and it
+didn't work.
