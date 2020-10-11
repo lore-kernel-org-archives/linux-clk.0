@@ -1,441 +1,108 @@
-Return-Path: <SRS0=xFW4=DQ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Sqg6=DS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC332C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Oct 2020 12:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD147C433DF
+	for <linux-clk@archiver.kernel.org>; Sun, 11 Oct 2020 17:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72AD022284
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Oct 2020 12:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8E82222A
+	for <linux-clk@archiver.kernel.org>; Sun, 11 Oct 2020 17:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asqqtzCC"
+	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="YsJbRBAI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbgJIMaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Oct 2020 08:30:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbgJIMaj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Oct 2020 08:30:39 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05684C0613D2;
-        Fri,  9 Oct 2020 05:30:39 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id f21so9644362wml.3;
-        Fri, 09 Oct 2020 05:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AjmLoetTBObgHXL/i47jeS5ZhvM7sMIdDP4emaMus2g=;
-        b=asqqtzCCpWEdFlVVTjiylkeSMp0o1bvIQI1aTOejkiv0XRQUikw9PJN/MKjI6asZC4
-         hyDbAFwnS6XAJQ3fc6MoHgDFbSvoAj+NcMiv5Fe4ouKyQlqIBrSwYJGfN9Ul1lFjtXf5
-         hdgDBdtiNoR7+IPO7RZprzb+AJjnUNVmzomWZxxs+P/xd5trJwWgez1D1n1tUry9rWpy
-         cGcrPblqZzSIcDgG1WIC22eOQndILpt41GaWZGVB9NKz9Wi7Ye8+zFFb48a/pTV38eb8
-         Yf5+zkNxaNa2dF7rDlLNTamuoBL7Z/oY9vzJWillNUZHzbglT98WHy3qhWab7KRXPsI3
-         Ti/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AjmLoetTBObgHXL/i47jeS5ZhvM7sMIdDP4emaMus2g=;
-        b=Wx/5jDJGDavmDDXvYYQ109sQJqpnM5zLtgiERq/xa7rPSnmvM0gq4uGl46ZZ0YCdmC
-         h5+aJcQKDCTjUeNLwqvz+w/tsi5rz83hj72t7q7Cl5zCm9yZmYTsa60vZXHIzMOXC3g9
-         iHoNEL5NyQ0VQFYpQYW41HX4TKE9Zf8ZIbiCU/j9LWPzNITWBSuVPb2wyG0i1LCu2U6w
-         j9hhpPOSgEv3IQBkWpQjarPWAhX5ImSEutd0Tg50XL0Ad6JWI6JeJuw6thI7Ibm7TatB
-         tJmKh39oKlc5iqfWWVtfuV/k6Cu46Z5smdpM9WiRjBN5C9V2KrQqFoBff8toc9EJpcNT
-         jCfA==
-X-Gm-Message-State: AOAM531MOmnCh8dDOeeOpp0MIcX61FMHSUHHfjKcfq7Dmz3Uaow8uApu
-        wKyPj69UgBnnoQkQtvuqjek=
-X-Google-Smtp-Source: ABdhPJw2Lo8s/yFUlcr8c49/Uewddu9hg079ybrqHjIVWx/YC2AQC7mQhXGMF07QF5gYM3+VLdtnQw==
-X-Received: by 2002:a1c:9949:: with SMTP id b70mr1120408wme.116.1602246637515;
-        Fri, 09 Oct 2020 05:30:37 -0700 (PDT)
-Received: from ziggy.stardust ([213.195.119.110])
-        by smtp.gmail.com with ESMTPSA id t124sm12301997wmg.31.2020.10.09.05.30.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2020 05:30:36 -0700 (PDT)
-Subject: Re: [PATCH v10 2/3] arm64: dts: add dts nodes for MT6779
-To:     Hanks Chen <hanks.chen@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     mtk01761 <wendell.lin@mediatek.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Andy Teng <andy.teng@mediatek.com>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com>
- <1596115816-11758-3-git-send-email-hanks.chen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <847f64e2-8ed6-2e09-5343-2aa70d5937fa@gmail.com>
-Date:   Fri, 9 Oct 2020 14:30:35 +0200
+        id S1728225AbgJKRbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Oct 2020 13:31:34 -0400
+Received: from www381.your-server.de ([78.46.137.84]:59638 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbgJKRbe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Oct 2020 13:31:34 -0400
+X-Greylist: delayed 1611 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Oct 2020 13:31:33 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+         s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID;
+        bh=ZHKg+MjGa0j1+rV6Y9+svUnYM6ktJkBSOZrPnXxDJSk=; b=YsJbRBAIcDXjKl1zhuQvq+oat3
+        BVQSQaXQC0xlxM+2ElqCoWJlQiAi/iMpPFuTRcJcz6ZuM4cyJpvdGC9iGBLEz0HUDLVjjMyZOsdUF
+        BMlYPXXDfnawZ+Tr4RPhjMsPzamWXTu2KkuhKdtz1k7l9ygOCHl3yab7x0vgH7YsoL9gg6ODO9E0a
+        47o2M+jPzodCte05Y2QngXrAudTtyNrTz6+yvBxVYGdwj983+d4AhLtJ8+MX7fj/7II3Eo8WfXZWj
+        PKeteagXGPGekjQMWpPIqkMjNZBPg0X/zgreSv82kxlc51O5oQ7ybzyhCChsbgwBwcCCGIj3/4h4J
+        Zp705dvg==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www381.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <lars@metafoo.de>)
+        id 1kRelx-00027x-Df; Sun, 11 Oct 2020 19:04:37 +0200
+Received: from [2001:a61:2478:ca01:9e5c:8eff:fe01:8578]
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <lars@metafoo.de>)
+        id 1kRelx-000KES-7J; Sun, 11 Oct 2020 19:04:37 +0200
+Subject: Re: [PATCH] dt-bindings: clock: adi,axi-clkgen: convert old binding
+ to yaml format
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "mdf@kernel.org" <mdf@kernel.org>,
+        "ardeleanalex@gmail.com" <ardeleanalex@gmail.com>
+References: <20201001085035.82938-1-alexandru.ardelean@analog.com>
+ <20201006202449.GA2769322@bogus>
+ <DM6PR03MB441199FB58D492BE288D3E6CF90B0@DM6PR03MB4411.namprd03.prod.outlook.com>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <b8262dc4-2c35-fdbe-7639-38a9e6970564@metafoo.de>
+Date:   Sun, 11 Oct 2020 19:04:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <1596115816-11758-3-git-send-email-hanks.chen@mediatek.com>
+In-Reply-To: <DM6PR03MB441199FB58D492BE288D3E6CF90B0@DM6PR03MB4411.namprd03.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.102.4/25954/Sun Oct 11 15:58:33 2020)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 10/8/20 11:28 AM, Ardelean, Alexandru wrote:
+>
+>> -----Original Message-----
+>> From: Rob Herring <robh@kernel.org>
+>> Sent: Tuesday, October 6, 2020 11:25 PM
+>> To: Ardelean, Alexandru <alexandru.Ardelean@analog.com>
+>> Cc: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Hennerich, Michael
+>> <Michael.Hennerich@analog.com>; lars@metafoo.de; sboyd@kernel.org;
+>> mturquette@baylibre.com; mdf@kernel.org
+>> Subject: Re: [PATCH] dt-bindings: clock: adi,axi-clkgen: convert old binding to
+>> yaml format
+>>
+>> On Thu, Oct 01, 2020 at 11:50:35AM +0300, Alexandru Ardelean wrote:
+>>> This change converts the old binding for the AXI clkgen driver to a
+>>> yaml format.
+>>>
+>>> As maintainers, added:
+>>>   - Lars-Peter Clausen <lars@metafoo.de> - as original author of driver &
+>>>     binding
+>> Do you have permission for relicensing? The default was GPL-2.0.
+> I talked to Michael Hennerich [he's cc-ed], and we have permission from his side.
+> I think Lars would need to provide permission as well, as the author.
+> If we won't have a reply from him [after by some time-frame] I'll leave it as GPL-2.0.
+> I'm a bit clumsy about licensing in general; and I don't care about it all that much.
+
+I guess you could argue that the yaml description is original work. 
+Either way
+
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
 
 
-On 30/07/2020 15:30, Hanks Chen wrote:
-> this adds initial MT6779 dts settings for board support,
-> including cpu, gic, timer, ccf, pinctrl, uart, sysirq...etc.
-> 
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
-> ---
->   arch/arm64/boot/dts/mediatek/Makefile       |   1 +
->   arch/arm64/boot/dts/mediatek/mt6779-evb.dts |  31 +++
->   arch/arm64/boot/dts/mediatek/mt6779.dtsi    | 271 ++++++++++++++++++++
->   3 files changed, 303 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dts
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index a57af9da9f5c..4d1b0f9d8d1c 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -1,6 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
->   dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6779-evb.dts b/arch/arm64/boot/dts/mediatek/mt6779-evb.dts
-> new file mode 100644
-> index 000000000000..164f5cbb3821
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6779-evb.dts
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + * Author: Mars.C <mars.cheng@mediatek.com>
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt6779.dtsi"
-> +
-> +/ {
-> +	model = "MediaTek MT6779 EVB";
-> +	compatible = "mediatek,mt6779-evb", "mediatek,mt6779";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +	};
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		reg = <0 0x40000000 0 0x1e800000>;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:921600n8";
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6779.dtsi b/arch/arm64/boot/dts/mediatek/mt6779.dtsi
-> new file mode 100644
-> index 000000000000..370f309d32de
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6779.dtsi
-> @@ -0,0 +1,271 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + * Author: Mars.C <mars.cheng@mediatek.com>
-> + *
-> + */
-> +
-> +#include <dt-bindings/clock/mt6779-clk.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/pinctrl/mt6779-pinfunc.h>
-> +
-> +/ {
-> +	compatible = "mediatek,mt6779";
-> +	interrupt-parent = <&sysirq>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	psci {
-> +		compatible = "arm,psci-0.2";
-> +		method = "smc";
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x000>;
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x100>;
-> +		};
-> +
-> +		cpu2: cpu@2 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x200>;
-> +		};
-> +
-> +		cpu3: cpu@3 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x300>;
-> +		};
-> +
-> +		cpu4: cpu@4 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x400>;
-> +		};
-> +
-> +		cpu5: cpu@5 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			enable-method = "psci";
-> +			reg = <0x500>;
-> +		};
-> +
-> +		cpu6: cpu@6 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a75";
-> +			enable-method = "psci";
-> +			reg = <0x600>;
-> +		};
-> +
-> +		cpu7: cpu@7 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a75";
-> +			enable-method = "psci";
-> +			reg = <0x700>;
-> +		};
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,armv8-pmuv3";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW 0>;
-> +	};
-> +
-> +	clk26m: oscillator@0 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <26000000>;
-> +		clock-output-names = "clk26m";
-> +	};
-> +
-> +	clk32k: oscillator@1 {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <32768>;
-> +		clock-output-names = "clk32k";
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW 0>,
-> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW 0>,
-> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW 0>,
-> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW 0>;
-> +	};
-> +
-> +	soc {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		compatible = "simple-bus";
-> +		ranges;
-> +
-> +		gic: interrupt-controller@0c000000 {
-> +			compatible = "arm,gic-v3";
-> +			#interrupt-cells = <4>;
-> +			interrupt-parent = <&gic>;
-> +			interrupt-controller;
-> +			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-> +			      <0 0x0c040000 0 0x200000>; /* GICR */
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
-> +
-> +			ppi-partitions {
-> +				ppi_cluster0: interrupt-partition-0 {
-> +					affinity = <&cpu0 &cpu1 \
-> +						&cpu2 &cpu3 &cpu4 &cpu5>;
-> +				};
-> +				ppi_cluster1: interrupt-partition-1 {
-> +					affinity = <&cpu6 &cpu7>;
-> +				};
-> +			};
-> +
-> +		};
-> +
-> +		sysirq: intpol-controller@0c53a650 {
-> +			compatible = "mediatek,mt6779-sysirq",
-> +				     "mediatek,mt6577-sysirq";
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			interrupt-parent = <&gic>;
-> +			reg = <0 0x0c53a650 0 0x50>;
-
-This looks a bit suspicious to me. Unfortunately I'm not able to find any 
-reference in the datasheets.
-
-Anyway, patch now applied to v5.10-tmp/dts64
-
-Thanks!
-Matthias
-
-> +		};
-> +
-> +		topckgen: clock-controller@10000000 {
-> +			compatible = "mediatek,mt6779-topckgen", "syscon";
-> +			reg = <0 0x10000000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		infracfg_ao: clock-controller@10001000 {
-> +			compatible = "mediatek,mt6779-infracfg_ao", "syscon";
-> +			reg = <0 0x10001000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		pio: pinctrl@10005000 {
-> +			compatible = "mediatek,mt6779-pinctrl", "syscon";
-> +			reg = <0 0x10005000 0 0x1000>,
-> +			      <0 0x11c20000 0 0x1000>,
-> +			      <0 0x11d10000 0 0x1000>,
-> +			      <0 0x11e20000 0 0x1000>,
-> +			      <0 0x11e70000 0 0x1000>,
-> +			      <0 0x11ea0000 0 0x1000>,
-> +			      <0 0x11f20000 0 0x1000>,
-> +			      <0 0x11f30000 0 0x1000>,
-> +			      <0 0x1000b000 0 0x1000>;
-> +			reg-names = "gpio", "iocfg_rm",
-> +				    "iocfg_br", "iocfg_lm",
-> +				    "iocfg_lb", "iocfg_rt",
-> +				    "iocfg_lt", "iocfg_tl",
-> +				    "eint";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pio 0 0 210>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		apmixed: clock-controller@1000c000 {
-> +			compatible = "mediatek,mt6779-apmixed", "syscon";
-> +			reg = <0 0x1000c000 0 0xe00>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		uart0: serial@11002000 {
-> +			compatible = "mediatek,mt6779-uart",
-> +				     "mediatek,mt6577-uart";
-> +			reg = <0 0x11002000 0 0x400>;
-> +			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART0>;
-> +			clock-names = "baud", "bus";
-> +			status = "disabled";
-> +		};
-> +
-> +		uart1: serial@11003000 {
-> +			compatible = "mediatek,mt6779-uart",
-> +				     "mediatek,mt6577-uart";
-> +			reg = <0 0x11003000 0 0x400>;
-> +			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART1>;
-> +			clock-names = "baud", "bus";
-> +			status = "disabled";
-> +		};
-> +
-> +		uart2: serial@11004000 {
-> +			compatible = "mediatek,mt6779-uart",
-> +				     "mediatek,mt6577-uart";
-> +			reg = <0 0x11004000 0 0x400>;
-> +			interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_LOW>;
-> +			clocks = <&clk26m>, <&infracfg_ao CLK_INFRA_UART2>;
-> +			clock-names = "baud", "bus";
-> +			status = "disabled";
-> +		};
-> +
-> +		audio: clock-controller@11210000 {
-> +			compatible = "mediatek,mt6779-audio", "syscon";
-> +			reg = <0 0x11210000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		mfgcfg: clock-controller@13fbf000 {
-> +			compatible = "mediatek,mt6779-mfgcfg", "syscon";
-> +			reg = <0 0x13fbf000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		mmsys: syscon@14000000 {
-> +			compatible = "mediatek,mt6779-mmsys", "syscon";
-> +			reg = <0 0x14000000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		imgsys: clock-controller@15020000 {
-> +			compatible = "mediatek,mt6779-imgsys", "syscon";
-> +			reg = <0 0x15020000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		vdecsys: clock-controller@16000000 {
-> +			compatible = "mediatek,mt6779-vdecsys", "syscon";
-> +			reg = <0 0x16000000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		vencsys: clock-controller@17000000 {
-> +			compatible = "mediatek,mt6779-vencsys", "syscon";
-> +			reg = <0 0x17000000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		camsys: clock-controller@1a000000 {
-> +			compatible = "mediatek,mt6779-camsys", "syscon";
-> +			reg = <0 0x1a000000 0 0x10000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		ipesys: clock-controller@1b000000 {
-> +			compatible = "mediatek,mt6779-ipesys", "syscon";
-> +			reg = <0 0x1b000000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +	};
-> +};
-> 
