@@ -2,191 +2,186 @@ Return-Path: <SRS0=uYlR=DU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B68C43457
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 14:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CF2C433E7
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 17:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD9124829
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 14:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5CB25319
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 17:05:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="dZfJ9/mL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388661AbgJMOaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 10:30:39 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:31412 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387516AbgJMOai (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Oct 2020 10:30:38 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09DENOoj012153;
-        Tue, 13 Oct 2020 10:30:24 -0400
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 344js7mcs9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Oct 2020 10:30:24 -0400
-Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 09DEUMPm003712
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 13 Oct 2020 10:30:23 -0400
-Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 13 Oct 2020 07:30:21 -0700
-Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
- SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 13 Oct 2020 07:29:26 -0700
-Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX11.ad.analog.com
- (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
- Transport; Tue, 13 Oct 2020 07:30:21 -0700
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 09DEUINT020834;
-        Tue, 13 Oct 2020 10:30:18 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <michael.hennerich@analog.com>, <lars@metafoo.de>,
-        <mdf@kernel.org>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <mturquette@baylibre.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v2] dt-bindings: clock: adi,axi-clkgen: convert old binding to yaml format
-Date:   Tue, 13 Oct 2020 17:34:20 +0300
-Message-ID: <20201013143421.84188-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201001085035.82938-1-alexandru.ardelean@analog.com>
-References: <20201001085035.82938-1-alexandru.ardelean@analog.com>
+        id S1728663AbgJMRFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 13:05:35 -0400
+Received: from z5.mailgun.us ([104.130.96.5]:13703 "EHLO z5.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727412AbgJMRFf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Oct 2020 13:05:35 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1602608734; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=YTaebKKbSFfDkBLgSmtyi+26Uv70n9SE6Qp6TyuX3HI=; b=dZfJ9/mLSRWbbV7xH4sP8L2oHQPe7YsFrx3w/bDC1PXBr76Q7d27LBOKjQoFPcNI49r1Nh2d
+ 7O8vtOjtjjj4RiFhiF9EkSTPr2g8uKwByw6FWJOZ8q58x7z8AC7va/Ay9mNL1LeQhBytnQ2j
+ Vyp50GuhJCfRtXjorDK8prfiRLs=
+X-Mailgun-Sending-Ip: 104.130.96.5
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
+ 5f85de044f8cc67c310a915d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 13 Oct 2020 17:04:04
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E0A13C43382; Tue, 13 Oct 2020 17:04:03 +0000 (UTC)
+Received: from [192.168.0.104] (unknown [49.204.182.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 65688C433CB;
+        Tue, 13 Oct 2020 17:03:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65688C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 1/3] clk: qcom: clk-alpha-pll: Add support for
+ controlling Agera PLLs
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+References: <1599584848-15530-1-git-send-email-tdas@codeaurora.org>
+ <1599584848-15530-2-git-send-email-tdas@codeaurora.org>
+ <160012882627.4188128.11464299361688037948@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <a88817ea-6fd2-9225-41e4-b6b9dff2fb13@codeaurora.org>
+Date:   Tue, 13 Oct 2020 22:33:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-13_06:2020-10-13,2020-10-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 phishscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010130109
+In-Reply-To: <160012882627.4188128.11464299361688037948@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This change converts the old binding for the AXI clkgen driver to a yaml
-format.
+Thanks for the review Stephen.
 
-As maintainers, added:
- - Lars-Peter Clausen <lars@metafoo.de> - as original author of driver &
-   binding
- - Michael Hennerich <michael.hennerich@analog.com> - as supporter of
-   Analog Devices drivers
+On 9/15/2020 5:43 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2020-09-08 10:07:26)
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 26139ef..fb27fcf 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -1561,3 +1571,75 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
+>>          .set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
+>>   };
+>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_ops);
+>> +
+>> +void clk_agera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>> +                       const struct alpha_pll_config *config)
+>> +{
+>> +       if (config->l)
+>> +               regmap_write(regmap, PLL_L_VAL(pll), config->l);
+>> +
+>> +       if (config->alpha)
+>> +               regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+>> +
+>> +       if (config->user_ctl_val)
+>> +               regmap_write(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
+>> +
+>> +       if (config->config_ctl_val)
+>> +               regmap_write(regmap, PLL_CONFIG_CTL(pll),
+>> +                                               config->config_ctl_val);
+>> +
+>> +       if (config->config_ctl_hi_val)
+>> +               regmap_write(regmap, PLL_CONFIG_CTL_U(pll),
+>> +                                               config->config_ctl_hi_val);
+>> +
+>> +       if (config->test_ctl_val)
+>> +               regmap_write(regmap, PLL_TEST_CTL(pll),
+>> +                                               config->test_ctl_val);
+>> +
+>> +       if (config->test_ctl_hi_val)
+>> +               regmap_write(regmap,  PLL_TEST_CTL_U(pll),
+>> +                                               config->test_ctl_hi_val);
+>> +}
+>> +EXPORT_SYMBOL_GPL(clk_agera_pll_configure);
+>> +
+>> +static int alpha_pll_agera_set_rate(struct clk_hw *hw, unsigned long rate,
+> 
+> Why not clk_alpha_pll prefix? We should prefix the other PLL functions
+> in here with clk_alpha_ like trion and fabia
+> 
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
+Yes, I will update this in the next patch.
 
-Changelog v1 -> v2:
-* add 'additionalProperties: false'
-* changed 'clock@...' -> 'clock-controller@...' in example
-* added Acked-by for Michael & Lars on the re-licensing
-* updated description for 'clocks' property
+>> +                                                       unsigned long prate)
+>> +{
+>> +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +       u32 l, alpha_width = pll_alpha_width(pll);
+>> +       unsigned long rrate;
+>> +       u64 a;
+>> +
+>> +       rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+>> +
+>> +       /*
+>> +        * Due to limited number of bits for fractional rate programming, the
+>> +        * rounded up rate could be marginally higher than the requested rate.
+>> +        */
+>> +       if (rrate > (rate + PLL_RATE_MARGIN) || rrate < rate) {
+>> +               pr_err("Call set rate on the PLL with rounded rates!\n");
+>> +               return -EINVAL;
+>> +       }
+> 
+> See commit f78f29079327 ("clk: qcom: alpha-pll: Make error prints more
+> informative") where I tried to make this better. Can you extract this
+> check into a function that helps us understand the error better?
+> 
 
- .../bindings/clock/adi,axi-clkgen.yaml        | 53 +++++++++++++++++++
- .../devicetree/bindings/clock/axi-clkgen.txt  | 25 ---------
- 2 files changed, 53 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/axi-clkgen.txt
+Updated to follow the same.
 
-diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-new file mode 100644
-index 000000000000..0d06387184d6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/adi,axi-clkgen.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Binding for Analog Devices AXI clkgen pcore clock generator
-+
-+maintainers:
-+  - Lars-Peter Clausen <lars@metafoo.de>
-+  - Michael Hennerich <michael.hennerich@analog.com>
-+
-+description: |
-+  The axi_clkgen IP core is a software programmable clock generator,
-+  that can be synthesized on various FPGA platforms.
-+
-+  Link: https://wiki.analog.com/resources/fpga/docs/axi_clkgen
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,axi-clkgen-2.00.a
-+
-+  clocks:
-+    description:
-+      Specifies the reference clock(s) from which the output frequency is
-+      derived. This must either reference one clock if only the first clock
-+      input is connected or two if both clock inputs are connected.
-+    minItems: 1
-+    maxItems: 2
-+
-+  '#clock-cells':
-+    const: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@ff000000 {
-+      compatible = "adi,axi-clkgen-2.00.a";
-+      #clock-cells = <0>;
-+      reg = <0xff000000 0x1000>;
-+      clocks = <&osc 1>;
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/axi-clkgen.txt b/Documentation/devicetree/bindings/clock/axi-clkgen.txt
-deleted file mode 100644
-index aca94fe9416f..000000000000
---- a/Documentation/devicetree/bindings/clock/axi-clkgen.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--Binding for the axi-clkgen clock generator
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be "adi,axi-clkgen-1.00.a" or "adi,axi-clkgen-2.00.a".
--- #clock-cells : from common clock binding; Should always be set to 0.
--- reg : Address and length of the axi-clkgen register set.
--- clocks : Phandle and clock specifier for the parent clock(s). This must
--	either reference one clock if only the first clock input is connected or two
--	if both clock inputs are connected. For the later case the clock connected
--	to the first input must be specified first.
--
--Optional properties:
--- clock-output-names : From common clock binding.
--
--Example:
--	clock@ff000000 {
--		compatible = "adi,axi-clkgen";
--		#clock-cells = <0>;
--		reg = <0xff000000 0x1000>;
--		clocks = <&osc 1>;
--	};
+>> +
+>> +       /* change L_VAL without having to go through the power on sequence */
+>> +       regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+>> +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+>> +
+>> +       /* Ensure that the write above goes through before proceeding. */
+>> +       mb();
+> 
+> regmap has an mb() in it. Remove this?
+> 
+
+Yes, will remove it.
+
+>> +
+>> +       if (clk_hw_is_enabled(hw))
+>> +               return wait_for_pll_enable_lock(pll);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +const struct clk_ops clk_alpha_pll_agera_ops = {
+>> +       .enable = clk_alpha_pll_enable,
+>> +       .disable = clk_alpha_pll_disable,
+>> +       .is_enabled = clk_alpha_pll_is_enabled,
+>> +       .recalc_rate = alpha_pll_fabia_recalc_rate,
+>> +       .round_rate = clk_alpha_pll_round_rate,
+>> +       .set_rate = alpha_pll_agera_set_rate,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_alpha_pll_agera_ops);
+
 -- 
-2.17.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
