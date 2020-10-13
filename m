@@ -2,104 +2,150 @@ Return-Path: <SRS0=klTJ=DV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A48CC433E7
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC113C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9FDD20B1F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FBE52222A
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:24:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Gl6vpxUK"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jvDdn/lr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbgJNJEt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 05:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
+        id S1726766AbgJNJYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 05:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbgJNJEg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 05:04:36 -0400
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07B5C04585B;
-        Tue, 13 Oct 2020 22:28:13 -0700 (PDT)
-Received: by mail-qt1-x841.google.com with SMTP id o21so1544478qtp.2;
-        Tue, 13 Oct 2020 22:28:13 -0700 (PDT)
+        with ESMTP id S1731180AbgJNJV4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 05:21:56 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2D6BC0613BD
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2020 15:27:08 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id l6so955805vsr.7
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2020 15:27:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kB//nqoMYrgFKVVbmCReUvvlCp/OH9pTFa1D0WvNeK8=;
-        b=Gl6vpxUKtK+nwjlLO+SvrSUeR2dC+PEV5wmiGiSO4POlCr4RCSIgQ3LSh9oI8d/GvE
-         3SCz5zqjFohPG3bpCgc3pDGJbq7kbxfM78TQRlzSzCwMCDAMEbi7r8gN5Lx7EeR9WFzp
-         ASIh0sC7J1hK0xf8PHJlMZ3xfkynkx3r+Txrk=
+        bh=nEh8aWSBzrx6UT31IWc0LsTnrFS8ZDfHAx42jaS0Cjs=;
+        b=jvDdn/lroKNiUWKl5bN/qT1jMxMbc7sZcDAu3vbzKBJYEOQM00+YdWsySveShwX1qr
+         LTiDPBQG5xOZ/wML9iM6nzFQgC76cHZwJpg9OoaMQN3FhlVSj/quqpW7HMh0VMVa8ILu
+         VS8aq2hPsvuME+fGU5NMgPErb9Z5OJzMtD+Lk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kB//nqoMYrgFKVVbmCReUvvlCp/OH9pTFa1D0WvNeK8=;
-        b=U5oVH4eVCkdJEGqiktlNj6whxDVekGeblMKmTDVtzwKqiP6PnPYJVOGrncCcPuc0m0
-         W7FU8Cf/cE6L6mVIWhJaM90U7TOroh05mPCgABeR6iKoQ0foPQoSA4W+XRtDKkOkGt8v
-         wEPxx+9c8B8aEywKFgqEDFH0iMD4ckYBntGEQXYzQ3003OQT1sPp6VkdlRPNF97Z2fMI
-         gE1EQCI23EIiXxicJgt+xKDxPXoDY8AXnhXqGhAYLVyOVGuOlZb14i7sYycxYXDWhxUH
-         kJeBvt/vAPpWTcbnSl1n7hm0qmYv6kNzbZ4zLkXKzS4X8si7phpgQE5f8xpWj7vOaCv6
-         4M7Q==
-X-Gm-Message-State: AOAM5326xXarde5RpqrbPuLKPZaLWCoNcjZSTV1T/57HTtJazosN3KuF
-        hVE/YuDWIpMW3BpcPRf+d3BAchzN0n5cXoR1Fug=
-X-Google-Smtp-Source: ABdhPJw24gb5jxVKjUGFnb8ILFTaJiae+ZhEB+sYFIQ/Gi83c+wIbHiQ4g4hFhDiM1oYPQWMGp2dm2s2NPDIVlvVANQ=
-X-Received: by 2002:ac8:3674:: with SMTP id n49mr3177077qtb.385.1602653292820;
- Tue, 13 Oct 2020 22:28:12 -0700 (PDT)
+        bh=nEh8aWSBzrx6UT31IWc0LsTnrFS8ZDfHAx42jaS0Cjs=;
+        b=L5dZ0AEv4GietbbM1L8r6DpcKHDDwi33rmljKKy8tk3yHSA8bLzFa2E0YWG0UnFTau
+         RsG70LfHJ+mZmFFrqzOsUfw8dS8setq46A8QJDGp8CDCc2Xt7IquM3Pf3KxaGjoaoPPj
+         9GVoyy0eBrWqGY8G/jef7LKA47mHRpKWvlcn/36lbqtvZEHyVuMsA7WOQin7uebFrxSk
+         RfLx2JNpUAejaSuibwsQA0gc1IOJGwV4EoI23+vX+/+R7aR/vvxbNItweQAf2Av4fx0H
+         +mngiYqROXVXOYU4NTniw7vrFQy8KebxMQfXNLDu/xt9Np/doPQzSACpNMgDPsLKmqMg
+         vDCg==
+X-Gm-Message-State: AOAM532H7Iz6NWpkIMuBTcdJnounTezmLqvIhLcxewX73ObKU6ytr5R+
+        1bB1I23puNJtC3DWoDEDUSrNhZSVVpJ8pw==
+X-Google-Smtp-Source: ABdhPJzmlGAS+/zfTb1WII62pAzCOWVkXEXGAXAHQYHK2MoOol6hUKJQo0bfJVuW4f0cXZ5ZUYocgg==
+X-Received: by 2002:a67:6504:: with SMTP id z4mr1944542vsb.48.1602628027566;
+        Tue, 13 Oct 2020 15:27:07 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id m125sm195010vkh.15.2020.10.13.15.27.06
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2020 15:27:06 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id x11so503689uav.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2020 15:27:06 -0700 (PDT)
+X-Received: by 2002:a9f:31ce:: with SMTP id w14mr1804071uad.104.1602628026293;
+ Tue, 13 Oct 2020 15:27:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
- <20200928070108.14040-2-ryan_chen@aspeedtech.com> <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
-In-Reply-To: <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 14 Oct 2020 05:28:00 +0000
-Message-ID: <CACPK8Xe-_hTey7hTJjG2-EcDsTN0qOw3bWBcrZZohEK3QOJuvg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
+References: <1602614008-2421-1-git-send-email-tdas@codeaurora.org> <1602614008-2421-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1602614008-2421-2-git-send-email-tdas@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 13 Oct 2020 15:26:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XOj-Vg36v8GtE1sjay0jCdCLgRMJtyN9ZYyZhsNkdVfg@mail.gmail.com>
+Message-ID: <CAD=FV=XOj-Vg36v8GtE1sjay0jCdCLgRMJtyN9ZYyZhsNkdVfg@mail.gmail.com>
+Subject: Re: [PATCH v0] clk: qcom: lpasscc: Re-configure the PLL in case lost
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        BMC-SW <bmc-sw@aspeedtech.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Oct 2020 at 02:50, Stephen Boyd <sboyd@kernel.org> wrote:
+Hi,
+
+On Tue, Oct 13, 2020 at 11:33 AM Taniya Das <tdas@codeaurora.org> wrote:
 >
-> Quoting Ryan Chen (2020-09-28 00:01:08)
-> > In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2 are
-> > default for Host SuperIO UART device, eSPI clk for Host eSPI bus access
-> > eSPI slave channel, those clks can't be disable should keep default,
-> > otherwise will affect Host side access SuperIO and SPI slave device.
-> >
-> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > ---
+> In the case where the PLL configuration is lost, then the pm runtime
+> resume will reconfigure before usage.
 >
-> Is there resolution on this thread?
+> Fixes: edab812d802d ("clk: qcom: lpass: Add support for LPASS clock controller for SC7180")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/lpasscorecc-sc7180.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> index 228d08f..5804a93 100644
+> --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> @@ -356,6 +356,25 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
+>         .num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
+>  };
+>
+> +static int lpass_core_cc_pm_clk_resume(struct device *dev)
+> +{
+> +       struct regmap *regmap = dev_get_drvdata(dev);
+> +       int l_val;
 
-Not yet.
+nit: technically "unsigned int" to match what regmap_read takes.
 
-We have a system where the BMC (management controller) controls some
-clocks, but the peripherals that it's clocking are outside the BMC's
-control. In this case, the host processor us using some UARTs and what
-not independent of any code running on the BMC.
+> +
+> +       pm_clk_resume(dev);
 
-Ryan wants to have them marked as critical so the BMC never powers them down.
+Even though pm_clk_resume() doesn't currently return any errors, it
+would be good form to check.  AKA:
 
-However, there are systems that don't use this part of the soc, so for
-those implementations they are not critical and Linux on the BMC can
-turn them off.
+ret = pm_clk_resume(dev);
+if (ret)
+  return ret;
 
-Do you have any thoughts? Has anyone solved a similar problem already?
 
-Cheers,
+> +       /* Read PLL_L_VAL */
+> +       regmap_read(regmap, 0x1004, &l_val);
+> +       if (!l_val)
+> +               clk_fabia_pll_configure(&lpass_lpaaudio_dig_pll, regmap,
+> +                               &lpass_lpaaudio_dig_pll_config);
+> +       return 0;
+> +}
+> +
+> +static const struct dev_pm_ops lpass_core_pm_ops = {
+> +       SET_RUNTIME_PM_OPS(pm_clk_suspend, lpass_core_cc_pm_clk_resume, NULL)
+> +};
+> +
+>  static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+>  {
+>         const struct qcom_cc_desc *desc;
+> @@ -386,6 +405,9 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+>         clk_fabia_pll_configure(&lpass_lpaaudio_dig_pll, regmap,
+>                                 &lpass_lpaaudio_dig_pll_config);
+>
+> +       pdev->dev.driver->pm = &lpass_core_pm_ops;
+> +       dev_set_drvdata(&pdev->dev, regmap);
 
-Joel
+I'm kinda confused.  Why not just change "lpass_core_cc_pm_ops"?  Then
+you can get rid of the above two lines of code and get rid of the
+whole "lpass_core_pm_ops" structure?
+
+
+-Doug
