@@ -2,109 +2,155 @@ Return-Path: <SRS0=uYlR=DU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6ADC433E7
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 09:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CA6C43457
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 12:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 620982072D
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 09:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCnGnsO5"
+	by mail.kernel.org (Postfix) with ESMTP id DC34A2222E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 12:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602591331;
+	bh=Jfl3S5/CVm87dfrfFsJcJ1KcmDiVSxRRxlJQMp3INpw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Zt44AIhHx0Bq4cjHOqCxf2bPWpakTgdBffhqEIqUsQL36vADDCPbHXpwOYVITwGv3
+	 BSUVjGmO8a3TUUTKpxlRRz4msMf9G5mtmx/NUZx6k/JRTn78LY2/li+q4XNTLNT8pH
+	 93hBrz5LJfIj9U7/m3RgZKOrLxlWUmYonyeo2xMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbgJMJnz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 05:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbgJMJny (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Oct 2020 05:43:54 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A8E1C0613D0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2020 02:43:54 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id g4so20239523edk.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Oct 2020 02:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qNDcMDWtQ0sTEVWyZLkGjwcbJnpHDXbpA/QreJVbZfc=;
-        b=sCnGnsO5W/n6wuA9IPLR4KnqzFLqwvhfCtvPxpqup/sBwnKxS5kS7HS7otg53wsm1K
-         daQmiA15sYiKPuKYTbHtnUlxRu3x51XMqzCZvns5Qj9ShPUQy+j7W+BWH1zQ7cZjsAIb
-         zZi/MvDntDvFVgCwpK2vB+hC8yTTyuxCmPifLMHxkAtJ+XfPJdTdchXuNjjXDMsLjMIL
-         BeT5roYt3iqsrpgCQsOSowQUxCSg/Spa/MNyy415P07KeSLrsCH+PiOUNRLonHKQo7Ck
-         3DHUgTE5eJUUWrPmAwWCsc1yPG0W4G4nvcO/D0Fyjts0ScXrzvxHjjFCIXWqFzR4ZlaN
-         Hxlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qNDcMDWtQ0sTEVWyZLkGjwcbJnpHDXbpA/QreJVbZfc=;
-        b=NGFwpOLjCQP7XMWw4NX3zVB/iIOqi5TNaB4MtXb3HR/k0+DwrI7DM0dkSQTWxdoe3L
-         L7KKDT4gupVTwhs8HWmY4VhTuOFVAzB3HuHt8keH15xEfbOyYV6eybYP3Mcrc8zibClZ
-         Ug+NvA/8Iu+0UMWF+SLBW5FFvFjCdCyAqCxKwKEx+j6xAXLceUWDSIXXc+L3QkBXm66e
-         SdDroBoe6gLBwbeC/tVvs/b54izH/96uzKr4uZw/Nfj/YmFcgqR4DiQOdquOdxFtqSyi
-         PS6gNIKOP7p6ugrjz8FDncrhyJd+XxA5v483gVvY0gFIDHWjIi0Y1bkkaDT8C052HIfs
-         UXyw==
-X-Gm-Message-State: AOAM530Za11+Cvca64p2Aw3rowBFeuUGoA9yYe+V8SrzuNZZR17uMivo
-        zrU7eIHq7cywiUaRohwXpBbJSUOsQDQ4xADansI=
-X-Google-Smtp-Source: ABdhPJy8oKROqzX2cl21txfaU4ZYFq/daDddaS26zdH8EHNTZvE2dr36z8AbMLNEHfC191M4f2Qi9M6yyqYAuAaT6Jo=
-X-Received: by 2002:a50:d5d8:: with SMTP id g24mr18700219edj.119.1602582233341;
- Tue, 13 Oct 2020 02:43:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
- <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
- <CAA+hA=Sa11AByUsKnsvhaH4HS_pdwfSv5P4192nnpRs_0vxk9w@mail.gmail.com>
- <CAA+hA=Qj5NV65N4pWJTCREkuxyw6GKKmSF8X4UXvr=Mmq9WpBA@mail.gmail.com>
- <AM6PR04MB4966AC7FCFB47A51A97D5C2980340@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <160253089964.310579.15879711282194567508@swboyd.mtv.corp.google.com>
-In-Reply-To: <160253089964.310579.15879711282194567508@swboyd.mtv.corp.google.com>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Tue, 13 Oct 2020 17:27:37 +0800
-Message-ID: <CAA+hA=S_eO1orWerMPVCujgybFAcG0TCur8LumF5WtZF=zHg3w@mail.gmail.com>
-Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+        id S1726993AbgJMMP0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 08:15:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbgJMMO6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Oct 2020 08:14:58 -0400
+Received: from mail.kernel.org (ip5f5ad5b2.dynamic.kabel-deutschland.de [95.90.213.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50CAC22363;
+        Tue, 13 Oct 2020 12:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602591295;
+        bh=Jfl3S5/CVm87dfrfFsJcJ1KcmDiVSxRRxlJQMp3INpw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W1eYstPcXcFq3NKpMJZUOZWeDlJ/3fKGrkhUrtGfj1AYmVNllVLXSxqzK0KdPe3lj
+         Q8AtYylAYOX22FG/PQGbmtNDXkeAaH8G6No29h/5bskrsIpWELSfYPb+y+2geNsEn7
+         0ITar86K20zICb84mLsSGnQi93lSSY4saheTo2Gw=
+Received: from mchehab by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1kSJCf-006Cob-7l; Tue, 13 Oct 2020 14:14:53 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
+        <jerome.pouiller@silabs.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devel@driverdev.osuosl.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 20/24] MAINTAINERS: fix broken doc refs due to yaml conversion
+Date:   Tue, 13 Oct 2020 14:14:47 +0200
+Message-Id: <2645a845a705a4ba5231db9d3570d7765b6204a0.1602590106.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.1602590106.git.mchehab+huawei@kernel.org>
+References: <cover.1602590106.git.mchehab+huawei@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Several *.txt files got converted to yaml. Update their
+references at MAINTAINERS file accordingly.
 
-On Tue, Oct 13, 2020 at 3:28 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Aisheng Dong (2020-09-26 21:13:44)
-> > Gently ping again...
-> >
-> > @Stephen Boyd
-> > Could you kindly provide some feedback how we can proceed this?
-> >
->
-> Hmm I thought Shawn was going to apply this a while ago. Did that not
-> happen? I guess I'll have to pile it in now.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/hi6220-clock.txt | 2 +-
+ MAINTAINERS                                              | 9 ++++-----
+ .../devicetree/bindings/net/wireless/silabs,wfx.yaml     | 2 +-
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
-Now there's still one patch that does not have your R-b tags.
-I guess Shawn is waiting for this.
-Once you give the R-b tags, this series could go to Shawn's tree
-as another DT patch set also depends on this.
+diff --git a/Documentation/devicetree/bindings/clock/hi6220-clock.txt b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+index ef3deb7b86ea..17ac4a3dd26a 100644
+--- a/Documentation/devicetree/bindings/clock/hi6220-clock.txt
++++ b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
+@@ -4,7 +4,7 @@ Clock control registers reside in different Hi6220 system controllers,
+ please refer the following document to know more about the binding rules
+ for these system controllers:
+ 
+-Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
++Documentation/devicetree/bindings/arm/hisilicon/hisilicon.yaml
+ 
+ Required Properties:
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f1eeef654caa..891b735233d3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -978,7 +978,7 @@ M:	Michael Hennerich <Michael.Hennerich@analog.com>
+ L:	linux-iio@vger.kernel.org
+ S:	Supported
+ W:	http://ez.analog.com/community/linux-device-drivers
+-F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
++F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+ F:	drivers/iio/adc/ad7768-1.c
+ 
+ ANALOG DEVICES INC AD7780 DRIVER
+@@ -3867,7 +3867,7 @@ M:	Roger Quadros <rogerq@ti.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/usb.git
+-F:	Documentation/devicetree/bindings/usb/cdns-usb3.txt
++F:	Documentation/devicetree/bindings/usb/cdns,usb3.yaml
+ F:	drivers/usb/cdns3/
+ 
+ CADET FM/AM RADIO RECEIVER DRIVER
+@@ -7919,7 +7919,7 @@ HISILICON LPC BUS DRIVER
+ M:	john.garry@huawei.com
+ S:	Maintained
+ W:	http://www.hisilicon.com
+-F:	Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
++F:	Documentation/devicetree/bindings/arm/hisilicon/low-pin-count.yaml
+ F:	drivers/bus/hisi_lpc.c
+ 
+ HISILICON NETWORK SUBSYSTEM 3 DRIVER (HNS3)
+@@ -14910,7 +14910,6 @@ RENESAS ETHERNET DRIVERS
+ R:	Sergei Shtylyov <sergei.shtylyov@gmail.com>
+ L:	netdev@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+-F:	Documentation/devicetree/bindings/net/renesas,*.txt
+ F:	Documentation/devicetree/bindings/net/renesas,*.yaml
+ F:	drivers/net/ethernet/renesas/
+ F:	include/linux/sh_eth.h
+@@ -18114,7 +18113,7 @@ M:	Yu Chen <chenyu56@huawei.com>
+ M:	Binghui Wang <wangbinghui@hisilicon.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
++F:	Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
+ F:	drivers/phy/hisilicon/phy-hi3660-usb3.c
+ 
+ USB ISP116X DRIVER
+diff --git a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
+index 43b5630c0407..510edd12ed19 100644
+--- a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
++++ b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
+@@ -24,7 +24,7 @@ description:
+     In addition, it is recommended to declare a mmc-pwrseq on SDIO host above
+     WFx. Without it, you may encounter issues with warm boot. The mmc-pwrseq
+     should be compatible with mmc-pwrseq-simple. Please consult
+-    Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.txt for more
++    Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml for more
+     information.
+ 
+   For SPI':'
+-- 
+2.26.2
 
-Would you help check this left one?
-[PATCH v7 03/11] clk: imx: scu: add two cells binding support
-All other patches already get yours R-b tags.
-
-Shawn,
-are you fine with this patch series to go through your tree?
-
-Regards
-Aisheng
