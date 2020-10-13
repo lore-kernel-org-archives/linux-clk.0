@@ -2,155 +2,191 @@ Return-Path: <SRS0=uYlR=DU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CA6C43457
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 12:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B68C43457
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 14:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC34A2222E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 12:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602591331;
-	bh=Jfl3S5/CVm87dfrfFsJcJ1KcmDiVSxRRxlJQMp3INpw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zt44AIhHx0Bq4cjHOqCxf2bPWpakTgdBffhqEIqUsQL36vADDCPbHXpwOYVITwGv3
-	 BSUVjGmO8a3TUUTKpxlRRz4msMf9G5mtmx/NUZx6k/JRTn78LY2/li+q4XNTLNT8pH
-	 93hBrz5LJfIj9U7/m3RgZKOrLxlWUmYonyeo2xMI=
+	by mail.kernel.org (Postfix) with ESMTP id 1CD9124829
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Oct 2020 14:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbgJMMP0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 08:15:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbgJMMO6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Oct 2020 08:14:58 -0400
-Received: from mail.kernel.org (ip5f5ad5b2.dynamic.kabel-deutschland.de [95.90.213.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50CAC22363;
-        Tue, 13 Oct 2020 12:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602591295;
-        bh=Jfl3S5/CVm87dfrfFsJcJ1KcmDiVSxRRxlJQMp3INpw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1eYstPcXcFq3NKpMJZUOZWeDlJ/3fKGrkhUrtGfj1AYmVNllVLXSxqzK0KdPe3lj
-         Q8AtYylAYOX22FG/PQGbmtNDXkeAaH8G6No29h/5bskrsIpWELSfYPb+y+2geNsEn7
-         0ITar86K20zICb84mLsSGnQi93lSSY4saheTo2Gw=
-Received: from mchehab by mail.kernel.org with local (Exim 4.94)
-        (envelope-from <mchehab@kernel.org>)
-        id 1kSJCf-006Cob-7l; Tue, 13 Oct 2020 14:14:53 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
-        <jerome.pouiller@silabs.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 20/24] MAINTAINERS: fix broken doc refs due to yaml conversion
-Date:   Tue, 13 Oct 2020 14:14:47 +0200
-Message-Id: <2645a845a705a4ba5231db9d3570d7765b6204a0.1602590106.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <cover.1602590106.git.mchehab+huawei@kernel.org>
-References: <cover.1602590106.git.mchehab+huawei@kernel.org>
+        id S2388661AbgJMOaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 10:30:39 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:31412 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387516AbgJMOai (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Oct 2020 10:30:38 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09DENOoj012153;
+        Tue, 13 Oct 2020 10:30:24 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 344js7mcs9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Oct 2020 10:30:24 -0400
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 09DEUMPm003712
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Tue, 13 Oct 2020 10:30:23 -0400
+Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 13 Oct 2020 07:30:21 -0700
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 13 Oct 2020 07:29:26 -0700
+Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Tue, 13 Oct 2020 07:30:21 -0700
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 09DEUINT020834;
+        Tue, 13 Oct 2020 10:30:18 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <michael.hennerich@analog.com>, <lars@metafoo.de>,
+        <mdf@kernel.org>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <mturquette@baylibre.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v2] dt-bindings: clock: adi,axi-clkgen: convert old binding to yaml format
+Date:   Tue, 13 Oct 2020 17:34:20 +0300
+Message-ID: <20201013143421.84188-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201001085035.82938-1-alexandru.ardelean@analog.com>
+References: <20201001085035.82938-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-13_06:2020-10-13,2020-10-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 phishscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
+ suspectscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010130109
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Several *.txt files got converted to yaml. Update their
-references at MAINTAINERS file accordingly.
+This change converts the old binding for the AXI clkgen driver to a yaml
+format.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+As maintainers, added:
+ - Lars-Peter Clausen <lars@metafoo.de> - as original author of driver &
+   binding
+ - Michael Hennerich <michael.hennerich@analog.com> - as supporter of
+   Analog Devices drivers
+
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 ---
- Documentation/devicetree/bindings/clock/hi6220-clock.txt | 2 +-
- MAINTAINERS                                              | 9 ++++-----
- .../devicetree/bindings/net/wireless/silabs,wfx.yaml     | 2 +-
- 3 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/hi6220-clock.txt b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-index ef3deb7b86ea..17ac4a3dd26a 100644
---- a/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi6220-clock.txt
-@@ -4,7 +4,7 @@ Clock control registers reside in different Hi6220 system controllers,
- please refer the following document to know more about the binding rules
- for these system controllers:
- 
--Documentation/devicetree/bindings/arm/hisilicon/hisilicon.txt
-+Documentation/devicetree/bindings/arm/hisilicon/hisilicon.yaml
- 
- Required Properties:
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f1eeef654caa..891b735233d3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -978,7 +978,7 @@ M:	Michael Hennerich <Michael.Hennerich@analog.com>
- L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	http://ez.analog.com/community/linux-device-drivers
--F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
-+F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
- F:	drivers/iio/adc/ad7768-1.c
- 
- ANALOG DEVICES INC AD7780 DRIVER
-@@ -3867,7 +3867,7 @@ M:	Roger Quadros <rogerq@ti.com>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/usb.git
--F:	Documentation/devicetree/bindings/usb/cdns-usb3.txt
-+F:	Documentation/devicetree/bindings/usb/cdns,usb3.yaml
- F:	drivers/usb/cdns3/
- 
- CADET FM/AM RADIO RECEIVER DRIVER
-@@ -7919,7 +7919,7 @@ HISILICON LPC BUS DRIVER
- M:	john.garry@huawei.com
- S:	Maintained
- W:	http://www.hisilicon.com
--F:	Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
-+F:	Documentation/devicetree/bindings/arm/hisilicon/low-pin-count.yaml
- F:	drivers/bus/hisi_lpc.c
- 
- HISILICON NETWORK SUBSYSTEM 3 DRIVER (HNS3)
-@@ -14910,7 +14910,6 @@ RENESAS ETHERNET DRIVERS
- R:	Sergei Shtylyov <sergei.shtylyov@gmail.com>
- L:	netdev@vger.kernel.org
- L:	linux-renesas-soc@vger.kernel.org
--F:	Documentation/devicetree/bindings/net/renesas,*.txt
- F:	Documentation/devicetree/bindings/net/renesas,*.yaml
- F:	drivers/net/ethernet/renesas/
- F:	include/linux/sh_eth.h
-@@ -18114,7 +18113,7 @@ M:	Yu Chen <chenyu56@huawei.com>
- M:	Binghui Wang <wangbinghui@hisilicon.com>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
-+F:	Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
- F:	drivers/phy/hisilicon/phy-hi3660-usb3.c
- 
- USB ISP116X DRIVER
-diff --git a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
-index 43b5630c0407..510edd12ed19 100644
---- a/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
-+++ b/drivers/staging/wfx/Documentation/devicetree/bindings/net/wireless/silabs,wfx.yaml
-@@ -24,7 +24,7 @@ description:
-     In addition, it is recommended to declare a mmc-pwrseq on SDIO host above
-     WFx. Without it, you may encounter issues with warm boot. The mmc-pwrseq
-     should be compatible with mmc-pwrseq-simple. Please consult
--    Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.txt for more
-+    Documentation/devicetree/bindings/mmc/mmc-pwrseq-simple.yaml for more
-     information.
- 
-   For SPI':'
+Changelog v1 -> v2:
+* add 'additionalProperties: false'
+* changed 'clock@...' -> 'clock-controller@...' in example
+* added Acked-by for Michael & Lars on the re-licensing
+* updated description for 'clocks' property
+
+ .../bindings/clock/adi,axi-clkgen.yaml        | 53 +++++++++++++++++++
+ .../devicetree/bindings/clock/axi-clkgen.txt  | 25 ---------
+ 2 files changed, 53 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/axi-clkgen.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+new file mode 100644
+index 000000000000..0d06387184d6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/adi,axi-clkgen.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Binding for Analog Devices AXI clkgen pcore clock generator
++
++maintainers:
++  - Lars-Peter Clausen <lars@metafoo.de>
++  - Michael Hennerich <michael.hennerich@analog.com>
++
++description: |
++  The axi_clkgen IP core is a software programmable clock generator,
++  that can be synthesized on various FPGA platforms.
++
++  Link: https://wiki.analog.com/resources/fpga/docs/axi_clkgen
++
++properties:
++  compatible:
++    enum:
++      - adi,axi-clkgen-2.00.a
++
++  clocks:
++    description:
++      Specifies the reference clock(s) from which the output frequency is
++      derived. This must either reference one clock if only the first clock
++      input is connected or two if both clock inputs are connected.
++    minItems: 1
++    maxItems: 2
++
++  '#clock-cells':
++    const: 0
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@ff000000 {
++      compatible = "adi,axi-clkgen-2.00.a";
++      #clock-cells = <0>;
++      reg = <0xff000000 0x1000>;
++      clocks = <&osc 1>;
++    };
+diff --git a/Documentation/devicetree/bindings/clock/axi-clkgen.txt b/Documentation/devicetree/bindings/clock/axi-clkgen.txt
+deleted file mode 100644
+index aca94fe9416f..000000000000
+--- a/Documentation/devicetree/bindings/clock/axi-clkgen.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-Binding for the axi-clkgen clock generator
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be "adi,axi-clkgen-1.00.a" or "adi,axi-clkgen-2.00.a".
+-- #clock-cells : from common clock binding; Should always be set to 0.
+-- reg : Address and length of the axi-clkgen register set.
+-- clocks : Phandle and clock specifier for the parent clock(s). This must
+-	either reference one clock if only the first clock input is connected or two
+-	if both clock inputs are connected. For the later case the clock connected
+-	to the first input must be specified first.
+-
+-Optional properties:
+-- clock-output-names : From common clock binding.
+-
+-Example:
+-	clock@ff000000 {
+-		compatible = "adi,axi-clkgen";
+-		#clock-cells = <0>;
+-		reg = <0xff000000 0x1000>;
+-		clocks = <&osc 1>;
+-	};
 -- 
-2.26.2
+2.17.1
 
