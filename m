@@ -6,82 +6,105 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76104C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 22:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A0AC433E7
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 23:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 119A122248
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 22:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC2C2145D
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 23:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602713454;
-	bh=vhqWjk6Ksj0VbJaHGxn+mUKAXNBtcqsuikukYdj1OAo=;
+	s=default; t=1602716454;
+	bh=Iuq4p7SE+3zmq4h6neqIJS6zra1rULNlT+guIBTPmX8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=VwOXjgiJcWnfU4H16Gwbs0FzIxKHK/XWBNxENOyxSGycT7TnyEvJh3/TseFXZFK8R
-	 W0zO9a94AsGnjdIxaCOOhN3Ja/Utj6/Wx9FiuYzmvJotFRpPT1UQGx6PdnOqVrEGQb
-	 TmBsfZI5F0uGUQoQrx0h/lW7r5lJc6a/dE+uwWfw=
+	b=Vq9tiMV8OdP66gekoNi09hRQeuNPE7ctWvhKk2O9QFdnf3kXvnaJyzVy2aHnF0e1R
+	 xHpjpxsBaX8ODuVhDlnJlg67+uAXVew9RMGfAWQEF4AjbX4kS89hfcGZkknw00fexV
+	 KgL+DS/i5yo30Ys1zrZr9oGEPMdOPJ4pgkBMotcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbgJNWKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 18:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
+        id S1730549AbgJNXAu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 19:00:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbgJNWKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Oct 2020 18:10:53 -0400
+        id S1726144AbgJNXAu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Oct 2020 19:00:50 -0400
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 961CA221FF;
-        Wed, 14 Oct 2020 22:10:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4E4020776;
+        Wed, 14 Oct 2020 23:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602713452;
-        bh=vhqWjk6Ksj0VbJaHGxn+mUKAXNBtcqsuikukYdj1OAo=;
+        s=default; t=1602716449;
+        bh=Iuq4p7SE+3zmq4h6neqIJS6zra1rULNlT+guIBTPmX8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m9uRw8CZs+OTYGzz9dm8qy8rrTaH2iQYUR1p/R/u9C3hpomrDKqfxR2dhlgHX+81/
-         9QPxOmP+Lk/wRZE7/yXZOGez0tvwM2rrXqKu+jG1T9wYop+ufUQTe5nPRnb6gGHbSr
-         IHsJtPuCWdDX8VYp+4BUG9pI4dLbmZvuu5NNC+RI=
+        b=ZE5CtvlSe5cF/HVaQ/RCnB6oUOGyfYTS1xCgopUkKaXeetIDNmN1NOU7k6SsccZdn
+         epiNkpf53/k4E5AHBZ4taVyE5DEJi+Pu9rWNi9ryw/fLpVRAIKBaCfKTvPHT6LnRe9
+         vMD+Ge1JWU7k/AagoBW7oriERIMEDyym8j+h3b+A=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
-References: <20201014140507.v3.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid> <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+In-Reply-To: <CAD=FV=UipL42FLRARc4V34bqEukaB=WQzAdr2Si2RUjPaAmE4g@mail.gmail.com>
+References: <20201014140507.v3.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid> <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid> <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com> <CAD=FV=UipL42FLRARc4V34bqEukaB=WQzAdr2Si2RUjPaAmE4g@mail.gmail.com>
 Subject: Re: [PATCH v3 2/3] clk: qcom: lpass-sc7180: Disentangle the two clock devices
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Taniya Das <tdas@codeaurora.org>, linux-soc@vger.kernel.org,
+Cc:     Taniya Das <tdas@codeaurora.org>, open list:
+        ARM/QUALCOMM SUPPORT <linux-soc@vger.kernel.org>,
         David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Douglas Anderson <dianders@chromium.org>
-Date:   Wed, 14 Oct 2020 15:10:51 -0700
-Message-ID: <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, ;
+Illegal-Object: Syntax error in Cc: address found on vger.kernel.org:
+        Cc:     ;
+                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
+To:     Doug Anderson <dianders@chromium.org>
+Date:   Wed, 14 Oct 2020 16:00:47 -0700
+Message-ID: <160271644762.884498.446447786516269652@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Douglas Anderson (2020-10-14 14:05:22)
-> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpa=
-sscorecc-sc7180.c
-> index abcf36006926..48d370e2108e 100644
-> --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-> +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-> @@ -356,12 +356,48 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7=
-180_desc =3D {
->         .num_gdscs =3D ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
->  };
-> =20
-> +static void lpass_pm_runtime_disable(void *data)
-> +{
-> +       pm_runtime_disable(data);
-> +}
-> +
-> +static void lapss_pm_clk_destroy(void *data)
-> +{
-> +       pm_clk_destroy(data);
-> +}
+Quoting Doug Anderson (2020-10-14 15:28:58)
+> Hi,
+>=20
+> On Wed, Oct 14, 2020 at 3:10 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Douglas Anderson (2020-10-14 14:05:22)
+> > > diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom=
+/lpasscorecc-sc7180.c
+> > > index abcf36006926..48d370e2108e 100644
+> > > --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> > > +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> > > @@ -356,12 +356,48 @@ static const struct qcom_cc_desc lpass_audio_hm=
+_sc7180_desc =3D {
+> > >         .num_gdscs =3D ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
+> > >  };
+> > >
+> > > +static void lpass_pm_runtime_disable(void *data)
+> > > +{
+> > > +       pm_runtime_disable(data);
+> > > +}
+> > > +
+> > > +static void lapss_pm_clk_destroy(void *data)
+> > > +{
+> > > +       pm_clk_destroy(data);
+> > > +}
+> >
+> > Why are these helpers added again? And do we even need them? Can't we
+> > just pass pm_runtime_disable or pm_clk_destroy to the
+> > devm_add_action_or_reset() second parameter?
+>=20
+> Unfortunately, we can't due to the C specification.  Take a look at
+> all the other users of devm_add_action_or_reset() and they all have
+> pretty much the same stupid thing.=20
 
-Why are these helpers added again? And do we even need them? Can't we
-just pass pm_runtime_disable or pm_clk_destroy to the
-devm_add_action_or_reset() second parameter?
+Ok, but we don't need two of the same functions, right?
+
+> ...actually, do we even need the runtime_disable in the error path?
+> When the dev goes away does it matter if you left pm_runtime enabled
+> on it?
+>=20
+
+I don't know. The device isn't destroyed but maybe when the driver is
+unbound it resets the runtime PM counters?
