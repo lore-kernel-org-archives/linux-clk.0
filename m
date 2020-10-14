@@ -2,259 +2,153 @@ Return-Path: <SRS0=IVDQ=DW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2F8C43457
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035AFC43457
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 01:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0FA122259
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 01:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0BF822257
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 01:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vk9W4Mlu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8Vspp7C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732247AbgJOB3i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 21:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49008 "EHLO
+        id S1732287AbgJOBeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 21:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732227AbgJOB3h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 21:29:37 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2FDC0D9425
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 17:13:43 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d23so579773pll.7
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 17:13:43 -0700 (PDT)
+        with ESMTP id S1728750AbgJOBeh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 21:34:37 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE9FC05112B
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 16:08:07 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id v23so404626vsp.6
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 16:08:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UlbiRK9FPIASJdWjbFlxZN7JKEjeG321ukcvNxoIW+Y=;
-        b=Vk9W4Mlu++ARKTCbhumJfJo840Ddq86v5pd4GoUMiZ/jn8R87NXlQrqOw7qIIGNcXt
-         fU1NlnVPlWdNDyyJJCP2gdIg/b1Y1ZHCDcU5ZC6iCuS+ZRcexPofZIeE4cKqhzUFoJJW
-         zRJktZcKqenkCO26pNfD4jRlhToWAoJ2wJrMs=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NY8uHKKpja9Uac1xehW411eyYV4U0oSKh6doZcj/Pf4=;
+        b=O8Vspp7ChzMcAAxZoKhsRbZSqDQruKcZgoXKzDouzA9zAbLJ48ZPbzUNS6moMSAi1f
+         RcATXgQRYZjLe+VADRc1BvaJ4rXXzOzHLJzHNJIk9SVTTd2KYp0r/c28iBZuU45zy0sn
+         GRaJn9sIPrVWQ1deTzEpCRjVaC8qvtrBtMgQ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UlbiRK9FPIASJdWjbFlxZN7JKEjeG321ukcvNxoIW+Y=;
-        b=D63o195Ymp+eCElC/VEjgNhS+E4eKIb+CAKpBm6eKTp4fNdEdRqTEHeWOulMQ1kkiB
-         HsUZP+ALumK1Wv5HsIrKVfZk4wj5eRJa/bU/diXpNVuPGz9OsHulV4YpKu8j5as3UAKn
-         0m/StGucBmO5LJA7YsETVxaS+j4o6V1fyqAoXfCLfsf4nk4TcZGT8+bjDl27GZJ1O6gQ
-         FV8e7FzNZizDXsU0TAYOJlzenVS3RtI6FJmt5iNbmGfqh0APgXNLVGyuog9Ihs8Nb8JC
-         LejQltYyDtIdiMekDvO8sDcuutZzW2Pim2jM4SOouDNmVBBqXgenTtuICFiCCYSQEqn8
-         g5HQ==
-X-Gm-Message-State: AOAM5309J6d3cV/IhuHI1R89RRao6Z0yaTfaQ++oCDlp97xyNPHtMwWS
-        HQIprc9BbkPiFKJmMJbibGTzrQ==
-X-Google-Smtp-Source: ABdhPJzUyM8QxDdPbJVsk13aEs2SgZMLJmPvtbxWE6eGgQv8WrXmx97oZcbONE04yikGH3baniEedg==
-X-Received: by 2002:a17:90a:8c17:: with SMTP id a23mr1625454pjo.112.1602720823467;
-        Wed, 14 Oct 2020 17:13:43 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:42b0:34ff:fe3d:58e6])
-        by smtp.gmail.com with ESMTPSA id r16sm726485pjo.19.2020.10.14.17.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2020 17:13:42 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NY8uHKKpja9Uac1xehW411eyYV4U0oSKh6doZcj/Pf4=;
+        b=auQqbhPa8zDRLDmQ7mCOBQiMVjZy/TW4cDRKOKMaTBaI6G17qqC/MgysXAzjeyaw1T
+         rH5SW1MQO75Y+hT1zq9L4C/myFoZfElGeEBiASxkoL8O5VCCSAXRx9RcgVBu/hp8lj9+
+         y2MQuZtjonpyzQcuyx08TWEE7cGa/+Q/t0r6IAzKyEDj+il9A1Sk37IaUJ78eUSwnSvK
+         anttLOcVA9jFIpcfq9tzmPx8saMTsfb+uymYXGRmAmJrRH8zgHCaI6nLMGoTaL1nSC/g
+         9ALWoxyvnh5LNEwuP7ATLaS8qMGD+kiTB4L1B47eDoSvmmbjvexAZvSHp5rBf7JJa3If
+         BHZA==
+X-Gm-Message-State: AOAM531TkXBjEnq6FqextYz8W1S3EZCpNfj0BcRjQR+ZdLO3HDchEQXt
+        HpamqgcplCAy/j8sbzO3Mq48/cc6YNZbAw==
+X-Google-Smtp-Source: ABdhPJxndwvIWUvg7rqLkE+bsqVcwOef4bFFbohD3rnpa+E35Uo7qbYjG9fqEhOd7lQ4Y4lo2egpng==
+X-Received: by 2002:a67:d090:: with SMTP id s16mr1061044vsi.0.1602716885749;
+        Wed, 14 Oct 2020 16:08:05 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id z1sm161787vkf.41.2020.10.14.16.08.04
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Oct 2020 16:08:04 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id f15so266169uaq.9
+        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 16:08:04 -0700 (PDT)
+X-Received: by 2002:ab0:4923:: with SMTP id z32mr699751uac.121.1602716884104;
+ Wed, 14 Oct 2020 16:08:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20201014140507.v3.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid>
+ <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+ <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com>
+ <CAD=FV=UipL42FLRARc4V34bqEukaB=WQzAdr2Si2RUjPaAmE4g@mail.gmail.com> <160271644762.884498.446447786516269652@swboyd.mtv.corp.google.com>
+In-Reply-To: <160271644762.884498.446447786516269652@swboyd.mtv.corp.google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 14 Oct 2020 16:07:52 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VTEQMqnmC_OMtADTdrs+2zxCd8ODSRpxtxP6SKBnx2qg@mail.gmail.com>
+Message-ID: <CAD=FV=VTEQMqnmC_OMtADTdrs+2zxCd8ODSRpxtxP6SKBnx2qg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: qcom: lpass-sc7180: Disentangle the two clock devices
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-soc@vger.kernel.org,
+Cc:     Taniya Das <tdas@codeaurora.org>,
+        "ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/3] clk: qcom: lpass-sc7180: Disentangle the two clock devices
-Date:   Wed, 14 Oct 2020 17:13:28 -0700
-Message-Id: <20201014171259.v4.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
-X-Mailer: git-send-email 2.28.0.1011.ga647a8990f-goog
-In-Reply-To: <20201014171259.v4.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid>
-References: <20201014171259.v4.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The sc7180 lpass clock driver manages two different devices.  These
-two devices were tangled together, using one probe and a lookup to
-figure out the real probe.  I think it's cleaner to really separate
-the probe for these two devices since they're really different things,
-just both managed by the same driver.
+Hi,
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+On Wed, Oct 14, 2020 at 4:00 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Doug Anderson (2020-10-14 15:28:58)
+> > Hi,
+> >
+> > On Wed, Oct 14, 2020 at 3:10 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Douglas Anderson (2020-10-14 14:05:22)
+> > > > diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> > > > index abcf36006926..48d370e2108e 100644
+> > > > --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> > > > +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> > > > @@ -356,12 +356,48 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
+> > > >         .num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
+> > > >  };
+> > > >
+> > > > +static void lpass_pm_runtime_disable(void *data)
+> > > > +{
+> > > > +       pm_runtime_disable(data);
+> > > > +}
+> > > > +
+> > > > +static void lapss_pm_clk_destroy(void *data)
+> > > > +{
+> > > > +       pm_clk_destroy(data);
+> > > > +}
+> > >
+> > > Why are these helpers added again? And do we even need them? Can't we
+> > > just pass pm_runtime_disable or pm_clk_destroy to the
+> > > devm_add_action_or_reset() second parameter?
+> >
+> > Unfortunately, we can't due to the C specification.  Take a look at
+> > all the other users of devm_add_action_or_reset() and they all have
+> > pretty much the same stupid thing.
+>
+> Ok, but we don't need two of the same functions, right?
 
-(no changes since v3)
+How would you write it more cleanly?  I suppose I could allocate an
+extra structure somewhere and put in a tuple of (function_pointer,
+dev_pointer) there and pass that as the data.  Then I could do:
 
-Changes in v3:
-- ("clk: qcom: lpass-sc7180: Disentangle the two clock devices") new for v3.
+  struct fp_dp_tuple {
+    void (*fn)(void *);
+    struct device *dev;
+  };
 
- drivers/clk/qcom/lpasscorecc-sc7180.c | 101 ++++++++++++++++----------
- 1 file changed, 62 insertions(+), 39 deletions(-)
+  struct fp_dp_tuple *tuple = data;
+  tuple->fn(tuple->dev);
 
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 2d15e33ec837..4ed766ca08bb 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -366,12 +366,38 @@ static void lpass_pm_clk_destroy(void *data)
- 	pm_clk_destroy(data);
- }
- 
-+static int lpass_create_pm_clks(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_clk_create(&pdev->dev);
-+	if (ret)
-+		return ret;
-+	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_clk_add(&pdev->dev, "iface");
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-+	return ret;
-+}
-+
- static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
- {
- 	const struct qcom_cc_desc *desc;
- 	struct regmap *regmap;
- 	int ret;
- 
-+	ret = lpass_create_pm_clks(pdev);
-+	if (ret)
-+		return ret;
-+
- 	lpass_core_cc_sc7180_regmap_config.name = "lpass_audio_cc";
- 	desc = &lpass_audio_hm_sc7180_desc;
- 	ret = qcom_cc_probe_by_index(pdev, 1, desc);
-@@ -402,6 +428,11 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
- static int lpass_hm_core_probe(struct platform_device *pdev)
- {
- 	const struct qcom_cc_desc *desc;
-+	int ret;
-+
-+	ret = lpass_create_pm_clks(pdev);
-+	if (ret)
-+		return ret;
- 
- 	lpass_core_cc_sc7180_regmap_config.name = "lpass_hm_core";
- 	desc = &lpass_core_hm_sc7180_desc;
-@@ -409,55 +440,28 @@ static int lpass_hm_core_probe(struct platform_device *pdev)
- 	return qcom_cc_probe_by_index(pdev, 0, desc);
- }
- 
--static const struct of_device_id lpass_core_cc_sc7180_match_table[] = {
-+static const struct of_device_id lpass_hm_sc7180_match_table[] = {
- 	{
- 		.compatible = "qcom,sc7180-lpasshm",
--		.data = lpass_hm_core_probe,
- 	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpass_hm_sc7180_match_table);
-+
-+static const struct of_device_id lpass_core_cc_sc7180_match_table[] = {
- 	{
- 		.compatible = "qcom,sc7180-lpasscorecc",
--		.data = lpass_core_cc_sc7180_probe,
- 	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, lpass_core_cc_sc7180_match_table);
- 
--static int lpass_core_sc7180_probe(struct platform_device *pdev)
--{
--	int (*clk_probe)(struct platform_device *p);
--	int ret;
--
--	pm_runtime_enable(&pdev->dev);
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = pm_clk_add(&pdev->dev, "iface");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to acquire iface clock\n");
--		return ret;
--	}
--
--	clk_probe = of_device_get_match_data(&pdev->dev);
--	if (!clk_probe)
--		return -EINVAL;
--
--	return clk_probe(pdev);
--}
--
- static const struct dev_pm_ops lpass_core_cc_pm_ops = {
- 	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
- };
- 
- static struct platform_driver lpass_core_cc_sc7180_driver = {
--	.probe = lpass_core_sc7180_probe,
-+	.probe = lpass_core_cc_sc7180_probe,
- 	.driver = {
- 		.name = "lpass_core_cc-sc7180",
- 		.of_match_table = lpass_core_cc_sc7180_match_table,
-@@ -465,17 +469,36 @@ static struct platform_driver lpass_core_cc_sc7180_driver = {
- 	},
- };
- 
--static int __init lpass_core_cc_sc7180_init(void)
-+static const struct dev_pm_ops lpass_hm_pm_ops = {
-+	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
-+
-+static struct platform_driver lpass_hm_sc7180_driver = {
-+	.probe = lpass_hm_core_probe,
-+	.driver = {
-+		.name = "lpass_hm-sc7180",
-+		.of_match_table = lpass_hm_sc7180_match_table,
-+		.pm = &lpass_hm_pm_ops,
-+	},
-+};
-+
-+static int __init lpass_sc7180_init(void)
- {
--	return platform_driver_register(&lpass_core_cc_sc7180_driver);
-+	int ret;
-+
-+	ret = platform_driver_register(&lpass_core_cc_sc7180_driver);
-+	if (ret)
-+		return ret;
-+	return platform_driver_register(&lpass_hm_sc7180_driver);
- }
--subsys_initcall(lpass_core_cc_sc7180_init);
-+subsys_initcall(lpass_sc7180_init);
- 
--static void __exit lpass_core_cc_sc7180_exit(void)
-+static void __exit lpass_sc7180_exit(void)
- {
-+	platform_driver_unregister(&lpass_hm_sc7180_driver);
- 	platform_driver_unregister(&lpass_core_cc_sc7180_driver);
- }
--module_exit(lpass_core_cc_sc7180_exit);
-+module_exit(lpass_sc7180_exit);
- 
- MODULE_DESCRIPTION("QTI LPASS_CORE_CC SC7180 Driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.28.0.1011.ga647a8990f-goog
+...but now I've got to create that tuple and stash it somewhere,
+right?  ...or am I missing some super easy/obvious solution for how I
+can know whether to call pm_runtime_disable() or pm_clk_destroy()?
 
+
+> > ...actually, do we even need the runtime_disable in the error path?
+> > When the dev goes away does it matter if you left pm_runtime enabled
+> > on it?
+> >
+>
+> I don't know. The device isn't destroyed but maybe when the driver is
+> unbound it resets the runtime PM counters?
+
+Certainly it seems safest just to do it...
+
+-Doug
