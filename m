@@ -2,97 +2,104 @@ Return-Path: <SRS0=klTJ=DV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4865EC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 06:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A48CC433E7
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F40F12222E
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 06:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602656259;
-	bh=UHTsECGrSzq3FOc11HErzxuMUJhoH4pWRTJFSnaKUDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eE3BIDdgC3yT8i3HdXZENkoP01ymzmloC36QFNWyT1iDzaROhb5vwx6fTMJYMGpqF
-	 9c7VIZmV9Q3iZuUeO60HpSYgKH1eWnyI9D+e0KJBJsv7AFP8/m6LAFhxYNcCgGCm00
-	 K5O4Gkx2gG5A7kQixIk/29lILDlIuQht+iy+xNR8=
+	by mail.kernel.org (Postfix) with ESMTP id D9FDD20B1F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 09:04:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Gl6vpxUK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbgJNGRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 02:17:38 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37811 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbgJNGRi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 02:17:38 -0400
-Received: by mail-ed1-f67.google.com with SMTP id o18so1908331edq.4;
-        Tue, 13 Oct 2020 23:17:36 -0700 (PDT)
+        id S1728752AbgJNJEt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 05:04:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbgJNJEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 05:04:36 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07B5C04585B;
+        Tue, 13 Oct 2020 22:28:13 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id o21so1544478qtp.2;
+        Tue, 13 Oct 2020 22:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kB//nqoMYrgFKVVbmCReUvvlCp/OH9pTFa1D0WvNeK8=;
+        b=Gl6vpxUKtK+nwjlLO+SvrSUeR2dC+PEV5wmiGiSO4POlCr4RCSIgQ3LSh9oI8d/GvE
+         3SCz5zqjFohPG3bpCgc3pDGJbq7kbxfM78TQRlzSzCwMCDAMEbi7r8gN5Lx7EeR9WFzp
+         ASIh0sC7J1hK0xf8PHJlMZ3xfkynkx3r+Txrk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nRETCMUggNgSzB3Ff8f9czD714/ySw0c2TVlidnZhzo=;
-        b=PQxKHD1LXYcFmio8bFpN2Z8nNuYPV26V1vnBECcgj5mKGcYAGQcPIzqKgDvFcNNBbT
-         ey9FogTyaCuN/c8Nn7gF/hdQk09ELuimknijLpHVaPTmB1HprkF/6VXOQvuyr5v8xsa3
-         1Dwh4M0HQlyFCi9Qy3Thv4GTTitFI2ovrl3BlT49OL60G74h1Ec5gtxhwZeZiQIPvSwT
-         xWdT1dpDHgLWksfBGEDxg9Onw4zXZpuR83LopJyQESVFCqbkQ5U5JFXRX5ijjt9vwWXb
-         nk/tMYEvJM2sJbQU5VyxeOa9wKfU+z/TNZVUZJ4E/0YI5LzGjcICIa36G6wcXN1X7hHP
-         qeZA==
-X-Gm-Message-State: AOAM533cULYFQ0e7Jk2YZL1eb+LtnK0GqItzgDojnLephULB9pfHQ0cA
-        7lYPZQib79ZsqdV9YKROE6qgcGLG9zA=
-X-Google-Smtp-Source: ABdhPJzCxYhYBVBaZz5jBqPvgupxLdGCqZC1DrVF7ARKbCN/YsQRr9PIxjYmOwWqoaBiMx1/c/FV/Q==
-X-Received: by 2002:a05:6402:651:: with SMTP id u17mr3419101edx.206.1602656255808;
-        Tue, 13 Oct 2020 23:17:35 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.240])
-        by smtp.googlemail.com with ESMTPSA id si13sm1047455ejb.49.2020.10.13.23.17.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Oct 2020 23:17:34 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 08:17:32 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 2/2] clk: samsung: exynos-clkout: convert to module driver
-Message-ID: <20201014061732.GA3672@kozik-lap>
-References: <20201001165646.32279-1-krzk@kernel.org>
- <20201001165646.32279-3-krzk@kernel.org>
- <160264342071.310579.16332243912081691987@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kB//nqoMYrgFKVVbmCReUvvlCp/OH9pTFa1D0WvNeK8=;
+        b=U5oVH4eVCkdJEGqiktlNj6whxDVekGeblMKmTDVtzwKqiP6PnPYJVOGrncCcPuc0m0
+         W7FU8Cf/cE6L6mVIWhJaM90U7TOroh05mPCgABeR6iKoQ0foPQoSA4W+XRtDKkOkGt8v
+         wEPxx+9c8B8aEywKFgqEDFH0iMD4ckYBntGEQXYzQ3003OQT1sPp6VkdlRPNF97Z2fMI
+         gE1EQCI23EIiXxicJgt+xKDxPXoDY8AXnhXqGhAYLVyOVGuOlZb14i7sYycxYXDWhxUH
+         kJeBvt/vAPpWTcbnSl1n7hm0qmYv6kNzbZ4zLkXKzS4X8si7phpgQE5f8xpWj7vOaCv6
+         4M7Q==
+X-Gm-Message-State: AOAM5326xXarde5RpqrbPuLKPZaLWCoNcjZSTV1T/57HTtJazosN3KuF
+        hVE/YuDWIpMW3BpcPRf+d3BAchzN0n5cXoR1Fug=
+X-Google-Smtp-Source: ABdhPJw24gb5jxVKjUGFnb8ILFTaJiae+ZhEB+sYFIQ/Gi83c+wIbHiQ4g4hFhDiM1oYPQWMGp2dm2s2NPDIVlvVANQ=
+X-Received: by 2002:ac8:3674:: with SMTP id n49mr3177077qtb.385.1602653292820;
+ Tue, 13 Oct 2020 22:28:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <160264342071.310579.16332243912081691987@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
+ <20200928070108.14040-2-ryan_chen@aspeedtech.com> <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
+In-Reply-To: <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 14 Oct 2020 05:28:00 +0000
+Message-ID: <CACPK8Xe-_hTey7hTJjG2-EcDsTN0qOw3bWBcrZZohEK3QOJuvg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        BMC-SW <bmc-sw@aspeedtech.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 07:43:40PM -0700, Stephen Boyd wrote:
-> Quoting Krzysztof Kozlowski (2020-10-01 09:56:46)
-> > diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-> > index 34ccb1d23bc3..68af082d4716 100644
-> > --- a/drivers/clk/samsung/clk-exynos-clkout.c
-> > +++ b/drivers/clk/samsung/clk-exynos-clkout.c
-> > @@ -28,41 +31,103 @@ struct exynos_clkout {
-> [...]
-> > +       if (!match) {
-> > +               dev_err(dev, "cannot match parent device\n");
-> > +               return -EINVAL;
-> > +       }
-> > +       variant = match->data;
-> > +
-> > +       *mux_mask = variant->mux_mask;
-> > +       dev_err(dev, "MATCH: %x\n", variant->mux_mask);
-> 
-> Is this a debug print?
+On Wed, 14 Oct 2020 at 02:50, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Ryan Chen (2020-09-28 00:01:08)
+> > In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2 are
+> > default for Host SuperIO UART device, eSPI clk for Host eSPI bus access
+> > eSPI slave channel, those clks can't be disable should keep default,
+> > otherwise will affect Host side access SuperIO and SPI slave device.
+> >
+> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > ---
+>
+> Is there resolution on this thread?
 
-Debugging left over, thanks for catching this. I'll remove it.
+Not yet.
 
-Best regards,
-Krzysztof
+We have a system where the BMC (management controller) controls some
+clocks, but the peripherals that it's clocking are outside the BMC's
+control. In this case, the host processor us using some UARTs and what
+not independent of any code running on the BMC.
+
+Ryan wants to have them marked as critical so the BMC never powers them down.
+
+However, there are systems that don't use this part of the soc, so for
+those implementations they are not critical and Linux on the BMC can
+turn them off.
+
+Do you have any thoughts? Has anyone solved a similar problem already?
+
+Cheers,
+
+Joel
