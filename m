@@ -2,83 +2,103 @@ Return-Path: <SRS0=klTJ=DV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4139DC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 00:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D398C433E7
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 00:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F364D21D7B
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 00:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E66208B3
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 00:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602636292;
-	bh=mbZzU39csZNZQGLMxoWeP2Ekx+MNtrzNxans6AvrVdY=;
+	s=default; t=1602636402;
+	bh=bHegWhytBbBlLR9BgF+yyPu4sS7bcuWDg/pEYkwLJpM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=pMb1Y/Mv5Qt9nYAXTshNyMEK9olpDLMJZv8jljZiUYlZ38xUtfGlvmxAPhtGJidGB
-	 WgHzmLQh1oU55JRtt/aTsSJYjICRzYAankuXJEviEhKRH04mhoc+zFXEpZblggQCoQ
-	 ZSlJN49oT0nz7oVrfTVBK9w88vNRkWClc5FFhA+s=
+	b=mTrGSDuXaGBVPp3pn5AVqsrYeUbTMkNzxTowWMa9Pxu3xc3l7vtyUrrNi4FzBjk7m
+	 H7jcsT1t89hNMXjsKLWJqeIBFFh8zDyKSo6by00QltUb0ao6BYdPSwt+lvl70ZscR2
+	 VOQ2UNbvRCuJ5omj3sIwSPpEIzIUZgPw2wuW4R+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbgJNAos (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 20:44:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56154 "EHLO mail.kernel.org"
+        id S1730656AbgJNAqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 20:46:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730641AbgJNAos (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Oct 2020 20:44:48 -0400
+        id S1728661AbgJNAql (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Oct 2020 20:46:41 -0400
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95EF620EDD;
-        Wed, 14 Oct 2020 00:44:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA1A208B3;
+        Wed, 14 Oct 2020 00:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602636287;
-        bh=mbZzU39csZNZQGLMxoWeP2Ekx+MNtrzNxans6AvrVdY=;
+        s=default; t=1602636401;
+        bh=bHegWhytBbBlLR9BgF+yyPu4sS7bcuWDg/pEYkwLJpM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jhW/FCgvIajeikR6GDVTN//xRCRcaTWpDXU4yfTvhEfSeoYeWNjk1d7O9LmommC0a
-         796lqKjycV6yBS04O/RMsL+QYeZUYFy8RBqFqkdBKfxgtUWqhv0diuEVh0QWyB5bPA
-         5y71pQUyPE2+xVuE1WOeBEWU+mlQOYJlu6mEsw+k=
+        b=xr58USUJ9omM850KuRI+gCEXQ3GRqp1vWr+UjH6H1yCCUav4ZtLDHJaEaqvOAqmdb
+         FNMnuysLGVD7TpZd6OS9vTS8UZn2mtAnBhLmpAU7KTIZSJXrk1zP4de0IX/Eh8YZlP
+         t5o0ZpX4iAwFxTwtchgVrNOMInKJTKaDHEJJEwkI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
-References: <1601233948-11629-1-git-send-email-Julia.Lawall@inria.fr> <1601233948-11629-11-git-send-email-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH 10/18] clk: meson: use semicolons rather than commas to separate statements
+In-Reply-To: <20201005225914.315852-2-dmitry.baryshkov@linaro.org>
+References: <20201005225914.315852-1-dmitry.baryshkov@linaro.org> <20201005225914.315852-2-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: qcom,dispcc: document power domain bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Valdis =?utf-8?q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Joe Perches <joe@perches.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kernel-janitors@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
+Cc:     linux-arm-msm@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
         Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Date:   Tue, 13 Oct 2020 17:44:46 -0700
-Message-ID: <160263628656.310579.10860580831866859265@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 13 Oct 2020 17:46:39 -0700
+Message-ID: <160263639992.310579.2985110685040776427@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Julia Lawall (2020-09-27 12:12:20)
-> Replace commas with semicolons.  What is done is essentially described by
-> the following Coccinelle semantic patch (http://coccinelle.lip6.fr/):
->=20
-> // <smpl>
-> @@ expression e1,e2; @@
-> e1
-> -,
-> +;
-> e2
-> ... when any
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
-> ---
+Quoting Dmitry Baryshkov (2020-10-05 15:59:12)
+> SM8250 requires special power domain for accessing MMDS_GDSC registers.
 
-Applied to clk-next
+Heh, not sure it's special.
+
+> Add bindings for the MMCX power domain.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/clock/qcom,sdm845-dispcc.yaml    | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.y=
+aml b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+> index 4a3be733d042..ff0db55470ac 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+> @@ -97,5 +108,22 @@ examples:
+>        #clock-cells =3D <1>;
+>        #reset-cells =3D <1>;
+>        #power-domain-cells =3D <1>;
+> +      /* this is a part of sm8250 setup the power domain example */
+> +      power-domains =3D <&rpmhpd SDM845_CX>;
+> +      power-domain-names =3D "mmcx";
+> +      required-opps =3D <&rpmhpd_opp_low_svs>;
+> +    };
+> +    rpmhpd: power-controller {
+
+Do we need this node in the example? I think it isn't required but I
+guess it's OK.
+
+> +      compatible =3D "qcom,sdm845-rpmhpd";
+> +      #power-domain-cells =3D <1>;
+> +      operating-points-v2 =3D <&rpmhpd_opp_table>;
+> +
+> +      rpmhpd_opp_table: opp-table {
+> +        compatible =3D "operating-points-v2";
+> +
+> +        rpmhpd_opp_low_svs: opp3 {
