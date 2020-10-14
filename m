@@ -2,108 +2,117 @@ Return-Path: <SRS0=klTJ=DV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C91FC433E7
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 16:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C2DC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 17:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C620214D8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 16:09:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e4TzfwWE"
+	by mail.kernel.org (Postfix) with ESMTP id 432982222C
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 17:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602695196;
+	bh=EOLvIIS5kKhHFW4VcTfYvDqptNryAzaq156DAo+BnuY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=gK+idN4ayCErFG2WJs4P52pm40smyIWRKRsopk5m35DOqaVS14ya4oewCWrT619U8
+	 7z8eckKjVBb+tq+ouWF6Rtf5IfYbUw0dkJRuYKnHcW5RqKc0Vpkymrdi2GWBC4NkBk
+	 AlUol5/XIoP5jD9euPlryapIXHLNvus1Zn5RZ77Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbgJNQJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 12:09:08 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:30565 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbgJNQJI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 12:09:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1602691748; x=1634227748;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=nYxnxg2+RQprtzLlI6wg7jfBRlbQ4KTtTqP8g1Qf1KE=;
-  b=e4TzfwWEXT0MjldBfZdNndVNSt2pAIs5/ee52i1IbUX8fdeu69N0/FMD
-   vtJFGDvALtumEileHYJQQrXKh7S1gA4iJdGAAZhtqQrADl7CHtnMvALKQ
-   FPSAVjEpsu27t9xIgkOe+JzBpLVS+SPpc9EsQ+JX14hQIGC3dZDCn+lOy
-   tjE7xXjZliEfnW+bCScemRnQO1wLjqVzHs71KW0qd2DqXkir1I2nI947d
-   +dEewSTFq4yYJme2gBE8Vky7iic+fLnULDR8iMKEZ+II/RI+xEPa5y0nO
-   Kv/WEHvWnlL3Py+iIrAhQDE2ZxWMtHxEEUn7ksvDuuT+7Sab1kpHRXx+K
-   A==;
-IronPort-SDR: /gXAgu2LkaNngK04jDWy1kDKIp56+nZeSl6zQwVRwBp1HE690GUFLX2hIY9A7kImXPZwsq7P2E
- APBMdLjPosxrrhDbg+HFkm7VgAhfv0oUGnxM0lrfqFzuvIlv36SoD95UTGpeSUv9Iil3vUGgp5
- YSwuMQMr7+Q+FPuj+SlCIKsDA/BusDtuSVxvMFdGZC8JpM1ZGjTSGloZyEA5tZhzIjOdZOy18+
- IFGhTtu3hHkXYikFjrTsSxoTThDg2bOFbVV3gOsHQAvsLOWcnQJSr/WcD72VxiSdM+G8aerq28
- 3i0=
-X-IronPort-AV: E=Sophos;i="5.77,375,1596524400"; 
-   d="scan'208";a="99507189"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Oct 2020 09:09:07 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 14 Oct 2020 09:09:07 -0700
-Received: from [10.171.246.17] (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.1979.3 via Frontend
- Transport; Wed, 14 Oct 2020 09:09:04 -0700
-Subject: Re: [PATCH] clk: at91: sam9x60: support only two programmable clocks
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <1602686072-28296-1-git-send-email-claudiu.beznea@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <1b6f29c9-c9b1-fc1e-7f08-ec4da720accc@microchip.com>
-Date:   Wed, 14 Oct 2020 18:09:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1731878AbgJNRGf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 13:06:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730842AbgJNRGf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Oct 2020 13:06:35 -0400
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3754A2173E;
+        Wed, 14 Oct 2020 17:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602695194;
+        bh=EOLvIIS5kKhHFW4VcTfYvDqptNryAzaq156DAo+BnuY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=1hYWF6kBUdFzglQACJT48SpGzLx/Mpj+JeL3OwFrWg4gYrW4hMSH3sG13CfOqBajj
+         1poFJyxsft8JTx3ISu3CKXrs8RBobleGnGQUPhCWsndy7T1+rQJSbHKoczBF6CiUvz
+         nOpOZuwr7rlYIYtH63boQ4Dnt04g4/3a8BwLO288=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1602686072-28296-1-git-send-email-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201014085758.v2.1.Id0cc5d859e2422082a29a7909658932c857f5a81@changeid>
+References: <20201014085758.v2.1.Id0cc5d859e2422082a29a7909658932c857f5a81@changeid>
+Subject: Re: [PATCH v2] clk: qcom: lpasscc: Re-configure the PLL in case lost
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-soc@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Douglas Anderson <dianders@chromium.org>
+Date:   Wed, 14 Oct 2020 10:06:32 -0700
+Message-ID: <160269519265.884498.6320532206038624483@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/10/2020 at 16:34, Claudiu Beznea wrote:
-> According to datasheet (Chapter 29.16.13, PMC Programmable Clock Register)
-> there are only two programmable clocks on SAM9X60.
-> 
-> Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Quoting Douglas Anderson (2020-10-14 08:58:24)
+> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpa=
+sscorecc-sc7180.c
+> index 228d08f5d26f..ee23eb5b9bf2 100644
+> --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> @@ -356,6 +356,25 @@ static const struct qcom_cc_desc lpass_audio_hm_sc71=
+80_desc =3D {
+>         .num_gdscs =3D ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
+>  };
+> =20
+> +static int lpass_core_cc_pm_clk_resume(struct device *dev)
+> +{
+> +       struct regmap *regmap =3D dev_get_drvdata(dev);
 
-This is a fix:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Can we use dev_get_remap(dev, NULL) instead?
 
-Cc: <stable@vger.kernel.org> # v5.2+
+> +       unsigned int l_val;
+> +       int ret;
+> +
+> +       ret =3D pm_clk_resume(dev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Read PLL_L_VAL */
 
-> ---
->   drivers/clk/at91/sam9x60.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index ab6318c0589e..3c4c95603595 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -279,7 +279,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->   	parent_names[3] = "masterck";
->   	parent_names[4] = "pllack_divck";
->   	parent_names[5] = "upllck_divck";
-> -	for (i = 0; i < 8; i++) {
-> +	for (i = 0; i < 2; i++) {
->   		char name[6];
->   
->   		snprintf(name, sizeof(name), "prog%d", i);
-> 
+Please drop this useless comment. Replace it with something like this
+(if at all):
 
+	/* Reconfigure PLL if PLL was reset across suspend */
 
--- 
-Nicolas Ferre
+> +       regmap_read(regmap, 0x1004, &l_val);
+> +       if (!l_val)
+> +               clk_fabia_pll_configure(&lpass_lpaaudio_dig_pll, regmap,
+> +                               &lpass_lpaaudio_dig_pll_config);
+> +
+> +       return 0;
+> +}
+> +
+>  static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+>  {
+>         const struct qcom_cc_desc *desc;
+> @@ -373,6 +392,8 @@ static int lpass_core_cc_sc7180_probe(struct platform=
+_device *pdev)
+>         if (IS_ERR(regmap))
+>                 return PTR_ERR(regmap);
+> =20
+> +       dev_set_drvdata(&pdev->dev, regmap);
+> +
+
+And then this isn't needed.
+
+>         /*
+>          * Keep the CLK always-ON
+>          * LPASS_AUDIO_CORE_SYSNOC_SWAY_CORE_CLK
