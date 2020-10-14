@@ -2,330 +2,310 @@ Return-Path: <SRS0=klTJ=DV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE79C433E7
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C668C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4666E21775
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D2C4221FF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602642977;
+	bh=g2j9ux/pAHJnNbc2Nu0mN1BILQ00CFDJo7UyKWD5yZI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=kOKKnO1BEW6438SmX/Gy8sZaN6pSr6csWipqSRKDh1JMAFcB2uKxeUd9m/raIDf23
+	 txheYulf4NYkzXGqoN6LHGLPfqCjoEie1oav2cGXnkbCxsdTF0yfNM/To93AIBKzJw
+	 Ym7L9HbHuedlNOhJz0dFrq9uq2LcxQw5Jv8He0iw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgJNCgM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 22:36:12 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:33178 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbgJNCgF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Oct 2020 22:36:05 -0400
-Received: from localhost (unknown [192.168.167.32])
-        by lucky1.263xmail.com (Postfix) with ESMTP id A9102EF3A8;
-        Wed, 14 Oct 2020 10:28:55 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P19667T139951086470912S1602642534014047_;
-        Wed, 14 Oct 2020 10:28:55 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <b1fe43c2b2aef226d2287d271475e7bf>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 5/5] clk: rockchip: support pll setting by auto
-Date:   Wed, 14 Oct 2020 10:28:53 +0800
-Message-Id: <20201014022853.7039-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201014022812.6733-1-zhangqing@rock-chips.com>
-References: <20201014022812.6733-1-zhangqing@rock-chips.com>
+        id S1728373AbgJNCgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 22:36:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727198AbgJNCgD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Oct 2020 22:36:03 -0400
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C11F21775;
+        Wed, 14 Oct 2020 02:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602642962;
+        bh=g2j9ux/pAHJnNbc2Nu0mN1BILQ00CFDJo7UyKWD5yZI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=xj6jhPED+WcoTPbVVLgWKjOjJ5wjpUI164pzTQChTUT1qHewE6g6O57Tn9d6KIEUo
+         Tt9q4N8A8h2i+mx/ihqtpQIIcDc15d+DF0I3a2nOf14jMZULB4/tG30t/XP9Oocc+Z
+         TVn4jcVoUUNEhZ2VPQa7JgALH5CCRQGn/SfFyVIs=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1601270140-4306-2-git-send-email-varada@codeaurora.org>
+References: <1601270140-4306-1-git-send-email-varada@codeaurora.org> <1601270140-4306-2-git-send-email-varada@codeaurora.org>
+Subject: Re: [PATCH 1/7] clk: qcom: clk-alpha-pll: Add support for Stromer PLLs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        catalin.marinas@arm.com, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, nsekar@codeaurora.org,
+        p.zabel@pengutronix.de, robh+dt@kernel.org,
+        sricharan@codeaurora.org, will@kernel.org, tdas@codeaurora.org
+To:     varada@codeaurora.org
+Date:   Tue, 13 Oct 2020 19:36:01 -0700
+Message-ID: <160264296113.310579.11748798538413456771@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If setting freq is not support in rockchip_pll_rate_table,
-It can calculate and set pll params by auto.
+Can you check your get_maintainers script invocation? Not sure why arm64
+maintainers are Cced on a clk patch.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-pll.c | 215 ++++++++++++++++++++++++++++++---
- 1 file changed, 200 insertions(+), 15 deletions(-)
+Quoting Varadarajan Narayanan (2020-09-27 22:15:34)
+> Add programming sequence support for managing the Stromer
+> PLLs.
+>=20
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 156 +++++++++++++++++++++++++++++++++=
++++++-
+>  drivers/clk/qcom/clk-alpha-pll.h |   5 ++
+>  2 files changed, 160 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
+a-pll.c
+> index 26139ef..ce3257f 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -116,6 +116,19 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] =3D {
+>                 [PLL_OFF_OPMODE] =3D 0x38,
+>                 [PLL_OFF_ALPHA_VAL] =3D 0x40,
+>         },
+> +
 
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 8adc6f54a605..e8ca86f5b7d1 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -15,6 +15,7 @@
- #include <linux/iopoll.h>
- #include <linux/regmap.h>
- #include <linux/clk.h>
-+#include <linux/gcd.h>
- #include "clk.h"
- 
- #define PLL_MODE_MASK		0x3
-@@ -47,6 +48,198 @@ struct rockchip_clk_pll {
- #define to_rockchip_clk_pll_nb(nb) \
- 			container_of(nb, struct rockchip_clk_pll, clk_nb)
- 
-+#define MHZ			(1000UL * 1000UL)
-+#define KHZ			(1000UL)
-+
-+/* CLK_PLL_TYPE_RK3066_AUTO type ops */
-+#define PLL_FREF_MIN		(269 * KHZ)
-+#define PLL_FREF_MAX		(2200 * MHZ)
-+
-+#define PLL_FVCO_MIN		(440 * MHZ)
-+#define PLL_FVCO_MAX		(2200 * MHZ)
-+
-+#define PLL_FOUT_MIN		(27500 * KHZ)
-+#define PLL_FOUT_MAX		(2200 * MHZ)
-+
-+#define PLL_NF_MAX		(4096)
-+#define PLL_NR_MAX		(64)
-+#define PLL_NO_MAX		(16)
-+
-+/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
-+#define MIN_FOUTVCO_FREQ	(800 * MHZ)
-+#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
-+
-+static struct rockchip_pll_rate_table auto_table;
-+
-+static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
-+{
-+	return &auto_table;
-+}
-+
-+static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
-+					u32 *postdiv1,
-+					u32 *postdiv2,
-+					u32 *foutvco)
-+{
-+	unsigned long freq;
-+
-+	if (fout_hz < MIN_FOUTVCO_FREQ) {
-+		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
-+			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
-+				freq = fout_hz * (*postdiv1) * (*postdiv2);
-+				if (freq >= MIN_FOUTVCO_FREQ &&
-+				    freq <= MAX_FOUTVCO_FREQ) {
-+					*foutvco = freq;
-+					return 0;
-+				}
-+			}
-+		}
-+		pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
-+		       fout_hz);
-+	} else {
-+		*postdiv1 = 1;
-+		*postdiv2 = 1;
-+	}
-+	return 0;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+			     unsigned long fin_hz,
-+			     unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	/* FIXME set postdiv1/2 always 1*/
-+	u32 foutvco = fout_hz;
-+	u64 fin_64, frac_64;
-+	u32 f_frac, postdiv1, postdiv2;
-+	unsigned long clk_gcd = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
-+	rate_table->postdiv1 = postdiv1;
-+	rate_table->postdiv2 = postdiv2;
-+	rate_table->dsmpd = 1;
-+
-+	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
-+		fin_hz /= MHZ;
-+		foutvco /= MHZ;
-+		clk_gcd = gcd(fin_hz, foutvco);
-+		rate_table->refdiv = fin_hz / clk_gcd;
-+		rate_table->fbdiv = foutvco / clk_gcd;
-+
-+		rate_table->frac = 0;
-+
-+		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
-+			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
-+			 rate_table->fbdiv, rate_table->postdiv1,
-+			 rate_table->postdiv2, rate_table->frac);
-+	} else {
-+		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
-+			 fin_hz, fout_hz,
-+			 fin_hz / MHZ * MHZ,
-+			 fout_hz / MHZ * MHZ);
-+		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
-+			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
-+		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
-+		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
-+		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
-+		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
-+			 rate_table->refdiv, rate_table->fbdiv);
-+
-+		rate_table->frac = 0;
-+
-+		f_frac = (foutvco % MHZ);
-+		fin_64 = fin_hz;
-+		do_div(fin_64, (u64)rate_table->refdiv);
-+		frac_64 = (u64)f_frac << 24;
-+		do_div(frac_64, fin_64);
-+		rate_table->frac = (u32)frac_64;
-+		if (rate_table->frac > 0)
-+			rate_table->dsmpd = 0;
-+		pr_debug("frac = %x\n", rate_table->frac);
-+	}
-+	return rate_table;
-+}
-+
-+static struct rockchip_pll_rate_table *
-+rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
-+				    unsigned long fin_hz,
-+				    unsigned long fout_hz)
-+{
-+	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
-+	u32 nr, nf, no, nonr;
-+	u32 nr_out, nf_out, no_out;
-+	u32 n;
-+	u32 numerator, denominator;
-+	u64 fref, fvco, fout;
-+	unsigned long clk_gcd = 0;
-+
-+	nr_out = PLL_NR_MAX + 1;
-+	no_out = 0;
-+	nf_out = 0;
-+
-+	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
-+		return NULL;
-+
-+	clk_gcd = gcd(fin_hz, fout_hz);
-+
-+	numerator = fout_hz / clk_gcd;
-+	denominator = fin_hz / clk_gcd;
-+
-+	for (n = 1;; n++) {
-+		nf = numerator * n;
-+		nonr = denominator * n;
-+		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
-+			break;
-+
-+		for (no = 1; no <= PLL_NO_MAX; no++) {
-+			if (!(no == 1 || !(no % 2)))
-+				continue;
-+
-+			if (nonr % no)
-+				continue;
-+			nr = nonr / no;
-+
-+			if (nr > PLL_NR_MAX)
-+				continue;
-+
-+			fref = fin_hz / nr;
-+			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
-+				continue;
-+
-+			fvco = fref * nf;
-+			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
-+				continue;
-+
-+			fout = fvco / no;
-+			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
-+				continue;
-+
-+			/* select the best from all available PLL settings */
-+			if ((no > no_out) ||
-+			    ((no == no_out) && (nr < nr_out))) {
-+				nr_out = nr;
-+				nf_out = nf;
-+				no_out = no;
-+			}
-+		}
-+	}
-+
-+	/* output the best PLL setting */
-+	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
-+		rate_table->nr = nr_out;
-+		rate_table->nf = nf_out;
-+		rate_table->no = no_out;
-+	} else {
-+		return NULL;
-+	}
-+
-+	return rate_table;
-+}
-+
- static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			    struct rockchip_clk_pll *pll, unsigned long rate)
- {
-@@ -58,24 +251,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
- 			return &rate_table[i];
- 	}
- 
--	return NULL;
-+	if (pll->type == pll_rk3066)
-+		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
-+	else
-+		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
- }
- 
- static long rockchip_pll_round_rate(struct clk_hw *hw,
- 			    unsigned long drate, unsigned long *prate)
- {
--	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
--	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
--	int i;
--
--	/* Assumming rate_table is in descending order */
--	for (i = 0; i < pll->rate_count; i++) {
--		if (drate >= rate_table[i].rate)
--			return rate_table[i].rate;
--	}
--
--	/* return minimum supported value */
--	return rate_table[i - 1].rate;
-+	return drate;
- }
- 
- /*
-@@ -165,7 +350,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
- 	struct rockchip_pll_rate_table cur;
--	u64 rate64 = prate;
-+	u64 rate64 = prate, frac_rate64 = prate;
- 
- 	rockchip_rk3036_pll_get_params(pll, &cur);
- 
-@@ -174,7 +359,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
- 
- 	if (cur.dsmpd == 0) {
- 		/* fractional mode */
--		u64 frac_rate64 = prate * cur.frac;
-+		frac_rate64 *= cur.frac;
- 
- 		do_div(frac_rate64, cur.refdiv);
- 		rate64 += frac_rate64 >> 24;
--- 
-2.17.1
+Nitpick: Drop this newline.
 
+> +       [CLK_ALPHA_PLL_TYPE_STROMER] =3D {
+> +               [PLL_OFF_L_VAL] =3D 0x08,
+> +               [PLL_OFF_ALPHA_VAL] =3D 0x10,
+> +               [PLL_OFF_ALPHA_VAL_U] =3D 0x14,
+> +               [PLL_OFF_USER_CTL] =3D 0x18,
+> +               [PLL_OFF_USER_CTL_U] =3D 0x1c,
+> +               [PLL_OFF_CONFIG_CTL] =3D 0x20,
+> +               [PLL_OFF_CONFIG_CTL_U] =3D 0xff,
+> +               [PLL_OFF_TEST_CTL] =3D 0x30,
+> +               [PLL_OFF_TEST_CTL_U] =3D 0x34,
+> +               [PLL_OFF_STATUS] =3D 0x28,
+> +       },
+>  };
+>  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+> =20
+> @@ -127,6 +140,8 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>  #define ALPHA_BITWIDTH         32U
+>  #define ALPHA_SHIFT(w)         min(w, ALPHA_BITWIDTH)
+> =20
+> +#define        PLL_STATUS_REG_SHIFT    8
 
+This should have an ALPHA_ prefix.
 
+> +
+>  #define PLL_HUAYRA_M_WIDTH             8
+>  #define PLL_HUAYRA_M_SHIFT             8
+>  #define PLL_HUAYRA_M_MASK              0xff
+> @@ -240,14 +255,143 @@ void clk_alpha_pll_configure(struct clk_alpha_pll =
+*pll, struct regmap *regmap,
+>         mask |=3D config->pre_div_mask;
+>         mask |=3D config->post_div_mask;
+>         mask |=3D config->vco_mask;
+> +       mask |=3D config->alpha_en_mask;
+> +       mask |=3D config->alpha_mode_mask;
+> =20
+>         regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
+> =20
+> +       /* Stromer APSS PLL does not enable LOCK_DET by default, so enabl=
+e it */
+> +       val_u =3D config->status_reg_val << PLL_STATUS_REG_SHIFT;
+> +       val_u |=3D config->lock_det;
+> +
+> +       mask_u =3D config->status_reg_mask;
+> +       mask_u |=3D config->lock_det;
+> +
+> +       if (val_u !=3D 0)
+
+if (val_u) is more canonical.
+
+> +               regmap_update_bits(regmap, PLL_USER_CTL_U(pll), mask_u, v=
+al_u);
+> +
+> +       if (config->test_ctl_val !=3D 0)
+
+Same comment
+
+> +               regmap_write(regmap, PLL_TEST_CTL(pll), config->test_ctl_=
+val);
+> +
+> +       if (config->test_ctl_hi_val !=3D 0)
+
+Same comment
+
+> +               regmap_write(regmap, PLL_TEST_CTL_U(pll), config->test_ct=
+l_hi_val);
+> +
+>         if (pll->flags & SUPPORTS_FSM_MODE)
+>                 qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+>  }
+>  EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+> =20
+> +static unsigned long
+> +alpha_pll_stromer_calc_rate(u64 prate, u32 l, u64 a)
+> +{
+> +       return (prate * l) + ((prate * a) >> ALPHA_REG_BITWIDTH);
+
+Is this not already in this file? Why can't we use
+alpha_pll_calc_rate()?
+
+> +}
+> +
+> +static unsigned long
+> +alpha_pll_stromer_round_rate(unsigned long rate, unsigned long prate, u3=
+2 *l, u64 *a)
+> +{
+> +       u64 remainder;
+> +       u64 quotient;
+> +
+> +       quotient =3D rate;
+> +       remainder =3D do_div(quotient, prate);
+> +       *l =3D quotient;
+> +
+> +       if (!remainder) {
+> +               *a =3D 0;
+> +               return rate;
+> +       }
+> +
+> +       quotient =3D remainder << ALPHA_REG_BITWIDTH;
+> +
+> +       remainder =3D do_div(quotient, prate);
+> +
+> +       if (remainder)
+> +               quotient++;
+> +
+> +       *a =3D quotient;
+> +       return alpha_pll_stromer_calc_rate(prate, *l, *a);
+> +}
+> +
+> +static unsigned long
+> +clk_alpha_pll_stromer_recalc_rate(struct clk_hw *hw, unsigned long paren=
+t_rate)
+> +{
+> +       u32 l, low, high, ctl;
+> +       u64 a =3D 0, prate =3D parent_rate;
+> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
+> +
+> +       regmap_read(pll->clkr.regmap, PLL_L_VAL(pll), &l);
+> +
+> +       regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &ctl);
+> +       if (ctl & PLL_ALPHA_EN) {
+> +               regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL(pll), &low);
+> +               regmap_read(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+> +                           &high);
+> +               a =3D (u64)high << ALPHA_BITWIDTH | low;
+> +       }
+> +
+> +       return alpha_pll_stromer_calc_rate(prate, l, a);
+> +}
+> +
+> +static int clk_alpha_pll_stromer_determine_rate(struct clk_hw *hw,
+> +                                        struct clk_rate_request *req)
+> +{
+> +       unsigned long rate =3D req->rate;
+> +       u32 l;
+> +       u64 a;
+> +
+> +       rate =3D alpha_pll_stromer_round_rate(rate, req->best_parent_rate=
+, &l, &a);
+
+Why assign to rate if nobody is going to look at it? Should probably be
+set to req->rate instead?
+
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_alpha_pll_stromer_set_rate(struct clk_hw *hw, unsigned lo=
+ng rate,
+> +                                        unsigned long prate)
+> +{
+> +       struct clk_alpha_pll *pll =3D to_clk_alpha_pll(hw);
+> +       u32 l;
+> +       int ret;
+> +       u64 a;
+> +
+> +       rate =3D alpha_pll_stromer_round_rate(rate, prate, &l, &a);
+> +
+> +       /* Write desired values to registers */
+
+Please drop this useless comment.
+
+> +       regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+> +                                       a >> ALPHA_BITWIDTH);
+> +
+> +       regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
+> +                          PLL_ALPHA_EN, PLL_ALPHA_EN);
+> +
+> +       if (!clk_hw_is_enabled(hw))
+> +               return 0;
+> +
+> +       /* Stromer PLL supports Dynamic programming.
+
+The /* goes on a line by itself.
+
+> +        * It allows the PLL frequency to be changed on-the-fly without f=
+irst
+> +        * execution of a shutdown procedure followed by a bring up proce=
+dure.
+> +        */
+
+Cool feature. Maybe that can go into the header file though?
+
+> +
+> +       regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE,
+> +                          PLL_UPDATE);
+> +       /* Make sure PLL_UPDATE request goes through */
+> +       mb();
+
+regmap APIs already have memory barriers so this isn't needed?
+
+> +
+> +       /* Wait for PLL_UPDATE to be cleared */
+
+I think the code already says this so we can just drop this comment.
+
+> +       ret =3D wait_for_pll_update(pll);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Wait 11or more PLL clk_ref ticks[to be explored more on wait] =
+*/
+> +
+
+Is this a TODO?
+
+> +       /* Poll LOCK_DET for one */
+
+I think the code already says this so we can just drop this comment.
+
+> +       ret =3D wait_for_pll_enable_lock(pll);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+> +}
+> +
+>  static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+>  {
+>         int ret;
