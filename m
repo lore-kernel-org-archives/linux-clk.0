@@ -3,88 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D3CC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 17:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76104C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 22:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5106121D7F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 17:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119A122248
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 22:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602696599;
-	bh=9437E/K9Qu+aoCzM51wOQqODMRawCtymxfccbkH8RAg=;
+	s=default; t=1602713454;
+	bh=vhqWjk6Ksj0VbJaHGxn+mUKAXNBtcqsuikukYdj1OAo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=YIww8zR4oy1qjMw5qhJAne++mznsD1W742lQAAnm1iGv0zvDbcTArZokCk1QDMSLz
-	 HGxdAvrCpC/IuoqNzkJiMIJTlR/w/HsTXMjZlw7Gq8+vOBvLS4DgqUUs1F31KCGcU9
-	 cT/h1u44phpDGUrPQD4yHlXOBwvU5zn2hmMIjv6M=
+	b=VwOXjgiJcWnfU4H16Gwbs0FzIxKHK/XWBNxENOyxSGycT7TnyEvJh3/TseFXZFK8R
+	 W0zO9a94AsGnjdIxaCOOhN3Ja/Utj6/Wx9FiuYzmvJotFRpPT1UQGx6PdnOqVrEGQb
+	 TmBsfZI5F0uGUQoQrx0h/lW7r5lJc6a/dE+uwWfw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbgJNR37 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 13:29:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54150 "EHLO mail.kernel.org"
+        id S1727891AbgJNWKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Oct 2020 18:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728813AbgJNR36 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:29:58 -0400
+        id S1726747AbgJNWKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Oct 2020 18:10:53 -0400
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA07D21D7F;
-        Wed, 14 Oct 2020 17:29:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 961CA221FF;
+        Wed, 14 Oct 2020 22:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602696597;
-        bh=9437E/K9Qu+aoCzM51wOQqODMRawCtymxfccbkH8RAg=;
+        s=default; t=1602713452;
+        bh=vhqWjk6Ksj0VbJaHGxn+mUKAXNBtcqsuikukYdj1OAo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eks+5Kx4x2WnR4nUpLvMdfiVWyzWm5JoGDPo9Bq00dK+flYHLoHgfmbKE240fVYJV
-         sbwxEVQFAvy6fydc0i1sIQW1ykWt92bll4Or+qHXsJTEeQuqp2RCKX+gfiI+WJxfJL
-         jn4xKmR0TfVZWouJjCFRZyXN6xaybJyawk5JmxHA=
+        b=m9uRw8CZs+OTYGzz9dm8qy8rrTaH2iQYUR1p/R/u9C3hpomrDKqfxR2dhlgHX+81/
+         9QPxOmP+Lk/wRZE7/yXZOGez0tvwM2rrXqKu+jG1T9wYop+ufUQTe5nPRnb6gGHbSr
+         IHsJtPuCWdDX8VYp+4BUG9pI4dLbmZvuu5NNC+RI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <153b313c-ff06-c91b-5adc-4cc3c5cd1a6f@linaro.org>
-References: <20201005225914.315852-1-dmitry.baryshkov@linaro.org> <20201005225914.315852-3-dmitry.baryshkov@linaro.org> <160264174883.310579.10321983404701479878@swboyd.mtv.corp.google.com> <153b313c-ff06-c91b-5adc-4cc3c5cd1a6f@linaro.org>
-Subject: Re: [PATCH v1 2/3] clk: qcom: gdsc: enable external switchable power domain
+In-Reply-To: <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+References: <20201014140507.v3.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid> <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+Subject: Re: [PATCH v3 2/3] clk: qcom: lpass-sc7180: Disentangle the two clock devices
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
+Cc:     Taniya Das <tdas@codeaurora.org>, linux-soc@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 14 Oct 2020 10:29:56 -0700
-Message-ID: <160269659638.884498.4031967462806977493@swboyd.mtv.corp.google.com>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Douglas Anderson <dianders@chromium.org>
+Date:   Wed, 14 Oct 2020 15:10:51 -0700
+Message-ID: <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2020-10-14 02:44:31)
-> On 14/10/2020 05:15, Stephen Boyd wrote:
-> > Quoting Dmitry Baryshkov (2020-10-05 15:59:13)
-> >> On SM8250 MDSS_GDSC (and respective dispcc clocks) are children of MMCX
-> >> power domain. MMCX needs to be enabled to be able to access GDSC
-> >> registers and to enable display clocks. Use dev_pm/opp to enable
-> >> corresponding power domain.
-> >>
-> >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> ---
-> >=20
-> > A general question is why is this done in the gdsc code instead of
-> > somewhere generic? It seems that genpds may need to change the
-> > performance state of other genpds. I vaguely recall that genpd supports
-> > connecting different power domains together so maybe this could all be
-> > handled in the genpd layer instead of here? Then a regulator could be
-> > put behind a genpd and similarly be connected to the gdsc and turned on
-> > before turning on the gdsc?
->=20
-> Basically because we need not only to enable the genpd, but also to set=20
-> performance state. This would mean creating a separate regulator driver=20
-> calling dev_pm_genpd_set_performance_state() from enable/disable paths.
-> Does that seem like a better solution to you?
+Quoting Douglas Anderson (2020-10-14 14:05:22)
+> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpa=
+sscorecc-sc7180.c
+> index abcf36006926..48d370e2108e 100644
+> --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> @@ -356,12 +356,48 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7=
+180_desc =3D {
+>         .num_gdscs =3D ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
+>  };
+> =20
+> +static void lpass_pm_runtime_disable(void *data)
+> +{
+> +       pm_runtime_disable(data);
+> +}
+> +
+> +static void lapss_pm_clk_destroy(void *data)
+> +{
+> +       pm_clk_destroy(data);
+> +}
 
-It does sound like a better solution to me. Unfortunately we already
-have that generic code here in the gdsc file so lifting it up into the
-genpd layer is a bunch of work. It is certainly the end goal.
+Why are these helpers added again? And do we even need them? Can't we
+just pass pm_runtime_disable or pm_clk_destroy to the
+devm_add_action_or_reset() second parameter?
