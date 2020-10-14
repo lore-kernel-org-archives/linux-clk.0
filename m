@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A172DC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC42C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49EFD221FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE96421D7F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Oct 2020 02:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602643423;
-	bh=UWEJk82Cdbiv30DvTjPsPNZGzD+7d86evQl7VsGfmuY=;
+	s=default; t=1602643448;
+	bh=SuJHrGeZzuy4zfE9LXRV6ODeI+7nUL3zjWs/yY99/OE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=wYfAtJiTkOxLXm/JJT4KodCuYI8podcXOE437Id9HI2+vjVsyCrUo+amd4I7OFUQI
-	 eF0E+yRMdNiUcrcYUAueD84BoMxIz7Mxksott8pD4b5Aeff9l7Y8l9Ypny5DXTsUGZ
-	 MKVUy5vpqvemBsuyDyIsJcFmNQkiBf1n0gfQjw8w=
+	b=k+BUiVU72NI7+6q0rXuukJpFsXJ7TYGcRkDoewNSGsAL0BHwaVOfzAvvtinda5atE
+	 8anwk1XDrWXquggF4j8jZ9JSU4OGQNIvgH63NnwJx7fsbnUgFb5FsLgCwO4CnekRkk
+	 I7WmCgrXrrxuPr/ZFoUcGkk6ghgw5sKmWilzhJHk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbgJNCnm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Oct 2020 22:43:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36626 "EHLO mail.kernel.org"
+        id S1726732AbgJNCoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Oct 2020 22:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbgJNCnm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Oct 2020 22:43:42 -0400
+        id S1725899AbgJNCoI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Oct 2020 22:44:08 -0400
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2178221775;
-        Wed, 14 Oct 2020 02:43:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4F2021775;
+        Wed, 14 Oct 2020 02:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602643422;
-        bh=UWEJk82Cdbiv30DvTjPsPNZGzD+7d86evQl7VsGfmuY=;
+        s=default; t=1602643447;
+        bh=SuJHrGeZzuy4zfE9LXRV6ODeI+7nUL3zjWs/yY99/OE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ogRWYKh+ENCQGLilusGcgXCaz1Rsb1GCofihg7UkjNuGai+Ugl6IpflPFAlX0jXIm
-         6vb299IC15HXM92Rz9wwYpI4KVZe9ZxbRPQOGwgtpI81S5I3P/+fMtIpX3uHGUp06b
-         VQGgvHHDqVKWtCDu1WhCckyEPVnwpoXdsAX7+wS8=
+        b=Bubu46TqeADxnXG6bvtsoblzj2+v1Gf9W2cN1b35M58qV46DpMJm0iRrzG6DPzdMI
+         ZkSqpNp9Bo19WGDTaGbLmEIjHtt5UUJQjgpgoyKwuAN6M70eaatc1vnAyEfICWOA2R
+         uLrvKVupPScSslCUBNfP7b4kYC0mSLmuYWM3No9A=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201001165646.32279-3-krzk@kernel.org>
-References: <20201001165646.32279-1-krzk@kernel.org> <20201001165646.32279-3-krzk@kernel.org>
-Subject: Re: [PATCH 2/2] clk: samsung: exynos-clkout: convert to module driver
+In-Reply-To: <20201001165646.32279-2-krzk@kernel.org>
+References: <20201001165646.32279-1-krzk@kernel.org> <20201001165646.32279-2-krzk@kernel.org>
+Subject: Re: [PATCH 1/2] soc: samsung: exynos-pmu: instantiate clkout driver as MFD
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
@@ -53,33 +53,25 @@ To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date:   Tue, 13 Oct 2020 19:43:40 -0700
-Message-ID: <160264342071.310579.16332243912081691987@swboyd.mtv.corp.google.com>
+Date:   Tue, 13 Oct 2020 19:44:06 -0700
+Message-ID: <160264344632.310579.1638354846177491444@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-10-01 09:56:46)
-> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsun=
-g/clk-exynos-clkout.c
-> index 34ccb1d23bc3..68af082d4716 100644
-> --- a/drivers/clk/samsung/clk-exynos-clkout.c
-> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
-> @@ -28,41 +31,103 @@ struct exynos_clkout {
-[...]
-> +       if (!match) {
-> +               dev_err(dev, "cannot match parent device\n");
-> +               return -EINVAL;
-> +       }
-> +       variant =3D match->data;
-> +
-> +       *mux_mask =3D variant->mux_mask;
-> +       dev_err(dev, "MATCH: %x\n", variant->mux_mask);
+Quoting Krzysztof Kozlowski (2020-10-01 09:56:45)
+> The Exynos clock output (clkout) driver uses same register address space
+> (Power Management Unit address space) as Exynos PMU driver and same set
+> of compatibles.  It was modeled as clock provider instantiated with
+> CLK_OF_DECLARE_DRIVE().
+>=20
+> This however brings ordering problems and lack of probe deferral,
+> therefore clkout driver should be converted to a regular module and
+> instantiated as a child of PMU driver to be able to use existing
+> compatibles and address space.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Is this a debug print?
-
-> +
-> +       return 0;
-> +}
->
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
