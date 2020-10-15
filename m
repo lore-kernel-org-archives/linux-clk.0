@@ -2,118 +2,93 @@ Return-Path: <SRS0=IVDQ=DW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA65C433E7
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 07:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4865C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 09:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF31E22247
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 07:07:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXrV4ZtR"
+	by mail.kernel.org (Postfix) with ESMTP id 691C522260
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 09:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbgJOHHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Oct 2020 03:07:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbgJOHHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2020 03:07:55 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE600C061755
-        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2020 00:07:54 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id lw21so2043736ejb.6
-        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2020 00:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1kBMPwrsRtTtpL85vKyORBSjlZVBSWro1bYKWi5sSoY=;
-        b=SXrV4ZtRTWZBx6nCrsO4/iccTgVnMMUFUt1xANSItx5agDtIdrWX6fuGmHJSBjcILr
-         ZpPtWYoHFcLr6abYV8jbKi5x7GUuvZaJ7oP+kvIsav7RwmcVyJAW3+7uJ4oxIJWcXBC0
-         4kAbBbkZVNUQ3IUvtRM/ZbVCOvzzi36ZwMvyctNmTRSz0FNh8t1OULIrCPf3xauJ/aK6
-         DiQLjQAC6Y03NEHD4i4Q7wvyO5NLCWLAdtWClvFS/SgmxupVBqZKAxnoKXy6wdMRTFj6
-         ItDnEWsRwHhrm64DcMXOB1WzMLD2uAOVS5jmrUsDcx2onQv+H6e5JNW/Y9oFdh0NmSRQ
-         C01A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1kBMPwrsRtTtpL85vKyORBSjlZVBSWro1bYKWi5sSoY=;
-        b=mqkXydLvDUtvHa4n+jycXz1ApCqaf/Cq8kv0e2309DaNXYqvm7T7NqNdTQTuWecvNe
-         LkZ/JmA8ycTkkkW+aUZIvaDQutRtkINYDS7lfiQqeXWS3DvSruQPvimJx42dMA3kb0ZI
-         vrmTm1jN+5HnHMQtT17u1b9XJp2shRPNcaulzELvkdjOlrpYftI52m5p+RiYihpogQq7
-         /yvlD44eRV/gcyLnEyx5ls+YK3EpSpD81cMBn8tdyjG8shRO4JpBMPUNaofpGUZjtiFi
-         ij6Yjop+aKdPzik+/urRL9nzdmi5xyi2o6TzwATGdJjFQABO3byQCF9/v5JWbzM5+VY+
-         1TsQ==
-X-Gm-Message-State: AOAM533QOSmdmbyyQwEOFkRhFxQheYqZXhbHdH1pAfbHjF9mzoNuYo87
-        nxf9uwEL5QbLo4ErGaYS9SIWcZqYshWw5m3Pd8A=
-X-Google-Smtp-Source: ABdhPJwD2yPwK8S+cloaHlq2Wl4s0tGHxabny+9d/csYf+2/SXkY2yzxD5vWaFI5jpk2hJz9SzfuFQ7MDD9mrZoxGus=
-X-Received: by 2002:a17:906:a119:: with SMTP id t25mr3149885ejy.67.1602745673533;
- Thu, 15 Oct 2020 00:07:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
- <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
- <CAA+hA=Sa11AByUsKnsvhaH4HS_pdwfSv5P4192nnpRs_0vxk9w@mail.gmail.com>
- <CAA+hA=Qj5NV65N4pWJTCREkuxyw6GKKmSF8X4UXvr=Mmq9WpBA@mail.gmail.com>
- <AM6PR04MB4966AC7FCFB47A51A97D5C2980340@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <160253089964.310579.15879711282194567508@swboyd.mtv.corp.google.com>
- <CAA+hA=S_eO1orWerMPVCujgybFAcG0TCur8LumF5WtZF=zHg3w@mail.gmail.com> <160263606049.310579.2039950012647453863@swboyd.mtv.corp.google.com>
-In-Reply-To: <160263606049.310579.2039950012647453863@swboyd.mtv.corp.google.com>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Thu, 15 Oct 2020 14:51:29 +0800
-Message-ID: <CAA+hA=SSNZbXLynhJFbZQH1SkoNOA15GMvHJytPGW=HBNT5bZw@mail.gmail.com>
-Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726426AbgJOJZu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Oct 2020 05:25:50 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:40222 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727753AbgJOJZu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Oct 2020 05:25:50 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A1811A07AE;
+        Thu, 15 Oct 2020 11:25:48 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A6BF1A061D;
+        Thu, 15 Oct 2020 11:25:48 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E8C29202DB;
+        Thu, 15 Oct 2020 11:25:47 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx8mq: Fix usdhc parents order
+Date:   Thu, 15 Oct 2020 12:25:44 +0300
+Message-Id: <1602753944-30757-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shawn,
+According to the latest RM (see Table 5-1. Clock Root Table),
+both usdhc root clocks have the parent order as follows:
 
-On Wed, Oct 14, 2020 at 8:41 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dong Aisheng (2020-10-13 02:27:37)
-> > On Tue, Oct 13, 2020 at 3:28 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Aisheng Dong (2020-09-26 21:13:44)
-> > > > Gently ping again...
-> > > >
-> > > > @Stephen Boyd
-> > > > Could you kindly provide some feedback how we can proceed this?
-> > > >
-> > >
-> > > Hmm I thought Shawn was going to apply this a while ago. Did that not
-> > > happen? I guess I'll have to pile it in now.
-> >
-> > Now there's still one patch that does not have your R-b tags.
-> > I guess Shawn is waiting for this.
-> > Once you give the R-b tags, this series could go to Shawn's tree
-> > as another DT patch set also depends on this.
-> >
-> > Would you help check this left one?
-> > [PATCH v7 03/11] clk: imx: scu: add two cells binding support
-> > All other patches already get yours R-b tags.
->
-> Ok I see. Sent the tag now.
+000 - 25M_REF_CLK
+001 - SYSTEM_PLL1_DIV2
+010 - SYSTEM_PLL1_CLK
+011 - SYSTEM_PLL2_DIV2
+100 - SYSTEM_PLL3_CLK
+101 - SYSTEM_PLL1_DIV3
+110 - AUDIO_PLL2_CLK
+111 - SYSTEM_PLL1_DIV8
 
-Thanks.
+So the audio_pll2_out and sys3_pll_out have to be swapped.
 
-Shawn,
-Would you apply this series?
-Kindly let me know if you want a resend.
+Fixes: b80522040cd3 ("clk: imx: Add clock driver for i.MX8MQ CCM")
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Reported-by: Cosmin Stefan Stoica <cosmin.stoica@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards
-Aisheng
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 238835c..75f6aa0 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -160,10 +160,10 @@ static const char * const imx8mq_qspi_sels[] = {"osc_25m", "sys1_pll_400m", "sys
+ 					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
+ 
+ static const char * const imx8mq_usdhc1_sels[] = {"osc_25m", "sys1_pll_400m", "sys1_pll_800m", "sys2_pll_500m",
+-					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
++					 "sys3_pll_out", "sys1_pll_266m", "audio_pll2_out", "sys1_pll_100m", };
+ 
+ static const char * const imx8mq_usdhc2_sels[] = {"osc_25m", "sys1_pll_400m", "sys1_pll_800m", "sys2_pll_500m",
+-					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
++					 "sys3_pll_out", "sys1_pll_266m", "audio_pll2_out", "sys1_pll_100m", };
+ 
+ static const char * const imx8mq_i2c1_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll_out", "audio_pll1_out",
+ 					 "video_pll1_out", "audio_pll2_out", "sys1_pll_133m", };
+-- 
+2.7.4
+
