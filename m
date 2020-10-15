@@ -2,106 +2,96 @@ Return-Path: <SRS0=IVDQ=DW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94732C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 11:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F88C433E7
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 11:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4AA20878
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 11:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56E52145D
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 11:49:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSMVRoIu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="m+/Q7YQo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgJOLWk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Oct 2020 07:22:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgJOLWj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2020 07:22:39 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B04BC061755;
-        Thu, 15 Oct 2020 04:22:39 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id v6so3101852lfa.13;
-        Thu, 15 Oct 2020 04:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UGCMKDJHnX/3RSDW25xtGUrV5WU8mJK2ylfsXOfPuY4=;
-        b=fSMVRoIu6uMlsDmazzPtyhdDV5uLOVnyuPHWR/QhrJD71dffmz3w/UfM7tVIWimBOx
-         t7QU8KUJPH3qTryVUc7FpMb8SPj0Ht92HdjgsAbdt3Pr+E4nVvj8yoXnkbmcOk38HoqZ
-         yPDgbi1WEk8ffc6vSaXlRXWjp4wbg91/XU0Omqsy1RA929h9GSueKsejN3IbGDQ10zxF
-         RMDlajqb50w4oZue7SI2Yvv+SBu3xUcwlRQAxAIowXNub0gUv0w0fYVX9vnBtIy0NFmJ
-         cfJzJgZqLrxoremFFMNctAO6IwMEN00VPre79ODTHY6Cryl14hoQ24/oxmuya0hAPWmg
-         2nEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UGCMKDJHnX/3RSDW25xtGUrV5WU8mJK2ylfsXOfPuY4=;
-        b=DNEzJGwFhc7c3H3qVBTGGh4nYXZJsBf3Z4KfF7+rY+cY+JRRRBjUfRwxQtgoHVmBbj
-         xyzbbXXuhZsrIGx9PGOlGyJ61SCSzw0uufZXtfBHIwZ4PAzrdhcRGNnUcS7jqAXCijR+
-         C8PkOeoyHDLDrpcWSlXkYI6P8LLNOVf3gvgHzJxrKQSDxjpY6y+fgU0aqnBqH8e0FRHf
-         WYOPHuL9mTRpSTHDrLFfELURtPmcKwnCKDR5yMuLFdmQKCeoe2f0lrKVi5rldXCB2xGP
-         rW4CES3+6GaI2d69vBXnsGidNN/uXkMudXb9aRvylqlp0xHvqVcWk15nRY5Q+BlAz0Z+
-         yLxw==
-X-Gm-Message-State: AOAM531Hji4PI+mltwmIjfzx944FuOV3v6Vk/YeGR2yMYrLeALlWsZkd
-        u/PJ72nIv4rryEwHgDw1ckxvWAl5WhddI1eIvOw=
-X-Google-Smtp-Source: ABdhPJwVrB+EgepMNS7j0APaZAjKdJsSlZYYH3z1GpGioMlGRGwxuKhvBlkMGzCudzMbx9H6AAoutxd9iL1k9ya+7Js=
-X-Received: by 2002:ac2:4e90:: with SMTP id o16mr975830lfr.251.1602760957682;
- Thu, 15 Oct 2020 04:22:37 -0700 (PDT)
+        id S1727942AbgJOLtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Oct 2020 07:49:33 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:29021 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbgJOLrb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2020 07:47:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1602762451; x=1634298451;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=NNO9wfBMjmJ6G+PyRIzbO5vvOG03eTWXRXtErSNf1U8=;
+  b=m+/Q7YQovhB02H5xocDWVHNCyjaCuMFIEU+YJNLuGPdTRmNxDXdULQS0
+   9JOI3IXmieiV8C3XsTWJVBotGOlqu1xplz/sJxpNBSRnYQm3gBlQGFQnK
+   nJPcbX8fu9jEQ/7/QWifeav0lcRwKuA7Ru1h4B/Kn8vOejOf7rpUrjeHg
+   MBU7yNct+qih89HMx15S1JQS2vmwJhJcxStyTk+bUDAreYmCewfftcZd2
+   yiwtZVyMypagmKXD04XLLMGpG/dMAfNbUNtQovgzRBZMJzXHxzrIy6lB1
+   Z2yLOA4eKjx4u0DdvZoJ6Jt3M0fJHGIP52HVOpOvBkFtWyn8TXnZm7NiX
+   Q==;
+IronPort-SDR: jPeAytXVQENt09QFbEBIAUhAEXKuTehRDlcMmr8CCww2eshEmh2ePiQgKleQ1TyLuHRNIbqUDG
+ um/MGSxqvTvcKe7UIZiMu96XY8Mf2k5hWnGKltSTwZ7X80r6kF7/C4zGINa3bQ+/dpOI21pcUp
+ eVgi7LpPFU44Kt7tCTtY6RN1fjWWA98EtFIEHFlt2OcK4cOqUoSXPKAEc1D/mYQ5brTTEO5lHk
+ kmKW6seW6AruW9NF0ejEOj4PPDaI9haclHVweFpL/PtQwkQEPNzSg3s44GEAnoDzYbjlaQtW+s
+ 4Rc=
+X-IronPort-AV: E=Sophos;i="5.77,378,1596524400"; 
+   d="scan'208";a="29988089"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2020 04:47:30 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 15 Oct 2020 04:47:30 -0700
+Received: from ryzen.microchip.com (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.1979.3 via Frontend
+ Transport; Thu, 15 Oct 2020 04:47:28 -0700
+From:   <daire.mcnamara@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <padmarao.begari@microchip.com>,
+        <david.abdurachmanov@gmail.com>
+CC:     Daire McNamara <daire.mcnamara@microchip.com>
+Subject: [PATCH v1 0/2] CLK: microchip: Add clkcfg driver for Microchip PolarFire SoC
+Date:   Thu, 15 Oct 2020 12:47:23 +0100
+Message-ID: <20201015114725.23137-1-daire.mcnamara@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <1602753944-30757-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1602753944-30757-1-git-send-email-abel.vesa@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 15 Oct 2020 08:22:28 -0300
-Message-ID: <CAOMZO5DxZN_cniuy2xhYGWAr3rjNBZNJAJvYcH+KNBa+S7S2mg@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8mq: Fix usdhc parents order
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Abel,
+From: Daire McNamara <daire.mcnamara@microchip.com>
 
-On Thu, Oct 15, 2020 at 6:26 AM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> According to the latest RM (see Table 5-1. Clock Root Table),
-> both usdhc root clocks have the parent order as follows:
->
-> 000 - 25M_REF_CLK
-> 001 - SYSTEM_PLL1_DIV2
-> 010 - SYSTEM_PLL1_CLK
-> 011 - SYSTEM_PLL2_DIV2
-> 100 - SYSTEM_PLL3_CLK
-> 101 - SYSTEM_PLL1_DIV3
-> 110 - AUDIO_PLL2_CLK
-> 111 - SYSTEM_PLL1_DIV8
->
-> So the audio_pll2_out and sys3_pll_out have to be swapped.
->
-> Fixes: b80522040cd3 ("clk: imx: Add clock driver for i.MX8MQ CCM")
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Reported-by: Cosmin Stefan Stoica <cosmin.stoica@nxp.com>
+This patchset adds support for the Microchip PolarFire clkcfg
+hardware block.
 
-Thanks for the fix:
+Daire McNamara (2):
+  dt-bindings: CLK: microchip: Add Microchip PolarFire host binding
+  CLK: microchip: Add driver for Microchip PolarFire SoC
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+ .../bindings/clock/microchip,pfsoc.yaml       |  70 +++
+ drivers/clk/Kconfig                           |   5 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/microchip/Makefile                |   1 +
+ drivers/clk/microchip/clk-pfsoc.c             | 424 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,pfsoc-clock.h |  45 ++
+ 6 files changed, 546 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,pfsoc.yaml
+ create mode 100644 drivers/clk/microchip/clk-pfsoc.c
+ create mode 100644 include/dt-bindings/clock/microchip,pfsoc-clock.h
+
+
+base-commit: b5fc7a89e58bcc059a3d5e4db79c481fb437de59
+prerequisite-patch-id: b98abc1ad412692a95e3eb3f7adfaff214750282
+prerequisite-patch-id: b77f4eea4090304b5c113e4ccc29e64fc82cdc45
+prerequisite-patch-id: 6237d2bb8bbd70d5f7023d07f4b3b2295097e85b
+prerequisite-patch-id: 4b86709d0511137151e90710207805dad7b2d6f1
+prerequisite-patch-id: 3c6331ab346c2cc212eddd1ecffd8c503e7a5cf1
+-- 
+2.25.1
+
