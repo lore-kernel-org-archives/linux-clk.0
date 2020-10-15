@@ -2,143 +2,118 @@ Return-Path: <SRS0=IVDQ=DW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF48C43467
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 02:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA65C433E7
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 07:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97CA322257
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 02:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF31E22247
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Oct 2020 07:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ElM2+r+w"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXrV4ZtR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbgJOCEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Oct 2020 22:04:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
+        id S1727785AbgJOHHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Oct 2020 03:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbgJOCEi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Oct 2020 22:04:38 -0400
-Received: from mail-vk1-xa43.google.com (mail-vk1-xa43.google.com [IPv6:2607:f8b0:4864:20::a43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7895EC05BD0D
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 15:29:13 -0700 (PDT)
-Received: by mail-vk1-xa43.google.com with SMTP id n141so149835vke.9
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 15:29:13 -0700 (PDT)
+        with ESMTP id S1727025AbgJOHHz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Oct 2020 03:07:55 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE600C061755
+        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2020 00:07:54 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id lw21so2043736ejb.6
+        for <linux-clk@vger.kernel.org>; Thu, 15 Oct 2020 00:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FFNmhfthsf5pFmuohFdBe/J1wSqD3GGj/IpnA7g1A30=;
-        b=ElM2+r+wNX9S0QX15/URuzFWDAgrQuroEb/3vWVNqelEtF3zeNVJX5JYXXEHfLzm8b
-         1+VO0qGMtKHyuKoYmWKxcRcr38VNqOCXnxuvQ49A318FaWwdq5hv+zGSlBBIen0PvDjH
-         1UKWTabxwoO4qh6CK3L1+Mxnl9lwc5CuqFAvs=
+        bh=1kBMPwrsRtTtpL85vKyORBSjlZVBSWro1bYKWi5sSoY=;
+        b=SXrV4ZtRTWZBx6nCrsO4/iccTgVnMMUFUt1xANSItx5agDtIdrWX6fuGmHJSBjcILr
+         ZpPtWYoHFcLr6abYV8jbKi5x7GUuvZaJ7oP+kvIsav7RwmcVyJAW3+7uJ4oxIJWcXBC0
+         4kAbBbkZVNUQ3IUvtRM/ZbVCOvzzi36ZwMvyctNmTRSz0FNh8t1OULIrCPf3xauJ/aK6
+         DiQLjQAC6Y03NEHD4i4Q7wvyO5NLCWLAdtWClvFS/SgmxupVBqZKAxnoKXy6wdMRTFj6
+         ItDnEWsRwHhrm64DcMXOB1WzMLD2uAOVS5jmrUsDcx2onQv+H6e5JNW/Y9oFdh0NmSRQ
+         C01A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FFNmhfthsf5pFmuohFdBe/J1wSqD3GGj/IpnA7g1A30=;
-        b=JExZZ/YfONr53mBabKSFTjAqnwAMi+nq1R8C2zG05esxdxnB84TQbKegwRCqwf5zPc
-         hLNuWe1AIE+rASdlcIA4nDhQUC6xqOuvAJ4BHRpvWCfad57LZzeB4jpsu/twqRuy+CxZ
-         4wrmtDU86vgU238Y/UIKj9TvlBT6Lb0C/RyQMkVo34iMJaCYsDFL9hq1EtiEMxwopGtA
-         XSwAW7QS6Bz77OKcMhAK1DSWTNRHPlCl2UI9Qf58veoo7u7q6MSmSWgw1tpoAxb8/48u
-         xb/AC7LfAIP2UH6Wa71LLj2VZOyI4nBPdGuKknquzjSY95rzVDEC2wzced6bQRHYdiFn
-         iHCA==
-X-Gm-Message-State: AOAM5323UwErKgSgH1857E43XXtmx9g7IYx/ar1TRaSWsx02RK+BcAex
-        +HdS9ERtiU0qX65HRft4rTcj3s04j8eKbg==
-X-Google-Smtp-Source: ABdhPJzNUjdGBGA+hs9z/s1yLmYfqHdlFzVpVcxcYiabYWPGW6X5hHgBcAcpbrAQJP4wq5zWsC2Hjg==
-X-Received: by 2002:a1f:210d:: with SMTP id h13mr1043269vkh.0.1602714551987;
-        Wed, 14 Oct 2020 15:29:11 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id w137sm150716vkw.11.2020.10.14.15.29.10
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 15:29:10 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id c7so247543uaq.4
-        for <linux-clk@vger.kernel.org>; Wed, 14 Oct 2020 15:29:10 -0700 (PDT)
-X-Received: by 2002:a9f:31ce:: with SMTP id w14mr725901uad.104.1602714550250;
- Wed, 14 Oct 2020 15:29:10 -0700 (PDT)
+        bh=1kBMPwrsRtTtpL85vKyORBSjlZVBSWro1bYKWi5sSoY=;
+        b=mqkXydLvDUtvHa4n+jycXz1ApCqaf/Cq8kv0e2309DaNXYqvm7T7NqNdTQTuWecvNe
+         LkZ/JmA8ycTkkkW+aUZIvaDQutRtkINYDS7lfiQqeXWS3DvSruQPvimJx42dMA3kb0ZI
+         vrmTm1jN+5HnHMQtT17u1b9XJp2shRPNcaulzELvkdjOlrpYftI52m5p+RiYihpogQq7
+         /yvlD44eRV/gcyLnEyx5ls+YK3EpSpD81cMBn8tdyjG8shRO4JpBMPUNaofpGUZjtiFi
+         ij6Yjop+aKdPzik+/urRL9nzdmi5xyi2o6TzwATGdJjFQABO3byQCF9/v5JWbzM5+VY+
+         1TsQ==
+X-Gm-Message-State: AOAM533QOSmdmbyyQwEOFkRhFxQheYqZXhbHdH1pAfbHjF9mzoNuYo87
+        nxf9uwEL5QbLo4ErGaYS9SIWcZqYshWw5m3Pd8A=
+X-Google-Smtp-Source: ABdhPJwD2yPwK8S+cloaHlq2Wl4s0tGHxabny+9d/csYf+2/SXkY2yzxD5vWaFI5jpk2hJz9SzfuFQ7MDD9mrZoxGus=
+X-Received: by 2002:a17:906:a119:: with SMTP id t25mr3149885ejy.67.1602745673533;
+ Thu, 15 Oct 2020 00:07:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201014140507.v3.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid>
- <20201014140507.v3.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid> <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com>
-In-Reply-To: <160271345117.884498.6375969749730135625@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 14 Oct 2020 15:28:58 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UipL42FLRARc4V34bqEukaB=WQzAdr2Si2RUjPaAmE4g@mail.gmail.com>
-Message-ID: <CAD=FV=UipL42FLRARc4V34bqEukaB=WQzAdr2Si2RUjPaAmE4g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: lpass-sc7180: Disentangle the two clock devices
+References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
+ <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
+ <CAA+hA=Sa11AByUsKnsvhaH4HS_pdwfSv5P4192nnpRs_0vxk9w@mail.gmail.com>
+ <CAA+hA=Qj5NV65N4pWJTCREkuxyw6GKKmSF8X4UXvr=Mmq9WpBA@mail.gmail.com>
+ <AM6PR04MB4966AC7FCFB47A51A97D5C2980340@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <160253089964.310579.15879711282194567508@swboyd.mtv.corp.google.com>
+ <CAA+hA=S_eO1orWerMPVCujgybFAcG0TCur8LumF5WtZF=zHg3w@mail.gmail.com> <160263606049.310579.2039950012647453863@swboyd.mtv.corp.google.com>
+In-Reply-To: <160263606049.310579.2039950012647453863@swboyd.mtv.corp.google.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Thu, 15 Oct 2020 14:51:29 +0800
+Message-ID: <CAA+hA=SSNZbXLynhJFbZQH1SkoNOA15GMvHJytPGW=HBNT5bZw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Taniya Das <tdas@codeaurora.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        "ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Shawn,
 
-On Wed, Oct 14, 2020 at 3:10 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Oct 14, 2020 at 8:41 AM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Quoting Douglas Anderson (2020-10-14 14:05:22)
-> > diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > index abcf36006926..48d370e2108e 100644
-> > --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-> > @@ -356,12 +356,48 @@ static const struct qcom_cc_desc lpass_audio_hm_sc7180_desc = {
-> >         .num_gdscs = ARRAY_SIZE(lpass_audio_hm_sc7180_gdscs),
-> >  };
+> Quoting Dong Aisheng (2020-10-13 02:27:37)
+> > On Tue, Oct 13, 2020 at 3:28 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Aisheng Dong (2020-09-26 21:13:44)
+> > > > Gently ping again...
+> > > >
+> > > > @Stephen Boyd
+> > > > Could you kindly provide some feedback how we can proceed this?
+> > > >
+> > >
+> > > Hmm I thought Shawn was going to apply this a while ago. Did that not
+> > > happen? I guess I'll have to pile it in now.
 > >
-> > +static void lpass_pm_runtime_disable(void *data)
-> > +{
-> > +       pm_runtime_disable(data);
-> > +}
-> > +
-> > +static void lapss_pm_clk_destroy(void *data)
-> > +{
-> > +       pm_clk_destroy(data);
-> > +}
+> > Now there's still one patch that does not have your R-b tags.
+> > I guess Shawn is waiting for this.
+> > Once you give the R-b tags, this series could go to Shawn's tree
+> > as another DT patch set also depends on this.
+> >
+> > Would you help check this left one?
+> > [PATCH v7 03/11] clk: imx: scu: add two cells binding support
+> > All other patches already get yours R-b tags.
 >
-> Why are these helpers added again? And do we even need them? Can't we
-> just pass pm_runtime_disable or pm_clk_destroy to the
-> devm_add_action_or_reset() second parameter?
+> Ok I see. Sent the tag now.
 
-Unfortunately, we can't due to the C specification.  Take a look at
-all the other users of devm_add_action_or_reset() and they all have
-pretty much the same stupid thing.  This is a pretty great grep, for
-instance:
+Thanks.
 
-git grep devm_add_action_or_reset.*clk_disable_unprepare
+Shawn,
+Would you apply this series?
+Kindly let me know if you want a resend.
 
-I did a quick Google search and the top hit was a stack overflow that
-explained it:
-
-https://stackoverflow.com/questions/559581/casting-a-function-pointer-to-another-type
-
-The net-net is that the answer there says:
-
-> Hence, since a void* is not compatible with a struct my_struct*, a
-> function pointer of type void (*)(void*) is not compatible with a
-> function pointer of type void (*)(struct my_struct*), so this
-> casting of function pointers is technically undefined behavior.
-
-I suppose I could try to add devm variants of these functions
-somewhere more general if you think it's a good idea, though there it
-seems like there's not a huge need since these two greps are zero:
-
-git grep devm_add_action_or_reset.*runtime_disable
-git grep devm_add_action_or_reset.*pm_clk_destroy
-
-...actually, do we even need the runtime_disable in the error path?
-When the dev goes away does it matter if you left pm_runtime enabled
-on it?
-
--Doug
+Regards
+Aisheng
