@@ -7,95 +7,86 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88FCC433E7
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 17:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AF8C433E7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 17:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9378720897
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 17:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F8E20789
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 17:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602868979;
-	bh=9OX2PDc6xde6dFGaMGbQyOIv71WR5E+RW9A/mk285k8=;
+	s=default; t=1602869162;
+	bh=3SKQY4ZvRX3XPA03iSzXq/AcTYy6G2d/KFC89ExPbuw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=J0SbGaQPNF7tZzDc79f3en38fy7Nyl0ubKTR/6qEXJyurTKThaV8KwVsNRON+Tplx
-	 lVBh9HpIbOYHJ4kMAQNGy/m3bIU/mnEb+d/wHi97lnhLOXPSG8N6N7o4YE+Bcd6SC7
-	 c2vjdZND2NP5NE/ow2OjykX+Re/1rLD+AhnHhrRI=
+	b=H32S2sOvY6Yx5uTasTuGAWkM4MkI6NxDiWg5Usuh28OWG7n+dQJfHo6DsHLJ25Nm1
+	 1P+Mer0uh7mV4BqyrIdZ7Q+Re4Lok++8RwZ9prrkQOCle2EdQgvPHHHcZhq8xwSVWq
+	 j8gjD7SCnHIUsqhLTLSQ39f6tvXXeeTRnMnwI9GM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390600AbgJPRW4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Oct 2020 13:22:56 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46775 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390593AbgJPRW4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2020 13:22:56 -0400
-Received: by mail-oi1-f195.google.com with SMTP id s81so3198378oie.13;
-        Fri, 16 Oct 2020 10:22:55 -0700 (PDT)
+        id S2390538AbgJPRZ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Oct 2020 13:25:57 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41952 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732379AbgJPRZ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2020 13:25:57 -0400
+Received: by mail-ot1-f66.google.com with SMTP id n15so3074669otl.8;
+        Fri, 16 Oct 2020 10:25:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=BJybATZoycDgLTmbffuI2naHa9L9rg82JqRTegGqLik=;
-        b=Ny5soEWnq3PBstrE46+qpflaN8GOlLie9UyqcrpnaDv3YQQZuPEv7ceZFN/WiJW0NS
-         vN4e9wB7NUW+/Yk9KtwEzSmBKZ/NOVVF4Vp1anhj8D0C1NqLQ/i9FFPS6Sg5mhoQC4kg
-         eONteaOeEdrq0gBWBqQ+qClYmhJRkNw7BYZhg/x1+U6abNqV72YtqDV7THUyGHfvmKo5
-         4cPB7gyDTWXlAsbr18Qa0z/uBgdvhZVKzmuctGApl8mrKC1H2wV2QCpFRhP8AgtqYyhN
-         OfLJAPVayyQcEI1Wv9b9mNgOyVFsBcVUmdrlFcJOJNwsYbvVNDGyiSRLK0xN8pI/IXm5
-         1Mbg==
-X-Gm-Message-State: AOAM531fv8l2f3l/W75RSAvhay6x+PxKe5hK/mdRBIYbgcuRRbBVRWV/
-        by6nPgKZIJcd7G5WUwCdSA==
-X-Google-Smtp-Source: ABdhPJxp9sgI5G8aybjKcCWmzMoG+26CI+MfMzp2N6g+7MDS4qq9xh60m6rvafSWTPabVDr9QAnNvg==
-X-Received: by 2002:a05:6808:b24:: with SMTP id t4mr2957434oij.93.1602868975325;
-        Fri, 16 Oct 2020 10:22:55 -0700 (PDT)
+        bh=DA94m8kt2TR3VyrgchuAUU6rzY+KQtZ6JM68Rr3FVA0=;
+        b=Kh2bCuLGSi/oQ5VKFlUtFPjmc9KdX+dIHS1N9jyk03SwcKx1E9jSj5Bo/P2WOUIKJ2
+         Wh3C95ohPQXub9Tnx9U9bOA4prnPL/QoOyYgamszyD5hHMrTHwjkcSV3mG+E1PwVLAyx
+         2kGK0UrpPcuaCS5on8WfnYm9kCnz58F0pq7zKRusfvSw8n4e41PkldpiJkHBshHYHufb
+         PhlJD0M7uDDVv5918uqw5+fDFcKRub+kMoABpiVGd6QTcAJgKgjTn9SYap4sxcISet97
+         xtgW7nAVjQvIfp1EMR3c02lEPrHZNf3dy3Oc/Hc8Kwb350EAu+lKPt3VZftGTO3NKMhW
+         mKnA==
+X-Gm-Message-State: AOAM533jksdB65ngtfsuzU4qkfX9okn1iN+j9z0/PCGSxIJQcd4isyhv
+        r3URa5KSSBVAku2DZEYjlA==
+X-Google-Smtp-Source: ABdhPJxO8CIfscEM6KLD9vmTBZG8pb+ZgU8lhRYrLMMyjjsl3Pl6OiFzFRDl09ih+v6CMRGMnVqAVg==
+X-Received: by 2002:a9d:2f69:: with SMTP id h96mr3262305otb.62.1602869154478;
+        Fri, 16 Oct 2020 10:25:54 -0700 (PDT)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 91sm1124825ott.55.2020.10.16.10.22.54
+        by smtp.gmail.com with ESMTPSA id 105sm1134203otf.52.2020.10.16.10.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2020 10:22:54 -0700 (PDT)
-Received: (nullmailer pid 1604743 invoked by uid 1000);
-        Fri, 16 Oct 2020 17:22:53 -0000
-Date:   Fri, 16 Oct 2020 12:22:53 -0500
+        Fri, 16 Oct 2020 10:25:53 -0700 (PDT)
+Received: (nullmailer pid 1608974 invoked by uid 1000);
+        Fri, 16 Oct 2020 17:25:52 -0000
+Date:   Fri, 16 Oct 2020 12:25:52 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-kernel@vger.kernel.org, michael.hennerich@analog.com,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org, mdf@kernel.org,
-        devicetree@vger.kernel.org, lars@metafoo.de,
-        mturquette@baylibre.com, sboyd@kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: adi,axi-clkgen: convert old
- binding to yaml format
-Message-ID: <20201016172253.GA1604546@bogus>
-References: <20201001085035.82938-1-alexandru.ardelean@analog.com>
- <20201013143421.84188-1-alexandru.ardelean@analog.com>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     robh+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: Add YAML schemas for the QCOM
+ Camera clock bindings.
+Message-ID: <20201016172552.GA1608922@bogus>
+References: <1602609110-11504-1-git-send-email-tdas@codeaurora.org>
+ <1602609110-11504-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201013143421.84188-1-alexandru.ardelean@analog.com>
+In-Reply-To: <1602609110-11504-3-git-send-email-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 13 Oct 2020 17:34:20 +0300, Alexandru Ardelean wrote:
-> This change converts the old binding for the AXI clkgen driver to a yaml
-> format.
+On Tue, 13 Oct 2020 22:41:49 +0530, Taniya Das wrote:
+> The Camera Subsystem clock provider have a bunch of generic properties
+> that are needed in a device tree. Add a YAML schemas for those.
 > 
-> As maintainers, added:
->  - Lars-Peter Clausen <lars@metafoo.de> - as original author of driver &
->    binding
->  - Michael Hennerich <michael.hennerich@analog.com> - as supporter of
->    Analog Devices drivers
+> Add clock ids for camera clocks which are required to bring the camera
+> subsystem out of reset.
 > 
-> Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
-> 
-> Changelog v1 -> v2:
-> * add 'additionalProperties: false'
-> * changed 'clock@...' -> 'clock-controller@...' in example
-> * added Acked-by for Michael & Lars on the re-licensing
-> * updated description for 'clocks' property
-> 
->  .../bindings/clock/adi,axi-clkgen.yaml        | 53 +++++++++++++++++++
->  .../devicetree/bindings/clock/axi-clkgen.txt  | 25 ---------
->  2 files changed, 53 insertions(+), 25 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/axi-clkgen.txt
+>  .../bindings/clock/qcom,sc7180-camcc.yaml          |  73 +++++++++++++
+>  include/dt-bindings/clock/qcom,camcc-sc7180.h      | 121 +++++++++++++++++++++
+>  2 files changed, 194 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,camcc-sc7180.h
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
