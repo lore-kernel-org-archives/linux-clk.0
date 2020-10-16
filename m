@@ -2,131 +2,124 @@ Return-Path: <SRS0=W/YM=DX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC05C433E7
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 14:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31839C433E7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 14:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4C4620866
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 14:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A3120874
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Oct 2020 14:56:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rS/jD8JM"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Ymp3Z3Al"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395461AbgJPORr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Oct 2020 10:17:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52562 "EHLO
+        id S2409643AbgJPO4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Oct 2020 10:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395420AbgJPORr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2020 10:17:47 -0400
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08180C061755;
-        Fri, 16 Oct 2020 07:17:46 -0700 (PDT)
-Received: by mail-qk1-x744.google.com with SMTP id k9so2034059qki.6;
-        Fri, 16 Oct 2020 07:17:45 -0700 (PDT)
+        with ESMTP id S2406998AbgJPO4c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Oct 2020 10:56:32 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8554C0613D3
+        for <linux-clk@vger.kernel.org>; Fri, 16 Oct 2020 07:56:30 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id m128so2731758oig.7
+        for <linux-clk@vger.kernel.org>; Fri, 16 Oct 2020 07:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=y2N9Ts5N7CVt9wr/ePD+KSf8C8M4q1OtWt2aeh5wg8c=;
-        b=rS/jD8JMDzk/CgwwjSLV20MjwHgI1Uj3Et/bRjSP1Lw3GOCzh7bJun5b8O02chx2Mo
-         O9/r+jPj0iki9GZ6z4HDf6SMMZ0Vm8EYHkmncqiC2/tvwi+OBGLuL/CFF8KOU/PcTCHJ
-         8SsmxpfqgHWX68ROIVJkaxo+o6HwaSY4c6Zc5E3jNwk/c7CXVZ20kTtvXmdPa3rLWenW
-         5WbWN5x/oHDlOtuHYu6DpTfQ3PGSYA4nIBFtW71I6SJXydES3FnsmU8ryD4vWInWckju
-         2YxzyLhZp9YJ3tmuyB3SnuhLzYnQs+0ARCUQu1FnkFh29qUa/E6TgBvcWbui+cbR+oiO
-         AVHQ==
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o683JyDzGtCz8h08bH720Xzkdnsct+b153JAeeQ2q3A=;
+        b=Ymp3Z3Alkmll4V81zm2iA/funD9+iBwilvwYdSd9IX5hMZRv5M7byKXSK+PMkOp56A
+         +yYyeMN+OW4vBy4YOedRf8XjX4mA9LNxrHGmvVrkQ2/PnZSw12zAqipKc5ZExVnn1a+k
+         0o+3tuXvjoOf+ml2ynW9iAxrN5i1wfkPOKe8BNsnzj4Zl9a1yViKfBXoMkf13O8R9toq
+         O+EoBlUWfBjYm+ei9fZxzNzkD2FqsMsRvuPUEhk8BpX3NGo4Q6rKhrrOtXsCk+g/EYQ6
+         hkvAddoDwwCVKhyig9g52Gn5e8MAT0MxaPRma95tSkBJdMnMZ5lVP6fGnBryobfPcveD
+         SEJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y2N9Ts5N7CVt9wr/ePD+KSf8C8M4q1OtWt2aeh5wg8c=;
-        b=EnaIb0wYYXGCrnWH9ZBo/2yFJlPbIPBVzrvKulZ3tvGAnJchbieLImRBUBJrTMBb/0
-         MjnnNFMkUrESgkOo/oYBfHTMmBcDnljIj3/UtsMBXxSMxLyRZCSwt8ODAhtoN39dUEBx
-         46U2930V6k0R8wIw8uTZ0phVbkmwYtGdUD6iDJAnc5pssFOR+ICHrqB+LK6W1/uCbAqt
-         Sp7iw28VprA84FlIGs7SfK06tlzvd+xlnRkWhxWBaL40zysHmddsinExsTumrHIj07Ik
-         RHkb4mwjrySX6Ro0pDskHaLa9QFdGSasJ93+Q6UMqSlvjqBrR93UpyrrilFRe29zHIoX
-         3cZQ==
-X-Gm-Message-State: AOAM530aMMRgNc/I9izEjgIyS8ZEoSARAn3KNqQDdZf02SDF1WgULKR6
-        BNBnl0RJ5GwdRKOXWlG1Xro=
-X-Google-Smtp-Source: ABdhPJz5G8Tza/D8Encg3kY9Xb3jwdS2iwgKlNCDyfpMMg3WySO1kAPX0r7PHPGeDRZwfQmuPWrZRw==
-X-Received: by 2002:a05:620a:66d:: with SMTP id a13mr3973446qkh.301.1602857865155;
-        Fri, 16 Oct 2020 07:17:45 -0700 (PDT)
-Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
-        by smtp.googlemail.com with ESMTPSA id n2sm1044448qtr.6.2020.10.16.07.17.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Oct 2020 07:17:44 -0700 (PDT)
-Subject: Re: [PATCH 0/4] clk: add driver for the SiFive FU740
-To:     Zong Li <zong.li@sifive.com>, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, mturquette@baylibre.com,
-        sboyd@kernel.org, yash.shah@sifive.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <cover.1602838910.git.zong.li@sifive.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Autocrypt: addr=seanga2@gmail.com; prefer-encrypt=mutual; keydata=
- mQENBFe74PkBCACoLC5Zq2gwrDcCkr+EPGsT14bsxrW07GiYzQhLCgwnPdEpgU95pXltbFhw
- 46GfyffABWxHKO2x+3L1S6ZxC5AiKbYXo7lpnTBYjamPWYouz+VJEVjUx9aaSEByBah5kX6a
- lKFZWNbXLAJh+dE1HFaMi3TQXXaInaREc+aO1F7fCa2zNE75ja+6ah8L4TPRFZ2HKQzve0/Y
- GXtoRw97qmnm3U36vKWT/m2AiLF619F4T1mHvlfjyd9hrVwjH5h/2rFyroXVXBZHGA9Aj8eN
- F2si35dWSZlIwXkNu9bXp0/pIu6FD0bI+BEkD5S7aH1G1iAcMFi5Qq2RNa041DfQSDDHABEB
- AAG0K1NlYW4gR2FsbGFnaGVyIEFuZGVyc29uIDxzZWFuZ2EyQGdtYWlsLmNvbT6JAVcEEwEK
- AEECGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4ACGQEWIQSQYR1bzo1I0gPoYCg+6I/stKEQ
- bgUCXT+S2AUJB2TlXwAKCRA+6I/stKEQbhNOB/9ooea0hU9Sgh7PBloU6CgaC5mlqPLB7NTp
- +JkB+nh3Fqhk+qLZwzEynnuDLl6ESpVHIc0Ym1lyF4gT3DsrlGT1h0Gzw7vUwd1+ZfN0CuIx
- Rn861U/dAUjvbtN5kMBqOI4/5ea+0r7MACcIVnKF/wMXBD8eypHsorT2sJTzwZ6DRCNP70C5
- N1ahpqqNmXe0uLdP0pu55JCqhrGw2SinkRMdWyhSxT56uNwIVHGhLTqH7Q4t1N6G1EH626qa
- SvIJsWlNpll6Y3AYLDw2/Spw/hqieS2PQ/Ky3rPZnvJt7/aSNYsKoFGX0yjkH67Uq8Lx0k1L
- w8jpXnbEPQN3A2ZJCbeM
-Message-ID: <d0627c5b-1007-bca0-e6d6-0a3740eaf6a7@gmail.com>
-Date:   Fri, 16 Oct 2020 10:17:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o683JyDzGtCz8h08bH720Xzkdnsct+b153JAeeQ2q3A=;
+        b=Yk0vbou+6I0nWeQz6HORrrafeGh85iqR8ttbqzPUiFrVaIBb6dDjXyxWyCnF/w+Oag
+         NrnArP53a3B0X1WN9u/yjShQZdCNKB0d4TXluCOVAUQHMEBG02yp/n0rlFwM4cqiYMgR
+         e+Ca4h6s7atYe/yVgxhFqlup+P5FIKvhoDtpFDKXEELi+O6gd87A9DuCPo+IUZcNQo+D
+         Wupf2ooad2WeVAq0vb+ZndZbv1yQqvLefM3PsB0nwfMiFrZlfLwA76pxhmafDObqUT62
+         r1hCusTYNlsgoyqGvRX9by/I938ERyHtXVTdlG+/qlfKPLAW9A8kmnf5OkRV/3q4N1Lj
+         BFTA==
+X-Gm-Message-State: AOAM53342+2PVkEDireNZ6m8B0hZLzN4teIAMapztPsWq9bFkw+c893d
+        d7oAlUYqkSidRarnvg1M0fNDfeDiUGHAgKVmpHofx5lW5fKthg==
+X-Google-Smtp-Source: ABdhPJwaOVXEFgE7MDb+P6rriQcnt5gJEF9iYQ95Wzrs+rMlfp6FglUJ6grrdHS4qDdHDbY3U7tDou8zkTfLCp3asy0=
+X-Received: by 2002:aca:6702:: with SMTP id z2mr2818623oix.140.1602860190126;
+ Fri, 16 Oct 2020 07:56:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1602838910.git.zong.li@sifive.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1602838910.git.zong.li@sifive.com> <d0627c5b-1007-bca0-e6d6-0a3740eaf6a7@gmail.com>
+In-Reply-To: <d0627c5b-1007-bca0-e6d6-0a3740eaf6a7@gmail.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Fri, 16 Oct 2020 22:56:19 +0800
+Message-ID: <CANXhq0pgeDZkWgwmZE+sFPjYhAmNBNoYGPRfij+Yz_Pc8hNN-Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] clk: add driver for the SiFive FU740
+To:     Sean Anderson <seanga2@gmail.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Yash Shah <yash.shah@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/16/20 5:18 AM, Zong Li wrote:
-> Add a driver for the SiFive FU740 PRCI IP block, which handles more
-> clocks than FU540. These patches also refactor the original
-> implementation by spliting the dependent-code of fu540 and fu740
-> respectively.
-> 
-> Zong Li (4):
->   clk: sifive: Extract prci core to common base
+On Fri, Oct 16, 2020 at 10:17 PM Sean Anderson <seanga2@gmail.com> wrote:
+>
+> On 10/16/20 5:18 AM, Zong Li wrote:
+> > Add a driver for the SiFive FU740 PRCI IP block, which handles more
+> > clocks than FU540. These patches also refactor the original
+> > implementation by spliting the dependent-code of fu540 and fu740
+> > respectively.
+> >
+> > Zong Li (4):
+> >   clk: sifive: Extract prci core to common base
+>
+> I don't see this patch, and it isn't listed on the web archive. Was it
+> not CC'd to this list?
+>
+>         --Sean
+>
 
-I don't see this patch, and it isn't listed on the web archive. Was it
-not CC'd to this list?
+There is a problem on linux-riscv mailing list for the first one
+patch, the size of it is too big, it needs to be approved and posted
+on the list by moderator.
 
-	--Sean
+This patch set is also sent to clk mailing list, and I can see it on that:
+https://patchwork.kernel.org/project/linux-clk/patch/b10784643665ad56ca41ea6754c7f28f8be1c7ca.1602838910.git.zong.li@sifive.com/
 
->   clk: sifive: Use common name for prci configuration
->   clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
->   clk: sifive: Refactor __prci_clock array by using macro
-> 
->  arch/riscv/Kconfig.socs                       |   2 +-
->  drivers/clk/sifive/Kconfig                    |   8 +-
->  drivers/clk/sifive/Makefile                   |   5 +-
->  drivers/clk/sifive/fu540-prci.c               | 618 +-----------------
->  drivers/clk/sifive/fu540-prci.h               |  21 +
->  drivers/clk/sifive/fu740-prci.c               | 102 +++
->  drivers/clk/sifive/fu740-prci.h               |  21 +
->  drivers/clk/sifive/sifive-prci.c              | 529 +++++++++++++++
->  drivers/clk/sifive/sifive-prci.h              | 297 +++++++++
->  include/dt-bindings/clock/sifive-fu740-prci.h |  23 +
->  10 files changed, 1032 insertions(+), 594 deletions(-)
->  create mode 100644 drivers/clk/sifive/fu540-prci.h
->  create mode 100644 drivers/clk/sifive/fu740-prci.c
->  create mode 100644 drivers/clk/sifive/fu740-prci.h
->  create mode 100644 drivers/clk/sifive/sifive-prci.c
->  create mode 100644 drivers/clk/sifive/sifive-prci.h
->  create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
-> 
 
+
+
+> >   clk: sifive: Use common name for prci configuration
+> >   clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
+> >   clk: sifive: Refactor __prci_clock array by using macro
+> >
+> >  arch/riscv/Kconfig.socs                       |   2 +-
+> >  drivers/clk/sifive/Kconfig                    |   8 +-
+> >  drivers/clk/sifive/Makefile                   |   5 +-
+> >  drivers/clk/sifive/fu540-prci.c               | 618 +-----------------
+> >  drivers/clk/sifive/fu540-prci.h               |  21 +
+> >  drivers/clk/sifive/fu740-prci.c               | 102 +++
+> >  drivers/clk/sifive/fu740-prci.h               |  21 +
+> >  drivers/clk/sifive/sifive-prci.c              | 529 +++++++++++++++
+> >  drivers/clk/sifive/sifive-prci.h              | 297 +++++++++
+> >  include/dt-bindings/clock/sifive-fu740-prci.h |  23 +
+> >  10 files changed, 1032 insertions(+), 594 deletions(-)
+> >  create mode 100644 drivers/clk/sifive/fu540-prci.h
+> >  create mode 100644 drivers/clk/sifive/fu740-prci.c
+> >  create mode 100644 drivers/clk/sifive/fu740-prci.h
+> >  create mode 100644 drivers/clk/sifive/sifive-prci.c
+> >  create mode 100644 drivers/clk/sifive/sifive-prci.h
+> >  create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
+> >
+>
