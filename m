@@ -2,92 +2,106 @@ Return-Path: <SRS0=sSu3=DY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A0DC433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Oct 2020 05:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AC0C433E7
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Oct 2020 05:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5278E206ED
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Oct 2020 05:37:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E6A206E5
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Oct 2020 05:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602913042;
-	bh=wpHHkpSSM4GJrfAVokKmd5/Sksc+zajepbEU8E6FKKw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=QY0KM93t5+maV7Ta7ZtJdXb1uVRP7eLDOGew5cS2B/u3TORFGQGVqKcmG4EirbRbZ
-	 esrHRg02u3ApnPeqphoFOm8s4yzywPdurORBBk5vbJ3JS6G247JEDjL8i1hSWUM+gl
-	 b3CWY1mYzyRFOM3nF8gr+1M08ns+YGtO+GvmqaUo=
+	s=default; t=1602913048;
+	bh=d7EFEjjiKLB+QQW+J2bNQ9y7o//QoL+XQws3HgblEQU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=hpPPFzQsl+Aae8XdoWh9jJX88cdwz0/kIlKEbXPq/75eC3/QaQjA6Cv/GlFGy7vcd
+	 jXWYnoNlEcnY5v2uxLvAyN463a6TOztauMMQE9Vw/Lt8hMlafllByvjCXBbGGwK+Up
+	 1kQSmbttBfJDZuvZIGjUs+GTz6tdQkcqRCgvcVHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411484AbgJQFhW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Oct 2020 01:37:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
+        id S2411494AbgJQFhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Oct 2020 01:37:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2411472AbgJQFhV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Oct 2020 01:37:21 -0400
-Received: from mail.kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2411478AbgJQFhW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Oct 2020 01:37:22 -0400
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D205207BC;
-        Sat, 17 Oct 2020 02:01:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 732CF20714;
+        Sat, 17 Oct 2020 02:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602900098;
-        bh=wpHHkpSSM4GJrfAVokKmd5/Sksc+zajepbEU8E6FKKw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RRxUJMkGM/FWKah4086J64u71LxphKynJzZrkX/5UlfClBO1pt0VPETpfzmV/iWCX
-         MM7f54KEepOPQuvVxbwGRbqEY5mrNs5CPdISa5GM1jn4Pyjmk1GNsd3ym9Li0DqY+j
-         KlVYSJ6DMQHhg14/0nRg/f1DfbvksiUTUte9Pgbk=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH] clk: qcom: gdsc: Keep RETAIN_FF bit set if gdsc is already on
-Date:   Fri, 16 Oct 2020 19:01:37 -0700
-Message-Id: <20201017020137.1251319-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
+        s=default; t=1602900096;
+        bh=d7EFEjjiKLB+QQW+J2bNQ9y7o//QoL+XQws3HgblEQU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=z+ZU3SrDwOJOC+B6oe70jp+xIdSPfci7uQdmzP3dbYiRqI3a5dLVnxM3v/1Jv+/GX
+         EIJLDbJYA7XSXgK9s5vkRSV9YHiAQcqRNs9p6q84pdttZy3zABC0RoOLH2cW4nscke
+         mdqmKqL0mXd2VrUJO45hVj/SPodHAAhfXiAyvius=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <160281818774.884498.11509417433655580732@swboyd.mtv.corp.google.com>
+References: <20201014171259.v4.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid> <20201014171259.v4.3.Id0cc5d859e2422082a29a7909658932c857f5a81@changeid> <160281818774.884498.11509417433655580732@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 3/3] clk: qcom: lpasscc-sc7180: Re-configure the PLL in case lost
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>, linux-soc@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Douglas Anderson <dianders@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Fri, 16 Oct 2020 19:01:35 -0700
+Message-ID: <160290009516.884498.11234055455838582432@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the GDSC is enabled out of boot but doesn't have the retain ff bit
-set we will get confusing results where the registers that are powered
-by the GDSC lose their contents on the first power off of the GDSC but
-thereafter they retain their contents. This is because gdsc_init() fails
-to make sure the RETAIN_FF bit is set when it probes the GDSC the first
-time and thus powering off the GDSC causes the register contents to be
-reset. We do set the RETAIN_FF bit the next time we power on the GDSC,
-see gdsc_enable(), so that subsequent GDSC power off's don't lose
-register contents state.
+Quoting Stephen Boyd (2020-10-15 20:16:27)
+> Quoting Douglas Anderson (2020-10-14 17:13:29)
+> > From: Taniya Das <tdas@codeaurora.org>
+> >=20
+> > In the case where the PLL configuration is lost, then the pm runtime
+> > resume will reconfigure before usage.
+>=20
+> Taniya, this commit needs a lot more describing than one sentence. I see
+> that the PLL's L value is reset at boot, but only once. That seems to be
+> because the bootloader I have doesn't set bit 11 for the RETAIN_FF bit
+> on the lpass_core_hm_gdsc. Once the gdsc is turned off the first time,
+> the PLL settings are lost and the L val is reset to 0. That makes sense
+> because RETAIN_FF isn't set. This also means the other register writes
+> during probe are lost during the first suspend of the lpass core clk
+> controller. Then when the GDSC is turned on the next time for this clk
+> controller  being runtime resumed we will set the retain bit and then
+> configure the PLL again. BTW, I see that runtime PM is called for this
+> clk controller for all the clk operations. Maybe there should be some
+> auto suspend timeout so that we're not toggling the gdsc constantly?
+>=20
+> I hacked up the GDSC code to set the bit at gdsc registration time and
+> it seems to fix the problem I'm seeing (i.e. that the PLL is stuck,
+> which should also be in the commit text here). When I try to set the bit
+> in the bootloader though my kernel won't boot. I guess something is
+> hanging the system if I enable the retain bit in the GDSC?
+>=20
 
-Forcibly set the bit at device probe time so that the kernel's assumed
-view of the GDSC is consistent with the state of the hardware. This
-fixes a problem where the audio PLL doesn't work on sc7180 when the
-bootloader leaves the lpass_core_hm GDSC enabled at boot (e.g. to make a
-noise) but critically doesn't set the RETAIN_FF bit.
+After hacking on this for some time it looks like we can apply this
+patch instead and things are good. The first two patches in this series
+look mostly good to me minus some nitpicks so please resend.
 
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Taniya Das <tdas@codeaurora.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Fixes: 173722995cdb ("clk: qcom: gdsc: Add support to enable retention of GSDCR")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/gdsc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
+---8<---
 diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index bfc4ac02f9ea..af26e0695b86 100644
+index 99834564bcc2..508c2901abfa 100644
 --- a/drivers/clk/qcom/gdsc.c
 +++ b/drivers/clk/qcom/gdsc.c
-@@ -358,6 +358,14 @@ static int gdsc_init(struct gdsc *sc)
+@@ -343,6 +343,14 @@ static int gdsc_init(struct gdsc *sc)
  	if ((sc->flags & VOTABLE) && on)
  		gdsc_enable(&sc->pd);
- 
+=20
 +	/*
 +	 * Make sure the retain bit is set if the GDSC is already on, otherwise
 +	 * we end up turning off the GDSC and destroying all the register
@@ -99,8 +113,3 @@ index bfc4ac02f9ea..af26e0695b86 100644
  	/* If ALWAYS_ON GDSCs are not ON, turn them ON */
  	if (sc->flags & ALWAYS_ON) {
  		if (!on)
-
-base-commit: 9ff9b0d392ea08090cd1780fb196f36dbb586529
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-
