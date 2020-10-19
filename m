@@ -7,39 +7,40 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA11EC43467
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 12:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C032C41604
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 12:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61E9322283
+	by mail.kernel.org (Postfix) with ESMTP id E7AD6222BA
 	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 12:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgJSMGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726851AbgJSMGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 19 Oct 2020 08:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47412 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgJSMGT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Oct 2020 08:06:19 -0400
+        with ESMTP id S1726599AbgJSMGU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Oct 2020 08:06:20 -0400
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6904AC0613D3
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EC6C0613D7
         for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2020 05:06:19 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
         by baptiste.telenet-ops.be with bizsmtp
-        id ho6G2300L4C55Sk01o6Gfb; Mon, 19 Oct 2020 14:06:17 +0200
+        id ho6G2300K4C55Sk01o6Gfa; Mon, 19 Oct 2020 14:06:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kUTvc-0000WZ-Nn; Mon, 19 Oct 2020 14:06:16 +0200
+        id 1kUTvc-0000WY-N5; Mon, 19 Oct 2020 14:06:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kUTvc-0005mM-Mv; Mon, 19 Oct 2020 14:06:16 +0200
+        id 1kUTvc-0005mJ-M4; Mon, 19 Oct 2020 14:06:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org,
+        Phong Hoang <phong.hoang.wz@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 6/6] arm64: dts: r8a779a0: Add GPIO nodes
-Date:   Mon, 19 Oct 2020 14:06:14 +0200
-Message-Id: <20201019120614.22149-7-geert+renesas@glider.be>
+Subject: [PATCH/RFC 5/6] gpio: rcar: Add support for R-Car V3U
+Date:   Mon, 19 Oct 2020 14:06:13 +0200
+Message-Id: <20201019120614.22149-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201019120614.22149-1-geert+renesas@glider.be>
 References: <20201019120614.22149-1-geert+renesas@glider.be>
@@ -47,175 +48,113 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device nodes for the General Purpose Input/Output (GPIO) block on
-the Renesas R-Car V3u (r8a779a0) SoC.
+From: Phong Hoang <phong.hoang.wz@renesas.com>
 
-As there is no node for the PFC yet, all "gpio-ranges" properties are
-commented out.
+Add support for the R-Car V3U (r8a779a0) SoC.
+This includes support for the new "General Input Enable" register to
+control input enable.
 
+Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This needs verification on real hardware, as the hardware manual is
-unclear w.r.t. the following points:
-  - Module clocks and interrupt mappings,
-  - There are more/multiple resets for the PFC[0-3] in the Software
-    Reset/Reset Clearing Registers 12, 13, and 14.
-    The BSP picked up a different set.
----
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 140 ++++++++++++++++++++++
- 1 file changed, 140 insertions(+)
+Untested on actual hardware.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index bc81e6a761d32034..1482bdf1cceb40ee 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -70,6 +70,146 @@
- 		#size-cells = <2>;
- 		ranges;
+Should input be enabled unconditionally, as recommended by the Hardware
+Manual for backwards compatibility with existing software?
+As per (errata?) commit ae9550f635533b1c ("gpio-rcar: Use OUTDT when
+reading GPIOs configured as output"), the gpio-rcar driver does not use
+the INDT register to read the status of a GPIO line when configured for
+output.
+---
+ drivers/gpio/gpio-rcar.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index a924cf8ac8df7f8f..44d09a0028db49e9 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -42,6 +42,7 @@ struct gpio_rcar_priv {
+ 	atomic_t wakeup_path;
+ 	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
++	bool has_inen;
+ 	struct gpio_rcar_bank_info bank_info;
+ };
  
-+		gpio0: gpio@e6058180 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6058180 0 0x54>;
-+			interrupts = <GIC_SPI 832 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 916>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 0 28>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
+@@ -58,6 +59,7 @@ struct gpio_rcar_priv {
+ #define FILONOFF 0x28	/* Chattering Prevention On/Off Register */
+ #define OUTDTSEL 0x40	/* Output Data Select Register */
+ #define BOTHEDGE 0x4c	/* One Edge/Both Edge Select Register */
++#define INEN 0x50	/* General Input Enable Register */
+ 
+ #define RCAR_MAX_GPIO_PER_BANK		32
+ 
+@@ -126,6 +128,10 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+ 	if (p->has_both_edge_trigger)
+ 		gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+ 
++	/* Select "Input Enable" in INEN */
++	if (p->has_inen)
++		gpio_rcar_modify_bit(p, INEN, hwirq, true);
 +
-+		gpio1: gpio@e6050180 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6050180 0 0x54>;
-+			interrupts = <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 915>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 32 31>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
+ 	/* Select "Interrupt Input Mode" in IOINTSEL */
+ 	gpio_rcar_modify_bit(p, IOINTSEL, hwirq, true);
+ 
+@@ -231,6 +237,10 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+ 	/* Configure positive logic in POSNEG */
+ 	gpio_rcar_modify_bit(p, POSNEG, gpio, false);
+ 
++	/* Select "Input Enable/Disable" in INEN */
++	if (p->has_inen)
++		gpio_rcar_modify_bit(p, INEN, gpio, !output);
 +
-+		gpio2: gpio@e6050980 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6050980 0 0x54>;
-+			interrupts = <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 915>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 64 25>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
+ 	/* Select "General Input/Output Mode" in IOINTSEL */
+ 	gpio_rcar_modify_bit(p, IOINTSEL, gpio, false);
+ 
+@@ -349,16 +359,25 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ struct gpio_rcar_info {
+ 	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
++	bool has_inen;
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+ 	.has_outdtsel = false,
+ 	.has_both_edge_trigger = false,
++	.has_inen = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+ 	.has_outdtsel = true,
+ 	.has_both_edge_trigger = true,
++	.has_inen = false,
++};
 +
-+		gpio3: gpio@e6058980 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6058980 0 0x54>;
-+			interrupts = <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 916>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 96 17>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio4: gpio@e6060180 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6060180 0 0x54>;
-+			interrupts = <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 917>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 128 27>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio5: gpio@e6060980 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6060980 0 0x54>;
-+			interrupts = <GIC_SPI 852 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 917>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 160 21>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio6: gpio@e6068180 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6068180 0 0x54>;
-+			interrupts = <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 918>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 192 21>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio7: gpio@e6068980 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6068980 0 0x54>;
-+			interrupts = <GIC_SPI 860 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 918>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 224 21>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio8: gpio@e6069180 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6069180 0 0x54>;
-+			interrupts = <GIC_SPI 864 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 918>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 256 21>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio9: gpio@e6069980 {
-+			compatible = "renesas,gpio-r8a779a0";
-+			reg = <0 0xe6069980 0 0x54>;
-+			interrupts = <GIC_SPI 868 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets =  <&cpg 918>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// gpio-ranges = <&pfc 0 288 21>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a779a0-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x4000>;
++static const struct gpio_rcar_info gpio_rcar_info_v3u = {
++	.has_outdtsel = true,
++	.has_both_edge_trigger = true,
++	.has_inen = true,
+ };
+ 
+ static const struct of_device_id gpio_rcar_of_table[] = {
+@@ -389,6 +408,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		.compatible = "renesas,gpio-r8a7796",
+ 		/* Gen3 GPIO is identical to Gen2. */
+ 		.data = &gpio_rcar_info_gen2,
++	}, {
++		.compatible = "renesas,gpio-r8a779a0",
++		.data = &gpio_rcar_info_v3u,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen1-gpio",
+ 		.data = &gpio_rcar_info_gen1,
+@@ -419,6 +441,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+ 	info = of_device_get_match_data(p->dev);
+ 	p->has_outdtsel = info->has_outdtsel;
+ 	p->has_both_edge_trigger = info->has_both_edge_trigger;
++	p->has_inen = info->has_inen;
+ 
+ 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+ 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
 -- 
 2.17.1
 
