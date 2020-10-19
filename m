@@ -2,91 +2,73 @@ Return-Path: <SRS0=TP+b=D2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5F2C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 20:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD86C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 22:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 102BA223EA
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 20:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB6B3223FD
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 22:38:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603138676;
-	bh=WYH2x+aPDf9YpqsNmBDQ15Fb/WMbsCVG9d5nnLQATZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lYhkAbIm1Qdj86kt3DvQy8/+j32tfgCa+SZVB1gXRbJmtD8E//1Qc/abnSC/ZF2Ln
-	 xZ1wV9EQVRhxswE1IGiu3+xUop3OY6POQ9YzIae3bwt12ITXJ5YEdInVSojdg4DrFm
-	 4l4d/BrBigOcI9tkFaI+fpoRaXStr3Dfm7zjlLhs=
+	s=default; t=1603147123;
+	bh=8W/h5XEBWGQWtqsEZjw4lr98DMheeA7pOXZm//R6+tw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=ftcTXUADlZ3HKjN1NZ8ZCArGwrUu50EKZFTRjJ8P1N83iME/u8E52oWP7hX9mwxgC
+	 122oRyW3m2tYKh7+qxhuoRosrTuP4UcflufbUm/+pht8tMuqTDYHEyLHHE2BpNq5yq
+	 iMe0ny5jafLoln8s/jjl9QT7qJHsSzqOUXH4NG8M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbgJSURx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Oct 2020 16:17:53 -0400
-Received: from mail-oo1-f66.google.com ([209.85.161.66]:34360 "EHLO
-        mail-oo1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgJSURw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Oct 2020 16:17:52 -0400
-Received: by mail-oo1-f66.google.com with SMTP id f1so242440oov.1;
-        Mon, 19 Oct 2020 13:17:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uChIWQxjMYXmjvNvbHaoJDeBI0DP85aT+vfNSzhRd3U=;
-        b=Gc8yw79d6Ie8c7WjkrEpwJ7zWBydyzStJz3kqKq7LUSDb681PPSeap6EXs7O4VgPcL
-         fntO87XNZ1yv5n5F2Z+o8Sve8DPnPkBCWInPpubCCF1kB3YlRRYlBqbkH3kznBjPQ+gk
-         2mS8nfVfNXLxogniVkK+btNqMHBPqsFFlaeZdyk7astm/9Ka9VR71yR049oafkSS7lOB
-         vXFs3E9SLoxyNpMLBhfc5UFnWB76UXz3vO8RGsPQpCFCOIBr1riPNQ3UJ1iO7E71k3m5
-         5NiPQTCjDTaCGYE2zuwKtZ7KbA8HCtHNSwSPZIeR9ffA3jG6ahP4W44EjjM2pzrcoWMp
-         iwYQ==
-X-Gm-Message-State: AOAM533Ew2vw/J69jDK/nomJBbCK5Yt7QlukSEeI0SV62Xqujrm/Mn9i
-        BngiBdbpQJpRTX6Wnu2Lrw==
-X-Google-Smtp-Source: ABdhPJyxpNT6cyYEfEkVnYbMj7VoQITTsIHA4p2FMo9vrnSTYCCGDn9wXtELjXyX+YbAoLSPDay+wA==
-X-Received: by 2002:a4a:890c:: with SMTP id f12mr1203831ooi.48.1603138671715;
-        Mon, 19 Oct 2020 13:17:51 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 105sm187496otf.52.2020.10.19.13.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 13:17:50 -0700 (PDT)
-Received: (nullmailer pid 3536422 invoked by uid 1000);
-        Mon, 19 Oct 2020 20:17:50 -0000
-Date:   Mon, 19 Oct 2020 15:17:50 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3 3/4] dt-bindings: clock: Add YAML schemas for the QCOM
- Camera clock bindings.
-Message-ID: <20201019201750.GA3536237@bogus>
-References: <1602873815-1677-1-git-send-email-tdas@codeaurora.org>
- <1602873815-1677-4-git-send-email-tdas@codeaurora.org>
+        id S2388379AbgJSWim (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Oct 2020 18:38:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388245AbgJSWim (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Oct 2020 18:38:42 -0400
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1677A222EA;
+        Mon, 19 Oct 2020 22:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603147122;
+        bh=8W/h5XEBWGQWtqsEZjw4lr98DMheeA7pOXZm//R6+tw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=O5PgNIbcntSL3cPa/SbkQneWQkCNiYnuyux7NJFY+9T2Sgm7j/u0GgqnLy/GoDR1h
+         Qc56wI7V+ZxkaUa5s6VoC4E9WNebcLpeM5UX0oIR9Vx3orvObgx/0JwwZMfKIEndJU
+         66VsjjSXYRYYdIezoXBNEBD9P4GTA+WcPdFEsBi4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1602873815-1677-4-git-send-email-tdas@codeaurora.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAD=FV=WAVoZ59p51HxBwBNXsXcirRbUAjeGuZ4T9G-O7Tvzqfw@mail.gmail.com>
+References: <20201014171259.v4.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid> <20201014171259.v4.3.Id0cc5d859e2422082a29a7909658932c857f5a81@changeid> <160281818774.884498.11509417433655580732@swboyd.mtv.corp.google.com> <160290009516.884498.11234055455838582432@swboyd.mtv.corp.google.com> <CAD=FV=WAVoZ59p51HxBwBNXsXcirRbUAjeGuZ4T9G-O7Tvzqfw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] clk: qcom: lpasscc-sc7180: Re-configure the PLL in case lost
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Taniya Das <tdas@codeaurora.org>,
+        David Brown <david.brown@linaro.org>, open list:
+        ARM/QUALCOMM SUPPORT <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, ;
+Illegal-Object: Syntax error in Cc: address found on vger.kernel.org:
+        Cc:     ;
+                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
+To:     Doug Anderson <dianders@chromium.org>
+Date:   Mon, 19 Oct 2020 15:38:38 -0700
+Message-ID: <160314711876.884498.2451675615619114259@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 17 Oct 2020 00:13:34 +0530, Taniya Das wrote:
-> The Camera Subsystem clock provider have a bunch of generic properties
-> that are needed in a device tree. Add a YAML schemas for those.
-> 
-> Add clock ids for camera clocks which are required to bring the camera
-> subsystem out of reset.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../bindings/clock/qcom,sc7180-camcc.yaml          |  73 +++++++++++++
->  include/dt-bindings/clock/qcom,camcc-sc7180.h      | 121 +++++++++++++++++++++
->  2 files changed, 194 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,camcc-sc7180.h
-> 
+Quoting Doug Anderson (2020-10-16 20:17:56)
+>=20
+> I'm happy to repost a v5 of just patches #1 and #2 with the newlines
+> fixed next week, or I'm happy if you want to fix them when applying as
+> you alluded to on the Chrome OS gerrit.=20
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Please resend. Thanks!
