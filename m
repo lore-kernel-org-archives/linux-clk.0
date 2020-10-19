@@ -2,84 +2,103 @@ Return-Path: <SRS0=TP+b=D2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8396C388E6
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 12:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F824C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 14:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA9822268
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 12:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4756F22263
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Oct 2020 14:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603117136;
+	bh=iejWNKkX6gDaIZIFFQINc9UrdUU+I22i+kcPhkU/UFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xKTC/E6BhK+d4zK/cdLUGn6ATSMeH9CJHFeKhjabumStArPHOXxUjkAPR0eqKMfLK
+	 39pjv/Ja84mW4YtUaCz6bmNbFf/jBJ/zXA4JwhEfb1XWmlBCeV9rk67/e0NsGDik8l
+	 tB2SWfG8zn1DLVUvHQQ9MU4yTDLYXdiz0L5pqhjs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbgJSMGV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Oct 2020 08:06:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbgJSMGU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Oct 2020 08:06:20 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91364C0613D6
-        for <linux-clk@vger.kernel.org>; Mon, 19 Oct 2020 05:06:19 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id ho6G2300U4C55Sk01o6GBr; Mon, 19 Oct 2020 14:06:17 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kUTvc-0000WJ-KH; Mon, 19 Oct 2020 14:06:16 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kUTvc-0005m5-IE; Mon, 19 Oct 2020 14:06:16 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/6] R-Car V3U GPIO support
-Date:   Mon, 19 Oct 2020 14:06:08 +0200
-Message-Id: <20201019120614.22149-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1729058AbgJSOSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Oct 2020 10:18:52 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33646 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728311AbgJSOSv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Oct 2020 10:18:51 -0400
+Received: by mail-ot1-f68.google.com with SMTP id t15so10617468otk.0;
+        Mon, 19 Oct 2020 07:18:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Z24gVtSLB9rMmRuyKZCmyYJQn2Pd/8+qOLiSmvSdEls=;
+        b=JGRvv6+oXNGOBRmRBR7xjui9dlZ9CT0H/dnOPQC3Dvfw86GU5ZKdFyybRce0bWyf/A
+         olmRhckkU2JC6CMTdsrcd3b4mN7bbM94C6hl0woZlMPgrgjEKJMalM+N8AkTY2Ck+cYC
+         cZv05etvxF6Lijnmv3aLbfYxwSOv2tOpLwbHRCa0tMa0xU0kjdVjFNgVxq+sKSUZEv8o
+         l/R3mrcgTMhpLgkQbZr1LHm/7O+Eq8zZgxrO0fePP3JX0psIn5fRPOc6hG3WHQ1c3af1
+         S2xJtB6G4o+mOSJndXqC68XJ9vm0UmX9itPUkyg38Xui0sb8PRhhaMcHHDJvxBvGkoG3
+         XatQ==
+X-Gm-Message-State: AOAM530iHj32ZFlAv3/xDiEK3SC4QYeBHG67qNtXzGVw8avtWfuH55wc
+        ffiMZXpJUb4H3XASoWVbFg==
+X-Google-Smtp-Source: ABdhPJzckhvgxw/qMc6EYqyurH71faTEzRho8uZp+h9D0opQzmdm2mlLotPw1M327xXTwCWLmrS5/A==
+X-Received: by 2002:a9d:61:: with SMTP id 88mr143344ota.109.1603117130528;
+        Mon, 19 Oct 2020 07:18:50 -0700 (PDT)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t84sm3580828oih.35.2020.10.19.07.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2020 07:18:49 -0700 (PDT)
+Received: (nullmailer pid 3036284 invoked by uid 1000);
+        Mon, 19 Oct 2020 14:18:48 -0000
+Date:   Mon, 19 Oct 2020 09:18:48 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     devicetree@vger.kernel.org, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: Add support for LPASS Audio
+ Clock Controller
+Message-ID: <20201019141848.GA3035809@bogus>
+References: <20201016141241.5839-1-srinivas.kandagatla@linaro.org>
+ <20201016141241.5839-2-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201016141241.5839-2-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi all,
+On Fri, 16 Oct 2020 15:12:38 +0100, Srinivas Kandagatla wrote:
+> Audio Clock controller is a block inside LPASS which controls
+> 2 Glitch free muxes to LPASS codec Macros.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/clock/qcom,audiocc-sm8250.yaml   | 58 +++++++++++++++++++
+>  .../clock/qcom,sm8250-lpass-audiocc.h         | 13 +++++
+>  2 files changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+> 
 
-This RFC patch series adds support for the GPIO blocks on the R-Car V3U
-(r8a77990) SoC.  This includes clock (incl. some drive-by fixes), DT
-binding, driver, and DTS updates.
 
-Due to lack of hardware, this is compile-tested only.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks for your comments!
+Error: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dts:25.30-31 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1366: dt_binding_check] Error 2
 
-Geert Uytterhoeven (5):
-  [RFC] clk: renesas: r8a779a0: Remove non-existent S2 clock
-  [RFC] clk: renesas: r8a779a0: Fix parent of CBFUSA clock
-  [RFC] clk: renesas: r8a779a0: Add PFC/GPIO clocks
-  [RFC] dt-bindings: gpio: rcar: Add r8a779a0 support
-  [RFC] arm64: dts: r8a779a0: Add GPIO nodes
 
-Phong Hoang (1):
-  [RFC] gpio: rcar: Add support for R-Car V3U
+See https://patchwork.ozlabs.org/patch/1383373
 
- .../bindings/gpio/renesas,rcar-gpio.yaml      |   3 +
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 140 ++++++++++++++++++
- drivers/clk/renesas/r8a779a0-cpg-mssr.c       |   8 +-
- drivers/gpio/gpio-rcar.c                      |  23 +++
- 4 files changed, 172 insertions(+), 2 deletions(-)
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
 
--- 
-2.17.1
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
 
-Gr{oetje,eeting}s,
+Please check and re-submit.
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
