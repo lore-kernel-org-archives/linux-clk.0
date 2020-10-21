@@ -2,99 +2,191 @@ Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EF9C55179
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DB6C55179
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74A4521D7B
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0CC120665
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="sGEe0ZSs"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="C8IiecTV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2444532AbgJUQVz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 12:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54400 "EHLO
+        id S2444552AbgJUQV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 12:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2444530AbgJUQVy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 12:21:54 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45C4DC0613CE
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2020 09:21:54 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id lw21so4103716ejb.6
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2020 09:21:54 -0700 (PDT)
+        with ESMTP id S2444551AbgJUQV5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 12:21:57 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A594C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2020 09:21:57 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id z5so4089373ejw.7
+        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2020 09:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UI2P/yyao6EznjeZr1h9V5wwTm/lr2jsyR7CYvPpJn8=;
-        b=sGEe0ZSsBq2hxXtN4AppUO1Zi4qpE8rjaTwX9Wi5YMoUpfkKpWDeC8/ptxqAH7PVfT
-         W2Wm/iYiW8Gy1hphh3YxpoKfkJS4qpIFENQQtiX5j6O5Lu/vCGSyezztx/pWVwrbOR7y
-         FEsYm1MaFmx0ioASrEdPyTgGZ8i49rzkz3JDUnjItBHliozJJrO7da0ibDypAqBVKKik
-         fObm9XdOL1ZOsJRzednQvcOqJw1q34CsvIsayRX3amK+jvKt/S9StRra6V+I0s5WbUcj
-         9LJORutEbazY+hbuHPmEtbhKBdvVkBNksZgc9QFUMkpkc3O6XisHdQ3W0kl0fKWKi+4M
-         Wp/g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=q55g9eud64WpGhGaDa2Dvtt/hAwehZmCVZltK6UXP+c=;
+        b=C8IiecTVGT1P3sYupPuqXGfRgdRRrllku4/9/WB8lckeu/jILHTWJy3B5zpSZyjidT
+         atUg8s0QUes2oxWPMwZaQgc7aW4jFqhIh/dS2Rv0A8FxIfwsIdqxc5Zcd3cS1nlHVP0X
+         +l5Q3URFShXC990ojgt4igfaCwLJjQqkxDZoR66LbHrjv6mO+6UndtcNzKWAP+at5sJ8
+         XJJT7hE4BAcPwZQ/7j/1+F84Cp7ISEpLXSHvhtfxd/e/OFeJwbuUxYpZJEs0YTIxNhjB
+         neNko+1u4H7RJzazj3QYvOE3w75o3HnCie8sXXcbAgtRd5XvPayvu7g3jZPCtB/L6dcG
+         KFGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UI2P/yyao6EznjeZr1h9V5wwTm/lr2jsyR7CYvPpJn8=;
-        b=nx1Jh6etVDqF8VxYGY3uSzexK+wCkLnLmXzY7eTBA+dLYCEIuc3A8XduEiCVL+dZ7z
-         3I/3tUyCsCgfUy7gDZo1nLkrSltvs6BgJJ8JLqdZ6glwqOE0zI8MNrsZ0A4QkDqxkNHn
-         KlGc1YAH95E+lVc/e35yTdu5TPm/PBiDUiZUQNSi1J81fQ4nl/n/pk3lRoTvfKeVhN4W
-         WyiXKGCS5Cfxhn4dwri8P+t1bqU5YxW0OjI0pHFAO1aNJMnX/iUTdYmSr0FXNVgAC4Mz
-         wlIGSJn2YYt+CFUhj29Fv6TkwKpUoefzrb0boDiIpmhnZvbA/FK4OMlLY4uigGnZJp4z
-         msyg==
-X-Gm-Message-State: AOAM532QXSBRtfJNMP2KrJHaMWct2Dsix+eWo9ynQ/iRQN0+Y7kJppXO
-        Jol+Gp+FVYFXzSgzhRtU4jW1Ag==
-X-Google-Smtp-Source: ABdhPJz01d9oIMCTPrSm5ZUKeD22XQbYSH9b+dNijavQFdQQWBxIif4CrZRFLBUmfLd4R+zYnk+Azg==
-X-Received: by 2002:a17:907:2089:: with SMTP id pv9mr4460227ejb.427.1603297312942;
-        Wed, 21 Oct 2020 09:21:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=q55g9eud64WpGhGaDa2Dvtt/hAwehZmCVZltK6UXP+c=;
+        b=ZK98WaYrDQUt8UjwtTBgUdpLAV5tMSxaRKIHRKwj+NQJ7KyB2VqXlmuLRuNemX5OrT
+         cAhrecFR+RmtieLP3o/YRdMWolE5R1KrXJYKnxMuRLExCLIkRnaHSrGE1HTFuKGeUxmZ
+         jlNoeYxtuPnZNip1ECM8nvKKpGPDvvp8FDqjaAvEGhgIHeuvInjiW+cydkR6osIeOJdd
+         1TokFGNrzAaVxKFTRi/qdGBoasPtlOjFABxfi0a2OamN/nnXUuk9m9s0+K2MstUir9a+
+         qCzWW26YzvYq0+dmQzuawfTe4vUaas+q+MoDZJ6I/GFuxZdCLJPKpYy8Glp+CBP/V37V
+         tKlw==
+X-Gm-Message-State: AOAM533FXqGI7bMEtB6ZWw081RGbwV1bsT71HOyOAwPrxw/qcTeUYcO2
+        7elSwL8Fb5d0sevoPc0sS2OcG0yI+4bPeA==
+X-Google-Smtp-Source: ABdhPJz+G1dBjBjCpnBLdWHbW1tSyTbYS7kPkAsPqhbosb2z4K4f83WPnTBKLviiVvM6Z1MI0t69sg==
+X-Received: by 2002:a17:907:206e:: with SMTP id qp14mr4330789ejb.76.1603297316070;
+        Wed, 21 Oct 2020 09:21:56 -0700 (PDT)
 Received: from starbuck.lan (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.googlemail.com with ESMTPSA id 11sm2566667ejy.19.2020.10.21.09.21.51
+        by smtp.googlemail.com with ESMTPSA id 11sm2566667ejy.19.2020.10.21.09.21.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 09:21:52 -0700 (PDT)
+        Wed, 21 Oct 2020 09:21:55 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v2 0/3] clk: add api to get clk consumer from clk_hw
-Date:   Wed, 21 Oct 2020 18:21:44 +0200
-Message-Id: <20201021162147.563655-1-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/3] clk: add api to get clk consumer from clk_hw
+Date:   Wed, 21 Oct 2020 18:21:46 +0200
+Message-Id: <20201021162147.563655-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.25.4
+In-Reply-To: <20201021162147.563655-1-jbrunet@baylibre.com>
+References: <20201021162147.563655-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset a call in CCF to get "struct clk*" from "struct clk_hw*"
+clk_register() is deprecated. Using 'clk' member of struct clk_hw is
+discouraged. With this constraint, it is difficult for driver to
+register clocks using the clk_hw API and then use the clock with
+the consumer API
 
-Changes since v1: [0]
-* Add a con_id string to help keep track of the consumer
-* Add devm variant:
- - Following our discussion on V1, I choose to have the dev as
-   argument as most devm function do. However, as Stephen pointed out
-   we don't expect this to differ from the one linked to clk_hw. In
-   this case a warning is thrown.
-* Add a first usage of this in the amlogic clock driver.
+This adds a simple helper, clk_hw_get_clk(), to get a struct clk from
+a struct clk_hw. Like other clk_get() variant, each call to this helper
+must be balanced with a call to clk_put(). To make life easier on the
+consumers, a memory managed version is provided as well.
 
-[0]: https://lore.kernel.org/r/20200519170440.294601-1-jbrunet@baylibre.com
-
-Jerome Brunet (3):
-  clk: avoid devm_clk_release name clash
-  clk: add api to get clk consumer from clk_hw
-  clk: meson: g12: drop use of __clk_lookup()
-
- drivers/clk/clk.c            | 73 +++++++++++++++++++++++++++++++++---
- drivers/clk/meson/g12a.c     | 68 ++++++++++++++++-----------------
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c            | 61 ++++++++++++++++++++++++++++++++++++
  include/linux/clk-provider.h |  5 +++
- 3 files changed, 104 insertions(+), 42 deletions(-)
+ 2 files changed, 66 insertions(+)
 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 88e5797bb6b4..d27153f26fa9 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3667,6 +3667,24 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 	return clk;
+ }
+ 
++/**
++ * clk_hw_get_clk: get clk consumer given an clk_hw
++ * @hw: clk_hw associated with the clk being consumed
++ * @con_id: connection ID string on device
++ *
++ * Returns: new clk consumer
++ * This is the function to be used by providers which need
++ * to get a consumer clk and act on the clock element
++ * Calls to this function must be balanced with calls clk_put()
++ */
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *con_id)
++{
++	struct device *dev = hw->core->dev;
++
++	return clk_hw_create_clk(dev, hw, dev_name(dev), con_id);
++}
++EXPORT_SYMBOL(clk_hw_get_clk);
++
+ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
+ {
+ 	const char *dst;
+@@ -4187,6 +4205,49 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
+ 
++static void devm_clk_release(struct device *dev, void *res)
++{
++	clk_put(*(struct clk **)res);
++}
++
++/**
++ * devm_clk_hw_get_clk: resource managed clk_hw_get_clk()
++ * @dev: device that is registering this clock
++ * @hw: clk_hw associated with the clk being consumed
++ * @con_id: connection ID string on device
++ *
++ * Managed clk_hw_get_clk(). Clocks got with this function are
++ * automatically clk_put() on driver detach. See clk_put()
++ * for more information.
++ */
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id)
++{
++	struct clk *clk;
++	struct clk **clkp;
++
++	/* This should not happen because it would mean we have drivers
++	 * passing around clk_hw pointers instead of having the caller use
++	 * proper clk_get() style APIs
++	 */
++	WARN_ON_ONCE(dev != hw->core->dev);
++
++	clkp = devres_alloc(devm_clk_release, sizeof(*clkp), GFP_KERNEL);
++	if (!clkp)
++		return ERR_PTR(-ENOMEM);
++
++	clk = clk_hw_get_clk(hw, con_id);
++	if (!IS_ERR(clk)) {
++		*clkp = clk;
++		devres_add(dev, clkp);
++	} else {
++		devres_free(clkp);
++	}
++
++	return clk;
++}
++EXPORT_SYMBOL_GPL(devm_clk_hw_get_clk);
++
+ /*
+  * clkdev helpers
+  */
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 03a5de5f99f4..86b707520ec0 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1088,6 +1088,11 @@ static inline struct clk_hw *__clk_get_hw(struct clk *clk)
+ 	return (struct clk_hw *)clk;
+ }
+ #endif
++
++struct clk *clk_hw_get_clk(struct clk_hw *hw, const char *con_id);
++struct clk *devm_clk_hw_get_clk(struct device *dev, struct clk_hw *hw,
++				const char *con_id);
++
+ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
 -- 
 2.25.4
 
