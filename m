@@ -2,144 +2,114 @@ Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A828DC55179
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FE4C4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE86222E9
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D7B2221FB
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hdaUtzrB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503627AbgJURhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 13:37:10 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:40904 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409024AbgJURhA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Oct 2020 13:37:00 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1E0061A0B02;
-        Wed, 21 Oct 2020 19:36:58 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0166C1A004F;
-        Wed, 21 Oct 2020 19:36:58 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FA0E2033F;
-        Wed, 21 Oct 2020 19:36:57 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [RFC 1/4] clk: Add CLK_GET_PARENT_NOCACHE flag
-Date:   Wed, 21 Oct 2020 20:36:52 +0300
-Message-Id: <1603301815-24670-2-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
-References: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2506854AbgJUXBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 19:01:22 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5860 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439276AbgJUXBW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 19:01:22 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f90bd640000>; Wed, 21 Oct 2020 15:59:48 -0700
+Received: from krlm (172.20.13.39) by HQMAIL107.nvidia.com (172.20.187.13)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Oct 2020 23:01:22
+ +0000
+Date:   Wed, 21 Oct 2020 16:01:37 -0700
+From:   Sivaram Nair <sivaramn@nvidia.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+CC:     <pdeschrijver@nvidia.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: bpmp: Clamp clock rates on requests
+Message-ID: <20201021230137.GA3933@krlm>
+References: <20201021101054.2836146-1-mperttunen@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20201021101054.2836146-1-mperttunen@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1603321188; bh=M/AGDHeb6JmQ+yu/XSBNHiMwy7D0SMSWDOU9Iywtgpw=;
+        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Disposition:In-Reply-To:X-NVConfidentiality:
+         User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=hdaUtzrBEzXuJ96dTPEnqVXnjCdVyZCq4kuElU72CuiuWKZ2ngvrm/O9JeYwuBrgc
+         9QMTJsHu/ZhTaiYUC7e6EIynJU+YIs0SC9rYVU8HNSOcfuR12JOAuwZiPtAImFA7Tl
+         IjyJ/ZXoUMU+CSoJiI9fFsAKGMh+z3Tm0050RACzAHUm7bQr9AB8u4UrX5NSYjN2NO
+         Sm+5eCxuVRQDnJjHwBh1zzg8qgceKOibaGfdqyeB6ydjOEyJs8Ge6PnIfcDu4AesUj
+         ErW9X1wRZJLbvP4kj9lf89j5Vg0uvMPiPLj26KHUHBYNMUmGPEUavg/g9I9kFLjL/X
+         FELyGvYD8MGCQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This can be used by the clocks that have their parents changed from EL3.
-This way the clk_get_parent will read the value from register instead of
-using the value stored in the core framework.
+On Wed, Oct 21, 2020 at 01:10:54PM +0300, Mikko Perttunen wrote:
+> From: Sivaram Nair <sivaramn@nvidia.com>
+> 
+> BPMP firmware ABI expects the rate inputs in int64_t. However,
+> tegra_bpmp_clk_round_rate() and tegra_bpmp_clk_set_rate() functions
+> directly assign 'unsigned long' inputs to a int64_t value causing
+> unexpected rounding errors.
+> 
+> Fix this by clipping the input rate to S64_MAX.
+> 
+> Signed-off-by: Sivaram Nair <sivaramn@nvidia.com>
+> [mperttunen: slight cleanup]
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-bpmp.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> index a66263b6490d..6ecf18f71c32 100644
+> --- a/drivers/clk/tegra/clk-bpmp.c
+> +++ b/drivers/clk/tegra/clk-bpmp.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) 2016 NVIDIA Corporation
+> + * Copyright (C) 2016-2020 NVIDIA Corporation
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -174,7 +174,7 @@ static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	int err;
+>  
+>  	memset(&request, 0, sizeof(request));
+> -	request.rate = rate;
+> +	request.rate = min_t(u64, rate, S64_MAX);
+>  
+>  	memset(&msg, 0, sizeof(msg));
+>  	msg.cmd = CMD_CLK_ROUND_RATE;
+> @@ -256,7 +256,7 @@ static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	struct tegra_bpmp_clk_message msg;
+>  
+>  	memset(&request, 0, sizeof(request));
+> -	request.rate = rate;
+> +	request.rate = min_t(u64, rate, S64_MAX);
+>  
+>  	memset(&msg, 0, sizeof(msg));
+>  	msg.cmd = CMD_CLK_SET_RATE;
+> -- 
+> 2.28.0
+> 
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Suggested-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/clk.c            | 31 +++++++++++++++++--------------
- include/linux/clk-provider.h |  1 +
- 2 files changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 90d2373..474315d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2401,6 +2401,16 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
- }
- EXPORT_SYMBOL_GPL(clk_set_max_rate);
- 
-+static struct clk_core *__clk_get_parent(struct clk_core *core)
-+{
-+	u8 index = 0;
-+
-+	if (core->num_parents > 1 && core->ops->get_parent)
-+		index = core->ops->get_parent(core->hw);
-+
-+	return clk_core_get_parent_by_index(core, index);
-+}
-+
- /**
-  * clk_get_parent - return the parent of a clk
-  * @clk: the clk whose parent gets returned
-@@ -2415,24 +2425,17 @@ struct clk *clk_get_parent(struct clk *clk)
- 		return NULL;
- 
- 	clk_prepare_lock();
--	/* TODO: Create a per-user clk and change callers to call clk_put */
--	parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
-+	if (clk->core && (clk->core->flags & CLK_GET_PARENT_NOCACHE))
-+		parent = __clk_get_parent(clk->core)->hw->clk;
-+	else
-+		/* TODO: Create a per-user clk and change callers to call clk_put */
-+		parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
- 	clk_prepare_unlock();
- 
- 	return parent;
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
- 
--static struct clk_core *__clk_init_parent(struct clk_core *core)
--{
--	u8 index = 0;
--
--	if (core->num_parents > 1 && core->ops->get_parent)
--		index = core->ops->get_parent(core->hw);
--
--	return clk_core_get_parent_by_index(core, index);
--}
--
- static void clk_core_reparent(struct clk_core *core,
- 				  struct clk_core *new_parent)
- {
-@@ -3353,7 +3356,7 @@ static void clk_core_reparent_orphans_nolock(void)
- 	 * parent.
- 	 */
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+		struct clk_core *parent = __clk_get_parent(orphan);
- 
- 		/*
- 		 * We need to use __clk_set_parent_before() and _after() to
-@@ -3454,7 +3457,7 @@ static int __clk_core_init(struct clk_core *core)
- 			goto out;
- 	}
- 
--	parent = core->parent = __clk_init_parent(core);
-+	parent = core->parent = __clk_get_parent(core);
- 
- 	/*
- 	 * Populate core->parent if parent has already been clk_core_init'd. If
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index d98e41f..94a78b3 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -33,6 +33,7 @@
- /* duty cycle call may be forwarded to the parent clock */
- #define CLK_DUTY_CYCLE_PARENT	BIT(13)
- #define CLK_SET_PARENT_NOCACHE	BIT(14) /* do not use the cached clk parent */
-+#define CLK_GET_PARENT_NOCACHE	BIT(15) /* read the parent from reg */
- 
- struct clk;
- struct clk_hw;
--- 
-2.7.4
-
+Reviewed-by: Sivaram Nair
