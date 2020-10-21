@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33975C56202
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A828DC55179
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6CEB2224E
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE86222E9
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 17:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503609AbgJURhE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 13:37:04 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:40948 "EHLO inva020.nxp.com"
+        id S2503627AbgJURhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 13:37:10 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:40904 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404713AbgJURhB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Oct 2020 13:37:01 -0400
+        id S2409024AbgJURhA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Oct 2020 13:37:00 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CDDB1A0598;
-        Wed, 21 Oct 2020 19:36:59 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1E0061A0B02;
+        Wed, 21 Oct 2020 19:36:58 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6F9C01A1293;
-        Wed, 21 Oct 2020 19:36:59 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0166C1A004F;
+        Wed, 21 Oct 2020 19:36:58 +0200 (CEST)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B8AD2033F;
-        Wed, 21 Oct 2020 19:36:59 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FA0E2033F;
+        Wed, 21 Oct 2020 19:36:57 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Peng Fan <peng.fan@nxp.com>,
@@ -37,9 +37,9 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [RFC 4/4] clk: imx8m: Use dram variant registration for dram clocks
-Date:   Wed, 21 Oct 2020 20:36:55 +0300
-Message-Id: <1603301815-24670-5-git-send-email-abel.vesa@nxp.com>
+Subject: [RFC 1/4] clk: Add CLK_GET_PARENT_NOCACHE flag
+Date:   Wed, 21 Oct 2020 20:36:52 +0300
+Message-Id: <1603301815-24670-2-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
 References: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
@@ -48,78 +48,98 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both dram_apb and dram_alt are controlled by EL3. Using the dram
-variant registration of the composite-8m clock, the mux and the
-divider will be read only. Do this for all i.MX8M platforms.
+This can be used by the clocks that have their parents changed from EL3.
+This way the clk_get_parent will read the value from register instead of
+using the value stored in the core framework.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Suggested-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mm.c | 4 ++--
- drivers/clk/imx/clk-imx8mn.c | 4 ++--
- drivers/clk/imx/clk-imx8mp.c | 4 ++--
- drivers/clk/imx/clk-imx8mq.c | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/clk.c            | 31 +++++++++++++++++--------------
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index cd807fa..7f9ef21 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -477,8 +477,8 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 	 * DRAM clocks are manipulated from TF-A outside clock framework.
- 	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 90d2373..474315d 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2401,6 +2401,16 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_max_rate);
+ 
++static struct clk_core *__clk_get_parent(struct clk_core *core)
++{
++	u8 index = 0;
++
++	if (core->num_parents > 1 && core->ops->get_parent)
++		index = core->ops->get_parent(core->hw);
++
++	return clk_core_get_parent_by_index(core, index);
++}
++
+ /**
+  * clk_get_parent - return the parent of a clk
+  * @clk: the clk whose parent gets returned
+@@ -2415,24 +2425,17 @@ struct clk *clk_get_parent(struct clk *clk)
+ 		return NULL;
+ 
+ 	clk_prepare_lock();
+-	/* TODO: Create a per-user clk and change callers to call clk_put */
+-	parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
++	if (clk->core && (clk->core->flags & CLK_GET_PARENT_NOCACHE))
++		parent = __clk_get_parent(clk->core)->hw->clk;
++	else
++		/* TODO: Create a per-user clk and change callers to call clk_put */
++		parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
+ 	clk_prepare_unlock();
+ 
+ 	return parent;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_parent);
+ 
+-static struct clk_core *__clk_init_parent(struct clk_core *core)
+-{
+-	u8 index = 0;
+-
+-	if (core->num_parents > 1 && core->ops->get_parent)
+-		index = core->ops->get_parent(core->hw);
+-
+-	return clk_core_get_parent_by_index(core, index);
+-}
+-
+ static void clk_core_reparent(struct clk_core *core,
+ 				  struct clk_core *new_parent)
+ {
+@@ -3353,7 +3356,7 @@ static void clk_core_reparent_orphans_nolock(void)
+ 	 * parent.
  	 */
--	hws[IMX8MM_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mm_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MM_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mm_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MM_CLK_DRAM_ALT] = imx8m_clk_hw_composite_dram("dram_alt", imx8mm_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MM_CLK_DRAM_APB] = imx8m_clk_hw_composite_dram("dram_apb", imx8mm_dram_apb_sels, base + 0xa080);
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+-		struct clk_core *parent = __clk_init_parent(orphan);
++		struct clk_core *parent = __clk_get_parent(orphan);
  
- 	/* IP */
- 	hws[IMX8MM_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mm_vpu_g1_sels, base + 0xa100);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index b65f60d..d8000ee 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -459,8 +459,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	 * DRAM clocks are manipulated from TF-A outside clock framework.
- 	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
- 	 */
--	hws[IMX8MN_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mn_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MN_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mn_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MN_CLK_DRAM_ALT] = imx8m_clk_hw_composite_dram("dram_alt", imx8mn_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MN_CLK_DRAM_APB] = imx8m_clk_hw_composite_dram("dram_apb", imx8mn_dram_apb_sels, base + 0xa080);
+ 		/*
+ 		 * We need to use __clk_set_parent_before() and _after() to
+@@ -3454,7 +3457,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			goto out;
+ 	}
  
- 	hws[IMX8MN_CLK_DISP_PIXEL] = imx8m_clk_hw_composite("disp_pixel", imx8mn_disp_pixel_sels, base + 0xa500);
- 	hws[IMX8MN_CLK_SAI2] = imx8m_clk_hw_composite("sai2", imx8mn_sai2_sels, base + 0xa600);
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 5b9026b..bf13566 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -846,8 +846,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
- 	hws[IMX8MP_CLK_IPG_AUDIO_ROOT] = imx_clk_hw_divider2("ipg_audio_root", "audio_ahb", ccm_base + 0x9180, 0, 1);
+-	parent = core->parent = __clk_init_parent(core);
++	parent = core->parent = __clk_get_parent(core);
  
--	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
--	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
-+	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite_dram("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
-+	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_dram("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
- 	hws[IMX8MP_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mp_vpu_g1_sels, ccm_base + 0xa100);
- 	hws[IMX8MP_CLK_VPU_G2] = imx8m_clk_hw_composite("vpu_g2", imx8mp_vpu_g2_sels, ccm_base + 0xa180);
- 	hws[IMX8MP_CLK_CAN1] = imx8m_clk_hw_composite("can1", imx8mp_can1_sels, ccm_base + 0xa200);
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index e5d2da4..57db0cc 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -473,8 +473,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
- 	 */
- 	hws[IMX8MQ_CLK_DRAM_CORE] = imx_clk_hw_mux2_flags("dram_core_clk", base + 0x9800, 24, 1, imx8mq_dram_core_sels, ARRAY_SIZE(imx8mq_dram_core_sels), CLK_IS_CRITICAL);
--	hws[IMX8MQ_CLK_DRAM_ALT] = __imx8m_clk_hw_composite("dram_alt", imx8mq_dram_alt_sels, base + 0xa000, CLK_GET_RATE_NOCACHE);
--	hws[IMX8MQ_CLK_DRAM_APB] = __imx8m_clk_hw_composite("dram_apb", imx8mq_dram_apb_sels, base + 0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-+	hws[IMX8MQ_CLK_DRAM_ALT] = imx8m_clk_hw_composite_dram("dram_alt", imx8mq_dram_alt_sels, base + 0xa000);
-+	hws[IMX8MQ_CLK_DRAM_APB] = imx8m_clk_hw_composite_dram("dram_apb", imx8mq_dram_apb_sels, base + 0xa080);
+ 	/*
+ 	 * Populate core->parent if parent has already been clk_core_init'd. If
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index d98e41f..94a78b3 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -33,6 +33,7 @@
+ /* duty cycle call may be forwarded to the parent clock */
+ #define CLK_DUTY_CYCLE_PARENT	BIT(13)
+ #define CLK_SET_PARENT_NOCACHE	BIT(14) /* do not use the cached clk parent */
++#define CLK_GET_PARENT_NOCACHE	BIT(15) /* read the parent from reg */
  
- 	/* IP */
- 	hws[IMX8MQ_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mq_vpu_g1_sels, base + 0xa100);
+ struct clk;
+ struct clk_hw;
 -- 
 2.7.4
 
