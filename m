@@ -2,111 +2,97 @@ Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50636C56202
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A989C4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4C0D2227F
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:38:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="PMsWf3B3"
+	by mail.kernel.org (Postfix) with ESMTP id 309F922249
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:39:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410036AbgJUKiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 06:38:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393418AbgJUKiJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 06:38:09 -0400
-X-Greylist: delayed 1594 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 21 Oct 2020 03:38:08 PDT
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36F4C0613CE
-        for <linux-clk@vger.kernel.org>; Wed, 21 Oct 2020 03:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=GPk+Vc4MLCkQhOcpoKYqeTnVTWZTfNVL3seSjTjvasM=; b=PMsWf3B3IgHUpQuD5qWcRV1b3T
-        8oFszBDd9f+i+GOFqyr/uNgXy30zQd8jU7XeNvk9Hu2BQVQ37gddOx9Abk8sfBhu9ukhPRFVP2V9s
-        Gmw+zpfYynke2mcDvqEHxh+4z5R89A/aOWsslIZzM3EFDC3cm4/C9k/hT1i4721uN9INR9zNFhtIy
-        JDhHf5KA5kS9lY5lbwLe0otV33ypR1JDAu9a/tdE+3VdMVmNksZzrdt4G1qR0M949FoTD1DQuObOb
-        RfYoehL5Qet8KxpDuMaC93gFVvhcoQcJFwEad5RzgERRWGDyo9ywuo1y3gQQkK7DlX84aQZ3/3u7l
-        o5x9xbnw==;
-Received: from dsl-hkibng22-54f986-236.dhcp.inet.fi ([84.249.134.236] helo=toshino.localdomain)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <mperttunen@nvidia.com>)
-        id 1kVB5b-0003nV-33; Wed, 21 Oct 2020 13:11:27 +0300
-From:   Mikko Perttunen <mperttunen@nvidia.com>
-To:     pdeschrijver@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Sivaram Nair <sivaramn@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] clk: tegra: bpmp: Clamp clock rates on requests
-Date:   Wed, 21 Oct 2020 13:10:54 +0300
-Message-Id: <20201021101054.2836146-1-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.28.0
+        id S2410081AbgJUKj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 06:39:58 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48408 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410044AbgJUKj5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Oct 2020 06:39:57 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1B461A11EF;
+        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D477D1A0C5B;
+        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BFE312033F;
+        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
+Date:   Wed, 21 Oct 2020 13:39:54 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     peng.fan@nxp.com
+Cc:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aisheng.dong@nxp.com
+Subject: Re: [PATCH 0/5] clk: imx: fix bus critical clk registration
+Message-ID: <20201021103954.ugjgs5ze2uriojgk@fsr-ub1664-175>
+References: <1603269094-29367-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 84.249.134.236
-X-SA-Exim-Mail-From: mperttunen@nvidia.com
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1603269094-29367-1-git-send-email-peng.fan@nxp.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sivaram Nair <sivaramn@nvidia.com>
+On 20-10-21 16:31:29, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The issue is exposed by
+> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/
+> linux.git/commit/?h=for-next&id=936c383673b9e3007432f17140ac62de53d87db9
+> 
+> Since the upper patch not in Linus tree, I not add Fixed tag.
+> 
+> The issue is bus clk should be registered using bus composite api, not
+> peripheral api. Otherwise we will met failed to assigned clock parents error log.
+> Because peripheral critical clk has CLK_SET_PARENT_GATE and CLK_IS_CRITICAL,
+> you will not able to set clk parents.
+> 
+> We need use bus critical clk api to register the clks, so introduce
+> a new helper and use it.
+> 
 
-BPMP firmware ABI expects the rate inputs in int64_t. However,
-tegra_bpmp_clk_round_rate() and tegra_bpmp_clk_set_rate() functions
-directly assign 'unsigned long' inputs to a int64_t value causing
-unexpected rounding errors.
+I already had this change in the devfreq+icc tree.
 
-Fix this by clipping the input rate to S64_MAX.
+Thanks for speeding up this work.
 
-Signed-off-by: Sivaram Nair <sivaramn@nvidia.com>
-[mperttunen: slight cleanup]
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/clk/tegra/clk-bpmp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+After our discussion yesterday, there is a further change needed for the bus
+clocks and that is the 'right' to reparent on rate change. I'll probably send
+that myself.
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index a66263b6490d..6ecf18f71c32 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) 2016 NVIDIA Corporation
-+ * Copyright (C) 2016-2020 NVIDIA Corporation
-  */
- 
- #include <linux/clk-provider.h>
-@@ -174,7 +174,7 @@ static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	int err;
- 
- 	memset(&request, 0, sizeof(request));
--	request.rate = rate;
-+	request.rate = min_t(u64, rate, S64_MAX);
- 
- 	memset(&msg, 0, sizeof(msg));
- 	msg.cmd = CMD_CLK_ROUND_RATE;
-@@ -256,7 +256,7 @@ static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_bpmp_clk_message msg;
- 
- 	memset(&request, 0, sizeof(request));
--	request.rate = rate;
-+	request.rate = min_t(u64, rate, S64_MAX);
- 
- 	memset(&msg, 0, sizeof(msg));
- 	msg.cmd = CMD_CLK_SET_RATE;
--- 
-2.28.0
+For this entire series:
 
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+
+> Peng Fan (5):
+>   clk: imx: add imx8m_clk_hw_composite_bus_critical
+>   clk: imx8mq: fix noc and noc_io registration
+>   clk: imx8mm: fix bus critical clk registration
+>   clk: imx8mn: fix bus critical clk registration
+>   clk: imx8mp: fix bus critical clk registration
+> 
+>  drivers/clk/imx/clk-imx8mm.c | 10 +++++-----
+>  drivers/clk/imx/clk-imx8mn.c |  6 +++---
+>  drivers/clk/imx/clk-imx8mp.c | 10 +++++-----
+>  drivers/clk/imx/clk-imx8mq.c |  8 ++++----
+>  drivers/clk/imx/clk.h        |  5 +++++
+>  5 files changed, 22 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.28.0
+> 
