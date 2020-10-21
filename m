@@ -2,75 +2,186 @@ Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AD1C55178
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C915DC388F9
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B20EA22283
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CED62177B
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 16:21:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="F2jIEE4n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441727AbgJUOft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 10:35:49 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56534 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410097AbgJUOft (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Oct 2020 10:35:49 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9C1971A0C76;
-        Wed, 21 Oct 2020 16:35:47 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8F83E1A0C1A;
-        Wed, 21 Oct 2020 16:35:47 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B8F82033F;
-        Wed, 21 Oct 2020 16:35:47 +0200 (CEST)
-Date:   Wed, 21 Oct 2020 17:35:47 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] clk: imx: Make the dram_apb and dram_alt as read-only
-Message-ID: <20201021143547.bxil5fafurwub56d@fsr-ub1664-175>
-References: <1603284043-27059-1-git-send-email-abel.vesa@nxp.com>
+        id S2444531AbgJUQVx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 12:21:53 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:12791 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2444530AbgJUQVw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 12:21:52 -0400
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Oct 2020 12:21:50 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1603297310;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=bqZvEy87OzoHTPXNvjpsVr4rrjHgCD2qfQ332Ib3HFA=;
+        b=F2jIEE4ndFoPZTJRURmMa1n47HgZLdSUkBfDfpoiF+Vq69m9ixaOlv58fGHwN94lf1
+        ckrWd/4YpWnMNu2ZYE191Pj9thLKG+AZskoL04Ck+iGFvpphu+k9J00GurgQczel4c3y
+        6HOQPSivuCW+PrYCSYmth569n8L7iu48vt1awJqeaOM5OSOtlS5i0+EeqSxXzkeToef1
+        i6P4NfzgKcJiiOOI/+/iAEzyDudWa6QZpqXvokMerKvZ4DXrvQk8o9qcbjVwkRS4G0Ys
+        cL+IP8KA+OTkZAA8iesDaPB6q5NCc+fxvsXud3dp2L26PilYfI58Qs395856ZYLtehey
+        9OYA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCs/87J3I0="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp05-03.back.ox.d0m.de
+        by smtp-ox.front (RZmta 47.2.1 AUTH)
+        with ESMTPSA id a056fbw9LGFm0Ah
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 21 Oct 2020 18:15:48 +0200 (CEST)
+Date:   Wed, 21 Oct 2020 18:15:48 +0200 (CEST)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-clk@vger.kernel.org, Phong Hoang <phong.hoang.wz@renesas.com>
+Message-ID: <404689346.305772.1603296948760@webmail.strato.com>
+In-Reply-To: <20201019120614.22149-6-geert+renesas@glider.be>
+References: <20201019120614.22149-1-geert+renesas@glider.be>
+ <20201019120614.22149-6-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 5/6] gpio: rcar: Add support for R-Car V3U
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1603284043-27059-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev25
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-10-21 15:40:41, Abel Vesa wrote:
-> On i.MX8M platforms the dram_apb and dram_alt are controlled from EL3.
-> So in order to keep track of the actual clock tree in kernel, we need
-> to actually declare the clocks but never actually change their parents
-> or divider settings. We do that by marking the mux and the div as read-only
-> with CLK_DIVIDER_READ_ONLY and CLK_MUX_READ_ONLY flags.
-> 
+Thank you for your patch!
 
-Ignore this patchset entirely. A lot of things are missing for this approach.
+> On 10/19/2020 2:06 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> 
+>  
+> From: Phong Hoang <phong.hoang.wz@renesas.com>
+> 
+> Add support for the R-Car V3U (r8a779a0) SoC.
+> This includes support for the new "General Input Enable" register to
+> control input enable.
+> 
+> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Untested on actual hardware.
+> 
+> Should input be enabled unconditionally, as recommended by the Hardware
+> Manual for backwards compatibility with existing software?
+> As per (errata?) commit ae9550f635533b1c ("gpio-rcar: Use OUTDT when
+> reading GPIOs configured as output"), the gpio-rcar driver does not use
+> the INDT register to read the status of a GPIO line when configured for
+> output.
+> ---
+>  drivers/gpio/gpio-rcar.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index a924cf8ac8df7f8f..44d09a0028db49e9 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -42,6 +42,7 @@ struct gpio_rcar_priv {
+>  	atomic_t wakeup_path;
+>  	bool has_outdtsel;
+>  	bool has_both_edge_trigger;
+> +	bool has_inen;
+>  	struct gpio_rcar_bank_info bank_info;
+>  };
+>  
+> @@ -58,6 +59,7 @@ struct gpio_rcar_priv {
+>  #define FILONOFF 0x28	/* Chattering Prevention On/Off Register */
+>  #define OUTDTSEL 0x40	/* Output Data Select Register */
+>  #define BOTHEDGE 0x4c	/* One Edge/Both Edge Select Register */
+> +#define INEN 0x50	/* General Input Enable Register */
+>  
+>  #define RCAR_MAX_GPIO_PER_BANK		32
+>  
+> @@ -126,6 +128,10 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+>  	if (p->has_both_edge_trigger)
+>  		gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+>  
+> +	/* Select "Input Enable" in INEN */
+> +	if (p->has_inen)
+> +		gpio_rcar_modify_bit(p, INEN, hwirq, true);
+> +
+>  	/* Select "Interrupt Input Mode" in IOINTSEL */
+>  	gpio_rcar_modify_bit(p, IOINTSEL, hwirq, true);
+>  
+> @@ -231,6 +237,10 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+>  	/* Configure positive logic in POSNEG */
+>  	gpio_rcar_modify_bit(p, POSNEG, gpio, false);
+>  
+> +	/* Select "Input Enable/Disable" in INEN */
 
-> Abel Vesa (2):
->   clk: imx: composite-8m: Add DRAM clock registration variant
->   clk: imx8m: Use dram variant registration for dram clocks
-> 
->  drivers/clk/imx/clk-composite-8m.c | 7 +++++++
->  drivers/clk/imx/clk-imx8mm.c       | 4 ++--
->  drivers/clk/imx/clk-imx8mn.c       | 4 ++--
->  drivers/clk/imx/clk-imx8mp.c       | 4 ++--
->  drivers/clk/imx/clk-imx8mq.c       | 4 ++--
->  drivers/clk/imx/clk.h              | 6 ++++++
->  6 files changed, 21 insertions(+), 8 deletions(-)
-> 
+Nit: It's always called "Input Enable" in the DS.
+
+> +	if (p->has_inen)
+> +		gpio_rcar_modify_bit(p, INEN, gpio, !output);
+> +
+>  	/* Select "General Input/Output Mode" in IOINTSEL */
+>  	gpio_rcar_modify_bit(p, IOINTSEL, gpio, false);
+>  
+> @@ -349,16 +359,25 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+>  struct gpio_rcar_info {
+>  	bool has_outdtsel;
+>  	bool has_both_edge_trigger;
+> +	bool has_inen;
+>  };
+>  
+>  static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+>  	.has_outdtsel = false,
+>  	.has_both_edge_trigger = false,
+> +	.has_inen = false,
+>  };
+>  
+>  static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+>  	.has_outdtsel = true,
+>  	.has_both_edge_trigger = true,
+> +	.has_inen = false,
+> +};
+> +
+> +static const struct gpio_rcar_info gpio_rcar_info_v3u = {
+> +	.has_outdtsel = true,
+> +	.has_both_edge_trigger = true,
+> +	.has_inen = true,
+>  };
+>  
+>  static const struct of_device_id gpio_rcar_of_table[] = {
+> @@ -389,6 +408,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+>  		.compatible = "renesas,gpio-r8a7796",
+>  		/* Gen3 GPIO is identical to Gen2. */
+>  		.data = &gpio_rcar_info_gen2,
+> +	}, {
+> +		.compatible = "renesas,gpio-r8a779a0",
+> +		.data = &gpio_rcar_info_v3u,
+>  	}, {
+>  		.compatible = "renesas,rcar-gen1-gpio",
+>  		.data = &gpio_rcar_info_gen1,
+> @@ -419,6 +441,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+>  	info = of_device_get_match_data(p->dev);
+>  	p->has_outdtsel = info->has_outdtsel;
+>  	p->has_both_edge_trigger = info->has_both_edge_trigger;
+> +	p->has_inen = info->has_inen;
+>  
+>  	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+>  	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
 > -- 
-> 2.7.4
-> 
+> 2.17.1
+
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+CU
+Uli
