@@ -2,97 +2,67 @@ Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A989C4363A
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0953FC56202
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 12:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 309F922249
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 10:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C842224E
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 12:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410081AbgJUKj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 06:39:58 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:48408 "EHLO inva020.nxp.com"
+        id S2440496AbgJUMk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Oct 2020 08:40:57 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54020 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410044AbgJUKj5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Oct 2020 06:39:57 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1B461A11EF;
-        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
+        id S1731126AbgJUMk4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Oct 2020 08:40:56 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 997A5200AB3;
+        Wed, 21 Oct 2020 14:40:53 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D477D1A0C5B;
-        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BFE312033F;
-        Wed, 21 Oct 2020 12:39:54 +0200 (CEST)
-Date:   Wed, 21 Oct 2020 13:39:54 +0300
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D08920194A;
+        Wed, 21 Oct 2020 14:40:53 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D9BF2033F;
+        Wed, 21 Oct 2020 14:40:53 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
-To:     peng.fan@nxp.com
-Cc:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aisheng.dong@nxp.com
-Subject: Re: [PATCH 0/5] clk: imx: fix bus critical clk registration
-Message-ID: <20201021103954.ugjgs5ze2uriojgk@fsr-ub1664-175>
-References: <1603269094-29367-1-git-send-email-peng.fan@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1603269094-29367-1-git-send-email-peng.fan@nxp.com>
-User-Agent: NeoMutt/20180622
+To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH 0/2] clk: imx: Make the dram_apb and dram_alt as read-only
+Date:   Wed, 21 Oct 2020 15:40:41 +0300
+Message-Id: <1603284043-27059-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-10-21 16:31:29, peng.fan@nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The issue is exposed by
-> https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/
-> linux.git/commit/?h=for-next&id=936c383673b9e3007432f17140ac62de53d87db9
-> 
-> Since the upper patch not in Linus tree, I not add Fixed tag.
-> 
-> The issue is bus clk should be registered using bus composite api, not
-> peripheral api. Otherwise we will met failed to assigned clock parents error log.
-> Because peripheral critical clk has CLK_SET_PARENT_GATE and CLK_IS_CRITICAL,
-> you will not able to set clk parents.
-> 
-> We need use bus critical clk api to register the clks, so introduce
-> a new helper and use it.
-> 
+On i.MX8M platforms the dram_apb and dram_alt are controlled from EL3.
+So in order to keep track of the actual clock tree in kernel, we need
+to actually declare the clocks but never actually change their parents
+or divider settings. We do that by marking the mux and the div as read-only
+with CLK_DIVIDER_READ_ONLY and CLK_MUX_READ_ONLY flags.
 
-I already had this change in the devfreq+icc tree.
+Abel Vesa (2):
+  clk: imx: composite-8m: Add DRAM clock registration variant
+  clk: imx8m: Use dram variant registration for dram clocks
 
-Thanks for speeding up this work.
+ drivers/clk/imx/clk-composite-8m.c | 7 +++++++
+ drivers/clk/imx/clk-imx8mm.c       | 4 ++--
+ drivers/clk/imx/clk-imx8mn.c       | 4 ++--
+ drivers/clk/imx/clk-imx8mp.c       | 4 ++--
+ drivers/clk/imx/clk-imx8mq.c       | 4 ++--
+ drivers/clk/imx/clk.h              | 6 ++++++
+ 6 files changed, 21 insertions(+), 8 deletions(-)
 
-After our discussion yesterday, there is a further change needed for the bus
-clocks and that is the 'right' to reparent on rate change. I'll probably send
-that myself.
+-- 
+2.7.4
 
-For this entire series:
-
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-
-> Peng Fan (5):
->   clk: imx: add imx8m_clk_hw_composite_bus_critical
->   clk: imx8mq: fix noc and noc_io registration
->   clk: imx8mm: fix bus critical clk registration
->   clk: imx8mn: fix bus critical clk registration
->   clk: imx8mp: fix bus critical clk registration
-> 
->  drivers/clk/imx/clk-imx8mm.c | 10 +++++-----
->  drivers/clk/imx/clk-imx8mn.c |  6 +++---
->  drivers/clk/imx/clk-imx8mp.c | 10 +++++-----
->  drivers/clk/imx/clk-imx8mq.c |  8 ++++----
->  drivers/clk/imx/clk.h        |  5 +++++
->  5 files changed, 22 insertions(+), 17 deletions(-)
-> 
-> -- 
-> 2.28.0
-> 
