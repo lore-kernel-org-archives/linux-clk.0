@@ -1,115 +1,98 @@
-Return-Path: <SRS0=09nf=D4=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4E15=D5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FE4C4363A
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9592EC388F2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 12:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7B2221FB
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Oct 2020 23:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2544F223BF
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 12:37:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hdaUtzrB"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="mTunhcZt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506854AbgJUXBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Oct 2020 19:01:22 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5860 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439276AbgJUXBW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Oct 2020 19:01:22 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f90bd640000>; Wed, 21 Oct 2020 15:59:48 -0700
-Received: from krlm (172.20.13.39) by HQMAIL107.nvidia.com (172.20.187.13)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Oct 2020 23:01:22
- +0000
-Date:   Wed, 21 Oct 2020 16:01:37 -0700
-From:   Sivaram Nair <sivaramn@nvidia.com>
-To:     Mikko Perttunen <mperttunen@nvidia.com>
-CC:     <pdeschrijver@nvidia.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: bpmp: Clamp clock rates on requests
-Message-ID: <20201021230137.GA3933@krlm>
-References: <20201021101054.2836146-1-mperttunen@nvidia.com>
+        id S2898285AbgJVMhu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Oct 2020 08:37:50 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33545 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2898284AbgJVMhu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Oct 2020 08:37:50 -0400
+X-UUID: bdfb4d33aa8c4240b2d89c4d6941ad59-20201022
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=8BjKNcZMoHnW3Ca0V7ucDH/EYdJ9P9beBOvuF8WRA7I=;
+        b=mTunhcZt9qz9X4u6Oi4CoEeXJGNOZJtKNSKjwaRzsLiOknOsSxs2A0cZk/5DwFzkNWIzAZKmOYBr4fb58i+Z24Tgbyee/XrGeCQxDyxfEKefAtCdg+EvaqhS4KrixnjDAIBNftlvsK3GfPtywG6GEt+c8wNORgmrnuQqKftYPtM=;
+X-UUID: bdfb4d33aa8c4240b2d89c4d6941ad59-20201022
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 480441456; Thu, 22 Oct 2020 20:37:46 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 22 Oct 2020 20:37:44 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 22 Oct 2020 20:37:44 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 01/34] dt-bindings: ARM: Mediatek: Add new document bindings of camsys raw controller
+Date:   Thu, 22 Oct 2020 20:36:54 +0800
+Message-ID: <1603370247-30437-2-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1603370247-30437-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1603370247-30437-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20201021101054.2836146-1-mperttunen@nvidia.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603321188; bh=M/AGDHeb6JmQ+yu/XSBNHiMwy7D0SMSWDOU9Iywtgpw=;
-        h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Disposition:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=hdaUtzrBEzXuJ96dTPEnqVXnjCdVyZCq4kuElU72CuiuWKZ2ngvrm/O9JeYwuBrgc
-         9QMTJsHu/ZhTaiYUC7e6EIynJU+YIs0SC9rYVU8HNSOcfuR12JOAuwZiPtAImFA7Tl
-         IjyJ/ZXoUMU+CSoJiI9fFsAKGMh+z3Tm0050RACzAHUm7bQr9AB8u4UrX5NSYjN2NO
-         Sm+5eCxuVRQDnJjHwBh1zzg8qgceKOibaGfdqyeB6ydjOEyJs8Ge6PnIfcDu4AesUj
-         ErW9X1wRZJLbvP4kj9lf89j5Vg0uvMPiPLj26KHUHBYNMUmGPEUavg/g9I9kFLjL/X
-         FELyGvYD8MGCQ==
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 01:10:54PM +0300, Mikko Perttunen wrote:
-> From: Sivaram Nair <sivaramn@nvidia.com>
-> 
-> BPMP firmware ABI expects the rate inputs in int64_t. However,
-> tegra_bpmp_clk_round_rate() and tegra_bpmp_clk_set_rate() functions
-> directly assign 'unsigned long' inputs to a int64_t value causing
-> unexpected rounding errors.
-> 
-> Fix this by clipping the input rate to S64_MAX.
-> 
-> Signed-off-by: Sivaram Nair <sivaramn@nvidia.com>
-> [mperttunen: slight cleanup]
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-bpmp.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index a66263b6490d..6ecf18f71c32 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (C) 2016 NVIDIA Corporation
-> + * Copyright (C) 2016-2020 NVIDIA Corporation
->   */
->  
->  #include <linux/clk-provider.h>
-> @@ -174,7 +174,7 @@ static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->  	int err;
->  
->  	memset(&request, 0, sizeof(request));
-> -	request.rate = rate;
-> +	request.rate = min_t(u64, rate, S64_MAX);
->  
->  	memset(&msg, 0, sizeof(msg));
->  	msg.cmd = CMD_CLK_ROUND_RATE;
-> @@ -256,7 +256,7 @@ static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  	struct tegra_bpmp_clk_message msg;
->  
->  	memset(&request, 0, sizeof(request));
-> -	request.rate = rate;
-> +	request.rate = min_t(u64, rate, S64_MAX);
->  
->  	memset(&msg, 0, sizeof(msg));
->  	msg.cmd = CMD_CLK_SET_RATE;
-> -- 
-> 2.28.0
-> 
+VGhpcyBwYXRjaCBhZGRzIHRoZSBuZXcgYmluZGluZyBkb2N1bWVudGF0aW9uIG9mIGNhbXN5cyBy
+YXcgY29udHJvbGxlcg0KZm9yIE1lZGlhdGVrIE1UODE5Mi4NCg0KU2lnbmVkLW9mZi1ieTogV2Vp
+eWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIC4uLi9iaW5kaW5ncy9hcm0vbWVk
+aWF0ZWsvbWVkaWF0ZWssY2Ftc3lzLXJhdy55YW1sIHwgNTQgKysrKysrKysrKysrKysrKysrKysr
+Kw0KIDEgZmlsZSBjaGFuZ2VkLCA1NCBpbnNlcnRpb25zKCspDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWss
+Y2Ftc3lzLXJhdy55YW1sDQoNCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGNhbXN5cy1yYXcueWFtbCBiL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssY2Ftc3lzLXJh
+dy55YW1sDQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5kZXggMDAwMDAwMC4uZWIzOTVmZg0KLS0t
+IC9kZXYvbnVsbA0KKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9t
+ZWRpYXRlay9tZWRpYXRlayxjYW1zeXMtcmF3LnlhbWwNCkBAIC0wLDAgKzEsNTQgQEANCisjIFNQ
+RFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBCU0QtMi1DbGF1c2UpDQorJVlBTUwg
+MS4yDQorLS0tDQorJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9hcm0vbWVkaWF0
+ZWsvbWVkaWF0ZWssY2Ftc3lzLXJhdy55YW1sIw0KKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0cmVl
+Lm9yZy9tZXRhLXNjaGVtYXMvY29yZS55YW1sIw0KKw0KK3RpdGxlOiBNZWRpYVRlayBDQU1TWVMg
+UkFXIENvbnRyb2xsZXINCisNCittYWludGFpbmVyczoNCisgIC0gV2VpeWkgTHUgPHdlaXlpLmx1
+QG1lZGlhdGVrLmNvbT4NCisNCitkZXNjcmlwdGlvbjoNCisgIFRoZSBNZWRpYXRlayBjYW1zeXMg
+cmF3IGNvbnRyb2xsZXIgcHJvdmlkZXMgZnVuY3Rpb25hbCBjb25maWd1cmF0aW9ucyBhbmQgY2xv
+Y2tzIHRvIHRoZSBzeXN0ZW0uDQorDQorcHJvcGVydGllczoNCisgIGNvbXBhdGlibGU6DQorICAg
+IGl0ZW1zOg0KKyAgICAgIC0gZW51bToNCisgICAgICAgICAgLSBtZWRpYXRlayxtdDgxOTItY2Ft
+c3lzX3Jhd2ENCisgICAgICAgICAgLSBtZWRpYXRlayxtdDgxOTItY2Ftc3lzX3Jhd2INCisgICAg
+ICAgICAgLSBtZWRpYXRlayxtdDgxOTItY2Ftc3lzX3Jhd2MNCisgICAgICAtIGNvbnN0OiBzeXNj
+b24NCisNCisgIHJlZzoNCisgICAgbWF4SXRlbXM6IDENCisNCisgICcjY2xvY2stY2VsbHMnOg0K
+KyAgICBjb25zdDogMQ0KKw0KK3JlcXVpcmVkOg0KKyAgLSBjb21wYXRpYmxlDQorICAtIHJlZw0K
+Kw0KK2V4YW1wbGVzOg0KKyAgLSB8DQorICAgIGNhbXN5c19yYXdhOiBzeXNjb25AMWEwNGYwMDAg
+ew0KKyAgICAgICAgY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxOTItY2Ftc3lzX3Jhd2EiLCAi
+c3lzY29uIjsNCisgICAgICAgIHJlZyA9IDwwIDB4MWEwNGYwMDAgMCAweDEwMDA+Ow0KKyAgICAg
+ICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KKyAgICB9Ow0KKw0KKyAgLSB8DQorICAgIGNhbXN5c19y
+YXdiOiBzeXNjb25AMWEwNmYwMDAgew0KKyAgICAgICAgY29tcGF0aWJsZSA9ICJtZWRpYXRlayxt
+dDgxOTItY2Ftc3lzX3Jhd2IiLCAic3lzY29uIjsNCisgICAgICAgIHJlZyA9IDwwIDB4MWEwNmYw
+MDAgMCAweDEwMDA+Ow0KKyAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KKyAgICB9Ow0KKw0K
+KyAgLSB8DQorICAgIGNhbXN5c19yYXdjOiBzeXNjb25AMWEwOGYwMDAgew0KKyAgICAgICAgY29t
+cGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxOTItY2Ftc3lzX3Jhd2MiLCAic3lzY29uIjsNCisgICAg
+ICAgIHJlZyA9IDwwIDB4MWEwOGYwMDAgMCAweDEwMDA+Ow0KKyAgICAgICAgI2Nsb2NrLWNlbGxz
+ID0gPDE+Ow0KKyAgICB9Ow0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
 
-Reviewed-by: Sivaram Nair
