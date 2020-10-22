@@ -2,77 +2,106 @@ Return-Path: <SRS0=4E15=D5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AC0C388F9
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 16:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94206C5DF9D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 18:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9036F2417D
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 16:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EAA324670
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Oct 2020 18:45:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8jUhEN6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368910AbgJVP7Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Oct 2020 11:59:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48680 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S368899AbgJVP7P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Oct 2020 11:59:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 33D51ADFF;
-        Thu, 22 Oct 2020 15:59:13 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
-Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v2 06/10] staging: vchiq: Release firmware handle on unbind
-Date:   Thu, 22 Oct 2020 17:58:53 +0200
-Message-Id: <20201022155858.20867-7-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201022155858.20867-1-nsaenzjulienne@suse.de>
-References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
+        id S368902AbgJVSpz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Oct 2020 14:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S368830AbgJVSpy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Oct 2020 14:45:54 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661EEC0613CE;
+        Thu, 22 Oct 2020 11:45:53 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id y14so1696170pfp.13;
+        Thu, 22 Oct 2020 11:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PJ+uKLoDbt4Kdg8ImByLjA8Njsk3WlOLgUgCbpkC9zk=;
+        b=A8jUhEN65PHD6v/QKxHHZH30h3Bes875e+6+YJN1oRjC7MZxpv05pacosmi/+65EBk
+         Dx8XXnOnRTnBVHVQ5JmYEycve17jrdZVst0f6IsgoRtTyydrVVoQEhhVNi4cbk+tod5A
+         MNLeNR+TUQSkY5iFpk/xW8fcCvmfbFIEIsWzj8l/+MZ2GaZLFfk/oasxZ10SVZDdetqd
+         m7cKjO1GDgNygAgXbqYg3qwViz8gUMo2l9iN/xTV7hcM7OzUJgHiVxn2xn1Ix11Xn3Mj
+         w5xyxZzMqJdXhyvSL/CCT5pFyt+G/Ry3aTxphw+1BfRgwJ6o1PZGhL3mLbVF7NEE1HQo
+         stlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PJ+uKLoDbt4Kdg8ImByLjA8Njsk3WlOLgUgCbpkC9zk=;
+        b=Lffidh1m26Tpvc0fK79Div1yEN/p+2gdVsvah6YqlDfyZhZRXsi+QpY1G+HVpOOppz
+         H56NwCbB/viPVmrdC+9JqCmF4mTzVdpdMz1y0eS5PNMAASEkejo4dhvnM7EDePCxjRfQ
+         Fx0moZo2qkGjTfSFuo25ZpPE2w8xzTBHLNEDmVqJhIlIRWzdJ7JO4OIqXxdDd8h4e0oL
+         2cXwch18dfnTSWK+ZIDklGy5wc1slWQm1Mw4SKPA82RMQFiawtLtL51IzCzqbDAdqm4h
+         SzW9FEN6fbyYSRIjq2xCZS9WoARgqGLKj1zbsZBO9HZRHL4O43E73SsHkWpjd8alueqQ
+         oRMw==
+X-Gm-Message-State: AOAM530yFVlBowcW0UkuuWa4lhLNX3dM35yizMP29Ui2FnMfAuN7HRy8
+        Opi1yF75+HS780vfSL2EOJbcKHuaiiQ/HFVN39Q=
+X-Google-Smtp-Source: ABdhPJwNbfbJKg7L/+F+lSBYE2PF207sJKCE67fjAwiCaIsXfyZycJr3U4/+t0LHsJes+amoJNW5cfEG1vmDYyxED/U=
+X-Received: by 2002:a05:6a00:22c2:b029:156:543:7c1d with SMTP id
+ f2-20020a056a0022c2b029015605437c1dmr3749000pfj.40.1603392352903; Thu, 22 Oct
+ 2020 11:45:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201022155858.20867-1-nsaenzjulienne@suse.de> <20201022155858.20867-2-nsaenzjulienne@suse.de>
+In-Reply-To: <20201022155858.20867-2-nsaenzjulienne@suse.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 22 Oct 2020 21:46:41 +0300
+Message-ID: <CAHp75Vej4UfsySRB6qXL7fFN7SjnTjy=p4Xkn1xBO0YOFy-kcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] firmware: raspberrypi: Introduce rpi_firmware_put()
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pwm@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        linux-input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Upon unbinding the device make sure we release RPi's firmware interface.
+On Thu, Oct 22, 2020 at 9:06 PM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> When unbinding the firmware device we need to make sure it has no
+> consumers left. Otherwise we'd leave them with a firmware handle
+> pointing at freed memory.
+>
+> Keep a reference count of all consumers and make sure they all finished
+> unbinding before we do.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 3 +++
- 1 file changed, 3 insertions(+)
+Wait, if it's a device, why do we need all these?
+get_device() / put_device() along with module_get() / module_put()
+should be sufficient, no?
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 01125d9f991b..dfa4d144faa8 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -2771,11 +2771,14 @@ static int vchiq_probe(struct platform_device *pdev)
- 
- static int vchiq_remove(struct platform_device *pdev)
- {
-+	struct vchiq_drvdata *drvdata = platform_get_drvdata(pdev);
-+
- 	platform_device_unregister(bcm2835_audio);
- 	platform_device_unregister(bcm2835_camera);
- 	vchiq_debugfs_deinit();
- 	device_destroy(vchiq_class, vchiq_devid);
- 	cdev_del(&vchiq_cdev);
-+	rpi_firmware_put(drvdata->fw);
- 
- 	return 0;
- }
 -- 
-2.28.0
-
+With Best Regards,
+Andy Shevchenko
