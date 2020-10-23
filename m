@@ -2,61 +2,62 @@ Return-Path: <SRS0=2J+f=D6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E17EC4363A
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB42C56201
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC29D20878
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DDED207FF
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:20:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CpTp4wLu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X9/k2IJL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S464516AbgJWNT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Oct 2020 09:19:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        id S464456AbgJWNUE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Oct 2020 09:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S464437AbgJWNTn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:43 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E230C0613D2
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:42 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id j30so2057836lfp.4
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:42 -0700 (PDT)
+        with ESMTP id S464449AbgJWNTi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:38 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5641C0613D5
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:36 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id m16so1531692ljo.6
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vs5mIrV/vf6dXVUTDjt/isM2L9GuwwyE1om4bgY/ZkU=;
-        b=CpTp4wLudC7DAsrK1ThoOcKozcTO0vn/+OJRKPKooHTPqgO9ZFJmTTfAdC7YcLIeIz
-         pDwIay79IUiwsxhjAFJg1a5VAo5gMpSVcDWkmiJrEaAAtO5DTgZpcEYfSCUkG33Vj5PG
-         vUYgZxKYPsL0y3gf6Ee20myRXrgimuasFlBpqofZ/uEEllU3OXJB7dELxbZf7yUJMhEV
-         /B57sdfKz8n6408WAfe5JxsAwEaz2gDQ3F3czB2nK3ssd/vozqMxIuVtJ32iVYkUjdSG
-         jcluEtB63dJkJDOElwj6N7yy6srLXcof8S6OX7mqrEEi+DiGm0n0LwngI/s2Ld9NOWRZ
-         Hg2w==
+        bh=AqOOQJkhUfvKoNHnpeyzoyANmDhc3aHrYoF+q2ExrGE=;
+        b=X9/k2IJLvlOHdTHBPXpgN4RmgFl3Oq62n61bxmVEhlMNmljFgL94Rd4cOvNlRLehAD
+         GIS4FbH9mh3Qvqh0/li1DbfMKSjAImGtgWKCqn7IKBgyGAChiOLr5kXnwDQjzgRyyWHr
+         CcATQGMj704tN98Lp+HEFgs1L3wG424ko9dpXlQurxVu42r4vqzwPvtkoa1X/BxpDqeI
+         651Cdtn6q/zdmRJNAXHxY9OJFX8uoc9xa3XLMxdCE1SMnvNn0OtlzNr1TVUPPIA3jd0R
+         G0PAvM53ysGj/72ELEYqo4xYNjgWPkduqv3fdkEiVjbB/JdCW+tZqtC4BTqyGkJMkYJ0
+         Da7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vs5mIrV/vf6dXVUTDjt/isM2L9GuwwyE1om4bgY/ZkU=;
-        b=LlXCDth0EOiIk9ihqTCVYqF2fkBKxM3oCNtJOpSSwh9lKjwOy1cj4D1jC7LH4/bbRv
-         ScKRWbkLkJo1Xe3VvnDjXP04b4ya0HhIFssQ+KKM6NgVDYRnhdgJN4PPxek22//ZxEE2
-         tdrW+blDgEARXUFB+TuEZo2TF+TSJ6NGT4AT3dzyoOyYvFxVZVpC5P8keYSN3+qevn3h
-         tqNusg1TBk0l3bKzxDU38qkObA2ZLjq2L5Gclgf8+Yy49E/WmDZZaCraujI3DxEzUN1h
-         bnUp/59kK7OVvarAn+yQRfk+C28bheiiSbBhta1w+lbU7LCRfJqQ0Lxw0HjXZS2/Vx1D
-         3vAQ==
-X-Gm-Message-State: AOAM532mLPKkPmr5LDmv0YrkmkzEATy2xROXrQlgeLGZ5PdYLRM8qGSb
-        LkF9Zgc+vZpXiKAxoAXZtk8Wfg==
-X-Google-Smtp-Source: ABdhPJw9ugMZCYpQu7QxG3hoZDbK0RbL4rhOr50EyBLVYx2Slttp8dcxQ4Sf5TIkPSMR6cZIH1hSwA==
-X-Received: by 2002:ac2:5976:: with SMTP id h22mr708794lfp.507.1603459181044;
-        Fri, 23 Oct 2020 06:19:41 -0700 (PDT)
+        bh=AqOOQJkhUfvKoNHnpeyzoyANmDhc3aHrYoF+q2ExrGE=;
+        b=ujpXqoVuk1s3hbGZuqAYvhZKCmMVTVoAY2DOpjCmiyY4mYku4ypUt2bon7I+8i6GyS
+         s9dpu9SZ5CW8NAmHtkcG91y4nH5KRoclmNXnKqkOrdd+TArFPkaNUr8ZnfqU4PF6Z9sg
+         5wiOG76h9ueWxzc66FD36Z951sTpL4AITf2oDUrfY+ZNdf/EoTirDcu6NekwxpETSwvj
+         5kxg4tAaTdyBWwClP4txgDu7kzHAeRZhp8elb3KIlCMlz78QAL/PXv1IbEThb0YILufN
+         UTTVSm+AC3081qhiabcb/F4O8QxEfSvkIuY3/FFEuq5td4chUnQIAkRZkZhGhTUZGbtj
+         BAsA==
+X-Gm-Message-State: AOAM533dWq/j/220+/g3U5hNNqxYwq+47saF1HWtu6/k2T2tzzgVNJ6u
+        IOKRvm/c4vSIdmpITRxQtYSOFg==
+X-Google-Smtp-Source: ABdhPJyKYcn13crHVHPIp5NgBoi1S4qmyj+ZQu0TvENFZQFgiwZs7aHHuN23fxPvwDp1+VVti3lVDg==
+X-Received: by 2002:a2e:b0e4:: with SMTP id h4mr816744ljl.119.1603459175157;
+        Fri, 23 Oct 2020 06:19:35 -0700 (PDT)
 Received: from eriador.lan ([188.162.64.195])
-        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.38
+        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 06:19:40 -0700 (PDT)
+        Fri, 23 Oct 2020 06:19:34 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -70,9 +71,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] arm64: dts: qcom: sm8250: add mmcx regulator
-Date:   Fri, 23 Oct 2020 16:19:24 +0300
-Message-Id: <20201023131925.334864-5-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 2/5] regulator: fixed: support using power domain for enable/disable
+Date:   Fri, 23 Oct 2020 16:19:22 +0300
+Message-Id: <20201023131925.334864-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
 References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
@@ -82,32 +83,149 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add regulator controlling MMCX power domain to be used by display clock
-controller on SM8250.
+Adds possibility to choose the compatible "fixed-regulator-domain" for
+regulators which use power domain for enabling/disabling corresponding
+regulator.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8250.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/regulator/fixed.c | 63 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 57 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-index d057d85a19fb..c1d4a63cd2de 100644
---- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
-@@ -214,6 +214,13 @@ memory@80000000 {
- 		reg = <0x0 0x80000000 0x0 0x0>;
- 	};
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 3de7709bdcd4..02ad83153e19 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -18,6 +18,8 @@
+ #include <linux/mutex.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/fixed.h>
+ #include <linux/gpio/consumer.h>
+@@ -34,11 +36,13 @@ struct fixed_voltage_data {
+ 	struct regulator_dev *dev;
  
-+	mmcx_reg: mmcx-reg {
-+		compatible = "regulator-fixed-domain";
-+		power-domains = <&rpmhpd SM8250_MMCX>;
-+		required-opps = <&rpmhpd_opp_low_svs>;
-+		regulator-name = "MMCX";
-+	};
+ 	struct clk *enable_clock;
+-	unsigned int clk_enable_counter;
++	unsigned int enable_counter;
++	int performance_state;
+ };
+ 
+ struct fixed_dev_type {
+ 	bool has_enable_clock;
++	bool has_performance_state;
+ };
+ 
+ static int reg_clock_enable(struct regulator_dev *rdev)
+@@ -50,7 +54,7 @@ static int reg_clock_enable(struct regulator_dev *rdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	priv->clk_enable_counter++;
++	priv->enable_counter++;
+ 
+ 	return ret;
+ }
+@@ -60,16 +64,41 @@ static int reg_clock_disable(struct regulator_dev *rdev)
+ 	struct fixed_voltage_data *priv = rdev_get_drvdata(rdev);
+ 
+ 	clk_disable_unprepare(priv->enable_clock);
+-	priv->clk_enable_counter--;
++	priv->enable_counter--;
+ 
+ 	return 0;
+ }
+ 
+-static int reg_clock_is_enabled(struct regulator_dev *rdev)
++static int reg_domain_enable(struct regulator_dev *rdev)
+ {
+ 	struct fixed_voltage_data *priv = rdev_get_drvdata(rdev);
++	struct device *dev = rdev->dev.parent;
++	int ret;
 +
- 	pmu {
- 		compatible = "arm,armv8-pmuv3";
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
++	ret = dev_pm_genpd_set_performance_state(dev, priv->performance_state);
++	if (ret)
++		return ret;
+ 
+-	return priv->clk_enable_counter > 0;
++	priv->enable_counter++;
++
++	return ret;
++}
++
++static int reg_domain_disable(struct regulator_dev *rdev)
++{
++	struct fixed_voltage_data *priv = rdev_get_drvdata(rdev);
++	struct device *dev = rdev->dev.parent;
++
++	priv->enable_counter--;
++
++	return dev_pm_genpd_set_performance_state(dev, 0);
++}
++
++static int reg_is_enabled(struct regulator_dev *rdev)
++{
++	struct fixed_voltage_data *priv = rdev_get_drvdata(rdev);
++
++	return priv->enable_counter > 0;
+ }
+ 
+ 
+@@ -129,7 +158,13 @@ static const struct regulator_ops fixed_voltage_ops = {
+ static const struct regulator_ops fixed_voltage_clkenabled_ops = {
+ 	.enable = reg_clock_enable,
+ 	.disable = reg_clock_disable,
+-	.is_enabled = reg_clock_is_enabled,
++	.is_enabled = reg_is_enabled,
++};
++
++static const struct regulator_ops fixed_voltage_domain_ops = {
++	.enable = reg_domain_enable,
++	.disable = reg_domain_disable,
++	.is_enabled = reg_is_enabled,
+ };
+ 
+ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+@@ -177,6 +212,14 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Can't get enable-clock from devicetree\n");
+ 			return -ENOENT;
+ 		}
++	} else if (drvtype && drvtype->has_performance_state) {
++		drvdata->desc.ops = &fixed_voltage_domain_ops;
++
++		drvdata->performance_state = of_get_required_opp_performance_state(dev->of_node, 0);
++		if (drvdata->performance_state < 0) {
++			dev_err(dev, "Can't get performance state from devicetree\n");
++			return drvdata->performance_state;
++		}
+ 	} else {
+ 		drvdata->desc.ops = &fixed_voltage_ops;
+ 	}
+@@ -260,6 +303,10 @@ static const struct fixed_dev_type fixed_clkenable_data = {
+ 	.has_enable_clock = true,
+ };
+ 
++static const struct fixed_dev_type fixed_domain_data = {
++	.has_performance_state = true,
++};
++
+ static const struct of_device_id fixed_of_match[] = {
+ 	{
+ 		.compatible = "regulator-fixed",
+@@ -269,6 +316,10 @@ static const struct of_device_id fixed_of_match[] = {
+ 		.compatible = "regulator-fixed-clock",
+ 		.data = &fixed_clkenable_data,
+ 	},
++	{
++		.compatible = "regulator-fixed-domain",
++		.data = &fixed_domain_data,
++	},
+ 	{
+ 	},
+ };
 -- 
 2.28.0
 
