@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA997C388F9
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E17EC4363A
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C1BE208FE
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC29D20878
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="najjhWzJ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CpTp4wLu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S464467AbgJWNTn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Oct 2020 09:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46830 "EHLO
+        id S464516AbgJWNT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Oct 2020 09:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S464463AbgJWNTl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:41 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C34C0613D4
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:39 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id c21so1545175ljj.0
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:39 -0700 (PDT)
+        with ESMTP id S464437AbgJWNTn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:43 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E230C0613D2
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:42 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id j30so2057836lfp.4
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8zrW3F4EtDxIXqxN4rkTzSpTYyKGY7/NdRqYOW9zNVQ=;
-        b=najjhWzJOGwlVwchFVVSyXcA5bTEsXvJ1MPlZBGtaKzm59NlBIzWj4Rjiyn718eTbJ
-         7Ve97wVO9+QachB6aDhu6nL1klAKC8KH/RhrPvPc661tYf5ax4Rn6MZUap6XSYCICbYy
-         3ZiOAlyb0pVB4L47+ctSNn4I2C+Yw+WR37P0Gg8O+Of/jYdM47BWS9A0v2qLP3w6kWa/
-         h9c+dQcjzjXxu/+PGBsfKYXR7EAESmCbBgTyNG2l4+FCohoLYuULBPvUJ0JxgBMDvG6C
-         fAhnTXoiQJbiJex0wj+5srxVJ37uQyBrn8o/Gh+znaheq4XQO4T6yTcMIRLPwqCastc7
-         p3DQ==
+        bh=vs5mIrV/vf6dXVUTDjt/isM2L9GuwwyE1om4bgY/ZkU=;
+        b=CpTp4wLudC7DAsrK1ThoOcKozcTO0vn/+OJRKPKooHTPqgO9ZFJmTTfAdC7YcLIeIz
+         pDwIay79IUiwsxhjAFJg1a5VAo5gMpSVcDWkmiJrEaAAtO5DTgZpcEYfSCUkG33Vj5PG
+         vUYgZxKYPsL0y3gf6Ee20myRXrgimuasFlBpqofZ/uEEllU3OXJB7dELxbZf7yUJMhEV
+         /B57sdfKz8n6408WAfe5JxsAwEaz2gDQ3F3czB2nK3ssd/vozqMxIuVtJ32iVYkUjdSG
+         jcluEtB63dJkJDOElwj6N7yy6srLXcof8S6OX7mqrEEi+DiGm0n0LwngI/s2Ld9NOWRZ
+         Hg2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8zrW3F4EtDxIXqxN4rkTzSpTYyKGY7/NdRqYOW9zNVQ=;
-        b=WE/qqQ88sEkfdqG1CC/A9G5tyCsS8Q8CYVW8Mz+YkdRWS91CHDgcaxHBX/HJCgUHrg
-         XSL52N8c1hSiAMXAGmi7f283DgXN3i7a37gzAtXytNTaGRYkQdDxezuHithvTgJbEdUw
-         STqtSkv3vxVzE2H96IFRlSwZ73Im9DUzBn76ZOClkM2nc1tnj5J5ieo/fIDp4HfrvLSh
-         CtkI/JUd0Xh95gSVJ72hNncCpA8G1yOI1wyZzxLaz315XFDPuSBhUwq2GLtX7UieOudC
-         C1xsAnmDY2rIKfRMBgGpeVndcaRb5244Ch2c60Q0BtQuxxxqMK4LvpZEZZ/lUEvi6xMC
-         Tl7A==
-X-Gm-Message-State: AOAM530bfzYizTloGdD7LS2Y1ZeEXdgvfT6jJNGuNBAbM3SAjYQYVOLn
-        pKvnmpjwc4e5wRhzr70y4ejTRg==
-X-Google-Smtp-Source: ABdhPJweGn0vIWzZdBnWSNSe8t6OIeR2SfamvlV4fVavaL9pzD/rRJi5LVMnFomo/CwmABiwSagkUg==
-X-Received: by 2002:a2e:8416:: with SMTP id z22mr950001ljg.72.1603459178362;
-        Fri, 23 Oct 2020 06:19:38 -0700 (PDT)
+        bh=vs5mIrV/vf6dXVUTDjt/isM2L9GuwwyE1om4bgY/ZkU=;
+        b=LlXCDth0EOiIk9ihqTCVYqF2fkBKxM3oCNtJOpSSwh9lKjwOy1cj4D1jC7LH4/bbRv
+         ScKRWbkLkJo1Xe3VvnDjXP04b4ya0HhIFssQ+KKM6NgVDYRnhdgJN4PPxek22//ZxEE2
+         tdrW+blDgEARXUFB+TuEZo2TF+TSJ6NGT4AT3dzyoOyYvFxVZVpC5P8keYSN3+qevn3h
+         tqNusg1TBk0l3bKzxDU38qkObA2ZLjq2L5Gclgf8+Yy49E/WmDZZaCraujI3DxEzUN1h
+         bnUp/59kK7OVvarAn+yQRfk+C28bheiiSbBhta1w+lbU7LCRfJqQ0Lxw0HjXZS2/Vx1D
+         3vAQ==
+X-Gm-Message-State: AOAM532mLPKkPmr5LDmv0YrkmkzEATy2xROXrQlgeLGZ5PdYLRM8qGSb
+        LkF9Zgc+vZpXiKAxoAXZtk8Wfg==
+X-Google-Smtp-Source: ABdhPJw9ugMZCYpQu7QxG3hoZDbK0RbL4rhOr50EyBLVYx2Slttp8dcxQ4Sf5TIkPSMR6cZIH1hSwA==
+X-Received: by 2002:ac2:5976:: with SMTP id h22mr708794lfp.507.1603459181044;
+        Fri, 23 Oct 2020 06:19:41 -0700 (PDT)
 Received: from eriador.lan ([188.162.64.195])
-        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.35
+        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 06:19:37 -0700 (PDT)
+        Fri, 23 Oct 2020 06:19:40 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -70,9 +70,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] arm64: dts: qcom: sm8150: add mmcx regulator
-Date:   Fri, 23 Oct 2020 16:19:23 +0300
-Message-Id: <20201023131925.334864-4-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 4/5] arm64: dts: qcom: sm8250: add mmcx regulator
+Date:   Fri, 23 Oct 2020 16:19:24 +0300
+Message-Id: <20201023131925.334864-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
 References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
@@ -83,31 +83,31 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Add regulator controlling MMCX power domain to be used by display clock
-controller on SM8150.
+controller on SM8250.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 7 +++++++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi | 7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index f0a872e02686..4c3d694b7dab 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -172,6 +172,13 @@ tcsr_mutex: hwlock {
- 		#hwlock-cells = <1>;
+diff --git a/arch/arm64/boot/dts/qcom/sm8250.dtsi b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+index d057d85a19fb..c1d4a63cd2de 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250.dtsi
+@@ -214,6 +214,13 @@ memory@80000000 {
+ 		reg = <0x0 0x80000000 0x0 0x0>;
  	};
  
 +	mmcx_reg: mmcx-reg {
 +		compatible = "regulator-fixed-domain";
-+		power-domains = <&rpmhpd SM8150_MMCX>;
++		power-domains = <&rpmhpd SM8250_MMCX>;
 +		required-opps = <&rpmhpd_opp_low_svs>;
 +		regulator-name = "MMCX";
 +	};
 +
- 	memory@80000000 {
- 		device_type = "memory";
- 		/* We expect the bootloader to fill in the size */
+ 	pmu {
+ 		compatible = "arm,armv8-pmuv3";
+ 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.28.0
 
