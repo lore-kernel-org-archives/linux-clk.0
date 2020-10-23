@@ -2,61 +2,61 @@ Return-Path: <SRS0=2J+f=D6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A5AC4363A
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA8EC388F9
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6AA221F9
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F60221F9
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 13:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z/wgNcMV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O4WPwwWW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S464428AbgJWNTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Oct 2020 09:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46784 "EHLO
+        id S464444AbgJWNTg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Oct 2020 09:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S464424AbgJWNTc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:32 -0400
+        with ESMTP id S464427AbgJWNTg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 09:19:36 -0400
 Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B4EFC0613D2
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:32 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id h6so2059692lfj.3
-        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A023C0613D2
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:34 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id l28so2036619lfp.10
+        for <linux-clk@vger.kernel.org>; Fri, 23 Oct 2020 06:19:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gkX+2gUi+v8i47aSHUAizP4Ds7j6F45LzqwxJroTws0=;
-        b=Z/wgNcMVhdp16LL6ZQWvlDZnxOeAJfCVSNOty5uKbdAEduIs6JIxbsHZjQGYzEj6l3
-         jkeG3UWtq+oKNGjCG9KbQ3Urh1wRg0MhHk7Fh2zYs04JRPYhJYyrXSLPHYs20OVMxavl
-         3YPCChAk4MYNJlbg3JjhmsQwJdWz7/ZmuLfiLuaIGsd5cWraWsbvT5CJMt8ghcffBWtb
-         EZXtNnvx5aSGkmQgzBt2Dk0VVnL7v81RhtonwfPXAyhOYNnNy0crJv0jAa78+5xNrYjK
-         SH1jU5oVP5lmL7lqvkuGR0tjyMBk0gAk1xJ2wN05kYTqppe9nnIugZsqpKVB7uyQPlir
-         tlMw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Qx8/8JORiXv27o7v4yO39cefNVmWr3jvO/t75+dTjdY=;
+        b=O4WPwwWWSIuLDEhXdfDmBZxgy/Nr8cebRFOYQJJ3+J7ISE6p/nk5iIPmM+zgUGewyg
+         MP+TKcbNJzxvYkZdJmi+FdBJeM/ohwuRIVdLf8LrSWXplvXpPRadHCw2JZXCZpcEPOoc
+         ktI1tJOQH+JKOXtvO3feIt7P2bPll32MDidUcJb505BLFpnjgDUa33neAJYZoa53c45T
+         kqa+EfmhCH7caOXvAZGJ7Qw4FmWTVm6526FmYGyJGTEFWc/G42qIzAZMYAXjhTfODJmH
+         MIDFtJ8ug/drLHsoQSPUpz3wU1UOM20Fl2O4s9U/JGwxHofMx6hOoCCDAN+8/A8C0K+j
+         2ZLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gkX+2gUi+v8i47aSHUAizP4Ds7j6F45LzqwxJroTws0=;
-        b=CHvRS05kWZCSALZSqQJ3poKUiW/a3RT/8uLanjnD33eqONlkUeM1DOWkobRqz10U+A
-         NQ8hcgRC/SXKYHI26/ZN6FcXyFWC9pKpQ/EkAEUVue6FqgeR/Kcq3BKsn01NYY4daovk
-         bPI1mBuF1sLu0aRxsSCo/gtIq5qKMI7O9wezkdUDwVIRlMDS80Jx0ITPg2U/8zZHiqHU
-         wTvFdT23+X9f9zviYkI6FUUBBG+mdUrxsRi+2OBprscuJvQO0YKbhtQ/fvw1mRHgwODL
-         RnxeCJX80hgT5m9b51+da0B35IeqRp1dtXIMEhEavQy2xWKNmssB3RfY53L8aWhqKNjG
-         +uqQ==
-X-Gm-Message-State: AOAM530jeVYO7mQzX12pxQNI3p6guWA7hzMkJT6AlqSpoWUoFwKpZISg
-        hhPLHvgegxZv602z8aVyrd400A==
-X-Google-Smtp-Source: ABdhPJwKRS1l0bWn+x3x3WMk7PvtBibC5R1oMkR5S6y7F7XYMl6I2GvcgR+rbri7PKkeVqIUDRgk0A==
-X-Received: by 2002:a19:c8d6:: with SMTP id y205mr715023lff.293.1603459170604;
-        Fri, 23 Oct 2020 06:19:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Qx8/8JORiXv27o7v4yO39cefNVmWr3jvO/t75+dTjdY=;
+        b=kECEc226VTVuQUHHu9q+BCXr8W3733nQtl9HvYMea03lBPyGOQcavM3QzGBdYS+/qY
+         t0iSwhHc0JNInK/EnE/GyKrsZqdOG/wBjF4mTtYGbNCv9+KP5F1UNhI2hU272xzTTMlW
+         cwhmVFGSO5GjamYcPqXSjqcrEhvq4kzoV3lUj3hq7Qcnh0UajUCJou/XV7z1aBYuuOL2
+         6RmCt7DwKonrWocvr2IqpW85weBVA6NEMXPzEmsSPN8O9NuA9z6gL0Tj/z5sztWOR0QJ
+         0s4KQshFEor5/k0hiDBS94Oc3uJPeTtVELjHLi4DWYE7Q7KiT1VbfrkcC7A4mPWe34Sm
+         qraQ==
+X-Gm-Message-State: AOAM530n33ujIQNnM8d8Q5sWzbUk+g65G/mZCh4+7xTod7Y0HwnkfJbi
+        FqPbUTWPtrmOOxsjw13XTtSjsA==
+X-Google-Smtp-Source: ABdhPJy869i54RJ9lJRegmrL7jXaydJIBnXbZK4NV5LGAXgaZbez6DNT7lcUk+T2TUqH4/5SWz+7/A==
+X-Received: by 2002:ac2:4ec8:: with SMTP id p8mr710093lfr.433.1603459172815;
+        Fri, 23 Oct 2020 06:19:32 -0700 (PDT)
 Received: from eriador.lan ([188.162.64.195])
-        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.28
+        by smtp.gmail.com with ESMTPSA id o22sm161564ljg.122.2020.10.23.06.19.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 06:19:29 -0700 (PDT)
+        Fri, 23 Oct 2020 06:19:32 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -70,35 +70,102 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] 
-Date:   Fri, 23 Oct 2020 16:19:20 +0300
-Message-Id: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 1/5] dt-bindings: regulator: fixed: provide bindings using power domain
+Date:   Fri, 23 Oct 2020 16:19:21 +0300
+Message-Id: <20201023131925.334864-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
+References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On SM8250 MDSS_GDSC (and the rest of display clock controller) is
-supplied power by MMCX power domain. Handle this link in GDSC code by
-binding the power domain in dts file.
+Define bindings for fixed regulator using power domain performance state
+to enable/disable corresponding regulator.
 
-This patchset depends on [1]
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../bindings/regulator/fixed-regulator.yaml   | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-Changes since v1:
- - Define fixed-regulator-domain regulator using power domain
-   performance state for enabling/disabling.
- - Rework to use new fixed regulator type (fixed-regulator-domain)
-   instead of controlling power domain directly from gdsc code.
-
-Changes since RFC:
- - Fix naming of gdsc_supply_on/gdsc_supply_off functions
- - Fix detaching of solo gdsc's power domain in error handling code
- - Drop the dts patch, as respective display nodes are still not
-   submitted to the mailing list.
-
-[1]
-https://lore.kernel.org/linux-arm-msm/20200927190653.13876-1-jonathan@marek.ca/
-
+diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
+index 92211f2b3b0c..d3d0dc13dd8b 100644
+--- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
++++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
+@@ -26,12 +26,22 @@ if:
+         const: regulator-fixed-clock
+   required:
+     - clocks
++else:
++  if:
++    properties:
++      compatible:
++        contains:
++          const: regulator-fixed-domain
++    required:
++      - power-domains
++      - required-opps
+ 
+ properties:
+   compatible:
+     enum:
+       - regulator-fixed
+       - regulator-fixed-clock
++      - regulator-fixed-domain
+ 
+   regulator-name: true
+ 
+@@ -46,6 +56,20 @@ properties:
+       is mandatory if compatible is chosen to regulator-fixed-clock.
+     maxItems: 1
+ 
++  power-domains:
++    description:
++      Power domain to use for enable control. This binding is only
++      available if the compatible is chosen to regulator-fixed-domain.
++    maxItems: 1
++
++  required-opps:
++    description:
++      Performance state to use for enable control. This binding is only
++      available if the compatible is chosen to regulator-fixed-domain. The
++      power-domain binding is mandatory if compatible is chosen to
++      regulator-fixed-domain.
++    maxItems: 1
++
+   startup-delay-us:
+     description: startup time in microseconds
+     $ref: /schemas/types.yaml#/definitions/uint32
+@@ -89,4 +113,27 @@ examples:
+       gpio-open-drain;
+       vin-supply = <&parent_reg>;
+     };
++    reg_1v8_clk: regulator-1v8-clk {
++      compatible = "regulator-fixed-clock";
++      regulator-name = "1v8";
++      regulator-min-microvolt = <1800000>;
++      regulator-max-microvolt = <1800000>;
++      clocks = <&clock1>;
++      startup-delay-us = <70000>;
++      enable-active-high;
++      regulator-boot-on;
++      vin-supply = <&parent_reg>;
++    };
++    reg_1v8_domain: regulator-1v8-domain {
++      compatible = "regulator-fixed-domain";
++      regulator-name = "1v8";
++      regulator-min-microvolt = <1800000>;
++      regulator-max-microvolt = <1800000>;
++      power-domains = <&domain1>;
++      required-opps = <&domain1_state1>;
++      startup-delay-us = <70000>;
++      enable-active-high;
++      regulator-boot-on;
++      vin-supply = <&parent_reg>;
++    };
+ ...
+-- 
+2.28.0
 
