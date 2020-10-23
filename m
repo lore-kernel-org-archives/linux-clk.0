@@ -2,102 +2,147 @@ Return-Path: <SRS0=2J+f=D6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EB6C55178
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 11:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F014C388F9
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 12:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40AF824182
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 11:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603453352;
-	bh=wS/X3ln10wqe8Ba/FDfOxDqc+VBkiXalNXlIqq6K46w=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=wA+2AHu6gmMbe7RmGUYVR9MuFwdTvIkZo3nAFPwZdw53RP7gs7mq3TBMG/rHYqh3L
-	 +nEcpalv9TA7QE4B+baQeBmE6OOBjVPHojMrqYZ1+Rqs8yYdxPPSK2wkgREkF2oBl5
-	 1RhzJh5HDEZ+dj7WDDkpn3DHPJQ21FA4F3J9pINw=
+	by mail.kernel.org (Postfix) with ESMTP id C906E20936
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Oct 2020 12:42:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S463161AbgJWLma (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Oct 2020 07:42:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S463160AbgJWLma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Oct 2020 07:42:30 -0400
-Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D714221F9;
-        Fri, 23 Oct 2020 11:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603453349;
-        bh=wS/X3ln10wqe8Ba/FDfOxDqc+VBkiXalNXlIqq6K46w=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=tTXF469B7fw/ODbqFlQBiV2EwedvGT/CD6gIzFwHtR+JlvDo+Z4JJa6+dlyt5Zn2p
-         HhtEBK2jQg55UpKvv1K0R8ijngTWDW48FxGQGpc/EKThX00WwxwDEzJaCODBZOYtbz
-         PE1bUDZCLzTwcRbnwaI5t/uoSUad/8odM5MVI09w=
-Subject: Re: [PATCH 2/2] clk: samsung: exynos-clkout: convert to module driver
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20201001165646.32279-1-krzk@kernel.org>
- <20201001165646.32279-3-krzk@kernel.org>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <d84ea240-5bb7-1b77-b287-c2bcca971201@kernel.org>
-Date:   Fri, 23 Oct 2020 13:42:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S463954AbgJWMmp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Oct 2020 08:42:45 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34915 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S373407AbgJWMmo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Oct 2020 08:42:44 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w191so1716573oif.2;
+        Fri, 23 Oct 2020 05:42:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RjpCnjRYrt8usXfUiWWJM/i9Xqzzc0nEFPFueT3x2oI=;
+        b=ZxAZmXlYAcpKnkrpWhwstTSLSa0LglOyJtqw73AfeM1hmX4ijkmN7vXMM+/QlIB+ri
+         9W5Fl4efO1pGOmZS2hZG/vKwPnnI+loW/SlfiqM4hl8slzd5gDbl3GA35/qNg28jWiQW
+         XCOAW8TM0X0xfBxrAsp+QHOGVbSTAPmTRvPYP3iIRN6hh9XjTYCQvGeP58Af+mLQQ2FU
+         GEkFc9t0T8DDUzTvlSGmAK9QB2tO7M24SrWQQ+PwPc7DqNuyaMAx0U3Jyz/A1cRoHOfO
+         Ssi/tb8Fu7Bbl1ZogOAiHuzuSJPsKT0zOw12r0VgG6LylAK75gkNjwGaGlHNlBb+i1MI
+         HOfw==
+X-Gm-Message-State: AOAM533iez2HLnncX5y9bTV8ZOaxfP8/cJYhkhQZfHUMwee+BIwnUvGR
+        EE5dgv/FcMYI647IepKVJXEFv1FFGcOONFNFskc=
+X-Google-Smtp-Source: ABdhPJybx+NEzgUJybBLn+A/LL5wFPpu5es5hgHmPOZ4aeJkJtuRPxSh7JojLW3XGJ9dCA5JI9clJQa2OxyqukLcHPs=
+X-Received: by 2002:aca:f203:: with SMTP id q3mr1413369oih.148.1603456963090;
+ Fri, 23 Oct 2020 05:42:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201001165646.32279-3-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201016121709.8447-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201016121709.8447-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVPfoU_X3A4ioy9TeJHmovE5P=fDYpShsWTzFYXmZoiww@mail.gmail.com> <CA+V-a8tX0qxFyf85QAC0h2t-s2Uo3EiQvJz2PU0+vw=ov1d2rA@mail.gmail.com>
+In-Reply-To: <CA+V-a8tX0qxFyf85QAC0h2t-s2Uo3EiQvJz2PU0+vw=ov1d2rA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 23 Oct 2020 14:42:32 +0200
+Message-ID: <CAMuHMdUdVhp-g_3G2+MZd9thyxojB-w1SnmPd0XuWgB4XztOzg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: renesas: r8a774c0: Add RPC clocks
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/1/20 18:56, Krzysztof Kozlowski wrote:
-> The Exynos clkout driver depends on board input clock (typically XXTI or
-> XUSBXTI), however on Exynos4 boards these clocks were modeled as part of
-> SoC clocks (Exynos4 clocks driver).  Obviously this is not proper, but
-> correcting it would break DT backward compatibility.
-> 
-> Both drivers - clkout and Exynos4 clocks - register the clock providers
-> with CLK_OF_DECLARE/OF_DECLARE_1 so their order is fragile (in the
-> Makefile clkout is behind Exynos4 clock).  It will work only if the
-> Exynos4 clock driver comes up before clkout.
-> 
-> A change in DTS adding input clock reference to Exynos4 clocks input
-> PLL, see reverted commit eaf2d2f6895d ("ARM: dts: exynos: add input
-> clock to CMU in Exynos4412 Odroid"), caused probe reorder: the clkout
-> appeared before Exynos4 clock provider.  Since clkout depends on Exynos4
-> clocks and does not support deferred probe, this did not work and caused
-> later failure of usb3503 USB hub probe which needs clkout:
-> 
->      [    5.007442] usb3503 0-0008: unable to request refclk (-517)
-> 
-> The Exynos clkout driver is not a critical/core clock so there is
-> actually no problem in instantiating it later, as a regular module.
-> This removes specific probe ordering and adds support for probe
-> deferral.
+Hi Prabhakar,
 
+On Fri, Oct 23, 2020 at 1:06 PM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, Oct 22, 2020 at 3:09 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Fri, Oct 16, 2020 at 2:17 PM Lad Prabhakar
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > > Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
+> > > as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
+> > > driver.
+> > >
+> > > Inspired by commit 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks").
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> > > +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> > > @@ -73,6 +74,12 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+> > >         DEF_FIXED(".s2",       CLK_S2,             CLK_PLL1,       4, 1),
+> > >         DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
+> > >         DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
+> > > +       DEF_BASE(".rpcsrc",    CLK_RPCSRC, CLK_TYPE_GEN3_RPCSRC, CLK_PLL1),
+> > > +
+> > > +       DEF_BASE("rpc",        R8A774C0_CLK_RPC, CLK_TYPE_GEN3_RPC,
+> > > +                CLK_RPCSRC),
+> > > +       DEF_BASE("rpcd2",      R8A774C0_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
+> > > +                R8A774C0_CLK_RPC),
+> > >
+> > >         DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+> > >
+> >
+> > > @@ -275,6 +283,10 @@ static int __init r8a774c0_cpg_mssr_init(struct device *dev)
+> > >         return rcar_gen3_cpg_init(cpg_pll_config, 0, cpg_mode);
+> > >  }
+> > >
+> > > +static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+> > > +       { 0, 5 }, { 1, 3 }, { 2, 8 }, {3, 2}, {0, 0},
+> > > +};
+> >
+> > The above models RPCSRC as a clock generated by dividing PLL1 by either
+> > 5, 3, 8, or 2.  This does not match the hardware user's manual, which
+> > states that RPCSRC is either PLL1 divided by 5 or 3, or PLL0 divided by
+> > 8 or 2.
+> >
+> Oops I completely missed that.
+>
+> But as per the manual (R-Car manual Rev.2.20) which I am referring to
+> 5, 3 and 2 are sourced from PLL1 and 5/8 (ie D3/E3) are sourced from
+> PLL0.
 
-The patch looks good to me, I have tested it on Trats2, where CLKOUT
-provides master clock for the audio codec.
+True, I misread the clocksource of the last entry.
 
-Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > I think you need a new clock type (CLK_TYPE_GEN3E_RPCSRC, as it applies
+> > to RZ/G2E, and R-Car E3?), which registers a composite clock consisting
+> > of a mux and divider.  This is a bit similar to the RPC/RPCD2 clocks,
+> > which are composite clocks consisting of a divider and a gate.
+> >
+> atm rcar_gen3_cpg_clk_register() only supports single parent, so if I
+> am getting it right you mean I need to add two separate entries for
+> RPSRC  one with PLL0 and one with PLL1 ?
 
-With the debug print removed feel free to apply it through your tree.
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+You can encode a second parent in the high halfword, cfr. what
+CLK_TYPE_GEN3_MDSEL and CLK_TYPE_GEN3_RCKSEL.
 
---
-Regards,
-Sylwester
+Note to myself: convert cpg_core_clk to a union, to make encoding
+and decoding easier.
+
+> > Note that R-Car D3 is similar, except that PLL0 is divided by 5 or 2, which
+> > means yet another clock type (and div_table).
+> >
+> I'm a bit confused here for D3 PLL0 is divided by 5 (n=5) ?
+
+Sorry, same misreading as above.
+Have a nice weekend!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
