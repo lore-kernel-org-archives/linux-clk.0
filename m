@@ -2,61 +2,62 @@ Return-Path: <SRS0=jX97=D7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231FEC2D0A3
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A979EC56202
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE2292087C
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4522225F
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOgIiGsp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grp7qtr2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1762038AbgJXQVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Oct 2020 12:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42280 "EHLO
+        id S1762135AbgJXQVN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Oct 2020 12:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759673AbgJXQVF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Oct 2020 12:21:05 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA48C0613CE;
-        Sat, 24 Oct 2020 09:21:05 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id u19so5633321ion.3;
-        Sat, 24 Oct 2020 09:21:05 -0700 (PDT)
+        with ESMTP id S1762114AbgJXQVM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Oct 2020 12:21:12 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA40C0613CE;
+        Sat, 24 Oct 2020 09:21:12 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id p9so4350521ilr.1;
+        Sat, 24 Oct 2020 09:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wWyoxZmi/FlddChHaymi/wsISdG3xKHaSJYRVIR+21M=;
-        b=OOgIiGspFu3YlBbS5yWxJliGdHnmhk8lftt7KiwgBzj7G9muXYCrBKAKCu62y2wqsC
-         51b91HC/e87lVcs4RxkShomCG01WboHsSbKEON04tE27o8Ba1vaISbuZhq0+II2K5bpD
-         hW9wyLhc145LEcTtCujCf2qmKFJkXJ0T8pWGIUtfipTjcGY+ByZLNjl1uWc4do72eWKw
-         QJ4/9wi70kYSqqvxtKxwuro+kl9ZFnXrW8n9gQNbauX3+BWJC0RePQS7CxJ9E27FLKun
-         EzYtEDlo3jwvrWiLtbxRH10qVsvGhB/YYUKbN7npjnXnIfbZoMAsQyfxBZDthTquus5a
-         rebg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4ewdjBL0POYbkyERKt0JClct+9je8sQshxDRVp8rLQk=;
+        b=grp7qtr2IS65QolRALjrQsJ9P4ieJ00Jkto8z93AVi+89gLb2EyxpH4duqYfrlB88j
+         xS5+9PnWswtbQbEV+p7cWVUwxWFSU5zWcnb/kk572hW20TGbMgXBrCTjTdFaR3AedsRh
+         7DkgJhqzj21vgQrulWIRAaIPjg7oijIg74ozFYKSXuTsuoiHwWCZLlelQzGLJHc0uEYe
+         bwTi+p2P9Q7g5Shzn7SyRJVuxwQU7DVU5z89cMKsA+dNIJM4X6AXplwfA3Thk+uCF4Ac
+         EHvF/95BaoCswI+kSNN2itmSZVDNCC51lmLKpDwP8lIwqc6R2LGGV2ZT7F7Tp01HcPBD
+         +n4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wWyoxZmi/FlddChHaymi/wsISdG3xKHaSJYRVIR+21M=;
-        b=m5Ny2bYGKiJJT1zWW25sNoybx7MkyYpGJtSEUrkMfFYpflGf6V9vTU17BuWu3uxSXv
-         n+L5FvBK7m9RKqEEzqGz9Q5BtPxmF2UrgCEvoyVBC8MjoO85Lm612rlRZMd232V9oFqb
-         HAlNL+m4dWFf4elAGYZ2NF+1Sozzv9ujBJxcTQAhb5rCi08/Al1wmez5gWyuwW83xZ5A
-         f1i+7GSgBwdUYj8cmYI3TNMWMQywu2Gsa1+HaWyacyOKIRjrjyjsGHbl/1bb/MVUTEb+
-         EJr2aftjQxgvsIMpdqthiSQJ2vGR6olOj79R6yd9I2p4JUx5HpWKLRXPvu4wDZpM5k23
-         dnDA==
-X-Gm-Message-State: AOAM533OBtEPQJ13MRG7LIPEHLsLGSC7r9Ld9JyqIBrlyFDjT2ygwDzH
-        dsejKsukcbsOPInQOl1lGg5R0/n0ALRsGw==
-X-Google-Smtp-Source: ABdhPJy5vSVk245QpNXf7RaLmv6F5K7Kl+sAaWeAiizjOhoV1VZNhzyZ6ax/2ciA7WWEmw6FfK7GzA==
-X-Received: by 2002:a5d:904d:: with SMTP id v13mr5362225ioq.116.1603556464730;
-        Sat, 24 Oct 2020 09:21:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4ewdjBL0POYbkyERKt0JClct+9je8sQshxDRVp8rLQk=;
+        b=kPul8zVSQzqiogErtZbiRHmk9WOBQYYX3Af0O+liAAuKrlLiKounjK1SU26dQpsAcP
+         NI7Azb20atoWpdgIxpPXYRqekSIm3H0A05Yrmqhi3o9yNzoi7KqUcej44gLa3GSTuk/o
+         M1ykzoHkgttY3hLIc6SNfXUTbeEWdMH/7uyPcDuyeJwNuC/4+p+4vXiGMt7Ggxsi5gGE
+         0ln/V65SpRPXUc8h1utubxxjnItzBHNWZeNwfWvo0fE54hWUd6lv6hpnFUB0IjaJFNR/
+         2TVVpW3PeQJOl6ZryVCiD3ytFRXCY1SVSeIRYm9JLwG7OvrT44A9pwnocfX/gfgQbB5N
+         lZsg==
+X-Gm-Message-State: AOAM533Irc+42yjEP4u5SAihCOcDKSwd4mp0vAh/Yxpk4NX5J0xxXAsP
+        T02gQs+E9JrD0uEPUHHwzMsbOh3PSSrUvw==
+X-Google-Smtp-Source: ABdhPJwi9oUTNHu72wgqV0Xr/QOjUGV/jwHh+j39fq7YVbNK7SRQodB35Gv4NCLo9a7fkGl+GZomsQ==
+X-Received: by 2002:a92:7112:: with SMTP id m18mr5846165ilc.133.1603556470189;
+        Sat, 24 Oct 2020 09:21:10 -0700 (PDT)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:527:767:b750:2d3c])
-        by smtp.gmail.com with ESMTPSA id m86sm3028587ilb.44.2020.10.24.09.21.03
+        by smtp.gmail.com with ESMTPSA id m86sm3028587ilb.44.2020.10.24.09.21.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2020 09:21:03 -0700 (PDT)
+        Sat, 24 Oct 2020 09:21:09 -0700 (PDT)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     abel.vesa@nxp.com, marex@denx.de, Adam Ford <aford173@gmail.com>,
@@ -71,42 +72,116 @@ Cc:     abel.vesa@nxp.com, marex@denx.de, Adam Ford <aford173@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org
-Subject: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
-Date:   Sat, 24 Oct 2020 11:20:12 -0500
-Message-Id: <20201024162016.1003041-1-aford173@gmail.com>
+Subject: [RFC 3/3] clk: imx: Add blk-ctl driver for i.MX8MN
+Date:   Sat, 24 Oct 2020 11:20:15 -0500
+Message-Id: <20201024162016.1003041-4-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201024162016.1003041-1-aford173@gmail.com>
+References: <20201024162016.1003041-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are some less-documented registers which control clocks and 
-resets for the multimedia block which controls the LCDIF, ISI, MIPI 
-CSI, and MIPI DSI.
+This driver is intended to work with the multimedia block which
+contains display and camera subsystems:
+  LCDIF
+  ISI
+  MIPI CSI
+  MIPI DSI
 
-The i.Mx8M Nano appears to have a subset of the i.MX8MP registers with
-a couple shared registers with the i.MX8MM.  This series builds on the
-series that have been submitted for both of those other two platforms.
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ drivers/clk/imx/clk-blk-ctl-imx8mn.c | 80 ++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-This is an RFC because when enabling the corresponding DTS node, the 
-system freezes on power on.  There are a couple of clocks that don't
-correspond to either the imx8mp nor the imx8mm, so I might have something
-wrong, and I was hoping for some constructive feedback in order to get
-the imx8m Nano to a similar point of the Mini and Plus.
-
-Adam Ford (3):
-  dt-bindings: clock: imx8mn: Add media blk_ctl clock IDs
-  dt-bindings: reset: imx8mn: Add media blk_ctl reset IDs
-  clk: imx: Add blk-ctl driver for i.MX8MN
-
- drivers/clk/imx/clk-blk-ctl-imx8mn.c     | 80 ++++++++++++++++++++++++
- include/dt-bindings/clock/imx8mn-clock.h | 11 ++++
- include/dt-bindings/reset/imx8mn-reset.h | 22 +++++++
- 3 files changed, 113 insertions(+)
- create mode 100644 drivers/clk/imx/clk-blk-ctl-imx8mn.c
- create mode 100644 include/dt-bindings/reset/imx8mn-reset.h
-
+diff --git a/drivers/clk/imx/clk-blk-ctl-imx8mn.c b/drivers/clk/imx/clk-blk-ctl-imx8mn.c
+new file mode 100644
+index 000000000000..917514212270
+--- /dev/null
++++ b/drivers/clk/imx/clk-blk-ctl-imx8mn.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2020 Compass Eletronics Group, LLC
++ */
++
++#include <dt-bindings/clock/imx8mn-clock.h>
++#include <dt-bindings/reset/imx8mn-reset.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++
++#include "clk.h"
++#include "clk-blk-ctl.h"
++
++#define IMX_MEDIA_BLK_CTL_SFT_RSTN		0x0
++#define IMX_MEDIA_BLK_CTL_CLK_EN		0x4
++#define IMX_MEDIA_BLK_CTL_MIPI_RST		0x8
++
++static struct imx_blk_ctl_hw imx8mn_media_blk_ctl_hws[] = {
++	/* clocks */
++	IMX_BLK_CTL_CLK_GATE("mipi_dsi_pclk", IMX8MN_CLK_MEDIA_BLK_CTL_MIPI_DSI_PCLK, 0x4, 0, "dsi_core"),
++	IMX_BLK_CTL_CLK_GATE("mipi_dsi_clkref", IMX8MN_CLK_MEDIA_BLK_CTL_MIPI_DSI_CLKREF, 0x4, 1, "dsi_phy_ref"),
++	IMX_BLK_CTL_CLK_GATE("mipi_csi_pclk", IMX8MN_CLK_MEDIA_BLK_CTL_MIPI_CSI_PCLK, 0x4, 2, "camera_pixel_clk"),
++	IMX_BLK_CTL_CLK_GATE("mipi_csi_aclk", IMX8MN_CLK_MEDIA_BLK_CTL_MIPI_CSI_ACLK, 0x4, 3, "media_cam1_pix_root_clk"),
++	IMX_BLK_CTL_CLK_GATE("lcdif_pixel_clk", IMX8MN_CLK_MEDIA_BLK_CTL_LCDIF_PIXEL, 0x4, 4, "disp_pixel"),
++	IMX_BLK_CTL_CLK_GATE("lcdif_apb_clk", IMX8MN_CLK_MEDIA_BLK_CTL_LCDIF_APB, 0x4, 5, "disp_apb"),
++	IMX_BLK_CTL_CLK_GATE("isi_proc_clk", IMX8MN_CLK_MEDIA_BLK_CTL_ISI_PROC, 0x4, 6, "disp_axi_root_clk"),
++	IMX_BLK_CTL_CLK_GATE("isi_apb_clk", IMX8MN_CLK_MEDIA_BLK_CTL_ISI_APB, 0x4, 7, "disp_apb_root_clk"),
++	IMX_BLK_CTL_CLK_GATE("bus_blk_clk", IMX8MN_CLK_MEDIA_BLK_CTL_BUS_BLK, 0x4, 8, "disp_axi_root_clk"),
++	
++	/* resets */
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_DSI_PCLK, 0, 0),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_DSI_CLKREF, 0, 1),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_CSI_PCLK, 0, 2),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_CSI_ACLK, 0, 3),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_LCDIF_PIXEL, 0, 4),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_LCDIF_APB, 0, 5),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_ISI_PROC, 0, 6),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_ISI_APB, 0, 7),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_BUS_BLK, 0, 8),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_S_RESET, 0x8, 16),
++	IMX_BLK_CTL_RESET(IMX8MN_MEDIA_BLK_CTL_RESET_MIPI_M_RESET, 0x8, 17),
++};
++
++const struct imx_blk_ctl_dev_data imx8mn_media_blk_ctl_dev_data __initconst = {
++	.hws = imx8mn_media_blk_ctl_hws,
++	.hws_num = ARRAY_SIZE(imx8mn_media_blk_ctl_hws),
++	.clocks_max = IMX8MN_CLK_MEDIA_BLK_CTL_END,
++	.resets_max = IMX8MN_MEDIA_BLK_CTL_RESET_NUM,
++	.pm_runtime_saved_regs_num = 3,
++	.pm_runtime_saved_regs = {
++		IMX_MEDIA_BLK_CTL_SFT_RSTN,
++		IMX_MEDIA_BLK_CTL_CLK_EN,
++		IMX_MEDIA_BLK_CTL_MIPI_RST,
++	},
++};
++
++static const struct of_device_id imx8mn_blk_ctl_of_match[] = {
++	{
++		.compatible = "fsl,imx8mn-media-blk-ctl",
++		.data = &imx8mn_media_blk_ctl_dev_data
++	},
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, imx8mn_blk_ctl_of_match);
++
++static struct platform_driver imx_blk_ctl_driver = {
++	.probe = imx_blk_ctl_probe,
++	.driver = {
++		.name = "imx8mn-blk-ctl",
++		.of_match_table = of_match_ptr(imx8mn_blk_ctl_of_match),
++		.pm = &imx_blk_ctl_pm_ops,
++	},
++};
++module_platform_driver(imx_blk_ctl_driver);
 -- 
 2.25.1
 
