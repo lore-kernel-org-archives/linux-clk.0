@@ -2,110 +2,111 @@ Return-Path: <SRS0=jX97=D7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13A5C55178
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 15:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231FEC2D0A3
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE932222EB
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 15:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2292087C
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Oct 2020 16:21:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvnx4TOK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOgIiGsp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1762039AbgJXPoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Oct 2020 11:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36680 "EHLO
+        id S1762038AbgJXQVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Oct 2020 12:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756857AbgJXPo3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Oct 2020 11:44:29 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2922AC0613CE;
-        Sat, 24 Oct 2020 08:44:29 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id h20so4875395lji.9;
-        Sat, 24 Oct 2020 08:44:29 -0700 (PDT)
+        with ESMTP id S1759673AbgJXQVF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Oct 2020 12:21:05 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA48C0613CE;
+        Sat, 24 Oct 2020 09:21:05 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id u19so5633321ion.3;
+        Sat, 24 Oct 2020 09:21:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iVvngnWeIDGhbxLx06m+FoOELtVvu4vONgAX93A/tXY=;
-        b=kvnx4TOKigpxlEKazViL6WLSKKrbU0dOmb5zHP7dZbPHHdved9KAw96ScO0YXfUbBL
-         GWMcOZvfKBSte7uOI8XI+79DsSEDU+kukxn/3vHWgEJrM397fkjibfcIczl9akmjgoII
-         XwGNe7impjNc3/qRrYCgpprD0BDRXXPjYBPnZjF9Qgp/cHwOBebv/QCnoYNh3y3RWTzP
-         41HwRVcWSBJ4ojwoRWAMt/zZYBpN7UcTuoFJQe0bl42A83RmUNmDnihz18wCpUx1Av//
-         mD0S0NHOQpzevaYzpcSIGNTViExTnluNLcOqoeL3JonjEVjRVKI8Cwzi9/5MtGCmEqXN
-         3myg==
+        bh=wWyoxZmi/FlddChHaymi/wsISdG3xKHaSJYRVIR+21M=;
+        b=OOgIiGspFu3YlBbS5yWxJliGdHnmhk8lftt7KiwgBzj7G9muXYCrBKAKCu62y2wqsC
+         51b91HC/e87lVcs4RxkShomCG01WboHsSbKEON04tE27o8Ba1vaISbuZhq0+II2K5bpD
+         hW9wyLhc145LEcTtCujCf2qmKFJkXJ0T8pWGIUtfipTjcGY+ByZLNjl1uWc4do72eWKw
+         QJ4/9wi70kYSqqvxtKxwuro+kl9ZFnXrW8n9gQNbauX3+BWJC0RePQS7CxJ9E27FLKun
+         EzYtEDlo3jwvrWiLtbxRH10qVsvGhB/YYUKbN7npjnXnIfbZoMAsQyfxBZDthTquus5a
+         rebg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iVvngnWeIDGhbxLx06m+FoOELtVvu4vONgAX93A/tXY=;
-        b=HqAmHaLgOvf8THcbS2kLNpzBMHM7EimI0z86qShhw1z9PfJVQ+kCe9R9/V3xhoCM0B
-         wPKhmERvoooG3SHOdHt9/imgV5bf3Z2hQJjhkVDklzHCTbf3GQzHXOU+sTaontKYDfGj
-         B0r6VyAlFlH8MJDLnuvCmu6LijtA3JMbHEtj18/kQBTUapgdja6ahtGAwriWOYke9K1V
-         XJp/3d75qZRwbLkQARBHsMo2ZuVJBb7DhWsaGXdr7KOgWu44mtAlciG1wwO4nxkvIP1T
-         9K27xIDZrB7n5C66ekHP01JtxhqhjmrtswQgj33FDAdpcB3doey1iNkjsLz5iI6tA53f
-         OSQw==
-X-Gm-Message-State: AOAM530QzFlhQuzuFFJivuJ50rfTjjixFFRPrJ5IzIkcmY2vdxFRQuzV
-        phFGcfvRuW+fokpc36rzG7Z0alt3/48=
-X-Google-Smtp-Source: ABdhPJz/klHWcs3bRbKDkYASeDigVNP3nTTs5rtGYA7UaR3O9h/X1CTwcak2v4Vg9hMKBIhvW+fi3w==
-X-Received: by 2002:a2e:87cd:: with SMTP id v13mr2689614ljj.146.1603554266621;
-        Sat, 24 Oct 2020 08:44:26 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:e9e3:358e:a790:ce1c])
-        by smtp.googlemail.com with ESMTPSA id 76sm472536lfn.128.2020.10.24.08.44.24
+        bh=wWyoxZmi/FlddChHaymi/wsISdG3xKHaSJYRVIR+21M=;
+        b=m5Ny2bYGKiJJT1zWW25sNoybx7MkyYpGJtSEUrkMfFYpflGf6V9vTU17BuWu3uxSXv
+         n+L5FvBK7m9RKqEEzqGz9Q5BtPxmF2UrgCEvoyVBC8MjoO85Lm612rlRZMd232V9oFqb
+         HAlNL+m4dWFf4elAGYZ2NF+1Sozzv9ujBJxcTQAhb5rCi08/Al1wmez5gWyuwW83xZ5A
+         f1i+7GSgBwdUYj8cmYI3TNMWMQywu2Gsa1+HaWyacyOKIRjrjyjsGHbl/1bb/MVUTEb+
+         EJr2aftjQxgvsIMpdqthiSQJ2vGR6olOj79R6yd9I2p4JUx5HpWKLRXPvu4wDZpM5k23
+         dnDA==
+X-Gm-Message-State: AOAM533OBtEPQJ13MRG7LIPEHLsLGSC7r9Ld9JyqIBrlyFDjT2ygwDzH
+        dsejKsukcbsOPInQOl1lGg5R0/n0ALRsGw==
+X-Google-Smtp-Source: ABdhPJy5vSVk245QpNXf7RaLmv6F5K7Kl+sAaWeAiizjOhoV1VZNhzyZ6ax/2ciA7WWEmw6FfK7GzA==
+X-Received: by 2002:a5d:904d:: with SMTP id v13mr5362225ioq.116.1603556464730;
+        Sat, 24 Oct 2020 09:21:04 -0700 (PDT)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:527:767:b750:2d3c])
+        by smtp.gmail.com with ESMTPSA id m86sm3028587ilb.44.2020.10.24.09.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2020 08:44:25 -0700 (PDT)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH] clk: exynos7: Mark aclk_fsys1_200 as critical
-Date:   Sat, 24 Oct 2020 17:43:46 +0200
-Message-Id: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
+        Sat, 24 Oct 2020 09:21:03 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     abel.vesa@nxp.com, marex@denx.de, Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
+Date:   Sat, 24 Oct 2020 11:20:12 -0500
+Message-Id: <20201024162016.1003041-1-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This clock must be always enabled to allow access to any registers in
-fsys1 CMU. Until proper solution based on runtime PM is applied
-(similar to what was done for Exynos5433), mark that clock as critical
-so it won't be disabled.
+There are some less-documented registers which control clocks and 
+resets for the multimedia block which controls the LCDIF, ISI, MIPI 
+CSI, and MIPI DSI.
 
-It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
-UFS module is probed before pmic used to power that device.
-In this case defer probe was happening and that clock was disabled by
-UFS driver, causing whole boot to hang on next CMU access.
+The i.Mx8M Nano appears to have a subset of the i.MX8MP registers with
+a couple shared registers with the i.MX8MM.  This series builds on the
+series that have been submitted for both of those other two platforms.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- drivers/clk/samsung/clk-exynos7.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is an RFC because when enabling the corresponding DTS node, the 
+system freezes on power on.  There are a couple of clocks that don't
+correspond to either the imx8mp nor the imx8mm, so I might have something
+wrong, and I was hoping for some constructive feedback in order to get
+the imx8m Nano to a similar point of the Mini and Plus.
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index c1ff715e960c..1048d83f097b 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -538,7 +538,8 @@ static const struct samsung_gate_clock top1_gate_clks[] __initconst = {
- 		ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT |
- 		CLK_IS_CRITICAL, 0),
- 	GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
--		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
-+		ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT |
-+		CLK_IS_CRITICAL, 0),
- 
- 	GATE(CLK_SCLK_PHY_FSYS1_26M, "sclk_phy_fsys1_26m",
- 		"dout_sclk_phy_fsys1_26m", ENABLE_SCLK_TOP1_FSYS11,
+Adam Ford (3):
+  dt-bindings: clock: imx8mn: Add media blk_ctl clock IDs
+  dt-bindings: reset: imx8mn: Add media blk_ctl reset IDs
+  clk: imx: Add blk-ctl driver for i.MX8MN
+
+ drivers/clk/imx/clk-blk-ctl-imx8mn.c     | 80 ++++++++++++++++++++++++
+ include/dt-bindings/clock/imx8mn-clock.h | 11 ++++
+ include/dt-bindings/reset/imx8mn-reset.h | 22 +++++++
+ 3 files changed, 113 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-blk-ctl-imx8mn.c
+ create mode 100644 include/dt-bindings/reset/imx8mn-reset.h
+
 -- 
 2.25.1
 
