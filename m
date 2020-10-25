@@ -2,156 +2,121 @@ Return-Path: <SRS0=IsCf=EA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB35C388F7
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 16:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A98C388F7
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 22:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1157217A0
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 16:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD58620790
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 22:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maK0k18L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmjzbHbB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1417092AbgJYQFp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Oct 2020 12:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
+        id S1420335AbgJYWmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Oct 2020 18:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1417082AbgJYQFo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Oct 2020 12:05:44 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9195EC0613CE;
-        Sun, 25 Oct 2020 09:05:44 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id q1so5937598ilt.6;
-        Sun, 25 Oct 2020 09:05:44 -0700 (PDT)
+        with ESMTP id S1420334AbgJYWmX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Oct 2020 18:42:23 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785C7C061755;
+        Sun, 25 Oct 2020 15:42:23 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id y16so7768902ljk.1;
+        Sun, 25 Oct 2020 15:42:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+vqcSmOOY97IzaN1+1HCH355O2NZAY2HbI1jkN79hI=;
-        b=maK0k18LOlWzmcfX5FXU4OHIBpi6XXy2fqu4lstMQYTI4yzpfEEspmuoyHji6l7g8v
-         iTZuFTrSeqHCzSF1WlPyLE+pEoxwmIRwfPmAxCtcCh/Ee6YKH1MimIrI7hmCEqYIxdnS
-         3u0vlKwhTERYGrqNlfif+c5n5tp2Z4Ybm2NzzOmILBn9ch3A89L3QmWOUoTTsN3oUYgm
-         GG+IsAYrU8R7zC+cj/cs6++7A04oABXFoe7XzDH68lBAcudOsGDqbvWvPYDkIUOXa+wZ
-         qF+bpht1aG2Nn3xAn74ii4CY8/XkwQ/sI+bpoomfn4vO4/L3s4zEB0DVe5G7IguyE+O2
-         bNIg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/owtm7CKL7aXeAomkI0+DszZCxQFPYFDuDBIRrRH/U=;
+        b=nmjzbHbBiymbyAdZ9y16ECopOtAhsBxwH3sstAI9BqTJ2qGz4hTeopEmj5otITQXaK
+         3pu9xRpCDD0FL2IN9SrVZr6UtdbBvPbK08OgwOAGP2Ubp9sqwFk9KAdfiGIp69cjWhVA
+         hzEknW5b80kp6j739bOWPl7NDPv1yZDuUUXZkgEyZ5LZ0U38K5tNoKBTCX/rJvtd3iqw
+         nqIetuLDDxDh4v7DpZvQwr8upo64QuZMbQijJ8fKtaosVwWi5DuPYBsm87UoG+XgihMr
+         yKfwArtme5WKCXYJnVYJZMjVJVGKJ7pjPUwMOjYM2sXhnnNtcn0wK1tnGK3nPz2mHqDC
+         KuHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+vqcSmOOY97IzaN1+1HCH355O2NZAY2HbI1jkN79hI=;
-        b=L3ci2Rr/d7R1ZwEObU/L8tGoNo3U9KVDFYPLpJGL79ZbchXldn22LyRpN6jr7CBNkP
-         mnGA5MwGtXdsPIQiLPvd/8u5ysaiK9Uw7+vMD4zm5weY8sRZRxDlH/K+rAHXZqKyb22X
-         s3EN93cgEe4in2pTyCBmB+tMgG1BoutUvv6aZLZMAOOXvxzA6xHH7TpDvu+Svc/glJCJ
-         hKa61f0PxfO+QULB1N9QvWd/6ZaupT9tR2QYWYEPc/4o+R1DiuVAhlla8Yiyc8QOY6ib
-         43z5mk6SqbSslDA+BGgvw/Yvbyw0HGgPTLfFFGpkA+MVZNQ0W26R7lF4d4J7T8+l0PpL
-         QZxw==
-X-Gm-Message-State: AOAM530yUJdH86ig1k9dH53ZF6wddchX43xu5uJ7mBYpA8i5KVettgfj
-        0URZEecwVSpN98GkNQcj9gWkuNd8h34AqzAzZxQ=
-X-Google-Smtp-Source: ABdhPJy2SHNZr1Dd8yNo+sGV/CJn5rnBcSlG2J20vuJGPkaYNODFUa+hQZqgdDqFhUPKeLpwICVWIzmkCNuY08MMUc0=
-X-Received: by 2002:a05:6e02:52c:: with SMTP id h12mr7774166ils.196.1603641943584;
- Sun, 25 Oct 2020 09:05:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201024162016.1003041-1-aford173@gmail.com> <20201024202335.y3npwtgragpp5wcz@fsr-ub1664-175>
- <CAHCN7xJiygvLStO56v4xSnOEqR_5fbYQHn5juA8YeDiWh2awbg@mail.gmail.com>
- <20201025120509.r5kl76wo5mdmapo5@fsr-ub1664-175> <3dadade8-6e77-e27f-d5a6-307de17a4dd0@denx.de>
-In-Reply-To: <3dadade8-6e77-e27f-d5a6-307de17a4dd0@denx.de>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sun, 25 Oct 2020 11:05:32 -0500
-Message-ID: <CAHCN7xLC-gKquDNS3ToQCff=g610PscQE+T4zfO=_05GpLyK4w@mail.gmail.com>
-Subject: Re: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
-To:     Marek Vasut <marex@denx.de>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/owtm7CKL7aXeAomkI0+DszZCxQFPYFDuDBIRrRH/U=;
+        b=UlxZNin69gQT934FDNSvBLTXLlbB/s0N5ilfcLYSnD8vCPVGy4Lp6Sch7WfqdmI1KD
+         iNMPb97Wn78GDdS4+Y8za6mh/ioI/C3ueVuT0dcZoS0lmSII79SFfIE6b+TZCPa6Phsb
+         QfQyjJ8cTKpcMDmDuss2UzAVVuVjxtHElKJiOHqSvU0BNkIFAG+W/Jloh5LGgCG3aF0y
+         wKILAm2JMUAG8R9X2WnQu69HF6dBJMkjVHDAyCBv3seb+oWDR4UVbGewNTJY+m4Z7y3P
+         5psHfEUWIF0EjM1wzv3juR/S7fg0key5W+i6PmaOeMnSSCjaaM1JnQPfuHtepusfDaAS
+         FGoQ==
+X-Gm-Message-State: AOAM531YAfsvr0Ll7ws6yzLfx7w7aDJfJuV7MLV0QI6bVeu8pSj8KbsP
+        Jvrt+yh0jQc1wrVqh/J49Js=
+X-Google-Smtp-Source: ABdhPJy979kPb7xmaWdqVdvrVukWTGOgZ34wsKFY2mm6Y2SnOmUQhksAixqTM9XZ+aBw5ZKSvfDOhA==
+X-Received: by 2002:a2e:9b8e:: with SMTP id z14mr4241146lji.26.1603665742036;
+        Sun, 25 Oct 2020 15:42:22 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
+        by smtp.gmail.com with ESMTPSA id e73sm855959lfd.199.2020.10.25.15.42.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Oct 2020 15:42:21 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Chauvet <kwizart@gmail.com>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk: tegra: Fix duplicated SE clock entry
+Date:   Mon, 26 Oct 2020 01:42:12 +0300
+Message-Id: <20201025224212.7790-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 25, 2020 at 7:19 AM Marek Vasut <marex@denx.de> wrote:
->
-> On 10/25/20 1:05 PM, Abel Vesa wrote:
->
-> [...]
->
-> >> Together, both the GPC and the clk-blk driver should be able to pull
-> >> the multimedia block out of reset.  Currently, the GPC can handle the
-> >> USB OTG and the GPU, but the LCDIF and MIPI DSI appear to be gated by
-> >> the clock block
-> >>
-> >> My original patch RFC didn't include the imx8mn node, because it
-> >> hangs, but the node I added looks like:
-> >>
-> >> media_blk_ctl: clock-controller@32e28000 {
-> >>      compatible = "fsl,imx8mn-media-blk-ctl", "syscon";
-> >>      reg = <0x32e28000 0x1000>;
-> >>      #clock-cells = <1>;
-> >>      #reset-cells = <1>;
-> >> };
-> >>
-> >> I was hoping you might have some feedback on the 8mn clk-blk driver
-> >> since you did the 8mp clk-blk drive and they appear to be very
-> >> similar.
-> >>
-> >
-> > I'll do you one better still. I'll apply the patch in my tree and give it
-> > a test tomorrow morning.
+The periph_clks[] array contains duplicated entry for Security Engine
+clock which was meant to be defined for T210, but it wasn't added
+properly. This patch corrects the T210 SE entry and fixes the following
+error message on T114/T124: "Tegra clk 127: register failed with -17".
 
-I do have some more updates on how to get the system to not hang, and
-to enumerate more clocks.
-Looking at Marek's work on enabling clocks in the 8MM, he added a
-power-domain in dispmix_blk_ctl pointing to the dispmix in the GPC.
-By forcing the GPC driver to write 0x1fff  to 32e28004, 0x7f to
-32e28000 and 0x30000 to 32e28008, the i.MX8MM can bring the display
-clocks out of reset.
+Fixes: dc37fec48314 ("clk: tegra: periph: Add new periph clks and muxes for Tegra210")
+Tested-by Nicolas Chauvet <kwizart@gmail.com>
+Reported-by Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-id.h           | 1 +
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Unfortunately, the i.MX8MN needs to have 0x100 written to both
-32e28000 and 32e28004, and the values written for the 8MM are not
-compatible.
-By forcing the GPC to write those values, I can get  lcdif_pixel_clk
-and the mipi_dsi_clkref  appearing on the Nano.
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index ff7da2d3e94d..24413812ec5b 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -227,6 +227,7 @@ enum clk_id {
+ 	tegra_clk_sdmmc4,
+ 	tegra_clk_sdmmc4_8,
+ 	tegra_clk_se,
++	tegra_clk_se_10,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_soc_therm_8,
+ 	tegra_clk_sor0,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2b2a3b81c16b..60cc34f90cb9 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -630,7 +630,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	INT8("host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_8),
+ 	INT8("host1x", mux_pllc4_out1_pllc_pllc4_out2_pllp_clkm_plla_pllc4_out0, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_9),
+ 	INT8("se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se),
+-	INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se),
++	INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se_10),
+ 	INT8("2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d_8),
+ 	INT8("3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d_8),
+ 	INT8("vic03", mux_pllm_pllc_pllp_plla_pllc2_c3_clkm, CLK_SOURCE_VIC03, 178, 0, tegra_clk_vic03),
+-- 
+2.27.0
 
- video_pll1_ref_sel                0        0        0    24000000
-     0     0  50000
-       video_pll1                     0        0        0   594000000
-        0     0  50000
-          video_pll1_bypass           0        0        0   594000000
-        0     0  50000
-             video_pll1_out           0        0        0   594000000
-        0     0  50000
-                disp_pixel            0        0        0   594000000
-        0     0  50000
-                   lcdif_pixel_clk       0        0        0
-594000000          0     0  50000
-                   disp_pixel_clk       0        0        0
-594000000          0     0  50000
-                dsi_phy_ref           0        0        0    27000000
-        0     0  50000
-                   mipi_dsi_clkref       0        0        0
-27000000          0     0  50000
-
-I am not 100% certain the clock parents  in the clk block driver for
-the 8MN are correct, and I am not seeing the mipi_dsi_pclk
-
-Once the dust settles on the GPC decision for Mini and Nano, I think
-we'll need a more generic way to pass the bits we need to set in clock
-block to the GPC.
-
-adam
->
-> You can also apply the one for 8MM:
-> https://lore.kernel.org/linux-arm-kernel/20201003224555.163780-5-marex@denx.de/
