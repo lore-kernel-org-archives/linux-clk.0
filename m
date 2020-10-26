@@ -2,201 +2,106 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06119C388F9
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A4AC55178
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 23:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4B2321D41
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D568520773
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 23:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603756044;
+	bh=CCd/1eClEmV4GdkYGGj4s8i+deHWYDJGw3SoCtNf2O8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
+	b=oKE6XXoiFK9v+voeoJpaicuNakckvY4K/r14+wScMF42HZQiNfWQ7BjZ3r3dVCufC
+	 hlse+Wm5ala4d9/S/rIHuY5NGMNWtbZqMLloPqcdH0vm5FjUeYWjF0gBWW2aEEzWog
+	 s//vneuB9w2V1Wp4wdppwfv9w9lVl/JXd11x24lI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1793340AbgJZTeB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 15:34:01 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60718 "EHLO inva021.nxp.com"
+        id S2408401AbgJZXrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 19:47:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2504915AbgJZTc4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 15:32:56 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A5B3200644;
-        Mon, 26 Oct 2020 20:32:54 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C8492003AE;
-        Mon, 26 Oct 2020 20:32:54 +0100 (CET)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7416620308;
-        Mon, 26 Oct 2020 20:32:53 +0100 (CET)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S2408400AbgJZXrY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 19:47:24 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34F4B20872;
+        Mon, 26 Oct 2020 23:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603756043;
+        bh=CCd/1eClEmV4GdkYGGj4s8i+deHWYDJGw3SoCtNf2O8=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=HEJKt+S9wdzTfdcyniRnE8GEYdxxMBjI4RH+tQDmKl+RC2dU/9SdSyui3E7dsz6Z0
+         mUBHYtTOGfwRwTWGDVW7XbDz2ng6Ck+gBlEW6x+HbAjKjoO5BvwnmitmzHiefY1Dvq
+         hM2QD+afILHXb5BCNVUFGshMpVbGIWJb5WqnBvVk=
+Date:   Mon, 26 Oct 2020 23:47:19 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v4 01/14] dt-bindings: clocks: imx8mp: Rename audiomix ids clocks to audio_blk_ctl
-Date:   Mon, 26 Oct 2020 21:32:17 +0200
-Message-Id: <1603740750-10385-2-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
-References: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
+References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2 0/5]
+Message-Id: <160375603445.32304.15800152990447798405.b4-ty@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the reference manual the actual name is Audio BLK_CTL.
-Lets make it more obvious here by renaming from audiomix to audio_blk_ctl.
+On Fri, 23 Oct 2020 16:19:20 +0300, Dmitry Baryshkov wrote:
+> On SM8250 MDSS_GDSC (and the rest of display clock controller) is
+> supplied power by MMCX power domain. Handle this link in GDSC code by
+> binding the power domain in dts file.
+> 
+> This patchset depends on [1]
+> 
+> Changes since v1:
+>  - Define fixed-regulator-domain regulator using power domain
+>    performance state for enabling/disabling.
+>  - Rework to use new fixed regulator type (fixed-regulator-domain)
+>    instead of controlling power domain directly from gdsc code.
+> 
+> [...]
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- include/dt-bindings/clock/imx8mp-clock.h | 120 +++++++++++++++----------------
- 1 file changed, 60 insertions(+), 60 deletions(-)
+Applied to
 
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index e8d68fb..89c67b7 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -324,66 +324,66 @@
- 
- #define IMX8MP_CLK_END				313
- 
--#define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
--#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
--#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK2		2
--#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK3		3
--#define IMX8MP_CLK_AUDIOMIX_SAI2_IPG		4
--#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK1		5
--#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK2		6
--#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK3		7
--#define IMX8MP_CLK_AUDIOMIX_SAI3_IPG		8
--#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1		9
--#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK2		10
--#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK3		11
--#define IMX8MP_CLK_AUDIOMIX_SAI5_IPG		12
--#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK1		13
--#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK2		14
--#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK3		15
--#define IMX8MP_CLK_AUDIOMIX_SAI6_IPG		16
--#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK1		17
--#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK2		18
--#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK3		19
--#define IMX8MP_CLK_AUDIOMIX_SAI7_IPG		20
--#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK1		21
--#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK2		22
--#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK3		23
--#define IMX8MP_CLK_AUDIOMIX_ASRC_IPG		24
--#define IMX8MP_CLK_AUDIOMIX_PDM_IPG		25
--#define IMX8MP_CLK_AUDIOMIX_SDMA2_ROOT		26
--#define IMX8MP_CLK_AUDIOMIX_SDMA3_ROOT		27
--#define IMX8MP_CLK_AUDIOMIX_SPBA2_ROOT		28
--#define IMX8MP_CLK_AUDIOMIX_DSP_ROOT		29
--#define IMX8MP_CLK_AUDIOMIX_DSPDBG_ROOT		30
--#define IMX8MP_CLK_AUDIOMIX_EARC_IPG		31
--#define IMX8MP_CLK_AUDIOMIX_OCRAMA_IPG		32
--#define IMX8MP_CLK_AUDIOMIX_AUD2HTX_IPG		33
--#define IMX8MP_CLK_AUDIOMIX_EDMA_ROOT		34
--#define IMX8MP_CLK_AUDIOMIX_AUDPLL_ROOT		35
--#define IMX8MP_CLK_AUDIOMIX_MU2_ROOT		36
--#define IMX8MP_CLK_AUDIOMIX_MU3_ROOT		37
--#define IMX8MP_CLK_AUDIOMIX_EARC_PHY		38
--#define IMX8MP_CLK_AUDIOMIX_PDM_ROOT		39
--#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1_SEL	40
--#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK2_SEL	41
--#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK1_SEL	42
--#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK2_SEL	43
--#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1_SEL	44
--#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK2_SEL	45
--#define IMX8MP_CLK_AUDIOMIX_SAI4_MCLK1_SEL	46
--#define IMX8MP_CLK_AUDIOMIX_SAI4_MCLK2_SEL	47
--#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK1_SEL	48
--#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK2_SEL	49
--#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK1_SEL	50
--#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK2_SEL	51
--#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK1_SEL	52
--#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK2_SEL	53
--#define IMX8MP_CLK_AUDIOMIX_PDM_SEL		54
--#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_REF_SEL	55
--#define IMX8MP_CLK_AUDIOMIX_SAI_PLL		56
--#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS	57
--#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT		58
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_IPG		0
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_MCLK1		1
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_MCLK2		2
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_MCLK3		3
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_IPG		4
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_MCLK1		5
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_MCLK2		6
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_MCLK3		7
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_IPG		8
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_MCLK1		9
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_MCLK2		10
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_MCLK3		11
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_IPG		12
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_MCLK1		13
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_MCLK2		14
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_MCLK3		15
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_IPG		16
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_MCLK1		17
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_MCLK2		18
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_MCLK3		19
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_IPG		20
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_MCLK1		21
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_MCLK2		22
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_MCLK3		23
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_ASRC_IPG		24
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_PDM_IPG		25
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SDMA2_ROOT		26
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SDMA3_ROOT		27
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SPBA2_ROOT		28
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_DSP_ROOT		29
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_DSPDBG_ROOT		30
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_EARC_IPG		31
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_OCRAMA_IPG		32
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_AUD2HTX_IPG		33
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_EDMA_ROOT		34
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_AUDPLL_ROOT		35
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_MU2_ROOT		36
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_MU3_ROOT		37
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_EARC_PHY		38
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_PDM_ROOT		39
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_MCLK1_SEL	40
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI1_MCLK2_SEL	41
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_MCLK1_SEL	42
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI2_MCLK2_SEL	43
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_MCLK1_SEL	44
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI3_MCLK2_SEL	45
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI4_MCLK1_SEL	46
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI4_MCLK2_SEL	47
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_MCLK1_SEL	48
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI5_MCLK2_SEL	49
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_MCLK1_SEL	50
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI6_MCLK2_SEL	51
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_MCLK1_SEL	52
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI7_MCLK2_SEL	53
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_PDM_SEL		54
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI_PLL_REF_SEL	55
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI_PLL		56
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI_PLL_BYPASS	57
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_SAI_PLL_OUT		58
- 
--#define IMX8MP_CLK_AUDIOMIX_END			59
-+#define IMX8MP_CLK_AUDIO_BLK_CTL_END			59
- 
- #endif
--- 
-2.7.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+Thanks!
+
+[1/2] regulator: fixed: provide bindings using power domain
+      commit: d4189bc55d5c40251abaa1f341796aac84ddfb10
+[2/2] regulator: fixed: support using power domain for enable/disable
+      commit: bf3a28cf42412c0a85631da94f198048bb37a8e5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
