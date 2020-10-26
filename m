@@ -2,115 +2,159 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BCAC55178
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 16:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59497C2D0A3
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 16:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B48F223B0
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 16:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10265206FB
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 16:33:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="e/I0HscW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1775995AbgJZQ0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 12:26:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47980 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404162AbgJZQ0W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 12:26:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EEE67AC48;
-        Mon, 26 Oct 2020 16:26:19 +0000 (UTC)
-Message-ID: <160f3f542a89e0263d5d375fdae796af6017c33c.camel@suse.de>
-Subject: Re: [PATCH v2 01/10] firmware: raspberrypi: Introduce
- rpi_firmware_put()
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pwm@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        linux-input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1421312AbgJZQd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 12:33:26 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37890 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1421363AbgJZQdZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2020 12:33:25 -0400
+Received: by mail-wm1-f68.google.com with SMTP id l15so13155673wmi.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2020 09:33:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=/lQRM2+EAb+jKRJafntJPMlzMeoOKfJANas/j8SJLN4=;
+        b=e/I0HscW2QgWc5e2sSX9P9394/GMnjHxQzVKqbxpXS0yQNJgP5oMXIXyZELYT2JzT7
+         /zH6+cn3Uvi6aBylxRweBESwO5QSHZDpYlx2Ba20Uha95pmp22BxEcmArfwiAiWCcabV
+         9V63eoEtrRPg6WukH0OlQNvqmKxD5FVWjuB9oJhdkWo+z9pOv3XccJVVyEBiho+mFJDA
+         94BY7C7W04ufQ39cbsIv+c/0H59wnNDwX4cXXetaFT/MbylnPG3ndSAwN8kXQr08QrIH
+         P2BdAAu7NWWSYjex5WlaMWNrtgPEC4GbeMYI0GpWiyIpxEn5ZlrK9zIz7V+L7lJgnWIW
+         N/fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=/lQRM2+EAb+jKRJafntJPMlzMeoOKfJANas/j8SJLN4=;
+        b=px7F0KpHUV7ws8XYO6DX7thDdptZ+jYYo7t3MBLfU5BqIyxh9tnxx1cxG/iahH/rGO
+         u/qFPkdmZQwzOuPYH1m7nwcrvArKP821jYL9OOVDGEe/4gdKU8Tb+X6P/tDkiEC18XBZ
+         V0YQFfNYqjn/crzFll5mXn3ghuyq281P68NENcJUGF4Ch3n+81ypakf90AC5DtBWZHb8
+         T7kG44PRmSDdJgHU4uBQwqh+EGhBkFL/O1WhvARvWkujU+ylPIJ/J0gHPHd86a+f2zHH
+         fkrDjLqH2DSUDqOD06CkCR6IYnZQ854+/65FFkgiQNggYGPJhmsxQITT6Ir/lNpgY3Cx
+         5rSA==
+X-Gm-Message-State: AOAM530irYSSvxV6Yr0Rb3qJy4NB7OgHKRASrRJuSRfCBN8XuyO9LwYV
+        J8HU/vormm0jMrwfoaosTnEyDg==
+X-Google-Smtp-Source: ABdhPJyreI18jIz7IrPx9Nt27h0Xuo9pf/2DbqlqowWOvewXDYrAULqhjkoLwyDCkT1sfcHYa7Oc4Q==
+X-Received: by 2002:a1c:e354:: with SMTP id a81mr16520015wmh.101.1603730002576;
+        Mon, 26 Oct 2020 09:33:22 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id m8sm22620877wrw.17.2020.10.26.09.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2020 09:33:22 -0700 (PDT)
+References: <20201026161411.3708639-1-arnd@kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
-Date:   Mon, 26 Oct 2020 17:26:17 +0100
-In-Reply-To: <CAHp75Vej4UfsySRB6qXL7fFN7SjnTjy=p4Xkn1xBO0YOFy-kcQ@mail.gmail.com>
-References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
-         <20201022155858.20867-2-nsaenzjulienne@suse.de>
-         <CAHp75Vej4UfsySRB6qXL7fFN7SjnTjy=p4Xkn1xBO0YOFy-kcQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-+M2bTZi8S7Ge32C0tkNp"
-User-Agent: Evolution 3.36.5 
+        Kevin Hilman <khilman@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mike Turquette <mturquette@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@codeaurora.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] clk: define to_clk_regmap() as inline function
+In-reply-to: <20201026161411.3708639-1-arnd@kernel.org>
+Date:   Mon, 26 Oct 2020 17:33:21 +0100
+Message-ID: <1ja6w9j6b2.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-+M2bTZi8S7Ge32C0tkNp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon 26 Oct 2020 at 17:13, Arnd Bergmann <arnd@kernel.org> wrote:
 
-On Thu, 2020-10-22 at 21:46 +0300, Andy Shevchenko wrote:
-> On Thu, Oct 22, 2020 at 9:06 PM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
-> > When unbinding the firmware device we need to make sure it has no
-> > consumers left. Otherwise we'd leave them with a firmware handle
-> > pointing at freed memory.
-> >=20
-> > Keep a reference count of all consumers and make sure they all finished
-> > unbinding before we do.
->=20
-> Wait, if it's a device, why do we need all these?
-> get_device() / put_device() along with module_get() / module_put()
-> should be sufficient, no?
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Nesting container_of() causes warnings with W=2, which is
+> annoying if it happens in headers and fills the build log
+> like:
+>
+> In file included from drivers/clk/qcom/clk-alpha-pll.c:6:
+> drivers/clk/qcom/clk-alpha-pll.c: In function 'clk_alpha_pll_hwfsm_enable':
+> include/linux/kernel.h:852:8: warning: declaration of '__mptr' shadows a previous local [-Wshadow]
+>   852 |  void *__mptr = (void *)(ptr);     \
+>       |        ^~~~~~
+> drivers/clk/qcom/clk-alpha-pll.c:155:31: note: in expansion of macro 'container_of'
+>   155 | #define to_clk_alpha_pll(_hw) container_of(to_clk_regmap(_hw), \
+>       |                               ^~~~~~~~~~~~
+> drivers/clk/qcom/clk-regmap.h:27:28: note: in expansion of macro 'container_of'
+>    27 | #define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
+>       |                            ^~~~~~~~~~~~
+> drivers/clk/qcom/clk-alpha-pll.c:155:44: note: in expansion of macro 'to_clk_regmap'
+>   155 | #define to_clk_alpha_pll(_hw) container_of(to_clk_regmap(_hw), \
+>       |                                            ^~~~~~~~~~~~~
+> drivers/clk/qcom/clk-alpha-pll.c:254:30: note: in expansion of macro 'to_clk_alpha_pll'
+>   254 |  struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>       |                              ^~~~~~~~~~~~~~~~
+> include/linux/kernel.h:852:8: note: shadowed declaration is here
+>   852 |  void *__mptr = (void *)(ptr);     \
+>       |        ^~~~~~
+>
+> Redefine two copies of the to_clk_regmap() macro as inline functions
+> to avoid a lot of these.
+>
+> Fixes: ea11dda9e091 ("clk: meson: add regmap clocks")
+> Fixes: 085d7a455444 ("clk: qcom: Add a regmap type clock struct")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Could you expand here a little, I do see how I could use get_device()'s
-reference count. But it seems to me I'd be digging way too deep into kobj i=
-n
-order to get the functionality I need.
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-If you meant to say that it should be automatically taken care by the platf=
-orm
-bus, just FYI we're using 'simple-mfd' in DT. Where firmware supplier is th=
-e
-parent and all consumers are children.
-
-Regards,
-Nicolas
-
-
---=-+M2bTZi8S7Ge32C0tkNp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+W+KkACgkQlfZmHno8
-x/6XwQf+N4Vi5LyZRLbYPf2alcEVhV4rJF362cZVbIn76rK576WGug740xSWsiwO
-gfzWfNuZQ8dHdYtromdKWWMK3JYZ1EYnhWwxzQVC9bhKypTweP7tpIxNgdQLfoi0
-qS6Omn19ldcynO+YlLCEp76lrapt5ADWIGR5phjOWOj2yPHYJN0TsaQ80bNsNHZL
-caC8ddA5LxpEZKe8NEd9tqOdhB9rnvTHmPLG4A7CdjCsNdwcO6TXUTM4os21JNVv
-IB/eaEzZp7DLTWVAUJxV+HIX0SSdy80TCryzgCsfbcd8q6AuD2RWtWpVQ88Qtrbl
-fFrXd+Hf3/iVhraCCi5GKegidy4SyA==
-=30G8
------END PGP SIGNATURE-----
-
---=-+M2bTZi8S7Ge32C0tkNp--
+> ---
+>  drivers/clk/meson/clk-regmap.h | 5 ++++-
+>  drivers/clk/qcom/clk-regmap.h  | 6 +++++-
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+> index c4a39604cffd..e365312da54e 100644
+> --- a/drivers/clk/meson/clk-regmap.h
+> +++ b/drivers/clk/meson/clk-regmap.h
+> @@ -26,7 +26,10 @@ struct clk_regmap {
+>  	void		*data;
+>  };
+>  
+> -#define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
+> +static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct clk_regmap, hw);
+> +}
+>  
+>  /**
+>   * struct clk_regmap_gate_data - regmap backed gate specific data
+> diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+> index 6cfc1bccb255..14ec659a3a77 100644
+> --- a/drivers/clk/qcom/clk-regmap.h
+> +++ b/drivers/clk/qcom/clk-regmap.h
+> @@ -24,7 +24,11 @@ struct clk_regmap {
+>  	unsigned int enable_mask;
+>  	bool enable_is_inverted;
+>  };
+> -#define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
+> +
+> +static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct clk_regmap, hw);
+> +}
+>  
+>  int clk_is_enabled_regmap(struct clk_hw *hw);
+>  int clk_enable_regmap(struct clk_hw *hw);
 
