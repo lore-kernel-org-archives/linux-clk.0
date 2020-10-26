@@ -1,122 +1,119 @@
-Return-Path: <SRS0=IsCf=EA=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A98C388F7
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 22:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D1DC4363A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 02:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD58620790
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Oct 2020 22:42:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmjzbHbB"
+	by mail.kernel.org (Postfix) with ESMTP id 7DD732224A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 02:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603680919;
+	bh=gb1WbQt5E9LHrMjJFx5SqW0vqDsqYEv3z3FfTwdd/TI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gDkhfQEn/2iHew5aNCJYrhW8BKoCS7NZV1bd2+5Udx8lxMR3WA/pBrqMIV6zGhTFE
+	 TMg7mYnFF3z+qvTAWKKn9GQROffmU6bjGk/1ckGs1Wb3Lppne2XmlRK4laBVLfxSmg
+	 eNtfqE7Vux+B2gJiKqcE+Go8CkKgcyRVNhCFs+0Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1420335AbgJYWmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Oct 2020 18:42:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1420334AbgJYWmX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Oct 2020 18:42:23 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 785C7C061755;
-        Sun, 25 Oct 2020 15:42:23 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y16so7768902ljk.1;
-        Sun, 25 Oct 2020 15:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V/owtm7CKL7aXeAomkI0+DszZCxQFPYFDuDBIRrRH/U=;
-        b=nmjzbHbBiymbyAdZ9y16ECopOtAhsBxwH3sstAI9BqTJ2qGz4hTeopEmj5otITQXaK
-         3pu9xRpCDD0FL2IN9SrVZr6UtdbBvPbK08OgwOAGP2Ubp9sqwFk9KAdfiGIp69cjWhVA
-         hzEknW5b80kp6j739bOWPl7NDPv1yZDuUUXZkgEyZ5LZ0U38K5tNoKBTCX/rJvtd3iqw
-         nqIetuLDDxDh4v7DpZvQwr8upo64QuZMbQijJ8fKtaosVwWi5DuPYBsm87UoG+XgihMr
-         yKfwArtme5WKCXYJnVYJZMjVJVGKJ7pjPUwMOjYM2sXhnnNtcn0wK1tnGK3nPz2mHqDC
-         KuHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V/owtm7CKL7aXeAomkI0+DszZCxQFPYFDuDBIRrRH/U=;
-        b=UlxZNin69gQT934FDNSvBLTXLlbB/s0N5ilfcLYSnD8vCPVGy4Lp6Sch7WfqdmI1KD
-         iNMPb97Wn78GDdS4+Y8za6mh/ioI/C3ueVuT0dcZoS0lmSII79SFfIE6b+TZCPa6Phsb
-         QfQyjJ8cTKpcMDmDuss2UzAVVuVjxtHElKJiOHqSvU0BNkIFAG+W/Jloh5LGgCG3aF0y
-         wKILAm2JMUAG8R9X2WnQu69HF6dBJMkjVHDAyCBv3seb+oWDR4UVbGewNTJY+m4Z7y3P
-         5psHfEUWIF0EjM1wzv3juR/S7fg0key5W+i6PmaOeMnSSCjaaM1JnQPfuHtepusfDaAS
-         FGoQ==
-X-Gm-Message-State: AOAM531YAfsvr0Ll7ws6yzLfx7w7aDJfJuV7MLV0QI6bVeu8pSj8KbsP
-        Jvrt+yh0jQc1wrVqh/J49Js=
-X-Google-Smtp-Source: ABdhPJy979kPb7xmaWdqVdvrVukWTGOgZ34wsKFY2mm6Y2SnOmUQhksAixqTM9XZ+aBw5ZKSvfDOhA==
-X-Received: by 2002:a2e:9b8e:: with SMTP id z14mr4241146lji.26.1603665742036;
-        Sun, 25 Oct 2020 15:42:22 -0700 (PDT)
-Received: from localhost.localdomain (109-252-193-186.dynamic.spd-mgts.ru. [109.252.193.186])
-        by smtp.gmail.com with ESMTPSA id e73sm855959lfd.199.2020.10.25.15.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 15:42:21 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Chauvet <kwizart@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra: Fix duplicated SE clock entry
-Date:   Mon, 26 Oct 2020 01:42:12 +0300
-Message-Id: <20201025224212.7790-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        id S1420361AbgJZCzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Oct 2020 22:55:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389379AbgJZCzT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 25 Oct 2020 22:55:19 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9E5A2222C;
+        Mon, 26 Oct 2020 02:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603680918;
+        bh=gb1WbQt5E9LHrMjJFx5SqW0vqDsqYEv3z3FfTwdd/TI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pNPyupL6jT8xa3CJ0GW8npamD0igQX3FI/h6zWxvBZlDwJfMLFHyg2xAEOfpgI24u
+         20b0Lr1WDcuigBx0Eb6aIJFkDslsqC39ou65Lxq8PQyhJFwU4gReXsyr02f05U79I8
+         FvwNwRCzqrEtUOr1Vcj5HzNAup4rbUacEJON0Erc=
+Date:   Mon, 26 Oct 2020 10:55:12 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sboyd@kernel.org, mturquette@baylibre.com, fabio.estevam@nxp.com,
+        linux-imx@nxp.com, kernel@pengutronix.de
+Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm
+ support
+Message-ID: <20201026025512.GD9880@dragon>
+References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The periph_clks[] array contains duplicated entry for Security Engine
-clock which was meant to be defined for T210, but it wasn't added
-properly. This patch corrects the T210 SE entry and fixes the following
-error message on T114/T124: "Tegra clk 127: register failed with -17".
+On Wed, Jul 29, 2020 at 04:00:07PM +0800, Dong Aisheng wrote:
+> This patch series is a preparation for the MX8 Architecture improvement.
+> As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+> of a couple of SS(Subsystems) while most of them within the same SS
+> can be shared. e.g. Clocks, Devices and etc.
+> 
+> However, current clock binding is using SW IDs for device tree to use
+> which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+> different SoCs.
+> 
+> This patch series aims to introduce a new binding which is more close to
+> hardware and platform independent and can makes us write a more general
+> drivers for different SCU based SoCs.
+> 
+> Another important thing is that on MX8, each Clock resource is associated
+> with a power domain. So we have to attach that clock device to the power
+> domain in order to make it work properly. Further more, the clock state
+> will be lost when its power domain is completely off during suspend/resume,
+> so we also introduce the clock state save&restore mechanism.
+> 
+> It's based on latest shanw/for-next branch.
+> 
+> The top commit is:
+> 3c1a41dab7b8 Merge branch 'imx/defconfig' into for-next
+> 
+> ChangeLog:
+> v6->v7:
+>  * addressed all comments from Stephen
+>  * rebased to latest shawn/for-next
+> v5->v6:
+>  * add scu clk unregister if add provider failed
+> v4->v5:
+>  * Address all comments from Stephen
+> v3->v4:
+>  * use clk-indices for LPCG to fetch each clks offset from dt
+> v2->v3:
+>  * change scu clk into two cells binding
+>  * add clk pm patches to ease the understand of the changes
+> v1->v2:
+>  * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
+>    Documentation/devicetree/bindings/arm/arm,scpi.txt
+>  * Add required power domain property
+>  * Dropped PATCH 3&4 first, will send the updated version accordingly
+>    after the binding is finally determined,
+> 
+> Dong Aisheng (11):
+>   dt-bindings: firmware: imx-scu: new binding to parse clocks from
+>     device tree
+>   dt-bindings: clock: imx-lpcg: add support to parse clocks from device
+>     tree
+>   clk: imx: scu: add two cells binding support
+>   clk: imx: scu: bypass cpu power domains
+>   clk: imx: scu: allow scu clk to take device pointer
+>   clk: imx: scu: add runtime pm support
+>   clk: imx: scu: add suspend/resume support
+>   clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
+>   clk: imx: lpcg: allow lpcg clk to take device pointer
+>   clk: imx: clk-imx8qxp-lpcg: add runtime pm support
+>   clk: imx: lpcg: add suspend/resume support
 
-Fixes: dc37fec48314 ("clk: tegra: periph: Add new periph clks and muxes for Tegra210")
-Tested-by Nicolas Chauvet <kwizart@gmail.com>
-Reported-by Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-id.h           | 1 +
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index ff7da2d3e94d..24413812ec5b 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -227,6 +227,7 @@ enum clk_id {
- 	tegra_clk_sdmmc4,
- 	tegra_clk_sdmmc4_8,
- 	tegra_clk_se,
-+	tegra_clk_se_10,
- 	tegra_clk_soc_therm,
- 	tegra_clk_soc_therm_8,
- 	tegra_clk_sor0,
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 2b2a3b81c16b..60cc34f90cb9 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -630,7 +630,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	INT8("host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_8),
- 	INT8("host1x", mux_pllc4_out1_pllc_pllc4_out2_pllp_clkm_plla_pllc4_out0, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_9),
- 	INT8("se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se),
--	INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se),
-+	INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PERIPH_ON_APB, tegra_clk_se_10),
- 	INT8("2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d_8),
- 	INT8("3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d_8),
- 	INT8("vic03", mux_pllm_pllc_pllp_plla_pllc2_c3_clkm, CLK_SOURCE_VIC03, 178, 0, tegra_clk_vic03),
--- 
-2.27.0
-
+Applied all, thanks.
