@@ -2,199 +2,115 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5341BC4363A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817AFC2D0A3
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 12:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E70922263
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463FA22265
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 12:02:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZPtgb0t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1774073AbgJZLyK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 07:54:10 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49977 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1771727AbgJZLyJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2020 07:54:09 -0400
-X-Greylist: delayed 1107 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Oct 2020 07:54:09 EDT
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1kX0mY-0002Sw-TZ; Mon, 26 Oct 2020 12:35:22 +0100
-Received: from pza by lupine with local (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1kX0mX-00083t-G9; Mon, 26 Oct 2020 12:35:21 +0100
-Message-ID: <c8ea80c2eb79f80539911f3563398957beedaa41.camel@pengutronix.de>
-Subject: Re: [PATCH 9/9] remoteproc/wkup_m3: Use reset control driver if
- available
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Mon, 26 Oct 2020 12:35:21 +0100
-In-Reply-To: <20201026111049.54835-10-tony@atomide.com>
-References: <20201026111049.54835-1-tony@atomide.com>
-         <20201026111049.54835-10-tony@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.5-1.1 
+        id S2403827AbgJZMC1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 08:02:27 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40016 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1737328AbgJZMC1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2020 08:02:27 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h5so12117944wrv.7
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2020 05:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rzDcAsPcv9VfA3khTArkxlqmE18NNhfd2DKZyq6irZY=;
+        b=uZPtgb0tzTa6z7hyIgpYYeiGvN2Lk58Yu7JfKzN5prXR7zq4DIVxngBEFXTIbE4I2H
+         hg1HKf2qLDXQ+CpaVf85YEXzB7p+UuQM+G1c0mHhp7TcksAehhrvvra95s0tR9r/bfdg
+         XlLspjjirubQjw+r2vhKqx5PfN+kCZHlcJiGvnggxMzagxPDtleeMqVbFdMzgcbVStfp
+         IPgTqucPsZ6Poqp5yHmAnGPa6WebVhvE2sBZm7oEpm4Yl0vSd4xIEVVGeM7boDsKdT9r
+         aGQNtEt6gECNemFc6EI8ZpefOKB7DmG/+Or25J+vJ78EzpJVnFvJrkNVu5K04KDnv1gW
+         GdaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rzDcAsPcv9VfA3khTArkxlqmE18NNhfd2DKZyq6irZY=;
+        b=BR1D3jT6N5XCKMFu1ZhPlMD2J4wnmIPp8XZ1oZKzrf+tiUmiK5IVEkPGJWxpyYHnxO
+         jxoLqo82bpUUedRPrBo00CtTh5yHgLLZuup6YvOMsY+j4UQe2Pm6STZZ1NXIiSCNByQT
+         PVuVrwWgPB28vwvIrr6fDEsAAyuGVHUi8RHTI4HEcd0mGRIWqT6z3buLSQOd9j0dXKFy
+         u5rMfY/rhP8iPzJ475hEZYUBOL+H2vu00clKTEgkaHRr2NUj5o45vXfC8zVqBWmpa+IW
+         xKg2ttDA2Dy5NZZpfqHUcldUM7DeUYTF/538DenKtuDDIokCgkbBvR89POdORGyQYnnz
+         G9GQ==
+X-Gm-Message-State: AOAM532v4CuLKz49wHCysBzpwk8Xj3XaJIWA/SHOebehC8DsCS0KYdy4
+        KpM8mysintNpU2aQ7laIvcRw+Q==
+X-Google-Smtp-Source: ABdhPJypvNXJuxmMM7Zf/cRBse301AwywIM5EX/nLsZGHuYZNtWiSXQSa4Qtp2BQvHZqpu18jMUbug==
+X-Received: by 2002:adf:fe81:: with SMTP id l1mr17322530wrr.11.1603713744985;
+        Mon, 26 Oct 2020 05:02:24 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
+        by smtp.gmail.com with ESMTPSA id i33sm23659337wri.79.2020.10.26.05.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2020 05:02:24 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [RESEND PATCH v3 0/4] clk: qcom : add sm8250 LPASS GFM drivers
+Date:   Mon, 26 Oct 2020 12:02:17 +0000
+Message-Id: <20201026120221.18984-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tony,
+This is resend of v3, due to dt_bindings check failure as
+rc1 was not out when previous v3 was sent!
 
-On Mon, 2020-10-26 at 13:10 +0200, Tony Lindgren wrote:
-> In order to move wkup_m3 to probe without platform data, let's add
-> support for using optional reset control driver if configured in the
-> dts. With this change and the related dts change, we can start
-> dropping the platform data for am335x.
-> 
-> And once wkup_m3 no longer needs platform data, we can simply drop the
-> related legacy reset platform data callbacks from wkup_m3 driver later
-> on after also am437x no longer depends on it.
-> 
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Dave Gerlach <d-gerlach@ti.com>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> Please review and ack if no issues. If you guys instead want to set up an
-> immutable remoteproc branch with just this patch in it against v5.10-rc1
-> that works too :)
-> 
-> ---
->  drivers/remoteproc/wkup_m3_rproc.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-> --- a/drivers/remoteproc/wkup_m3_rproc.c
-> +++ b/drivers/remoteproc/wkup_m3_rproc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/reset.h>
->  
->  #include <linux/platform_data/wkup_m3.h>
->  
-> @@ -43,11 +44,13 @@ struct wkup_m3_mem {
->   * @rproc: rproc handle
->   * @pdev: pointer to platform device
->   * @mem: WkupM3 memory information
-> + * @rsts: reset control
->   */
->  struct wkup_m3_rproc {
->  	struct rproc *rproc;
->  	struct platform_device *pdev;
->  	struct wkup_m3_mem mem[WKUPM3_MEM_MAX];
-> +	struct reset_control *rsts;
->  };
->  
->  static int wkup_m3_rproc_start(struct rproc *rproc)
-> @@ -57,6 +60,9 @@ static int wkup_m3_rproc_start(struct rproc *rproc)
->  	struct device *dev = &pdev->dev;
->  	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
->  
-> +	if (wkupm3->rsts)
+This patchset adds support for GFM Muxes found in LPASS
+(Low Power Audio SubSystem) IP in Audio Clock Controller
+and Always ON clock controller.
 
-No need for this check, reset_control_deassert() just returns 0 if the
-rstc parameter is NULL.
+Clocks derived from these muxes are consumed by LPASS Digital Codec.
+Currently the driver for Audio and Always ON clock controller only
+supports GFM Muxes, however it should be easy to add more clock
+support when required
 
-> +		return reset_control_deassert(wkupm3->rsts);
-> +
->  	if (pdata->deassert_reset(pdev, pdata->reset_name)) {
->  		dev_err(dev, "Unable to reset wkup_m3!\n");
->  		return -ENODEV;
-> @@ -72,6 +78,9 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
->  	struct device *dev = &pdev->dev;
->  	struct wkup_m3_platform_data *pdata = dev_get_platdata(dev);
->  
-> +	if (wkupm3->rsts)
+Changes since v2:
+- updated Kconfig text and help as suggested by Stephen
+- removed unnecessary header file include
+- use fw_name instead of name for parents
+- use devm_platform_ioremap_resource
 
-Same as above.
+verified dt_binding_check to pass on rc1,
 
-> +		return reset_control_assert(wkupm3->rsts);
-> +
->  	if (pdata->assert_reset(pdev, pdata->reset_name)) {
->  		dev_err(dev, "Unable to assert reset of wkup_m3!\n");
->  		return -ENODEV;
-> @@ -132,12 +141,6 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
->  	int ret;
->  	int i;
->  
-> -	if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
-> -	      pdata->reset_name)) {
-> -		dev_err(dev, "Platform data missing!\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	ret = of_property_read_string(dev->of_node, "ti,pm-firmware",
->  				      &fw_name);
->  	if (ret) {
-> @@ -165,6 +168,17 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
->  	wkupm3->rproc = rproc;
->  	wkupm3->pdev = pdev;
->  
-> +	wkupm3->rsts = devm_reset_control_get_optional_shared(dev, "rstctrl");
-> +	if (PTR_ERR_OR_ZERO(wkupm3->rsts)) {
+Srinivas Kandagatla (4):
+  dt-bindings: clock: Add support for LPASS Audio Clock Controller
+  dt-bindings: clock: Add support for LPASS Always ON Controller
+  clk: qcom: Add support to LPASS AUDIO_CC Glitch Free Mux clocks
+  clk: qcom: Add support to LPASS AON_CC Glitch Free Mux clocks
 
-Please properly return errors. rsts will be NULL if the optional rstctrl
-reset is not specified:
+ .../bindings/clock/qcom,aoncc-sm8250.yaml     |  58 ++++
+ .../bindings/clock/qcom,audiocc-sm8250.yaml   |  58 ++++
+ drivers/clk/qcom/Kconfig                      |   6 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/lpass-gfm-sm8250.c           | 320 ++++++++++++++++++
+ .../clock/qcom,sm8250-lpass-aoncc.h           |  11 +
+ .../clock/qcom,sm8250-lpass-audiocc.h         |  13 +
+ 7 files changed, 467 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,aoncc-sm8250.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
+ create mode 100644 drivers/clk/qcom/lpass-gfm-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-aoncc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
 
-	if (IS_ERR(wkump3->rsts))
-		return PTR_ERR(wkump3->rsts);
+-- 
+2.21.0
 
-	if (!wkump3->rsts) {
-> +		if (!(pdata && pdata->deassert_reset && pdata->assert_reset &&
-> +		      pdata->reset_name)) {
-> +			dev_err(dev, "Platform data missing!\n");
-> +			ret = -ENODEV;
-> +			goto err_put_rproc;
-> +		}
-> +		wkupm3->rsts = NULL;
-
-I assume this will later be dropped with the platform data support?
-
-> +	}
-> +
->  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
->  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->  						   mem_names[i]);
-> @@ -173,7 +187,7 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
->  			dev_err(&pdev->dev, "devm_ioremap_resource failed for resource %d\n",
->  				i);
->  			ret = PTR_ERR(wkupm3->mem[i].cpu_addr);
-> -			goto err;
-> +			goto err_put_rproc;
->  		}
->  		wkupm3->mem[i].bus_addr = res->start;
->  		wkupm3->mem[i].size = resource_size(res);
-
-regards
-Philipp
