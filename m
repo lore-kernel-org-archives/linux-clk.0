@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA62C2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B89C5DF9D
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D37E2085B
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822D220872
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1793262AbgJZTdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 15:33:24 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:32806 "EHLO inva021.nxp.com"
+        id S1793209AbgJZTdF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 15:33:05 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60872 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1793201AbgJZTdG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 15:33:06 -0400
+        id S1793186AbgJZTdD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 15:33:03 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F271820171A;
-        Mon, 26 Oct 2020 20:33:03 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AE02020171C;
+        Mon, 26 Oct 2020 20:33:00 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E568620089E;
-        Mon, 26 Oct 2020 20:33:03 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A06952016FD;
+        Mon, 26 Oct 2020 20:33:00 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 284A420308;
-        Mon, 26 Oct 2020 20:33:03 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E617B20308;
+        Mon, 26 Oct 2020 20:32:59 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v4 13/14] arm64: dts: imx8mp: Add media_blk_ctl node
-Date:   Mon, 26 Oct 2020 21:32:29 +0200
-Message-Id: <1603740750-10385-14-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v4 09/14] Documentation: bindings: clk: Add bindings for i.MX BLK_CTL
+Date:   Mon, 26 Oct 2020 21:32:25 +0200
+Message-Id: <1603740750-10385-10-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
 References: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
@@ -56,43 +56,81 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some of the features of the media_ctl will be used by some
-different drivers in a way those drivers will know best, so adding the
-syscon compatible we allow those to do just that. Only the resets
-and the clocks are registered bit the clk-blk-ctl driver.
+Document the i.MX BLK_CTL with its devicetree properties.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index ae161a7..291e135 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -736,6 +736,21 @@
- 			};
- 		};
- 
-+		aips4: bus@32c00000 {
-+			compatible = "simple-bus";
-+			reg = <0x32c00000 0x400000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
+diff --git a/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+new file mode 100644
+index 00000000..5e9eb40
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/fsl,imx-blk-ctl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+			media_blk_ctl: clock-controller@32ec0000 {
-+				compatible = "fsl,imx8mp-media-blk-ctl", "syscon";
-+				reg = <0x32ec0000 0x10000>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+		};
++title: NXP i.MX BLK_CTL
 +
- 		aips5: bus@30c00000 {
- 			compatible = "fsl,aips-bus", "simple-bus";
- 			reg = <0x30c00000 0x400000>;
++maintainers:
++  - Abel Vesa <abel.vesa@nxp.com>
++
++description:
++  i.MX BLK_CTL is a conglomerate of different GPRs that are
++  dedicated to a specific subsystem. Because it usually contains
++  clocks amongst other things, it needs access to the i.MX clocks
++  API. All the other functionalities it provides can work just fine
++  from the clock subsystem tree.
++
++properties:
++  compatible:
++    items:
++      - enum:
++         - fsl,imx8mp-audio-blk-ctl
++         - fsl,imx8mp-hdmi-blk-ctl
++         - fsl,imx8mp-media-blk-ctl
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - power-domains
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/imx8mp-clock.h>
++
++    audio_blk_ctl: clock-controller@30e20000 {
++       compatible = "fsl,imx8mp-audio-blk-ctl", "syscon";
++       reg = <0x30e20000 0x10000>;
++       power-domains = <&audiomix_pd>;
++
++       #clock-cells = <1>;
++       #reset-cells = <1>;
++    };
 -- 
 2.7.4
 
