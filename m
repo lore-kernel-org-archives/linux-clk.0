@@ -2,145 +2,160 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F608C4363A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 14:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5776FC2D0A3
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 14:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2660C22265
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 14:45:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1OrMnfHH"
+	by mail.kernel.org (Postfix) with ESMTP id 1857E22263
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 14:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1781921AbgJZOpe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 10:45:34 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46466 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1781911AbgJZOpd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2020 10:45:33 -0400
-Received: by mail-ed1-f66.google.com with SMTP id 33so9611816edq.13
-        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2020 07:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=108wjdzd0/xglJPKdUFBrU/U8qTH53Q7ViQVBUZc56k=;
-        b=1OrMnfHHqDBoo2mYxJrLQ9UlNNI6ec8McsUQXHPbq7sKgz+s/nXE8wC/tcI/BwH3BA
-         YcAIrjszEI+afPxnRmUMsSafZo++P4xTvrdEqggzBABUFDbbV/e9xn+YZ3cB/dPnf3kl
-         9ZGuOQRnd6APa67+wQwTCEP61nfTjrToUqGBWbolTmKWKeyz73rYrmvMumShSk9TWAF9
-         +MREeJUOnaLftLucXz5QGIgOkw2duaObvPbDmqRNRkJj959McPu1ur7Zk48voZsuQ9ZO
-         vX1M9rjAraSINox0yzNORVihGBwgnebY6oKbYvqhxGWZ/XB/jl58QutvGrPjQrUPCTJW
-         JjqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=108wjdzd0/xglJPKdUFBrU/U8qTH53Q7ViQVBUZc56k=;
-        b=QmtMXMUrh/Szv0p/YyB/7XB91ovT66nwjiiK+3ucqmzKnAKshDLFK9Ia4b8dYrc7aH
-         8oybImHXzN5KEHBiml2C/7ij8NFxPcRTF0pbs7yW74nOjqKgbztLdHeMN/UhOsNfKxGS
-         loZxRjpb0mB9aDoz3adJMNzL3br+E28QWa6ebYRdl+mOtyAjRSTq8y9hbtSUEvfrG3Yv
-         x2Id4Icyj+PueQoNOGYWs/O2kvtkgwdEiCGHFBi5OHIq60D+pJl/wxs+844Pw76RSwX0
-         QS9V/Ie5iCx7P++l0SWFo3C/4yg/Y8uh8VJ/vVhGKXt0LKU3Etfa8ntWBEMcYpsfBP9l
-         2Znw==
-X-Gm-Message-State: AOAM533ZWFjDD0kb58rULdy2ElxPZeZc+HtcFJLPDslP97RzUlOaGjpS
-        B0CoG2bLeqssIHpcnT4JOozzVQX4uhjgeEfRK4l2Kw==
-X-Google-Smtp-Source: ABdhPJwpLZGnNpfAXvm5XX2UTeeOpwB6YzeBR/r0R25NPP/c93Zb+pjiQMB4mwWWBByibX0wj7kl731YGtPxH+pE/SM=
-X-Received: by 2002:a50:e442:: with SMTP id e2mr16721662edm.186.1603723528358;
- Mon, 26 Oct 2020 07:45:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201022155858.20867-1-nsaenzjulienne@suse.de>
- <20201022155858.20867-4-nsaenzjulienne@suse.de> <CAMpxmJXw12hKYCuMDjG-Ns6n=mXmr4B2x3HJaAJ19wH_xDUMag@mail.gmail.com>
- <700a149849222f3efbec73cb8a6be56b4b1c5bcb.camel@suse.de>
-In-Reply-To: <700a149849222f3efbec73cb8a6be56b4b1c5bcb.camel@suse.de>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 26 Oct 2020 15:45:17 +0100
-Message-ID: <CAMpxmJWTuREXQKLtc37uo6+6aG_-Tkb-P+8Ozjkz+7-DixvpDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] gpio: raspberrypi-exp: Release firmware handle
- on unbind
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
-        Linux Input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1782670AbgJZOzU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 10:55:20 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:55354 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1782664AbgJZOzT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 10:55:19 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DBEEB1A0C89;
+        Mon, 26 Oct 2020 15:55:16 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CD7AE1A0078;
+        Mon, 26 Oct 2020 15:55:16 +0100 (CET)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B6D0E20308;
+        Mon, 26 Oct 2020 15:55:16 +0100 (CET)
+Date:   Mon, 26 Oct 2020 16:55:16 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Marek Vasut <marex@denx.de>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
+Message-ID: <20201026145516.shmb55gaeh6u7oru@fsr-ub1664-175>
+References: <20201024162016.1003041-1-aford173@gmail.com>
+ <20201024202335.y3npwtgragpp5wcz@fsr-ub1664-175>
+ <CAHCN7xJiygvLStO56v4xSnOEqR_5fbYQHn5juA8YeDiWh2awbg@mail.gmail.com>
+ <20201025120509.r5kl76wo5mdmapo5@fsr-ub1664-175>
+ <3dadade8-6e77-e27f-d5a6-307de17a4dd0@denx.de>
+ <CAHCN7xLC-gKquDNS3ToQCff=g610PscQE+T4zfO=_05GpLyK4w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xLC-gKquDNS3ToQCff=g610PscQE+T4zfO=_05GpLyK4w@mail.gmail.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 3:42 PM Nicolas Saenz Julienne
-<nsaenzjulienne@suse.de> wrote:
->
-> On Mon, 2020-10-26 at 15:40 +0100, Bartosz Golaszewski wrote:
-> > On Thu, Oct 22, 2020 at 5:59 PM Nicolas Saenz Julienne
-> > <nsaenzjulienne@suse.de> wrote:
-> > > Upon unbinding the device make sure we release RPi's firmware interface.
-> > >
-> > > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > > ---
-> > >  drivers/gpio/gpio-raspberrypi-exp.c | 14 +++++++++++++-
-> > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpio/gpio-raspberrypi-exp.c b/drivers/gpio/gpio-raspberrypi-exp.c
-> > > index bb100e0124e6..c008336e1131 100644
-> > > --- a/drivers/gpio/gpio-raspberrypi-exp.c
-> > > +++ b/drivers/gpio/gpio-raspberrypi-exp.c
-> > > @@ -231,8 +231,19 @@ static int rpi_exp_gpio_probe(struct platform_device *pdev)
-> > >         rpi_gpio->gc.get = rpi_exp_gpio_get;
-> > >         rpi_gpio->gc.set = rpi_exp_gpio_set;
-> > >         rpi_gpio->gc.can_sleep = true;
-> > > +       platform_set_drvdata(pdev, rpi_gpio);
-> > >
-> > > -       return devm_gpiochip_add_data(dev, &rpi_gpio->gc, rpi_gpio);
-> > > +       return gpiochip_add_data(&rpi_gpio->gc, rpi_gpio);
-> > > +}
-> > > +
-> > > +static int rpi_exp_gpio_remove(struct platform_device *pdev)
-> > > +{
-> > > +       struct rpi_exp_gpio *rpi_gpio = platform_get_drvdata(pdev);
-> > > +
-> > > +       gpiochip_remove(&rpi_gpio->gc);
-> > > +       rpi_firmware_put(rpi_gpio->fw);
-> > > +
-> > > +       return 0;
-> > >  }
-> > >
-> > >  static const struct of_device_id rpi_exp_gpio_ids[] = {
-> > > @@ -247,6 +258,7 @@ static struct platform_driver rpi_exp_gpio_driver = {
-> > >                 .of_match_table = of_match_ptr(rpi_exp_gpio_ids),
-> > >         },
-> > >         .probe  = rpi_exp_gpio_probe,
-> > > +       .remove = rpi_exp_gpio_remove,
-> > >  };
-> > >  module_platform_driver(rpi_exp_gpio_driver);
-> > >
-> > > --
-> > > 2.28.0
-> > >
+On 20-10-25 11:05:32, Adam Ford wrote:
+> On Sun, Oct 25, 2020 at 7:19 AM Marek Vasut <marex@denx.de> wrote:
 > >
-> > Why not introduce devm_rpi_firmware_get()? That would allow you to
-> > keep the driver elegant without re-adding remove().
->
-> I like the idea, I'll look into it.
->
-> Thanks,
-> Nicolas
->
+> > On 10/25/20 1:05 PM, Abel Vesa wrote:
+> >
+> > [...]
+> >
+> > >> Together, both the GPC and the clk-blk driver should be able to pull
+> > >> the multimedia block out of reset.  Currently, the GPC can handle the
+> > >> USB OTG and the GPU, but the LCDIF and MIPI DSI appear to be gated by
+> > >> the clock block
+> > >>
+> > >> My original patch RFC didn't include the imx8mn node, because it
+> > >> hangs, but the node I added looks like:
+> > >>
+> > >> media_blk_ctl: clock-controller@32e28000 {
+> > >>      compatible = "fsl,imx8mn-media-blk-ctl", "syscon";
+> > >>      reg = <0x32e28000 0x1000>;
+> > >>      #clock-cells = <1>;
+> > >>      #reset-cells = <1>;
+> > >> };
+> > >>
+> > >> I was hoping you might have some feedback on the 8mn clk-blk driver
+> > >> since you did the 8mp clk-blk drive and they appear to be very
+> > >> similar.
+> > >>
+> > >
+> > > I'll do you one better still. I'll apply the patch in my tree and give it
+> > > a test tomorrow morning.
+> 
+> I do have some more updates on how to get the system to not hang, and
+> to enumerate more clocks.
+> Looking at Marek's work on enabling clocks in the 8MM, he added a
+> power-domain in dispmix_blk_ctl pointing to the dispmix in the GPC.
+> By forcing the GPC driver to write 0x1fff  to 32e28004, 0x7f to
+> 32e28000 and 0x30000 to 32e28008, the i.MX8MM can bring the display
+> clocks out of reset.
+> 
 
-If you can't do it for some reason, then even using devm_add_action() is fine.
+Yeah, that makes sense. Basically, it was trying to disable unused clocks
+(see clk_disable_unused) but in order to disable the clocks from the
+media BLK_CTL (which I think should be renamed in display BLK_CTL) the
+PD need to be on. Since you initially didn't give it any PD, it was trying
+to blindly write/read the gate bit and therefore freeze.
 
-Bartosz
+> Unfortunately, the i.MX8MN needs to have 0x100 written to both
+> 32e28000 and 32e28004, and the values written for the 8MM are not
+> compatible.
+> By forcing the GPC to write those values, I can get  lcdif_pixel_clk
+> and the mipi_dsi_clkref  appearing on the Nano.
+
+I'm trying to make a branch with all the patches for all i.MX8M so I
+can keep track of it all. On this branch I've also applied the 
+following patchset from Lucas Stach:
+https://www.spinics.net/lists/arm-kernel/msg843007.html
+but I'm getting the folowing errors:
+
+[   16.690885] imx-pgc imx-pgc-domain.3: failed to power up ADB400
+[   16.716839] imx-pgc imx-pgc-domain.3: failed to power up ADB400
+[   16.730500] imx-pgc imx-pgc-domain.3: failed to power up ADB400
+
+Lucas, any thoughts?
+
+Maybe it's something related to 8MN.
+
+Will dig further, see what pops out.
+
+> 
+>  video_pll1_ref_sel                0        0        0    24000000
+>      0     0  50000
+>        video_pll1                     0        0        0   594000000
+>         0     0  50000
+>           video_pll1_bypass           0        0        0   594000000
+>         0     0  50000
+>              video_pll1_out           0        0        0   594000000
+>         0     0  50000
+>                 disp_pixel            0        0        0   594000000
+>         0     0  50000
+>                    lcdif_pixel_clk       0        0        0
+> 594000000          0     0  50000
+>                    disp_pixel_clk       0        0        0
+> 594000000          0     0  50000
+>                 dsi_phy_ref           0        0        0    27000000
+>         0     0  50000
+>                    mipi_dsi_clkref       0        0        0
+> 27000000          0     0  50000
+> 
+> I am not 100% certain the clock parents  in the clk block driver for
+> the 8MN are correct, and I am not seeing the mipi_dsi_pclk
+> 
+> Once the dust settles on the GPC decision for Mini and Nano, I think
+> we'll need a more generic way to pass the bits we need to set in clock
+> block to the GPC.
+> 
+> adam
+> >
+> > You can also apply the one for 8MM:
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flinux-arm-kernel%2F20201003224555.163780-5-marex%40denx.de%2F&amp;data=04%7C01%7Cabel.vesa%40nxp.com%7Cae966cce11204214fb1908d878ffd492%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637392387462398200%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=M944BaOI7Sa1RmI0nwrshKaM7MGMEN5pWgjmYqXZkns%3D&amp;reserved=0
