@@ -2,99 +2,211 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1727C2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 17:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9B4C388F9
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 18:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6BAC239D2
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 17:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603731787;
-	bh=Vx3kwhUrgAstRm7ol0WS1C7y+i6SeJQpZ/usDeWwXjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cAtsJdX6wJCgzBMHVamrIY32wDz9lUZKCLRtTDetG/WbQ4WsmUQRfXqGgHfQ7FB6+
-	 fPC5aQhctD3/VqJ8aBqsWlgFAsfouw0z916tVfAU6l99WHfJjbWHAuk27ATdddrpFs
-	 se5OsGLmj2aRum/4wBs/bc0zscS+0retioC6KC3M=
+	by mail.kernel.org (Postfix) with ESMTP id 5C34121707
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 18:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1787093AbgJZRCz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 13:02:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50896 "EHLO mail.kernel.org"
+        id S1790454AbgJZSvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 14:51:09 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:35430 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1787091AbgJZRCy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 13:02:54 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7878622450;
-        Mon, 26 Oct 2020 17:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603731774;
-        bh=Vx3kwhUrgAstRm7ol0WS1C7y+i6SeJQpZ/usDeWwXjw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1HGmyQZdomU/Kcotc6fonPISgftZKhHwL7gHb6VeyrwzgMJltpq9pWE80mmu1RFE3
-         x3zRvpo2a5VLA1Ht1UohZDgVrhKlBQxFrV83VyfrPOV6ZDzbxhiwhmStcsZeqO4uPA
-         e4IRJW31qs8XutTP77u+GSEVcLP9WBLbvvFEWSX8=
-Date:   Mon, 26 Oct 2020 17:02:49 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: regulator: fixed: provide bindings
- using power domain
-Message-ID: <20201026170249.GH7402@sirena.org.uk>
-References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
- <20201023131925.334864-2-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ewQ5hdP4CtoTt3oD"
-Content-Disposition: inline
-In-Reply-To: <20201023131925.334864-2-dmitry.baryshkov@linaro.org>
-X-Cookie: Safety Third.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1790447AbgJZSvI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 14:51:08 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 26B591A125F;
+        Mon, 26 Oct 2020 19:51:06 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 194FC1A006E;
+        Mon, 26 Oct 2020 19:51:06 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DB3A20308;
+        Mon, 26 Oct 2020 19:51:05 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx: gate2: Fix the is_enabled op
+Date:   Mon, 26 Oct 2020 20:50:48 +0200
+Message-Id: <1603738248-8193-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The clock is considered to be enabled only if the controlling bits
+match the cgr_val mask. Also make sure the is_enabled returns the
+correct vaule by locking the access to the register.
 
---ewQ5hdP4CtoTt3oD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Fixes: 1e54afe9fcfe ("clk: imx: gate2: Allow single bit gating clock")
+---
+ drivers/clk/imx/clk-gate2.c | 60 ++++++++++++++++++++-------------------------
+ drivers/clk/imx/clk.h       |  8 ++----
+ 2 files changed, 29 insertions(+), 39 deletions(-)
 
-On Fri, Oct 23, 2020 at 04:19:21PM +0300, Dmitry Baryshkov wrote:
-> Define bindings for fixed regulator using power domain performance state
-> to enable/disable corresponding regulator.
+diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
+index 7eed708..f320bd2b 100644
+--- a/drivers/clk/imx/clk-gate2.c
++++ b/drivers/clk/imx/clk-gate2.c
+@@ -37,10 +37,22 @@ struct clk_gate2 {
+ 
+ #define to_clk_gate2(_hw) container_of(_hw, struct clk_gate2, hw)
+ 
++static void clk_gate2_do_shared_clks(struct clk_hw *hw, bool enable)
++{
++	struct clk_gate2 *gate = to_clk_gate2(hw);
++	u32 reg;
++
++	reg = readl(gate->reg);
++	if (enable)
++		reg |= gate->cgr_val << gate->bit_idx;
++	else
++		reg &= ~(gate->cgr_val << gate->bit_idx);
++	writel(reg, gate->reg);
++}
++
+ static int clk_gate2_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate2 *gate = to_clk_gate2(hw);
+-	u32 reg;
+ 	unsigned long flags;
+ 	int ret = 0;
+ 
+@@ -49,15 +61,7 @@ static int clk_gate2_enable(struct clk_hw *hw)
+ 	if (gate->share_count && (*gate->share_count)++ > 0)
+ 		goto out;
+ 
+-	if (gate->flags & IMX_CLK_GATE2_SINGLE_BIT) {
+-		ret = clk_gate_ops.enable(hw);
+-	} else {
+-		reg = readl(gate->reg);
+-		reg &= ~(3 << gate->bit_idx);
+-		reg |= gate->cgr_val << gate->bit_idx;
+-		writel(reg, gate->reg);
+-	}
+-
++	clk_gate2_do_shared_clks(hw, true);
+ out:
+ 	spin_unlock_irqrestore(gate->lock, flags);
+ 
+@@ -67,7 +71,6 @@ static int clk_gate2_enable(struct clk_hw *hw)
+ static void clk_gate2_disable(struct clk_hw *hw)
+ {
+ 	struct clk_gate2 *gate = to_clk_gate2(hw);
+-	u32 reg;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(gate->lock, flags);
+@@ -79,23 +82,16 @@ static void clk_gate2_disable(struct clk_hw *hw)
+ 			goto out;
+ 	}
+ 
+-	if (gate->flags & IMX_CLK_GATE2_SINGLE_BIT) {
+-		clk_gate_ops.disable(hw);
+-	} else {
+-		reg = readl(gate->reg);
+-		reg &= ~(3 << gate->bit_idx);
+-		writel(reg, gate->reg);
+-	}
+-
++	clk_gate2_do_shared_clks(hw, false);
+ out:
+ 	spin_unlock_irqrestore(gate->lock, flags);
+ }
+ 
+-static int clk_gate2_reg_is_enabled(void __iomem *reg, u8 bit_idx)
++static int clk_gate2_reg_is_enabled(void __iomem *reg, u8 bit_idx, u8 cgr_val)
+ {
+ 	u32 val = readl(reg);
+ 
+-	if (((val >> bit_idx) & 1) == 1)
++	if (((val >> bit_idx) & cgr_val) == cgr_val)
+ 		return 1;
+ 
+ 	return 0;
+@@ -104,29 +100,27 @@ static int clk_gate2_reg_is_enabled(void __iomem *reg, u8 bit_idx)
+ static int clk_gate2_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_gate2 *gate = to_clk_gate2(hw);
++	unsigned long flags;
++	int ret;
+ 
+-	if (gate->flags & IMX_CLK_GATE2_SINGLE_BIT)
+-		return clk_gate_ops.is_enabled(hw);
++	spin_lock_irqsave(gate->lock, flags);
+ 
+-	return clk_gate2_reg_is_enabled(gate->reg, gate->bit_idx);
++	ret = clk_gate2_reg_is_enabled(gate->reg, gate->bit_idx, gate->cgr_val);
++
++	spin_unlock_irqrestore(gate->lock, flags);
++
++	return ret;
+ }
+ 
+ static void clk_gate2_disable_unused(struct clk_hw *hw)
+ {
+ 	struct clk_gate2 *gate = to_clk_gate2(hw);
+ 	unsigned long flags;
+-	u32 reg;
+-
+-	if (gate->flags & IMX_CLK_GATE2_SINGLE_BIT)
+-		return;
+ 
+ 	spin_lock_irqsave(gate->lock, flags);
+ 
+-	if (!gate->share_count || *gate->share_count == 0) {
+-		reg = readl(gate->reg);
+-		reg &= ~(3 << gate->bit_idx);
+-		writel(reg, gate->reg);
+-	}
++	if (!gate->share_count || *gate->share_count == 0)
++		clk_gate2_do_shared_clks(hw, false);
+ 
+ 	spin_unlock_irqrestore(gate->lock, flags);
+ }
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 3b796b3..069b07d 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -6,8 +6,6 @@
+ #include <linux/spinlock.h>
+ #include <linux/clk-provider.h>
+ 
+-#define IMX_CLK_GATE2_SINGLE_BIT	1
+-
+ extern spinlock_t imx_ccm_lock;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
+@@ -383,10 +381,8 @@ static inline struct clk_hw *imx_dev_clk_hw_gate_shared(struct device *dev,
+ 				void __iomem *reg, u8 shift,
+ 				unsigned int *share_count)
+ {
+-	return clk_hw_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT |
+-					CLK_OPS_PARENT_ENABLE, reg, shift, 0x3,
+-					IMX_CLK_GATE2_SINGLE_BIT,
+-					&imx_ccm_lock, share_count);
++	return clk_hw_register_gate2(dev, name, parent, CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE, reg,
++					shift, 0x1, 0, &imx_ccm_lock, share_count);
+ }
+ 
+ static inline struct clk *imx_clk_gate2_cgr(const char *name,
+-- 
+2.7.4
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---ewQ5hdP4CtoTt3oD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+XATgACgkQJNaLcl1U
-h9B3ZQf/b7wpRLW/WpVwlv/42X+6gg4wtsqgDCgaVyn4HGeEN0DFdW6WdAmKTygm
-eQwftDetW7iOVVMC9hOjWcqjqsv9mOEerwPyEwv9PN8GKtf6RKpBl2+6q0Bazv/Y
-45WSBguDbosl/Km4cHIviwAgfiTNFvPLKsm7I+OJGSkQgjeO9sIAel7NbcHoOH7p
-qBimFcit4Ztw2p7MNGzsg2G73ddnYQAWHosVs6fdClGIOJ0y3jfCG0FKrvrvBpdz
-fUqrlurarkaR+C/2mnI5S2wGMXsd6HGLV+YkThN71hYjUKovn76o0e+LTPaXltIL
-aj1yZK1NiGho3IJDqRjeudSZa5R20A==
-=6lYt
------END PGP SIGNATURE-----
-
---ewQ5hdP4CtoTt3oD--
