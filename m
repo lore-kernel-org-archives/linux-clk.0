@@ -2,32 +2,32 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313B7C5517A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0506BC4363A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5ED521D41
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52BF21D41
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 19:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1793164AbgJZTc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 15:32:58 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39458 "EHLO inva020.nxp.com"
+        id S1793325AbgJZTdx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 15:33:53 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60760 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1784922AbgJZTc5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 15:32:57 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1AD741A0A7B;
-        Mon, 26 Oct 2020 20:32:55 +0100 (CET)
+        id S1793143AbgJZTc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 15:32:58 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B4B4120089E;
+        Mon, 26 Oct 2020 20:32:56 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0930A1A09FD;
-        Mon, 26 Oct 2020 20:32:55 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A713D2003AE;
+        Mon, 26 Oct 2020 20:32:56 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CAE120308;
-        Mon, 26 Oct 2020 20:32:54 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E53DA20308;
+        Mon, 26 Oct 2020 20:32:55 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v4 02/14] dt-bindings: reset: imx8mp: Add audio blk_ctl reset IDs
-Date:   Mon, 26 Oct 2020 21:32:18 +0200
-Message-Id: <1603740750-10385-3-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v4 04/14] dt-bindings: clock: imx8mp: Add media blk_ctl clock IDs
+Date:   Mon, 26 Oct 2020 21:32:20 +0200
+Message-Id: <1603740750-10385-5-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
 References: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
@@ -62,21 +62,44 @@ Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- include/dt-bindings/reset/imx8mp-reset.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/dt-bindings/clock/imx8mp-clock.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/include/dt-bindings/reset/imx8mp-reset.h b/include/dt-bindings/reset/imx8mp-reset.h
-index 2e8c910..6c7f17f 100644
---- a/include/dt-bindings/reset/imx8mp-reset.h
-+++ b/include/dt-bindings/reset/imx8mp-reset.h
-@@ -47,4 +47,9 @@
+diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+index 5fc2c40..12632fa 100644
+--- a/include/dt-bindings/clock/imx8mp-clock.h
++++ b/include/dt-bindings/clock/imx8mp-clock.h
+@@ -396,4 +396,32 @@
  
- #define IMX8MP_RESET_NUM			38
+ #define IMX8MP_CLK_AUDIO_BLK_CTL_END			59
  
-+#define IMX8MP_AUDIO_BLK_CTL_EARC_RESET		0
-+#define IMX8MP_AUDIO_BLK_CTL_EARC_PHY_RESET	1
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI_PCLK		0
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI_CLKREF	1
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI_PCLK		2
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI_ACLK		3
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_PIXEL		4
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_APB		5
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISI_PROC		6
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISI_APB		7
++#define IMX8MP_CLK_MEDIA_BLK_CTL_BUS_BLK		8
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI2_PCLK		9
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_CSI2_ACLK		10
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_PIXEL		11
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_APB		12
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_COR		13
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_AXI		14
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP1_AHB		15
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_COR		16
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_AXI		17
++#define IMX8MP_CLK_MEDIA_BLK_CTL_ISP0_AHB		18
++#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_COR		19
++#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_AXI		20
++#define IMX8MP_CLK_MEDIA_BLK_CTL_DWE_AHB		21
++#define IMX8MP_CLK_MEDIA_BLK_CTL_MIPI_DSI2		22
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF_AXI		23
++#define IMX8MP_CLK_MEDIA_BLK_CTL_LCDIF2_AXI		24
 +
-+#define IMX8MP_AUDIO_BLK_CTL_RESET_NUM		2
++#define IMX8MP_CLK_MEDIA_BLK_CTL_END			25
 +
  #endif
 -- 
