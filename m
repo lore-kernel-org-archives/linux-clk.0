@@ -2,72 +2,101 @@ Return-Path: <SRS0=xpy6=EB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F54C2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 13:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F4BC4363A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 13:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC12122263
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 13:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A80992463C
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 13:56:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Khw6HtXi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1737281AbgJZNOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 09:14:42 -0400
-Received: from muru.com ([72.249.23.125]:46800 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394178AbgJZNNp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 09:13:45 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D518F80AA;
-        Mon, 26 Oct 2020 13:13:46 +0000 (UTC)
-Date:   Mon, 26 Oct 2020 15:13:38 +0200
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 0/9] Genpd related code changes to drop am335x pdata
-Message-ID: <20201026131338.GC5639@atomide.com>
-References: <20201026111049.54835-1-tony@atomide.com>
+        id S1770572AbgJZN4m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 09:56:42 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50453 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1780769AbgJZN4m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Oct 2020 09:56:42 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 13so11742803wmf.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Oct 2020 06:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=HgyBh+16fLRmJC5zM1itgabVQdxvIj/AWtqWUQEP6yc=;
+        b=Khw6HtXiUbQUTT15ZKtC1tSHL3G0pWYJkDmyqU4U9ImTpofZ96CxkjCjZ9pg8LVRRM
+         CXTTsNBHXMJo78LPCvCk6A+aSvBjPwytrmKcGGtDr75MUjLL4LIagO/lam1xV4wHMLIY
+         9r6xFeE65639FT8qnuT+eZs018NUkgAA9xmkkAIKpN4LBTswNYKjvsNsEAC+lyLHJpy3
+         gvxB22Jl4If0+HRow+pNI+MWIWzl9PUiloLBwEKeb+66jlRkAWg5LKwNnKv2qwihc32n
+         7BQna0hcFMIRKn6JexOMZAqGcD5D3+p6uHCgFsVceeNvj5TzGk0HCFXFAQb8VfK1LKEn
+         I/cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=HgyBh+16fLRmJC5zM1itgabVQdxvIj/AWtqWUQEP6yc=;
+        b=ffg8g+sG0Ty3N5vdLd2FvPRddtiT23nlgRllDBN2jM7pus4Frmv8Uz4X18cmN1kqMy
+         d2oYzfzvJmHg8qzmFEEHubTSwkEwVnCAc/LV6Uhsyfr7ebdRQlGHAyyA2jqMkN4wqxUK
+         Wm4+wT/X7zzSLGZMag7UTPjf+hLlHjJ4Rb6v0eIsGio3ItjR1snFVuFPeHOD8ZPSPSRG
+         ve7+JViOpeb2kE9oYOAvJ+EnqUhrlSnds6C4K4MZQaTi4J5wPtJPFIOhAfsb/AYpKSV7
+         z6V7YybzVqt5xEaW+my6O9KUmXrq3VWojdCacpGzkGayq20L5hVRKM3rsgnvZ13H/CIW
+         ZAJw==
+X-Gm-Message-State: AOAM530gFqXr/AiH7rkUnb53PTr/yv3yg9XynmPIESGEcIzBLv9H3ary
+        JgVxeSkbd4EeMDuV6WDbRG+4zA==
+X-Google-Smtp-Source: ABdhPJwhFRSy34ieLn1DstuSvVzZsmJTDrXtazaPwKq5GkCIxrsVvZ2CQeyoqavPfCy8A+wgZ4FTcQ==
+X-Received: by 2002:a1c:7214:: with SMTP id n20mr16444207wmc.93.1603720600298;
+        Mon, 26 Oct 2020 06:56:40 -0700 (PDT)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id u195sm23028274wmu.18.2020.10.26.06.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2020 06:56:39 -0700 (PDT)
+References: <20200915124553.8056-1-narmstrong@baylibre.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] clk: meson: axg: add clocks for MIPI-DSI support
+In-reply-to: <20200915124553.8056-1-narmstrong@baylibre.com>
+Date:   Mon, 26 Oct 2020 14:56:39 +0100
+Message-ID: <1jeelljdk8.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201026111049.54835-1-tony@atomide.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [201026 11:11]:
-> Hi all,
-> 
-> Here are the code related changes for v5.11 merge window to drop the
-> remaining am335x platform data. I'll be posting the related device tree
-> changes separately.
 
-Sorry I forgot to mention that this series depends also on a series of
-fixes posted earlier at [1].
+On Tue 15 Sep 2020 at 14:45, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-Also, the related dts changes are now posted at [2], and I've also
-pushed out an initial branch for easier testing at [3].
+> This adds the VPU & VAPB clocks along the MIPI DSI Host clock.
+>
+> The clock scheme is based on the GXBB & G12A VPU clocks, with a different CTS
+> clock output used for MIPI-DSI.
+>
+> Changes since v1 at [1]:
+> - update patch 3 commit message to reflect drm driver state
+> - added comments in patch 3 for clock specificities
+> - removed useless parents comments in patch 2
+> - fixed bad flags in patch 4
+> - removed holes in axg_vdin_meas_parent_data in patch 4
+>
+> [1] https://lkml.kernel.org/r/20200907093810.6585-1-narmstrong@baylibre.com
+>
+> Neil Armstrong (4):
+>   dt-bindings: clk: axg-clkc: add Video Clocks
+>   dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
+>   clk: meson: axg: add Video Clocks
+>   clk: meson: axg: add MIPI DSI Host clock
 
-Regards,
+Applied for v5.11 fixing 75 char per line patches 3 & 4 commit descriptions
 
-Tony
+>
+>  drivers/clk/meson/axg.c              | 819 +++++++++++++++++++++++++++
+>  drivers/clk/meson/axg.h              |  23 +-
+>  include/dt-bindings/clock/axg-clkc.h |  25 +
+>  3 files changed, 866 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/linux-omap/20201026105812.38418-1-tony@atomide.com/T/#t
-[2] https://lore.kernel.org/linux-omap/20201026131007.GB5639@atomide.com/T/#t
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/?h=omap-for-v5.11/genpd
