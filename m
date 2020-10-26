@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AE5C55178
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34009C4363A
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7B32224A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0883322263
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Oct 2020 11:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1773136AbgJZLLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 07:11:10 -0400
-Received: from muru.com ([72.249.23.125]:46530 "EHLO muru.com"
+        id S1773153AbgJZLLT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 07:11:19 -0400
+Received: from muru.com ([72.249.23.125]:46568 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1773135AbgJZLLI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 07:11:08 -0400
+        id S1773149AbgJZLLQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 07:11:16 -0400
 Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 39A0481A0;
-        Mon, 26 Oct 2020 11:11:10 +0000 (UTC)
+        by muru.com (Postfix) with ESMTP id 3C51D8196;
+        Mon, 26 Oct 2020 11:11:18 +0000 (UTC)
 From:   Tony Lindgren <tony@atomide.com>
 To:     linux-omap@vger.kernel.org
 Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
@@ -32,16 +32,16 @@ Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
         Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
         Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH 3/9] clk: ti: am33xx: Keep am3 l3 main clock always on for genpd
-Date:   Mon, 26 Oct 2020 13:10:43 +0200
-Message-Id: <20201026111049.54835-4-tony@atomide.com>
+Subject: [PATCH 5/9] bus: ti-sysc: Implement GPMC debug quirk to drop platform data
+Date:   Mon, 26 Oct 2020 13:10:45 +0200
+Message-Id: <20201026111049.54835-6-tony@atomide.com>
 X-Mailer: git-send-email 2.29.1
 In-Reply-To: <20201026111049.54835-1-tony@atomide.com>
 References: <20201026111049.54835-1-tony@atomide.com>
@@ -51,35 +51,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order for suspend and resume to work with genpd on am3, we must keep
-l3 main clock always on. Otherwise prm_omap driver will shut down the l3
-main clock on suspend when simple-pm-bus and GENPD_FLAG_PM_CLK are used.
-Note that we already keep the l3 main clock always on with the legacy
-platform code.
+We need to enable no-reset-on-init quirk for GPMC if the config
+option for CONFIG_OMAP_GPMC_DEBUG is set. Otherwise the GPMC
+driver code is unable to show the bootloader configured timings.
 
-Later on we may want to start managing the l3 main clock with a dedicated
-interconnect driver instead of using simple-pm-bus and GENPD_FLAG_PM_CLK.
-
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/clk/ti/clk-33xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/bus/ti-sysc.c                 | 10 ++++++++++
+ include/linux/platform_data/ti-sysc.h |  1 +
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -266,6 +266,8 @@ static const char *enable_init_clks[] = {
- 	"dpll_ddr_m2_ck",
- 	"dpll_mpu_m2_ck",
- 	"l3_gclk",
-+	/* AM3_L3_L3_MAIN_CLKCTRL, needed during suspend */
-+	"l3-clkctrl:00bc:0",
- 	"l4hs_gclk",
- 	"l4fw_gclk",
- 	"l4ls_gclk",
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -1382,6 +1382,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
+ 		   SYSC_QUIRK_CLKDM_NOAUTO),
+ 	SYSC_QUIRK("dwc3", 0x488c0000, 0, 0x10, -ENODEV, 0x500a0200, 0xffffffff,
+ 		   SYSC_QUIRK_CLKDM_NOAUTO),
++	SYSC_QUIRK("gpmc", 0, 0, 0x10, 0x14, 0x00000060, 0xffffffff,
++		   SYSC_QUIRK_GPMC_DEBUG),
+ 	SYSC_QUIRK("hdmi", 0, 0, 0x10, -ENODEV, 0x50030200, 0xffffffff,
+ 		   SYSC_QUIRK_OPT_CLKS_NEEDED),
+ 	SYSC_QUIRK("hdq1w", 0, 0, 0x14, 0x18, 0x00000006, 0xffffffff,
+@@ -1815,6 +1817,14 @@ static void sysc_init_module_quirks(struct sysc *ddata)
+ 		return;
+ 	}
+ 
++#ifdef CONFIG_OMAP_GPMC_DEBUG
++	if (ddata->cfg.quirks & SYSC_QUIRK_GPMC_DEBUG) {
++		ddata->cfg.quirks |= SYSC_QUIRK_NO_RESET_ON_INIT;
++
++		return;
++	}
++#endif
++
+ 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_I2C) {
+ 		ddata->pre_reset_quirk = sysc_pre_reset_quirk_i2c;
+ 		ddata->post_reset_quirk = sysc_post_reset_quirk_i2c;
+diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
+--- a/include/linux/platform_data/ti-sysc.h
++++ b/include/linux/platform_data/ti-sysc.h
+@@ -50,6 +50,7 @@ struct sysc_regbits {
+ 	s8 emufree_shift;
+ };
+ 
++#define SYSC_QUIRK_GPMC_DEBUG		BIT(26)
+ #define SYSC_MODULE_QUIRK_ENA_RESETDONE	BIT(25)
+ #define SYSC_MODULE_QUIRK_PRUSS		BIT(24)
+ #define SYSC_MODULE_QUIRK_DSS_RESET	BIT(23)
 -- 
 2.29.1
