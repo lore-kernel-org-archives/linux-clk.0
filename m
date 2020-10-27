@@ -2,164 +2,97 @@ Return-Path: <SRS0=XLdV=EC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5433C5517A
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 11:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A881C4363A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 18:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57B7B22263
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 11:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 303E3208B8
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 18:58:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WymB0rXz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439211AbgJ0Lz2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Oct 2020 07:55:28 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:56386 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439111AbgJ0Lz2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Oct 2020 07:55:28 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A730D200C98;
-        Tue, 27 Oct 2020 12:55:25 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9947F200C60;
-        Tue, 27 Oct 2020 12:55:25 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 84851202AE;
-        Tue, 27 Oct 2020 12:55:25 +0100 (CET)
-Date:   Tue, 27 Oct 2020 13:55:25 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Adam Ford <aford173@gmail.com>, Marek Vasut <marex@denx.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
-Message-ID: <20201027115525.gxt2oqavqulsqolo@fsr-ub1664-175>
-References: <20201024162016.1003041-1-aford173@gmail.com>
- <20201024202335.y3npwtgragpp5wcz@fsr-ub1664-175>
- <CAHCN7xJiygvLStO56v4xSnOEqR_5fbYQHn5juA8YeDiWh2awbg@mail.gmail.com>
- <20201025120509.r5kl76wo5mdmapo5@fsr-ub1664-175>
- <3dadade8-6e77-e27f-d5a6-307de17a4dd0@denx.de>
- <CAHCN7xLC-gKquDNS3ToQCff=g610PscQE+T4zfO=_05GpLyK4w@mail.gmail.com>
- <20201026145516.shmb55gaeh6u7oru@fsr-ub1664-175>
- <c976125e45e2fe46afbee1735004668677383805.camel@pengutronix.de>
- <20201027093110.jaslelqecwudn22k@fsr-ub1664-175>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201027093110.jaslelqecwudn22k@fsr-ub1664-175>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S371301AbgJ0S6J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Oct 2020 14:58:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:57004 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S371274AbgJ0S6I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Oct 2020 14:58:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603825085;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=/w7n3wo/ogMNJSBrl9q8TgkOqP0Cfiwxz1gfe/57UsA=;
+        b=WymB0rXzUiXBR+OG2luMf5g0CDve48dfDjLaGNEaX0o1TPZT9V+RItECqIIXNTjpAjrstr
+        jLIz4c6LNPzurW1AGlaqvKj4A8q6MlNH7Qig2hlPE9TFDZmw8r8GP2gHM3+hMbe5fIoPmt
+        IKtGQR+0vB2Kw63ms6/n2M8iSnWLGnw=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-500-U-JsI0v_OsmT6yW4zz3rFw-1; Tue, 27 Oct 2020 14:58:03 -0400
+X-MC-Unique: U-JsI0v_OsmT6yW4zz3rFw-1
+Received: by mail-ot1-f72.google.com with SMTP id l8so746853ots.22
+        for <linux-clk@vger.kernel.org>; Tue, 27 Oct 2020 11:58:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/w7n3wo/ogMNJSBrl9q8TgkOqP0Cfiwxz1gfe/57UsA=;
+        b=LWaZhqsXOe7vqpPXrzefRhHvt+vg1q9s+yLrrECf3CgxUJaPughiZTDYpxSsV5Szmh
+         B3CUNKBm32rSBFcNugZrBsAxfRHltIqinKQlASSYWu5wQQFOd/OXsl6/i/HYg1Wuvqkd
+         6dEGzOyjat9zTO7HQbVjBjqLYFQCc2n10rYm9OLJAf3C2TSoehPBSuXBSbv37U6MYt7c
+         RVKXQ0ul+lAKEb7VRXtwhrBfRrSxiwoT2ZclgKQmykve84lCr0FeF8ZD18Uda/qdL8Ts
+         TBsKaXIGGams3ZhN/JhMQ0l3Ih1+uelQ76qsZ2XC7nuPATLulGRp5S40KnUsgaF1Ogh5
+         F04Q==
+X-Gm-Message-State: AOAM533DrpomrAqURa7MvEwW6KdZH7oBZY/lFIjFC1u/Dmc1hnhUON4h
+        HuPsf0gOdWjeRE30BTi96Vh8LL785h+tP6KGrXGRhYGHQcTao01eGO3RUHWftQKvX52lMez19Vu
+        aj+uskN24ZdyMe2CzNn4P
+X-Received: by 2002:a05:6830:10d2:: with SMTP id z18mr2320855oto.41.1603825082559;
+        Tue, 27 Oct 2020 11:58:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxYGhvIxX/WWpgZFdD22OWQEZoC9GCiKRCLyoHJyIbNVn7keqIqMsFXtqbWyOFnR+FdTTxhYA==
+X-Received: by 2002:a05:6830:10d2:: with SMTP id z18mr2320838oto.41.1603825082332;
+        Tue, 27 Oct 2020 11:58:02 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id j97sm1433795otj.37.2020.10.27.11.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2020 11:58:01 -0700 (PDT)
+From:   trix@redhat.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, Anson.Huang@nxp.com, abel.vesa@nxp.com,
+        peng.fan@nxp.com, leonard.crestez@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tom Rix <trix@redhat.com>
+Subject: [PATCH] clk: imx: remove unneeded semicolon
+Date:   Tue, 27 Oct 2020 11:57:56 -0700
+Message-Id: <20201027185756.1586607-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-10-27 11:31:10, Abel Vesa wrote:
-> On 20-10-26 16:37:51, Lucas Stach wrote:
-> > Am Montag, den 26.10.2020, 16:55 +0200 schrieb Abel Vesa:
-> > > On 20-10-25 11:05:32, Adam Ford wrote:
-> > > > On Sun, Oct 25, 2020 at 7:19 AM Marek Vasut <marex@denx.de> wrote:
-> > > > > On 10/25/20 1:05 PM, Abel Vesa wrote:
-> > > > > 
-> > > > > [...]
-> > > > > 
-> > > > > > > Together, both the GPC and the clk-blk driver should be able to pull
-> > > > > > > the multimedia block out of reset.  Currently, the GPC can handle the
-> > > > > > > USB OTG and the GPU, but the LCDIF and MIPI DSI appear to be gated by
-> > > > > > > the clock block
-> > > > > > > 
-> > > > > > > My original patch RFC didn't include the imx8mn node, because it
-> > > > > > > hangs, but the node I added looks like:
-> > > > > > > 
-> > > > > > > media_blk_ctl: clock-controller@32e28000 {
-> > > > > > >      compatible = "fsl,imx8mn-media-blk-ctl", "syscon";
-> > > > > > >      reg = <0x32e28000 0x1000>;
-> > > > > > >      #clock-cells = <1>;
-> > > > > > >      #reset-cells = <1>;
-> > > > > > > };
-> > > > > > > 
-> > > > > > > I was hoping you might have some feedback on the 8mn clk-blk driver
-> > > > > > > since you did the 8mp clk-blk drive and they appear to be very
-> > > > > > > similar.
-> > > > > > > 
-> > > > > > 
-> > > > > > I'll do you one better still. I'll apply the patch in my tree and give it
-> > > > > > a test tomorrow morning.
-> > > > 
-> > > > I do have some more updates on how to get the system to not hang, and
-> > > > to enumerate more clocks.
-> > > > Looking at Marek's work on enabling clocks in the 8MM, he added a
-> > > > power-domain in dispmix_blk_ctl pointing to the dispmix in the GPC.
-> > > > By forcing the GPC driver to write 0x1fff  to 32e28004, 0x7f to
-> > > > 32e28000 and 0x30000 to 32e28008, the i.MX8MM can bring the display
-> > > > clocks out of reset.
-> > > > 
-> > > 
-> > > Yeah, that makes sense. Basically, it was trying to disable unused clocks
-> > > (see clk_disable_unused) but in order to disable the clocks from the
-> > > media BLK_CTL (which I think should be renamed in display BLK_CTL) the
-> > > PD need to be on. Since you initially didn't give it any PD, it was trying
-> > > to blindly write/read the gate bit and therefore freeze.
-> > > 
-> > > > Unfortunately, the i.MX8MN needs to have 0x100 written to both
-> > > > 32e28000 and 32e28004, and the values written for the 8MM are not
-> > > > compatible.
-> > > > By forcing the GPC to write those values, I can get  lcdif_pixel_clk
-> > > > and the mipi_dsi_clkref  appearing on the Nano.
-> > > 
-> > > I'm trying to make a branch with all the patches for all i.MX8M so I
-> > > can keep track of it all. On this branch I've also applied the 
-> > > following patchset from Lucas Stach:
-> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.spinics.net%2Flists%2Farm-kernel%2Fmsg843007.html&amp;data=04%7C01%7Cabel.vesa%40nxp.com%7C5ff46189143747fce45908d87a5b4281%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637393879674506099%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=ELDCbfLvxrB6FLwnsA6VyGlU5V3qpA2ImfPAbZnWyzI%3D&amp;reserved=0
-> > > but I'm getting the folowing errors:
-> > > 
-> > > [   16.690885] imx-pgc imx-pgc-domain.3: failed to power up ADB400
-> > > [   16.716839] imx-pgc imx-pgc-domain.3: failed to power up ADB400
-> > > [   16.730500] imx-pgc imx-pgc-domain.3: failed to power up ADB400
-> > > 
-> > > Lucas, any thoughts?
-> > > 
-> > > Maybe it's something related to 8MN.
-> > 
-> > The ADB is apparently clocked by one of the BLK_CTL clocks, so the ADB
-> > handshake ack will only work when the BLK_CTL clocks are enabled. So I
-> > guess the GPC driver should enable those clocks and assert the resets
-> > at the right time in the power-up sequencing. Unfortunately this means
-> > we can't properly put the BLK_CTL driver in the power-domain without
-> > having a cyclic dependency in the DT. I'm still thinking about how to
-> > solve this properly.
-> > 
-> 
-> I remember we had something similar in our internal tree with the
-> bus_blk_clk on 8MP, which was added by the media BLK_CTL. What I did was to
-> just drop the registration of that clock entirely. My rationale was that if
-> the clock is part of the BLK_CTL but also needed by the BLK_CTL to work,
-> I can leave it alone (that is, enabled by default) since when the PD will be
-> powered off the clock will gated too. I guess another option would be to 
-> mark it as critical, that way, it will never be disabled (will be left alone
-> by the clk_disable_unused too) but at the same time will be visible in the
-> clock hierarchy.
-> 
+From: Tom Rix <trix@redhat.com>
 
-Do ignore evrything I said about the bus_blk_ctl, that did work on our tree since
-the whole PD power on/off "magic" is done in TF-A.
+A semicolon is not needed after a switch statement.
 
-So the problem, as I understand it now, is the fact that the blk_ctl driver won't
-probe because it needs its PD, but the PD is not registered because the ADB400
-can't power up since it needs the bus_blk_ctl clock enabled, clock which is registered
-by the blk_ctl. 
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ drivers/clk/imx/clk-pll14xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Regards,
-> > Lucas
-> > 
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index aba36e4217d2..2b5ed86b9dbb 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -416,7 +416,7 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
+ 		       __func__, name);
+ 		kfree(pll);
+ 		return ERR_PTR(-EINVAL);
+-	};
++	}
+ 
+ 	pll->base = base;
+ 	pll->hw.init = &init;
+-- 
+2.18.1
+
