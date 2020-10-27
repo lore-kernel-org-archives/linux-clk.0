@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 661E7C2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 00:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD049C55178
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 00:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33BA02087C
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 00:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADEA521741
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Oct 2020 00:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603756885;
-	bh=PYSup8cJDclLG37QWwdOKGOB4WRiilxqiT29AB8MppQ=;
+	s=default; t=1603757473;
+	bh=5dw8bp377Q3VfyFt5ZaoKeAJ61WPvUdcSWlnw0Cs76Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U/HaEBrSqis24vNW/ZAfqzvP2WOm58PTxNoH49njrIhueTp5dORxkeiMvbyri0HgP
-	 kS2hR6ouu1ZIuRr787jqoMO39R4oFTB6VazquJP8XCD0+AWTOq9UZJH4zMoKVP+QR6
-	 26a91eDPsd3s7zjXZZn3+CGqerLwwdQxgysJa/a8=
+	b=VXhS0kr82IQE4YL6yecxVWhmWoTHOaIfobVDGmEAeRX8wGuyIZzDssZQwvMxe8WsU
+	 q3dV/0ov/Tcnbf9+5H7mtKpWiDqVRTIAcaTmoCEfjZJmxlNPCIu78fl96gmLb1/mPc
+	 b5pN6SBmoJt8CXY8oMQ7s7H69uPe2CwGHlAYeWys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437313AbgJ0ABT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:01:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36320 "EHLO mail.kernel.org"
+        id S2394880AbgJ0ALM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Oct 2020 20:11:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2411148AbgJZX43 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:56:29 -0400
+        id S2439251AbgJ0ALK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Oct 2020 20:11:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D29F820770;
-        Mon, 26 Oct 2020 23:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DFB7217A0;
+        Tue, 27 Oct 2020 00:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756588;
-        bh=PYSup8cJDclLG37QWwdOKGOB4WRiilxqiT29AB8MppQ=;
+        s=default; t=1603757470;
+        bh=5dw8bp377Q3VfyFt5ZaoKeAJ61WPvUdcSWlnw0Cs76Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZDvBsAlfU1tmDtgGXAA3Eju5Oe32xLJv1b97EcoM65oGKyLjm8n/7dk5Ac4kY/ObU
-         +KLrOXbGT8zdacB9/t8Ev1cpFHBvEnjqTMbkE193rEn8sI2rdUOYvnsBHG8izWZsS/
-         MYE1h0jtfXolSFc8SatpbY5dZgt+UTYJD4eagFdI=
+        b=LmMSWW4WqqIznygMLtHMy5EdUlGrgQG7BuxvnFR7UwQWd1nydB03dyWREBKQxge37
+         hdLg+5nIL13pVo3nKBdOOksB3QRZUZc8RscIcM0OPOss95s6VRanxF/C6Ub+wVHKkf
+         cTFLR5RKlltgWc4qdn9noKDSyw/iuj88pRNsecMA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tero Kristo <t-kristo@ti.com>, Dan Murphy <dmurphy@ti.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 60/80] clk: ti: clockdomain: fix static checker warning
-Date:   Mon, 26 Oct 2020 19:54:56 -0400
-Message-Id: <20201026235516.1025100-60-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 22/30] clk: ti: clockdomain: fix static checker warning
+Date:   Mon, 26 Oct 2020 20:10:36 -0400
+Message-Id: <20201027001044.1027349-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201026235516.1025100-1-sashal@kernel.org>
-References: <20201026235516.1025100-1-sashal@kernel.org>
+In-Reply-To: <20201027001044.1027349-1-sashal@kernel.org>
+References: <20201027001044.1027349-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,11 +74,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 423a99b9f10c7..8d0dea188a284 100644
+index 6cf9dd189a924..4e5e952380869 100644
 --- a/drivers/clk/ti/clockdomain.c
 +++ b/drivers/clk/ti/clockdomain.c
-@@ -146,10 +146,12 @@ static void __init of_ti_clockdomain_setup(struct device_node *node)
- 		if (!omap2_clk_is_hw_omap(clk_hw)) {
+@@ -124,10 +124,12 @@ static void __init of_ti_clockdomain_setup(struct device_node *node)
+ 		if (clk_hw_get_flags(clk_hw) & CLK_IS_BASIC) {
  			pr_warn("can't setup clkdm for basic clk %s\n",
  				__clk_get_name(clk));
 +			clk_put(clk);
