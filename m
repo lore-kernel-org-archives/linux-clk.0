@@ -2,129 +2,92 @@ Return-Path: <SRS0=O9me=ED=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EC5C4363A
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E0EC388F7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C72092470E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8351A20EDD
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603922566;
+	bh=pADFI+I4rTuP2uKARPn/R/jbLmiist+W1YMVm+62fvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jFRWatl1hkA0ozN3XFOsKp5mQBcPUWTCCQzWUXGxc3lDI/7tiqfZ0l7jcFQ2/NKjO
+	 YpGVce1rFkCYyw0O7V+JvNRFYxd6geEobTjHfWagkWAxy7JFGl5eqH1NPhGrRgZPlN
+	 oZaY6f40t011UuLf1I2MbVNKXd6O7EisOTrmXBGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbgJ1Vzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:55:45 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:58694 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728151AbgJ1Vzo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:55:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5EA442015B2;
-        Wed, 28 Oct 2020 12:15:46 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 50D412015AA;
-        Wed, 28 Oct 2020 12:15:46 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8155B2030E;
-        Wed, 28 Oct 2020 12:15:45 +0100 (CET)
-Date:   Wed, 28 Oct 2020 13:15:44 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: gate2: Fix the is_enabled op
-Message-ID: <20201028111544.xv3qmxrleehk6yz6@fsr-ub1664-175>
-References: <1603738248-8193-1-git-send-email-abel.vesa@nxp.com>
- <20201028082412.GU26805@pengutronix.de>
- <20201028095057.cuaxqqr4yzxvzwvp@fsr-ub1664-175>
- <20201028101552.GA26805@pengutronix.de>
+        id S1729558AbgJ1WCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:02:42 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:46545 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729557AbgJ1WCl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 18:02:41 -0400
+Received: by mail-ej1-f68.google.com with SMTP id t25so999278ejd.13;
+        Wed, 28 Oct 2020 15:02:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4gLV5jqZWEzx0kSjn0ZlymUAXJbYU1uMHL1QmYMs6LA=;
+        b=tOyvKkx5fXDVh0D91p75HxFMkGyqloOP+olWNATOeuM34+S65B6Tws9gmDMcZrIPUm
+         TupdtucY+YUg/kLIcAymQ/zvgQFCCCMN5z1qSxGxOWwAtuj4MhUDTTbYVKIJl+QMmfJj
+         ZUyfMHll0Wq86hWOzNNSMBJl7DbGZ/HutEn6h1EUgpQhq5AfaGoAQg2HDmi2QDu+K3ue
+         bF3Zo+diIrGmUbblTDD0VrMjHPVqWcP0JPITksBF02IvNGhXYN56M/cF5FLxWwdEEdqN
+         Jx/HonIGisKDmA5w4e4X0pH/WZbMUkqSNbvMJKpAeISEQCQAx67l+MgK9RRA17EOdZAK
+         4H/w==
+X-Gm-Message-State: AOAM532iKjfjtf4OP972YYSs7xD/g6l0Otn4kSsVj+XUf2Ryis3yZLWK
+        G1Cy0ARM7XswQaMVLbJNDxs=
+X-Google-Smtp-Source: ABdhPJzTVbBja1pgLqS76H5a7HJ4PpaZGt8w1wdce7Ox6yZdCWF/ZVkaaOZZrdWROtKTG3r7QsBafg==
+X-Received: by 2002:a17:906:c2d2:: with SMTP id ch18mr1159055ejb.446.1603922558697;
+        Wed, 28 Oct 2020 15:02:38 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id oz18sm411058ejb.55.2020.10.28.15.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 15:02:37 -0700 (PDT)
+Date:   Wed, 28 Oct 2020 23:02:35 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] soc: samsung: exynos-pmu: instantiate clkout driver
+ as MFD
+Message-ID: <20201028220235.GA271157@kozik-lap>
+References: <20201001165646.32279-1-krzk@kernel.org>
+ <20201001165646.32279-2-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201028101552.GA26805@pengutronix.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20201001165646.32279-2-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-10-28 11:15:52, Sascha Hauer wrote:
-> On Wed, Oct 28, 2020 at 11:50:57AM +0200, Abel Vesa wrote:
-> > On 20-10-28 09:24:12, Sascha Hauer wrote:
-> > > Hi Abel,
-> > > 
-> > > On Mon, Oct 26, 2020 at 08:50:48PM +0200, Abel Vesa wrote:
-> > > > The clock is considered to be enabled only if the controlling bits
-> > > > match the cgr_val mask. Also make sure the is_enabled returns the
-> > > > correct vaule by locking the access to the register.
-> > > > 
-> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > > Fixes: 1e54afe9fcfe ("clk: imx: gate2: Allow single bit gating clock")
-> > > > ---
-> > > >  drivers/clk/imx/clk-gate2.c | 60 ++++++++++++++++++++-------------------------
-> > > >  drivers/clk/imx/clk.h       |  8 ++----
-> > > >  2 files changed, 29 insertions(+), 39 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-> > > > index 7eed708..f320bd2b 100644
-> > > > --- a/drivers/clk/imx/clk-gate2.c
-> > > > +++ b/drivers/clk/imx/clk-gate2.c
-> > > > @@ -37,10 +37,22 @@ struct clk_gate2 {
-> > > >  
-> > > >  #define to_clk_gate2(_hw) container_of(_hw, struct clk_gate2, hw)
-> > > >  
-> > > > +static void clk_gate2_do_shared_clks(struct clk_hw *hw, bool enable)
-> > > > +{
-> > > > +	struct clk_gate2 *gate = to_clk_gate2(hw);
-> > > > +	u32 reg;
-> > > > +
-> > > > +	reg = readl(gate->reg);
-> > > > +	if (enable)
-> > > > +		reg |= gate->cgr_val << gate->bit_idx;
-> > > > +	else
-> > > > +		reg &= ~(gate->cgr_val << gate->bit_idx);
-> > > 
-> > > Shouldn't this be:
-> > > 
-> > > 	reg &= ~(3 << gate->bit_idx);
-> > > 	if (enable)
-> > > 		reg |= gate->cgr_val << gate->bit_idx;
-> > > 
-> > > At least that's how it was without this patch and that's how it makes
-> > > sense to me with cgr_val != 3.
-> > > 
-> > 
-> > Well, that's the actual problem. The value 3 forces all the clocks
-> > that register with this clock type to have 2 bits for controlling the gate.
-> > 
-> > My patch (though now I think I should split it into 2 separate patches) allows
-> > two HW gates to be controlled by as many bits necessary. For example, there
-> > could be multiple HW gates that are controled by the same bit. By passing
-> > the cgr_val when registering the clocks you can specify how many bits (as a mask)
-> > control all those HW gates that share their control bits.
+On Thu, Oct 01, 2020 at 06:56:45PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos clock output (clkout) driver uses same register address space
+> (Power Management Unit address space) as Exynos PMU driver and same set
+> of compatibles.  It was modeled as clock provider instantiated with
+> CLK_OF_DECLARE_DRIVE().
 > 
-> cgr_val is not a mask, it's a value that shall be written to the two
-> bits to enable the clock. cgr_val could also be 0b10, see imx_clk_gate2_cgr().
+> This however brings ordering problems and lack of probe deferral,
+> therefore clkout driver should be converted to a regular module and
+> instantiated as a child of PMU driver to be able to use existing
+> compatibles and address space.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Oh, I see your point now.
+Applied with all tags.
 
-Maybe we should add another member called cgr_mask. That should fix the issue.
+Best regards,
+Krzysztof
 
-> Sascha
-> 
-> -- 
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.pengutronix.de%2F&amp;data=04%7C01%7Cabel.vesa%40nxp.com%7C03a2a0c430384a43db0708d87b2a762c%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637394769581294045%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=HiJ25Kyi3TS0XJx24G2VExgTntmCT2eKFbzBUe6GBH0%3D&amp;reserved=0  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
