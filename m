@@ -2,211 +2,138 @@ Return-Path: <SRS0=O9me=ED=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E390BC4363A
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945C3C4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96C85207C4
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603927047;
-	bh=qkAXpSysgKo1NZ6R9MzhxEJKVMspafQ70cuRPVp+xG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EfanSUkyy59JivwzbossGQLOw8GGBdb3fFUwMiUv563bE/PaV+svaT+8EfHRPAx5n
-	 vciLxobtHulYOeA+baUmeHUuGN8ibGQVCgeN9/DFYzi6YJ+mfftrPRKJ6mdFUYY/JM
-	 FosL7ME0P13qtRyVtz4XBLj5qRUeehlEhVfpKSvQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3BBB220791
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:18:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Tp4mM3D0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388017AbgJ1XRW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:17:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46883 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728511AbgJ1XRV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 19:17:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n6so775616wrm.13;
-        Wed, 28 Oct 2020 16:17:19 -0700 (PDT)
+        id S2388185AbgJ1XSo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732512AbgJ1XSX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 19:18:23 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5372C0613D1;
+        Wed, 28 Oct 2020 16:18:23 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id x20so649712qkn.1;
+        Wed, 28 Oct 2020 16:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4MykbGw6bHee+sbWD2NGwMwnxeBN9iL5rF1OE9UjJ1Q=;
+        b=Tp4mM3D0AUMmouj4W6RXfvIIS810w5N6ZfCPO62M4OTOOqdefYTFMYQvkv8RZjTxbg
+         KAwVGVb9sPj2KNyn/uQFfuZFIpk3TCBmrRM/UUX++fbrobzL1xmClclUj417B+x7JZeD
+         zg0GOP0R5Nrw9atwCSZjMc4mbSbOk8lUN+0Ak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0DnG4LJjdv6mAxFeMJR8DGf+NctXJFLBf9GwLy+AxJQ=;
-        b=o8dt85FiopWcGhXhpt25kIrlJBkT7xuHrqLVBo2fDOCuGnm7LJbaKxbp04x0/TQKC4
-         8JWvvjn3IUu4FSy/iWT85nQz4dMXhSOPL8187t64GzS9u0HARKocB4kGRZg5iokCfPPn
-         XQCCYmL0jZDdTNlWO23UEQM6ORn2hvyP66lc68+t5S9djlRhfphA2VHhCvDmCXvzoOmC
-         ZYMcNDVw0ZJw5A9B874xObT0KoE1tmf/YRaXl/6jRJrPMxcCaiPKaQzAyg4LJNOi6lNB
-         5ObO+rPjJqsZzC1BfcgXNsszs9e/w1f3lpepPjpmLbt6CjfEOC01A+JvQEredxLI3EHl
-         ctGw==
-X-Gm-Message-State: AOAM533RFgqbzdCd0F79yN4y6YolCk/UKzf8IDS2E9Mn/ntUkax3KcOe
-        43033a5xQlyAeF2N/IWaair532W+wEtnzWWE
-X-Google-Smtp-Source: ABdhPJzfpLMuUvtJrSFwIFWjAp/ycvj6HKNRVF8qRIcs0RQFe6tX1Ju0ziEFEpJPgFr+LJbS453aoA==
-X-Received: by 2002:a17:907:204c:: with SMTP id pg12mr6158094ejb.464.1603874307610;
-        Wed, 28 Oct 2020 01:38:27 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id v6sm2525073ejj.112.2020.10.28.01.38.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 01:38:26 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 09:38:24 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: media: imx258: add bindings for
- IMX258 sensor
-Message-ID: <20201028083824.GA32155@kozik-lap>
-References: <20201019170247.92002-1-krzk@kernel.org>
- <20201020103833.GT13341@paasikivi.fi.intel.com>
- <CAJKOXPdKHCQikYDLKDS2Y3NVyCjMYYH1pcxgaMoYgOK19vQCrQ@mail.gmail.com>
- <20201020120058.GU13341@paasikivi.fi.intel.com>
- <20201020122621.GA126891@kozik-lap>
- <20201020124654.GX13341@paasikivi.fi.intel.com>
- <20201020125852.GA128323@kozik-lap>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4MykbGw6bHee+sbWD2NGwMwnxeBN9iL5rF1OE9UjJ1Q=;
+        b=ck5v4UJrQ5jSzCpDrDu319IfS2giBoHdjdP7/BYhdksvyyis6klJPyxRf03tNoOL5W
+         mexfWtojJ41qOQaibFUFPuamfFOkIMMr3wDzbq2g7Muad15nJyv+rQqTI0F8LTu8DdT1
+         1fThSy82iOGVrVaEQiBBLEYdhu5VlxocaYhAJ0rIKcEBSbgYkiFOFbDULJK0EimSDQ4C
+         Z/TMm2AXRz9X/S1MujQstEDJtBlup26F1viDkCQUMtQMLQMbTXHYXZWlzGu++ws4hUcO
+         B1Vkgbqq27F5WCFOhQ6UE8FEDXgbcAs5D20GxiSIKofEX2XxpKVOAH8/S/RBksZQEaLW
+         aB1Q==
+X-Gm-Message-State: AOAM531T4Qy5fdKtyeZWs2TVzKWPMl/gKyN2Mkz+/BMUn2r93fP6oo8Q
+        zOSfjzPHSFNue+oTVPrV5OjOChaLeyOWBZCLUMC7nxMDCmYAzw==
+X-Google-Smtp-Source: ABdhPJwwjgO8IqC8w+C79BxSvAYXYDw1GUHfrT/SZUU3zpmx1+2t9DpDIW5G3LtpRjVBq3ypIaEi6EQ8SBJWcM+Xai0=
+X-Received: by 2002:a05:620a:1303:: with SMTP id o3mr5769587qkj.66.1603859902807;
+ Tue, 27 Oct 2020 21:38:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201020125852.GA128323@kozik-lap>
+References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
+ <20200928070108.14040-2-ryan_chen@aspeedtech.com> <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
+ <CACPK8Xe-_hTey7hTJjG2-EcDsTN0qOw3bWBcrZZohEK3QOJuvg@mail.gmail.com> <160269577311.884498.8429245140509326318@swboyd.mtv.corp.google.com>
+In-Reply-To: <160269577311.884498.8429245140509326318@swboyd.mtv.corp.google.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 28 Oct 2020 04:38:10 +0000
+Message-ID: <CACPK8XeGRq2XeJAjdQ=pT1oKk7-wk1==4Byfc50_6+-UijU12w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        BMC-SW <bmc-sw@aspeedtech.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 20, 2020 at 02:58:52PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Oct 20, 2020 at 03:46:54PM +0300, Sakari Ailus wrote:
-> > On Tue, Oct 20, 2020 at 02:26:21PM +0200, Krzysztof Kozlowski wrote:
-> > > On Tue, Oct 20, 2020 at 03:00:58PM +0300, Sakari Ailus wrote:
-> > > > Hi Krzysztof,
-> > > > 
-> > > > On Tue, Oct 20, 2020 at 12:54:09PM +0200, Krzysztof Kozlowski wrote:
-> > > > > On Tue, 20 Oct 2020 at 12:38, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > > > > >
-> > > > > > Hi Krzysztof,
-> > > > > >
-> > > > > > On Mon, Oct 19, 2020 at 07:02:44PM +0200, Krzysztof Kozlowski wrote:
-> > > > > > > Add bindings for the IMX258 camera sensor.  The bindings, just like the
-> > > > > > > driver, are quite limited, e.g. do not support regulator supplies.
-> > > > > > >
-> > > > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > > >
-> > > > > > > ---
-> > > > > > >
-> > > > > > > Changes since v4:
-> > > > > > > 1. Add clock-lanes,
-> > > > > > > 2. Add Rob's review,
-> > > > > > > 3. Add one more example and extend existing one,
-> > > > > > > 4. Add common clock properties (assigned-*).
-> > > > > >
-> > > > > > Using the assigned-* clock properties may be workable for this driver at
-> > > > > > the moment. But using these properties does not guarantee the external
-> > > > > > clock frequency intended to be used on the hardware.
-> > > > > 
-> > > > > It guarantees it. The clock frequency will be as expected (except if
-> > > > > someone misconfigures the DTS).
-> > > > 
-> > > > Is that guaranteed?
-> > > > 
-> > > > I'm not saying no to the approach, but if we change how camera sensor DT
-> > > > bindings are defined, I'd prefer an informed decision is made on the
-> > > > matter.
-> > > > 
-> > > > > 
-> > > > > > Using other
-> > > > > > frequencies *is not* expected to work. That applies to this driver as well.
-> > > > > 
-> > > > > This is the binding which is HW description. According to HW datasheet
-> > > > > other frequencies from described range are accepted and expected to
-> > > > > work.
-> > > > 
-> > > > As per datasheet, yes, different external clock frequencies can be used.
-> > > > But the link frequency is still not independent of the external clock
-> > > > frequency.
-> > > > 
-> > > > The properties of the sensor's PLL tree determines what can be achieved
-> > > > given a certain external clock frequency. So picking a wrong external clock
-> > > > frequency quite possibly means that none of the designated link frequencies
-> > > > are available, rendering the sensor inoperable.
-> > > 
-> > > The driver then controls the HW and knows exactly what is needed. If
-> > > link frequency (which has its own DT property) requires some clock
-> > > frequency, the driver will configure the clock to that value. The same
-> > 
-> > Well it doesn't if it doesn't get that information from DT.
-> 
-> It will get it - via clk_get_rate(). You do not need DT for this.
-> 
-> > The frequency is usually a range, and looking at these bindings, it's from
-> > 6 MHz to 27 MHz. That'd be a lot of frequencies for a driver to try.
-> 
-> It does not have to try all of them. Assuming link frequency is fixed,
-> just use any matching (or hard-coded) input clock frequency. Since the
-> input clock frequency most likely will be set with assigned-clock-rates,
-> there will be no job to do for the driver at all. Unless the driver
-> wants to do something more, of course.
-> 
-> > 
-> > > going other direction. Driver has the knowledge about both its input
-> > > clock and link frequency, therefore it can make the best decision.
-> > 
-> > Again you're assuming a particular driver implementation.
-> 
-> Actually not, I am talking about bindings as far away from the driver
-> implementation as possible.  This is why some specific frequency *is
-> not* part of the bindings.
-> 
-> > 
-> > Typically only a few frequencies are really available on platforms, so a in
-> > practice a driver would not be able to get any requested frequency. I
-> > wouldn't start hard-coding every possible frequency to camera sensor
-> > drivers
-> 
-> If the driver cannot get requested frequency which it apparently
-> requires, there is nothing more to do. It's broken HW implementation.
-> The input clock must be matching requirements, regardless of what
-> property you put in DT.  You can add "clock-frequency" property, you can
-> even add "really-i-require-clock-frequency" but if the real HW input
-> clock does not have, it won't work.
-> 
-> IOW, adding "clock-frequency" property does not change the reality - the
-> board (HW) must provide given frequency so the entire system works.
-> 
-> > 
-> > > > > > This, instead of the clock-frequency property, effectively removes the
-> > > > > > ability to set the correct frequency from the driver, at least with current
-> > > > > > set of the used APIs.
-> > > > > 
-> > > > > It seems you confuse DT bindings with some specific driver
-> > > > > implementation. Bindings do not describe the driver behavior but the
-> > > > > HW. The ability to set the correct frequency from the driver is not
-> > > > > removed. It was never part of the bindings and never should. It is
-> > > > > part of the driver.
-> > > > > 
-> > > > > >
-> > > > > > I suppose you could add a function to set the assigned clock frequency and
-> > > > > > keep it, just as clk_set_rate_exclusive does?
-> > > 
-> > > I did not reply to this comment, so let me know. Of course, one could
-> > > add such functions. It's not a job for DT bindings, though.
-> > 
-> > I'm not suggesting to add it to DT binding patch. What I'm saying that with
-> > this approach is looks like it may well be needed.
-> 
-> New properties can always be added to DT. However existing properties
-> cannot be removed. Their meaning or values cannot be changed.
+Thanks for the response Stephen. Sorry it's taken me a while to get back to you.
 
-Any more comments on the bindings or the patchset?
+On Wed, 14 Oct 2020 at 17:16, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Joel Stanley (2020-10-13 22:28:00)
+> > On Wed, 14 Oct 2020 at 02:50, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Ryan Chen (2020-09-28 00:01:08)
+> > > > In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2 are
+> > > > default for Host SuperIO UART device, eSPI clk for Host eSPI bus access
+> > > > eSPI slave channel, those clks can't be disable should keep default,
+> > > > otherwise will affect Host side access SuperIO and SPI slave device.
+> > > >
+> > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > > ---
+> > >
+> > > Is there resolution on this thread?
+> >
+> > Not yet.
+> >
+> > We have a system where the BMC (management controller) controls some
+> > clocks, but the peripherals that it's clocking are outside the BMC's
+> > control. In this case, the host processor us using some UARTs and what
+> > not independent of any code running on the BMC.
+> >
+> > Ryan wants to have them marked as critical so the BMC never powers them down.
+> >
+> > However, there are systems that don't use this part of the soc, so for
+> > those implementations they are not critical and Linux on the BMC can
+> > turn them off.
+> >
+> > Do you have any thoughts? Has anyone solved a similar problem already?
+> >
+>
+> Is this critical clocks in DT? Where we want to have different DT for
+> different device configurations to indicate that some clks should be
+> marked critical so they're never turned off and other times they aren't
+> so they're turned off?
 
-Best regards,
-Krzysztof
+Spot on.
 
+> It also sounds sort of like the protected-clocks binding. Where you
+> don't want to touch certain clks depending on the usage configuration of
+> the SoC. There is a patch to make that generic that I haven't applied
+> because it looks wrong at first glance[1].
+
+That binding is exactly what I had in mind. I wasn't aware of it.
+
+The drawbacks outlined in the commit message do sound concerning. I
+take it we could avoid those drawbacks by having a driver-specific
+implementation of protected-clocks, like qcom does?
+
+> Maybe not registering those
+> clks to the framework on the configuration that Ryan has is good enough?
+
+I didn't quite follow here. Did you mean with protected-clocks, or
+using a different mechanism?
+
+Cheers,
+
+Joel
+
+>
+> [1] https://lore.kernel.org/r/20200903040015.5627-2-samuel@sholland.org
