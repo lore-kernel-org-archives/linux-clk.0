@@ -2,107 +2,150 @@ Return-Path: <SRS0=XeJu=EE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF42C55179
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 00:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2593C388F7
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 01:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2342220809
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 00:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6013420796
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 01:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aD2Q4zyG"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="II7y2sOO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403866AbgJ2A67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
+        id S1728159AbgJ1WEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731592AbgJ2A66 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 20:58:58 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F65CC0613CF;
-        Wed, 28 Oct 2020 17:58:58 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id y14so900103pfp.13;
-        Wed, 28 Oct 2020 17:58:58 -0700 (PDT)
+        with ESMTP id S1728163AbgJ1WBr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 18:01:47 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED12C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 15:01:48 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id n5so1032918ile.7
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 15:01:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QXZW3YRniP2oFz8GgSPBsCUD7y+Lc+Kxo6AM/U3WDKg=;
-        b=aD2Q4zyGY7pl2vRzW3Lqto70bdEXz+rEqmitWIloR2NIklBwD1IqzezdsDGc/m/uOt
-         AUx7OLTMusO/FlXpctRhC2xZZ0KyXAMpMjkOWUOz38Xz8mMSLmzuk4JrkEFoClgdFD8r
-         9uyFPaoLx/4F+dWqyoMqsLAsHWRvx6LuMJqUXAo1No2MxUOwYvE4DXiYO5zVoi5WEVV6
-         aGytRsoGuXYjFkAPKcnXhKNmf2woEdPWqn3YjhVVJLLf6V63Oxgf3QzQfX/BdTicjvcL
-         qPXSO++B2LGlW3IxRzb/Zm2bsobLGM8HskDLOzyjBUE9QFTvQKn2tWm+buVYy+aL1KmB
-         9hSg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z2nv8ieGjS37fi1b03zMseQoHKsRO+D/JXqI8/WM/lg=;
+        b=II7y2sOO4VBMYCA8hvox5v3rLsbjjK+ou6Wgnt6+3iHcpCSwOMEyDXIgGkXoT99fbl
+         L4S+W94x43NMy8AhMMFEFxUbPf6VxLU6vVJ4V/dnEPIY3iyrqijWlNa6gtC6UsAt1F4y
+         rFgaskObCDEblL5aTglXYq15v9S1R69bZWSOSlREpM6g8neG4WGYk3JPzGzs+EXjG/Gb
+         NH/X3uC5QaXqb1bsS3s27HpvpOkfyfBCiHKYKJ4yi9AjOteWgzlPxAIFbRslJvXinP0O
+         9U2uOEo/TpsTI4M/2a6VrRGYVOxx1TD4hfaW+zQ8N/MayGM7tDgmoUx/Zyrr5yoMShl5
+         WkfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QXZW3YRniP2oFz8GgSPBsCUD7y+Lc+Kxo6AM/U3WDKg=;
-        b=TCrLBhvgO63COvG7UFMAZ8QseLazNNzBj7C9UpusHirk6RSgl61DdNK9n34UK8qVfv
-         2ry26YVvGXcyNUhN5TWdEXfoFktq3YDlhdiZivq/E+zkdB6CdOIeC+j5b8Tabro9sl6u
-         ru7pppOjLW59ML9p5AK/lqH2M9tS/aT9lguuLGGcDUXWA+nebo4tWhuraWMnORAiDOUy
-         bEs2GH8TeNg80Wx5htPzJzKY5Cw+WhJU/AT0r6e39tESW9j2Jk49TkytuTU+r8hkHdpN
-         JS/gjAp0fXF17327DEd+9l+QUyGOEG5nZl2tEVQGAj75tK4uD8gTXoP2bINEjnKmeBVx
-         C02w==
-X-Gm-Message-State: AOAM533jvndUxifZ9Ec6Pmrq3qXse7YnyVIMOnRl4UGuHjeZ64QE0b27
-        P3w0iqII90tIDT9u+1Tj7vc=
-X-Google-Smtp-Source: ABdhPJwHYHtZDoWjTOFCCY0oE5fBhRiAfCMsITm7seMXgOmTo6kV1tReuWLw058ICrVo9olQUusKUw==
-X-Received: by 2002:a17:90a:c48:: with SMTP id u8mr1526949pje.121.1603933137689;
-        Wed, 28 Oct 2020 17:58:57 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id d145sm819343pfd.136.2020.10.28.17.58.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 17:58:57 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jonathanh@nvidia.com, thierry.reding@gmail.com, sboyd@kernel.org,
-        mturquette@baylibre.com, pgaikwad@nvidia.com,
-        pdeschrijver@nvidia.com
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: tegra: Do not return 0 on failure
-Date:   Wed, 28 Oct 2020 17:48:20 -0700
-Message-Id: <20201029004820.9062-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z2nv8ieGjS37fi1b03zMseQoHKsRO+D/JXqI8/WM/lg=;
+        b=uBWzVKc8pooTsLs/xXN0lKYvggj36REEzkC3pGFuRNx7rBb+p9gInrWyF9SLNvC6+k
+         GkS9H+MxrsBo+Z8NUEFAXrOvkjNnWgjbMpyBdpUnGwydO4UZYsYxgkfjEsCT1z5hRpIl
+         gmIyAQIORmr+XdyIx6ExkTW6i43psPoXR2k9swTQJUH6Sa5Civ2WZ4XlXew8hy8nPPc+
+         1gXFBBYJSrRWv+KyIrvBH4Ee+bClAUzSL+lnN9bF5haiK/XGutuSJhAZXJdPyk0bqB0O
+         6M42Fj2ZWuciGJLkrnj/oBAXuGTxPbrYOjcKPmHXkPfKZZr3UcrPSfAb6W8LSjmnNE6p
+         z69Q==
+X-Gm-Message-State: AOAM532dyPQ8Kc85lIqrbohHxt0fEH3nOph2/WIB5iE8H5iEipWXDYe5
+        NNomLbfwKqfd5u1oD/GQrQv/WwZqNxMyOiMJ/rWSEEec7Xc=
+X-Google-Smtp-Source: ABdhPJz9PfM0Rg/BH/F/zTz+sEmqFR7fWaO1laj/CwdbRYwjhOTCkMQkThF45nzYh2RLYxT9cR9T15lxpMj5YrhhpnU=
+X-Received: by 2002:a92:d8cb:: with SMTP id l11mr5348907ilo.88.1603880868118;
+ Wed, 28 Oct 2020 03:27:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <1603371365-30863-1-git-send-email-weiyi.lu@mediatek.com> <1603371365-30863-11-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1603371365-30863-11-git-send-email-weiyi.lu@mediatek.com>
+From:   Fabien Parent <fparent@baylibre.com>
+Date:   Wed, 28 Oct 2020 11:27:36 +0100
+Message-ID: <CAOwMV_xh0=D+sEDZM4AOqid6XtGCenyjdzm=Go77DBaiuwe1Lg@mail.gmail.com>
+Subject: Re: [PATCH 10/12] clk: mediatek: Clean up the pll_en_bit from en_mask
+ on MT8183
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        srv_heupstream@mediatek.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Return values from read_dt_param() will be either TRUE (1) or
-FALSE (0), while dfll_fetch_pwm_params() returns 0 on success
-or an ERR code on failure.
+Hi Weiyi,
 
-So this patch fixes the bug of returning 0 on failure.
+The clock driver for MT8167 has been merged in v5.10-rc1. Can you also
+apply the change to that driver.
+Thank you
 
-Fixes: 36541f0499fe ("clk: tegra: dfll: support PWM regulator control")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/clk/tegra/clk-dfll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Fabien
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index cfbaa90c7adb..a5f526bb0483 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1856,13 +1856,13 @@ static int dfll_fetch_pwm_params(struct tegra_dfll *td)
- 			    &td->reg_init_uV);
- 	if (!ret) {
- 		dev_err(td->dev, "couldn't get initialized voltage\n");
--		return ret;
-+		return -EINVAL;
- 	}
- 
- 	ret = read_dt_param(td, "nvidia,pwm-period-nanoseconds", &pwm_period);
- 	if (!ret) {
- 		dev_err(td->dev, "couldn't get PWM period\n");
--		return ret;
-+		return -EINVAL;
- 	}
- 	td->pwm_rate = (NSEC_PER_SEC / pwm_period) * (MAX_DFLL_VOLTAGES - 1);
- 
--- 
-2.17.1
-
+On Fri, Oct 23, 2020 at 2:44 AM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+>
+> remove pll_en_bit(bit0) from en_mask to make en_mask a pure en_mask
+> that only used for pll dividers.
+>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-mt8183.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+> index 5046852..608108c 100644
+> --- a/drivers/clk/mediatek/clk-mt8183.c
+> +++ b/drivers/clk/mediatek/clk-mt8183.c
+> @@ -1121,34 +1121,34 @@
+>  };
+>
+>  static const struct mtk_pll_data plls[] = {
+> -       PLL_B(CLK_APMIXED_ARMPLL_LL, "armpll_ll", 0x0200, 0x020C, 0x00000001,
+> +       PLL_B(CLK_APMIXED_ARMPLL_LL, "armpll_ll", 0x0200, 0x020C, 0,
+>                 HAVE_RST_BAR | PLL_AO, BIT(24), 22, 8, 0x0204, 24, 0x0, 0x0, 0,
+>                 0x0204, 0, 0, armpll_div_table),
+> -       PLL_B(CLK_APMIXED_ARMPLL_L, "armpll_l", 0x0210, 0x021C, 0x00000001,
+> +       PLL_B(CLK_APMIXED_ARMPLL_L, "armpll_l", 0x0210, 0x021C, 0,
+>                 HAVE_RST_BAR | PLL_AO, BIT(24), 22, 8, 0x0214, 24, 0x0, 0x0, 0,
+>                 0x0214, 0, 0, armpll_div_table),
+> -       PLL(CLK_APMIXED_CCIPLL, "ccipll", 0x0290, 0x029C, 0x00000001,
+> +       PLL(CLK_APMIXED_CCIPLL, "ccipll", 0x0290, 0x029C, 0,
+>                 HAVE_RST_BAR | PLL_AO, BIT(24), 22, 8, 0x0294, 24, 0x0, 0x0, 0,
+>                 0x0294, 0, 0),
+> -       PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0220, 0x022C, 0x00000001,
+> +       PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0220, 0x022C, 0,
+>                 HAVE_RST_BAR, BIT(24), 22, 8, 0x0224, 24, 0x0, 0x0, 0,
+>                 0x0224, 0, 0),
+> -       PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x0230, 0x023C, 0x00000001,
+> +       PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x0230, 0x023C, 0,
+>                 HAVE_RST_BAR, BIT(24), 22, 8, 0x0234, 24, 0x0, 0x0, 0,
+>                 0x0234, 0, 0),
+> -       PLL_B(CLK_APMIXED_MFGPLL, "mfgpll", 0x0240, 0x024C, 0x00000001,
+> +       PLL_B(CLK_APMIXED_MFGPLL, "mfgpll", 0x0240, 0x024C, 0,
+>                 0, 0, 22, 8, 0x0244, 24, 0x0, 0x0, 0, 0x0244, 0, 0,
+>                 mfgpll_div_table),
+> -       PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x0250, 0x025C, 0x00000001,
+> +       PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x0250, 0x025C, 0,
+>                 0, 0, 22, 8, 0x0254, 24, 0x0, 0x0, 0, 0x0254, 0, 0),
+> -       PLL(CLK_APMIXED_TVDPLL, "tvdpll", 0x0260, 0x026C, 0x00000001,
+> +       PLL(CLK_APMIXED_TVDPLL, "tvdpll", 0x0260, 0x026C, 0,
+>                 0, 0, 22, 8, 0x0264, 24, 0x0, 0x0, 0, 0x0264, 0, 0),
+> -       PLL(CLK_APMIXED_MMPLL, "mmpll", 0x0270, 0x027C, 0x00000001,
+> +       PLL(CLK_APMIXED_MMPLL, "mmpll", 0x0270, 0x027C, 0,
+>                 HAVE_RST_BAR, BIT(23), 22, 8, 0x0274, 24, 0x0, 0x0, 0,
+>                 0x0274, 0, 0),
+> -       PLL(CLK_APMIXED_APLL1, "apll1", 0x02A0, 0x02B0, 0x00000001,
+> +       PLL(CLK_APMIXED_APLL1, "apll1", 0x02A0, 0x02B0, 0,
+>                 0, 0, 32, 8, 0x02A0, 1, 0x02A8, 0x0014, 0, 0x02A4, 0, 0x02A0),
+> -       PLL(CLK_APMIXED_APLL2, "apll2", 0x02b4, 0x02c4, 0x00000001,
+> +       PLL(CLK_APMIXED_APLL2, "apll2", 0x02b4, 0x02c4, 0,
+>                 0, 0, 32, 8, 0x02B4, 1, 0x02BC, 0x0014, 1, 0x02B8, 0, 0x02B4),
+>  };
+>
+> --
+> 1.8.1.1.dirty
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
