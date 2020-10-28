@@ -5,445 +5,279 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E96BC388F7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8391AC4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E623246CD
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 316D42245A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 21:51:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="T4akp1ad"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BWA0y3lx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725446AbgJ1Vqw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:46:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48124 "EHLO
+        id S1728124AbgJ1VvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 17:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbgJ1Vqs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 17:46:48 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35EDEC0613CF
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 14:46:48 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id c72so1112708oig.9
-        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 14:46:48 -0700 (PDT)
+        with ESMTP id S1728152AbgJ1VvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 17:51:13 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE1B1C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 14:51:12 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id x1so1099068oic.13
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 14:51:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N1e+BCUO8+mC+KGj3wF6VbxXngF455cwAyIY2MXIsus=;
-        b=T4akp1adQjfEMeMUkRQLY2gIoJxbAqURtyQkMnoZfCD/A2ry20rAQC0MDR1mw/5eMn
-         AccPBVtonvLQBk3lGl43lz8z81JX091UHLJlF+mc/ifyPI8eTU0Z6+6jFh6Z22eHwe8r
-         RH8lRbc4rbm+pRSW14ipcj+IFRNGJGI51n4ew=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=CgWxSUbYLOGZZyY2g+rM9bDDaFkZNULbUUBKlJxmBF4=;
+        b=BWA0y3lxxjF6XwFU8l7c72d9ThTde95ktr6lT8LYhOc94tqjJLwqfz43M9aH1U0C0p
+         5HzThdNoxcQKe3xgTLi+bzvsG6ZPDQXXh5DGv+Q3I8xT/XrTkD6PwljP9jf23mRl+pST
+         YwLAes/LUTDbfIEBEUB4lZA99cbcGm1rgcdhA1cWnpPs3/wxvEGSG1WRpPhQsBFLoioc
+         JN1UgdJEUnH7y1ufQ/34bkjxsBegnvby8mgvuXIZBXlzS5zkchVkXhQG8bqYVPy7vfuh
+         Qwdfe1qbfo6gldSYpOIdZP9TkceK2C6oHLZBlzaga6h5cspqhnd3X2g08en9eeoAfbli
+         mgxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N1e+BCUO8+mC+KGj3wF6VbxXngF455cwAyIY2MXIsus=;
-        b=bnjBM2b/iBFU7SpOl2ea3Ye5uqZ3tV6Damaxt8hMVuyuoVD9TrfExar90WY8Rpiw1a
-         /G2bofkvOJXyuN3U1K2rayeQhnXk1bSI4UnkNQ30eK+wRHeTvhGP7zTlrGWXNd3dGfzF
-         JFn1hzbl4jLtG4+wzoQYDxd2sDJl0R6Bk/tDUgPHQ5Lw6UPyfendpnF9OmvRtU4Il05g
-         pm58qFTEmMz/dEUo04ZFDqRoWS95alIs/BJKr5VJceCDAkCiYAHVLEHw+eLlzd/UXFyM
-         uffLhdrnrEeln9cpUij/wwpwPkZqKT28yNb67OauR1Qob9PdRk9FehTgaV9IMzLVV3E/
-         MeMQ==
-X-Gm-Message-State: AOAM532zdzroBMQB56LWkI8udn81m3vnbIBrO/2dV7I4IxF7lfYxA3Zs
-        HJ38KvSYHOop2c9hu4154a88pZMPCYh4WQ==
-X-Google-Smtp-Source: ABdhPJwnjQTcWIA/6CuB2hDSWT2aMZRnBt3BMZjtD+24pK9KNRbtUAqRrBQdIkPWLNxDdPMhYOmzkA==
-X-Received: by 2002:a17:90a:14a4:: with SMTP id k33mr6299169pja.236.1603885400385;
-        Wed, 28 Oct 2020 04:43:20 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:c809:c7a4:2d09:2940:d772:8d5])
-        by smtp.gmail.com with ESMTPSA id 10sm5350214pjt.50.2020.10.28.04.43.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=CgWxSUbYLOGZZyY2g+rM9bDDaFkZNULbUUBKlJxmBF4=;
+        b=iEFzAjvpZKym355cGvI3aETCjGZ43bnKSH6fSuQavy9Jd0rQc6wzeCG9l5r/hZ5aiz
+         d09X7ZgNOfywJhL0oBjp2PS29cFsU9C7cuRAhGoRw8HIpzvI5n8QAFvc4l7bXSlHbzcl
+         AXMjsHzmDot+jUHg/7YBUhUZ8vMH4eJ+E3C5HnCbekwUwInhXxL9dQWxdBviN7e0Psy6
+         ObnKqsbEycoeDqBZLDKcreYEtH995GBLBOfBB9BDQZbfXmvU/yK3ZnH78pxpkW+01Z+o
+         2W9PUB8OCiALwMK+lq/07fJaW0HkKsIFValbCvz7FGF8qFgVIREpA7/56pVo8nfyNhQA
+         dFXA==
+X-Gm-Message-State: AOAM530ekBVWJKgjCyufOnIW+ghi/hI70O7kCgZEROdax1jUxMtRcGMe
+        4bgrsTLSlJyDcdNiz3pllH12fRIN8RDv4MU=
+X-Google-Smtp-Source: ABdhPJyJvwOrj6+Bei13dr1n3rIXvqqyum8tzbnrcvtqSWpkM1AC5gxQkx3Q5HG+U8owvfpMK7cXHQ==
+X-Received: by 2002:a17:90b:997:: with SMTP id bl23mr5650241pjb.140.1603870984211;
+        Wed, 28 Oct 2020 00:43:04 -0700 (PDT)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id e7sm4289579pgj.19.2020.10.28.00.43.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 04:43:19 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Kever Yang <kever.yang@rock-chips.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2] clk: rockchip: Limit input rate for fractional approximation
-Date:   Wed, 28 Oct 2020 17:12:59 +0530
-Message-Id: <20201028114259.219698-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 28 Oct 2020 00:43:03 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: clock: Add SDX55 GCC clock bindings
+Date:   Wed, 28 Oct 2020 13:12:29 +0530
+Message-Id: <20201028074232.22922-2-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
+References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fractional approximation in some rockchip families can be generated
-based on the fractional divider and the input clock frequency of
-fractional divider should be less than a specified value.
-.i.e:
-            |--\
----[GPLL]---|   \                                      |--\
----[CPLL]---|mux|--[GATE]--[DIV]-----------------------|   \
----[NPLL]---|   /                |                     |mux|--[GATE]--
-            |--/                 |--[GATE]--[FRACDIV]--|   /
-                                                       |--/
+From: Vinod Koul <vkoul@kernel.org>
 
-The FRACDIV frequency is designed to be only 300M(Different SOC
-implementations are different).But the GPLL or CPLL may be 1200M.
-Must be added to limit to ensure that the design is not exceeded.
+Add device tree bindings for global clock controller on SDX55 SoCs.
 
-This patch is trying to support this fractional approximation on
-PX30 platform with input limit rate of 600MHz.
-
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
-Changes for v2:
-- v2 version patch from previous patch
-https://patchwork.kernel.org/project/linux-arm-kernel/patch/20200831161436.134186-1-jagan@amarulasolutions.com/
-- support input limit rate for frac approx.
+ .../bindings/clock/qcom,gcc-sdx55.yaml        |  71 +++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdx55.h    | 112 ++++++++++++++++++
+ 2 files changed, 183 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx55.h
 
- drivers/clk/rockchip/clk-px30.c | 69 +++++++++++++++++----------------
- drivers/clk/rockchip/clk.c      | 31 ++++++++++++---
- drivers/clk/rockchip/clk.h      | 21 ++++++++++
- include/linux/clk-provider.h    |  2 +
- 4 files changed, 84 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
-index 6fb9c98b7d24..34e4c02d3cb1 100644
---- a/drivers/clk/rockchip/clk-px30.c
-+++ b/drivers/clk/rockchip/clk-px30.c
-@@ -13,6 +13,7 @@
- #include "clk.h"
- 
- #define PX30_GRF_SOC_STATUS0		0x480
-+#define PX30_FRAC_CLK_LIMIT		600000000
- 
- enum px30_plls {
- 	apll, dpll, cpll, npll, apll_b_h, apll_b_l,
-@@ -421,19 +422,19 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(0, "dclk_vopb_src", mux_cpll_npll_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
- 			PX30_CLKSEL_CON(5), 11, 1, MFLAGS, 0, 8, DFLAGS,
- 			PX30_CLKGATE_CON(2), 2, GFLAGS),
--	COMPOSITE_FRACMUX(0, "dclk_vopb_frac", "dclk_vopb_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "dclk_vopb_frac", "dclk_vopb_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(6), 0,
- 			PX30_CLKGATE_CON(2), 3, GFLAGS,
--			&px30_dclk_vopb_fracmux),
-+			&px30_dclk_vopb_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(DCLK_VOPB, "dclk_vopb", "dclk_vopb_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(2), 4, GFLAGS),
- 	COMPOSITE(0, "dclk_vopl_src", mux_npll_cpll_p, 0,
- 			PX30_CLKSEL_CON(8), 11, 1, MFLAGS, 0, 8, DFLAGS,
- 			PX30_CLKGATE_CON(2), 6, GFLAGS),
--	COMPOSITE_FRACMUX(0, "dclk_vopl_frac", "dclk_vopl_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "dclk_vopl_frac", "dclk_vopl_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(9), 0,
- 			PX30_CLKGATE_CON(2), 7, GFLAGS,
--			&px30_dclk_vopl_fracmux),
-+			&px30_dclk_vopl_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(DCLK_VOPL, "dclk_vopl", "dclk_vopl_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(2), 8, GFLAGS),
- 
-@@ -588,20 +589,20 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(0, "clk_pdm_src", mux_gpll_xin24m_npll_p, 0,
- 			PX30_CLKSEL_CON(26), 8, 2, MFLAGS, 0, 7, DFLAGS,
- 			PX30_CLKGATE_CON(9), 9, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_pdm_frac", "clk_pdm_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_pdm_frac", "clk_pdm_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(27), 0,
- 			PX30_CLKGATE_CON(9), 10, GFLAGS,
--			&px30_pdm_fracmux),
-+			&px30_pdm_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_PDM, "clk_pdm", "clk_pdm_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(9), 11, GFLAGS),
- 
- 	COMPOSITE(0, "clk_i2s0_tx_src", mux_gpll_npll_p, 0,
- 			PX30_CLKSEL_CON(28), 8, 1, MFLAGS, 0, 7, DFLAGS,
- 			PX30_CLKGATE_CON(9), 12, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_i2s0_tx_frac", "clk_i2s0_tx_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_i2s0_tx_frac", "clk_i2s0_tx_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(29), 0,
- 			PX30_CLKGATE_CON(9), 13, GFLAGS,
--			&px30_i2s0_tx_fracmux),
-+			&px30_i2s0_tx_fracmux, PX30_FRAC_CLK_LIMIT),
- 	COMPOSITE_NODIV(SCLK_I2S0_TX, "clk_i2s0_tx", mux_i2s0_tx_rx_p, CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(28), 12, 1, MFLAGS,
- 			PX30_CLKGATE_CON(9), 14, GFLAGS),
-@@ -614,10 +615,10 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(0, "clk_i2s0_rx_src", mux_gpll_npll_p, 0,
- 			PX30_CLKSEL_CON(58), 8, 1, MFLAGS, 0, 7, DFLAGS,
- 			PX30_CLKGATE_CON(17), 0, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_i2s0_rx_frac", "clk_i2s0_rx_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_i2s0_rx_frac", "clk_i2s0_rx_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(59), 0,
- 			PX30_CLKGATE_CON(17), 1, GFLAGS,
--			&px30_i2s0_rx_fracmux),
-+			&px30_i2s0_rx_fracmux, PX30_FRAC_CLK_LIMIT),
- 	COMPOSITE_NODIV(SCLK_I2S0_RX, "clk_i2s0_rx", mux_i2s0_rx_tx_p, CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(58), 12, 1, MFLAGS,
- 			PX30_CLKGATE_CON(17), 2, GFLAGS),
-@@ -630,10 +631,10 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(0, "clk_i2s1_src", mux_gpll_npll_p, 0,
- 			PX30_CLKSEL_CON(30), 8, 1, MFLAGS, 0, 7, DFLAGS,
- 			PX30_CLKGATE_CON(10), 0, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_i2s1_frac", "clk_i2s1_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_i2s1_frac", "clk_i2s1_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(31), 0,
- 			PX30_CLKGATE_CON(10), 1, GFLAGS,
--			&px30_i2s1_fracmux),
-+			&px30_i2s1_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_I2S1, "clk_i2s1", "clk_i2s1_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(10), 2, GFLAGS),
- 	COMPOSITE_NODIV(0, "clk_i2s1_out_pre", mux_i2s1_out_p, 0,
-@@ -645,10 +646,10 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(0, "clk_i2s2_src", mux_gpll_npll_p, 0,
- 			PX30_CLKSEL_CON(32), 8, 1, MFLAGS, 0, 7, DFLAGS,
- 			PX30_CLKGATE_CON(10), 4, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_i2s2_frac", "clk_i2s2_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_i2s2_frac", "clk_i2s2_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(33), 0,
- 			PX30_CLKGATE_CON(10), 5, GFLAGS,
--			&px30_i2s2_fracmux),
-+			&px30_i2s2_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_I2S2, "clk_i2s2", "clk_i2s2_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(10), 6, GFLAGS),
- 	COMPOSITE_NODIV(0, "clk_i2s2_out_pre", mux_i2s2_out_p, 0,
-@@ -660,65 +661,65 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
- 	COMPOSITE(SCLK_UART1_SRC, "clk_uart1_src", mux_uart_src_p, CLK_SET_RATE_NO_REPARENT,
- 			PX30_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(10), 12, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(35), 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(10), 13, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(36), 0,
- 			PX30_CLKGATE_CON(10), 14, GFLAGS,
--			&px30_uart1_fracmux),
-+			&px30_uart1_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART1, "clk_uart1", "clk_uart1_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(10), 15, GFLAGS),
- 
- 	COMPOSITE(SCLK_UART2_SRC, "clk_uart2_src", mux_uart_src_p, 0,
- 			PX30_CLKSEL_CON(37), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 0, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(38), 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 1, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(39), 0,
- 			PX30_CLKGATE_CON(11), 2, GFLAGS,
--			&px30_uart2_fracmux),
-+			&px30_uart2_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART2, "clk_uart2", "clk_uart2_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(11), 3, GFLAGS),
- 
- 	COMPOSITE(0, "clk_uart3_src", mux_uart_src_p, 0,
- 			PX30_CLKSEL_CON(40), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 4, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(41), 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 5, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(42), 0,
- 			PX30_CLKGATE_CON(11), 6, GFLAGS,
--			&px30_uart3_fracmux),
-+			&px30_uart3_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART3, "clk_uart3", "clk_uart3_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(11), 7, GFLAGS),
- 
- 	COMPOSITE(0, "clk_uart4_src", mux_uart_src_p, 0,
- 			PX30_CLKSEL_CON(43), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 8, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(44), 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 9, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(45), 0,
- 			PX30_CLKGATE_CON(11), 10, GFLAGS,
--			&px30_uart4_fracmux),
-+			&px30_uart4_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART4, "clk_uart4", "clk_uart4_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(11), 11, GFLAGS),
- 
- 	COMPOSITE(0, "clk_uart5_src", mux_uart_src_p, 0,
- 			PX30_CLKSEL_CON(46), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 12, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(47), 0, 5, DFLAGS,
- 			PX30_CLKGATE_CON(11), 13, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
- 			PX30_CLKSEL_CON(48), 0,
- 			PX30_CLKGATE_CON(11), 14, GFLAGS,
--			&px30_uart5_fracmux),
-+			&px30_uart5_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART5, "clk_uart5", "clk_uart5_mux", CLK_SET_RATE_PARENT,
- 			PX30_CLKGATE_CON(11), 15, GFLAGS),
- 
-@@ -915,10 +916,10 @@ static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
- 	 * Clock-Architecture Diagram 2
- 	 */
- 
--	COMPOSITE_FRACMUX(0, "clk_rtc32k_frac", "xin24m", CLK_IGNORE_UNUSED,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_rtc32k_frac", "xin24m", CLK_IGNORE_UNUSED,
- 			PX30_PMU_CLKSEL_CON(1), 0,
- 			PX30_PMU_CLKGATE_CON(0), 13, GFLAGS,
--			&px30_rtc32k_pmu_fracmux),
-+			&px30_rtc32k_pmu_fracmux, 0),
- 
- 	COMPOSITE_NOMUX(XIN24M_DIV, "xin24m_div", "xin24m", CLK_IGNORE_UNUSED,
- 			PX30_PMU_CLKSEL_CON(0), 8, 5, DFLAGS,
-@@ -934,13 +935,13 @@ static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
- 	COMPOSITE(0, "clk_uart0_pmu_src", mux_uart_src_p, 0,
- 			PX30_PMU_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 5, DFLAGS,
- 			PX30_PMU_CLKGATE_CON(1), 0, GFLAGS),
--	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", 0,
-+	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
- 			PX30_PMU_CLKSEL_CON(4), 0, 5, DFLAGS,
- 			PX30_PMU_CLKGATE_CON(1), 1, GFLAGS),
--	COMPOSITE_FRACMUX(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
-+	COMPOSITE_FRACMUX_LIMIT(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
- 			PX30_PMU_CLKSEL_CON(5), 0,
- 			PX30_PMU_CLKGATE_CON(1), 2, GFLAGS,
--			&px30_uart0_pmu_fracmux),
-+			&px30_uart0_pmu_fracmux, PX30_FRAC_CLK_LIMIT),
- 	GATE(SCLK_UART0_PMU, "clk_uart0_pmu", "clk_uart0_pmu_mux", CLK_SET_RATE_PARENT,
- 			PX30_PMU_CLKGATE_CON(1), 3, GFLAGS),
- 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index b443169dd408..9055725af6c5 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -182,12 +182,32 @@ static void rockchip_fractional_approximation(struct clk_hw *hw,
- 	unsigned long p_rate, p_parent_rate;
- 	struct clk_hw *p_parent;
- 	unsigned long scale;
-+	u32 div;
- 
- 	p_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
--	if ((rate * 20 > p_rate) && (p_rate % rate != 0)) {
-+	if (((rate * 20 > p_rate) && (p_rate % rate != 0)) ||
-+	    (fd->max_prate && fd->max_prate < p_rate)) {
- 		p_parent = clk_hw_get_parent(clk_hw_get_parent(hw));
--		p_parent_rate = clk_hw_get_rate(p_parent);
--		*parent_rate = p_parent_rate;
-+		if (!p_parent) {
-+			*parent_rate = p_rate;
-+		} else {
-+			/* support fractional divider for one level parent clock */
-+			p_parent_rate = clk_hw_get_rate(p_parent);
-+			*parent_rate = p_parent_rate;
-+			if (fd->max_prate && p_parent_rate > fd->max_prate) {
-+				div = DIV_ROUND_UP(p_parent_rate,
-+						   fd->max_prate);
-+				*parent_rate = p_parent_rate / div;
-+			}
-+		}
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+new file mode 100644
+index 000000000000..c24c9d9fb7dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-sdx55.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		if (*parent_rate < rate * 20) {
-+			pr_warn("%s p_rate(%ld) is low than rate(%ld)*20, use integer or half-div\n",
-+				clk_hw_get_name(hw), *parent_rate, rate);
-+			*m = 0;
-+			*n = 1;
-+			return;
-+		}
- 	}
- 
- 	/*
-@@ -210,7 +230,7 @@ static struct clk *rockchip_clk_register_frac_branch(
- 		void __iomem *base, int muxdiv_offset, u8 div_flags,
- 		int gate_offset, u8 gate_shift, u8 gate_flags,
- 		unsigned long flags, struct rockchip_clk_branch *child,
--		spinlock_t *lock)
-+		unsigned long max_prate, spinlock_t *lock)
- {
- 	struct clk_hw *hw;
- 	struct rockchip_clk_frac *frac;
-@@ -251,6 +271,7 @@ static struct clk *rockchip_clk_register_frac_branch(
- 	div->nmask = GENMASK(div->nwidth - 1, 0) << div->nshift;
- 	div->lock = lock;
- 	div->approximation = rockchip_fractional_approximation;
-+	div->max_prate = max_prate;
- 	div_ops = &clk_fractional_divider_ops;
- 
- 	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-@@ -488,7 +509,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
- 				list->div_flags,
- 				list->gate_offset, list->gate_shift,
- 				list->gate_flags, flags, list->child,
--				&ctx->lock);
-+				list->max_prate, &ctx->lock);
- 			break;
- 		case branch_half_divider:
- 			clk = rockchip_clk_register_halfdiv(list->name,
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 2271a84124b0..fb37e5919cf6 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -420,6 +420,7 @@ struct rockchip_clk_branch {
- 	u8				gate_shift;
- 	u8				gate_flags;
- 	struct rockchip_clk_branch	*child;
-+	unsigned long			max_prate;
- };
- 
- #define COMPOSITE(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw,\
-@@ -594,6 +595,26 @@ struct rockchip_clk_branch {
- 		.child		= ch,				\
- 	}
- 
-+#define COMPOSITE_FRACMUX_LIMIT(_id, cname, pname, f, mo, df,	\
-+				go, gs, gf, ch, prate) \
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_fraction_divider,	\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= 16,				\
-+		.div_width	= 16,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= go,				\
-+		.gate_shift	= gs,				\
-+		.gate_flags	= gf,				\
-+		.child		= ch,				\
-+		.max_prate	= prate,			\
-+	}
++title: Qualcomm Global Clock & Reset Controller Binding for SDX55
 +
- #define COMPOSITE_FRACMUX_NOGATE(_id, cname, pname, f, mo, df, ch) \
- 	{							\
- 		.id		= _id,				\
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 03a5de5f99f4..b6b28a097526 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -924,6 +924,7 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
-  * @mwidth:	width of the numerator bit field
-  * @nshift:	shift to the denominator bit field
-  * @nwidth:	width of the denominator bit field
-+ * @max_parent:	the maximum frequency of fractional divider parent clock
-  * @lock:	register lock
-  *
-  * Clock with adjustable fractional divider affecting its output frequency.
-@@ -947,6 +948,7 @@ struct clk_fractional_divider {
- 	u8		nwidth;
- 	u32		nmask;
- 	u8		flags;
-+	unsigned long	max_prate;
- 	void		(*approximation)(struct clk_hw *hw,
- 				unsigned long rate, unsigned long *parent_rate,
- 				unsigned long *m, unsigned long *n);
++maintainers:
++  - Vinod Koul <vkoul@kernel.org>
++  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SDX55
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-sdx55.h
++
++properties:
++  compatible:
++    const: qcom,gcc-sdx55
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: sleep_clk
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-sdx55";
++      reg = <0x00100000 0x1f0000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&sleep_clk>;
++      clock-names = "bi_tcxo", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++
++...
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdx55.h b/include/dt-bindings/clock/qcom,gcc-sdx55.h
+new file mode 100644
+index 000000000000..09ca45c6de73
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gcc-sdx55.h
+@@ -0,0 +1,112 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2020, Linaro Ltd.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SDX55_H
++#define _DT_BINDINGS_CLK_QCOM_GCC_SDX55_H
++
++#define GPLL0							3
++#define GPLL0_OUT_EVEN						4
++#define GPLL4							5
++#define GPLL4_OUT_EVEN						6
++#define GPLL5							7
++#define GCC_AHB_PCIE_LINK_CLK					8
++#define GCC_BLSP1_AHB_CLK					9
++#define GCC_BLSP1_QUP1_I2C_APPS_CLK				10
++#define GCC_BLSP1_QUP1_I2C_APPS_CLK_SRC				11
++#define GCC_BLSP1_QUP1_SPI_APPS_CLK				12
++#define GCC_BLSP1_QUP1_SPI_APPS_CLK_SRC				13
++#define GCC_BLSP1_QUP2_I2C_APPS_CLK				14
++#define GCC_BLSP1_QUP2_I2C_APPS_CLK_SRC				15
++#define GCC_BLSP1_QUP2_SPI_APPS_CLK				16
++#define GCC_BLSP1_QUP2_SPI_APPS_CLK_SRC				17
++#define GCC_BLSP1_QUP3_I2C_APPS_CLK				18
++#define GCC_BLSP1_QUP3_I2C_APPS_CLK_SRC				19
++#define GCC_BLSP1_QUP3_SPI_APPS_CLK				20
++#define GCC_BLSP1_QUP3_SPI_APPS_CLK_SRC				21
++#define GCC_BLSP1_QUP4_I2C_APPS_CLK				22
++#define GCC_BLSP1_QUP4_I2C_APPS_CLK_SRC				23
++#define GCC_BLSP1_QUP4_SPI_APPS_CLK				24
++#define GCC_BLSP1_QUP4_SPI_APPS_CLK_SRC				25
++#define GCC_BLSP1_UART1_APPS_CLK				26
++#define GCC_BLSP1_UART1_APPS_CLK_SRC				27
++#define GCC_BLSP1_UART2_APPS_CLK				28
++#define GCC_BLSP1_UART2_APPS_CLK_SRC				29
++#define GCC_BLSP1_UART3_APPS_CLK				30
++#define GCC_BLSP1_UART3_APPS_CLK_SRC				31
++#define GCC_BLSP1_UART4_APPS_CLK				32
++#define GCC_BLSP1_UART4_APPS_CLK_SRC				33
++#define GCC_BOOT_ROM_AHB_CLK					34
++#define GCC_CE1_AHB_CLK						35
++#define GCC_CE1_AXI_CLK						36
++#define GCC_CE1_CLK						37
++#define GCC_CPUSS_AHB_CLK					38
++#define GCC_CPUSS_AHB_CLK_SRC					39
++#define GCC_CPUSS_GNOC_CLK					40
++#define GCC_CPUSS_RBCPR_CLK					41
++#define GCC_CPUSS_RBCPR_CLK_SRC					42
++#define GCC_EMAC_CLK_SRC					43
++#define GCC_EMAC_PTP_CLK_SRC					44
++#define GCC_ETH_AXI_CLK						45
++#define GCC_ETH_PTP_CLK						46
++#define GCC_ETH_RGMII_CLK					47
++#define GCC_ETH_SLAVE_AHB_CLK					48
++#define GCC_GP1_CLK						49
++#define GCC_GP1_CLK_SRC						50
++#define GCC_GP2_CLK						51
++#define GCC_GP2_CLK_SRC						52
++#define GCC_GP3_CLK						53
++#define GCC_GP3_CLK_SRC						54
++#define GCC_PCIE_0_CLKREF_CLK					55
++#define GCC_PCIE_AUX_CLK					56
++#define GCC_PCIE_AUX_PHY_CLK_SRC				57
++#define GCC_PCIE_CFG_AHB_CLK					58
++#define GCC_PCIE_MSTR_AXI_CLK					59
++#define GCC_PCIE_PIPE_CLK					60
++#define GCC_PCIE_RCHNG_PHY_CLK					61
++#define GCC_PCIE_RCHNG_PHY_CLK_SRC				62
++#define GCC_PCIE_SLEEP_CLK					63
++#define GCC_PCIE_SLV_AXI_CLK					64
++#define GCC_PCIE_SLV_Q2A_AXI_CLK				65
++#define GCC_PDM2_CLK						66
++#define GCC_PDM2_CLK_SRC					67
++#define GCC_PDM_AHB_CLK						68
++#define GCC_PDM_XO4_CLK						69
++#define GCC_SDCC1_AHB_CLK					70
++#define GCC_SDCC1_APPS_CLK					71
++#define GCC_SDCC1_APPS_CLK_SRC					72
++#define GCC_SYS_NOC_CPUSS_AHB_CLK				73
++#define GCC_USB30_MASTER_CLK					74
++#define GCC_USB30_MASTER_CLK_SRC				75
++#define GCC_USB30_MOCK_UTMI_CLK					76
++#define GCC_USB30_MOCK_UTMI_CLK_SRC				77
++#define GCC_USB30_MSTR_AXI_CLK					78
++#define GCC_USB30_SLEEP_CLK					79
++#define GCC_USB30_SLV_AHB_CLK					80
++#define GCC_USB3_PHY_AUX_CLK					81
++#define GCC_USB3_PHY_AUX_CLK_SRC				82
++#define GCC_USB3_PHY_PIPE_CLK					83
++#define GCC_USB3_PRIM_CLKREF_CLK				84
++#define GCC_USB_PHY_CFG_AHB2PHY_CLK				85
++#define GCC_XO_DIV4_CLK						86
++#define GCC_XO_PCIE_LINK_CLK					87
++
++#define GCC_EMAC_BCR						0
++#define GCC_PCIE_BCR						1
++#define GCC_PCIE_LINK_DOWN_BCR					2
++#define GCC_PCIE_NOCSR_COM_PHY_BCR				3
++#define GCC_PCIE_PHY_BCR					4
++#define GCC_PCIE_PHY_CFG_AHB_BCR				5
++#define GCC_PCIE_PHY_COM_BCR					6
++#define GCC_PCIE_PHY_NOCSR_COM_PHY_BCR				7
++#define GCC_PDM_BCR						8
++#define GCC_QUSB2PHY_BCR					9
++#define GCC_TCSR_PCIE_BCR					10
++#define GCC_USB30_BCR						11
++#define GCC_USB3_PHY_BCR					12
++#define GCC_USB3PHY_PHY_BCR					13
++#define GCC_USB_PHY_CFG_AHB2PHY_BCR				14
++
++#endif
 -- 
-2.25.1
+2.17.1
 
