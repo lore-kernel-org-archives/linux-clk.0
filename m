@@ -2,138 +2,121 @@ Return-Path: <SRS0=O9me=ED=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 945C3C4363A
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC32C4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BBB220791
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C592207BC
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:28:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Tp4mM3D0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v23DjL4B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388185AbgJ1XSo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35556 "EHLO
+        id S2390419AbgJ1X21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:28:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732512AbgJ1XSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 19:18:23 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5372C0613D1;
-        Wed, 28 Oct 2020 16:18:23 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id x20so649712qkn.1;
-        Wed, 28 Oct 2020 16:18:23 -0700 (PDT)
+        with ESMTP id S2390573AbgJ1X2U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 19:28:20 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41670C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 16:28:19 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id t6so382132plq.11
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 16:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4MykbGw6bHee+sbWD2NGwMwnxeBN9iL5rF1OE9UjJ1Q=;
-        b=Tp4mM3D0AUMmouj4W6RXfvIIS810w5N6ZfCPO62M4OTOOqdefYTFMYQvkv8RZjTxbg
-         KAwVGVb9sPj2KNyn/uQFfuZFIpk3TCBmrRM/UUX++fbrobzL1xmClclUj417B+x7JZeD
-         zg0GOP0R5Nrw9atwCSZjMc4mbSbOk8lUN+0Ak=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=aD/m2VgCYiafD5XJrexC8xG2hc+36DzQpHElqK1SRuE=;
+        b=v23DjL4BqoRVxPR9GiRf0kU1JhgymDI0xiYjXnCz4Q785C1+xKWhpKU6Km8WPOp58w
+         xGur69N7GeI8fwXXwA+kVV+RcFy4HsedaSVvKdI47qTsXih/LGVM3DGC0btx4VoxTYxJ
+         cLSx2YmlYZW9A8eUFhVGuOquAzmHZ8jND6vyejb2sKUqdSR/CFagLZUEYBVJKs/2kDc6
+         JGC5vPGT+PpvhNxJJFT4rYUlvHhjTjPn8MOkZc/uu565J5yhEcMDFCxPX6kKim6nGVzT
+         NCdS4ntm1tBymmjYUg6XJ53cjrMCeKuIT63npvN/BqgJ9tqRhjtf3+wNAzJBxOxVCa+y
+         0RXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4MykbGw6bHee+sbWD2NGwMwnxeBN9iL5rF1OE9UjJ1Q=;
-        b=ck5v4UJrQ5jSzCpDrDu319IfS2giBoHdjdP7/BYhdksvyyis6klJPyxRf03tNoOL5W
-         mexfWtojJ41qOQaibFUFPuamfFOkIMMr3wDzbq2g7Muad15nJyv+rQqTI0F8LTu8DdT1
-         1fThSy82iOGVrVaEQiBBLEYdhu5VlxocaYhAJ0rIKcEBSbgYkiFOFbDULJK0EimSDQ4C
-         Z/TMm2AXRz9X/S1MujQstEDJtBlup26F1viDkCQUMtQMLQMbTXHYXZWlzGu++ws4hUcO
-         B1Vkgbqq27F5WCFOhQ6UE8FEDXgbcAs5D20GxiSIKofEX2XxpKVOAH8/S/RBksZQEaLW
-         aB1Q==
-X-Gm-Message-State: AOAM531T4Qy5fdKtyeZWs2TVzKWPMl/gKyN2Mkz+/BMUn2r93fP6oo8Q
-        zOSfjzPHSFNue+oTVPrV5OjOChaLeyOWBZCLUMC7nxMDCmYAzw==
-X-Google-Smtp-Source: ABdhPJwwjgO8IqC8w+C79BxSvAYXYDw1GUHfrT/SZUU3zpmx1+2t9DpDIW5G3LtpRjVBq3ypIaEi6EQ8SBJWcM+Xai0=
-X-Received: by 2002:a05:620a:1303:: with SMTP id o3mr5769587qkj.66.1603859902807;
- Tue, 27 Oct 2020 21:38:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
- <20200928070108.14040-2-ryan_chen@aspeedtech.com> <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
- <CACPK8Xe-_hTey7hTJjG2-EcDsTN0qOw3bWBcrZZohEK3QOJuvg@mail.gmail.com> <160269577311.884498.8429245140509326318@swboyd.mtv.corp.google.com>
-In-Reply-To: <160269577311.884498.8429245140509326318@swboyd.mtv.corp.google.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 28 Oct 2020 04:38:10 +0000
-Message-ID: <CACPK8XeGRq2XeJAjdQ=pT1oKk7-wk1==4Byfc50_6+-UijU12w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: aspeed: modify some default clks are critical
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        BMC-SW <bmc-sw@aspeedtech.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=aD/m2VgCYiafD5XJrexC8xG2hc+36DzQpHElqK1SRuE=;
+        b=kw7Sj5sZhjF/ECQ2RpfeFmHb2cZiS/50ASazvkbnBiIZeSG5otWhKh+Y75GPnluXpF
+         BE1xk8Qi0QChFJfzx7d2d888EiRlox6I0/n5T7Uni++W/DqVBcsGHYIhdykQLE3xl9NM
+         9tMqGviM0tM4XyGmM5zCwKD3+uRc3+GuQBWeNa91Qs3d1G5LNLWZztX/1VSPwLBvvHRh
+         rjeA4E5h8vXyyM8hfHnzqVEHsZt9udcXABc6wVjTvNYpXPbigby5H9QMj9YaDzpcjM1E
+         5SfxYvVqQLi4s+meaYrboKdf8lE5ayJ5QRZfEmy1YTBedQH4f/31/AspWPD6bLVpHRcx
+         ACZQ==
+X-Gm-Message-State: AOAM533n32MR/ngNcA3cS+y9MR2L+GVAdGs6J7XXMTq+pqStl7jHmRBp
+        fAiF4/hPSmF6prvn82F/TvxhouhEzzNX
+X-Google-Smtp-Source: ABdhPJz8bqfzm3rNPe2a2hytHwPw1HH8gsns4sap2sQtA7nMk9rNUILQwS2zVPM5K3yckVKsL3p6JQ==
+X-Received: by 2002:aa7:911a:0:b029:155:8521:ba6c with SMTP id 26-20020aa7911a0000b02901558521ba6cmr5161777pfh.8.1603870995286;
+        Wed, 28 Oct 2020 00:43:15 -0700 (PDT)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id e7sm4289579pgj.19.2020.10.28.00.43.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 00:43:14 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/4] clk: qcom: Add support for SDX55 RPMh clocks
+Date:   Wed, 28 Oct 2020 13:12:32 +0530
+Message-Id: <20201028074232.22922-5-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
+References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks for the response Stephen. Sorry it's taken me a while to get back to you.
+Add support for clocks maintained by RPMh in SDX55 SoCs.
 
-On Wed, 14 Oct 2020 at 17:16, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Joel Stanley (2020-10-13 22:28:00)
-> > On Wed, 14 Oct 2020 at 02:50, Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Ryan Chen (2020-09-28 00:01:08)
-> > > > In ASPEED SoC LCLK is LPC clock for all SuperIO device, UART1/UART2 are
-> > > > default for Host SuperIO UART device, eSPI clk for Host eSPI bus access
-> > > > eSPI slave channel, those clks can't be disable should keep default,
-> > > > otherwise will affect Host side access SuperIO and SPI slave device.
-> > > >
-> > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > > > ---
-> > >
-> > > Is there resolution on this thread?
-> >
-> > Not yet.
-> >
-> > We have a system where the BMC (management controller) controls some
-> > clocks, but the peripherals that it's clocking are outside the BMC's
-> > control. In this case, the host processor us using some UARTs and what
-> > not independent of any code running on the BMC.
-> >
-> > Ryan wants to have them marked as critical so the BMC never powers them down.
-> >
-> > However, there are systems that don't use this part of the soc, so for
-> > those implementations they are not critical and Linux on the BMC can
-> > turn them off.
-> >
-> > Do you have any thoughts? Has anyone solved a similar problem already?
-> >
->
-> Is this critical clocks in DT? Where we want to have different DT for
-> different device configurations to indicate that some clks should be
-> marked critical so they're never turned off and other times they aren't
-> so they're turned off?
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/qcom/clk-rpmh.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Spot on.
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index e2c669b08aff..88d010178b59 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -432,6 +432,25 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
+ 	.num_clks = ARRAY_SIZE(sm8250_rpmh_clocks),
+ };
+ 
++DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
++DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
++DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
++
++static struct clk_hw *sdx55_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_RF_CLK1]		= &sdx55_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdx55_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdx55_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdx55_rf_clk2_ao.hw,
++	[RPMH_QPIC_CLK]		= &sdx55_qpic_clk.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
++	.clks = sdx55_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sdx55_rpmh_clocks),
++};
++
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+ 					 void *data)
+ {
+@@ -519,6 +538,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+ 	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
+ 	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
++	{ .compatible = "qcom,sdx55-rpmh-clk", .data = &clk_rpmh_sdx55},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+-- 
+2.17.1
 
-> It also sounds sort of like the protected-clocks binding. Where you
-> don't want to touch certain clks depending on the usage configuration of
-> the SoC. There is a patch to make that generic that I haven't applied
-> because it looks wrong at first glance[1].
-
-That binding is exactly what I had in mind. I wasn't aware of it.
-
-The drawbacks outlined in the commit message do sound concerning. I
-take it we could avoid those drawbacks by having a driver-specific
-implementation of protected-clocks, like qcom does?
-
-> Maybe not registering those
-> clks to the framework on the configuration that Ryan has is good enough?
-
-I didn't quite follow here. Did you mean with protected-clocks, or
-using a different mechanism?
-
-Cheers,
-
-Joel
-
->
-> [1] https://lore.kernel.org/r/20200903040015.5627-2-samuel@sholland.org
