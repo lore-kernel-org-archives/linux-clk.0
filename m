@@ -7,105 +7,88 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F9FC5DF9D
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D56C4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFCF320735
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D6152076B
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 23:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603924553;
-	bh=2nLxeH13ppLvWb52plCjQFdfTqr2r+rinqMVIVZRSG8=;
+	s=default; t=1603926201;
+	bh=SnWAKf7Tea+FrzUzm1yo5r4j/+Bi0jaQLvfj/3JFVXI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ox/ccK1zjWMCvVvfdntZdsvqxqXUUjR6YOZ2y7UhTpboTo4b3PuXWiOe20rKNY4Ig
-	 hDmCQRwWSIq/Y4JAiefQsQu4b+fwa/P7NNGGt3Blab9Mrc1wttbhAQqjwDfWXwSNTk
-	 xD/nnJoUiMuv08VJ+gL7UC2wI0nPVUc1F+NYSeHQ=
+	b=nMPchhyAeop1s024ocrv9oc1vnwkpKTv3v3Qgu9lHn4eVOxMcN2SgJ4ybKmnda3yg
+	 Pb8emv6dqtfq0h69ICXmvVPbkhUgXA73i/Sgsub7YGy4dgMYdu7yHnBttwS901rtlI
+	 n7G+wbDgjo/QWhYsioNe4lBoT+ZczZNBDXYQ3A84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388264AbgJ1Wft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:35:49 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40470 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732560AbgJ1Wfr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 18:35:47 -0400
-Received: by mail-oi1-f195.google.com with SMTP id m128so1246919oig.7;
-        Wed, 28 Oct 2020 15:35:46 -0700 (PDT)
+        id S2389911AbgJ1XCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 19:02:51 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34806 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730802AbgJ1XCl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 19:02:41 -0400
+Received: by mail-ua1-f67.google.com with SMTP id x11so205457uav.1;
+        Wed, 28 Oct 2020 16:02:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=j40fXvYMK2w1uYoqbRN/p/K2nSLc7QBgd4j2HeymL48=;
-        b=rZxK11zR99v0qURJQX/GHzTQbEUlOkWtuiBfwl1SBRgwr7B11SPJiMCbDIeyFlosdt
-         P538eehxjTY+dtWzgXLGm/BsC+zxxj23tWAulV4goETwIHMzddLmby6pAuO9qCJDotM/
-         rZnvllcO/z1RvCbCFWvpshW+KfAdtbov9EgRCkDlb8T1rkArypoAHH7Xlz/mmKFwJVDO
-         MVZA6oLIOGd5Pgc+2wNtv6/nhqV36Hr31ehIPbZXwYWLkOZMNipj+huWgzkvDvRTAopR
-         ufLRRvBJ2lEXWiJLI5SxxVfPP1kRTec35wrpsJ2CQxFy2nY0H5MihgoZ36ecwkxk2Iva
-         Dvlw==
-X-Gm-Message-State: AOAM532Ak0cMegW5QRAq/PBQ/Gea6vZZLV8z4Tp4DfRrHUKxbrrr320Y
-        Yg4YAWo8ZEE3Wr4/sSgX0BFKdM/4qA==
-X-Google-Smtp-Source: ABdhPJwoDP3ZNhOt8k6d3nBfKIYb6o3ezWXIw7ASHIquqjVuovgMd+jq/KjXaIEjhCPeoDgQTQdHFw==
-X-Received: by 2002:aca:38c6:: with SMTP id f189mr5415873oia.27.1603893201354;
-        Wed, 28 Oct 2020 06:53:21 -0700 (PDT)
+        bh=0G4ddUyBDAmFIJZfLdJeZ5DORv/CzVKctJJjdwMQ2hA=;
+        b=oz+h/9W+vKiikyttr3MXE6n+al9sEwMYTXDWlFY7XMk5RchM/TbVPM4aj6wR9DmKJm
+         Vf9IsFYIRJyXHOOW1hzEUSgzn2vQFIXtXpDltuN1HxA1Dw/T/9Q/oAEQ/U1Ckw2kMb7P
+         jm7ISi1ZusltCQhKECpunGF00fS3hzWoCKa9iVuBF03EbIIM3JsDwBpoivb1bTT2tD96
+         exVxUpNct4ew8+p7F9T1EaJ4kC9dk3Z3eYdB91wf89KL1cZX7t2fNT1Qhj3QD8NI5BCQ
+         0XHkLy6O88W8egEK2ieyAMxUTe1YFMLx/Jxm/FCmJBJlet3vNiIBFKHziOv5hupjD1vQ
+         CQeg==
+X-Gm-Message-State: AOAM532VNSrf0ULp6L8Edy5vqVeNuHT9s59n4H8suuYNR1if3NryFrZv
+        6bI8Jw+OfQRkXAWlwQsdN+LBjasn3A==
+X-Google-Smtp-Source: ABdhPJzjsODVzwEavFHnP2SeXAsiY9C71CRqgTEGh2Z6Q40K80z+BHN5EwtDNrj8BkTr0cnmJRhWGw==
+X-Received: by 2002:a9d:5b3:: with SMTP id 48mr5823698otd.110.1603899170988;
+        Wed, 28 Oct 2020 08:32:50 -0700 (PDT)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t5sm2145145oth.16.2020.10.28.06.53.20
+        by smtp.gmail.com with ESMTPSA id y8sm2733386oon.16.2020.10.28.08.32.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 06:53:20 -0700 (PDT)
-Received: (nullmailer pid 3927164 invoked by uid 1000);
-        Wed, 28 Oct 2020 13:53:19 -0000
-Date:   Wed, 28 Oct 2020 08:53:19 -0500
+        Wed, 28 Oct 2020 08:32:50 -0700 (PDT)
+Received: (nullmailer pid 4063907 invoked by uid 1000);
+        Wed, 28 Oct 2020 15:32:49 -0000
+Date:   Wed, 28 Oct 2020 10:32:49 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@kernel.org,
-        robh+dt@kernel.org, mturquette@baylibre.com,
-        devicetree@vger.kernel.org, bjorn.andersson@linaro.org
-Subject: Re: [RESEND PATCH v3 1/4] dt-bindings: clock: Add support for LPASS
- Audio Clock Controller
-Message-ID: <20201028135319.GA3926524@bogus>
-References: <20201026120221.18984-1-srinivas.kandagatla@linaro.org>
- <20201026120221.18984-2-srinivas.kandagatla@linaro.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Adam Ford <aford173@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 09/14] Documentation: bindings: clk: Add bindings for
+ i.MX BLK_CTL
+Message-ID: <20201028153249.GA4063845@bogus>
+References: <1603740750-10385-1-git-send-email-abel.vesa@nxp.com>
+ <1603740750-10385-10-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201026120221.18984-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <1603740750-10385-10-git-send-email-abel.vesa@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 26 Oct 2020 12:02:18 +0000, Srinivas Kandagatla wrote:
-> Audio Clock controller is a block inside LPASS which controls
-> 2 Glitch free muxes to LPASS codec Macros.
+On Mon, 26 Oct 2020 21:32:25 +0200, Abel Vesa wrote:
+> Document the i.MX BLK_CTL with its devicetree properties.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
->  .../bindings/clock/qcom,audiocc-sm8250.yaml   | 58 +++++++++++++++++++
->  .../clock/qcom,sm8250-lpass-audiocc.h         | 13 +++++
->  2 files changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8250-lpass-audiocc.h
+>  .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
 > 
 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dts:25.30-31 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:342: Documentation/devicetree/bindings/clock/qcom,audiocc-sm8250.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1366: dt_binding_check] Error 2
-
-
-See https://patchwork.ozlabs.org/patch/1387714
-
-The base for the patch is generally the last rc1. Any dependencies
-should be noted.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
