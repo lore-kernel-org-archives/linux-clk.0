@@ -2,105 +2,108 @@ Return-Path: <SRS0=O9me=ED=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD3FC388F7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A5CC4363A
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC3C5247F9
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603922876;
-	bh=5WnOk1FngbfoonrxPwgRdPcgKDVEHc8ZNmE7nFAXpL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zhQVIbNmuYEHkjv1xAx9iNqSDcRvaPAHPss1fkt5ONQ2nR1tcQmZVvp8QrS3fxd6F
-	 L9hICGmgVlrGm1EpPKwT+Y6pbCs8mcXuUt+MPSH2/rfJO1vhNtEF4Q7DfXg7nCj5/4
-	 F2pkd5fu7EFp9SednjVwVEhMGatOy4MDVd24IFak=
+	by mail.kernel.org (Postfix) with ESMTP id 3300E24743
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Oct 2020 22:08:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a3f/43fr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbgJ1WHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:07:42 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:41339 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730129AbgJ1WHj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 18:07:39 -0400
-Received: by mail-ej1-f68.google.com with SMTP id s15so1057498ejf.8;
-        Wed, 28 Oct 2020 15:07:37 -0700 (PDT)
+        id S1727690AbgJ1WIL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Oct 2020 18:08:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730170AbgJ1WIB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Oct 2020 18:08:01 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14219C0613CF
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 15:08:01 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id i26so648980pgl.5
+        for <linux-clk@vger.kernel.org>; Wed, 28 Oct 2020 15:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=eVyqGjvfohdsbrYhdD/p8pzCpzKljI3AzNSUpTK32Wo=;
+        b=a3f/43froPNpVcVXZ6k1VnyH1sem1ux4I7smr6NCTtzZfcNGHHGRF6DID+ixtzNnKt
+         DBWpxCf9XycFS4Fqtf2I4R8RjVVMJUJqyhHSi0bfLLxWzwgsvi+2kpcIylLYoxTT98H+
+         Guonng2LHV7BASnrcuugFBuBuhWG1eMR9YvTtSZfayqa/KMGXQr0hVLtOIFD8YqKZeSO
+         yPKzTS7ms6xxBDHHpZ4lElpGJ7DO3FmnxgTvEGVt+ezAEr2wD+Hcz2z3Hs+U+vqgPLeS
+         HVw3sdg5YmK2QqaOdYTwbllL+JCcxdhf+t9dI1D4YKZsH3R5N81SZN/cciBshopC8vjK
+         6bJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bZlCZTDwAJNro79TS3InJDAfis8jNWbj3KB0SY/Cc4k=;
-        b=cpb8k+jncLXekyiif8q3wVI91bcSdDNfjBbxQtBtIsJEyFimlF1mVlhiV1emxLSwdW
-         emfwinnNJSA75gq92W4BxeqnhBLankw1r6T5t6rODpctsb8xU04Hl4MRc5WfbaTBP/t8
-         PqxLZGeI62aB5PUIwgV/fIq2KJdT99IFnS9E4L6nIqL5BYlbf878AUFTqXXEeLpLt9/J
-         f/NSSzha/fY60Bg7Tc/pnxyqlTTU+KhxbaWk+6HUCm3pKjAYIwJZktAIisE+gx3rGx6t
-         JsOFTn99f18TKAQdyZ4yFiLhqTXlzsJi1GvtGNHan7qirzOWym8teA7JCdW97KaO9qSD
-         0Uuw==
-X-Gm-Message-State: AOAM531wym3N+w9rPF0H9cNQIP3VcQ+VCcX76Gnz6DEJjz+yi/y0S55J
-        dtH5fPgrLSASfcifCP2Xx1w=
-X-Google-Smtp-Source: ABdhPJyRmpfag6RIm2++FBM/0keuZbgnjwCIrwJuWHSQK3lNqf0rJbKI08iYVMOyjfncGqQDAZyWLA==
-X-Received: by 2002:a17:906:bc91:: with SMTP id lv17mr1181717ejb.249.1603922856842;
-        Wed, 28 Oct 2020 15:07:36 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.184])
-        by smtp.googlemail.com with ESMTPSA id i14sm435620ejp.2.2020.10.28.15.07.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=eVyqGjvfohdsbrYhdD/p8pzCpzKljI3AzNSUpTK32Wo=;
+        b=G10FE7H9bKlDIkr699ak/t96en4u0Q+nGxqCwO0nMVd9BkhhhOaladKkVIQrvh/6uv
+         5Fu3lxL1GBXeA5oLBkfJzGKM7Tb5rt6Uud54V6S2spAeJAQYN1MXOgjAf8Qdw4dFtkFm
+         J+Vig1uJIY1kvec7ee+VpNXHBW4qeTX2pTXeTkSnCDn7xSpFcMNMWczZNxN3VuWO/oiU
+         wBHpbCNp0dfbtoBODD07S8GLG+nyf321uETFSC1ql0anCVxUhWaeJOMy7IXi9xejepN/
+         fS16vR5ZuJCsMQVZw4ofKti4kujcuMwbQ914aJ1MQ+uGHAq4WHQCIezuJItNAxM7DwdZ
+         d7Ig==
+X-Gm-Message-State: AOAM533rh6CIrKuxSxjIaODiWdFkosPBmR32EmZU57rXRUQRZg2aq3Ci
+        +3eABeVQ2NVII5eIUiTfqlU+RB7rUbYP
+X-Google-Smtp-Source: ABdhPJzZQsPZCrT9I8dKOJrQcceX296IYhD6o42iY3UR6M0j3Ecp49oF0iQ7ke9WBgq6ATTs6M9vcg==
+X-Received: by 2002:a17:902:b7c5:b029:d6:1158:99af with SMTP id v5-20020a170902b7c5b02900d6115899afmr6209912plz.26.1603870991742;
+        Wed, 28 Oct 2020 00:43:11 -0700 (PDT)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id e7sm4289579pgj.19.2020.10.28.00.43.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 15:07:35 -0700 (PDT)
-Date:   Wed, 28 Oct 2020 23:07:33 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 2/2] clk: samsung: exynos-clkout: convert to module driver
-Message-ID: <20201028220733.GB271157@kozik-lap>
-References: <20201001165646.32279-1-krzk@kernel.org>
- <20201001165646.32279-3-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201001165646.32279-3-krzk@kernel.org>
+        Wed, 28 Oct 2020 00:43:11 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] dt-bindings: clock: Introduce RPMHCC bindings for SDX55
+Date:   Wed, 28 Oct 2020 13:12:31 +0530
+Message-Id: <20201028074232.22922-4-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
+References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 06:56:46PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos clkout driver depends on board input clock (typically XXTI or
-> XUSBXTI), however on Exynos4 boards these clocks were modeled as part of
-> SoC clocks (Exynos4 clocks driver).  Obviously this is not proper, but
-> correcting it would break DT backward compatibility.
-> 
-> Both drivers - clkout and Exynos4 clocks - register the clock providers
-> with CLK_OF_DECLARE/OF_DECLARE_1 so their order is fragile (in the
-> Makefile clkout is behind Exynos4 clock).  It will work only if the
-> Exynos4 clock driver comes up before clkout.
-> 
-> A change in DTS adding input clock reference to Exynos4 clocks input
-> PLL, see reverted commit eaf2d2f6895d ("ARM: dts: exynos: add input
-> clock to CMU in Exynos4412 Odroid"), caused probe reorder: the clkout
-> appeared before Exynos4 clock provider.  Since clkout depends on Exynos4
-> clocks and does not support deferred probe, this did not work and caused
-> later failure of usb3503 USB hub probe which needs clkout:
-> 
->     [    5.007442] usb3503 0-0008: unable to request refclk (-517)
-> 
-> The Exynos clkout driver is not a critical/core clock so there is
-> actually no problem in instantiating it later, as a regular module.
-> This removes specific probe ordering and adds support for probe
-> deferral.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/clk/samsung/clk-exynos-clkout.c | 198 +++++++++++++++++-------
->  1 file changed, 141 insertions(+), 57 deletions(-)
+From: Vinod Koul <vkoul@kernel.org>
 
-Applied (with fixes pointed out by Sylwester).
+Add compatible for SDX55 RPMHCC and DT include.
 
-Best regards,
-Krzysztof
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ include/dt-bindings/clock/qcom,rpmh.h                    | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index a46a3a799a70..a54930f111ba 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -19,6 +19,7 @@ properties:
+     enum:
+       - qcom,sc7180-rpmh-clk
+       - qcom,sdm845-rpmh-clk
++      - qcom,sdx55-rpmh-clk
+       - qcom,sm8150-rpmh-clk
+       - qcom,sm8250-rpmh-clk
+ 
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+index 2e6c54e65455..cd806eccb7dd 100644
+--- a/include/dt-bindings/clock/qcom,rpmh.h
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -21,5 +21,6 @@
+ #define RPMH_IPA_CLK				12
+ #define RPMH_LN_BB_CLK1				13
+ #define RPMH_LN_BB_CLK1_A			14
++#define RPMH_QPIC_CLK				15
+ 
+ #endif
+-- 
+2.17.1
 
