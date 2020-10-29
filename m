@@ -2,184 +2,74 @@ Return-Path: <SRS0=XeJu=EE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E0EC55179
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 14:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DB7C2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 22:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5812A2151B
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 14:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A2F520782
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 22:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbgJ2O3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Oct 2020 10:29:10 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:42408 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgJ2O3K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2020 10:29:10 -0400
-Received: by mail-oo1-f67.google.com with SMTP id l26so735740oop.9;
-        Thu, 29 Oct 2020 07:29:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Om9WUjh4cubJwGaGg9gntuiRkHiaoGi/Sm+rG3LGg3M=;
-        b=iaQ17wd/eK4ed1F4DYkowMz4hlNGw32fjoEznv/SWnEunjqd4oPW304AxxRf3lgQ0C
-         9X4Tw0NRl6Goi4nfPgV4tXxlCPvSv9FFyE+Rkedtz1VlM3YyRYG8J6dkHQB9g5VRCvWk
-         XJbUHDixadAriDuO/Fwezmw9ZkQKLZTReVIg+miztTNFapCxK/3O3PYBAdvo9caFHx+j
-         eOkUtzOgL8G3rrKEABS6RVrye1oxrysT6ODa6+357YkfHfqIjJU54yURrUGgLtCEl/Zl
-         6CAJ7i7V12EIH9ybmh1aI8+ietcLWmpk/mnjyInZBx3NAMlyd2u0S4oSFWDHWBbVnzyp
-         0OjQ==
-X-Gm-Message-State: AOAM532Jc4CVLF7m57HWRKJunRXPZE+YGonC4wrXSc7zw26gaIVumd3J
-        6DFaGLNEuD9QElMnmA3LO20zggjrw8v4WmcjkN8=
-X-Google-Smtp-Source: ABdhPJw7YlP1lEV530rXHjS9xtnhZh1Vq9wCndTfLh4fCs3RdWXOrequIUwIhf9iOd/F4dNMTHRaU553LofDOScJkwc=
-X-Received: by 2002:a4a:8892:: with SMTP id j18mr3445928ooa.40.1603981748538;
- Thu, 29 Oct 2020 07:29:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 29 Oct 2020 15:28:57 +0100
-Message-ID: <CAMuHMdVGO+DEgsTr62nA+egU2etZA_vwE9GrOG1JPWBvv90UXg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r8a774c0: Add RPC clocks
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1725768AbgJ2WkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Oct 2020 18:40:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44119 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbgJ2WkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2020 18:40:12 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1kYGaV-0005la-Kr; Thu, 29 Oct 2020 22:40:07 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: remove redundant assignment to pointer np
+Date:   Thu, 29 Oct 2020 22:40:07 +0000
+Message-Id: <20201029224007.390762-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, Oct 29, 2020 at 11:55 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-> as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
-> driver.
+Pointer np is being initialized with a value that is never read
+and it is being updated with a value later on. The initialization
+is redundant and can be removed.
 
-Thanks for your patch!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Add new clk type CLK_TYPE_GEN3E3_RPCSRC to handle registering rpcsrc
-> clock as the source for RPCSRC can be either PLL0/PLL1 and this depends
-> on MD[1:4] pins where as compared to other R-Car Gen3 SoC's the RPCSRC
-> clock source is always PLL1.
->
-> MD[4] MD[3] MD[2] MD[1]
->   0     0     0    1     -> RPCSRC CLK source is PLL1
->   0     0     1    1     -> RPCSRC CLK source is PLL1
->   0     1     0    0     -> RPCSRC CLK source is PLL1
->   1     0     1    1     -> RPCSRC CLK source is PLL1
->   x     x     x    x     -> For any other values RPCSRC CLK source is PLL0
-
-AFAIU, the _initial values_ of the RPCCKCR bits depend on the MD pins.
-They can still be changed at run-time, and might have been changed by
-the bootloader before transferring control to Linux.
-
-> R-Car Gen3 manual Rev.2.20 has in-correct information related to
-> determining the clock source for RPCSRC.
-
-Which part of the information is not correct?
-Where can I find corrected information?
-Is my understanding above incorrect, too?
-
-> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-
-> @@ -73,6 +74,12 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
->         DEF_FIXED(".s2",       CLK_S2,             CLK_PLL1,       4, 1),
->         DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
->         DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
-> +       DEF_BASE(".rpcsrc",    CLK_RPCSRC, CLK_TYPE_GEN3E3_RPCSRC, (CLK_PLL1 << 16) | CLK_PLL0),
-
-You may want to add a new DEF_* helper macro for this.
-
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -441,6 +441,14 @@ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
->         { 2, 5 }, { 3, 6 }, { 0, 0 },
->  };
->
-> +static const struct clk_div_table cpg_rpcsrc_e3_pll0_div_table[] = {
-> +       { 2, 8 }, { 0, 0 },
-> +};
-> +
-> +static const struct clk_div_table cpg_rpcsrc_e3_pll1_div_table[] = {
-> +       { 0, 5 }, { 1, 3 }, { 3, 2 }, { 0, 0 },
-> +};
-> +
->  static const struct clk_div_table cpg_rpc_div_table[] = {
->         { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 0, 0 },
->  };
-> @@ -515,6 +523,18 @@ static struct clk * __init cpg_rpcd2_clk_register(const char *name,
->         return clk;
->  }
->
-> +static int __init cpg_rpcsrc_e3_get_parent(u32 mode)
-> +{
-> +       unsigned int e3_rpcsrc = (mode & GENMASK(4, 1)) >> 1;
-> +       unsigned int pll1[] = { 0x1, 0x3, 0x4, 0xb, };
-> +       int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(pll1); i++)
-> +               if (e3_rpcsrc == pll1[i])
-> +                       return 1;
-> +
-> +       return 0;
-> +}
->
->  static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
->  static unsigned int cpg_clk_extalr __initdata;
-> @@ -552,6 +572,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->         const struct clk *parent;
->         unsigned int mult = 1;
->         unsigned int div = 1;
-> +       int e3_rpcsrc_parent;
->         u32 value;
->
->         parent = clks[core->parent & 0xffff];   /* some types use high bits */
-> @@ -696,6 +717,22 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->                                                   cpg_rpcsrc_div_table,
->                                                   &cpg_lock);
->
-> +       case CLK_TYPE_GEN3E3_RPCSRC:
-> +               e3_rpcsrc_parent = cpg_rpcsrc_e3_get_parent(cpg_mode);
-
-This is not correct if the boot loader has changed the parent clock.
-
-> +               if (e3_rpcsrc_parent) {
-> +                       parent = clks[core->parent >> 16];
-> +                       if (IS_ERR(parent))
-> +                               return ERR_CAST(parent);
-> +               }
-> +
-> +               return clk_register_divider_table(NULL, core->name,
-> +                                                 __clk_get_name(parent), 0,
-> +                                                 base + CPG_RPCCKCR, 3, 2, 0,
-> +                                                 e3_rpcsrc_parent ?
-> +                                                 cpg_rpcsrc_e3_pll1_div_table :
-> +                                                 cpg_rpcsrc_e3_pll0_div_table,
-> +                                                 &cpg_lock);
-> +
-
-So you want to keep the parent clock selection fixed, but still allow
-the system to change the divider?
-Why not support changing the parent too, by modeling this as a composite
-clock consisting of a mux and a divider?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 12ce4770f702..3cb2bc46eae0 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -425,7 +425,7 @@ static struct clk **uart_clks[ARRAY_SIZE(uart_clk_ids) + 1];
+ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
++	struct device_node *np;
+ 	void __iomem *anatop_base, *ccm_base;
+ 	int i;
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.27.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
