@@ -2,93 +2,270 @@ Return-Path: <SRS0=XeJu=EE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3511AC2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 07:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E097C2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 09:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB582214DB
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 07:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AE2E2075E
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 09:05:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="UFiG3bOb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbgJ2Hg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Oct 2020 03:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729416AbgJ2HgI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2020 03:36:08 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD85C0613D4
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2020 00:36:07 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kY2TT-0005fG-Ug; Thu, 29 Oct 2020 08:35:55 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kY2TT-000181-7y; Thu, 29 Oct 2020 08:35:55 +0100
-Date:   Thu, 29 Oct 2020 08:35:55 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] Fix the gate2 and make it more flexible
-Message-ID: <20201029073555.GD26805@pengutronix.de>
-References: <1603889942-27026-1-git-send-email-abel.vesa@nxp.com>
+        id S1725904AbgJ2JFH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Oct 2020 05:05:07 -0400
+Received: from z5.mailgun.us ([104.130.96.5]:59649 "EHLO z5.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726676AbgJ2JDD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Oct 2020 05:03:03 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1603962181; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=NdzsoEdcRVXFcGy0mrVKMSKtPLAju5oVn97JEaJidDY=; b=UFiG3bObOZHOK8m0zEzeKPAsvdxJS6logyC4yEXYgi2q6U4gQkJMQ+CLZdLUI/L6KbA04kqL
+ koGCg1/0Yl2Z1wcIVMFVq03+YuRzZzQDoB/GtBSgu9uM/HsNSw5QpTcNq0DEFPsDHGqCpAL9
+ 6+WXkORi4GlurE3o1SP6tGzy0wc=
+X-Mailgun-Sending-Ip: 104.130.96.5
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 5f9a8545940cfd47f148cbe7 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 29 Oct 2020 09:03:01
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 4CEA0C433CB; Thu, 29 Oct 2020 09:03:01 +0000 (UTC)
+Received: from [192.168.0.106] (unknown [49.204.180.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 06DA6C43382;
+        Thu, 29 Oct 2020 09:02:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06DA6C43382
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v5 2/2] clk: qcom: lpass-sc7180: Disentangle the two clock
+ devices
+To:     Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-soc@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201019154857.v5.1.I4567b5e7e17bbb15ef063d447cb83fd43746cb18@changeid>
+ <20201019154857.v5.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <eb8b7d12-30fa-4a29-9adb-e1ad171e7dce@codeaurora.org>
+Date:   Thu, 29 Oct 2020 14:32:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1603889942-27026-1-git-send-email-abel.vesa@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:35:24 up 252 days, 15:05, 142 users,  load average: 0.46, 0.22,
- 0.18
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20201019154857.v5.2.I75c409497d4dea9daefa53ec5f93824081c4ecbe@changeid>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 02:58:57PM +0200, Abel Vesa wrote:
-> First version here: https://lkml.org/lkml/2020/10/26/988
+Reviewed-by: Taniya Das <tdas@codeaurora.org>
+
+On 10/20/2020 4:19 AM, Douglas Anderson wrote:
+> The sc7180 lpass clock driver manages two different devices.  These
+> two devices were tangled together, using one probe and a lookup to
+> figure out the real probe.  I think it's cleaner to really separate
+> the probe for these two devices since they're really different things,
+> just both managed by the same driver.
 > 
-> Changes since v1:
->  * split the work in multiple iterative patches
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
 > 
-> Abel Vesa (5):
->   clk: imx: gate2: Remove the IMX_CLK_GATE2_SINGLE_BIT special case
->   clk: imx: gate2: Keep the register writing in on place
->   clk: imx: gate2: Check if clock is enabled against cgr_val
->   clk: imx: gate2: Add cgr_mask for more flexible number of control bits
->   clk: imx: gate2: Add locking in is_enabled op
-
-For the series:
-
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Sascha
+> Note: this is now a 2-patch cleanup series with no actual bugfixes
+> since the problem solved by patch #3 was better solved with:
+> 
+> https://lore.kernel.org/r/20201017020137.1251319-1-sboyd@kernel.org
+> 
+> Changes in v5:
+> - Two blank lines inserted before "return" statements.
+> 
+> Changes in v3:
+> - ("clk: qcom: lpass-sc7180: Disentangle the two clock devices") new for v3.
+> 
+>   drivers/clk/qcom/lpasscorecc-sc7180.c | 103 ++++++++++++++++----------
+>   1 file changed, 64 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> index 2d15e33ec837..1a3925badd7c 100644
+> --- a/drivers/clk/qcom/lpasscorecc-sc7180.c
+> +++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+> @@ -366,12 +366,39 @@ static void lpass_pm_clk_destroy(void *data)
+>   	pm_clk_destroy(data);
+>   }
+>   
+> +static int lpass_create_pm_clks(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_clk_create(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_clk_add(&pdev->dev, "iface");
+> +	if (ret < 0)
+> +		dev_err(&pdev->dev, "failed to acquire iface clock\n");
+> +
+> +	return ret;
+> +}
+> +
+>   static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+>   {
+>   	const struct qcom_cc_desc *desc;
+>   	struct regmap *regmap;
+>   	int ret;
+>   
+> +	ret = lpass_create_pm_clks(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+>   	lpass_core_cc_sc7180_regmap_config.name = "lpass_audio_cc";
+>   	desc = &lpass_audio_hm_sc7180_desc;
+>   	ret = qcom_cc_probe_by_index(pdev, 1, desc);
+> @@ -402,6 +429,11 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+>   static int lpass_hm_core_probe(struct platform_device *pdev)
+>   {
+>   	const struct qcom_cc_desc *desc;
+> +	int ret;
+> +
+> +	ret = lpass_create_pm_clks(pdev);
+> +	if (ret)
+> +		return ret;
+>   
+>   	lpass_core_cc_sc7180_regmap_config.name = "lpass_hm_core";
+>   	desc = &lpass_core_hm_sc7180_desc;
+> @@ -409,55 +441,28 @@ static int lpass_hm_core_probe(struct platform_device *pdev)
+>   	return qcom_cc_probe_by_index(pdev, 0, desc);
+>   }
+>   
+> -static const struct of_device_id lpass_core_cc_sc7180_match_table[] = {
+> +static const struct of_device_id lpass_hm_sc7180_match_table[] = {
+>   	{
+>   		.compatible = "qcom,sc7180-lpasshm",
+> -		.data = lpass_hm_core_probe,
+>   	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, lpass_hm_sc7180_match_table);
+> +
+> +static const struct of_device_id lpass_core_cc_sc7180_match_table[] = {
+>   	{
+>   		.compatible = "qcom,sc7180-lpasscorecc",
+> -		.data = lpass_core_cc_sc7180_probe,
+>   	},
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, lpass_core_cc_sc7180_match_table);
+>   
+> -static int lpass_core_sc7180_probe(struct platform_device *pdev)
+> -{
+> -	int (*clk_probe)(struct platform_device *p);
+> -	int ret;
+> -
+> -	pm_runtime_enable(&pdev->dev);
+> -	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = pm_clk_create(&pdev->dev);
+> -	if (ret)
+> -		return ret;
+> -	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_clk_destroy, &pdev->dev);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = pm_clk_add(&pdev->dev, "iface");
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to acquire iface clock\n");
+> -		return ret;
+> -	}
+> -
+> -	clk_probe = of_device_get_match_data(&pdev->dev);
+> -	if (!clk_probe)
+> -		return -EINVAL;
+> -
+> -	return clk_probe(pdev);
+> -}
+> -
+>   static const struct dev_pm_ops lpass_core_cc_pm_ops = {
+>   	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+>   };
+>   
+>   static struct platform_driver lpass_core_cc_sc7180_driver = {
+> -	.probe = lpass_core_sc7180_probe,
+> +	.probe = lpass_core_cc_sc7180_probe,
+>   	.driver = {
+>   		.name = "lpass_core_cc-sc7180",
+>   		.of_match_table = lpass_core_cc_sc7180_match_table,
+> @@ -465,17 +470,37 @@ static struct platform_driver lpass_core_cc_sc7180_driver = {
+>   	},
+>   };
+>   
+> -static int __init lpass_core_cc_sc7180_init(void)
+> +static const struct dev_pm_ops lpass_hm_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+> +};
+> +
+> +static struct platform_driver lpass_hm_sc7180_driver = {
+> +	.probe = lpass_hm_core_probe,
+> +	.driver = {
+> +		.name = "lpass_hm-sc7180",
+> +		.of_match_table = lpass_hm_sc7180_match_table,
+> +		.pm = &lpass_hm_pm_ops,
+> +	},
+> +};
+> +
+> +static int __init lpass_sc7180_init(void)
+>   {
+> -	return platform_driver_register(&lpass_core_cc_sc7180_driver);
+> +	int ret;
+> +
+> +	ret = platform_driver_register(&lpass_core_cc_sc7180_driver);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return platform_driver_register(&lpass_hm_sc7180_driver);
+>   }
+> -subsys_initcall(lpass_core_cc_sc7180_init);
+> +subsys_initcall(lpass_sc7180_init);
+>   
+> -static void __exit lpass_core_cc_sc7180_exit(void)
+> +static void __exit lpass_sc7180_exit(void)
+>   {
+> +	platform_driver_unregister(&lpass_hm_sc7180_driver);
+>   	platform_driver_unregister(&lpass_core_cc_sc7180_driver);
+>   }
+> -module_exit(lpass_core_cc_sc7180_exit);
+> +module_exit(lpass_sc7180_exit);
+>   
+>   MODULE_DESCRIPTION("QTI LPASS_CORE_CC SC7180 Driver");
+>   MODULE_LICENSE("GPL v2");
+> 
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
