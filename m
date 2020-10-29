@@ -6,258 +6,180 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932EBC55178
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 13:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E0EC55179
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 14:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4397920725
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 13:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5812A2151B
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Oct 2020 14:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgJ2NEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Oct 2020 09:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgJ2NEJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2020 09:04:09 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D12AC0613CF
-        for <linux-clk@vger.kernel.org>; Thu, 29 Oct 2020 06:04:09 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1kY7av-0003gY-5d; Thu, 29 Oct 2020 14:03:57 +0100
-Message-ID: <ea7162d355d429401cbcf10d34cc31b6264aabc7.camel@pengutronix.de>
-Subject: Re: [RFC 0/3] clk: imx: Implement blk-ctl driver for i.MX8MN
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Marek Vasut <marex@denx.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 29 Oct 2020 14:03:55 +0100
-In-Reply-To: <CAHCN7xKSs9z1_ryXX3xOcJn7FfWXBE+zTzDYJT3pA1LCbHyOBw@mail.gmail.com>
-References: <20201024162016.1003041-1-aford173@gmail.com>
-         <20201024202335.y3npwtgragpp5wcz@fsr-ub1664-175>
-         <CAHCN7xJiygvLStO56v4xSnOEqR_5fbYQHn5juA8YeDiWh2awbg@mail.gmail.com>
-         <20201025120509.r5kl76wo5mdmapo5@fsr-ub1664-175>
-         <3dadade8-6e77-e27f-d5a6-307de17a4dd0@denx.de>
-         <CAHCN7xLC-gKquDNS3ToQCff=g610PscQE+T4zfO=_05GpLyK4w@mail.gmail.com>
-         <20201026145516.shmb55gaeh6u7oru@fsr-ub1664-175>
-         <CAHCN7xJOczT1B03Am4A645Xrk6-VF_7VDgAq13F-81=oCkixjw@mail.gmail.com>
-         <6274ab26d1fea5e00cea576d1e00028a4c4633af.camel@pengutronix.de>
-         <CAHCN7xK1Stx=dzbDE6dKtRHuWGgca54bwQf=JSGNFVmHJ_fSig@mail.gmail.com>
-         <55a33659d6faeb5677f4f3e4809bc426c1a4fc88.camel@pengutronix.de>
-         <CAHCN7xKSs9z1_ryXX3xOcJn7FfWXBE+zTzDYJT3pA1LCbHyOBw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1725909AbgJ2O3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Oct 2020 10:29:10 -0400
+Received: from mail-oo1-f67.google.com ([209.85.161.67]:42408 "EHLO
+        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbgJ2O3K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Oct 2020 10:29:10 -0400
+Received: by mail-oo1-f67.google.com with SMTP id l26so735740oop.9;
+        Thu, 29 Oct 2020 07:29:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Om9WUjh4cubJwGaGg9gntuiRkHiaoGi/Sm+rG3LGg3M=;
+        b=iaQ17wd/eK4ed1F4DYkowMz4hlNGw32fjoEznv/SWnEunjqd4oPW304AxxRf3lgQ0C
+         9X4Tw0NRl6Goi4nfPgV4tXxlCPvSv9FFyE+Rkedtz1VlM3YyRYG8J6dkHQB9g5VRCvWk
+         XJbUHDixadAriDuO/Fwezmw9ZkQKLZTReVIg+miztTNFapCxK/3O3PYBAdvo9caFHx+j
+         eOkUtzOgL8G3rrKEABS6RVrye1oxrysT6ODa6+357YkfHfqIjJU54yURrUGgLtCEl/Zl
+         6CAJ7i7V12EIH9ybmh1aI8+ietcLWmpk/mnjyInZBx3NAMlyd2u0S4oSFWDHWBbVnzyp
+         0OjQ==
+X-Gm-Message-State: AOAM532Jc4CVLF7m57HWRKJunRXPZE+YGonC4wrXSc7zw26gaIVumd3J
+        6DFaGLNEuD9QElMnmA3LO20zggjrw8v4WmcjkN8=
+X-Google-Smtp-Source: ABdhPJw7YlP1lEV530rXHjS9xtnhZh1Vq9wCndTfLh4fCs3RdWXOrequIUwIhf9iOd/F4dNMTHRaU553LofDOScJkwc=
+X-Received: by 2002:a4a:8892:: with SMTP id j18mr3445928ooa.40.1603981748538;
+ Thu, 29 Oct 2020 07:29:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 29 Oct 2020 15:28:57 +0100
+Message-ID: <CAMuHMdVGO+DEgsTr62nA+egU2etZA_vwE9GrOG1JPWBvv90UXg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r8a774c0: Add RPC clocks
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Donnerstag, den 29.10.2020, 07:18 -0500 schrieb Adam Ford:
-> On Thu, Oct 29, 2020 at 6:55 AM Lucas Stach <l.stach@pengutronix.de>
-> wrote:
-> > Am Montag, den 26.10.2020, 11:23 -0500 schrieb Adam Ford:
-> > > On Mon, Oct 26, 2020 at 10:44 AM Lucas Stach <
-> > > l.stach@pengutronix.de> wrote:
-> > > > Am Montag, den 26.10.2020, 10:12 -0500 schrieb Adam Ford:
-> > > > > On Mon, Oct 26, 2020 at 9:55 AM Abel Vesa <abel.vesa@nxp.com>
-> > > > > wrote:
-> > > > > > On 20-10-25 11:05:32, Adam Ford wrote:
-> > > > > > > On Sun, Oct 25, 2020 at 7:19 AM Marek Vasut <
-> > > > > > > marex@denx.de> wrote:
-> > > > > > > > On 10/25/20 1:05 PM, Abel Vesa wrote:
-> > > > > > > > 
-> > > > > > > > [...]
-> > > > > > > > 
-> > > > > > > > > > Together, both the GPC and the clk-blk driver
-> > > > > > > > > > should be able to pull
-> > > > > > > > > > the multimedia block out of reset.  Currently, the
-> > > > > > > > > > GPC can handle the
-> > > > > > > > > > USB OTG and the GPU, but the LCDIF and MIPI DSI
-> > > > > > > > > > appear to be gated by
-> > > > > > > > > > the clock block
-> > > > > > > > > > 
-> > > > > > > > > > My original patch RFC didn't include the imx8mn
-> > > > > > > > > > node, because it
-> > > > > > > > > > hangs, but the node I added looks like:
-> > > > > > > > > > 
-> > > > > > > > > > media_blk_ctl: clock-controller@32e28000 {
-> > > > > > > > > >      compatible = "fsl,imx8mn-media-blk-ctl",
-> > > > > > > > > > "syscon";
-> > > > > > > > > >      reg = <0x32e28000 0x1000>;
-> > > > > > > > > >      #clock-cells = <1>;
-> > > > > > > > > >      #reset-cells = <1>;
-> > > > > > > > > > };
-> > > > > > > > > > 
-> > > > > > > > > > I was hoping you might have some feedback on the
-> > > > > > > > > > 8mn clk-blk driver
-> > > > > > > > > > since you did the 8mp clk-blk drive and they appear
-> > > > > > > > > > to be very
-> > > > > > > > > > similar.
-> > > > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > I'll do you one better still. I'll apply the patch in
-> > > > > > > > > my tree and give it
-> > > > > > > > > a test tomorrow morning.
-> > > > > > > 
-> > > > > > > I do have some more updates on how to get the system to
-> > > > > > > not hang, and
-> > > > > > > to enumerate more clocks.
-> > > > > > > Looking at Marek's work on enabling clocks in the 8MM, he
-> > > > > > > added a
-> > > > > > > power-domain in dispmix_blk_ctl pointing to the dispmix
-> > > > > > > in the GPC.
-> > > > > > > By forcing the GPC driver to write 0x1fff  to 32e28004,
-> > > > > > > 0x7f to
-> > > > > > > 32e28000 and 0x30000 to 32e28008, the i.MX8MM can bring
-> > > > > > > the display
-> > > > > > > clocks out of reset.
-> > > > > > > 
-> > > > > > 
-> > > > > > Yeah, that makes sense. Basically, it was trying to disable
-> > > > > > unused clocks
-> > > > > > (see clk_disable_unused) but in order to disable the clocks
-> > > > > > from the
-> > > > > > media BLK_CTL (which I think should be renamed in display
-> > > > > > BLK_CTL) the
-> > > > > > PD need to be on. Since you initially didn't give it any
-> > > > > > PD, it was trying
-> > > > > > to blindly write/read the gate bit and therefore freeze.
-> > > > > > 
-> > > > > > > Unfortunately, the i.MX8MN needs to have 0x100 written to
-> > > > > > > both
-> > > > > > > 32e28000 and 32e28004, and the values written for the 8MM
-> > > > > > > are not
-> > > > > > > compatible.
-> > > > > > > By forcing the GPC to write those values, I can
-> > > > > > > get  lcdif_pixel_clk
-> > > > > > > and the mipi_dsi_clkref  appearing on the Nano.
-> > > > > > 
-> > > > > > I'm trying to make a branch with all the patches for all
-> > > > > > i.MX8M so I
-> > > > > > can keep track of it all. On this branch I've also applied
-> > > > > > the
-> > > > > > following patchset from Lucas Stach:
-> > > > > > https://www.spinics.net/lists/arm-kernel/msg843007.html
-> > > > > > but I'm getting the folowing errors:
-> > > > > > 
-> > > > > > [   16.690885] imx-pgc imx-pgc-domain.3: failed to power up
-> > > > > > ADB400
-> > > > > > [   16.716839] imx-pgc imx-pgc-domain.3: failed to power up
-> > > > > > ADB400
-> > > > > > [   16.730500] imx-pgc imx-pgc-domain.3: failed to power up
-> > > > > > ADB400
-> > > > > > 
-> > > > > > Lucas, any thoughts?
-> > > > > > 
-> > > > > > Maybe it's something related to 8MN.
-> > > > > > 
-> > > > > I will go back and double check this now that we have both
-> > > > > the
-> > > > > blt_crl->power-domain and the power-domain->blk_ctl.
-> > > > > 
-> > > > > > Will dig further, see what pops out.
-> > > > > 
-> > > > > I wasn't sure which direction to go with the name.  I can
-> > > > > rename the
-> > > > > media_blk_ctl  driver to display_blk_ctl.  I used Media based
-> > > > > on the
-> > > > > imx8mp naming convention and the fact that it's controlling
-> > > > > both the
-> > > > > display and the camera interface, however it's depending on
-> > > > > the
-> > > > > dispmix GPC.
-> > > > > 
-> > > > > I'll submit a RFC V2 with the cross referencing to the GPC
-> > > > > based on
-> > > > > Marek's Mini patch set, but we'll still have an issue where
-> > > > > the Mini
-> > > > > and Nano have different syscon values to enable the clocks,
-> > > > > and
-> > > > > Marek's branch has it card-coded, so my patch would
-> > > > > effectively break
-> > > > > the Mini in order to make the Nano operate until we find a
-> > > > > better
-> > > > > solution.
-> > > > 
-> > > > The GPC should not write into the BLK_CTL region via syscon,
-> > > > but
-> > > > instead use the clocks and resets as exposed by the BLK_CTL
-> > > > driver.
-> > > > Doing it via syscon is a hack to get things going. The clocks
-> > > > and
-> > > > resets should properly be hooked up to the GPC domains via the
-> > > > clocks
-> > > > and resets DT properties.
-> > > > 
-> > > > For the clocks there is one complication: if the clocks are
-> > > > controlled
-> > > > via BLK_CTL we can only enable them once the domain is powered
-> > > > up,
-> > > > however the earlier designs using the GPCv2 assert resets as
-> > > > part of
-> > > > the power up sequence, which needs the clocks to be running for
-> > > > the
-> > > > reset to propagate. So depending on whether we have a power
-> > > > domain with
-> > > > a BLK_CTL or not we need to enable the clocks before or after
-> > > > powering
-> > > > up the domain. I guess we need a new DT property to specify
-> > > > which way
-> > > > the domain needs to handled.
-> > > 
-> > > So in the case of Nano, could we create two blocks instead of
-> > > one?
-> > > The first block would enable the bus clock and reset that
-> > > correspond
-> > > to writing 0x100 to avoid writing to syscon.  From there, we
-> > > reference
-> > > that reset and clock from the GPC displaymix_pd to enable the
-> > > access.
-> > > Once that's done, we point the 2nd block power-domain to the
-> > > dispmix_pd to unlock the remaining clocks.
-> > > 
-> > > Would that work?  I can try it later today, but I'm not near the
-> > > hardware now.
-> > 
-> > Splitting the PD into 2 staged domains might actually work well to
-> > get
-> > around the cyclic dependency between GPC and BLK_CTL. It's not
-> > totally
-> > to my liking, as the DT description doesn't map 1:1 to hardware
-> > anymore, but it seems to be the most elegant solution to get around
-> > the
-> > dependency.
-> > 
-> > I'll try to implement this on the i.MX8MM today or tomorrow to see
-> > if
-> > it holds up in reality or if there are some hidden warts.
-> 
-> I tried it last night on the Nano without success.  :-(
-> 
-> I was just getting ready to e-mail the group when I saw this come in.
+Hi Prabhakar,
 
-I was thinking the other way around, keeping a single BLK_CTL, but
-splitting the PD to reflect the power-up sequence requirement. I'll let
-you know how this works out.
+On Thu, Oct 29, 2020 at 11:55 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
+> as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
+> driver.
 
-Regards,
-Lucas
+Thanks for your patch!
 
+> Add new clk type CLK_TYPE_GEN3E3_RPCSRC to handle registering rpcsrc
+> clock as the source for RPCSRC can be either PLL0/PLL1 and this depends
+> on MD[1:4] pins where as compared to other R-Car Gen3 SoC's the RPCSRC
+> clock source is always PLL1.
+>
+> MD[4] MD[3] MD[2] MD[1]
+>   0     0     0    1     -> RPCSRC CLK source is PLL1
+>   0     0     1    1     -> RPCSRC CLK source is PLL1
+>   0     1     0    0     -> RPCSRC CLK source is PLL1
+>   1     0     1    1     -> RPCSRC CLK source is PLL1
+>   x     x     x    x     -> For any other values RPCSRC CLK source is PLL0
+
+AFAIU, the _initial values_ of the RPCCKCR bits depend on the MD pins.
+They can still be changed at run-time, and might have been changed by
+the bootloader before transferring control to Linux.
+
+> R-Car Gen3 manual Rev.2.20 has in-correct information related to
+> determining the clock source for RPCSRC.
+
+Which part of the information is not correct?
+Where can I find corrected information?
+Is my understanding above incorrect, too?
+
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+
+> @@ -73,6 +74,12 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+>         DEF_FIXED(".s2",       CLK_S2,             CLK_PLL1,       4, 1),
+>         DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
+>         DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
+> +       DEF_BASE(".rpcsrc",    CLK_RPCSRC, CLK_TYPE_GEN3E3_RPCSRC, (CLK_PLL1 << 16) | CLK_PLL0),
+
+You may want to add a new DEF_* helper macro for this.
+
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -441,6 +441,14 @@ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+>         { 2, 5 }, { 3, 6 }, { 0, 0 },
+>  };
+>
+> +static const struct clk_div_table cpg_rpcsrc_e3_pll0_div_table[] = {
+> +       { 2, 8 }, { 0, 0 },
+> +};
+> +
+> +static const struct clk_div_table cpg_rpcsrc_e3_pll1_div_table[] = {
+> +       { 0, 5 }, { 1, 3 }, { 3, 2 }, { 0, 0 },
+> +};
+> +
+>  static const struct clk_div_table cpg_rpc_div_table[] = {
+>         { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 0, 0 },
+>  };
+> @@ -515,6 +523,18 @@ static struct clk * __init cpg_rpcd2_clk_register(const char *name,
+>         return clk;
+>  }
+>
+> +static int __init cpg_rpcsrc_e3_get_parent(u32 mode)
+> +{
+> +       unsigned int e3_rpcsrc = (mode & GENMASK(4, 1)) >> 1;
+> +       unsigned int pll1[] = { 0x1, 0x3, 0x4, 0xb, };
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(pll1); i++)
+> +               if (e3_rpcsrc == pll1[i])
+> +                       return 1;
+> +
+> +       return 0;
+> +}
+>
+>  static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+>  static unsigned int cpg_clk_extalr __initdata;
+> @@ -552,6 +572,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>         const struct clk *parent;
+>         unsigned int mult = 1;
+>         unsigned int div = 1;
+> +       int e3_rpcsrc_parent;
+>         u32 value;
+>
+>         parent = clks[core->parent & 0xffff];   /* some types use high bits */
+> @@ -696,6 +717,22 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>                                                   cpg_rpcsrc_div_table,
+>                                                   &cpg_lock);
+>
+> +       case CLK_TYPE_GEN3E3_RPCSRC:
+> +               e3_rpcsrc_parent = cpg_rpcsrc_e3_get_parent(cpg_mode);
+
+This is not correct if the boot loader has changed the parent clock.
+
+> +               if (e3_rpcsrc_parent) {
+> +                       parent = clks[core->parent >> 16];
+> +                       if (IS_ERR(parent))
+> +                               return ERR_CAST(parent);
+> +               }
+> +
+> +               return clk_register_divider_table(NULL, core->name,
+> +                                                 __clk_get_name(parent), 0,
+> +                                                 base + CPG_RPCCKCR, 3, 2, 0,
+> +                                                 e3_rpcsrc_parent ?
+> +                                                 cpg_rpcsrc_e3_pll1_div_table :
+> +                                                 cpg_rpcsrc_e3_pll0_div_table,
+> +                                                 &cpg_lock);
+> +
+
+So you want to keep the parent clock selection fixed, but still allow
+the system to change the divider?
+Why not support changing the parent too, by modeling this as a composite
+clock consisting of a mux and a divider?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
