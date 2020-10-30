@@ -2,141 +2,82 @@ Return-Path: <SRS0=Ewk5=EF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12394C00A89
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Oct 2020 10:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278BAC4363A
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Oct 2020 11:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFEA920728
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Oct 2020 10:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9010D20723
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Oct 2020 11:52:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="T5PMxHHh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgJ3Ksd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Oct 2020 06:48:33 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46664 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbgJ3Ksc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Oct 2020 06:48:32 -0400
-Received: by mail-oi1-f193.google.com with SMTP id x1so6169289oic.13;
-        Fri, 30 Oct 2020 03:48:31 -0700 (PDT)
+        id S1726259AbgJ3Lwv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Oct 2020 07:52:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbgJ3Lwv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Oct 2020 07:52:51 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AC1C0613CF
+        for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2020 04:52:43 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id h12so3842927qtu.1
+        for <linux-clk@vger.kernel.org>; Fri, 30 Oct 2020 04:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=+5h8uGAWLKMJPxsKSBHFnKRvgJ1/8UrMiZ99ArnMrJA=;
+        b=T5PMxHHhKjVVOAZLZj9tznmOgO5a8RNT6nFtO79RdHLj0Pg+Qhg+XzBx2y/gYFOMyr
+         Q9qtgI37UAo5dbmxjtVCym0gSW8haDG4CPDCYdf5srLDok4MCvio1sbfARmihoq3rsuv
+         oYoXnXfJTcsF6mnX2jHUpd8Q51fPUmDJqA97E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o/a1Fg1l8jTDVjB4D1N/25wYLdlaFeX7TtKVbE5a6QU=;
-        b=MNbNqKWaeycBfMaxfs6jaw6By+KU4zltvwRJkSq0T1j0gdpXHOYSNhkpx2UXtopcBr
-         2Zu0dWaYcW4m/feTRAbvoxDHKGk44zdu/eW9schEKFU1hHEs8VrPDlLa1wLtz5UROleP
-         ytedGPZbXZUEpaNQHxmkmqzlXB6+25GZbIgD9+JxPofVcK7zAZbrnW9WXnQ7V20jbCHa
-         8uGphlESQC4eZUfyoApvINUZF/IjoDzxntLonSn37Sm3gQgIZjVh6KMj/lJ2q/drwbGz
-         T4Rs/v9mwPEvPyQZef7BnZb6hJxV/ZivDbUp0fexufOWW0gHj4hT0Ap1zV0xG0Q/U6Rz
-         7cag==
-X-Gm-Message-State: AOAM5331PGhsco4iAhx/h6G9z3qMFxJjJAbqpO3fMLtGF42zlNy/9WdH
-        dVny4LIJKJ19icKlxu5SnZzSP9XaekaWmtvtqdM=
-X-Google-Smtp-Source: ABdhPJz6VOJFKEvyavQMgMiOs1PPCRImkfzYWVg19kSmpxLT/Yeaz/lHde0Miqty14Cx+GLfOtOvCsICUqXj+iFp8yE=
-X-Received: by 2002:aca:c490:: with SMTP id u138mr1180705oif.54.1604054911030;
- Fri, 30 Oct 2020 03:48:31 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=+5h8uGAWLKMJPxsKSBHFnKRvgJ1/8UrMiZ99ArnMrJA=;
+        b=nW+dkCYbqqxX/B/fHC7vrh9ZDqLvty46OGFtYAp6c75Ko0Xm7l9cJYiLb5npxhbWq7
+         tAfG3H+QSMaLoM1TlI9aWA/P7r8xIGYBDGVfZDKml/m4aMYROXvBPEyO7LtDD8ao9cWc
+         uRnQ4JYPjo58QvJx6HDGreMkACcmmYOwSr6mi5GaGx2s0Fr0UkUeyjeBpbrHBlnr7znf
+         aloxWJ2q+8GE8g3/aL63qFX+VQZuMZrPFwEYtB9oBQn1FUpC8ZkFnwBJ0PI9OaGWUmtR
+         UiN4GDzHNobFsHbUBQhEMEP5+fTq7JWEVLZZxGxhd9UnxqPs+jVVSKyScIVmSh5+LEGi
+         7T2A==
+X-Gm-Message-State: AOAM53026RqxfG0dGJjxgKLNnDLNdLM7EY+ULIwumE9LL2GezKbebISU
+        96EuQyf+4wsGTqv0ftTRywI5pDW6irJBJySN+g5n5ohR8MI=
+X-Google-Smtp-Source: ABdhPJwLO2y7F/la84e25j+8RAOK24xd1w93sjXGQQQ5Lt0KhcSrOTGTUA1lk6O6/uaREE7b2D38qQfMsLpESwGNPkU=
+X-Received: by 2002:aed:2125:: with SMTP id 34mr1670365qtc.249.1604058762193;
+ Fri, 30 Oct 2020 04:52:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVGO+DEgsTr62nA+egU2etZA_vwE9GrOG1JPWBvv90UXg@mail.gmail.com> <CA+V-a8sagMFjaxxVUGMeqG5wdAWwT=oqOPHgTBZ7j0hPP1LcNw@mail.gmail.com>
-In-Reply-To: <CA+V-a8sagMFjaxxVUGMeqG5wdAWwT=oqOPHgTBZ7j0hPP1LcNw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 30 Oct 2020 11:48:19 +0100
-Message-ID: <CAMuHMdX_x9YkUv3DCZxW_sydX1NiQ=5EJjsgo9yQ7pZV-xC_+g@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r8a774c0: Add RPC clocks
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Fri, 30 Oct 2020 20:52:31 +0900
+Message-ID: <CAFr9PX=Ac6yzR31uzK=6WmnbznUm_FzVRs+v2D3ONfX4UCY_QQ@mail.gmail.com>
+Subject: Acceptable format for clock cells.
+To:     linux-clk@vger.kernel.org
+Cc:     DTML <devicetree@vger.kernel.org>, Daniel Palmer <daniel@0x0f.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+Hi all,
 
-On Fri, Oct 30, 2020 at 11:13 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Thu, Oct 29, 2020 at 2:29 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Thu, Oct 29, 2020 at 11:55 AM Lad Prabhakar
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-> > > as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
-> > > driver.
-> >
-> > Thanks for your patch!
-> >
-> > > Add new clk type CLK_TYPE_GEN3E3_RPCSRC to handle registering rpcsrc
-> > > clock as the source for RPCSRC can be either PLL0/PLL1 and this depends
-> > > on MD[1:4] pins where as compared to other R-Car Gen3 SoC's the RPCSRC
-> > > clock source is always PLL1.
-> > >
-> > > MD[4] MD[3] MD[2] MD[1]
-> > >   0     0     0    1     -> RPCSRC CLK source is PLL1
-> > >   0     0     1    1     -> RPCSRC CLK source is PLL1
-> > >   0     1     0    0     -> RPCSRC CLK source is PLL1
-> > >   1     0     1    1     -> RPCSRC CLK source is PLL1
-> > >   x     x     x    x     -> For any other values RPCSRC CLK source is PLL0
-> >
-> > AFAIU, the _initial values_ of the RPCCKCR bits depend on the MD pins.
-> > They can still be changed at run-time, and might have been changed by
-> > the bootloader before transferring control to Linux.
-> >
-> > > R-Car Gen3 manual Rev.2.20 has in-correct information related to
-> > > determining the clock source for RPCSRC.
-> >
-> > Which part of the information is not correct?
-> > Where can I find corrected information?
-> > Is my understanding above incorrect, too?
-> >
-> R-Car Gen3 HW manual mentions the below statement (page 529, Rev.2.20 manual):
-> [R-Car E3]
-> When (MD4, MD3, MD2, MD1) = (0, 0, 0, 1) or (0, 1, 0, 0): DIV[2:0] =
-> 011, DIV[4:3] = 00 (300 MHz PLL0)
+I'm writing a clock driver for a PLL unit in an ARM SoC that I hope to
+wrap up and send the patches for in the next few days.
 
-That indeed doesn't match the values in the DIV[4:0] bits description.
+This PLL unit has one PLL and then a series of dividers. Then each
+divider apparently has between 0 and 3 dividers coming off of it.
 
-> Confirming with internal team this should be below:
->
-> When (MD4, MD3, MD2, MD1) = (0, 0, 0, 1) or (0, 1, 0, 0): DIV[2:0] =
-> 011, DIV[4:3] = 00 (80 MHz PLL1)
->
-> This should be fixed in the next version of the document, and when
-> available I'll ask Chris P to send it across.
+As there is no documentation for this thing and I'm not sure what the
+logical output numbers are or even if I know all of them I was
+considering making the number of clock cells 2 and having the first be
+the first divider (i.e. the divide by 2 output would be 2) and the
+second cell the chained divider or 0 for no divider.
 
-OK, that does match the bits.
+If I should just decide the order of the outputs and come up with
+indexes for them would it still be ok to nest them like the first cell
+is the index of the divider and then the second cell is the index of
+the chained divider?
 
-> > > @@ -696,6 +717,22 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
-> > >                                                   cpg_rpcsrc_div_table,
-> > >                                                   &cpg_lock);
-> > >
-> > > +       case CLK_TYPE_GEN3E3_RPCSRC:
-> > > +               e3_rpcsrc_parent = cpg_rpcsrc_e3_get_parent(cpg_mode);
-> >
-> > This is not correct if the boot loader has changed the parent clock.
-> >
-> You mean by manually togelling the MD pins before we get into Linux ?
+Thanks,
 
-No, by writing to the RPCCKCR register.
-Remember, the _initial_ values are determined by the MD pins.
-They can still be changed.
-
-E.g. on R-Car D3, I verified that changing PLL0CR.CKSEL at runtime
-does work.  In the end, we decided to just look at MD12 instead (IIRC
-because the CKSEL bit was removed from later documentation, but
-Rev 2.20 documents it again ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Daniel
