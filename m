@@ -2,142 +2,155 @@ Return-Path: <SRS0=CNvH=EI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A6AC00A89
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 15:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E4CC00A89
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 17:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 896392072C
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 15:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D2F420657
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 17:15:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tIixBm7W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbgKBPFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Nov 2020 10:05:54 -0500
-Received: from mga11.intel.com ([192.55.52.93]:40040 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbgKBPFx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Nov 2020 10:05:53 -0500
-IronPort-SDR: rXY5eGxnrlp2FWas2lfgnJf3m6PPLCYMO3brzDgPHQyUpN4ekTxblLOUz531Uz69VymUdMTf7F
- Qxt4OsCMYInw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9793"; a="165391995"
-X-IronPort-AV: E=Sophos;i="5.77,445,1596524400"; 
-   d="scan'208";a="165391995"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2020 07:05:52 -0800
-IronPort-SDR: Rk8KtKoJ0WVtwG02bBKp1DCA0eUAmt8IjohOY2uUVmJxltiamIaBUqjCxBJtRh0gJOGywbmexx
- B7HKWx+fVHeA==
-X-IronPort-AV: E=Sophos;i="5.77,445,1596524400"; 
-   d="scan'208";a="426011235"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2020 07:05:49 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 8F638208F7; Mon,  2 Nov 2020 17:05:47 +0200 (EET)
-Date:   Mon, 2 Nov 2020 17:05:47 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
+        id S1727228AbgKBRP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Nov 2020 12:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbgKBRP1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2020 12:15:27 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8935BC0617A6;
+        Mon,  2 Nov 2020 09:15:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=kY8nxtxSx3r09CKBimdC1BarQSeukB+zCO2mlqb8faY=; b=tIixBm7W0Y1H8b5N42QUk5f3B/
+        bL1aZRjqJB924clhDCkViGl9XyFgFec5O98RQlI1MhkEB6xiI8CkSe4mkGK2o8ah9hV2s9Z3Zkgn0
+        stfnuEvc7of/dq7R8hLZpoWoPzBS89Pt6MxJ8sobm1lQaP6WfKncGWHsAEEfN3jRpp7ls6yE4PAvS
+        5h6eCHqSyxVkCUgPJyyiGh9OJrRbhv8HFXspp1n45801jYDHd+RCL59vjZqJjRBSswEa+X7c2Da5c
+        9ga87RESykW6w3ydH/GeluGqW5FCCBO0hCCiBVPN32FQyDfQI8H5LWhUT5BZ1iqQ/zFwmGIoKypPW
+        91vLvnZA==;
+Received: from [2601:1c0:6280:3f0::60d5]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kZdQS-0005BM-Ms; Mon, 02 Nov 2020 17:15:25 +0000
+Subject: Re: [PATCH] clk: imx: scu: Fix compile error with module build of
+ clk-scu.o
+To:     =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] dt-bindings: media: imx258: add bindings for
- IMX258 sensor
-Message-ID: <20201102150547.GY26150@paasikivi.fi.intel.com>
-References: <20201019170247.92002-1-krzk@kernel.org>
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <208469.1604318525@turing-police>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6e5a8fdb-0a02-5eae-ca1f-37df8a454e34@infradead.org>
+Date:   Mon, 2 Nov 2020 09:15:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201019170247.92002-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <208469.1604318525@turing-police>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krysztof,
+On 11/2/20 4:02 AM, Valdis Klētnieks wrote:
+> commit 77d8f3068c63ee0983f0b5ba3207d3f7cce11be4 (HEAD)
+> Author: Dong Aisheng <aisheng.dong@nxp.com>
+> Date:   Wed Jul 29 16:00:10 2020 +0800
+> 
+>     clk: imx: scu: add two cells binding support
+> 
+> This missed a #include, which results in some nasty errors when
+> built as a module
+> 
+>   CC [M]  drivers/clk/imx/clk-scu.o
+> In file included from ./include/linux/device.h:32,
+>                  from ./include/linux/of_platform.h:9,
+>                  from drivers/clk/imx/clk-scu.c:11:
+> ./include/linux/device/driver.h:290:1: warning: data definition has no type or storage class
+>  device_initcall(__driver##_init);
+>  ^~~~~~~~~~~~~~~
+> ./include/linux/platform_device.h:258:2: note: in expansion of macro 'builtin_driver'
+>   builtin_driver(__platform_driver, platform_driver_register)
+>   ^~~~~~~~~~~~~~
+> drivers/clk/imx/clk-scu.c:545:1: note: in expansion of macro 'builtin_platform_driver'
+>  builtin_platform_driver(imx_clk_scu_driver);
+>  ^~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/device/driver.h:290:1: error: type defaults to 'int' in declaration of 'device_initcall' [-Werror=implicit-int]
+>  device_initcall(__driver##_init);
+>  ^~~~~~~~~~~~~~~
+> ./include/linux/platform_device.h:258:2: note: in expansion of macro 'builtin_driver'
+>   builtin_driver(__platform_driver, platform_driver_register)
+>   ^~~~~~~~~~~~~~
+> drivers/clk/imx/clk-scu.c:545:1: note: in expansion of macro 'builtin_platform_driver'
+>  builtin_platform_driver(imx_clk_scu_driver);
+>  ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/imx/clk-scu.c:545:1: warning: parameter names (without types) in function declaration
+> In file included from ./include/linux/device.h:32,
+>                  from ./include/linux/of_platform.h:9,
+>                  from drivers/clk/imx/clk-scu.c:11:
+> drivers/clk/imx/clk-scu.c:545:25: warning: 'imx_clk_scu_driver_init' defined but not used [-Wunused-function]
+>  builtin_platform_driver(imx_clk_scu_driver);
+>                          ^~~~~~~~~~~~~~~~~~
+> ./include/linux/device/driver.h:286:19: note: in definition of macro 'builtin_driver'
+>  static int __init __driver##_init(void) \
+>                    ^~~~~~~~
+> drivers/clk/imx/clk-scu.c:545:1: note: in expansion of macro 'builtin_platform_driver'
+>  builtin_platform_driver(imx_clk_scu_driver);
+>  ^~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[3]: *** [scripts/Makefile.build:283: drivers/clk/imx/clk-scu.o] Error 1
+> 
+> Fix by providing the include.
 
-On Mon, Oct 19, 2020 at 07:02:44PM +0200, Krzysztof Kozlowski wrote:
-> Add bindings for the IMX258 camera sensor.  The bindings, just like the
-> driver, are quite limited, e.g. do not support regulator supplies.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> ---
-> 
-> Changes since v4:
-> 1. Add clock-lanes,
-> 2. Add Rob's review,
-> 3. Add one more example and extend existing one,
-> 4. Add common clock properties (assigned-*).
-> 
-> Changes since v3:
-> 1. Document also two lane setup.
-> 
-> Changes since v2:
-> 1. Remove clock-frequency, add reset GPIOs, add supplies.
-> 2. Use additionalProperties.
-> 
-> Changes since v1:
-> 1. None
-> ---
->  .../devicetree/bindings/media/i2c/imx258.yaml | 140 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 141 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx258.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx258.yaml b/Documentation/devicetree/bindings/media/i2c/imx258.yaml
-> new file mode 100644
-> index 000000000000..4a3471fb88a1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/imx258.yaml
-> @@ -0,0 +1,140 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/imx258.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sony IMX258 13 Mpixel CMOS Digital Image Sensor
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +description: |-
-> +  IMX258 is a diagonal 5.867mm (Type 1/3.06) 13 Mega-pixel CMOS active pixel
-> +  type stacked image sensor with a square pixel array of size 4208 x 3120. It
-> +  is programmable through I2C interface.  Image data is sent through MIPI
-> +  CSI-2.
-> +
-> +properties:
-> +  compatible:
-> +    const: sony,imx258
-> +
-> +  assigned-clocks: true
-> +  assigned-clock-parents: true
-> +  assigned-clock-rates: true
 
-I discussed the matter of using assigned clocks with Rob some time ago and
-the conclusion of that was that the sensor driver could use the default
-frequency (set using assigned-clock-rates) instead of the explicit
-frequency in DT. There are use cases (sharing the clock signal between two
-sensors, but different frequencies) that would be affected by this but I
-don't think we have any in mainline so I guess this approach works for now
-without additional changes. If someone needs those use cases, it's likely
-DT clock binding semantings and clock framework changes will be needed.
-That'll be another discussion if it ever happens.
+also
+Reported-by: kernel test robot <lkp@intel.com>
+
+However, this driver does not directly use <linux/module.h>.
+platform_device.h #includes <linux/device.h>, which is where the
+problem lies:
+
+<linux/device.h> uses macros that are provided by <linux/module.h>
+so <linux/device.h> should #include <linux/module.h>.
+
+and that fixes this commit:
+
+commit 4c002c978b7f2f2306d53de051c054504af920a9
+Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon Dec 9 20:33:03 2019 +0100
+
+    device.h: move 'struct driver' stuff out to device/driver.h
+
+> 
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> 
+> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+> index 229a290ca5b6..15d382f6f9f8 100644
+> --- a/drivers/clk/imx/clk-scu.c
+> +++ b/drivers/clk/imx/clk-scu.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/err.h>
+> +#include <linux/module.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+> 
+> 
+
 
 -- 
-Regards,
+~Randy
 
-Sakari Ailus
