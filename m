@@ -2,140 +2,91 @@ Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D726EC00A89
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 01:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03E0C00A89
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 01:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D74822265
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 01:03:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4887722243
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 01:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BxVhdddd"
+	dkim=pass (2048-bit key) header.d=vt-edu.20150623.gappssmtp.com header.i=@vt-edu.20150623.gappssmtp.com header.b="BCTlhAur"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbgKCBDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Nov 2020 20:03:48 -0500
-Received: from mail-db8eur05on2045.outbound.protection.outlook.com ([40.107.20.45]:39649
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbgKCBDr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Nov 2020 20:03:47 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PdITAwEr9Vsvypm/Rk/VSlRsYvCR6h2PbVxbWFnn2oF/nlJGfl0omSAbLS2aFrCS0McDJNnNQW4RlzN2vFw9tyAPn3+q2lYV5csueAp4nj7mKoE7jfWA3FDxH4ebdehLW1nnertAklEjQPnXlg43ZwQ5/0N+O/wZOBPxveY6gEAVQheh+MwnmG33NNYbQ2OVkcs7y/rWqSJ7H/UcUqeM+xiUHbMhw9k57lSAeKOLP+mPbZivoTqQNz2PuAUMUXRvNxqEnlemGgO308uLwRhOGk3lnUp7JumvSthf9jV6khvKgLJYGkBy9fbzhmaX1Qoi8D7NJME0gug7ACIEyOcw9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZeLzhONcDob/FeFy5YAYk55HvUNFyNaueFeSkbvndF0=;
- b=YmsHUtumKHyPc42NODnQYNl0R3FO+XsroWLcBUP52VN4nd5zotuSlBdDfqRxiLJYnSfwq3Ajz7SlV+431nPc/m+wn5a8FOa9MTlPrZGk9H/NglL6o5SZ/mK/Ndc0UzWPGUjWTPCcAqcYVFR32GlR1PciwR2TWmiMIiKQO4eMN/kAUxWhbyIcdmhYd+U2PwAbh9+HUWIZhf9k9iGejPyS8+wvB+HF2BI4qpBtKflnAREt4jsraGJHtJMPKhBGGFWgZxxHIhZZDqcP4zmVbxI8okyGS5CT4eUqW4zZyXTO3hgDJne9Dp1dxuaVNGELlcJeFKQc5znZe0wswT8wNx9OPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZeLzhONcDob/FeFy5YAYk55HvUNFyNaueFeSkbvndF0=;
- b=BxVhddddfdu/H8uL5QmW/KS3pPkLneFxwmLKhavYwdmqGegmw7Lv1oGiwUP17sSgU33WIGOSvJXW5xN6wuGqnrtcy0W7VdrjEd+3VGIbZVAXvS0cC/bFVQJ4XP5oO9ivCtYvvGcLn9WsFrB0Oqk31Lwb+Tj0J9TqolxXkzy5C6o=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR04MB3125.eurprd04.prod.outlook.com (2603:10a6:6:11::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.28; Tue, 3 Nov
- 2020 01:03:44 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::ec42:b6d0:7666:19ef]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::ec42:b6d0:7666:19ef%8]) with mapi id 15.20.3499.030; Tue, 3 Nov 2020
- 01:03:44 +0000
-From:   Peng Fan <peng.fan@nxp.com>
+        id S1726312AbgKCBpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Nov 2020 20:45:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbgKCBpI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2020 20:45:08 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67417C0617A6
+        for <linux-clk@vger.kernel.org>; Mon,  2 Nov 2020 17:45:08 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id j31so3945635qtb.8
+        for <linux-clk@vger.kernel.org>; Mon, 02 Nov 2020 17:45:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:in-reply-to:references:mime-version:date
+         :message-id;
+        bh=cjxoNYxbu1+SaqzoPnce/Hs00JITYfxQWTJFm6SDY4M=;
+        b=BCTlhAur6u1VziO20eWewM72Cq99of9KTcxc+w2vZ0WNhghROr6RgNmHg+bPeyfjVq
+         pKzPI8wSjYmyK1uhNnfQmGkrThVhveQat+Ol8Hm1oWwu/2JJWw2JbbgWZycUMjDpZkPa
+         litzC4Wx9viykurVhIazVRf/sJXFLJkBfBYP3ws5KMXjzPxpMXnDdPFH7tdm0SnAxTBy
+         y6YGezR6s7odPABA7MAdIfkKvQYoSYSEZ4qL01qB5WUNIlCqCc0vxNtyPVQHyrPhGOWO
+         zf7FzkY2LzCk0NX//DLRcj9k9W32HfmlowLemoQhispnI4jEr3gqHG5m5HZsXd72SEkO
+         rciA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:date:message-id;
+        bh=cjxoNYxbu1+SaqzoPnce/Hs00JITYfxQWTJFm6SDY4M=;
+        b=Rm0qg5EA9r2+PWu2IsIy+20NTCA7i2JfHqbuOl0Bx/JeIq8ZT+r+PndiERdzUKWMxV
+         nNAWXo3b6kwZzXurfwpITWVZGtTgZJbrAvcw8P8uQdjARRiWSsFWmOKqSg2wc+vjHqbu
+         lgGRejev7KXKwdQDXWogmdugPakkltFKbCn04BApSJP/dST4chD1/iAr39wo9YF1vn6x
+         eRvk8zGof2MK+MeYlyiC4/1c1lzRV5jiEBCt/aKgkRika93VKWfRzeAYYxWUPuZ5kzi4
+         JO55lwvbhChC0VCMCnMMqo6cZ4oDTzTxpwLqCLDhc856eIx2Z3Z9RHprxxXJCxxbr3ML
+         J27g==
+X-Gm-Message-State: AOAM530ZzEjuz69+2+x+QxnHZN4id2soF2Utk/AxNSQp8rkx/FkOeKol
+        Dr2DQKzXqu2AAqf3+XUhtkEWDw==
+X-Google-Smtp-Source: ABdhPJwCA1LA4NwvrUfJpr0a/T2v5OrQWQPArlZUx5JCWifS0MgN7sP370U7d1i6+cV/NQedAx0jwA==
+X-Received: by 2002:ac8:7b98:: with SMTP id p24mr16682435qtu.31.1604367907411;
+        Mon, 02 Nov 2020 17:45:07 -0800 (PST)
+Received: from turing-police ([2601:5c0:c380:d61::359])
+        by smtp.gmail.com with ESMTPSA id d18sm7587566qka.41.2020.11.02.17.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Nov 2020 17:45:05 -0800 (PST)
+Sender: Valdis Kletnieks <valdis@vt.edu>
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
 To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V3] clk: imx8m: fix bus critical clk registration
-Thread-Topic: [PATCH V3] clk: imx8m: fix bus critical clk registration
-Thread-Index: AQHWsEJPSa9ZZa+Apk613nP3qyZAk6m1ifiAgAAPrCA=
-Date:   Tue, 3 Nov 2020 01:03:44 +0000
-Message-ID: <DB6PR0402MB2760920568B1FC6A9F993EFB88110@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <1604229834-25594-1-git-send-email-peng.fan@nxp.com>
- <20201103000657.GA31601@dragon>
-In-Reply-To: <20201103000657.GA31601@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c53d453f-db70-482f-b398-08d87f944fbb
-x-ms-traffictypediagnostic: DB6PR04MB3125:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB6PR04MB312544E8F662C8765AA1226F88110@DB6PR04MB3125.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: YXHHFHiTs937blgJtqzLUvb8O1l6zY9YWGPhMtT4kZCq+Rji6p8q2AiXenSzT22ERzINvUubGXmYw5WvEAioMPCagtnixUtlja5LXbDCfFeIKBQ+df12wZeUbYvZBjzop2+EceOed8/I+oWO4rXCR8sJJyUgNTpbLU2AJCphEtVbVI1cW7ZySYfRaMgZQMf5/hxp8yvdBdb/3RviaP/NQLv1bHUITCyzGbTx5ly/2Xj8Y3ztWbHRGFB/JM1rlxFnASb8siQew8JU84zxj7vNdWCol/rrZQXBwnOH5xEeLoKGwcVLXEGT32wUElyfDMzBwOxcUffa8ix3sqTw4SIhCpODkDcmmaf6lHJDMavOQPyBgP+M02FvKaJu0PtzGlH6
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(366004)(376002)(136003)(396003)(346002)(4744005)(52536014)(7696005)(26005)(478600001)(6916009)(9686003)(316002)(8936002)(83380400001)(6506007)(54906003)(71200400001)(66556008)(5660300002)(86362001)(66476007)(55016002)(64756008)(76116006)(66446008)(8676002)(186003)(66946007)(44832011)(4326008)(2906002)(33656002)(32563001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: MG4bIJiaUJzQ9OTJmFMAIptxzjCYLjGcO29zCTwLXagX+nwphbpM4I0FhxKEONsS2v57pqXRVDVfKiPTgVYn7wGQZyDQOMr2lcss8FMUp/Dz+om9Yeyz4xlng8GQk/g3xLgADn+gKfvZ0aHAXcP1eh+i77XbBoVECW2u/5VsSIEij4bu3Q/+zZL+hxJrEJaMJXi8p6PshKPv8MrTeIafL0seLHhXbnDVvub5XwoE2IovCB2tGPrpu43HK7BNqVAPVkfEjgLg1S6I+SZy9f8MKyH7uMaQXTxmHgY/hdScuqA43xHMgan10P+HuXbvxQzv7pu1W/APulwgjVQ5L8S2wPj4fYBXXc3LBkBNyrWodqVSu6S5iLjAM9AIpwMO/UhzzwNWZ1dxsBBQZLYPG7U2zS8cecez6WMapZ78GwpWCnLdvXIXFcDMKk3yOkLqf0+0FAZVx4z5NQ2gadLtobBo1STElANOAdDDbGnoBqvZRk/bs38KAGq/HhxdemNEqTgCLtZuUa1LwXOQ7mtGp9Qf9D3olIN28cLbzcAyyZwCAJgO55/MmCNzwf0BHeMPsdET7CHD9mpw7pMAjoFEzaDAET3W0xt7uJZdrKbFkArTUdaHhsBMKSfnEippBdB8OypmBfFuBU9VWbYfO73XFbhPAw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c53d453f-db70-482f-b398-08d87f944fbb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2020 01:03:44.1004
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: flwLUlnCRzol1/y46O2RgasJEdM88QJAZIO+einoBrB8tsUIINT77vA5FxafEMI+TQkupV9XvgYLJ2FYdQvk1Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3125
+cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] clk: imx: scu: Fix compile error with module build of clk-scu.o
+In-reply-to: <20201102235218.GY31601@dragon>
+References: <208469.1604318525@turing-police> <6e5a8fdb-0a02-5eae-ca1f-37df8a454e34@infradead.org> <238534.1604350899@turing-police> <0b61c4f4-b389-c853-6e09-ee603455e583@infradead.org>
+ <20201102235218.GY31601@dragon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Mon, 02 Nov 2020 20:45:04 -0500
+Message-ID: <253486.1604367904@turing-police>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Shawn,
+On Tue, 03 Nov 2020 07:52:19 +0800, Shawn Guo said:
 
-> Subject: Re: [PATCH V3] clk: imx8m: fix bus critical clk registration
->=20
-> On Sun, Nov 01, 2020 at 07:23:54PM +0800, peng.fan@nxp.com wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > noc/axi/ahb are bus clk, not peripheral clk.
-> > Since peripheral clk has a limitation that for peripheral clock slice,
-> > IP clock slices must be stopped to change the clock source.
-> >
-> > However if the bus clk is marked as critical clk peripheral, the
-> > assigned clock parent operation will fail.
-> >
-> > So we added CLK_SET_PARENT_GATE flag to avoid glitch.
-> >
-> > And add imx8m_clk_hw_composite_bus_critical for bus critical clock
-> > usage
-> >
-> > Fixes: 936c383673b9e ("clk: imx: fix composite peripheral flags")
-> > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-> > Reported-by: Abel Vesa <abel.vesa@nxp.com>
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
->=20
-> Do you want this be picked up as a fix for 5.10-rc or non-critical stuff =
-for
-> -next?
-
-Please take this as a fix for 5.10-rc.
-
-Thanks,
-Peng.
-
->=20
+> It's a driver problem which is being addressed by Dong's patch[1].
+>
 > Shawn
+>
+> [1] https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201030153733.30160-1-aisheng.dong@nxp.com/
+
+OK, We'll fix it that way then.
