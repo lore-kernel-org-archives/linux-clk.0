@@ -4,104 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7774C388F2
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B1AC2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 994C322403
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91952071A
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbgKCLUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 06:20:22 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:38264 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbgKCLTR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 06:19:17 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E7AE91A0600;
-        Tue,  3 Nov 2020 12:19:14 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA9F41A0984;
-        Tue,  3 Nov 2020 12:19:14 +0100 (CET)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 292A62033F;
-        Tue,  3 Nov 2020 12:19:14 +0100 (CET)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v5 05/14] dt-bindings: reset: imx8mp: Add media blk_ctl reset IDs
-Date:   Tue,  3 Nov 2020 13:18:17 +0200
-Message-Id: <1604402306-5348-6-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
-References: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728890AbgKCLUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 06:20:31 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7041 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728437AbgKCLUa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Nov 2020 06:20:30 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CQS4p3lZ5zhbPq;
+        Tue,  3 Nov 2020 19:20:26 +0800 (CST)
+Received: from linux-lmwb.huawei.com (10.175.103.112) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 3 Nov 2020 19:20:22 +0800
+From:   Zou Wei <zou_wei@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Zou Wei <zou_wei@huawei.com>
+Subject: [PATCH -next] clk: imx: gate2: Remove unused variable ret
+Date:   Tue, 3 Nov 2020 19:32:14 +0800
+Message-ID: <1604403134-32814-1-git-send-email-zou_wei@huawei.com>
+X-Mailer: git-send-email 2.6.2
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.103.112]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These will be used by the imx8mp for blk_ctl driver.
+This patch fixes below warning reported by coccicheck:
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+./clk-gate2.c:57:5-8: Unneeded variable: "ret". Return "0" on line 68
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zou Wei <zou_wei@huawei.com>
 ---
- include/dt-bindings/reset/imx8mp-reset.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/clk/imx/clk-gate2.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/reset/imx8mp-reset.h b/include/dt-bindings/reset/imx8mp-reset.h
-index 6c7f17f..ba70248 100644
---- a/include/dt-bindings/reset/imx8mp-reset.h
-+++ b/include/dt-bindings/reset/imx8mp-reset.h
-@@ -52,4 +52,32 @@
+diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
+index 480a184..f16c401 100644
+--- a/drivers/clk/imx/clk-gate2.c
++++ b/drivers/clk/imx/clk-gate2.c
+@@ -54,7 +54,6 @@ static int clk_gate2_enable(struct clk_hw *hw)
+ {
+ 	struct clk_gate2 *gate = to_clk_gate2(hw);
+ 	unsigned long flags;
+-	int ret = 0;
  
- #define IMX8MP_AUDIO_BLK_CTL_RESET_NUM		2
+ 	spin_lock_irqsave(gate->lock, flags);
  
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_DSI_PCLK	0
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_DSI_CLKREF	1
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_CSI_PCLK	2
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_CSI_ACLK	3
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF_PIXEL		4
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF_APB		5
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISI_PROC		6
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISI_APB		7
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_BUS_BLK		8
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_CSI2_PCLK	9
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_CSI2_ACLK	10
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF2_PIXEL		11
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF2_APB		12
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP1_COR		13
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP1_AXI		14
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP1_AHB		15
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP0_COR		16
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP0_AXI		17
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_ISP0_AHB		18
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_DWE_COR		19
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_DWE_AXI		20
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_DWE_AHB		21
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_MIPI_DSI2		22
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF_AXI		23
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_LCDIF2_AXI		24
-+
-+#define IMX8MP_MEDIA_BLK_CTL_RESET_NUM			25
-+
- #endif
+@@ -65,7 +64,7 @@ static int clk_gate2_enable(struct clk_hw *hw)
+ out:
+ 	spin_unlock_irqrestore(gate->lock, flags);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void clk_gate2_disable(struct clk_hw *hw)
 -- 
-2.7.4
+2.6.2
 
