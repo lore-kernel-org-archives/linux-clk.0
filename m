@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4257AC2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7F7C388F9
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0325C20870
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A07122280
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604420692;
-	bh=zN+eFM0HVIOS9nyOh7xEE5REPSI59gCe7GIMvHgRwOc=;
+	s=default; t=1604420699;
+	bh=WSq+jGqn7IIOco4olcXArGnNZtTL3ya7nktnhlMAieY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OxKA7PtXW+EMYsx31Af9jEnHr7GQpCqSw0Gl1UtOUCJH7g/Y4+4SmMFFzEqGgqt4T
-	 AMXgXXIW1o1HVjRh5YkDqtfkyhwZihDx0bfWjdjO8HUmI5jGT9wOfHZ5qeYa+29Izx
-	 Br6Nt7gZ2AcbDEko7reHW0iaLa2LTrbopEWpAvgo=
+	b=ZU4Qu/+4Z6IwRgNuJeN6XnbbpQjPiyz1A7DNMmHsBnYhguubGGH2alooLITEH3XPO
+	 vG5OWqTe6PJ0XpC5Wm9dWU07s5Zh/lshuoGyeAhA2XhnOF82Ur8Gs4DOctnMl46Qhf
+	 zRhpCXLtm05uWSkxgRTfoUQQAmNYNerHPz0sBUVQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgKCQYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 11:24:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
+        id S1728539AbgKCQY6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 11:24:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728405AbgKCQYu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:24:50 -0500
+        id S1728532AbgKCQY5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 11:24:57 -0500
 Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9217E22370;
-        Tue,  3 Nov 2020 16:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAA09223EA;
+        Tue,  3 Nov 2020 16:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604420689;
-        bh=zN+eFM0HVIOS9nyOh7xEE5REPSI59gCe7GIMvHgRwOc=;
+        s=default; t=1604420696;
+        bh=WSq+jGqn7IIOco4olcXArGnNZtTL3ya7nktnhlMAieY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hUprS4DbediXpTc3/Gbg6TO+IcEsqfZgdeLGh3mu0u6NdxZ28xyygKDQmY4bfSte9
-         jEWTXVMjCzZkFZx0k4KK/taadz874ujvpSbKEjvZDc9gwKGxXp1tRiiwlA0z9Cazpc
-         HlmQLiDKcA9xH3qPahQuWS2ssTsmgua0i52M5VIk=
+        b=yrMBsSVpyHPGYp5WdpHIcomDX/1s7Fplmr9Z+EABIl+81/8DnZ8QV3Z45fS6g1+Az
+         9sSwRq+O1v0J10XthWmjnbMGyMCDdG/t2VgL8VvZp0wrhAx7txHVCLIzd9xBcPENqZ
+         9/Plw74JvB3w/LtLcedTi2KlfWvUeFTl2ZZ0rDxg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -53,9 +53,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/8] clk: imx8mn: drop of_match_ptr from of_device_id table
-Date:   Tue,  3 Nov 2020 17:24:30 +0100
-Message-Id: <20201103162435.13689-3-krzk@kernel.org>
+Subject: [PATCH 5/8] clk: imx8mq: drop of_match_ptr from of_device_id table
+Date:   Tue,  3 Nov 2020 17:24:32 +0100
+Message-Id: <20201103162435.13689-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201103162435.13689-1-krzk@kernel.org>
 References: <20201103162435.13689-1-krzk@kernel.org>
@@ -71,27 +71,27 @@ used and the of_match_ptr does not have any sense (this also allows ACPI
 matching via PRP0001, even though it might be not relevant here).  This
 fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
 
-    drivers/clk/imx/clk-imx8mn.c:592:34: warning:
-        ‘imx8mn_clk_of_match’ defined but not used [-Wunused-const-variable=]
+    drivers/clk/imx/clk-imx8mq.c:626:34: warning:
+        ‘imx8mq_clk_of_match’ defined but not used [-Wunused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/imx/clk-imx8mn.c | 2 +-
+ drivers/clk/imx/clk-imx8mq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index e984de543f0b..18f81419f355 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -604,7 +604,7 @@ static struct platform_driver imx8mn_clk_driver = {
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 8265d1d48af4..75186888ecae 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -639,7 +639,7 @@ static struct platform_driver imx8mq_clk_driver = {
  		 * reloading the driver will crash or break devices.
  		 */
  		.suppress_bind_attrs = true,
--		.of_match_table = of_match_ptr(imx8mn_clk_of_match),
-+		.of_match_table = imx8mn_clk_of_match,
+-		.of_match_table = of_match_ptr(imx8mq_clk_of_match),
++		.of_match_table = imx8mq_clk_of_match,
  	},
  };
- module_platform_driver(imx8mn_clk_driver);
+ module_platform_driver(imx8mq_clk_driver);
 -- 
 2.25.1
 
