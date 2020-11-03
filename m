@@ -2,98 +2,150 @@ Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D0C388F7
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F296FC388F9
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 17:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9800920773
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604420722;
-	bh=p6SQM1UMwof5wLchb2Qt88XEkIATt19vgignrCZa8iE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nCFRz86yTgBas7imlIAf329SLJg4fF2I+NIc8lObM2V2FeLqCm+64zvnFLg1sRoUp
-	 SEuci7GPHXNwKmqT3dR35oj0iQiTHRCZO+TkVwkuB3g8sQkxge9J0Bkd5EmFqRzekk
-	 uFQspgm4GZ6Obx1Eo7VvQUxlG0y//tcoPRYQDsx4=
+	by mail.kernel.org (Postfix) with ESMTP id A39DC221FB
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 17:34:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q2n8tpHV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbgKCQYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 11:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728405AbgKCQYy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:24:54 -0500
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EB1920773;
-        Tue,  3 Nov 2020 16:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604420693;
-        bh=p6SQM1UMwof5wLchb2Qt88XEkIATt19vgignrCZa8iE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XwM08dkdb9vy7Xg3UBxGclvykQL2LanGM27iv1yZ9ieSskMXjRtFXtPu3Hlk+horX
-         wyf48rJCXIDqoFhgtkLhgfgNJ7QcGWJfWI2Wc1mf5TBQ7Y8WFNgBHBEoSXSxxg3qUC
-         AFESLoIsbNEW5mAvcejSZLUcBwTkX9f7Yw57a1yU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH 4/8] clk: imx8mp: drop of_match_ptr from of_device_id table
-Date:   Tue,  3 Nov 2020 17:24:31 +0100
-Message-Id: <20201103162435.13689-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201103162435.13689-1-krzk@kernel.org>
-References: <20201103162435.13689-1-krzk@kernel.org>
+        id S1728690AbgKCReW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 12:34:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728241AbgKCReW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Nov 2020 12:34:22 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66561C0617A6
+        for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2020 09:34:22 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id c21so4168420oic.1
+        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2020 09:34:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1JaZqXqFdIPWnt0E572LVN0+nDbV1o5m6gHDSDoIC4I=;
+        b=Q2n8tpHV5nvmR2OSazRvxRWjiFH+PKL/RCPajflFlEudEY3RSDuRnYEQVw4yaus37x
+         8YPDStWRw8UUe7KUhTt/YXdJ6a4/b5XzFw7pgoJEeO4PnTLiFCiUR90suFcU6V3mm9Ag
+         v9kRYp1akaOMtiswKY5Ia6V3Wg5CAta7OWvv7YZ8vTpPXsWYlI8xONYzj4DrjflJU7nb
+         TfgTPj4oqYkDJNOZHZPciKnMyuo/pUcLdTxK00YuA/+1wpQGHhiuYp/lyRvW7tLb7GO8
+         qNPmiO4bXYC/5h5/j/Qqyl/0y+MmidTJDA4tmN2ow2p9SbLLsDtXgvDnfDBpAeVR5sLQ
+         wVjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1JaZqXqFdIPWnt0E572LVN0+nDbV1o5m6gHDSDoIC4I=;
+        b=tAgpyP90TGMkfi+BQ+iocatVIiAUlZCE8UvNPedRNqJMsVUKgFlOHBdAXPXFgT+X4z
+         dxoOuopzMQBjIOwgenURNw4mXsTl8auX4MyNDmGUp3pW5QmChg7avGTfzGix4UXokkPP
+         /ycUfOkSf4pgTYOabRtXaarIoDrna5fp6zBjmubnfUK5Awz7eMl47f9YErAzNs6lNQzR
+         oNWiNOsOx8mP0pfPx2GyAKQ2Z+YCDOZcwiYVuETEl0qhkuT19dENi/V+3yWCy2O/X1kv
+         bsKpTzv3z1gZxc+sI/eHKCCwjgHY69sJfYcLq0sCspV2zWVtNvu/sWJ1rMo24VWGc8WU
+         Jg/g==
+X-Gm-Message-State: AOAM530z73szKNxQpAQfc1oqFDqzmVZcNshjBowpzObTJpDp/ml8EcLs
+        LAvwu4faI9uHJIinG+vTFMnZcg==
+X-Google-Smtp-Source: ABdhPJxHzlfUfcI++bJ+iZGECeMfHDlxPyTogVh3GwkhPPMW09JbfIDc7FH7/XeiZPCfD6Y4u1WguA==
+X-Received: by 2002:aca:5d07:: with SMTP id r7mr135553oib.87.1604424861654;
+        Tue, 03 Nov 2020 09:34:21 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t65sm4261575oib.50.2020.11.03.09.34.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 09:34:20 -0800 (PST)
+Date:   Tue, 3 Nov 2020 11:34:19 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Add GCC and RPMh clock support for SDX55
+Message-ID: <20201103173419.GP3151@builder.lan>
+References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
+ <20201028170853.GA3191@Mani-XPS-13-9360>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201028170853.GA3191@Mani-XPS-13-9360>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might be not relevant here).  This
-fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
+On Wed 28 Oct 12:08 CDT 2020, Manivannan Sadhasivam wrote:
 
-    drivers/clk/imx/clk-imx8mp.c:751:34: warning:
-        ‘imx8mp_clk_of_match’ defined but not used [-Wunused-const-variable=]
+> On Wed, Oct 28, 2020 at 01:12:28PM +0530, Manivannan Sadhasivam wrote:
+> > Hello,
+> > 
+> > This series adds Global Clock Controller (GCC) and RPMh clock support
+> > for SDX55 SoC from Qualcomm with relevant DT bindings.
+> > 
+> > This series has been tested on SDX55 MTP board. The dts patches for this
+> > SoC/board will be posted later.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > Manivannan Sadhasivam (1):
+> >   clk: qcom: Add support for SDX55 RPMh clocks
+> > 
+> > Naveen Yadav (1):
+> >   clk: qcom: Add SDX55 GCC support
+> 
+> Bjorn, I've inherited the gcc driver from downstream and did some modification.
+> But I'm not sure if I can take the authorship of this patch hence kept it to the
+> downstream author.
+> 
+> In my point of view, the downstream author wrote the driver so I should keep
+> the copyright and even list them as MODULE_AUTHOR. But I don't think I should
+> give the patch authorship to them because I haven't received the patch anyhow.
+> I usually keep the authorship if I take the patch from a source like LKML and
+> repost it. But in this case, I authored the patch using someone's code!
+> 
+> What is your view on this?
+> 
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/imx/clk-imx8mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think the author should be the person whom prepared the patch.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 12ce4770f702..5295a5156ab0 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -763,7 +763,7 @@ static struct platform_driver imx8mp_clk_driver = {
- 		 * reloading the driver will crash or break devices.
- 		 */
- 		.suppress_bind_attrs = true,
--		.of_match_table = of_match_ptr(imx8mp_clk_of_match),
-+		.of_match_table = imx8mp_clk_of_match,
- 	},
- };
- module_platform_driver(imx8mp_clk_driver);
--- 
-2.25.1
+Given that the downstream driver is a series of patches from a single
+author it's not unreasonable to squash those and retain the author. But
+if your effort to prepare the patch for upstream was non-trivial I would
+consider it reasonable for you to claim authorship of the patch.
 
+If this is the case it's definitely preferable to give credit to the
+original author(s) by mentioning them in the commit message (e.g. "Based
+on downstream implementation by Jane Doe").
+
+And the copyright for the work definitely needs to come along, possibly
+with the addition of yours, depending on your modifications.
+
+Thanks,
+Bjorn
+
+> Thanks,
+> Mani
+> 
+> > 
+> > Vinod Koul (2):
+> >   dt-bindings: clock: Add SDX55 GCC clock bindings
+> >   dt-bindings: clock: Introduce RPMHCC bindings for SDX55
+> > 
+> >  .../bindings/clock/qcom,gcc-sdx55.yaml        |   71 +
+> >  .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+> >  drivers/clk/qcom/Kconfig                      |    8 +
+> >  drivers/clk/qcom/Makefile                     |    1 +
+> >  drivers/clk/qcom/clk-rpmh.c                   |   20 +
+> >  drivers/clk/qcom/gcc-sdx55.c                  | 1667 +++++++++++++++++
+> >  include/dt-bindings/clock/qcom,gcc-sdx55.h    |  112 ++
+> >  include/dt-bindings/clock/qcom,rpmh.h         |    1 +
+> >  8 files changed, 1881 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+> >  create mode 100644 drivers/clk/qcom/gcc-sdx55.c
+> >  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx55.h
+> > 
+> > -- 
+> > 2.17.1
+> > 
