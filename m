@@ -2,100 +2,102 @@ Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821B5C2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 10:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0B8C2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13F44208B6
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 10:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604401174;
-	bh=qeFHNu/TjXZ28G/HeWCLlB9Rs2ZplrmupeH3I17qMMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1nili4gJRGiVzDUY0aejpRpZYC1XdnpYB2rR83YRLJSOFgTPwRvAsTx7QUChR6xfB
-	 19r1z75UIy0bFe+U7NG297b4bICSE78P5aei+S1m6u3fsQUNm3LqzY1CK9ykpTIMf0
-	 545iy74xjGNnDQSKadcDWI5ZywWH5EJbku6d95wI=
+	by mail.kernel.org (Postfix) with ESMTP id D0EC022409
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 11:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbgKCK7b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 05:59:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35714 "EHLO mail.kernel.org"
+        id S1728302AbgKCLTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 06:19:13 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:40964 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726058AbgKCK7b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 05:59:31 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8187E208B6;
-        Tue,  3 Nov 2020 10:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604401170;
-        bh=qeFHNu/TjXZ28G/HeWCLlB9Rs2ZplrmupeH3I17qMMY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HadCM52Fwbr7Bx14vtSn0XROrJ8NOI4lvGa9Z6yvwyCKfe+iRQQWW8v0fsMhNGO9z
-         thkVfnxg5XVNLXsTNQ9KHORuVy+F1v9yW+TjXsMRCcxq+KqT9mXwIgLzLJdEuF0pC5
-         a2s0kWuQWNQm1m8bOASANQwMaao/XBwOpy/ZkVkA=
-Date:   Tue, 3 Nov 2020 18:59:25 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
+        id S1728202AbgKCLTN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 06:19:13 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E89B120054E;
+        Tue,  3 Nov 2020 12:19:10 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DB3DC200342;
+        Tue,  3 Nov 2020 12:19:10 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C2E32033F;
+        Tue,  3 Nov 2020 12:19:10 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         Anson Huang <anson.huang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: Re: [PATCH V3] clk: imx8m: fix bus critical clk registration
-Message-ID: <20201103105924.GD31601@dragon>
-References: <1604229834-25594-1-git-send-email-peng.fan@nxp.com>
- <20201103000657.GA31601@dragon>
- <DB6PR0402MB2760920568B1FC6A9F993EFB88110@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB6PR0402MB2760920568B1FC6A9F993EFB88110@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v5 00/14] Add BLK_CTL support for i.MX8MP
+Date:   Tue,  3 Nov 2020 13:18:12 +0200
+Message-Id: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 01:03:44AM +0000, Peng Fan wrote:
-> Shawn,
-> 
-> > Subject: Re: [PATCH V3] clk: imx8m: fix bus critical clk registration
-> > 
-> > On Sun, Nov 01, 2020 at 07:23:54PM +0800, peng.fan@nxp.com wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > noc/axi/ahb are bus clk, not peripheral clk.
-> > > Since peripheral clk has a limitation that for peripheral clock slice,
-> > > IP clock slices must be stopped to change the clock source.
-> > >
-> > > However if the bus clk is marked as critical clk peripheral, the
-> > > assigned clock parent operation will fail.
-> > >
-> > > So we added CLK_SET_PARENT_GATE flag to avoid glitch.
-> > >
-> > > And add imx8m_clk_hw_composite_bus_critical for bus critical clock
-> > > usage
-> > >
-> > > Fixes: 936c383673b9e ("clk: imx: fix composite peripheral flags")
-> > > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-> > > Reported-by: Abel Vesa <abel.vesa@nxp.com>
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > 
-> > Do you want this be picked up as a fix for 5.10-rc or non-critical stuff for
-> > -next?
-> 
-> Please take this as a fix for 5.10-rc.
+The BLK_CTL according to HW design is basically the wrapper of the entire
+function specific group of IPs and holds GPRs that usually cannot be placed
+into one specific IP from that group. Some of these GPRs are used to control
+some clocks, other some resets, others some very specific function that does
+not fit into clocks or resets. Since the clocks are registered using the i.MX
+clock subsystem API, the driver is placed into the clock subsystem, but it
+also registers the resets. For the other functionalities that other GPRs might
+have, the syscon is used.
 
-Okay, I will leave this to Stephen then.
+Changes since v4:
+ * added back the bus_blk_clk in the imx8mp blk_ctl driver (media_blk_ctl)
+ * added the R-b tag from Rob to the documentation patch
 
-Shawn
+Abel Vesa (14):
+  dt-bindings: clocks: imx8mp: Rename audiomix ids clocks to
+    audio_blk_ctl
+  dt-bindings: reset: imx8mp: Add audio blk_ctl reset IDs
+  dt-bindings: clock: imx8mp: Add ids for the audio shared gate
+  dt-bindings: clock: imx8mp: Add media blk_ctl clock IDs
+  dt-bindings: reset: imx8mp: Add media blk_ctl reset IDs
+  dt-bindings: clock: imx8mp: Add hdmi blk_ctl clock IDs
+  dt-bindings: reset: imx8mp: Add hdmi blk_ctl reset IDs
+  clk: imx8mp: Add audio shared gate
+  Documentation: bindings: clk: Add bindings for i.MX BLK_CTL
+  clk: imx: Add generic blk-ctl driver
+  clk: imx: Add blk-ctl driver for i.MX8MP
+  arm64: dts: imx8mp: Add audio_blk_ctl node
+  arm64: dts: imx8mp: Add media_blk_ctl node
+  arm64: dts: imx8mp: Add hdmi_blk_ctl node
+
+ .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml |  60 ++++
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi          |  37 +++
+ drivers/clk/imx/Makefile                           |   2 +-
+ drivers/clk/imx/clk-blk-ctl-imx8mp.c               | 317 +++++++++++++++++++++
+ drivers/clk/imx/clk-blk-ctl.c                      | 302 ++++++++++++++++++++
+ drivers/clk/imx/clk-blk-ctl.h                      |  80 ++++++
+ drivers/clk/imx/clk-imx8mp.c                       |  12 +-
+ include/dt-bindings/clock/imx8mp-clock.h           | 200 +++++++++----
+ include/dt-bindings/reset/imx8mp-reset.h           |  45 +++
+ 9 files changed, 992 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+ create mode 100644 drivers/clk/imx/clk-blk-ctl-imx8mp.c
+ create mode 100644 drivers/clk/imx/clk-blk-ctl.c
+ create mode 100644 drivers/clk/imx/clk-blk-ctl.h
+
+-- 
+2.7.4
+
