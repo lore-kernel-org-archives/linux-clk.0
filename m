@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679E3C388F9
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F1DC388F7
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15E7120674
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44A020870
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604420705;
-	bh=qxGUjyAKucLG+05VEGNWglb8mPI0UTja9MiuRVQDnWQ=;
+	s=default; t=1604420706;
+	bh=KmXSDLIUyhLlsIyTxtF/O+VdNgM2OIydEXth8aYL6Lg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ABjduP9ayFGpERMCxP6o+t4tnfyEcob/JxEUuas4uYSf95+vwBs9IGL1XhQ8pUyuE
-	 0+auNl0/NlJbUyBhX1WP1z37hL2emn/Mvsvto4TzEU6rSwNY9nyQDvShPuHGPkWPOD
-	 w9D45nUYu1ehKSaiZO5cGyiOiX9UjKq0tlsLS/2Y=
+	b=Gy4pwOs/sw89LQIFBQ8m4qDO9fqAGaARvFT+tufqbnLQ5T5mpQhroh6Fxe5SFiubl
+	 ziA6D+20shLjWP+d0Vs4jE6IonKAE9PMU3gDT9B3kr2RWDNJV8d+J6fapEUXkSfsj2
+	 48Mp9pqDmLu91A30fWMziDTPjGUtPlijx36xdJY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgKCQZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 11:25:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51678 "EHLO mail.kernel.org"
+        id S1728564AbgKCQZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 11:25:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728532AbgKCQZB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:25:01 -0500
+        id S1726126AbgKCQZE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 11:25:04 -0500
 Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A57820773;
-        Tue,  3 Nov 2020 16:24:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1397E223C7;
+        Tue,  3 Nov 2020 16:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604420700;
-        bh=qxGUjyAKucLG+05VEGNWglb8mPI0UTja9MiuRVQDnWQ=;
+        s=default; t=1604420704;
+        bh=KmXSDLIUyhLlsIyTxtF/O+VdNgM2OIydEXth8aYL6Lg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZbyoJ5pnEf+2XmxMIM4Wz8VfXVkz422bs0tNq1TqfNT7AJ3RhQO56Mja9kGxdzyY
-         Iw7uk5fZ9AL6sqennPXEvwVOJ6Jc3MQxwa1075nRhYBGvJSMwcMkcOvEKodk4r2u8s
-         4fEdGjJlRddsgT8C75w5oWDwcBdAO8RssCG0zhU8=
+        b=KZfrEPnPNM+PkDbRo5AtoUpRQoW0pHi/E2SHb9gZguC+OAyql3jlQ5ucFeF/kF0gK
+         +efwgmsjoQLdSX5rkK1SbK79eidFkTuDxnri1Wufs/6OokmjvMtBgO7tTvm7XZc1Ts
+         o/6ww0+usBpsNcb7lcVXKpeliAMmrCeyMByCMq0Y=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -53,43 +53,42 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 6/8] clk: renesas: r8a779a0-cpg-mssr: add static to local function
-Date:   Tue,  3 Nov 2020 17:24:33 +0100
-Message-Id: <20201103162435.13689-6-krzk@kernel.org>
+Subject: [PATCH 7/8] clk: renesas: renesas-cpg-mssr: fix kerneldoc of cpg_mssr_priv
+Date:   Tue,  3 Nov 2020 17:24:34 +0100
+Message-Id: <20201103162435.13689-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201103162435.13689-1-krzk@kernel.org>
 References: <20201103162435.13689-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The function rcar_r8a779a0_cpg_clk_register() is not used outside of the
-unit so it can be made static to fix compilation warning:
+The struct cpg_mssr_priv missed proper formatting:
 
-    drivers/clk/renesas/r8a779a0-cpg-mssr.c:156:21: warning:
-        no previous prototype for ‘rcar_r8a779a0_cpg_clk_register’ [-Wmissing-prototypes]
+    drivers/clk/renesas/renesas-cpg-mssr.c:142: warning:
+        cannot understand function prototype: 'struct cpg_mssr_priv '
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index 17ebbac7ddfb..7e25b3b8945b 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -153,7 +153,7 @@ static const struct rcar_r8a779a0_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
- static u32 cpg_mode __initdata;
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 94db88370337..1c3215dc4877 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -119,7 +119,8 @@ static const u16 srstclr_for_v3u[] = {
+ };
  
--struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
-+static struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base,
- 	struct raw_notifier_head *notifiers)
+ /**
+- * Clock Pulse Generator / Module Standby and Software Reset Private Data
++ * struct cpg_mssr_priv - Clock Pulse Generator / Module Standby
++ *                        and Software Reset Private Data
+  *
+  * @rcdev: Optional reset controller entity
+  * @dev: CPG/MSSR device
 -- 
 2.25.1
 
