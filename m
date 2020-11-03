@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F11C388F7
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4257AC2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69DFC22264
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0325C20870
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604420688;
-	bh=2wimUO+VSXbBzfuTHoe58Y6vRB6mfx+eV7EIjA1pLEM=;
+	s=default; t=1604420692;
+	bh=zN+eFM0HVIOS9nyOh7xEE5REPSI59gCe7GIMvHgRwOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kRTVkjvc3OFsLnkZVKZ/VJJ/hYF9BOEOMwmYkboA4DeITxmnS7zaDyIyZ2MsaTh4+
-	 Tsz1/0RkOVOVwEb2Xu/YT93k+Oe2WH6mPpwi0EcWCUwXP0AG8ke2p1WL5ZHo4vdaCW
-	 hv5Cnb4q5zhghOP7hRGPYvL8ljVnJ/UzQoV7vIUQ=
+	b=OxKA7PtXW+EMYsx31Af9jEnHr7GQpCqSw0Gl1UtOUCJH7g/Y4+4SmMFFzEqGgqt4T
+	 AMXgXXIW1o1HVjRh5YkDqtfkyhwZihDx0bfWjdjO8HUmI5jGT9wOfHZ5qeYa+29Izx
+	 Br6Nt7gZ2AcbDEko7reHW0iaLa2LTrbopEWpAvgo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgKCQYr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 11:24:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51398 "EHLO mail.kernel.org"
+        id S1728364AbgKCQYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 11:24:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbgKCQYq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:24:46 -0500
+        id S1728405AbgKCQYu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 11:24:50 -0500
 Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2623522280;
-        Tue,  3 Nov 2020 16:24:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9217E22370;
+        Tue,  3 Nov 2020 16:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604420686;
-        bh=2wimUO+VSXbBzfuTHoe58Y6vRB6mfx+eV7EIjA1pLEM=;
+        s=default; t=1604420689;
+        bh=zN+eFM0HVIOS9nyOh7xEE5REPSI59gCe7GIMvHgRwOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0R9meRyiVbPBA93PiTRbY++uIv6dBNIgxhqBpRsVD/ZiULjZI4PAEpWU3QMkOrAtT
-         GcOlz3xqU7BFW4Ji+m/ZAVhG3/N7VZXyVrStYNJbl9Va9qZjskzD5YYV+PcYjDpPaB
-         Xrkhmx4cjWDskBmXNO7EUJoosAWB95UrJsNUnWSA=
+        b=hUprS4DbediXpTc3/Gbg6TO+IcEsqfZgdeLGh3mu0u6NdxZ28xyygKDQmY4bfSte9
+         jEWTXVMjCzZkFZx0k4KK/taadz874ujvpSbKEjvZDc9gwKGxXp1tRiiwlA0z9Cazpc
+         HlmQLiDKcA9xH3qPahQuWS2ssTsmgua0i52M5VIk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -53,9 +53,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/8] clk: imx8mm: drop of_match_ptr from of_device_id table
-Date:   Tue,  3 Nov 2020 17:24:29 +0100
-Message-Id: <20201103162435.13689-2-krzk@kernel.org>
+Subject: [PATCH 3/8] clk: imx8mn: drop of_match_ptr from of_device_id table
+Date:   Tue,  3 Nov 2020 17:24:30 +0100
+Message-Id: <20201103162435.13689-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201103162435.13689-1-krzk@kernel.org>
 References: <20201103162435.13689-1-krzk@kernel.org>
@@ -71,27 +71,27 @@ used and the of_match_ptr does not have any sense (this also allows ACPI
 matching via PRP0001, even though it might be not relevant here).  This
 fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
 
-    drivers/clk/imx/clk-imx8mm.c:641:34: warning:
-        ‘imx8mm_clk_of_match’ defined but not used [-Wunused-const-variable=]
+    drivers/clk/imx/clk-imx8mn.c:592:34: warning:
+        ‘imx8mn_clk_of_match’ defined but not used [-Wunused-const-variable=]
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/imx/clk-imx8mm.c | 2 +-
+ drivers/clk/imx/clk-imx8mn.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 0de0be0cf548..e27890b61fb6 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -653,7 +653,7 @@ static struct platform_driver imx8mm_clk_driver = {
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index e984de543f0b..18f81419f355 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -604,7 +604,7 @@ static struct platform_driver imx8mn_clk_driver = {
  		 * reloading the driver will crash or break devices.
  		 */
  		.suppress_bind_attrs = true,
--		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
-+		.of_match_table = imx8mm_clk_of_match,
+-		.of_match_table = of_match_ptr(imx8mn_clk_of_match),
++		.of_match_table = imx8mn_clk_of_match,
  	},
  };
- module_platform_driver(imx8mm_clk_driver);
+ module_platform_driver(imx8mn_clk_driver);
 -- 
 2.25.1
 
