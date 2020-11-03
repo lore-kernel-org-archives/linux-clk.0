@@ -2,163 +2,94 @@ Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6854C2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 14:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC3BC2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9272B22264
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 14:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3F5120870
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 16:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604420683;
+	bh=oy0BIq1d1q74mC6j3/1prk2IjXyLRHfreCZtGCV8UV4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Z5/WbJE/kL4s4LJADEg9D6cmwBMQYMojnuAn0XYT7hG02d1XBtVSX9sI9tXme6Zp0
+	 Rj+zrQWJRPvsZ0kPyk2M2oB65CSRay63YNYykzjEyvYCv7yBjLKSFPw2/3FLbkv6M7
+	 n4/k8sl3Wfn12g/Hy0lXiprgD48iYCm4U8gGdONg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbgKCOYS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 09:24:18 -0500
-Received: from atl4mhfb01.myregisteredsite.com ([209.17.115.55]:50312 "EHLO
-        atl4mhfb01.myregisteredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729706AbgKCOXK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Nov 2020 09:23:10 -0500
-X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Nov 2020 09:23:09 EST
-Received: from jax4mhob17.registeredsite.com (jax4mhob17.registeredsite.com [64.69.218.105])
-        by atl4mhfb01.myregisteredsite.com (8.14.4/8.14.4) with ESMTP id 0A3EHpZ9032101
-        for <linux-clk@vger.kernel.org>; Tue, 3 Nov 2020 09:17:51 -0500
-Received: from mailpod.hostingplatform.com ([10.30.71.206])
-        by jax4mhob17.registeredsite.com (8.14.4/8.14.4) with ESMTP id 0A3EHnPQ109747
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-clk@vger.kernel.org>; Tue, 3 Nov 2020 09:17:49 -0500
-Received: (qmail 23793 invoked by uid 0); 3 Nov 2020 14:17:49 -0000
-X-TCPREMOTEIP: 83.128.90.119
-X-Authenticated-UID: mike@milosoftware.com
-Received: from unknown (HELO phenom.domain?not?set.invalid) (mike@milosoftware.com@83.128.90.119)
-  by 0 with ESMTPA; 3 Nov 2020 14:17:49 -0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     linux-clk@vger.kernel.org
-Cc:     sboyd@kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk-si5341: Support NVM programming through sysfs
-Date:   Tue,  3 Nov 2020 15:17:41 +0100
-Message-Id: <20201103141741.2511-1-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 2.17.1
+        id S1728299AbgKCQYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 11:24:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728266AbgKCQYn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 11:24:43 -0500
+Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A576B20674;
+        Tue,  3 Nov 2020 16:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604420682;
+        bh=oy0BIq1d1q74mC6j3/1prk2IjXyLRHfreCZtGCV8UV4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AgC4Zm9HcAnnExuc3aSR7BodaIW9ulmnWxnVFE1LdEdOMjW89BQ6TYPGvf96nbj10
+         Lw1DdNRIJsmjCL6FAMI3cw27BvCOD2LVCCvbP9q12EpxfxvDu5sHPykyNTkktnArqh
+         FIv8TbgEF4stkwGBaAs2wuQUqC2wxhMdNPuSD1TM=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/8] clk: pwm: drop of_match_ptr from of_device_id table
+Date:   Tue,  3 Nov 2020 17:24:28 +0100
+Message-Id: <20201103162435.13689-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Export an attribute program_nvm_bank that when read reports the current
-bank value. To program the chip's current state into NVM, write the
-magic value 0xC7 into this attribute.
+The driver can match only via the DT table so the table should be always
+used and the of_match_ptr does not have any sense (this also allows ACPI
+matching via PRP0001, even though it might be not relevant here).  This
+fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+    drivers/clk/clk-pwm.c:139:34: warning:
+        ‘clk_pwm_dt_ids’ defined but not used [-Wunused-const-variable=]
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/clk-si5341.c | 73 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ drivers/clk/clk-pwm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index e0446e66fa64..4e025a5ea2b7 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -92,6 +92,9 @@ struct clk_si5341_output_config {
- #define SI5341_PN_BASE		0x0002
- #define SI5341_DEVICE_REV	0x0005
- #define SI5341_STATUS		0x000C
-+#define SI5341_ACTIVE_NVM_BANK	0x00E2
-+#define SI5341_NVM_WRITE	0x00E3
-+#define SI5341_DEVICE_READY	0x00FE
- #define SI5341_SOFT_RST		0x001C
- #define SI5341_IN_SEL		0x0021
- #define SI5341_XAXB_CFG		0x090E
-@@ -144,6 +147,9 @@ struct clk_si5341_output_config {
- #define SI5341_OUT_CFG_OE		BIT(1)
- #define SI5341_OUT_CFG_RDIV_FORCE2	BIT(2)
- 
-+/* Programming NVM, magic value to write to program the NVM */
-+#define SI5341_SI5341_NVM_WRITE_COOKIE	0xC7
-+
- /* Static configuration (to be moved to firmware) */
- struct si5341_reg_default {
- 	u16 address;
-@@ -1199,6 +1205,69 @@ static const struct regmap_config si5341_regmap_config = {
- 	.volatile_table = &si5341_regmap_volatile,
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index 86f2e2d3fc02..da2c8eddfd9f 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -147,7 +147,7 @@ static struct platform_driver clk_pwm_driver = {
+ 	.remove = clk_pwm_remove,
+ 	.driver = {
+ 		.name = "pwm-clock",
+-		.of_match_table = of_match_ptr(clk_pwm_dt_ids),
++		.of_match_table = clk_pwm_dt_ids,
+ 	},
  };
  
-+static ssize_t program_nvm_bank_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct clk_si5341 *data = i2c_get_clientdata(client);
-+	unsigned int regval;
-+	int ret;
-+
-+	ret = regmap_read(data->regmap, SI5341_ACTIVE_NVM_BANK, &regval);
-+	if (ret)
-+		return ret;
-+
-+	return sprintf(buf, "%#x\n", regval);
-+}
-+
-+static ssize_t program_nvm_bank_store(struct device *dev,
-+	struct device_attribute *attr,
-+	const char *buf,
-+	size_t count)
-+{
-+	struct clk_si5341 *data = i2c_get_clientdata(to_i2c_client(dev));
-+	int ret;
-+	unsigned int value;
-+	unsigned int timeout;
-+
-+	ret = kstrtouint(buf, 0, &value);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Write the magic value to this attribute to program the NVM */
-+	if (value != SI5341_SI5341_NVM_WRITE_COOKIE)
-+		return -EINVAL;
-+
-+	ret = regmap_write(data->regmap, SI5341_NVM_WRITE,
-+			SI5341_SI5341_NVM_WRITE_COOKIE);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for SI5341_DEVICE_READY register to become 0x0f */
-+	for (timeout = 10000; timeout; --timeout) {
-+		ret = regmap_read(data->regmap, SI5341_DEVICE_READY, &value);
-+		if (ret)
-+			return ret;
-+
-+		if (value == 0x0f)
-+			break;
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(program_nvm_bank);
-+
-+static struct attribute *si5341_sysfs_entries[] = {
-+	&dev_attr_program_nvm_bank.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group si5341_attr_group = {
-+	.name	= NULL,	/* put in device directory */
-+	.attrs	= si5341_sysfs_entries,
-+};
-+
- static int si5341_dt_parse_dt(struct i2c_client *client,
- 	struct clk_si5341_output_config *config)
- {
-@@ -1544,6 +1613,10 @@ static int si5341_probe(struct i2c_client *client,
- 	for (i = 0; i < data->num_synth; ++i)
- 		 devm_kfree(&client->dev, (void *)synth_clock_names[i]);
- 
-+	err = sysfs_create_group(&client->dev.kobj, &si5341_attr_group);
-+	if (err)
-+		dev_err(&client->dev, "failed to create sysfs entries\n");
-+
- 	return 0;
- }
- 
 -- 
-2.17.1
+2.25.1
 
