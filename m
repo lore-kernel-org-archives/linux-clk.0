@@ -1,114 +1,83 @@
-Return-Path: <SRS0=CNvH=EI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA907C00A89
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 23:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DA0C00A89
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 00:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C3D3208B6
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Nov 2020 23:59:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CZilSElb"
+	by mail.kernel.org (Postfix) with ESMTP id 9C40722275
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 00:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604362024;
+	bh=GzuDDXWY8aoG90EgJn5PYz9hpehIy8YNVnQqPK2pNA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qNaK/KQXuk+8CwCH9SjUZ1qDzFocWf5dto/YbUDW60SGBbmCcDfyWAw5Wn//+vaC1
+	 IkZmPrItT/W5InhAoGvsjX9k4nsYlx2qSCkSbeBI0hRSe+fDDsu39mvM0/zO3z5MkH
+	 V2GLXHG+3EXv0m6vpsIrVkwFvmgNgBek6L3NzPmo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725910AbgKBX7U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Nov 2020 18:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbgKBX7U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Nov 2020 18:59:20 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84406C0617A6;
-        Mon,  2 Nov 2020 15:59:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=kq5zl3zxK4YCSEMFuwsnwaP6L+NpwyRjMkpocdwcKhE=; b=CZilSElbfGYe4hk/zbGuQ9hUp6
-        27s3aXWr9fwyvkpavFiHVMXX7NN8mG9b8LDbhCNRgZouzdgNK6OezF3GArzsV6L3j/RyrFO+CBptQ
-        TSjuJFZyHlyBbz/UBZ5sBfrzum4D5Y8ISf8kmOt2VtLwFs7TukVoIJfsdqXZK/m/zNTfj+NffC2po
-        1sN/AsHbDecArg5JxYqqWnVP6OjsEbme31c5onfFuitLAVf1krpes/P3HYVXacQGzNhOwx/wAL71e
-        +HAt+837kddLHTxzLc0MqMEv9SCu55eNlFxx5BC4nwf46dv+/7TdTkC3nM2lLwM1QcVDgYsgnYGhK
-        Hgc3onQQ==;
-Received: from [2601:1c0:6280:3f0::60d5]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kZjjI-0006Zj-V6; Mon, 02 Nov 2020 23:59:17 +0000
-Subject: Re: [PATCH] clk: imx: scu: Fix compile error with module build of
- clk-scu.o
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <208469.1604318525@turing-police>
- <6e5a8fdb-0a02-5eae-ca1f-37df8a454e34@infradead.org>
- <238534.1604350899@turing-police>
- <0b61c4f4-b389-c853-6e09-ee603455e583@infradead.org>
- <20201102235218.GY31601@dragon>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fa030692-ec91-93c6-559a-77d82ef54928@infradead.org>
-Date:   Mon, 2 Nov 2020 15:59:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726778AbgKCAHE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Nov 2020 19:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725910AbgKCAHE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Nov 2020 19:07:04 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 942EC21556;
+        Tue,  3 Nov 2020 00:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604362023;
+        bh=GzuDDXWY8aoG90EgJn5PYz9hpehIy8YNVnQqPK2pNA0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ea2GOEo3eP1OAYFF4fm3vrCCV7slEw9Bf8Im0CNQFkIf/x78yF+i+qTnHv4hg/+4T
+         roNJmJet1bYgMTJNzhTASIm5KXOyZsyiR3Xw6oJYfrtT5nAvY9alYEiKlzjP7ly5aw
+         vdtl87sehivFTUXmoCrCq656BZ0va/m0tNTv73GQ=
+Date:   Tue, 3 Nov 2020 08:06:57 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     peng.fan@nxp.com
+Cc:     sboyd@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, kernel@pengutronix.de, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aisheng.dong@nxp.com
+Subject: Re: [PATCH V3] clk: imx8m: fix bus critical clk registration
+Message-ID: <20201103000657.GA31601@dragon>
+References: <1604229834-25594-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20201102235218.GY31601@dragon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604229834-25594-1-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/2/20 3:52 PM, Shawn Guo wrote:
-> On Mon, Nov 02, 2020 at 01:31:59PM -0800, Randy Dunlap wrote:
->> On 11/2/20 1:01 PM, Valdis Klētnieks wrote:
->>> On Mon, 02 Nov 2020 09:15:20 -0800, Randy Dunlap said:
->>>
->>>> also
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>>
->>>> However, this driver does not directly use <linux/module.h>.
->>>
->>> Just my luck - I looked at 3 or 4 other things that include of_platform.h
->>> and they all *did* include module.h.
->>>
->>>> platform_device.h #includes <linux/device.h>, which is where the
->>>> problem lies:
->>>>
->>>> <linux/device.h> uses macros that are provided by <linux/module.h>
->>>> so <linux/device.h> should #include <linux/module.h>.
->>>>
->>>> and that fixes this commit:
->>>>
->>>> commit 4c002c978b7f2f2306d53de051c054504af920a9
->>>> Author: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> Date:   Mon Dec 9 20:33:03 2019 +0100
->>>>
->>>>     device.h: move 'struct driver' stuff out to device/driver.h
->>>
->>> OK.. who's going to do that? Me, or Randy, or Greg?
->>
->> You could go ahead... I began on it yesterday but didn't finish
->> testing, although I did see the same build error that the 0day
->> bot reported, so I don't know what it's going to take to fix that.
+On Sun, Nov 01, 2020 at 07:23:54PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> It's a driver problem which is being addressed by Dong's patch[1].
+> noc/axi/ahb are bus clk, not peripheral clk.
+> Since peripheral clk has a limitation that for peripheral clock slice,
+> IP clock slices must be stopped to change the clock source.
 > 
-> Shawn
+> However if the bus clk is marked as critical clk peripheral, the
+> assigned clock parent operation will fail.
 > 
-> [1] https://patchwork.kernel.org/project/linux-arm-kernel/patch/20201030153733.30160-1-aisheng.dong@nxp.com/
+> So we added CLK_SET_PARENT_GATE flag to avoid glitch.
 > 
+> And add imx8m_clk_hw_composite_bus_critical for bus critical clock usage
+> 
+> Fixes: 936c383673b9e ("clk: imx: fix composite peripheral flags")
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> Reported-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Thanks for the info & link.
+Do you want this be picked up as a fix for 5.10-rc or non-critical stuff
+for -next?
 
--- 
-~Randy
-
+Shawn
