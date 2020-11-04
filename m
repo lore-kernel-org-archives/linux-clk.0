@@ -2,162 +2,112 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622C9C4742C
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D286C55178
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 135C0206ED
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604517327;
-	bh=x4IMmGGfstOB5QZnRkOBuIvAws/n8zpWfSdcIL7R6Wc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nG5f3lXRYwPePa4ePQ3sURU1fvCjNTvEWpLrm1kSxbEMtv6wZ1KyoIQ8N74Dy+oVJ
-	 D01D/RqrDYEiywXGMjJWCXzLIIf8854sZMAJI19nnxTbILACUpVSRd8wQSjN5+n0i7
-	 l/ksZqdMghH/gg8/nbMvRfNPCC+baf87tOLNSe3w=
+	by mail.kernel.org (Postfix) with ESMTP id 5891A20759
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbgKDTP0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:15:26 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45348 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgKDTPY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:15:24 -0500
-Received: by mail-ot1-f67.google.com with SMTP id k3so8486638otp.12;
-        Wed, 04 Nov 2020 11:15:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3ktR9xXAhm5rkXgxzXt3WdwZLIj5Pq6xAAQ/UnvJYVQ=;
-        b=oMxmi1u/CnqFlcdVx/dAjctazz62N+Mjo6lfMtJA29MwjbsQIn217sAiM4qAyyceGP
-         OSl3xAVEeXNu/Et4WT7pOVJuowdLrZxvniRijLjJ0lGuAeoKN8HuKBvAYhSfBhbpfbqy
-         xSFaYEjS8ouxve0Hig34eQ5xGPf11CQQZWoHgkiYNNTfOt9gnHVmZ2dtpNzfQzxYFE/1
-         kvZcqtdwSSbqvCC82+cJQRML/NP6UezeUFMl+sEideJ7pd8FadzKF4oWogLQXk6JoPfb
-         d7RiGg8/7Cbuc0+eSAIfInLGg6X3v8db+j0h1nkPuxQQByGP+Z2iESh58C5C87ug7XOK
-         o8RQ==
-X-Gm-Message-State: AOAM531/ZppZAZ2x6rzxhzwsSmI44W6f00hIe6+RRzqqUHn/+PsRzSqn
-        bgNbxMJ6phlsI7w/FyH3vg==
-X-Google-Smtp-Source: ABdhPJxynEbTDEPWyxdkPjdoSSl8j0qBRbQwd+b7vgHuU/oNQqSspABE21ehLcNPH7MIDU3+IrBepQ==
-X-Received: by 2002:a9d:a87:: with SMTP id 7mr14380326otq.29.1604517321660;
-        Wed, 04 Nov 2020 11:15:21 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d22sm641493oij.53.2020.11.04.11.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:15:20 -0800 (PST)
-Received: (nullmailer pid 3972094 invoked by uid 1000);
-        Wed, 04 Nov 2020 19:15:20 -0000
-Date:   Wed, 4 Nov 2020 13:15:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     linux-clk@vger.kernel.org, git@xilinx.com,
-        devicetree@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org
-Subject: Re: [PATCH v7 1/7] dt-bindings: add documentation of xilinx clocking
- wizard
-Message-ID: <20201104191520.GB3967018@bogus>
-References: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1604502407-14352-2-git-send-email-shubhrajyoti.datta@xilinx.com>
+        id S1730542AbgKDTzY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:55:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33184 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbgKDTzY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 14:55:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 15DE6AC53;
+        Wed,  4 Nov 2020 19:55:22 +0000 (UTC)
+Message-ID: <4debc77f5c72e1f4eff36a700231493bf9fbf404.camel@suse.de>
+Subject: Re: [PATCH v3 09/11] dt-bindings: pwm: Add binding for RPi firmware
+ PWM bus
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        Ray Jui <rjui@broadcom.com>, u.kleine-koenig@pengutronix.de,
+        devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        dmitry.torokhov@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com, p.zabel@pengutronix.de,
+        linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        linux-input@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        bgolaszewski@baylibre.com, sboyd@kernel.org,
+        linux-gpio@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        andy.shevchenko@gmail.com
+Date:   Wed, 04 Nov 2020 20:55:19 +0100
+In-Reply-To: <20201104190612.GA3959462@bogus>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+         <20201104103938.1286-10-nsaenzjulienne@suse.de>
+         <20201104190612.GA3959462@bogus>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-cU9/G+WYZ+w+iySzg6LF"
+User-Agent: Evolution 3.36.5 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1604502407-14352-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 08:36:41PM +0530, Shubhrajyoti Datta wrote:
-> Add the devicetree binding for the xilinx clocking wizard.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-> v6:
-> Fix a yaml warning
-> v7:
-> Add vendor prefix speed-grade
-> 
->  .../bindings/clock/xlnx,clocking-wizard.yaml       | 65 ++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> new file mode 100644
-> index 0000000..a19b9bb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx clocking wizard
-> +
-> +maintainers:
-> +  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> +
-> +description: |
-> +  The clocking wizard is a soft ip clocking block of Xilinx versal. It
-> +  reads required input clock frequencies from the devicetree and acts as clock
-> +  clock output.
-> +
-> +select: false
 
-Why? That's one way to make the example pass with your schema...
+--=-cU9/G+WYZ+w+iySzg6LF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +properties:
-> +  compatible:
-> +      - enum:
-> +          - xlnx,clocking-wizard
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: clock input
-> +      - description: axi clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clk_in1
-> +      - const: s_axi_aclk
-> +
-> +  xlnx,speed-grade:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [1, 2, 3]
-> +    description:
-> +      Speed grade of the device.
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - speed-grade
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-generator@40040000 {
-> +        #clock-cells = <1>;
-> +        reg = <0x40040000 0x1000>;
-> +        compatible = "xlnx,clocking-wizard";
-> +        xlnx,speed-grade = <1>;
-> +        clock-names = "clk_in1", "s_axi_aclk";
-> +        clocks = <&clkc 15>, <&clkc 15>;
-> +        clock-output-names = "clk_out1", "clk_out2",
-> +        "clk_out3", "clk_out4", "clk_out5",
-> +        "clk_out6", "clk_out7";
-> +    };
-> +...
-> -- 
-> 2.1.1
-> 
+On Wed, 2020-11-04 at 13:06 -0600, Rob Herring wrote:
+> On Wed, 04 Nov 2020 11:39:35 +0100, Nicolas Saenz Julienne wrote:
+> > The PWM bus controlling the fan in RPi's official PoE hat can only be
+> > controlled by the board's co-processor.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> >=20
+> > ---
+> >=20
+> > Changes since v1:
+> >  - Update bindings to use 2 #pwm-cells
+> >=20
+> >  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
+> >  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
+> >  2 files changed, 33 insertions(+)
+> >  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
+> >=20
+>=20
+> My bot found errors running 'make dt_binding_check' on your patch:
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/=
+bcm/raspberrypi,bcm2835-firmware.example.dt.yaml: firmware: pwm:#pwm-cells:=
+0:0: 2 was expected
+
+Yes I forgot to update the example...
+
+Regards,
+Nicolas
+
+
+--=-cU9/G+WYZ+w+iySzg6LF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+jBycACgkQlfZmHno8
+x/4lqwf+LNqmKYmR+D64RymsZ5v7t1WD9DkM2AcOluMdjU13iiD8I+U2KdCc2R8Y
+KhH9mNARA0Kd5JtfEzifsT4G3OqWIac7V/abpwHwrS7ilQjx2gLCACaBO87JwzK0
+R5uOO0FWqaEoLK5GknPO2HGn8ez34EPHU3cu4SXBBFqEnaEbEMr9cEl0ou+vdrYS
+3JnsvkWGZO7LY9vh05c9I/L2pyFg1JieOLU46BYJxAPvlqeILLwWvJ0oq4iiFM7I
+ZFjf/7VhrNk92HLeRMTgPt6/LuVsvnDBJXzAEknYiZt4Taa99Y11MxauWIIqAsk+
+LBfmYrGtxl88K4eRkxCDzH4wnYm/qQ==
+=Ei+W
+-----END PGP SIGNATURE-----
+
+--=-cU9/G+WYZ+w+iySzg6LF--
+
