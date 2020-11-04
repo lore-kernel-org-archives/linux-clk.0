@@ -1,134 +1,127 @@
-Return-Path: <SRS0=je5o=EJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6196FC2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 17:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F8FC2D0A3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 04:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBAC22264
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Nov 2020 17:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD48922226
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 04:07:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T/jljiOH"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="bHwbiwIU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728705AbgKCRxV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Nov 2020 12:53:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51162 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbgKCRxV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Nov 2020 12:53:21 -0500
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F8B4C061A04
-        for <linux-clk@vger.kernel.org>; Tue,  3 Nov 2020 09:53:21 -0800 (PST)
-Received: by mail-oi1-x241.google.com with SMTP id m143so9902355oig.7
-        for <linux-clk@vger.kernel.org>; Tue, 03 Nov 2020 09:53:21 -0800 (PST)
+        id S1727754AbgKDEHi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Nov 2020 23:07:38 -0500
+Received: from mail-bn8nam11on2052.outbound.protection.outlook.com ([40.107.236.52]:27424
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727688AbgKDEHh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Nov 2020 23:07:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E3cPEfBqiM+Ngxw5iwM7vj4inU9KuQepW/wMlftx6avha2C31WwB24EkZAzkceS7J8QH8gP6vHUZ3y7ccZYqrZrwl05OdiItOy6H34n5Pa9hOQGhX/kcvP71Pdu3n50kIcINHydQyjhOi6OF3QhLlQnzL+dLzCcRxCYdTufi4A6wJqdD6IZB91KtN1xB5Yw5WwqWgRT5ozd4CWmruGC0xXmV4rB3RQX4ZBxM619fhIqRPhHmLhMnSoZ50JCN1TRacvwxbktorKQGjZAx/UX/J6p+NgRrDEYFGbX2ubheRvZx+L+3ogf8Fta8CwqUiovTyGnyL2nbC5Ler72pWS1pEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rkwa7RWO7PI5UKeJvkHpPcHHBEofRvq7NbAw2gWgLPU=;
+ b=gOwOVU+W5se6KISRD9Ge4vbM5aRCnfZ9D+XJm0K5Pn9zjdGv/HHqTR/HW1uqBr9f+u6izFm5vtJ0xvJtRql7vU3LFP8OAQOefVq4X0/zygn/L4N80zyTPAzciB1jnq5I4so2XvjUiUFmrSsggP6UU1uiTt77cMvPlOrGXHB6P+42tHJ2eXJo6FhO18eh+q/fIrCjfG+j8+Ljc6p4A6apkGTubirU7r/aorabLVUO/qNQIf4/ZnaXgFZrVYkS8JZU8geJAiCuQuWh0uMI2vM+gXBPnETl3Y7ABSQSZnuM5moAmY8HiFm3jhzdGpTZQbH+gxjyg0vqlCVfnFu2A8E1Ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qsTSf6EkquY3dHustq6mQzDJDGGNrho9XMEHXQz+zxk=;
-        b=T/jljiOHu3j1XVKoaYXHyf8vTSL4gc9s5VAX2LHAlgrIovWbr3SArKhviYapCZ6w7T
-         tzStg2v8w9tLnHaCO2DRh/2XTj+yidm/1uRIGqpBetS62g8ogFbE41qsqWzS3rZquF7o
-         WwTjsM9XquZcdSuSGLlNN2SRZyXPC3DzmY5K9o7gLks/oSA3moHP8tx/BuLjdjd5MHZG
-         Kj8DmBVDvkLKP3Bdi7ypcM3C3evAmAXIvN8Pohpkxy68jM45NEawFS9CpMRHMUkCPFOO
-         6RtkmVzRkjsvjdz81uc4w5Voo7n2VmgIfIPjb27itJYPgoiPTsYyA3KIYfCCfsXgXEp3
-         fPDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qsTSf6EkquY3dHustq6mQzDJDGGNrho9XMEHXQz+zxk=;
-        b=hdLAFU2PGMVi0lwaUwqlSm8OKTQRzJwA2ADCZbXZZiSzaOGpjW4fuikDxhGUee1BQD
-         XV5KAfvYWblguw50jzPEMH+jgKlXOe3qI4uJMnEXie8NmpD2MDFRHZsdCJk+EkA65VW+
-         iTnq2F0GPFkoRtEmEBhjfM5aFrcRiVeir0J0tcThSZeDBYrmXXfL0HXNcPSLKtdBOrxb
-         qxtmaWFd8H3kU+i0nOz5MhwKU09a/JMDXqJCIK9inKo+/IePpLd/WC1TKewUzuEwByjk
-         BQHhxiDnr/E5UwdOwymeIeu2dzbYPKYOcFiO2KoKPYWtHV+vd4QqPM9y0ieWO0XfIIWm
-         /Frg==
-X-Gm-Message-State: AOAM533uTNeWYVHFbUndxDkBeDjbZ1erD49PooJlR+f9EUZ7hXyz3Dfw
-        vbIUeqm5bKrcQ4v2Zdb1GzxJXg==
-X-Google-Smtp-Source: ABdhPJzQ7GJ3R7rKvOo77Qr7qMs/c4V4qPn0otWyL884sE+OfSLJ/CbXizTazkSMy2Fd79MwmWSx6Q==
-X-Received: by 2002:aca:fd86:: with SMTP id b128mr197258oii.103.1604426000377;
-        Tue, 03 Nov 2020 09:53:20 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id z10sm539928otp.0.2020.11.03.09.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 09:53:19 -0800 (PST)
-Date:   Tue, 3 Nov 2020 11:53:17 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: qcom: Add support for SDX55 RPMh clocks
-Message-ID: <20201103175317.GC65067@builder.lan>
-References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org>
- <20201028074232.22922-5-manivannan.sadhasivam@linaro.org>
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rkwa7RWO7PI5UKeJvkHpPcHHBEofRvq7NbAw2gWgLPU=;
+ b=bHwbiwIU8RQK6i/ADiAVvnp86cIA+u2SCTGA9SXI8SuL18P24J5PfHRgoR7AMIX+wRn+dabo6k+w+hqVpt5mnKJQ3V/FBXcWM6Ag4XhoRkgj1uUs09ry4ufCrisSJVgUT/+sGthDs74ZaQAk0m31jgsKu2OVXjQfQ1eRP5BNppM=
+Received: from SN6PR02MB4381.namprd02.prod.outlook.com (2603:10b6:805:b3::32)
+ by SN4PR0201MB3502.namprd02.prod.outlook.com (2603:10b6:803:4c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Wed, 4 Nov
+ 2020 04:07:33 +0000
+Received: from SN6PR02MB4381.namprd02.prod.outlook.com
+ ([fe80::3db0:8c28:e501:be1d]) by SN6PR02MB4381.namprd02.prod.outlook.com
+ ([fe80::3db0:8c28:e501:be1d%5]) with mapi id 15.20.3499.030; Wed, 4 Nov 2020
+ 04:07:33 +0000
+From:   Shubhrajyoti Datta <shubhraj@xilinx.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH v6 2/8] clk: clock-wizard: Add the clockwizard to clk
+ directory
+Thread-Topic: [PATCH v6 2/8] clk: clock-wizard: Add the clockwizard to clk
+ directory
+Thread-Index: AQHWfUDIdC9/DTAeFki/8dKbUVv6v6lzv2qAgAAAfICARARV0A==
+Date:   Wed, 4 Nov 2020 04:07:33 +0000
+Message-ID: <SN6PR02MB438146090F4AD67F0BD7580CAAEF0@SN6PR02MB4381.namprd02.prod.outlook.com>
+References: <1598621996-31040-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <1598621996-31040-3-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <160072319955.310579.4256832010356165092@swboyd.mtv.corp.google.com>
+ <160072330324.310579.14466423524100614935@swboyd.mtv.corp.google.com>
+In-Reply-To: <160072330324.310579.14466423524100614935@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=xilinx.com;
+x-originating-ip: [157.45.18.94]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 6ffd6393-2f67-43cc-eb45-08d8807727ef
+x-ms-traffictypediagnostic: SN4PR0201MB3502:
+x-microsoft-antispam-prvs: <SN4PR0201MB350226C8959A95D271AB48DEAAEF0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: OXF2EVKl45x5MwIqusVO+dZ5QY9OcQO9VK3x9634kC5WJj8QHteRtS20a37Y480PQNts6OWkirrSK40jXJQloGTLDuopNnS4dPtRKKyJlx9uJMP6jmwXWyAN2/MfUlx4N1n8A+Pr/LK+5j8uk+k5LVxs/bAmlSOX9Y+TG84BiSk/bL7uxYWIxq845LylPWNceQXQfHgtk598UM2O3NnHfadto/l4mmkAwWJCgEJ/jy8fSCIEvi6cf7FJuSPhjb3qRi7USM4VI2zZQxiBZw3ykF/rPlU4f/qPN0RqcLXugDPBYQsbzDeER0h6EB3nVQz7h7zcjPvcUFBA8Wzd2+KVxA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR02MB4381.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(396003)(366004)(136003)(39850400004)(376002)(76116006)(53546011)(66946007)(66446008)(478600001)(8676002)(4744005)(86362001)(64756008)(66476007)(66556008)(316002)(6506007)(26005)(8936002)(2906002)(110136005)(71200400001)(33656002)(54906003)(52536014)(9686003)(83380400001)(4326008)(7696005)(186003)(55016002)(5660300002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: kf0MjQiUYnHLR8HAFfnmhp5fPcTViZdWYAs+s0PTF0brMJK7514lHmsev72FBi+8YK/8K9/h1vFzGEYuz07Bhw5/AthWvs9NKaVipS4RdmHlbvjpuipNlp+cofhE62Y/4dbSOiQKgXsgj231e6YXSV39z514qR/HxKoUV6Iec12P3GeAc6IFzCaQGuWpGbW9AQbvsWoVMYQWZwdYx56r2Ef9dBMKQOpkYAJU+KZpWV9zBa7cINSpDp4mK09AQt58J1xJahmEeXRq/7qtHwxZVqKH9SznVXufhQMZs3eml/Drw/izJUGajSYMqK6+/QSj8SypX84ssaXXhMdmIN9DQomy09mgpYpcIDQQs39hdkTTGJQD5ueY+QnGG+S5+OemZT4KgDncw5qATp8T/VzcqwpSVXgLeEnGX4qe1Tw5kO+NrRMRmkvfa4YQnsQfXfhmz3bve5YDm0bfy5KhKSs1lOm8LrQyjMQl1frxEvDNNKUXndsyB19FRSyqHqoeJi5lebEp5vM02g2FMMWCFJRQ/LrW/SOii5XX7kF2q17lCkL/2UqoZrlYSqNoy8+aw8sFojykhfUBQiB2CLTXy4Z1jCvPnBm0yZQDP+5nIjnypdh6THrqHnOZsYst9C7bMsvIPxDBL/oKj/AuzLw+Y7tItA==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201028074232.22922-5-manivannan.sadhasivam@linaro.org>
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4381.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ffd6393-2f67-43cc-eb45-08d8807727ef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2020 04:07:33.1214
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xCZLJfmh+fFV15n1ZYddmnw9xrwrKMKDbGjXJzn3CEEZfepWvXietuZUqDcyEgdwcqLiOHEGx4393ko8L1tt4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3502
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 28 Oct 02:42 CDT 2020, Manivannan Sadhasivam wrote:
-
-> Add support for clocks maintained by RPMh in SDX55 SoCs.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index e2c669b08aff..88d010178b59 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -432,6 +432,25 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
->  	.num_clks = ARRAY_SIZE(sm8250_rpmh_clocks),
->  };
->  
-> +DEFINE_CLK_RPMH_VRM(sdx55, rf_clk1, rf_clk1_ao, "rfclkd1", 1);
-> +DEFINE_CLK_RPMH_VRM(sdx55, rf_clk2, rf_clk2_ao, "rfclkd2", 1);
-> +DEFINE_CLK_RPMH_BCM(sdx55, qpic_clk, "QP0");
-> +
-> +static struct clk_hw *sdx55_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sdx55_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sdx55_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sdx55_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sdx55_rf_clk2_ao.hw,
-> +	[RPMH_QPIC_CLK]		= &sdx55_qpic_clk.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sdx55 = {
-> +	.clks = sdx55_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sdx55_rpmh_clocks),
-> +};
-> +
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -519,6 +538,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
->  	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
->  	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-> +	{ .compatible = "qcom,sdx55-rpmh-clk", .data = &clk_rpmh_sdx55},
-
-The sort order is off here.
-
-Regards,
-Bjorn
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-> -- 
-> 2.17.1
-> 
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3Lg0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCA8c2JveWRAa2VybmVsLm9yZz4NCj4g
+U2VudDogVHVlc2RheSwgU2VwdGVtYmVyIDIyLCAyMDIwIDI6NTIgQU0NCj4gVG86IFNodWJocmFq
+eW90aSBEYXR0YSA8c2h1YmhyYWpAeGlsaW54LmNvbT47IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5v
+cmcNCj4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnOw0KPiBkZXZlbEBkcml2ZXJkZXYub3N1b3NsLm9yZzsgcm9iaCtkdEBrZXJuZWwu
+b3JnOw0KPiBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5j
+b207IFNodWJocmFqeW90aQ0KPiBEYXR0YSA8c2h1YmhyYWpAeGlsaW54LmNvbT4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCB2NiAyLzhdIGNsazogY2xvY2std2l6YXJkOiBBZGQgdGhlIGNsb2Nrd2l6
+YXJkIHRvIGNsaw0KPiBkaXJlY3RvcnkNCj4gDQo+IFF1b3RpbmcgU3RlcGhlbiBCb3lkICgyMDIw
+LTA5LTIxIDE0OjE5OjU5KQ0KPiA+IFF1b3RpbmcgU2h1YmhyYWp5b3RpIERhdHRhICgyMDIwLTA4
+LTI4IDA2OjM5OjUwKQ0KPiA+ID4gQWRkIGNsb2NraW5nIHdpemFyZCBkcml2ZXIgdG8gY2xrLg0K
+PiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IFNodWJocmFqeW90aSBEYXR0YSA8c2h1YmhyYWp5
+b3RpLmRhdHRhQHhpbGlueC5jb20+DQo+ID4gPiAtLS0NCj4gPg0KPiA+IENhbiB0aGlzIGJlIGNv
+bWJpbmVkIHdpdGggcGF0Y2ggIzY/DQo+IA0KPiBTb3JyeSwgSSBtZWFudCBwYXRjaCAjOC4NCkRp
+ZCBub3QgZ2V0IHRoZSBjb21tZW50Lg0KRG8geW91IHdhbnQgdG8gc3BsaXQgdGhlIG1ha2VmaWxl
+IGFuZCB0aGUgZHJpdmVyIHBhcnRzIG9mIHRoZSBwYXRjaC4NCk9yIHRoZSB3aG9sZSBvZiB0aGUg
+cGF0Y2ggdG8gYmUgbWVyZ2VkLg0KDQpPciBkbyB5b3Ugd2FudCB0aGUgc3RhZ2luZyBwYXRjaCBt
+ZXJnZWQgd2l0aCAgaGVyZT8NCg0KW1BBVENIIHY2IDgvOF0gc3RhZ2luZzogY2xvY2tpbmctd2l6
+YXJkOiBEZWxldGUgdGhlIGRyaXZlciBmcm9tIHRoZSBzdGFnaW5nDQoNCg0K
