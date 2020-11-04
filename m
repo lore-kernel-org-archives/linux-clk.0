@@ -7,78 +7,94 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936DFC55178
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D5AC4741F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34BA7206D9
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B2222067B
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604516685;
-	bh=gvuNDnLABjcWcsRpFkYYBymUyC7wNaLvB7lxxXyUVAs=;
+	s=default; t=1604516782;
+	bh=ilpBQ/1VyjpcQkzbM+hgn4u6GF48OPRDT7Xjs8PVOt4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DZ5qDDm6+mVvvJ3kYb3PF5hfKrxrab+RWuftOhL5pmXpJcNN43SZ1LO+GTnUe7KQ1
-	 +/COT3RWEBQ9v8SZF20AzRTiv3wKx4sPqp4yjAYyijUognx9UIYFGEBFarrNjdrg1p
-	 AGmfL+nLOUpgqVZ/BvK5nXK0GxwHnnFT9S+QB2pU=
+	b=QXwIa0hcjDfzxlWp3QiBZ3tC+K1X+xqssz+KSNrqCK+9BPIktZW+emItgnIK4jOIY
+	 l5h9fQJ/zrO2rvMaKMtCJ8p5LSFKRwkvF1q3w0bQr3zPzUbG3GxuACckNUkMd9/AwO
+	 0oZJ1SmTJCDqV4GodptqVzXopJPz61CGuA2iovEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbgKDTEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:04:44 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35108 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727098AbgKDTEo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:04:44 -0500
-Received: by mail-ot1-f65.google.com with SMTP id n11so20345430ota.2;
-        Wed, 04 Nov 2020 11:04:43 -0800 (PST)
+        id S1731102AbgKDTGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:06:16 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:33081 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729946AbgKDTGQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:06:16 -0500
+Received: by mail-oi1-f173.google.com with SMTP id k26so17738oiw.0;
+        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7I4Ava00xHdhJtO3UlyADm3vNZtn+VRgADj5UlnLDao=;
-        b=VnEMajPHnfTmO/tkUxxeE9uZ3CdUTgeHtt+84oyAt7XB3jI+BDxjV4mdfr5MM8kDpW
-         mBMjZSqheLmSgKoiQTf1ELKwt9GPoZ+LxAtU8HznVxzLLIAy59s33cLsoK0AKHAr093u
-         7cOp4KRgh0NJol6sdfndqqQNrGImxwzaV3Qru9XorkxltX+QHYF7WGOBshq9Iai9XIgV
-         yewYhe5Dz6COXhkoquI/BvbQwFcXIQlx2GYLxb6fH0yb2ocbBoA3n024agoRERVHaWmy
-         LZmdor4P6AMU68iGyxA14d4nKYWqaZdlfKvYAO3jXOvQeTvw6DYfuYsDh03kfH0RDu+f
-         u5Ag==
-X-Gm-Message-State: AOAM531/Umu63ezzld+2kMVDRxg1oLkWUIBapZy6Pb/S62vSMdP4+k/l
-        dwmjOnuhLHiKp7z/R4DRAt2FZd0qpg==
-X-Google-Smtp-Source: ABdhPJzQ8ZznaslqnLk24xyY+Hv42Y9DhhSILH5m9qKCLuQNRjhU+wW39YkpyMt7b8oR4nXAStvAMw==
-X-Received: by 2002:a9d:6419:: with SMTP id h25mr20253654otl.79.1604516683215;
-        Wed, 04 Nov 2020 11:04:43 -0800 (PST)
+        bh=cFN5h9yGsHsZOKXv8QOHIY58GxPhGQOkwRhjB/ZiBHY=;
+        b=FbgnidgIt7VLNJxNMEbNFFm3S6Chuc1G5n+V3jGI0MuARAkpiyEI7DJ5nrwuyKBV+1
+         +b/CeVSjHeQTcahov28fS48DD66ZAH45QhIvynqnHNcTWf/C3Z1xoNO39Dqmmp/IDbP5
+         m78PeMkk9jNAD/YWAl5++rdd53RYRW/PoICBxwiKSV2IdcbJR0r6eqYoEawlYgJQQe+T
+         NkDIhhN2OFtaNrXYFdLUEwc9ajb+WliISCgIZQfg7nS8z6AIZp6fEXUmA2hOD8Qhf9wb
+         CvjPal0ojb2LFyHc4uVW94NaKThwCkwS8Gyr3fOxuOb6zWV+dT5Gl5fZDiVKO0Db3Qwq
+         me6w==
+X-Gm-Message-State: AOAM531ZkwxqpnjizheeyfySpTfR6RiqNtQFqeYWdMpnPuvmmshrhMQW
+        SiuGu4Evcud2upH65DPiHw==
+X-Google-Smtp-Source: ABdhPJxg0zwV09ldz2969D3HBuxab6u1/Ts/gJbn+JECdctdgUFKh5ZxAEiWT0cSOANiSBHnw3BhhA==
+X-Received: by 2002:aca:a951:: with SMTP id s78mr3577208oie.114.1604516775469;
+        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n128sm634671oif.4.2020.11.04.11.04.42
+        by smtp.gmail.com with ESMTPSA id r188sm658438oia.13.2020.11.04.11.06.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:04:42 -0800 (PST)
-Received: (nullmailer pid 3957943 invoked by uid 1000);
-        Wed, 04 Nov 2020 19:04:41 -0000
-Date:   Wed, 4 Nov 2020 13:04:41 -0600
+        Wed, 04 Nov 2020 11:06:14 -0800 (PST)
+Received: (nullmailer pid 3960013 invoked by uid 1000);
+        Wed, 04 Nov 2020 19:06:12 -0000
+Date:   Wed, 4 Nov 2020 13:06:12 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: renesas: rcar-usb2-clock-sel:
- Convert bindings to json-schema
-Message-ID: <20201104190441.GB3957380@bogus>
-References: <1604475005-29495-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+        Ray Jui <rjui@broadcom.com>, u.kleine-koenig@pengutronix.de,
+        devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        dmitry.torokhov@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com, p.zabel@pengutronix.de,
+        linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        linux-input@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        bgolaszewski@baylibre.com, sboyd@kernel.org,
+        linux-gpio@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        andy.shevchenko@gmail.com
+Subject: Re: [PATCH v3 09/11] dt-bindings: pwm: Add binding for RPi firmware
+ PWM bus
+Message-ID: <20201104190612.GA3959462@bogus>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+ <20201104103938.1286-10-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1604475005-29495-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20201104103938.1286-10-nsaenzjulienne@suse.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 04 Nov 2020 16:30:05 +0900, Yoshihiro Shimoda wrote:
-> Convert Renesas R-Car USB 2.0 clock selector bindings documentation
-> to json-schema.
+On Wed, 04 Nov 2020 11:39:35 +0100, Nicolas Saenz Julienne wrote:
+> The PWM bus controlling the fan in RPi's official PoE hat can only be
+> controlled by the board's co-processor.
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 > ---
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  68 --------------
->  .../clock/renesas,rcar-usb2-clock-sel.yaml         | 100 +++++++++++++++++++++
->  2 files changed, 100 insertions(+), 68 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+> 
+> Changes since v1:
+>  - Update bindings to use 2 #pwm-cells
+> 
+>  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
+>  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
+>  2 files changed, 33 insertions(+)
+>  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
 > 
 
 
@@ -87,12 +103,11 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml: 'additionalProperties' is a required property
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml: ignoring, error in schema: 
-warning: no schema found in file: ./Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.example.dt.yaml: firmware: pwm:#pwm-cells:0:0: 2 was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
 
 
-See https://patchwork.ozlabs.org/patch/1393687
+See https://patchwork.ozlabs.org/patch/1393804
 
 The base for the patch is generally the last rc1. Any dependencies
 should be noted.
