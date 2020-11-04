@@ -2,78 +2,85 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD46DC388F7
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF83C2D0A3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFCF20786
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31B1920867
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbgKDKj5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:39:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58606 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729568AbgKDKjy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 05:39:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 876DAAD76;
-        Wed,  4 Nov 2020 10:39:52 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v3 04/11] reset: raspberrypi: Release firmware handle on unbind
-Date:   Wed,  4 Nov 2020 11:39:30 +0100
-Message-Id: <20201104103938.1286-5-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.29.1
-In-Reply-To: <20201104103938.1286-1-nsaenzjulienne@suse.de>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+        id S1728066AbgKDKwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 05:52:36 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38405 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbgKDKwg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 05:52:36 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 9so21712712oir.5;
+        Wed, 04 Nov 2020 02:52:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Tgxgz65t1p/f8iIMRXffOT0LvSZivNKheyZ9LDhkIc=;
+        b=cbmlMwJ0Vp256O2KwLamG2DUJZOIdeGF5l4Kjk3ITDK+9H5qdqtxPEo0YlbKFaTtIn
+         w1ac7agk8zpVIzjLjnYsgdr31pP9ecf+dgq0dk7SwOl8e/A1Vg3bjJc1zSEBLlZOOE7T
+         TApX/5T8Ql3uwEwcbiu11yCCg1etISdbaGlszRETpM8wrSNI/2NIwkQo+4EeTHRkUe+7
+         brBxApDeb9I8cSZpMpRr8y+0P4ILD2SE5pWx+kFsSuGiauEoE2HLELz6zJOZCFm/BC4e
+         KsswlrXc2pk1EBsd7Ns2uJqSinTdcQlKRnqVqX41I+ronvC+YRR+p5/Dw3Vm7jbFPUV0
+         yy5A==
+X-Gm-Message-State: AOAM532vZHsqYy/A5FAvWQ1vne6OXICcgL4NQlViiKebm9kZJhGHKNm1
+        041CfR+K0ZknbFTwLxlUjdOMjUa2Xfj6cepu/tA=
+X-Google-Smtp-Source: ABdhPJyvMxieCAu21C5+PVfz2yWWX9ytXdUxoVF8evK3bsrE8Y92FJiB0HEOlFOhHtXntxTD7+2uR7Dx21t0iuJoSCQ=
+X-Received: by 2002:aca:52c9:: with SMTP id g192mr2234724oib.54.1604487154307;
+ Wed, 04 Nov 2020 02:52:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201103162435.13689-1-krzk@kernel.org> <20201103162435.13689-7-krzk@kernel.org>
+In-Reply-To: <20201103162435.13689-7-krzk@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 4 Nov 2020 11:52:23 +0100
+Message-ID: <CAMuHMdVx_oYFpe8G7iKcQ0FFwpPTTiWZLps3WsLSphqJ0pweyQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: renesas: renesas-cpg-mssr: fix kerneldoc of cpg_mssr_priv
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-interface when unbinding the device.
+On Tue, Nov 3, 2020 at 5:25 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> The struct cpg_mssr_priv missed proper formatting:
+>
+>     drivers/clk/renesas/renesas-cpg-mssr.c:142: warning:
+>         cannot understand function prototype: 'struct cpg_mssr_priv '
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.11.
 
----
+Gr{oetje,eeting}s,
 
-Changes since v2:
- - Use devm_rpi_firmware_get(), instead of remove function
+                        Geert
 
- drivers/reset/reset-raspberrypi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/reset/reset-raspberrypi.c b/drivers/reset/reset-raspberrypi.c
-index 02f59c06f69b..fa23db554bcf 100644
---- a/drivers/reset/reset-raspberrypi.c
-+++ b/drivers/reset/reset-raspberrypi.c
-@@ -82,7 +82,7 @@ static int rpi_reset_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	fw = rpi_firmware_get(np);
-+	fw = devm_rpi_firmware_get(&pdev->dev, np);
- 	of_node_put(np);
- 	if (!fw)
- 		return -EPROBE_DEFER;
 -- 
-2.29.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
