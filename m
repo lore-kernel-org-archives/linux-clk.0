@@ -7,107 +7,118 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D5AC4741F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C7FC2D0A3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2222067B
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3926F206ED
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604516782;
-	bh=ilpBQ/1VyjpcQkzbM+hgn4u6GF48OPRDT7Xjs8PVOt4=;
+	s=default; t=1604517109;
+	bh=2P8VoNarX7PlI8e1kORbAOWQOUvDCuyv18emgxJ2kEo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QXwIa0hcjDfzxlWp3QiBZ3tC+K1X+xqssz+KSNrqCK+9BPIktZW+emItgnIK4jOIY
-	 l5h9fQJ/zrO2rvMaKMtCJ8p5LSFKRwkvF1q3w0bQr3zPzUbG3GxuACckNUkMd9/AwO
-	 0oZJ1SmTJCDqV4GodptqVzXopJPz61CGuA2iovEU=
+	b=aZuqfWnhIKL1ZBRebmvTMKPSizAvt98h3xkXn32s6hBfKMTsJ1bmLhofDplc82V6W
+	 ADEz6gu5elQmTKCqQCOdeaO/zoWmZgtO8oqzh1pah8Ofo4aWbPXQnW642SPw1SgAIa
+	 GD2sio3JKicQ9zxCqrJqy1xIll4ZLVyPPw3SMiWA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731102AbgKDTGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:06:16 -0500
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:33081 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729946AbgKDTGQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:06:16 -0500
-Received: by mail-oi1-f173.google.com with SMTP id k26so17738oiw.0;
-        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
+        id S1727246AbgKDTLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:11:49 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41317 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbgKDTLs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:11:48 -0500
+Received: by mail-oi1-f193.google.com with SMTP id m13so14240321oih.8;
+        Wed, 04 Nov 2020 11:11:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=cFN5h9yGsHsZOKXv8QOHIY58GxPhGQOkwRhjB/ZiBHY=;
-        b=FbgnidgIt7VLNJxNMEbNFFm3S6Chuc1G5n+V3jGI0MuARAkpiyEI7DJ5nrwuyKBV+1
-         +b/CeVSjHeQTcahov28fS48DD66ZAH45QhIvynqnHNcTWf/C3Z1xoNO39Dqmmp/IDbP5
-         m78PeMkk9jNAD/YWAl5++rdd53RYRW/PoICBxwiKSV2IdcbJR0r6eqYoEawlYgJQQe+T
-         NkDIhhN2OFtaNrXYFdLUEwc9ajb+WliISCgIZQfg7nS8z6AIZp6fEXUmA2hOD8Qhf9wb
-         CvjPal0ojb2LFyHc4uVW94NaKThwCkwS8Gyr3fOxuOb6zWV+dT5Gl5fZDiVKO0Db3Qwq
-         me6w==
-X-Gm-Message-State: AOAM531ZkwxqpnjizheeyfySpTfR6RiqNtQFqeYWdMpnPuvmmshrhMQW
-        SiuGu4Evcud2upH65DPiHw==
-X-Google-Smtp-Source: ABdhPJxg0zwV09ldz2969D3HBuxab6u1/Ts/gJbn+JECdctdgUFKh5ZxAEiWT0cSOANiSBHnw3BhhA==
-X-Received: by 2002:aca:a951:: with SMTP id s78mr3577208oie.114.1604516775469;
-        Wed, 04 Nov 2020 11:06:15 -0800 (PST)
+        bh=8kvDlvfB/ougNgcIaK1HVi2RwwJqg5X8RCfCHinO1k4=;
+        b=HIhqw1fKaLA2s1KepNwUJccCSrm7dZOihwrYqXEVleRI6u0GDjjw7pRVqzEWCa/d3p
+         w+d5ct/P3MTH3Mz6GEhkgJQMQyzxvvJ6qKFVKYVpOzCNaZuXs3+u/GSobaQNtsfyGmVf
+         DK5sR3sIr+0gzKHU250MFUmDVMTfKJxXJpXUxZCmOTdIkUZv1Sp+mXhUE/GjQSbjDKBK
+         e/gJUTZLbodlXEk0T33MShkR0ANF/9t/5kDUU6GI2eg93uKCkQWeOERaSt5YbHYu7R0l
+         2L/G7SkHjFof2A8ILRdpYPNmU+8QKhgRt5v9OfhV8aJlm90WXpHQEvWAF46kfJ1WIRnA
+         m0QQ==
+X-Gm-Message-State: AOAM530kiiwRNbcHDftD+eWQ9E+aD+hJ5W1VX9YAxSgxTE4RpOkMwF3d
+        VDbB2wsgB81K3lg+4LAorA==
+X-Google-Smtp-Source: ABdhPJy2VWTtxX+P4OimzsGuO4yCP41YMoUq6SSdGAKVAARpRXrNgGXvevDEeX5xh15jVWPjlr45xA==
+X-Received: by 2002:aca:6185:: with SMTP id v127mr3506004oib.135.1604517107763;
+        Wed, 04 Nov 2020 11:11:47 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r188sm658438oia.13.2020.11.04.11.06.13
+        by smtp.gmail.com with ESMTPSA id f4sm710175oot.16.2020.11.04.11.11.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:06:14 -0800 (PST)
-Received: (nullmailer pid 3960013 invoked by uid 1000);
-        Wed, 04 Nov 2020 19:06:12 -0000
-Date:   Wed, 4 Nov 2020 13:06:12 -0600
+        Wed, 04 Nov 2020 11:11:47 -0800 (PST)
+Received: (nullmailer pid 3967436 invoked by uid 1000);
+        Wed, 04 Nov 2020 19:11:46 -0000
+Date:   Wed, 4 Nov 2020 13:11:46 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Ray Jui <rjui@broadcom.com>, u.kleine-koenig@pengutronix.de,
-        devicetree@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        dmitry.torokhov@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, p.zabel@pengutronix.de,
-        linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        linux-input@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        bgolaszewski@baylibre.com, sboyd@kernel.org,
-        linux-gpio@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 09/11] dt-bindings: pwm: Add binding for RPi firmware
- PWM bus
-Message-ID: <20201104190612.GA3959462@bogus>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
- <20201104103938.1286-10-nsaenzjulienne@suse.de>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     git@xilinx.com, mturquette@baylibre.com, sboyd@kernel.org,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 1/7] dt-bindings: add documentation of xilinx clocking
+ wizard
+Message-ID: <20201104191146.GA3967018@bogus>
+References: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <1604502407-14352-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201104103938.1286-10-nsaenzjulienne@suse.de>
+In-Reply-To: <1604502407-14352-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 04 Nov 2020 11:39:35 +0100, Nicolas Saenz Julienne wrote:
-> The PWM bus controlling the fan in RPi's official PoE hat can only be
-> controlled by the board's co-processor.
+On Wed, 04 Nov 2020 20:36:41 +0530, Shubhrajyoti Datta wrote:
+> Add the devicetree binding for the xilinx clocking wizard.
 > 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 > ---
+> v6:
+> Fix a yaml warning
+> v7:
+> Add vendor prefix speed-grade
 > 
-> Changes since v1:
->  - Update bindings to use 2 #pwm-cells
-> 
->  .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
->  .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
->  2 files changed, 33 insertions(+)
->  create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       | 65 ++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml:21:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
+./Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml:38:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
+./Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml:40:5: [error] syntax error: expected <block end>, but found '<block mapping start>' (syntax)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.example.dt.yaml: firmware: pwm:#pwm-cells:0:0: 2 was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-extract-example", line 45, in <module>
+    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 343, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
+    node = self.composer.get_single_node()
+  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
+  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 891, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
+ruamel.yaml.parser.ParserError: while parsing a block mapping
+  in "<unicode string>", line 20, column 3
+did not find expected key
+  in "<unicode string>", line 40, column 5
+make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.example.dts] Error 1
+make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.example.dts'
+make[1]: *** Waiting for unfinished jobs....
+make[1]: *** [Documentation/devicetree/bindings/Makefile:59: Documentation/devicetree/bindings/processed-schema-examples.json] Error 123
+make: *** [Makefile:1364: dt_binding_check] Error 2
 
 
-See https://patchwork.ozlabs.org/patch/1393804
+See https://patchwork.ozlabs.org/patch/1394053
 
 The base for the patch is generally the last rc1. Any dependencies
 should be noted.
