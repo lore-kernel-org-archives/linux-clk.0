@@ -2,67 +2,135 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE00C388F7
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D95C388F7
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF962224E
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:00:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6DBB22264
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:40:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DVhYCJ/k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725812AbgKDJA1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 04:00:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:33406 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbgKDJA1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 04:00:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43F08139F;
-        Wed,  4 Nov 2020 01:00:26 -0800 (PST)
-Received: from bogus (unknown [10.57.20.164])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4236B3F66E;
-        Wed,  4 Nov 2020 01:00:23 -0800 (PST)
-Date:   Wed, 4 Nov 2020 09:00:16 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 8/8] clk: scpi: mark scpi_clk_match as maybe unused
-Message-ID: <20201104090016.4yknr3zrewuhwhnu@bogus>
-References: <20201103162435.13689-1-krzk@kernel.org>
- <20201103162435.13689-8-krzk@kernel.org>
+        id S1727110AbgKDJkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 04:40:15 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:50096 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbgKDJkO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 04:40:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1604482813; x=1636018813;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=0DHraKbRH3590M9sevmtaecbtEISot1V5c4yDS9ajbc=;
+  b=DVhYCJ/kKKJzCeG8uYR5m71DWAg7JggJCG6YIYN0ke2eliYqhIkCDDSr
+   gN4LipezbzQQo8OBKRrDd+kcRuE5A7TP61iXbCh76N8B8qVkxF0BdM+nQ
+   MCNyYowWDFYxMh0pemk4sSUavYisSFXExSHR3Od7/oOAaetGRnRelTPww
+   MoFgSa4wv9Z7pk8Ph/TjHhX0jPtHk46OvxWDJNuhLdkcMHY/u5BdwjDsa
+   bJ8QR8s9LI7aEeb/1zb1hcVlC8E5BpKueMOXc8zxpVLI/G6wUUH5nL895
+   dCFXzxqigTdwWBszrWDkGeAUckHO025laiaAW9IYQTk0qXW0eryfqJTFv
+   A==;
+IronPort-SDR: eYEtuCBPhdWoPt4qxB5MtpKkKNRsISIky3i8nKXY7MNHLRQ6jLaILeTTiiPJihRsvbRycaui+W
+ D+10vosEmQjuD3szIPlEH39PUmlMPa2O1VTgUiUl5l3cBISn8QIQyCLNU/PGwmUqYurH4UZKjN
+ r56oYiI0a7dJLNJv3EjZa9wVdo/9lnbZj2Uy38Sy9p+AfhhEv4Olmf54A0YXgxV4IORTcU7mcB
+ IAx2AusWY2tb/aSSfXtpRRlYUZXXnphgVsaInKt20srrVykZEsLdZX0P6kGvEM1FcBDrTSItRd
+ Nc8=
+X-IronPort-AV: E=Sophos;i="5.77,450,1596524400"; 
+   d="scan'208";a="32375204"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Nov 2020 02:40:11 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Wed, 4 Nov 2020 02:40:10 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Wed, 4 Nov 2020 02:40:05 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/8]clk: at91: adapt for dvfs
+Date:   Wed, 4 Nov 2020 11:39:54 +0200
+Message-ID: <1604482802-1647-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201103162435.13689-8-krzk@kernel.org>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 05:24:35PM +0100, Krzysztof Kozlowski wrote:
-> The scpi_clk_match (struct of_device_id) is referenced only with
-> CONFIG_OF builds thus mark it as __maybe_unused:
->
->     drivers/clk/clk-scpi.c:132:34: warning:
->         ‘scpi_clk_match’ defined but not used [-Wunused-const-variable=]
->
+Hi,
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+SAMA7G5 is capable of DVFS. The supported CPU clock frequencies could be
+obtained from CPU PLL. The hardware block diagram for clock feeding the
+CPU is as follows:
 
---
-Regards,
-Sudeep
+                               +--------+
+                           +-->|divider1|--> CPU clock
+                           |   +--------+
++--------+   +----------+  |   +--------+
+|CPU PLL |-->|prescaller|--+-->|divider0|--> MCK0 clock
++--------+   +----------+      +--------+
+
+When switching CPU clock frequencies the MCK0 is also changed by DVFS
+driver to avoid its over/under clocking (depending on CPU clock frequency
+requested by DVFS algorithms). Some of IPs feed by MCK0 are MCK0 glich
+aware, some are not. For this MCK0 was removed from the parents list of
+the IPs which are not MCK0 glitch aware (patch 5/8).
+
+This series adapt AT91 clocks (mostly sam9x60-pll and master clock drivers)
+so that runtime changes of these clocks to be allowed.
+
+The CPU clock was registered from prescaller clock (see above diagram)
+and no software control has been added for divider1 because the frequencies
+supported by SAMA7G5's CPU could be directly obtained from CPU PLL +
+prescaller.
+
+On top of this series I also added a fix for sama7g5.c code (patch 1/8).
+Please let me know if you would like me to send this one separtely (it
+would be nice if this fix could be integrated in 5.10).
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (6):
+  clk: at91: sama7g5: fix compilation error
+  clk: at91: clk-sam9x60-pll: allow runtime changes for pll
+  clk: at91: sama7g5: remove mck0 from parent list of other clocks
+  clk: at91: sama7g5: decrease lower limit for MCK0 rate
+  clk: at91: clk-master: re-factor master clock
+  clk: at91: sama7g5: register cpu clock
+
+Eugen Hristev (2):
+  dt-bindings: clock: at91: add sama7g5 pll defines
+  clk: at91: sama7g5: allow SYS and CPU PLLs to be exported and
+    referenced in DT
+
+ drivers/clk/at91/at91rm9200.c      |  20 ++-
+ drivers/clk/at91/at91sam9260.c     |  24 ++-
+ drivers/clk/at91/at91sam9g45.c     |  30 ++--
+ drivers/clk/at91/at91sam9n12.c     |  34 ++--
+ drivers/clk/at91/at91sam9rl.c      |  22 ++-
+ drivers/clk/at91/at91sam9x5.c      |  27 +++-
+ drivers/clk/at91/clk-master.c      | 323 +++++++++++++++++++++++++++++++------
+ drivers/clk/at91/clk-sam9x60-pll.c | 102 ++++++++++--
+ drivers/clk/at91/dt-compat.c       |  15 +-
+ drivers/clk/at91/pmc.h             |  20 ++-
+ drivers/clk/at91/sam9x60.c         |  35 ++--
+ drivers/clk/at91/sama5d2.c         |  41 +++--
+ drivers/clk/at91/sama5d3.c         |  37 +++--
+ drivers/clk/at91/sama5d4.c         |  39 +++--
+ drivers/clk/at91/sama7g5.c         | 139 +++++++++-------
+ include/dt-bindings/clock/at91.h   |  11 ++
+ 16 files changed, 692 insertions(+), 227 deletions(-)
+
+-- 
+2.7.4
+
