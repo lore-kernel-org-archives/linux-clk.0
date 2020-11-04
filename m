@@ -7,102 +7,92 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BCDC4741F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936DFC55178
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE6F320704
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34BA7206D9
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604516554;
-	bh=AxVram8zdbc2uYQEPmJkGvrAq+0jhyJgiHJ/n0WOENI=;
+	s=default; t=1604516685;
+	bh=gvuNDnLABjcWcsRpFkYYBymUyC7wNaLvB7lxxXyUVAs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Cayl3p3Z6awIfW1AD2lLw7rOdJj5JO9+GHKD4X02KqgPML2p6MY6rSIM/JtqLq1Y9
-	 mJLGquAQyr/q72z83m56Nb1VuIJrBYxJX3TPJQrQiO5olm/FdeoOCD526LiXKvJ4nS
-	 WXXPXeRHqMSFte9RkacqeQBxP9ym9U7F8aJccK2Q=
+	b=DZ5qDDm6+mVvvJ3kYb3PF5hfKrxrab+RWuftOhL5pmXpJcNN43SZ1LO+GTnUe7KQ1
+	 +/COT3RWEBQ9v8SZF20AzRTiv3wKx4sPqp4yjAYyijUognx9UIYFGEBFarrNjdrg1p
+	 AGmfL+nLOUpgqVZ/BvK5nXK0GxwHnnFT9S+QB2pU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730950AbgKDTCe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 14:02:34 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41650 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729599AbgKDTBP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:01:15 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n15so20288908otl.8;
-        Wed, 04 Nov 2020 11:01:15 -0800 (PST)
+        id S1729555AbgKDTEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:04:44 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35108 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727098AbgKDTEo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:04:44 -0500
+Received: by mail-ot1-f65.google.com with SMTP id n11so20345430ota.2;
+        Wed, 04 Nov 2020 11:04:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=fCdADtGJbCE4LsoGfkd3VKJpJmoa6WJULS6JxI7ElEc=;
-        b=mVoIDb/0ANev04ACzpu8Fev0NWMYjiE8NBEcjVzrnLvqR21pAntcI1zYcHyKnAG8jZ
-         mGPg/D491ayByM3A2zXa52Fiq0KNhHtBoXllwBx6WXllVt2F6aVijoV+I7drXKMG3DWa
-         deoGn8OWuaZ0ohAQ41XpX2TL8WcGZNSAegYpyLwsL9Nb5iSmcp6T3mrVH34U3D3qs46Q
-         kXcVD5aqqdnnXF4IehFZNDPAJG3+q6qqemt4VyabvEKqn0Q1z7WCOJiz3f7L3wwMhmfF
-         yzr/soDaRUgMw83ZrN4TcuDnWOGNqyO3Pw6govFUcqGAojOe9Ar+2Dr4UWzVbslVTScw
-         lQpw==
-X-Gm-Message-State: AOAM532Khb9JrINH/Mfm4GF3XtvnxNz063AE7TZdtq/JIT5Ut3SexjSF
-        SEiHMDs+ycZKrGZ8JHY1cw==
-X-Google-Smtp-Source: ABdhPJwafnq62npe4dpj+8WaXkzleVIJJ9Y5Xz5INV3jgI1bfcGgLWp/B3v+FGdbPXjjFmcURQaK2g==
-X-Received: by 2002:a9d:896:: with SMTP id 22mr19680580otf.55.1604516474734;
-        Wed, 04 Nov 2020 11:01:14 -0800 (PST)
+        bh=7I4Ava00xHdhJtO3UlyADm3vNZtn+VRgADj5UlnLDao=;
+        b=VnEMajPHnfTmO/tkUxxeE9uZ3CdUTgeHtt+84oyAt7XB3jI+BDxjV4mdfr5MM8kDpW
+         mBMjZSqheLmSgKoiQTf1ELKwt9GPoZ+LxAtU8HznVxzLLIAy59s33cLsoK0AKHAr093u
+         7cOp4KRgh0NJol6sdfndqqQNrGImxwzaV3Qru9XorkxltX+QHYF7WGOBshq9Iai9XIgV
+         yewYhe5Dz6COXhkoquI/BvbQwFcXIQlx2GYLxb6fH0yb2ocbBoA3n024agoRERVHaWmy
+         LZmdor4P6AMU68iGyxA14d4nKYWqaZdlfKvYAO3jXOvQeTvw6DYfuYsDh03kfH0RDu+f
+         u5Ag==
+X-Gm-Message-State: AOAM531/Umu63ezzld+2kMVDRxg1oLkWUIBapZy6Pb/S62vSMdP4+k/l
+        dwmjOnuhLHiKp7z/R4DRAt2FZd0qpg==
+X-Google-Smtp-Source: ABdhPJzQ8ZznaslqnLk24xyY+Hv42Y9DhhSILH5m9qKCLuQNRjhU+wW39YkpyMt7b8oR4nXAStvAMw==
+X-Received: by 2002:a9d:6419:: with SMTP id h25mr20253654otl.79.1604516683215;
+        Wed, 04 Nov 2020 11:04:43 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b185sm647365oif.5.2020.11.04.11.01.13
+        by smtp.gmail.com with ESMTPSA id n128sm634671oif.4.2020.11.04.11.04.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 11:01:14 -0800 (PST)
-Received: (nullmailer pid 3953219 invoked by uid 1000);
-        Wed, 04 Nov 2020 19:01:13 -0000
-Date:   Wed, 4 Nov 2020 13:01:13 -0600
+        Wed, 04 Nov 2020 11:04:42 -0800 (PST)
+Received: (nullmailer pid 3957943 invoked by uid 1000);
+        Wed, 04 Nov 2020 19:04:41 -0000
+Date:   Wed, 4 Nov 2020 13:04:41 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     devicetree@vger.kernel.org, Jacky Bai <ping.bai@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v5 09/14] Documentation: bindings: clk: Add bindings for
- i.MX BLK_CTL
-Message-ID: <20201104190113.GB3950437@bogus>
-References: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
- <1604402306-5348-10-git-send-email-abel.vesa@nxp.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: renesas: rcar-usb2-clock-sel:
+ Convert bindings to json-schema
+Message-ID: <20201104190441.GB3957380@bogus>
+References: <1604475005-29495-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1604402306-5348-10-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1604475005-29495-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 03 Nov 2020 13:18:21 +0200, Abel Vesa wrote:
-> Document the i.MX BLK_CTL with its devicetree properties.
+On Wed, 04 Nov 2020 16:30:05 +0900, Yoshihiro Shimoda wrote:
+> Convert Renesas R-Car USB 2.0 clock selector bindings documentation
+> to json-schema.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
->  .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+>  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  68 --------------
+>  .../clock/renesas,rcar-usb2-clock-sel.yaml         | 100 +++++++++++++++++++++
+>  2 files changed, 100 insertions(+), 68 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml:23:10: [warning] wrong indentation: expected 10 but found 9 (indentation)
 
 dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml: 'additionalProperties' is a required property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml: ignoring, error in schema: 
+warning: no schema found in file: ./Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
 
 
-See https://patchwork.ozlabs.org/patch/1392927
+See https://patchwork.ozlabs.org/patch/1393687
 
 The base for the patch is generally the last rc1. Any dependencies
 should be noted.
