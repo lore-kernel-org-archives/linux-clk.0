@@ -2,93 +2,71 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4654EC2D0A3
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857C4C2D0A3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 11:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F303C20867
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 10:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39B49221F8
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 11:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729520AbgKDKyG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:54:06 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38309 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729400AbgKDKyC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 05:54:02 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b2so18911562ots.5;
-        Wed, 04 Nov 2020 02:54:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bZFiMdw9AfqczhhnOLw0PdAOZHm8uCoTpsDyjy95y2E=;
-        b=PnmXdWwIy28xkBlun+jgMrCoMHcwgx7gtWd0vZowd88ho8ZMlN6kk0KhOJPShUjhmR
-         68ebQuFcynEWqKEXd1cdQ33NJKX88u66I1n/1lPiqQftyX3Dcs2zB5dO8qgNuoT0xFES
-         eEn8qnS+BIItu67eDa1vAoGX2xRA1SExRAJ/OpvmnE4EsB3uiRZ/7+zhd9viu5Metx8n
-         MKK4viTP0I9+QFuoovVYjPUxzPjHHOMEwwHKQZ641KVpNEVw3+KTOyZJ+0bNk4QrtQ5X
-         vv209H2PRRLmvLTg+aBzZWJSwR4DwTNxIN2CxadTzyF7WhN9YPXsdMtbWXgiFc3NJLEr
-         y83w==
-X-Gm-Message-State: AOAM532BuRxuTN/NsgP96Mp3NycjlecPpCy+3YI1EohXGAaebaknB/Ji
-        5MN0y+4w7zQV/9ZQrxcB0TD9oxnerjTZdN4DNAM=
-X-Google-Smtp-Source: ABdhPJxaanoeAw7n0wE9LQbm8ZIt9sxPb+Ju/MIYOPk3JellEUYqDZJQbswViFLjObmKhp6PbZKlxVIncGF/D5wwYFk=
-X-Received: by 2002:a9d:3b76:: with SMTP id z109mr18639764otb.250.1604487241619;
- Wed, 04 Nov 2020 02:54:01 -0800 (PST)
+        id S1729159AbgKDLHr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 06:07:47 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7143 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729263AbgKDLHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 06:07:47 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CR3lf0448z15RTX;
+        Wed,  4 Nov 2020 19:07:42 +0800 (CST)
+Received: from linux-lmwb.huawei.com (10.175.103.112) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 4 Nov 2020 19:07:35 +0800
+From:   Zou Wei <zou_wei@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Zou Wei <zou_wei@huawei.com>
+Subject: [PATCH -next] clk: imx: scu: Make pd_np with static keyword
+Date:   Wed, 4 Nov 2020 19:19:31 +0800
+Message-ID: <1604488771-40827-1-git-send-email-zou_wei@huawei.com>
+X-Mailer: git-send-email 2.6.2
 MIME-Version: 1.0
-References: <20201103162435.13689-1-krzk@kernel.org> <20201103162435.13689-6-krzk@kernel.org>
-In-Reply-To: <20201103162435.13689-6-krzk@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Nov 2020 11:53:50 +0100
-Message-ID: <CAMuHMdUQwk_oWBEv-ZweF0Z5MLATs4+1zdXdaf1ftit0rvav6Q@mail.gmail.com>
-Subject: Re: [PATCH 6/8] clk: renesas: r8a779a0-cpg-mssr: add static to local function
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.175.103.112]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+Fix the following sparse warning:
 
-On Tue, Nov 3, 2020 at 5:25 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> The function rcar_r8a779a0_cpg_clk_register() is not used outside of the
-> unit so it can be made static to fix compilation warning:
->
->     drivers/clk/renesas/r8a779a0-cpg-mssr.c:156:21: warning:
->         no previous prototype for ‘rcar_r8a779a0_cpg_clk_register’ [-Wmissing-prototypes]
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+./clk-scu.c:23:20: warning: symbol 'pd_np' was not declared. Should it be static?
 
-Thanks for your patch!
-A fix for this is already queued in renesas-clk-for-v5.11:
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=renesas-clk-for-v5.11&id=c3f207f6d23d01c0fa817fcd6118bbbc509abe39
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zou Wei <zou_wei@huawei.com>
+---
+ drivers/clk/imx/clk-scu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index d0243c5..d10f60e 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -20,7 +20,7 @@
+ #define IMX_SIP_SET_CPUFREQ		0x00
+ 
+ static struct imx_sc_ipc *ccm_ipc_handle;
+-struct device_node *pd_np;
++static struct device_node *pd_np;
+ static struct platform_driver imx_clk_scu_driver;
+ 
+ struct imx_scu_clk_node {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.6.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
