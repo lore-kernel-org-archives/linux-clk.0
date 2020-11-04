@@ -2,136 +2,64 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C77C4741F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C49CAC2D0A3
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDDBE2225B
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:40:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="IiyP6tIs"
+	by mail.kernel.org (Postfix) with ESMTP id 7432722206
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 09:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbgKDJk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 04:40:57 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:31012 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbgKDJkz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 04:40:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604482855; x=1636018855;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=FTnpt332R5NLvCQFqroGbAzktlAA+XgpwzFNaC+ewTk=;
-  b=IiyP6tIs8LRwLCmMxlGG5Se36xxX1S5fXDw+CW+AJU/itsztvX9mZujO
-   pPPnCMEGgi71n5k//rm0hB5e6Wm3L6UvE2VDSw2sFvR1CADlWyL5ALzBW
-   sS3SY0O07P5oAO90btjzWC2KWpOPRyZe0NWEzX0Lt0CWagr/K3quVdvKG
-   IR5SePyrC98xRyBEukPEUoLg7K/13gXDBV1GFaDKuuWVbbbPS/MJ9ogBw
-   m6PLQPlYOAM+eLfFWE9YywglksYa4bGjNjde8JrLU9gtmfo3cVkg6W7hX
-   47I1NrTj6J5TsO3yR9dlWQ6cgU36ieyeQhFO1a3EL2+Ylauhdx7rAJ59N
-   Q==;
-IronPort-SDR: 4WsZQFbql3yw6035MST7ldq15zB5TODG0I/nSHQPw+SmShSTfETls8hiqR0L2/NlHZVpAA6nH1
- bqpU8OmdW1XvmbZqkbPLiHQwQzFPKZEXSuKdX/GpVzXETRd6mbydl59o+OLUkmaJleCVKwXBOQ
- QrIJRNA0OevkZX9hm15FaW4TTB6zhdaM+AtkeiS8TIzNUkEWqAXbhFYPx/OsFeo1+HZ3Me3EmA
- B8Yry4tc3my6f90pYImXut9XAtcKmWOZVe+srIZqjchwyKj8eLeu1fpmt/ie+PasgCWqGVWWBp
- 1hE=
-X-IronPort-AV: E=Sophos;i="5.77,450,1596524400"; 
-   d="scan'208";a="102141446"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Nov 2020 02:40:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 4 Nov 2020 02:40:54 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 4 Nov 2020 02:40:49 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 8/8] clk: at91: sama7g5: register cpu clock
-Date:   Wed, 4 Nov 2020 11:40:02 +0200
-Message-ID: <1604482802-1647-9-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604482802-1647-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1728645AbgKDJzx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 04:55:53 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:58065 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728607AbgKDJzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 04:55:53 -0500
+X-Originating-IP: 86.194.74.19
+Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 759701BF203;
+        Wed,  4 Nov 2020 09:55:49 +0000 (UTC)
+Date:   Wed, 4 Nov 2020 10:55:48 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 7/8] clk: at91: clk-master: re-factor master clock
+Message-ID: <20201104095548.GU7761@piout.net>
 References: <1604482802-1647-1-git-send-email-claudiu.beznea@microchip.com>
+ <1604482802-1647-8-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604482802-1647-8-git-send-email-claudiu.beznea@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register CPU clock as being the master clock prescaler. This would
-be used by DVFS. The block diagram of SAMA7G5's PMC contains also a divider
-between master clock prescaler and CPU (PMC_CPU_RATIO.RATIO) but the
-frequencies supported by SAMA7G5 could be directly received from
-CPUPLL + master clock prescaler and the extra divider would do no work in
-case it would be enabled.
+Hi,
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/sama7g5.c       | 13 ++++++-------
- include/dt-bindings/clock/at91.h |  1 +
- 2 files changed, 7 insertions(+), 7 deletions(-)
+On 04/11/2020 11:40:01+0200, Claudiu Beznea wrote:
+> diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
+> index bb81ff731ad8..38d0141bcd2d 100644
+> --- a/drivers/clk/at91/at91sam9260.c
+> +++ b/drivers/clk/at91/at91sam9260.c
+> @@ -32,6 +32,8 @@ struct at91sam926x_data {
+>  	bool has_slck;
+>  };
+>  
+> +static DEFINE_SPINLOCK(at91rm9200_mck_lock);
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index d38766c6fc8c..b712dd273a0b 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -852,7 +852,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	sama7g5_pmc = pmc_data_allocate(PMC_ETHPLL + 1,
-+	sama7g5_pmc = pmc_data_allocate(PMC_CPU + 1,
- 					nck(sama7g5_systemck),
- 					nck(sama7g5_periphck),
- 					nck(sama7g5_gck), 8);
-@@ -929,18 +929,17 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 		}
- 	}
- 
--	parent_names[0] = md_slck_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "cpupll_divpmcck";
--	parent_names[3] = "syspll_divpmcck";
--	hw = at91_clk_register_master_pres(regmap, "mck0_pres", 4, parent_names,
-+	parent_names[0] = "cpupll_divpmcck";
-+	hw = at91_clk_register_master_pres(regmap, "cpuck", 1, parent_names,
- 					   &mck0_layout, &mck0_characteristics,
- 					   &pmc_mck0_lock,
- 					   CLK_SET_RATE_PARENT, 0);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_master_div(regmap, "mck0_div", "mck0_pres",
-+	sama7g5_pmc->chws[PMC_CPU] = hw;
-+
-+	hw = at91_clk_register_master_div(regmap, "mck0", "cpuck",
- 					  &mck0_layout, &mck0_characteristics,
- 					  &pmc_mck0_lock, 0);
- 	if (IS_ERR(hw))
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index fab313f62e8f..98e1b2ab6403 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -34,6 +34,7 @@
- #define PMC_AUDIOPMCPLL		(PMC_MAIN + 6)
- #define PMC_AUDIOIOPLL		(PMC_MAIN + 7)
- #define PMC_ETHPLL		(PMC_MAIN + 8)
-+#define PMC_CPU			(PMC_MAIN + 9)
- 
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
+I guess this one should have a different name.
+
+
 -- 
-2.7.4
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
