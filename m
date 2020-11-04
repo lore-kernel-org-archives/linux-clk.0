@@ -2,137 +2,116 @@ Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F89C55179
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 17:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BCDC4741F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E267B2067B
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 17:46:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="iu1evf7+"
+	by mail.kernel.org (Postfix) with ESMTP id AE6F320704
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 19:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604516554;
+	bh=AxVram8zdbc2uYQEPmJkGvrAq+0jhyJgiHJ/n0WOENI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Cayl3p3Z6awIfW1AD2lLw7rOdJj5JO9+GHKD4X02KqgPML2p6MY6rSIM/JtqLq1Y9
+	 mJLGquAQyr/q72z83m56Nb1VuIJrBYxJX3TPJQrQiO5olm/FdeoOCD526LiXKvJ4nS
+	 WXXPXeRHqMSFte9RkacqeQBxP9ym9U7F8aJccK2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbgKDRq3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 12:46:29 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:61541 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732076AbgKDRq2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 12:46:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604511987; x=1636047987;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=cuSF0gSlstTy7/1sjdn75EP/sqA1SN5o3astT2nOOL0=;
-  b=iu1evf7+E4K+VqdBOZ25tK20ajYFEiBEb6a+6/lZCcKhL+GyaSW2uIx8
-   Td3/TWfZi7KBY33YcRtIMUb9/0uPmGsInRQx0XqPfdQRayfgWnDNP9Ylq
-   kgV8b+30NaOYPqJiCIAcfS8syEJWaPRywl7H/OxgVBcHOz5mTsz9My8VV
-   kQ3IcqmyehSLxx5pDi3PnuvMfRHIYt/nBTu//PqYRguwlEhTGqM60zuh0
-   fjrb6O7XlkGkznOPvC6q+XIcs8X59/Ui7AM2OXVzah6X5lVPJo5vRiltG
-   xW1FN7hO5ix0Ggdq7mczhOJCuQ6HY1y6+hkz/pa/VyUOjAsFnso6ud26d
-   A==;
-IronPort-SDR: Xu+jdCajfs21/12Fxg04RNe4pJNiOay7qYpN5lYJCWbw4k69xiGeNSk9YTqZxxx5tnyqE1d9lV
- pPxIIq2ulH2RwOM7hgIOCbPZOx0V4EQDxkHue6mTWVYsbyo2J1jne2lI31Qf0laLaSXgJcdoDq
- 6Rq1dvcZ6CL1RKV+o//RX0NCLecCnGR09XrunpfyxKJgdJdj6WDOLIGTnVZnx5TKwaB7FIhYtF
- LD9ra31Af4/wbp0uDzCXVE5C7lEGqLVNbLFNFpb2ZRXvkaBvQFngnEOpWOn76mDOqYXlJFclcT
- VMI=
-X-IronPort-AV: E=Sophos;i="5.77,451,1596524400"; 
-   d="scan'208";a="32430057"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Nov 2020 10:46:25 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 4 Nov 2020 10:46:22 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 4 Nov 2020 10:46:17 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <eugen.hristev@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 8/8] clk: at91: sama7g5: register cpu clock
-Date:   Wed, 4 Nov 2020 19:45:26 +0200
-Message-ID: <1604511926-29516-9-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604511926-29516-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1604511926-29516-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1730950AbgKDTCe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 14:02:34 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41650 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729599AbgKDTBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 14:01:15 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n15so20288908otl.8;
+        Wed, 04 Nov 2020 11:01:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fCdADtGJbCE4LsoGfkd3VKJpJmoa6WJULS6JxI7ElEc=;
+        b=mVoIDb/0ANev04ACzpu8Fev0NWMYjiE8NBEcjVzrnLvqR21pAntcI1zYcHyKnAG8jZ
+         mGPg/D491ayByM3A2zXa52Fiq0KNhHtBoXllwBx6WXllVt2F6aVijoV+I7drXKMG3DWa
+         deoGn8OWuaZ0ohAQ41XpX2TL8WcGZNSAegYpyLwsL9Nb5iSmcp6T3mrVH34U3D3qs46Q
+         kXcVD5aqqdnnXF4IehFZNDPAJG3+q6qqemt4VyabvEKqn0Q1z7WCOJiz3f7L3wwMhmfF
+         yzr/soDaRUgMw83ZrN4TcuDnWOGNqyO3Pw6govFUcqGAojOe9Ar+2Dr4UWzVbslVTScw
+         lQpw==
+X-Gm-Message-State: AOAM532Khb9JrINH/Mfm4GF3XtvnxNz063AE7TZdtq/JIT5Ut3SexjSF
+        SEiHMDs+ycZKrGZ8JHY1cw==
+X-Google-Smtp-Source: ABdhPJwafnq62npe4dpj+8WaXkzleVIJJ9Y5Xz5INV3jgI1bfcGgLWp/B3v+FGdbPXjjFmcURQaK2g==
+X-Received: by 2002:a9d:896:: with SMTP id 22mr19680580otf.55.1604516474734;
+        Wed, 04 Nov 2020 11:01:14 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b185sm647365oif.5.2020.11.04.11.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2020 11:01:14 -0800 (PST)
+Received: (nullmailer pid 3953219 invoked by uid 1000);
+        Wed, 04 Nov 2020 19:01:13 -0000
+Date:   Wed, 4 Nov 2020 13:01:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     devicetree@vger.kernel.org, Jacky Bai <ping.bai@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v5 09/14] Documentation: bindings: clk: Add bindings for
+ i.MX BLK_CTL
+Message-ID: <20201104190113.GB3950437@bogus>
+References: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
+ <1604402306-5348-10-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604402306-5348-10-git-send-email-abel.vesa@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register CPU clock as being the master clock prescaler. This would
-be used by DVFS. The block schema of SAMA7G5's PMC contains also a divider
-between master clock prescaler and CPU (PMC_CPU_RATIO.RATIO) but the
-frequencies supported by SAMA7G5 could be directly received from
-CPUPLL + master clock prescaler and the extra divider would do no work in
-case it would be enabled.
+On Tue, 03 Nov 2020 13:18:21 +0200, Abel Vesa wrote:
+> Document the i.MX BLK_CTL with its devicetree properties.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/fsl,imx-blk-ctl.yaml | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml
+> 
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/sama7g5.c       | 13 ++++++-------
- include/dt-bindings/clock/at91.h |  1 +
- 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index d38766c6fc8c..b712dd273a0b 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -852,7 +852,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	sama7g5_pmc = pmc_data_allocate(PMC_ETHPLL + 1,
-+	sama7g5_pmc = pmc_data_allocate(PMC_CPU + 1,
- 					nck(sama7g5_systemck),
- 					nck(sama7g5_periphck),
- 					nck(sama7g5_gck), 8);
-@@ -929,18 +929,17 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 		}
- 	}
- 
--	parent_names[0] = md_slck_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "cpupll_divpmcck";
--	parent_names[3] = "syspll_divpmcck";
--	hw = at91_clk_register_master_pres(regmap, "mck0_pres", 4, parent_names,
-+	parent_names[0] = "cpupll_divpmcck";
-+	hw = at91_clk_register_master_pres(regmap, "cpuck", 1, parent_names,
- 					   &mck0_layout, &mck0_characteristics,
- 					   &pmc_mck0_lock,
- 					   CLK_SET_RATE_PARENT, 0);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_master_div(regmap, "mck0_div", "mck0_pres",
-+	sama7g5_pmc->chws[PMC_CPU] = hw;
-+
-+	hw = at91_clk_register_master_div(regmap, "mck0", "cpuck",
- 					  &mck0_layout, &mck0_characteristics,
- 					  &pmc_mck0_lock, 0);
- 	if (IS_ERR(hw))
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index fab313f62e8f..98e1b2ab6403 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -34,6 +34,7 @@
- #define PMC_AUDIOPMCPLL		(PMC_MAIN + 6)
- #define PMC_AUDIOIOPLL		(PMC_MAIN + 7)
- #define PMC_ETHPLL		(PMC_MAIN + 8)
-+#define PMC_CPU			(PMC_MAIN + 9)
- 
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
--- 
-2.7.4
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/fsl,imx-blk-ctl.yaml:23:10: [warning] wrong indentation: expected 10 but found 9 (indentation)
+
+dtschema/dtc warnings/errors:
+
+
+See https://patchwork.ozlabs.org/patch/1392927
+
+The base for the patch is generally the last rc1. Any dependencies
+should be noted.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
