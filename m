@@ -3,110 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5828DC4741F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 07:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ABDC4742C
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 07:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED4C72087D
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 07:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BD221556
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 07:51:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="iqd4cqha"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="EcKDtfv4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgKEHW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Nov 2020 02:22:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbgKEHWZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 02:22:25 -0500
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC932C0613CF
-        for <linux-clk@vger.kernel.org>; Wed,  4 Nov 2020 23:22:24 -0800 (PST)
-Received: by mail-oi1-x243.google.com with SMTP id t143so705184oif.10
-        for <linux-clk@vger.kernel.org>; Wed, 04 Nov 2020 23:22:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WSZ3+zLaojBm8Llmv8mdwwh1sKAbO9V1JJ7VIGY5YaM=;
-        b=iqd4cqhaOURh+RJCIK7wwSnQuhnxujTo2ztBt+aVcxykRvNrG9uuBde3XzAhI2pjP9
-         OOE6bjCaG65Qow41L4PK7cMY5hA3m5pLHsAATuQziti/UZ0+bTHycJBzTs1WKnnc8giT
-         tkB9OA/hvZS1dUUOu23LMJteVg7jYwg6J+RJ2kp/63ti20sl0YrPLjk0haMozMXNKVmb
-         64oS4WIeHb6RrS6tGBtkbjyiyJUWaKycGNBbqPgg/xgAza+dbfnEvHcJaDQsqkpGWLLs
-         6VgB5i9La8YVUm0i1paX5ZOAA2//pHVk34C21OIjBlBwfU8aA2aZhgSn9VPAQ3NkOpXw
-         LyPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WSZ3+zLaojBm8Llmv8mdwwh1sKAbO9V1JJ7VIGY5YaM=;
-        b=O6sg3vLcWjtoPNM2n+EBXxCH92xArG7yC82UX/0zjtbytD+O5Y3ejxz9p/VKg2vxNl
-         EwT8zAbo9vdNQOxbhSzNED6nCmLVNsiYiBqTAMDoLrHB9hm2V6MKjtNHQbQBrSMeMN1o
-         j+c05cPrIViati4pXmHCzQ6aSJvZ7d7kGxau6zbXvAYYG5aUBdQBpevSp/cFl6sIZgnx
-         PWo0eWe+Y4mswimagjyDL355ovIGl3yn07u/YmMsFTAtB+cifN4Xr1/FJsvQPqYUS7lK
-         LTJ4MFgBfO29eNcNOeXmH6nSzWopG0i3p3CfoM6Rr9Ui7ocO7kmd3tqkfnUr1C7UlCZi
-         DAEg==
-X-Gm-Message-State: AOAM533s1Car3hMcBLhU1QesEHZkjZi4k2B0wbgajkD734xOodr1tGV3
-        8iXtFIDtQ5eaf4RaVU5eOyEz4PHCQWqFgHyvm2EG4g==
-X-Google-Smtp-Source: ABdhPJy0F5JCc98tp7QNjA610x1Eqz7f1L3ylLULpbwz+DrTYw2meMBgEMIwHINr6f0EPsTptlEuoAYI6lV5pfkWL5c=
-X-Received: by 2002:aca:4b82:: with SMTP id y124mr750400oia.35.1604560943669;
- Wed, 04 Nov 2020 23:22:23 -0800 (PST)
+        id S1726152AbgKEHvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Nov 2020 02:51:03 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:53821 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbgKEHvD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 02:51:03 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 8CFC322EE3;
+        Thu,  5 Nov 2020 08:51:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1604562661;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=y9nYMNipFWE8sSkn1Vl8PkFScRN6z5TpxXpkMWetXpU=;
+        b=EcKDtfv4J8/6mEv4+l/JnAIjw2EfFpGZbPhRTvUJxHMf/xSCy0jvF90Prq51i4SLhoWCBx
+        o527QJDxBJ6k3M7cpXMX3bGoOFnSesN38eVWUdreIdKfvnWX8Yd1S6XTkKbhmIG8GJcADN
+        HwxhyugtauPxeyIRfrrC8bngWYlKxog=
 MIME-Version: 1.0
-References: <cover.1602838910.git.zong.li@sifive.com> <b10784643665ad56ca41ea6754c7f28f8be1c7ca.1602838910.git.zong.li@sifive.com>
- <160454434294.3965362.6100009498384462585@swboyd.mtv.corp.google.com>
-In-Reply-To: <160454434294.3965362.6100009498384462585@swboyd.mtv.corp.google.com>
-From:   Zong Li <zong.li@sifive.com>
-Date:   Thu, 5 Nov 2020 15:22:10 +0800
-Message-ID: <CANXhq0qpEXejD765A5S5KfbuYQc=in5sFdEmk5K=BzZy2L=nmQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: sifive: Extract prci core to common base
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 05 Nov 2020 08:50:59 +0100
+From:   Michael Walle <michael@walle.cc>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Yash Shah <yash.shah@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: fsl-sai: fix memory leak
+In-Reply-To: <160453619129.3965362.7473462251338349415@swboyd.mtv.corp.google.com>
+References: <20201101184818.2754-1-michael@walle.cc>
+ <160453619129.3965362.7473462251338349415@swboyd.mtv.corp.google.com>
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <93b003ea4b80e0b6ec3eb63288e028eb@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 10:45 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Zong Li (2020-10-16 02:18:23)
-> > Extract common core of prci driver to an independent file, it could
-> > allow other chips to reuse it. Separate SoCs-dependent code 'fu540'
-> > from prci core, then we can easily add 'fu740' later.
->
-> Please indicate if there are any functional changes or this is just code
-> movement.
+Am 2020-11-05 01:29, schrieb Stephen Boyd:
+> Quoting Michael Walle (2020-11-01 10:48:18)
+>> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+>> index 0221180a4dd7..1e81c8d8a6fd 100644
+>> --- a/drivers/clk/clk-fsl-sai.c
+>> +++ b/drivers/clk/clk-fsl-sai.c
+>> @@ -68,9 +68,20 @@ static int fsl_sai_clk_probe(struct platform_device 
+>> *pdev)
+>>         if (IS_ERR(hw))
+>>                 return PTR_ERR(hw);
+>> 
+>> +       platform_set_drvdata(pdev, hw);
+>> +
+>>         return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, 
+>> hw);
+>>  }
+>> 
+>> +static int fsl_sai_clk_remove(struct platform_device *pdev)
+>> +{
+>> +       struct clk_hw *hw = platform_get_drvdata(pdev);
+>> +
+>> +       clk_hw_unregister_composite(hw);
+> 
+> Should we add a devm_clk_hw_register_composite() API and use it here?
+> That way we don't need a remove function and devm can be used
+> throughout.
 
-There are some changes for common use, not just code movement or
-copies, I would figure out the changes in the commit message  in the
-next version.
+Can do. But does adding a devm_ function qualify for the -stable branch?
+Or should I expect to have exactly this patch as a backport there then?
 
->
-> >
-> > Signed-off-by: Zong Li <zong.li@sifive.com>
-> > ---
-> >  drivers/clk/sifive/Makefile      |   2 +
-> >  drivers/clk/sifive/fu540-prci.c  | 586 +------------------------------
-> >  drivers/clk/sifive/fu540-prci.h  |  21 ++
-> >  drivers/clk/sifive/sifive-prci.c | 409 +++++++++++++++++++++
-> >  drivers/clk/sifive/sifive-prci.h | 201 +++++++++++
->
-> How much of this is a copy/pastes? Can you generate patches with
-> format-patch -M -C to try to find copies and renames?
-
-I tried to add -M and -C option to find renames and copies, but it
-doesn't detect anything here.
-
->
-> >  5 files changed, 652 insertions(+), 567 deletions(-)
-> >  create mode 100644 drivers/clk/sifive/fu540-prci.h
-> >  create mode 100644 drivers/clk/sifive/sifive-prci.c
-> >  create mode 100644 drivers/clk/sifive/sifive-prci.h
-> >
+-michael
