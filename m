@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9579C388F7
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA60C55178
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 774AF2078E
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C91EC21D81
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:35:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="sOJbKSIz"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="j+rtgJWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbgKETfY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Nov 2020 14:35:24 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:45577 "EHLO
+        id S1732231AbgKETfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Nov 2020 14:35:34 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:51693 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732043AbgKETfW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:35:22 -0500
+        with ESMTP id S1726729AbgKETf2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:35:28 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id AADC222F9C;
-        Thu,  5 Nov 2020 20:35:18 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 0629623E55;
+        Thu,  5 Nov 2020 20:35:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604604919;
+        t=1604604924;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ReHp2fm9OSWxCgIlDeVZla1A8qw/osOuWokzylh+8xI=;
-        b=sOJbKSIz15FFPpqCG/+es9pUQ0P+ZCT5x1GN3fteL7H2XAtaXQkzb5Dl0rn9dHss0FTAC6
-        4wdNNc+5BAcYS1UrJ0i0cIaIQfuu9VVsY2rKN/BqDA2e5Fh7F6CnUHqIBIonlcHjSdNXNq
-        8x/nkLxzO3gc8HFnZyTSQ4iycd16pvQ=
+        bh=eo+fPBfPzk/qMCRWMSDzjxSvOrHTFJ/sZimjalXzeRw=;
+        b=j+rtgJWGm/jt67NwLZCmWqhjqFiPqzQ6yzxElteyt0p89CEJz+nn8DxhI7NBcdbK6GqH0W
+        QdLDiN0AlTrAeO/uOhdYn2+OkaU3xTbATtis9BupxwgVwCdOmpcfeVn+0d7uro7VU8RGQn
+        n9ABZOaj842J71fkNZqAye5m5qOTFE0=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -45,9 +45,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 1/5] clk: divider: add devm_clk_hw_register_divider_table()
-Date:   Thu,  5 Nov 2020 20:35:08 +0100
-Message-Id: <20201105193512.22388-2-michael@walle.cc>
+Subject: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
+Date:   Thu,  5 Nov 2020 20:35:12 +0100
+Message-Id: <20201105193512.22388-6-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201105193512.22388-1-michael@walle.cc>
 References: <20201105193512.22388-1-michael@walle.cc>
@@ -57,112 +57,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This will simplify drivers which would only unregister the clk in their
-remove() op.
+Now that we have a proper driver for the FlexSPI interface use it. This
+will fix SCK frequency switching on Layerscape SoCs.
+
+This was only compile time tested.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
 Changes since v1:
- - new patch
+ - none
 
- drivers/clk/clk-divider.c    | 34 ++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 8de12cb0c43d..c499799693cc 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -8,6 +8,7 @@
-  */
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index 83072da6f6c6..6e375e80bd35 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -659,9 +659,20 @@
+ 		};
  
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-@@ -578,3 +579,36 @@ void clk_hw_unregister_divider(struct clk_hw *hw)
- 	kfree(div);
- }
- EXPORT_SYMBOL_GPL(clk_hw_unregister_divider);
+ 		dcfg: syscon@1e00000 {
+-			compatible = "fsl,lx2160a-dcfg", "syscon";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-mfd";
+ 			reg = <0x0 0x1e00000 0x0 0x10000>;
++			ranges = <0x0 0x0 0x1e00000 0x10000>;
+ 			little-endian;
 +
-+static void devm_clk_hw_release_divider(struct device *dev, void *res)
-+{
-+	clk_hw_unregister_divider(*(struct clk_hw **)res);
-+}
-+
-+struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		const struct clk_div_table *table, spinlock_t *lock)
-+{
-+	struct clk_hw **ptr, *hw;
-+
-+	ptr = devres_alloc(devm_clk_hw_release_divider, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hw = __clk_hw_register_divider(dev, np, name, parent_name, parent_hw,
-+				       parent_data, flags, reg, shift, width,
-+				       clk_divider_flags, table, lock);
-+
-+	if (!IS_ERR(hw)) {
-+		*ptr = hw;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return hw;
-+}
-+EXPORT_SYMBOL_GPL(__devm_clk_hw_register_divider);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 03a5de5f99f4..9ead4633c8c8 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -639,6 +639,12 @@ struct clk_hw *__clk_hw_register_divider(struct device *dev,
- 		const struct clk_parent_data *parent_data, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
- 		const struct clk_div_table *table, spinlock_t *lock);
-+struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data, unsigned long flags,
-+		void __iomem *reg, u8 shift, u8 width, u8 clk_divider_flags,
-+		const struct clk_div_table *table, spinlock_t *lock);
- struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 shift, u8 width,
-@@ -779,6 +785,27 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 				  (parent_data), (flags), (reg), (shift),     \
- 				  (width), (clk_divider_flags), (table),      \
- 				  (lock))
-+/**
-+ * devm_clk_hw_register_divider_table - register a table based divider clock
-+ * with the clock framework (devres variant)
-+ * @dev: device registering this clock
-+ * @name: name of this clock
-+ * @parent_name: name of clock's parent
-+ * @flags: framework-specific flags
-+ * @reg: register address to adjust divider
-+ * @shift: number of bits to shift the bitfield
-+ * @width: width of the bitfield
-+ * @clk_divider_flags: divider-specific flags for this clock
-+ * @table: array of divider/value pairs ending with a div set to 0
-+ * @lock: shared register lock for this clock
-+ */
-+#define devm_clk_hw_register_divider_table(dev, name, parent_name, flags,     \
-+					   reg, shift, width,		      \
-+					   clk_divider_flags, table, lock)    \
-+	__devm_clk_hw_register_divider((dev), NULL, (name), (parent_name),    \
-+				       NULL, NULL, (flags), (reg), (shift),   \
-+				       (width), (clk_divider_flags), (table), \
-+				       (lock))
++			fspi_clk: clock-controller@900 {
++				compatible = "fsl,lx2160a-flexspi-clk";
++				reg = <0x900 0x4>;
++				#clock-cells = <0>;
++				clocks = <&clockgen 4 0>;
++				clock-output-names = "fspi_clk";
++			};
+ 		};
  
- void clk_unregister_divider(struct clk *clk);
- void clk_hw_unregister_divider(struct clk_hw *hw);
+ 		tmu: tmu@1f80000 {
+@@ -776,7 +787,7 @@
+ 			      <0x0 0x20000000 0x0 0x10000000>;
+ 			reg-names = "fspi_base", "fspi_mmap";
+ 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clocks = <&clockgen 4 3>, <&fspi_clk>;
+ 			clock-names = "fspi_en", "fspi";
+ 			status = "disabled";
+ 		};
 -- 
 2.20.1
 
