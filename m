@@ -7,82 +7,306 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3148FC2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A5CC2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D52FC20867
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:46:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8508E20A8B
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604544418;
-	bh=latL1K3uBvpZ46MD7GD39fenbWIQylUyOF7tssY/na8=;
+	s=default; t=1604544649;
+	bh=s9TmciBG4hvcsBn5EOIsicR/HDbAaQeCGdnoHYH8AQo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ToQnhUBa5ACUIthuLdQD1B8vrAtyqgP9jwOCE+WVt6ibebBPDnjYsfmtrdfpsrq/K
-	 wXt3sBxwiH/v3FHSqlEspI/MO7MEsG+v7Ja+Gmtqmd2tkv9nd5MVAY/pGN5pk3gyPI
-	 Tv06j3WHEMpHxkw4clhBDOZGBvcwibq8lY4sbwIw=
+	b=j86D7sbkqV7MQAd3HTVqZHHe16E3wlFE9E5lqIWmOgYZF54xFhqubdE18vhsZgu8k
+	 inFjz9EfBiRr9NXC1zS0GjzoHPQlKEYBMYkA2TO44sq1WMwhyrZt+QCxn42HAjSA+K
+	 Sy/ydP9UkOC2vsPOqJL/A/o2BgaBgkXvgPJI4wRw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388416AbgKECq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 21:46:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57466 "EHLO mail.kernel.org"
+        id S1732414AbgKECut (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 21:50:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729344AbgKECq6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 21:46:58 -0500
+        id S1726185AbgKECut (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 21:50:49 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBCD3207BB;
-        Thu,  5 Nov 2020 02:46:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75A2920825;
+        Thu,  5 Nov 2020 02:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604544417;
-        bh=latL1K3uBvpZ46MD7GD39fenbWIQylUyOF7tssY/na8=;
+        s=default; t=1604544647;
+        bh=s9TmciBG4hvcsBn5EOIsicR/HDbAaQeCGdnoHYH8AQo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=j7k7a3BCXdmFXHRjEkR+nUanUPG7bBo8AypRT5JyDONuCrMXCS19mzAnkj9RB1PBC
-         P4eXA7A7niOzVfeozB1wQpzCz6Lon0EUbNuzCZ/a5MNa1N0rDYxR5e713uuVc9By2d
-         GY98O/1xDeBXuh6zPDsVIG7SS9N6NG8Q7IWhJa/4=
+        b=Ye/hPkoXGGk/wr9ge36IzFFs9zzVxX8hffZxSf8AZsRvQVdU4v6lPJ3nH6KLfYyJC
+         nslmXovseDS1qfsLmcf+OevTS90dt4jr4IFzb/OC0shoji1IbKqnPyykvw/feiNhGn
+         u21r4r9PKzObyQZtImbiYvSKaU3WfVjIia2tih6M=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <691e24d1c45a4b56b57ce1e02a04268c4253a77d.1602838910.git.zong.li@sifive.com>
-References: <cover.1602838910.git.zong.li@sifive.com> <691e24d1c45a4b56b57ce1e02a04268c4253a77d.1602838910.git.zong.li@sifive.com>
-Subject: Re: [PATCH 2/4] clk: sifive: Use common name for prci configuration
+In-Reply-To: <8ad64f9814137c5255d43d4ba670b5fcd15837ab.1602838910.git.zong.li@sifive.com>
+References: <cover.1602838910.git.zong.li@sifive.com> <8ad64f9814137c5255d43d4ba670b5fcd15837ab.1602838910.git.zong.li@sifive.com>
+Subject: Re: [PATCH 4/4] clk: sifive: Refactor __prci_clock array by using macro
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Zong Li <zong.li@sifive.com>
 To:     Zong Li <zong.li@sifive.com>, aou@eecs.berkeley.edu,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, mturquette@baylibre.com,
         palmer@dabbelt.com, paul.walmsley@sifive.com, yash.shah@sifive.com
-Date:   Wed, 04 Nov 2020 18:46:56 -0800
-Message-ID: <160454441626.3965362.17922436443029310228@swboyd.mtv.corp.google.com>
+Date:   Wed, 04 Nov 2020 18:50:45 -0800
+Message-ID: <160454464591.3965362.9361884545184336266@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2020-10-16 02:18:24)
-> Use generic name CLK_SIFIVE_PRCI instead of CLK_SIFIVE_FU540_PRCI. This
-> patch is prepared for fu740 support.
+Quoting Zong Li (2020-10-16 02:18:26)
+> Refactor code by using DEFINE_PRCI_CLOCK to define each clock
+> and reduce duplicate code.
+
+What is duplicate?
+
 >=20
 > Signed-off-by: Zong Li <zong.li@sifive.com>
 > ---
-
-Looks ok but needs an ack from riscv maintainers to go through clk
-tree. I was worried it would break defconfigs but it seems that the arch
-selects the config so this should be OK, right?
-
->  arch/riscv/Kconfig.socs     | 2 +-
->  drivers/clk/sifive/Kconfig  | 6 +++---
->  drivers/clk/sifive/Makefile | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
+>  drivers/clk/sifive/fu540-prci.c  | 38 ++++++----------
+>  drivers/clk/sifive/fu540-prci.h  |  2 +-
+>  drivers/clk/sifive/fu740-prci.c  | 74 ++++++++++++--------------------
+>  drivers/clk/sifive/fu740-prci.h  |  2 +-
+>  drivers/clk/sifive/sifive-prci.c |  2 +-
+>  drivers/clk/sifive/sifive-prci.h | 10 ++++-
+>  6 files changed, 53 insertions(+), 75 deletions(-)
 >=20
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index 8a55f6156661..3284d5c291be 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -5,7 +5,7 @@ config SOC_SIFIVE
->         select SERIAL_SIFIVE if TTY
->         select SERIAL_SIFIVE_CONSOLE if TTY
->         select CLK_SIFIVE
-> -       select CLK_SIFIVE_FU540_PRCI
-> +       select CLK_SIFIVE_PRCI
->         select SIFIVE_PLIC
->         help
->           This enables support for SiFive SoC platform hardware.
+> diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-p=
+rci.c
+> index 840b97bfff85..d43b9a9984f6 100644
+> --- a/drivers/clk/sifive/fu540-prci.c
+> +++ b/drivers/clk/sifive/fu540-prci.c
+> @@ -54,29 +54,19 @@ static const struct clk_ops sifive_fu540_prci_tlclkse=
+l_clk_ops =3D {
+>         .recalc_rate =3D sifive_prci_tlclksel_recalc_rate,
+>  };
+> =20
+> +DEFINE_PRCI_CLOCK(fu540, corepll, hfclk,
+> +                 &sifive_fu540_prci_wrpll_clk_ops, &__prci_corepll_data);
+> +DEFINE_PRCI_CLOCK(fu540, ddrpll, hfclk,
+> +                 &sifive_fu540_prci_wrpll_ro_clk_ops, &__prci_ddrpll_dat=
+a);
+> +DEFINE_PRCI_CLOCK(fu540, gemgxlpll, hfclk,
+> +                 &sifive_fu540_prci_wrpll_clk_ops, &__prci_gemgxlpll_dat=
+a);
+> +DEFINE_PRCI_CLOCK(fu540, tlclk, corepll,
+> +                 &sifive_fu540_prci_tlclksel_clk_ops, NULL);
+
+Readability looks to decrease with this change. Why should all us code
+reviewers suffer because the code author wants to type a few less
+characters? Named initializers are useful so we don't have to hold each
+macro argument in our head and map it to the struct member that is being
+initialized.
+
+> +
+>  /* List of clock controls provided by the PRCI */
+> -struct __prci_clock __prci_init_clocks_fu540[] =3D {
+> -       [PRCI_CLK_COREPLL] =3D {
+> -               .name =3D "corepll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu540_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_corepll_data,
+> -       },
+> -       [PRCI_CLK_DDRPLL] =3D {
+> -               .name =3D "ddrpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu540_prci_wrpll_ro_clk_ops,
+> -               .pwd =3D &__prci_ddrpll_data,
+> -       },
+> -       [PRCI_CLK_GEMGXLPLL] =3D {
+> -               .name =3D "gemgxlpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu540_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_gemgxlpll_data,
+> -       },
+> -       [PRCI_CLK_TLCLK] =3D {
+> -               .name =3D "tlclk",
+> -               .parent_name =3D "corepll",
+> -               .ops =3D &sifive_fu540_prci_tlclksel_clk_ops,
+> -       },
+> +struct __prci_clock *__prci_init_clocks_fu540[] =3D {
+> +       [PRCI_CLK_COREPLL]      =3D &fu540_corepll,
+> +       [PRCI_CLK_DDRPLL]       =3D &fu540_ddrpll,
+> +       [PRCI_CLK_GEMGXLPLL]    =3D &fu540_gemgxlpll,
+> +       [PRCI_CLK_TLCLK]        =3D &fu540_tlclk,
+>  };
+> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-p=
+rci.h
+> index c8271efa7bdc..281200cd8848 100644
+> --- a/drivers/clk/sifive/fu540-prci.h
+> +++ b/drivers/clk/sifive/fu540-prci.h
+> @@ -11,7 +11,7 @@
+> =20
+>  #define NUM_CLOCK_FU540        4
+> =20
+> -extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
+> +extern struct __prci_clock *__prci_init_clocks_fu540[NUM_CLOCK_FU540];
+> =20
+>  static const struct prci_clk_desc prci_clk_fu540 =3D {
+>         .clks =3D __prci_init_clocks_fu540,
+> diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-p=
+rci.c
+> index 3b87e273c3eb..676cad2c3886 100644
+> --- a/drivers/clk/sifive/fu740-prci.c
+> +++ b/drivers/clk/sifive/fu740-prci.c
+> @@ -71,52 +71,32 @@ static const struct clk_ops sifive_fu740_prci_hfpclkp=
+lldiv_clk_ops =3D {
+>         .recalc_rate =3D sifive_prci_hfpclkplldiv_recalc_rate,
+>  };
+> =20
+> +
+> +DEFINE_PRCI_CLOCK(fu740, corepll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_clk_ops, &__prci_corepll_data);
+> +DEFINE_PRCI_CLOCK(fu740, ddrpll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_ro_clk_ops, &__prci_ddrpll_dat=
+a);
+> +DEFINE_PRCI_CLOCK(fu740, gemgxlpll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_clk_ops, &__prci_gemgxlpll_dat=
+a);
+> +DEFINE_PRCI_CLOCK(fu740, dvfscorepll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_clk_ops, &__prci_dvfscorepll_d=
+ata);
+> +DEFINE_PRCI_CLOCK(fu740, hfpclkpll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_clk_ops, &__prci_hfpclkpll_dat=
+a);
+> +DEFINE_PRCI_CLOCK(fu740, cltxpll, hfclk,
+> +                 &sifive_fu740_prci_wrpll_clk_ops, &__prci_cltxpll_data);
+> +DEFINE_PRCI_CLOCK(fu740, tlclk, corepll,
+> +                 &sifive_fu740_prci_tlclksel_clk_ops, NULL);
+> +DEFINE_PRCI_CLOCK(fu740, pclk, hfpclkpll,
+> +                 &sifive_fu740_prci_hfpclkplldiv_clk_ops, NULL);
+> +
+>  /* List of clock controls provided by the PRCI */
+> -struct __prci_clock __prci_init_clocks_fu740[] =3D {
+> -       [PRCI_CLK_COREPLL] =3D {
+> -               .name =3D "corepll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_corepll_data,
+> -       },
+> -       [PRCI_CLK_DDRPLL] =3D {
+> -               .name =3D "ddrpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_ro_clk_ops,
+> -               .pwd =3D &__prci_ddrpll_data,
+> -       },
+> -       [PRCI_CLK_GEMGXLPLL] =3D {
+> -               .name =3D "gemgxlpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_gemgxlpll_data,
+> -       },
+> -       [PRCI_CLK_DVFSCOREPLL] =3D {
+> -               .name =3D "dvfscorepll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_dvfscorepll_data,
+> -       },
+> -       [PRCI_CLK_HFPCLKPLL] =3D {
+> -               .name =3D "hfpclkpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_hfpclkpll_data,
+> -       },
+> -       [PRCI_CLK_CLTXPLL] =3D {
+> -               .name =3D "cltxpll",
+> -               .parent_name =3D "hfclk",
+> -               .ops =3D &sifive_fu740_prci_wrpll_clk_ops,
+> -               .pwd =3D &__prci_cltxpll_data,
+> -       },
+> -       [PRCI_CLK_TLCLK] =3D {
+> -               .name =3D "tlclk",
+> -               .parent_name =3D "corepll",
+> -               .ops =3D &sifive_fu740_prci_tlclksel_clk_ops,
+> -       },
+> -       [PRCI_CLK_PCLK] =3D {
+> -               .name =3D "pclk",
+> -               .parent_name =3D "hfpclkpll",
+> -               .ops =3D &sifive_fu740_prci_hfpclkplldiv_clk_ops,
+> -       },
+> +struct __prci_clock *__prci_init_clocks_fu740[] =3D {
+> +       [PRCI_CLK_COREPLL]      =3D &fu740_corepll,
+> +       [PRCI_CLK_DDRPLL]       =3D &fu740_ddrpll,
+> +       [PRCI_CLK_GEMGXLPLL]    =3D &fu740_gemgxlpll,
+> +       [PRCI_CLK_DVFSCOREPLL]  =3D &fu740_dvfscorepll,
+> +       [PRCI_CLK_HFPCLKPLL]    =3D &fu740_hfpclkpll,
+> +       [PRCI_CLK_CLTXPLL]      =3D &fu740_cltxpll,
+> +       [PRCI_CLK_TLCLK]        =3D &fu740_tlclk,
+> +       [PRCI_CLK_PCLK]         =3D &fu740_pclk,
+>  };
+
+I suppose this is fine and then non-macro structs above this array of
+pointers.
+
+> diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-p=
+rci.h
+> index 13ef971f7764..3f03295f719a 100644
+> --- a/drivers/clk/sifive/fu740-prci.h
+> +++ b/drivers/clk/sifive/fu740-prci.h
+> @@ -11,7 +11,7 @@
+> =20
+>  #define NUM_CLOCK_FU740        8
+> =20
+> -extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
+> +extern struct __prci_clock *__prci_init_clocks_fu740[NUM_CLOCK_FU740];
+> =20
+>  static const struct prci_clk_desc prci_clk_fu740 =3D {
+>         .clks =3D __prci_init_clocks_fu740,
+> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive=
+-prci.c
+> index 4098dbc5881a..2ef3f9f91b33 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -431,7 +431,7 @@ static int __prci_register_clocks(struct device *dev,=
+ struct __prci_data *pd,
+> =20
+>         /* Register PLLs */
+>         for (i =3D 0; i < desc->num_clks; ++i) {
+> -               pic =3D &(desc->clks[i]);
+> +               pic =3D desc->clks[i];
+
+This is related how?
+
+> =20
+>                 init.name =3D pic->name;
+>                 init.parent_names =3D &pic->parent_name;
+> diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive=
+-prci.h
+> index bc0646bc9c3e..e6c9f72e20de 100644
+> --- a/drivers/clk/sifive/sifive-prci.h
+> +++ b/drivers/clk/sifive/sifive-prci.h
+> @@ -253,6 +253,14 @@ struct __prci_clock {
+>         struct __prci_data *pd;
+>  };
+> =20
+> +#define DEFINE_PRCI_CLOCK(_platform, _name, _parent, _ops, _pwd)       \
+> +       static struct __prci_clock _platform##_##_name =3D {             =
+ \
+> +               .name =3D #_name,                                        =
+ \
+> +               .parent_name =3D #_parent,                               =
+ \
+> +               .ops =3D _ops,                                           =
+ \
+> +               .pwd =3D _pwd,                                           =
+ \
+> +       }                                                               \
+> +
+>  #define clk_hw_to_prci_clock(pwd) container_of(pwd, struct __prci_clock,=
+ hw)
+> =20
+>  /*
+> @@ -261,7 +269,7 @@ struct __prci_clock {
+>   * @num_clks: the number of element of clks
+>   */
+>  struct prci_clk_desc {
+> -       struct __prci_clock *clks;
+> +       struct __prci_clock **clks;
+
+Huh? Nothing in the commit text mentions this.
+
+>         size_t num_clks;
+>  };
