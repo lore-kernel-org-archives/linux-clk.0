@@ -2,148 +2,116 @@ Return-Path: <SRS0=dIxE=EL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48363C4741F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 09:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B7BC4741F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 09:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1B2220825
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 09:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5462821D46
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 09:56:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CyY1MxxZ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OJTzDyH0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbgKEJnG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Nov 2020 04:43:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56144 "EHLO
+        id S1726344AbgKEJ4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Nov 2020 04:56:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbgKEJnC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 04:43:02 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32177C061A4A
-        for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2020 01:43:02 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id o18so834000edq.4
-        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2020 01:43:02 -0800 (PST)
+        with ESMTP id S1726280AbgKEJ4M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 04:56:12 -0500
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BAB8C0613CF
+        for <linux-clk@vger.kernel.org>; Thu,  5 Nov 2020 01:56:12 -0800 (PST)
+Received: by mail-oi1-x241.google.com with SMTP id 9so1085429oir.5
+        for <linux-clk@vger.kernel.org>; Thu, 05 Nov 2020 01:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DeOBs8//T4JC8W2v/41RF/aONDtKGyNLXtxBMCRNHss=;
-        b=CyY1MxxZtzoUExDGbmpfCTNbv0CVGls7p0kDIFJHKIwdCk8Bd4QEzlmsBdJkefe5kF
-         bDVViaItqLXwHDLbA+q9Fr5dnVgW/1XDyTeTaEGjy3Dr6pOaBaYVENiOk6ilsVbG0/HL
-         xeFbvtqJO3blOzIuCgaSSkafRYQolKoH227e+GB3iGCLhm5zzOLXRXW5GdbDuLploRFF
-         FqXsj+CadpLYKdBoFr13XOn5hQRujYHvQqPzQkdCdrmCwaKQKlw9Ba8ZQB5ctigIBhSw
-         tB7ZNrEGerTHA3/IxDKAXDu6f3oUcxTz8A/mJaAdvwYjPMhFzhGJbODSNOIOvro3aJbF
-         ipug==
+        bh=ndz5Vv+R7dwHwUNh16wYXBC3DQLbUHpsCLSiSv8wpGw=;
+        b=OJTzDyH0esN9OPZyPAj6631qDN2gKy7xWH7yicsOC4KQfdY/dTXwvMSG+gayb42JMW
+         Zd/x5gaJCd1Fd83MFYkkQtVXu4HRcd0xYvhCht5PuM8n/y0vmnjRUNr7kfyp6JuTPc0t
+         3pOSPwss6bXAbAz66A7tfLPQYYIxd1R4nBfTxWE6YE0M8B95RUVqmukEWLcGzYQfo8IJ
+         ICjj3djjZKHIxfyqy97mleTfyxxBPMLq33nSs4iDShPqcud/W7qrrZubYKqyfVaxGUq0
+         WEetyzgIJLqHpCLiv5WwC07b/98nOMNmPs7zYMKduro2vUZaUFNLvO4s5uojDUZMzqBI
+         PG8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DeOBs8//T4JC8W2v/41RF/aONDtKGyNLXtxBMCRNHss=;
-        b=C1rWSt3PSRJ7KQahAcohYqNOnrdPVbboYJ+lLEQfSqrQJkRSvPCSxQScOQolaAPLH+
-         pVFtmzExi+Zw7UFV9TQC55PDCi7be1E3NBT6iWSl8pHwpY83K/p6DqdsPbDvDBDcMFGf
-         g9hESS4sxDpCdbvE+AO8cLTMtT4pK6mjrv+dYSuHZUKj6JkGcQgmsHN1Y7nC7oC/5B6Q
-         /0K26PQMAUk2sTYlw/WHrF3W1jb3vOePjfKvdQ1zzGAUnhuam+6aXSk4kn9gMr5Dsu0N
-         rk5+rEz9yvE8SOP80hoh8YBCT3V7olKH8xcOgNGeuLL+sp8E11MOj59cGpwMxuVAGZF4
-         mBJA==
-X-Gm-Message-State: AOAM533aNnSKA/3AGY3vX+gPVI0OkKWRwzd06dP3hb2sFSoCPLOa/ozc
-        gTTlwPZQKlIaMcDl1BDXKdmRXR4vqJNJhtAp0obUEA==
-X-Google-Smtp-Source: ABdhPJybud6FTPvTcrbvBWnuDfmJGrn2QRie046seVglh3JPax7rANBITFnA8FFir54MK6PUKO/kndp9C8T8y77d14o=
-X-Received: by 2002:a50:e442:: with SMTP id e2mr1738064edm.186.1604569380861;
- Thu, 05 Nov 2020 01:43:00 -0800 (PST)
+        bh=ndz5Vv+R7dwHwUNh16wYXBC3DQLbUHpsCLSiSv8wpGw=;
+        b=cIQ/0PumLX9ynY8wjUU7M0MjgPcbBV6DPk3+wpLwAdKGVE9B1HZxrV+6qc/ezbkB6F
+         7aAlAEXy/hnFjX1GELbiuQQyI+AvHjhwZcLHV4PusCDuE6yG6CTAF1puhePKUxaFACQc
+         75JdTFw21Xv8k5xnZkFOp24wZX9Aj9k2rB8qcZRkUodi+WnDWeUarmKJyWoqvZZiCbbu
+         4qasu5+vvASr87m3wwUbMEgTFd3BSSSPUzQP+Mi15fbuzZuij+tqRP4jO7yWqGVyEMMm
+         jQOLSlj5cuwBll3L+kqhi6Tq22fLSYGVDnzGs46iasjjbib3RVxVIVmRflivLuNOhbM3
+         bqPA==
+X-Gm-Message-State: AOAM532yG+U+zD5HnlNy0Unt2j8oTrfYddpfJ9RDH/Db3o1FG7ypaxQP
+        +uH6m+3KCNRvNJ2uWpFnargLmHjTgQnRDYqjnZgeog==
+X-Google-Smtp-Source: ABdhPJzpNj4ARWML+b5ZkSBTL/EAiEsuc6lD/J3O0DQRD37LBqn+eu39NyqkN4z3f9pG87siPsVjo40h8K1SFJ7cKWA=
+X-Received: by 2002:aca:f1c6:: with SMTP id p189mr1076089oih.18.1604570171786;
+ Thu, 05 Nov 2020 01:56:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de> <20201104103938.1286-2-nsaenzjulienne@suse.de>
- <CAMpxmJWJRcQQiLitJCLWKmhQVQWr3bMDY=td5FEn5uy2YZfwkA@mail.gmail.com> <47eaba0bc71c6e23bff87b8a01cebf0c6d12efd0.camel@suse.de>
-In-Reply-To: <47eaba0bc71c6e23bff87b8a01cebf0c6d12efd0.camel@suse.de>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 5 Nov 2020 10:42:50 +0100
-Message-ID: <CAMpxmJUZ23uYM3+_L2XvTXzvA48JWrxrhZaLnGAxTpJjFiERRA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] firmware: raspberrypi: Introduce devm_rpi_firmware_get()
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
-        Linux Input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20201023131925.334864-1-dmitry.baryshkov@linaro.org>
+ <20201023131925.334864-6-dmitry.baryshkov@linaro.org> <160454417608.3965362.16775651224166864448@swboyd.mtv.corp.google.com>
+In-Reply-To: <160454417608.3965362.16775651224166864448@swboyd.mtv.corp.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 5 Nov 2020 12:56:00 +0300
+Message-ID: <CAA8EJppY3gnumEWHiVtm-T9vBDLVkpojVC-BD4qpfQ0rzhymtA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] clk: qcom: dispcc-sm8250: handle MMCX power domain
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 10:28 AM Nicolas Saenz Julienne
-<nsaenzjulienne@suse.de> wrote:
+On Thu, 5 Nov 2020 at 05:42, Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Hi Bartosz, thanks for the review.
->
-> On Thu, 2020-11-05 at 10:13 +0100, Bartosz Golaszewski wrote:
-> > > +/**
-> > > + * devm_rpi_firmware_get - Get pointer to rpi_firmware structure.
-> > > + * @firmware_node:    Pointer to the firmware Device Tree node.
-> > > + *
-> > > + * Returns NULL is the firmware device is not ready.
-> > > + */
-> > > +struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
-> > > +                                          struct device_node *firmware_node)
-> > > +{
-> > > +       struct platform_device *pdev = of_find_device_by_node(firmware_node);
-> > > +       struct rpi_firmware *fw;
-> > > +
-> > > +       if (!pdev)
-> > > +               return NULL;
-> > > +
-> > > +       fw = platform_get_drvdata(pdev);
-> > > +       if (!fw)
-> > > +               return NULL;
-> > > +
-> > > +       if (!refcount_inc_not_zero(&fw->consumers))
-> > > +               return NULL;
-> > > +
-> > > +       if (devm_add_action_or_reset(dev, rpi_firmware_put, fw))
-> > > +               return NULL;
-> > > +
-> > > +       return fw;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(devm_rpi_firmware_get);
+> Quoting Dmitry Baryshkov (2020-10-23 06:19:25)
+> > On SM8250 MMCX power domain is required to access MMDS_GDSC registers.
+> > This power domain is expressed as mmcx-supply regulator property. Use
+> > this regulator as MDSS_GDSC supply.
 > >
-> > Usually I'd expect the devres variant to simply call
-> > rpi_firmware_get() and then schedule a release callback which would
-> > call whatever function is the release counterpart for it currently.
-> > Devres actions are for drivers which want to schedule some more
-> > unusual tasks at driver detach. Any reason for designing it this way?
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/clk/qcom/dispcc-sm8250.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+> > index 07a98d3f882d..588575e1169d 100644
+> > --- a/drivers/clk/qcom/dispcc-sm8250.c
+> > +++ b/drivers/clk/qcom/dispcc-sm8250.c
+> > @@ -963,6 +963,7 @@ static struct gdsc mdss_gdsc = {
+> >         },
+> >         .pwrsts = PWRSTS_OFF_ON,
+> >         .flags = HW_CTRL,
+> > +       .supply = "mmcx",
+> >  };
+> >
 >
-> Yes, see patch #8 where I get rid of rpi_firmware_get() altogether after
-> converting all users to devres. Since there is no use for the vanilla version
-> of the function anymore, I figured it'd be better to merge everything into
-> devm_rpi_firmware_get(). That said it's not something I have strong feelings
-> about.
->
+> Can this patch be applied to clk tree or will it break the tree without
+> the dts/regulator bits in place?
 
-I see. So the previous version didn't really have any reference
-counting and it leaked the reference returned by
-of_find_device_by_node(), got it. Could you just clarify for me the
-logic behind the wait_queue in rpi_firmware_remove()? If the firmware
-driver gets detached and remove() stops on the wait_queue - it will be
-stuck until the last user releases the firmware. I'm not sure this is
-correct. I'd prefer to see a kref with a release callback and remove
-would simply decrease the kref and return. Each user would do the same
-and then after the last user is detached the firmware would be
-destroyed.
+It can be applied to clk tree. Regulator bits are already accepted by
+Mark Brown.
 
-Don't we really have some centralized firmware subsystem that would handle this?
 
-Bartosz
+-- 
+With best wishes
+Dmitry
