@@ -2,83 +2,87 @@ Return-Path: <SRS0=dIxE=EL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0EDC2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3148FC2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D813F2075E
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D52FC20867
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604544346;
-	bh=ZND+etKvo9cOoumubJj8jAyx7zVBF0vSY5DA1VtbySY=;
+	s=default; t=1604544418;
+	bh=latL1K3uBvpZ46MD7GD39fenbWIQylUyOF7tssY/na8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=RXFqvUTy9SLoyum+kfrjZtO/QTJCCZ92ispHjToP4b1mIbP6n5vVg8V2YAWYeRFCd
-	 xN7hOA2y3y6PgYfw2J3gvnoIZ4lbbcMrOfvj/s2Wuqw7pY6FN6hZMVXlyDs0upGOpa
-	 RHMQNg9DuazbNEICmCy/N6w9uC3Qdf84L7Ghnh1w=
+	b=ToQnhUBa5ACUIthuLdQD1B8vrAtyqgP9jwOCE+WVt6ibebBPDnjYsfmtrdfpsrq/K
+	 wXt3sBxwiH/v3FHSqlEspI/MO7MEsG+v7Ja+Gmtqmd2tkv9nd5MVAY/pGN5pk3gyPI
+	 Tv06j3WHEMpHxkw4clhBDOZGBvcwibq8lY4sbwIw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbgKECpq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 21:45:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56800 "EHLO mail.kernel.org"
+        id S2388416AbgKECq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 21:46:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729344AbgKECpq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 21:45:46 -0500
+        id S1729344AbgKECq6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 21:46:58 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 944272074B;
-        Thu,  5 Nov 2020 02:45:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBCD3207BB;
+        Thu,  5 Nov 2020 02:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604544344;
-        bh=ZND+etKvo9cOoumubJj8jAyx7zVBF0vSY5DA1VtbySY=;
+        s=default; t=1604544417;
+        bh=latL1K3uBvpZ46MD7GD39fenbWIQylUyOF7tssY/na8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vToYG6rik7/vw09/YnScFZDKwVW3nkERgEDEL8Yf27KpbBKY5P/Ne4vovyhUQYFqY
-         ciLFlMCU6d5LuUAGnh9afyXRgmEjB2DaVPKu8XUYAQADGo3d8EuXA6wH9DPToqMjvB
-         +KKewqJce9mQktXfsCl34SICmOwIPwpJJUmqlr2E=
+        b=j7k7a3BCXdmFXHRjEkR+nUanUPG7bBo8AypRT5JyDONuCrMXCS19mzAnkj9RB1PBC
+         P4eXA7A7niOzVfeozB1wQpzCz6Lon0EUbNuzCZ/a5MNa1N0rDYxR5e713uuVc9By2d
+         GY98O/1xDeBXuh6zPDsVIG7SS9N6NG8Q7IWhJa/4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b10784643665ad56ca41ea6754c7f28f8be1c7ca.1602838910.git.zong.li@sifive.com>
-References: <cover.1602838910.git.zong.li@sifive.com> <b10784643665ad56ca41ea6754c7f28f8be1c7ca.1602838910.git.zong.li@sifive.com>
-Subject: Re: [PATCH 1/4] clk: sifive: Extract prci core to common base
+In-Reply-To: <691e24d1c45a4b56b57ce1e02a04268c4253a77d.1602838910.git.zong.li@sifive.com>
+References: <cover.1602838910.git.zong.li@sifive.com> <691e24d1c45a4b56b57ce1e02a04268c4253a77d.1602838910.git.zong.li@sifive.com>
+Subject: Re: [PATCH 2/4] clk: sifive: Use common name for prci configuration
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Zong Li <zong.li@sifive.com>
 To:     Zong Li <zong.li@sifive.com>, aou@eecs.berkeley.edu,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, mturquette@baylibre.com,
         palmer@dabbelt.com, paul.walmsley@sifive.com, yash.shah@sifive.com
-Date:   Wed, 04 Nov 2020 18:45:42 -0800
-Message-ID: <160454434294.3965362.6100009498384462585@swboyd.mtv.corp.google.com>
+Date:   Wed, 04 Nov 2020 18:46:56 -0800
+Message-ID: <160454441626.3965362.17922436443029310228@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2020-10-16 02:18:23)
-> Extract common core of prci driver to an independent file, it could
-> allow other chips to reuse it. Separate SoCs-dependent code 'fu540'
-> from prci core, then we can easily add 'fu740' later.
-
-Please indicate if there are any functional changes or this is just code
-movement.
-
+Quoting Zong Li (2020-10-16 02:18:24)
+> Use generic name CLK_SIFIVE_PRCI instead of CLK_SIFIVE_FU540_PRCI. This
+> patch is prepared for fu740 support.
 >=20
 > Signed-off-by: Zong Li <zong.li@sifive.com>
 > ---
->  drivers/clk/sifive/Makefile      |   2 +
->  drivers/clk/sifive/fu540-prci.c  | 586 +------------------------------
->  drivers/clk/sifive/fu540-prci.h  |  21 ++
->  drivers/clk/sifive/sifive-prci.c | 409 +++++++++++++++++++++
->  drivers/clk/sifive/sifive-prci.h | 201 +++++++++++
 
-How much of this is a copy/pastes? Can you generate patches with
-format-patch -M -C to try to find copies and renames?
+Looks ok but needs an ack from riscv maintainers to go through clk
+tree. I was worried it would break defconfigs but it seems that the arch
+selects the config so this should be OK, right?
 
->  5 files changed, 652 insertions(+), 567 deletions(-)
->  create mode 100644 drivers/clk/sifive/fu540-prci.h
->  create mode 100644 drivers/clk/sifive/sifive-prci.c
->  create mode 100644 drivers/clk/sifive/sifive-prci.h
->
+>  arch/riscv/Kconfig.socs     | 2 +-
+>  drivers/clk/sifive/Kconfig  | 6 +++---
+>  drivers/clk/sifive/Makefile | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 8a55f6156661..3284d5c291be 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -5,7 +5,7 @@ config SOC_SIFIVE
+>         select SERIAL_SIFIVE if TTY
+>         select SERIAL_SIFIVE_CONSOLE if TTY
+>         select CLK_SIFIVE
+> -       select CLK_SIFIVE_FU540_PRCI
+> +       select CLK_SIFIVE_PRCI
+>         select SIFIVE_PLIC
+>         help
+>           This enables support for SiFive SoC platform hardware.
