@@ -4,101 +4,338 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9D5C2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7295FC388F9
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8316220729
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 112072074B
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604541840;
-	bh=p0b7JP12+XnhdR5f+Vatb+6IkVGyqXW0dkr++bxfdnE=;
+	s=default; t=1604543024;
+	bh=oixDUU7a1AUEjrvMCBwRGSbqLiFTn1BvjnqSx7DY654=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=z6rTURAIy3kgFRzhOGKhfs5t9iLhkTdBBh2lFv3IiP5GVtC5q3naRoZOs9+FsaKJn
-	 5Ipypo7dDSm5pe5t1qycINN3AfUlsSt8YaYaT1xJ4W7bzHKTPkxyu/mvTxYGn36I9e
-	 aF3hL5ctCteXjxMWA3O/V/HwqB9yFHSJwuYB5B0g=
+	b=Ixqz9V5Hcu0LhNCx2xK2vLLkY48d/bq3ZvFSAZ+iZnhSmBurEt6UaXbiwHzJkSXMS
+	 hWiEa6ODXtveSstEI3Ldj+2gpdlP9MnOAoL5tki8Rip/cZVjSRJZSmi/Nl47uLEG0f
+	 m9M80AXfdAhyu/HgHGt61eCuOkEQErAXNeMpphSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbgKECEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 21:04:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35736 "EHLO mail.kernel.org"
+        id S1732314AbgKECXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 21:23:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbgKECD7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 21:03:59 -0500
+        id S1729163AbgKECXk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 21:23:40 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D99D920729;
-        Thu,  5 Nov 2020 02:03:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD81220735;
+        Thu,  5 Nov 2020 02:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604541839;
-        bh=p0b7JP12+XnhdR5f+Vatb+6IkVGyqXW0dkr++bxfdnE=;
+        s=default; t=1604543019;
+        bh=oixDUU7a1AUEjrvMCBwRGSbqLiFTn1BvjnqSx7DY654=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SvRXAYvDl8uof8aVyesC/MGjL41dfVmvvaHhfr+2VUaoz+SxylGEJsDTvfNWO7PVT
-         WUYGmnwOG166WSpIumI6mQcMa+Iul3WEwiVBQlWnjJGapJ9yLfyaL/uLAo+HHPcjKY
-         PP7oJ6L0qsD+SY2goMIWzNGqhY7wDd2LGYeWAGFA=
+        b=Q6KqcNJ2KDmRebBHSoQyI7LNXAtmcYJjeuwIqQFzN4NEub7/+5OphvpIBmEZDEYgK
+         0Ncu6Utr93ymiKUKt4jMN4t3kMFet4WCczEh818i81UaV4+ynLgsCUQWJGk/qsvheq
+         RPNQ4zmDyJO5LhRZo3uC/5KVf4ueZKGEjVD6oBWM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201031032944.GA5635@Mani-XPS-13-9360>
-References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org> <20201028074232.22922-2-manivannan.sadhasivam@linaro.org> <20201030192225.GA4174677@bogus> <20201031032944.GA5635@Mani-XPS-13-9360>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: Add SDX55 GCC clock bindings
+In-Reply-To: <20201028074232.22922-3-manivannan.sadhasivam@linaro.org>
+References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org> <20201028074232.22922-3-manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 2/4] clk: qcom: Add SDX55 GCC support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, bjorn.andersson@linaro.org,
-        vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Naveen Yadav <naveenky@codeaurora.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Date:   Wed, 04 Nov 2020 18:03:57 -0800
-Message-ID: <160454183744.3965362.9735818194173206801@swboyd.mtv.corp.google.com>
+        mturquette@baylibre.com, robh+dt@kernel.org
+Date:   Wed, 04 Nov 2020 18:23:37 -0800
+Message-ID: <160454301723.3965362.9504622582275389041@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2020-10-30 20:29:44)
-> Hi Rob,
+Quoting Manivannan Sadhasivam (2020-10-28 00:42:30)
+> From: Naveen Yadav <naveenky@codeaurora.org>
 >=20
-> On Fri, Oct 30, 2020 at 02:22:25PM -0500, Rob Herring wrote:
-> > On Wed, Oct 28, 2020 at 01:12:29PM +0530, Manivannan Sadhasivam wrote:
-> > > From: Vinod Koul <vkoul@kernel.org>
-> > >=20
-> > > Add device tree bindings for global clock controller on SDX55 SoCs.
-> > >=20
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> >=20
-> > This should carry your S-o-b too.
-> >=20
+> Add Global Clock Controller (GCC) support for SDX55 SoCs from Qualcomm.
 >=20
-> Ah yes!
+> Signed-off-by: Naveen Yadav <naveenky@codeaurora.org>
+> [mani: converted to parent_data, commented critical clocks, cleanups]
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/clk/qcom/Kconfig     |    8 +
+>  drivers/clk/qcom/Makefile    |    1 +
+>  drivers/clk/qcom/gcc-sdx55.c | 1667 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 1676 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-sdx55.c
 >=20
-> > > ---
-> > >  .../bindings/clock/qcom,gcc-sdx55.yaml        |  71 +++++++++++
-> > >  include/dt-bindings/clock/qcom,gcc-sdx55.h    | 112 ++++++++++++++++=
-++
-> > >  2 files changed, 183 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-=
-sdx55.yaml
-> > >  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx55.h
-> > >=20
->=20
-> [...]
->=20
-> > > diff --git a/include/dt-bindings/clock/qcom,gcc-sdx55.h b/include/dt-=
-bindings/clock/qcom,gcc-sdx55.h
-> > > new file mode 100644
-> > > index 000000000000..09ca45c6de73
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/qcom,gcc-sdx55.h
-> > > @@ -0,0 +1,112 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-only */
-> >=20
-> > Dual license?=20
-> >=20
->=20
-> The downstream code just lists the GPL2.0 and I'm not sure if I can make
-> it as dual license. Whereas the binding we made it dual license since we
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 3a965bd326d5..dbca8debc06f 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -502,4 +502,12 @@ config KRAITCC
+>           Support for the Krait CPU clocks on Qualcomm devices.
+>           Say Y if you want to support CPU frequency scaling.
+> =20
+> +config GCC_SDX55
 
-Can you check? qcom has been doing it so I suspect you should just ask.
+Please sort instead of add at end.
+
+> +       tristate "SDX55 Global Clock Controller"
+> +       depends on ARM
+
+Why?
+
+> +       help
+> +         Support for the global clock controller on SDX55 devices.
+> +         Say Y if you want to use peripheral devices such as UART,
+> +         SPI, I2C, USB, SD/UFS, PCIe etc.
+> +
+>  endif
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 11ae86febe87..3e27d67f95aa 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -75,3 +75,4 @@ obj-$(CONFIG_SPMI_PMIC_CLKDIV) +=3D clk-spmi-pmic-div.o
+>  obj-$(CONFIG_KPSS_XCC) +=3D kpss-xcc.o
+>  obj-$(CONFIG_QCOM_HFPLL) +=3D hfpll.o
+>  obj-$(CONFIG_KRAITCC) +=3D krait-cc.o
+> +obj-$(CONFIG_GCC_SDX55) +=3D gcc-sdx55.o
+
+Please sort this instead of add at end.
+
+> diff --git a/drivers/clk/qcom/gcc-sdx55.c b/drivers/clk/qcom/gcc-sdx55.c
+> new file mode 100644
+> index 000000000000..75831c829202
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sdx55.c
+> @@ -0,0 +1,1667 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2020, Linaro Ltd.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,gcc-sdx55.h>
+> +
+> +#include "common.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_CORE_BI_PLL_TEST_SE,
+> +       P_GPLL0_OUT_EVEN,
+> +       P_GPLL0_OUT_MAIN,
+> +       P_GPLL4_OUT_EVEN,
+> +       P_GPLL5_OUT_MAIN,
+> +       P_SLEEP_CLK,
+> +};
+> +
+> +static struct pll_vco lucid_vco[] =3D {
+
+const
+
+> +       { 249600000, 2000000000, 0 },
+> +};
+> +
+> +static struct clk_alpha_pll gpll0 =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+> +       .vco_table =3D lucid_vco,
+> +       .num_vco =3D ARRAY_SIZE(lucid_vco),
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x6d000,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll0",
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .fw_name =3D "bi_tcxo",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fixed_lucid_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static const struct clk_div_table post_div_table_lucid_even[] =3D {
+> +       { 0x0, 1 },
+> +       { 0x1, 2 },
+> +       { 0x3, 4 },
+> +       { 0x7, 8 },
+> +       { }
+> +};
+
+I think this table is common to all lucid plls? Maybe we can push it
+into the clk_ops somehow and stop duplicating it here?
+
+> +
+> +static struct clk_alpha_pll_postdiv gpll0_out_even =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_lucid_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_lucid_even),
+> +       .width =3D 4,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll0_out_even",
+> +               .parent_data =3D &(const struct clk_parent_data){
+> +                       .fw_name =3D "gpll0",
+> +               },
+
+If this is gpll0 in this file, then this should be a clk_hws pointer
+instead and directly pointing to the parent.
+
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_lucid_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll gpll4 =3D {
+> +       .offset =3D 0x76000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+> +       .vco_table =3D lucid_vco,
+> +       .num_vco =3D ARRAY_SIZE(lucid_vco),
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x6d000,
+> +               .enable_mask =3D BIT(4),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gpll4",
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .fw_name =3D "bi_tcxo",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fixed_lucid_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv gpll4_out_even =3D {
+> +       .offset =3D 0x76000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_lucid_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_lucid_even),
+> +       .width =3D 4,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gpll4_out_even",
+> +               .parent_data =3D &(const struct clk_parent_data){
+> +                       .fw_name =3D "gpll4",
+
+If this is gpll4 in this file, then this should be a clk_hws pointer
+instead and directly pointing to the parent.
+
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_lucid_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll gpll5 =3D {
+> +       .offset =3D 0x74000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
+> +       .vco_table =3D lucid_vco,
+> +       .num_vco =3D ARRAY_SIZE(lucid_vco),
+[...]
+> +                       .name =3D "gcc_sdcc1_ahb_clk",
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_sdcc1_apps_clk =3D {
+> +       .halt_reg =3D 0xf004,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0xf004,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_sdcc1_apps_clk",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gcc_sdcc1_apps_clk_src.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +/* For CPUSS functionality the SYS NOC clock needs to be left enabled */
+> +static struct clk_branch gcc_sys_noc_cpuss_ahb_clk =3D {
+> +       .halt_reg =3D 0x4010,
+> +       .halt_check =3D BRANCH_HALT_VOTED,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x6d008,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_sys_noc_cpuss_ahb_clk",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gcc_cpuss_ahb_clk_src.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+
+These CLK_IS_CRITICAL clks can't be set once at driver probe time and
+forgotten about? It would be nice to not allocate memory for things that
+never matter.
+
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_usb30_master_clk =3D {
+> +       .halt_reg =3D 0xb010,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0xb010,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_usb30_master_clk",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gcc_usb30_master_clk_src.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+[...]
+> +
+> +static const struct qcom_cc_desc gcc_sdx55_desc =3D {
+> +       .config =3D &gcc_sdx55_regmap_config,
+> +       .clks =3D gcc_sdx55_clocks,
+> +       .num_clks =3D ARRAY_SIZE(gcc_sdx55_clocks),
+> +       .resets =3D gcc_sdx55_resets,
+> +       .num_resets =3D ARRAY_SIZE(gcc_sdx55_resets),
+
+No gdscs?
+
+> +};
+> +
+> +static const struct of_device_id gcc_sdx55_match_table[] =3D {
+> +       { .compatible =3D "qcom,gcc-sdx55" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, gcc_sdx55_match_table);
+> +
+> +static int gcc_sdx55_probe(struct platform_device *pdev)
+> +{
+> +       return qcom_cc_probe(pdev, &gcc_sdx55_desc);
+
+Wow haven't seen this in some time. There isn't some sort of PLL that
+needs configuring or some clks that need to be slammed on with a couple
+register writes?
+
+> +}
+> +
