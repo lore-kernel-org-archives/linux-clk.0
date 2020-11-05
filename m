@@ -1,81 +1,89 @@
-Return-Path: <SRS0=af6Y=EK=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=dIxE=EL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C518C2D0A3
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 22:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F4BC388F7
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 00:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D469A2080D
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Nov 2020 22:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE6320825
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 00:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604529254;
-	bh=JhIFYQBZMU/6mRToxTnMkOdvkhsPr9VgD+iPyFQzJwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FWBXDL7q+8hqS9COT7chlZ0hDEd/Y12/mlWtnI9cqBCQLTBrmRcHRXC+eWcmbYgiP
-	 BvMJ8FaH4l7PX90i6fXSJDewqh0vV7mZtv+jLdvavXYcF++lrpBRiKb9T6gNTvST6X
-	 ndnBwFY9jLHHcaPErkT/T0vs3lNsbBCBRJwB87do=
+	s=default; t=1604536223;
+	bh=pwsIgIBSAjXexIaH9MrKCZNoDQPxrq7mUAOeqVWHGtQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=ERNTm+cbXN0UfaujYZhfCDw2jyjat/zdR+GyGUELujjWXXojWt4L4wy5FvtIQyzgx
+	 6WhCwjVCcvm0gkwvXxCIcnw+MkVRl0Cqx/DGqqkISSfLjrshZbSNsz3+4dObu8q/z7
+	 OdtbuNmRKE6wV+SdNgKQD1JZrkDKl2Fa5N7Q+7E4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbgKDWeO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 17:34:14 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36752 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732367AbgKDWeN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Nov 2020 17:34:13 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d9so17957512oib.3;
-        Wed, 04 Nov 2020 14:34:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kGLpzsKIYhuP2vsF9IWvrtBr9wgyFG/xp8noHXujTnU=;
-        b=pN51tjhphd2ekhME4W6OgKRQE87GB3RDblAC0xAwOml7HMTWDBg4OLaYfY7hbUaReR
-         hVW/Sw4MjzFtH0J6Gv5qECD6xFYOzhsBaXzRxmFhiRQaN34HtObeXxTYCzLuQzw5SdlC
-         nZX+K4WhNIjYjBSS0ZJAEjbUoRrKCk2olhinYuKO1e7Fnv9ZvodTs54dF2hBuTR7AeYs
-         8RRlCD4WeyGKmXv8nqPyf1SBRb79NB47Q24fEE2QFiHZLSt1ouPTg+YUj/Ya2c9HWXvE
-         ZHmZdx506VCXJjBEd3lkwHFuc5DNno6XtQynQbuaEAH6zRyoqQGxq+fHHdosuqNVsIkL
-         v4uQ==
-X-Gm-Message-State: AOAM532nbNHj3YSVtIB3ztDRPRErX6jqBDocHPtaRUtCxdkNYBQ/WetQ
-        7qVPqs6KCDkxit/G9nvXFQ==
-X-Google-Smtp-Source: ABdhPJyOIymHCe/ZIubxgK5CUBmnGtFwaV6QBxsW28rHlx/A/KzVi+5QcrltMklh3b3ZNJfUJN/AZw==
-X-Received: by 2002:aca:4c8d:: with SMTP id z135mr3471oia.23.1604529252375;
-        Wed, 04 Nov 2020 14:34:12 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z12sm846380oos.12.2020.11.04.14.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2020 14:34:11 -0800 (PST)
-Received: (nullmailer pid 48103 invoked by uid 1000);
-        Wed, 04 Nov 2020 22:34:11 -0000
-Date:   Wed, 4 Nov 2020 16:34:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: document the fsl-flexspi-clk
- driver
-Message-ID: <20201104223411.GA48059@bogus>
-References: <20201101192053.18644-1-michael@walle.cc>
+        id S1732256AbgKEAaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 19:30:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732206AbgKEA3x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 19:29:53 -0500
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB7E82080D;
+        Thu,  5 Nov 2020 00:29:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604536193;
+        bh=pwsIgIBSAjXexIaH9MrKCZNoDQPxrq7mUAOeqVWHGtQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mPVaCbOsvEkiPC/3AxURRqz1OQ/+xnl2g9pI6ydRR8CHxu+2qrpfdxzpvrjF9CfET
+         OKez3BpQ8OP81pwaxwbGs/Cgg+ZrN37sXObo/NAGDpg04OhE/1tbHvZ4kHC1JVySUh
+         nzo/zZ14xPrrHOq1dkRiCJDcMchulBOqrzT7WfUk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201101192053.18644-1-michael@walle.cc>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201101184818.2754-1-michael@walle.cc>
+References: <20201101184818.2754-1-michael@walle.cc>
+Subject: Re: [PATCH] clk: fsl-sai: fix memory leak
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Michael Walle <michael@walle.cc>
+To:     Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 04 Nov 2020 16:29:51 -0800
+Message-ID: <160453619129.3965362.7473462251338349415@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 01 Nov 2020 20:20:50 +0100, Michael Walle wrote:
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
->  .../bindings/clock/fsl,flexspi-clock.yaml     | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,flexspi-clock.yaml
-> 
+Quoting Michael Walle (2020-11-01 10:48:18)
+> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+> index 0221180a4dd7..1e81c8d8a6fd 100644
+> --- a/drivers/clk/clk-fsl-sai.c
+> +++ b/drivers/clk/clk-fsl-sai.c
+> @@ -68,9 +68,20 @@ static int fsl_sai_clk_probe(struct platform_device *p=
+dev)
+>         if (IS_ERR(hw))
+>                 return PTR_ERR(hw);
+> =20
+> +       platform_set_drvdata(pdev, hw);
+> +
+>         return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
+>  }
+> =20
+> +static int fsl_sai_clk_remove(struct platform_device *pdev)
+> +{
+> +       struct clk_hw *hw =3D platform_get_drvdata(pdev);
+> +
+> +       clk_hw_unregister_composite(hw);
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Should we add a devm_clk_hw_register_composite() API and use it here?
+That way we don't need a remove function and devm can be used
+throughout.
+
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct of_device_id of_fsl_sai_clk_ids[] =3D {
+>         { .compatible =3D "fsl,vf610-sai-clock" },
+>         { }
