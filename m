@@ -2,72 +2,121 @@ Return-Path: <SRS0=dIxE=EL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239EEC55178
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65C7C4741F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ABCD2078E
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4910C20867
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="kph3EZpm"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="Z7ceb00Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732011AbgKET15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Nov 2020 14:27:57 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:48545 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbgKET14 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:27:56 -0500
+        id S1732193AbgKET17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Nov 2020 14:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732157AbgKET17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:27:59 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B73C0613D2;
+        Thu,  5 Nov 2020 11:27:58 -0800 (PST)
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 7BCB622F99;
-        Thu,  5 Nov 2020 20:27:54 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id B37A723E3F;
+        Thu,  5 Nov 2020 20:27:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604604474;
+        t=1604604475;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=oxdHvq0gz4GRGuGK+j8md3XnfhogL4o/bIOjGCNEplI=;
-        b=kph3EZpmFZa9NQP52qqy6hBoRAyQm1wyOfyrJNO2jgowy3HhKZdXfpon9xJuyM5POYlU/A
-        J3aZw/fnUOzZtec/W2FzomMSnbEEpR3GLukR3npCQHEky5D9VQ2qh4J4wyUipYIWdFOd3u
-        rGzryq6+7Fy1n92cEMohHQUJuOz4fiI=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=plNNHT7VIZNzARI2mJ5mJsRA1g2t6wd+Fq/gWFZ7ctY=;
+        b=Z7ceb00QD5eb0+75AufiFopYJNDAOIPTLJW/RQA0KKm5Rv6h7Knb0livuDnX15HPyWh/Mr
+        KQIRzqQt9vBpvX2zU0LOAtrox/nuKAj5/xdgga6XHo3qbWzx6bwiPaMhxIRAH46rJKS9Ff
+        DVRUKjtfvUfn6pD1X0U0OPSlBTFC5u0=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 0/3] clk: fsl-sai: fix memory leak
-Date:   Thu,  5 Nov 2020 20:27:43 +0100
-Message-Id: <20201105192746.19564-1-michael@walle.cc>
+Subject: [PATCH v2 3/3] clk: fsl-sai: use devm_clk_hw_register_composite_pdata()
+Date:   Thu,  5 Nov 2020 20:27:46 +0100
+Message-Id: <20201105192746.19564-4-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20201105192746.19564-1-michael@walle.cc>
+References: <20201105192746.19564-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Patch 1 will fix the memory leak and can be picked up by the stable queues.
-Patch 2-3 will add and use the devm_ variant to simplify the handling.
+Simplify the driver by using that helper and drop the remove() function.
 
-Please note that the new devm_ isn't exported as the original one isn't
-exported either. I'm planning to post another patch which will add module
-support to the clk-fsl-sai driver and this will then export the function.
+Signed-off-by: Michael Walle <michael@walle.cc>
+---
+Changes since v1:
+ - new patch
 
-Michael Walle (3):
-  clk: fsl-sai: fix memory leak
-  clk: composite: add devm_clk_hw_register_composite_pdata()
-  clk: fsl-sai: use devm_clk_hw_register_composite_pdata()
+ drivers/clk/clk-fsl-sai.c | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
 
- drivers/clk/clk-composite.c  | 50 ++++++++++++++++++++++++++++++++++++
- drivers/clk/clk-fsl-sai.c    | 14 +++++-----
- include/linux/clk-provider.h |  7 +++++
- 3 files changed, 64 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
+index 1e81c8d8a6fd..6238fcea0467 100644
+--- a/drivers/clk/clk-fsl-sai.c
++++ b/drivers/clk/clk-fsl-sai.c
+@@ -58,30 +58,19 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
+ 	/* set clock direction, we are the BCLK master */
+ 	writel(CR2_BCD, base + I2S_CR2);
+ 
+-	hw = clk_hw_register_composite_pdata(dev, dev->of_node->name,
+-					     &pdata, 1, NULL, NULL,
+-					     &sai_clk->div.hw,
+-					     &clk_divider_ops,
+-					     &sai_clk->gate.hw,
+-					     &clk_gate_ops,
+-					     CLK_SET_RATE_GATE);
++	hw = devm_clk_hw_register_composite_pdata(dev, dev->of_node->name,
++						  &pdata, 1, NULL, NULL,
++						  &sai_clk->div.hw,
++						  &clk_divider_ops,
++						  &sai_clk->gate.hw,
++						  &clk_gate_ops,
++						  CLK_SET_RATE_GATE);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 
+-	platform_set_drvdata(pdev, hw);
+-
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
+ }
+ 
+-static int fsl_sai_clk_remove(struct platform_device *pdev)
+-{
+-	struct clk_hw *hw = platform_get_drvdata(pdev);
+-
+-	clk_hw_unregister_composite(hw);
+-
+-	return 0;
+-}
+-
+ static const struct of_device_id of_fsl_sai_clk_ids[] = {
+ 	{ .compatible = "fsl,vf610-sai-clock" },
+ 	{ }
+@@ -90,7 +79,6 @@ MODULE_DEVICE_TABLE(of, of_fsl_sai_clk_ids);
+ 
+ static struct platform_driver fsl_sai_clk_driver = {
+ 	.probe = fsl_sai_clk_probe,
+-	.remove = fsl_sai_clk_remove,
+ 	.driver		= {
+ 		.name	= "fsl-sai-clk",
+ 		.of_match_table = of_fsl_sai_clk_ids,
 -- 
 2.20.1
 
