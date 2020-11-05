@@ -7,28 +7,25 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65C7C4741F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71240C55178
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4910C20867
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 158192087D
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 19:28:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="Z7ceb00Q"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="ukAGETkX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732193AbgKET17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Nov 2020 14:27:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732157AbgKET17 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:27:59 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B73C0613D2;
-        Thu,  5 Nov 2020 11:27:58 -0800 (PST)
+        id S1732107AbgKET16 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Nov 2020 14:27:58 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:54821 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731799AbgKET16 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Nov 2020 14:27:58 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id B37A723E3F;
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 619BF23078;
         Thu,  5 Nov 2020 20:27:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
         t=1604604475;
@@ -36,18 +33,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail20160613
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=plNNHT7VIZNzARI2mJ5mJsRA1g2t6wd+Fq/gWFZ7ctY=;
-        b=Z7ceb00QD5eb0+75AufiFopYJNDAOIPTLJW/RQA0KKm5Rv6h7Knb0livuDnX15HPyWh/Mr
-        KQIRzqQt9vBpvX2zU0LOAtrox/nuKAj5/xdgga6XHo3qbWzx6bwiPaMhxIRAH46rJKS9Ff
-        DVRUKjtfvUfn6pD1X0U0OPSlBTFC5u0=
+        bh=e4MLf2/TOiYjV3fsQDtUBagoBi797jwm6AKIfsC7qEQ=;
+        b=ukAGETkXkM3KI0T27MsOakxhn8gqj0dep3ovdkqybrD6seWu+OUXlKa/2NjzryVwnpnEiY
+        YvKe1UGFixjhHJjFVwNuZZ4BGOFX0k4MGGbEfWY77+hiPb8Z3x/e+CPiIgV6QtOla/QFY4
+        4XMJNh3iC84dcO+WBxrjqJmJ6qANWnY=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Michael Walle <michael@walle.cc>
-Subject: [PATCH v2 3/3] clk: fsl-sai: use devm_clk_hw_register_composite_pdata()
-Date:   Thu,  5 Nov 2020 20:27:46 +0100
-Message-Id: <20201105192746.19564-4-michael@walle.cc>
+Subject: [PATCH v2 2/3] clk: composite: add devm_clk_hw_register_composite_pdata()
+Date:   Thu,  5 Nov 2020 20:27:45 +0100
+Message-Id: <20201105192746.19564-3-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201105192746.19564-1-michael@walle.cc>
 References: <20201105192746.19564-1-michael@walle.cc>
@@ -57,66 +54,101 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Simplify the driver by using that helper and drop the remove() function.
+This will simplify drivers which would only unregister the clk in their
+remove() op.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
 Changes since v1:
  - new patch
 
- drivers/clk/clk-fsl-sai.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+ drivers/clk/clk-composite.c  | 50 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  7 +++++
+ 2 files changed, 57 insertions(+)
 
-diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-index 1e81c8d8a6fd..6238fcea0467 100644
---- a/drivers/clk/clk-fsl-sai.c
-+++ b/drivers/clk/clk-fsl-sai.c
-@@ -58,30 +58,19 @@ static int fsl_sai_clk_probe(struct platform_device *pdev)
- 	/* set clock direction, we are the BCLK master */
- 	writel(CR2_BCD, base + I2S_CR2);
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 2ddb54f7d3ab..0506046a5f4b 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -4,6 +4,7 @@
+  */
  
--	hw = clk_hw_register_composite_pdata(dev, dev->of_node->name,
--					     &pdata, 1, NULL, NULL,
--					     &sai_clk->div.hw,
--					     &clk_divider_ops,
--					     &sai_clk->gate.hw,
--					     &clk_gate_ops,
--					     CLK_SET_RATE_GATE);
-+	hw = devm_clk_hw_register_composite_pdata(dev, dev->of_node->name,
-+						  &pdata, 1, NULL, NULL,
-+						  &sai_clk->div.hw,
-+						  &clk_divider_ops,
-+						  &sai_clk->gate.hw,
-+						  &clk_gate_ops,
-+						  CLK_SET_RATE_GATE);
- 	if (IS_ERR(hw))
- 		return PTR_ERR(hw);
+ #include <linux/clk-provider.h>
++#include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
  
--	platform_set_drvdata(pdev, hw);
--
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
+@@ -405,3 +406,52 @@ void clk_hw_unregister_composite(struct clk_hw *hw)
+ 	kfree(composite);
  }
+ EXPORT_SYMBOL_GPL(clk_hw_unregister_composite);
++
++static void devm_clk_hw_release_composite(struct device *dev, void *res)
++{
++	clk_hw_unregister_composite(*(struct clk_hw **)res);
++}
++
++static struct clk_hw *__devm_clk_hw_register_composite(struct device *dev,
++			const char *name, const char * const *parent_names,
++			const struct clk_parent_data *pdata, int num_parents,
++			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++			unsigned long flags)
++{
++	struct clk_hw **ptr, *hw;
++
++	ptr = devres_alloc(devm_clk_hw_release_composite, sizeof(*ptr),
++			   GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hw = __clk_hw_register_composite(dev, name, parent_names, pdata,
++					 num_parents, mux_hw, mux_ops, rate_hw,
++					 rate_ops, gate_hw, gate_ops, flags);
++
++	if (!IS_ERR(hw)) {
++		*ptr = hw;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hw;
++}
++
++struct clk_hw *devm_clk_hw_register_composite_pdata(struct device *dev,
++			const char *name,
++			const struct clk_parent_data *parent_data,
++			int num_parents,
++			struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++			struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++			struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++			unsigned long flags)
++{
++	return __devm_clk_hw_register_composite(dev, name, NULL, parent_data,
++						num_parents, mux_hw, mux_ops,
++						rate_hw, rate_ops, gate_hw,
++						gate_ops, flags);
++}
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 9ead4633c8c8..5f896df01f83 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1089,6 +1089,13 @@ struct clk_hw *clk_hw_register_composite_pdata(struct device *dev,
+ 		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
+ 		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+ 		unsigned long flags);
++struct clk_hw *devm_clk_hw_register_composite_pdata(struct device *dev,
++		const char *name, const struct clk_parent_data *parent_data,
++		int num_parents,
++		struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
++		struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
++		struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
++		unsigned long flags);
+ void clk_hw_unregister_composite(struct clk_hw *hw);
  
--static int fsl_sai_clk_remove(struct platform_device *pdev)
--{
--	struct clk_hw *hw = platform_get_drvdata(pdev);
--
--	clk_hw_unregister_composite(hw);
--
--	return 0;
--}
--
- static const struct of_device_id of_fsl_sai_clk_ids[] = {
- 	{ .compatible = "fsl,vf610-sai-clock" },
- 	{ }
-@@ -90,7 +79,6 @@ MODULE_DEVICE_TABLE(of, of_fsl_sai_clk_ids);
- 
- static struct platform_driver fsl_sai_clk_driver = {
- 	.probe = fsl_sai_clk_probe,
--	.remove = fsl_sai_clk_remove,
- 	.driver		= {
- 		.name	= "fsl-sai-clk",
- 		.of_match_table = of_fsl_sai_clk_ids,
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw);
 -- 
 2.20.1
 
