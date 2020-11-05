@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4316BC388F7
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4ACC388F7
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEBEE20786
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F8B2074B
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Nov 2020 02:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604543464;
-	bh=ORv25bnFvbGzFSMDhLM10DcOpYDlzjv/ONbpN7EoQ+k=;
+	s=default; t=1604543475;
+	bh=iOJh1FMVsFSCrGlqaGyryWmi8wT+648ecaMGSIMs8w8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=NC441hVhdYoiMj9TZMUdGsoxbck3S5+87hbV9UlRKj3Ti5wPOlVm35ec/4naP+iYq
-	 tTmBNi1q5AYPw6+PRyOgMurOTEEAdpzTdUKUDO8pWFlAp3uw+su6nktLD1EE7S9J9W
-	 lWbD11cqWEC0IlKvcCnwhajyZrnPp7fhG/Ohj/cg=
+	b=E9K4OAv1DcChjdtL1UlDkUXEE1BtBucuC51OC99zUAs2vKJP2iJphMCpsHeFPNGm9
+	 4En1if9tPzNL3egFSWrd6gkczVlz8EtcWnFNm9mpfRVa6QypO/r28zxmA0MOGhiFyJ
+	 EQ4pBt8z7bmzJ2cOX5sJ74gmLLamZiImJs7naisk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387810AbgKECa7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Nov 2020 21:30:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52236 "EHLO mail.kernel.org"
+        id S2387914AbgKECbK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Nov 2020 21:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387699AbgKECa7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Nov 2020 21:30:59 -0500
+        id S2387672AbgKECbK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Nov 2020 21:31:10 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D35B2075E;
-        Thu,  5 Nov 2020 02:30:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1EEC20739;
+        Thu,  5 Nov 2020 02:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604543458;
-        bh=ORv25bnFvbGzFSMDhLM10DcOpYDlzjv/ONbpN7EoQ+k=;
+        s=default; t=1604543469;
+        bh=iOJh1FMVsFSCrGlqaGyryWmi8wT+648ecaMGSIMs8w8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ek22l3poXGxUhTFxKx4+euBsFiVTXEpIizRSVESxSGquCB9jG1wFn/Jqoxlg54HGf
-         AJ6lvSAMnlutV1pRpUE9XdX40LkgncjLbQ8/SruezNR//TjcvFcB6vNEzY63j78Hwp
-         vuLX5SnJFguZ7yClNhzWmU7ySecKX4Nzep6nJ14M=
+        b=V0RnLMdujMwGXfxNPZ7Jo+jzsat1PsAq8V3ww1SgMi/7X2786mnB4s3qDKkkFtPKm
+         RqZ2Ftnwok9iazm0F65vEBJEIXTmZMP21zmSPYIPQDEhfpjxyhiLiPLILFTpPuFpd4
+         MehsnExur+c79H9SzfPxrQUKxc8QpAHbDAGRTkbQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1602873815-1677-4-git-send-email-tdas@codeaurora.org>
-References: <1602873815-1677-1-git-send-email-tdas@codeaurora.org> <1602873815-1677-4-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v3 3/4] dt-bindings: clock: Add YAML schemas for the QCOM Camera clock bindings.
+In-Reply-To: <1602873815-1677-5-git-send-email-tdas@codeaurora.org>
+References: <1602873815-1677-1-git-send-email-tdas@codeaurora.org> <1602873815-1677-5-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v3 4/4] clk: qcom: camcc: Add camera clock controller driver for SC7180
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -54,21 +54,18 @@ Cc:     David Brown <david.brown@linaro.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 04 Nov 2020 18:30:57 -0800
-Message-ID: <160454345702.3965362.1630676856760200558@swboyd.mtv.corp.google.com>
+Date:   Wed, 04 Nov 2020 18:31:08 -0800
+Message-ID: <160454346831.3965362.1176963402805166784@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-10-16 11:43:34)
-> The Camera Subsystem clock provider have a bunch of generic properties
-> that are needed in a device tree. Add a YAML schemas for those.
->=20
-> Add clock ids for camera clocks which are required to bring the camera
-> subsystem out of reset.
+Quoting Taniya Das (2020-10-16 11:43:35)
+> Add support for the camera clock controller found on SC7180 based devices.
+> This would allow camera drivers to probe and control their clocks.
 >=20
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
 
-Applied to clk-next
+Applied to clk-next with some minor fixups.
