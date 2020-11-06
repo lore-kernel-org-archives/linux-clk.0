@@ -2,128 +2,150 @@ Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3074CC2D0A3
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 08:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E20C55178
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFCB0208C3
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 08:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B5D2087E
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="dPU4c0Me"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GTKjchbD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725830AbgKFILT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 03:11:19 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:38183 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgKFILT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 03:11:19 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id BA7FE22F2E;
-        Fri,  6 Nov 2020 09:11:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604650276;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=H6PCQOsk4843thV4QwRXWAUqcG3RrYFZg55kC85YjBo=;
-        b=dPU4c0MeLHo3tzZ2SjL3SQLx8j4hRnb8cDb7T7NUf/KBjv4hS7CXiZEVKlMKOwzjtLXGhZ
-        8D0Y1MdBIryViVZ/+L2yJA7vWQYDqplHBwOwAkzCax4Wq3Y6ooV8inEK8o26spLm1JGNwm
-        AUmNBZtmnsDgeeIN2Zh2d80227h8Y9s=
+        id S1726139AbgKFJ2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:28:14 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:42869 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgKFJ2O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 04:28:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1604654894; x=1636190894;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=XFJniwlkNXe8JM15OXyPD5pcQfDbLM43u1ZRyw/GVgk=;
+  b=GTKjchbDWcS2fm7+Qz1PKNWXWOyrSUrYG0+YLgy1ZNme3Rnq/ObRuTny
+   zGCOCdPrCF5VYEZi+34zB6B7Q+69+amWIlrhZOa7fhqsU9r43bYKYM3Jr
+   2PYHUjU8m5hco0R74ujQtc6nQyQHMrd2IFXkztOPniKXPQEQUB1zgUyEw
+   Hy+XfEb5K7tP8GULqXuo+NaF4QgqGcXXhmLyMtwCkazxuGrLko79OnIti
+   BUUlsofQl4kwP1bhIFyQCCicHtOBic+UvgTxs1+YwKXlv+XQfWO3TFuW8
+   0iZsws6/ncNdLQOfHO1BNU491SuDVMvHSBrsJuoIwvCQmEOtPsutR+/2b
+   A==;
+IronPort-SDR: PiN57OyndIRezPrmP27QVdfP9WUeWkQxAMo9QmP1nWM1lMY8qk5l0xrCE6Wmla35kxvYLbuVRn
+ /aJL4OyZmsmv+0MX6nbmlfH9/QTAaE7tmvSHt9Pb0EnGE6CjjnDs9HeNNIwa2IB2h1vQMTvEne
+ sJXSmbqioY+99bdOnL5nycYigbS8X7OzcRLENgAKeKTN7LhrXXOcI7jsnyuHglQRT7j2oRiqOZ
+ gmaET2pVAMJDS629U9J9aKkdG7aXkAtIJ0pqWi+2ya0mqMaOpdY1s00CaMDxLzzIaio1QMsWB3
+ I90=
+X-IronPort-AV: E=Sophos;i="5.77,456,1596524400"; 
+   d="scan'208";a="97423883"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Nov 2020 02:28:14 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Fri, 6 Nov 2020 02:28:13 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Fri, 6 Nov 2020 02:28:06 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>
+CC:     <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v3 00/11] clk: at91: adapt for dvfs
+Date:   Fri, 6 Nov 2020 11:27:53 +0200
+Message-ID: <1604654884-30339-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Nov 2020 09:11:15 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Leo Li <leoyang.li@nxp.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
-In-Reply-To: <VE1PR04MB6687EC27F8C230A8F334119E8FED0@VE1PR04MB6687.eurprd04.prod.outlook.com>
-References: <20201105193512.22388-1-michael@walle.cc>
- <20201105193512.22388-6-michael@walle.cc>
- <VE1PR04MB6687EC27F8C230A8F334119E8FED0@VE1PR04MB6687.eurprd04.prod.outlook.com>
-User-Agent: Roundcube Webmail/1.4.9
-Message-ID: <639fa8e62e0b98bedf4077f76fd75e83@walle.cc>
-X-Sender: michael@walle.cc
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 2020-11-06 03:00, schrieb Leo Li:
->> -----Original Message-----
->> From: Michael Walle <michael@walle.cc>
->> Sent: Thursday, November 5, 2020 1:35 PM
->> To: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
->> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@kernel.org>; Rob Herring <robh+dt@kernel.org>; Shawn Guo
->> <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; Michael Walle
->> <michael@walle.cc>
->> Subject: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
->> 
->> Now that we have a proper driver for the FlexSPI interface use it. 
->> This will fix
->> SCK frequency switching on Layerscape SoCs.
->> 
->> This was only compile time tested.
->> 
->> Signed-off-by: Michael Walle <michael@walle.cc>
->> ---
->> Changes since v1:
->>  - none
->> 
->>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 15 +++++++++++++--
->>  1 file changed, 13 insertions(+), 2 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->> index 83072da6f6c6..6e375e80bd35 100644
->> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->> @@ -659,9 +659,20 @@
->>  		};
->> 
->>  		dcfg: syscon@1e00000 {
->> -			compatible = "fsl,lx2160a-dcfg", "syscon";
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-
->> mfd";
->>  			reg = <0x0 0x1e00000 0x0 0x10000>;
->> +			ranges = <0x0 0x0 0x1e00000 0x10000>;
->>  			little-endian;
->> +
->> +			fspi_clk: clock-controller@900 {
->> +				compatible = "fsl,lx2160a-flexspi-clk";
->> +				reg = <0x900 0x4>;
->> +				#clock-cells = <0>;
->> +				clocks = <&clockgen 4 0>;
-> 
-> This is different from the current <&clockgen 4 3>, is it an intended 
-> change?
+Hi,
 
-Yes, this change was intended. At least on the LS1028A this clock 
-divider is
-connected to the platform base clock. I don't know why there was
-"<&clockgen 4 3>" in the first place. But because the clkgen clock 
-cannot
-be changed it didn't matter before this commit. The flexspi driver only
-calls clk_set_rate(), never clk_get_rate(). On the LS1028A I actually
-meassured the resulting SCK frequency.
-Looking at Figure 7. (Clock subsystem block diagram) in the LX2160A RM, 
-this
-seems to be the case here, too.
+SAMA7G5 is capable of DVFS. The supported CPU clock frequencies could be
+obtained from CPU PLL. The hardware block diagram for clock feeding the
+CPU is as follows:
 
--michael
+                               +--------+
+                           +-->|divider1|--> CPU clock
+                           |   +--------+
++--------+   +----------+  |   +--------+
+|CPU PLL |-->|prescaller|--+-->|divider0|--> MCK0 clock
++--------+   +----------+      +--------+
+
+When switching CPU clock frequencies the MCK0 is also changed by DVFS
+driver to avoid its over/under clocking (depending on CPU clock frequency
+requested by DVFS algorithms). Some of IPs feed by MCK0 are MCK0 glich
+aware, some are not. For this MCK0 was removed from the parents list of
+the IPs which are not MCK0 glitch aware (patch 7/11).
+
+This series adapt AT91 clocks (mostly sam9x60-pll and master clock drivers)
+so that runtime changes of these clocks to be allowed.
+
+The CPU clock was registered from prescaller clock (see above diagram)
+and no software control has been added for divider1 because the frequencies
+supported by SAMA7G5's CPU could be directly obtained from CPU PLL +
+prescaller.
+
+On top of this series I also added a fix for sama7g5.c code (patch 1/11).
+Please let me know if you would like me to send this one separtely (it
+would be nice if this fix could be integrated in 5.10).
+
+Changes were tested on SAMA5D2, SAMA5D3, SAM9X60 and SAMA7G5.
+
+Thank you,
+Claudiu Beznea
+
+Changes in v3:
+- collected Reviewed-by, Tested-by tags
+- add patches 4/11, 5/11, 9/11
+- in patch 10/11 use CLK_SET_RATE_GATE on MCK div and MCK pres for all
+  the platforms except sama7g5
+
+Changes in v2:
+- s/at91rm9200_mck_lock/at91sam9260_mck_lock in patch 7/8
+
+Claudiu Beznea (7):
+  clk: at91: sama7g5: fix compilation error
+  clk: at91: clk-sam9x60-pll: allow runtime changes for pll
+  clk: at91: sama7g5: remove mck0 from parent list of other clocks
+  clk: at91: sama7g5: decrease lower limit for MCK0 rate
+  clk: at91: sama7g5: do not allow cpu pll to go higher than 1GHz
+  clk: at91: clk-master: re-factor master clock
+  clk: at91: sama7g5: register cpu clock
+
+Eugen Hristev (4):
+  dt-bindings: clock: at91: add sama7g5 pll defines
+  clk: at91: sama7g5: allow SYS and CPU PLLs to be exported and
+    referenced in DT
+  clk: at91: clk-master: add 5th divisor for mck master
+  clk: at91: sama7g5: add 5th divisor for mck0 layout and
+    characteristics
+
+ drivers/clk/at91/at91rm9200.c      |  21 ++-
+ drivers/clk/at91/at91sam9260.c     |  26 ++-
+ drivers/clk/at91/at91sam9g45.c     |  32 +++-
+ drivers/clk/at91/at91sam9n12.c     |  36 ++--
+ drivers/clk/at91/at91sam9rl.c      |  23 ++-
+ drivers/clk/at91/at91sam9x5.c      |  28 +++-
+ drivers/clk/at91/clk-master.c      | 328 +++++++++++++++++++++++++++++++------
+ drivers/clk/at91/clk-sam9x60-pll.c | 102 ++++++++++--
+ drivers/clk/at91/dt-compat.c       |  15 +-
+ drivers/clk/at91/pmc.h             |  22 ++-
+ drivers/clk/at91/sam9x60.c         |  36 ++--
+ drivers/clk/at91/sama5d2.c         |  42 +++--
+ drivers/clk/at91/sama5d3.c         |  38 +++--
+ drivers/clk/at91/sama5d4.c         |  40 +++--
+ drivers/clk/at91/sama7g5.c         | 204 ++++++++++++++---------
+ include/dt-bindings/clock/at91.h   |  11 ++
+ 16 files changed, 759 insertions(+), 245 deletions(-)
+
+-- 
+2.7.4
+
