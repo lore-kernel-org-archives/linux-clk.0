@@ -2,112 +2,101 @@ Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,
+	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65F3C2D0A3
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 10:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A116CC2D0A3
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 12:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 429A12072E
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 10:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604659894;
-	bh=VRH0OOsTmug4IluCYlUGvOuQXo2JVTTtYzsTQcMKftI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=MNCURJSeAIkkBVed4QCRdux83waOoiYB5vBlZ/biTJ8z0kBkfEgIu5wxIjSQQ47dE
-	 t130CtvZvG7m2MLBq2O7CaXyC07zl1ebVRlrX/1kRSLpdA1J7zTwFGGZNxTsBOSUw+
-	 qmx7MID843TKl5CGU+O1cP6TagLVt1mKKZxXDkQY=
+	by mail.kernel.org (Postfix) with ESMTP id 3BD0720728
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 12:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbgKFKve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 05:51:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbgKFKvd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Nov 2020 05:51:33 -0500
-Received: from localhost (otava-0257.koleje.cuni.cz [78.128.181.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F19420724;
-        Fri,  6 Nov 2020 10:51:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604659893;
-        bh=VRH0OOsTmug4IluCYlUGvOuQXo2JVTTtYzsTQcMKftI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DR5GjgYnxgYfNUy4hxBJ+GkFu3TNlmpO0aaYPkTbPYlxY0rr4ihwrVMNDTN2Ds1lO
-         zjmit0mzO3nbNkk60AsmHKvxMhMqtY8XeVPwSkNIvGUwHsgdzGJviJ1Y0rhDaJqAXQ
-         KSHS80Rm+ob1CkN8BWqPmpBGJJSb7/AosGPxF6DQ=
-Date:   Fri, 6 Nov 2020 11:51:18 +0100
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Terry Zhou <bjzhou@marvell.com>,
-        Konstantin Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH] clk: mvebu: a3700: fix the XTAL MODE pin to MPP1_9
-Message-ID: <20201106115118.43eab492@kernel.org>
-In-Reply-To: <20201106100039.11385-1-pali@kernel.org>
-References: <20201106100039.11385-1-pali@kernel.org>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727131AbgKFMK7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 07:10:59 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:7417 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbgKFMK7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 07:10:59 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CSK3c5572z73Tn;
+        Fri,  6 Nov 2020 20:10:52 +0800 (CST)
+Received: from huawei.com (10.151.151.249) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Fri, 6 Nov 2020
+ 20:10:48 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gengdongjiu@huawei.com>
+Subject: [PATCH] clk: hisilicon: Fix the memory leak issues
+Date:   Fri, 6 Nov 2020 20:35:25 +0000
+Message-ID: <20201106203525.9991-1-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.151.151.249]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Also, this is how A3720 WTMI code and ATF determines XTAL clock rate.
-No reason for kernel to do it differently.
+When return errors, the clock driver does not unmap
+the mapped memory, so fix this issue.
 
-Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+---
+ drivers/clk/hisilicon/clk-hi3620.c | 8 ++++++--
+ drivers/clk/hisilicon/clk.c        | 5 ++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-On Fri,  6 Nov 2020 11:00:39 +0100
-Pali Roh=C3=A1r <pali@kernel.org> wrote:
-
-> From: Terry Zhou <bjzhou@marvell.com>
->=20
-> There is an error in the current code that the XTAL MODE
-> pin was set to NB MPP1_31 which should be NB MPP1_9.
-> The latch register of NB MPP1_9 has different offset of 0x8.
->=20
-> Signed-off-by: Terry Zhou <bjzhou@marvell.com>
-> [pali: Fix pin name in commit message]
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> Fixes: 7ea8250406a6 ("clk: mvebu: Add the xtal clock for Armada 3700 SoC")
-> Cc: stable@vger.kernel.org
->=20
-> ---
-> This patch is present in Marvell SDK and also in Marvell's kernel fork:
-> https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/80d4cec=
-4cef8282e5ac3aaf98ce3e68fb299a134
->=20
-> Konstantin Porotchkin wrote on Github that Gregory Clement was notified
-> about this patch, but as this patch is still not in mainline kernel I'm
-> sending it again for review.
->=20
-> In original commit message (only in commit message, not code) was
-> specified MPP9 pin on South Bridge, but correct is North Bridge.
-> ---
->  drivers/clk/mvebu/armada-37xx-xtal.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/arm=
-ada-37xx-xtal.c
-> index e9e306d4e9af..41271351cf1f 100644
-> --- a/drivers/clk/mvebu/armada-37xx-xtal.c
-> +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-> @@ -13,8 +13,8 @@
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> =20
-> -#define NB_GPIO1_LATCH	0xC
-> -#define XTAL_MODE	    BIT(31)
-> +#define NB_GPIO1_LATCH	0x8
-> +#define XTAL_MODE	    BIT(9)
-> =20
->  static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
->  {
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index a3d04c7c3da8..d5f1a8df4b1c 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -463,12 +463,16 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+ 	}
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+-	if (WARN_ON(!clk_data))
++	if (WARN_ON(!clk_data)) {
++		iounmap(base);
+ 		return;
++	}
+ 
+ 	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
+-	if (!clk_data->clks)
++	if (!clk_data->clks) {
++		iounmap(base);
+ 		return;
++	}
+ 
+ 	for (i = 0; i < num; i++) {
+ 		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 54d9fdc93599..53acaff32934 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -69,8 +69,10 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 	}
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+-	if (!clk_data)
++	if (!clk_data) {
++		iounmap(base);
+ 		goto err;
++	}
+ 
+ 	clk_data->base = base;
+ 	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
+@@ -82,6 +84,7 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+ 	return clk_data;
+ err_data:
++	iounmap(base);
+ 	kfree(clk_data);
+ err:
+ 	return NULL;
+-- 
+2.17.1
 
