@@ -2,136 +2,120 @@ Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DBBC55ABD
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D613EC2D0A3
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 262A92087E
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 726D520B80
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:48:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Uz+8L77f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ3+X40T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgKFJrl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:47:41 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:41964 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbgKFJrl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 04:47:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604656061; x=1636192061;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=gVkb/HduIodWBWgTTPTKx7ktzM9BdW4BzHHiUogCOBA=;
-  b=Uz+8L77fbyWG1zF37NTN9r88bPQbwtg+dEbzpVsfrw0+/mLOQBJ1tLsW
-   qruwgU2f7280TKzIaveGSF6aNnqnwzBfc3WdJBSTka2wnrOjEaJ5UULlA
-   x4R7+OaNHxLZItwKD7JOMmKUrsOvKuOKd1R4wYn6dpH7iMhg9F1+IJtA1
-   MWlTqygjbJdORJaGNfbOZywZrCFZJSqwIHsTIJarRjMd/vT/dHeIoWqLZ
-   ZzAPmAqlmdG2C5vwQ5c/pUTjwmBsBinjZ+zf/uPVxyh0YntD6XOyIsMC1
-   abLeR+efeL/8sesnzTMeDmue9rHhqxPy730/Me7UeDIMY/agsOM9+I/eh
-   A==;
-IronPort-SDR: OQcD0hW+21HJs/1YPlhfQ/Y9q39o4GUKUs0pJc/rTlJFVKhR11ljxT+STUs5htGDdX5vQ9PrLM
- b2zOcasvxxZ3hNdjuJzK1XppvS06r/MrHr/qf5MInMGyN1pF4SDqwPzoa2QSKSnFSxgFeJowWB
- Oqa69g30eUbHvyH8Gdih0HQXMZ2uVzo6mt9IvI+0r/0824Mbs+5gtMZ15zdYEnF7Ncno2pfXjw
- MexRpPsw26ygSTJqsW8ds5s2guz9KCvUFmier6OyYq51vWNIiTJ8ry3/i5Znj39dSBDAm934/Q
- +Vo=
-X-IronPort-AV: E=Sophos;i="5.77,456,1596524400"; 
-   d="scan'208";a="97428461"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Nov 2020 02:47:40 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Fri, 6 Nov 2020 02:47:38 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Fri, 6 Nov 2020 02:47:33 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>
-CC:     <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v4 11/11] clk: at91: sama7g5: register cpu clock
-Date:   Fri, 6 Nov 2020 11:46:28 +0200
-Message-ID: <1604655988-353-12-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726345AbgKFJsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56070 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgKFJsf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 04:48:35 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6799AC0613CF;
+        Fri,  6 Nov 2020 01:48:35 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id 33so625174wrl.7;
+        Fri, 06 Nov 2020 01:48:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=r7YyaJmRIWWPTEfEzl80MC6QW4rF6G5MsBiV1a8/Lpc=;
+        b=eQ3+X40TsWePgKwYfv6Y0LrGNy6Si6msdrfWqYRBp5WPTkG0hjNjGm66SiM9HqZ0nk
+         KF5HPV6RTb5+1fkntdj+itsd956wskElIvlUkBamTgKjpnplJ4Rk2Ib0ZBg32FcYylp+
+         Jfutwen3/Jo8hF5/Y7bL2j/tf2OT/5H9BfIE66I48QofEdVgCsdlHb6TyttKYBIJ9Jy5
+         cfSwiMiCX4I7W2zvParOK4si2/Z6C52EoVua/0aWfSgdb9cEX2/ug7fpydGdA+KKEM9J
+         R1r/ICUPEoh548L51HgsP7qB63gu7VwTtGnqrF2ukiNlWpoD3+spNOiV3Wf7kfih6Vuu
+         4CJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=r7YyaJmRIWWPTEfEzl80MC6QW4rF6G5MsBiV1a8/Lpc=;
+        b=R1XYbL2fVZIQBto8tAFCAr9w77oAsXb4Ygb9ctFyvwkvwHax4kwqda3gSa9srkHNcU
+         dbC79coAMDov59yEzpGwXtriS3IndnRkPBOGoOhfh7xSPRd2RV04sVb3mN8qFMaBq+9G
+         rVZH2ygcxKsPxsukdDoGGfDWpeX4qPpjyRs1dvmOMPpfo3WLI54FTsFG/62eIZcBC7rX
+         6F4L8nkneWUbxM4bZ4Rex0Wl93//RIoi7U6tySjHNHMGhzZFaNP0eg19D39j33kALr3a
+         EtQ9npB8+tMepk2888BMrShyJVLo2zoR/gB+5/kV7dwPb0QeFXbMt0oUu/mCV8zVPg58
+         Zjqg==
+X-Gm-Message-State: AOAM532pOTTqgl1Gx6AgE8k76vasbx9sfYAiLrURDyCnkamApGj4nMZJ
+        7ajHOuhOeJSce5PLFerZOj0=
+X-Google-Smtp-Source: ABdhPJyVUzxwiL83Bw5+ELbmBhVqWaLCOIfOQ1w3aqx4YdGq1EfkW9niP4Pe3zgVc9WNFsu/OEZyqg==
+X-Received: by 2002:a5d:6681:: with SMTP id l1mr1705435wru.356.1604656114107;
+        Fri, 06 Nov 2020 01:48:34 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d20:9d00:b87b:b644:61a3:6870])
+        by smtp.gmail.com with ESMTPSA id c9sm1187446wrp.65.2020.11.06.01.48.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Nov 2020 01:48:33 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Tom Rix <trix@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] clk: remove unneeded dead-store initialization
+Date:   Fri,  6 Nov 2020 10:48:20 +0100
+Message-Id: <20201106094820.30167-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register CPU clock as being the master clock prescaler. This would
-be used by DVFS. The block schema of SAMA7G5's PMC contains also a divider
-between master clock prescaler and CPU (PMC_CPU_RATIO.RATIO) but the
-frequencies supported by SAMA7G5 could be directly received from
-CPUPLL + master clock prescaler and the extra divider would do no work in
-case it would be enabled.
+make clang-analyzer on x86_64 defconfig caught my attention with:
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+  drivers/clk/clk.c:423:19:
+  warning: Value stored to 'parent' during its initialization is never read
+  [clang-analyzer-deadcode.DeadStores]
+          struct clk_core *parent = ERR_PTR(-ENOENT);
+                           ^
+
+Commit fc0c209c147f ("clk: Allow parents to be specified without string
+names") introduced clk_core_fill_parent_index() with this unneeded
+dead-store initialization.
+
+So, simply remove this unneeded dead-store initialization to make
+clang-analyzer happy.
+
+As compilers will detect this unneeded assignment and optimize this anyway,
+the resulting object code is identical before and after this change.
+
+No functional change. No change to object code.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/clk/at91/sama7g5.c       | 13 ++++++-------
- include/dt-bindings/clock/at91.h |  1 +
- 2 files changed, 7 insertions(+), 7 deletions(-)
+applies cleanly on current master and next-20201106
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index be32d9b88d89..40fceb7595d4 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -885,7 +885,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
+Stephen, Michael, please pick this minor non-urgent clean-up patch.
+
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f83dac54ed85..ba35bf35bcd3 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -420,7 +420,7 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+ static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
+ {
+ 	struct clk_parent_map *entry = &core->parents[index];
+-	struct clk_core *parent = ERR_PTR(-ENOENT);
++	struct clk_core *parent;
  
--	sama7g5_pmc = pmc_data_allocate(PMC_ETHPLL + 1,
-+	sama7g5_pmc = pmc_data_allocate(PMC_CPU + 1,
- 					nck(sama7g5_systemck),
- 					nck(sama7g5_periphck),
- 					nck(sama7g5_gck), 8);
-@@ -962,18 +962,17 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 		}
- 	}
- 
--	parent_names[0] = md_slck_name;
--	parent_names[1] = "mainck";
--	parent_names[2] = "cpupll_divpmcck";
--	parent_names[3] = "syspll_divpmcck";
--	hw = at91_clk_register_master_pres(regmap, "mck0_pres", 4, parent_names,
-+	parent_names[0] = "cpupll_divpmcck";
-+	hw = at91_clk_register_master_pres(regmap, "cpuck", 1, parent_names,
- 					   &mck0_layout, &mck0_characteristics,
- 					   &pmc_mck0_lock,
- 					   CLK_SET_RATE_PARENT, 0);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
--	hw = at91_clk_register_master_div(regmap, "mck0_div", "mck0_pres",
-+	sama7g5_pmc->chws[PMC_CPU] = hw;
-+
-+	hw = at91_clk_register_master_div(regmap, "mck0", "cpuck",
- 					  &mck0_layout, &mck0_characteristics,
- 					  &pmc_mck0_lock, 0);
- 	if (IS_ERR(hw))
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index fab313f62e8f..98e1b2ab6403 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -34,6 +34,7 @@
- #define PMC_AUDIOPMCPLL		(PMC_MAIN + 6)
- #define PMC_AUDIOIOPLL		(PMC_MAIN + 7)
- #define PMC_ETHPLL		(PMC_MAIN + 8)
-+#define PMC_CPU			(PMC_MAIN + 9)
- 
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
+ 	if (entry->hw) {
+ 		parent = entry->hw->core;
 -- 
-2.7.4
+2.17.1
 
