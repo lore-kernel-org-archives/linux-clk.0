@@ -3,140 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A868AC55178
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 14:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B34C2D0A3
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 18:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE912078B
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 14:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CD9A21D46
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 18:05:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="l4TapnhA"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AK0B6vve"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgKFOEP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 09:04:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40006 "EHLO
+        id S1727676AbgKFSFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 13:05:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbgKFOEO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 09:04:14 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C22DC0613CF;
-        Fri,  6 Nov 2020 06:04:11 -0800 (PST)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 0F42522FAD;
-        Fri,  6 Nov 2020 15:04:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604671449;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7dno5sBvYxAuw3MDGvBMCHVYmJvxMS+kWsqU80FUOXA=;
-        b=l4TapnhA4st1PTrh4jy7UoaFIncBkag6/FkvvKrRWxEXQzTTDpR+ElYUCpDrBqNw1YV4uI
-        qgLzk7ljoSLv3kdZ03gC1FZI6Q2kw/oxduYscwI66XSe/LSQTZr1ssWr3wXO64q+5I3KO6
-        tXQvEBfDIPaFJwuvFysWojOV+p84SqU=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Nov 2020 15:04:08 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Leo Li <leoyang.li@nxp.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        with ESMTP id S1726034AbgKFSFx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 13:05:53 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3D2C0613CF;
+        Fri,  6 Nov 2020 10:05:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=90zuK8BdS44z3twp9I9Jyw0x30yb82cvNVQYVDPC/9U=; b=AK0B6vve+vs4QnOQAcsmJ7A5X4
+        PxVnO2q4QT3W4RoD/Yixod2UovCJoRby6Q3OKPC7JYJYz9pzDGO00cYzkvv/v62jORtekHV+wIm8O
+        6x8wY/SRhAw3D3d/FcLdULGt74TkHAhTS9rSFSm2+HrR0QPK4EZA+33gDMuYFJ+YAMPRWzq2+28LZ
+        /7S6L9YvyXzF7rUXjao6vW5BD6ckhvo9IQItoDo0lMgfjvSIjLm56eyWdHZOO816HpoUNAp3VGORd
+        WaLQxPJ1VN74XOv2iiHT1BhLvJjjz0eosg7CZzyQcRX2b2rgodW0Dtv8aKwTYkzrx9C+myj9Cglfv
+        nkLUuA4g==;
+Received: from [2601:1c0:6280:3f0::a1cb] (helo=smtpauth.infradead.org)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kb67S-0003oB-8v; Fri, 06 Nov 2020 18:05:50 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
-In-Reply-To: <639fa8e62e0b98bedf4077f76fd75e83@walle.cc>
-References: <20201105193512.22388-1-michael@walle.cc>
- <20201105193512.22388-6-michael@walle.cc>
- <VE1PR04MB6687EC27F8C230A8F334119E8FED0@VE1PR04MB6687.eurprd04.prod.outlook.com>
- <639fa8e62e0b98bedf4077f76fd75e83@walle.cc>
-User-Agent: Roundcube Webmail/1.4.9
-Message-ID: <8c96e34b3139c99f0946b62767b8cfdd@walle.cc>
-X-Sender: michael@walle.cc
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>, linux-next@vger.kernel.org
+Subject: [PATCH -next] clk: pm_clock: provide stubs for pm_clk_runtime_suspend/_resume
+Date:   Fri,  6 Nov 2020 10:05:44 -0800
+Message-Id: <20201106180544.5681-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 2020-11-06 09:11, schrieb Michael Walle:
-> Am 2020-11-06 03:00, schrieb Leo Li:
->>> -----Original Message-----
->>> From: Michael Walle <michael@walle.cc>
->>> Sent: Thursday, November 5, 2020 1:35 PM
->>> To: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
->>> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->>> <sboyd@kernel.org>; Rob Herring <robh+dt@kernel.org>; Shawn Guo
->>> <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; Michael Walle
->>> <michael@walle.cc>
->>> Subject: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
->>> 
->>> Now that we have a proper driver for the FlexSPI interface use it. 
->>> This will fix
->>> SCK frequency switching on Layerscape SoCs.
->>> 
->>> This was only compile time tested.
->>> 
->>> Signed-off-by: Michael Walle <michael@walle.cc>
->>> ---
->>> Changes since v1:
->>>  - none
->>> 
->>>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 15 +++++++++++++--
->>>  1 file changed, 13 insertions(+), 2 deletions(-)
->>> 
->>> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->>> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->>> index 83072da6f6c6..6e375e80bd35 100644
->>> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->>> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
->>> @@ -659,9 +659,20 @@
->>>  		};
->>> 
->>>  		dcfg: syscon@1e00000 {
->>> -			compatible = "fsl,lx2160a-dcfg", "syscon";
->>> +			#address-cells = <1>;
->>> +			#size-cells = <1>;
->>> +			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-
->>> mfd";
->>>  			reg = <0x0 0x1e00000 0x0 0x10000>;
->>> +			ranges = <0x0 0x0 0x1e00000 0x10000>;
->>>  			little-endian;
->>> +
->>> +			fspi_clk: clock-controller@900 {
->>> +				compatible = "fsl,lx2160a-flexspi-clk";
->>> +				reg = <0x900 0x4>;
->>> +				#clock-cells = <0>;
->>> +				clocks = <&clockgen 4 0>;
->> 
->> This is different from the current <&clockgen 4 3>, is it an intended 
->> change?
-> 
-> Yes, this change was intended. At least on the LS1028A this clock 
-> divider is
-> connected to the platform base clock. I don't know why there was
-> "<&clockgen 4 3>" in the first place. But because the clkgen clock 
-> cannot
-> be changed it didn't matter before this commit. The flexspi driver only
-> calls clk_set_rate(), never clk_get_rate(). On the LS1028A I actually
-> meassured the resulting SCK frequency.
-> Looking at Figure 7. (Clock subsystem block diagram) in the LX2160A RM, 
-> this
-> seems to be the case here, too.
+Add stubs for pm_clk_runtime_suspend() and pm_clk_runtime_resume()
+to fix build errors when CONFIG_PM and CONFIG_PM_CLK are not enabled.
 
-Btw on the LS1028A this should be "<&clockgen 2 0>;" Will be fixed in 
-the
-new version.
-And because there so much difference between LS1028A and LX2160A, I'll 
-mark
-the last patch (this one, for the LX2160A) as RFC until someone will 
-test it.
+Fixes these build errors:
 
--michael
+../drivers/clk/qcom/camcc-sc7180.c: In function ‘cam_cc_sc7180_probe’:
+../drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function ‘pm_clk_runtime_resume’; did you mean ‘pm_runtime_resume’? [-Werror=implicit-function-declaration]
+  ret = pm_clk_runtime_resume(&pdev->dev);
+        ^~~~~~~~~~~~~~~~~~~~~
+../drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function ‘pm_clk_runtime_suspend’; did you mean ‘pm_runtime_suspend’? [-Werror=implicit-function-declaration]
+   pm_clk_runtime_suspend(&pdev->dev);
+   ^~~~~~~~~~~~~~~~~~~~~~
+
+Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: Taniya Das <tdas@codeaurora.org>
+Cc: linux-next@vger.kernel.org
+---
+ include/linux/pm_clock.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- linux-next-20201106.orig/include/linux/pm_clock.h
++++ linux-next-20201106/include/linux/pm_clock.h
+@@ -83,6 +83,15 @@ static inline void pm_clk_remove(struct
+ static inline void pm_clk_remove_clk(struct device *dev, struct clk *clk)
+ {
+ }
++
++static inline int pm_clk_runtime_suspend(struct device *dev)
++{
++	return 0;
++}
++static inline int pm_clk_runtime_resume(struct device *dev)
++{
++	return 0;
++}
+ #endif
+ 
+ #ifdef CONFIG_HAVE_CLK
