@@ -2,54 +2,54 @@ Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCBFC55178
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21930C2D0A3
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 626BD20A8B
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B2620A8B
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 09:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dfD8n+E/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VvXDXVUe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgKFJrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 04:47:17 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:12018 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgKFJrR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 04:47:17 -0500
+        id S1726901AbgKFJrJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 04:47:09 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:60425 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbgKFJrH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 04:47:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1604656036; x=1636192036;
+  t=1604656026; x=1636192026;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=98KyUzL1G42E2CqSBWVfWz4SgFeNLS+jPn7ldi5xgeA=;
-  b=dfD8n+E/7Wflrh2NfAI8ZENZRH8CCwSbgkKyZCLrlZpA35ka9DrC6szH
-   YThT9DPBoVF21z0LmUlL3DhiNnVKblFa3wIUcCGc3r6h+LO3DUdcpXv5U
-   TkgdluirdTGWnJrl17RCKRnbVt34IFi/+PlTGCg1szuDgLddlJLyAbTb3
-   Fc4QKMjOfUNVHZQ6f7E6ncZsdXgmR7xenielwS5z1TsakRz+uC64mVS4A
-   oHkjSVUoyYKpAFcr9hxyVUvvNoUgewqCv+VbYIIkj+z62sa/6/inKnObx
-   OGnS6Q0gbQCPith8fCoADcjLgdv4dX1M0A9bYyEiA92OhBQckKuiDSv/q
-   Q==;
-IronPort-SDR: SzrN3oT6ne9Ft6g65lRCO7DSneC/NsamOwhbdsS3vKzIIiMOJ/qO3P7zxsfC+rHPKi+Bbgju5H
- rwhFjh49b7ishHP5bM1GAWvImXFGjJ56VAKBCgPcJlQVdU7KJig3owVTKUe0sS6mObj0P/n3vu
- ihnL+RYW1T9/apZ9ZWhK8ShzilqQUHOOU2f6zJg7vftDujS++UitDjne2mkx2UBLpNiM0zm9I1
- 7kH7lce317JmWujSrdMCcpVGcCVEzl7igHlk+m+QNDlMrA5RMRQ6zKpZmYgn0jg6HF9iMJg8XD
- Lxg=
+  bh=jpoo8lswkA0HTqIME8fJoefP6IOmvgmdgVpF/Ams+UA=;
+  b=VvXDXVUenQCxmXko5innt/1vG08pBgHLNZSe3c+J3oixNlbn1grkSmSF
+   XSIYRULoTjBrv5j99aqh7lfSo1HdnXwGmZTeJrptsXZ8SxoUhn+8Ii5qr
+   5duev4APECqUgTtTVI2eK7MhpZyINlCUUZGzEm8fFYfeyJ30GSi8ycEvo
+   pwy3lrgCjs+tMooLkuCLGf4xmU1zUqlN5NzLBMaC+zcDBrx0UCXNNVKXc
+   fT08OXc63p1OkqbWmBI9yTdnTd7bg5wjyG+1b7pYP5d47UUW1d2ibC4v+
+   +/cpC67Uw1sr0S3HPh/5inlPX4mnLpa0NcNd9WIo06Fhdp4bRSpZ2ifHH
+   A==;
+IronPort-SDR: orh4IzbvH8+Z32NLqmAEYhBzLmWibX8zV7E7eVSn6NmRbwAwSWaVnoMfFNFa18nL+kccwSKi4n
+ u9ep4bfxKjGguu8zMhcJ52IKLwMM5KQ4KrYDkm1fhgryJrHgGgUsfaotRXP0DaLEfQxy6RTnST
+ wHds/woHpJDFYeHhPG2IlhzHjLVF4rFZa2Pa87eVHNmOc/J1knoIAv5NwAkn02jG+1m4iooXua
+ +50aYong8zmXiNVAe33aRxeNw6GA50ZABNruaXnclA1tBwfOZYvdgdvq0h9lYscxcMTuHp5TRj
+ eCk=
 X-IronPort-AV: E=Sophos;i="5.77,456,1596524400"; 
-   d="scan'208";a="102449873"
+   d="scan'208";a="32680448"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Nov 2020 02:47:16 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Nov 2020 02:47:04 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Fri, 6 Nov 2020 02:47:15 -0700
+ 15.1.1979.3; Fri, 6 Nov 2020 02:47:04 -0700
 Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Fri, 6 Nov 2020 02:47:10 -0700
+ 15.1.1979.3 via Frontend Transport; Fri, 6 Nov 2020 02:46:59 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -58,9 +58,9 @@ CC:     <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v4 07/11] clk: at91: sama7g5: remove mck0 from parent list of other clocks
-Date:   Fri, 6 Nov 2020 11:46:24 +0200
-Message-ID: <1604655988-353-8-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH v4 05/11] clk: at91: sama7g5: add 5th divisor for mck0 layout and characteristics
+Date:   Fri, 6 Nov 2020 11:46:22 +0200
+Message-ID: <1604655988-353-6-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com>
@@ -70,196 +70,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MCK0 is changed at runtime by DVFS. Due to this, since not all IPs
-are glitch free aware at MCK0 changes, remove MCK0 from parent list
-of other clocks (e.g. generic clock, programmable/system clock, MCKX).
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
+This SoC has the 5th divisor for the mck0 master clock.
+Adapt the characteristics accordingly.
+
+Reported-by: Mihai Sain <mihai.sain@microchip.com>
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/at91/sama7g5.c | 55 ++++++++++++++++++++++------------------------
- 1 file changed, 26 insertions(+), 29 deletions(-)
+ drivers/clk/at91/sama7g5.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 33faf7c6d9fb..88ad0c70ca98 100644
+index d3c3469d47d9..d685e22b2014 100644
 --- a/drivers/clk/at91/sama7g5.c
 +++ b/drivers/clk/at91/sama7g5.c
-@@ -261,7 +261,7 @@ static const struct {
- 	  .ep = { "syspll_divpmcck", "ddrpll_divpmcck", "imgpll_divpmcck", },
- 	  .ep_mux_table = { 5, 6, 7, },
- 	  .ep_count = 3,
--	  .ep_chg_id = 6, },
-+	  .ep_chg_id = 5, },
- 
- 	{ .n = "mck4",
- 	  .id = 4,
-@@ -294,7 +294,7 @@ static const struct {
+@@ -775,13 +775,13 @@ static const struct clk_pll_characteristics pll_characteristics = {
+ /* MCK0 characteristics. */
+ static const struct clk_master_characteristics mck0_characteristics = {
+ 	.output = { .min = 140000000, .max = 200000000 },
+-	.divisors = { 1, 2, 4, 3 },
++	.divisors = { 1, 2, 4, 3, 5 },
+ 	.have_div3_pres = 1,
  };
  
- /* Mux table for programmable clocks. */
--static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, };
-+static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 5, 6, 7, 8, 9, 10, };
- 
- /**
-  * Peripheral clock description
-@@ -417,7 +417,7 @@ static const struct {
- 	  .pp = { "audiopll_divpmcck", },
- 	  .pp_mux_table = { 9, },
- 	  .pp_count = 1,
--	  .pp_chg_id = 4, },
-+	  .pp_chg_id = 3, },
- 
- 	{ .n  = "csi_gclk",
- 	  .id = 33,
-@@ -529,7 +529,7 @@ static const struct {
- 	  .pp = { "ethpll_divpmcck", },
- 	  .pp_mux_table = { 10, },
- 	  .pp_count = 1,
--	  .pp_chg_id = 4, },
-+	  .pp_chg_id = 3, },
- 
- 	{ .n  = "gmac1_gclk",
- 	  .id = 52,
-@@ -561,7 +561,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
- 	  .pp_mux_table = { 5, 9, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "i2smcc1_gclk",
- 	  .id = 58,
-@@ -569,7 +569,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
- 	  .pp_mux_table = { 5, 9, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "mcan0_gclk",
- 	  .id = 61,
-@@ -711,7 +711,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
- 	  .pp_mux_table = { 5, 8, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "sdmmc1_gclk",
- 	  .id = 81,
-@@ -719,7 +719,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
- 	  .pp_mux_table = { 5, 8, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "sdmmc2_gclk",
- 	  .id = 82,
-@@ -727,7 +727,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
- 	  .pp_mux_table = { 5, 8, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "spdifrx_gclk",
- 	  .id = 84,
-@@ -735,7 +735,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
- 	  .pp_mux_table = { 5, 9, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n = "spdiftx_gclk",
- 	  .id = 85,
-@@ -743,7 +743,7 @@ static const struct {
- 	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
- 	  .pp_mux_table = { 5, 9, },
- 	  .pp_count = 2,
--	  .pp_chg_id = 5, },
-+	  .pp_chg_id = 4, },
- 
- 	{ .n  = "tcb0_ch0_gclk",
- 	  .id = 88,
-@@ -942,9 +942,8 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	parent_names[0] = md_slck_name;
- 	parent_names[1] = td_slck_name;
- 	parent_names[2] = "mainck";
--	parent_names[3] = "mck0";
- 	for (i = 0; i < ARRAY_SIZE(sama7g5_mckx); i++) {
--		u8 num_parents = 4 + sama7g5_mckx[i].ep_count;
-+		u8 num_parents = 3 + sama7g5_mckx[i].ep_count;
- 		u32 *mux_table;
- 
- 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-@@ -952,10 +951,10 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 		if (!mux_table)
- 			goto err_free;
- 
--		SAMA7G5_INIT_TABLE(mux_table, 4);
--		SAMA7G5_FILL_TABLE(&mux_table[4], sama7g5_mckx[i].ep_mux_table,
-+		SAMA7G5_INIT_TABLE(mux_table, 3);
-+		SAMA7G5_FILL_TABLE(&mux_table[3], sama7g5_mckx[i].ep_mux_table,
- 				   sama7g5_mckx[i].ep_count);
--		SAMA7G5_FILL_TABLE(&parent_names[4], sama7g5_mckx[i].ep,
-+		SAMA7G5_FILL_TABLE(&parent_names[3], sama7g5_mckx[i].ep,
- 				   sama7g5_mckx[i].ep_count);
- 
- 		hw = at91_clk_sama7g5_register_master(regmap, sama7g5_mckx[i].n,
-@@ -978,20 +977,19 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	parent_names[0] = md_slck_name;
- 	parent_names[1] = td_slck_name;
- 	parent_names[2] = "mainck";
--	parent_names[3] = "mck0";
--	parent_names[4] = "syspll_divpmcck";
--	parent_names[5] = "ddrpll_divpmcck";
--	parent_names[6] = "imgpll_divpmcck";
--	parent_names[7] = "baudpll_divpmcck";
--	parent_names[8] = "audiopll_divpmcck";
--	parent_names[9] = "ethpll_divpmcck";
-+	parent_names[3] = "syspll_divpmcck";
-+	parent_names[4] = "ddrpll_divpmcck";
-+	parent_names[5] = "imgpll_divpmcck";
-+	parent_names[6] = "baudpll_divpmcck";
-+	parent_names[7] = "audiopll_divpmcck";
-+	parent_names[8] = "ethpll_divpmcck";
- 	for (i = 0; i < 8; i++) {
- 		char name[6];
- 
- 		snprintf(name, sizeof(name), "prog%d", i);
- 
- 		hw = at91_clk_register_programmable(regmap, name, parent_names,
--						    10, i,
-+						    9, i,
- 						    &programmable_layout,
- 						    sama7g5_prog_mux_table);
- 		if (IS_ERR(hw))
-@@ -1028,9 +1026,8 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	parent_names[0] = md_slck_name;
- 	parent_names[1] = td_slck_name;
- 	parent_names[2] = "mainck";
--	parent_names[3] = "mck0";
- 	for (i = 0; i < ARRAY_SIZE(sama7g5_gck); i++) {
--		u8 num_parents = 4 + sama7g5_gck[i].pp_count;
-+		u8 num_parents = 3 + sama7g5_gck[i].pp_count;
- 		u32 *mux_table;
- 
- 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-@@ -1038,10 +1035,10 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 		if (!mux_table)
- 			goto err_free;
- 
--		SAMA7G5_INIT_TABLE(mux_table, 4);
--		SAMA7G5_FILL_TABLE(&mux_table[4], sama7g5_gck[i].pp_mux_table,
-+		SAMA7G5_INIT_TABLE(mux_table, 3);
-+		SAMA7G5_FILL_TABLE(&mux_table[3], sama7g5_gck[i].pp_mux_table,
- 				   sama7g5_gck[i].pp_count);
--		SAMA7G5_FILL_TABLE(&parent_names[4], sama7g5_gck[i].pp,
-+		SAMA7G5_FILL_TABLE(&parent_names[3], sama7g5_gck[i].pp,
- 				   sama7g5_gck[i].pp_count);
- 
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+ /* MCK0 layout. */
+ static const struct clk_master_layout mck0_layout = {
+-	.mask = 0x373,
++	.mask = 0x773,
+ 	.pres_shift = 4,
+ 	.offset = 0x28,
+ };
 -- 
 2.7.4
 
