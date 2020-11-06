@@ -2,105 +2,141 @@ Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054C5C55178
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 12:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A868AC55178
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 14:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAE3120715
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 12:16:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EE912078B
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 14:04:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="l4TapnhA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgKFMQn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 07:16:43 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40494 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbgKFMQn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 07:16:43 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 79so1027071otc.7;
-        Fri, 06 Nov 2020 04:16:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+xDAzLUg1c4ATFWXTeoRwJCCaKgy8LRS6wAzG60O47w=;
-        b=ZxT85t7P/JQRL4PmUhadUdBofRxWfA7uLrA2PoxAHpGWsv7avbzBUV155cqrOStLDR
-         KBGrII4v8l8cN3K/XMGZtdvq3GbgiYgkGzjDmA09yHVgzPNwfEosoeojzYawQE8VUsvn
-         v9hIhnzUc6j7LXdXl3+tns38ZpOi9UUmjkV1J2g38VStCxRixhjRkGYSAmprfAFGymVT
-         eJLMFj7Y0Jhgi4Xc2c7DYe3BxVnAzISiK8JKoqTQkO58WTvpL+ipSN2uu7WuzhmB9hdG
-         jfPE3agpycp3LxOXWkcOxMysBlXjHfKr9JAW1V3am26yNgZ8NDPAThF44IAEDNy6xTby
-         El1w==
-X-Gm-Message-State: AOAM533MLDaHt6XIdsPMW0rM5aExal6VtqAWLTJ1YtFdZTZ32uNHhF8P
-        POHm32trDJ9Z5aPhtAxUvL+DpoVIh4GpfqT/cgI=
-X-Google-Smtp-Source: ABdhPJwsCD7JJXjqS83wKh2AZm22ZIVZUyx+6LkKKzYyucmo+SZ5UmKV2U6I9aLbPMfL4719sAv0kSWGYWR5vCEm8/o=
-X-Received: by 2002:a05:6830:210a:: with SMTP id i10mr914074otc.145.1604665002287;
- Fri, 06 Nov 2020 04:16:42 -0800 (PST)
+        id S1727420AbgKFOEP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Nov 2020 09:04:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbgKFOEO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 09:04:14 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C22DC0613CF;
+        Fri,  6 Nov 2020 06:04:11 -0800 (PST)
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 0F42522FAD;
+        Fri,  6 Nov 2020 15:04:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1604671449;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7dno5sBvYxAuw3MDGvBMCHVYmJvxMS+kWsqU80FUOXA=;
+        b=l4TapnhA4st1PTrh4jy7UoaFIncBkag6/FkvvKrRWxEXQzTTDpR+ElYUCpDrBqNw1YV4uI
+        qgLzk7ljoSLv3kdZ03gC1FZI6Q2kw/oxduYscwI66XSe/LSQTZr1ssWr3wXO64q+5I3KO6
+        tXQvEBfDIPaFJwuvFysWojOV+p84SqU=
 MIME-Version: 1.0
-References: <1602873815-1677-1-git-send-email-tdas@codeaurora.org>
- <1602873815-1677-5-git-send-email-tdas@codeaurora.org> <160454346831.3965362.1176963402805166784@swboyd.mtv.corp.google.com>
-In-Reply-To: <160454346831.3965362.1176963402805166784@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 6 Nov 2020 13:16:31 +0100
-Message-ID: <CAMuHMdXL9ZdLQGtgZM3nqcQoBrUnjGaS5Hg3cB7zrW8WFGyOjg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] clk: qcom: camcc: Add camera clock controller
- driver for SC7180
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Nov 2020 15:04:08 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Leo Li <leoyang.li@nxp.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
+In-Reply-To: <639fa8e62e0b98bedf4077f76fd75e83@walle.cc>
+References: <20201105193512.22388-1-michael@walle.cc>
+ <20201105193512.22388-6-michael@walle.cc>
+ <VE1PR04MB6687EC27F8C230A8F334119E8FED0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+ <639fa8e62e0b98bedf4077f76fd75e83@walle.cc>
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <8c96e34b3139c99f0946b62767b8cfdd@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 5:52 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Taniya Das (2020-10-16 11:43:35)
-> > Add support for the camera clock controller found on SC7180 based devices.
-> > This would allow camera drivers to probe and control their clocks.
-> >
-> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > ---
->
-> Applied to clk-next with some minor fixups.
+Am 2020-11-06 09:11, schrieb Michael Walle:
+> Am 2020-11-06 03:00, schrieb Leo Li:
+>>> -----Original Message-----
+>>> From: Michael Walle <michael@walle.cc>
+>>> Sent: Thursday, November 5, 2020 1:35 PM
+>>> To: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+>>> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+>>> <sboyd@kernel.org>; Rob Herring <robh+dt@kernel.org>; Shawn Guo
+>>> <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; Michael Walle
+>>> <michael@walle.cc>
+>>> Subject: [PATCH v2 5/5] arm64: dts: lx2160a: fix FlexSPI clock
+>>> 
+>>> Now that we have a proper driver for the FlexSPI interface use it. 
+>>> This will fix
+>>> SCK frequency switching on Layerscape SoCs.
+>>> 
+>>> This was only compile time tested.
+>>> 
+>>> Signed-off-by: Michael Walle <michael@walle.cc>
+>>> ---
+>>> Changes since v1:
+>>>  - none
+>>> 
+>>>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 15 +++++++++++++--
+>>>  1 file changed, 13 insertions(+), 2 deletions(-)
+>>> 
+>>> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+>>> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+>>> index 83072da6f6c6..6e375e80bd35 100644
+>>> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+>>> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+>>> @@ -659,9 +659,20 @@
+>>>  		};
+>>> 
+>>>  		dcfg: syscon@1e00000 {
+>>> -			compatible = "fsl,lx2160a-dcfg", "syscon";
+>>> +			#address-cells = <1>;
+>>> +			#size-cells = <1>;
+>>> +			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-
+>>> mfd";
+>>>  			reg = <0x0 0x1e00000 0x0 0x10000>;
+>>> +			ranges = <0x0 0x0 0x1e00000 0x10000>;
+>>>  			little-endian;
+>>> +
+>>> +			fspi_clk: clock-controller@900 {
+>>> +				compatible = "fsl,lx2160a-flexspi-clk";
+>>> +				reg = <0x900 0x4>;
+>>> +				#clock-cells = <0>;
+>>> +				clocks = <&clockgen 4 0>;
+>> 
+>> This is different from the current <&clockgen 4 3>, is it an intended 
+>> change?
+> 
+> Yes, this change was intended. At least on the LS1028A this clock 
+> divider is
+> connected to the platform base clock. I don't know why there was
+> "<&clockgen 4 3>" in the first place. But because the clkgen clock 
+> cannot
+> be changed it didn't matter before this commit. The flexspi driver only
+> calls clk_set_rate(), never clk_get_rate(). On the LS1028A I actually
+> meassured the resulting SCK frequency.
+> Looking at Figure 7. (Clock subsystem block diagram) in the LX2160A RM, 
+> this
+> seems to be the case here, too.
 
-On Fri, Nov 6, 2020 at 8:43 AM <noreply@ellerman.id.au> wrote:
-> FAILED linux-next/m68k-allmodconfig/m68k-gcc8 Fri Nov 06, 18:35
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/14393224/
->
-> Commit:   Add linux-next specific files for 20201106
->           c34f157421f6905e6b4a79a312e9175dce2bc607
-> Compiler: m68k-linux-gcc (GCC) 8.1.0 / GNU ld (GNU Binutils) 2.30
->
-> Possible errors
-> ---------------
->
-> drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function 'pm_clk_runtime_resume'; did you mean 'pm_runtime_resume'? [-Werror=implicit-function-declaration]
-> drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function 'pm_clk_runtime_suspend'; did you mean 'pm_runtime_suspend'? [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[4]: *** [scripts/Makefile.build:283: drivers/clk/qcom/camcc-sc7180.o] Error 1
-> make[3]: *** [scripts/Makefile.build:500: drivers/clk/qcom] Error 2
+Btw on the LS1028A this should be "<&clockgen 2 0>;" Will be fixed in 
+the
+new version.
+And because there so much difference between LS1028A and LX2160A, I'll 
+mark
+the last patch (this one, for the LX2160A) as RFC until someone will 
+test it.
 
-The pm_clk_runtime_*() functions are only available if CONFIG_PM=y.
-No dummies are provided for the CONFIG_PM=n case yet.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-michael
