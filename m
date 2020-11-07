@@ -1,170 +1,139 @@
-Return-Path: <SRS0=zIv1=EM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=qcMm=EN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97438C2D0A3
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 22:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C28AC4741F
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 478FF2072E
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Nov 2020 22:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E775820B1F
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:14:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJ3eU3my"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WbLmDeHM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbgKFWlz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Nov 2020 17:41:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36824 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728390AbgKFWly (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Nov 2020 17:41:54 -0500
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767E1C0613CF;
-        Fri,  6 Nov 2020 14:41:54 -0800 (PST)
-Received: by mail-qt1-x843.google.com with SMTP id i7so1963088qti.6;
-        Fri, 06 Nov 2020 14:41:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=z7FzhduA30Tm2qYziVPMUtmZyLRgCN7aQ0VOcniLxfY=;
-        b=HJ3eU3myQMPuA6VE8cHM6/10KXPZMnaphEJVB3Wrm4mr18vUuECaCd9fy/IUt8KUpJ
-         KtL2QwgXfwA6p0zbrWnB/C6MtYYIS+OQNEQKQ6L0FKKzW+xV4IDXYbhWj/MA4h4HovI7
-         pinQUoyzFWmASq/Jxxss6GfF04D4BPyT1JZp24xjltmN6ox7QsSZLKocE8Wrv7ykihJH
-         jhQx5BADjQ1GzBvgG48C2ILsD5gOJxSC0pFo+ZAXkTeP+5Sac4ImPXajPvoFMnsuwa0v
-         fOmTRQhHGyGBTL+P4fSRJ5SPKDFYNou7amgFNusX4F6TapLGI9439WgX/AhBVHAQD36O
-         3aqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=z7FzhduA30Tm2qYziVPMUtmZyLRgCN7aQ0VOcniLxfY=;
-        b=rfJURQHid0AmNWgyH6NZxaiVFD+MwVQP3PC7rSfuOuwq2F6nxSYm+yawBxl35k0GwZ
-         GMrNOyz7ap1no5y3OKtkOnkn1brTNCOOV1Urem0VpuZJM7Qo+dbcrrl2KHpXBri9OZSt
-         uLV2onTPXU/y8EwFqcbF7z2/y2mQtWa1xZK5nvzY80uXYKzaL3dyE7hl0Cm16AjVohIw
-         CNhNXQDtxXj1lKsrJkQaiNm6IORY/qQYhzg+Zs2p5iv0rBcefiO3ZRJ90m+vilV3A130
-         zJqxCBbxQFNtZdFKMUb3nn+Kxz4T+NTvvNBwTUjCMzjletOfoIRZbxgiJChl/zdTMjzk
-         BW+Q==
-X-Gm-Message-State: AOAM5301PBgASb97dOxokhF/ODGI8jesHze5K0iMzQYgfuRVBYfM6PF9
-        tFE4lA7WdTZT7X+7LaK9Azc=
-X-Google-Smtp-Source: ABdhPJxKeA2me0EkL+mP07TIDmSCUWPJiEsceqjGfsRkB8cJn8NR84Q7ocq9nUHwYWQI50UgZEZpSw==
-X-Received: by 2002:ac8:5d53:: with SMTP id g19mr3762928qtx.306.1604702513581;
-        Fri, 06 Nov 2020 14:41:53 -0800 (PST)
-Received: from ubuntu-m3-large-x86 ([2604:1380:45f1:1d00::1])
-        by smtp.gmail.com with ESMTPSA id w54sm1563018qtb.0.2020.11.06.14.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2020 14:41:52 -0800 (PST)
-Date:   Fri, 6 Nov 2020 15:41:51 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1727873AbgKGIO1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Nov 2020 03:14:27 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57208 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727738AbgKGIO1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Nov 2020 03:14:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1604736866; x=1636272866;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BqUviBNZqhcYKVjLlBRgbOvJ4y6AYLOsGaaxkI1tHXE=;
+  b=WbLmDeHMpyuMAj5o6aC3ehE826nSoTpBtKiuqxJrh9QieKpt5VVYIGEM
+   P5BxAyT0VYjpY33M4I5MIqPeLlvVeswKj5ZZU/78m+elcsvEyLNWmS/Fg
+   YeEgYsYj7wYE7+NqI5xY0QhIp0Qwgzrkl5UJ9eDGc413EMqkcMrpKt+U9
+   Dl4smzilr+Oftroz10BHEE0mR/IEtO7YACeHKUyQBzQV6CPiLBHFpYly5
+   SSnbNa33q7Cnk70/yLwva9DVbYB7AqsmZpcnMl7jViHjG8WztzR4tpGCB
+   ANdHtans1lhNlmwZFFfRlxjoSIgDITVVYUWQMXKNXwb+Q4xp9LbZ1hMqt
+   A==;
+IronPort-SDR: n771JepbWCHDRkYyn8eHlO+UD9lV3sUgQrKoHBpkBj7/26yMD0PvmFHEJh7Fg1b3OZV5IZi+YM
+ aLs3US7E1aU+D1JYFzLMYtkZVOt3O/P8z7PGAPQ6ZzKeuzBT+P9X2+FKFFj5YoJ8X+Gs4UchL1
+ Lbokr311ZW3yP/SY/KWdYRsEHqqQ6SHkBpjmeZc5gmlCSW/FA/fa5cm6n8IbJlEVKyqYZgGwCS
+ G38Ie2i8IPv6HuQtPABDm/3OXTfjHlXFn8xnyZGWg8UhnepZ+Io5Qh0GymXFqeUy499JgMebav
+ f1k=
+X-IronPort-AV: E=Sophos;i="5.77,459,1596470400"; 
+   d="scan'208";a="156564357"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2020 16:14:26 +0800
+IronPort-SDR: CViM24XLr0s7xjdVlrD3qV2x7d5ahqOLGtfj6NwpuToaZWpy/uS4bssZd4bEZH4Sw4QOHEW2QD
+ TrToZ5NlkAX0ddU0K7J/VLq/MvsWO3HqJh+K91GoK4e8JtGdJyV39OtZxiCgHCsG8Z2ymEIioI
+ No7d6V1X4d+d6ZHLx6uHdUcZ6unfMXJSyraKM3HE+i3E8W1hfph+3je7D9Ug5mBOg9CJW1z06x
+ bQSephzJS3Y3ps7ruC1E2m3+03z05EkU6/zKAnQCbc6VN8UsXTtSlOqCMBr6ECkd8uEvZRthwz
+ X4CIW2tNehmo14F7SN+Xdov2
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2020 23:59:17 -0800
+IronPort-SDR: TmBsa7t3u9A7oOAAJ6Q9xlQB6YGNq7OndCgwgljnfYFrMAktTQLVE89+b449fpt9Mw7Xr+O3BY
+ U9zIY390So2hnkbpscRoeheh9r+XlcJwEykzBi55qYwq0hTm5aoaNFV3b2Bc2yubJYy5jJJpZp
+ jjMxRqB1Bc9lZQysDb6Pcr+5RH/AgWpwmT3QihEA/AcCs4BgEg5egeDogJqj32RBmxwcAmcke+
+ le/0xfq+Zm5V7QU1z0BA81wKCy48rumCkg4lGF2bMCmkGnS9pARlhm+ISDPatWjLyhaaTddJm4
+ 7Y8=
+WDCIronportException: Internal
+Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.85])
+  by uls-op-cesaip01.wdc.com with ESMTP; 07 Nov 2020 00:14:24 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>, linux-next@vger.kernel.org
-Subject: Re: [PATCH -next] clk: pm_clock: provide stubs for
- pm_clk_runtime_suspend/_resume
-Message-ID: <20201106224151.GA3571170@ubuntu-m3-large-x86>
-References: <20201106180544.5681-1-rdunlap@infradead.org>
- <20201106181713.GA3970874@ubuntu-m3-large-x86>
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH 01/32] of: Fix property supplier parsing
+Date:   Sat,  7 Nov 2020 17:13:49 +0900
+Message-Id: <20201107081420.60325-2-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201107081420.60325-1-damien.lemoal@wdc.com>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201106181713.GA3970874@ubuntu-m3-large-x86>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 11:17:13AM -0700, Nathan Chancellor wrote:
-> On Fri, Nov 06, 2020 at 10:05:44AM -0800, Randy Dunlap wrote:
-> > Add stubs for pm_clk_runtime_suspend() and pm_clk_runtime_resume()
-> > to fix build errors when CONFIG_PM and CONFIG_PM_CLK are not enabled.
-> > 
-> > Fixes these build errors:
-> > 
-> > ../drivers/clk/qcom/camcc-sc7180.c: In function ‘cam_cc_sc7180_probe’:
-> > ../drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function ‘pm_clk_runtime_resume’; did you mean ‘pm_runtime_resume’? [-Werror=implicit-function-declaration]
-> >   ret = pm_clk_runtime_resume(&pdev->dev);
-> >         ^~~~~~~~~~~~~~~~~~~~~
-> > ../drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function ‘pm_clk_runtime_suspend’; did you mean ‘pm_runtime_suspend’? [-Werror=implicit-function-declaration]
-> >    pm_clk_runtime_suspend(&pdev->dev);
-> >    ^~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
-> > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Len Brown <len.brown@intel.com>
-> > Cc: Pavel Machek <pavel@ucw.cz>
-> > Cc: linux-pm@vger.kernel.org
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: Taniya Das <tdas@codeaurora.org>
-> > Cc: linux-next@vger.kernel.org
-> 
-> This fixes the same build failure that I saw with s390 all{mod,yes}config.
-> 
-> Build-tested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+The DesignWare GPIO driver gpio-dwapb ("snps,dw-apb-gpio" or
+"apm,xgene-gpio-v2" compatible string) defines the property
+"snps,nr-gpios" for the user to specify the number of GPIOs available
+on a port. The "-gpios" suffix of this property name ends up being
+interpreted as a cell reference when properties are parsed in
+of_link_to_suppliers(), leading to error messages such as:
 
-Actually, this breaks certain powerpc configs:
+OF: /soc/bus@50200000/gpio-controller@50200000/gpio-port@0: could not
+find phandle
 
-$ make -skj"$(nproc)" ARCH=powerpc CROSS_COMPILE=powerpc-linux- distclean ppc44x_defconfig drivers/base/power/common.o
-In file included from drivers/base/power/common.c:11:
-./include/linux/pm_clock.h:87:19: error: static declaration of 'pm_clk_runtime_suspend' follows non-static declaration
-   87 | static inline int pm_clk_runtime_suspend(struct device *dev)
-      |                   ^~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pm_clock.h:23:12: note: previous declaration of 'pm_clk_runtime_suspend' was here
-   23 | extern int pm_clk_runtime_suspend(struct device *dev);
-      |            ^~~~~~~~~~~~~~~~~~~~~~
-./include/linux/pm_clock.h:91:19: error: static declaration of 'pm_clk_runtime_resume' follows non-static declaration
-   91 | static inline int pm_clk_runtime_resume(struct device *dev)
-      |                   ^~~~~~~~~~~~~~~~~~~~~
-./include/linux/pm_clock.h:24:12: note: previous declaration of 'pm_clk_runtime_resume' was here
-   24 | extern int pm_clk_runtime_resume(struct device *dev);
-      |            ^~~~~~~~~~~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:283: drivers/base/power/common.o] Error 1
-make[4]: Target '__build' not remade because of errors.
-make[3]: *** [scripts/Makefile.build:500: drivers/base/power] Error 2
-make[3]: Target '__build' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:500: drivers/base] Error 2
-make[2]: Target '__build' not remade because of errors.
-make[1]: *** [Makefile:1797: drivers] Error 2
-make[1]: Target 'drivers/base/power/common.o' not remade because of errors.
-make: *** [Makefile:335: __build_one_by_one] Error 2
-make: Target 'distclean' not remade because of errors.
-make: Target 'ppc44x_defconfig' not remade because of errors.
-make: Target 'drivers/base/power/common.o' not remade because of errors.
+Fix this by manually defining a parse_gpios() function which ignores
+this property, skipping the search for the supplier and thus avoiding
+the device tree parsing error.
 
-I think this should be moved into the CONFIG_PM block at the top of the
-file.
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ drivers/of/property.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-> > ---
-> >  include/linux/pm_clock.h |    9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > --- linux-next-20201106.orig/include/linux/pm_clock.h
-> > +++ linux-next-20201106/include/linux/pm_clock.h
-> > @@ -83,6 +83,15 @@ static inline void pm_clk_remove(struct
-> >  static inline void pm_clk_remove_clk(struct device *dev, struct clk *clk)
-> >  {
-> >  }
-> > +
-> > +static inline int pm_clk_runtime_suspend(struct device *dev)
-> > +{
-> > +	return 0;
-> > +}
-> > +static inline int pm_clk_runtime_resume(struct device *dev)
-> > +{
-> > +	return 0;
-> > +}
-> >  #endif
-> >  
-> >  #ifdef CONFIG_HAVE_CLK
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 408a7b5f06a9..d16111c0d6da 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -1308,7 +1308,6 @@ DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
+ DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
+ DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+ DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+-DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
+ 
+ static struct device_node *parse_iommu_maps(struct device_node *np,
+ 					    const char *prop_name, int index)
+@@ -1319,6 +1318,22 @@ static struct device_node *parse_iommu_maps(struct device_node *np,
+ 	return of_parse_phandle(np, prop_name, (index * 4) + 1);
+ }
+ 
++static struct device_node *parse_gpios(struct device_node *np,
++				       const char *prop_name, int index)
++{
++	/*
++	 * Quirck for the DesignWare gpio-dwapb GPIO driver which defines
++	 * the "snps,nr-gpios" property to indicate the total number of GPIOs
++	 * available. As this conflict with "xx-gpios" reference properties,
++	 * ignore it.
++	 */
++	if (strcmp(prop_name, "snps,nr-gpios") == 0)
++		return NULL;
++
++	return parse_suffix_prop_cells(np, prop_name, index,
++				       "-gpios", "#gpio-cells");
++}
++
+ static const struct supplier_bindings of_supplier_bindings[] = {
+ 	{ .parse_prop = parse_clocks, },
+ 	{ .parse_prop = parse_interconnects, },
+-- 
+2.28.0
+
