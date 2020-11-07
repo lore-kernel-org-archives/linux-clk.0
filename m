@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6507BC55ABD
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 551FAC56202
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20B39208E4
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1332C20B1F
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 08:15:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="eJDxYjNh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="fb3oXHC6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbgKGIPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 Nov 2020 03:15:25 -0500
+        id S1728126AbgKGIPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Nov 2020 03:15:36 -0500
 Received: from esa3.hgst.iphmx.com ([216.71.153.141]:57208 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727801AbgKGIPZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Nov 2020 03:15:25 -0500
+        with ESMTP id S1727801AbgKGIPg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Nov 2020 03:15:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604736924; x=1636272924;
+  t=1604736935; x=1636272935;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=QkRCfLP1RiMjOvLwrisdDi2IrprGO1LS2AaUs89hBgw=;
-  b=eJDxYjNhar8xyv0oYbS9+h2uXdLelq6Ca80njO4CayiP2SYmNFXIXx6Z
-   ilgp8wFsQXCmWV9v1TP3O09lu9MfBughKOinpfhNs692H6y16um7bCspx
-   +sUwMMuKJV2CGNDwIxaM/PKJyc2RC9BBuOM160kDYPDXdW+RsjQoWsJ1k
-   u+OAzYsP92c1R/p/1HASE6Ov4+99Zc2jXDeUN8KPRHoLY6JjEAzZG4qgR
-   YcJ50c6xHfQUWwwfzbdBRRulP0BmVaj/17AEok7U1ynwFUJDtaPafjRgH
-   TPo7aKw0zWO1ywiGR6sksfCIN9doVbFvrBQMukQsuLvRNxRAjs/Ah7d8y
-   A==;
-IronPort-SDR: lM4lpqv689/JuIMDOO4gZFzuO2XrAohTNfkwMYGsMlDtPE6atD4JfEXimrPPoBtp9xjAnFiVSh
- 5Gb7XUxNZksmAEnaJYmc5XWAU/WPcgt7sp7w8229CdyiFKO1l+0GWe4RxdK7b9KPnFuZsI6BtX
- pC23lknFP/EtUZS4O8DOK4L+71Ph/E2jTkcx1P8Eivj5XIPQVKZxc9nRj09TG58XCtCQZQ/VAk
- vV6azDEkKylCpUNKfEof7sz5XFlRV0ktJY+x+MiYPbjQqGhRz93HhQ4hqorQ3bzRR+F8gyKwn8
- 9Qg=
+  bh=R6ojcjfpOV1mQTShcVKl24jzRG2DzI4ILkhh1fxkrVo=;
+  b=fb3oXHC6aUwRST9LZNaU/4uyfHIlkdN9hMqwE8wZ3xMwA6tZATMzWq/B
+   092vQlVUBP8g0mki3ORjk61DRsa0jOyfSDeBWVVxd1O07K7QzdUB6DHwI
+   AF8VyVy40VBFKfEYN+FEHp4elYHqGVvai5n79QvTIlgwGEPeD8BEa4dyU
+   zK59usoz0/1WAKQofrUo0U8HoMFXSGd7/D1vOAcXJmhaQUq/u53e77kpS
+   iBkQJux2jKIslAGy3L2A082xrlfHXAFr+PrFl+TnSpVpHLRSc5sUcHQGz
+   1XKw6cYWmLJeP9fciu+Fy6GO5o0j81Wd/LsM610xaqfU3aHqzPUmvIjWy
+   Q==;
+IronPort-SDR: i1tUvOnLH97xQSflAWOSTLMzVCqwZTdeZLd3RnENWhmfUavxRx/zDWp3Vn/5SPs6hwQSVvjRkN
+ JDouJL7ty7/hvjnvFeqVVh/hB9TjwW1an+sWVlZKTYom8ZOACfprB7Qpy41sZYYjZ9MqcQ2Gv/
+ G/qT/4XsCGYTBZnE/O6NWrvzaGgEM0uTwUigrOrs9NvPSIwhVY80wjgtWNGKlh173Co3fswe7I
+ sfkECBpQuuDUFQlzzgF8bN7PWZ8G2sPiTm1RIYmdAh0ixoKQ1u1KoBwwTuYdu+8Th3bCVlatpF
+ rcU=
 X-IronPort-AV: E=Sophos;i="5.77,459,1596470400"; 
-   d="scan'208";a="156564419"
+   d="scan'208";a="156564433"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2020 16:15:24 +0800
-IronPort-SDR: JEADym+E38O3EuyvCUKWoWeSyKY3njK4MfKgYxQR/3VaRXdiiCg7nPHGai2hzVnBE+SZVYhOxb
- 082Wz4kF3zvEm4oj7t0jBIajI18EpRyTq7Moi6/JZWRPUM/AphCu4U7bLUgaXY0/M8Iazj7F/a
- UnrxfOAB4GNnjSU+W8g2HX7zpK3m54i/elZW9+cDbW++K4ibGQHV6qdHNzOvr56+mgqpdpE1Ez
- 02Z8T9/F3rV09mNOJF0b52GovvA1cujYsGNVpMIjWfxOIRJKXWpr8LlR3X34OvvNQ3Z+O8WqtD
- 8lH3lEjPxwRA6lkcw1cMbUyq
+  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2020 16:15:35 +0800
+IronPort-SDR: 11r3r9yrywNL3nI9bn0a52Nh9J9OnQLMXfQB9in4CkS1J0WoKSNHxveavwaASa4PYpUC/LSXsM
+ HjK/vCvwLBN+JcVCvQSY2IDloIaGjXQOqsK8RrSGmdKUEnDate059U8vVqpbqqLZbGJncCEn55
+ ryvhPq2uTmBkd9L+cCu5vY5+g5TfQEvnEWUxLuBDXFtjVwiSQYHm0ply9WOWADl6C63qH/LxLs
+ 4YL+Oj+5Dd6bXhJPe2Og90u65xAsUg2n45vMZvRq6fgs5u38ckTremPsKBJV30iz2motp6DK7L
+ FpJ7Nopj/apksimyn9nKS+0j
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2020 00:00:15 -0800
-IronPort-SDR: kNbmK/ZaWtIhWERqlBQPde5LebiYxI9kiEu8NrnS1rg2xhz2B9moqa38rqRkEw4qXSs9kQD4gN
- 1UduA2IXuax8AVRO+HiLUrNXDyjrKKiSozhKTsiF3RxCpJFY4Izb9tYfB9DUOm24HSwDeDrc5f
- DIVlk9KPPSh0q5zYG99b2uOUnzNsQ9GEZWS/qfDsygdI0Gxw4henwmOBCRTyUJQwX7XsqhsZF2
- rGgGTdzOkGf/EgDjlylToDdHm8+sDeWdNFeRfndSZUrbFXJTg4QsMJj4H2dJ+0GNRdDXZYmpm4
- N4s=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2020 00:00:26 -0800
+IronPort-SDR: wm66Qy/0HChucDX9w7hQOkrgUfMD8sdsv9JyXig2wbzGofnzoKmJIXIyPg8/eli6D5dkanBxYf
+ bD7VpSATO851A/BzXhEw2iTnQjpuOOxrm9ci6Ipqoi8Rs7lc83cAzHhesV0MZqpNJ80dXvM/O+
+ MAOvOPbQR6VrfDEq2qGT89g3zKgHQpmbd4nazHPE6n793KPZGHKblkLcmuYKmZ81EQlXFEBUL4
+ gXgxBvRN49eBK4yiMnyMrJqHKoX+lPlbViXHhvGc6S4ppbxVaIqnRXo79Wpebe8F3vgq3FUR4Y
+ HcM=
 WDCIronportException: Internal
 Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.85])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Nov 2020 00:15:23 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 07 Nov 2020 00:15:33 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -68,9 +68,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH 23/32] dt-binding: Document kendryte,k210-clk bindings
-Date:   Sat,  7 Nov 2020 17:14:11 +0900
-Message-Id: <20201107081420.60325-24-damien.lemoal@wdc.com>
+Subject: [PATCH 27/32] riscv: Add SiPeed MAIX BiT board device tree
+Date:   Sat,  7 Nov 2020 17:14:15 +0900
+Message-Id: <20201107081420.60325-28-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201107081420.60325-1-damien.lemoal@wdc.com>
 References: <20201107081420.60325-1-damien.lemoal@wdc.com>
@@ -80,91 +80,247 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the device tree bindings of the Kendryte K210 SoC clock driver
-in Documentation/devicetree/bindings/clock/kendryte,k210-clk.yaml.
+Add a device tree for the SiPeed MAIX BiT and MAIX BiTm boards. This
+device tree enables LEDs, gpio, i2c and spi/mmc SD card devices.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- .../bindings/clock/kendryte,k210-clk.yaml     | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/kendryte,k210-clk.yaml
+ .../riscv/boot/dts/kendryte/k210_maix_bit.dts | 226 ++++++++++++++++++
+ 1 file changed, 226 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/kendryte/k210_maix_bit.dts
 
-diff --git a/Documentation/devicetree/bindings/clock/kendryte,k210-clk.yaml b/Documentation/devicetree/bindings/clock/kendryte,k210-clk.yaml
+diff --git a/arch/riscv/boot/dts/kendryte/k210_maix_bit.dts b/arch/riscv/boot/dts/kendryte/k210_maix_bit.dts
 new file mode 100644
-index 000000000000..02f5f8a86bc8
+index 000000000000..fc814f7c1173
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/kendryte,k210-clk.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/kendryte,k210-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/arch/riscv/boot/dts/kendryte/k210_maix_bit.dts
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
++ * Copyright (C) 2020 Western Digital Corporation or its affiliates.
++ */
 +
-+title: Kendryte K210 Clock Device Tree Bindings
++/dts-v1/;
 +
-+maintainers:
-+  - Damien Le Moal <damien.lemoal@wdc.com>
++#include "k210.dtsi"
 +
-+description: |
-+  Kendryte K210 clock controller driver which support the system controller
-+  subsystem supplied clocks for the various controllers and peripherals within
-+  the SoC.
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
 +
-+  See also:
-+  - dt-bindings/clock/k210-clk.h
++/ {
++	model = "SiPeed MAIX BiT";
++	compatible = "sipeed,maix-bitm", "sipeed,maix-bit",
++		     "kendryte,k210";
 +
-+properties:
-+  compatible:
-+    const: kendryte,k210-clk
++	chosen {
++		bootargs = "earlycon console=ttySIF0";
++		stdout-path = "serial0:115200n8";
++	};
 +
-+  clocks:
-+    maxItems: 1
-+    description: System fixed rate oscillator clock
++	gpio-leds {
++		compatible = "gpio-leds";
 +
-+  '#clock-cells':
-+    const: 1
++		green {
++			gpios = <&gpio1_0 4 GPIO_ACTIVE_LOW>;
++		};
 +
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - clocks
++		red {
++			gpios = <&gpio1_0 5 GPIO_ACTIVE_LOW>;
++		};
 +
-+additionalProperties: false
++		blue {
++			gpios = <&gpio1_0 6 GPIO_ACTIVE_LOW>;
++		};
++	};
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/k210-clk.h>
++	gpio-keys {
++		compatible = "gpio-keys";
 +
-+    clocks {
-+      in0: oscillator {
-+        compatible = "fixed-clock";
-+        #clock-cells = <0>;
-+        clock-frequency = <26000000>;
-+      };
-+    };
++		boot {
++			label = "BOOT";
++			linux,code = <BTN_0>;
++			gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
++		};
++	};
 +
-+    soc {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      /* ... */
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		status = "disabled";
 +
-+      sysctl: system-controller@50440000 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        compatible = "kendryte,k210-sysctl",
-+                     "syscon", "simple-mfd";
-+        reg = <0x50440000 0x1000>;
-+        /* ... */
-+        sysclk: clock-controller {
-+          #clock-cells = <1>;
-+          compatible = "kendryte,k210-clk";
-+          clocks = <&in0>;
-+        };
-+        /* ... */
-+      };
-+    };
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0 0>;
++		};
 +
++		simple-audio-card,codec {
++			sound-dai = <&mic>;
++		};
++	};
++
++	mic: mic {
++		#sound-dai-cells = <0>;
++		compatible = "memsensing,msm261s4030h0";
++		status = "disabled";
++	};
++};
++
++&fpioa {
++	pinctrl-0 = <&fpioa_jtag>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	fpioa_jtag: jtag {
++		pinmux = <K210_FPIOA(0, K210_PCF_JTAG_TCLK)>,
++			 <K210_FPIOA(1, K210_PCF_JTAG_TDI)>,
++			 <K210_FPIOA(2, K210_PCF_JTAG_TMS)>,
++			 <K210_FPIOA(3, K210_PCF_JTAG_TDO)>;
++	};
++
++	fpioa_uarths: uarths {
++		pinmux = <K210_FPIOA(4, K210_PCF_UARTHS_RX)>,
++			 <K210_FPIOA(5, K210_PCF_UARTHS_TX)>;
++	};
++
++	fpioa_gpio: gpio {
++		pinmux = <K210_FPIOA(8, K210_PCF_GPIO0)>,
++			 <K210_FPIOA(9, K210_PCF_GPIO1)>,
++			 <K210_FPIOA(10, K210_PCF_GPIO2)>,
++			 <K210_FPIOA(11, K210_PCF_GPIO3)>,
++			 <K210_FPIOA(12, K210_PCF_GPIO4)>,
++			 <K210_FPIOA(13, K210_PCF_GPIO5)>,
++			 <K210_FPIOA(14, K210_PCF_GPIO6)>,
++			 <K210_FPIOA(15, K210_PCF_GPIO7)>;
++	};
++
++	fpioa_gpiohs: gpiohs {
++		pinmux = <K210_FPIOA(16, K210_PCF_GPIOHS0)>,
++			 <K210_FPIOA(17, K210_PCF_GPIOHS1)>,
++			 <K210_FPIOA(21, K210_PCF_GPIOHS5)>,
++			 <K210_FPIOA(22, K210_PCF_GPIOHS6)>,
++			 <K210_FPIOA(23, K210_PCF_GPIOHS7)>,
++			 <K210_FPIOA(24, K210_PCF_GPIOHS8)>,
++			 <K210_FPIOA(25, K210_PCF_GPIOHS9)>,
++			 <K210_FPIOA(32, K210_PCF_GPIOHS16)>,
++			 <K210_FPIOA(33, K210_PCF_GPIOHS17)>,
++			 <K210_FPIOA(34, K210_PCF_GPIOHS18)>,
++			 <K210_FPIOA(35, K210_PCF_GPIOHS19)>;
++	};
++
++	fpioa_i2s0: i2s0 {
++		pinmux = <K210_FPIOA(18, K210_PCF_I2S0_SCLK)>,
++			 <K210_FPIOA(19, K210_PCF_I2S0_WS)>,
++			 <K210_FPIOA(20, K210_PCF_I2S0_IN_D0)>;
++	};
++
++	fpioa_dvp: dvp {
++		pinmux = <K210_FPIOA(40, K210_PCF_SCCB_SDA)>,
++			 <K210_FPIOA(41, K210_PCF_SCCB_SCLK)>,
++			 <K210_FPIOA(42, K210_PCF_DVP_RST)>,
++			 <K210_FPIOA(43, K210_PCF_DVP_VSYNC)>,
++			 <K210_FPIOA(44, K210_PCF_DVP_PWDN)>,
++			 <K210_FPIOA(45, K210_PCF_DVP_HSYNC)>,
++			 <K210_FPIOA(46, K210_PCF_DVP_XCLK)>,
++			 <K210_FPIOA(47, K210_PCF_DVP_PCLK)>;
++	};
++
++	fpioa_spi0: spi0 {
++		pinmux = <K210_FPIOA(36, K210_PCF_GPIOHS20)>,  /* cs */
++			 <K210_FPIOA(37, K210_PCF_GPIOHS21)>,  /* rst */
++			 <K210_FPIOA(38, K210_PCF_GPIOHS22)>,  /* dc */
++			 <K210_FPIOA(39, K210_PCF_SPI0_SCLK)>; /* wr */
++	};
++
++	fpioa_spi1: spi1 {
++		pinmux = <K210_FPIOA(26, K210_PCF_SPI1_D1)>,
++			 <K210_FPIOA(27, K210_PCF_SPI1_SCLK)>,
++			 <K210_FPIOA(28, K210_PCF_SPI1_D0)>,
++			 <K210_FPIOA(29, K210_PCF_SPI1_SS0)>; /* cs */
++	};
++
++	fpioa_i2c1: i2c1 {
++		pinmux = <K210_FPIOA(30, K210_PCF_I2C1_SCLK)>,
++			 <K210_FPIOA(31, K210_PCF_I2C1_SDA)>;
++	};
++};
++
++&uarths0 {
++	pinctrl-0 = <&fpioa_uarths>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&gpio0 {
++	pinctrl-0 = <&fpioa_gpiohs>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&gpio1 {
++	pinctrl-0 = <&fpioa_gpio>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&i2s0 {
++	#sound-dai-cells = <1>;
++	pinctrl-0 = <&fpioa_i2s0>;
++	pinctrl-names = "default";
++};
++
++&i2c1 {
++	pinctrl-0 = <&fpioa_i2c1>;
++	pinctrl-names = "default";
++	clock-frequency = <400000>;
++	status = "okay";
++};
++
++&dvp0 {
++	pinctrl-0 = <&fpioa_dvp>;
++	pinctrl-names = "default";
++};
++
++&spi0 {
++	pinctrl-0 = <&fpioa_spi0>;
++	pinctrl-names = "default";
++	num-cs = <1>;
++	cs-gpios = <&gpio0 20 0>;
++
++	panel@0 {
++		compatible = "sitronix,st7789v";
++		reg = <0>;
++		reset-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
++		dc-gpios = <&gpio0 22 0>;
++		spi-max-frequency = <15000000>;
++		status = "disabled";
++	};
++};
++
++&spi1 {
++	pinctrl-0 = <&fpioa_spi1>;
++	pinctrl-names = "default";
++	num-cs = <1>;
++	polling;
++	status = "okay";
++
++	slot@0 {
++		compatible = "mmc-spi-slot";
++		reg = <0>;
++		voltage-ranges = <3300 3300>;
++		spi-max-frequency = <4000000>;
++		broken-cd;
++	};
++};
++
++&spi3 {
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++		m25p,fast-read;
++		broken-flash-reset;
++	};
++};
 -- 
 2.28.0
 
