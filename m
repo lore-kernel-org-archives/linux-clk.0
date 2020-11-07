@@ -2,122 +2,181 @@ Return-Path: <SRS0=qcMm=EN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9709C388F9
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 12:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E8BC4742C
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 13:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86E8A20719
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 12:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC7E8206ED
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Nov 2020 13:28:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F46HQ1XI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPN5CiQP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgKGMPH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 Nov 2020 07:15:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
+        id S1728034AbgKGN2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Nov 2020 08:28:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbgKGMPG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Nov 2020 07:15:06 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA39C0613CF;
-        Sat,  7 Nov 2020 04:15:04 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id s30so5677572lfc.4;
-        Sat, 07 Nov 2020 04:15:04 -0800 (PST)
+        with ESMTP id S1727084AbgKGN2y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Nov 2020 08:28:54 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183AAC0613CF;
+        Sat,  7 Nov 2020 05:28:54 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id v11so2438052qtq.12;
+        Sat, 07 Nov 2020 05:28:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8+Mm44weplld/dSNNRNUy7NBfXXfQxTylZi90l7dWis=;
-        b=F46HQ1XI/INYQ7QCgO/1nFtEUip8UcNsw77sK+EOHgPoA37xQiKMI1YEg9yGHvVP1L
-         NXSNEFJLV9uiBbUklfUWAD7/K2vgab61sY/NtQk48GcY9lrVdYqxqvR+TQsin3r2ldpn
-         QuBit5fdNORZoTL9hOoKfQLZ8/UlqWdkQLkE103KiaMSoiK/c231lcvqz5bMjD+Gh2Uu
-         0X5OUJWK/KgZ/fzXki016xj79F4dxkn8rgFy69DUVIWc6RL033U43v5QSOvolZ4UB49Y
-         DtiJuMHXrMn8FyWPSAz3rD+quEdxxq1ZzAeo8lOQJuvN9m8kB6L+CETuF75WKg4jvJKz
-         6BGQ==
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dn/HeCtFRABC/ah/L2n0R362D6f38waNtj4v0HJdssk=;
+        b=cPN5CiQPwqDFVdbga3mf9g1vnoSpLPtjYCc/HxBibpMnEaRnpr33do1VW5dfiICuTp
+         jEtINCzgBVSdEirrEB2MkxaBSk3sStb8qRwNL7hYWpTOkvgQ+20uCjmn0LpUcuKXcB+8
+         X7rcr9H67tt1H4y6iJA5ohPcnsjhX7Pj96O9PVwlO7GW/0btNxuCSsGormYU4UghSiNm
+         kWCZQxZfYB/ZuVJZRPGfEW0lIKttInLPzFzvoVN0gneMKZEBF8di96124tIyDCQ3rFPC
+         xo1e0R4v3NSrbz13WpomNhr9Ar9ViL/+HWYwYoaGTg4bOgPI7oAyUyZhN3jRF1C9KLup
+         bEiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8+Mm44weplld/dSNNRNUy7NBfXXfQxTylZi90l7dWis=;
-        b=hBFpGfcmIE6fraZwkOzIULljpIpMaRV/6GDoWB5A00wEKKTKF9Rn0gSrtm3raCFx3c
-         p9a14PD5DMxDWtYrVh7DRwdavv2Qbi9TPIqvdgpRiDYF6QmfaNdjz5rR83T/b/nHCZZ8
-         jhTCOgrqUMTEJ6kAnoGtwpZZ0i9mp2ijkBf8pkllgtGgBpEWMAk7VqA1L3pnPhhkNu9b
-         uTMovFrf2axMMVOSS/ASzVNF+Z1K37WYnPQVFeftM6CAbeGIUEjfIQF/k1Tc7BrIEKM1
-         X7Vc8wKS8chMA4FOeV4xCEIlG/oDKxhPjHXpqQSmWj7oUCzjJ2olh9x195mmh1vfowRp
-         WJtA==
-X-Gm-Message-State: AOAM530QfP3Q8o22qvrIkJzlYyDOSaU70YlBSCJa4PfBeZr1r+00SJ9g
-        ytO351WrmL8xa/9AoGqXjUk=
-X-Google-Smtp-Source: ABdhPJyXSihKMIVg9TRTUqhHcpHCcsdtTm44JJEMUD1eZcPni5jfyGby+/1mUJWfiSZK+7QD+mGl1g==
-X-Received: by 2002:ac2:5e91:: with SMTP id b17mr2392285lfq.442.1604751303425;
-        Sat, 07 Nov 2020 04:15:03 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:d646:fcbb:9c5e:1da1])
-        by smtp.googlemail.com with ESMTPSA id y26sm489828lfe.164.2020.11.07.04.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2020 04:15:02 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2] clk: exynos7: Keep aclk_fsys1_200 enabled
-Date:   Sat,  7 Nov 2020 13:14:56 +0100
-Message-Id: <20201107121456.25562-1-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        bh=dn/HeCtFRABC/ah/L2n0R362D6f38waNtj4v0HJdssk=;
+        b=C4iP5ePrtgWXMJrvjUEYbJMHYLHEhodVvp5OIuyOFPF+n84hiE8KTImuzdoC6ruukK
+         RIDP4T5wwcKYWuQt3Q04BhaKi1TfZT9Oz+X956rZMBWA/ibsQTZF0KKsNqSQ3IyFYC/A
+         9h8Umd7CPSrAMOqGBEtR7/vpnUxwnRqEm225iKYUyAUHycjX2etoBXD8XnwmvOOk+rGT
+         dEZk4xpcRSXEyhkL/HAIq4k52FsLO65Ox+EFbkoQrzyCxg9E4csMYL+k6ZyqS0m/2Qq5
+         ASfbQnwRbFm3aseDmIawDVA00Ezuiqy5KmOnV6tRapsNeRwUBXojJIVo31riPtStU+ka
+         VXmg==
+X-Gm-Message-State: AOAM531pJZstT4bEySkTyjFx/VWDtpmohFddqWuuUGFUt+ZKokO+pyFi
+        dTbw/ezHnprS/cMA/Yp+jQ8=
+X-Google-Smtp-Source: ABdhPJxa0jkI7jybW+0vygF/BSBlg4wHi5TOu+7IGUDmgwmNWnxQbSOqQzhXElvDte5P+hUZEBYnrg==
+X-Received: by 2002:ac8:13c1:: with SMTP id i1mr5798465qtj.78.1604755733365;
+        Sat, 07 Nov 2020 05:28:53 -0800 (PST)
+Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
+        by smtp.googlemail.com with ESMTPSA id q1sm2346943qti.95.2020.11.07.05.28.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Nov 2020 05:28:52 -0800 (PST)
+Subject: Re: [PATCH 02/32] spi: dw: Add support for 32-bits ctrlr0 layout
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
+ <20201107081420.60325-3-damien.lemoal@wdc.com>
+From:   Sean Anderson <seanga2@gmail.com>
+Autocrypt: addr=seanga2@gmail.com; prefer-encrypt=mutual; keydata=
+ mQENBFe74PkBCACoLC5Zq2gwrDcCkr+EPGsT14bsxrW07GiYzQhLCgwnPdEpgU95pXltbFhw
+ 46GfyffABWxHKO2x+3L1S6ZxC5AiKbYXo7lpnTBYjamPWYouz+VJEVjUx9aaSEByBah5kX6a
+ lKFZWNbXLAJh+dE1HFaMi3TQXXaInaREc+aO1F7fCa2zNE75ja+6ah8L4TPRFZ2HKQzve0/Y
+ GXtoRw97qmnm3U36vKWT/m2AiLF619F4T1mHvlfjyd9hrVwjH5h/2rFyroXVXBZHGA9Aj8eN
+ F2si35dWSZlIwXkNu9bXp0/pIu6FD0bI+BEkD5S7aH1G1iAcMFi5Qq2RNa041DfQSDDHABEB
+ AAG0K1NlYW4gR2FsbGFnaGVyIEFuZGVyc29uIDxzZWFuZ2EyQGdtYWlsLmNvbT6JAVcEEwEK
+ AEECGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4ACGQEWIQSQYR1bzo1I0gPoYCg+6I/stKEQ
+ bgUCXT+S2AUJB2TlXwAKCRA+6I/stKEQbhNOB/9ooea0hU9Sgh7PBloU6CgaC5mlqPLB7NTp
+ +JkB+nh3Fqhk+qLZwzEynnuDLl6ESpVHIc0Ym1lyF4gT3DsrlGT1h0Gzw7vUwd1+ZfN0CuIx
+ Rn861U/dAUjvbtN5kMBqOI4/5ea+0r7MACcIVnKF/wMXBD8eypHsorT2sJTzwZ6DRCNP70C5
+ N1ahpqqNmXe0uLdP0pu55JCqhrGw2SinkRMdWyhSxT56uNwIVHGhLTqH7Q4t1N6G1EH626qa
+ SvIJsWlNpll6Y3AYLDw2/Spw/hqieS2PQ/Ky3rPZnvJt7/aSNYsKoFGX0yjkH67Uq8Lx0k1L
+ w8jpXnbEPQN3A2ZJCbeM
+Message-ID: <e166976c-5119-a63b-25ff-8c403e4fc0ae@gmail.com>
+Date:   Sat, 7 Nov 2020 08:28:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201107081420.60325-3-damien.lemoal@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This clock must be always enabled to allow access to any registers in
-fsys1 CMU. Until proper solution based on runtime PM is applied
-(similar to what was done for Exynos5433), fix this by calling
-clk_prepare_enable() directly from clock provider driver.
+On 11/7/20 3:13 AM, Damien Le Moal wrote:
+> Synopsis DesignWare DW_apb_ssi version 4 defines a 32-bit layout of
+> the ctrlr0 register for SPI masters. The layout of ctrlr0 is:
+> 
+> |   31 .. 23  | 22 .. 21 | 20 .. 16 |
+> | other stuff | spi_frf  |  dfs_32  |
+> 
+> |   15 .. 10  | 9 .. 8 | 7 .. 6 | 5 .. 4 | 3 .. 0 |
+> | other stuff |  tmod  |  mode  |  frf   |  dfs   |
+> 
+> Th main difference of this layout with the 16-bits version is the data
+> frame format field which resides in bits 16..20 instead of bits 3..0.
+> 
+> Introduce the DW SPI capability flag DW_SPI_CAP_DFS_32 to let a
+> platform signal that this layout is in use. Modify
+> dw_spi_update_config() to test this capability flag to set the data
+> frame format field at the correct register location.
+> 
+> Suggested-by: Sean Anderson <seanga2@gmail.com>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  drivers/spi/spi-dw-core.c | 8 ++++++--
+>  drivers/spi/spi-dw.h      | 9 +++++++++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-dw-core.c b/drivers/spi/spi-dw-core.c
+> index 2e50cc0a9291..841c85247f01 100644
+> --- a/drivers/spi/spi-dw-core.c
+> +++ b/drivers/spi/spi-dw-core.c
+> @@ -311,8 +311,12 @@ void dw_spi_update_config(struct dw_spi *dws, struct spi_device *spi,
+>  	u32 speed_hz;
+>  	u16 clk_div;
+>  
+> -	/* CTRLR0[ 4/3: 0] Data Frame Size */
+> -	cr0 |= (cfg->dfs - 1);
+> +	if (!(dws->caps & DW_SPI_CAP_DFS_32))
+> +		/* CTRLR0[ 4/3: 0] Data Frame Size */
+> +		cr0 |= (cfg->dfs - 1);
+> +	else
+> +		/* CTRLR0[20: 16] Data Frame Size */
+> +		cr0 |= (cfg->dfs - 1) << DWC_APB_CTRLR0_32_DFS_OFFSET;
+>  
+>  	if (!(dws->caps & DW_SPI_CAP_DWC_SSI))
+>  		/* CTRLR0[ 9:8] Transfer Mode */
+> diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
+> index faf40cb66498..48a11a51a407 100644
+> --- a/drivers/spi/spi-dw.h
+> +++ b/drivers/spi/spi-dw.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/io.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/spi/spi-mem.h>
+> +#include <linux/bitfield.h>
+>  
+>  /* Register offsets */
+>  #define DW_SPI_CTRLR0			0x00
+> @@ -72,6 +73,13 @@
+>  #define DWC_SSI_CTRLR0_FRF_OFFSET	6
+>  #define DWC_SSI_CTRLR0_DFS_OFFSET	0
+>  
+> +/*
+> + * Bit fields in CTRLR0 for DWC_apb_ssi v4 32-bits ctrlr0.
+> + * Based on DW_apb_ssi Databook v4.02a.
+> + */
+> +#define DWC_APB_CTRLR0_32_DFS_OFFSET	16
+> +#define DWC_APB_CTRLR0_32_DFS_MASK	GENMASK(20, 16)
+> +
+>  /*
+>   * For Keem Bay, CTRLR0[31] is used to select controller mode.
+>   * 0: SSI is slave
+> @@ -121,6 +129,7 @@ enum dw_ssi_type {
+>  #define DW_SPI_CAP_CS_OVERRIDE		BIT(0)
+>  #define DW_SPI_CAP_KEEMBAY_MST		BIT(1)
+>  #define DW_SPI_CAP_DWC_SSI		BIT(2)
+> +#define DW_SPI_CAP_DFS_32		BIT(3)
+>  
+>  /* Slave spi_transfer/spi_mem_op related */
+>  struct dw_spi_cfg {
+> 
 
-It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
-UFS module is probed before pmic used to power that device.
-In this case defer probe was happening and that clock was disabled by
-UFS driver, causing whole boot to hang on next CMU access.
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
-Changes from v1:
-  - Instead of marking clock as critical, enable it manually in driver.
----
- drivers/clk/samsung/clk-exynos7.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index c1ff715e960c..e05b673e277f 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/of.h>
-+#include <linux/clk.h>
- 
- #include "clk.h"
- #include <dt-bindings/clock/exynos7-clk.h>
-@@ -571,6 +572,10 @@ static const struct samsung_cmu_info top1_cmu_info __initconst = {
- static void __init exynos7_clk_top1_init(struct device_node *np)
- {
- 	samsung_cmu_register_one(np, &top1_cmu_info);
-+	/*
-+	 * Keep top FSYS1 aclk enabled permanently. It's required for CMU register access.
-+	 */
-+	clk_prepare_enable(__clk_lookup("aclk_fsys1_200"));
- }
- 
- CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
--- 
-2.27.0
-
+Reviewed-by: Sean Anderson <seanga2@gmail.com>
