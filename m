@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A354C4742C
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB14C61DD8
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF0F2076E
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FE4420773
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="meQsPxlb"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="Ho1OkZVY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgKHSvd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Nov 2020 13:51:33 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:54145 "EHLO
+        id S1728904AbgKHSvn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Nov 2020 13:51:43 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:55223 "EHLO
         ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728904AbgKHSvc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 13:51:32 -0500
+        with ESMTP id S1728879AbgKHSvb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 13:51:31 -0500
 Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 22C7C23E63;
-        Sun,  8 Nov 2020 19:51:29 +0100 (CET)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 8BD6F23E5B;
+        Sun,  8 Nov 2020 19:51:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604861489;
+        t=1604861488;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JH5gvZvLtD+T6J5gJa7u72Ihh3TsKWgIHzRE/YcUp4c=;
-        b=meQsPxlbtXajdgdWxX06jAMgrkn06oDTGxMF5rh19gKHlrAlSlqSWQxIb9KY9RyBMdkS01
-        m41g+wFvildS8iADOqXtkiyAXkCMKaktUlBael4xagTXeHfVIKrIvrL2dr1c5k+oaew006
-        I1uupI6t7kGO60VbX5nkSWbjvP9OBtU=
+        bh=dNkpy43+hIFFCsfsdbjxvE/UUo6ri9ye43CWs2O33dI=;
+        b=Ho1OkZVY1TDTA3IHM1wUrhm6k1lQj54AHB/5XEHJmirNCfyZH3rA6jqfGhipVd4Nnz1HU/
+        07sC5w4e15qRfjaNkpBFhQKpg49wAsptfIPw/Y628xDX1xk9MLC2eyWn/ivfpZfQPDOcxx
+        2cpL9jyT/igrQkZZaGM5c8tOFKjblls=
 From:   Michael Walle <michael@walle.cc>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -49,9 +49,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Ashish Kumar <Ashish.Kumar@nxp.com>,
         Vladimir Oltean <vladimir.oltean@nxp.com>,
         Michael Walle <michael@walle.cc>
-Subject: [RFC PATCH v3 9/9] arm64: dts: lx2160a: fix FlexSPI clock
-Date:   Sun,  8 Nov 2020 19:51:13 +0100
-Message-Id: <20201108185113.31377-10-michael@walle.cc>
+Subject: [PATCH v3 8/9] arm64: dts: ls1028a: fix FlexSPI clock
+Date:   Sun,  8 Nov 2020 19:51:12 +0100
+Message-Id: <20201108185113.31377-9-michael@walle.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201108185113.31377-1-michael@walle.cc>
 References: <20201108185113.31377-1-michael@walle.cc>
@@ -64,54 +64,53 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Now that we have a proper driver for the FlexSPI interface use it. This
 will fix SCK frequency switching on Layerscape SoCs.
 
+This was tested on the Kontron sl28 board.
+
 Signed-off-by: Michael Walle <michael@walle.cc>
 ---
-Thanks to Vladimir Oltean, this was partially tested on a LX2160A RDB. But
-this patch is marked as RFC nonetheless, because there is too much
-difference in the clock tree between LS1028A and LX2160A. It would be nice
-if someone could test it and add a Tested-by.
-
 Changes since v2:
- - none
+ - use device tree constants for clockgen
+ - also use &fspi_clk for fspi_en clock
 
 Changes since v1:
  - none
 
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-index 0a54a54ec770..130de5f7ff5e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -661,9 +661,20 @@
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 055da2c710c3..8f2f2e2ab87d 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -207,9 +207,20 @@
  		};
  
  		dcfg: syscon@1e00000 {
--			compatible = "fsl,lx2160a-dcfg", "syscon";
+-			compatible = "fsl,ls1028a-dcfg", "syscon";
 +			#address-cells = <1>;
 +			#size-cells = <1>;
-+			compatible = "fsl,lx2160a-dcfg", "syscon", "simple-mfd";
++			compatible = "fsl,ls1028a-dcfg", "syscon", "simple-mfd";
  			reg = <0x0 0x1e00000 0x0 0x10000>;
 +			ranges = <0x0 0x0 0x1e00000 0x10000>;
  			little-endian;
 +
 +			fspi_clk: clock-controller@900 {
-+				compatible = "fsl,lx2160a-flexspi-clk";
++				compatible = "fsl,ls1028a-flexspi-clk";
 +				reg = <0x900 0x4>;
 +				#clock-cells = <0>;
-+				clocks = <&clockgen 4 0>;
++				clocks = <&clockgen QORIQ_CLK_HWACCEL 0>;
 +				clock-output-names = "fspi_clk";
 +			};
  		};
  
- 		tmu: tmu@1f80000 {
-@@ -778,7 +789,7 @@
+ 		rst: syscon@1e60000 {
+@@ -327,8 +338,7 @@
  			      <0x0 0x20000000 0x0 0x10000000>;
  			reg-names = "fspi_base", "fspi_mmap";
  			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
-+			clocks = <&clockgen 4 3>, <&fspi_clk>;
+-			clocks = <&clockgen QORIQ_CLK_HWACCEL 0>,
+-				 <&clockgen QORIQ_CLK_HWACCEL 0>;
++			clocks = <&fspi_clk>, <&fspi_clk>;
  			clock-names = "fspi_en", "fspi";
  			status = "disabled";
  		};
