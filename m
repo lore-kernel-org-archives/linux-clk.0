@@ -2,93 +2,112 @@ Return-Path: <SRS0=iGjC=EO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFDCC388F9
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C89C388F9
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCBA20731
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604860881;
-	bh=BB34i6qX1kFmwVdE8Dd7s1EdHCjK0YFuETZZ7uPAndQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WytEw8e8NASmuhxVk6od5rVxHlkttekXyEvWuzDAdl7a1peOP6zUb2GpCuX1QGr2J
-	 44I/mb8P02ZiPTXjd1q1PI8e5IjaPX2P2iecPOU0Oi83H2tY0j2lAzEI1enrI2yxDP
-	 cKF+0KSwjI5SUhfYKTVTrZ/NYrPkxRPagMDXx6wI=
+	by mail.kernel.org (Postfix) with ESMTP id 7AA1820773
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:51:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="mkVPPTBV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbgKHSlU convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Nov 2020 13:41:20 -0500
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:41532 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbgKHSlU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 13:41:20 -0500
-Received: by mail-ej1-f67.google.com with SMTP id cw8so9133937ejb.8;
-        Sun, 08 Nov 2020 10:41:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Ey9X7mPMBcATwPjhwdqocaqwR7EqA7Y/rZNNR5RdnGY=;
-        b=JXASts0jJ7Y30AAf1vWiurm0v08R813Lm2DBlwZ7CddL+dSNgxA2zDzKKzO+g3X+3L
-         xY6u8uFtmKZ3AeG5vHsMd5yMNIOIA46NBPX6i92Tgu3miW3yqEiieB25VnBVGLTpvv+8
-         Vxu5NKMUIxz4xmGME4GWC9TMNWOW1bqdWaS2MqENsMlfS1KsEK48Fn6vPws2KCSSD4/7
-         cSSWLnXbDtoFijWhvy232SmOaJI81wIngSEcu9Yg3WWOz8Q4oQFsZcOrX0RMCjtFXPDl
-         GKLeLiFcziLdiqCM5rCQE3M8LYXdZKFZ0SefKQs8IXaCUKUolXOTLo36M0EvNMGL0ZOb
-         +n+A==
-X-Gm-Message-State: AOAM533U8L39zhiOsNfE85wY6qUUnWulR9XfgNoHT6EOylBHlQk8tadV
-        0s35/wQk4lZO4cD+fA6/nHw=
-X-Google-Smtp-Source: ABdhPJxPftdb0DK3Om5Civ5TCbbbeFZ38vXXSSJJ0NcXWXu5sfffH/1OSZyDfxSKUk1ndKnQHcAgTA==
-X-Received: by 2002:a17:906:cd0f:: with SMTP id oz15mr11870595ejb.200.1604860878295;
-        Sun, 08 Nov 2020 10:41:18 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id b1sm6945826edh.24.2020.11.08.10.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Nov 2020 10:41:17 -0800 (PST)
-Date:   Sun, 8 Nov 2020 19:41:15 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: exynos7: Keep aclk_fsys1_200 enabled
-Message-ID: <20201108184115.GA7078@kozik-lap>
-References: <20201107121456.25562-1-pawel.mikolaj.chmiel@gmail.com>
+        id S1727910AbgKHSv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Nov 2020 13:51:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbgKHSv0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 13:51:26 -0500
+Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FB0C0613CF;
+        Sun,  8 Nov 2020 10:51:25 -0800 (PST)
+Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 8385422F99;
+        Sun,  8 Nov 2020 19:51:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1604861484;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/I/CIuBByYHKkyIKlrDS4wUEwzh8MXwuUNWSe/E9rCU=;
+        b=mkVPPTBVspEG6szazT+H8AnDI30RsbcyZikq2Ze1SUah+rUUuGHQwWuchxkrY9mS4qMQk/
+        Etg2+SP+eVR+9hsNugI/YPw6a/r5qJmAs16k+rAwwNVgtx8uEBaaMQGSwCaZqxsQDodf3w
+        lWNM1FCd3Vs9IkHYo/o629K1luaq8FE=
+From:   Michael Walle <michael@walle.cc>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        "Y . b . Lu" <yangbo.lu@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        Ashish Kumar <Ashish.Kumar@nxp.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Michael Walle <michael@walle.cc>
+Subject: [PATCH v3 0/9] clk: qoriq fixes and new fsl-flexspi driver
+Date:   Sun,  8 Nov 2020 19:51:04 +0100
+Message-Id: <20201108185113.31377-1-michael@walle.cc>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20201107121456.25562-1-pawel.mikolaj.chmiel@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 07, 2020 at 01:14:56PM +0100, Paweł Chmiel wrote:
-> This clock must be always enabled to allow access to any registers in
-> fsys1 CMU. Until proper solution based on runtime PM is applied
-> (similar to what was done for Exynos5433), fix this by calling
-> clk_prepare_enable() directly from clock provider driver.
-> 
-> It was observed on Samsung Galaxy S6 device (based on Exynos7420), where
-> UFS module is probed before pmic used to power that device.
-> In this case defer probe was happening and that clock was disabled by
-> UFS driver, causing whole boot to hang on next CMU access.
-> 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
-> Changes from v1:
->   - Instead of marking clock as critical, enable it manually in driver.
-> ---
->  drivers/clk/samsung/clk-exynos7.c | 5 +++++
->  1 file changed, 5 insertions(+)
+The first two patches fix clock references for the ENETC and the
+FlexSPI on the LS1028A. These are intended to be picked up by the
+stable branches.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+To circumvent further mistakes, I new device tree constants for
+the qoriq binding. This should make it far easier for humans to
+read the clockgen nodes.
 
-Best regards,
-Krzysztof
+The 4th patch convert the LS1028A device tree include to use the
+new constants.
+
+The last five patches add a clock driver for the FlexSPI
+controller on layerscape SoCs. There is a single register which
+can control the divider value. Right now the LS1028A and the LX2160A
+aren't able to switch the SCK frequency on the FlexSPI interface.
+
+I've included the first four patches in this series, otherwise
+there would be merge conflicts, because they depend on the new
+qoriq device tree constants.
+
+Michael Walle (9):
+  arm64: dts: ls1028a: fix ENETC PTP clock input
+  arm64: dts: ls1028a: fix FlexSPI clock input
+  clk: qoriq: provide constants for the type
+  arm64: dts: ls1028a: use constants in the clockgen phandle
+  clk: divider: add devm_clk_hw_register_divider_table()
+  dt-bindings: clock: document the fsl-flexspi-clk driver
+  clk: fsl-flexspi: new driver
+  arm64: dts: ls1028a: fix FlexSPI clock
+  arm64: dts: lx2160a: fix FlexSPI clock
+
+ .../bindings/clock/fsl,flexspi-clock.yaml     |  55 ++++++
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 174 +++++++++++++-----
+ .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi |  15 +-
+ drivers/clk/Kconfig                           |   8 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-divider.c                     |  34 ++++
+ drivers/clk/clk-fsl-flexspi.c                 | 106 +++++++++++
+ drivers/clk/clk-qoriq.c                       |  13 +-
+ .../dt-bindings/clock/fsl,qoriq-clockgen.h    |  15 ++
+ include/linux/clk-provider.h                  |  27 +++
+ 10 files changed, 393 insertions(+), 55 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,flexspi-clock.yaml
+ create mode 100644 drivers/clk/clk-fsl-flexspi.c
+ create mode 100644 include/dt-bindings/clock/fsl,qoriq-clockgen.h
+
+-- 
+2.20.1
+
