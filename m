@@ -2,98 +2,124 @@ Return-Path: <SRS0=iGjC=EO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B7EC56201
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEBB7C388F9
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 21:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA8C221FA
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 18:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 688FB206B7
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Nov 2020 21:21:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="RO01Jkhd"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jEMHsT/t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbgKHSv1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Nov 2020 13:51:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728770AbgKHSv1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 13:51:27 -0500
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15DEC0613CF;
-        Sun,  8 Nov 2020 10:51:26 -0800 (PST)
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 6B30D23E55;
-        Sun,  8 Nov 2020 19:51:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1604861484;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rQFbSNbCC4d8HsUblJnVNTAfkx/7jXh2YNcs4HFInSI=;
-        b=RO01JkhdETuFgEcI3uS2fKcUslY/N+zmEN3k6N/CHKSI8XwRJ9EZRzX5DZEHAKKOWC3qdR
-        1mLjJjjytZXCU81x/NXwrn+28ioIHFGOOGsxYY1304Axsa1TaaMvSnKb72PKx3RPXfPoA/
-        QJ71NQGuh8BsuuLxdd5UgujoT9xmiS4=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1728038AbgKHVVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Nov 2020 16:21:47 -0500
+Received: from mail-eopbgr80054.outbound.protection.outlook.com ([40.107.8.54]:65088
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727910AbgKHVVq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 8 Nov 2020 16:21:46 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YlpG/hzmMvT0mnI//ZlZ2V4q7W88QH8az508aaPTF3Bxp8JmEyTPJ38iN5E+o0ObQFX5aWIIx2tpPpxaPBDsG9iJClPfdobGHhOOqzbiEj26EiCjhNkuq0r/K19MXstgb81JSOur8kfk9f1R+w9VaZS76B/XjbiTyOEOh0l3069rSo1yekBYsRpn6fo1p37ayKkA4IsZbIQ0p0Z09kT3dnYSFbzhz0UuN30CtG/UetfXc8359CJTGRfpKA5BeDoqLJPqs2vpOct2LcI+xq8+0mYm8YcbEGCcm8QblbQJhFDZFjIc94Az8+rDWaKFS4USePhyTe0oVUQNPT7WlOVIpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y9kDwjD4nJ6zI/8fcCB1CYCEIVBvXaQzXrHHJCAIxE0=;
+ b=d7i16izuT8fH4lmV5oct7iymmec9ZM5HZHQcK6LH78ruRtKzvdslVmIBQ3IYOsc5wbg9otRju8hwyxQDxwyuUrYPrwWpr3fh1kHJ3bgevg8/On1Mstf08+fkxjmSN7PPo8BnTEz4AHYpNcDP8xF49bxwz5jjOQ09fUXWSMsJxpYS3zfWQQWiIU4Tfn99lhdJuTOYeoLxB6cBvGCvk+jGKN9XZRg8KhZaqzsR9WbZB1wgK8RrGhcBV+ss5eI22hqva6B8XpRhR2O7mxt0vqY5Xa7/YhMwNw1UVFaPA/EZ5h70wXWWVZZj4BBfFeCn07hdnEB/xwX8TELS0CJ0blEr7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y9kDwjD4nJ6zI/8fcCB1CYCEIVBvXaQzXrHHJCAIxE0=;
+ b=jEMHsT/t5rDV8dFyinBQr1z4nXmuk8ms9ANDReuu/EFQRvyxU1in0g39u4hF1SaLvk0+500j13uUa8tQpaOuoSgU5zQudSErtPTek8HYskyZb6302cmaAYVPJIl03vZoutDruFCP+DbEbFjhcOEdMEqCK2qkeN5FY7aUkdnHDJ8=
+Received: from AM6PR04MB5685.eurprd04.prod.outlook.com (2603:10a6:20b:a4::30)
+ by AM6PR0402MB3944.eurprd04.prod.outlook.com (2603:10a6:209:1c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.21; Sun, 8 Nov
+ 2020 21:21:40 +0000
+Received: from AM6PR04MB5685.eurprd04.prod.outlook.com
+ ([fe80::c62:742e:bcca:e226]) by AM6PR04MB5685.eurprd04.prod.outlook.com
+ ([fe80::c62:742e:bcca:e226%4]) with mapi id 15.20.3499.032; Sun, 8 Nov 2020
+ 21:21:40 +0000
+From:   Vladimir Oltean <vladimir.oltean@nxp.com>
+To:     Michael Walle <michael@walle.cc>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        "Y . b . Lu" <yangbo.lu@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        Ashish Kumar <Ashish.Kumar@nxp.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH v3 1/9] arm64: dts: ls1028a: fix ENETC PTP clock input
-Date:   Sun,  8 Nov 2020 19:51:05 +0100
-Message-Id: <20201108185113.31377-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201108185113.31377-1-michael@walle.cc>
+        Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
+        "Y.b. Lu" <yangbo.lu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>
+Subject: Re: [RFC PATCH v3 9/9] arm64: dts: lx2160a: fix FlexSPI clock
+Thread-Topic: [RFC PATCH v3 9/9] arm64: dts: lx2160a: fix FlexSPI clock
+Thread-Index: AQHWtgAtKyW9G4asMEKhHnQyvrTE46m+vkqA
+Date:   Sun, 8 Nov 2020 21:21:40 +0000
+Message-ID: <20201108212139.ht22zdk27pyxv6wc@skbuf>
 References: <20201108185113.31377-1-michael@walle.cc>
+ <20201108185113.31377-10-michael@walle.cc>
+In-Reply-To: <20201108185113.31377-10-michael@walle.cc>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: walle.cc; dkim=none (message not signed)
+ header.d=none;walle.cc; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [188.25.2.177]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7d417aa5-7061-4d27-d5b2-08d8842c48b9
+x-ms-traffictypediagnostic: AM6PR0402MB3944:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR0402MB3944C33A20355D5B01D3100FE0EB0@AM6PR0402MB3944.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: snMcSu8VojHihkLWOrl5KqN6udvri8DaRTx9OCTh2YDfbmRgZojr8LgoRmACdXTm2SPEuvrTiJ4RdoWTFH4XrqPotB8H3e+mHYPx+OPD1VPLfaU+n+LAYAVdeTcl5QkRoDWhJEK41bsY6kxX7fWvU5SkYuJtHOO8uzCrga5mH3Gkoa3lCy4dExuj09VRpfKL+hhHN8NdfH3KGG8J0PmnUVpu+GbZz6TXcvE+tM5Vw3M4yfw0pbJOUWVyrgHVpawdE9mk4lw9gJp9IvMi8vtlJDOOqb6BUTkJ/8eDH6AJVCvKLOXgwVpi1qsDM1Qy+9TxkQrhLDzeIO8TNA3B0lCrFg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5685.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(4636009)(366004)(39860400002)(346002)(136003)(396003)(376002)(5660300002)(6512007)(9686003)(6506007)(1076003)(6916009)(44832011)(91956017)(4744005)(66946007)(86362001)(66446008)(8936002)(186003)(76116006)(4326008)(8676002)(478600001)(71200400001)(83380400001)(64756008)(66556008)(316002)(2906002)(6486002)(54906003)(66476007)(33716001)(26005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: NQjvvAarKM1rcLGC2ov8h5K22WmVjd4smR97Di0RakqKHXAnn6beV6Oh83iFS0qE/CTrar7BtF/b6Fkkw+NFVRIZOrJV8G2vAigyWDC1jzIu4w+1065JcLhXbxX8zjWx88C1t9kjbngguE1agJDe5TFNg8wjUu9iGYAHL1Qnyvn4VOq5EyrdPO6gBg5eCv1ymizp0Nr1phYSyyYsktheQHlnJrKhIWW1aBg/mme16lahKpbiEWrnKqJGvUlz1LqhWCgpTmy49sWz/afrNiqCiZs3hCbq1VhQLIQiUaiiTQ81uDksTPu26SIqY/AVkJrnGpVOqkKC3svLr4Rgqo8MRZDvpQX/jurvR/6vtSlB7/NJiTyv7Lq+M0O0CMO982h7htmEn5pJbTsgVeJlpUL6t9cmmm374+hFR4KcrIlKvXoqtXORc/puwYL4tTQSiwjtRfpK+2KP0J0lXY7kAmhkxQJzB0XoOZS6T2eQbupBAdyULeDu1PU/PRv1DfPo7yS9iMwaiQLv2ckjWVcjzBcC8O47JBNCBm7HFMQ0WxjirQY9DeOp2sTfEmaoRHKfFotY/rB9knIpHMmrLCy5jgNdox/He7hL+REzChw4DIeTBVVk3zQ6M6qt/npNFF7gZuCTu60OW0l88PQ+s8cOTxed0A==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <082F56944ED14142BB953CD58602C62A@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5685.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d417aa5-7061-4d27-d5b2-08d8842c48b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2020 21:21:40.5351
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZPsJVh2C/OmF59iwor23jfrKMNzSPDfVpA24ZuIpwZepRlVRLmx84DukoyTbnOwL1WmCdWeOSEd6ZeuEaT0tQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3944
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the LS1028A the ENETC reference clock is connected to 4th HWA output,
-see Figure 7 "Clock subsystem block diagram".
+On Sun, Nov 08, 2020 at 07:51:13PM +0100, Michael Walle wrote:
+> Now that we have a proper driver for the FlexSPI interface use it. This
+> will fix SCK frequency switching on Layerscape SoCs.
+>=20
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+> Thanks to Vladimir Oltean, this was partially tested on a LX2160A RDB. Bu=
+t
+> this patch is marked as RFC nonetheless, because there is too much
+> difference in the clock tree between LS1028A and LX2160A. It would be nic=
+e
+> if someone could test it and add a Tested-by.
 
-The PHC may run with a wrong frequency. ptp_qoriq_auto_config() will read
-the clock speed of the clock given in the device tree. It is likely that,
-on the reference board this wasn't noticed because both clocks have the
-same frequency. But this must not be always the case. Fix it.
-
-Fixes: 49401003e260 ("arm64: dts: fsl: ls1028a: add ENETC 1588 timer node")
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-Changes since v2:
- - new patch
-
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 2c831d814572..e22f29aa4658 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -961,7 +961,7 @@
- 			ethernet@0,4 {
- 				compatible = "fsl,enetc-ptp";
- 				reg = <0x000400 0 0 0 0>;
--				clocks = <&clockgen 4 0>;
-+				clocks = <&clockgen 2 3>;
- 				little-endian;
- 				fsl,extts-fifo;
- 			};
--- 
-2.20.1
-
+You want someone to probe the SCK frequency? I expect that if frequency
+switching works on LS1028A, and the lx2160a_flexspi_divs table is
+correct (which, based on the documentation for FlexSPICR1[FlexSPI_CLK_DIV],
+it is), then it would work on LX2160A too?
+Is there a simple test that can be made in order to trivially determine
+whether the frequencies are correct?=
