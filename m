@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460F2C2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89A0C5517A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9CB620897
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96EF620E65
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:36:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mymailcheap.com header.i=@mymailcheap.com header.b="qXiHMHWe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="xNsQjkv6"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mymailcheap.com header.i=@mymailcheap.com header.b="doPNJ93G";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="GoZvr8ns"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbgKIFeo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 00:34:44 -0500
-Received: from relay-us1.mymailcheap.com ([51.81.35.219]:59544 "EHLO
+        id S1729521AbgKIFgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 00:36:07 -0500
+Received: from relay-us1.mymailcheap.com ([51.81.35.219]:59546 "EHLO
         relay-us1.mymailcheap.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729458AbgKIFeo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 00:34:44 -0500
+        with ESMTP id S1729507AbgKIFgG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 00:36:06 -0500
 Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
-        by relay-us1.mymailcheap.com (Postfix) with ESMTPS id BA27020DFB
-        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:34:42 +0000 (UTC)
-Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.154])
-        by relay5.mymailcheap.com (Postfix) with ESMTPS id 75EFD2008F
-        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:34:40 +0000 (UTC)
-Received: from filter1.mymailcheap.com (filter1.mymailcheap.com [149.56.130.247])
-        by relay4.mymailcheap.com (Postfix) with ESMTPS id 4460D3F162;
-        Mon,  9 Nov 2020 06:34:36 +0100 (CET)
+        by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 61E2520DFB
+        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:36:05 +0000 (UTC)
+Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.100])
+        by relay5.mymailcheap.com (Postfix) with ESMTPS id F223B2008F
+        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:36:02 +0000 (UTC)
+Received: from filter2.mymailcheap.com (filter2.mymailcheap.com [91.134.140.82])
+        by relay1.mymailcheap.com (Postfix) with ESMTPS id 39C6D3F1C5;
+        Mon,  9 Nov 2020 05:35:59 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
-        by filter1.mymailcheap.com (Postfix) with ESMTP id 755962A34E;
-        Mon,  9 Nov 2020 00:34:35 -0500 (EST)
+        by filter2.mymailcheap.com (Postfix) with ESMTP id 81A4C2A522;
+        Mon,  9 Nov 2020 06:35:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mymailcheap.com;
-        s=default; t=1604900075;
-        bh=SwvQnJtqUgOiKdb4MC207JwiS1YKn0JykmKbXGcSsCE=;
+        s=default; t=1604900158;
+        bh=tQSP6jEb+nlCIph8viKb/ttszWBAoq6XZvKRuUKb5CA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qXiHMHWe8z8lBfXIgkpyoKw4/thsd2g3Iuqz7QeGUz4Rik1+k/teJQP5ea1wrNHg6
-         lTK2ax7gB63cBHZy6GEg+O32uzvCsbYxD0GRAqd/b6OfnwXZJgeULxun3Z6JbEtUPH
-         BPFYsnIZ50u9tFU9kPCrkEDYMaBTiGcjR7rKMdmY=
-X-Virus-Scanned: Debian amavisd-new at filter1.mymailcheap.com
-Received: from filter1.mymailcheap.com ([127.0.0.1])
-        by localhost (filter1.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qmJiP_2da-GT; Mon,  9 Nov 2020 00:34:34 -0500 (EST)
+        b=doPNJ93GoJjTZl5QedjD4phG2TDg6WsG4I+sQWSUzbmLAiCGr9nKjLYSugpB4sImz
+         RmZtevE3K6Be7T84cT+os7JcOQJP33qLTgfcfRhkEzZRIeLYBROrKFazyYnB0qUs8k
+         gEEuHBt0bXz2Yqoi1v514B7aOguGKHkMLFnoZfmg=
+X-Virus-Scanned: Debian amavisd-new at filter2.mymailcheap.com
+Received: from filter2.mymailcheap.com ([127.0.0.1])
+        by localhost (filter2.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id CvlzvEp4KGyU; Mon,  9 Nov 2020 06:35:57 +0100 (CET)
 Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
         (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by filter1.mymailcheap.com (Postfix) with ESMTPS;
-        Mon,  9 Nov 2020 00:34:34 -0500 (EST)
+        by filter2.mymailcheap.com (Postfix) with ESMTPS;
+        Mon,  9 Nov 2020 06:35:57 +0100 (CET)
 Received: from [148.251.23.173] (ml.mymailcheap.com [148.251.23.173])
-        by mail20.mymailcheap.com (Postfix) with ESMTP id 80CD641E32;
-        Mon,  9 Nov 2020 05:34:33 +0000 (UTC)
+        by mail20.mymailcheap.com (Postfix) with ESMTP id D7A9A41E32;
+        Mon,  9 Nov 2020 05:35:56 +0000 (UTC)
 Authentication-Results: mail20.mymailcheap.com;
-        dkim=pass (1024-bit key; unprotected) header.d=aosc.io header.i=@aosc.io header.b="xNsQjkv6";
+        dkim=pass (1024-bit key; unprotected) header.d=aosc.io header.i=@aosc.io header.b="GoZvr8ns";
         dkim-atps=neutral
 AI-Spam-Status: Not processed
 Received: from ice-e5v2.lan (unknown [59.41.163.164])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail20.mymailcheap.com (Postfix) with ESMTPSA id CDDDE41E32;
-        Mon,  9 Nov 2020 05:34:22 +0000 (UTC)
+        by mail20.mymailcheap.com (Postfix) with ESMTPSA id 0B91C41E32;
+        Mon,  9 Nov 2020 05:35:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-        t=1604900065; bh=SwvQnJtqUgOiKdb4MC207JwiS1YKn0JykmKbXGcSsCE=;
+        t=1604900151; bh=tQSP6jEb+nlCIph8viKb/ttszWBAoq6XZvKRuUKb5CA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xNsQjkv6u2WGKbu7wGyhNi77itJ4KVRL59E/R693qWX29uQMzGoPFsui69w4GgoJn
-         CtuUpMMSBvPaIWY4JANUYaJ3+lGo/NRUTklnwHxPyACX5Obj2Ui/YC8oNlxTzPDIo/
-         SZxvItj+UKR2i43UCffRsY+l/DXguyFaEvYFY08I=
+        b=GoZvr8nsejd+rcofAvapYEAmgKRr/rarnr76ZgkcGjmNMEPXTjZMFQmmiWo7i6zxQ
+         ghLCsJS4s65tZ84txvnkmjsIq2ZzakjTYTPf1NDFrDBTv6bcrw8yVOc9bCY02d1z2R
+         DUrLP1pIP25Ld+9StZ2CfUQkHTfKRR9gXJvzK5O8=
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -76,15 +76,15 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH 1/2] clk: sunxi-ng: a64: disable dividers in PLL-CPUX
-Date:   Mon,  9 Nov 2020 13:33:57 +0800
-Message-Id: <20201109053358.54220-2-icenowy@aosc.io>
+Subject: [RFC PATCH 2/2] clk: sunxi-ng: a64: disable mux and pll notifiers for CPUX reclocking
+Date:   Mon,  9 Nov 2020 13:35:37 +0800
+Message-Id: <20201109053537.54450-1-icenowy@aosc.io>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201109053358.54220-1-icenowy@aosc.io>
 References: <20201109053358.54220-1-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 80CD641E32
+X-Rspamd-Queue-Id: D7A9A41E32
 X-Spamd-Result: default: False [4.90 / 20.00];
          ARC_NA(0.00)[];
          RCVD_VIA_SMTP_AUTH(0.00)[];
@@ -113,143 +113,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the user manual, PLL-CPUX have two dividers, in which P is
-only allowed when the desired rate is less than 240MHz. As the CCU
-framework have no such feature yet and the clock rate that allows P is
-much lower than where we normally operate, disallow the usage of P
-factor now.
+After the dividers of PLL-CPUX disabled, there's no need for PLL-CPUX to
+be gated when tweaking the clock of CPUX, thus reparenting CPUX to
+osc24M is also now not needed.
 
-M is not restricted in the user manual, however according to the BSP PLL
-setup table (see [1]), it's not used at all. To follow what the BSP
-does, disable this factor too.
+Remove these notifiers.
 
-Disabling the dividers will make it possible to remove the need to
-switch to osc24M when doing frequency scaling on PLL-CPUX.
-
-In order to prevent boot-time usage of dividers (current known mainline
-U-Boot implementation use m = 2), tweaking of the factors are done when
-probing CCU driver.
+Preventing reparenting CPUX is said to be able to help solving the issue
+that the timer jumps backward according to Ondrej Jirman.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 79 ++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
 diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 5f66bf879772..6108d150a0e3 100644
+index 6108d150a0e3..67d570efe5bd 100644
 --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
 +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -4,6 +4,7 @@
-  */
+@@ -943,7 +943,6 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
+-	int ret;
  
- #include <linux/clk-provider.h>
-+#include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-@@ -23,13 +24,14 @@
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -1029,18 +1028,7 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 		writel(val, reg + SUN50I_A64_CPUX_AXI_REG);
+ 	}
  
- #include "ccu-sun50i-a64.h"
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+-	if (ret)
+-		return ret;
+-
+-	/* Gate then ungate PLL CPU after any rate changes */
+-	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
+-
+-	/* Reparent CPU during PLL CPU rate changes */
+-	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
+-				  &sun50i_a64_cpu_nb);
+-
+-	return 0;
++	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
+ }
  
-+#define SUN50I_A64_PLL_CPUX_REG		0x000
- static struct ccu_nkmp pll_cpux_clk = {
- 	.enable		= BIT(31),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT(8, 5),
- 	.k		= _SUNXI_CCU_MULT(4, 2),
--	.m		= _SUNXI_CCU_DIV(0, 2),
--	.p		= _SUNXI_CCU_DIV_MAX(16, 2, 4),
-+	.m		= _SUNXI_CCU_DIV_MAX(16, 2, 1),
-+	.p		= _SUNXI_CCU_DIV_MAX(0, 2, 1),
- 	.common		= {
- 		.reg		= 0x000,
- 		.hw.init	= CLK_HW_INIT("pll-cpux",
-@@ -215,6 +217,7 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
- 
-+#define SUN50I_A64_CPUX_AXI_REG		0x050
- static const char * const cpux_parents[] = { "osc32k", "osc24M",
- 					     "pll-cpux", "pll-cpux" };
- static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
-@@ -954,6 +957,78 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- 
- 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
- 
-+	/* Disable any possible dividers on PLL-CPUX */
-+	val = readl(reg + SUN50I_A64_PLL_CPUX_REG);
-+	if (val & (GENMASK(17, 16) | GENMASK(1, 0))) {
-+		unsigned int n, k, m, p;
-+
-+		n = ((val & GENMASK(12, 8)) >> 8) + 1;
-+		k = ((val & GENMASK(5, 4)) >> 4) + 1;
-+		m = (val & GENMASK(1, 0)) + 1;
-+		p = 1 << ((val & GENMASK(17, 16)) >> 16);
-+
-+		/*
-+		 * Known mainline U-Boot revisions never uses
-+		 * divider p, and it will only use m when k = 3 or 4.
-+		 * Specially judge for these cases, to satisfy
-+		 * what will most possibly happen.
-+		 * For m = 2 and k = 3, fractional change will be
-+		 * applied to n, to mostly keep the clock rate.
-+		 * For m = 2 and k = 4, just change to m = 1 and k = 2.
-+		 * For other cases, just try to divide it from N.
-+		 */
-+		if (p >= 2) {
-+			n /= p;
-+			p = 1;
-+		}
-+
-+		if (m == 2) {
-+			if (k == 3) {
-+				k = 2;
-+				n = n * 3 / 4;
-+				m = 1;
-+			}
-+			if (k == 4) {
-+				k = 2;
-+				m = 1;
-+			}
-+		}
-+
-+		if (m >= 2) {
-+			n /= m;
-+			m = 1;
-+		}
-+
-+		/* The user manual constrains n*k >= 10 */
-+		if (n * k < 10) {
-+			n = 10;
-+			k = 1;
-+		}
-+
-+		/* Switch CPUX clock to osc24M temporarily */
-+		val = readl(reg + SUN50I_A64_CPUX_AXI_REG);
-+		val &= ~GENMASK(17, 16);
-+		val |= (1 << 16);
-+		writel(val, reg + SUN50I_A64_CPUX_AXI_REG);
-+		udelay(1);
-+
-+		/* Setup PLL-CPUX with new factors */
-+		val = ((n - 1) << 8) | ((k - 1) << 4);
-+		writel(val, reg + SUN50I_A64_PLL_CPUX_REG);
-+		val |= BIT(31);
-+		writel(val, reg + SUN50I_A64_PLL_CPUX_REG);
-+		do {
-+			/* Wait the PLL to lock */
-+			val = readl(reg + SUN50I_A64_PLL_CPUX_REG);
-+		} while (!(val & BIT(28)));
-+
-+		/* Switch CPUX clock back to PLL-CPUX */
-+		val = readl(reg + SUN50I_A64_CPUX_AXI_REG);
-+		val &= ~GENMASK(17, 16);
-+		val |= (2 << 16);
-+		writel(val, reg + SUN50I_A64_CPUX_AXI_REG);
-+	}
-+
- 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
- 	if (ret)
- 		return ret;
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
 -- 
 2.28.0
