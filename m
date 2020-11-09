@@ -2,110 +2,128 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40A3C388F9
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 03:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A488AC5517A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8FA206C1
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 03:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6599820E65
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 05:34:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sMcA3xod"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mymailcheap.com header.i=@mymailcheap.com header.b="ZySsbN7E";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="xsZga7Ng"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbgKIDVZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Nov 2020 22:21:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728191AbgKIDVZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 22:21:25 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AD6C0613CF;
-        Sun,  8 Nov 2020 19:21:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=9ccmp8c2bM7yoQL9161bvYGYwR+a7M197QPEnd7pBS8=; b=sMcA3xodBofJCZFcVjN+CXOwGD
-        3UMUWvK7TnT5vvv3P12VZi29eJ40OTnWoEv+GnCBVO6WPQbWqsIQxfn2ebL7QSXYddlSb+mGiCmWZ
-        nhUOWQVFRppWLbiL7YSNz6mtD+uxXeRI6uMCyx5myzYA8Mzo16Iaoz3yUsHY4nA1NUF1V1e6bJMhd
-        Lp+Dh5YpCyflbGyThrOnDxJNN9OEH6AW6Xnq4aPpOCqFb10l5C9kzGD7m1FDi1t7jMxgf1eAxFIHs
-        ZQb8r/JJsRsGUoMYS++aje65p13oYrLmu5/1lwv2lEXAcnXG8CE46CJ4u/gsSUrzI6SH2lQOimRn8
-        i6eIO7og==;
-Received: from [2601:1c0:6280:3f0::64ec] (helo=smtpauth.infradead.org)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kbxk9-0003It-9p; Mon, 09 Nov 2020 03:21:22 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>, linux-next@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH -next v2] clk: pm_clock: provide stubs for pm_clk_runtime_suspend/_resume
-Date:   Sun,  8 Nov 2020 19:21:15 -0800
-Message-Id: <20201109032115.10610-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.26.2
+        id S1729466AbgKIFeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 00:34:37 -0500
+Received: from relay-us1.mymailcheap.com ([51.81.35.219]:59542 "EHLO
+        relay-us1.mymailcheap.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729458AbgKIFeg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 00:34:36 -0500
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+        by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 5425F20DFB
+        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:34:35 +0000 (UTC)
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.119.155])
+        by relay5.mymailcheap.com (Postfix) with ESMTPS id 229A82008F
+        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 05:34:32 +0000 (UTC)
+Received: from filter1.mymailcheap.com (filter1.mymailcheap.com [149.56.130.247])
+        by relay3.mymailcheap.com (Postfix) with ESMTPS id BE8963ECDF;
+        Mon,  9 Nov 2020 06:34:27 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by filter1.mymailcheap.com (Postfix) with ESMTP id 0DFF42A34E;
+        Mon,  9 Nov 2020 00:34:27 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mymailcheap.com;
+        s=default; t=1604900067;
+        bh=kezafdLDXkw9ugbI/iH8HxtYMYAGAZ09l+KOu0Rdrf4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZySsbN7E32/eGSN/+WvsFDWqM3wOIg91npbNVENW20Bef+pf5FzfqdMPJDxymtvrU
+         6VKX25IZ2YNQsPMqea2CwLjypAtR9ZfaQDWMbKbmQcj8owGByZZlrkEvlzm0Q+/M/X
+         +hEhVX8KyblocEl+wmSuzLx/WeKbDA9mj1h4BzxU=
+X-Virus-Scanned: Debian amavisd-new at filter1.mymailcheap.com
+Received: from filter1.mymailcheap.com ([127.0.0.1])
+        by localhost (filter1.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id fwhZdbuYE7bk; Mon,  9 Nov 2020 00:34:26 -0500 (EST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by filter1.mymailcheap.com (Postfix) with ESMTPS;
+        Mon,  9 Nov 2020 00:34:26 -0500 (EST)
+Received: from [213.133.102.83] (ml.mymailcheap.com [213.133.102.83])
+        by mail20.mymailcheap.com (Postfix) with ESMTP id 9718341E35;
+        Mon,  9 Nov 2020 05:34:24 +0000 (UTC)
+Authentication-Results: mail20.mymailcheap.com;
+        dkim=pass (1024-bit key; unprotected) header.d=aosc.io header.i=@aosc.io header.b="xsZga7Ng";
+        dkim-atps=neutral
+AI-Spam-Status: Not processed
+Received: from ice-e5v2.lan (unknown [59.41.163.164])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail20.mymailcheap.com (Postfix) with ESMTPSA id 0952E41E32;
+        Mon,  9 Nov 2020 05:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+        t=1604900053; bh=kezafdLDXkw9ugbI/iH8HxtYMYAGAZ09l+KOu0Rdrf4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xsZga7Ng8zIDYchIUW6V+U/0g5fk0/6gq+txyRU3EtqJ2Yj8uVAUUQ8bHe7K1psVs
+         qqDiM+ZRq2YdR1kd53Jqsql8+uHEqRluwIFpXOSmvvH9MdY3ew93mpOYTlLbKiuZdi
+         2505TmcnUG8RKcfjCX0qGRzdfoO0V1ysFe9nMoJA=
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Ondrej Jirman <megous@megous.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH 0/2] clk: sunxi-ng: a64: Remove CPUX mux switching
+Date:   Mon,  9 Nov 2020 13:33:56 +0800
+Message-Id: <20201109053358.54220-1-icenowy@aosc.io>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 9718341E35
+X-Spamd-Result: default: False [4.90 / 20.00];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         ARC_NA(0.00)[];
+         R_DKIM_ALLOW(0.00)[aosc.io:s=default];
+         RECEIVED_SPAMHAUS_PBL(0.00)[59.41.163.164:received];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         R_MISSING_CHARSET(2.50)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DMARC_NA(0.00)[aosc.io];
+         BROKEN_CONTENT_TYPE(1.50)[];
+         R_SPF_SOFTFAIL(0.00)[~all];
+         ML_SERVERS(-3.10)[213.133.102.83];
+         DKIM_TRACE(0.00)[aosc.io:+];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         MID_CONTAINS_FROM(1.00)[];
+         RCVD_NO_TLS_LAST(0.10)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:24940, ipnet:213.133.96.0/19, country:DE];
+         RCVD_COUNT_TWO(0.00)[2];
+         HFILTER_HELO_BAREIP(3.00)[213.133.102.83,1]
+X-Rspamd-Server: mail20.mymailcheap.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add stubs for pm_clk_runtime_suspend() and pm_clk_runtime_resume()
-to fix build errors when CONFIG_PM and CONFIG_PM_CLK are not enabled.
+According to Ondrej Jirman, switching of the mux of CPUX clock is one of
+the sources of timer jumps on A64 (and maybe this will also lead to
+timer jump on H3).
 
-Fixes these build errors:
+This patchset tries to remove this mux by disabling the dividers in
+PLL-CPUX. Both the lack of reparent when relocking and the prevention of
+PLL-CPUX dividers are behaviors of the BSP kernel.
 
-../drivers/clk/qcom/camcc-sc7180.c: In function ‘cam_cc_sc7180_probe’:
-../drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function ‘pm_clk_runtime_resume’; did you mean ‘pm_runtime_resume’? [-Werror=implicit-function-declaration]
-  ret = pm_clk_runtime_resume(&pdev->dev);
-        ^~~~~~~~~~~~~~~~~~~~~
-../drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function ‘pm_clk_runtime_suspend’; did you mean ‘pm_runtime_suspend’? [-Werror=implicit-function-declaration]
-   pm_clk_runtime_suspend(&pdev->dev);
-   ^~~~~~~~~~~~~~~~~~~~~~
+Icenowy Zheng (2):
+  clk: sunxi-ng: a64: disable dividers in PLL-CPUX
+  clk: sunxi-ng: a64: disable mux and pll notifiers for CPUX reclocking
 
-Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: linux-pm@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: Taniya Das <tdas@codeaurora.org>
-Cc: linux-next@vger.kernel.org
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
-v2: move the function stubs to be inside the #else (for !CONFIG_PM)
-    as suggested by Nathan to fix another build error
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 93 ++++++++++++++++++++++-----
+ 1 file changed, 78 insertions(+), 15 deletions(-)
 
- include/linux/pm_clock.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- linux-next-20201106.orig/include/linux/pm_clock.h
-+++ linux-next-20201106/include/linux/pm_clock.h
-@@ -27,6 +27,14 @@ extern int pm_clk_runtime_resume(struct
- 	.runtime_resume = pm_clk_runtime_resume,
- #else
- #define USE_PM_CLK_RUNTIME_OPS
-+static inline int pm_clk_runtime_suspend(struct device *dev)
-+{
-+	return 0;
-+}
-+static inline int pm_clk_runtime_resume(struct device *dev)
-+{
-+	return 0;
-+}
- #endif
- 
- #ifdef CONFIG_PM_CLK
+-- 
+2.28.0
