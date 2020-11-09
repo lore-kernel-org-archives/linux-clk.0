@@ -2,154 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E9FC388F7
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A750C388F7
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9F8620897
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFF1E20853
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:05:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e694j70u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tvuwBxx+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbgKIOtW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 09:49:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37902 "EHLO
+        id S1731726AbgKIPF7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 10:05:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730892AbgKIOtV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 09:49:21 -0500
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4639C0613CF;
-        Mon,  9 Nov 2020 06:49:21 -0800 (PST)
-Received: by mail-qt1-x843.google.com with SMTP id f93so6098684qtb.10;
-        Mon, 09 Nov 2020 06:49:21 -0800 (PST)
+        with ESMTP id S1730350AbgKIPFH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 10:05:07 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB1EC0613CF;
+        Mon,  9 Nov 2020 07:05:07 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id q19so8979371ljc.10;
+        Mon, 09 Nov 2020 07:05:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l2UTPfjMOy4W/99qQHXOpF1Lpnf53K1hsAMO22jvIkY=;
-        b=e694j70uTcmP3PIO7aPqHeFYsM6YllddqDAzZr1cXTDGdP5GV31JlqTiGFOGK7WwXJ
-         yVZ2bkJ4fZkdLuj2ZcIfqRVTQrjvtriS+Cv+6CuOS8y4MfJtoPRFXdKe1lwjw3CiM/2x
-         z+mkAv0KcHb391bjam54gdM2ODfWH6qVZisIQXTLuNB71Yz9ouCRIHCN3AGi5Unj97YU
-         LKnusTZeQFNoDADrnNx5attcaYoj6GMheflr3Ml4io48C/Jn41V/falwIU+Dnq8L6n5R
-         rMoa73GTwWypCkxL1QPG7PHsPRVjjcKb66vQ2hf9U3zmncgGH/6N/RgsE3BFmKRYUDo9
-         p2eg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9Fi5Hhyl7gelaqOmcgAJ5M1MZ/xVgsIzn2nzYEuzd1A=;
+        b=tvuwBxx+Iv7Mda16xZUTuva+GASbvOuK2AZr0+o3QLQXajOmpBYoQ2ksHZau/GPle3
+         BnyfEpgqAizWpJZOUyG9cc81uDC4ctAzj7jerluvanbj5XzZFcl+OzIrG+T5tfN9aIQe
+         qx/6Xe8wJYguBk8LCwmig2QjdWGpEZwb9WPzzUuXAkETNGNZ59CSb5RNkjQCYBW0S1w8
+         xj5wtAlX1JDVF8R5eGZmckL1XFGUUoWqxvKVZN15IE90rKivrim8RltvVTvr7Nr2BXDk
+         bFLJt3HzZtH14a/FB373L3IG43mtwtw6/dazdPun9KjLC0WrFU8wdfw5s2VAMqyp/Rho
+         043w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=l2UTPfjMOy4W/99qQHXOpF1Lpnf53K1hsAMO22jvIkY=;
-        b=YFGPk+lqkG9OADW0w3hCckG/e+W1WdsS+yzjCzsbfw52bW4hIT0hkTNvGjLPDX1BYA
-         yCxUvKFlf5D5tMpiyST39kStaMGS4tohm88LQHveyfjRTfo9kwXBxt0c597W3C4LZaTW
-         r85hNhiEIxbqv4MxkAM/xYCJtdYZsBZap5othvHxGicUPx1OclzuUIKA4h34IdUA6Q5i
-         4CuOG56zkRnvaAyZ0ojzBXPEoa7Hntp4G6w/ekche5KC2qjQMNb1//t6ZRzqSM0qtz7z
-         MyhJc1dSJ2OUvp3tr5WbEa1HMEZPkVxw+O8ne987Hz1TrLH4jYxzPEnxud/Ps0QJg3G3
-         d2+A==
-X-Gm-Message-State: AOAM53377YEQlCXkOnIYyjMo3Zi0xxVuteeQMnsTe67U+i3S81Brk2Cg
-        eWtxnuMDCw8UTssYPtDhaffvQ4BGLluA+w==
-X-Google-Smtp-Source: ABdhPJwudeu3VY4+R4JvfKhFzFtuA6XAa0PXz5m/Acmue+Jt3OltUI7YziPpbKc1TVe9+di/2uPvlA==
-X-Received: by 2002:ac8:3499:: with SMTP id w25mr13388711qtb.44.1604933360938;
-        Mon, 09 Nov 2020 06:49:20 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
-        by smtp.googlemail.com with ESMTPSA id q20sm5956338qtn.80.2020.11.09.06.49.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Nov 2020 06:49:20 -0800 (PST)
-Subject: Re: [PATCH 02/32] spi: dw: Add support for 32-bits ctrlr0 layout
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9Fi5Hhyl7gelaqOmcgAJ5M1MZ/xVgsIzn2nzYEuzd1A=;
+        b=nsx7gMPcxktCEypAmjdc+KRcsgMZo6om9YKS+UpR/dsBZpHxWtsEoU7EwMw4SkKsVo
+         xTB9hO2D+QO9B4dGzyK/nwSjeTXBYHOa9+WkJr1SNXVuVOLkVZV0+1XvCvGEApK6ke5i
+         vax6Tw8IwMKnu6GaRGCWz7OOXSllYcDQQHi7UHBPBVh5iA3mKbDyUNa3pJxexuJJ4Xte
+         pg0IuKJUXxi0/4PbsZxkbw/RD3cKv4mxbSNTxtmPnvvFUnelA2UHNC7EneKOZiYU2eXI
+         4OayFnYw73iOYjFgiWBs15xpVLKDn9o/v2klvr+roSSPJdbZAghCWPQiwzxBtKAMVtar
+         8J/w==
+X-Gm-Message-State: AOAM531lVwLZ5Ptml5AHdrOTIwBaOgc7pG7SvQ0LR9QRPTpKhuL5KgIt
+        h4+3Sb17b2x7D9av8BwAmSw=
+X-Google-Smtp-Source: ABdhPJz8ZT9IqU+wtfbrOXL+B3JrzFSM+Jqh+Cc+c2Mi1XuR1K1aT8v1QkfGUTsrsUzG/NrzrDIviQ==
+X-Received: by 2002:a2e:b4f3:: with SMTP id s19mr4036487ljm.196.1604934305938;
+        Mon, 09 Nov 2020 07:05:05 -0800 (PST)
+Received: from mobilestation ([95.79.141.114])
+        by smtp.gmail.com with ESMTPSA id w12sm2216805ljo.67.2020.11.09.07.05.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2020 07:05:05 -0800 (PST)
+Date:   Mon, 9 Nov 2020 18:05:03 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH 01/32] of: Fix property supplier parsing
+Message-ID: <20201109150503.ijc72z76i6wjxfhx@mobilestation>
 References: <20201107081420.60325-1-damien.lemoal@wdc.com>
- <20201107081420.60325-3-damien.lemoal@wdc.com>
- <20201109142529.tt5ojjyn36vd3ohe@mobilestation>
- <6dc6d52e-a39d-c351-5280-71b9e8eafe37@gmail.com>
- <CAHp75VejtoTRAM1JmGib3OaJwzuw9Bb-qb08+XhdZUOuzTGUKw@mail.gmail.com>
- <CAHp75Vc+h5PCqBUnyFshw8RE4zWusE+zdvKKSxBxfFw1_5k0vQ@mail.gmail.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Autocrypt: addr=seanga2@gmail.com; prefer-encrypt=mutual; keydata=
- mQENBFe74PkBCACoLC5Zq2gwrDcCkr+EPGsT14bsxrW07GiYzQhLCgwnPdEpgU95pXltbFhw
- 46GfyffABWxHKO2x+3L1S6ZxC5AiKbYXo7lpnTBYjamPWYouz+VJEVjUx9aaSEByBah5kX6a
- lKFZWNbXLAJh+dE1HFaMi3TQXXaInaREc+aO1F7fCa2zNE75ja+6ah8L4TPRFZ2HKQzve0/Y
- GXtoRw97qmnm3U36vKWT/m2AiLF619F4T1mHvlfjyd9hrVwjH5h/2rFyroXVXBZHGA9Aj8eN
- F2si35dWSZlIwXkNu9bXp0/pIu6FD0bI+BEkD5S7aH1G1iAcMFi5Qq2RNa041DfQSDDHABEB
- AAG0K1NlYW4gR2FsbGFnaGVyIEFuZGVyc29uIDxzZWFuZ2EyQGdtYWlsLmNvbT6JAVcEEwEK
- AEECGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4ACGQEWIQSQYR1bzo1I0gPoYCg+6I/stKEQ
- bgUCXT+S2AUJB2TlXwAKCRA+6I/stKEQbhNOB/9ooea0hU9Sgh7PBloU6CgaC5mlqPLB7NTp
- +JkB+nh3Fqhk+qLZwzEynnuDLl6ESpVHIc0Ym1lyF4gT3DsrlGT1h0Gzw7vUwd1+ZfN0CuIx
- Rn861U/dAUjvbtN5kMBqOI4/5ea+0r7MACcIVnKF/wMXBD8eypHsorT2sJTzwZ6DRCNP70C5
- N1ahpqqNmXe0uLdP0pu55JCqhrGw2SinkRMdWyhSxT56uNwIVHGhLTqH7Q4t1N6G1EH626qa
- SvIJsWlNpll6Y3AYLDw2/Spw/hqieS2PQ/Ky3rPZnvJt7/aSNYsKoFGX0yjkH67Uq8Lx0k1L
- w8jpXnbEPQN3A2ZJCbeM
-Message-ID: <7e8bba71-763e-2e09-88d2-d736a56a6920@gmail.com>
-Date:   Mon, 9 Nov 2020 09:49:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ <20201107081420.60325-2-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc+h5PCqBUnyFshw8RE4zWusE+zdvKKSxBxfFw1_5k0vQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201107081420.60325-2-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/9/20 9:41 AM, Andy Shevchenko wrote:
-> On Mon, Nov 9, 2020 at 4:40 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->>
->> On Mon, Nov 9, 2020 at 4:34 PM Sean Anderson <seanga2@gmail.com> wrote:
->>> On 11/9/20 9:25 AM, Serge Semin wrote:
->>>> On Sat, Nov 07, 2020 at 05:13:50PM +0900, Damien Le Moal wrote:
->>
->> ...
->>
->>>> Are you sure they have been moved from [0, 3] to [16, 20]? I don't have the
->>>> manual for the 4.0x version of the core, but according to this patch:
->>>> https://patchwork.kernel.org/project/spi-devel-general/patch/1575907443-26377-7-git-send-email-wan.ahmad.zainie.wan.mohamad@intel.com/
->>>> it has been ok to use the lowest four bits for DFS setting. Is the commit
->>>> message misleading there?
->>>
->>> This commit message is a truncated version of [1].
->>
->> I don't see how they are related.
+On Sat, Nov 07, 2020 at 05:13:49PM +0900, Damien Le Moal wrote:
+> The DesignWare GPIO driver gpio-dwapb ("snps,dw-apb-gpio" or
+> "apm,xgene-gpio-v2" compatible string) defines the property
+> "snps,nr-gpios" for the user to specify the number of GPIOs available
+> on a port. The "-gpios" suffix of this property name ends up being
+> interpreted as a cell reference when properties are parsed in
+> of_link_to_suppliers(), leading to error messages such as:
+> 
+> OF: /soc/bus@50200000/gpio-controller@50200000/gpio-port@0: could not
+> find phandle
+> 
+> Fix this by manually defining a parse_gpios() function which ignores
+> this property, skipping the search for the supplier and thus avoiding
+> the device tree parsing error.
 
-I think this commit message is specifically taken from v3 of that patch
-[2]. However, I had not gotten a chance to have a look at the datasheet
-at that point, so it is a bit misleading (e.g. showing dfs for devices
-with SSI_MAX_XFER_SIZE=32, even though it is all zeros for those
-devices). In any case, the diagram is taken from that patch.
+That's why I have introduced the "ngpios" property support and marked the 
+"snps,nr-gpios" as deprecated here:
+https://lkml.org/lkml/2020/7/22/1298
 
-[2] https://patchwork.ozlabs.org/project/uboot/patch/20200914153503.91983-7-seanga2@gmail.com/
+to encourage the later one from being used in favor of the first one. So I
+suggest for you to convert your dts'es (if you have ones) to using the
+"ngpios" property anyway.
 
 > 
-> For DW_ssi v1.x DFS is always for transfers up to 32-bit.
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  drivers/of/property.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 408a7b5f06a9..d16111c0d6da 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1308,7 +1308,6 @@ DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
+>  DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
+>  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+>  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+> -DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
+>  
+>  static struct device_node *parse_iommu_maps(struct device_node *np,
+>  					    const char *prop_name, int index)
+> @@ -1319,6 +1318,22 @@ static struct device_node *parse_iommu_maps(struct device_node *np,
+>  	return of_parse_phandle(np, prop_name, (index * 4) + 1);
+>  }
+>  
 
-Do you mean DWC_ssi?
+> +static struct device_node *parse_gpios(struct device_node *np,
+> +				       const char *prop_name, int index)
+> +{
+> +	/*
+> +	 * Quirck for the DesignWare gpio-dwapb GPIO driver which defines
+           ^
+           |
+           Quirk?     
+> +	 * the "snps,nr-gpios" property to indicate the total number of GPIOs
+> +	 * available. As this conflict with "xx-gpios" reference properties,
+> +	 * ignore it.
+> +	 */
+> +	if (strcmp(prop_name, "snps,nr-gpios") == 0)
+> +		return NULL;
+> +
+> +	return parse_suffix_prop_cells(np, prop_name, index,
+> +				       "-gpios", "#gpio-cells");
+> +}
+> +
 
-> 
->>> Importantly, DFS is
->>> valid when SSI_MAX_XFER_SIZE=16. When it =32, then DFS_32 must be used
->>> (since DFS is constant 0xF). Since SSI_MAX_XFER_SIZE is a synthesis
->>> parameter, there exist devices where DFS must be used, and also where
->>> DFS_32 must be used.
->>>
->>> [1] https://patchwork.ozlabs.org/project/uboot/patch/20201016225755.302659-10-seanga2@gmail.com/
-> 
-> 
-> 
+Personally I'd prefer to convert all the dts-es to using the "ngpios' instead of
+the vendor-specific property. That's why I haven't fixed the problem the way you
+suggest in the first place, to encourage people to send the patches with such
+fixes. Anyway it's up to the OF-subsystem maintainers to decide whether to accept
+this quirk.
 
+-Sergey
+
+>  static const struct supplier_bindings of_supplier_bindings[] = {
+>  	{ .parse_prop = parse_clocks, },
+>  	{ .parse_prop = parse_interconnects, },
+> -- 
+> 2.28.0
+> 
