@@ -2,67 +2,131 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC29AC4741F
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 10:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A79C2D0A3
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62C2E206B2
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 10:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604917176;
-	bh=ujdtjONW6IMNC9nuw+sGKzRyA8g09Lt4MGCnjePFh/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bWMSJwguiT2QNAyr04EHaysM2y8Qb2zo9vsYtXygNLf8ma+g2vsiGRqr1E04vPZKR
-	 NxKYcsHQBkUWhiHwJc96L1aftdHonaJfPz1YKCp4JF41M2ImHW8zDAMwRszZJQxOfO
-	 AjaC7Q8RnSjE2RL5jtwdGBtT5OuyKUMVuqPbfX5g=
+	by mail.kernel.org (Postfix) with ESMTP id 84E042083B
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbgKIKTg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 05:19:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgKIKTf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Nov 2020 05:19:35 -0500
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC70020684;
-        Mon,  9 Nov 2020 10:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604917175;
-        bh=ujdtjONW6IMNC9nuw+sGKzRyA8g09Lt4MGCnjePFh/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fjmKBgS8WrHpIl2O8dJ0a8cIhDE1OYrlZzMEZclXByLig/MGB43JCIt99psN3y3U/
-         3hvOTQA1fPAGyHz69hORtqMSiZz5n0ikDRW1hfiITnK5Qpzv9+CogDs8f0k7hgNwdh
-         rF0Ia6SgNh0KdwUNsqJRXV+bQXNK8XyQMN2WYvKo=
-Date:   Mon, 9 Nov 2020 11:20:35 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: Re: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static
- function
-Message-ID: <20201109102035.GA1238638@kroah.com>
-References: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
+        id S1727311AbgKIMCe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 07:02:34 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2366 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbgKIMCd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 07:02:33 -0500
+Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4CV8kN5hRxz52X9;
+        Mon,  9 Nov 2020 20:02:20 +0800 (CST)
+Received: from [10.140.157.68] (10.140.157.68) by
+ dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 9 Nov 2020 20:02:30 +0800
+Subject: Re: [PATCH V2] clk: hisilicon: Free clk_data and unmap region
+ obtained by of_iomap
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Markus Elfring <Markus.Elfring@web.de>
+References: <20201109180920.43193-1-gengdongjiu@huawei.com>
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+Message-ID: <eedf6ba7-90e0-c21c-a808-29bd69b1d423@huawei.com>
+Date:   Mon, 9 Nov 2020 20:02:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <20201109180920.43193-1-gengdongjiu@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.140.157.68]
+X-ClientProxiedBy: dggeme710-chm.china.huawei.com (10.1.199.106) To
+ dggeme755-chm.china.huawei.com (10.3.19.101)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 05:37:07PM +0800, Weiyi Lu wrote:
-> mtk_clk_register_mux() should be a static function
+add Markus
+
+On 2020/11/10 2:09, Dongjiu Geng wrote:
+> Free memory mapping and free clk_data, if clock initialization
+> is not successful.
 > 
-> Fixes: a3ae549917f16 ("clk: mediatek: Add new clkmux register API")
-> Cc: <stable@vger.kernel.org>
-
-Why is this for stable trees?
-
+> Fixes: 75af25f581b1 ("clk: hisi: remove static variable")
+> Fixes: 62ac983b6141 ("clk: hisilicon: add hi3620_mmc_clks")
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> ---
+>  drivers/clk/hisilicon/clk-hi3620.c |  8 ++++++--
+>  drivers/clk/hisilicon/clk.c        | 11 ++++++-----
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+> index a3d04c7c3da8..864d2ddfc73c 100644
+> --- a/drivers/clk/hisilicon/clk-hi3620.c
+> +++ b/drivers/clk/hisilicon/clk-hi3620.c
+> @@ -464,11 +464,11 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+>  
+>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+>  	if (WARN_ON(!clk_data))
+> -		return;
+> +		goto unmap_io;
+>  
+>  	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
+>  	if (!clk_data->clks)
+> -		return;
+> +		goto free_clk_data;
+>  
+>  	for (i = 0; i < num; i++) {
+>  		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
+> @@ -478,6 +478,10 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+>  
+>  	clk_data->clk_num = num;
+>  	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +free_clk_data:
+> +	kfree(clk_data);
+> +unmap_io:
+> +	iounmap(base);
+>  }
+>  
+>  CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
+> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+> index 54d9fdc93599..da655683710f 100644
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+> @@ -65,25 +65,26 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+>  	base = of_iomap(np, 0);
+>  	if (!base) {
+>  		pr_err("%s: failed to map clock registers\n", __func__);
+> -		goto err;
+> +		return NULL;
+>  	}
+>  
+>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+>  	if (!clk_data)
+> -		goto err;
+> +		goto unmap_io;
+>  
+>  	clk_data->base = base;
+>  	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
+>  	if (!clk_table)
+> -		goto err_data;
+> +		goto free_clk_data;
+>  
+>  	clk_data->clk_data.clks = clk_table;
+>  	clk_data->clk_data.clk_num = nr_clks;
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+>  	return clk_data;
+> -err_data:
+> +free_clk_data:
+>  	kfree(clk_data);
+> -err:
+> +unmap_io:
+> +	iounmap(base);
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(hisi_clk_init);
+> 
