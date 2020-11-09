@@ -2,138 +2,110 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD3EC388F9
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 02:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40A3C388F9
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 03:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5F95206CB
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 02:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8FA206C1
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 03:21:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iQOAIKDn"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sMcA3xod"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbgKICXD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Nov 2020 21:23:03 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40475 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727979AbgKICXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 21:23:03 -0500
-X-UUID: 48fb9cfabaf5400d9fa57c8c3402e5b2-20201109
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=X+emFbkKDWXUxsl/dlhhvQTCk9MsT2snLQrN+cM5D/U=;
-        b=iQOAIKDn/exKrF6hFBz12QJOxoCuzkJETAkXSAQkJbmOu4FUcv0uo7Ku84yay3jnIGtd8KzL7u3Xu2qZOEvwerncwY0h4pzTUMojuEeIBPgJbKSpB1ponePX6v12Mv2aYFibbtmZPa/wM+4zwiO9w0AA7RklNdPhZkBrHsVvzrA=;
-X-UUID: 48fb9cfabaf5400d9fa57c8c3402e5b2-20201109
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1281214121; Mon, 09 Nov 2020 10:22:56 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 9 Nov 2020 10:22:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 9 Nov 2020 10:22:48 +0800
-Message-ID: <1604888568.15580.1.camel@mtksdaap41>
-Subject: Re: [PATCH 10/12] clk: mediatek: Clean up the pll_en_bit from
- en_mask on MT8183
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Fabien Parent <fparent@baylibre.com>
-CC:     Nicolas Boichat <drinkcat@chromium.org>,
-        <srv_heupstream@mediatek.com>, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Date:   Mon, 9 Nov 2020 10:22:48 +0800
-In-Reply-To: <CAOwMV_xh0=D+sEDZM4AOqid6XtGCenyjdzm=Go77DBaiuwe1Lg@mail.gmail.com>
-References: <1603371365-30863-1-git-send-email-weiyi.lu@mediatek.com>
-         <1603371365-30863-11-git-send-email-weiyi.lu@mediatek.com>
-         <CAOwMV_xh0=D+sEDZM4AOqid6XtGCenyjdzm=Go77DBaiuwe1Lg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1728814AbgKIDVZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Nov 2020 22:21:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbgKIDVZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Nov 2020 22:21:25 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AD6C0613CF;
+        Sun,  8 Nov 2020 19:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=9ccmp8c2bM7yoQL9161bvYGYwR+a7M197QPEnd7pBS8=; b=sMcA3xodBofJCZFcVjN+CXOwGD
+        3UMUWvK7TnT5vvv3P12VZi29eJ40OTnWoEv+GnCBVO6WPQbWqsIQxfn2ebL7QSXYddlSb+mGiCmWZ
+        nhUOWQVFRppWLbiL7YSNz6mtD+uxXeRI6uMCyx5myzYA8Mzo16Iaoz3yUsHY4nA1NUF1V1e6bJMhd
+        Lp+Dh5YpCyflbGyThrOnDxJNN9OEH6AW6Xnq4aPpOCqFb10l5C9kzGD7m1FDi1t7jMxgf1eAxFIHs
+        ZQb8r/JJsRsGUoMYS++aje65p13oYrLmu5/1lwv2lEXAcnXG8CE46CJ4u/gsSUrzI6SH2lQOimRn8
+        i6eIO7og==;
+Received: from [2601:1c0:6280:3f0::64ec] (helo=smtpauth.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kbxk9-0003It-9p; Mon, 09 Nov 2020 03:21:22 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>, linux-next@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH -next v2] clk: pm_clock: provide stubs for pm_clk_runtime_suspend/_resume
+Date:   Sun,  8 Nov 2020 19:21:15 -0800
+Message-Id: <20201109032115.10610-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTEwLTI4IGF0IDExOjI3ICswMTAwLCBGYWJpZW4gUGFyZW50IHdyb3RlOg0K
-PiBIaSBXZWl5aSwNCj4gDQo+IFRoZSBjbG9jayBkcml2ZXIgZm9yIE1UODE2NyBoYXMgYmVlbiBt
-ZXJnZWQgaW4gdjUuMTAtcmMxLiBDYW4geW91IGFsc28NCj4gYXBwbHkgdGhlIGNoYW5nZSB0byB0
-aGF0IGRyaXZlci4NCj4gVGhhbmsgeW91DQo+IA0KPiBGYWJpZW4NCj4gDQoNCkhpIEZhYmllbiwN
-Cg0KRG9uZS4gdXBkYXRlIGluIHYyLg0KTWFueSB0aGFua3MuDQoNCj4gT24gRnJpLCBPY3QgMjMs
-IDIwMjAgYXQgMjo0NCBBTSBXZWl5aSBMdSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPiB3cm90ZToN
-Cj4gPg0KPiA+IHJlbW92ZSBwbGxfZW5fYml0KGJpdDApIGZyb20gZW5fbWFzayB0byBtYWtlIGVu
-X21hc2sgYSBwdXJlIGVuX21hc2sNCj4gPiB0aGF0IG9ubHkgdXNlZCBmb3IgcGxsIGRpdmlkZXJz
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNv
-bT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE4My5jIHwgMjIg
-KysrKysrKysrKystLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9u
-cygrKSwgMTEgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
-bWVkaWF0ZWsvY2xrLW10ODE4My5jIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE4My5j
-DQo+ID4gaW5kZXggNTA0Njg1Mi4uNjA4MTA4YyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Ns
-ay9tZWRpYXRlay9jbGstbXQ4MTgzLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9j
-bGstbXQ4MTgzLmMNCj4gPiBAQCAtMTEyMSwzNCArMTEyMSwzNCBAQA0KPiA+ICB9Ow0KPiA+DQo+
-ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbXRrX3BsbF9kYXRhIHBsbHNbXSA9IHsNCj4gPiAtICAg
-ICAgIFBMTF9CKENMS19BUE1JWEVEX0FSTVBMTF9MTCwgImFybXBsbF9sbCIsIDB4MDIwMCwgMHgw
-MjBDLCAweDAwMDAwMDAxLA0KPiA+ICsgICAgICAgUExMX0IoQ0xLX0FQTUlYRURfQVJNUExMX0xM
-LCAiYXJtcGxsX2xsIiwgMHgwMjAwLCAweDAyMEMsIDAsDQo+ID4gICAgICAgICAgICAgICAgIEhB
-VkVfUlNUX0JBUiB8IFBMTF9BTywgQklUKDI0KSwgMjIsIDgsIDB4MDIwNCwgMjQsIDB4MCwgMHgw
-LCAwLA0KPiA+ICAgICAgICAgICAgICAgICAweDAyMDQsIDAsIDAsIGFybXBsbF9kaXZfdGFibGUp
-LA0KPiA+IC0gICAgICAgUExMX0IoQ0xLX0FQTUlYRURfQVJNUExMX0wsICJhcm1wbGxfbCIsIDB4
-MDIxMCwgMHgwMjFDLCAweDAwMDAwMDAxLA0KPiA+ICsgICAgICAgUExMX0IoQ0xLX0FQTUlYRURf
-QVJNUExMX0wsICJhcm1wbGxfbCIsIDB4MDIxMCwgMHgwMjFDLCAwLA0KPiA+ICAgICAgICAgICAg
-ICAgICBIQVZFX1JTVF9CQVIgfCBQTExfQU8sIEJJVCgyNCksIDIyLCA4LCAweDAyMTQsIDI0LCAw
-eDAsIDB4MCwgMCwNCj4gPiAgICAgICAgICAgICAgICAgMHgwMjE0LCAwLCAwLCBhcm1wbGxfZGl2
-X3RhYmxlKSwNCj4gPiAtICAgICAgIFBMTChDTEtfQVBNSVhFRF9DQ0lQTEwsICJjY2lwbGwiLCAw
-eDAyOTAsIDB4MDI5QywgMHgwMDAwMDAwMSwNCj4gPiArICAgICAgIFBMTChDTEtfQVBNSVhFRF9D
-Q0lQTEwsICJjY2lwbGwiLCAweDAyOTAsIDB4MDI5QywgMCwNCj4gPiAgICAgICAgICAgICAgICAg
-SEFWRV9SU1RfQkFSIHwgUExMX0FPLCBCSVQoMjQpLCAyMiwgOCwgMHgwMjk0LCAyNCwgMHgwLCAw
-eDAsIDAsDQo+ID4gICAgICAgICAgICAgICAgIDB4MDI5NCwgMCwgMCksDQo+ID4gLSAgICAgICBQ
-TEwoQ0xLX0FQTUlYRURfTUFJTlBMTCwgIm1haW5wbGwiLCAweDAyMjAsIDB4MDIyQywgMHgwMDAw
-MDAwMSwNCj4gPiArICAgICAgIFBMTChDTEtfQVBNSVhFRF9NQUlOUExMLCAibWFpbnBsbCIsIDB4
-MDIyMCwgMHgwMjJDLCAwLA0KPiA+ICAgICAgICAgICAgICAgICBIQVZFX1JTVF9CQVIsIEJJVCgy
-NCksIDIyLCA4LCAweDAyMjQsIDI0LCAweDAsIDB4MCwgMCwNCj4gPiAgICAgICAgICAgICAgICAg
-MHgwMjI0LCAwLCAwKSwNCj4gPiAtICAgICAgIFBMTChDTEtfQVBNSVhFRF9VTklWMlBMTCwgInVu
-aXYycGxsIiwgMHgwMjMwLCAweDAyM0MsIDB4MDAwMDAwMDEsDQo+ID4gKyAgICAgICBQTEwoQ0xL
-X0FQTUlYRURfVU5JVjJQTEwsICJ1bml2MnBsbCIsIDB4MDIzMCwgMHgwMjNDLCAwLA0KPiA+ICAg
-ICAgICAgICAgICAgICBIQVZFX1JTVF9CQVIsIEJJVCgyNCksIDIyLCA4LCAweDAyMzQsIDI0LCAw
-eDAsIDB4MCwgMCwNCj4gPiAgICAgICAgICAgICAgICAgMHgwMjM0LCAwLCAwKSwNCj4gPiAtICAg
-ICAgIFBMTF9CKENMS19BUE1JWEVEX01GR1BMTCwgIm1mZ3BsbCIsIDB4MDI0MCwgMHgwMjRDLCAw
-eDAwMDAwMDAxLA0KPiA+ICsgICAgICAgUExMX0IoQ0xLX0FQTUlYRURfTUZHUExMLCAibWZncGxs
-IiwgMHgwMjQwLCAweDAyNEMsIDAsDQo+ID4gICAgICAgICAgICAgICAgIDAsIDAsIDIyLCA4LCAw
-eDAyNDQsIDI0LCAweDAsIDB4MCwgMCwgMHgwMjQ0LCAwLCAwLA0KPiA+ICAgICAgICAgICAgICAg
-ICBtZmdwbGxfZGl2X3RhYmxlKSwNCj4gPiAtICAgICAgIFBMTChDTEtfQVBNSVhFRF9NU0RDUExM
-LCAibXNkY3BsbCIsIDB4MDI1MCwgMHgwMjVDLCAweDAwMDAwMDAxLA0KPiA+ICsgICAgICAgUExM
-KENMS19BUE1JWEVEX01TRENQTEwsICJtc2RjcGxsIiwgMHgwMjUwLCAweDAyNUMsIDAsDQo+ID4g
-ICAgICAgICAgICAgICAgIDAsIDAsIDIyLCA4LCAweDAyNTQsIDI0LCAweDAsIDB4MCwgMCwgMHgw
-MjU0LCAwLCAwKSwNCj4gPiAtICAgICAgIFBMTChDTEtfQVBNSVhFRF9UVkRQTEwsICJ0dmRwbGwi
-LCAweDAyNjAsIDB4MDI2QywgMHgwMDAwMDAwMSwNCj4gPiArICAgICAgIFBMTChDTEtfQVBNSVhF
-RF9UVkRQTEwsICJ0dmRwbGwiLCAweDAyNjAsIDB4MDI2QywgMCwNCj4gPiAgICAgICAgICAgICAg
-ICAgMCwgMCwgMjIsIDgsIDB4MDI2NCwgMjQsIDB4MCwgMHgwLCAwLCAweDAyNjQsIDAsIDApLA0K
-PiA+IC0gICAgICAgUExMKENMS19BUE1JWEVEX01NUExMLCAibW1wbGwiLCAweDAyNzAsIDB4MDI3
-QywgMHgwMDAwMDAwMSwNCj4gPiArICAgICAgIFBMTChDTEtfQVBNSVhFRF9NTVBMTCwgIm1tcGxs
-IiwgMHgwMjcwLCAweDAyN0MsIDAsDQo+ID4gICAgICAgICAgICAgICAgIEhBVkVfUlNUX0JBUiwg
-QklUKDIzKSwgMjIsIDgsIDB4MDI3NCwgMjQsIDB4MCwgMHgwLCAwLA0KPiA+ICAgICAgICAgICAg
-ICAgICAweDAyNzQsIDAsIDApLA0KPiA+IC0gICAgICAgUExMKENMS19BUE1JWEVEX0FQTEwxLCAi
-YXBsbDEiLCAweDAyQTAsIDB4MDJCMCwgMHgwMDAwMDAwMSwNCj4gPiArICAgICAgIFBMTChDTEtf
-QVBNSVhFRF9BUExMMSwgImFwbGwxIiwgMHgwMkEwLCAweDAyQjAsIDAsDQo+ID4gICAgICAgICAg
-ICAgICAgIDAsIDAsIDMyLCA4LCAweDAyQTAsIDEsIDB4MDJBOCwgMHgwMDE0LCAwLCAweDAyQTQs
-IDAsIDB4MDJBMCksDQo+ID4gLSAgICAgICBQTEwoQ0xLX0FQTUlYRURfQVBMTDIsICJhcGxsMiIs
-IDB4MDJiNCwgMHgwMmM0LCAweDAwMDAwMDAxLA0KPiA+ICsgICAgICAgUExMKENMS19BUE1JWEVE
-X0FQTEwyLCAiYXBsbDIiLCAweDAyYjQsIDB4MDJjNCwgMCwNCj4gPiAgICAgICAgICAgICAgICAg
-MCwgMCwgMzIsIDgsIDB4MDJCNCwgMSwgMHgwMkJDLCAweDAwMTQsIDEsIDB4MDJCOCwgMCwgMHgw
-MkI0KSwNCj4gPiAgfTsNCj4gPg0KPiA+IC0tDQo+ID4gMS44LjEuMS5kaXJ0eQ0KPiA+IF9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+ID4gbGludXgtYXJt
-LWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gPiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
-ZC5vcmcNCj4gPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bnV4LWFybS1rZXJuZWwNCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fDQo+IExpbnV4LW1lZGlhdGVrIG1haWxpbmcgbGlzdA0KPiBMaW51eC1tZWRp
-YXRla0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21h
-aWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsNCg0K
+Add stubs for pm_clk_runtime_suspend() and pm_clk_runtime_resume()
+to fix build errors when CONFIG_PM and CONFIG_PM_CLK are not enabled.
 
+Fixes these build errors:
+
+../drivers/clk/qcom/camcc-sc7180.c: In function ‘cam_cc_sc7180_probe’:
+../drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function ‘pm_clk_runtime_resume’; did you mean ‘pm_runtime_resume’? [-Werror=implicit-function-declaration]
+  ret = pm_clk_runtime_resume(&pdev->dev);
+        ^~~~~~~~~~~~~~~~~~~~~
+../drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function ‘pm_clk_runtime_suspend’; did you mean ‘pm_runtime_suspend’? [-Werror=implicit-function-declaration]
+   pm_clk_runtime_suspend(&pdev->dev);
+   ^~~~~~~~~~~~~~~~~~~~~~
+
+Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-pm@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: Taniya Das <tdas@codeaurora.org>
+Cc: linux-next@vger.kernel.org
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+v2: move the function stubs to be inside the #else (for !CONFIG_PM)
+    as suggested by Nathan to fix another build error
+
+ include/linux/pm_clock.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- linux-next-20201106.orig/include/linux/pm_clock.h
++++ linux-next-20201106/include/linux/pm_clock.h
+@@ -27,6 +27,14 @@ extern int pm_clk_runtime_resume(struct
+ 	.runtime_resume = pm_clk_runtime_resume,
+ #else
+ #define USE_PM_CLK_RUNTIME_OPS
++static inline int pm_clk_runtime_suspend(struct device *dev)
++{
++	return 0;
++}
++static inline int pm_clk_runtime_resume(struct device *dev)
++{
++	return 0;
++}
+ #endif
+ 
+ #ifdef CONFIG_PM_CLK
