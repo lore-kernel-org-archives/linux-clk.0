@@ -2,91 +2,116 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F87FC2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB037C63697
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C93C207BC
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E613208FE
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 12:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604925794;
-	bh=mdCQiXxd9t13NKXB/BYRJOOlnXCt3idWsu2zuWDVwmU=;
-	h=Subject:From:To:Cc:References:Date:In-Reply-To:List-ID:From;
-	b=Mgdmr828FZA3mCUKUsNEAqEehDuSpTECLGZCdOvmuWkKcMsuUUsvZ4lsBeB+J4Mrg
-	 pJhAW3jRnOuCzjmXBQP9o2PYOvcUGfgfkPwB6xtjUJ8rFnT1fkEb94RIcZyuuB1TL8
-	 HanwJ6jMn5+Cs+NovFGWCyczc5QNoCwXsfuGnpUA=
+	s=default; t=1604926294;
+	bh=Bei45B1lXJhHW9eoNuI13U+f97K1W4Zn41krW3jveY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ahma8gU/SmnH+MJ48iN2dfOwx8mlqQWTf1FyTsaBVrtBHJo4W7Mn7k/8BKVvXU14l
+	 NSHmiGNyZWoski1L1LzWkQLujQcFKBneaNTX5gaXA7yuVj20OerrE4MR1VWiE+ZvO/
+	 7af8IJXUl0RiYAAgU/lNhSKmFOiScA0lHxysWO7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbgKIMnN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 07:43:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48036 "EHLO mail.kernel.org"
+        id S1729571AbgKIMvd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 07:51:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726956AbgKIMnN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Nov 2020 07:43:13 -0500
-Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729751AbgKIMvc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Nov 2020 07:51:32 -0500
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1D3920659;
-        Mon,  9 Nov 2020 12:43:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FF2020657;
+        Mon,  9 Nov 2020 12:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604925793;
-        bh=mdCQiXxd9t13NKXB/BYRJOOlnXCt3idWsu2zuWDVwmU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=qR2i3eUADy9Vg/23HK4wX1PX6H8vRpsPo48OCWCIaW+t+PCFHaB4jzbRkpuUcUSzD
-         y3wW26/lJl5c2XVFxXKUmHYrp/YKTzdKTgGutDRrGGeFzZ34LjBL77ozcxNHa2Ab6v
-         iUnSyykQLr5Pql4btXDRdIbPYaLGEjUOd7ZIrGOo=
-Subject: Re: [PATCH v2] clk: exynos7: Keep aclk_fsys1_200 enabled
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20201107121456.25562-1-pawel.mikolaj.chmiel@gmail.com>
- <a2fdef20-9c0d-ee59-bc2f-411391f4f58b@kernel.org>
-Message-ID: <42957109-931e-31ca-7273-55fd42fc0fd1@kernel.org>
-Date:   Mon, 9 Nov 2020 13:43:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        s=default; t=1604926285;
+        bh=Bei45B1lXJhHW9eoNuI13U+f97K1W4Zn41krW3jveY0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b4FQ89bxQNkt5pc41PUHmso0qKRSgWcUz7/8ZFk+eWlXnAzUEdBPB9yedV7c9y2DK
+         yar7WVDj/6tzsvBdG+nh7by2h8bWAGhXTV42Qe1NGvSRCYBL/oN3X3VVlYUQUMuhel
+         HyHrInH6f+tVF7brZK3IqULe0QTfSx7R7lKr/kBM=
+Date:   Mon, 9 Nov 2020 12:51:11 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH 00/32] RISC-V Kendryte K210 support improvments
+Message-ID: <20201109125111.GA6380@sirena.org.uk>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <a2fdef20-9c0d-ee59-bc2f-411391f4f58b@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Content-Disposition: inline
+In-Reply-To: <20201107081420.60325-1-damien.lemoal@wdc.com>
+X-Cookie: This fortune is false.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/9/20 13:32, Sylwester Nawrocki wrote:
-> -------------8<----------------
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index 87ee1ba..9ecf498 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -570,7 +570,15 @@ static const struct samsung_cmu_info top1_cmu_info __initconst = {
->   
->   static void __init exynos7_clk_top1_init(struct device_node *np)
->   {
-> -       samsung_cmu_register_one(np, &top1_cmu_info);
-> +       struct samsung_clk_provider *ctx;
-> +       struct clk_hw **hws;
-> +
-> +       ctx = samsung_cmu_register_one(np, &top1_cmu_info);
-> +       if (!ctx)
-> +               return;
-> +       hws = ctx->clk_data.hws;
-> +
-> +       clk_prepare_enable(hws[CLK_ACLK_FSYS1_200]);
 
-Of course it was supposed to be:
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  clk_prepare_enable(hws[CLK_ACLK_FSYS1_200]->clk);
+On Sat, Nov 07, 2020 at 05:13:48PM +0900, Damien Le Moal wrote:
 
->   }
->   
->   CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
-> -------------8<----------------
+> The first patch of this series is a fix of the device tree parsing code.
+> Without this fix, a warning is generated when parsing Designware gpio
+> controller nodes.
+
+> The following 6 patches are fixes and improvements to the Designware SPI
+> driver to enable support for the MMC-spi slot found on all K210 boards.
+
+> Pathes 8 to 13 are various fixes for riscv arch code and riscv
+> dependent devices. Of not here is patch 11 which fix system call
+> execution in the no MMU case, and patch 13 which simplifies DTB builtin
+> handling.
+
+> The following patches 14 to 25 implement and document idevice tree
+> mapping of several drivers for the K210 SoC: clock driver, reset
+> controller and pin function management (pinctrl).
+
+> Patches 26 to 31 update the existing K210 device tree and device new
+> device tree files for several K210 based boards: the MAIX Bit,
+> MAIXSUINO, MAIX Dock and MAIX Go boards from SiPeed and the KD233
+> development board from Kendryte.
+
+Please don't mix unrelated changes into a single series like this -
+patch serieses this big are generally something to be avoided at the
+best of times since they're a bit overwhelming in people's inboxes and
+when unrelated changes are put in a single series it makes dependencies
+between patches unclear which can hold things up.  It is better to send
+the changes for each subsystem separately, it makes life easier all
+round.
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+pOz4ACgkQJNaLcl1U
+h9CEewf/d71EbjpYPiGmBNkn7r8dGy0+h6PgyHq7EGg+UJFjwHeWcI7BlgbNNsZt
+RwiaM5PsMdGYvoflet8kQiuKiEh8E+cgmdMcb/vey4ge0Ay1WXmVg7Uqo4dFGKOn
+wQUaomO+FwtYgXYV2G4bG4B9Ib4AsOqQn9VvhVl5lT/nPnH76Tj37FpNrMKBEjV7
+IXBPp7kCwEOzPCJRRHGlos5b54D8XRYJg3YiAbJX087dS/vAva/DbwVZXTJeNDQ1
+oKmgYnjdKHuE00Mhh224U/Km5GE00uOtFl91yTbAR56Nl0o+gMik42IBMq8NJXmn
+tozkEgo+8a5912q/BqKHL87oPW1HeQ==
+=lS0/
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
