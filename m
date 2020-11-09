@@ -2,86 +2,122 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F301C2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 09:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E242C4741F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 09:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36F1F20719
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 09:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A84B20789
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 09:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="aUSm5LzE"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="HGsjjCZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbgKIJhN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 04:37:13 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40484 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727959AbgKIJhN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 04:37:13 -0500
-X-UUID: eea5f82a0ec046a1bfee65d48b211755-20201109
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=y18PdOi4AAYhrSttdKfUyYbFn/VzBQNwj5oUxyKSku8=;
-        b=aUSm5LzEOcmmlkpLQNc3aUnoBvMulocdAIaCV6qXRPWFOaiD1APDYmIwUDzdxLoIr6HIlAJbcuR40ER2mHZRD64sBaxIM0Wad721m/aL50nJO0k6w1nK0KtVZRt75d5/w9/hP0PbxkbiaInoyqsBvyxVozz8vIC4JGd5JGCE7Bg=;
-X-UUID: eea5f82a0ec046a1bfee65d48b211755-20201109
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1914843392; Mon, 09 Nov 2020 17:37:10 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 9 Nov 2020 17:37:08 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 9 Nov 2020 17:37:08 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static function
-Date:   Mon, 9 Nov 2020 17:37:07 +0800
-Message-ID: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
+        id S1729121AbgKIJnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 04:43:07 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:39089 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728802AbgKIJnG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 04:43:06 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 4A7CE22F2D;
+        Mon,  9 Nov 2020 10:43:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1604914983;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TISJX/0g0eTQvbb/iznKAoeAEUeQtZ4L3gDonZPa6fg=;
+        b=HGsjjCZPzp70oOWnoVY8PrIEv7hr8tj+nm0oJ/1dojWxsXcVt6k5hCgWmYJ+/AFRjB/7ZE
+        PCfR4oD41OaBZ45/z/uJvrZVZZYgLDRIhZox1LVKW5sEmwIXNz1he47uZv/z1Uas62R8Uo
+        8Qf37A0U3oSZij/OmMi+CTJq3yDTXXQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 09 Nov 2020 10:43:03 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
+        "Y.b. Lu" <yangbo.lu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>,
+        Ashish Kumar <ashish.kumar@nxp.com>
+Subject: Re: [RFC PATCH v3 9/9] arm64: dts: lx2160a: fix FlexSPI clock
+In-Reply-To: <20201108212139.ht22zdk27pyxv6wc@skbuf>
+References: <20201108185113.31377-1-michael@walle.cc>
+ <20201108185113.31377-10-michael@walle.cc>
+ <20201108212139.ht22zdk27pyxv6wc@skbuf>
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <0e165232e518c0f6c1b894311f00982a@walle.cc>
+X-Sender: michael@walle.cc
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-bXRrX2Nsa19yZWdpc3Rlcl9tdXgoKSBzaG91bGQgYmUgYSBzdGF0aWMgZnVuY3Rpb24NCg0KRml4
-ZXM6IGEzYWU1NDk5MTdmMTYgKCJjbGs6IG1lZGlhdGVrOiBBZGQgbmV3IGNsa211eCByZWdpc3Rl
-ciBBUEkiKQ0KQ2M6IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0KU2lnbmVkLW9mZi1ieTogV2Vp
-eWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvY2xrL21lZGlhdGVr
-L2Nsay1tdXguYyB8IDIgKy0NCiBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmggfCA0IC0t
-LS0NCiAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA1IGRlbGV0aW9ucygtKQ0KDQpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jIGIvZHJpdmVycy9jbGsv
-bWVkaWF0ZWsvY2xrLW11eC5jDQppbmRleCAxNGUxMjdlLi5kY2MxMzUyIDEwMDY0NA0KLS0tIGEv
-ZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jDQorKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRl
-ay9jbGstbXV4LmMNCkBAIC0xNTUsNyArMTU1LDcgQEAgc3RhdGljIGludCBtdGtfY2xrX211eF9z
-ZXRfcGFyZW50X3NldGNscl9sb2NrKHN0cnVjdCBjbGtfaHcgKmh3LCB1OCBpbmRleCkNCiAJLnNl
-dF9wYXJlbnQgPSBtdGtfY2xrX211eF9zZXRfcGFyZW50X3NldGNscl9sb2NrLA0KIH07DQogDQot
-c3RydWN0IGNsayAqbXRrX2Nsa19yZWdpc3Rlcl9tdXgoY29uc3Qgc3RydWN0IG10a19tdXggKm11
-eCwNCitzdGF0aWMgc3RydWN0IGNsayAqbXRrX2Nsa19yZWdpc3Rlcl9tdXgoY29uc3Qgc3RydWN0
-IG10a19tdXggKm11eCwNCiAJCQkJIHN0cnVjdCByZWdtYXAgKnJlZ21hcCwNCiAJCQkJIHNwaW5s
-b2NrX3QgKmxvY2spDQogew0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1t
-dXguaCBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaA0KaW5kZXggZjU2MjVmNC4uOGUy
-ZjkyNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaA0KKysrIGIv
-ZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5oDQpAQCAtNzcsMTAgKzc3LDYgQEAgc3RydWN0
-IG10a19tdXggew0KIAkJCV93aWR0aCwgX2dhdGUsIF91cGRfb2ZzLCBfdXBkLAkJCVwNCiAJCQlD
-TEtfU0VUX1JBVEVfUEFSRU5UKQ0KIA0KLXN0cnVjdCBjbGsgKm10a19jbGtfcmVnaXN0ZXJfbXV4
-KGNvbnN0IHN0cnVjdCBtdGtfbXV4ICptdXgsDQotCQkJCSBzdHJ1Y3QgcmVnbWFwICpyZWdtYXAs
-DQotCQkJCSBzcGlubG9ja190ICpsb2NrKTsNCi0NCiBpbnQgbXRrX2Nsa19yZWdpc3Rlcl9tdXhl
-cyhjb25zdCBzdHJ1Y3QgbXRrX211eCAqbXV4ZXMsDQogCQkJICAgaW50IG51bSwgc3RydWN0IGRl
-dmljZV9ub2RlICpub2RlLA0KIAkJCSAgIHNwaW5sb2NrX3QgKmxvY2ssDQotLSANCjEuOC4xLjEu
-ZGlydHkNCg==
+Am 2020-11-08 22:21, schrieb Vladimir Oltean:
+> On Sun, Nov 08, 2020 at 07:51:13PM +0100, Michael Walle wrote:
+>> Now that we have a proper driver for the FlexSPI interface use it. 
+>> This
+>> will fix SCK frequency switching on Layerscape SoCs.
+>> 
+>> Signed-off-by: Michael Walle <michael@walle.cc>
+>> ---
+>> Thanks to Vladimir Oltean, this was partially tested on a LX2160A RDB. 
+>> But
+>> this patch is marked as RFC nonetheless, because there is too much
+>> difference in the clock tree between LS1028A and LX2160A. It would be 
+>> nice
+>> if someone could test it and add a Tested-by.
+> 
+> You want someone to probe the SCK frequency?
 
+No not really, just a thorough test.
+
+> I expect that if frequency
+> switching works on LS1028A, and the lx2160a_flexspi_divs table is
+> correct (which, based on the documentation for 
+> FlexSPICR1[FlexSPI_CLK_DIV],
+> it is), then it would work on LX2160A too?
+
+The switching should work. Finding out wether it is correct can be 
+checked
+by reading the raw register value, i.e. 01E0_0900h. But the parent clock 
+is
+what is bothering me a little. Getting that wrong would lead to a wrong 
+SCK
+output frequency albeit the divider is set to a correct value.
+
+> Is there a simple test that can be made in order to trivially determine
+> whether the frequencies are correct?
+
+We already found out that there seems to be kind of a saturation with
+higher frequencies, i.e. octal SPI bus is capable of a much higher
+throughput but we only achieve 50MB/s. I'd have expected a much higher
+datarate (I mean it is advertised as high performance and it uses a 8 
+bit
+wide databus..). But anyway, it might make sense to go the other way, 
+i.e.
+find out the max datathroughput at lower frequencies and look if it 
+makes
+sense. Assuming no DDR, the throughput should be around your frequency. 
+For
+example, having 4 MHz should result in 4MB/s data throughput.
+
+OTOH we already saw that after linux booted - with the current device 
+tree
+which has a setting of 50MHz max SCK frequency - the programmed divider 
+by
+my driver is the same as the former setting (0x13, div-by-32); so this 
+series
+doesn't change the SCK frequency.
+
+-michael
