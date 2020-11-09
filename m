@@ -2,111 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593C0C4741F
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B07DC388F7
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE8720789
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03E321D7F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604935933;
+	bh=LdUacPIOLrIqn9CdpUBSmiVlcE4JMo1ObnCv0BUo5q0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JhlC1hm2dOZ2qlx6Uy9ZKspHyIpxGee2/7L/J2NrrMop9nX3ywqS+wOHlTEjl5oAt
+	 uNSjN0O5C2Tf5VNN3cE1Z9DAqUY7k+4jXBdq7GglfM+0cIcXpEu1DSRSw7t129etKS
+	 f3DXWJzpHWWV6umkWwGLXLYrk7JGNXjTDgHgFpP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbgKIP0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 10:26:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgKIP0V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 10:26:21 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB34C0613CF
-        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 07:26:20 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id qFSG2300N4C55Sk06FSG8e; Mon, 09 Nov 2020 16:26:16 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kc93g-000v8S-3j; Mon, 09 Nov 2020 16:26:16 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kc93f-00ALOd-ME; Mon, 09 Nov 2020 16:26:15 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: r8a779a0: Fix R and OSC clocks
-Date:   Mon,  9 Nov 2020 16:26:14 +0100
-Message-Id: <20201109152614.2465483-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1729940AbgKIPcN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 10:32:13 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38139 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729289AbgKIPcM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 10:32:12 -0500
+Received: by mail-ot1-f67.google.com with SMTP id a15so7562479otf.5;
+        Mon, 09 Nov 2020 07:32:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=O/MhRiDM2XLsUq3m1Qal43ednQtGsrnCRzGf4Dwfv8A=;
+        b=q39JjO5PYwGw5zQ6j6zi4TSqDZVoZhjBsFltNum/jQa/Cp6hZc6wPt7oRCxeSXUo7q
+         qmFymR1p0tCQzLqo39xmqq3voZ2C5SFbbsrO3sj8lyCj2dbX7HqqZIqzXaCz10z4GQHZ
+         L41TWDc542z3XjGBgiHohY7yojofRStjEvz3t2UwNpLHXPb8chyV55aczX286N5LLyc/
+         sEQMLFsUi621FLFPDbg6puxNN+0jYbNb4sHcX7hH+g6AUkpgBblumkbyQVjUqLPjDFvq
+         xRFnXyKNrNCMpWJOHyrjfoAHCJw9H4Rw5SfXmvMjNJyByYrUueFkg6Y8s9nBqLhT7yMa
+         cyDQ==
+X-Gm-Message-State: AOAM533X8M8NU1XnDl5nViRP5VEWMShaBx25dZ/lnFgg0ZAXRFqUfPpL
+        5NSL10d+RZHZtLm/XxiW7w==
+X-Google-Smtp-Source: ABdhPJyVDlLobHGRODhe5D+jhGh+NZj7eFU7nY/tPIVmlrM37y0bv23zcdQvuPUcKBTpMfyTSN1GOQ==
+X-Received: by 2002:a9d:64c7:: with SMTP id n7mr10134080otl.137.1604935931440;
+        Mon, 09 Nov 2020 07:32:11 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g18sm250938otp.23.2020.11.09.07.32.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2020 07:32:10 -0800 (PST)
+Received: (nullmailer pid 1330007 invoked by uid 1000);
+        Mon, 09 Nov 2020 15:32:09 -0000
+Date:   Mon, 9 Nov 2020 09:32:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Sean Anderson <seanga2@gmail.com>, linux-spi@vger.kernel.org,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 22/32] dt-binding: Document kendryte,k210-sysctl bindings
+Message-ID: <20201109153209.GA1329063@bogus>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
+ <20201107081420.60325-23-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201107081420.60325-23-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The R-Car V3U clock driver defines the R and OSC clocks using R-Car Gen3
-clock types.  However, The R-Car V3U clock driver does not use the R-Car
-Gen3 clock driver core, hence registering the R and OSC clocks fails:
+On Sat, 07 Nov 2020 17:14:10 +0900, Damien Le Moal wrote:
+> Document the device tree bindings of the Kendryte K210 SoC system
+> controller driver in
+> Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  .../bindings/mfd/kendryte,k210-sysctl.yaml    | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml
+> 
 
-    renesas-cpg-mssr e6150000.clock-controller: Failed to register core clock osc: -22
-    renesas-cpg-mssr e6150000.clock-controller: Failed to register core clock r: -22
 
-Fix this by introducing clock definition macros specific to R-Car V3U.
-Note that rcar_r8a779a0_cpg_clk_register() already handled the related
-clock types.  Drop the now unneeded include of rcar-gen3-cpg.h.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Fixes: 17bcc8035d2d19fc ("clk: renesas: cpg-mssr: Add support for R-Car V3U")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v5.11, as no driver relies on the presence of
-the R and OSC clocks yet.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml:23:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml: properties:clocks: 'anyOf' conditional failed, one must be fixed:
+		/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
+			'minItems' is not one of ['maxItems']
+			'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'default', '$ref']
+		/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
+			'items' is not one of ['maxItems']
+			'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'default', '$ref']
+		'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'default', '$ref']
+		1 is less than the minimum of 2
+	'minItems' is not one of ['type', 'description', 'dependencies', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'allOf', 'anyOf', 'oneOf', '$ref']
+	'maxItems' is not one of ['type', 'description', 'dependencies', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'allOf', 'anyOf', 'oneOf', '$ref']
+	'items' is not one of ['type', 'description', 'dependencies', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'allOf', 'anyOf', 'oneOf', '$ref']
+	'type' is a required property
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml: ignoring, error in schema: properties: clocks
+warning: no schema found in file: ./Documentation/devicetree/bindings/mfd/kendryte,k210-sysctl.yaml
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index 1eddff2f94c23e1e..c4aa561bb01152df 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -26,7 +26,6 @@
- #include <dt-bindings/clock/r8a779a0-cpg-mssr.h>
- 
- #include "renesas-cpg-mssr.h"
--#include "rcar-gen3-cpg.h"
- 
- enum rcar_r8a779a0_clk_types {
- 	CLK_TYPE_R8A779A0_MAIN = CLK_TYPE_CUSTOM,
-@@ -83,6 +82,14 @@ enum clk_ids {
- 	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_PLL2X_3X, CLK_MAIN, \
- 		 .offset = _offset)
- 
-+#define DEF_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_MDSEL,	\
-+		 (_parent0) << 16 | (_parent1),		\
-+		 .div = (_div0) << 16 | (_div1), .offset = _md)
-+
-+#define DEF_OSC(_name, _id, _parent, _div)		\
-+	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_OSC, _parent, .div = _div)
-+
- static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",  CLK_EXTAL),
-@@ -136,8 +143,8 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",	R8A779A0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
- 	DEF_DIV6P1("csi0",	R8A779A0_CLK_CSI0,	CLK_PLL5_DIV4,	0x880),
- 
--	DEF_GEN3_OSC("osc",	R8A779A0_CLK_OSC,	CLK_EXTAL,	8),
--	DEF_GEN3_MDSEL("r",	R8A779A0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
-+	DEF_OSC("osc",		R8A779A0_CLK_OSC,	CLK_EXTAL,	8),
-+	DEF_MDSEL("r",		R8A779A0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
- };
- 
- static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
--- 
-2.25.1
+
+See https://patchwork.ozlabs.org/patch/1396076
+
+The base for the patch is generally the last rc1. Any dependencies
+should be noted.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
