@@ -2,95 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCBBC4741F
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593C0C4741F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7D1E2083B
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:14:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/xYBWjJ"
+	by mail.kernel.org (Postfix) with ESMTP id 0EE8720789
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 15:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbgKIPOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 10:14:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41646 "EHLO
+        id S1730626AbgKIP0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 10:26:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729791AbgKIPNe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 10:13:34 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047BAC0613CF;
-        Mon,  9 Nov 2020 07:13:32 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id e21so7381202pgr.11;
-        Mon, 09 Nov 2020 07:13:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qHWsdF+9c9Znyw/+xmlrHFHZZNlg9caiciX5yI+PJqg=;
-        b=h/xYBWjJerd+Nng65RxzaEks1xJhwINQyY9Kk84UP0ulcLuRhnmTobsVYl3EaoGFCr
-         pmRS8cTieTCtPXnqRHSV81aivSlGEFes5pjpp+y+DAjSEjaETUwjo3t7vma6iGQpHtaA
-         qr3Rn9lg5N9jeL+Hlgd6tevc5NbF3r5DuW9qEcUbSMWmIO/fU4BZwQndEgYRP4zocklU
-         ZmgImOQ17grJhUCyvTmxMCR4ocfKILJSZMBwVVzqk1G/oTvwKehmO/xQB6rTtzYJHxxA
-         46TfEl4s0YenH/OSsT0v8VTAoIXqo7BPVjX530QwGZRCIPobomB982/lQwc7wXvK3h1h
-         zKGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qHWsdF+9c9Znyw/+xmlrHFHZZNlg9caiciX5yI+PJqg=;
-        b=gHmMwMJNnLOKHqbXk9EgyOL8kJJxdDWjdjUZtpZQn5qQiGsvR4SLa+u/Fa1rocsX/t
-         tjb5pnYzXuMz8RR9x8ZQzj5YXBwzWOMssGaerUQS2YxcL0n4DfZJsZFMoVNgZYlrwUaJ
-         ijvLdafohk1SAVu3494Go6SctnTE4XyjqiLSXRBtmV8i5bgbmCApsyBYVBaHGnQo5lU4
-         o7VKdvhfYfw9R35EeCrGCeEsArEcdIKQNMMs4tPWo2fN3P+0Bp7bzDAMIVI5DyAP7DdS
-         0NS8P9WPufG8vpdEBBc6LoE0gCeEpV7fLVdXq+iu08hJgoZ1ZKUVOAc/j54+CFkZUPPE
-         ufWA==
-X-Gm-Message-State: AOAM532StM3jfcToTj8WG8IZCFhHis0kIA4pCkV3E9Rs6h8qgo1Tpr0H
-        kdX7VIxM+sp6780wsTU94ogF5NSGVCcMe6ax96I=
-X-Google-Smtp-Source: ABdhPJzbzt1UYLvSnFqF0Z8uM3EiVS1ndggK5B8kpcpbTxvC1ovHRrCqnbQrmSaPrTMJIc851fa8tqkAO+ZtDX3BrV8=
-X-Received: by 2002:a63:4511:: with SMTP id s17mr13179323pga.4.1604934812562;
- Mon, 09 Nov 2020 07:13:32 -0800 (PST)
+        with ESMTP id S1727077AbgKIP0V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 10:26:21 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB34C0613CF
+        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 07:26:20 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id qFSG2300N4C55Sk06FSG8e; Mon, 09 Nov 2020 16:26:16 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kc93g-000v8S-3j; Mon, 09 Nov 2020 16:26:16 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kc93f-00ALOd-ME; Mon, 09 Nov 2020 16:26:15 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779a0: Fix R and OSC clocks
+Date:   Mon,  9 Nov 2020 16:26:14 +0100
+Message-Id: <20201109152614.2465483-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-2-damien.lemoal@wdc.com>
-In-Reply-To: <20201107081420.60325-2-damien.lemoal@wdc.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 9 Nov 2020 17:14:21 +0200
-Message-ID: <CAHp75VfvUZ6h+JGCUQ65i7qFsugvbd3n=aCprgvp=geRSpQEhQ@mail.gmail.com>
-Subject: Re: [PATCH 01/32] of: Fix property supplier parsing
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 7, 2020 at 10:14 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+The R-Car V3U clock driver defines the R and OSC clocks using R-Car Gen3
+clock types.  However, The R-Car V3U clock driver does not use the R-Car
+Gen3 clock driver core, hence registering the R and OSC clocks fails:
 
-> @@ -1308,7 +1308,6 @@ DEFINE_SIMPLE_PROP(pinctrl7, "pinctrl-7", NULL)
->  DEFINE_SIMPLE_PROP(pinctrl8, "pinctrl-8", NULL)
->  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
->  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
-> -DEFINE_SUFFIX_PROP(gpios, "-gpios", "#gpio-cells")
+    renesas-cpg-mssr e6150000.clock-controller: Failed to register core clock osc: -22
+    renesas-cpg-mssr e6150000.clock-controller: Failed to register core clock r: -22
 
-Sorry, but the above doesn't sound right to me.
-It's a generic code and you may imagine how many systems you broke by
-this change.
+Fix this by introducing clock definition macros specific to R-Car V3U.
+Note that rcar_r8a779a0_cpg_clk_register() already handled the related
+clock types.  Drop the now unneeded include of rcar-gen3-cpg.h.
 
+Fixes: 17bcc8035d2d19fc ("clk: renesas: cpg-mssr: Add support for R-Car V3U")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v5.11, as no driver relies on the presence of
+the R and OSC clocks yet.
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index 1eddff2f94c23e1e..c4aa561bb01152df 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -26,7 +26,6 @@
+ #include <dt-bindings/clock/r8a779a0-cpg-mssr.h>
+ 
+ #include "renesas-cpg-mssr.h"
+-#include "rcar-gen3-cpg.h"
+ 
+ enum rcar_r8a779a0_clk_types {
+ 	CLK_TYPE_R8A779A0_MAIN = CLK_TYPE_CUSTOM,
+@@ -83,6 +82,14 @@ enum clk_ids {
+ 	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_PLL2X_3X, CLK_MAIN, \
+ 		 .offset = _offset)
+ 
++#define DEF_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_MDSEL,	\
++		 (_parent0) << 16 | (_parent1),		\
++		 .div = (_div0) << 16 | (_div1), .offset = _md)
++
++#define DEF_OSC(_name, _id, _parent, _div)		\
++	DEF_BASE(_name, _id, CLK_TYPE_R8A779A0_OSC, _parent, .div = _div)
++
+ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("extal",  CLK_EXTAL),
+@@ -136,8 +143,8 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ 	DEF_DIV6P1("canfd",	R8A779A0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
+ 	DEF_DIV6P1("csi0",	R8A779A0_CLK_CSI0,	CLK_PLL5_DIV4,	0x880),
+ 
+-	DEF_GEN3_OSC("osc",	R8A779A0_CLK_OSC,	CLK_EXTAL,	8),
+-	DEF_GEN3_MDSEL("r",	R8A779A0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
++	DEF_OSC("osc",		R8A779A0_CLK_OSC,	CLK_EXTAL,	8),
++	DEF_MDSEL("r",		R8A779A0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
+ };
+ 
+ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1
+
