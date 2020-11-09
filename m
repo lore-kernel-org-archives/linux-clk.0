@@ -2,79 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECCAC2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 19:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B102AC388F7
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 19:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1D7C206E3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 19:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A3B4206F1
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 19:19:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZtplO94"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729243AbgKITGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 14:06:20 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34212 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727303AbgKITGU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 14:06:20 -0500
-Received: by mail-oi1-f193.google.com with SMTP id w188so5827292oib.1;
-        Mon, 09 Nov 2020 11:06:19 -0800 (PST)
+        id S1729831AbgKITTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 14:19:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729243AbgKITTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 14:19:15 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CCAC0613CF;
+        Mon,  9 Nov 2020 11:19:13 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id y16so5719155ljh.0;
+        Mon, 09 Nov 2020 11:19:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=r9d7dXS9UxJQZPpIorblG/IcIk0uXkJw79U3kSgMOhk=;
+        b=OZtplO94Wt9ecWyv8oYMp5JKwvjXA+daO5t+WaReAkLrGlHgLq+RM7QH6jQ95okGVO
+         4kXLHt3IjiYkImJt6KMd72nQOioIhyKvP+QKi+GQ8Ewmpwx4ceWLPuP9pKd7oq0PbSoM
+         rHgNtSEtk+b0GznCh4vGTUbCtrloZrnT79gmFpmx5krNBmwgBUPggTSWH/JDQSfd5sUu
+         CmzLWXPVjf2Pe844CBkTqgluv3YqES6vdmdzlyARc/slgVO7iiT1C3Iv9xb5LTQf/UTZ
+         hvynAxc/37Xvc/g3MP/nvTgfbZSNaeQwfk53tLRmP01mePGCNuUmNU9EW6pBXEZRUnu2
+         ycPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=NyKEQzfxMyUyNU2uzmh/F3T8nMthTwYvAIfKbyiOUJ8=;
-        b=uG9Z1xIpLEOKmHWqPP/kzSenD33dx8cQHWLSi6ZGj9WOegK0zTXzP4+r+6fuQ9Xcmt
-         G9uEDDhL8ZkSCzvncfIvUaKKrHAYLNCoUyVITGP82SlaGxd9A+bbk/uCfMjygmL7LS3h
-         ICpiAtgcj6tjGSPn15b/iYJmdEVxz7KhrjzSO4VEMw2X4Rdx3jy1MxQ+JLWzMe8w0sfC
-         TMAeXIbgo3uNdT7kJwSH+xisVHnki2SxAe6xXAWXpUii5Ua42AAefFkHabNmkgnsVKgM
-         tFchD2fiGE1GBcxj1KJD9cPv7qaEsvmOJCqPiErdtdmJlg3KfMMd4CNzIA+3sMN0Vq/X
-         Sqtw==
-X-Gm-Message-State: AOAM530eNj3KM4YL9pF33I0qeOg3X5iOtsxlp8DbFFzU0E6YEkyveyfM
-        egz15G9Tcv0kzENj7Snd3ULjwVZX6A==
-X-Google-Smtp-Source: ABdhPJyHnd+mWV6LVlAEfuMHvKUEm/jvECdRIk0QPPXGApehF0sQ4A/M1aZhrd+3tbmqItPryMFWbg==
-X-Received: by 2002:a05:6808:6d1:: with SMTP id m17mr438420oih.134.1604948779301;
-        Mon, 09 Nov 2020 11:06:19 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x190sm2560129oia.35.2020.11.09.11.06.18
+        bh=r9d7dXS9UxJQZPpIorblG/IcIk0uXkJw79U3kSgMOhk=;
+        b=awEKS8xAOpI/xMPreuTKJp/fVtVLphr2pK2fheCtvTiFxivpUKMYAYsg3wzdGUM+2Y
+         u9g4zdWXKvGG55wbWOtIqXTkb99OCj24pPH1cpHSJdXfsyKnIP1l6taE0Jo8rXos2tZ4
+         1xFwuyl7fBm2H3LewH0CHLA5XgSAzhZ5dmwbUq+YX5ykRUrfO1A8DIz7v5GvFe8lfrVX
+         ZafT0Dz2DITtLERG+rjy1916xO4igmOyOm18IEUrx+xAdVKaPNCyVEf7uYC3/gPyug5d
+         gC3vvLYLcfAT/kdVPqjXjsfmHe1X4iXOPZEP6XvVUOGmK2hgNtvB9Q7ssKfLmTmN5MS+
+         IVhg==
+X-Gm-Message-State: AOAM530Aq86rlsPlEsG1OFjXO1kLzKr3EM0g77z23G46ehz3b1tpPXs5
+        gTUqwvRPI7mKqg03BKlSRfo=
+X-Google-Smtp-Source: ABdhPJysV4HArNxJWnmNnrRZDrlhi2BXsPTRITKipRHlzWi9l4KAqb+DSLRqHJPmUN4GB2gASmc2ZQ==
+X-Received: by 2002:a2e:a54c:: with SMTP id e12mr2948208ljn.220.1604949551996;
+        Mon, 09 Nov 2020 11:19:11 -0800 (PST)
+Received: from mobilestation ([95.79.141.114])
+        by smtp.gmail.com with ESMTPSA id f1sm31595lfm.184.2020.11.09.11.19.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 11:06:18 -0800 (PST)
-Received: (nullmailer pid 1598978 invoked by uid 1000);
-        Mon, 09 Nov 2020 19:06:17 -0000
-Date:   Mon, 9 Nov 2020 13:06:17 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     robh+dt@kernel.org, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: renesas: rcar-usb2-clock-sel:
- Convert bindings to json-schema
-Message-ID: <20201109190617.GA1598944@bogus>
-References: <1604543524-31482-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 09 Nov 2020 11:19:11 -0800 (PST)
+Date:   Mon, 9 Nov 2020 22:19:09 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Sean Anderson <seanga2@gmail.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 03/32] spi: dw: Fix driving MOSI low while recieving
+Message-ID: <20201109191909.wfuwpddng4rdn4ca@mobilestation>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com>
+ <20201107081420.60325-4-damien.lemoal@wdc.com>
+ <20201109132935.GB6380@sirena.org.uk>
+ <c37ca9be-ea92-b07a-b600-d68de4f7bde5@gmail.com>
+ <20201109141422.GD6380@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1604543524-31482-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20201109141422.GD6380@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 05 Nov 2020 11:32:04 +0900, Yoshihiro Shimoda wrote:
-> Convert Renesas R-Car USB 2.0 clock selector bindings documentation
-> to json-schema.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Changes from v1:
->  - Fix dt-schema error.
->  https://patchwork.kernel.org/project/linux-renesas-soc/patch/1604475005-29495-1-git-send-email-yoshihiro.shimoda.uh@renesas.com/
-> 
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  68 --------------
->  .../clock/renesas,rcar-usb2-clock-sel.yaml         | 100 +++++++++++++++++++++
->  2 files changed, 100 insertions(+), 68 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+On Mon, Nov 09, 2020 at 02:14:22PM +0000, Mark Brown wrote:
+> On Mon, Nov 09, 2020 at 08:47:10AM -0500, Sean Anderson wrote:
+> > On 11/9/20 8:29 AM, Mark Brown wrote:
+> > > On Sat, Nov 07, 2020 at 05:13:51PM +0900, Damien Le Moal wrote:
+> > > 
+
+> > >> The resting state of MOSI is high when nothing is driving it. If we
+> > >> drive it low while recieving, it looks like we are transmitting 0x00
+> > >> instead of transmitting nothing. This can confuse slaves (like SD cards)
+> > >> which allow new commands to be sent over MOSI while they are returning
+> > >> data over MISO. The return of MOSI from 0 to 1 at the end of recieving
+> > >> a byte can look like a start bit and a transmission bit to an SD card.
+
+Yeah, that's what we've also experienced on our systems. We've worked
+around the problem in exactly the same way as you have. But we haven't
+dared to send it out as the solution seemed a bit hackish.
+
+> > > 
+> > > If client devices are interpreting the transmitted data then I would
+> > > expect the drivers for that hardware to be ensuring that whatever we
+> > > transmit matches what the device is expecting.  We shouldn't be putting
+> > > a hack in a particular controller driver to paper over things, that will
+> > > mean that the device will break when used with other controllers and if
+> > > different devices have different requirements then obviously we can't
+> > > satisfy them.  There is not meaningfully a general specification for SPI
+> > > which says what happens when signals are idle, it's all specific to the
+> > > client device.
+> > > 
+> > > In this case it also looks like the controller hardware requires
+> > > transmit data and therefore should be setting SPI_MUST_TX and just
+> > > removing the in driver default anyway, though that will have no effect
+> > > one way or anther on the issue you're seeing.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > There is a recieve-only mode, but it is not used by this driver. Perhaps
+> > it should be.
+> 
+> I'd expect it'd perform better, especially on systems that are
+> apparently struggling for CPU bandwidth like yours seems to.
+
+CPU-wise. RO-mode won't help in that case. Moreover it will be even
+more errors-prone for the systems with small CPU bandwidth. As I said
+the Receive-only mode will make the SPI controller automatically
+receiving data from the SPI bus and putting it into the Rx FIFO. If
+CPU is either busy with something else or too slow in fetching the
+data from the Rx FIFO, the FIFO will be eventually overflown with
+data, which we need to avoid at all cost.
+
+As I see it the Receive-only mode is only acceptable in the next two
+situations:
+
+1) Rx-only DMA. But only if the DMA-engine and system bus are fast
+enough to fetch the incoming data on time. (Note for example in our
+system some DWC DMA-engine channels don't work well with the DW APB
+SSI working with full-speed, so we had to set constraints on the DWC
+DMA channels being used in conjunction with the DW APB SSI
+controller.)
+
+2) Rx-only with atomic CPU utilization. In order to make sure that the
+CPU keeps up with fetching the data from the Rx FIFO, we have to
+disable the local CPU IRQs while performing the Rx-only transfers, so
+to prevent the Rx FIFO overflow while the CPU is doing something else.
+Needless to say that such approach should be utilized only as a last
+resort, if we have no choice but to run the Receive-only transfers.
+Because locking the CPU for God knows how much time may cause the
+system interactivity degradation. For instance, a possible use-case of
+that design is when the controller is communicating with the
+SPI-devices with native DW APB SSI chip-select attached. BTW You can
+also find that design implemented in the kernel 5.10 spi-dw-core.c
+driver in context of the SPI-memory operations (with my last patches
+merged in). In particular I had to use it to handle the CPU-based
+EEPROM-read mode.
+
+So in all other cases for normal CPU-based SPI-transfers when
+GPIO-based chip-select is available the safest solution would be to
+use a normal Push-Pull mode. In this case we have no risk in getting
+the Rx FIFO overflow unless there is a bug in the code, which is
+fixable anyway.
+
+Getting back to the patch. In fact I don't really see how the
+Receive-only mode will help us with solving the problem noted in the
+patch log. As Mark said the problem with the Tx data on Rx-only
+transfers should be fixed on the client side. If an subordinate
+SPI-device needs a specific value to be received in that case, then
+that value should be somehow provided to the SPI-controller anyway.
+So the native Rx-only mode of the DW APB SSI controller won't help.
+Currently it's possible to be done only by executing a Full-duplex
+SPI-transfer with the Tx-buffer being pre-initialized with that
+value.
+
+Another possible solution for the problem would be to fix the SPI core
+so aside with tx_buf being set to the NULL-pointer, a client driver
+would provide a default level or some specific value being put to the
+SPI bus on Rx-only transfers. If an SPI-controller is capable of
+satisfying the request, then it will accept the transfer. If it's not,
+then the SPI core may try to convert the Rx-only transfer into the
+Full-duplex transfer with the Tx-buffer being initialized with the
+requested level.
+
+-Sergey
