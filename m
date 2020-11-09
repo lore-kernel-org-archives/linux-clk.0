@@ -2,103 +2,195 @@ Return-Path: <SRS0=VQD0=EP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AADC2D0A3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503E4C5517A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B25B0207BC
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604931363;
-	bh=En9Ed05eGm/mVXemcKM0+v+qUqkketwqoNTG9zmUgq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DzPa45HKrKLlYYWGvmnXQHdNmsAgRhf1E+krspQXZDfwX3dQULmZ1OoMy3ou0LJG3
-	 zplyzoLhOcP4Y/t2BqfDQOC5LhIX2DCCanBCYKi9LEm+8lPZbYELu7y3Pk7I/I9pSE
-	 hw1ygh0zK5IoqDtt2r1TpSjeygFM9VASX5deQ9+w=
+	by mail.kernel.org (Postfix) with ESMTP id EA67F2074F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Nov 2020 14:25:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLaQop/B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbgKIOQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 09:16:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730088AbgKIOQD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Nov 2020 09:16:03 -0500
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB914206ED;
-        Mon,  9 Nov 2020 14:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604931362;
-        bh=En9Ed05eGm/mVXemcKM0+v+qUqkketwqoNTG9zmUgq4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=McKic9AMlk5ie8beb/Xzbfn6jBvWtBX6LbQjd3Kv8c7DEMYvXVbM6FKyRcqnA0vU8
-         cgw/f/iYm5OoAdXuNZ3JxEz12UhM9e26T2Nwrhut0K5Mb/Az2dNFgo42flFbVBjrkN
-         jnUUghXs18eVMeOfbOBCDyfUdVbB18Vk0Y1DFdsw=
-Date:   Mon, 9 Nov 2020 14:15:48 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sean Anderson <seanga2@gmail.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1730384AbgKIOZf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 09:25:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730035AbgKIOZe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 09:25:34 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58691C0613CF;
+        Mon,  9 Nov 2020 06:25:34 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id s9so8801102ljo.11;
+        Mon, 09 Nov 2020 06:25:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=URtdoNVy8gkPjkFeamValqRKNNb6u2NGeKTyfcPlO98=;
+        b=DLaQop/BJeZDkogr8fvQz6LbxsL33OhxD4lqAi9SvHtRmZNBf2xTIyRTZyFGwyhiDl
+         G9qOu8XSWJ+rZwZGks9jJwuWlBETaNerCEkGHK1/OzHxZhOXheXU1ffD8dsYrRpgGMF5
+         +wS933P8s6M68Uwyf9RbC4q57O/2zbOyfsUPIPHMTjAbNXTTU90mhPNyCBlALqmRzhSp
+         19brjatCQSXL7+vDornRUks5ZE/rv9Bnc8P8IeWJ1zdGcx9N7rtG9KwaTifYHv4Pgy9K
+         ne+oXHaMtJYLd2O3IfEQ1sGoaUqOEtzGeTMgAurOtR52+4G0gUFk55IsVvleliEwWMdI
+         +VNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=URtdoNVy8gkPjkFeamValqRKNNb6u2NGeKTyfcPlO98=;
+        b=OQtLydJAvAYGJY3EpYz0JvtNoxyT9iSSfn8zXW6YpfqLCoG2nBbFbdOtRZZm9l4aF+
+         47wEgAGCSPA+WoOH5O+lHBjPKC/Txp2z74VB4ZsPGmtdZU3viZyZ7ITPQJCdIk05BL3r
+         oWjiz6Fes/i3aDaOwUmaRimXP861xJLTjk9csC/4f8IULOxb5HiYfIyGkZaBeTCmOjZM
+         THGDdOizSNZdgkqBMa+3THx6+rM+iIiMcFmv9mZVrc9RBQ88admpYLl3z4XsHIN4NZNL
+         tZTq6yXE/DJAg5t7jkWEwIQ+BFqKUpXj3evp1gTv+QDh4AwDBKv5WuEvtRjl9iWBpt0T
+         NYug==
+X-Gm-Message-State: AOAM531wxzAI12kgVq3oVDZnQB6nylK61Ga3HXaWT43X721WCYXVc21R
+        0PzONCI9ThYXWFRlz6rOBMY=
+X-Google-Smtp-Source: ABdhPJxzl/GFY/rQuAZ6payfqwMabYYZkaNwAFBFjC9q1uKdg7lmxSJpUdStg7dfVfrnJnzAPGbTPA==
+X-Received: by 2002:a2e:9096:: with SMTP id l22mr2683281ljg.199.1604931932805;
+        Mon, 09 Nov 2020 06:25:32 -0800 (PST)
+Received: from mobilestation ([95.79.141.114])
+        by smtp.gmail.com with ESMTPSA id 78sm2196319ljf.64.2020.11.09.06.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2020 06:25:32 -0800 (PST)
+Date:   Mon, 9 Nov 2020 17:25:29 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 06/32] spi: dw: Add support for the Kendryte K210 SoC
-Message-ID: <20201109141548.GE6380@sirena.org.uk>
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH 02/32] spi: dw: Add support for 32-bits ctrlr0 layout
+Message-ID: <20201109142529.tt5ojjyn36vd3ohe@mobilestation>
 References: <20201107081420.60325-1-damien.lemoal@wdc.com>
- <20201107081420.60325-7-damien.lemoal@wdc.com>
- <53859725-ca0b-5f57-9147-10346707b3cb@gmail.com>
- <BL0PR04MB65145CB4FC66106B62E179CEE7EC0@BL0PR04MB6514.namprd04.prod.outlook.com>
- <db97cbfb-0d42-9c45-e770-37a3c38d79c7@gmail.com>
+ <20201107081420.60325-3-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <db97cbfb-0d42-9c45-e770-37a3c38d79c7@gmail.com>
-X-Cookie: This fortune is false.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201107081420.60325-3-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Damien,
+Thanks for your patches. My comments are below.
 
---o0ZfoUVt4BxPQnbU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Sat, Nov 07, 2020 at 05:13:50PM +0900, Damien Le Moal wrote:
+> Synopsis DesignWare DW_apb_ssi version 4 defines a 32-bit layout of
+> the ctrlr0 register for SPI masters. The layout of ctrlr0 is:
+> 
+> |   31 .. 23  | 22 .. 21 | 20 .. 16 |
+> | other stuff | spi_frf  |  dfs_32  |
+> 
+> |   15 .. 10  | 9 .. 8 | 7 .. 6 | 5 .. 4 | 3 .. 0 |
+> | other stuff |  tmod  |  mode  |  frf   |  dfs   |
+> 
 
-On Sat, Nov 07, 2020 at 08:52:24AM -0500, Sean Anderson wrote:
+> Th main difference of this layout with the 16-bits version is the data
+    ^
+    |
+    e
 
-> I think if it is detectable at runtime it should be, instead of relying
-> on compatible strings. That way causes less future grief to anyone
-> porting a device possibly using DFS_32.
+> frame format field which resides in bits 16..20 instead of bits 3..0.
+> 
 
-Yes, runtime enumeration is generally preferred.  Having the compatible
-string is nice in case some quirks are discoverd but for things that
-can be enumerated there's less that can go wrong if we do so.
+Are you sure they have been moved from [0, 3] to [16, 20]? I don't have the
+manual for the 4.0x version of the core, but according to this patch:
+https://patchwork.kernel.org/project/spi-devel-general/patch/1575907443-26377-7-git-send-email-wan.ahmad.zainie.wan.mohamad@intel.com/
+it has been ok to use the lowest four bits for DFS setting. Is the commit
+message misleading there?
 
---o0ZfoUVt4BxPQnbU
-Content-Type: application/pgp-signature; name="signature.asc"
+> Introduce the DW SPI capability flag DW_SPI_CAP_DFS_32 to let a
+> platform signal that this layout is in use. Modify
+> dw_spi_update_config() to test this capability flag to set the data
+> frame format field at the correct register location.
+> 
+> Suggested-by: Sean Anderson <seanga2@gmail.com>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  drivers/spi/spi-dw-core.c | 8 ++++++--
+>  drivers/spi/spi-dw.h      | 9 +++++++++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-dw-core.c b/drivers/spi/spi-dw-core.c
+> index 2e50cc0a9291..841c85247f01 100644
+> --- a/drivers/spi/spi-dw-core.c
+> +++ b/drivers/spi/spi-dw-core.c
+> @@ -311,8 +311,12 @@ void dw_spi_update_config(struct dw_spi *dws, struct spi_device *spi,
+>  	u32 speed_hz;
+>  	u16 clk_div;
+>  
 
------BEGIN PGP SIGNATURE-----
+> -	/* CTRLR0[ 4/3: 0] Data Frame Size */
+> -	cr0 |= (cfg->dfs - 1);
+> +	if (!(dws->caps & DW_SPI_CAP_DFS_32))
+> +		/* CTRLR0[ 4/3: 0] Data Frame Size */
+> +		cr0 |= (cfg->dfs - 1);
+> +	else
+> +		/* CTRLR0[20: 16] Data Frame Size */
+> +		cr0 |= (cfg->dfs - 1) << DWC_APB_CTRLR0_32_DFS_OFFSET;
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+pTxMACgkQJNaLcl1U
-h9CCzwf/SOaVjDOfJ3WO2PcRpeRE277pJrANK1utzq6zRVou8PJIN+wBkqgHEYcr
-P2w4049o4LKkvZOCXYn69ZznYDkM75uV7oWtRWOOu+ltmyWTYNTf1bqxYJVuVp98
-ZJdHyesJpsVgVvKW5athUt1+zh6A1cOBNel0Klu5E3pY6i7JHQFMp+E33sFV+wiC
-KGEx3Y89sAkQRMLmrlbTctOMhODPxQuEx+a/9Yjgg39AYrikjOijlub7mPHE4PcB
-IEEuZUBSCtwhJ2s0W3DL9ycrfrMSdjVduXNK9X6MJafqNP1UDeCW6LsqKZVgSBWG
-Yh8sK9idMtmFzUG+lU+5JZVq9f9bnA==
-=GnrL
------END PGP SIGNATURE-----
+If you extend the dfs field from four to five bits, then
+controller->bits_per_word_mask field should be properly updated too.
 
---o0ZfoUVt4BxPQnbU--
+Alas it hasn't been done for the DWC_ssi version of the core. So I suppose it
+should be fixed for the both of them.
+
+Just for the record. There are very handy macros for setting and getting bit fields
+to/from a variable. This is a good place to use them instead of manually
+shifting and defining the offsets. The macros are defined in linux/bitfield.h .
+Alas this driver hasn't been converted to using them. So I won't insist on using
+them here. But I hope someone will fix it sometime in future...
+
+-Sergey
+
+>  
+>  	if (!(dws->caps & DW_SPI_CAP_DWC_SSI))
+>  		/* CTRLR0[ 9:8] Transfer Mode */
+> diff --git a/drivers/spi/spi-dw.h b/drivers/spi/spi-dw.h
+> index faf40cb66498..48a11a51a407 100644
+> --- a/drivers/spi/spi-dw.h
+> +++ b/drivers/spi/spi-dw.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/io.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/spi/spi-mem.h>
+> +#include <linux/bitfield.h>
+>  
+>  /* Register offsets */
+>  #define DW_SPI_CTRLR0			0x00
+> @@ -72,6 +73,13 @@
+>  #define DWC_SSI_CTRLR0_FRF_OFFSET	6
+>  #define DWC_SSI_CTRLR0_DFS_OFFSET	0
+>  
+> +/*
+> + * Bit fields in CTRLR0 for DWC_apb_ssi v4 32-bits ctrlr0.
+> + * Based on DW_apb_ssi Databook v4.02a.
+> + */
+> +#define DWC_APB_CTRLR0_32_DFS_OFFSET	16
+> +#define DWC_APB_CTRLR0_32_DFS_MASK	GENMASK(20, 16)
+> +
+>  /*
+>   * For Keem Bay, CTRLR0[31] is used to select controller mode.
+>   * 0: SSI is slave
+> @@ -121,6 +129,7 @@ enum dw_ssi_type {
+>  #define DW_SPI_CAP_CS_OVERRIDE		BIT(0)
+>  #define DW_SPI_CAP_KEEMBAY_MST		BIT(1)
+>  #define DW_SPI_CAP_DWC_SSI		BIT(2)
+> +#define DW_SPI_CAP_DFS_32		BIT(3)
+>  
+>  /* Slave spi_transfer/spi_mem_op related */
+>  struct dw_spi_cfg {
+> -- 
+> 2.28.0
+> 
