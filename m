@@ -2,75 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67698C2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72CDC4741F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04AA120789
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E5720789
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nO8dGzUI"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrnBr7Ul"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731267AbgKJBis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 20:38:48 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58472 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731151AbgKJBir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 20:38:47 -0500
-X-UUID: ab346585b6d447eebda9f4e3fe62f05a-20201110
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=YjSSNPs9DIKiggA5+V9fbL6MfaunwhMceWHthl8AyvQ=;
-        b=nO8dGzUIDG+QXsinumgcurz/T7wPsQvr1oPc1A7nF2uGE/ORDVrKMr2cPaXTjHVcwXG+f0QJzH/z4yRyz3kSnOATU5ipjC41YTEp5qhOTcaDXEMhpNWle2fifa5iqlrB8JIuxFI+6nZB366Js0YYH18fbyORUb0kY9ga/Rg25VI=;
-X-UUID: ab346585b6d447eebda9f4e3fe62f05a-20201110
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 362126511; Tue, 10 Nov 2020 09:38:42 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 10 Nov 2020 09:38:41 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 10 Nov 2020 09:38:40 +0800
-Message-ID: <1604972321.16474.9.camel@mtksdaap41>
-Subject: Re: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static
- function
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1729874AbgKJByL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 20:54:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725889AbgKJByK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Nov 2020 20:54:10 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4529A206B2;
+        Tue, 10 Nov 2020 01:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604973250;
+        bh=eu56qa11Tiul6OfX9zaPBrGDUTnusdxoaA6l3R1Qp3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MrnBr7Ul3CCgtdn+V2+BIfvqktyHTp7itUz8tyCG8IDKM0VpvmGUNeKLmqOSPWoZJ
+         uyO3TsN3Jx+10UCiIknWKZevnzcnvnOUIqDTWwnpkK36w5mKZTh9Ip2aeoTJzw2kTN
+         lbWJrcCmwrs8LAofawk80orIRLjUHSUEOtmGfNRo=
+Date:   Tue, 10 Nov 2020 09:54:03 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Owen Chen <owen.chen@mediatek.com>
-Date:   Tue, 10 Nov 2020 09:38:41 +0800
-In-Reply-To: <20201109102035.GA1238638@kroah.com>
-References: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
-         <20201109102035.GA1238638@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/8] clk: imx8mm: drop of_match_ptr from of_device_id
+ table
+Message-ID: <20201110015402.GM31601@dragon>
+References: <20201103162435.13689-1-krzk@kernel.org>
+ <20201103162435.13689-2-krzk@kernel.org>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201103162435.13689-2-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTExLTA5IGF0IDExOjIwICswMTAwLCBHcmVnIEtIIHdyb3RlOg0KPiBPbiBN
-b24sIE5vdiAwOSwgMjAyMCBhdCAwNTozNzowN1BNICswODAwLCBXZWl5aSBMdSB3cm90ZToNCj4g
-PiBtdGtfY2xrX3JlZ2lzdGVyX211eCgpIHNob3VsZCBiZSBhIHN0YXRpYyBmdW5jdGlvbg0KPiA+
-IA0KPiA+IEZpeGVzOiBhM2FlNTQ5OTE3ZjE2ICgiY2xrOiBtZWRpYXRlazogQWRkIG5ldyBjbGtt
-dXggcmVnaXN0ZXIgQVBJIikNCj4gPiBDYzogPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+DQo+IA0K
-PiBXaHkgaXMgdGhpcyBmb3Igc3RhYmxlIHRyZWVzPw0KDQpIaSBHcmVnLA0KDQpNeSBNaXN0YWtl
-LiBJbmRlZWQsIHRoaXMgaXMgbm90IGEgYnVnIGZpeCBmb3Igc3RhYmxlIHRyZWUuDQpBbmQgdGhl
-cmUgYXJlIHNpbXBsZSBxdWVzdGlvbnMuDQpXaWxsIEkgYmUgYWxsb3dlZCB0byBrZWVwIHRoZSBm
-aXhlcyB0YWcgaW4gdGhpcyBwYXRjaCB0byBpbmRpY2F0ZSB0aGUNCm1pc3Rha2VzIHdlIG1hZGUg
-aW4gcHJldmlvdXMgY29tbWl0IGlmIGl0J3Mgbm90IGEgYnVnIGZpeCBmb3Igc3RhYmxlDQp0cmVl
-Pw0KQW5kIGFsbCBJIG5lZWQgdG8gZG8gbm93IGlzIHRvIHJlbW92ZSBzdGFibGUgdHJlZSBmcm9t
-IGNjIGxpc3QuIElzIGl0DQpjb3JyZWN0Pw0KDQpNYW55IHRoYW5rcy4NCg0KPiANCg0K
+On Tue, Nov 03, 2020 at 05:24:29PM +0100, Krzysztof Kozlowski wrote:
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it might be not relevant here).  This
+> fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
+> 
+>     drivers/clk/imx/clk-imx8mm.c:641:34: warning:
+>         ‘imx8mm_clk_of_match’ defined but not used [-Wunused-const-variable=]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+Applied, thanks.
