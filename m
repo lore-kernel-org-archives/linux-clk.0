@@ -4,74 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E7BC2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18375C2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 02:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0EE2078D
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9384720789
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 02:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOTX/j7j"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKX7MWJK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730921AbgKJBzF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 20:55:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35702 "EHLO mail.kernel.org"
+        id S1729648AbgKJCRr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 21:17:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729874AbgKJBzE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Nov 2020 20:55:04 -0500
+        id S1727311AbgKJCRr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Nov 2020 21:17:47 -0500
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30F93206B2;
-        Tue, 10 Nov 2020 01:55:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A29CD206B6;
+        Tue, 10 Nov 2020 02:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604973304;
-        bh=GCFhXse/e+ZHjphqwvgogigFqAMfjhABvI4EMREDYXU=;
+        s=default; t=1604974666;
+        bh=Z2YKuS5E9HnIPJvgzwiP2pZ8tz9wbpvCvI1ZS9WjtdM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JOTX/j7jI9fupke2UYQDX2P0QVnZO3m/2ZF0mxiFarFy7ODm9CRGTbloEWUDOs7au
-         p4gyF/NoRIQJHh696pl8eFoHV20KdzId7NwzorXPJUdp2m2LE4kF3J2Q+pIU2IhAdh
-         KmCiFPsn4Qh2DDObg3pwPAh4ZAZ+h2703wPc8lq8=
-Date:   Tue, 10 Nov 2020 09:54:57 +0800
+        b=UKX7MWJK4asbJspSFmKpUjwwkLoUNeF08iaBbRZFmvJjpXKZ1rLuqizEJA78XAY5i
+         90A483I/S9yxejc1oPqyVtmyoE9h2V6dBvKGWRGxSmGhZiTkvaNvvR3Zj8PjFudslu
+         6nM32XXpFK/rp6c9dNNqJ+/2LqUbBc0k1kIeGESw=
+Date:   Tue, 10 Nov 2020 10:17:39 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 5/8] clk: imx8mq: drop of_match_ptr from of_device_id
- table
-Message-ID: <20201110015457.GP31601@dragon>
-References: <20201103162435.13689-1-krzk@kernel.org>
- <20201103162435.13689-5-krzk@kernel.org>
+To:     Zou Wei <zou_wei@huawei.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] clk: imx: scu: Make pd_np with static keyword
+Message-ID: <20201110021738.GR31601@dragon>
+References: <1604488771-40827-1-git-send-email-zou_wei@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201103162435.13689-5-krzk@kernel.org>
+In-Reply-To: <1604488771-40827-1-git-send-email-zou_wei@huawei.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 05:24:32PM +0100, Krzysztof Kozlowski wrote:
-> The driver can match only via the DT table so the table should be always
-> used and the of_match_ptr does not have any sense (this also allows ACPI
-> matching via PRP0001, even though it might be not relevant here).  This
-> fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
+On Wed, Nov 04, 2020 at 07:19:31PM +0800, Zou Wei wrote:
+> Fix the following sparse warning:
 > 
->     drivers/clk/imx/clk-imx8mq.c:626:34: warning:
->         ‘imx8mq_clk_of_match’ defined but not used [-Wunused-const-variable=]
+> ./clk-scu.c:23:20: warning: symbol 'pd_np' was not declared. Should it be static?
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zou Wei <zou_wei@huawei.com>
 
 Applied, thanks.
