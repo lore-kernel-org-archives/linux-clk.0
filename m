@@ -2,92 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD92C55ABD
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 20:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49143C388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 21:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 410A320809
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 20:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E443420781
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 21:30:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZbUzZQG5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgKJUZt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 15:25:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbgKJUZs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 15:25:48 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09E7C0613D1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 12:25:48 -0800 (PST)
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kcaCz-0001ol-KH; Tue, 10 Nov 2020 21:25:41 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1kcaCy-0007Ab-Qy; Tue, 10 Nov 2020 21:25:40 +0100
-Date:   Tue, 10 Nov 2020 21:25:37 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: provide new devm helpers for prepared and
- enabled clocks
-Message-ID: <20201110202537.fyldrnhqewtppjkw@pengutronix.de>
-References: <20201013082132.661993-1-u.kleine-koenig@pengutronix.de>
- <20201013082132.661993-2-u.kleine-koenig@pengutronix.de>
+        id S1726688AbgKJVar (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 16:30:47 -0500
+Received: from ozlabs.org ([203.11.71.1]:60323 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726462AbgKJVar (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Nov 2020 16:30:47 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CW1Hj6KSpz9s1l;
+        Wed, 11 Nov 2020 08:30:41 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1605043844;
+        bh=TJeJa2tzl/LdHql1YVlaGWX2j/CQDqQ6INQTnj8ggfs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZbUzZQG5JxqA4YV2SZahiUdI30dQMP46KvpEnPXtnZuHo7c3Wmkj9UxrqV+O0dnT7
+         cQ0+a8HzLl4dfnEszsH88S5ZHS/K+rLjiHLq123sZjNSopUXTKkabrwhVwPh9ds+fS
+         BnRBnR/KVURwzmnZuGyDARkPM+ayvTsijevOQtdZ2lZVT03DHZ7biZbQb5mHTbUqvm
+         LPAitB4Q3+UaTUW/xAbbsGuGcR2MrXOEoePekFqZ+ZxBdDsdRZl9k/5KG+X6ljgbqv
+         SwrUhJeusEjFAWaMUcltq019Izb3B3eRgg+5EjJvqmn+WUI7rQpnbnzu7b36BFO4RG
+         ZYMJxwcwP6L6A==
+Date:   Wed, 11 Nov 2020 08:30:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH -next v2] clk: pm_clock: provide stubs for
+ pm_clk_runtime_suspend/_resume
+Message-ID: <20201111083041.698a561c@canb.auug.org.au>
+In-Reply-To: <CAJZ5v0jhJcL6uJw_Cm02SeUMff_s1L-mKzX3haAyejcCkKihNg@mail.gmail.com>
+References: <20201109032115.10610-1-rdunlap@infradead.org>
+        <CAJZ5v0jhJcL6uJw_Cm02SeUMff_s1L-mKzX3haAyejcCkKihNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vja2ao7c3lrfyvsg"
-Content-Disposition: inline
-In-Reply-To: <20201013082132.661993-2-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/NNkr73WnZd2Rjkw1MfDcr59";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---vja2ao7c3lrfyvsg
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+--Sig_/NNkr73WnZd2Rjkw1MfDcr59
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Rafael,
 
-On Tue, Oct 13, 2020 at 10:21:31AM +0200, Uwe Kleine-K=F6nig wrote:
-> When a driver keeps a clock prepared (or enabled) during the whole
-> lifetime of the driver, these helpers allow to simplify the drivers.
+On Tue, 10 Nov 2020 18:43:04 +0100 "Rafael J. Wysocki" <rafael@kernel.org> =
+wrote:
+>
+> > Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller dri=
+ver for SC7180")
+>
+> Applied to the PM tree as 5.10-rc material, thanks!
 
-I'd really like to make use of these helpers, so it would be great if
-you could take a look and tell me if you like my approach.
-
-Best regards
-Uwe
+The problem is that the commit that this one fixes is in the clk tree
+not the pm tree, so this patch needs to (also) be in the clk tree to
+reduced bisect problems.
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Cheers,
+Stephen Rothwell
 
---vja2ao7c3lrfyvsg
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/NNkr73WnZd2Rjkw1MfDcr59
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+q9z4ACgkQwfwUeK3K
-7AlqfAf+IjbADZjFZFkkzkx614oDoA3yTUUbGi/0f1FFniQH+XxC1pdJ0f/3GDo6
-WNU0b9K65aYN3d+KseUkhxcaqEfOM8Wi5RJeYXCJfaEuzJ7PpN7XLcvi0Q7IddJz
-ShBcknshTmiWPAi31mxSl/M2rRkH33S7m+dvxTaw1hLhZb05HHxX+GhOD4svyiyO
-syBMwMpTE8pez+0C9VMh0+T242YDHqWrlEGUxI/TZG7aGXMtibniSLXz//zR1Zoz
-QcaY8fFSOtmjrJDReE0AgQXcYaou5F8vYcqKarSf/NF3VCjCXjiOWaR3Loo2M8w1
-ApNFRqDiEMf/iTJFl99jmRStrDBd9Q==
-=NUx6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+rBoEACgkQAVBC80lX
+0GwywQf9EPeARXiMnQ41GV1QHYfOW3ZwJizOxCI/b26sjpnk/cfkaeiA5TXMezh/
+zkM/7hdYitLquso9XO4M+ODlgSuiHEwSOwmw+yVb5RlFwezkg07J1xbSnm5kyNyz
+bm/72cvGjhP3R3GWTV7a7OI+i92efj7Hlpcml9Qu91tMxQNEkM++ABPlDa5eP2uF
+BatuzT6k0dSj5VmwH+HmPSZTPK+TEVFs9hKC2oq70Yk0CO5G8YGwlpdnnZ/urd1o
+8UpRQOjggfx6WjJ/5oZtV2kXf5GiPB0/Zdwvgrfvd124xWZbxgufCK0oc0BRfHqn
+Gm/tC8bKMwzRprhfWiteI2/3OdkvSw==
+=2ZHS
 -----END PGP SIGNATURE-----
 
---vja2ao7c3lrfyvsg--
+--Sig_/NNkr73WnZd2Rjkw1MfDcr59--
