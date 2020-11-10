@@ -2,575 +2,352 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC18C56201
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 07:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336A1C388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 08:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF0220781
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 07:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C626E20829
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 08:31:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="aHyUFbxS"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RFyaleQh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731552AbgKJH2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 02:28:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51586 "EHLO
+        id S1726825AbgKJIb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 03:31:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730921AbgKJH2P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 02:28:15 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E8FC0613D4
-        for <linux-clk@vger.kernel.org>; Mon,  9 Nov 2020 23:28:15 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id 10so10617937pfp.5
-        for <linux-clk@vger.kernel.org>; Mon, 09 Nov 2020 23:28:15 -0800 (PST)
+        with ESMTP id S1726462AbgKJIb7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 03:31:59 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DC7C0613CF
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 00:31:57 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id k2so8313922wrx.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 00:31:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WEyHk3bb1IAAgDKv0Umarx37Gd76su7VgBxFNoUZNgI=;
-        b=aHyUFbxShpi+AjePr3nY5AykBveBDvHrQo900msrXaxRHeSMVo3h+78GOAbgGBdOBG
-         7Hrrj3Vl51eKdwVoDTnuLSTqtZi48D4kOvXw6TOFVV0VNbfGd/ujaAk5HVQnbthVmvrV
-         iMUKEhOauRgmEok3O28vMHcchek9EP9EpFvxmAprcNbH76Gl3ZAL54y7HQOHPKSgQV1W
-         3xh258kjqCJAzzhpUfzE1NU0xG7Soq5eZ4xrukbMazqFh/gNsTBf/2rNH3G14ekn5Eca
-         lX3nHcAabLfS9uWLtYiDHx5nNMB1P2/OiCzgGKbIjUXsMvgXW+HSccN1Q5zPUlWzh8qz
-         mhcA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=YdVm+RMVBZ5c4fhXdJnD+KzbuIzyYWJgCSlyloNp+OI=;
+        b=RFyaleQhVb65qbDmZcrSTOZ5slBNPYmCEBpdgvwmJ/M3KabTNr4qaWoERWqjG2HeEd
+         XFpHH40WOTprdK5QWbezsAANlN4UR7rQuEQo9UenEO/LZ8NTl0lH+ph2nadErPJrb/nP
+         EuaYdecjnonqKn9haqeObyYCY6BCxEWnVVNSkT/FFEwjSD3siJq03/uDmmER8+Cls9Gs
+         zOpA3NlHbzAnYvsQ92jhEyG6vudEOab8LisXeyC/ijzwnaApOiB0e9E1boLEvQsRSBVe
+         bKF39Il5QvJu+cw5gQH7KRiYU0DnKmZWVZkXKFxsehT0qbcrzwrUA9fJxUp7iT7EojWS
+         F9fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WEyHk3bb1IAAgDKv0Umarx37Gd76su7VgBxFNoUZNgI=;
-        b=JICMcT2bRmU5DcmB7iiwFAi1hl0ffQtkt3AW+s5nYFU5maRywnnYCvl8+LxXczTlZd
-         YtOzPNs43DJmH/LgbLJsNfalb3YKr98qNz1c8YDAwBKuXjfJ/layUGwZspo0+3/C9BZZ
-         sdaTU+2lhX3DbWT1embBJ0iusflTWFLtAkgtE3g136ml/n2dPOU+lQSi71xvIiS9eG5S
-         nnWLRaAcKXkp1gE38ubdMmZLYzaS6tvehoSzEK+qUHQ7oDmcHdtJ12vHikdeh14nX79h
-         YMc/u8IRKbPzaJ1FMJo5MQMan44QRwHX/A0qNjCNFs6tOO4xasz9qIqPafnzvL1IHbUK
-         wzdg==
-X-Gm-Message-State: AOAM532GRru6ieRgVTkI+zyjjJSrdcE5+s5PmBXztevZKQK2BzDh2X7o
-        kUS/AS21mwQj5Llkd7XSK8Z+7A==
-X-Google-Smtp-Source: ABdhPJz8CrBUKDmtoUmhD4Mm+qITL0Nb5cX3ASX1NJB/srfdJpWYRVCNwjXVUiB9UpEVv5R7+Ks2Xg==
-X-Received: by 2002:a63:4c24:: with SMTP id z36mr1918750pga.432.1604993294904;
-        Mon, 09 Nov 2020 23:28:14 -0800 (PST)
-Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
-        by smtp.gmail.com with ESMTPSA id w22sm12233191pge.25.2020.11.09.23.28.12
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=YdVm+RMVBZ5c4fhXdJnD+KzbuIzyYWJgCSlyloNp+OI=;
+        b=aZS9lPGfQNAYZOdymH9Oe6RlV59McAjGvkcJEbKu7V2fRkKbmt5/5NOevs9bFwuj6n
+         xh3mz66QxzJdprg+UarvGuSRIvhQBa/9FI4phlS216XYxBKL3SvrjZFGGdNd90aganyD
+         vjFFB8hhlAx6RbnonPn6rF/TrieSq/HmWHRr0nt3Z0gCnhkbPhcn3kx2aL3YvHOgQZXz
+         i8Lp6tknrjthNOvZCpdUXkSdtPtP8OP+fAyGjD2pYysbzgaZctj+8oCrIIfh9w6O9UC4
+         LDA6VTrwY5ygncIhoxHfsDoIgXCvLVTt/mLUrwMFEY6yv7UxKyDemd2ai46ev8shIBU5
+         XCQA==
+X-Gm-Message-State: AOAM532MVPwTri8Q5tRaCz3bby8OdG5IyebMY1MjspdxdLBhK1pPNtdL
+        OKViUUHohQFLOBo6E1XxXv0DtA==
+X-Google-Smtp-Source: ABdhPJxPbeiyv6TbH42tc7dPsPd2xHRWlzEkmWsDx7fYTf0GLfgf3f0Lney5HcmHGoXxtvsw1vzFNQ==
+X-Received: by 2002:a5d:4883:: with SMTP id g3mr22646828wrq.19.1604997115869;
+        Tue, 10 Nov 2020 00:31:55 -0800 (PST)
+Received: from localhost (253.35.17.109.rev.sfr.net. [109.17.35.253])
+        by smtp.gmail.com with ESMTPSA id m12sm15984083wrs.92.2020.11.10.00.31.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 23:28:14 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
-        schwab@linux-m68k.org, aou@eecs.berkeley.edu,
-        mturquette@baylibre.com, yash.shah@sifive.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Cc:     Zong Li <zong.li@sifive.com>, Henry Styles <hes@sifive.com>,
-        Erik Danie <erik.danie@sifive.com>
-Subject: [PATCH v2 3/3] clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
-Date:   Tue, 10 Nov 2020 15:27:48 +0800
-Message-Id: <20201110072748.46705-4-zong.li@sifive.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201110072748.46705-1-zong.li@sifive.com>
-References: <20201110072748.46705-1-zong.li@sifive.com>
+        Tue, 10 Nov 2020 00:31:55 -0800 (PST)
+References: <20201109233622.23598-1-khilman@baylibre.com>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: meson: enable building as modules
+In-reply-to: <20201109233622.23598-1-khilman@baylibre.com>
+Message-ID: <1jft5hpq85.fsf@starbuckisacylon.baylibre.com>
+Date:   Tue, 10 Nov 2020 09:31:54 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add driver code for the SiFive FU740 PRCI IP block. This IP block
-handles reset and clock control for the SiFive FU740 device and
-implements SoC-level clock tree controls and dividers.
 
-This driver contains bug fixes and contributions from
-Henry Styles <hes@sifive.com> and Erik Danie <erik.danie@sifive.com>.
+On Tue 10 Nov 2020 at 00:36, Kevin Hilman <khilman@baylibre.com> wrote:
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
-Cc: Henry Styles <hes@sifive.com>
-Cc: Erik Danie <erik.danie@sifive.com>
----
- drivers/clk/sifive/Kconfig                    |   4 +-
- drivers/clk/sifive/Makefile                   |   1 +
- drivers/clk/sifive/fu740-prci.c               | 122 ++++++++++++++++++
- drivers/clk/sifive/fu740-prci.h               |  21 +++
- drivers/clk/sifive/sifive-prci.c              | 120 +++++++++++++++++
- drivers/clk/sifive/sifive-prci.h              |  88 +++++++++++++
- include/dt-bindings/clock/sifive-fu740-prci.h |  23 ++++
- 7 files changed, 377 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/sifive/fu740-prci.c
- create mode 100644 drivers/clk/sifive/fu740-prci.h
- create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
+> Make it possible to build all clk drivers as modules, but default
+> remains built-in.
+>
+> No functional changes.
+>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+> Depends on series adding new API to get clk consumer from clk_hw:
+> https://lore.kernel.org/linux-amlogic/20201021162147.563655-1-jbrunet@baylibre.com/
 
-diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
-index ab48cf7e0105..1c14eb20c066 100644
---- a/drivers/clk/sifive/Kconfig
-+++ b/drivers/clk/sifive/Kconfig
-@@ -13,7 +13,7 @@ config CLK_SIFIVE_PRCI
- 	select CLK_ANALOGBITS_WRPLL_CLN28HPC
- 	help
- 	  Supports the Power Reset Clock interface (PRCI) IP block found in
--	  FU540 SoCs. If this kernel is meant to run on a SiFive FU540 SoC,
--	  enable this driver.
-+	  FU540/FU740 SoCs. If this kernel is meant to run on a SiFive FU540/
-+	  FU740 SoCs, enable this driver.
- 
- endif
-diff --git a/drivers/clk/sifive/Makefile b/drivers/clk/sifive/Makefile
-index fe3e2cb4c4d8..2c05798e4ba4 100644
---- a/drivers/clk/sifive/Makefile
-+++ b/drivers/clk/sifive/Makefile
-@@ -2,3 +2,4 @@
- obj-y += sifive-prci.o
- 
- obj-$(CONFIG_CLK_SIFIVE_PRCI)	+= fu540-prci.o
-+obj-$(CONFIG_CLK_SIFIVE_PRCI)	+= fu740-prci.o
-diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
-new file mode 100644
-index 000000000000..3b87e273c3eb
---- /dev/null
-+++ b/drivers/clk/sifive/fu740-prci.c
-@@ -0,0 +1,122 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018-2019 SiFive, Inc.
-+ * Wesley Terpstra
-+ * Paul Walmsley
-+ * Zong Li
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <dt-bindings/clock/sifive-fu740-prci.h>
-+#include <linux/module.h>
-+#include "sifive-prci.h"
-+
-+/* PRCI integration data for each WRPLL instance */
-+
-+static struct __prci_wrpll_data __prci_corepll_data = {
-+	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-+	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
-+	.disable_bypass = sifive_prci_coreclksel_use_final_corepll,
-+};
-+
-+static struct __prci_wrpll_data __prci_ddrpll_data = {
-+	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-+};
-+
-+static struct __prci_wrpll_data __prci_gemgxlpll_data = {
-+	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-+};
-+
-+static struct __prci_wrpll_data __prci_dvfscorepll_data = {
-+	.cfg0_offs = PRCI_DVFSCOREPLLCFG0_OFFSET,
-+	.enable_bypass = sifive_prci_corepllsel_use_corepll,
-+	.disable_bypass = sifive_prci_corepllsel_use_dvfscorepll,
-+};
-+
-+static struct __prci_wrpll_data __prci_hfpclkpll_data = {
-+	.cfg0_offs = PRCI_HFPCLKPLLCFG0_OFFSET,
-+	.enable_bypass = sifive_prci_hfpclkpllsel_use_hfclk,
-+	.disable_bypass = sifive_prci_hfpclkpllsel_use_hfpclkpll,
-+};
-+
-+static struct __prci_wrpll_data __prci_cltxpll_data = {
-+	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
-+};
-+
-+/* Linux clock framework integration */
-+
-+static const struct clk_ops sifive_fu740_prci_wrpll_clk_ops = {
-+	.set_rate = sifive_prci_wrpll_set_rate,
-+	.round_rate = sifive_prci_wrpll_round_rate,
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_wrpll_ro_clk_ops = {
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_tlclksel_clk_ops = {
-+	.recalc_rate = sifive_prci_tlclksel_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_hfpclkplldiv_clk_ops = {
-+	.recalc_rate = sifive_prci_hfpclkplldiv_recalc_rate,
-+};
-+
-+/* List of clock controls provided by the PRCI */
-+struct __prci_clock __prci_init_clocks_fu740[] = {
-+	[PRCI_CLK_COREPLL] = {
-+		.name = "corepll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &__prci_corepll_data,
-+	},
-+	[PRCI_CLK_DDRPLL] = {
-+		.name = "ddrpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_ro_clk_ops,
-+		.pwd = &__prci_ddrpll_data,
-+	},
-+	[PRCI_CLK_GEMGXLPLL] = {
-+		.name = "gemgxlpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &__prci_gemgxlpll_data,
-+	},
-+	[PRCI_CLK_DVFSCOREPLL] = {
-+		.name = "dvfscorepll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &__prci_dvfscorepll_data,
-+	},
-+	[PRCI_CLK_HFPCLKPLL] = {
-+		.name = "hfpclkpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &__prci_hfpclkpll_data,
-+	},
-+	[PRCI_CLK_CLTXPLL] = {
-+		.name = "cltxpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &__prci_cltxpll_data,
-+	},
-+	[PRCI_CLK_TLCLK] = {
-+		.name = "tlclk",
-+		.parent_name = "corepll",
-+		.ops = &sifive_fu740_prci_tlclksel_clk_ops,
-+	},
-+	[PRCI_CLK_PCLK] = {
-+		.name = "pclk",
-+		.parent_name = "hfpclkpll",
-+		.ops = &sifive_fu740_prci_hfpclkplldiv_clk_ops,
-+	},
-+};
-diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
-new file mode 100644
-index 000000000000..13ef971f7764
---- /dev/null
-+++ b/drivers/clk/sifive/fu740-prci.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2020 SiFive, Inc.
-+ * Zong Li
-+ */
-+
-+#ifndef __SIFIVE_CLK_FU740_PRCI_H
-+#define __SIFIVE_CLK_FU740_PRCI_H
-+
-+#include "sifive-prci.h"
-+
-+#define NUM_CLOCK_FU740	8
-+
-+extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
-+
-+static const struct prci_clk_desc prci_clk_fu740 = {
-+	.clks = __prci_init_clocks_fu740,
-+	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu740),
-+};
-+
-+#endif /* __SIFIVE_CLK_FU740_PRCI_H */
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index 0ac729eeb71b..4098dbc5881a 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -27,6 +27,7 @@
- #include <linux/of_device.h>
- #include "sifive-prci.h"
- #include "fu540-prci.h"
-+#include "fu740-prci.h"
- 
- /*
-  * Private functions
-@@ -242,6 +243,18 @@ unsigned long sifive_prci_tlclksel_recalc_rate(struct clk_hw *hw,
- 	return div_u64(parent_rate, div);
- }
- 
-+/* HFPCLK clock integration */
-+
-+unsigned long sifive_prci_hfpclkplldiv_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-+	struct __prci_data *pd = pc->pd;
-+	u32 div = __prci_readl(pd, PRCI_HFPCLKPLLDIV_OFFSET);
-+
-+	return div_u64(parent_rate, div + 2);
-+}
-+
- /*
-  * Core clock mux control
-  */
-@@ -287,6 +300,112 @@ void sifive_prci_coreclksel_use_corepll(struct __prci_data *pd)
- 	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET);	/* barrier */
- }
- 
-+/**
-+ * sifive_prci_coreclksel_use_final_corepll() - switch the CORECLK mux to output
-+ * FINAL_COREPLL
-+ * @pd: struct __prci_data * for the PRCI containing the CORECLK mux reg
-+ *
-+ * Switch the CORECLK mux to the final COREPLL output clock; return once
-+ * complete.
-+ *
-+ * Context: Any context.  Caller must prevent concurrent changes to the
-+ *          PRCI_CORECLKSEL_OFFSET register.
-+ */
-+void sifive_prci_coreclksel_use_final_corepll(struct __prci_data *pd)
-+{
-+	u32 r;
-+
-+	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET);
-+	r &= ~PRCI_CORECLKSEL_CORECLKSEL_MASK;
-+	__prci_writel(r, PRCI_CORECLKSEL_OFFSET, pd);
-+
-+	r = __prci_readl(pd, PRCI_CORECLKSEL_OFFSET);	/* barrier */
-+}
-+
-+/**
-+ * sifive_prci_corepllsel_use_dvfscorepll() - switch the COREPLL mux to
-+ * output DVFS_COREPLL
-+ * @pd: struct __prci_data * for the PRCI containing the COREPLL mux reg
-+ *
-+ * Switch the COREPLL mux to the DVFSCOREPLL output clock; return once complete.
-+ *
-+ * Context: Any context.  Caller must prevent concurrent changes to the
-+ *          PRCI_COREPLLSEL_OFFSET register.
-+ */
-+void sifive_prci_corepllsel_use_dvfscorepll(struct __prci_data *pd)
-+{
-+	u32 r;
-+
-+	r = __prci_readl(pd, PRCI_COREPLLSEL_OFFSET);
-+	r |= PRCI_COREPLLSEL_COREPLLSEL_MASK;
-+	__prci_writel(r, PRCI_COREPLLSEL_OFFSET, pd);
-+
-+	r = __prci_readl(pd, PRCI_COREPLLSEL_OFFSET);	/* barrier */
-+}
-+
-+/**
-+ * sifive_prci_corepllsel_use_corepll() - switch the COREPLL mux to
-+ * output COREPLL
-+ * @pd: struct __prci_data * for the PRCI containing the COREPLL mux reg
-+ *
-+ * Switch the COREPLL mux to the COREPLL output clock; return once complete.
-+ *
-+ * Context: Any context.  Caller must prevent concurrent changes to the
-+ *          PRCI_COREPLLSEL_OFFSET register.
-+ */
-+void sifive_prci_corepllsel_use_corepll(struct __prci_data *pd)
-+{
-+	u32 r;
-+
-+	r = __prci_readl(pd, PRCI_COREPLLSEL_OFFSET);
-+	r &= ~PRCI_COREPLLSEL_COREPLLSEL_MASK;
-+	__prci_writel(r, PRCI_COREPLLSEL_OFFSET, pd);
-+
-+	r = __prci_readl(pd, PRCI_COREPLLSEL_OFFSET);	/* barrier */
-+}
-+
-+/**
-+ * sifive_prci_hfpclkpllsel_use_hfclk() - switch the HFPCLKPLL mux to
-+ * output HFCLK
-+ * @pd: struct __prci_data * for the PRCI containing the HFPCLKPLL mux reg
-+ *
-+ * Switch the HFPCLKPLL mux to the HFCLK input source; return once complete.
-+ *
-+ * Context: Any context.  Caller must prevent concurrent changes to the
-+ *          PRCI_HFPCLKPLLSEL_OFFSET register.
-+ */
-+void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd)
-+{
-+	u32 r;
-+
-+	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);
-+	r |= PRCI_HFPCLKPLLSEL_HFPCLKPLLSEL_MASK;
-+	__prci_writel(r, PRCI_HFPCLKPLLSEL_OFFSET, pd);
-+
-+	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);	/* barrier */
-+}
-+
-+/**
-+ * sifive_prci_hfpclkpllsel_use_hfpclkpll() - switch the HFPCLKPLL mux to
-+ * output HFPCLKPLL
-+ * @pd: struct __prci_data * for the PRCI containing the HFPCLKPLL mux reg
-+ *
-+ * Switch the HFPCLKPLL mux to the HFPCLKPLL output clock; return once complete.
-+ *
-+ * Context: Any context.  Caller must prevent concurrent changes to the
-+ *          PRCI_HFPCLKPLLSEL_OFFSET register.
-+ */
-+void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd)
-+{
-+	u32 r;
-+
-+	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);
-+	r &= ~PRCI_HFPCLKPLLSEL_HFPCLKPLLSEL_MASK;
-+	__prci_writel(r, PRCI_HFPCLKPLLSEL_OFFSET, pd);
-+
-+	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);	/* barrier */
-+}
-+
- /**
-  * __prci_register_clocks() - register clock controls in the PRCI
-  * @dev: Linux struct device *
-@@ -391,6 +510,7 @@ static int sifive_prci_probe(struct platform_device *pdev)
- 
- static const struct of_device_id sifive_prci_of_match[] = {
- 	{.compatible = "sifive,fu540-c000-prci", .data = &prci_clk_fu540},
-+	{.compatible = "sifive,fu740-c000-prci", .data = &prci_clk_fu740},
- 	{}
- };
- 
-diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive-prci.h
-index 025f717bc053..bc0646bc9c3e 100644
---- a/drivers/clk/sifive/sifive-prci.h
-+++ b/drivers/clk/sifive/sifive-prci.h
-@@ -117,6 +117,87 @@
- #define PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_MASK			\
- 		(0x1 << PRCI_CLKMUXSTATUSREG_TLCLKSEL_STATUS_SHIFT)
- 
-+/* CLTXPLLCFG0 */
-+#define PRCI_CLTXPLLCFG0_OFFSET		0x30
-+#define PRCI_CLTXPLLCFG0_DIVR_SHIFT	0
-+#define PRCI_CLTXPLLCFG0_DIVR_MASK	(0x3f << PRCI_CLTXPLLCFG0_DIVR_SHIFT)
-+#define PRCI_CLTXPLLCFG0_DIVF_SHIFT	6
-+#define PRCI_CLTXPLLCFG0_DIVF_MASK	(0x1ff << PRCI_CLTXPLLCFG0_DIVF_SHIFT)
-+#define PRCI_CLTXPLLCFG0_DIVQ_SHIFT	15
-+#define PRCI_CLTXPLLCFG0_DIVQ_MASK	(0x7 << PRCI_CLTXPLLCFG0_DIVQ_SHIFT)
-+#define PRCI_CLTXPLLCFG0_RANGE_SHIFT	18
-+#define PRCI_CLTXPLLCFG0_RANGE_MASK	(0x7 << PRCI_CLTXPLLCFG0_RANGE_SHIFT)
-+#define PRCI_CLTXPLLCFG0_BYPASS_SHIFT	24
-+#define PRCI_CLTXPLLCFG0_BYPASS_MASK	(0x1 << PRCI_CLTXPLLCFG0_BYPASS_SHIFT)
-+#define PRCI_CLTXPLLCFG0_FSE_SHIFT	25
-+#define PRCI_CLTXPLLCFG0_FSE_MASK	(0x1 << PRCI_CLTXPLLCFG0_FSE_SHIFT)
-+#define PRCI_CLTXPLLCFG0_LOCK_SHIFT	31
-+#define PRCI_CLTXPLLCFG0_LOCK_MASK	(0x1 << PRCI_CLTXPLLCFG0_LOCK_SHIFT)
-+
-+/* CLTXPLLCFG1 */
-+#define PRCI_CLTXPLLCFG1_OFFSET		0x34
-+#define PRCI_CLTXPLLCFG1_CKE_SHIFT	24
-+#define PRCI_CLTXPLLCFG1_CKE_MASK	(0x1 << PRCI_CLTXPLLCFG1_CKE_SHIFT)
-+
-+/* DVFSCOREPLLCFG0 */
-+#define PRCI_DVFSCOREPLLCFG0_OFFSET	0x38
-+
-+/* DVFSCOREPLLCFG1 */
-+#define PRCI_DVFSCOREPLLCFG1_OFFSET	0x3c
-+#define PRCI_DVFSCOREPLLCFG1_CKE_SHIFT	24
-+#define PRCI_DVFSCOREPLLCFG1_CKE_MASK	(0x1 << PRCI_DVFSCOREPLLCFG1_CKE_SHIFT)
-+
-+/* COREPLLSEL */
-+#define PRCI_COREPLLSEL_OFFSET			0x40
-+#define PRCI_COREPLLSEL_COREPLLSEL_SHIFT	0
-+#define PRCI_COREPLLSEL_COREPLLSEL_MASK					\
-+		(0x1 << PRCI_COREPLLSEL_COREPLLSEL_SHIFT)
-+
-+/* HFPCLKPLLCFG0 */
-+#define PRCI_HFPCLKPLLCFG0_OFFSET		0x50
-+#define PRCI_HFPCLKPLL_CFG0_DIVR_SHIFT		0
-+#define PRCI_HFPCLKPLL_CFG0_DIVR_MASK					\
-+		(0x3f << PRCI_HFPCLKPLLCFG0_DIVR_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_DIVF_SHIFT		6
-+#define PRCI_HFPCLKPLL_CFG0_DIVF_MASK					\
-+		(0x1ff << PRCI_HFPCLKPLLCFG0_DIVF_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_DIVQ_SHIFT		15
-+#define PRCI_HFPCLKPLL_CFG0_DIVQ_MASK					\
-+		(0x7 << PRCI_HFPCLKPLLCFG0_DIVQ_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_RANGE_SHIFT		18
-+#define PRCI_HFPCLKPLL_CFG0_RANGE_MASK					\
-+		(0x7 << PRCI_HFPCLKPLLCFG0_RANGE_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_BYPASS_SHIFT	24
-+#define PRCI_HFPCLKPLL_CFG0_BYPASS_MASK					\
-+		(0x1 << PRCI_HFPCLKPLLCFG0_BYPASS_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_FSE_SHIFT		25
-+#define PRCI_HFPCLKPLL_CFG0_FSE_MASK					\
-+		(0x1 << PRCI_HFPCLKPLLCFG0_FSE_SHIFT)
-+#define PRCI_HFPCLKPLL_CFG0_LOCK_SHIFT		31
-+#define PRCI_HFPCLKPLL_CFG0_LOCK_MASK					\
-+		(0x1 << PRCI_HFPCLKPLLCFG0_LOCK_SHIFT)
-+
-+/* HFPCLKPLLCFG1 */
-+#define PRCI_HFPCLKPLLCFG1_OFFSET		0x54
-+#define PRCI_HFPCLKPLLCFG1_CKE_SHIFT		24
-+#define PRCI_HFPCLKPLLCFG1_CKE_MASK					\
-+		(0x1 << PRCI_HFPCLKPLLCFG1_CKE_SHIFT)
-+
-+/* HFPCLKPLLSEL */
-+#define PRCI_HFPCLKPLLSEL_OFFSET		0x58
-+#define PRCI_HFPCLKPLLSEL_HFPCLKPLLSEL_SHIFT	0
-+#define PRCI_HFPCLKPLLSEL_HFPCLKPLLSEL_MASK				\
-+		(0x1 << PRCI_HFPCLKPLLSEL_HFPCLKPLLSEL_SHIFT)
-+
-+/* HFPCLKPLLDIV */
-+#define PRCI_HFPCLKPLLDIV_OFFSET		0x5c
-+
-+/* PRCIPLL */
-+#define PRCI_PRCIPLL_OFFSET			0xe0
-+
-+/* PROCMONCFG */
-+#define PRCI_PROCMONCFG_OFFSET			0xf0
-+
- /*
-  * Private structures
-  */
-@@ -187,6 +268,11 @@ struct prci_clk_desc {
- /* Core clock mux control */
- void sifive_prci_coreclksel_use_hfclk(struct __prci_data *pd);
- void sifive_prci_coreclksel_use_corepll(struct __prci_data *pd);
-+void sifive_prci_coreclksel_use_final_corepll(struct __prci_data *pd);
-+void sifive_prci_corepllsel_use_dvfscorepll(struct __prci_data *pd);
-+void sifive_prci_corepllsel_use_corepll(struct __prci_data *pd);
-+void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd);
-+void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd);
- 
- /* Linux clock framework integration */
- long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -197,5 +283,7 @@ unsigned long sifive_prci_wrpll_recalc_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate);
- unsigned long sifive_prci_tlclksel_recalc_rate(struct clk_hw *hw,
- 					       unsigned long parent_rate);
-+unsigned long sifive_prci_hfpclkplldiv_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate);
- 
- #endif /* __SIFIVE_CLK_SIFIVE_PRCI_H */
-diff --git a/include/dt-bindings/clock/sifive-fu740-prci.h b/include/dt-bindings/clock/sifive-fu740-prci.h
-new file mode 100644
-index 000000000000..cd7706ea5677
---- /dev/null
-+++ b/include/dt-bindings/clock/sifive-fu740-prci.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (C) 2019 SiFive, Inc.
-+ * Wesley Terpstra
-+ * Paul Walmsley
-+ * Zong Li
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_SIFIVE_FU740_PRCI_H
-+#define __DT_BINDINGS_CLOCK_SIFIVE_FU740_PRCI_H
-+
-+/* Clock indexes for use by Device Tree data and the PRCI driver */
-+
-+#define PRCI_CLK_COREPLL	       0
-+#define PRCI_CLK_DDRPLL		       1
-+#define PRCI_CLK_GEMGXLPLL	       2
-+#define PRCI_CLK_DVFSCOREPLL	       3
-+#define PRCI_CLK_HFPCLKPLL	       4
-+#define PRCI_CLK_CLTXPLL	       5
-+#define PRCI_CLK_TLCLK		       6
-+#define PRCI_CLK_PCLK		       7
-+
-+#endif	/* __DT_BINDINGS_CLOCK_SIFIVE_FU740_PRCI_H */
--- 
-2.29.2
+and
+
+https://lore.kernel.org/r/20201021163847.595189-1-jbrunet@baylibre.com
+
+Once these notifier allocations are dealt with, I'm happy to take this.
+
+One minor details though ...
+
+>
+>  drivers/clk/meson/Kconfig       | 7 ++++---
+>  drivers/clk/meson/axg-aoclk.c   | 5 ++++-
+>  drivers/clk/meson/axg.c         | 5 ++++-
+>  drivers/clk/meson/g12a-aoclk.c  | 5 ++++-
+>  drivers/clk/meson/g12a.c        | 5 ++++-
+>  drivers/clk/meson/gxbb-aoclk.c  | 5 ++++-
+>  drivers/clk/meson/gxbb.c        | 5 ++++-
+>  drivers/clk/meson/meson-aoclk.c | 4 ++++
+>  drivers/clk/meson/meson-eeclk.c | 3 +++
+>  9 files changed, 35 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 034da203e8e0..fc002c155bc3 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -58,7 +58,7 @@ config COMMON_CLK_MESON8B
+>  	  want peripherals and CPU frequency scaling to work.
+>  
+>  config COMMON_CLK_GXBB
+> -	bool "GXBB and GXL SoC clock controllers support"
+> +	tristate "GXBB and GXL SoC clock controllers support"
+>  	depends on ARM64
+>  	default y
+>  	select COMMON_CLK_MESON_REGMAP
+> @@ -74,7 +74,7 @@ config COMMON_CLK_GXBB
+>  	  Say Y if you want peripherals and CPU frequency scaling to work.
+>  
+>  config COMMON_CLK_AXG
+> -	bool "AXG SoC clock controllers support"
+> +	tristate "AXG SoC clock controllers support"
+>  	depends on ARM64
+>  	default y
+>  	select COMMON_CLK_MESON_REGMAP
+> @@ -100,7 +100,7 @@ config COMMON_CLK_AXG_AUDIO
+>  	  aka axg, Say Y if you want audio subsystem to work.
+>  
+>  config COMMON_CLK_G12A
+> -	bool "G12 and SM1 SoC clock controllers support"
+> +	tristate "G12 and SM1 SoC clock controllers support"
+>  	depends on ARM64
+>  	default y
+>  	select COMMON_CLK_MESON_REGMAP
+> @@ -110,6 +110,7 @@ config COMMON_CLK_G12A
+>  	select COMMON_CLK_MESON_AO_CLKC
+>  	select COMMON_CLK_MESON_EE_CLKC
+>  	select COMMON_CLK_MESON_CPU_DYNDIV
+> +	select COMMON_CLK_MESON_VID_PLL_DIV
+
+This looks like a fix which could be sent separately with a fix tag,
+doesn't it ?
+
+>  	select MFD_SYSCON
+>  	help
+>  	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+> diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+> index b488b40c9d0e..af6db437bcd8 100644
+> --- a/drivers/clk/meson/axg-aoclk.c
+> +++ b/drivers/clk/meson/axg-aoclk.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+>  #include "meson-aoclk.h"
+>  #include "axg-aoclk.h"
+>  
+> @@ -326,6 +327,7 @@ static const struct of_device_id axg_aoclkc_match_table[] = {
+>  	},
+>  	{ }
+>  };
+> +MODULE_DEVICE_TABLE(of, axg_aoclkc_match_table);
+>  
+>  static struct platform_driver axg_aoclkc_driver = {
+>  	.probe		= meson_aoclkc_probe,
+> @@ -335,4 +337,5 @@ static struct platform_driver axg_aoclkc_driver = {
+>  	},
+>  };
+>  
+> -builtin_platform_driver(axg_aoclkc_driver);
+> +module_platform_driver(axg_aoclkc_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 13fc0006f63d..7ca7ea7345e5 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/init.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/module.h>
+>  
+>  #include "clk-regmap.h"
+>  #include "clk-pll.h"
+> @@ -1354,6 +1355,7 @@ static const struct of_device_id clkc_match_table[] = {
+>  	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
+>  	{}
+>  };
+> +MODULE_DEVICE_TABLE(of, clkc_match_table);
+>  
+>  static struct platform_driver axg_driver = {
+>  	.probe		= meson_eeclkc_probe,
+> @@ -1363,4 +1365,5 @@ static struct platform_driver axg_driver = {
+>  	},
+>  };
+>  
+> -builtin_platform_driver(axg_driver);
+> +module_platform_driver(axg_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+> index 62499563e4f5..b52990e574d2 100644
+> --- a/drivers/clk/meson/g12a-aoclk.c
+> +++ b/drivers/clk/meson/g12a-aoclk.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+>  #include "meson-aoclk.h"
+>  #include "g12a-aoclk.h"
+>  
+> @@ -461,6 +462,7 @@ static const struct of_device_id g12a_aoclkc_match_table[] = {
+>  	},
+>  	{ }
+>  };
+> +MODULE_DEVICE_TABLE(of, g12a_aoclkc_match_table);
+>  
+>  static struct platform_driver g12a_aoclkc_driver = {
+>  	.probe		= meson_aoclkc_probe,
+> @@ -470,4 +472,5 @@ static struct platform_driver g12a_aoclkc_driver = {
+>  	},
+>  };
+>  
+> -builtin_platform_driver(g12a_aoclkc_driver);
+> +module_platform_driver(g12a_aoclkc_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index b814d44917a5..66094bfec2cc 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/clk.h>
+> +#include <linux/module.h>
+>  
+>  #include "clk-mpll.h"
+>  #include "clk-pll.h"
+> @@ -5370,6 +5371,7 @@ static const struct of_device_id clkc_match_table[] = {
+>  	},
+>  	{}
+>  };
+> +MODULE_DEVICE_TABLE(of, clkc_match_table);
+>  
+>  static struct platform_driver g12a_driver = {
+>  	.probe		= meson_g12a_probe,
+> @@ -5379,4 +5381,5 @@ static struct platform_driver g12a_driver = {
+>  	},
+>  };
+>  
+> -builtin_platform_driver(g12a_driver);
+> +module_platform_driver(g12a_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+> index e940861a396b..fce95cf89836 100644
+> --- a/drivers/clk/meson/gxbb-aoclk.c
+> +++ b/drivers/clk/meson/gxbb-aoclk.c
+> @@ -5,6 +5,7 @@
+>   */
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+>  #include "meson-aoclk.h"
+>  #include "gxbb-aoclk.h"
+>  
+> @@ -287,6 +288,7 @@ static const struct of_device_id gxbb_aoclkc_match_table[] = {
+>  	},
+>  	{ }
+>  };
+> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
+>  
+>  static struct platform_driver gxbb_aoclkc_driver = {
+>  	.probe		= meson_aoclkc_probe,
+> @@ -295,4 +297,5 @@ static struct platform_driver gxbb_aoclkc_driver = {
+>  		.of_match_table = gxbb_aoclkc_match_table,
+>  	},
+>  };
+> -builtin_platform_driver(gxbb_aoclkc_driver);
+> +module_platform_driver(gxbb_aoclkc_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 0a68af6eec3d..d6eed760327d 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/init.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/module.h>
+>  
+>  #include "gxbb.h"
+>  #include "clk-regmap.h"
+> @@ -3519,6 +3520,7 @@ static const struct of_device_id clkc_match_table[] = {
+>  	{ .compatible = "amlogic,gxl-clkc", .data = &gxl_clkc_data },
+>  	{},
+>  };
+> +MODULE_DEVICE_TABLE(of, clkc_match_table);
+>  
+>  static struct platform_driver gxbb_driver = {
+>  	.probe		= meson_eeclkc_probe,
+> @@ -3528,4 +3530,5 @@ static struct platform_driver gxbb_driver = {
+>  	},
+>  };
+>  
+> -builtin_platform_driver(gxbb_driver);
+> +module_platform_driver(gxbb_driver);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+> index bf8bea675d24..f0858fe789bc 100644
+> --- a/drivers/clk/meson/meson-aoclk.c
+> +++ b/drivers/clk/meson/meson-aoclk.c
+> @@ -14,6 +14,8 @@
+>  #include <linux/reset-controller.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of_device.h>
+> +#include <linux/module.h>
+> +
+>  #include <linux/slab.h>
+>  #include "meson-aoclk.h"
+>  
+> @@ -84,3 +86,5 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>  		(void *) data->hw_data);
+>  }
+> +EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+> index a7cb1e7aedc4..8d5a5dab955a 100644
+> --- a/drivers/clk/meson/meson-eeclk.c
+> +++ b/drivers/clk/meson/meson-eeclk.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+> +#include <linux/module.h>
+>  
+>  #include "clk-regmap.h"
+>  #include "meson-eeclk.h"
+> @@ -54,3 +55,5 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>  					   data->hw_onecell_data);
+>  }
+> +EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
+> +MODULE_LICENSE("GPL v2");
 
