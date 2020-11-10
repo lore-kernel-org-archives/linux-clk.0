@@ -2,352 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336A1C388F7
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 08:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D66C4741F
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 10:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C626E20829
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 08:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F12C20795
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 10:50:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RFyaleQh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrhFbwdH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgKJIb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 03:31:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33136 "EHLO
+        id S1730397AbgKJKuM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 05:50:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbgKJIb7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 03:31:59 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DC7C0613CF
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 00:31:57 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id k2so8313922wrx.2
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 00:31:57 -0800 (PST)
+        with ESMTP id S1726690AbgKJKuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 05:50:12 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF16DC0613CF;
+        Tue, 10 Nov 2020 02:50:11 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id d142so2521625wmd.4;
+        Tue, 10 Nov 2020 02:50:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=YdVm+RMVBZ5c4fhXdJnD+KzbuIzyYWJgCSlyloNp+OI=;
-        b=RFyaleQhVb65qbDmZcrSTOZ5slBNPYmCEBpdgvwmJ/M3KabTNr4qaWoERWqjG2HeEd
-         XFpHH40WOTprdK5QWbezsAANlN4UR7rQuEQo9UenEO/LZ8NTl0lH+ph2nadErPJrb/nP
-         EuaYdecjnonqKn9haqeObyYCY6BCxEWnVVNSkT/FFEwjSD3siJq03/uDmmER8+Cls9Gs
-         zOpA3NlHbzAnYvsQ92jhEyG6vudEOab8LisXeyC/ijzwnaApOiB0e9E1boLEvQsRSBVe
-         bKF39Il5QvJu+cw5gQH7KRiYU0DnKmZWVZkXKFxsehT0qbcrzwrUA9fJxUp7iT7EojWS
-         F9fg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RI3echpmsILHMbwDzAgMqcqkjUKk2AOhPsGaeepkNKI=;
+        b=FrhFbwdHS6/kq3jq8MO8bIfVNpx/tqWrlhlOsA3bKsZghA74MehbDZoUkpZHwRJM9j
+         4g0/JpvOD6J4nGOkh8cLPQG8LK5xHzSP2efrQ+y8UBN7JoBdflYvnLUmqWWmaVOa4XZh
+         HJZP5sqeRG/lRZAvH5YMsdwOxr8dsfPsTrSV+0kJVaPP2Ecm08KQRP1Q6QfUI8+E6gRh
+         uxcowjkBfnD69wwWMgU+E9/miAGpncdYoQGEt2jhyNckw77imOXJ9qirusZt4ptHaADF
+         6SU7wyJzV9+k5IccBZ+nfFT984BpzWZ7p//S+aGMh7NuoIgFqWHshg9WYhW7ahC++LXd
+         yBzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=YdVm+RMVBZ5c4fhXdJnD+KzbuIzyYWJgCSlyloNp+OI=;
-        b=aZS9lPGfQNAYZOdymH9Oe6RlV59McAjGvkcJEbKu7V2fRkKbmt5/5NOevs9bFwuj6n
-         xh3mz66QxzJdprg+UarvGuSRIvhQBa/9FI4phlS216XYxBKL3SvrjZFGGdNd90aganyD
-         vjFFB8hhlAx6RbnonPn6rF/TrieSq/HmWHRr0nt3Z0gCnhkbPhcn3kx2aL3YvHOgQZXz
-         i8Lp6tknrjthNOvZCpdUXkSdtPtP8OP+fAyGjD2pYysbzgaZctj+8oCrIIfh9w6O9UC4
-         LDA6VTrwY5ygncIhoxHfsDoIgXCvLVTt/mLUrwMFEY6yv7UxKyDemd2ai46ev8shIBU5
-         XCQA==
-X-Gm-Message-State: AOAM532MVPwTri8Q5tRaCz3bby8OdG5IyebMY1MjspdxdLBhK1pPNtdL
-        OKViUUHohQFLOBo6E1XxXv0DtA==
-X-Google-Smtp-Source: ABdhPJxPbeiyv6TbH42tc7dPsPd2xHRWlzEkmWsDx7fYTf0GLfgf3f0Lney5HcmHGoXxtvsw1vzFNQ==
-X-Received: by 2002:a5d:4883:: with SMTP id g3mr22646828wrq.19.1604997115869;
-        Tue, 10 Nov 2020 00:31:55 -0800 (PST)
-Received: from localhost (253.35.17.109.rev.sfr.net. [109.17.35.253])
-        by smtp.gmail.com with ESMTPSA id m12sm15984083wrs.92.2020.11.10.00.31.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 00:31:55 -0800 (PST)
-References: <20201109233622.23598-1-khilman@baylibre.com>
-User-agent: mu4e 1.4.10; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: meson: enable building as modules
-In-reply-to: <20201109233622.23598-1-khilman@baylibre.com>
-Message-ID: <1jft5hpq85.fsf@starbuckisacylon.baylibre.com>
-Date:   Tue, 10 Nov 2020 09:31:54 +0100
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RI3echpmsILHMbwDzAgMqcqkjUKk2AOhPsGaeepkNKI=;
+        b=WR4VKww8wnie04JARLuatz1nFnVFknJSi214f/RN+2asQR20Z1K2eiqHieFIUQVHuF
+         aW4mNHS5Em9AdEeI6YjukHGoMplma4EGkzmTwKo03afUedbNwixfOJdHDcHdu7ChPqVg
+         Ba5LSG7yMRBYka9aGbJOpDpKWGNWVsPNd5g32uudBKGPDOmIgTwVNCvX7YtZg6HtGgVg
+         M1UaxKL5XmiGmKxK/lzvWi0mCy6PItBgQ/Hszojs3QHncrHuEKtsITR9t3UjrQy6UF3p
+         snX2SYFRcAmp3an1Wy8uXaqQ9UKmiOHCmWjttra43w36iRMNcopK4KNIF775+NSH2v2c
+         TJEQ==
+X-Gm-Message-State: AOAM5339emz/XGIfC/3R/2VMAzUs5GenrgHgtNsgSVdUxBYOELUikNjn
+        AkqWtoVi3wG8juDLaXZoEHQ=
+X-Google-Smtp-Source: ABdhPJx4aH/axjJpFpDOjbOiN8JuiZiLYbtFxERcm0uuN9Xjc0uKWDIuFz8ESgqBpekhNRBqg9O1LQ==
+X-Received: by 2002:a1c:9652:: with SMTP id y79mr4175402wmd.71.1605005410743;
+        Tue, 10 Nov 2020 02:50:10 -0800 (PST)
+Received: from ziggy.stardust ([213.195.112.112])
+        by smtp.gmail.com with ESMTPSA id m20sm18743080wrg.81.2020.11.10.02.50.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Nov 2020 02:50:10 -0800 (PST)
+Subject: Re: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static
+ function
+To:     Weiyi Lu <weiyi.lu@mediatek.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Owen Chen <owen.chen@mediatek.com>
+References: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
+ <20201109102035.GA1238638@kroah.com> <1604972321.16474.9.camel@mtksdaap41>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <00a5aabb-b478-66e0-0663-3cf5557e861b@gmail.com>
+Date:   Tue, 10 Nov 2020 11:50:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1604972321.16474.9.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue 10 Nov 2020 at 00:36, Kevin Hilman <khilman@baylibre.com> wrote:
 
-> Make it possible to build all clk drivers as modules, but default
-> remains built-in.
->
-> No functional changes.
->
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> ---
-> Depends on series adding new API to get clk consumer from clk_hw:
-> https://lore.kernel.org/linux-amlogic/20201021162147.563655-1-jbrunet@baylibre.com/
+On 10/11/2020 02:38, Weiyi Lu wrote:
+> On Mon, 2020-11-09 at 11:20 +0100, Greg KH wrote:
+>> On Mon, Nov 09, 2020 at 05:37:07PM +0800, Weiyi Lu wrote:
+>>> mtk_clk_register_mux() should be a static function
+>>>
+>>> Fixes: a3ae549917f16 ("clk: mediatek: Add new clkmux register API")
+>>> Cc: <stable@vger.kernel.org>
+>>
+>> Why is this for stable trees?
+> 
+> Hi Greg,
+> 
+> My Mistake. Indeed, this is not a bug fix for stable tree.
+> And there are simple questions.
+> Will I be allowed to keep the fixes tag in this patch to indicate the
+> mistakes we made in previous commit if it's not a bug fix for stable
+> tree?
+> And all I need to do now is to remove stable tree from cc list. Is it
+> correct?
 
-and
+That's my understanding, yes. Keep fixes tag but delete cc to stable.
 
-https://lore.kernel.org/r/20201021163847.595189-1-jbrunet@baylibre.com
-
-Once these notifier allocations are dealt with, I'm happy to take this.
-
-One minor details though ...
-
->
->  drivers/clk/meson/Kconfig       | 7 ++++---
->  drivers/clk/meson/axg-aoclk.c   | 5 ++++-
->  drivers/clk/meson/axg.c         | 5 ++++-
->  drivers/clk/meson/g12a-aoclk.c  | 5 ++++-
->  drivers/clk/meson/g12a.c        | 5 ++++-
->  drivers/clk/meson/gxbb-aoclk.c  | 5 ++++-
->  drivers/clk/meson/gxbb.c        | 5 ++++-
->  drivers/clk/meson/meson-aoclk.c | 4 ++++
->  drivers/clk/meson/meson-eeclk.c | 3 +++
->  9 files changed, 35 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 034da203e8e0..fc002c155bc3 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -58,7 +58,7 @@ config COMMON_CLK_MESON8B
->  	  want peripherals and CPU frequency scaling to work.
->  
->  config COMMON_CLK_GXBB
-> -	bool "GXBB and GXL SoC clock controllers support"
-> +	tristate "GXBB and GXL SoC clock controllers support"
->  	depends on ARM64
->  	default y
->  	select COMMON_CLK_MESON_REGMAP
-> @@ -74,7 +74,7 @@ config COMMON_CLK_GXBB
->  	  Say Y if you want peripherals and CPU frequency scaling to work.
->  
->  config COMMON_CLK_AXG
-> -	bool "AXG SoC clock controllers support"
-> +	tristate "AXG SoC clock controllers support"
->  	depends on ARM64
->  	default y
->  	select COMMON_CLK_MESON_REGMAP
-> @@ -100,7 +100,7 @@ config COMMON_CLK_AXG_AUDIO
->  	  aka axg, Say Y if you want audio subsystem to work.
->  
->  config COMMON_CLK_G12A
-> -	bool "G12 and SM1 SoC clock controllers support"
-> +	tristate "G12 and SM1 SoC clock controllers support"
->  	depends on ARM64
->  	default y
->  	select COMMON_CLK_MESON_REGMAP
-> @@ -110,6 +110,7 @@ config COMMON_CLK_G12A
->  	select COMMON_CLK_MESON_AO_CLKC
->  	select COMMON_CLK_MESON_EE_CLKC
->  	select COMMON_CLK_MESON_CPU_DYNDIV
-> +	select COMMON_CLK_MESON_VID_PLL_DIV
-
-This looks like a fix which could be sent separately with a fix tag,
-doesn't it ?
-
->  	select MFD_SYSCON
->  	help
->  	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
-> diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-> index b488b40c9d0e..af6db437bcd8 100644
-> --- a/drivers/clk/meson/axg-aoclk.c
-> +++ b/drivers/clk/meson/axg-aoclk.c
-> @@ -12,6 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/reset-controller.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include "meson-aoclk.h"
->  #include "axg-aoclk.h"
->  
-> @@ -326,6 +327,7 @@ static const struct of_device_id axg_aoclkc_match_table[] = {
->  	},
->  	{ }
->  };
-> +MODULE_DEVICE_TABLE(of, axg_aoclkc_match_table);
->  
->  static struct platform_driver axg_aoclkc_driver = {
->  	.probe		= meson_aoclkc_probe,
-> @@ -335,4 +337,5 @@ static struct platform_driver axg_aoclkc_driver = {
->  	},
->  };
->  
-> -builtin_platform_driver(axg_aoclkc_driver);
-> +module_platform_driver(axg_aoclkc_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index 13fc0006f63d..7ca7ea7345e5 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-> @@ -13,6 +13,7 @@
->  #include <linux/init.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/module.h>
->  
->  #include "clk-regmap.h"
->  #include "clk-pll.h"
-> @@ -1354,6 +1355,7 @@ static const struct of_device_id clkc_match_table[] = {
->  	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
->  	{}
->  };
-> +MODULE_DEVICE_TABLE(of, clkc_match_table);
->  
->  static struct platform_driver axg_driver = {
->  	.probe		= meson_eeclkc_probe,
-> @@ -1363,4 +1365,5 @@ static struct platform_driver axg_driver = {
->  	},
->  };
->  
-> -builtin_platform_driver(axg_driver);
-> +module_platform_driver(axg_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-> index 62499563e4f5..b52990e574d2 100644
-> --- a/drivers/clk/meson/g12a-aoclk.c
-> +++ b/drivers/clk/meson/g12a-aoclk.c
-> @@ -12,6 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/reset-controller.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include "meson-aoclk.h"
->  #include "g12a-aoclk.h"
->  
-> @@ -461,6 +462,7 @@ static const struct of_device_id g12a_aoclkc_match_table[] = {
->  	},
->  	{ }
->  };
-> +MODULE_DEVICE_TABLE(of, g12a_aoclkc_match_table);
->  
->  static struct platform_driver g12a_aoclkc_driver = {
->  	.probe		= meson_aoclkc_probe,
-> @@ -470,4 +472,5 @@ static struct platform_driver g12a_aoclkc_driver = {
->  	},
->  };
->  
-> -builtin_platform_driver(g12a_aoclkc_driver);
-> +module_platform_driver(g12a_aoclkc_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index b814d44917a5..66094bfec2cc 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -15,6 +15,7 @@
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/clk.h>
-> +#include <linux/module.h>
->  
->  #include "clk-mpll.h"
->  #include "clk-pll.h"
-> @@ -5370,6 +5371,7 @@ static const struct of_device_id clkc_match_table[] = {
->  	},
->  	{}
->  };
-> +MODULE_DEVICE_TABLE(of, clkc_match_table);
->  
->  static struct platform_driver g12a_driver = {
->  	.probe		= meson_g12a_probe,
-> @@ -5379,4 +5381,5 @@ static struct platform_driver g12a_driver = {
->  	},
->  };
->  
-> -builtin_platform_driver(g12a_driver);
-> +module_platform_driver(g12a_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-> index e940861a396b..fce95cf89836 100644
-> --- a/drivers/clk/meson/gxbb-aoclk.c
-> +++ b/drivers/clk/meson/gxbb-aoclk.c
-> @@ -5,6 +5,7 @@
->   */
->  #include <linux/platform_device.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include "meson-aoclk.h"
->  #include "gxbb-aoclk.h"
->  
-> @@ -287,6 +288,7 @@ static const struct of_device_id gxbb_aoclkc_match_table[] = {
->  	},
->  	{ }
->  };
-> +MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
->  
->  static struct platform_driver gxbb_aoclkc_driver = {
->  	.probe		= meson_aoclkc_probe,
-> @@ -295,4 +297,5 @@ static struct platform_driver gxbb_aoclkc_driver = {
->  		.of_match_table = gxbb_aoclkc_match_table,
->  	},
->  };
-> -builtin_platform_driver(gxbb_aoclkc_driver);
-> +module_platform_driver(gxbb_aoclkc_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index 0a68af6eec3d..d6eed760327d 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -8,6 +8,7 @@
->  #include <linux/init.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/module.h>
->  
->  #include "gxbb.h"
->  #include "clk-regmap.h"
-> @@ -3519,6 +3520,7 @@ static const struct of_device_id clkc_match_table[] = {
->  	{ .compatible = "amlogic,gxl-clkc", .data = &gxl_clkc_data },
->  	{},
->  };
-> +MODULE_DEVICE_TABLE(of, clkc_match_table);
->  
->  static struct platform_driver gxbb_driver = {
->  	.probe		= meson_eeclkc_probe,
-> @@ -3528,4 +3530,5 @@ static struct platform_driver gxbb_driver = {
->  	},
->  };
->  
-> -builtin_platform_driver(gxbb_driver);
-> +module_platform_driver(gxbb_driver);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-> index bf8bea675d24..f0858fe789bc 100644
-> --- a/drivers/clk/meson/meson-aoclk.c
-> +++ b/drivers/clk/meson/meson-aoclk.c
-> @@ -14,6 +14,8 @@
->  #include <linux/reset-controller.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/of_device.h>
-> +#include <linux/module.h>
-> +
->  #include <linux/slab.h>
->  #include "meson-aoclk.h"
->  
-> @@ -84,3 +86,5 @@ int meson_aoclkc_probe(struct platform_device *pdev)
->  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->  		(void *) data->hw_data);
->  }
-> +EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-> index a7cb1e7aedc4..8d5a5dab955a 100644
-> --- a/drivers/clk/meson/meson-eeclk.c
-> +++ b/drivers/clk/meson/meson-eeclk.c
-> @@ -9,6 +9,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <linux/module.h>
->  
->  #include "clk-regmap.h"
->  #include "meson-eeclk.h"
-> @@ -54,3 +55,5 @@ int meson_eeclkc_probe(struct platform_device *pdev)
->  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->  					   data->hw_onecell_data);
->  }
-> +EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
-> +MODULE_LICENSE("GPL v2");
-
+Regards,
+Matthias
