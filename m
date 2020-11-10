@@ -2,101 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABCBC63697
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F1CC388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1BBE207BB
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F34920781
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731106AbgKJLVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 06:21:09 -0500
-Received: from muru.com ([72.249.23.125]:47728 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730986AbgKJLVI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Nov 2020 06:21:08 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 17FA380BA;
-        Tue, 10 Nov 2020 11:21:10 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S1726428AbgKJL6V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 06:58:21 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2429 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbgKJL6V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 06:58:21 -0500
+Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CVmb50XQBz53g0;
+        Tue, 10 Nov 2020 19:58:09 +0800 (CST)
+Received: from [10.140.157.68] (10.140.157.68) by
+ dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 10 Nov 2020 19:58:16 +0800
+Subject: Re: [PATCH v2] clk: hisilicon: Free clk_data and unmap region
+ obtained by of_iomap
+To:     Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH 5/9] bus: ti-sysc: Implement GPMC debug quirk to drop platform data
-Date:   Tue, 10 Nov 2020 13:20:38 +0200
-Message-Id: <20201110112042.65489-6-tony@atomide.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201110112042.65489-1-tony@atomide.com>
-References: <20201110112042.65489-1-tony@atomide.com>
+        Stephen Boyd <sboyd@kernel.org>
+References: <20201109180920.43193-1-gengdongjiu@huawei.com>
+ <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+Message-ID: <3252231f-dfb9-789f-e164-11d0e579defe@huawei.com>
+Date:   Tue, 10 Nov 2020 19:58:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.140.157.68]
+X-ClientProxiedBy: dggeme714-chm.china.huawei.com (10.1.199.110) To
+ dggeme755-chm.china.huawei.com (10.3.19.101)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We need to enable no-reset-on-init quirk for GPMC if the config
-option for CONFIG_OMAP_GPMC_DEBUG is set. Otherwise the GPMC
-driver code is unable to show the bootloader configured timings.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c                 | 10 ++++++++++
- include/linux/platform_data/ti-sysc.h |  1 +
- 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1383,6 +1383,8 @@ static const struct sysc_revision_quirk sysc_revision_quirks[] = {
- 		   SYSC_QUIRK_CLKDM_NOAUTO),
- 	SYSC_QUIRK("dwc3", 0x488c0000, 0, 0x10, -ENODEV, 0x500a0200, 0xffffffff,
- 		   SYSC_QUIRK_CLKDM_NOAUTO),
-+	SYSC_QUIRK("gpmc", 0, 0, 0x10, 0x14, 0x00000060, 0xffffffff,
-+		   SYSC_QUIRK_GPMC_DEBUG),
- 	SYSC_QUIRK("hdmi", 0, 0, 0x10, -ENODEV, 0x50030200, 0xffffffff,
- 		   SYSC_QUIRK_OPT_CLKS_NEEDED),
- 	SYSC_QUIRK("hdq1w", 0, 0, 0x14, 0x18, 0x00000006, 0xffffffff,
-@@ -1818,6 +1820,14 @@ static void sysc_init_module_quirks(struct sysc *ddata)
- 		return;
- 	}
- 
-+#ifdef CONFIG_OMAP_GPMC_DEBUG
-+	if (ddata->cfg.quirks & SYSC_QUIRK_GPMC_DEBUG) {
-+		ddata->cfg.quirks |= SYSC_QUIRK_NO_RESET_ON_INIT;
-+
-+		return;
-+	}
-+#endif
-+
- 	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_I2C) {
- 		ddata->pre_reset_quirk = sysc_pre_reset_quirk_i2c;
- 		ddata->post_reset_quirk = sysc_post_reset_quirk_i2c;
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -50,6 +50,7 @@ struct sysc_regbits {
- 	s8 emufree_shift;
- };
- 
-+#define SYSC_QUIRK_GPMC_DEBUG		BIT(26)
- #define SYSC_MODULE_QUIRK_ENA_RESETDONE	BIT(25)
- #define SYSC_MODULE_QUIRK_PRUSS		BIT(24)
- #define SYSC_MODULE_QUIRK_DSS_RESET	BIT(23)
--- 
-2.29.2
+On 2020/11/10 1:54, Markus Elfring wrote:
+> …
+>> +++ b/drivers/clk/hisilicon/clk-hi3620.c
+> …
+>> @@ -478,6 +478,10 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+>>
+>>  	clk_data->clk_num = num;
+>>  	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>> +free_clk_data:
+>> +	kfree(clk_data);
+> …
+> 
+> * Should any system resources be kept allocated if the execution
+>   of this function implementation succeeded?
+> 
+> * How do you think about to add the statement “return;”
+>   after the call of the function “of_clk_add_provider”?
+> 
+> * Should another return value be also checked here?
+
+sure.
+
+> 
+>   See also:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?id=f8394f232b1eab649ce2df5c5f15b0e528c92091#n4414
+>   https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/clk/clk.c#L4414
+> 
+> * Would you like to use the function “of_clk_add_hw_provider” instead?
+
+    How about we still use of_clk_add_provider()? It doesn't seem to make difference using of_clk_add_hw_provider().
+
+> 
+> Regards,
+> Markus
