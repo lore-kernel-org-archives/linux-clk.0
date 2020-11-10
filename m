@@ -2,92 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECDC4742C
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C9DC388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 15:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDB8C206F1
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yMvmv62j"
+	by mail.kernel.org (Postfix) with ESMTP id 0A93420795
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 15:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730306AbgKJOkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 09:40:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        id S1730853AbgKJPrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 10:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgKJOkM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 09:40:12 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B44C0613D4
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id e27so17876587lfn.7
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
-        b=yMvmv62jzEb5fWYRyJZ4EfNvXQWxI0M2a6MD6A14Kx2zX0+pJwr0BFTgurkn/NFcYN
-         SEuffXDjbLtIeQtWDaXAhzdEJoRKIeHAT5dvDEySvCGFrvh9bPI0L3QFezJRcPZWqkwR
-         FIQqy4YacfO3Oj7lxlpiIQnlZ4lyLWMQFP58iJL3VeCk2S/Z0o+9+n36DPvrUm3djefP
-         Nf8fsoRkRTr406syuJyIdGYjtpWJFYIFc/AlaHKP8gv0mbHpRynDsz7F35XR6HyAaEkO
-         LEgu4epTlp38o7p3nKYvORMzrP2I8j9HTmYhHZ1PbN3l0woZQdGi2pyG9yox7ZCDvkr+
-         JmKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
-        b=JAnEoDJMv6YEhb+KAbrw1sl7MgNgdN1WkdTYZ+UFonjYlOAbjqlJ285j5jjBT7pVWg
-         fgmkiQwcIoG1BfLU5GhX7Cf0dOa4/F7XFCq5470GQIF/hLQKQF1rMuhyv/i+RGTHbjNV
-         qCACiGYPc53BV0DQf0IKvH4mfGZVrbWTXvqpvE/8yjhm6t9+WZpPjsDz2V7YKtRvY3t9
-         8HqWExpqQXuARuFbsNmSymtC5g8eCwoH1ZlgLusBwUcWMxbvJUWA1fPCWFcrHakO5R4N
-         dmIrlBAfRUQbr8NuCM70WoagPUEsqHqswPa38qo4Yja7OHSoCarc8Wym3jN19J78nz3b
-         1ubQ==
-X-Gm-Message-State: AOAM5337hyVbivEOG84XgBmHxAd3nZxG9kuKXY1Ed9Hf51/hk8sx2VPQ
-        0HRMlsVqqYprygTMtsyBj7DQN6R0W/tA+Q1K091Kew==
-X-Google-Smtp-Source: ABdhPJwZKZCcPYORmeuUmPxVdMBipXbwsghexY2Fo6mTCT8Nwc9BfXeRqZ9vpij7/rcd11cpqaaXACeFiLO1OmB0y3k=
-X-Received: by 2002:a19:ca05:: with SMTP id a5mr4591668lfg.571.1605019208781;
- Tue, 10 Nov 2020 06:40:08 -0800 (PST)
+        with ESMTP id S1730299AbgKJPrx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 10:47:53 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C20C0613D1
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 07:47:53 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by michel.telenet-ops.be with bizsmtp
+        id qfnr2300Z4C55Sk06fnru7; Tue, 10 Nov 2020 16:47:51 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kcVs7-001DPN-G8; Tue, 10 Nov 2020 16:47:51 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kcVs7-00DmhG-38; Tue, 10 Nov 2020 16:47:51 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2] clk: qoriq: Add platform dependencies
+Date:   Tue, 10 Nov 2020 16:47:50 +0100
+Message-Id: <20201110154750.3285411-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-10-damien.lemoal@wdc.com>
-In-Reply-To: <20201107081420.60325-10-damien.lemoal@wdc.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Nov 2020 15:39:57 +0100
-Message-ID: <CACRpkda1Pd3hTiEHWDOAz3zCMA6WK4VmvjkNv0O_ckFaWQ-zSw@mail.gmail.com>
-Subject: Re: [PATCH 09/32] riscv: Fix SiFive gpio probe
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 7, 2020 at 9:14 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+The Freescale QorIQ clock controller is only present on Freescale E500MC
+and Layerscape SoCs.  Add platform dependencies to the CLK_QORIQ config
+symbol, to avoid asking the user about it when configuring a kernel
+without E500MC or Layerscape support.
 
-> Fix the check on the number of IRQs to allow up to the maximum (32)
-> instead of only the maximum minus one.
->
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Li Yang <leoyang.li@nxp.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+v2:
+  - Add Acked-by.
+---
+ drivers/clk/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I just ripped this patch out of your patch set and applied it to
-the GPIO tree with some minor change to the subject.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 07a30a7b90b1eeb8..e902f2de027ca041 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -246,7 +246,8 @@ config COMMON_CLK_AXI_CLKGEN
+ 
+ config CLK_QORIQ
+ 	bool "Clock driver for Freescale QorIQ platforms"
+-	depends on (PPC_E500MC || ARM || ARM64 || COMPILE_TEST) && OF
++	depends on OF
++	depends on PPC_E500MC || SOC_LS1021A || ARCH_LAYERSCAPE || COMPILE_TEST
+ 	help
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+-- 
+2.25.1
 
-Yours,
-Linus Walleij
