@@ -2,113 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B66EC56201
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 19:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD92C55ABD
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 20:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D66921741
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 19:38:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0uvq151S"
+	by mail.kernel.org (Postfix) with ESMTP id 410A320809
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 20:25:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgKJTh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 14:37:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbgKJTh6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Nov 2020 14:37:58 -0500
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BF3020678;
-        Tue, 10 Nov 2020 19:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605037077;
-        bh=Fl2UQG2htLleEj9UfjSzEEtMBBatbOujS6Yy09+5Cu8=;
-        h=From:To:Subject:Date:From;
-        b=0uvq151SoGRa1d/cy+GtV4G6jYI9QRlTHeor71pmVztSpQ5jqRyqW/hYocpbHZXWw
-         ZwK/6LXakv1tF7ppRKPL8nzq6aO2N+IhsURtBw0lVAo3wksDWupqyCu4gYNhXmrs9Z
-         AX3GXx9iM/iS/s3eJJ0Fr/vK8oiXAuPGBTmEin3A=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: samsung: allow building the clkout driver as module
-Date:   Tue, 10 Nov 2020 20:37:49 +0100
-Message-Id: <20201110193749.261367-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        id S1726428AbgKJUZt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 15:25:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbgKJUZs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 15:25:48 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09E7C0613D1
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 12:25:48 -0800 (PST)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kcaCz-0001ol-KH; Tue, 10 Nov 2020 21:25:41 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kcaCy-0007Ab-Qy; Tue, 10 Nov 2020 21:25:40 +0100
+Date:   Tue, 10 Nov 2020 21:25:37 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: provide new devm helpers for prepared and
+ enabled clocks
+Message-ID: <20201110202537.fyldrnhqewtppjkw@pengutronix.de>
+References: <20201013082132.661993-1-u.kleine-koenig@pengutronix.de>
+ <20201013082132.661993-2-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vja2ao7c3lrfyvsg"
+Content-Disposition: inline
+In-Reply-To: <20201013082132.661993-2-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Exynos clock output driver can be built as module (it does not have
-to be part of core init process) for better customization.  Adding a
-KConfig entry allows also compile testing for build coverage.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/Kconfig             | 10 ++++++++++
- drivers/clk/samsung/Makefile            |  2 +-
- drivers/clk/samsung/clk-exynos-clkout.c |  1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
+--vja2ao7c3lrfyvsg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 57d4b3f20417..b6b2cb209543 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -19,6 +19,16 @@ config EXYNOS_AUDSS_CLK_CON
- 	  on some Exynos SoC variants. Choose M or Y here if you want to
- 	  use audio devices such as I2S, PCM, etc.
- 
-+config EXYNOS_CLK_OUT
-+	tristate "Samsung Exynos clock output driver"
-+	depends on COMMON_CLK_SAMSUNG
-+	default y if ARCH_EXYNOS
-+	help
-+	  Support for the clock output (XCLKOUT) driver present on some of
-+	  Exynos SoC variants. Usually the XCLKOUT is used to monitor the
-+	  status of the certains clocks from SoC, but it could also be tied to
-+	  other devices as an input clock.
-+
- # For S3C24XX platforms, select following symbols:
- config S3C2410_COMMON_CLK
- 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 1a4e6b787978..4adbf972e9f6 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -15,7 +15,7 @@ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5-subcmu.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
- obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
--obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
-+obj-$(CONFIG_EXYNOS_CLK_OUT)	+= clk-exynos-clkout.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
- obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index f5f8a956b316..9ec2f40cc400 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -72,6 +72,7 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 		.data = &exynos_clkout_exynos5,
- 	}, { }
- };
-+MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
- 
- /*
-  * Device will be instantiated as child of PMU device without its own
--- 
-2.25.1
+Hello,
 
+On Tue, Oct 13, 2020 at 10:21:31AM +0200, Uwe Kleine-K=F6nig wrote:
+> When a driver keeps a clock prepared (or enabled) during the whole
+> lifetime of the driver, these helpers allow to simplify the drivers.
+
+I'd really like to make use of these helpers, so it would be great if
+you could take a look and tell me if you like my approach.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--vja2ao7c3lrfyvsg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl+q9z4ACgkQwfwUeK3K
+7AlqfAf+IjbADZjFZFkkzkx614oDoA3yTUUbGi/0f1FFniQH+XxC1pdJ0f/3GDo6
+WNU0b9K65aYN3d+KseUkhxcaqEfOM8Wi5RJeYXCJfaEuzJ7PpN7XLcvi0Q7IddJz
+ShBcknshTmiWPAi31mxSl/M2rRkH33S7m+dvxTaw1hLhZb05HHxX+GhOD4svyiyO
+syBMwMpTE8pez+0C9VMh0+T242YDHqWrlEGUxI/TZG7aGXMtibniSLXz//zR1Zoz
+QcaY8fFSOtmjrJDReE0AgQXcYaou5F8vYcqKarSf/NF3VCjCXjiOWaR3Loo2M8w1
+ApNFRqDiEMf/iTJFl99jmRStrDBd9Q==
+=NUx6
+-----END PGP SIGNATURE-----
+
+--vja2ao7c3lrfyvsg--
