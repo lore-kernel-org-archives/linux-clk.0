@@ -2,89 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F1CC388F7
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74771C388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 12:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F34920781
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26D6F2065E
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 12:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgKJL6V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 06:58:21 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2429 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbgKJL6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 06:58:21 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CVmb50XQBz53g0;
-        Tue, 10 Nov 2020 19:58:09 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 10 Nov 2020 19:58:16 +0800
-Subject: Re: [PATCH v2] clk: hisilicon: Free clk_data and unmap region
- obtained by of_iomap
-To:     Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        id S1730306AbgKJM4T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 07:56:19 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:59092 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729787AbgKJM4T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 07:56:19 -0500
+X-IronPort-AV: E=Sophos;i="5.77,466,1596466800"; 
+   d="scan'208";a="62244176"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Nov 2020 21:56:17 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A74DA4007F41;
+        Tue, 10 Nov 2020 21:56:15 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20201109180920.43193-1-gengdongjiu@huawei.com>
- <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <3252231f-dfb9-789f-e164-11d0e579defe@huawei.com>
-Date:   Tue, 10 Nov 2020 19:58:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <c6d2fe3b-3261-2c0f-f245-49bb5e63c1ed@web.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme714-chm.china.huawei.com (10.1.199.110) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3] clk: renesas: r8a774c0: Add RPC clocks
+Date:   Tue, 10 Nov 2020 12:56:09 +0000
+Message-Id: <20201110125609.30246-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
+as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
+driver.
 
+Add new clk type CLK_TYPE_GEN3E3_RPCSRC to register rpcsrc as a fixed
+clock on R-Car Gen3 E3 (and also RZ/G2E which is identical to E3 SoC),
+parent and the divider is set based on the register value CPG_RPCCKCR[4:3]
+(parent is cross verified against MD[4:1] pins) which has been set prior
+to booting the kernel.
 
-On 2020/11/10 1:54, Markus Elfring wrote:
-> …
->> +++ b/drivers/clk/hisilicon/clk-hi3620.c
-> …
->> @@ -478,6 +478,10 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
->>
->>  	clk_data->clk_num = num;
->>  	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
->> +free_clk_data:
->> +	kfree(clk_data);
-> …
-> 
-> * Should any system resources be kept allocated if the execution
->   of this function implementation succeeded?
-> 
-> * How do you think about to add the statement “return;”
->   after the call of the function “of_clk_add_provider”?
-> 
-> * Should another return value be also checked here?
+MD[4] MD[3] MD[2] MD[1]
+  0     0     0    1     -> RPCSRC CLK source is PLL1
+  0     0     1    1     -> RPCSRC CLK source is PLL1
+  0     1     0    0     -> RPCSRC CLK source is PLL1
+  1     0     1    1     -> RPCSRC CLK source is PLL1
+  x     x     x    x     -> For any other values RPCSRC CLK source is PLL0
 
-sure.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3
+* Implemented as a fixed clock
 
-> 
->   See also:
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk.c?id=f8394f232b1eab649ce2df5c5f15b0e528c92091#n4414
->   https://elixir.bootlin.com/linux/v5.10-rc2/source/drivers/clk/clk.c#L4414
-> 
-> * Would you like to use the function “of_clk_add_hw_provider” instead?
+v1->v2
+* Fixed divider table depending on the clk source
+* Introduced CLK_TYPE_GEN3E3_RPCSRC for E3/G2E.
 
-    How about we still use of_clk_add_provider()? It doesn't seem to make difference using of_clk_add_hw_provider().
+v1: https://lkml.org/lkml/2020/10/16/474
+---
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c |  9 +++++
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 49 +++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++
+ 3 files changed, 62 insertions(+)
 
-> 
-> Regards,
-> Markus
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 9fc9fa9e531a..ed3a2cf0e0bb 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -44,6 +44,7 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_RPCSRC,
+ 	CLK_RINT,
+ 	CLK_OCO,
+ 
+@@ -74,6 +75,13 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+ 	DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
+ 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
+ 
++	DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
++
++	DEF_BASE("rpc",		R8A774C0_CLK_RPC, CLK_TYPE_GEN3_RPC,
++		 CLK_RPCSRC),
++	DEF_BASE("rpcd2",	R8A774C0_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
++		 R8A774C0_CLK_RPC),
++
+ 	DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+ 
+ 	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
+@@ -199,6 +207,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+ 	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
+ 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
++	DEF_MOD("rpc-if",		 917,	R8A774C0_CLK_RPCD2),
+ 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
+ 	DEF_MOD("i2c5",			 919,	R8A774C0_CLK_S3D2),
+ 	DEF_MOD("i2c-dvfs",		 926,	R8A774C0_CLK_CP),
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 488f8b3980c5..00c3d5570274 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -427,6 +427,19 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
+ 	return clk;
+ }
+ 
++static bool __init cpg_rpcsrc_e3_parent_is_pll0(u32 mode)
++{
++	unsigned int e3_rpcsrc = (mode & GENMASK(4, 1)) >> 1;
++	unsigned int pll1[] = { 0x1, 0x3, 0x4, 0xb, };
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(pll1); i++)
++		if (e3_rpcsrc == pll1[i])
++			return false;
++
++	return true;
++}
++
+ struct rpc_clock {
+ 	struct clk_divider div;
+ 	struct clk_gate gate;
+@@ -696,6 +709,42 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 						  cpg_rpcsrc_div_table,
+ 						  &cpg_lock);
+ 
++	case CLK_TYPE_GEN3E3_RPCSRC:
++		/*
++		 * Register RPCSRC as fixed factor clock based on the
++		 * MD[4:1] pins and CPG_RPCCKCR[4:3] register value for
++		 * which has been set prior to booting the kernel.
++		 */
++
++		value = (readl(base + CPG_RPCCKCR) & GENMASK(4, 3)) >> 3;
++		if (cpg_rpcsrc_e3_parent_is_pll0(cpg_mode)) {
++			if (value != 2)
++				return ERR_PTR(-EINVAL);
++		} else {
++			if (value == 2)
++				return ERR_PTR(-EINVAL);
++		}
++
++		switch (value) {
++		case 0:
++			div = 5;
++			break;
++		case 1:
++			div = 3;
++			break;
++		case 2:
++			parent = clks[core->parent >> 16];
++			if (IS_ERR(parent))
++				return ERR_CAST(parent);
++			div = 8;
++			break;
++		case 3:
++		default:
++			div = 2;
++			break;
++		}
++		break;
++
+ 	case CLK_TYPE_GEN3_RPC:
+ 		return cpg_rpc_clk_register(core->name, base,
+ 					    __clk_get_name(parent), notifiers);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index c4ac80cac6a0..4d20b2a8bd9f 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+ 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
+ 	CLK_TYPE_GEN3_RPCSRC,
++	CLK_TYPE_GEN3E3_RPCSRC,
+ 	CLK_TYPE_GEN3_RPC,
+ 	CLK_TYPE_GEN3_RPCD2,
+ 
+@@ -54,6 +55,9 @@ enum rcar_gen3_clk_types {
+ #define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _offset)	\
+ 	DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
+ 
++#define DEF_FIXED_RPCSRC_E3(_name, _id, _parent0, _parent1)	\
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3E3_RPCSRC, (_parent0) << 16 | (_parent1))
++
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
+-- 
+2.17.1
+
