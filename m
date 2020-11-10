@@ -2,110 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D66C4741F
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 10:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7996DC388F7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F12C20795
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 10:50:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrhFbwdH"
+	by mail.kernel.org (Postfix) with ESMTP id 194C2207BB
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 11:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbgKJKuM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 05:50:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbgKJKuM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 05:50:12 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF16DC0613CF;
-        Tue, 10 Nov 2020 02:50:11 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id d142so2521625wmd.4;
-        Tue, 10 Nov 2020 02:50:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RI3echpmsILHMbwDzAgMqcqkjUKk2AOhPsGaeepkNKI=;
-        b=FrhFbwdHS6/kq3jq8MO8bIfVNpx/tqWrlhlOsA3bKsZghA74MehbDZoUkpZHwRJM9j
-         4g0/JpvOD6J4nGOkh8cLPQG8LK5xHzSP2efrQ+y8UBN7JoBdflYvnLUmqWWmaVOa4XZh
-         HJZP5sqeRG/lRZAvH5YMsdwOxr8dsfPsTrSV+0kJVaPP2Ecm08KQRP1Q6QfUI8+E6gRh
-         uxcowjkBfnD69wwWMgU+E9/miAGpncdYoQGEt2jhyNckw77imOXJ9qirusZt4ptHaADF
-         6SU7wyJzV9+k5IccBZ+nfFT984BpzWZ7p//S+aGMh7NuoIgFqWHshg9WYhW7ahC++LXd
-         yBzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RI3echpmsILHMbwDzAgMqcqkjUKk2AOhPsGaeepkNKI=;
-        b=WR4VKww8wnie04JARLuatz1nFnVFknJSi214f/RN+2asQR20Z1K2eiqHieFIUQVHuF
-         aW4mNHS5Em9AdEeI6YjukHGoMplma4EGkzmTwKo03afUedbNwixfOJdHDcHdu7ChPqVg
-         Ba5LSG7yMRBYka9aGbJOpDpKWGNWVsPNd5g32uudBKGPDOmIgTwVNCvX7YtZg6HtGgVg
-         M1UaxKL5XmiGmKxK/lzvWi0mCy6PItBgQ/Hszojs3QHncrHuEKtsITR9t3UjrQy6UF3p
-         snX2SYFRcAmp3an1Wy8uXaqQ9UKmiOHCmWjttra43w36iRMNcopK4KNIF775+NSH2v2c
-         TJEQ==
-X-Gm-Message-State: AOAM5339emz/XGIfC/3R/2VMAzUs5GenrgHgtNsgSVdUxBYOELUikNjn
-        AkqWtoVi3wG8juDLaXZoEHQ=
-X-Google-Smtp-Source: ABdhPJx4aH/axjJpFpDOjbOiN8JuiZiLYbtFxERcm0uuN9Xjc0uKWDIuFz8ESgqBpekhNRBqg9O1LQ==
-X-Received: by 2002:a1c:9652:: with SMTP id y79mr4175402wmd.71.1605005410743;
-        Tue, 10 Nov 2020 02:50:10 -0800 (PST)
-Received: from ziggy.stardust ([213.195.112.112])
-        by smtp.gmail.com with ESMTPSA id m20sm18743080wrg.81.2020.11.10.02.50.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2020 02:50:10 -0800 (PST)
-Subject: Re: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static
- function
-To:     Weiyi Lu <weiyi.lu@mediatek.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, stable@vger.kernel.org,
-        Owen Chen <owen.chen@mediatek.com>
-References: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
- <20201109102035.GA1238638@kroah.com> <1604972321.16474.9.camel@mtksdaap41>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <00a5aabb-b478-66e0-0663-3cf5557e861b@gmail.com>
-Date:   Tue, 10 Nov 2020 11:50:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726428AbgKJLUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 06:20:49 -0500
+Received: from muru.com ([72.249.23.125]:47654 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726219AbgKJLUt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Nov 2020 06:20:49 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id D546681A8;
+        Tue, 10 Nov 2020 11:20:51 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCHv2 0/9] Genpd related code changes to drop am335x pdata
+Date:   Tue, 10 Nov 2020 13:20:33 +0200
+Message-Id: <20201110112042.65489-1-tony@atomide.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <1604972321.16474.9.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi all,
 
+Here's v2 set of changes for v5.11 merge window to drop the remaining
+am335x platform data.
 
-On 10/11/2020 02:38, Weiyi Lu wrote:
-> On Mon, 2020-11-09 at 11:20 +0100, Greg KH wrote:
->> On Mon, Nov 09, 2020 at 05:37:07PM +0800, Weiyi Lu wrote:
->>> mtk_clk_register_mux() should be a static function
->>>
->>> Fixes: a3ae549917f16 ("clk: mediatek: Add new clkmux register API")
->>> Cc: <stable@vger.kernel.org>
->>
->> Why is this for stable trees?
-> 
-> Hi Greg,
-> 
-> My Mistake. Indeed, this is not a bug fix for stable tree.
-> And there are simple questions.
-> Will I be allowed to keep the fixes tag in this patch to indicate the
-> mistakes we made in previous commit if it's not a bug fix for stable
-> tree?
-> And all I need to do now is to remove stable tree from cc list. Is it
-> correct?
+Changes since v1:
+- Simplify wkup_m3_rproc.c changes as suggested by Philipp Zabel
+- Do not configure pm_clk for omap_prm.c except for simple-pm-bus
 
-That's my understanding, yes. Keep fixes tag but delete cc to stable.
+These patches depend on:
+
+[PATCH 2/4] ARM: OMAP2+: Fix missing select PM_GENERIC_DOMAINS_OF
+
+And the related device tree changes have been posted as:
+
+[PATCH 00/18] Drop remaining pdata for am335x and use genpd
 
 Regards,
-Matthias
+
+Tony
+
+
+Tero Kristo (1):
+  soc: ti: omap-prm: am3: add genpd support for remaining PRM instances
+
+Tony Lindgren (8):
+  ARM: OMAP2+: Check for inited flag
+  ARM: OMAP2+: Probe PRCM first to probe l4_wkup with simple-pm-bus
+  clk: ti: am33xx: Keep am3 l3 main clock always on for genpd
+  bus: ti-sysc: Support modules without control registers
+  bus: ti-sysc: Implement GPMC debug quirk to drop platform data
+  soc: ti: omap-prm: Add pm_clk for genpd
+  soc: ti: pm33xx: Enable basic PM runtime support for genpd
+  remoteproc/wkup_m3: Use reset control driver if available
+
+ arch/arm/mach-omap2/omap_hwmod.c      |  6 ++
+ arch/arm/mach-omap2/pdata-quirks.c    | 11 ++++
+ drivers/bus/ti-sysc.c                 | 17 ++++++
+ drivers/clk/ti/clk-33xx.c             |  2 +
+ drivers/remoteproc/wkup_m3_rproc.c    | 41 +++++++++-----
+ drivers/soc/ti/omap_prm.c             | 80 ++++++++++++++++++++++++++-
+ drivers/soc/ti/pm33xx.c               | 17 +++++-
+ include/linux/platform_data/ti-sysc.h |  1 +
+ 8 files changed, 157 insertions(+), 18 deletions(-)
+
+-- 
+2.29.2
