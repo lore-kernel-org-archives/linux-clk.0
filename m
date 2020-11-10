@@ -2,138 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7688C2D0A3
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67698C2D0A3
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64B3E20809
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AA120789
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 01:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r/JRUTiK"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nO8dGzUI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731267AbgKJBJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Nov 2020 20:09:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729968AbgKJBJP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 20:09:15 -0500
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2C1C0613D3;
-        Mon,  9 Nov 2020 17:09:15 -0800 (PST)
-Received: by mail-qk1-x742.google.com with SMTP id q22so2712087qkq.6;
-        Mon, 09 Nov 2020 17:09:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=2XKHZA23lqGXukkdu35/JyFEQPF6UYXMzYhhKw2rxGo=;
-        b=r/JRUTiK+47+y4OahAiRa1G+rapmvoJnFlgICYHcCVQHBVlYOgRE4uKBJmo5zoKszn
-         A5MlSiFBvleYXeWKkAqWUACMFq3LYbD6dvreXvgti4VOyZBnbxnqEdRGQFAPDGDgmDSb
-         UO7qdzFY2tnWHHXV9fBxEhQukAs5Xj36hJrH0261XPve/zoi1Rp0szsEcjEgyMpDd07N
-         UdGoxcQQiEhZzuBIdVt3M/SbhzU4xoI5wvUQGRKyBDZaVCZwgcWCGBMiOr81UWOL36zj
-         mh+tH5FVBWwE36hWwe3r+2bVm+xeqhm27Ag4rdl1N87aDt3lwI9TpCIxE4kflW7SRluo
-         obkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=2XKHZA23lqGXukkdu35/JyFEQPF6UYXMzYhhKw2rxGo=;
-        b=NPvCTXds/ZTsdLwbx5E6XCYpDswYogoO5UUda7fl52bz9P5f+KpqLf13rfbUEVMYL8
-         5uOH2N/KW92fGSAjFZa1z/UZiUQaJkqgwiS8GUgi9u/wOcK07fPKEIQ+N923Lau+DIbX
-         Y06lFY1aGdFG4Ddg2tnWrWfedSUxiqgxMKqWAFTkByGPUabwSVJJnGHyoKTi4/6Yd9aP
-         B1zamVfhgC6ZN2PgKrcTO12U5Rd6Pw+UERIyQb82TqJoUGOPvA8cna2P7PBd5fR8fFEE
-         Frv16WvbedKIVRypU4+qBKu0xFKy8f6v8oz7rJosy2iN0iogtOTrMcqb7xAQUdbZTKe9
-         J2nw==
-X-Gm-Message-State: AOAM5307cc8NKNSH5gaVID6np2Lka+YXg5fF58eu7Lrin7/3HyJXwn9s
-        Ydc8grWfoOsVirCDX+MYKBo=
-X-Google-Smtp-Source: ABdhPJx7BbgcFLja6xvTiyyLD87hIKw5BHbWuSbxRVX/hG9Sz+pjezxp3cx51Lk6uWZNJVTZplGn9w==
-X-Received: by 2002:a37:a010:: with SMTP id j16mr10662108qke.347.1604970554741;
-        Mon, 09 Nov 2020 17:09:14 -0800 (PST)
-Received: from ubuntu-m3-large-x86 ([2604:1380:45f1:1d00::1])
-        by smtp.gmail.com with ESMTPSA id m25sm1816324qka.107.2020.11.09.17.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 17:09:14 -0800 (PST)
-Date:   Mon, 9 Nov 2020 18:09:12 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>, linux-next@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH -next v2] clk: pm_clock: provide stubs for
- pm_clk_runtime_suspend/_resume
-Message-ID: <20201110010912.GA2018177@ubuntu-m3-large-x86>
-References: <20201109032115.10610-1-rdunlap@infradead.org>
+        id S1731267AbgKJBis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Nov 2020 20:38:48 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58472 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731151AbgKJBir (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Nov 2020 20:38:47 -0500
+X-UUID: ab346585b6d447eebda9f4e3fe62f05a-20201110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=YjSSNPs9DIKiggA5+V9fbL6MfaunwhMceWHthl8AyvQ=;
+        b=nO8dGzUIDG+QXsinumgcurz/T7wPsQvr1oPc1A7nF2uGE/ORDVrKMr2cPaXTjHVcwXG+f0QJzH/z4yRyz3kSnOATU5ipjC41YTEp5qhOTcaDXEMhpNWle2fifa5iqlrB8JIuxFI+6nZB366Js0YYH18fbyORUb0kY9ga/Rg25VI=;
+X-UUID: ab346585b6d447eebda9f4e3fe62f05a-20201110
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 362126511; Tue, 10 Nov 2020 09:38:42 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 10 Nov 2020 09:38:41 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 10 Nov 2020 09:38:40 +0800
+Message-ID: <1604972321.16474.9.camel@mtksdaap41>
+Subject: Re: [PATCH] clk: mediatek: fix mtk_clk_register_mux() as static
+ function
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Date:   Tue, 10 Nov 2020 09:38:41 +0800
+In-Reply-To: <20201109102035.GA1238638@kroah.com>
+References: <1604914627-9203-1-git-send-email-weiyi.lu@mediatek.com>
+         <20201109102035.GA1238638@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201109032115.10610-1-rdunlap@infradead.org>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Nov 08, 2020 at 07:21:15PM -0800, Randy Dunlap wrote:
-> Add stubs for pm_clk_runtime_suspend() and pm_clk_runtime_resume()
-> to fix build errors when CONFIG_PM and CONFIG_PM_CLK are not enabled.
-> 
-> Fixes these build errors:
-> 
-> ../drivers/clk/qcom/camcc-sc7180.c: In function ‘cam_cc_sc7180_probe’:
-> ../drivers/clk/qcom/camcc-sc7180.c:1672:8: error: implicit declaration of function ‘pm_clk_runtime_resume’; did you mean ‘pm_runtime_resume’? [-Werror=implicit-function-declaration]
->   ret = pm_clk_runtime_resume(&pdev->dev);
->         ^~~~~~~~~~~~~~~~~~~~~
-> ../drivers/clk/qcom/camcc-sc7180.c:1681:3: error: implicit declaration of function ‘pm_clk_runtime_suspend’; did you mean ‘pm_runtime_suspend’? [-Werror=implicit-function-declaration]
->    pm_clk_runtime_suspend(&pdev->dev);
->    ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-pm@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Cc: linux-next@vger.kernel.org
-> Cc: Nathan Chancellor <natechancellor@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+T24gTW9uLCAyMDIwLTExLTA5IGF0IDExOjIwICswMTAwLCBHcmVnIEtIIHdyb3RlOg0KPiBPbiBN
+b24sIE5vdiAwOSwgMjAyMCBhdCAwNTozNzowN1BNICswODAwLCBXZWl5aSBMdSB3cm90ZToNCj4g
+PiBtdGtfY2xrX3JlZ2lzdGVyX211eCgpIHNob3VsZCBiZSBhIHN0YXRpYyBmdW5jdGlvbg0KPiA+
+IA0KPiA+IEZpeGVzOiBhM2FlNTQ5OTE3ZjE2ICgiY2xrOiBtZWRpYXRlazogQWRkIG5ldyBjbGtt
+dXggcmVnaXN0ZXIgQVBJIikNCj4gPiBDYzogPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+DQo+IA0K
+PiBXaHkgaXMgdGhpcyBmb3Igc3RhYmxlIHRyZWVzPw0KDQpIaSBHcmVnLA0KDQpNeSBNaXN0YWtl
+LiBJbmRlZWQsIHRoaXMgaXMgbm90IGEgYnVnIGZpeCBmb3Igc3RhYmxlIHRyZWUuDQpBbmQgdGhl
+cmUgYXJlIHNpbXBsZSBxdWVzdGlvbnMuDQpXaWxsIEkgYmUgYWxsb3dlZCB0byBrZWVwIHRoZSBm
+aXhlcyB0YWcgaW4gdGhpcyBwYXRjaCB0byBpbmRpY2F0ZSB0aGUNCm1pc3Rha2VzIHdlIG1hZGUg
+aW4gcHJldmlvdXMgY29tbWl0IGlmIGl0J3Mgbm90IGEgYnVnIGZpeCBmb3Igc3RhYmxlDQp0cmVl
+Pw0KQW5kIGFsbCBJIG5lZWQgdG8gZG8gbm93IGlzIHRvIHJlbW92ZSBzdGFibGUgdHJlZSBmcm9t
+IGNjIGxpc3QuIElzIGl0DQpjb3JyZWN0Pw0KDQpNYW55IHRoYW5rcy4NCg0KPiANCg0K
 
-Build-tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-
-> ---
-> v2: move the function stubs to be inside the #else (for !CONFIG_PM)
->     as suggested by Nathan to fix another build error
-> 
->  include/linux/pm_clock.h |    8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> --- linux-next-20201106.orig/include/linux/pm_clock.h
-> +++ linux-next-20201106/include/linux/pm_clock.h
-> @@ -27,6 +27,14 @@ extern int pm_clk_runtime_resume(struct
->  	.runtime_resume = pm_clk_runtime_resume,
->  #else
->  #define USE_PM_CLK_RUNTIME_OPS
-> +static inline int pm_clk_runtime_suspend(struct device *dev)
-> +{
-> +	return 0;
-> +}
-> +static inline int pm_clk_runtime_resume(struct device *dev)
-> +{
-> +	return 0;
-> +}
->  #endif
->  
->  #ifdef CONFIG_PM_CLK
