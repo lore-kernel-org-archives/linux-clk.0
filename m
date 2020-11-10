@@ -2,204 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74771C388F7
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 12:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D33CC56202
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 13:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26D6F2065E
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 12:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C66207E8
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 13:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730306AbgKJM4T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 07:56:19 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:59092 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729787AbgKJM4T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 07:56:19 -0500
-X-IronPort-AV: E=Sophos;i="5.77,466,1596466800"; 
-   d="scan'208";a="62244176"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Nov 2020 21:56:17 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A74DA4007F41;
-        Tue, 10 Nov 2020 21:56:15 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1730692AbgKJNi5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 08:38:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35390 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730534AbgKJNi4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Nov 2020 08:38:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7AAC6ACDB;
+        Tue, 10 Nov 2020 13:38:54 +0000 (UTC)
+Message-ID: <25933d5863cd6ddb98dea25bdedf342ebd063480.camel@suse.de>
+Subject: Re: [PATCH v3 01/11] firmware: raspberrypi: Introduce
+ devm_rpi_firmware_get()
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
+        Linux Input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3] clk: renesas: r8a774c0: Add RPC clocks
-Date:   Tue, 10 Nov 2020 12:56:09 +0000
-Message-Id: <20201110125609.30246-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        linux-rpi-kernel@lists.infradead.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 10 Nov 2020 14:38:52 +0100
+In-Reply-To: <CAMpxmJUZ23uYM3+_L2XvTXzvA48JWrxrhZaLnGAxTpJjFiERRA@mail.gmail.com>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+         <20201104103938.1286-2-nsaenzjulienne@suse.de>
+         <CAMpxmJWJRcQQiLitJCLWKmhQVQWr3bMDY=td5FEn5uy2YZfwkA@mail.gmail.com>
+         <47eaba0bc71c6e23bff87b8a01cebf0c6d12efd0.camel@suse.de>
+         <CAMpxmJUZ23uYM3+_L2XvTXzvA48JWrxrhZaLnGAxTpJjFiERRA@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-aSQnVn7Q9FP2OogzR6s5"
+User-Agent: Evolution 3.36.5 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
-driver.
 
-Add new clk type CLK_TYPE_GEN3E3_RPCSRC to register rpcsrc as a fixed
-clock on R-Car Gen3 E3 (and also RZ/G2E which is identical to E3 SoC),
-parent and the divider is set based on the register value CPG_RPCCKCR[4:3]
-(parent is cross verified against MD[4:1] pins) which has been set prior
-to booting the kernel.
+--=-aSQnVn7Q9FP2OogzR6s5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MD[4] MD[3] MD[2] MD[1]
-  0     0     0    1     -> RPCSRC CLK source is PLL1
-  0     0     1    1     -> RPCSRC CLK source is PLL1
-  0     1     0    0     -> RPCSRC CLK source is PLL1
-  1     0     1    1     -> RPCSRC CLK source is PLL1
-  x     x     x    x     -> For any other values RPCSRC CLK source is PLL0
+Hi Bartosz, thanks for the feedback.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v2->v3
-* Implemented as a fixed clock
+On Thu, 2020-11-05 at 10:42 +0100, Bartosz Golaszewski wrote:
+> On Thu, Nov 5, 2020 at 10:28 AM Nicolas Saenz Julienne
+> <nsaenzjulienne@suse.de> wrote:
+> > Hi Bartosz, thanks for the review.
+> >=20
+> > On Thu, 2020-11-05 at 10:13 +0100, Bartosz Golaszewski wrote:
+> > > > +/**
+> > > > + * devm_rpi_firmware_get - Get pointer to rpi_firmware structure.
+> > > > + * @firmware_node:    Pointer to the firmware Device Tree node.
+> > > > + *
+> > > > + * Returns NULL is the firmware device is not ready.
+> > > > + */
+> > > > +struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
+> > > > +                                          struct device_node *firm=
+ware_node)
+> > > > +{
+> > > > +       struct platform_device *pdev =3D of_find_device_by_node(fir=
+mware_node);
+> > > > +       struct rpi_firmware *fw;
+> > > > +
+> > > > +       if (!pdev)
+> > > > +               return NULL;
+> > > > +
+> > > > +       fw =3D platform_get_drvdata(pdev);
+> > > > +       if (!fw)
+> > > > +               return NULL;
+> > > > +
+> > > > +       if (!refcount_inc_not_zero(&fw->consumers))
+> > > > +               return NULL;
+> > > > +
+> > > > +       if (devm_add_action_or_reset(dev, rpi_firmware_put, fw))
+> > > > +               return NULL;
+> > > > +
+> > > > +       return fw;
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(devm_rpi_firmware_get);
+> > >=20
+> > > Usually I'd expect the devres variant to simply call
+> > > rpi_firmware_get() and then schedule a release callback which would
+> > > call whatever function is the release counterpart for it currently.
+> > > Devres actions are for drivers which want to schedule some more
+> > > unusual tasks at driver detach. Any reason for designing it this way?
+> >=20
+> > Yes, see patch #8 where I get rid of rpi_firmware_get() altogether afte=
+r
+> > converting all users to devres. Since there is no use for the vanilla v=
+ersion
+> > of the function anymore, I figured it'd be better to merge everything i=
+nto
+> > devm_rpi_firmware_get(). That said it's not something I have strong fee=
+lings
+> > about.
+> >=20
+>=20
+> I see. So the previous version didn't really have any reference
+> counting and it leaked the reference returned by
+> of_find_device_by_node(), got it. Could you just clarify for me the
+> logic behind the wait_queue in rpi_firmware_remove()? If the firmware
+> driver gets detached and remove() stops on the wait_queue - it will be
+> stuck until the last user releases the firmware. I'm not sure this is
+> correct.
 
-v1->v2
-* Fixed divider table depending on the clk source
-* Introduced CLK_TYPE_GEN3E3_RPCSRC for E3/G2E.
+Yes, that's what I meant to implement.
 
-v1: https://lkml.org/lkml/2020/10/16/474
----
- drivers/clk/renesas/r8a774c0-cpg-mssr.c |  9 +++++
- drivers/clk/renesas/rcar-gen3-cpg.c     | 49 +++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++
- 3 files changed, 62 insertions(+)
+> I'd prefer to see a kref with a release callback and remove
+> would simply decrease the kref and return. Each user would do the same
+> and then after the last user is detached the firmware would be
+> destroyed.
 
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index 9fc9fa9e531a..ed3a2cf0e0bb 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -44,6 +44,7 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_RPCSRC,
- 	CLK_RINT,
- 	CLK_OCO,
- 
-@@ -74,6 +75,13 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 	DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
- 	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
- 
-+	DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
-+
-+	DEF_BASE("rpc",		R8A774C0_CLK_RPC, CLK_TYPE_GEN3_RPC,
-+		 CLK_RPCSRC),
-+	DEF_BASE("rpcd2",	R8A774C0_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
-+		 R8A774C0_CLK_RPC),
-+
- 	DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
- 
- 	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
-@@ -199,6 +207,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
-+	DEF_MOD("rpc-if",		 917,	R8A774C0_CLK_RPCD2),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c5",			 919,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("i2c-dvfs",		 926,	R8A774C0_CLK_CP),
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 488f8b3980c5..00c3d5570274 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -427,6 +427,19 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
- 	return clk;
- }
- 
-+static bool __init cpg_rpcsrc_e3_parent_is_pll0(u32 mode)
-+{
-+	unsigned int e3_rpcsrc = (mode & GENMASK(4, 1)) >> 1;
-+	unsigned int pll1[] = { 0x1, 0x3, 0x4, 0xb, };
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pll1); i++)
-+		if (e3_rpcsrc == pll1[i])
-+			return false;
-+
-+	return true;
-+}
-+
- struct rpc_clock {
- 	struct clk_divider div;
- 	struct clk_gate gate;
-@@ -696,6 +709,42 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 						  cpg_rpcsrc_div_table,
- 						  &cpg_lock);
- 
-+	case CLK_TYPE_GEN3E3_RPCSRC:
-+		/*
-+		 * Register RPCSRC as fixed factor clock based on the
-+		 * MD[4:1] pins and CPG_RPCCKCR[4:3] register value for
-+		 * which has been set prior to booting the kernel.
-+		 */
-+
-+		value = (readl(base + CPG_RPCCKCR) & GENMASK(4, 3)) >> 3;
-+		if (cpg_rpcsrc_e3_parent_is_pll0(cpg_mode)) {
-+			if (value != 2)
-+				return ERR_PTR(-EINVAL);
-+		} else {
-+			if (value == 2)
-+				return ERR_PTR(-EINVAL);
-+		}
-+
-+		switch (value) {
-+		case 0:
-+			div = 5;
-+			break;
-+		case 1:
-+			div = 3;
-+			break;
-+		case 2:
-+			parent = clks[core->parent >> 16];
-+			if (IS_ERR(parent))
-+				return ERR_CAST(parent);
-+			div = 8;
-+			break;
-+		case 3:
-+		default:
-+			div = 2;
-+			break;
-+		}
-+		break;
-+
- 	case CLK_TYPE_GEN3_RPC:
- 		return cpg_rpc_clk_register(core->name, base,
- 					    __clk_get_name(parent), notifiers);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index c4ac80cac6a0..4d20b2a8bd9f 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
- 	CLK_TYPE_GEN3_RPCSRC,
-+	CLK_TYPE_GEN3E3_RPCSRC,
- 	CLK_TYPE_GEN3_RPC,
- 	CLK_TYPE_GEN3_RPCD2,
- 
-@@ -54,6 +55,9 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _offset)	\
- 	DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
- 
-+#define DEF_FIXED_RPCSRC_E3(_name, _id, _parent0, _parent1)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3E3_RPCSRC, (_parent0) << 16 | (_parent1))
-+
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
- 	u8 pll1_mult;
--- 
-2.17.1
+Sounds good to me. I'll update it.
+
+> Don't we really have some centralized firmware subsystem that would handl=
+e this?
+
+Sadly no, this is an RPi specific thing, it doesn't live behind a standard =
+like
+other firmware based protocols (for ex. SCMI), and evolves as the needs ari=
+se.
+
+Regards,
+Nicolas
+
+
+--=-aSQnVn7Q9FP2OogzR6s5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+ql+wACgkQlfZmHno8
+x/5TFQgArzH6eU5ljiN7do5NqV1SI7f2HoX88NazrWiPc8Ixl7QT4jfzWnZeyiBn
+31OdfWDVQeexADs3RDEvq/o5SSxNP+FDGlnzm9PiYaKPWcGdOpe8wW9wggXest4N
+MVtyqksGQlf3MuItqI4HgP/aAhB8EKnYHTVrku2tAPR9cNliVmeusFWsPWIYXSYc
+IcX61cPnzFkqU56k7aNrk452Kme6XDFDi2eD2DXAzHNlSHiQOH5ZQPKBmFUkaCDL
+xP/T5PwL+YwF3ZWO2sU6voMp96QfiO8R/LYt215dIzlmTmdKcIC7scqEkr4HRSJp
+9SW2n981ery3AA1wXoyGhLMJMilzcQ==
+=CaET
+-----END PGP SIGNATURE-----
+
+--=-aSQnVn7Q9FP2OogzR6s5--
 
