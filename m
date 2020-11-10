@@ -2,101 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29921C55ABD
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 13:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECDC4742C
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5EFF20797
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 13:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDB8C206F1
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 14:40:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="onGLtCfW"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yMvmv62j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbgKJNnx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 08:43:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730099AbgKJNnx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Nov 2020 08:43:53 -0500
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F84420731;
-        Tue, 10 Nov 2020 13:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605015833;
-        bh=8a93PI75TfxaQ/45J7emDK1Y8Q31siD/1/I+xtXuprk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=onGLtCfW9xKqxLvawwxMVgVhxER7U4G8YaW6HCGl5H1Oc57M6y6rsASGGm5EV0csi
-         08nKnppFYrxJw8xcq0+KhtqR5TmjJyOb7SOEzbBBDCuiYVgtRGwCDDyPsPKohqgvzK
-         HqyN/6m2iyy9nSjZprAZzrqY6m0ood8Ew2dHCvLQ=
-Date:   Tue, 10 Nov 2020 13:43:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Sean Anderson <seanga2@gmail.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
+        id S1730306AbgKJOkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 09:40:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbgKJOkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 09:40:12 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B44C0613D4
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id e27so17876587lfn.7
+        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 06:40:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
+        b=yMvmv62jzEb5fWYRyJZ4EfNvXQWxI0M2a6MD6A14Kx2zX0+pJwr0BFTgurkn/NFcYN
+         SEuffXDjbLtIeQtWDaXAhzdEJoRKIeHAT5dvDEySvCGFrvh9bPI0L3QFezJRcPZWqkwR
+         FIQqy4YacfO3Oj7lxlpiIQnlZ4lyLWMQFP58iJL3VeCk2S/Z0o+9+n36DPvrUm3djefP
+         Nf8fsoRkRTr406syuJyIdGYjtpWJFYIFc/AlaHKP8gv0mbHpRynDsz7F35XR6HyAaEkO
+         LEgu4epTlp38o7p3nKYvORMzrP2I8j9HTmYhHZ1PbN3l0woZQdGi2pyG9yox7ZCDvkr+
+         JmKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XMIR0x3v/SOduiNJI+iAqXslKNdg1Phd+avxtEvAmZ0=;
+        b=JAnEoDJMv6YEhb+KAbrw1sl7MgNgdN1WkdTYZ+UFonjYlOAbjqlJ285j5jjBT7pVWg
+         fgmkiQwcIoG1BfLU5GhX7Cf0dOa4/F7XFCq5470GQIF/hLQKQF1rMuhyv/i+RGTHbjNV
+         qCACiGYPc53BV0DQf0IKvH4mfGZVrbWTXvqpvE/8yjhm6t9+WZpPjsDz2V7YKtRvY3t9
+         8HqWExpqQXuARuFbsNmSymtC5g8eCwoH1ZlgLusBwUcWMxbvJUWA1fPCWFcrHakO5R4N
+         dmIrlBAfRUQbr8NuCM70WoagPUEsqHqswPa38qo4Yja7OHSoCarc8Wym3jN19J78nz3b
+         1ubQ==
+X-Gm-Message-State: AOAM5337hyVbivEOG84XgBmHxAd3nZxG9kuKXY1Ed9Hf51/hk8sx2VPQ
+        0HRMlsVqqYprygTMtsyBj7DQN6R0W/tA+Q1K091Kew==
+X-Google-Smtp-Source: ABdhPJwZKZCcPYORmeuUmPxVdMBipXbwsghexY2Fo6mTCT8Nwc9BfXeRqZ9vpij7/rcd11cpqaaXACeFiLO1OmB0y3k=
+X-Received: by 2002:a19:ca05:: with SMTP id a5mr4591668lfg.571.1605019208781;
+ Tue, 10 Nov 2020 06:40:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-10-damien.lemoal@wdc.com>
+In-Reply-To: <20201107081420.60325-10-damien.lemoal@wdc.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 10 Nov 2020 15:39:57 +0100
+Message-ID: <CACRpkda1Pd3hTiEHWDOAz3zCMA6WK4VmvjkNv0O_ckFaWQ-zSw@mail.gmail.com>
+Subject: Re: [PATCH 09/32] riscv: Fix SiFive gpio probe
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 03/32] spi: dw: Fix driving MOSI low while recieving
-Message-ID: <20201110134338.GB5957@sirena.org.uk>
-References: <20201107081420.60325-1-damien.lemoal@wdc.com>
- <20201107081420.60325-4-damien.lemoal@wdc.com>
- <20201109132935.GB6380@sirena.org.uk>
- <c37ca9be-ea92-b07a-b600-d68de4f7bde5@gmail.com>
- <20201109141422.GD6380@sirena.org.uk>
- <20201109191909.wfuwpddng4rdn4ca@mobilestation>
- <20201109202052.GL6380@sirena.org.uk>
- <20201109210531.wp4dmug4w2r4kh4p@mobilestation>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
-Content-Disposition: inline
-In-Reply-To: <20201109210531.wp4dmug4w2r4kh4p@mobilestation>
-X-Cookie: Disk crisis, please clean up!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Nov 7, 2020 at 9:14 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
 
---H+4ONPRPur6+Ovig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Fix the check on the number of IRQs to allow up to the maximum (32)
+> instead of only the maximum minus one.
+>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 
-On Tue, Nov 10, 2020 at 12:05:31AM +0300, Serge Semin wrote:
+I just ripped this patch out of your patch set and applied it to
+the GPIO tree with some minor change to the subject.
 
-> If by general Rx-only half-duplex transfers you meant that the client
-> SPI-device shall just not care what the MOSI level, then the only
-> acceptable solution of the noted in this patch problem is to fix the
-> client driver. Since in case of the MMC-SPI client device sometimes it
-> does care about the level.
-
-Yes, that's how the API is at present (as you say) and is the more
-general case for SPI devices that I've seen - I'm not *totally* against
-adding something to the core if there's enough users that could usefully
-use it but if it's just one or two then it seems like it'll be more
-robust to stick with the current API.
-
---H+4ONPRPur6+Ovig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl+qmQoACgkQJNaLcl1U
-h9B0Rwf+KopRKnXYo5wqZqMUc6Z6nfo2YpwZsWiUO1Sy8+hG9keAbGxcnu5bOGDJ
-90r9oFQxqTjVPKZ556EN5XNqKBijwQMnBPjvCBnfV7U31rvhcd5xiOMh6GXCi18H
-yuvD88KqsXweetYSO7EHqr0MARsZ8OT7khH4/U2b+37uvhfIHDsICIkPHRp4jQQH
-p5hOgTE8uoHNPz6pMzEBmXEMq/yR3Hvt4gMSPAioVH/0sKgB77fMlAdpDyXZewl0
-tQiilBL5bv2mq9IDl/4J3oJf0gM4VT2k4oOehY5wpaXZgn5LJlJVl7DUxJBlmG0r
-4kUkW4N97ZkMpwo/MulisIT+1LpECQ==
-=ZOI9
------END PGP SIGNATURE-----
-
---H+4ONPRPur6+Ovig--
+Yours,
+Linus Walleij
