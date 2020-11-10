@@ -2,81 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E990BC388F7
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 15:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61248C5517A
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 16:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE78A20665
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 15:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00EA92151B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 16:03:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6KVxoRV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731173AbgKJPvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 10:51:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731146AbgKJPvV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 10:51:21 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E826DC0613D1
-        for <linux-clk@vger.kernel.org>; Tue, 10 Nov 2020 07:51:20 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id qfrK230084C55Sk01frK6U; Tue, 10 Nov 2020 16:51:19 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kcVvT-001DQk-1D; Tue, 10 Nov 2020 16:51:19 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kcVvS-00Dmul-5J; Tue, 10 Nov 2020 16:51:18 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
-Cc:     linux-xtensa@linux-xtensa.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH resend v2] xtensa: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Tue, 10 Nov 2020 16:51:17 +0100
-Message-Id: <20201110155117.3286247-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1731272AbgKJQD1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 11:03:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730681AbgKJQD1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Nov 2020 11:03:27 -0500
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C79320809;
+        Tue, 10 Nov 2020 16:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605024206;
+        bh=Q4tizdLmjkzMbfpePr+avvWWNz2g0MJUKN8eJ2xoJc8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A6KVxoRVUh7MGpM78oa3naUGFo1EcjhPmNuJoaAofEbM4A1BSeiqKQPmq7g7OEDvo
+         /7P91TM9kqQ1O2kq4xIYur9mfdDywNu6VkjsrLrpX12sVUWDACrjbTm3U+JGiGfz29
+         h/Y6nTdFSFQhx/+ikQUBprsBbdi1sI/l/h6O1vRo=
+Received: by mail-oi1-f181.google.com with SMTP id t143so14862315oif.10;
+        Tue, 10 Nov 2020 08:03:26 -0800 (PST)
+X-Gm-Message-State: AOAM5328HCNvpQ7YqYYbFCoYVSSJNKJPKVynhQAqrCqNc5/NsyBHdbAS
+        6ktSNQozU0JkPoRaKrScUwb5sziTa2w566uUQA==
+X-Google-Smtp-Source: ABdhPJxffCMld8zxb9GQXqc30p3WWWPLcHwsDvjVqY4ZjnX3Xq/4kK3Jyc+SH7Uma8dDisNt6kO4m/SmAfDDh4PMeBw=
+X-Received: by 2002:aca:fdd4:: with SMTP id b203mr3276663oii.152.1605024205264;
+ Tue, 10 Nov 2020 08:03:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1604887429-29445-1-git-send-email-weiyi.lu@mediatek.com> <1604887429-29445-7-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1604887429-29445-7-git-send-email-weiyi.lu@mediatek.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 10 Nov 2020 10:03:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKj3Mr6fT_R8JLCK4Ciyt-NyEbUbXXrxnbCBzo2TsLFZg@mail.gmail.com>
+Message-ID: <CAL_JsqKj3Mr6fT_R8JLCK4Ciyt-NyEbUbXXrxnbCBzo2TsLFZg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/24] clk: mediatek: Add dt-bindings of MT8192 clocks
+To:     Weiyi Lu <weiyi.lu@mediatek.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Xtensa time code is not a clock provider, and just needs to call
-of_clk_init().
+On Sun, Nov 8, 2020 at 8:03 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+>
+> Add MT8192 clock dt-bindings, include topckgen, apmixedsys,
+> infracfg, pericfg and subsystem clocks.
+>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  include/dt-bindings/clock/mt8192-clk.h | 592 +++++++++++++++++++++++++++++++++
+>  1 file changed, 592 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mt8192-clk.h
 
-Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+linux-next binding checks are broken until this is applied.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
----
-v2:
-  - Add Reviewed-by, Acked-by.
----
- arch/xtensa/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/xtensa/kernel/time.c b/arch/xtensa/kernel/time.c
-index 77971fe4cc95ba2b..e8ceb1528608188c 100644
---- a/arch/xtensa/kernel/time.c
-+++ b/arch/xtensa/kernel/time.c
-@@ -13,7 +13,7 @@
-  */
- 
- #include <linux/clk.h>
--#include <linux/clk-provider.h>
-+#include <linux/of_clk.h>
- #include <linux/errno.h>
- #include <linux/sched.h>
- #include <linux/time.h>
--- 
-2.25.1
-
+Rob
