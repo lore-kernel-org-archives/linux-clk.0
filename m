@@ -2,104 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49143C388F7
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 21:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156C2C388F7
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Nov 2020 02:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E443420781
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Nov 2020 21:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C907221F1
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Nov 2020 02:34:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZbUzZQG5"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sAgAUfrB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbgKJVar (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Nov 2020 16:30:47 -0500
-Received: from ozlabs.org ([203.11.71.1]:60323 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbgKJVar (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Nov 2020 16:30:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CW1Hj6KSpz9s1l;
-        Wed, 11 Nov 2020 08:30:41 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1605043844;
-        bh=TJeJa2tzl/LdHql1YVlaGWX2j/CQDqQ6INQTnj8ggfs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZbUzZQG5JxqA4YV2SZahiUdI30dQMP46KvpEnPXtnZuHo7c3Wmkj9UxrqV+O0dnT7
-         cQ0+a8HzLl4dfnEszsH88S5ZHS/K+rLjiHLq123sZjNSopUXTKkabrwhVwPh9ds+fS
-         BnRBnR/KVURwzmnZuGyDARkPM+ayvTsijevOQtdZ2lZVT03DHZ7biZbQb5mHTbUqvm
-         LPAitB4Q3+UaTUW/xAbbsGuGcR2MrXOEoePekFqZ+ZxBdDsdRZl9k/5KG+X6ljgbqv
-         SwrUhJeusEjFAWaMUcltq019Izb3B3eRgg+5EjJvqmn+WUI7rQpnbnzu7b36BFO4RG
-         ZYMJxwcwP6L6A==
-Date:   Wed, 11 Nov 2020 08:30:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH -next v2] clk: pm_clock: provide stubs for
- pm_clk_runtime_suspend/_resume
-Message-ID: <20201111083041.698a561c@canb.auug.org.au>
-In-Reply-To: <CAJZ5v0jhJcL6uJw_Cm02SeUMff_s1L-mKzX3haAyejcCkKihNg@mail.gmail.com>
-References: <20201109032115.10610-1-rdunlap@infradead.org>
-        <CAJZ5v0jhJcL6uJw_Cm02SeUMff_s1L-mKzX3haAyejcCkKihNg@mail.gmail.com>
+        id S1727401AbgKKCeF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Nov 2020 21:34:05 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38047 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725928AbgKKCeF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Nov 2020 21:34:05 -0500
+X-UUID: f2e05021bd2a4d70a8e876962742d36e-20201111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=cTeQ/hjldFmEyV5pQnqStA/bVh7oOAFXTZ9SDz6FiSc=;
+        b=sAgAUfrBKnBCM+5q+fYpXZajMMt4CbSBcX9ZagzeEijirjJs30VXaGJdny4EzRHbSAccRsnBEs/reKJcCW5tKBsUfH3hcSG+wuMF5gkfH9Lg5qLkTOUoubr6LIHjGqrGX2XnefIGqvxUlh4Qu1NGw41pZpPd3pDGCT73oBFiCrk=;
+X-UUID: f2e05021bd2a4d70a8e876962742d36e-20201111
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 827047059; Wed, 11 Nov 2020 10:33:59 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 11 Nov 2020 10:33:57 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 11 Nov 2020 10:33:57 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v2] clk: mediatek: fix mtk_clk_register_mux() as static function
+Date:   Wed, 11 Nov 2020 10:33:56 +0800
+Message-ID: <1605062036-12735-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NNkr73WnZd2Rjkw1MfDcr59";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/NNkr73WnZd2Rjkw1MfDcr59
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+bXRrX2Nsa19yZWdpc3Rlcl9tdXgoKSBzaG91bGQgYmUgYSBzdGF0aWMgZnVuY3Rpb24NCg0KRml4
+ZXM6IGEzYWU1NDk5MTdmMTYgKCJjbGs6IG1lZGlhdGVrOiBBZGQgbmV3IGNsa211eCByZWdpc3Rl
+ciBBUEkiKQ0KU2lnbmVkLW9mZi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4N
+Ci0tLQ0KIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguYyB8IDIgKy0NCiBkcml2ZXJzL2Ns
+ay9tZWRpYXRlay9jbGstbXV4LmggfCA0IC0tLS0NCiAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCA1IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0
+ZWsvY2xrLW11eC5jIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jDQppbmRleCAxNGUx
+MjdlLi5kY2MxMzUyIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5j
+DQorKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCkBAIC0xNTUsNyArMTU1LDcg
+QEAgc3RhdGljIGludCBtdGtfY2xrX211eF9zZXRfcGFyZW50X3NldGNscl9sb2NrKHN0cnVjdCBj
+bGtfaHcgKmh3LCB1OCBpbmRleCkNCiAJLnNldF9wYXJlbnQgPSBtdGtfY2xrX211eF9zZXRfcGFy
+ZW50X3NldGNscl9sb2NrLA0KIH07DQogDQotc3RydWN0IGNsayAqbXRrX2Nsa19yZWdpc3Rlcl9t
+dXgoY29uc3Qgc3RydWN0IG10a19tdXggKm11eCwNCitzdGF0aWMgc3RydWN0IGNsayAqbXRrX2Ns
+a19yZWdpc3Rlcl9tdXgoY29uc3Qgc3RydWN0IG10a19tdXggKm11eCwNCiAJCQkJIHN0cnVjdCBy
+ZWdtYXAgKnJlZ21hcCwNCiAJCQkJIHNwaW5sb2NrX3QgKmxvY2spDQogew0KZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaCBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
+ay1tdXguaA0KaW5kZXggZjU2MjVmNC4uOGUyZjkyNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvY2xr
+L21lZGlhdGVrL2Nsay1tdXguaA0KKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5o
+DQpAQCAtNzcsMTAgKzc3LDYgQEAgc3RydWN0IG10a19tdXggew0KIAkJCV93aWR0aCwgX2dhdGUs
+IF91cGRfb2ZzLCBfdXBkLAkJCVwNCiAJCQlDTEtfU0VUX1JBVEVfUEFSRU5UKQ0KIA0KLXN0cnVj
+dCBjbGsgKm10a19jbGtfcmVnaXN0ZXJfbXV4KGNvbnN0IHN0cnVjdCBtdGtfbXV4ICptdXgsDQot
+CQkJCSBzdHJ1Y3QgcmVnbWFwICpyZWdtYXAsDQotCQkJCSBzcGlubG9ja190ICpsb2NrKTsNCi0N
+CiBpbnQgbXRrX2Nsa19yZWdpc3Rlcl9tdXhlcyhjb25zdCBzdHJ1Y3QgbXRrX211eCAqbXV4ZXMs
+DQogCQkJICAgaW50IG51bSwgc3RydWN0IGRldmljZV9ub2RlICpub2RlLA0KIAkJCSAgIHNwaW5s
+b2NrX3QgKmxvY2ssDQotLSANCjEuOC4xLjEuZGlydHkNCg==
 
-Hi Rafael,
-
-On Tue, 10 Nov 2020 18:43:04 +0100 "Rafael J. Wysocki" <rafael@kernel.org> =
-wrote:
->
-> > Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller dri=
-ver for SC7180")
->
-> Applied to the PM tree as 5.10-rc material, thanks!
-
-The problem is that the commit that this one fixes is in the clk tree
-not the pm tree, so this patch needs to (also) be in the clk tree to
-reduced bisect problems.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/NNkr73WnZd2Rjkw1MfDcr59
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl+rBoEACgkQAVBC80lX
-0GwywQf9EPeARXiMnQ41GV1QHYfOW3ZwJizOxCI/b26sjpnk/cfkaeiA5TXMezh/
-zkM/7hdYitLquso9XO4M+ODlgSuiHEwSOwmw+yVb5RlFwezkg07J1xbSnm5kyNyz
-bm/72cvGjhP3R3GWTV7a7OI+i92efj7Hlpcml9Qu91tMxQNEkM++ABPlDa5eP2uF
-BatuzT6k0dSj5VmwH+HmPSZTPK+TEVFs9hKC2oq70Yk0CO5G8YGwlpdnnZ/urd1o
-8UpRQOjggfx6WjJ/5oZtV2kXf5GiPB0/Zdwvgrfvd124xWZbxgufCK0oc0BRfHqn
-Gm/tC8bKMwzRprhfWiteI2/3OdkvSw==
-=2ZHS
------END PGP SIGNATURE-----
-
---Sig_/NNkr73WnZd2Rjkw1MfDcr59--
