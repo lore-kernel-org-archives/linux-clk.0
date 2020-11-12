@@ -2,80 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8921EC2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 15:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59328C5519F
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 16:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E3412078D
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 15:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CA02078D
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 16:18:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbgKLPBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 10:01:43 -0500
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:45588 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbgKLPBn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 10:01:43 -0500
-Received: by mail-ot1-f41.google.com with SMTP id k3so5803158otp.12;
-        Thu, 12 Nov 2020 07:01:43 -0800 (PST)
+        id S1728492AbgKLQSY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 11:18:24 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34106 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbgKLQSY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 11:18:24 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a15so6967277edy.1;
+        Thu, 12 Nov 2020 08:18:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aAUelRMcvAJXaXpipWJpdYSsCWDu43G8R6f9TrGJYRo=;
-        b=lXTNSI73uEzOzPPNbIu2beTBM4W48v+ocB8uAtstrbiJUaevrLbSr6BgO8V6RJMCW5
-         r4UjmWDDUTID/kRs8FEi11jKzqXMWE08O4WRDxT+18cN1mFbv+eDzetYsPuOkvHup1+9
-         ur8BDpyznH3W9lGBCju8I3/45UeDlj5eVxqtjOpTzPNHL00RNXGVvbGRkci4EVVYKa96
-         +HKkseB+YFJMWuAVpPnPpnbIP2Xylh3wAzwAGcegdX7IuvrC93If4/Pb00hohh4MNNa2
-         ktiWdRcPHHSYuMYtIzluj2SPh8X337/OuIun1AdxRFMCu92S+UYsR3PQO1NKhAdNgYLc
-         bjjw==
-X-Gm-Message-State: AOAM531xwws5jv+gzSRC/ngGfC3u2aCTScSLH9K/KMc2qHBViUIlV70k
-        e+DQpGBk8jL9oDeCqjDs4bbUvaTwY/9ULHZL8qb+lwXv
-X-Google-Smtp-Source: ABdhPJyh+CQMhwVGiTecjsemaPnz6Y/GlLiHpgBP3QMFbhgwhmF8pcIqLWXomCAPJfpV6mjEhuBVtAkOjAq46MrscPI=
-X-Received: by 2002:a9d:171a:: with SMTP id i26mr22669238ota.260.1605193302680;
- Thu, 12 Nov 2020 07:01:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20201109032115.10610-1-rdunlap@infradead.org> <CAJZ5v0jhJcL6uJw_Cm02SeUMff_s1L-mKzX3haAyejcCkKihNg@mail.gmail.com>
- <20201111083041.698a561c@canb.auug.org.au>
-In-Reply-To: <20201111083041.698a561c@canb.auug.org.au>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 12 Nov 2020 16:01:32 +0100
-Message-ID: <CAJZ5v0h3qD2M0L+4gh7fgL0B282O9oE0WF4arqOb+f_EHxei_A@mail.gmail.com>
-Subject: Re: [PATCH -next v2] clk: pm_clock: provide stubs for pm_clk_runtime_suspend/_resume
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Oi3gnOCxcrOs0+khI8hhtUkNotcrmrGmIvdN+HAPrVQ=;
+        b=S0A4nC0SjYSrGr1Egd2aP9IyG0qIy8m+KvUOtRuhrpMl9AKoBttFC69iCntDq9dk4X
+         cg9p5H3Sh36AgLnZbm2kuPHJDLsoxFiiV8vgJOCNE6UegqXYOmPEhjcNM4LR9bYFj4JH
+         W26pqQ2l4OOW1OEImqyKhqEk3KGMm2L9XK8Mn04+jgZ5J3faibP8EuNjVmv7mFlcpzBj
+         JK4Zkf0PaEmtqwgxDfvzDkqn6y4NFa6jkZNdGv2J4hTZ5hSo3J5ZMxziebIe0fClATZv
+         XnC1vZLwMr8MUap/vfCsLQ2NMIuNIWlAl8peI5DYwND6AkodWiggkoRCKebaTXBVvVKx
+         eJNA==
+X-Gm-Message-State: AOAM533AdP2JBps3jUKCLKNiOHrNq+dWPHmRf6bpTtslSmXfN0xtB+GU
+        Ow9J6p18Cz7aFSmz0b51wK0=
+X-Google-Smtp-Source: ABdhPJxU8A/Q2g0DP+feOmxvU1fP6FCS006FvMp1NfPEruaqw24Y5rJB7Z8fBGQrpkoQw1M8rMTrhw==
+X-Received: by 2002:a50:ec10:: with SMTP id g16mr544202edr.63.1605197902687;
+        Thu, 12 Nov 2020 08:18:22 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id z13sm2330880ejp.30.2020.11.12.08.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2020 08:18:21 -0800 (PST)
+Date:   Thu, 12 Nov 2020 17:18:20 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: samsung: allow building the clkout driver as module
+Message-ID: <20201112161820.GA17700@kozik-lap>
+References: <20201110193749.261367-1-krzk@kernel.org>
+ <92ccc476-6afd-4be9-7c72-40c9a9218b03@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <92ccc476-6afd-4be9-7c72-40c9a9218b03@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Thu, Nov 12, 2020 at 03:36:35PM +0100, Sylwester Nawrocki wrote:
+> On 11/10/20 20:37, Krzysztof Kozlowski wrote:
+> > The Exynos clock output driver can be built as module (it does not have
+> > to be part of core init process) for better customization.  Adding a
+> > KConfig entry allows also compile testing for build coverage.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> This needs to go through your tree due to dependencies on your previous
+> patches, so
+> 
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Tue, Nov 10, 2020 at 10:30 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Rafael,
->
-> On Tue, 10 Nov 2020 18:43:04 +0100 "Rafael J. Wysocki" <rafael@kernel.org> wrote:
-> >
-> > > Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
-> >
-> > Applied to the PM tree as 5.10-rc material, thanks!
->
-> The problem is that the commit that this one fixes is in the clk tree
-> not the pm tree, so this patch needs to (also) be in the clk tree to
-> reduced bisect problems.
+Yes, thanks.
 
-OK, dropping from pm then.
+> 
+> > ---
+> >   drivers/clk/samsung/Kconfig             | 10 ++++++++++
+> >   drivers/clk/samsung/Makefile            |  2 +-
+> >   drivers/clk/samsung/clk-exynos-clkout.c |  1 +
+> >   3 files changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> > index 57d4b3f20417..b6b2cb209543 100644
+> > --- a/drivers/clk/samsung/Kconfig
+> > +++ b/drivers/clk/samsung/Kconfig
+> > @@ -19,6 +19,16 @@ config EXYNOS_AUDSS_CLK_CON
+> >   	  on some Exynos SoC variants. Choose M or Y here if you want to
+> >   	  use audio devices such as I2S, PCM, etc.
+> >   
+> > +config EXYNOS_CLK_OUT
+> 
+> Perhaps change it EXYNOS_CLKOUT for a better match with the SoC documentation? 
+
+Sure, I applied it with name fixup.
+
+Best regards,
+Krzysztof
