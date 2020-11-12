@@ -2,93 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,
+	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10400C2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 09:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1126C55ABD
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 10:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4850216FD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 09:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CCE2222A
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 10:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbgKLJIM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 04:08:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37746 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbgKLJGZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Nov 2020 04:06:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 96635AE78;
-        Thu, 12 Nov 2020 09:06:23 +0000 (UTC)
-Message-ID: <9e3a04f0ae76675f610bf25e6b53b4aff26afae4.camel@suse.de>
-Subject: Re: [PATCH v3 07/11] input: raspberrypi-ts: Release firmware handle
- when not needed
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
-Date:   Thu, 12 Nov 2020 10:06:21 +0100
-In-Reply-To: <20201112014542.GA1003057@dtor-ws>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
-         <20201104103938.1286-8-nsaenzjulienne@suse.de>
-         <20201112014542.GA1003057@dtor-ws>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-j2+UKM6wkcW3jVx2ysNJ"
-User-Agent: Evolution 3.36.5 
+        id S1727147AbgKLKwm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 05:52:42 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7522 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbgKLKwl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 05:52:41 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CWz2J5ynkzhkZ3;
+        Thu, 12 Nov 2020 18:52:24 +0800 (CST)
+Received: from huawei.com (10.151.151.249) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Thu, 12 Nov 2020
+ 18:52:26 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <gengdongjiu@huawei.com>
+Subject: [PATCH] clk: hisilicon: refine hi3620_mmc_clk_init() and fix memory leak issues
+Date:   Thu, 12 Nov 2020 19:17:00 +0000
+Message-ID: <20201112191700.48813-1-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.151.151.249]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Refine hi3620_mmc_clk_init() to use of_clk_add_hw_provider()
+instead of of_clk_add_provider(), the called function hisi_register_clk_mmc()
+returns 'clk_hw *' to adapt to this change.  Also free memory mapping and
+free hw_data if clock initialization is failed.
 
---=-j2+UKM6wkcW3jVx2ysNJ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Fix the memory leak issues in hisi_clk_init().
 
-On Wed, 2020-11-11 at 17:45 -0800, Dmitry Torokhov wrote:
-> Hi Nicolas,
->=20
-> On Wed, Nov 04, 2020 at 11:39:33AM +0100, Nicolas Saenz Julienne wrote:
-> > Use devm_rpi_firmware_get() so as to make sure we release RPi's firmwar=
-e
-> > interface when unbinding the device.
->=20
-> Unless I am mistaken this driver does not really need the firmware
-> structure past rpi_ts_probe(), and will be fine if it disappears earlier
-> than unbind time.
+Fixes: 75af25f581b1 ("clk: hisi: remove static variable")
+Fixes: 62ac983b6141 ("clk: hisilicon: add hi3620_mmc_clks")
+Cc: Markus Elfring <Markus.Elfring@web.de>
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+---
+v2->v3:
+1. Refind hi3620_mmc_clk_init() and hisi_register_clk_mmc() in order to use
+   of_clk_add_hw_provider().
+2. Fix the issue that incorrectly free data even clock is initialized
+   successfully.
+---
+ drivers/clk/hisilicon/clk-hi3620.c | 44 ++++++++++++++++++------------
+ drivers/clk/hisilicon/clk.c        | 11 ++++----
+ 2 files changed, 33 insertions(+), 22 deletions(-)
 
-Yes, I missed that. Will update it.
-
-Regards,
-Nicolas
-
-
---=-j2+UKM6wkcW3jVx2ysNJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+s+w0ACgkQlfZmHno8
-x/5iuQgApaPJZjl0NVPJ80THZ1yICuyOa9+6d8Bal28kwj6Ft8Xb+Z6ploXmWJ5T
-EPDFQF4pFMoSBGmgGSspJj4dl/KD3UaeJIRB3c3UNqIC7icH9TpBZY4Z41Mioqsv
-l4QH1DIWYVsRYi/9I1vhoijsquL5t5WK0c1N9GBs6GIQjVwEMN9tsDcQ3flTLKZs
-93saK4xtDp6UbqsYQYtwmupmREvAIxqnm0g3GB/Qk8Fkg9vpIK0H5cRBaJT9bfb8
-tQPpTY2LWTXQ53azvlBOcZC7yJQRBKitR2GkibS1ynNoNl43f5ZjyWXkzK2TEw1j
-HOKtCH+6NObb7Wm+xwL50tkanpTaGg==
-=eql2
------END PGP SIGNATURE-----
-
---=-j2+UKM6wkcW3jVx2ysNJ--
+diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+index a3d04c7c3da8..3dec48174560 100644
+--- a/drivers/clk/hisilicon/clk-hi3620.c
++++ b/drivers/clk/hisilicon/clk-hi3620.c
+@@ -408,12 +408,13 @@ static const struct clk_ops clk_mmc_ops = {
+ 	.recalc_rate = mmc_clk_recalc_rate,
+ };
+ 
+-static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
++static struct clk_hw *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
+ 			void __iomem *base, struct device_node *np)
+ {
+ 	struct clk_mmc *mclk;
+-	struct clk *clk;
++	struct clk_hw *hw;
+ 	struct clk_init_data init;
++	int err;
+ 
+ 	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
+ 	if (!mclk)
+@@ -439,17 +440,22 @@ static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
+ 	mclk->sam_off = mmc_clk->sam_off;
+ 	mclk->sam_bits = mmc_clk->sam_bits;
+ 
+-	clk = clk_register(NULL, &mclk->hw);
+-	if (WARN_ON(IS_ERR(clk)))
++	hw = &mclk->hw;
++	err = clk_hw_register(NULL, hw);
++
++	if (err) {
+ 		kfree(mclk);
+-	return clk;
++		return ERR_PTR(err);
++	}
++
++	return hw;
+ }
+ 
+ static void __init hi3620_mmc_clk_init(struct device_node *node)
+ {
+ 	void __iomem *base;
+-	int i, num = ARRAY_SIZE(hi3620_mmc_clks);
+-	struct clk_onecell_data *clk_data;
++	int i, ret, num = ARRAY_SIZE(hi3620_mmc_clks);
++	struct clk_hw_onecell_data *hw_data;
+ 
+ 	if (!node) {
+ 		pr_err("failed to find pctrl node in DTS\n");
+@@ -462,22 +468,26 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+ 		return;
+ 	}
+ 
+-	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+-	if (WARN_ON(!clk_data))
+-		return;
+-
+-	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
+-	if (!clk_data->clks)
+-		return;
++	hw_data = kzalloc(struct_size(hw_data, hws, num), GFP_KERNEL);
++	if (WARN_ON(!hw_data))
++		goto unmap_io;
+ 
+ 	for (i = 0; i < num; i++) {
+ 		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
+-		clk_data->clks[mmc_clk->id] =
++		hw_data->hws[mmc_clk->id] =
+ 			hisi_register_clk_mmc(mmc_clk, base, node);
+ 	}
+ 
+-	clk_data->clk_num = num;
+-	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	hw_data->num = num;
++	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, hw_data);
++	if (ret < 0)
++		goto free_hw_data;
++	return;
++
++free_hw_data:
++	kfree(hw_data);
++unmap_io:
++	iounmap(base);
+ }
+ 
+ CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
+diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+index 54d9fdc93599..da655683710f 100644
+--- a/drivers/clk/hisilicon/clk.c
++++ b/drivers/clk/hisilicon/clk.c
+@@ -65,25 +65,26 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+-		goto err;
++		return NULL;
+ 	}
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+-		goto err;
++		goto unmap_io;
+ 
+ 	clk_data->base = base;
+ 	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
+ 	if (!clk_table)
+-		goto err_data;
++		goto free_clk_data;
+ 
+ 	clk_data->clk_data.clks = clk_table;
+ 	clk_data->clk_data.clk_num = nr_clks;
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+ 	return clk_data;
+-err_data:
++free_clk_data:
+ 	kfree(clk_data);
+-err:
++unmap_io:
++	iounmap(base);
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(hisi_clk_init);
+-- 
+2.17.1
 
