@@ -2,130 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519A2C56201
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 16:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFAEC63699
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 17:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05138216FD
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 16:47:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F042A206E3
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 17:26:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="V1er74VJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbgKLQrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 11:47:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52330 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728487AbgKLQrL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Nov 2020 11:47:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BD74CAEA3;
-        Thu, 12 Nov 2020 16:47:08 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        id S1726151AbgKLR0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 12:26:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbgKLR0A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 12:26:00 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 978ABC061A04
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2020 09:25:58 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id cq7so7248791edb.4
+        for <linux-clk@vger.kernel.org>; Thu, 12 Nov 2020 09:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EYH3xwiXEDAnNYFH6sRlnj0nrx9OC5GkHU2BEsYeg8c=;
+        b=V1er74VJGkYMqey/iyOXhUJFrbfBMej3NDgDK/+Dsn878FmHqTP2crY3RgRv+amk6x
+         qmjtEZmsJbcY0UAfQUB4Uy/Au7ucKUx4UikT7GphdZINd4kjRqdu7vhLTTTpV1YG4zaU
+         7eSTqs1Ajd5b1s8r6edLBGVp0ADsMSfZVuRn4RIbtxiHxKc5NzogmuBfiG1TJ59nrTi8
+         jDtqKDS+c/qmN9QYU5oKIdKjsCTqT85+uPsYArzF81ZO2o053KEPLRhdaNUI7gbS37YR
+         ZYP6gYur4aoMH+k6trf/kSpCgk7T8XZUUHJ5JjANSOs0Y1Wmvue8yKT61v8pLlOtGbuv
+         QViA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EYH3xwiXEDAnNYFH6sRlnj0nrx9OC5GkHU2BEsYeg8c=;
+        b=DIny5U5F5a/uDjxE9La8NTcfriwOU6yNg1F57d8LQk0NngO65bNwvz3/TIzl7usug5
+         ckH9xRBPXeXd0kvRxpp1iehHdHgxzSW/7UMBtYhnjqhbLmAIJXI4U24p0RWuYyONo2hw
+         bgDrCWtP5x8QFNpvgyvJUod54hoj7ayr9BSvGqvnOmovWNQGyfAmNmCw0eSi0pxePjq3
+         ZOIj/yzi8315vQGPD4kFStUGY18AqZ07gK/NkyKTbSPb1wmPkXX/DguDnk6qt6925rBn
+         dqbJ5cbdbjwvs++1zOead6V6vA9xz+2HQKUsUzLKkIGTZzggppnshMVG3QtUllzybM6B
+         fF/A==
+X-Gm-Message-State: AOAM533eytMs7FLsI0TonSry+Seu4P5TBd9Lp55+Qr2wqApR6iFllyeF
+        mJxtBamy5gId+rRjgPvoLjqt4+gBQDYjPzDQhhIRdg==
+X-Google-Smtp-Source: ABdhPJwDBX/NfTxaAUg6N/MVUgyGIi6++bAnqswSeUgMd0WUV9wPeIj1nATdpL6JniiSVSiXHWRN6oFLXiRoHp9hbx0=
+X-Received: by 2002:aa7:d54b:: with SMTP id u11mr878250edr.341.1605201957042;
+ Thu, 12 Nov 2020 09:25:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20201112163630.17177-1-nsaenzjulienne@suse.de> <20201112163630.17177-3-nsaenzjulienne@suse.de>
+In-Reply-To: <20201112163630.17177-3-nsaenzjulienne@suse.de>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 12 Nov 2020 18:25:46 +0100
+Message-ID: <CAMpxmJWZsqfkkTP99a_8mu+O4xHwNWDqHuvgt7Cs88bA-iMvQA@mail.gmail.com>
+Subject: Re: [PATCH v4 02/11] firmware: raspberrypi: Introduce devm_rpi_firmware_get()
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
-Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v4 09/11] dt-bindings: pwm: Add binding for RPi firmware PWM bus
-Date:   Thu, 12 Nov 2020 17:36:27 +0100
-Message-Id: <20201112163630.17177-10-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201112163630.17177-1-nsaenzjulienne@suse.de>
-References: <20201112163630.17177-1-nsaenzjulienne@suse.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
+        Linux Input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PWM bus controlling the fan in RPi's official PoE hat can only be
-controlled by the board's co-processor.
+On Thu, Nov 12, 2020 at 5:44 PM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> Itroduce devm_rpi_firmware_get(), it'll simplify the firmware handling
+> for most consumers.
+>
+> Suggested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>
+> Changes since v2:
+> - Introduce devm_rpi_firmware_get()
+>
+>  drivers/firmware/raspberrypi.c             | 31 +++++++++++++++++++++-
+>  include/soc/bcm2835/raspberrypi-firmware.h |  8 ++++++
+>  2 files changed, 38 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+> index 438e17074a97..4ab2dfdc82ad 100644
+> --- a/drivers/firmware/raspberrypi.c
+> +++ b/drivers/firmware/raspberrypi.c
+> @@ -237,10 +237,17 @@ static void rpi_firmware_delete(struct kref *kref)
+>         kfree(fw);
+>  }
+>
+> -void rpi_firmware_put(struct rpi_firmware *fw)
+> +static void __rpi_firmware_put(void *data)
+>  {
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+The '__' prefix is very vague and usually used for unlocked variants
+of functions. The casting to void * in rpi_firmware_put() is also
+unneeded. I would much prefer that the devres release callback be
+called devm_rpi_firmware_put() and that it call rpi_firmware_put()
+which would then call kref_put().
 
-Changes since v3:
- - Fix example
+Bartosz
 
-Changes since v1:
- - Update bindings to use 2 #pwm-cells
-
- .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
- .../pwm/raspberrypi,firmware-pwm.h            | 13 ++++++++++++
- 2 files changed, 33 insertions(+)
- create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
-
-diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-index a2c63c8b1d10..38be3ff69609 100644
---- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-+++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-@@ -64,6 +64,21 @@ properties:
-       - compatible
-       - "#reset-cells"
- 
-+  pwm:
-+    type: object
-+
-+    properties:
-+      compatible:
-+        const: raspberrypi,firmware-pwm
-+
-+      "#pwm-cells":
-+        # See pwm.yaml in this directory for a description of the cells format.
-+        const: 2
-+
-+    required:
-+      - compatible
-+      - "#pwm-cells"
-+
-     additionalProperties: false
- 
- required:
-@@ -87,5 +102,10 @@ examples:
-             compatible = "raspberrypi,firmware-reset";
-             #reset-cells = <1>;
-         };
-+
-+        pwm: pwm {
-+            compatible = "raspberrypi,firmware-pwm";
-+            #pwm-cells = <2>;
-+        };
-     };
- ...
-diff --git a/include/dt-bindings/pwm/raspberrypi,firmware-pwm.h b/include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
-new file mode 100644
-index 000000000000..27c5ce68847b
---- /dev/null
-+++ b/include/dt-bindings/pwm/raspberrypi,firmware-pwm.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2020 Nicolas Saenz Julienne
-+ * Author: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+ */
-+
-+#ifndef _DT_BINDINGS_RASPBERRYPI_FIRMWARE_PWM_H
-+#define _DT_BINDINGS_RASPBERRYPI_FIRMWARE_PWM_H
-+
-+#define RASPBERRYPI_FIRMWARE_PWM_POE		0
-+#define RASPBERRYPI_FIRMWARE_PWM_NUM		1
-+
-+#endif
--- 
-2.29.2
-
+> +       struct rpi_firmware *fw = data;
+> +
+>         kref_put(&fw->consumers, rpi_firmware_delete);
+>  }
+> +
+> +void rpi_firmware_put(struct rpi_firmware *fw)
+> +{
+> +       __rpi_firmware_put(fw);
+> +}
+>  EXPORT_SYMBOL_GPL(rpi_firmware_put);
+>
+>  static int rpi_firmware_probe(struct platform_device *pdev)
+> @@ -326,6 +333,28 @@ struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
+>  }
+>  EXPORT_SYMBOL_GPL(rpi_firmware_get);
+>
+> +/**
+> + * devm_rpi_firmware_get - Get pointer to rpi_firmware structure.
+> + * @firmware_node:    Pointer to the firmware Device Tree node.
+> + *
+> + * Returns NULL is the firmware device is not ready.
+> + */
+> +struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
+> +                                          struct device_node *firmware_node)
+> +{
+> +       struct rpi_firmware *fw;
+> +
+> +       fw = rpi_firmware_get(firmware_node);
+> +       if (!fw)
+> +               return NULL;
+> +
+> +       if (devm_add_action_or_reset(dev, __rpi_firmware_put, fw))
+> +               return NULL;
+> +
+> +       return fw;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_rpi_firmware_get);
+> +
+>  static const struct of_device_id rpi_firmware_of_match[] = {
+>         { .compatible = "raspberrypi,bcm2835-firmware", },
+>         {},
+> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
+> index fdfef7fe40df..73ad784fca96 100644
+> --- a/include/soc/bcm2835/raspberrypi-firmware.h
+> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+> @@ -142,6 +142,8 @@ int rpi_firmware_property_list(struct rpi_firmware *fw,
+>                                void *data, size_t tag_size);
+>  void rpi_firmware_put(struct rpi_firmware *fw);
+>  struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
+> +struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
+> +                                          struct device_node *firmware_node);
+>  #else
+>  static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
+>                                         void *data, size_t len)
+> @@ -160,6 +162,12 @@ static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware
+>  {
+>         return NULL;
+>  }
+> +
+> +static inline struct rpi_firmware *devm_rpi_firmware_get(struct device *dev,
+> +                                       struct device_node *firmware_node)
+> +{
+> +       return NULL;
+> +}
+>  #endif
+>
+>  #endif /* __SOC_RASPBERRY_FIRMWARE_H__ */
+> --
+> 2.29.2
+>
