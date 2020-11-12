@@ -2,127 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3DDC388F7
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93205C2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C22D920825
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C9BD20825
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMJgpf9a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJHjI8PK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgKLFdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728206AbgKLFdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 12 Nov 2020 00:33:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54106 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbgKLBq1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Nov 2020 20:46:27 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD36C0613D1;
-        Wed, 11 Nov 2020 17:45:47 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id g7so3039246pfc.2;
-        Wed, 11 Nov 2020 17:45:47 -0800 (PST)
+        with ESMTP id S1728873AbgKLBfY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Nov 2020 20:35:24 -0500
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56155C0617A7;
+        Wed, 11 Nov 2020 17:34:08 -0800 (PST)
+Received: by mail-io1-xd43.google.com with SMTP id s10so4379781ioe.1;
+        Wed, 11 Nov 2020 17:34:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nOQD+47l1Vj9tZi/oOhEDued5DuJRPNMgWRyqUdj0hA=;
-        b=RMJgpf9aRvHsm7kXTPn6A4QHZjITSTMgFpSPAsMIDsD9Vq2FGlymCQ2Uy9WLTcLgud
-         qcvZWqtPn4jtyWomXgZOZuaGMlO2WRVM66OJ58RyU+8tB4/Z6t+5kyb1la/bFNvIQPNy
-         +gfGfVHSsGC88lwyTHYBVOldd5dkmJ8zNnfGN4wdGKkvtA5U/ZgbYHYAtXazC6yUv6G6
-         18AKV5PhQRuc9McMOPXFn4enN6RsZ6bzrUeznvRv50DulrL8Df1nad3nFKi4ygo6hi1F
-         vr6MAnGzpjH0q2duju6VUxCCWNB57QbzNbWKojxTfKCMb8p803FeYeAomZ9dfOGjw0HX
-         nzmg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rbpdEV5oJs5EmTQ4qqBH8SAi38sGGbLtW6CQKc149hs=;
+        b=QJHjI8PK16X+WFhTxpfikEQQBKesGLQy41FaqcLf/NYWYbNYkYVVY4hbzUW3/zu83+
+         6LTXMHmPce3IvwNpRjh0UUYuL8X2qLjhdPiIxy706lUXRXEcc5pz3fkpGu81jquaTH+9
+         sKFgqy3n4wBPlNcT5mJDERmYeN35oyrxsu0A2IODkzQbLooR+w4nqX9mslkCSt5ISpS2
+         hAOgwGk6EzZkHldzpAi2aA1iEPC24vJwF3F0I3wnDGCMxZNCiJ+4sYLrw62wSb4ZpKWO
+         KLFcdzbICoZltLeOVJSc2VZdHIqo2dbcpMPLoj+e9cmoqk0LKNPsI5f4H+WHK2mpZ1s/
+         Z/pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nOQD+47l1Vj9tZi/oOhEDued5DuJRPNMgWRyqUdj0hA=;
-        b=jYx9+7oQNHxjIczMKy+rlhs69F/hQVvDHWD3hcQLkKyTda97o7M6xeuCDi47Uns4CY
-         0RNu+bafh24ndLckrf7ZHqyzQwvGD/UV4Q9b6t+9w8ODtbk+lU1UCEjOjlMD81ZbXz34
-         CnoTAcPQE8D72kX+VIzn4SNNEBYI/qLfsEL4iAVJX6ZjN+XSNfixOhcLiNWl7QD6dTrl
-         ug6lEEue1pByYaowcQGVBm3It4Z5Y4QIADeFfr6UAxwNxYTDcWxDWblQTUVmKxFPhjHG
-         MigEfXb/XyjOrdBI+y9uuB7ckRmIKUFFr1FCF2nv5fihJX7PKp6fu+FMjP1QVOctnb/z
-         BEVw==
-X-Gm-Message-State: AOAM532kZ7itmJKepXN7HHXIh+SSxMGn8UbmRztJoL4iQO9/Tf2bUcRx
-        wtXzAhtqTL1s++PNDEjjQsI=
-X-Google-Smtp-Source: ABdhPJw49jebosLeBcZ1ZsqKR3LnVI8Mxnm8v5sWdo+ropNNGLFnXAlwpDz5nWxUdwGFQZE5kJbwXQ==
-X-Received: by 2002:a17:90a:fd0d:: with SMTP id cv13mr4600504pjb.124.1605145546448;
-        Wed, 11 Nov 2020 17:45:46 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
-        by smtp.gmail.com with ESMTPSA id d11sm3944079pjm.18.2020.11.11.17.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2020 17:45:45 -0800 (PST)
-Date:   Wed, 11 Nov 2020 17:45:42 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
-        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 07/11] input: raspberrypi-ts: Release firmware handle
- when not needed
-Message-ID: <20201112014542.GA1003057@dtor-ws>
-References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
- <20201104103938.1286-8-nsaenzjulienne@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rbpdEV5oJs5EmTQ4qqBH8SAi38sGGbLtW6CQKc149hs=;
+        b=l4cASASad9JJNOv4xWs3ONSWG2rOPeeHfWvBoknAR+Lsg1GkQoNV9ZCqx7rc1yy5W4
+         AdCc27hgkS9GpUtl59QsX2J6InI8CKHcKv/hXnSJLzazxp0iQvwX0/QPAr2+hMCKwBXv
+         OMniIiOz84UwhNKJXj0k0AnrKmuEfbyVkaJxUwFrv2tPV4/j08aH/8AQhbWP4ckhS+5L
+         DzYgKcsybhBmeBqWfGkKDftNzGBmrPydptBkg6o0OsGXVfL4pGgbS/GP4VxmHtQmVBGM
+         Scj/6yY/5aQSBLwHkVCaSPNBxdEgkm7Wnia7BrbdmwmCUrKr/g8P593Hw806IDaxxUjx
+         xmaQ==
+X-Gm-Message-State: AOAM533ooXar4WQVB+Xox/elZBWTwy8LtsI8y6wAabT3blSFHPrc4qu3
+        FUU2VYePOzHMiLPuMes/s0H5HXUaYJsfARuuxc0=
+X-Google-Smtp-Source: ABdhPJx9s5i1TWJ7IiZOclN/QEVz3COO+bkdo4SQu9Uhi7hDY6mOuJ+30tEBzttD211kuDsTR9BIV8uhKO5AcbH9RrA=
+X-Received: by 2002:a02:a793:: with SMTP id e19mr21883768jaj.45.1605144847713;
+ Wed, 11 Nov 2020 17:34:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104103938.1286-8-nsaenzjulienne@suse.de>
+References: <20201111163013.29412-1-sergio.paracuellos@gmail.com> <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
+In-Reply-To: <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Thu, 12 Nov 2020 09:33:56 +0800
+Message-ID: <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] MIPS: ralink: add CPU clock detection and clock gate
+ driver for MT7621
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nicolas,
+On Thu, Nov 12, 2020 at 9:26 AM Chuanhong Guo <gch981213@gmail.com> wrote:
+>
+> I've already said in previous threads that clock assignment in
+> current linux kernel is not trustworthy.
+> I've got the clock plan for mt7621 now. (Can't share it, sorry.)
+> Most of your clock assumptions above are incorrect.
+> I've made a clock driver with gate support a few months ago.[0]
+> but I don't have much time to really finish it.
+> Maybe you could rework your clock gate driver based on it.
+>
+> [0] https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
 
-On Wed, Nov 04, 2020 at 11:39:33AM +0100, Nicolas Saenz Julienne wrote:
-> Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-> interface when unbinding the device.
-
-Unless I am mistaken this driver does not really need the firmware
-structure past rpi_ts_probe(), and will be fine if it disappears earlier
-than unbind time.
-
-Thanks.
-
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> 
-> ---
-> 
-> Changes since v2:
->  - Use devm_rpi_firmware_get(), instead of remove function
-> 
->  drivers/input/touchscreen/raspberrypi-ts.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/touchscreen/raspberrypi-ts.c b/drivers/input/touchscreen/raspberrypi-ts.c
-> index ef6aaed217cf..efed0efa91d9 100644
-> --- a/drivers/input/touchscreen/raspberrypi-ts.c
-> +++ b/drivers/input/touchscreen/raspberrypi-ts.c
-> @@ -134,7 +134,7 @@ static int rpi_ts_probe(struct platform_device *pdev)
->  		return -ENOENT;
->  	}
->  
-> -	fw = rpi_firmware_get(fw_node);
-> +	fw = devm_rpi_firmware_get(&pdev->dev, fw_node);
->  	of_node_put(fw_node);
->  	if (!fw)
->  		return -EPROBE_DEFER;
-> -- 
-> 2.29.1
-> 
+hsdma/eth/pio clocks are still missing in mediatek doc and
+I just made them up in the driver. Correct clock frequency for
+them aren't really important for them to work though.
+And another part I didn't finish is checking clock support for
+every drivers mt7621 used. Many drivers don't explicitly
+enable the clock and may be problematic when kernel
+gates unused clocks.
 
 -- 
-Dmitry
+Regards,
+Chuanhong Guo
