@@ -2,198 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,
+	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A75CC2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 11:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430C3C388F7
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 13:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E50F622201
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 11:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBC5020A8B
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 13:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbgKLLCM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 06:02:12 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2431 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbgKLK7p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 05:59:45 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CWzBM6vyvz53wv;
-        Thu, 12 Nov 2020 18:59:23 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 12 Nov 2020 18:59:33 +0800
-Subject: Re: [PATCH V3] clk: hisilicon: refine hi3620_mmc_clk_init() and fix
- memory leak issues
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20201112192214.48926-1-gengdongjiu@huawei.com>
+        id S1728284AbgKLNz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 08:55:59 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7221 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728210AbgKLNz7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 08:55:59 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CX35q5tX8zkZnk;
+        Thu, 12 Nov 2020 21:55:43 +0800 (CST)
+Received: from huawei.com (10.151.151.249) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Thu, 12 Nov 2020
+ 21:55:55 +0800
 From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <2f85025e-f072-e01c-cb57-6a0a65a3cb0d@huawei.com>
-Date:   Thu, 12 Nov 2020 18:59:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] dt-bindings: Document the hi3559a clock bindings
+Date:   Thu, 12 Nov 2020 22:20:28 +0000
+Message-ID: <20201112222029.19701-1-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20201112192214.48926-1-gengdongjiu@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
+Content-Type: text/plain
+X-Originating-IP: [10.151.151.249]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-add Markus
+Add DT bindings documentation for hi3559a SoC clock.
 
-On 2020/11/13 3:22, Dongjiu Geng wrote:
-> Refine hi3620_mmc_clk_init() to use of_clk_add_hw_provider()
-> instead of of_clk_add_provider(), the called function hisi_register_clk_mmc()
-> returns 'clk_hw *' to adapt to this change.  Also free memory mapping and
-> free hw_data if clock initialization is failed.
-> 
-> Fix the memory leak issues in hisi_clk_init().
-> 
-> Fixes: 75af25f581b1 ("clk: hisi: remove static variable")
-> Fixes: 62ac983b6141 ("clk: hisilicon: add hi3620_mmc_clks")
-> Cc: Markus Elfring <Markus.Elfring@web.de>
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
-> v2->v3:
-> 1. Refind hi3620_mmc_clk_init() and hisi_register_clk_mmc() in order to use
->    of_clk_add_hw_provider().
-> 2. Fix the issue that incorrectly free data even clock is initialized
->    successfully.
-> ---
->  drivers/clk/hisilicon/clk-hi3620.c | 44 ++++++++++++++++++------------
->  drivers/clk/hisilicon/clk.c        | 11 ++++----
->  2 files changed, 33 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-> index a3d04c7c3da8..3dec48174560 100644
-> --- a/drivers/clk/hisilicon/clk-hi3620.c
-> +++ b/drivers/clk/hisilicon/clk-hi3620.c
-> @@ -408,12 +408,13 @@ static const struct clk_ops clk_mmc_ops = {
->  	.recalc_rate = mmc_clk_recalc_rate,
->  };
->  
-> -static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
-> +static struct clk_hw *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
->  			void __iomem *base, struct device_node *np)
->  {
->  	struct clk_mmc *mclk;
-> -	struct clk *clk;
-> +	struct clk_hw *hw;
->  	struct clk_init_data init;
-> +	int err;
->  
->  	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
->  	if (!mclk)
-> @@ -439,17 +440,22 @@ static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
->  	mclk->sam_off = mmc_clk->sam_off;
->  	mclk->sam_bits = mmc_clk->sam_bits;
->  
-> -	clk = clk_register(NULL, &mclk->hw);
-> -	if (WARN_ON(IS_ERR(clk)))
-> +	hw = &mclk->hw;
-> +	err = clk_hw_register(NULL, hw);
-> +
-> +	if (err) {
->  		kfree(mclk);
-> -	return clk;
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return hw;
->  }
->  
->  static void __init hi3620_mmc_clk_init(struct device_node *node)
->  {
->  	void __iomem *base;
-> -	int i, num = ARRAY_SIZE(hi3620_mmc_clks);
-> -	struct clk_onecell_data *clk_data;
-> +	int i, ret, num = ARRAY_SIZE(hi3620_mmc_clks);
-> +	struct clk_hw_onecell_data *hw_data;
->  
->  	if (!node) {
->  		pr_err("failed to find pctrl node in DTS\n");
-> @@ -462,22 +468,26 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
->  		return;
->  	}
->  
-> -	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> -	if (WARN_ON(!clk_data))
-> -		return;
-> -
-> -	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
-> -	if (!clk_data->clks)
-> -		return;
-> +	hw_data = kzalloc(struct_size(hw_data, hws, num), GFP_KERNEL);
-> +	if (WARN_ON(!hw_data))
-> +		goto unmap_io;
->  
->  	for (i = 0; i < num; i++) {
->  		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
-> -		clk_data->clks[mmc_clk->id] =
-> +		hw_data->hws[mmc_clk->id] =
->  			hisi_register_clk_mmc(mmc_clk, base, node);
->  	}
->  
-> -	clk_data->clk_num = num;
-> -	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +	hw_data->num = num;
-> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, hw_data);
-> +	if (ret < 0)
-> +		goto free_hw_data;
-> +	return;
-> +
-> +free_hw_data:
-> +	kfree(hw_data);
-> +unmap_io:
-> +	iounmap(base);
->  }
->  
->  CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
-> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> index 54d9fdc93599..da655683710f 100644
-> --- a/drivers/clk/hisilicon/clk.c
-> +++ b/drivers/clk/hisilicon/clk.c
-> @@ -65,25 +65,26 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->  	base = of_iomap(np, 0);
->  	if (!base) {
->  		pr_err("%s: failed to map clock registers\n", __func__);
-> -		goto err;
-> +		return NULL;
->  	}
->  
->  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->  	if (!clk_data)
-> -		goto err;
-> +		goto unmap_io;
->  
->  	clk_data->base = base;
->  	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
->  	if (!clk_table)
-> -		goto err_data;
-> +		goto free_clk_data;
->  
->  	clk_data->clk_data.clks = clk_table;
->  	clk_data->clk_data.clk_num = nr_clks;
->  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
->  	return clk_data;
-> -err_data:
-> +free_clk_data:
->  	kfree(clk_data);
-> -err:
-> +unmap_io:
-> +	iounmap(base);
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(hisi_clk_init);
-> 
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+---
+ .../bindings/clock/hi3559av100-clock.txt      | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3559av100-clock.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/hi3559av100-clock.txt b/Documentation/devicetree/bindings/clock/hi3559av100-clock.txt
+new file mode 100644
+index 000000000000..0fb4ccc72cfe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/hi3559av100-clock.txt
+@@ -0,0 +1,40 @@
++* Hisilicon Hi3559A Clock Controller
++
++The Hi3559A clock controller generates and supplies clock to various
++controllers within the Hi3559A SoC.
++
++Required Properties:
++
++- compatible: the compatible should be one of the following strings to
++	indicate the clock controller functionality.
++
++	- "hisilicon,hi3559av100-clock"
++
++- reg: physical base address of the controller and length of memory mapped
++  region.
++
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes use this identifier
++to specify the clock which they consume.
++
++All these identifier could be found in <dt-bindings/clock/hi3559av100-clock.h>.
++
++Examples:
++
++	clock: clock0 {
++		compatible = "hisilicon,hi3559av100-clock", "syscon";
++		#clock-cells = <1>;
++		#reset-cells = <2>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		reg = <0x0 0x12010000 0x0 0x10000>;
++	};
++
++	uart0: uart@12100000 {
++		compatible = "arm,pl011", "arm,primecell";
++		reg = <0x12100000 0x1000>;
++		interrupts = <0 6 4>;
++		clocks = <&clock HI3559AV100_UART0_CLK>;
++		clock-names = "apb_pclk";
++	};
+-- 
+2.17.1
+
