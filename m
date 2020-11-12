@@ -2,136 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E6FC63697
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 01:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E6BC63699
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92AC720791
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 01:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 571DC20825
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:33:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPsUI/o6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgKLBcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Nov 2020 20:32:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54826 "EHLO
+        id S1728232AbgKLFdU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 00:33:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbgKKWqr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Nov 2020 17:46:47 -0500
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B760C061A47;
-        Wed, 11 Nov 2020 14:28:42 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id f16so3665818otl.11;
-        Wed, 11 Nov 2020 14:28:42 -0800 (PST)
+        with ESMTP id S1725860AbgKLFX6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 00:23:58 -0500
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD19CC0613D4;
+        Wed, 11 Nov 2020 21:23:57 -0800 (PST)
+Received: by mail-ot1-x343.google.com with SMTP id k3so4440017otp.12;
+        Wed, 11 Nov 2020 21:23:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NU0FnSXQ52zfzOppTtAfZgow5m+SuejdPqh1x/iQhIo=;
+        b=cPsUI/o6jcDroRRF15FPKRzNWt/KUk/CDMBgqp+Sepr12C45no3YzDny+TA3uTQXDX
+         xjpSwQcnKxfLjTDGOZtFlnmgs9nmDXv1k1yJVI2PgvuOO4W77RLSiaC4++J3Cbap89rU
+         LXozxq7vhFRkQnlZBRtRYQnreuU98uqKspZ6lDsXTzkwTdEMDOkWYlhkkRJSh4n4ZAMt
+         n3yq0Sr8C72i8m4Sx0mPmUEnOTNWWk+lNGCILpy2/IGnyVLkAMqvdUH0svCROz73rBLQ
+         UdFI4Nit/dBaUbNxQXtHhUUGiBIrPBJnuqFF0bTc+ptDt8mZYs1G5rTgoJNHMx6OtBeC
+         CY4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=I7afwCU5Zz8A6AK7ziXO/mFlkl96qobpis0V/RHYr6g=;
-        b=HllTtBb+9w+4/jezG3C+36OqM7mrWaU3vlR1uvVuiuMQtsHtsyBx9BOxhcqNl4IjAd
-         fCkO9Sv+RZ/Q349f4wVGa6AGhqqGNxrUF5NASjD2czVuu/cWTMuUSLWNJn/cM2vI9O2u
-         8wudHIn9sVgTFODGbXK8QEnMscVSAV9BnPjD5qfIGGBejXambW2mBZGCmP8AO/zmF5w+
-         y8gg0YAt7t5aF7BmNlBzy4rHxxQFjp8nn++gB3kYsiqW6XAeO0zkF9UfyOesIJtijmp8
-         4QYQJXntYLMOgyo2Y0qKKRUg6/81P3Hbs7XwJhQBNiRYHEZBTC6tRjtK9HnzSEltVPYc
-         /K3Q==
-X-Gm-Message-State: AOAM533fhiRiOTUJIADgfaxhq5O0Ro0YGmL49k/yUmZRMudj8uxwLnOw
-        k6wOiwA4+d/NcGFmuqQ3IQ==
-X-Google-Smtp-Source: ABdhPJzZzxj/l38ISSbGAqIMW+OGIR82Les8jqXmZTG7FPHFTvrMsSSQiM9e38zItHJEQCMCl/gmwQ==
-X-Received: by 2002:a9d:3d3:: with SMTP id f77mr19065035otf.125.1605133421911;
-        Wed, 11 Nov 2020 14:23:41 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t6sm828879ooo.22.2020.11.11.14.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2020 14:23:41 -0800 (PST)
-Received: (nullmailer pid 2149138 invoked by uid 1000);
-        Wed, 11 Nov 2020 22:23:40 -0000
-Date:   Wed, 11 Nov 2020 16:23:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dongjiu Geng <gengdongjiu@huawei.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: hisilicon: Add clock driver for hi3559A SoC
-Message-ID: <20201111222340.GA2143735@bogus>
-References: <20201109202838.43105-1-gengdongjiu@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NU0FnSXQ52zfzOppTtAfZgow5m+SuejdPqh1x/iQhIo=;
+        b=EklYhzJzQws8NxYzOI4AqBaoWTHBnWkB9xqOEaKWmuJde5IT6pxiyI20AZcISYmZnO
+         lEldhzYiQmTPRHNFlKyALIyOI3U7ApxsHkQeUYKAC5NYDaUf4QUZwd7FYkcv1jN/wGNN
+         3JPbOAzHyOQ4/RnUJY091hnhu/0TaCG4KIFp2o9Zd+kfUyrnvaQtJAVs+7nntyAO4EeB
+         zcUNsF58Bt8puKfdIwmrdi4XzAE3o5kKg2/lPhYcFO0u8e1iu1+ex7zSbsfaCyWJHbX5
+         k2Iy52a75d1i3b4xrSmkmnm2Nt228NGEydn8i5zGLhTcTaKUiDIj11mMLAaLIi+tM55c
+         NZKA==
+X-Gm-Message-State: AOAM530es8uatiTmFefVPwKL+nsb4zodJYKpxu/MCGyD/6luyoPQVbJd
+        c5YmyHnvfWqQLW5S74e88m+q+nfz0J851xW2jdQ=
+X-Google-Smtp-Source: ABdhPJzgCBqL5XPCfRFxa2JBTGNwdjwYjw4dXs6Iin9lcc6LxT6/9ubBVjPvC14EPwoe8wCcM9g7m/ZnXV5uhc7d+Zs=
+X-Received: by 2002:a9d:4704:: with SMTP id a4mr19589584otf.236.1605158637343;
+ Wed, 11 Nov 2020 21:23:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201109202838.43105-1-gengdongjiu@huawei.com>
+References: <20201111163013.29412-1-sergio.paracuellos@gmail.com>
+ <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com> <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
+In-Reply-To: <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Thu, 12 Nov 2020 06:23:46 +0100
+Message-ID: <CAMhs-H85RCK=a_y+fVm-oR3hOEfr=rtVcLvX09YH4F65enz3oA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] MIPS: ralink: add CPU clock detection and clock gate
+ driver for MT7621
+To:     Chuanhong Guo <gch981213@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 08:28:38PM +0000, Dongjiu Geng wrote:
-> Add clock drivers for hi3559A SoC, this driver controls the SoC
-> registers to supply different clocks to different IPs in the SoC.
-> 
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
->  drivers/clk/hisilicon/Kconfig                 |   7 +
->  drivers/clk/hisilicon/Makefile                |   1 +
->  drivers/clk/hisilicon/clk-hi3559a.c           | 873 ++++++++++++++++++
->  include/dt-bindings/clock/hi3559av100-clock.h | 173 ++++
+Hi,
 
-Is there a binding for this? The header should be part of it.
+On Thu, Nov 12, 2020 at 2:34 AM Chuanhong Guo <gch981213@gmail.com> wrote:
+>
+> On Thu, Nov 12, 2020 at 9:26 AM Chuanhong Guo <gch981213@gmail.com> wrote:
+> >
+> > I've already said in previous threads that clock assignment in
+> > current linux kernel is not trustworthy.
+> > I've got the clock plan for mt7621 now. (Can't share it, sorry.)
+> > Most of your clock assumptions above are incorrect.
+> > I've made a clock driver with gate support a few months ago.[0]
+> > but I don't have much time to really finish it.
+> > Maybe you could rework your clock gate driver based on it.
+> >
+> > [0] https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
+>
+> hsdma/eth/pio clocks are still missing in mediatek doc and
+> I just made them up in the driver. Correct clock frequency for
+> them aren't really important for them to work though.
+> And another part I didn't finish is checking clock support for
+> every drivers mt7621 used. Many drivers don't explicitly
+> enable the clock and may be problematic when kernel
+> gates unused clocks.
+>
 
->  4 files changed, 1054 insertions(+)
->  create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
->  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
-> 
-> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-> index 6a9e93a0bb95..5ecc37aaa118 100644
-> --- a/drivers/clk/hisilicon/Kconfig
-> +++ b/drivers/clk/hisilicon/Kconfig
-> @@ -15,6 +15,13 @@ config COMMON_CLK_HI3519
->  	help
->  	  Build the clock driver for hi3519.
->  
-> +config COMMON_CLK_HI3559A
-> +	bool "Hi3559A Clock Driver"
-> +	depends on ARCH_HISI || COMPILE_TEST
-> +	default ARCH_HISI
-> +	help
-> +	  Build the clock driver for hi3559a.
-> +
->  config COMMON_CLK_HI3660
->  	bool "Hi3660 Clock Driver"
->  	depends on ARCH_HISI || COMPILE_TEST
-> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
-> index b2441b99f3d5..bc101833b35e 100644
-> --- a/drivers/clk/hisilicon/Makefile
-> +++ b/drivers/clk/hisilicon/Makefile
-> @@ -17,3 +17,4 @@ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
->  obj-$(CONFIG_RESET_HISI)	+= reset.o
->  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
->  obj-$(CONFIG_STUB_CLK_HI3660)	+= clk-hi3660-stub.o
-> +obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
-> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
-> new file mode 100644
-> index 000000000000..bd3921fc8c8e
-> --- /dev/null
-> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
-> @@ -0,0 +1,873 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Hisilicon Hi3559A clock driver
-> + *
-> + * Copyright (c) 2019-2020 HiSilicon Technologies Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
+Well, I think they are not important either. Also, by default gate
+register has all the gate bits enabled. When a gate driver is added,
+the kernel by default will try to disable those clocks that haven't
+been requested. To avoid weird behaviour because of some drivers are
+not using properly clocks we have the CLK_IGNORED_UNUSED, which as you
+can see is currently being used in my code. Using that all seems to
+work as expected as it is now.
 
-Don't need both this and SPDX tag. Kernel code should be GPL-2.0 (-only) 
-generally.
+> --
+> Regards,
+> Chuanhong Guo
 
-> + *
-> + * Author: Dongjiu Geng <gengdongjiu@huawei.com>
-
-git will tell us this.
-
-Same comments apply to the header. Though DT headers should be dual 
-licensed.
-
-Rob
+Best regards,
+    Sergio Paracuellos
