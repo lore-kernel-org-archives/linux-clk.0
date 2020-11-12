@@ -2,104 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93205C2D0A3
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E5CC56201
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 06:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9BD20825
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 05:44:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJHjI8PK"
+	by mail.kernel.org (Postfix) with ESMTP id 21408208FE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 06:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbgKLFdS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 00:33:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbgKLBfY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Nov 2020 20:35:24 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56155C0617A7;
-        Wed, 11 Nov 2020 17:34:08 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id s10so4379781ioe.1;
-        Wed, 11 Nov 2020 17:34:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rbpdEV5oJs5EmTQ4qqBH8SAi38sGGbLtW6CQKc149hs=;
-        b=QJHjI8PK16X+WFhTxpfikEQQBKesGLQy41FaqcLf/NYWYbNYkYVVY4hbzUW3/zu83+
-         6LTXMHmPce3IvwNpRjh0UUYuL8X2qLjhdPiIxy706lUXRXEcc5pz3fkpGu81jquaTH+9
-         sKFgqy3n4wBPlNcT5mJDERmYeN35oyrxsu0A2IODkzQbLooR+w4nqX9mslkCSt5ISpS2
-         hAOgwGk6EzZkHldzpAi2aA1iEPC24vJwF3F0I3wnDGCMxZNCiJ+4sYLrw62wSb4ZpKWO
-         KLFcdzbICoZltLeOVJSc2VZdHIqo2dbcpMPLoj+e9cmoqk0LKNPsI5f4H+WHK2mpZ1s/
-         Z/pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rbpdEV5oJs5EmTQ4qqBH8SAi38sGGbLtW6CQKc149hs=;
-        b=l4cASASad9JJNOv4xWs3ONSWG2rOPeeHfWvBoknAR+Lsg1GkQoNV9ZCqx7rc1yy5W4
-         AdCc27hgkS9GpUtl59QsX2J6InI8CKHcKv/hXnSJLzazxp0iQvwX0/QPAr2+hMCKwBXv
-         OMniIiOz84UwhNKJXj0k0AnrKmuEfbyVkaJxUwFrv2tPV4/j08aH/8AQhbWP4ckhS+5L
-         DzYgKcsybhBmeBqWfGkKDftNzGBmrPydptBkg6o0OsGXVfL4pGgbS/GP4VxmHtQmVBGM
-         Scj/6yY/5aQSBLwHkVCaSPNBxdEgkm7Wnia7BrbdmwmCUrKr/g8P593Hw806IDaxxUjx
-         xmaQ==
-X-Gm-Message-State: AOAM533ooXar4WQVB+Xox/elZBWTwy8LtsI8y6wAabT3blSFHPrc4qu3
-        FUU2VYePOzHMiLPuMes/s0H5HXUaYJsfARuuxc0=
-X-Google-Smtp-Source: ABdhPJx9s5i1TWJ7IiZOclN/QEVz3COO+bkdo4SQu9Uhi7hDY6mOuJ+30tEBzttD211kuDsTR9BIV8uhKO5AcbH9RrA=
-X-Received: by 2002:a02:a793:: with SMTP id e19mr21883768jaj.45.1605144847713;
- Wed, 11 Nov 2020 17:34:07 -0800 (PST)
+        id S1726233AbgKLGlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 01:41:10 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2430 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbgKLGlJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 01:41:09 -0500
+Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CWsS82f9sz54B9;
+        Thu, 12 Nov 2020 14:40:56 +0800 (CST)
+Received: from [10.140.157.68] (10.140.157.68) by
+ dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Thu, 12 Nov 2020 14:41:05 +0800
+Subject: Re: [PATCH] clk: hisilicon: Add clock driver for hi3559A SoC
+To:     Rob Herring <robh@kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20201109202838.43105-1-gengdongjiu@huawei.com>
+ <20201111222340.GA2143735@bogus>
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+Message-ID: <69f78676-6e5e-867a-5b14-cb9af84a32ba@huawei.com>
+Date:   Thu, 12 Nov 2020 14:41:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <20201111163013.29412-1-sergio.paracuellos@gmail.com> <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
-In-Reply-To: <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Thu, 12 Nov 2020 09:33:56 +0800
-Message-ID: <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
-Subject: Re: [PATCH 0/7] MIPS: ralink: add CPU clock detection and clock gate
- driver for MT7621
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201111222340.GA2143735@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.140.157.68]
+X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
+ dggeme755-chm.china.huawei.com (10.3.19.101)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 9:26 AM Chuanhong Guo <gch981213@gmail.com> wrote:
->
-> I've already said in previous threads that clock assignment in
-> current linux kernel is not trustworthy.
-> I've got the clock plan for mt7621 now. (Can't share it, sorry.)
-> Most of your clock assumptions above are incorrect.
-> I've made a clock driver with gate support a few months ago.[0]
-> but I don't have much time to really finish it.
-> Maybe you could rework your clock gate driver based on it.
->
-> [0] https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
+On 2020/11/12 6:23, Rob Herring wrote:
+> On Mon, Nov 09, 2020 at 08:28:38PM +0000, Dongjiu Geng wrote:
+>> Add clock drivers for hi3559A SoC, this driver controls the SoC
+>> registers to supply different clocks to different IPs in the SoC.
+>>
+>> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+>> ---
+>>  drivers/clk/hisilicon/Kconfig                 |   7 +
+>>  drivers/clk/hisilicon/Makefile                |   1 +
+>>  drivers/clk/hisilicon/clk-hi3559a.c           | 873 ++++++++++++++++++
+>>  include/dt-bindings/clock/hi3559av100-clock.h | 173 ++++
+> 
+> Is there a binding for this? The header should be part of it.
+yes, I will add it.
+Thanks for the pointing out.
 
-hsdma/eth/pio clocks are still missing in mediatek doc and
-I just made them up in the driver. Correct clock frequency for
-them aren't really important for them to work though.
-And another part I didn't finish is checking clock support for
-every drivers mt7621 used. Many drivers don't explicitly
-enable the clock and may be problematic when kernel
-gates unused clocks.
+> 
+>>  4 files changed, 1054 insertions(+)
+>>  create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
+>>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
+>>
+>> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+>> index 6a9e93a0bb95..5ecc37aaa118 100644
+>> --- a/drivers/clk/hisilicon/Kconfig
+>> +++ b/drivers/clk/hisilicon/Kconfig
+>> @@ -15,6 +15,13 @@ config COMMON_CLK_HI3519
+>>  	help
+>>  	  Build the clock driver for hi3519.
+>>  
+>> +config COMMON_CLK_HI3559A
+>> +	bool "Hi3559A Clock Driver"
+>> +	depends on ARCH_HISI || COMPILE_TEST
+>> +	default ARCH_HISI
+>> +	help
+>> +	  Build the clock driver for hi3559a.
+>> +
+>>  config COMMON_CLK_HI3660
+>>  	bool "Hi3660 Clock Driver"
+>>  	depends on ARCH_HISI || COMPILE_TEST
+>> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+>> index b2441b99f3d5..bc101833b35e 100644
+>> --- a/drivers/clk/hisilicon/Makefile
+>> +++ b/drivers/clk/hisilicon/Makefile
+>> @@ -17,3 +17,4 @@ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+>>  obj-$(CONFIG_RESET_HISI)	+= reset.o
+>>  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
+>>  obj-$(CONFIG_STUB_CLK_HI3660)	+= clk-hi3660-stub.o
+>> +obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
+>> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
+>> new file mode 100644
+>> index 000000000000..bd3921fc8c8e
+>> --- /dev/null
+>> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
+>> @@ -0,0 +1,873 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Hisilicon Hi3559A clock driver
+>> + *
+>> + * Copyright (c) 2019-2020 HiSilicon Technologies Co., Ltd.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+> 
+> Don't need both this and SPDX tag. Kernel code should be GPL-2.0 (-only) 
+> generally.
 
--- 
-Regards,
-Chuanhong Guo
+Ok, I will remove one. thanks.
+
+> 
+>> + *
+>> + * Author: Dongjiu Geng <gengdongjiu@huawei.com>
+> 
+> git will tell us this.
+> 
+> Same comments apply to the header. Though DT headers should be dual 
+> licensed.
+> 
+> Rob
+> .
+> 
