@@ -2,124 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD94C61DD8
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10400C2D0A3
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 09:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B87FD2085B
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="o695KMSl"
+	by mail.kernel.org (Postfix) with ESMTP id B4850216FD
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 09:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbgKLHVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 02:21:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbgKLHVa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 02:21:30 -0500
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DB4C0613D4
-        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
-Received: by mail-il1-x142.google.com with SMTP id y17so4367894ilg.4
-        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atishpatra.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
-        b=o695KMSlvlKK8s2nZB3RnNNjASazEvqZxx7SlWDLIfkA7DjvTGHQKtr7OeUjA+JK/W
-         6AsWT7BcKyt6qJFEm42kuZq/NhNqqk+O/5M33EKitgOxYwwKwIv4xVOTPW0KtSDKxWoi
-         N/WtmAKQP0MX+WWeb1AnqArll7M6n1MD4y/2o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
-        b=VaF/0VM3ICvy5pMAA3ZTXNc1AayyZCrsxezKUKO0JoUAHTXSasOByeaICeGLaVOXhW
-         LQ7wfpfusT/D4YecfooPU6MqvpMJW0m3WvRNuoQ91CSNwKqv+YRjH807yF0rjz74JS8H
-         SfqPUFuYbTpcUMJMjiQGiEL19Fkblwzzl1xojI0by0KDtp0Bn8jwl8IRTkfewEGP0Cg7
-         xShKwGZrTvIj6oChzbOIxp0b89iJu5a6qVp9gPZubdJBxkXHuItlYxQ4H8GmLV6uR3lq
-         qSBUoo4xdA6XLXk1ocX+JgXJodfZ7AKx9nQ7Xu+E9uBy0WMhZovGXnI/yvjYqhzImvaq
-         0b/g==
-X-Gm-Message-State: AOAM533x7NyabUQJ/yhC5MHV25xac1rEOZ+yys27r2YXCxQ2cF/6OsKR
-        QD5pui5DEjBGo41d/QaDz1IUIVUKEt3eoe69xp/g
-X-Google-Smtp-Source: ABdhPJwG3l0icsmB1IU32yQpvlFd8k79z2GNzpvnNWW307BnW87hWqYbQJNHXepVhLwR9j1SCouAAn38lAiRUpIrLCw=
-X-Received: by 2002:a92:512:: with SMTP id q18mr20861835ile.147.1605165688041;
- Wed, 11 Nov 2020 23:21:28 -0800 (PST)
+        id S1727967AbgKLJIM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 04:08:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37746 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbgKLJGZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Nov 2020 04:06:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 96635AE78;
+        Thu, 12 Nov 2020 09:06:23 +0000 (UTC)
+Message-ID: <9e3a04f0ae76675f610bf25e6b53b4aff26afae4.camel@suse.de>
+Subject: Re: [PATCH v3 07/11] input: raspberrypi-ts: Release firmware handle
+ when not needed
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
+        f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
+Date:   Thu, 12 Nov 2020 10:06:21 +0100
+In-Reply-To: <20201112014542.GA1003057@dtor-ws>
+References: <20201104103938.1286-1-nsaenzjulienne@suse.de>
+         <20201104103938.1286-8-nsaenzjulienne@suse.de>
+         <20201112014542.GA1003057@dtor-ws>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-j2+UKM6wkcW3jVx2ysNJ"
+User-Agent: Evolution 3.36.5 
 MIME-Version: 1.0
-References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-9-damien.lemoal@wdc.com>
-In-Reply-To: <20201107081420.60325-9-damien.lemoal@wdc.com>
-From:   Atish Patra <atishp@atishpatra.org>
-Date:   Wed, 11 Nov 2020 23:21:17 -0800
-Message-ID: <CAOnJCUJO3Oqy94MbT-eV+xaJn9obE0H=zpvuJuch-aY5e9bfgQ@mail.gmail.com>
-Subject: Re: [PATCH 08/32] riscv: Fix kernel time_init()
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 7, 2020 at 12:15 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
->
-> If of_clk_init() is not called in time_init(), clock providers defined
-> in the system device tree are not initialized, resulting in failures for
-> other devices to initialize due to missing clocks.
-> Similarly to other architectures and to the default kernel time_init()
-> implementation, call of_clk_init() before executing timer_probe() in
-> time_init().
->
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  arch/riscv/kernel/time.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-> index 4d3a1048ad8b..8a5cf99c0776 100644
-> --- a/arch/riscv/kernel/time.c
-> +++ b/arch/riscv/kernel/time.c
-> @@ -4,6 +4,7 @@
->   * Copyright (C) 2017 SiFive
->   */
->
-> +#include <linux/of_clk.h>
->  #include <linux/clocksource.h>
->  #include <linux/delay.h>
->  #include <asm/sbi.h>
-> @@ -24,6 +25,8 @@ void __init time_init(void)
->         riscv_timebase = prop;
->
->         lpj_fine = riscv_timebase / HZ;
-> +
-> +       of_clk_init(NULL);
->         timer_probe();
->  }
->
-> --
-> 2.28.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
+--=-j2+UKM6wkcW3jVx2ysNJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
+On Wed, 2020-11-11 at 17:45 -0800, Dmitry Torokhov wrote:
+> Hi Nicolas,
+>=20
+> On Wed, Nov 04, 2020 at 11:39:33AM +0100, Nicolas Saenz Julienne wrote:
+> > Use devm_rpi_firmware_get() so as to make sure we release RPi's firmwar=
+e
+> > interface when unbinding the device.
+>=20
+> Unless I am mistaken this driver does not really need the firmware
+> structure past rpi_ts_probe(), and will be fine if it disappears earlier
+> than unbind time.
 
--- 
+Yes, I missed that. Will update it.
+
 Regards,
-Atish
+Nicolas
+
+
+--=-j2+UKM6wkcW3jVx2ysNJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+s+w0ACgkQlfZmHno8
+x/5iuQgApaPJZjl0NVPJ80THZ1yICuyOa9+6d8Bal28kwj6Ft8Xb+Z6ploXmWJ5T
+EPDFQF4pFMoSBGmgGSspJj4dl/KD3UaeJIRB3c3UNqIC7icH9TpBZY4Z41Mioqsv
+l4QH1DIWYVsRYi/9I1vhoijsquL5t5WK0c1N9GBs6GIQjVwEMN9tsDcQ3flTLKZs
+93saK4xtDp6UbqsYQYtwmupmREvAIxqnm0g3GB/Qk8Fkg9vpIK0H5cRBaJT9bfb8
+tQPpTY2LWTXQ53azvlBOcZC7yJQRBKitR2GkibS1ynNoNl43f5ZjyWXkzK2TEw1j
+HOKtCH+6NObb7Wm+xwL50tkanpTaGg==
+=eql2
+-----END PGP SIGNATURE-----
+
+--=-j2+UKM6wkcW3jVx2ysNJ--
+
