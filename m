@@ -2,134 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E5CC56201
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 06:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD94C61DD8
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21408208FE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 06:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B87FD2085B
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Nov 2020 07:21:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=atishpatra.org header.i=@atishpatra.org header.b="o695KMSl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbgKLGlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 01:41:10 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2430 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbgKLGlJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 01:41:09 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CWsS82f9sz54B9;
-        Thu, 12 Nov 2020 14:40:56 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 12 Nov 2020 14:41:05 +0800
-Subject: Re: [PATCH] clk: hisilicon: Add clock driver for hi3559A SoC
-To:     Rob Herring <robh@kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20201109202838.43105-1-gengdongjiu@huawei.com>
- <20201111222340.GA2143735@bogus>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <69f78676-6e5e-867a-5b14-cb9af84a32ba@huawei.com>
-Date:   Thu, 12 Nov 2020 14:41:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1725941AbgKLHVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Nov 2020 02:21:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbgKLHVa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 02:21:30 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DB4C0613D4
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id y17so4367894ilg.4
+        for <linux-clk@vger.kernel.org>; Wed, 11 Nov 2020 23:21:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atishpatra.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
+        b=o695KMSlvlKK8s2nZB3RnNNjASazEvqZxx7SlWDLIfkA7DjvTGHQKtr7OeUjA+JK/W
+         6AsWT7BcKyt6qJFEm42kuZq/NhNqqk+O/5M33EKitgOxYwwKwIv4xVOTPW0KtSDKxWoi
+         N/WtmAKQP0MX+WWeb1AnqArll7M6n1MD4y/2o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ab2X7D8rQV+rUh3MG2vmCj3eeC4kvsZIlLSd9hzapi4=;
+        b=VaF/0VM3ICvy5pMAA3ZTXNc1AayyZCrsxezKUKO0JoUAHTXSasOByeaICeGLaVOXhW
+         LQ7wfpfusT/D4YecfooPU6MqvpMJW0m3WvRNuoQ91CSNwKqv+YRjH807yF0rjz74JS8H
+         SfqPUFuYbTpcUMJMjiQGiEL19Fkblwzzl1xojI0by0KDtp0Bn8jwl8IRTkfewEGP0Cg7
+         xShKwGZrTvIj6oChzbOIxp0b89iJu5a6qVp9gPZubdJBxkXHuItlYxQ4H8GmLV6uR3lq
+         qSBUoo4xdA6XLXk1ocX+JgXJodfZ7AKx9nQ7Xu+E9uBy0WMhZovGXnI/yvjYqhzImvaq
+         0b/g==
+X-Gm-Message-State: AOAM533x7NyabUQJ/yhC5MHV25xac1rEOZ+yys27r2YXCxQ2cF/6OsKR
+        QD5pui5DEjBGo41d/QaDz1IUIVUKEt3eoe69xp/g
+X-Google-Smtp-Source: ABdhPJwG3l0icsmB1IU32yQpvlFd8k79z2GNzpvnNWW307BnW87hWqYbQJNHXepVhLwR9j1SCouAAn38lAiRUpIrLCw=
+X-Received: by 2002:a92:512:: with SMTP id q18mr20861835ile.147.1605165688041;
+ Wed, 11 Nov 2020 23:21:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201111222340.GA2143735@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-9-damien.lemoal@wdc.com>
+In-Reply-To: <20201107081420.60325-9-damien.lemoal@wdc.com>
+From:   Atish Patra <atishp@atishpatra.org>
+Date:   Wed, 11 Nov 2020 23:21:17 -0800
+Message-ID: <CAOnJCUJO3Oqy94MbT-eV+xaJn9obE0H=zpvuJuch-aY5e9bfgQ@mail.gmail.com>
+Subject: Re: [PATCH 08/32] riscv: Fix kernel time_init()
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020/11/12 6:23, Rob Herring wrote:
-> On Mon, Nov 09, 2020 at 08:28:38PM +0000, Dongjiu Geng wrote:
->> Add clock drivers for hi3559A SoC, this driver controls the SoC
->> registers to supply different clocks to different IPs in the SoC.
->>
->> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
->> ---
->>  drivers/clk/hisilicon/Kconfig                 |   7 +
->>  drivers/clk/hisilicon/Makefile                |   1 +
->>  drivers/clk/hisilicon/clk-hi3559a.c           | 873 ++++++++++++++++++
->>  include/dt-bindings/clock/hi3559av100-clock.h | 173 ++++
-> 
-> Is there a binding for this? The header should be part of it.
-yes, I will add it.
-Thanks for the pointing out.
+On Sat, Nov 7, 2020 at 12:15 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+>
+> If of_clk_init() is not called in time_init(), clock providers defined
+> in the system device tree are not initialized, resulting in failures for
+> other devices to initialize due to missing clocks.
+> Similarly to other architectures and to the default kernel time_init()
+> implementation, call of_clk_init() before executing timer_probe() in
+> time_init().
+>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  arch/riscv/kernel/time.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+> index 4d3a1048ad8b..8a5cf99c0776 100644
+> --- a/arch/riscv/kernel/time.c
+> +++ b/arch/riscv/kernel/time.c
+> @@ -4,6 +4,7 @@
+>   * Copyright (C) 2017 SiFive
+>   */
+>
+> +#include <linux/of_clk.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/delay.h>
+>  #include <asm/sbi.h>
+> @@ -24,6 +25,8 @@ void __init time_init(void)
+>         riscv_timebase = prop;
+>
+>         lpj_fine = riscv_timebase / HZ;
+> +
+> +       of_clk_init(NULL);
+>         timer_probe();
+>  }
+>
+> --
+> 2.28.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-> 
->>  4 files changed, 1054 insertions(+)
->>  create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
->>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
->>
->> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
->> index 6a9e93a0bb95..5ecc37aaa118 100644
->> --- a/drivers/clk/hisilicon/Kconfig
->> +++ b/drivers/clk/hisilicon/Kconfig
->> @@ -15,6 +15,13 @@ config COMMON_CLK_HI3519
->>  	help
->>  	  Build the clock driver for hi3519.
->>  
->> +config COMMON_CLK_HI3559A
->> +	bool "Hi3559A Clock Driver"
->> +	depends on ARCH_HISI || COMPILE_TEST
->> +	default ARCH_HISI
->> +	help
->> +	  Build the clock driver for hi3559a.
->> +
->>  config COMMON_CLK_HI3660
->>  	bool "Hi3660 Clock Driver"
->>  	depends on ARCH_HISI || COMPILE_TEST
->> diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
->> index b2441b99f3d5..bc101833b35e 100644
->> --- a/drivers/clk/hisilicon/Makefile
->> +++ b/drivers/clk/hisilicon/Makefile
->> @@ -17,3 +17,4 @@ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
->>  obj-$(CONFIG_RESET_HISI)	+= reset.o
->>  obj-$(CONFIG_STUB_CLK_HI6220)	+= clk-hi6220-stub.o
->>  obj-$(CONFIG_STUB_CLK_HI3660)	+= clk-hi3660-stub.o
->> +obj-$(CONFIG_COMMON_CLK_HI3559A)	+= clk-hi3559a.o
->> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
->> new file mode 100644
->> index 000000000000..bd3921fc8c8e
->> --- /dev/null
->> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
->> @@ -0,0 +1,873 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Hisilicon Hi3559A clock driver
->> + *
->> + * Copyright (c) 2019-2020 HiSilicon Technologies Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
-> 
-> Don't need both this and SPDX tag. Kernel code should be GPL-2.0 (-only) 
-> generally.
 
-Ok, I will remove one. thanks.
+Reviewed-by: Atish Patra <atish.patra@wdc.com>
 
-> 
->> + *
->> + * Author: Dongjiu Geng <gengdongjiu@huawei.com>
-> 
-> git will tell us this.
-> 
-> Same comments apply to the header. Though DT headers should be dual 
-> licensed.
-> 
-> Rob
-> .
-> 
+-- 
+Regards,
+Atish
