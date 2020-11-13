@@ -2,112 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4880C388F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7016C388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 595512224B
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47DA72224B
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UAVKs+wS"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcaNGCU1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbgKMKOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 05:14:39 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60286 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbgKMKOi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 05:14:38 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ADAAnDI160473;
-        Fri, 13 Nov 2020 10:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=l4B1MAfnMRL1EsdoVAfHURAMa/V+QkYO+uBwIFlUECI=;
- b=UAVKs+wSiu554wUg2pEOoJBXFMlWor1sID20/T5QjkK6iBMmBu21uLSI8czAqsraCk/D
- 865SYqSmUiEsVbu2KyEGrTa3kroZJV4CY306TDFoXU0DYP34rFbwpVQg9ENvpQ4BufMV
- N0QsVvOfhmmV6Bce5uqTFE606Pbxx9lObwWsqmfWxIB6y9y20gVutQqHhRZlX9SvE+Jq
- pcZrlGrGigUrMEnxBdCCbcqjH0jfBVHK+1ocMYSWcJi6694gECT+dDIUwYcBO5zApSuc
- eTq0rhwV9Ui/h4mN8zowpMj6pFwtEjjXk4flYdEWtWDTl4bwpOvLPE1UmmVhaBdjP3I2 vg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 34p72f006g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Nov 2020 10:14:30 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ADABMgB097084;
-        Fri, 13 Nov 2020 10:14:30 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 34p55stf3y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 Nov 2020 10:14:29 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ADAERu7032154;
-        Fri, 13 Nov 2020 10:14:28 GMT
-Received: from mwanda (/10.175.206.108)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 13 Nov 2020 02:14:27 -0800
-Date:   Fri, 13 Nov 2020 13:14:19 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
+        id S1726279AbgKMKTX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 05:19:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726176AbgKMKTX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Nov 2020 05:19:23 -0500
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A70A22245;
+        Fri, 13 Nov 2020 10:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605262762;
+        bh=qVTJQRf6GmtiuWOPt1SdAlwhgxqs13LlxzA1gWVZ5Kk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LcaNGCU1OiWW3rbylaLYKSJFR5y4eXE/6sb4POw+2a28Q9lGIt1uSe8egkPaC593I
+         HfFOx1ZAIreAEI2umpw6p3Ei6cbq7vZki6cD/nloIIJj5nb83TqeX5hFeyY8QS1XOJ
+         ykSbZdR2LCAZVCTWxI1bUF6nJ4JPKPEr1c0tECPw=
+Received: by pali.im (Postfix)
+        id 4002F723; Fri, 13 Nov 2020 11:19:19 +0100 (CET)
+Date:   Fri, 13 Nov 2020 11:19:19 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: qcom: lpass-sc7180: Clean up on error in
- lpass_sc7180_init()
-Message-ID: <20201113101419.GC168908@mwanda>
+        Terry Zhou <bjzhou@marvell.com>,
+        Konstantin Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH] clk: mvebu: a3700: fix the XTAL MODE pin to MPP1_9
+Message-ID: <20201113101919.wega756egs7dinth@pali>
+References: <20201106100039.11385-1-pali@kernel.org>
+ <20201106115118.43eab492@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011130061
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011130061
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201106115118.43eab492@kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clean up the first driver if the second driver can't be registered.
+Michael, Stephen: Could you take this clk patch?
 
-Fixes: 4ee9fe3e292b ("clk: qcom: lpass-sc7180: Disentangle the two clock devices")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/clk/qcom/lpasscorecc-sc7180.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
-index 1a3925badd7c..9081649f476f 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7180.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
-@@ -491,7 +491,13 @@ static int __init lpass_sc7180_init(void)
- 	if (ret)
- 		return ret;
- 
--	return platform_driver_register(&lpass_hm_sc7180_driver);
-+	ret = platform_driver_register(&lpass_hm_sc7180_driver);
-+	if (ret) {
-+		platform_driver_unregister(&lpass_core_cc_sc7180_driver);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- subsys_initcall(lpass_sc7180_init);
- 
--- 
-2.28.0
-
+On Friday 06 November 2020 11:51:18 Marek Behún wrote:
+> Also, this is how A3720 WTMI code and ATF determines XTAL clock rate.
+> No reason for kernel to do it differently.
+> 
+> Reviewed-by: Marek Behún <kabel@kernel.org>
+> 
+> On Fri,  6 Nov 2020 11:00:39 +0100
+> Pali Rohár <pali@kernel.org> wrote:
+> 
+> > From: Terry Zhou <bjzhou@marvell.com>
+> > 
+> > There is an error in the current code that the XTAL MODE
+> > pin was set to NB MPP1_31 which should be NB MPP1_9.
+> > The latch register of NB MPP1_9 has different offset of 0x8.
+> > 
+> > Signed-off-by: Terry Zhou <bjzhou@marvell.com>
+> > [pali: Fix pin name in commit message]
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > Fixes: 7ea8250406a6 ("clk: mvebu: Add the xtal clock for Armada 3700 SoC")
+> > Cc: stable@vger.kernel.org
+> > 
+> > ---
+> > This patch is present in Marvell SDK and also in Marvell's kernel fork:
+> > https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/80d4cec4cef8282e5ac3aaf98ce3e68fb299a134
+> > 
+> > Konstantin Porotchkin wrote on Github that Gregory Clement was notified
+> > about this patch, but as this patch is still not in mainline kernel I'm
+> > sending it again for review.
+> > 
+> > In original commit message (only in commit message, not code) was
+> > specified MPP9 pin on South Bridge, but correct is North Bridge.
+> > ---
+> >  drivers/clk/mvebu/armada-37xx-xtal.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+> > index e9e306d4e9af..41271351cf1f 100644
+> > --- a/drivers/clk/mvebu/armada-37xx-xtal.c
+> > +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+> > @@ -13,8 +13,8 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/regmap.h>
+> >  
+> > -#define NB_GPIO1_LATCH	0xC
+> > -#define XTAL_MODE	    BIT(31)
+> > +#define NB_GPIO1_LATCH	0x8
+> > +#define XTAL_MODE	    BIT(9)
+> >  
+> >  static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
+> >  {
+> 
