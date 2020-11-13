@@ -2,112 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7016C388F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3F0C4742C
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 13:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47DA72224B
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:19:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcaNGCU1"
+	by mail.kernel.org (Postfix) with ESMTP id 3FB4222245
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 13:12:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbgKMKTX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 05:19:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgKMKTX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Nov 2020 05:19:23 -0500
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A70A22245;
-        Fri, 13 Nov 2020 10:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605262762;
-        bh=qVTJQRf6GmtiuWOPt1SdAlwhgxqs13LlxzA1gWVZ5Kk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LcaNGCU1OiWW3rbylaLYKSJFR5y4eXE/6sb4POw+2a28Q9lGIt1uSe8egkPaC593I
-         HfFOx1ZAIreAEI2umpw6p3Ei6cbq7vZki6cD/nloIIJj5nb83TqeX5hFeyY8QS1XOJ
-         ykSbZdR2LCAZVCTWxI1bUF6nJ4JPKPEr1c0tECPw=
-Received: by pali.im (Postfix)
-        id 4002F723; Fri, 13 Nov 2020 11:19:19 +0100 (CET)
-Date:   Fri, 13 Nov 2020 11:19:19 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Terry Zhou <bjzhou@marvell.com>,
-        Konstantin Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH] clk: mvebu: a3700: fix the XTAL MODE pin to MPP1_9
-Message-ID: <20201113101919.wega756egs7dinth@pali>
-References: <20201106100039.11385-1-pali@kernel.org>
- <20201106115118.43eab492@kernel.org>
+        id S1726237AbgKMNM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 08:12:56 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7538 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgKMNM4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 08:12:56 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CXf5Z64R4zhbfr;
+        Fri, 13 Nov 2020 21:12:34 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Fri, 13 Nov 2020
+ 21:12:39 +0800
+From:   Zhang Qilong <zhangqilong3@huawei.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH] clk: ti: Fix memleak in ti_fapll_synth_setup
+Date:   Fri, 13 Nov 2020 21:16:23 +0800
+Message-ID: <20201113131623.2098222-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201106115118.43eab492@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Michael, Stephen: Could you take this clk patch?
+If clk_register fails, we should goto free branch
+before function returns to prevent memleak.
 
-On Friday 06 November 2020 11:51:18 Marek Behún wrote:
-> Also, this is how A3720 WTMI code and ATF determines XTAL clock rate.
-> No reason for kernel to do it differently.
-> 
-> Reviewed-by: Marek Behún <kabel@kernel.org>
-> 
-> On Fri,  6 Nov 2020 11:00:39 +0100
-> Pali Rohár <pali@kernel.org> wrote:
-> 
-> > From: Terry Zhou <bjzhou@marvell.com>
-> > 
-> > There is an error in the current code that the XTAL MODE
-> > pin was set to NB MPP1_31 which should be NB MPP1_9.
-> > The latch register of NB MPP1_9 has different offset of 0x8.
-> > 
-> > Signed-off-by: Terry Zhou <bjzhou@marvell.com>
-> > [pali: Fix pin name in commit message]
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > Fixes: 7ea8250406a6 ("clk: mvebu: Add the xtal clock for Armada 3700 SoC")
-> > Cc: stable@vger.kernel.org
-> > 
-> > ---
-> > This patch is present in Marvell SDK and also in Marvell's kernel fork:
-> > https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/80d4cec4cef8282e5ac3aaf98ce3e68fb299a134
-> > 
-> > Konstantin Porotchkin wrote on Github that Gregory Clement was notified
-> > about this patch, but as this patch is still not in mainline kernel I'm
-> > sending it again for review.
-> > 
-> > In original commit message (only in commit message, not code) was
-> > specified MPP9 pin on South Bridge, but correct is North Bridge.
-> > ---
-> >  drivers/clk/mvebu/armada-37xx-xtal.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-> > index e9e306d4e9af..41271351cf1f 100644
-> > --- a/drivers/clk/mvebu/armada-37xx-xtal.c
-> > +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-> > @@ -13,8 +13,8 @@
-> >  #include <linux/platform_device.h>
-> >  #include <linux/regmap.h>
-> >  
-> > -#define NB_GPIO1_LATCH	0xC
-> > -#define XTAL_MODE	    BIT(31)
-> > +#define NB_GPIO1_LATCH	0x8
-> > +#define XTAL_MODE	    BIT(9)
-> >  
-> >  static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
-> >  {
-> 
+Fixes: 163152cbbe321 ("clk: ti: Add support for FAPLL on dm816x")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+ drivers/clk/ti/fapll.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index 95e36ba64acc..8024c6d2b9e9 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -498,6 +498,7 @@ static struct clk * __init ti_fapll_synth_setup(struct fapll_data *fd,
+ {
+ 	struct clk_init_data *init;
+ 	struct fapll_synth *synth;
++	struct clk *clk = ERR_PTR(-ENOMEM);
+ 
+ 	init = kzalloc(sizeof(*init), GFP_KERNEL);
+ 	if (!init)
+@@ -520,13 +521,19 @@ static struct clk * __init ti_fapll_synth_setup(struct fapll_data *fd,
+ 	synth->hw.init = init;
+ 	synth->clk_pll = pll_clk;
+ 
+-	return clk_register(NULL, &synth->hw);
++	clk = clk_register(NULL, &synth->hw);
++	if (IS_ERR(clk)) {
++		pr_err("failed to register clock\n");
++		goto free;
++	}
++
++	return clk;
+ 
+ free:
+ 	kfree(synth);
+ 	kfree(init);
+ 
+-	return ERR_PTR(-ENOMEM);
++	return clk;
+ }
+ 
+ static void __init ti_fapll_setup(struct device_node *node)
+-- 
+2.25.4
+
