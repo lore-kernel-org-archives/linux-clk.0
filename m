@@ -2,107 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A206C388F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E62C4742C
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E98A2145D
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 118612145D
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:10:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVGTSAeT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jw+KiuDr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbgKMJEd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 04:04:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35590 "EHLO
+        id S1726255AbgKMJKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 04:10:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgKMJEd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 04:04:33 -0500
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EBFC0613D1;
-        Fri, 13 Nov 2020 01:04:32 -0800 (PST)
-Received: by mail-lf1-x143.google.com with SMTP id j205so12736647lfj.6;
-        Fri, 13 Nov 2020 01:04:32 -0800 (PST)
+        with ESMTP id S1726187AbgKMJKv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 04:10:51 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96624C0613D1;
+        Fri, 13 Nov 2020 01:10:50 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id l1so8911105wrb.9;
+        Fri, 13 Nov 2020 01:10:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2GxhUCefEOa/B6zdFZukUMX5vwuWHoZ4mk0/X54rIZY=;
-        b=HVGTSAeTWJudmGTp17fSJDYNbrg4dxXFjx/IOQ0uLp2ZICcL7iw/PI0jlxfHikdZGx
-         hkrzdczrlfX7xE0zX9zAF7tVum74KM/67YMwYH4gdN5Cpeuzb+cb/gJMh+Z72oGDIsrM
-         m+shjk9V6bg2eL6CNGxqBvpyrj8ziTyW808V1Go5Lv7q2/CmwzMefSfA9dLu3Lc81+Uj
-         OyuRPRw+zTr5o5zk9lpoOPoWq/YYuH9QUy2ol73gwFURc6D4BTeRVp00mm6gq7LAzpJa
-         j8/XBsEVf+spxn+oMLy4toLJLqHSs4rqAbzARmxRejHFy3tzx1VHyq5kFTFTftg5BuPf
-         Z4Sg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EICGtdSdBUVTfYQynfx1jthTLvT03AILkfeZoMTfCBA=;
+        b=jw+KiuDr2MCpgnurAjQL+7y/5jqx9CRSCS2W2kR3HJ20amCZ2/0qsVaa2UpLdtFYtz
+         oVhctDoevJXZJJAjVRwzxzFweHPV0g0kMVCmiy+BhGpnI54RdTHUzExCOFETjpQQHd/N
+         XVyGHN02S0hhakUkNc3a1IxM2m7CfvIvDxj2AS/iRKC/7wiviIACJfbhNiQ3x+JG58KQ
+         wZTY1B6qFVshdSo1AmTTzaC9Zlr80r8Vw+gJXRCG8Zr5ImrKk+KcIIrnlXx4Zep5SzFO
+         4TlcWoJvYg/CSCREZwpdA4KyWyznDcKn/WgxscoC+1+e9cTLCBmtjjmAh3jXw14KOAOg
+         N/rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2GxhUCefEOa/B6zdFZukUMX5vwuWHoZ4mk0/X54rIZY=;
-        b=X3Zfxt+8DQ2vzf31B8/Ak/2sTZ/m+978WUrL9VwJKiH4MvYPYhQrU0vAgwt7p/cRVh
-         2oOXQ46LGS+pKt9r5N2+DnUB0MJrYkEeP6jSpvT6q8y6nbufBOKLirRYGiYM3l05pm/5
-         vDK31yCz02bqL9F8qiYmSZcWdMv+oX2J/F5NzWx+xRp2T81MobxRCfsioKYPa+yeNZZ3
-         QL1EOLKhnDRgoZbT8teqsRM6e676WIVTQp4pGhhTqiZ7Fi6wusrWmlstRqkuq9Zg0Y5+
-         0zZBEbvxJJLZ3s46NvJJ8KJDr17ri+uNoKzif6FZu8DQalUS06/BB5C6FxwkgeyOu2d1
-         x3uA==
-X-Gm-Message-State: AOAM530a5+CdEKXy9Rqf1R7NkuAihyUsEsddJTuIrGI4uQ3jHA+VtPOt
-        CsyYOPorVgodF0iyrlaq8MT7SkF2+wA=
-X-Google-Smtp-Source: ABdhPJynCMzZYISl7vpAXlcm6rIcnGx2Q0JYl/1WSXHcUtg6esCLaQzR/10qulOq3rbyHw7eARJGVg==
-X-Received: by 2002:a19:6619:: with SMTP id a25mr450970lfc.186.1605258271117;
-        Fri, 13 Nov 2020 01:04:31 -0800 (PST)
-Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
-        by smtp.googlemail.com with ESMTPSA id p9sm1473413lfa.129.2020.11.13.01.04.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Nov 2020 01:04:30 -0800 (PST)
-Subject: Re: [PATCH v1] clk: Add enable-state column to clk summary
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201104165631.22295-1-digetx@gmail.com>
- <160525551074.60232.7613044083282105115@swboyd.mtv.corp.google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <519526ca-fd50-f8c5-6ea9-dba6d356f0e9@gmail.com>
-Date:   Fri, 13 Nov 2020 12:04:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        bh=EICGtdSdBUVTfYQynfx1jthTLvT03AILkfeZoMTfCBA=;
+        b=FMavN7UfvJ7wyT2OmTUjhZyxvyFlsYLXDWGJyifs5EunHTzG/bClXDeGVy1NIV01uA
+         yT5uypmJg7/g1ZlLvAHCwI1N75y9Mj0N6RP2hqj8EYfDSM2n3IE8gCalHLJZDZtpLduW
+         e6opzv/jF7I/PzdXzzI0ABltFW5frq0EM78sBNdCSrEXPBHoJY0TYPsPrwo6F4ZXAs9V
+         tkpKOHTYPXb4G2HAAIA0K3EKvZDwcRWb3wjlBvjxuoitEShrKRouyH8L5NLerJKWNAKz
+         v3hWfa7CbL1qhNlYNFckMKfE115fu8wXpVqX98sDOcPdMRMi0/bwB6+2OW3czwCjmMSV
+         moHg==
+X-Gm-Message-State: AOAM530Km/JIAZSEz3p1Izb4AUg/vDOVPgUZQbeg2RUL8k3l2WSQAugB
+        sg6SCbw5Vn9poDKdO0hAYOQ=
+X-Google-Smtp-Source: ABdhPJwARQUWT+LL5qd7cHVha5dx9jUOCqUFoy8FspFQSSJ3cgmhpS3edvtOzv47RdlBZwdtHXXC6A==
+X-Received: by 2002:adf:8284:: with SMTP id 4mr2166748wrc.386.1605258649314;
+        Fri, 13 Nov 2020 01:10:49 -0800 (PST)
+Received: from localhost.localdomain (245.red-79-158-78.dynamicip.rima-tde.net. [79.158.78.245])
+        by smtp.gmail.com with ESMTPSA id 15sm9266183wmg.1.2020.11.13.01.10.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Nov 2020 01:10:48 -0800 (PST)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, robh+dt@kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, gregkh@linuxfoundation.org, gch981213@gmail.com,
+        hackpascal@gmail.com, jiaxun.yang@flygoat.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        devel@driverdev.osuosl.org, neil@brown.name
+Subject: [PATCH v2 0/5] MIPS: ralink: add CPU clock detection and clock gate driver for MT7621
+Date:   Fri, 13 Nov 2020 10:10:41 +0100
+Message-Id: <20201113091046.30964-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <160525551074.60232.7613044083282105115@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-13.11.2020 11:18, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2020-11-04 08:56:31)
->> Add "enable state" column to the clk summary. It's handy to know actual
->> hardware state of all clocks for debugging purposes. In conjunction with
->> clk_ignore_unused, this tells us what unused clocks are left on after
->> bootloader without disabling the clocks.
-> 
-> Should it be called "boot state" then? That idea sounds OK to me.
-> 
->> It's also s useful debugging
-> 
-> Stray 's' here.
-> 
->> information for cases where firmware touches clocks.
-> 
-> Care to explain more? Presumably you mean when firmware is modifying clk
-> state without notifying the kernel?
+This patchset ports CPU clock detection for MT7621 from OpenWrt
+and adds a complete clock plan for the mt7621 SOC.
 
-This is exactly what I meant.
+The documentation for this SOC only talks about two registers
+regarding to the clocks:
+* SYSC_REG_CPLL_CLKCFG0 - provides some information about boostrapped
+refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
+* SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
+all or some ip cores. 
 
-> In which case it should be called
-> "hardware enable" or something like that and be a "Y/N/?" value
-> depending on if the value can be read or not and if it is enabled or not?
+No documentation about a probably existant set of dividers for each ip
+core is included in the datasheets. So we cannot make anything better,
+AFAICT.
 
-Indeed, I like the "hardware enable", thank you for the suggestion. The
-"Y/N/?" suggestion is also good.
+Looking into driver code, and some openWRT patched there are
+another frequences which are used in some drivers (uart, sd...).
+According to all of this information the clock plan for this
+SoC is set as follows:
+- Main top clock "xtal" from where all the rest of the world is
+derived.
+- CPU clock "cpu" derived from "xtal" frequencies and a bunch of
+register reads and predividers.
+- BUS clock "bus" derived from "cpu" and with (cpu / 4) MHz.
+- Fixed clocks from "xtal":
+    * "50m": 50 MHz.
+    * "125m": 125 MHz.
+    * "150m": 150 MHz.
+    * "250m": 250 MHz.
+    * "270m": 270 MHz.
 
-I'll prepare v2, thank you for the review!
+We also have a buch of gate clocks with their parents:
+ - "hsdma": "150m"
+ - "fe": "250m"
+ - "sp_divtx": "270m"
+ - "timer": "50m"
+ - "pcm": "270m"
+ - "pio": "50m"
+ - "gdma": "bus"
+ - "nand": "125m"
+ - "i2c": "50m"
+ - "i2s": "270m"
+ - "spi": "bus"
+ - "uart1": "50m"
+ - "uart2": "50m"
+ - "uart3": "50m"
+ - "eth": "50m"
+ - "pcie0": "125m"
+ - "pcie1": "125m"
+ - "pcie2": "125m"
+ - "crypto": "250m"
+ - "shxc": "50m"
+
+There was a previous attempt of doing this here[0] but the author
+(Chuanhong Guo) did not wanted to make assumptions of a clock plan
+for the platform that time. It seems that now he has a better idea of
+how the clocks are dispossed for this SoC so he share code[1] where
+some frequencies and clock parents for the gates are coded from a
+real mediatek private clock plan.
+    
+I do really want this to be upstreamed so according to the comments
+in previous attempt[0] from Oleksij Rempel and the frequencies in
+code[1] I have tried to do this by myself.
+
+All of this patches have been tested in a GNUBee PC1 resulting in a
+working platform.
+
+Changes in v2:
+  - Remove the following patches:
+     * dt: bindings: add mt7621-pll device tree binding documentation.
+     * MIPS: ralink: add clock device providing cpu/ahb/apb clock for mt7621.
+  - Move all relevant clock code to 'drivers/clk/ralink/clk-mt7621.c' and
+    unify there previous 'mt7621-pll' and 'mt7621-clk' into a unique driver
+    and binding 'mt7621-clk'.
+  - Driver is not a platform driver anymore and now make use of 'CLK_OF_DECLARE'
+    because we need clocks available in 'plat_time_init' before setting up
+    the timer for the GIC.
+  - Use new fixed clocks as parents for different gates and deriving from 'xtal'
+    using frequencies in[1].
+  - Adapt dts file and bindings header and documentation for new changes.
+  - Change MAINTAINERS file to only contains clk-mt7621.c code and
+    mediatek,mt7621-clk.yaml file.
+
+[0]: https://www.lkml.org/lkml/2019/7/23/1044
+[1]: https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
+
+Sergio Paracuellos (5):
+  dt-bindings: clock: add dt binding header for mt7621 clocks
+  dt: bindings: add mt7621-clk device tree binding documentation
+  clk: ralink: add clock driver for mt7621 SoC
+  staging: mt7621-dts: make use of new 'mt7621-clk'
+  MAINTAINERS: add MT7621 CLOCK maintainer
+
+ .../bindings/clock/mediatek,mt7621-clk.yaml   |  61 ++++
+ MAINTAINERS                                   |   6 +
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/ralink/Kconfig                    |  14 +
+ drivers/clk/ralink/Makefile                   |   2 +
+ drivers/clk/ralink/clk-mt7621.c               | 345 ++++++++++++++++++
+ drivers/staging/mt7621-dts/gbpc1.dts          |  11 -
+ drivers/staging/mt7621-dts/mt7621.dtsi        |  72 ++--
+ include/dt-bindings/clock/mt7621-clk.h        |  41 +++
+ 10 files changed, 504 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+ create mode 100644 drivers/clk/ralink/Kconfig
+ create mode 100644 drivers/clk/ralink/Makefile
+ create mode 100644 drivers/clk/ralink/clk-mt7621.c
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+
+-- 
+2.25.1
+
