@@ -2,90 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03B8C388F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E9EC388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 524D6208D5
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1CA2073C
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:11:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEe502JB"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6LiCQIC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbgKMIDO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 03:03:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
+        id S1726136AbgKMILW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 03:11:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbgKMIDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Nov 2020 03:03:14 -0500
+        id S1725866AbgKMILW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Nov 2020 03:11:22 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3B6620857;
-        Fri, 13 Nov 2020 08:03:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9C64206D9;
+        Fri, 13 Nov 2020 08:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605254593;
-        bh=wtJt7F4vlmce/drFU3S1eZEo8CDrUYp19bWjAusZv6w=;
+        s=default; t=1605255081;
+        bh=q7R0ZJDODTZcOxWdt3jAqjnMWNyOJbFIt8pXF6LGNt4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZEe502JBSE7qHDdEPozczkESUGdTlv1PgE+53xICs34OJ7bBp4hJc0k1aiUbJ39FZ
-         lUjxBIxmVL4gwzxX0qkHPMo5V/PGDO+PJlRQOqeFG3G8TEMhRAmeXlvVQQfe7jhA5k
-         9X7YQPKCdseRfzGBWjKYE5wKpofYR53zZ69cUU40=
+        b=l6LiCQICXEhVpbskIMBx/95dvbCNC1vayy/peszqYiL1yFABOyvMkK5tYBA2sBj1I
+         x6GJ65poI9UWlFOPoygr3y4XRGxbAIUmyzzOzQm55F9LCFZm11Gt/Rb/NxCg8Ukv7i
+         z6Qkuc1JWAxqt2A9nD2t5Oln3ZgzwdVgpTXKOa18=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b18625cf-7dd0-db96-9460-bb0ff920b5db@topic.nl>
-References: <20201103141741.2511-1-mike.looijmans@topic.nl> <160454088987.3965362.6147280271557523496@swboyd.mtv.corp.google.com> <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.e888d4ad-6d00-4e78-a0c7-083be5e86c8e@emailsignatures365.codetwo.com> <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.0d2bd5fa-15cc-4b27-b94e-83614f9e5b38.9c2cb1f3-6c6b-4005-b459-f71a0d72128e@emailsignatures365.codetwo.com> <b18625cf-7dd0-db96-9460-bb0ff920b5db@topic.nl>
-Subject: Re: [PATCH] clk-si5341: Support NVM programming through sysfs
+In-Reply-To: <BL0PR04MB65144DA979067F3760D26B01E7E60@BL0PR04MB6514.namprd04.prod.outlook.com>
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-9-damien.lemoal@wdc.com> <160525270249.60232.12874105352298232293@swboyd.mtv.corp.google.com> <BL0PR04MB6514621FDC804DAD854AFA06E7E60@BL0PR04MB6514.namprd04.prod.outlook.com> <160525398691.60232.17463845218341195554@swboyd.mtv.corp.google.com> <BL0PR04MB65144DA979067F3760D26B01E7E60@BL0PR04MB6514.namprd04.prod.outlook.com>
+Subject: Re: [PATCH 08/32] riscv: Fix kernel time_init()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-kernel@vger.kernel.org
-To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-Date:   Fri, 13 Nov 2020 00:03:12 -0800
-Message-ID: <160525459234.60232.7901604955432682238@swboyd.mtv.corp.google.com>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Fri, 13 Nov 2020 00:11:20 -0800
+Message-ID: <160525508016.60232.12394737512819290718@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Looijmans (2020-11-05 01:06:54)
-> On 05-11-2020 02:48, Stephen Boyd wrote:
-> > Quoting Mike Looijmans (2020-11-03 06:17:41)
-> >> Export an attribute program_nvm_bank that when read reports the current
-> >> bank value. To program the chip's current state into NVM, write the
-> >> magic value 0xC7 into this attribute.
-> >>
-> >> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> >> ---
+Quoting Damien Le Moal (2020-11-12 23:57:19)
+> On 2020/11/13 16:53, Stephen Boyd wrote:
 > >=20
-> > Any chance this can be done through the nvmem framework?
+> > Yes it's fine. Just the commit text reads as "If of_clk_init() is not
+> > called in time_init() then nothing works" which is true but made me
+> > wonder if it was because it needed to be super early or not. The commit
+> > text could be a little clearer here.
 >=20
-> This part doesn't fit. The purpose is to store the current state of the c=
-lock=20
-> chip into its non-volatile storage so it boots up with that configuration=
- the=20
-> next POR. Main use case is that some vendors initialize PLLs only in a=20
-> bootloader and thus need the clock running at boot. Or it might just be t=
-o=20
-> save on that 300ms initialization time.
+> OK. I will clarify the commit message in V2. Working on it now.
 
-Can these details be put in the commit text? It would go a long way
-towards helping reviewers understand the motivation if it is to speed up
-boot and stash away clk configuration across resets. Why is userspace
-involved? Why can't the driver write to the non-volatile storage with
-shutdown or reboot driver hooks instead of implementing a bespoke sysfs
-ABI?
+Thanks!
 
 >=20
-> Having said that, the clock chip does have some "scratch" areas that'd be=
-=20
-> useful as NVMEM storage. That'd be for a separate patch.
+> > We don't have any good solution for a fallback to call of_clk_init()
+> > somewhere later. I do wonder if we should generalize this though and
+> > call of_clk_init() from start_kernel() directly via some Kconfig that
+> > architectures select if they need it for their timer and then move it to
+> > an initcall if architectures don't select the config. Or throw it into
+> > the of_platform_default_populate_init() hook if the architecture doesn't
+> > need to call it early.
 >=20
-> For this device to be NVMEM compatible, nvmem would need to have a sort o=
-f=20
-> transaction model, where you write several values and then "commit" them =
-all=20
-> to NVM in one call. The nvmem framework wasn't intended for that I think.
+> This last idea seems reasonable and probably the easiest. And I think it =
+could
+> be done unconditionally even if the arch calls of_clk_init() early as the
+> already populated clock provider nodes would not be initialized again.
+>=20
 
-I suppose patches could be written to support that if desired.
+Also of_clk_init() is for the CLK_OF_DECLARE() users and if they can
+wait to platform bus population time then they could be converted to
+regular old platform device drivers. Maybe the problem is the clk driver
+you're using is only using CLK_OF_DECLARE() and not registering a
+platform driver?
