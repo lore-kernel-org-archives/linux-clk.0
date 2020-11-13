@@ -4,112 +4,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8036FC388F9
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 05:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FAEC388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9292145D
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 05:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA2720825
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h86+nsdj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMiotV0G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgKMFdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 00:33:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
+        id S1726405AbgKMH0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 02:26:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbgKMFdI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 00:33:08 -0500
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82FE2C0613D1;
-        Thu, 12 Nov 2020 21:33:07 -0800 (PST)
-Received: by mail-oi1-x244.google.com with SMTP id m143so9238788oig.7;
-        Thu, 12 Nov 2020 21:33:07 -0800 (PST)
+        with ESMTP id S1726133AbgKMH0f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 02:26:35 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD95C0613D1;
+        Thu, 12 Nov 2020 23:26:19 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id d3so4150880plo.4;
+        Thu, 12 Nov 2020 23:26:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rzpHxVwtYfPNR5m+0xd40O02SiyxGAAISovudBzR/vE=;
-        b=h86+nsdjF93+wDYVtajUVNvY26hefcNO04S+d0kH+aiRUmxn58HcQx5GtgRzTOZZg7
-         qtXZbq4JpNzvvjKAnjgzcujlx+yLhKxWysKxVUHdj9hcYpjHiwcYjfITQyblfLCd8BL2
-         d2bOfs2FEkwNBZGGGDYwInbsQp8GwLNv+BTmQ7vmL0XGShcy94/3LcblWZu0yr2DAOYm
-         CAdnXuF54D7OuqAweTnyGlQhL7UMhXNdlcLjUWtg9CAtMYEqIn97G286HoczEHADNb/+
-         Leez1Sjob23y065wvBBKLehx4xhenW1CRkTCIzUZPa5aEFxJZX7x8ZLRUiAQpQiODjwe
-         mk9Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bVc4aZk4rKy/6/VqEhMXbEQ5ZVosOHXwKRbVIxDDoGY=;
+        b=GMiotV0GyRZSn0pn1dgPWm/1yR1DzPikBgKi5Lbkr2+y/iNDlpqYBVO7SfIvAgqAbf
+         uIaCVLY528t7w5yWehm/+G4BNoS1lB69IH4dB9iSPueZ2vY4/XYJoWpU0aQEMS570PMt
+         gfyrGW2DRdfuIkQPiOQfGiyd6Icf9TqwlJVhKT9GlbO7q/Mj4/7h6vRa/vNWfxW1mehI
+         GBBBTEzl+JU36/Sc52m4n+V0gVtafzPbCLB2RuMl1UZyUSG2LeWJBlAiNPu5ZgflYKFh
+         dBz3JOOX0NRmiUfmf22A+yolC5R2dAEyS/GcPJGRpS4tu3Prtj7hQV+cpG105mS2OmpU
+         cB8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rzpHxVwtYfPNR5m+0xd40O02SiyxGAAISovudBzR/vE=;
-        b=Bn/v+Mf6rjUSU0EBKfgmtm2nh7RNdWINZ+Qq71ndnV/ftibuqZzivcECsyx56PMmfc
-         NNU6nWGHm8OwyJhxYTJJ9ghdpHUBT1RwtYLeGprrwg1o+Wnlxsky+C8Vt8fLlgmYr8GW
-         K17UieQuUqf4I2phT3NpaNamtXoHCfMg9AXLTfrzdvLNe3XvrFgHCIktiZDjjp9P/tFW
-         JKfPc8VS+RFjfX/n585S66PNF93KAVtlXys14Uao9Vhfux49T80zYbiQeNMM3U4m2GdX
-         j6G2QWexS8WX07DeVxUiIhvMEQse5dkfkWaxUUshklzLBB7Uhczy162LXboxpptMywvg
-         usQw==
-X-Gm-Message-State: AOAM530hFQMus66crlDaEzYA6pIG2zwT1gSI9Y6x+JLU4r8GXbs6MLgZ
-        a8BEz97Y+WX3YqDcMSVZFV6RStaly2la+tW6Fzw=
-X-Google-Smtp-Source: ABdhPJzvDqnz5H8slcSClxUbBKekqGkSOvIRf7i1k5l9QQ/+KRmv33DpeSYtc0XvtPH09vHjxxEa5wSlnHz8GOQH1sA=
-X-Received: by 2002:aca:f407:: with SMTP id s7mr377123oih.23.1605245587028;
- Thu, 12 Nov 2020 21:33:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20201111163013.29412-1-sergio.paracuellos@gmail.com>
- <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
- <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
- <CAMhs-H85RCK=a_y+fVm-oR3hOEfr=rtVcLvX09YH4F65enz3oA@mail.gmail.com> <CAJsYDV+Gm-0HpvE7W8iG=t5JT+whrQjerRUT65eXxv2av9160A@mail.gmail.com>
-In-Reply-To: <CAJsYDV+Gm-0HpvE7W8iG=t5JT+whrQjerRUT65eXxv2av9160A@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Fri, 13 Nov 2020 06:32:55 +0100
-Message-ID: <CAMhs-H_qFpVv3KK5Bc4igrj7VffZSmAAT=sM8PSyY7H0-SV1yg@mail.gmail.com>
-Subject: Re: [PATCH 0/7] MIPS: ralink: add CPU clock detection and clock gate
- driver for MT7621
-To:     Chuanhong Guo <gch981213@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        John Crispin <john@phrozen.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bVc4aZk4rKy/6/VqEhMXbEQ5ZVosOHXwKRbVIxDDoGY=;
+        b=ilHQ4bKelIaLk5fRLJ4K1wju+atXDEou+ME04dzDW8cMYGS+v2y4Y4OjmjWaHt6BLT
+         eEVVnoYvNVkyO6tOmQLejfAufnSDjZuoTvwvvqHkVtXRuWhISdm/Qgo9Y8tkj0WidDHo
+         ymwkSnf3iGUQ41ZzQgnQALh5rSRSgJ9QG7o48MyseNa5w2DKiU6EjmOFODonKVWSRRc5
+         AjS58F6JdNtusghqSNWVNuYSJhP7j2rnXn9Mz6NswUsWoQrVv/rv0pnZTbxSt4sU/bfn
+         6Y54Prxym1xcAfx7r49UWixjR/ArssAhsVQE5gLkxzz7gGdRLh8vjL0bBBUOV5LcWBrf
+         BwvQ==
+X-Gm-Message-State: AOAM532fH+1JKn1dF+HSjqLXCfcqO5Y2WwahbF5zC1zyGjqPSCo7Rkh5
+        esLkJOwqWGGCZ2wfXQzYJZ0=
+X-Google-Smtp-Source: ABdhPJwxvk3sEiTwtCGzh6+CErNAzuUpI0fhTqrV5pUBqPIIf6eT7t4y2GPOTdCy6tzoqSvWpYqfbA==
+X-Received: by 2002:a17:902:c016:b029:d7:1a0:7cf0 with SMTP id v22-20020a170902c016b02900d701a07cf0mr878425plx.64.1605252379251;
+        Thu, 12 Nov 2020 23:26:19 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:a6ae:11ff:fe11:fcc3])
+        by smtp.gmail.com with ESMTPSA id l20sm9170507pfd.103.2020.11.12.23.26.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2020 23:26:18 -0800 (PST)
+Date:   Thu, 12 Nov 2020 23:26:15 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pwm@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        linux-input <linux-input@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v4 01/11] firmware: raspberrypi: Keep count of all
+ consumers
+Message-ID: <20201113072615.GE356503@dtor-ws>
+References: <20201112163630.17177-1-nsaenzjulienne@suse.de>
+ <20201112163630.17177-2-nsaenzjulienne@suse.de>
+ <CAHp75Vf9E7UWVDMs=eRjLjoSN6SVOWw9thNdnR8ruCL6GmY7JQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf9E7UWVDMs=eRjLjoSN6SVOWw9thNdnR8ruCL6GmY7JQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 1:40 AM Chuanhong Guo <gch981213@gmail.com> wrote:
->
-> On Thu, Nov 12, 2020 at 1:23 PM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
+On Thu, Nov 12, 2020 at 07:52:14PM +0200, Andy Shevchenko wrote:
+> On Thu, Nov 12, 2020 at 6:40 PM Nicolas Saenz Julienne
+> <nsaenzjulienne@suse.de> wrote:
 > >
-> > To avoid weird behaviour because of some drivers are
-> > not using properly clocks we have the CLK_IGNORED_UNUSED, which as you
-> > can see is currently being used in my code. Using that all seems to
-> > work as expected as it is now.
->
-> The whole point of having a clock gate driver is to gate unused
-> clocks to save (maybe a tiny bit of) power. It's other peripheral
-> drivers' fault that it doesn't enable clocks properly and we shouldn't
-> just work-around the problem in the clock driver by disallowing auto
-> clock gating.
->
+> > When unbinding the firmware device we need to make sure it has no
+> > consumers left. Otherwise we'd leave them with a firmware handle
+> > pointing at freed memory.
+> >
+> > Keep a reference count of all consumers and introduce rpi_firmware_put()
+> > which will permit automatically decrease the reference count upon
+> > unbinding consumer drivers.
+> 
+> ...
+> 
+> >  /**
+> > - * rpi_firmware_get - Get pointer to rpi_firmware structure.
+> >   * @firmware_node:    Pointer to the firmware Device Tree node.
+> >   *
+> > + * The reference to rpi_firmware has to be released with rpi_firmware_put().
+> > + *
+> >   * Returns NULL is the firmware device is not ready.
+> >   */
+> >  struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
+> >  {
+> >         struct platform_device *pdev = of_find_device_by_node(firmware_node);
+> > +       struct rpi_firmware *fw;
+> >
+> >         if (!pdev)
+> >                 return NULL;
+> >
+> > -       return platform_get_drvdata(pdev);
+> > +       fw = platform_get_drvdata(pdev);
+> > +       if (!fw)
+> > +               return NULL;
+> > +
+> > +       if (!kref_get_unless_zero(&fw->consumers))
+> > +               return NULL;
+> 
+> Don't we have a more traditional way of doing this, i.e.
+> try_module_get() coupled with get_device() ?
 
-Totally agreed with what you are saying here but I don't really think
-using the flag is a workaround. It is just a way to ensure no
-regressions occurred until all drivers are adapted and also having all
-of them enabled is the behaviour. For me adapt the rest of driver code
- should be a different patch set after this driver is properly
-finished and mainlined.
+get_device() will make sure that device is there, but gives no
+assurances that device is bound to a driver, so it will not help with
+the racy access to firmware via platform_get_drvdata() call.
 
-> --
-> Regards,
-> Chuanhong Guo
+Thanks.
 
-Best regards,
-     Sergio Paracuellos
+-- 
+Dmitry
