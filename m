@@ -2,72 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14032C4742C
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D18C4742C
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8EFD22226
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:31:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a07F7osU"
+	by mail.kernel.org (Postfix) with ESMTP id AC38920709
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbgKMHbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 02:31:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbgKMHbo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Nov 2020 02:31:44 -0500
-Received: from kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAD6B2085B;
-        Fri, 13 Nov 2020 07:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605252704;
-        bh=IxHFr+O2Qeh2nbz9XeXyx6Xdc9c/exv2Y07r+qrDnTE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=a07F7osUltHrv80bza86dFbbwqa8o6pChOyptgMVnw1icH731bI5MQBphl5ha1WaP
-         iNYgD3I7OohPhTAa1j0APFrCMDttT1nZ4bNLswvIkB3LYLTmKp7o97u370vJthEpkn
-         u+DwZUMidzSuJMvo1haBpal+J1XvNDWH1ER1uLUk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726375AbgKMHgq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 02:36:46 -0500
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:42074 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbgKMHgp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 02:36:45 -0500
+Received: by mail-ej1-f66.google.com with SMTP id i19so11895462ejx.9;
+        Thu, 12 Nov 2020 23:36:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lF9F6ulOL21hYHmYnWk/iPK3JjbD1z5cgjWscdLc7o4=;
+        b=Eec7C07MBXFS3dMJFBQq7cQrtn8GYCFk45NMjZVjfEhw5oqcM2ruBZ9BFVBTSmfcUa
+         2ApRrXXvtnBkvfPFR57iDORMCwpwAul7i7LfCXKBV2nxD2c+GAEuFHV/BTh4JySg1i4T
+         /xzRnADOdb/xsno42NBYiIpiBc4zqAQloiBj2sZRq+SY3hTCRx3r4p253kqX37gewPl/
+         JGp6njHx1d1IfGiLdd1vAO24rEZkeVXNE0X/lYXrCgTBUN1E/wryY0PCZcmy/hUkAQt0
+         Y8+2NIfaRpDR4z4y7O6zhnneiyNnA8c/Mdx0pBZOCQcvfD2s5y84coZOsFQOif3mFM6E
+         iT8w==
+X-Gm-Message-State: AOAM5312rO7MwgQ7J3/+0dzAHP+03m6VyDQZn8hv8dnUzj6LtFuNQTq1
+        MbPfH12Do17/DsSi95Mfxa8=
+X-Google-Smtp-Source: ABdhPJyGD5+mmTulDLlgvMkt/TG2cliCNiLEJPvGahMPDQz8KN2r1/II3OoM9LERzf2d1xWkKiHUuw==
+X-Received: by 2002:a17:906:934d:: with SMTP id p13mr693013ejw.245.1605253003489;
+        Thu, 12 Nov 2020 23:36:43 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id t21sm3154426edy.39.2020.11.12.23.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2020 23:36:42 -0800 (PST)
+Date:   Fri, 13 Nov 2020 08:36:41 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-clk@vger.kernel.org, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, m.szyprowski@samsung.com, sboyd@kernel.org,
+        mturquette@baylibre.com, b.zolnierkie@samsung.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4] clk: samsung: Prevent potential endless loop in the
+ PLL set_rate ops
+Message-ID: <20201113073641.GA4405@kozik-lap>
+References: <CGME20201110193254eucas1p22e954946d03c07995c73a019e5593ba0@eucas1p2.samsung.com>
+ <20201110193226.20681-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201107081420.60325-9-damien.lemoal@wdc.com>
-References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-9-damien.lemoal@wdc.com>
-Subject: Re: [PATCH 08/32] riscv: Fix kernel time_init()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sean Anderson <seanga2@gmail.com>
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Date:   Thu, 12 Nov 2020 23:31:42 -0800
-Message-ID: <160525270249.60232.12874105352298232293@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201110193226.20681-1-s.nawrocki@samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Damien Le Moal (2020-11-07 00:13:56)
-> If of_clk_init() is not called in time_init(), clock providers defined
-> in the system device tree are not initialized, resulting in failures for
-> other devices to initialize due to missing clocks.
-> Similarly to other architectures and to the default kernel time_init()
-> implementation, call of_clk_init() before executing timer_probe() in
-> time_init().
+On Tue, Nov 10, 2020 at 08:32:26PM +0100, Sylwester Nawrocki wrote:
+> The PLL status polling loops in the set_rate callbacks of some PLLs
+> have no timeout detection and may become endless loops when something
+> goes wrong with the PLL.
+> 
+> For some PLLs there is already the ktime API based timeout detection,
+> but it will not work in all conditions when .set_rate gets called.
+> In particular, before the clocksource is initialized or when the
+> timekeeping is suspended.
+> 
+> This patch adds a common helper with the PLL status bit polling and
+> timeout detection. For conditions where the timekeeping API should not
+> be used a simple readl_relaxed/cpu_relax() busy loop is added with the
+> iterations limit derived from measurements of readl_relaxed() execution
+> time for various PLL types and Exynos SoCs variants.
+> 
+> Actual PLL lock time depends on the P divider value, the VCO frequency
+> and a constant PLL type specific LOCK_FACTOR and can be calculated as
+> 
+>  lock_time = Pdiv * LOCK_FACTOR / VCO_freq
+> 
+> For the ktime API use cases a common timeout value of 20 ms is applied
+> for all the PLLs with an assumption that maximum possible value of Pdiv
+> is 64, maximum possible LOCK_FACTOR value is 3000 and minimum VCO
+> frequency is 24 MHz.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> I'm not sure whether we actually need to implement precise timeouts,
+> likely the simple busy loop case would be enough. AFAIK the PLL
+> failures happen very rarely, mostly in early code development stage
+> for given platform.
+> 
+> Changes since v3:
+>  - dropped udelay() from the PLL status bit polling loop as it didn't
+>    work on arm64 at early boot time, before timekeeping was initialized,
+>  - use the timekeeping API in cases when it is already initialized and
+>    not suspended,
+>  - use samsung_pll_lock_wait() also in samsung_pll3xxx_enable() function,
+>    now all potential endless loops are removed.
+> ---
+>  drivers/clk/samsung/clk-pll.c | 147 ++++++++++++++++++++----------------------
+>  1 file changed, 71 insertions(+), 76 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index ac70ad7..cefb57e 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -8,14 +8,17 @@
+>  
+>  #include <linux/errno.h>
+>  #include <linux/hrtimer.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/delay.h>
+>  #include <linux/slab.h>
+> +#include <linux/timekeeping.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+>  #include "clk.h"
+>  #include "clk-pll.h"
+>  
+> -#define PLL_TIMEOUT_MS		10
+> +#define PLL_TIMEOUT_US		20000U
+> +#define PLL_TIMEOUT_LOOPS	1000000U
+>  
+>  struct samsung_clk_pll {
+>  	struct clk_hw		hw;
+> @@ -63,6 +66,53 @@ static long samsung_pll_round_rate(struct clk_hw *hw,
+>  	return rate_table[i - 1].rate;
+>  }
+>  
+> +static bool __early_timeout = true;
 
-Do you have timers that need clks to be running or queryable this early?
-This of_clk_init() call is made here when architectures need to call
-things like clk_get_rate() to figure out some clk frequency for their
-clockevent or clocksource. It is OK to have this call here, I'm just
-curious if this is actually necessary vs. delaying it to later.
+Drop the __ prefix and maybe use "pll_early_timeout".
+This looks like __ro_after_init.
+
+Best regards,
+Krzysztof
