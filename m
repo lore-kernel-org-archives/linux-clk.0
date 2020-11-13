@@ -2,128 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAD2C4742C
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4880C388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE74206FA
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 595512224B
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 10:14:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UAVKs+wS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgKMJVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 04:21:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58080 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgKMJVc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Nov 2020 04:21:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2523CAE92;
-        Fri, 13 Nov 2020 09:21:30 +0000 (UTC)
-Message-ID: <3af26701a12b0bcb55b8d422e2a18f06a8e94d4d.camel@suse.de>
-Subject: Re: [PATCH v4 02/11] firmware: raspberrypi: Introduce
- devm_rpi_firmware_get()
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
-        Linux Input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1726267AbgKMKOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 05:14:39 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60286 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbgKMKOi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 05:14:38 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ADAAnDI160473;
+        Fri, 13 Nov 2020 10:14:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=l4B1MAfnMRL1EsdoVAfHURAMa/V+QkYO+uBwIFlUECI=;
+ b=UAVKs+wSiu554wUg2pEOoJBXFMlWor1sID20/T5QjkK6iBMmBu21uLSI8czAqsraCk/D
+ 865SYqSmUiEsVbu2KyEGrTa3kroZJV4CY306TDFoXU0DYP34rFbwpVQg9ENvpQ4BufMV
+ N0QsVvOfhmmV6Bce5uqTFE606Pbxx9lObwWsqmfWxIB6y9y20gVutQqHhRZlX9SvE+Jq
+ pcZrlGrGigUrMEnxBdCCbcqjH0jfBVHK+1ocMYSWcJi6694gECT+dDIUwYcBO5zApSuc
+ eTq0rhwV9Ui/h4mN8zowpMj6pFwtEjjXk4flYdEWtWDTl4bwpOvLPE1UmmVhaBdjP3I2 vg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 34p72f006g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Nov 2020 10:14:30 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ADABMgB097084;
+        Fri, 13 Nov 2020 10:14:30 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 34p55stf3y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Nov 2020 10:14:29 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ADAERu7032154;
+        Fri, 13 Nov 2020 10:14:28 GMT
+Received: from mwanda (/10.175.206.108)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Nov 2020 02:14:27 -0800
+Date:   Fri, 13 Nov 2020 13:14:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andy Gross <agross@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 13 Nov 2020 10:21:28 +0100
-In-Reply-To: <CAMpxmJWZsqfkkTP99a_8mu+O4xHwNWDqHuvgt7Cs88bA-iMvQA@mail.gmail.com>
-References: <20201112163630.17177-1-nsaenzjulienne@suse.de>
-         <20201112163630.17177-3-nsaenzjulienne@suse.de>
-         <CAMpxmJWZsqfkkTP99a_8mu+O4xHwNWDqHuvgt7Cs88bA-iMvQA@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-lVAZyxFfZVTn1rZzZexc"
-User-Agent: Evolution 3.36.5 
+        Taniya Das <tdas@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: qcom: lpass-sc7180: Clean up on error in
+ lpass_sc7180_init()
+Message-ID: <20201113101419.GC168908@mwanda>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011130061
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011130061
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Clean up the first driver if the second driver can't be registered.
 
---=-lVAZyxFfZVTn1rZzZexc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Fixes: 4ee9fe3e292b ("clk: qcom: lpass-sc7180: Disentangle the two clock devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/qcom/lpasscorecc-sc7180.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Thu, 2020-11-12 at 18:25 +0100, Bartosz Golaszewski wrote:
-> On Thu, Nov 12, 2020 at 5:44 PM Nicolas Saenz Julienne
-> <nsaenzjulienne@suse.de> wrote:
-> > Itroduce devm_rpi_firmware_get(), it'll simplify the firmware handling
-> > for most consumers.
-> >=20
-> > Suggested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> > ---
-> >=20
-> > Changes since v2:
-> > - Introduce devm_rpi_firmware_get()
-> >=20
-> >  drivers/firmware/raspberrypi.c             | 31 +++++++++++++++++++++-
-> >  include/soc/bcm2835/raspberrypi-firmware.h |  8 ++++++
-> >  2 files changed, 38 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberr=
-ypi.c
-> > index 438e17074a97..4ab2dfdc82ad 100644
-> > --- a/drivers/firmware/raspberrypi.c
-> > +++ b/drivers/firmware/raspberrypi.c
-> > @@ -237,10 +237,17 @@ static void rpi_firmware_delete(struct kref *kref=
-)
-> >         kfree(fw);
-> >  }
-> >=20
-> > -void rpi_firmware_put(struct rpi_firmware *fw)
-> > +static void __rpi_firmware_put(void *data)
-> >  {
->=20
-> The '__' prefix is very vague and usually used for unlocked variants
-> of functions. The casting to void * in rpi_firmware_put() is also
-> unneeded. I would much prefer that the devres release callback be
-> called devm_rpi_firmware_put() and that it call rpi_firmware_put()
-> which would then call kref_put().
-
-Yes, that's better. I'll change it.
-
-Regards,
-Nicolas
-
-
---=-lVAZyxFfZVTn1rZzZexc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl+uUBgACgkQlfZmHno8
-x/6lEgf/d59t0Td5W4xLTNBLofc0Vh4uZHeN9Gvi6L52ayUePt+6T8iYBizcBSD7
-gMFFnbzAziAWiKl7DSZjZTOaVNPohvZqyhssPCN/xAs2Xw4k/9iy8SfjtY0LyJ5S
-cY0As+Fny0/3v+hdAXAcl0O26eMFecffjVnEne56Iyy9pA1GAsjf2IU2XO6bE2sX
-qED6OKxz+B+3vVZOyHv4E10B0L1rIs64Tjrh0fUElpaT+d8jPJ2aog1LKEjPe+rD
-1QA4cwN8xmkiB6Tj97LK6q2yG2Cji9OHBP6QEw9orQHti/aKKhozLyw+stmIq/uF
-gGk9YGb3/9okyNRC33V9EFN+3zjzCg==
-=Sbj8
------END PGP SIGNATURE-----
-
---=-lVAZyxFfZVTn1rZzZexc--
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 1a3925badd7c..9081649f476f 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -491,7 +491,13 @@ static int __init lpass_sc7180_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	return platform_driver_register(&lpass_hm_sc7180_driver);
++	ret = platform_driver_register(&lpass_hm_sc7180_driver);
++	if (ret) {
++		platform_driver_unregister(&lpass_core_cc_sc7180_driver);
++		return ret;
++	}
++
++	return 0;
+ }
+ subsys_initcall(lpass_sc7180_init);
+ 
+-- 
+2.28.0
 
