@@ -3,110 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6A1C63697
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03B8C388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01EEE22244
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 07:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524D6208D5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCKHUwXZ"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEe502JB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbgKMH6V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 02:58:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49996 "EHLO mail.kernel.org"
+        id S1726202AbgKMIDO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 03:03:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbgKMH6U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Nov 2020 02:58:20 -0500
+        id S1726200AbgKMIDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Nov 2020 03:03:14 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAA46217A0;
-        Fri, 13 Nov 2020 07:58:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3B6620857;
+        Fri, 13 Nov 2020 08:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605254299;
-        bh=10l0sk2jrGzHB1tIxTLrFahRzHJbVxhjaHaFD3DdNK4=;
+        s=default; t=1605254593;
+        bh=wtJt7F4vlmce/drFU3S1eZEo8CDrUYp19bWjAusZv6w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZCKHUwXZ9GgFME/9s7A0jXfI82DQxMiKSyvJv4cPCetpP4S71sw3Gj7a/D/nSDcKA
-         ObSuBYb7tix5kLaH1ty/B5vf/PC0xhc4MIH+PePur5qvXQetqPaDlmbUAIbGEOODrO
-         AvCzEALf4OeUqkJ2ntYtme1SbHCyDvHEDBcUP02o=
+        b=ZEe502JBSE7qHDdEPozczkESUGdTlv1PgE+53xICs34OJ7bBp4hJc0k1aiUbJ39FZ
+         lUjxBIxmVL4gwzxX0qkHPMo5V/PGDO+PJlRQOqeFG3G8TEMhRAmeXlvVQQfe7jhA5k
+         9X7YQPKCdseRfzGBWjKYE5wKpofYR53zZ69cUU40=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201105085148.GA7308@work>
-References: <20201028074232.22922-1-manivannan.sadhasivam@linaro.org> <20201028074232.22922-3-manivannan.sadhasivam@linaro.org> <160454301723.3965362.9504622582275389041@swboyd.mtv.corp.google.com> <20201105085148.GA7308@work>
-Subject: Re: [PATCH 2/4] clk: qcom: Add SDX55 GCC support
+In-Reply-To: <b18625cf-7dd0-db96-9460-bb0ff920b5db@topic.nl>
+References: <20201103141741.2511-1-mike.looijmans@topic.nl> <160454088987.3965362.6147280271557523496@swboyd.mtv.corp.google.com> <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.e888d4ad-6d00-4e78-a0c7-083be5e86c8e@emailsignatures365.codetwo.com> <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.0d2bd5fa-15cc-4b27-b94e-83614f9e5b38.9c2cb1f3-6c6b-4005-b459-f71a0d72128e@emailsignatures365.codetwo.com> <b18625cf-7dd0-db96-9460-bb0ff920b5db@topic.nl>
+Subject: Re: [PATCH] clk-si5341: Support NVM programming through sysfs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        bjorn.andersson@linaro.org, vkoul@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Naveen Yadav <naveenky@codeaurora.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date:   Thu, 12 Nov 2020 23:58:18 -0800
-Message-ID: <160525429844.60232.2716300766254728207@swboyd.mtv.corp.google.com>
+Cc:     mturquette@baylibre.com, linux-kernel@vger.kernel.org
+To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
+Date:   Fri, 13 Nov 2020 00:03:12 -0800
+Message-ID: <160525459234.60232.7901604955432682238@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2020-11-05 00:51:48)
-> On Wed, Nov 04, 2020 at 06:23:37PM -0800, Stephen Boyd wrote:
-> > > diff --git a/drivers/clk/qcom/gcc-sdx55.c b/drivers/clk/qcom/gcc-sdx5=
-5.c
-> > > new file mode 100644
-> > > index 000000000000..75831c829202
-> > > --- /dev/null
-> > > +++ b/drivers/clk/qcom/gcc-sdx55.c
-> > > @@ -0,0 +1,1667 @@
-> > > +
->=20
-> [...]
->=20
-> > > +static const struct clk_div_table post_div_table_lucid_even[] =3D {
-> > > +       { 0x0, 1 },
-> > > +       { 0x1, 2 },
-> > > +       { 0x3, 4 },
-> > > +       { 0x7, 8 },
-> > > +       { }
-> > > +};
+Quoting Mike Looijmans (2020-11-05 01:06:54)
+> On 05-11-2020 02:48, Stephen Boyd wrote:
+> > Quoting Mike Looijmans (2020-11-03 06:17:41)
+> >> Export an attribute program_nvm_bank that when read reports the current
+> >> bank value. To program the chip's current state into NVM, write the
+> >> magic value 0xC7 into this attribute.
+> >>
+> >> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> >> ---
 > >=20
-> > I think this table is common to all lucid plls? Maybe we can push it
-> > into the clk_ops somehow and stop duplicating it here?
-> >=20
+> > Any chance this can be done through the nvmem framework?
 >=20
-> Are you referring to lucid plls in this driver? Because, this table is
-> not common for other SoCs. And I don't think having this way introduces
-> any overhead, so I'd prefer keeping it as it is.
->=20
+> This part doesn't fit. The purpose is to store the current state of the c=
+lock=20
+> chip into its non-volatile storage so it boots up with that configuration=
+ the=20
+> next POR. Main use case is that some vendors initialize PLLs only in a=20
+> bootloader and thus need the clock running at boot. Or it might just be t=
+o=20
+> save on that 300ms initialization time.
 
-Yes all lucid type PLLs probably have the same divider table.
+Can these details be put in the commit text? It would go a long way
+towards helping reviewers understand the motivation if it is to speed up
+boot and stash away clk configuration across resets. Why is userspace
+involved? Why can't the driver write to the non-volatile storage with
+shutdown or reboot driver hooks instead of implementing a bespoke sysfs
+ABI?
 
 >=20
-> > > +/* For CPUSS functionality the SYS NOC clock needs to be left enable=
-d */
-> > > +static struct clk_branch gcc_sys_noc_cpuss_ahb_clk =3D {
-> > > +       .halt_reg =3D 0x4010,
-> > > +       .halt_check =3D BRANCH_HALT_VOTED,
-> > > +       .clkr =3D {
-> > > +               .enable_reg =3D 0x6d008,
-> > > +               .enable_mask =3D BIT(0),
-> > > +               .hw.init =3D &(struct clk_init_data){
-> > > +                       .name =3D "gcc_sys_noc_cpuss_ahb_clk",
-> > > +                       .parent_hws =3D (const struct clk_hw *[]){
-> > > +                               &gcc_cpuss_ahb_clk_src.clkr.hw },
-> > > +                       .num_parents =3D 1,
-> > > +                       .flags =3D CLK_IS_CRITICAL | CLK_SET_RATE_PAR=
-ENT,
-> >=20
-> > These CLK_IS_CRITICAL clks can't be set once at driver probe time and
-> > forgotten about? It would be nice to not allocate memory for things that
-> > never matter.
-> >=20
+> Having said that, the clock chip does have some "scratch" areas that'd be=
+=20
+> useful as NVMEM storage. That'd be for a separate patch.
 >=20
-> Makes sense! But are we moving into the direction of deprecating the use
-> of CLK_IS_CRITICAL?
+> For this device to be NVMEM compatible, nvmem would need to have a sort o=
+f=20
+> transaction model, where you write several values and then "commit" them =
+all=20
+> to NVM in one call. The nvmem framework wasn't intended for that I think.
 
-No? Just judiciously using it.
+I suppose patches could be written to support that if desired.
