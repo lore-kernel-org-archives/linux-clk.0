@@ -2,91 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF81C388F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A206C388F7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9248B20B80
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 08:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E98A2145D
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 09:04:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVGTSAeT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbgKMIaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Nov 2020 03:30:00 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34613 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725866AbgKMI37 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 03:29:59 -0500
-X-UUID: ecd4d68091624f2cb8b08da4dbbc4a69-20201113
-X-UUID: ecd4d68091624f2cb8b08da4dbbc4a69-20201113
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1776010858; Fri, 13 Nov 2020 16:29:55 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 13 Nov 2020 16:29:54 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 13 Nov 2020 16:29:54 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v3] clk: mediatek: Make mtk_clk_register_mux() a static function
-Date:   Fri, 13 Nov 2020 16:29:52 +0800
-Message-ID: <1605256192-31307-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
+        id S1726255AbgKMJEd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 04:04:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgKMJEd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 04:04:33 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EBFC0613D1;
+        Fri, 13 Nov 2020 01:04:32 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id j205so12736647lfj.6;
+        Fri, 13 Nov 2020 01:04:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2GxhUCefEOa/B6zdFZukUMX5vwuWHoZ4mk0/X54rIZY=;
+        b=HVGTSAeTWJudmGTp17fSJDYNbrg4dxXFjx/IOQ0uLp2ZICcL7iw/PI0jlxfHikdZGx
+         hkrzdczrlfX7xE0zX9zAF7tVum74KM/67YMwYH4gdN5Cpeuzb+cb/gJMh+Z72oGDIsrM
+         m+shjk9V6bg2eL6CNGxqBvpyrj8ziTyW808V1Go5Lv7q2/CmwzMefSfA9dLu3Lc81+Uj
+         OyuRPRw+zTr5o5zk9lpoOPoWq/YYuH9QUy2ol73gwFURc6D4BTeRVp00mm6gq7LAzpJa
+         j8/XBsEVf+spxn+oMLy4toLJLqHSs4rqAbzARmxRejHFy3tzx1VHyq5kFTFTftg5BuPf
+         Z4Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2GxhUCefEOa/B6zdFZukUMX5vwuWHoZ4mk0/X54rIZY=;
+        b=X3Zfxt+8DQ2vzf31B8/Ak/2sTZ/m+978WUrL9VwJKiH4MvYPYhQrU0vAgwt7p/cRVh
+         2oOXQ46LGS+pKt9r5N2+DnUB0MJrYkEeP6jSpvT6q8y6nbufBOKLirRYGiYM3l05pm/5
+         vDK31yCz02bqL9F8qiYmSZcWdMv+oX2J/F5NzWx+xRp2T81MobxRCfsioKYPa+yeNZZ3
+         QL1EOLKhnDRgoZbT8teqsRM6e676WIVTQp4pGhhTqiZ7Fi6wusrWmlstRqkuq9Zg0Y5+
+         0zZBEbvxJJLZ3s46NvJJ8KJDr17ri+uNoKzif6FZu8DQalUS06/BB5C6FxwkgeyOu2d1
+         x3uA==
+X-Gm-Message-State: AOAM530a5+CdEKXy9Rqf1R7NkuAihyUsEsddJTuIrGI4uQ3jHA+VtPOt
+        CsyYOPorVgodF0iyrlaq8MT7SkF2+wA=
+X-Google-Smtp-Source: ABdhPJynCMzZYISl7vpAXlcm6rIcnGx2Q0JYl/1WSXHcUtg6esCLaQzR/10qulOq3rbyHw7eARJGVg==
+X-Received: by 2002:a19:6619:: with SMTP id a25mr450970lfc.186.1605258271117;
+        Fri, 13 Nov 2020 01:04:31 -0800 (PST)
+Received: from [192.168.2.145] (109-252-193-159.dynamic.spd-mgts.ru. [109.252.193.159])
+        by smtp.googlemail.com with ESMTPSA id p9sm1473413lfa.129.2020.11.13.01.04.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Nov 2020 01:04:30 -0800 (PST)
+Subject: Re: [PATCH v1] clk: Add enable-state column to clk summary
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201104165631.22295-1-digetx@gmail.com>
+ <160525551074.60232.7613044083282105115@swboyd.mtv.corp.google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <519526ca-fd50-f8c5-6ea9-dba6d356f0e9@gmail.com>
+Date:   Fri, 13 Nov 2020 12:04:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <160525551074.60232.7613044083282105115@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-mtk_clk_register_mux() should be a static function
+13.11.2020 11:18, Stephen Boyd пишет:
+> Quoting Dmitry Osipenko (2020-11-04 08:56:31)
+>> Add "enable state" column to the clk summary. It's handy to know actual
+>> hardware state of all clocks for debugging purposes. In conjunction with
+>> clk_ignore_unused, this tells us what unused clocks are left on after
+>> bootloader without disabling the clocks.
+> 
+> Should it be called "boot state" then? That idea sounds OK to me.
+> 
+>> It's also s useful debugging
+> 
+> Stray 's' here.
+> 
+>> information for cases where firmware touches clocks.
+> 
+> Care to explain more? Presumably you mean when firmware is modifying clk
+> state without notifying the kernel?
 
-Fixes: a3ae549917f16 ("clk: mediatek: Add new clkmux register API")
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/clk/mediatek/clk-mux.c | 2 +-
- drivers/clk/mediatek/clk-mux.h | 4 ----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+This is exactly what I meant.
 
-diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
-index 14e127e..dcc1352 100644
---- a/drivers/clk/mediatek/clk-mux.c
-+++ b/drivers/clk/mediatek/clk-mux.c
-@@ -155,7 +155,7 @@ static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
- 	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
- };
- 
--struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
-+static struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
- 				 struct regmap *regmap,
- 				 spinlock_t *lock)
- {
-diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
-index f5625f4..8e2f927 100644
---- a/drivers/clk/mediatek/clk-mux.h
-+++ b/drivers/clk/mediatek/clk-mux.h
-@@ -77,10 +77,6 @@ struct mtk_mux {
- 			_width, _gate, _upd_ofs, _upd,			\
- 			CLK_SET_RATE_PARENT)
- 
--struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
--				 struct regmap *regmap,
--				 spinlock_t *lock);
--
- int mtk_clk_register_muxes(const struct mtk_mux *muxes,
- 			   int num, struct device_node *node,
- 			   spinlock_t *lock,
--- 
-1.8.1.1.dirty
+> In which case it should be called
+> "hardware enable" or something like that and be a "Y/N/?" value
+> depending on if the value can be read or not and if it is enabled or not?
 
+Indeed, I like the "hardware enable", thank you for the suggestion. The
+"Y/N/?" suggestion is also good.
+
+I'll prepare v2, thank you for the review!
