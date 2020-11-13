@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBFEC56202
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 00:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8036FC388F9
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 05:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9B5320B80
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 00:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9292145D
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Nov 2020 05:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItHGWFKB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h86+nsdj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgKMAkX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Nov 2020 19:40:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
+        id S1726157AbgKMFdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Nov 2020 00:33:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbgKMAkU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Nov 2020 19:40:20 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24DCC0613D1;
-        Thu, 12 Nov 2020 16:40:20 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id u21so8036364iol.12;
-        Thu, 12 Nov 2020 16:40:20 -0800 (PST)
+        with ESMTP id S1726071AbgKMFdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Nov 2020 00:33:08 -0500
+Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82FE2C0613D1;
+        Thu, 12 Nov 2020 21:33:07 -0800 (PST)
+Received: by mail-oi1-x244.google.com with SMTP id m143so9238788oig.7;
+        Thu, 12 Nov 2020 21:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KwsRYTIelL+rQfaWByBY2jDX2TK6VO5EvbvbPDRhoZM=;
-        b=ItHGWFKBEnfm/3yEFqHr4tpisqmr5LgUINwjxMECLYJ5Sd0mrylFpr6fulRr09T39A
-         FUUYt+sm3Fd7f8p2rl+B7maioKkcie9N4EhRWXwPF/pYXsLT5Xp0px5KMDQKOiAHzFuz
-         DmF4vKn9hm5xsAeym/TPrhjYeBX4dVXeP7EA/BBrlVnqHUaIcLmz+AF/DQPoywiSDnm6
-         oeFc0khKuJTd4ef7M7+M10XxOqHjf9ApbH+foEsKEUUmO6gN2bjEGJIk3Z7e4UrEaEHK
-         OTdYpoph/DPIviUOLUzu4NDn/o+02lX26JiHJmJqB09rii4ME1C3QRIepAziPJ2/pHG/
-         IpoA==
+        bh=rzpHxVwtYfPNR5m+0xd40O02SiyxGAAISovudBzR/vE=;
+        b=h86+nsdjF93+wDYVtajUVNvY26hefcNO04S+d0kH+aiRUmxn58HcQx5GtgRzTOZZg7
+         qtXZbq4JpNzvvjKAnjgzcujlx+yLhKxWysKxVUHdj9hcYpjHiwcYjfITQyblfLCd8BL2
+         d2bOfs2FEkwNBZGGGDYwInbsQp8GwLNv+BTmQ7vmL0XGShcy94/3LcblWZu0yr2DAOYm
+         CAdnXuF54D7OuqAweTnyGlQhL7UMhXNdlcLjUWtg9CAtMYEqIn97G286HoczEHADNb/+
+         Leez1Sjob23y065wvBBKLehx4xhenW1CRkTCIzUZPa5aEFxJZX7x8ZLRUiAQpQiODjwe
+         mk9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KwsRYTIelL+rQfaWByBY2jDX2TK6VO5EvbvbPDRhoZM=;
-        b=SKgtHzVjCHs76Nkl7HOIv/yd2UlnaQ0p0ki2oE3I9yV4gl0Qf7A5whz8yFWtEXyjKL
-         3GzSgeuPKlTu93tjCv5DfCuDvYA2LFpNb3++HuHlQG33gl0rH3TdJgUF2SFUH22cXjoh
-         OAYy5lNsp46912uJSPVQX62T8/Yx19wjzaPTSSjcBL3K7cPdok8LUhkOmnxfyBoqmha0
-         iqehVTA9tZoUKyCZ+JcKxc8OxAnJ8QsSsy5zBErUGxnzGNYY9+ai/XofeslimQceZObI
-         ypTmENC6UW351iw2PMiZA28h26lirmx+Jtt3uQuLUj90MeX4Yk5W5NNFs0cT4G0yeDMb
-         qjjg==
-X-Gm-Message-State: AOAM531oBX1H6HtAp2DX0Y8MqMv1/Maei7nM6IIZN/SL0l2zjENBgYBj
-        wM2g1ElMlxaHHZ31kwN9rkmVuoXqLXTMDXwl9o0=
-X-Google-Smtp-Source: ABdhPJzZnfm6M/D6C6FDUIUrc/BiG76DixcJoRURxDV7ng30jOeHO75IwXPePu7T8eJ0AmyOnQSk8e26ZTZDyc2lAvM=
-X-Received: by 2002:a02:c995:: with SMTP id b21mr1977945jap.65.1605228019942;
- Thu, 12 Nov 2020 16:40:19 -0800 (PST)
+        bh=rzpHxVwtYfPNR5m+0xd40O02SiyxGAAISovudBzR/vE=;
+        b=Bn/v+Mf6rjUSU0EBKfgmtm2nh7RNdWINZ+Qq71ndnV/ftibuqZzivcECsyx56PMmfc
+         NNU6nWGHm8OwyJhxYTJJ9ghdpHUBT1RwtYLeGprrwg1o+Wnlxsky+C8Vt8fLlgmYr8GW
+         K17UieQuUqf4I2phT3NpaNamtXoHCfMg9AXLTfrzdvLNe3XvrFgHCIktiZDjjp9P/tFW
+         JKfPc8VS+RFjfX/n585S66PNF93KAVtlXys14Uao9Vhfux49T80zYbiQeNMM3U4m2GdX
+         j6G2QWexS8WX07DeVxUiIhvMEQse5dkfkWaxUUshklzLBB7Uhczy162LXboxpptMywvg
+         usQw==
+X-Gm-Message-State: AOAM530hFQMus66crlDaEzYA6pIG2zwT1gSI9Y6x+JLU4r8GXbs6MLgZ
+        a8BEz97Y+WX3YqDcMSVZFV6RStaly2la+tW6Fzw=
+X-Google-Smtp-Source: ABdhPJzvDqnz5H8slcSClxUbBKekqGkSOvIRf7i1k5l9QQ/+KRmv33DpeSYtc0XvtPH09vHjxxEa5wSlnHz8GOQH1sA=
+X-Received: by 2002:aca:f407:: with SMTP id s7mr377123oih.23.1605245587028;
+ Thu, 12 Nov 2020 21:33:07 -0800 (PST)
 MIME-Version: 1.0
 References: <20201111163013.29412-1-sergio.paracuellos@gmail.com>
  <CAJsYDVJtPqd-aPjJZFC76R2fbv1i=tVzRR7S1VFAMzp1QcPbiQ@mail.gmail.com>
- <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com> <CAMhs-H85RCK=a_y+fVm-oR3hOEfr=rtVcLvX09YH4F65enz3oA@mail.gmail.com>
-In-Reply-To: <CAMhs-H85RCK=a_y+fVm-oR3hOEfr=rtVcLvX09YH4F65enz3oA@mail.gmail.com>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Fri, 13 Nov 2020 08:40:09 +0800
-Message-ID: <CAJsYDV+Gm-0HpvE7W8iG=t5JT+whrQjerRUT65eXxv2av9160A@mail.gmail.com>
+ <CAJsYDVKWuygjbBErQt1B5XD8Bp06-TdrziBzDdYmMGhU_8X-aA@mail.gmail.com>
+ <CAMhs-H85RCK=a_y+fVm-oR3hOEfr=rtVcLvX09YH4F65enz3oA@mail.gmail.com> <CAJsYDV+Gm-0HpvE7W8iG=t5JT+whrQjerRUT65eXxv2av9160A@mail.gmail.com>
+In-Reply-To: <CAJsYDV+Gm-0HpvE7W8iG=t5JT+whrQjerRUT65eXxv2av9160A@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Fri, 13 Nov 2020 06:32:55 +0100
+Message-ID: <CAMhs-H_qFpVv3KK5Bc4igrj7VffZSmAAT=sM8PSyY7H0-SV1yg@mail.gmail.com>
 Subject: Re: [PATCH 0/7] MIPS: ralink: add CPU clock detection and clock gate
  driver for MT7621
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     Chuanhong Guo <gch981213@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -82,20 +83,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 1:23 PM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
+On Fri, Nov 13, 2020 at 1:40 AM Chuanhong Guo <gch981213@gmail.com> wrote:
 >
-> To avoid weird behaviour because of some drivers are
-> not using properly clocks we have the CLK_IGNORED_UNUSED, which as you
-> can see is currently being used in my code. Using that all seems to
-> work as expected as it is now.
+> On Thu, Nov 12, 2020 at 1:23 PM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > To avoid weird behaviour because of some drivers are
+> > not using properly clocks we have the CLK_IGNORED_UNUSED, which as you
+> > can see is currently being used in my code. Using that all seems to
+> > work as expected as it is now.
+>
+> The whole point of having a clock gate driver is to gate unused
+> clocks to save (maybe a tiny bit of) power. It's other peripheral
+> drivers' fault that it doesn't enable clocks properly and we shouldn't
+> just work-around the problem in the clock driver by disallowing auto
+> clock gating.
+>
 
-The whole point of having a clock gate driver is to gate unused
-clocks to save (maybe a tiny bit of) power. It's other peripheral
-drivers' fault that it doesn't enable clocks properly and we shouldn't
-just work-around the problem in the clock driver by disallowing auto
-clock gating.
+Totally agreed with what you are saying here but I don't really think
+using the flag is a workaround. It is just a way to ensure no
+regressions occurred until all drivers are adapted and also having all
+of them enabled is the behaviour. For me adapt the rest of driver code
+ should be a different patch set after this driver is properly
+finished and mainlined.
 
--- 
-Regards,
-Chuanhong Guo
+> --
+> Regards,
+> Chuanhong Guo
+
+Best regards,
+     Sergio Paracuellos
