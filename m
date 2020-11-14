@@ -2,84 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C233C55ABD
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 20:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66142C5519F
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 20:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA07B223EA
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 20:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C287223FD
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 20:35:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8qAnAzQ"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvcivOj0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgKNUcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Nov 2020 15:32:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33228 "EHLO mail.kernel.org"
+        id S1726121AbgKNUf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Nov 2020 15:35:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbgKNUcg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 14 Nov 2020 15:32:36 -0500
+        id S1726112AbgKNUf3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 14 Nov 2020 15:35:29 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDCA223EA;
-        Sat, 14 Nov 2020 20:32:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8C60223EA;
+        Sat, 14 Nov 2020 20:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605385955;
-        bh=uRosUtJJuCEP6nMWxQx1tCUp6FLcFxFLp8EIa+4Qbh0=;
+        s=default; t=1605386128;
+        bh=7vnaB3VFxpvaHHYts3jclhQxPRL+APAK9cgp7E6I5H0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=k8qAnAzQ+2KiJp1+K0XMKsxv/0UQkcr9U9AJHotV5KORzpmTubxAgNxziGTGWZJM7
-         hDwU8UXBraY3OQAte4CpCEgwlnvK6djMMTyo9082NkS/nMvidmX8Xk5VCQ6I0HZgez
-         ooKmyeRTWpmoW01fmAroEegkJeqXpobuSZlDUlr8=
+        b=LvcivOj0XV9O4mPgbisHUZs/geMn7U1K76ejPdJJ4Q6M8jjRRje6weWtOwpZSPGDg
+         Yl2Mgr8PyuUSEQz28ACRTBQqrySnOdCQFZr0X4lw8v4qNsxuzz59FFv/QHCCyhuXw0
+         AcpPCx6MEG8wOiISU0qDcgxH6up3GEihN2pM9W+w=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201106094820.30167-1-lukas.bulwahn@gmail.com>
-References: <20201106094820.30167-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] clk: remove unneeded dead-store initialization
+In-Reply-To: <20201106093819.GE2621@vkoul-mobl>
+References: <20201105104817.15715-1-manivannan.sadhasivam@linaro.org> <20201105104817.15715-3-manivannan.sadhasivam@linaro.org> <20201106093819.GE2621@vkoul-mobl>
+Subject: Re: [PATCH v2 2/4] clk: qcom: Add SDX55 GCC support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Tom Rix <trix@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Sat, 14 Nov 2020 12:32:34 -0800
-Message-ID: <160538595432.60232.9813667976586248163@swboyd.mtv.corp.google.com>
+        Naveen Yadav <naveenky@codeaurora.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Date:   Sat, 14 Nov 2020 12:35:27 -0800
+Message-ID: <160538612750.60232.17440819605514427384@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lukas Bulwahn (2020-11-06 01:48:20)
-> make clang-analyzer on x86_64 defconfig caught my attention with:
+Quoting Vinod Koul (2020-11-06 01:38:19)
+> On 05-11-20, 16:18, Manivannan Sadhasivam wrote:
+> > +#include "reset.h"
+> > +
+> > +enum {
+> > +     P_BI_TCXO,
+> > +     P_CORE_BI_PLL_TEST_SE,
 >=20
->   drivers/clk/clk.c:423:19:
->   warning: Value stored to 'parent' during its initialization is never re=
-ad
->   [clang-analyzer-deadcode.DeadStores]
->           struct clk_core *parent =3D ERR_PTR(-ENOENT);
->                            ^
+> This is for test and we removed this for upstream, so can you do that as
+> well (not parent will decrease for clks below)
 >=20
-> Commit fc0c209c147f ("clk: Allow parents to be specified without string
-> names") introduced clk_core_fill_parent_index() with this unneeded
-> dead-store initialization.
+> With that updated:
 >=20
-> So, simply remove this unneeded dead-store initialization to make
-> clang-analyzer happy.
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
 >=20
-> As compilers will detect this unneeded assignment and optimize this anywa=
-y,
-> the resulting object code is identical before and after this change.
->=20
-> No functional change. No change to object code.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
 
-Applied to clk-next
+I half understood that. Just an FYI that I'm waiting for this update.
