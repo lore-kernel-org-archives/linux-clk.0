@@ -2,64 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B08C61DD8
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 17:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09567C5519F
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 17:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3A2E22470
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 17:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCB5E2222C
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 17:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5qItgqp"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdlGltP5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgKNREQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Nov 2020 12:04:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36188 "EHLO mail.kernel.org"
+        id S1726146AbgKNRoK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Nov 2020 12:44:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbgKNREQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 14 Nov 2020 12:04:16 -0500
-Received: from kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726088AbgKNRoK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 14 Nov 2020 12:44:10 -0500
+Received: from mail.kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6980223FD;
-        Sat, 14 Nov 2020 17:04:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D9272222C;
+        Sat, 14 Nov 2020 17:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605373455;
-        bh=WO7tgLQ38QQNH+AlJMGx/LTDRQbX3PlKn/5JVtI3d2s=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=U5qItgqp4soSY4sKftwC+juT+PXEfPWZWVb0GaqlDu8zL77L2xLWr0O8sucGNl5EX
-         hsn+vIMPfc+e3YsaE3lCL+mnIs0dfJ9c8kpxGTdAGdU3MhF9ykaR1Js7KTAYpW8pJh
-         qr1yRmPREXBFSU1S0kvk0EAuCssiz8mlNFczRPBA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201113101419.GC168908@mwanda>
-References: <20201113101419.GC168908@mwanda>
-Subject: Re: [PATCH] clk: qcom: lpass-sc7180: Clean up on error in lpass_sc7180_init()
+        s=default; t=1605375849;
+        bh=UTKc5AmDz2O8mWHUg53Nzuej7AFXGlvaUvHgaxeLrRE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EdlGltP56R90EiGnFfJizvt72PDW2Dn6Vsy7JJWU+DsXKnEFztALwNOjnFSmvkayG
+         U+l/Xbu175YkOKNXvPXlXjO8qJMihYq+KwRYacZ2KVLcbp8lmZAIAV4MFgVjhBBx+Z
+         gO2mrBGK5/FtoxtI0CrBSkCCY39p0D9aWeTUQEEk=
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Taniya Das <tdas@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Sat, 14 Nov 2020 09:04:13 -0800
-Message-ID: <160537345343.60232.8506254322830181377@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH] clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones
+Date:   Sat, 14 Nov 2020 09:44:08 -0800
+Message-Id: <20201114174408.579047-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dan Carpenter (2020-11-13 02:14:19)
-> Clean up the first driver if the second driver can't be registered.
->=20
-> Fixes: 4ee9fe3e292b ("clk: qcom: lpass-sc7180: Disentangle the two clock =
-devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+Let's call pm_runtime_get() here instead of calling the PM clk APIs
+directly. This avoids a compilation problem on CONFIG_PM=n where the
+pm_clk_runtime_{resume,suspend}() functions don't exist and covers the
+intent, i.e. enable the clks for this device so we can program PLL
+settings.
 
-Applied to clk-next
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Taniya Das <tdas@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/camcc-sc7180.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+index f51bf5b6decc..dbac5651ab85 100644
+--- a/drivers/clk/qcom/camcc-sc7180.c
++++ b/drivers/clk/qcom/camcc-sc7180.c
+@@ -1669,16 +1669,14 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
+ 		goto disable_pm_runtime;
+ 	}
+ 
+-	ret = pm_clk_runtime_resume(&pdev->dev);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "pm runtime resume failed\n");
++	ret = pm_runtime_get(&pdev->dev);
++	if (ret)
+ 		goto destroy_pm_clk;
+-	}
+ 
+ 	regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
+ 	if (IS_ERR(regmap)) {
+ 		ret = PTR_ERR(regmap);
+-		pm_clk_runtime_suspend(&pdev->dev);
++		pm_runtime_put(&pdev->dev);
+ 		goto destroy_pm_clk;
+ 	}
+ 
+@@ -1688,9 +1686,7 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
+ 	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+ 
+ 	ret = qcom_cc_really_probe(pdev, &cam_cc_sc7180_desc, regmap);
+-
+-	pm_clk_runtime_suspend(&pdev->dev);
+-
++	pm_runtime_put(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
+ 		goto destroy_pm_clk;
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+
