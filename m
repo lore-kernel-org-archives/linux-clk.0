@@ -2,129 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D6EC63697
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 18:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC82C5519F
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 19:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B51182224F
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 18:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4094B22280
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Nov 2020 19:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xK2Ld/dx"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkTpQTcD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgKNSaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Nov 2020 13:30:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbgKNSaS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Nov 2020 13:30:18 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8D5C0613D1;
-        Sat, 14 Nov 2020 10:30:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=s2/BETzhhA+FGEyKIwtMzuW1T+rRFdj0w4J0RN+5mn8=; b=xK2Ld/dx9Xttpf01RguKcwqsHn
-        9lgLlOlp8c/pz4HEKNaeCEPCRY7ArQrCnFnJiB4omAvXra/Dui5EidEIa088F2mcg4oViFdT4LIJa
-        Z0BsxGw1vM1uO9a+k1ukME3Q7K39cnZf+5UvSYRAujavz8lymxtKxBtaHt7p5c4FRYH7Q0C3ANrEV
-        IV9w0ACBhwzFD+SeZ0tm/OZBDPptqdXpI9dIzq66kNsrKM+1LrpzXQSmpFdcJf4awsXxQTeWcgxTy
-        i4A5UkUbDajFzlbzsOjfYbeJD2QYuOj93ttbL8j6q98ENHH65uUffSTtVJ0fZC9Yrs9C/IiGP9yvx
-        M3XTbx8g==;
-Received: from [2601:1c0:6280:3f0::f32]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ke0JL-0000Sr-NL; Sat, 14 Nov 2020 18:30:08 +0000
-Subject: Re: [PATCH] clk: qcom: camcc-sc7180: Use runtime PM ops instead of
- clk ones
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Taniya Das <tdas@codeaurora.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20201114174408.579047-1-sboyd@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <79da0ec7-425a-40e9-2101-b55568b3187c@infradead.org>
-Date:   Sat, 14 Nov 2020 10:30:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726125AbgKNTjf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Nov 2020 14:39:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726112AbgKNTjf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 14 Nov 2020 14:39:35 -0500
+Received: from mail.kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26E9522275;
+        Sat, 14 Nov 2020 19:39:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605382775;
+        bh=OhUkYtHxpcowYlogkbZuwo4qzcsgKrOVLFlT2QSSKF4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CkTpQTcDtgyEw9tJHUAGAZ1XV9W2Vg8qYl1dTjglY+b7m8+blomMkD6a8TOSN5Pm0
+         SUoHFHRmIW7CTHj2cm2Rq5ipegdfbR9KLjAByYNGvgcJSfGDdoqJbz8LeNpiOhTle/
+         tDaiqKm4hIpanPcBCQBIVVrBrL1MG8p0zzW/w+VE=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.10-rc3
+Date:   Sat, 14 Nov 2020 11:39:34 -0800
+Message-Id: <20201114193934.785014-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
 MIME-Version: 1.0
-In-Reply-To: <20201114174408.579047-1-sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/14/20 9:44 AM, Stephen Boyd wrote:
-> Let's call pm_runtime_get() here instead of calling the PM clk APIs
-> directly. This avoids a compilation problem on CONFIG_PM=n where the
-> pm_clk_runtime_{resume,suspend}() functions don't exist and covers the
-> intent, i.e. enable the clks for this device so we can program PLL
-> settings.
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Nathan Chancellor <natechancellor@gmail.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
 
-Thanks.
+are available in the Git repository at:
 
-> ---
->  drivers/clk/qcom/camcc-sc7180.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-> index f51bf5b6decc..dbac5651ab85 100644
-> --- a/drivers/clk/qcom/camcc-sc7180.c
-> +++ b/drivers/clk/qcom/camcc-sc7180.c
-> @@ -1669,16 +1669,14 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
->  		goto disable_pm_runtime;
->  	}
->  
-> -	ret = pm_clk_runtime_resume(&pdev->dev);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "pm runtime resume failed\n");
-> +	ret = pm_runtime_get(&pdev->dev);
-> +	if (ret)
->  		goto destroy_pm_clk;
-> -	}
->  
->  	regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
->  	if (IS_ERR(regmap)) {
->  		ret = PTR_ERR(regmap);
-> -		pm_clk_runtime_suspend(&pdev->dev);
-> +		pm_runtime_put(&pdev->dev);
->  		goto destroy_pm_clk;
->  	}
->  
-> @@ -1688,9 +1686,7 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
->  	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->  
->  	ret = qcom_cc_really_probe(pdev, &cam_cc_sc7180_desc, regmap);
-> -
-> -	pm_clk_runtime_suspend(&pdev->dev);
-> -
-> +	pm_runtime_put(&pdev->dev);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
->  		goto destroy_pm_clk;
-> 
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
+for you to fetch changes up to c277ca155d2f0028a5c79708426d3f79b54a5fc1:
+
+  clk: imx8m: fix bus critical clk registration (2020-11-04 17:13:12 -0800)
+
+----------------------------------------------------------------
+Two small clk driver fixes
+
+ - Make to_clk_regmap() inline to avoid compiler annoyance
+ - Fix critical clks on i.MX imx8m SoCs
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      clk: define to_clk_regmap() as inline function
+
+Peng Fan (1):
+      clk: imx8m: fix bus critical clk registration
+
+ drivers/clk/imx/clk-imx8mm.c   | 10 +++++-----
+ drivers/clk/imx/clk-imx8mn.c   |  6 +++---
+ drivers/clk/imx/clk-imx8mp.c   | 10 +++++-----
+ drivers/clk/imx/clk-imx8mq.c   |  8 ++++----
+ drivers/clk/imx/clk.h          |  5 +++++
+ drivers/clk/meson/clk-regmap.h |  5 ++++-
+ drivers/clk/qcom/clk-regmap.h  |  6 +++++-
+ 7 files changed, 31 insertions(+), 19 deletions(-)
 
 -- 
-~Randy
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
