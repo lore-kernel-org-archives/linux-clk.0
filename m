@@ -2,503 +2,254 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A4EC8266F
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A22EC8267C
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59E8820855
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE8220853
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fJatngIn";
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="aXzm79H0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbgKPLUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Nov 2020 06:20:43 -0500
-Received: from muru.com ([72.249.23.125]:48538 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729735AbgKPLUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Nov 2020 06:20:42 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 2AFD6813D;
-        Mon, 16 Nov 2020 11:20:47 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
-Subject: [PATCH 17/17] ARM: OMAP2+: Drop legacy remaining legacy platform data for am4
-Date:   Mon, 16 Nov 2020 13:19:39 +0200
-Message-Id: <20201116111939.21405-18-tony@atomide.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201116111939.21405-1-tony@atomide.com>
-References: <20201116111939.21405-1-tony@atomide.com>
+        id S1729667AbgKPLY7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Nov 2020 06:24:59 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:40418 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbgKPLY6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2020 06:24:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1605525898; x=1637061898;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=ikinvW4XyccyUhcDzmFWpNySr1QOg8rXA1Og75Y/PEs=;
+  b=fJatngInlPDPPBYiYsX6Dd1ao6BnfYRxXI0ZpgKCV1ZPoLg27XqusxWD
+   ige7HOJYoDK6uAwKfpizVhf2fc3HfaEPCSYjYctLOhAboAxgdnxHIQrIs
+   CeiotPZa5p23jOSknZ/tOwNUHJy270Qjl3fon8IJIvalmV3rZvPuZYFyN
+   30+Yu8pGpZ1Dag5/AZdKOrwtrkdcKl5XefgONuZoiYvbWolHbSLmuM+gG
+   5JqKTEuYKyu0zMcW8PO8McuzOq3gnzYf9bFo0FqqxO/jQ+qX8yfcqIvW8
+   IVMoO/BUBA+h5T6vMsJq9nUVBzcLzrh916ewSZ30gB1ra7eph2w3lbUK9
+   A==;
+IronPort-SDR: H378Ow0FMll/AEQUzDD3Y6R8u4lT2dl4Smzn1DrCHG2GqQZ9PdCA+IUkYUtvcvXSdRLxtr/7A/
+ SpVuUrSvrTup3PQlV+J5IKEFn+EZTx1/n+HYN2elaUxA2lzPgOLDlbsV2Af0PT5Agq+I0SaZTt
+ 0hFb9X+ej7HGZG99gxyJx6UxzvjVrvPtSl958mpttVZNV6RlOj7pHIgt60KRlJJ89rQa7v5gi2
+ aqsj08m/VujjkQS/YS9UTpZQtB7EHLyfkpoPnjfyKmtDfLHBxiFOd/L0n9DhEA9Km4zipsANS0
+ dlM=
+X-IronPort-AV: E=Sophos;i="5.77,482,1596524400"; 
+   d="scan'208";a="99165121"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 Nov 2020 04:24:58 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Mon, 16 Nov 2020 04:24:57 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3 via Frontend
+ Transport; Mon, 16 Nov 2020 04:24:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lRkvbNqyEHpMkRAZ+/9f/JRX2afesoKML+5HlHWFO6PgrH9ZTCZGcm0eZ538sScCWu+PSPLMN6UdrdfbSxYdsLSGuW/JD8kp8Fe/psO+PD9B4w9kByzP5bSSetzwux8CaBYsM3u0equC1RPUGrQOxZ+JGFg23sqVaZfZuksmjPnvkOs7QT8WxvVOsMJ8HLSg3Nvl1d4g0NHhLeTpmNYNyi8t0uoJfPBQLVeaKz7W8FmQIJ3neQR3Ap3B2RbVpPuMolnw0hcoz0qaQV5bjIVqOkwcj7CjtOIuLKHwrli8Q2wg/zWfXK54EVq93onkbbVYfdL/FK+1BOT/bz2N75T6sA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ikinvW4XyccyUhcDzmFWpNySr1QOg8rXA1Og75Y/PEs=;
+ b=IngCG52fMNhkOmlKTU8ogcbC9MA7FY7/vAQuErGzid4v9A/pkJZFLPEcazvIaPds2mcrL6I+iSmB5TMiXwWdgfkMWsxOInQbtpNw0dB6iHJeqjd37YnF4ZtjGGQx0mn5j0Mi7S8lcyO1o87qVM1Zj7sPL68pUIL+eG0Fd20v0RBl0TAItjdr1KUIwL5ODse4Yvw0ALERfSKrsN+WFosIpmdUwN3/PB6varhKjgSNGWTrzOIDI9QwxKR0gIgFoFEJ29PZhFVydYhP5ZLhiPdrRnCViOS7llk7U5CuBBaSfBYd21ewJ/x06+5OnKqgUoTxtVPtlN9Dz3k9aT2mirxMdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ikinvW4XyccyUhcDzmFWpNySr1QOg8rXA1Og75Y/PEs=;
+ b=aXzm79H0cyPtgaJjY1KU8BpuSUFzAz7fOE3gqbICbc3j6W7dtKNAH3q9J0C2XjSBbnHa65NICdgqgMoOwfr2UOfuhvxzAdal3v9amJsOzlIquSEJVAZqUbzOKIyShRY2ITmUBd7aykbcaxrzYohR6jNGUtxXSqJJyUxi0HUP+Ck=
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com (2603:10b6:5:69::31) by
+ DM5PR11MB1788.namprd11.prod.outlook.com (2603:10b6:3:10a::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3564.25; Mon, 16 Nov 2020 11:24:54 +0000
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::f983:dc6d:ad81:9e18]) by DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::f983:dc6d:ad81:9e18%7]) with mapi id 15.20.3564.028; Mon, 16 Nov 2020
+ 11:24:54 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <mturquette@baylibre.com>,
+        <Nicolas.Ferre@microchip.com>, <robh+dt@kernel.org>
+CC:     <Eugen.Hristev@microchip.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 06/11] clk: at91: clk-sam9x60-pll: allow runtime
+ changes for pll
+Thread-Topic: [PATCH v4 06/11] clk: at91: clk-sam9x60-pll: allow runtime
+ changes for pll
+Thread-Index: AQHWvAsXdqHXVxqoU0quyuo4xeR8ew==
+Date:   Mon, 16 Nov 2020 11:24:54 +0000
+Message-ID: <24d975ca-1942-5f7f-ae89-7b572f48812c@microchip.com>
+References: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com>
+ <1604655988-353-7-git-send-email-claudiu.beznea@microchip.com>
+ <160538849947.60232.12002724470272520124@swboyd.mtv.corp.google.com>
+In-Reply-To: <160538849947.60232.12002724470272520124@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=microchip.com;
+x-originating-ip: [86.124.22.247]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b73e1229-4ef2-48ee-50e0-08d88a223e25
+x-ms-traffictypediagnostic: DM5PR11MB1788:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR11MB17888636EBF99E7B03B9623C87E30@DM5PR11MB1788.namprd11.prod.outlook.com>
+x-bypassexternaltag: True
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EWQqKP5DxOpoFtUCvPP30UHzrmUB/bZTqi1dI/tnC3pTRxBPFWLXcUjvvnTEPrQKX5NsehMH44cQtHS2xV48gNBsM2QRmTh6jFgi+42gl7Zy/j6sPDnoOcpgCj2DNpeBHPMb3Ee57WFtk8b99xaFSvoeEIJfzobx12oMgll8gvjHOQvfu88G+qyya1mAvTz4Sv0HAiU2YW9LVy7amNnysb8wB3dRe9rGP8BmZFqeTbCZx6bRSD7RAtrPyYVhou/kp8p9yUS0wviPj4BhVsGx4C5KYszgxUCBdsW7ZcldCqMtNdms0pyAn240cUO1o8Dy7wigi0iKkOC19kFXJXxV4YS1lDi1J/i3a/DrWync1tbzq9oM3HBLpS9DWjy8gzgQ
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3420.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(346002)(376002)(136003)(366004)(396003)(86362001)(31696002)(186003)(26005)(478600001)(66946007)(53546011)(2616005)(76116006)(91956017)(64756008)(66476007)(66446008)(6512007)(5660300002)(6506007)(4326008)(316002)(71200400001)(83380400001)(36756003)(2906002)(54906003)(110136005)(8936002)(8676002)(66556008)(31686004)(6486002)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: ldRsADmb64dAyihd/2EST0B12TLAhA1Dg3mgdC4rl2M9AKJQOUplC6y1NRLFz4gJ7iHNP7ktH285DSxI4n8vQTyoElos3MDsQ63tfh71gu+llePz4pbbK8w1S2AC7uYfOE271ZSLK23CZ+EBdZuvNeL1nnR9ilGoIxiFWjoE0jwUC4IcaWq8ZQDdd7ZYAtSOt3Htxa1bRMa0V25Oin78/hDjnRJatTr3SeMSQ6NUmkseT7iXxseuyJPleBnjaSetN4iliGMRf/konr3UcZP09nmhSjXaHbTeEcuJsjD/NypEvDWwPvWPXlq3jDDzXwMGuTtjYGUlfA7hY3MURLeI7k1uyKetxuMBh0GpY04bQhK0EmcFv6l7Jbf9mJrNHmZqwYu8UFoUZSQzRGHvCg1YDRDPOWJ8F5Agw9GJh5yD3fWmncQUQutAstotvKm146XbAcN0gQ6RVkpaHMdLzXMcq5ouFtW3iOAq5TShzi+fN1rgR/yGIGeXp8qRZ3ptB3pPrYnXy0Qc/3OfwaUraBooM5vldHb18//3G9avqVRFO1DNE+Q/omHaCUNHo+T1f5BmnP46x8ikSC+0sZFESJkeaIOXwca32UlAw7yp8vs5i/qljP9ZB8OalXR/HQJXfGUENnzFyiU68y/OveW9p5VwtCFL73n2yjRjjGNgEkIRt+wjPZZSzKRHNjIngbMo6mhQV2Zho8USmCdWVWvlezzh+Nqy9EaMQFBxkUdBFiE6EZ09W8YQA92NuAvzMSTG0TRm6cQ8mhNb8KxahO+o0N1Bs8Kswlhb6lDnIhiwU46Ok7434zjm1qqMS7dnArd8HLDHUnTrydfl8cGEviH5zBxpiw8LTbw7h+XVnHrkIqOyd/XOCAmPfnta9mX0h0gbPm3Q1mgIrBGyPtLt+TL+FIC+YQ==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F72881E7120A4B46AE624A3005F0D87D@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3420.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b73e1229-4ef2-48ee-50e0-08d88a223e25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2020 11:24:54.8409
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MJKCJ2cqy42BoK0Q937oRaKNISqxabfAHEJqT9EDq29818gIXc2Q4dKGsvedbiLFftpng/0DyprKmjYvdTggh9keJuzUnZqdzniLQaI7eLY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1788
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We can now drop the remaining legacy platform data as we are
-probing devices with device tree data.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/mach-omap2/Kconfig                   |   1 -
- arch/arm/mach-omap2/Makefile                  |   5 +-
- arch/arm/mach-omap2/io.c                      |   1 -
- .../omap_hwmod_33xx_43xx_common_data.h        |  52 -----
- .../omap_hwmod_33xx_43xx_interconnect_data.c  |  59 ------
- .../omap_hwmod_33xx_43xx_ipblock_data.c       | 184 ------------------
- arch/arm/mach-omap2/omap_hwmod_43xx_data.c    |  81 --------
- 7 files changed, 1 insertion(+), 382 deletions(-)
- delete mode 100644 arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
- delete mode 100644 arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
- delete mode 100644 arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
- delete mode 100644 arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-
-diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
---- a/arch/arm/mach-omap2/Kconfig
-+++ b/arch/arm/mach-omap2/Kconfig
-@@ -78,7 +78,6 @@ config SOC_AM43XX
- 	select HAVE_ARM_TWD
- 	select ARM_ERRATA_754322
- 	select ARM_ERRATA_775420
--	select OMAP_HWMOD
- 	select OMAP_INTERCONNECT
- 	select ARM_CPU_SUSPEND if PM
- 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -23,7 +23,7 @@ obj-$(CONFIG_ARCH_OMAP3) += $(omap-2-3-common) $(hwmod-common) $(secure-common)
- obj-$(CONFIG_ARCH_OMAP4) += $(hwmod-common) $(secure-common)
- obj-$(CONFIG_SOC_AM33XX) += $(secure-common)
- obj-$(CONFIG_SOC_OMAP5)  += $(hwmod-common) $(secure-common)
--obj-$(CONFIG_SOC_AM43XX) += $(hwmod-common) $(secure-common)
-+obj-$(CONFIG_SOC_AM43XX) += $(secure-common)
- obj-$(CONFIG_SOC_DRA7XX) += $(hwmod-common) $(secure-common)
- 
- ifneq ($(CONFIG_SND_SOC_OMAP_MCBSP),)
-@@ -206,9 +206,6 @@ obj-$(CONFIG_SOC_OMAP2430)		+= omap_hwmod_2xxx_interconnect_data.o
- obj-$(CONFIG_SOC_OMAP2430)		+= omap_hwmod_2430_data.o
- obj-$(CONFIG_ARCH_OMAP3)		+= omap_hwmod_2xxx_3xxx_ipblock_data.o
- obj-$(CONFIG_ARCH_OMAP3)		+= omap_hwmod_3xxx_data.o
--obj-$(CONFIG_SOC_AM43XX)		+= omap_hwmod_43xx_data.o
--obj-$(CONFIG_SOC_AM43XX)		+= omap_hwmod_33xx_43xx_interconnect_data.o
--obj-$(CONFIG_SOC_AM43XX)		+= omap_hwmod_33xx_43xx_ipblock_data.o
- obj-$(CONFIG_SOC_TI81XX)		+= omap_hwmod_81xx_data.o
- obj-$(CONFIG_ARCH_OMAP4)		+= omap_hwmod_44xx_data.o
- obj-$(CONFIG_SOC_OMAP5)			+= omap_hwmod_54xx_data.o
-diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
---- a/arch/arm/mach-omap2/io.c
-+++ b/arch/arm/mach-omap2/io.c
-@@ -588,7 +588,6 @@ void __init am43xx_init_early(void)
- 	omap2_prcm_base_init();
- 	am43xx_powerdomains_init();
- 	am43xx_clockdomains_init();
--	am43xx_hwmod_init();
- 	omap_hwmod_init_postsetup();
- 	omap_l2_cache_init();
- 	omap_clk_soc_init = am43xx_dt_clk_init;
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
-deleted file mode 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_common_data.h
-+++ /dev/null
-@@ -1,52 +0,0 @@
--/*
-- *
-- * Copyright (C) 2013 Texas Instruments Incorporated
-- *
-- * Data common for AM335x and AM43x
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef __ARCH_ARM_MACH_OMAP2_OMAP_HWMOD_33XX_43XX_COMMON_DATA_H
--#define __ARCH_ARM_MACH_OMAP2_OMAP_HWMOD_33XX_43XX_COMMON_DATA_H
--
--extern struct omap_hwmod_ocp_if am33xx_l3_main__l3_s;
--extern struct omap_hwmod_ocp_if am33xx_l3_s__l4_ls;
--extern struct omap_hwmod_ocp_if am33xx_l3_s__l4_wkup;
--extern struct omap_hwmod_ocp_if am33xx_l3_main__l3_instr;
--extern struct omap_hwmod_ocp_if am33xx_l3_s__l3_main;
--extern struct omap_hwmod_ocp_if am33xx_gfx__l3_main;
--extern struct omap_hwmod_ocp_if am33xx_l3_main__gfx;
--extern struct omap_hwmod_ocp_if am33xx_l4_ls__timer2;
--extern struct omap_hwmod_ocp_if am33xx_l3_main__ocmc;
--
--extern struct omap_hwmod am33xx_l3_main_hwmod;
--extern struct omap_hwmod am33xx_l3_s_hwmod;
--extern struct omap_hwmod am33xx_l3_instr_hwmod;
--extern struct omap_hwmod am33xx_l4_ls_hwmod;
--extern struct omap_hwmod am33xx_l4_wkup_hwmod;
--extern struct omap_hwmod am33xx_gfx_hwmod;
--extern struct omap_hwmod am33xx_prcm_hwmod;
--extern struct omap_hwmod am33xx_ocmcram_hwmod;
--extern struct omap_hwmod am33xx_smartreflex0_hwmod;
--extern struct omap_hwmod am33xx_smartreflex1_hwmod;
--
--extern struct omap_hwmod_class am33xx_emif_hwmod_class;
--extern struct omap_hwmod_class am33xx_l4_hwmod_class;
--extern struct omap_hwmod_class am33xx_wkup_m3_hwmod_class;
--extern struct omap_hwmod_class am33xx_control_hwmod_class;
--extern struct omap_hwmod_class am33xx_timer_hwmod_class;
--extern struct omap_hwmod_class am33xx_ehrpwm_hwmod_class;
--extern struct omap_hwmod_class am33xx_spi_hwmod_class;
--
--void omap_hwmod_am33xx_reg(void);
--void omap_hwmod_am43xx_reg(void);
--
--#endif
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
-deleted file mode 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_interconnect_data.c
-+++ /dev/null
-@@ -1,59 +0,0 @@
--/*
-- *
-- * Copyright (C) 2013 Texas Instruments Incorporated
-- *
-- * Interconnects common for AM335x and AM43x
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/sizes.h>
--#include "omap_hwmod.h"
--#include "omap_hwmod_33xx_43xx_common_data.h"
--
--/* l3 main -> l3 s */
--struct omap_hwmod_ocp_if am33xx_l3_main__l3_s = {
--	.master		= &am33xx_l3_main_hwmod,
--	.slave		= &am33xx_l3_s_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
--/* l3 s -> l4 per/ls */
--struct omap_hwmod_ocp_if am33xx_l3_s__l4_ls = {
--	.master		= &am33xx_l3_s_hwmod,
--	.slave		= &am33xx_l4_ls_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
--/* l3 s -> l4 wkup */
--struct omap_hwmod_ocp_if am33xx_l3_s__l4_wkup = {
--	.master		= &am33xx_l3_s_hwmod,
--	.slave		= &am33xx_l4_wkup_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
--/* l3 main -> l3 instr */
--struct omap_hwmod_ocp_if am33xx_l3_main__l3_instr = {
--	.master		= &am33xx_l3_main_hwmod,
--	.slave		= &am33xx_l3_instr_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
--/* l3 s -> l3 main*/
--struct omap_hwmod_ocp_if am33xx_l3_s__l3_main = {
--	.master		= &am33xx_l3_s_hwmod,
--	.slave		= &am33xx_l3_main_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-deleted file mode 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c
-+++ /dev/null
-@@ -1,184 +0,0 @@
--/*
-- *
-- * Copyright (C) 2013 Texas Instruments Incorporated
-- *
-- * Hwmod common for AM335x and AM43x
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/types.h>
--
--#include "omap_hwmod.h"
--#include "cm33xx.h"
--#include "prm33xx.h"
--#include "omap_hwmod_33xx_43xx_common_data.h"
--#include "prcm43xx.h"
--#include "common.h"
--
--#define CLKCTRL(oh, clkctrl) ((oh).prcm.omap4.clkctrl_offs = (clkctrl))
--#define RSTCTRL(oh, rstctrl) ((oh).prcm.omap4.rstctrl_offs = (rstctrl))
--#define RSTST(oh, rstst) ((oh).prcm.omap4.rstst_offs = (rstst))
--
--/*
-- * 'l3' class
-- * instance(s): l3_main, l3_s, l3_instr
-- */
--static struct omap_hwmod_class am33xx_l3_hwmod_class = {
--	.name		= "l3",
--};
--
--struct omap_hwmod am33xx_l3_main_hwmod = {
--	.name		= "l3_main",
--	.class		= &am33xx_l3_hwmod_class,
--	.clkdm_name	= "l3_clkdm",
--	.flags		= HWMOD_INIT_NO_IDLE,
--	.main_clk	= "l3_gclk",
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/* l3_s */
--struct omap_hwmod am33xx_l3_s_hwmod = {
--	.name		= "l3_s",
--	.class		= &am33xx_l3_hwmod_class,
--	.clkdm_name	= "l3s_clkdm",
--};
--
--/* l3_instr */
--struct omap_hwmod am33xx_l3_instr_hwmod = {
--	.name		= "l3_instr",
--	.class		= &am33xx_l3_hwmod_class,
--	.clkdm_name	= "l3_clkdm",
--	.flags		= HWMOD_INIT_NO_IDLE,
--	.main_clk	= "l3_gclk",
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/*
-- * 'l4' class
-- * instance(s): l4_ls, l4_hs, l4_wkup, l4_fw
-- */
--struct omap_hwmod_class am33xx_l4_hwmod_class = {
--	.name		= "l4",
--};
--
--/* l4_ls */
--struct omap_hwmod am33xx_l4_ls_hwmod = {
--	.name		= "l4_ls",
--	.class		= &am33xx_l4_hwmod_class,
--	.clkdm_name	= "l4ls_clkdm",
--	.flags		= HWMOD_INIT_NO_IDLE,
--	.main_clk	= "l4ls_gclk",
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/* l4_wkup */
--struct omap_hwmod am33xx_l4_wkup_hwmod = {
--	.name		= "l4_wkup",
--	.class		= &am33xx_l4_hwmod_class,
--	.clkdm_name	= "l4_wkup_clkdm",
--	.flags		= HWMOD_INIT_NO_IDLE,
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/*
-- * 'prcm' class
-- * power and reset manager (whole prcm infrastructure)
-- */
--static struct omap_hwmod_class am33xx_prcm_hwmod_class = {
--	.name	= "prcm",
--};
--
--/* prcm */
--struct omap_hwmod am33xx_prcm_hwmod = {
--	.name		= "prcm",
--	.class		= &am33xx_prcm_hwmod_class,
--	.clkdm_name	= "l4_wkup_clkdm",
--};
--
--/* 'smartreflex' class */
--static struct omap_hwmod_class am33xx_smartreflex_hwmod_class = {
--	.name		= "smartreflex",
--};
--
--/* smartreflex0 */
--struct omap_hwmod am33xx_smartreflex0_hwmod = {
--	.name		= "smartreflex0",
--	.class		= &am33xx_smartreflex_hwmod_class,
--	.clkdm_name	= "l4_wkup_clkdm",
--	.main_clk	= "smartreflex0_fck",
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/* smartreflex1 */
--struct omap_hwmod am33xx_smartreflex1_hwmod = {
--	.name		= "smartreflex1",
--	.class		= &am33xx_smartreflex_hwmod_class,
--	.clkdm_name	= "l4_wkup_clkdm",
--	.main_clk	= "smartreflex1_fck",
--	.prcm		= {
--		.omap4	= {
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static void omap_hwmod_am33xx_clkctrl(void)
--{
--	CLKCTRL(am33xx_smartreflex0_hwmod,
--		AM33XX_CM_WKUP_SMARTREFLEX0_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_smartreflex1_hwmod,
--		AM33XX_CM_WKUP_SMARTREFLEX1_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l4_ls_hwmod, AM33XX_CM_PER_L4LS_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l4_wkup_hwmod, AM33XX_CM_WKUP_L4WKUP_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l3_main_hwmod, AM33XX_CM_PER_L3_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l3_instr_hwmod , AM33XX_CM_PER_L3_INSTR_CLKCTRL_OFFSET);
--}
--
--void omap_hwmod_am33xx_reg(void)
--{
--	omap_hwmod_am33xx_clkctrl();
--}
--
--static void omap_hwmod_am43xx_clkctrl(void)
--{
--	CLKCTRL(am33xx_smartreflex0_hwmod,
--		AM43XX_CM_WKUP_SMARTREFLEX0_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_smartreflex1_hwmod,
--		AM43XX_CM_WKUP_SMARTREFLEX1_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l4_ls_hwmod, AM43XX_CM_PER_L4LS_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l4_wkup_hwmod, AM43XX_CM_WKUP_L4WKUP_CLKCTRL_OFFSET);
--	CLKCTRL(am33xx_l3_main_hwmod, AM43XX_CM_PER_L3_CLKCTRL_OFFSET);
--}
--
--void omap_hwmod_am43xx_reg(void)
--{
--	omap_hwmod_am43xx_clkctrl();
--}
-diff --git a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c b/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-deleted file mode 100644
---- a/arch/arm/mach-omap2/omap_hwmod_43xx_data.c
-+++ /dev/null
-@@ -1,81 +0,0 @@
--/*
-- * Copyright (C) 2013 Texas Instruments Incorporated
-- *
-- * Hwmod present only in AM43x and those that differ other than register
-- * offsets as compared to AM335x.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- */
--
--#include "omap_hwmod.h"
--#include "omap_hwmod_33xx_43xx_common_data.h"
--#include "prcm43xx.h"
--#include "omap_hwmod_common_data.h"
--
--/* IP blocks */
--static struct omap_hwmod am43xx_l4_hs_hwmod = {
--	.name		= "l4_hs",
--	.class		= &am33xx_l4_hwmod_class,
--	.clkdm_name	= "l3_clkdm",
--	.flags		= HWMOD_INIT_NO_IDLE,
--	.main_clk	= "l4hs_gclk",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= AM43XX_CM_PER_L4HS_CLKCTRL_OFFSET,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--/* Interfaces */
--
--static struct omap_hwmod_ocp_if am43xx_l3_main__l4_hs = {
--	.master		= &am33xx_l3_main_hwmod,
--	.slave		= &am43xx_l4_hs_hwmod,
--	.clk		= "l3s_gclk",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
--static struct omap_hwmod_ocp_if am43xx_l4_wkup__smartreflex0 = {
--	.master		= &am33xx_l4_wkup_hwmod,
--	.slave		= &am33xx_smartreflex0_hwmod,
--	.clk		= "sys_clkin_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if am43xx_l4_wkup__smartreflex1 = {
--	.master		= &am33xx_l4_wkup_hwmod,
--	.slave		= &am33xx_smartreflex1_hwmod,
--	.clk		= "sys_clkin_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if *am43xx_hwmod_ocp_ifs[] __initdata = {
--	&am33xx_l3_s__l4_ls,
--	&am33xx_l3_s__l4_wkup,
--	&am43xx_l3_main__l4_hs,
--	&am33xx_l3_main__l3_s,
--	&am33xx_l3_main__l3_instr,
--	&am33xx_l3_s__l3_main,
--	&am43xx_l4_wkup__smartreflex0,
--	&am43xx_l4_wkup__smartreflex1,
--	NULL,
--};
--
--int __init am43xx_hwmod_init(void)
--{
--	int ret;
--
--	omap_hwmod_am43xx_reg();
--	omap_hwmod_init();
--	ret = omap_hwmod_register_links(am43xx_hwmod_ocp_ifs);
--
--	return ret;
--}
--- 
-2.29.2
+DQoNCk9uIDE0LjExLjIwMjAgMjM6MTQsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gRVhURVJOQUwg
+RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Ug
+a25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBRdW90aW5nIENsYXVkaXUgQmV6bmVhICgy
+MDIwLTExLTA2IDAxOjQ2OjIzKQ0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEvY2xr
+LXNhbTl4NjAtcGxsLmMgYi9kcml2ZXJzL2Nsay9hdDkxL2Nsay1zYW05eDYwLXBsbC5jDQo+PiBp
+bmRleCA3OGY0NThhN2IyZWYuLjZmZTVkODUzMGEwYyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMv
+Y2xrL2F0OTEvY2xrLXNhbTl4NjAtcGxsLmMNCj4+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvY2xr
+LXNhbTl4NjAtcGxsLmMNCj4+IEBAIC0yMjUsOCArMjI1LDUxIEBAIHN0YXRpYyBpbnQgc2FtOXg2
+MF9mcmFjX3BsbF9zZXRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5zaWduZWQgbG9uZyByYXRl
+LA0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcg
+cGFyZW50X3JhdGUpDQo+PiAgew0KPj4gICAgICAgICBzdHJ1Y3Qgc2FtOXg2MF9wbGxfY29yZSAq
+Y29yZSA9IHRvX3NhbTl4NjBfcGxsX2NvcmUoaHcpOw0KPj4gKyAgICAgICBzdHJ1Y3Qgc2FtOXg2
+MF9mcmFjICpmcmFjID0gdG9fc2FtOXg2MF9mcmFjKGNvcmUpOw0KPj4gKyAgICAgICBzdHJ1Y3Qg
+cmVnbWFwICpyZWdtYXAgPSBjb3JlLT5yZWdtYXA7DQo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcg
+aXJxZmxhZ3MsIGNsa2ZsYWdzID0gY2xrX2h3X2dldF9mbGFncyhodyk7DQo+PiArICAgICAgIHVu
+c2lnbmVkIGludCB2YWwsIGNmcmFjLCBjbXVsOw0KPj4gKyAgICAgICBsb25nIHJldDsNCj4+ICsN
+Cj4+ICsgICAgICAgcmV0ID0gc2FtOXg2MF9mcmFjX3BsbF9jb21wdXRlX211bF9mcmFjKGNvcmUs
+IHJhdGUsIHBhcmVudF9yYXRlLCB0cnVlKTsNCj4+ICsgICAgICAgaWYgKHJldCA8PSAwIHx8IChj
+bGtmbGFncyAmIENMS19TRVRfUkFURV9HQVRFKSkNCj4gDQo+IElzIHRoaXMgZnVuY3Rpb24gYmVp
+bmcgY2FsbGVkIHdoZW4gdGhlIGNsayBpcyBlbmFibGVkIGFuZCBpdCBoYXMgdGhlDQo+IENMS19T
+RVRfUkFURV9HQVRFIGZsYWcgc2V0Pw0KDQpZZXMsIHRoaXMgZnVuY3Rpb24gY291bGQgYmUgY2Fs
+bGVkIHdoZW4gQ0xLX1NFVF9SQVRFX0dBVEUgaXMgc2V0Lg0KT24gU0FNQTdHNSB0aGVyZSBhcmUg
+bXVsdGlwbGUgUExMIGJsb2NrcyBvZiB0aGUgc2FtZSB0eXBlLiBBbGwgdGhlc2UgUExMcw0KYXJl
+IGNvbnRyb2xsZWQgYnkgY2xrLXNhbTl4NjAtcGxsLmMgZHJpdmVyLiBPbmUgb2YgdGhpcyBQTEwg
+YmxvY2sgZmVkIHRoZQ0KQ1BVIHdobydzIGZyZXF1ZW5jeSBjb3VsZCBiZSBjaGFuZ2VkIGF0IHJ1
+biB0aW1lLiBBdCB0aGUgc2FtZSB0aW1lIHRoZXJlDQphcmUgUExMcyB0aGF0IGZlZCBoYXJkd2Fy
+ZSBibG9jayBub3QgZ2xpdGNoIGZyZWUgYXdhcmUgb3IgdGhhdCB3ZSBkb24ndA0Kd2FudCB0byBh
+bGxvdyB0aGUgcmF0ZSBjaGFuZ2UgKHRoaXMgaXMgdGhlIGNhc2Ugb2YgU0FNOVg2MCdzIENQVSBQ
+TEwsIG9yDQp0aGUgRERSIFBMTCBvbiBTQU1BN0c1KS4NCg0KSSdtIGNvbmZ1c2VkIHdoeSB0aGlz
+IGRyaXZlciBuZWVkcyB0byBjaGVjaw0KPiB0aGlzIGZsYWcuDQoNCkJlY2F1c2Ugd2UgaGF2ZSBt
+dWx0aXBsZSBQTExzIG9mIHRoZSBzYW1lIHR5cGUsIHNvbWUgb2YgdGhlbSBmZWVkIGhhcmR3YXJl
+DQpibG9ja3MgdGhhdCBhcmUgZ2xpdGNoIGZyZWUgYXdhcmUgb2YgdGhlc2UgUExMcycgZnJlcXVl
+bmNpZXMgY2hhbmdlcywgc29tZQ0KZmVlZCBoYXJkd2FyZSBibG9ja3MgdGhhdCBhcmUgbm90IGds
+aXRjaCBmcmVlIGF3YXJlIG9mIFBMTHMnIGZyZXF1ZW5jaWVzDQpjaGFuZ2VzIG9yIGZvciBzb21l
+IG9mIHRoZW0gd2UgZG9uJ3Qgd2FudCB0aGUgZnJlcXVlbmN5IGNoYW5nZXMgYXQgYWxsLg0KDQo+
+IA0KPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+PiArDQo+PiArICAgICAgIHNwaW5f
+bG9ja19pcnFzYXZlKGNvcmUtPmxvY2ssIGlycWZsYWdzKTsNCj4+ICsNCj4+ICsgICAgICAgcmVn
+bWFwX3VwZGF0ZV9iaXRzKHJlZ21hcCwgQVQ5MV9QTUNfUExMX1VQRFQsIEFUOTFfUE1DX1BMTF9V
+UERUX0lEX01TSywNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIGNvcmUtPmlkKTsNCj4+
+ICsgICAgICAgcmVnbWFwX3JlYWQocmVnbWFwLCBBVDkxX1BNQ19QTExfQ1RSTDEsICZ2YWwpOw0K
+Pj4gKyAgICAgICBjbXVsID0gKHZhbCAmIGNvcmUtPmxheW91dC0+bXVsX21hc2spID4+IGNvcmUt
+PmxheW91dC0+bXVsX3NoaWZ0Ow0KPj4gKyAgICAgICBjZnJhYyA9ICh2YWwgJiBjb3JlLT5sYXlv
+dXQtPmZyYWNfbWFzaykgPj4gY29yZS0+bGF5b3V0LT5mcmFjX3NoaWZ0Ow0KPj4gKw0KPj4gKyAg
+ICAgICBpZiAoY211bCA9PSBmcmFjLT5tdWwgJiYgY2ZyYWMgPT0gZnJhYy0+ZnJhYykNCj4+ICsg
+ICAgICAgICAgICAgICBnb3RvIHVubG9jazsNCj4+ICsNCj4+ICsgICAgICAgcmVnbWFwX3dyaXRl
+KHJlZ21hcCwgQVQ5MV9QTUNfUExMX0NUUkwxLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgKGZy
+YWMtPm11bCA8PCBjb3JlLT5sYXlvdXQtPm11bF9zaGlmdCkgfA0KPj4gKyAgICAgICAgICAgICAg
+ICAgICAgKGZyYWMtPmZyYWMgPDwgY29yZS0+bGF5b3V0LT5mcmFjX3NoaWZ0KSk7DQo+PiArDQo+
+PiArICAgICAgIHJlZ21hcF91cGRhdGVfYml0cyhyZWdtYXAsIEFUOTFfUE1DX1BMTF9VUERULA0K
+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgQVQ5MV9QTUNfUExMX1VQRFRfVVBEQVRFIHwg
+QVQ5MV9QTUNfUExMX1VQRFRfSURfTVNLLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+QVQ5MV9QTUNfUExMX1VQRFRfVVBEQVRFIHwgY29yZS0+aWQpOw0KPj4gKw0KPj4gKyAgICAgICBy
+ZWdtYXBfdXBkYXRlX2JpdHMocmVnbWFwLCBBVDkxX1BNQ19QTExfQ1RSTDAsDQo+PiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICBBVDkxX1BNQ19QTExfQ1RSTDBfRU5MT0NLIHwgQVQ5MV9QTUNf
+UExMX0NUUkwwX0VOUExMLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgQVQ5MV9QTUNf
+UExMX0NUUkwwX0VOTE9DSyB8DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICBBVDkxX1BN
+Q19QTExfQ1RSTDBfRU5QTEwpOw0KPj4gKw0KPj4gKyAgICAgICByZWdtYXBfdXBkYXRlX2JpdHMo
+cmVnbWFwLCBBVDkxX1BNQ19QTExfVVBEVCwNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+IEFUOTFfUE1DX1BMTF9VUERUX1VQREFURSB8IEFUOTFfUE1DX1BMTF9VUERUX0lEX01TSywNCj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIEFUOTFfUE1DX1BMTF9VUERUX1VQREFURSB8IGNv
+cmUtPmlkKTsNCj4+DQo+PiAtICAgICAgIHJldHVybiBzYW05eDYwX2ZyYWNfcGxsX2NvbXB1dGVf
+bXVsX2ZyYWMoY29yZSwgcmF0ZSwgcGFyZW50X3JhdGUsIHRydWUpOw0KPj4gKyAgICAgICB3aGls
+ZSAoIXNhbTl4NjBfcGxsX3JlYWR5KHJlZ21hcCwgY29yZS0+aWQpKQ0KPj4gKyAgICAgICAgICAg
+ICAgIGNwdV9yZWxheCgpOw0KPj4gKw0KPj4gK3VubG9jazoNCj4+ICsgICAgICAgc3Bpbl91bmxv
+Y2tfaXJxcmVzdG9yZShjb3JlLT5sb2NrLCBpcnFmbGFncyk7DQo+PiArDQo+PiArICAgICAgIHJl
+dHVybiByZXQ7DQo+PiAgfQ0KPj4NCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGNsa19vcHMgc2Ft
+OXg2MF9mcmFjX3BsbF9vcHMgPSB7DQo+PiBAQCAtMzc4LDkgKzQyMSwzOSBAQCBzdGF0aWMgaW50
+IHNhbTl4NjBfZGl2X3BsbF9zZXRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywgdW5zaWduZWQgbG9u
+ZyByYXRlLA0KPj4gIHsNCj4+ICAgICAgICAgc3RydWN0IHNhbTl4NjBfcGxsX2NvcmUgKmNvcmUg
+PSB0b19zYW05eDYwX3BsbF9jb3JlKGh3KTsNCj4+ICAgICAgICAgc3RydWN0IHNhbTl4NjBfZGl2
+ICpkaXYgPSB0b19zYW05eDYwX2Rpdihjb3JlKTsNCj4+ICsgICAgICAgc3RydWN0IHJlZ21hcCAq
+cmVnbWFwID0gY29yZS0+cmVnbWFwOw0KPj4gKyAgICAgICB1bnNpZ25lZCBsb25nIGlycWZsYWdz
+LCBjbGtmbGFncyA9IGNsa19od19nZXRfZmxhZ3MoaHcpOw0KPj4gKyAgICAgICB1bnNpZ25lZCBp
+bnQgdmFsLCBjZGl2Ow0KPj4NCj4+ICAgICAgICAgZGl2LT5kaXYgPSBESVZfUk9VTkRfQ0xPU0VT
+VChwYXJlbnRfcmF0ZSwgcmF0ZSkgLSAxOw0KPj4NCj4+ICsgICAgICAgaWYgKGNsa2ZsYWdzICYg
+Q0xLX1NFVF9SQVRFX0dBVEUpDQo+IA0KPiBTYW1lIGNvbW1lbnQuDQo+IA0KPj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvY2xrL2F0OTEvc2FtYTdnNS5jIGIvZHJpdmVycy9jbGsvYXQ5MS9zYW1hN2c1
+LmMNCj4+IGluZGV4IGQ2ODVlMjJiMjAxNC4uMzNmYWY3YzZkOWZiIDEwMDY0NA0KPj4gLS0tIGEv
+ZHJpdmVycy9jbGsvYXQ5MS9zYW1hN2c1LmMNCj4+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvc2Ft
+YTdnNS5jDQo+PiBAQCAtOTUsMTUgKzk1LDE1IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX3Bs
+bF9sYXlvdXQgcGxsX2xheW91dF9kaXZpbyA9IHsNCj4+ICAgKiBAcDogICAgICAgICBjbG9jayBw
+YXJlbnQNCj4+ICAgKiBAbDogICAgICAgICBjbG9jayBsYXlvdXQNCj4+ICAgKiBAdDogICAgICAg
+ICBjbG9jayB0eXBlDQo+PiAtICogQGY6ICAgICAgICAgdHJ1ZSBpZiBjbG9jayBpcyBjcml0aWNh
+bCBhbmQgY2Fubm90IGJlIGRpc2FibGVkDQo+PiArICogQGY6ICAgICAgICAgY2xvY2sgZmxhZ3MN
+Cj4+ICAgKiBAZWlkOiAgICAgICBleHBvcnQgaW5kZXggaW4gc2FtYTdnNS0+Y2h3c1tdIGFycmF5
+DQo+PiAgICovDQo+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCB7DQo+PiAgICAgICAgIGNvbnN0IGNo
+YXIgKm47DQo+PiAgICAgICAgIGNvbnN0IGNoYXIgKnA7DQo+PiAgICAgICAgIGNvbnN0IHN0cnVj
+dCBjbGtfcGxsX2xheW91dCAqbDsNCj4+ICsgICAgICAgdTMyIGY7DQo+IA0KPiBXaHkgbm90IHVu
+c2lnbmVkIGxvbmc/DQoNCkknbGwgc3dpdGNoIHRvIHVuc2lnbmVkIGxvbmcuDQoNCj4gDQo+PiAg
+ICAgICAgIHU4IHQ7DQo+PiAtICAgICAgIHU4IGM7DQo+PiAgICAgICAgIHU4IGVpZDsNCj4+ICB9
+IHNhbWE3ZzVfcGxsc1tdW1BMTF9JRF9NQVhdID0gew0KPj4gICAgICAgICBbUExMX0lEX0NQVV0g
+PSB7DQo+PiBAQCAtMTExLDEzICsxMTEsMTMgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB7DQo+PiAg
+ICAgICAgICAgICAgICAgICAucCA9ICJtYWluY2siLA0KPj4gICAgICAgICAgICAgICAgICAgLmwg
+PSAmcGxsX2xheW91dF9mcmFjLA0KPj4gICAgICAgICAgICAgICAgICAgLnQgPSBQTExfVFlQRV9G
+UkFDLA0KPj4gLSAgICAgICAgICAgICAgICAgLmMgPSAxLCB9LA0KPj4gKyAgICAgICAgICAgICAg
+ICAgLmYgPSBDTEtfSVNfQ1JJVElDQUwsIH0sDQo+Pg0KPj4gICAgICAgICAgICAgICAgIHsgLm4g
+PSAiY3B1cGxsX2RpdnBtY2NrIiwNCj4+ICAgICAgICAgICAgICAgICAgIC5wID0gImNwdXBsbF9m
+cmFjY2siLA0KPj4gICAgICAgICAgICAgICAgICAgLmwgPSAmcGxsX2xheW91dF9kaXZwbWMsDQo+
+PiAgICAgICAgICAgICAgICAgICAudCA9IFBMTF9UWVBFX0RJViwNCj4+IC0gICAgICAgICAgICAg
+ICAgIC5jID0gMSwNCj4+ICsgICAgICAgICAgICAgICAgIC5mID0gQ0xLX0lTX0NSSVRJQ0FMIHwg
+Q0xLX1NFVF9SQVRFX1BBUkVOVCwNCj4+ICAgICAgICAgICAgICAgICAgIC5laWQgPSBQTUNfQ1BV
+UExMLCB9LA0KPj4gICAgICAgICB9LA0KPj4NCj4+IEBAIC0xMjYsMTMgKzEyNiwxMyBAQCBzdGF0
+aWMgY29uc3Qgc3RydWN0IHsNCj4+ICAgICAgICAgICAgICAgICAgIC5wID0gIm1haW5jayIsDQo+
+PiAgICAgICAgICAgICAgICAgICAubCA9ICZwbGxfbGF5b3V0X2ZyYWMsDQo+PiAgICAgICAgICAg
+ICAgICAgICAudCA9IFBMTF9UWVBFX0ZSQUMsDQo+PiAtICAgICAgICAgICAgICAgICAuYyA9IDEs
+IH0sDQo+PiArICAgICAgICAgICAgICAgICAuZiA9IENMS19JU19DUklUSUNBTCB8IENMS19TRVRf
+UkFURV9HQVRFLCB9LA0KPj4NCj4+ICAgICAgICAgICAgICAgICB7IC5uID0gInN5c3BsbF9kaXZw
+bWNjayIsDQo+PiAgICAgICAgICAgICAgICAgICAucCA9ICJzeXNwbGxfZnJhY2NrIiwNCj4+ICAg
+ICAgICAgICAgICAgICAgIC5sID0gJnBsbF9sYXlvdXRfZGl2cG1jLA0KPj4gICAgICAgICAgICAg
+ICAgICAgLnQgPSBQTExfVFlQRV9ESVYsDQo+PiAtICAgICAgICAgICAgICAgICAuYyA9IDEsDQo+
+PiArICAgICAgICAgICAgICAgICAuZiA9IENMS19JU19DUklUSUNBTCB8IENMS19TRVRfUkFURV9H
+QVRFLA0KPiANCj4gUGxlYXNlIGluZGljYXRlIHdoeSBjbGtzIGFyZSBjcml0aWNhbC4NCg0KU3Vy
+ZSEgSSdsbCBkbyBpdCBpbiBuZXh0IHZlcnNpb24uIEkgY2hvc2UgaXQgbGlrZSB0aGlzIGJlY2F1
+c2UgdGhleSBhcmUNCmZlZWRpbmcgY3JpdGljYWwgcGFydHMgb2YgdGhlIHN5c3RlbSBsaWtlIENQ
+VSBvciBtZW1vcnkuDQoNCj4gV2hlbmV2ZXIgdGhlIENMS19JU19DUklUSUNBTCBmbGFnDQo+IGlz
+IHVzZWQgd2Ugc2hvdWxkIGhhdmUgYSBjb21tZW50IGluZGljYXRpbmcgd2h5Lg0KDQpJIHdhcyBu
+b3QgYXdhcmUgb2YgdGhpcyBydWxlLiBJJ2xsIHVwZGF0ZSB0aGUgY29kZSBhY2NvcmRpbmdseS4N
+Cg0KVGhhbmsgeW91LA0KQ2xhdWRpdSBCZXpuZWENCg0KPiANCj4+ICAgICAgICAgICAgICAgICAg
+IC5laWQgPSBQTUNfU1lTUExMLCB9LA0KPj4gICAgICAgICB9LA0KPj4=
