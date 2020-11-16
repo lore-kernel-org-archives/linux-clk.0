@@ -2,100 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F83C4742C
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 15:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1398C64E7C
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 18:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA12A216C4
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 15:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E197207BC
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 18:34:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="GpnsUtXV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbgKPPW2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Nov 2020 10:22:28 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:2307 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729645AbgKPPW2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2020 10:22:28 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4CZXqW6bQgz13TJm;
-        Mon, 16 Nov 2020 23:21:59 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Mon, 16 Nov 2020 23:22:23 +0800
-Subject: Re: [PATCH v3 1/2] dt-bindings: Document the hi3559a clock bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20201114002237.35962-1-gengdongjiu@huawei.com>
- <20201114002237.35962-2-gengdongjiu@huawei.com>
- <20201116150223.GA1645329@bogus>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <8071c22d-1a9f-6353-7dd0-026de6e465de@huawei.com>
-Date:   Mon, 16 Nov 2020 23:22:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S2387417AbgKPSeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Nov 2020 13:34:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731711AbgKPSeV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2020 13:34:21 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B80AC0613CF
+        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2020 10:34:20 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id a18so14970139pfl.3
+        for <linux-clk@vger.kernel.org>; Mon, 16 Nov 2020 10:34:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=QVvcJdJmpqnlFCLLkW4zJyWf8eFpaM5XCv8ZqOAZ0do=;
+        b=GpnsUtXV4YL0rAUZfUERSVnakbTycQixdwQn/hCf72h7cri1fmlDUiNpse79XjaCw2
+         g2P6pw+NVIaxFf5IhooVnjLPtIzy6VAdcLReIgAl1KDzlaY+IDcZetkYDD595W4+NKsf
+         wgUh1h0rWegX0a2s9q4Zz73YgdlnUWXve3rX9xie55+JTzA6U1dtlOo7Cx2/io/BZQY/
+         xc1RbdkWd2Tp3ADIiKEjTz+rkKTTHPIjaZjuOrbMACi4h25rJMElou3zDamd6G/fPyua
+         eSv5tt2toV6jHCTL9eQgGyU1CWr675DHtGd2rxlldeYiJP0sp8J6CRp2tQ0x1SWBM5Vs
+         QVEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=QVvcJdJmpqnlFCLLkW4zJyWf8eFpaM5XCv8ZqOAZ0do=;
+        b=MYCX85imcUpsAJgh2c3g8JTN4ROpQQWHFQaYzKhSsfbTPkPvjKfZ+cvcHKn2ApvEoU
+         6PXEEQTTnLDtElzJYvgqwvV+1KNaoJ5D2SH6Kf6TWhKsni5DIfOoRX8pKy/KoZEKGwg6
+         TT16ZNzDViettSFOsvElhAP0s5WEKVnXTi6HDq0u/rzH0OGEmOJeeYiXDwMEkKpjXc5E
+         ZG/Kv90/g57AqD5cfyuvyiAP+k+H8Tv7ukQVjyj5rM+/v4cvHxT16ubdWFGZ5dOVAQ0v
+         FNKWZIE2ckato/fw6o6GsNmf5QoThJv3WwWtsRdSlRwHTmH8J7oWhS1OxSDywrQ6i7yx
+         MkwA==
+X-Gm-Message-State: AOAM530PGssC+wEaoY/M64P+4Br7plImxaA7G2p62vkNqe7PmzRytKVI
+        FwDWqU7aKXHmmt2DWCmdXn5Exg==
+X-Google-Smtp-Source: ABdhPJx+jGW+KoJEtsBTl+HxuBZ6EhpovPRpR3LhArqlcwWGbl3byEZO0CeKNKnYCF0Ey7VMLWtNog==
+X-Received: by 2002:a17:90a:d591:: with SMTP id v17mr261644pju.4.1605551659589;
+        Mon, 16 Nov 2020 10:34:19 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id j19sm20395117pfd.189.2020.11.16.10.34.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2020 10:34:19 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: meson: enable building as modules
+In-Reply-To: <1jft5hpq85.fsf@starbuckisacylon.baylibre.com>
+References: <20201109233622.23598-1-khilman@baylibre.com> <1jft5hpq85.fsf@starbuckisacylon.baylibre.com>
+Date:   Mon, 16 Nov 2020 10:34:18 -0800
+Message-ID: <7hsg9940d1.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20201116150223.GA1645329@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme712-chm.china.huawei.com (10.1.199.108) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-
-On 2020/11/16 23:02, Rob Herring wrote:
-> On Sat, 14 Nov 2020 00:22:36 +0000, Dongjiu Geng wrote:
->> Add DT bindings documentation for hi3559a SoC clock.
+> On Tue 10 Nov 2020 at 00:36, Kevin Hilman <khilman@baylibre.com> wrote:
+>
+>> Make it possible to build all clk drivers as modules, but default
+>> remains built-in.
 >>
->> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+>> No functional changes.
+>>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 >> ---
->>  .../clock/hisilicon,hi3559av100-clock.yaml    |  65 +++++++
->>  include/dt-bindings/clock/hi3559av100-clock.h | 165 ++++++++++++++++++
->>  2 files changed, 230 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
->>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
->>
-> 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.example.dts:20.23-27.11: Warning (unit_address_vs_reg): /example-0/clock0: node has a reg or ranges property, but no unit name
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.example.dt.yaml: clock0: compatible: ['hisilicon,hi3559av100-clock', 'syscon'] is too long
-> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.example.dt.yaml: clock0: compatible: Additional items are not allowed ('syscon' was unexpected)
-> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.example.dt.yaml: clock0: #reset-cells:0:0: 1 was expected
-> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
-> 
-> 
-> See https://patchwork.ozlabs.org/patch/1399891
-> 
-> The base for the patch is generally the last rc1. Any dependencies
-> should be noted.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
-ok， thanks a lot for the reminder.
+>> Depends on series adding new API to get clk consumer from clk_hw:
+>> https://lore.kernel.org/linux-amlogic/20201021162147.563655-1-jbrunet@baylibre.com/
+>
+> and
+>
+> https://lore.kernel.org/r/20201021163847.595189-1-jbrunet@baylibre.com
+>
+> Once these notifier allocations are dealt with, I'm happy to take this.
+>
+> One minor details though ...
 
-> 
-> .
-> 
+[...]
+
+>>  config COMMON_CLK_G12A
+>> -	bool "G12 and SM1 SoC clock controllers support"
+>> +	tristate "G12 and SM1 SoC clock controllers support"
+>>  	depends on ARM64
+>>  	default y
+>>  	select COMMON_CLK_MESON_REGMAP
+>> @@ -110,6 +110,7 @@ config COMMON_CLK_G12A
+>>  	select COMMON_CLK_MESON_AO_CLKC
+>>  	select COMMON_CLK_MESON_EE_CLKC
+>>  	select COMMON_CLK_MESON_CPU_DYNDIV
+>> +	select COMMON_CLK_MESON_VID_PLL_DIV
+>
+> This looks like a fix which could be sent separately with a fix tag,
+> doesn't it ?
+
+Ah, yes.  This is a fix which should be sent separately.  I'll split it
+out and resend.
+
+Thanks for the review,
+
+Kevin
