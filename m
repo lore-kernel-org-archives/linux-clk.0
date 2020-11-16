@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 756F0C6379D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1C5C6379F
 	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 14:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3EA1B2222C
+	by mail.kernel.org (Postfix) with ESMTP id 13FFB22265
 	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 14:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729955AbgKPOT5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Nov 2020 09:19:57 -0500
-Received: from out28-170.mail.aliyun.com ([115.124.28.170]:59150 "EHLO
-        out28-170.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbgKPOTv (ORCPT
+        id S1729568AbgKPOTv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Nov 2020 09:19:51 -0500
+Received: from out28-193.mail.aliyun.com ([115.124.28.193]:53073 "EHLO
+        out28-193.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729291AbgKPOTv (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2020 09:19:51 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08245762|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.22616-0.0193576-0.754482;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047211;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.IxS0Otf_1605536372;
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.7611277|0.8395645;CH=green;DM=|SPAM|false|;DS=CONTINUE|ham_regular_dialog|0.0296191-0.00170077-0.96868;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047188;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.IxS0Otf_1605536372;
 Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.IxS0Otf_1605536372)
           by smtp.aliyun-inc.com(10.147.40.7);
-          Mon, 16 Nov 2020 22:19:44 +0800
+          Mon, 16 Nov 2020 22:19:46 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     balbi@kernel.org, gregkh@linuxfoundation.org,
@@ -33,10 +33,12 @@ Cc:     linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
         dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
         rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
         sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
-Subject: [PATCH v9 0/3] Use the generic PHY framework for Ingenic USB PHY.
-Date:   Mon, 16 Nov 2020 22:19:03 +0800
-Message-Id: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v9 2/3] dt-bindings: USB: Add bindings for Ingenic JZ4775 and X2000.
+Date:   Mon, 16 Nov 2020 22:19:05 +0800
+Message-Id: <20201116141906.11758-3-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
+References: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,54 +46,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-v3->v4:
-Only add new generic-PHY driver, without removing the old one. Because the
-jz4740-musb driver is not ready to use the generic PHY framework. When the
-jz4740-musb driver is modified to use the generic PHY framework, the old
-jz4770-phy driver can be "retired".
+Move Ingenic USB PHY bindings from Documentation/devicetree/bindings/usb
+to Documentation/devicetree/bindings/phy, and add bindings for JZ4775 SoC
+and X2000 SoC.
 
-v4->v5:
-1.Add an extra blank line between "devm_of_phy_provider_register" and "return".
-2.Remove unnecessary "phy_set_drvdata".
-3.Add Paul Cercueil's Reviewed-by.
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+---
 
-v5->v6:
-1.Revert the removal of "phy_set_drvdata" in v5, removing "phy_set_drvdata" will
-  cause a kernel panic on CI20.
-  Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-2.Rewrite the macro definitions, replace the original code with "FIELD_PREP()"
-  and "u32p_replace_bits()" according to Vinod Koul's suggestion.
+Notes:
+    v8:
+    New patch.
+    
+    v8->v9:
+    Correct the path errors in "ingenic,phy-usb.yaml" and "ingenic,cgu.yaml".
 
-v6->v7:
-1.Remove the stray tab character.
-2.Remove unnecessary "platform_set_drvdata".
-3.Remove the "dev" field in priv structure, and use &phy->dev instead.
-
-v7->v8:
-Add support for Ingenic JZ4775 SoC and X2000 SoC.
-
-v8->v9:
-Correct the path errors in "ingenic,phy-usb.yaml" and "ingenic,cgu.yaml".
-
-周琰杰 (Zhou Yanjie) (3):
-  USB: PHY: JZ4770: Remove unnecessary function calls.
-  dt-bindings: USB: Add bindings for Ingenic JZ4775 and X2000.
-  PHY: Ingenic: Add USB PHY driver using generic PHY framework.
-
- .../devicetree/bindings/clock/ingenic,cgu.yaml     |   2 +-
- .../ingenic,phy-usb.yaml}                          |   4 +-
- drivers/phy/Kconfig                                |   1 +
- drivers/phy/Makefile                               |   1 +
- drivers/phy/ingenic/Kconfig                        |  12 +
- drivers/phy/ingenic/Makefile                       |   2 +
- drivers/phy/ingenic/phy-ingenic-usb.c              | 412 +++++++++++++++++++++
- drivers/usb/phy/phy-jz4770.c                       |   2 +-
- 8 files changed, 433 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/clock/ingenic,cgu.yaml              | 2 +-
+ .../{usb/ingenic,jz4770-phy.yaml => phy/ingenic,phy-usb.yaml}         | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
  rename Documentation/devicetree/bindings/{usb/ingenic,jz4770-phy.yaml => phy/ingenic,phy-usb.yaml} (89%)
- create mode 100644 drivers/phy/ingenic/Kconfig
- create mode 100644 drivers/phy/ingenic/Makefile
- create mode 100644 drivers/phy/ingenic/phy-ingenic-usb.c
 
+diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+index 5dd7ea8a78e4..c65b9458c0b6 100644
+--- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
++++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+@@ -92,7 +92,7 @@ required:
+ 
+ patternProperties:
+   "^usb-phy@[a-f0-9]+$":
+-    allOf: [ $ref: "../usb/ingenic,jz4770-phy.yaml#" ]
++    allOf: [ $ref: "../phy/ingenic,phy-usb.yaml#" ]
+ 
+ additionalProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml b/Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml
+similarity index 89%
+rename from Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml
+rename to Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml
+index 2d61166ea5cf..0fd93d71fe5a 100644
+--- a/Documentation/devicetree/bindings/usb/ingenic,jz4770-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/usb/ingenic,jz4770-phy.yaml#
++$id: http://devicetree.org/schemas/phy/ingenic,phy-usb.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Ingenic SoCs USB PHY devicetree bindings
+@@ -17,9 +17,11 @@ properties:
+   compatible:
+     enum:
+       - ingenic,jz4770-phy
++      - ingenic,jz4775-phy
+       - ingenic,jz4780-phy
+       - ingenic,x1000-phy
+       - ingenic,x1830-phy
++      - ingenic,x2000-phy
+ 
+   reg:
+     maxItems: 1
 -- 
 2.11.0
 
