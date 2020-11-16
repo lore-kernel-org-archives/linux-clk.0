@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F771C8303F
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F70C82643
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7428720853
+	by mail.kernel.org (Postfix) with ESMTP id E819820853
 	for <linux-clk@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbgKPLUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Nov 2020 06:20:06 -0500
-Received: from muru.com ([72.249.23.125]:48412 "EHLO muru.com"
+        id S1729585AbgKPLUL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Nov 2020 06:20:11 -0500
+Received: from muru.com ([72.249.23.125]:48428 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbgKPLUG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Nov 2020 06:20:06 -0500
+        id S1727228AbgKPLUK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Nov 2020 06:20:10 -0500
 Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 612F9813D;
-        Mon, 16 Nov 2020 11:20:11 +0000 (UTC)
+        by muru.com (Postfix) with ESMTP id DABDC8196;
+        Mon, 16 Nov 2020 11:20:15 +0000 (UTC)
 From:   Tony Lindgren <tony@atomide.com>
 To:     linux-omap@vger.kernel.org
 Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
         Dave Gerlach <d-gerlach@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Santosh Shilimkar <ssantosh@kernel.org>,
-        Suman Anna <s-anna@ti.com>
-Subject: [PATCH 01/17] clk: ti: am437x: Keep am4 l3 main clock always on for genpd
-Date:   Mon, 16 Nov 2020 13:19:23 +0200
-Message-Id: <20201116111939.21405-2-tony@atomide.com>
+        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 03/17] ARM: dts: am43xx: add remaining PRM instances
+Date:   Mon, 16 Nov 2020 13:19:25 +0200
+Message-Id: <20201116111939.21405-4-tony@atomide.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116111939.21405-1-tony@atomide.com>
 References: <20201116111939.21405-1-tony@atomide.com>
@@ -43,48 +43,69 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order for suspend and resume to work with genpd on am4, we must keep
-l3 main clock always on. Otherwise prm_omap driver will shut down the l3
-main clock on suspend when simple-pm-bus and GENPD_FLAG_PM_CLK are used.
-Note that we already keep the l3 main clock always on with the legacy
-platform code.
+From: Tero Kristo <t-kristo@ti.com>
 
-Later on we may want to start managing the l3 main clock with a dedicated
-interconnect driver instead of using simple-pm-bus and GENPD_FLAG_PM_CLK.
+Add remaining PRM instances for the am43xx SoC. Additionally enable the
+genpd support for them.
 
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/clk/ti/clk-43xx.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/am4372.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -272,6 +272,11 @@ static struct ti_dt_clk am43xx_clks[] = {
- 	{ .node_name = NULL },
- };
+diff --git a/arch/arm/boot/dts/am4372.dtsi b/arch/arm/boot/dts/am4372.dtsi
+--- a/arch/arm/boot/dts/am4372.dtsi
++++ b/arch/arm/boot/dts/am4372.dtsi
+@@ -548,6 +548,12 @@ target-module@56000000 {
+ #include "am43xx-clocks.dtsi"
  
-+static const char *enable_init_clks[] = {
-+	/* AM4_L3_L3_MAIN_CLKCTRL, needed during suspend */
-+	"l3-clkctrl:0000:0",
-+};
+ &prcm {
++	prm_mpu: prm@300 {
++		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
++		reg = <0x300 0x100>;
++		#power-domain-cells = <0>;
++	};
 +
- int __init am43xx_dt_clk_init(void)
- {
- 	struct clk *clk1, *clk2;
-@@ -283,6 +288,9 @@ int __init am43xx_dt_clk_init(void)
+ 	prm_gfx: prm@400 {
+ 		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
+ 		reg = <0x400 0x100>;
+@@ -555,16 +561,36 @@ prm_gfx: prm@400 {
+ 		#reset-cells = <1>;
+ 	};
  
- 	omap2_clk_disable_autoidle_all();
- 
-+	omap2_clk_enable_init_clocks(enable_init_clks,
-+				     ARRAY_SIZE(enable_init_clks));
++	prm_rtc: prm@500 {
++		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
++		reg = <0x500 0x100>;
++		#power-domain-cells = <0>;
++	};
 +
- 	ti_clk_add_aliases();
++	prm_tamper: prm@600 {
++		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
++		reg = <0x600 0x100>;
++		#power-domain-cells = <0>;
++	};
++
++	prm_cefuse: prm@700 {
++		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
++		reg = <0x700 0x100>;
++		#power-domain-cells = <0>;
++	};
++
+ 	prm_per: prm@800 {
+ 		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
+ 		reg = <0x800 0x100>;
+ 		#reset-cells = <1>;
++		#power-domain-cells = <0>;
+ 	};
  
- 	/*
+ 	prm_wkup: prm@2000 {
+ 		compatible = "ti,am4-prm-inst", "ti,omap-prm-inst";
+ 		reg = <0x2000 0x100>;
+ 		#reset-cells = <1>;
++		#power-domain-cells = <0>;
+ 	};
+ 
+ 	prm_device: prm@4000 {
 -- 
 2.29.2
