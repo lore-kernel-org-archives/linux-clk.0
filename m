@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6A7C2D0E4
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 15:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34239C2D0E4
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7C6C2463D
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 15:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9822463D
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgKQPt3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 10:49:29 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:40507 "EHLO
+        id S1726701AbgKQQDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 11:03:17 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:60195 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbgKQPt3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 10:49:29 -0500
+        with ESMTP id S1726588AbgKQQDR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 11:03:17 -0500
 Received: from orion.localdomain ([95.118.38.12]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MDeAZ-1kWV2Z1QJj-00AjEx; Tue, 17 Nov 2020 16:49:16 +0100
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MOiLp-1kueNm03x9-00QFEO; Tue, 17 Nov 2020 17:03:09 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH] drivers: clk: make gpio-gated clock support optional
-Date:   Tue, 17 Nov 2020 16:49:15 +0100
-Message-Id: <20201117154915.19951-1-info@metux.net>
+Subject: [PATCH] (v2) drivers: clk: make gpio-gated clock support optional
+Date:   Tue, 17 Nov 2020 17:03:06 +0100
+Message-Id: <20201117160306.21760-1-info@metux.net>
 X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:PbXwhxgZEHmBSuv2/cxNCEqWXKG8HNRUpU5VDyHQtaeNY2Q3q53
- emv4MJ03ToWKfXlnHO0lBgf6YnxAqhGMwat2O2xWssDus2zJwPXISE3s/90UsQJTo/hX82M
- 7I82cTnzgeupAnPOCvoXgXjuWiZu5r1X3FN5f34r7KEmL3LqANbe18yOIFsTb2AGUOCm//r
- c0oemH+sYEj7AD7oAab5A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0R1qHjUzETc=:SjUN+Br12J7imWezXdxNi7
- 5d1wBxcHv134q1wVsopfeUPHxvbWDv7torQVGiB9OiZBd5+RPP3t7UpXxkA6GeeFP65wPjpiA
- jvAwRo6LS/HHCYdmCN2K+cBAqYt1oXXCerAqrIUMfby9kDVUr1FnJYWCP67m+lrvre9osu2QC
- PAsimuwCNtFXfjzCteljXYI8JsuElSxdSCyNztzLEw2yjW52N8e1xeesd1pcgdWPk9M8MFevQ
- 3ijmUaiYROZsA5ZomixqGQsUN67EFYZYllZ8wz+ITGQxAKGKufUKhVFFatG0h8Q7Yesj7m5Gq
- 6YGw6RVx7dO7fSiyBz+K9VVJEEYlAetdzi4upwW2T1GHStJQi9lCqGvFWIhj7aIXx/R2+CUlx
- Xw2YuTTjcaon8TelJTYWNcwLXqpJWjgt3MPlBMLEk067chgNIF3qz8AoYETZN
+X-Provags-ID: V03:K1:DHjCkcHF4JV+D/H9vn6hiuerLHesxxqjWv+whhAPfXYe3PLpd2f
+ vXBSTvFcEOJoptHYXN42T0LP8oGsscHMyzkbICW0N1y6d5gI2P3j7mHyNXEoUktsQAfWJFT
+ vlgr3I9uFKbNCpsj+nvAom90IuQSdLIL5y2NuGAro/Y49GwCRY126YfpBnmMSZDcMn8UA9Y
+ 5eum4UEVwEBWfGqSvPcPw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nuDhTfKWFYQ=:TLnx//cNjXuEVcQGeldan1
+ YRkSUqyJoC67kUo7o0/z3cOzQTttBcG712R6qRps4U4tNVNKsqQSJlce+baUrDJYDATI7NzsH
+ h9lhTFJ9252aXls1GYDxSx1VNRow5IIbAFMAfllvno6w/U2eDRoG+Gd2W6uBRfTtO9e4kxvud
+ GAlMc9zTIwfL1RVKgWtBXIeL+evKjbBWsnngwS9flzrVQajfwybvW/EfAXmMp/4UT1v797EE2
+ dZB710fmq5fFSiGkYFFKHgq6fytbUZHFJoVr70Nvd2TAFlFqXqAOD+QyR7NGfQHYm2LDUa4wG
+ t/JyWAPRSnoIEzWrhrL4S2uvDiBVPRH3LwAQc04x/OxA7niHiRi6uaSgGcMor8Rs/ziUl1E67
+ CDJQ4Dc8a0rFqBaeuxr/M0dcYn/lCy4meVvUraz/51eiRiLEpGoSIlKR4u66m
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -51,23 +51,26 @@ it unconditionally.
 
 Thus make it optional, but keep it enabled by default.
 
+fixes v2: added missing dependency on gpiolib
+
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/clk/Kconfig  | 7 +++++++
+ drivers/clk/Kconfig  | 8 ++++++++
  drivers/clk/Makefile | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c715d4681a0b..ec5b3a75bcf4 100644
+index c715d4681a0b..99e0188a15be 100644
 --- a/drivers/clk/Kconfig
 +++ b/drivers/clk/Kconfig
-@@ -38,6 +38,13 @@ menuconfig COMMON_CLK
+@@ -38,6 +38,14 @@ menuconfig COMMON_CLK
  
  if COMMON_CLK
  
 +config COMMON_CLK_GPIO
 +	tristate "GPIO gated clock support"
 +	default y
++	select gpiolib
 +	help
 +	  Supports gpio gated clocks, which can be enabled/disabled via
 +	  gpio output.
