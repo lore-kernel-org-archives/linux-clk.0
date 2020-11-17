@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D44AC64E7B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EE0C64E75
 	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA762222E
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87012463B
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:46:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIOGOw6h"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gv9iMNUE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbgKQTpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 14:45:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34534 "EHLO
+        id S1730464AbgKQTpd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 14:45:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730464AbgKQTpV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 14:45:21 -0500
+        with ESMTP id S1730578AbgKQTpZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 14:45:25 -0500
 Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1C1DC0617A6;
-        Tue, 17 Nov 2020 11:45:20 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id cq7so23742004edb.4;
-        Tue, 17 Nov 2020 11:45:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C42BC0613CF;
+        Tue, 17 Nov 2020 11:45:24 -0800 (PST)
+Received: by mail-ed1-x543.google.com with SMTP id e18so23767851edy.6;
+        Tue, 17 Nov 2020 11:45:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cfXI1Q85bb28+McjuHeu3xbkODr0lp86DQ42QSmzooY=;
-        b=UIOGOw6hK+SW6PZnTFb6Ge3JqTDe/NwtTmNJTO4P+2RtdCxVwpi7Rq/Aqdy7x6Adcp
-         wRP88fBy5dFJaM2aQnbeAQ86OaDGwNfxN12gzmJ3dkqFpVnOiTua1TOmWPi7J28YErO5
-         +vT7F/x1TgHqtmEhUwh1PGspoG99p7+7gC8IC1SqDzWM6y+6IByo7u7LnARJsyzVo3vk
-         EGBbLldPVSZ2FfdplHh31JJWObz6Q/AbWGttToOaFGaxQ4Bnap+uRazajLZG+ZNqt8mO
-         LDNPLKADpPwuoYQpU5npEVkcgsD8/4BWY1DBz+1+56qMZZS+niS+ovqyTi/ggQR6pvM/
-         lMSQ==
+        bh=/M45YtMWBHvWX7HJgiaCX3duzycDxACgeh25TxK15Eg=;
+        b=gv9iMNUExdomLmhZ6/3RtkBaW3AhpWBSUWSrMO1oLfdXYLZKQ0dl9R4nUwEcxPz1V0
+         mijrwHA55UDncYNgagM9CjzpkasGyZQoc3OpbH5CXsWqB2RXLkTBzhyOkCyKX2oxJpeb
+         Cwkb3M6jllsXM2EVpeBVtFwAtu16JC1xGqamfyB9l0yrXPxgPasdkyldRj/5V4DH6Awd
+         iNOINqDFXEiDXichdp0Q/ygBI5MghrASAsL7lKCJ8uR6kmH3Q5B2JU5Dl2Czrb8IMnf+
+         ndjcDuDSRacZCVEFgjLl1RQo58XMQZZ6lrS28sjX1rAs/o4SH4t8XgaWKHyUJXwmiPpv
+         ov7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cfXI1Q85bb28+McjuHeu3xbkODr0lp86DQ42QSmzooY=;
-        b=P2ocJ4QT/dyAJAgpkCemwYWS6Emz0mxWvhfLZ7eyd5pN9mI64Yn+8Bzc9FrOq5wwx7
-         4qHgmienHb9D26Y76cu6oWaeYfCy2V38p50WGGD/CyQBy/Ew/CD5hJbSkjhthN0Wq3Vh
-         mQ/mljxm94LS/m2PpB89iX595GMkNv6xZ3MyWPgLJhfkY4yohK8x0Ym12IF6fntA+tl/
-         q2Wvcpu9axfWkdpzKlqDvWO0sNV2WmxL5q0AaPG3zUGctTTaNNZ6uDaCAygXhEygyr3w
-         Mteq9diixRnsxi1Vn5cvRqwYTiS1APdQE3tjNGSRGsW9X+lTVpbOHmaP2vitLZfnACD6
-         QAUg==
-X-Gm-Message-State: AOAM530xJDYrNmyAmwKloZrzUuL31y32GY9izEOi1eL0412D/FgnhXN5
-        DD+7G8Y6TdyYrkNjjBoSswDaaHuMTBVnRw==
-X-Google-Smtp-Source: ABdhPJzm63HVDveFpEYpiHWpLCJrGBMkWK296r8Fu/+E5TNgbXn9uz3U4HX7amby2EJhlwkYrbPUvQ==
-X-Received: by 2002:a05:6402:1389:: with SMTP id b9mr12408755edv.178.1605642319735;
-        Tue, 17 Nov 2020 11:45:19 -0800 (PST)
+        bh=/M45YtMWBHvWX7HJgiaCX3duzycDxACgeh25TxK15Eg=;
+        b=YigKzk3YCOg2wMypj+ww5FsCBF8JMM1eXqQhBP4DPk5ZQHhn1Y/qVsv0mXZX+OFXz9
+         ARvAnOAOYlMJFV8VHSAvvrQRJd08oYtsCxbTlOhnxzsyMQ4G2nxtjYQ3qSmOANhUkzIY
+         JxpanVD0hZ8ziYnRb4Iktv13GwI1na8EHZ3YhAU/jLLUM7ov4gFzQd9lg/TpsQ1KhnOo
+         CEu1evpgsQPHI3+iExGxAKSo8uMryYYDWXcqIiBNZL5rjEBhVxH9hkVeQwXCF/ON1Xuw
+         KSPk34+Rfoodf6hmsIgtr/6aAjX306d7BLeL0sZzlC6aWSmZaaYQVISdH//GAGwZh3UG
+         QBIw==
+X-Gm-Message-State: AOAM532mD66Ebcbg/MbDIZT7E+BmM+nF3GCXYRga62YDPUQV6Z1L9o/Q
+        QF1EHlixG/4HIlzJ0bBR1Nw=
+X-Google-Smtp-Source: ABdhPJw0SEhxpFWNTsu1mkMrCWY8UFWsWPMj03LOTEeqmIC1KaMO+Jigt4JOZdpDCQfeyl7XDV8vHQ==
+X-Received: by 2002:a05:6402:6d6:: with SMTP id n22mr23176808edy.82.1605642323246;
+        Tue, 17 Nov 2020 11:45:23 -0800 (PST)
 Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id w2sm727972ejc.109.2020.11.17.11.45.18
+        by smtp.gmail.com with ESMTPSA id w2sm727972ejc.109.2020.11.17.11.45.22
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Nov 2020 11:45:19 -0800 (PST)
+        Tue, 17 Nov 2020 11:45:22 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
@@ -65,9 +65,9 @@ Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/7] dt-bindings: display: add #sound-dai-cells property to rockchip rk3066 hdmi
-Date:   Tue, 17 Nov 2020 20:45:03 +0100
-Message-Id: <20201117194507.14843-4-jbx6244@gmail.com>
+Subject: [PATCH v4 6/7] ARM: dts: rockchip: add hdmi-sound node to rk3066a.dtsi
+Date:   Tue, 17 Nov 2020 20:45:06 +0100
+Message-Id: <20201117194507.14843-7-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20201117194507.14843-1-jbx6244@gmail.com>
 References: <20201117194507.14843-1-jbx6244@gmail.com>
@@ -75,38 +75,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-'#sound-dai-cells' is required to properly interpret
-the list of DAI specified in the 'sound-dai' property.
-Add it to rockchip,rk3066-hdmi.yaml to document that the
-rk3066 HDMI TX also can be used to transmit some audio.
+Add hdmi-sound node to rk3066a.dtsi, so that it
+can be reused by boards with HDMI support.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- .../devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml    | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/rk3066a.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
-index 4110d003c..585a8d3b9 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
-@@ -42,6 +42,9 @@ properties:
-     description:
-       This soc uses GRF regs to switch the HDMI TX input between vop0 and vop1.
+diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
+index 67fcb0dc9..f91ce3054 100644
+--- a/arch/arm/boot/dts/rk3066a.dtsi
++++ b/arch/arm/boot/dts/rk3066a.dtsi
+@@ -49,6 +49,22 @@
+ 		ports = <&vop0_out>, <&vop1_out>;
+ 	};
  
-+  "#sound-dai-cells":
-+    const: 0
++	hdmi_sound: hdmi-sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "HDMI";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,mclk-fs = <256>;
++		status = "disabled";
 +
-   ports:
-     type: object
- 
-@@ -101,6 +104,7 @@ examples:
-       pinctrl-names = "default";
-       power-domains = <&power RK3066_PD_VIO>;
-       rockchip,grf = <&grf>;
-+      #sound-dai-cells = <0>;
- 
-       ports {
-         #address-cells = <1>;
++		simple-audio-card,codec {
++			sound-dai = <&hdmi>;
++		};
++
++		simple-audio-card,cpu {
++			sound-dai = <&i2s0>;
++		};
++	};
++
+ 	sram: sram@10080000 {
+ 		compatible = "mmio-sram";
+ 		reg = <0x10080000 0x10000>;
 -- 
 2.11.0
 
