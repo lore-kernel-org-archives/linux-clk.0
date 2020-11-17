@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D09C64E69
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A41C64E7C
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52BA52463F
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E14962463F
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQfdSGQu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/P6lB+w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbgKQTpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 14:45:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34524 "EHLO
+        id S1730830AbgKQTp3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 14:45:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbgKQTpT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 14:45:19 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D1AC0613CF;
-        Tue, 17 Nov 2020 11:45:18 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id k4so7030992edl.0;
-        Tue, 17 Nov 2020 11:45:18 -0800 (PST)
+        with ESMTP id S1730464AbgKQTp1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 14:45:27 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3F2C0617A6;
+        Tue, 17 Nov 2020 11:45:25 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id d18so10850907edt.7;
+        Tue, 17 Nov 2020 11:45:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iGo+ZN3tAXAxv3w8yNYuIIpSkiLbRMRp3Fk34AunwFo=;
-        b=XQfdSGQug74wE57EDrUQcCwv7ZUJWtBXN01FdoRbPoHB0gW73UHsF61Bpr7LBhFNdP
-         w9XxyHke8I9Xz8vs4Exv7IxndU25bpqtO7CqysEz8MDBU8QynFD6SCgWeJD/5t6VbCmv
-         DJ/+01cA56p+DUwBYdBt8SIpMZcDSfOnEt1BaQCs6dCxDAwwu0CyyRTjmN89cqlzGV4W
-         CdDeMzFE8TedSqG9OfayovDxEdV+SZ8ciISQFShyOeS/BagY9Vnqy8I7ekOdkAAa5gsX
-         lkbymMefNwT00tGalZbO0r5vI+aIHB0A5D64fpPcJfCMwye9NawQ0nX1/oHo5VikF6kn
-         ukNg==
+        bh=MNzWsDtU39BR4iFEfSJQ9mnoYu92ToJLMEGgLWUUrPw=;
+        b=j/P6lB+wO6vdZOi5Agv1mqQVbIrni+q+ALO6i+QbbntEAjO3ALjbyoaIccUUaOa0Yj
+         o6cvV+wMx3wOdDlbzNzxjXywYGNQbe72oR4JacgcqedptYB1kV4gPGE+9dGv9jes269G
+         Bq0r064CiJxLQraZzATdDk96xLcU/rIXbMJPuKTx1omwbiBt8qZeYKJpGfqDIPuYdMfY
+         kyat5CUjgA9yeRMemvobcamXiv2alDl+Dd1uzPC8Lmqx7g7WXqB3glUF4qtkFkoaYh1h
+         ZI4XdciXwfyp2DhlBEthUhQgPupbBA3tggimAtRPScUSsyZY2QGd69uiH5vjBKPHREA3
+         /ZCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iGo+ZN3tAXAxv3w8yNYuIIpSkiLbRMRp3Fk34AunwFo=;
-        b=n2J9K+pclDgy4Ai6o6Le010G+e1Rf0GDkYFk/i5mSoEk/WSqFiqPbQ6wjHWBnEIEYb
-         fYz1/is59qkdTtpB+jJ5UT8xD5kHooAQ9KjFgo8IHTKS1sdzS3h+5bNFRIL0OJ7gC7ns
-         KWkrJ9OceNicXTFC/vhShx4xNmj+Lg6WmBQxy/5aiCBiIG2VzXhb0u1fTPXcews5hoS5
-         wOJGxKH+fUJINvmIUv/8MCYobZ8tSnMOTOurVo1pi7vurCNc5Dmn26VeYoJwPORB8vbx
-         afiC0cuGaP0AMSBjsT4FQDzigLo0U/sZodIMlPDrAts70LSd8SPC4yJqgbzuYtFOveV8
-         5nkw==
-X-Gm-Message-State: AOAM5316iNBq4pOlBsLlb40MGcqsRPeKRkJ3WLdYvDcqtEPvdDv55TD4
-        HEI/1EzAWaf/GbTn57UNyys=
-X-Google-Smtp-Source: ABdhPJyJxBsI7UzMAZkh+RoYMhBgZCCmMMEWzjjea4hV0eMUQ97cCmDrfRIc+G8Gjy1ktw15PxCicg==
-X-Received: by 2002:aa7:c617:: with SMTP id h23mr21899993edq.154.1605642317521;
-        Tue, 17 Nov 2020 11:45:17 -0800 (PST)
+        bh=MNzWsDtU39BR4iFEfSJQ9mnoYu92ToJLMEGgLWUUrPw=;
+        b=dJuvB3Qgo1AGvdC2TdoWLF8PQfOPudWcf5FfmyGdfNRvhegV3YjgoBVoDApD4NuvX7
+         kn3e/B6IMf1+RQauSuKG+aMnzKnFeXFF+a+MPHlCSQc2/bXPwXULZZixOM6oNZTyUixw
+         QqcqWL8vTRoFRnzBBXXyhludzAFl9bCYcV2VN7Od+a/bEPcvMdAQDKGPs16hXkqFdcAk
+         bkCO/y9zwnJxLo+uxfleouZC6Jm6sAuH0vGcuf2uwrePgaVPYGLrO4B8wF3oy9aJS5i4
+         e6ffe0mtMoHPxdns4rw7qgKQdt7ZtzN71KKHFLf3mF8Be07oKW/ug1bkwlvPDg7jV7uu
+         CQRg==
+X-Gm-Message-State: AOAM531i81udNCiTCYipIk4kP0BfNcERPxd5Qixb5VmGdradl6zS067K
+        kBB4QG1SDASS1v833uYTvOk=
+X-Google-Smtp-Source: ABdhPJyrzzhxGF5lvPmDjYfPklRS9F51sz7rQAaESr2rA6OkcPjado8yI8xHELXCq5r82ignHt0H3A==
+X-Received: by 2002:a50:a105:: with SMTP id 5mr21926061edj.165.1605642324325;
+        Tue, 17 Nov 2020 11:45:24 -0800 (PST)
 Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id w2sm727972ejc.109.2020.11.17.11.45.16
+        by smtp.gmail.com with ESMTPSA id w2sm727972ejc.109.2020.11.17.11.45.23
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Nov 2020 11:45:16 -0800 (PST)
+        Tue, 17 Nov 2020 11:45:23 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
@@ -65,9 +65,9 @@ Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/7] clk: rockchip: add CLK_SET_RATE_PARENT to sclk for rk3066a i2s and uart clocks
-Date:   Tue, 17 Nov 2020 20:45:01 +0100
-Message-Id: <20201117194507.14843-2-jbx6244@gmail.com>
+Subject: [PATCH v4 7/7] ARM: dts: rockchip: enable hdmi_sound and i2s0 for rk3066a-mk808
+Date:   Tue, 17 Nov 2020 20:45:07 +0100
+Message-Id: <20201117194507.14843-8-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20201117194507.14843-1-jbx6244@gmail.com>
 References: <20201117194507.14843-1-jbx6244@gmail.com>
@@ -75,120 +75,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CLK_SET_RATE_PARENT to sclk for rk3066a i2s and uart clocks,
-so that the parent COMPOSITE_FRACMUX and COMPOSITE_NOMUX
-also update.
+Make some noise with mk808. Enable the hdmi_sound node and
+add i2s0 as sound source for hdmi.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- drivers/clk/rockchip/clk-rk3188.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/rk3066a-mk808.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 730020fcc..db8c58813 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -255,19 +255,19 @@ static struct rockchip_clk_branch common_spdif_fracmux __initdata =
- 			RK2928_CLKSEL_CON(5), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch common_uart0_fracmux __initdata =
--	MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, 0,
-+	MUX(SCLK_UART0, "sclk_uart0", mux_sclk_uart0_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(13), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch common_uart1_fracmux __initdata =
--	MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, 0,
-+	MUX(SCLK_UART1, "sclk_uart1", mux_sclk_uart1_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(14), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch common_uart2_fracmux __initdata =
--	MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, 0,
-+	MUX(SCLK_UART2, "sclk_uart2", mux_sclk_uart2_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(15), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch common_uart3_fracmux __initdata =
--	MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, 0,
-+	MUX(SCLK_UART3, "sclk_uart3", mux_sclk_uart3_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(16), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch common_clk_branches[] __initdata = {
-@@ -408,28 +408,28 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "uart0_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(13), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 8, GFLAGS),
--	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart0_frac", "uart0_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(17), 0,
- 			RK2928_CLKGATE_CON(1), 9, GFLAGS,
- 			&common_uart0_fracmux),
- 	COMPOSITE_NOMUX(0, "uart1_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(14), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 10, GFLAGS),
--	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart1_frac", "uart1_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(18), 0,
- 			RK2928_CLKGATE_CON(1), 11, GFLAGS,
- 			&common_uart1_fracmux),
- 	COMPOSITE_NOMUX(0, "uart2_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(15), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 12, GFLAGS),
--	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart2_frac", "uart2_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(19), 0,
- 			RK2928_CLKGATE_CON(1), 13, GFLAGS,
- 			&common_uart2_fracmux),
- 	COMPOSITE_NOMUX(0, "uart3_pre", "uart_src", 0,
- 			RK2928_CLKSEL_CON(16), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(1), 14, GFLAGS),
--	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_pre", 0,
-+	COMPOSITE_FRACMUX(0, "uart3_frac", "uart3_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(20), 0,
- 			RK2928_CLKGATE_CON(1), 15, GFLAGS,
- 			&common_uart3_fracmux),
-@@ -543,15 +543,15 @@ static struct clk_div_table div_aclk_cpu_t[] = {
+diff --git a/arch/arm/boot/dts/rk3066a-mk808.dts b/arch/arm/boot/dts/rk3066a-mk808.dts
+index eed9e60cf..5fe74c097 100644
+--- a/arch/arm/boot/dts/rk3066a-mk808.dts
++++ b/arch/arm/boot/dts/rk3066a-mk808.dts
+@@ -116,6 +116,14 @@
+ 	};
  };
  
- static struct rockchip_clk_branch rk3066a_i2s0_fracmux __initdata =
--	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, 0,
-+	MUX(SCLK_I2S0, "sclk_i2s0", mux_sclk_i2s0_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(2), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3066a_i2s1_fracmux __initdata =
--	MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, 0,
-+	MUX(SCLK_I2S1, "sclk_i2s1", mux_sclk_i2s1_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(3), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3066a_i2s2_fracmux __initdata =
--	MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, 0,
-+	MUX(SCLK_I2S2, "sclk_i2s2", mux_sclk_i2s2_p, CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(4), 8, 2, MFLAGS);
- 
- static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
-@@ -615,21 +615,21 @@ static struct rockchip_clk_branch rk3066a_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "i2s0_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(2), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 7, GFLAGS),
--	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s0_frac", "i2s0_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(6), 0,
- 			RK2928_CLKGATE_CON(0), 8, GFLAGS,
- 			&rk3066a_i2s0_fracmux),
- 	COMPOSITE_NOMUX(0, "i2s1_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(3), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 9, GFLAGS),
--	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s1_frac", "i2s1_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(7), 0,
- 			RK2928_CLKGATE_CON(0), 10, GFLAGS,
- 			&rk3066a_i2s1_fracmux),
- 	COMPOSITE_NOMUX(0, "i2s2_pre", "i2s_src", 0,
- 			RK2928_CLKSEL_CON(4), 0, 7, DFLAGS,
- 			RK2928_CLKGATE_CON(0), 11, GFLAGS),
--	COMPOSITE_FRACMUX(0, "i2s2_frac", "i2s2_pre", 0,
-+	COMPOSITE_FRACMUX(0, "i2s2_frac", "i2s2_pre", CLK_SET_RATE_PARENT,
- 			RK2928_CLKSEL_CON(8), 0,
- 			RK2928_CLKGATE_CON(0), 12, GFLAGS,
- 			&rk3066a_i2s2_fracmux),
++&hdmi_sound {
++	status = "okay";
++};
++
++&i2s0 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	bus-width = <4>;
+ 	cap-mmc-highspeed;
 -- 
 2.11.0
 
