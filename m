@@ -2,138 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 552C2C388F9
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 02:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ED4C2D0E4
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 04:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA994246A4
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 02:47:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cfAl9Pve"
+	by mail.kernel.org (Postfix) with ESMTP id C90BB24695
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 04:46:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgKQCr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Nov 2020 21:47:57 -0500
-Received: from mail-am6eur05on2060.outbound.protection.outlook.com ([40.107.22.60]:27571
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725901AbgKQCr5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Nov 2020 21:47:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cSBXuYwsV1I4ptcvbZK6HmSt33Bdp6nF9yZukPdT/eYoUGzTPzJpYFsZaug/BRR2IbERZvQJnsrubtHubMPeEx6ZDevcxNdjxAfn+DeBdVkalvuCe3EZGMbx9I0awspIFBPqyUZGtM5Tgc2wf+m9dzXuawPh5P9YKRssaA6VZVhaaBq28HLBBwcTIYcu4H3glMpFNcQonubKC3LUfKus+F94+fsNKqffVESuk9fvWzcgzdZrkfII7DvktGgK8m8wPJL4Tb4gDeNsz6MZw/rUwFXZqQ9nOSO89XW9xcY+44sJ7HIkprlylsFmUj97Ovsg+gujwTpkF223dffL+I6ZCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OkvbaNwOHDfcil9VdvsKJSK2no7rLIYjjPRkPF2sV3w=;
- b=BGIqFDMFyXhm9p6t+hTNpEw5RtIArXBL4VMLWLxRDA8Rv/kIU9rmWDl4Dev2vRfF8I8ulV4/fd7EF8BpKxqSUw4TVzcyAxoG9YVeYHY/OY0XRKSyEEESvqWl9VpqlAcDNa247Zqqd2MqH18JuP+kb9M2DYhIMJzCLoLVQfbRhFfyOymPHzaQElHTcgPpZJfs4I20PDlJdLKJV4yycAsKcT/1OQMaLYrtMtSqcU6kekNRRX0rDSzXcPqmMYbSJ9iEzs34blws/HlNIW01bW8PrMWjdzLWcGVhwKFjagX2b7CuDN4C8ot9OpyRD5hrFp/GS60Oh3myh9438SBGn1OSkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OkvbaNwOHDfcil9VdvsKJSK2no7rLIYjjPRkPF2sV3w=;
- b=cfAl9Pveduq5cucMg3dJLnZIeJyI5dej97DLF+BBABcabPoEpSuXe8q8yhq2DCXhEt9i8IkJHlQVWe6T/PNjaracfsq2jumFc5ykXYvK/mEa1chcSctKHG5qsJFYJ8HluLijiTyzNtDMIaEMMnnkEBVFEU+Cr2hRW8qbUOEccSI=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DBBPR04MB7817.eurprd04.prod.outlook.com (2603:10a6:10:1ef::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.25; Tue, 17 Nov
- 2020 02:47:53 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::ec42:b6d0:7666:19ef]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::ec42:b6d0:7666:19ef%8]) with mapi id 15.20.3564.028; Tue, 17 Nov 2020
- 02:47:53 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        id S1726289AbgKQEp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Nov 2020 23:45:58 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:44097 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726274AbgKQEp6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Nov 2020 23:45:58 -0500
+X-Greylist: delayed 580 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Nov 2020 23:45:57 EST
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 13E9C12DF;
+        Mon, 16 Nov 2020 23:36:16 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 16 Nov 2020 23:36:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=p
+        kszPB7jeuJ2s0wgF4vEobMXp32NtsKINiE+dXw3VWA=; b=faQ040BYeumwKBqS6
+        VAgIb8XEx/yt88bgcSSTyuSgg1Q5pyEZmTnJEbTiC4s4pePmK1u+vJH3bKt5aZxf
+        XW3VZ9Pb64FCp5XALSrSSy64yoR3ZJoi8/e3ZFmnBawHo6fSIKeki5mAud8PKC/w
+        Ii+6Sky1WOR9vNl3CcZjrX/gcd3g6Zv/DSMcxYwzDZPYRqq13lo0yuH4Ly7db1Vd
+        bkqjPkR2/Qq0uMk/zQktEidmdrJ8bNf8SQqlHcQdkSVoVHe5p5tVYGaVpJtGGwV8
+        H8e9QWoWiLC+647XqQo/FMGZuh9TPoWZpqBdFarSKUH+MgQ0WisQIsZNi/7rE9xN
+        /LQcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=pkszPB7jeuJ2s0wgF4vEobMXp32NtsKINiE+dXw3V
+        WA=; b=mEqfsoGrOXn64UpvVznr0IwaETGuAhL2+cFv1OI8DwzMW77ixhdVGpdMN
+        vbbjCqXHZI3ftX7YRTEXh4j9tdX6C2d3qBB1zMZcD+4stis12XSzEK+oa9jTReMM
+        rObIAu9/GoMkhtlplDQ3gKrQoKHvBbAOTBm1ab5RFY5z5lOSCHBxRuhasVcflOZt
+        USPLpZHetF27YtYyyqVLoxcIJdRPioe09ZHdFK+XaYf5liRbwES3Xvik6OPsfVWu
+        EAUS8qwBnOsI4OtnPnaIBj9N4xH0Br5cMpME7Jyge/JWsJQMZfhczsVXnKibxoyX
+        UCfxT/7H5dcnMZSEvmMvLaCgPwkMQ==
+X-ME-Sender: <xms:PVOzXz6kXgyWcKgQjxAevdVgKQpWBF6dhptuhu2_khtd-9N8T8jUPg>
+    <xme:PVOzX46--cBuRWjUkte98zmS-9qkfNnEabFIoXDk2U_SX_NmSxLTsxU0a-pJoWhU4
+    XkzGqvpATX-3Vj_kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudefvddgiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepgfevffetleehffejueekvdekvdeitdehveegfeekheeuieeiueet
+    uefgtedtgeegnecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
+    nhgurdhorhhg
+X-ME-Proxy: <xmx:PVOzX6cO0lFlBJXntTv3tGcR9iQZWWG7530idRXzM3N7fUF8-acCLA>
+    <xmx:PVOzX0KzcSio2QdVCCWApNH4gdajMeu7Z_TXHSOdkGDVJICDxBAJ7Q>
+    <xmx:PVOzX3Jjkhi5yiNbY5W4mRVc8Mq5jjB2y49yIGB24iXBZSUvduwC3A>
+    <xmx:P1OzXw6oI-JF_KyUNvkPBU0U7NPkZyzfoH3N--HMfZKlzYlSRjYYUg9gSSc>
+Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D73E13280060;
+        Mon, 16 Nov 2020 23:36:12 -0500 (EST)
+Subject: Re: [RFC 2/3] ARM: sunxi: do not select COMMON_CLK to fix builds
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: RE: [RFC 0/4] clk: imx: Register the dram_apb and dram_alt as
- read-only 
-Thread-Topic: [RFC 0/4] clk: imx: Register the dram_apb and dram_alt as
- read-only 
-Thread-Index: AQHWp9DHtYlAfQ1tB0iCCzMj1hVKEqnLyEvw
-Date:   Tue, 17 Nov 2020 02:47:53 +0000
-Message-ID: <DB6PR0402MB276070853555160D0AB5641C88E20@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1603301815-24670-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: nxp.com; dkim=none (message not signed)
- header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7a1a3dc0-d3d8-4104-763c-08d88aa32e53
-x-ms-traffictypediagnostic: DBBPR04MB7817:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DBBPR04MB7817D3D4802CF3DEC419E83788E20@DBBPR04MB7817.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: vaH7EZHSVtPjLnU1xLkCRcIRUekkIuuCfFCbmdBgYh+zI7XE6hJ7PKhIxHwEAZmhybGDAmk1JVQK71EPQzsPsOt+X85mzfAcatWo2wcreBUr2mpv1NYiQLqQ9QdMY7N72U/b+tS7Uw9IB068n60PEZlRxRWbRvhbSndpZyYxhVCkt0r1+d+L8r5qhKSf/4bRdB7ajN9ErxoEBRJao98iYwMjXtU9uqsP2i/ci59BIKwHUu5qvLoKviEeWa3d4HaD1lQ/NL1AP/ri3CeO2YBUK5qwZRGfSzuAnX5kV3zY5kTzItqlqUPlMocu1u+dpHRlY4cdiBsO67USqdg4XUwv5g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(396003)(136003)(39860400002)(346002)(83380400001)(44832011)(52536014)(8676002)(8936002)(55016002)(6636002)(4326008)(9686003)(33656002)(110136005)(478600001)(186003)(6506007)(4743002)(64756008)(66556008)(66946007)(66446008)(66476007)(316002)(26005)(2906002)(54906003)(7696005)(5660300002)(86362001)(71200400001)(76116006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: CFV02B4yyRtZ+HRBJfRU4jVHceJYY8NTsxGB24QhayfYCLKPmhoHqhBDwFIpPTgOqOnPLPJnOVpvH8uj3ZlcU/w+vMGKFpUl4ujy7lKfLSBPfrBAn3O7mE7xSxWE78iyrjn3wpuqdi7O30DGNH1KOZb/VFIg5cM34pOvCj46Ncqm+lsFabzTWQ95Kus0+eb9MMYgBUOMSjLZFAJPxPYVo/IO0SJE3QDy1C2jz3MR50mX8g7/UnmXe2QxK0YsF9aKzomqRisS0NPm4j4vTQ9sBkcj37a3+11IDPP7qAs3LNmfJ+Q+j2kktUjn7xg+YB8QGIkfAK6jH+bMpmlt9/G5VK9UC2b41GaJVvwIg3/iOpN9a066nmkRQgZPmue3uoNxBkHIPorGB4rOc5bklT6dSY+D8qlgrCE6aaOYaCSPtai52xPt2TEfORF2QlgRfGHPtPPaXrUAF2IT2gvEqmfi3MC3E2ob+d5SxYtB4u4Zzvq5taVXD/tsqTTVvwfo8PmiL+y8/+80zQ4fWSzygKujzYxQimZWOXS8X1R5Ng2YXeL71kdU5EHjwQPkfWXHWZLgqf6Z1H9x3lC8KnprLM2HDSwQuBa/mHW9f16i5DtX/bHhqrbIkKRIXJq5G0Fr2hUkzKuxIjHDgtU8aPZqs8zjgw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org
+References: <20201115170950.304460-1-krzk@kernel.org>
+ <20201115170950.304460-3-krzk@kernel.org>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <f637762e-0b02-1705-ea6b-24ac338fcd69@sholland.org>
+Date:   Mon, 16 Nov 2020 22:36:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a1a3dc0-d3d8-4104-763c-08d88aa32e53
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2020 02:47:53.3029
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TQv8C4PdrdC5EZ1MHFoiOgJyyxgbWhdmk8fCzww/lN9f+lQsFb1FihD9NxpVIYVjaZPneNietRWJHS0ek5kv4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7817
+In-Reply-To: <20201115170950.304460-3-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Subject: [RFC 0/4] clk: imx: Register the dram_apb and dram_alt as read-o=
-nly
+On 11/15/20 11:09 AM, Krzysztof Kozlowski wrote:
+> COMMON_CLK is a user-selectable option with its own dependencies.  The
+> most important dependency is !HAVE_LEGACY_CLK.  User-selectable drivers
+> should not select COMMON_CLK because they will create a dependency cycle
+> and build failures.  For example on MIPS a configuration with COMMON_CLK
+> (selected by SND_SUN8I_CODEC) and HAVE_LEGACY_CLK (selected by
+> SOC_RT305X) is possible:
 
-Any follow up about this patchset?
+Ah, that makes sense.
 
-Regards,
-Peng.
+> 
+>   WARNING: unmet direct dependencies detected for COMMON_CLK
+>     Depends on [n]: !HAVE_LEGACY_CLK [=y]
+>     Selected by [y]:
+>     - SND_SUN8I_CODEC [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] &&
+>       (ARCH_SUNXI || COMPILE_TEST [=y]) && OF [=y] && (MACH_SUN8I || ARM64 && ARCH_SUNXI || COMPILE_TEST [=y])
+> 
+>     /usr/bin/mips-linux-gnu-ld: drivers/clk/clk.o: in function `clk_set_rate':
+>     (.text+0xaeb4): multiple definition of `clk_set_rate'; arch/mips/ralink/clk.o:(.text+0x88): first defined here
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/mach-sunxi/Kconfig | 1 +
+>  sound/soc/sunxi/Kconfig     | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> index eeadb1a4dcfe..4d9f9b6d329d 100644
+> --- a/arch/arm/mach-sunxi/Kconfig
+> +++ b/arch/arm/mach-sunxi/Kconfig
+> @@ -4,6 +4,7 @@ menuconfig ARCH_SUNXI
+>  	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select CLKSRC_MMIO
+> +	select COMMON_CLK
 
->=20
-> On i.MX8M platforms the dram_apb and dram_alt are controlled from EL3.
-> So in order to keep track of the actual clock tree in kernel, we need to
-> actually declare the clocks but never write to any of their registes.
-> We do that by registering the clocks with only the ops that read but neve=
-r
-> write the registers.
->=20
-> Abel Vesa (4):
->   clk: Add CLK_GET_PARENT_NOCACHE flag
->   clk: Add clk_gate_ro_ops for read-only gate clocks
->   clk: imx: composite-8m: Add DRAM clock registration variant
->   clk: imx8m: Use dram variant registration for dram clocks
->=20
->  drivers/clk/clk-gate.c             |  5 +++++
->  drivers/clk/clk.c                  | 31 +++++++++++++++++--------------
->  drivers/clk/imx/clk-composite-8m.c | 12 +++++++++++-
->  drivers/clk/imx/clk-imx8mm.c       |  4 ++--
->  drivers/clk/imx/clk-imx8mn.c       |  4 ++--
->  drivers/clk/imx/clk-imx8mp.c       |  4 ++--
->  drivers/clk/imx/clk-imx8mq.c       |  4 ++--
->  drivers/clk/imx/clk.h              |  7 +++++++
->  include/linux/clk-provider.h       |  2 ++
->  9 files changed, 50 insertions(+), 23 deletions(-)
->=20
-> --
-> 2.7.4
+This is not necessary, since ARCH_SUNXI depends (through ARCH_MULTI_V{5,7}) on
+ARCH_MULTIPLATFORM, which selects COMMON_CLK already.
 
+>  	select GENERIC_IRQ_CHIP
+>  	select GPIOLIB
+>  	select PINCTRL
+> diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
+> index 69b9d8515335..ddcaaa98d3cb 100644
+> --- a/sound/soc/sunxi/Kconfig
+> +++ b/sound/soc/sunxi/Kconfig
+> @@ -14,7 +14,7 @@ config SND_SUN8I_CODEC
+>  	tristate "Allwinner SUN8I audio codec"
+>  	depends on OF
+>  	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+> -	select COMMON_CLK
+> +	depends on COMMON_CLK
+>  	select REGMAP_MMIO
+>  	help
+>  	  This option enables the digital part of the internal audio codec for
+> 
+
+For this file:
+Reviewed-by: Samuel Holland <samuel@sholland.org>
+
+Thanks,
+Samuel
