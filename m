@@ -2,107 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D05C63777
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 18:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC417C63798
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97FA62462E
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 18:07:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C49E2463D
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 19:45:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fBNW3I5R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEGG7+pW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgKQSHk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 13:07:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47432 "EHLO
+        id S1728818AbgKQTpS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 14:45:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729869AbgKQSHk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 13:07:40 -0500
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23620C061A47
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 10:07:40 -0800 (PST)
-Received: by mail-qt1-x841.google.com with SMTP id b16so16167650qtb.6
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 10:07:40 -0800 (PST)
+        with ESMTP id S1727955AbgKQTpR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 14:45:17 -0500
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0E8C0613CF;
+        Tue, 17 Nov 2020 11:45:17 -0800 (PST)
+Received: by mail-ed1-x543.google.com with SMTP id v22so23736330edt.9;
+        Tue, 17 Nov 2020 11:45:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2SS128aons6BQS3TKpOR9L0j7t9FSqGwHFgxqCfMpDU=;
-        b=fBNW3I5RV8rBpWXFp56lTRkZhxGxYxMOdZN4ufQ5AR7Aiv4TsAZziPHSOw4y5pWsE3
-         48h5FIdIgpYKP1E2NXvI/AcxoTYF768F+P6C6JC5/+xLAM9Oj9Mfw9AKk/JD2BzUKSKd
-         Km5AGnuylL2kyRGfMDnHTlVDJuLD594rUwr3nQIjw0Ejsz/cyXkVEzvjedls5q3smlSB
-         CQA5AhwAi4BgZ8cZjemn6HGwSAzDB/TPGPgHJZeE0ghuB4zr7f4F6IEeOJPOpsFHEB2h
-         8x1pQFbnTA57mqAqt3wS3b3p9YEWcNGMxtOLJ/MdheQpCcpHbSigJozKkVbSd007760T
-         jJBA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7FuTWq4BSG35jYcVC2y/aAokRjHupx3BOtYk6g9sB7k=;
+        b=bEGG7+pWjohHYGCns+rU7864961TKkiTrUm42uvT6LxfEO1YbnvJekuitA/BWkBKCo
+         qsN7cTlm7OY2hRiTAQmLfnUp5/8RZkKp3Z1cgY6qHSkU2RUHKqAoAI1oAj92qbp+41pe
+         b6MjEliAQcKXdDVxBibvY1dzSUPVoAUuBdgwaCY1IAT2zds2yNeNwWnKqoWmVMTxDpmU
+         Akl7TpvzvH5UZnc2SzUfp1e4+K8aIFpDLyllv88lW4vf7WvlidV+fOa2lO/WErCtz9Eb
+         wrQ/xv8kRnYDHyi6GvBxmPENKiQuoaJ2MA8DAOb2WxOwi6mr7o/5gY81Y8VYrIQ0wr9s
+         1piQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2SS128aons6BQS3TKpOR9L0j7t9FSqGwHFgxqCfMpDU=;
-        b=qMiEealSn/LzDNdrkFP6BeGc2YoQUpOr/TrJAz3vo2PVoyYSC274PSAJRbRsdOyuiW
-         5JNwUMFfJKQdc5o8rgW948DJJP5t+s8lhHgQCO6w9EjzlYpJ8kLQ7ya0QEW9AhoWwwcN
-         aUxyf2TdhCaue0sEZRVNEtg6F3QKeQprOOXR1yiq5tlOV7IgmIOltPGkw0BFJfWkgDJd
-         kI7nndzIc9CkijK+cgAbM3a48HR9CoCeFIuzLlHtROErPN9F5oI/9yqP/FQ88UNzoAM/
-         fuxOQeeraqCStHlXFQYHH/NzTSnw63dQYH6dWIUN7k83iq6Ty2QM2rNI0Quqguo1c14I
-         zgEQ==
-X-Gm-Message-State: AOAM532inMJqJY0xWRwAot5m6NMuE3XVqvTMGnepS9mjJqX5zf+CbAKb
-        a4l6Zod2kmvoxLAiQQaIOO/xzpJE6FuZOA==
-X-Google-Smtp-Source: ABdhPJzu1uZfI39HSUvCvU1l/3UKdy6XJ21aOheouU1xUuby7ej2D5BtDzqZgwhLlk5/sYIGR/PJzg==
-X-Received: by 2002:ac8:6f3b:: with SMTP id i27mr915044qtv.221.1605636459096;
-        Tue, 17 Nov 2020 10:07:39 -0800 (PST)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id w30sm2997727qkw.24.2020.11.17.10.07.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 10:07:37 -0800 (PST)
-Subject: Re: [PATCH 0/6] Enable Qualcomm Crypto Engine on sdm845
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201117134714.3456446-1-thara.gopinath@linaro.org>
- <X7QA/BMr/A/jjayk@sol.localdomain>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <49ba008a-fd92-46bf-daf5-a8d3dd4132ea@linaro.org>
-Date:   Tue, 17 Nov 2020 13:07:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <X7QA/BMr/A/jjayk@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7FuTWq4BSG35jYcVC2y/aAokRjHupx3BOtYk6g9sB7k=;
+        b=JAp6rLSDz8xSSKqpNf0dKOYpmnfXdCd6f/RMZzBqBkNcVA/xrJP86Ea2TD46X7YJKl
+         RFKRxO0bu4o9XOunvrSyZZDiNfS7f7jGcWWl6GbrpaIGWMz+GLksPhOnYyx+P0ZfwuRd
+         JIZm5PFFxXglEYxYIQnu3IRH4j1SKim4+hmzHNJqSptYRvhooY7z9RG1c2T+BJ/f6tdE
+         qydrTeqmgPNwqgH0/R1YGCXzoOtqwN5w21ecwiY5RZ5v3t08LemA/UUuguE8Y/QDqXBq
+         /6jKJbg4J1N9u5ghFNYyoiyYyfUaSlwVgyB8aCfBcVFNwIu7otzJPZ7ebzuYYAX/BR2a
+         04IA==
+X-Gm-Message-State: AOAM533W0Q0l/jdZDLvWWgLZItY3fGngUjbE7fDBqotSExvZNOKvqAiN
+        8ReXT93OYkqdnBWGnpbyznfqUawlL14Big==
+X-Google-Smtp-Source: ABdhPJwioSe6dJaxInh8X3IisG9hWd9obKO0KYfxQKA8qdRvbEI9nQjadusnXlOz4yN8QPtxAn5+Fg==
+X-Received: by 2002:aa7:df82:: with SMTP id b2mr21560851edy.251.1605642316279;
+        Tue, 17 Nov 2020 11:45:16 -0800 (PST)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id w2sm727972ejc.109.2020.11.17.11.45.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Nov 2020 11:45:15 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
+        daniel@ffwll.ch, mturquette@baylibre.com, sboyd@kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/7] Enable rk3066a HDMI sound
+Date:   Tue, 17 Nov 2020 20:45:00 +0100
+Message-Id: <20201117194507.14843-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+First fix some legacy things in clk-rk3188.c that was never updated,
+because probably nobody used rk3066a I2S before in the mainline kernel.
+Update the rk3066a HDMI documents with a #sound-dai-cells property.
+Include the code for sound in the HDMI driver.
+Add a simple-sound-card compatible node to rk3066a.dtsi,
+because I2S0 and HDMI TX are connected internally.
+And as last enable rk3066a HDMI sound in the rk3066a-mk808.dts file.
 
+Johan Jonker (6):
+  clk: rockchip: add CLK_SET_RATE_PARENT to sclk for rk3066a i2s and
+    uart clocks
+  clk: rockchip: fix i2s gate bits on rk3066 and rk3188
+  dt-bindings: display: add #sound-dai-cells property to rockchip rk3066
+    hdmi
+  ARM: dts: rockchip: rk3066a: add #sound-dai-cells to hdmi node
+  ARM: dts: rockchip: add hdmi-sound node to rk3066a.dtsi
+  ARM: dts: rockchip: enable hdmi_sound and i2s0 for rk3066a-mk808
 
-On 11/17/20 11:57 AM, Eric Biggers wrote:
-> On Tue, Nov 17, 2020 at 08:47:08AM -0500, Thara Gopinath wrote:
->> Qualcomm crypto engine supports hardware accelerated algorithms for
->> encryption and authentication. Enable support for aes,des,3des encryption
->> algorithms and sha1,sha256, hmac(sha1),hmac(sha256) authentication
->> algorithms on sdm845.The patch series has been tested using the kernel
->> crypto testing module tcrypto.ko.
-> 
-> Did you do this testing with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled?
-> Do all tests pass with it enabled?
+Zheng Yang (1):
+  drm: rockchip: add sound support to rk3066 hdmi driver
 
-No I have not. This is in my todo list though. I am trying to enable 
-AEAD algorithms on the crypto engine right now. I will try to test it 
-out with that set.
+ .../display/rockchip/rockchip,rk3066-hdmi.yaml     |   4 +
+ arch/arm/boot/dts/rk3066a-mk808.dts                |   8 +
+ arch/arm/boot/dts/rk3066a.dtsi                     |  17 ++
+ drivers/clk/rockchip/clk-rk3188.c                  |  35 +--
+ drivers/gpu/drm/rockchip/Kconfig                   |   2 +
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c             | 272 ++++++++++++++++++++-
+ 6 files changed, 320 insertions(+), 18 deletions(-)
 
-> 
-> - Eric
-> 
+--
+2.11.0
 
--- 
-Warm Regards
-Thara
