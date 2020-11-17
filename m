@@ -2,95 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34239C2D0E4
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640C1C63798
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB9822463D
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC3324654
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Nov 2020 16:57:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pU/xwNuF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgKQQDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 11:03:17 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:60195 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbgKQQDR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 11:03:17 -0500
-Received: from orion.localdomain ([95.118.38.12]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MOiLp-1kueNm03x9-00QFEO; Tue, 17 Nov 2020 17:03:09 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH] (v2) drivers: clk: make gpio-gated clock support optional
-Date:   Tue, 17 Nov 2020 17:03:06 +0100
-Message-Id: <20201117160306.21760-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:DHjCkcHF4JV+D/H9vn6hiuerLHesxxqjWv+whhAPfXYe3PLpd2f
- vXBSTvFcEOJoptHYXN42T0LP8oGsscHMyzkbICW0N1y6d5gI2P3j7mHyNXEoUktsQAfWJFT
- vlgr3I9uFKbNCpsj+nvAom90IuQSdLIL5y2NuGAro/Y49GwCRY126YfpBnmMSZDcMn8UA9Y
- 5eum4UEVwEBWfGqSvPcPw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nuDhTfKWFYQ=:TLnx//cNjXuEVcQGeldan1
- YRkSUqyJoC67kUo7o0/z3cOzQTttBcG712R6qRps4U4tNVNKsqQSJlce+baUrDJYDATI7NzsH
- h9lhTFJ9252aXls1GYDxSx1VNRow5IIbAFMAfllvno6w/U2eDRoG+Gd2W6uBRfTtO9e4kxvud
- GAlMc9zTIwfL1RVKgWtBXIeL+evKjbBWsnngwS9flzrVQajfwybvW/EfAXmMp/4UT1v797EE2
- dZB710fmq5fFSiGkYFFKHgq6fytbUZHFJoVr70Nvd2TAFlFqXqAOD+QyR7NGfQHYm2LDUa4wG
- t/JyWAPRSnoIEzWrhrL4S2uvDiBVPRH3LwAQc04x/OxA7niHiRi6uaSgGcMor8Rs/ziUl1E67
- CDJQ4Dc8a0rFqBaeuxr/M0dcYn/lCy4meVvUraz/51eiRiLEpGoSIlKR4u66m
+        id S1727522AbgKQQ5f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 11:57:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbgKQQ5f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Nov 2020 11:57:35 -0500
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B41422447;
+        Tue, 17 Nov 2020 16:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605632254;
+        bh=9YRqsxQ2usGvEt2meH9lhvEXpcTOviy8taZs/VJohUM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pU/xwNuFBJ++tk+KbBaiLmoAm+Qqa30OahDDtH5y/GcbS0mJ6tKITuUEFG23l0BD/
+         MmGCY3oU+KQBoEBZQQisTlo4ka/NFvqBjkPPsAvTPeqNpTosj8N+A3xGnzEjukqQA5
+         Y71qpStax2oLIrQnwWCbmpSEOXbBoM41HPPCOuUA=
+Date:   Tue, 17 Nov 2020 08:57:32 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/6] Enable Qualcomm Crypto Engine on sdm845
+Message-ID: <X7QA/BMr/A/jjayk@sol.localdomain>
+References: <20201117134714.3456446-1-thara.gopinath@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201117134714.3456446-1-thara.gopinath@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gpio-gate-clock / gpio-mux-clock driver isn't used much,
-just by a few ARM SoCs, so there's no need to always include
-it unconditionally.
+On Tue, Nov 17, 2020 at 08:47:08AM -0500, Thara Gopinath wrote:
+> Qualcomm crypto engine supports hardware accelerated algorithms for
+> encryption and authentication. Enable support for aes,des,3des encryption
+> algorithms and sha1,sha256, hmac(sha1),hmac(sha256) authentication
+> algorithms on sdm845.The patch series has been tested using the kernel
+> crypto testing module tcrypto.ko.
 
-Thus make it optional, but keep it enabled by default.
+Did you do this testing with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled?
+Do all tests pass with it enabled?
 
-fixes v2: added missing dependency on gpiolib
-
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/clk/Kconfig  | 8 ++++++++
- drivers/clk/Makefile | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c715d4681a0b..99e0188a15be 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -38,6 +38,14 @@ menuconfig COMMON_CLK
- 
- if COMMON_CLK
- 
-+config COMMON_CLK_GPIO
-+	tristate "GPIO gated clock support"
-+	default y
-+	select gpiolib
-+	help
-+	  Supports gpio gated clocks, which can be enabled/disabled via
-+	  gpio output.
-+
- config COMMON_CLK_WM831X
- 	tristate "Clock driver for WM831x/2x PMICs"
- 	depends on MFD_WM831X
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index da8fcf147eb1..0692ab5abc6d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
--obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
-+obj-$(CONFIG_COMMON_CLK_GPIO)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
- endif
--- 
-2.11.0
-
+- Eric
