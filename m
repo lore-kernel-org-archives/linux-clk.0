@@ -2,143 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6DA4C56202
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 04:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50747C5519F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 05:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4268B2225E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 04:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA93C24655
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 05:21:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qx0xDJvK"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VI97rdeV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgKREK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 23:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbgKREK4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 23:10:56 -0500
-Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 807BEC061A52
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 20:10:54 -0800 (PST)
-Received: by mail-oo1-xc41.google.com with SMTP id l10so86662oom.6
-        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 20:10:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dRKcQO3pMtpF1NuRSX79Onpwrs+gklZx89qUCct/3SM=;
-        b=qx0xDJvKIig0sy53FRoTJcfK5ApCXai9Xep4AiD5uw8cXKVPDQJuiOvTAKPirYWbK6
-         9uRC4oqhzurXiQqdPKA9npG9AFTdq5Vivhs2DXfQyNYtVokc+fIB/Y5T55L5n2XLjKWo
-         h7JUwS7itLQITyiZRajejWqSlrJLdycOzUtIkvrJJpfZcpp6gqp0c15ew4e0PYxLr2/s
-         JFHsfb5BjYhCMMEkUN/hF3VrftxD1WBc8tiw36P6gDNJDDpZBuzo1Ai+DxgcJar4Seba
-         1Fh9lslOMthE7PJESN3QIvxQz3MxHsgUhvjrtD3jaAZ/Gclo5uxQtduw5GxJRTrzYGZ6
-         aRKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dRKcQO3pMtpF1NuRSX79Onpwrs+gklZx89qUCct/3SM=;
-        b=JfcKHcdjQ+wunKD3iQ3JEw2XYmIPiXPEbYqpd77MNljNr4HcjHzImZWmPkx684jbkN
-         7nb0iBmEwgGwgf2WNd40JCxOysBxuUNMnhWnAlD0WXm3Y0u0QLNGvZI++naTW9jFhwid
-         GMgwEz3W7SVfCXW1vGkvBrd4R1Zzlw9qGMTIwnYVtjDEvODWdbaykWE8RquHHQOlx/YM
-         aqaEGdqupxMwlZtHGdhOxcK40q9FxQtKXNpD+GBd4NdJkGb0mVcK7C+9Mzu95GwuF1g+
-         D+AX6GXcjry/fDAZ1+ij6cYyGBLT8PH/tplSzjpGxxrfU7fUMnfyQ9RYqGFpVhMYNgwk
-         Rigw==
-X-Gm-Message-State: AOAM531AzeHYwJm/cLXbULF8OxdXTpIaupPEbM++IAa67TUoVgwHOj2t
-        /Z5JtCKigDBRLg2TEfpRQDX0yw==
-X-Google-Smtp-Source: ABdhPJxl09WdJ1NQZeKYkxqPw0H5GKrDyLUScIS7dsPNwhLOqoUD1AyXq3vCWBh9+EB1kPR4vKnIfA==
-X-Received: by 2002:a4a:ddd7:: with SMTP id i23mr5416947oov.73.1605672653737;
-        Tue, 17 Nov 2020 20:10:53 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w22sm2446592oie.49.2020.11.17.20.10.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2020 20:10:53 -0800 (PST)
-Date:   Tue, 17 Nov 2020 22:10:51 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     agross@kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, robh+dt@kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/6] dts:qcom:sdm845: Add dt entries to support crypto
- engine.
-Message-ID: <20201118041051.GF8532@builder.lan>
-References: <20201117134714.3456446-1-thara.gopinath@linaro.org>
- <20201117134714.3456446-6-thara.gopinath@linaro.org>
+        id S1726426AbgKRFVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 00:21:44 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:52670 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726385AbgKRFVo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 00:21:44 -0500
+X-UUID: 4e46af33476348b9bea50bdcdbb16ff7-20201118
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=+7P9mBeoEEXeFr17rEhjdhoY8h80YhME3cFw6QX94Yo=;
+        b=VI97rdeVCnYOus2bqCPCNpKfmYPYlzMlBe+pp/ZEk81sp7y8ar0753kts/a1Muoi+PuT3iUQ9oTtQ+17IQWxijILC3ci9mlwXAARsRuCCadBplMORfsvW3F3iok8ePKMcfvD/+yre96cTv4x1ZZZ2Reduimd6dz2FZ3Bup9jOQ8=;
+X-UUID: 4e46af33476348b9bea50bdcdbb16ff7-20201118
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 2002945904; Wed, 18 Nov 2020 13:21:42 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 18 Nov 2020 13:21:41 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 18 Nov 2020 13:21:40 +0800
+Message-ID: <1605676900.25459.2.camel@mtksdaap41>
+Subject: Re: [PATCH v5 07/24] clk: mediatek: Fix asymmetrical PLL enable and
+ disable control
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Ikjoon Jang <ikjn@chromium.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "Yingjoe Chen" <yingjoe.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 18 Nov 2020 13:21:40 +0800
+In-Reply-To: <20201118035502.GB1049148@chromium.org>
+References: <1604887429-29445-1-git-send-email-weiyi.lu@mediatek.com>
+         <1604887429-29445-8-git-send-email-weiyi.lu@mediatek.com>
+         <20201118035502.GB1049148@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201117134714.3456446-6-thara.gopinath@linaro.org>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 17 Nov 07:47 CST 2020, Thara Gopinath wrote:
+T24gV2VkLCAyMDIwLTExLTE4IGF0IDExOjU1ICswODAwLCBJa2pvb24gSmFuZyB3cm90ZToNCj4g
+T24gTW9uLCBOb3YgMDksIDIwMjAgYXQgMTA6MDM6MzJBTSArMDgwMCwgV2VpeWkgTHUgd3JvdGU6
+DQo+ID4gSW4gZmFjdCwgdGhlIGVuX21hc2sgaXMgYSBjb21iaW5hdGlvbiBvZiBkaXZpZGVyIGVu
+YWJsZSBtYXNrDQo+ID4gYW5kIHBsbCBlbmFibGUgYml0KGJpdDApLg0KPiA+IEJlZm9yZSB0aGlz
+IHBhdGNoLCB3ZSBlbmFibGVkIGJvdGggZGl2aWRlciBtYXNrIGFuZCBiaXQwIGluIHByZXBhcmUo
+KSwNCj4gPiBidXQgb25seSBjbGVhcmVkIHRoZSBiaXQwIGluIHVucHJlcGFyZSgpLg0KPiA+IElu
+IHRoZSBmdXR1cmUsIHdlIGhvcGUgZW5fbWFzayB3aWxsIG9ubHkgYmUgdXNlZCBhcyBkaXZpZGVy
+IGVuYWJsZSBtYXNrLg0KPiA+IFRoZSBlbmFibGUgcmVnaXN0ZXIoQ09OMCkgd2lsbCBiZSBzZXQg
+aW4gMiBzdGVwczoNCj4gPiBmaXJzdCBpcyBkaXZpZGVyIG1hc2ssIGFuZCB0aGVuIGJpdDAgZHVy
+aW5nIHByZXBhcmUoKSwgYW5kIHZpY2UgdmVyc2EuDQo+ID4gQnV0IGNvbnNpZGVyaW5nIGJhY2t3
+YXJkIGNvbXBhdGliaWxpdHksIGF0IHRoaXMgc3RhZ2Ugd2UgYWxsb3cgZW5fbWFzaw0KPiA+IHRv
+IGJlIGEgY29tYmluYXRpb24gb3IgYSBwdXJlIGRpdmlkZXIgZW5hYmxlIG1hc2suDQo+ID4gQW5k
+IHRoZW4gd2Ugd2lsbCBtYWtlIGVuX21hc2sgYSBwdXJlIGRpdmlkZXIgZW5hYmxlIG1hc2sgaW4g
+YW5vdGhlcg0KPiA+IGZvbGxvd2luZyBwYXRjaCBzZXJpZXMuDQo+IA0KPiBJIGhhdmUgYSBxdWVz
+dGlvbiBvbiB0aGlzOiBBcmUgdGhlcmUgYW55IHBvc3NpYmxlIHByb2JsZW1zIG9uIGNvbnRyb2xs
+aW5nDQo+IGRpdmlkZXJfZW4gYW5kIGJpdDAgYXQgdGhlIHNhbWUgdGltZT8gT3IgaXMgdGhpcyBv
+bmx5IGZvciBjbGVhbnVwcz8NCj4gDQoNClllcywgdGhpcyBpcyBvbmx5IGZvciBjbGVhbnVwcyBh
+bmQgY29udHJvbGxpbmcgZGl2aWRlcl9lbiBhbmQgYml0MCBhdA0KdGhlIHNhbWUgdGltZSB3aWxs
+IG5vdCBjYXVzZSBhbnkgcHJvYmxlbS4NCg0KPiBJZiBtdGtfcGxsX2RhdGE6OmVuX21hc2sgaXMg
+bm90IGFsbG93ZWQgdG8gY29udHJvbCB3aXRoIGJpdDAgdG9nZXRoZXIsDQo+IEkgZ3Vlc3MgcmVn
+aXN0ZXJfcGxsKCkgYWxzbyBuZWVkcyB0byBjaGVjayBlbl9tYXNrOjpiaXQwIGlzIGNsZWFyZWQ/
+DQo+IA0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlaXlpIEx1IDx3ZWl5aS5sdUBtZWRpYXRl
+ay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1wbGwuYyB8IDIw
+ICsrKysrKysrKysrKysrKystLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25z
+KCspLCA0IGRlbGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9t
+ZWRpYXRlay9jbGstcGxsLmMgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstcGxsLmMNCj4gPiBp
+bmRleCBmNDQwZjJjZC4uMTFlZDVkMSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRp
+YXRlay9jbGstcGxsLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstcGxsLmMN
+Cj4gPiBAQCAtMjM4LDYgKzIzOCw3IEBAIHN0YXRpYyBpbnQgbXRrX3BsbF9wcmVwYXJlKHN0cnVj
+dCBjbGtfaHcgKmh3KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgbXRrX2Nsa19wbGwgKnBsbCA9IHRv
+X210a19jbGtfcGxsKGh3KTsNCj4gPiAgCXUzMiByOw0KPiA+ICsJdTMyIGRpdl9lbl9tYXNrOw0K
+PiA+ICANCj4gPiAgCXIgPSByZWFkbChwbGwtPnB3cl9hZGRyKSB8IENPTjBfUFdSX09OOw0KPiA+
+ICAJd3JpdGVsKHIsIHBsbC0+cHdyX2FkZHIpOw0KPiA+IEBAIC0yNDcsMTAgKzI0OCwxNSBAQCBz
+dGF0aWMgaW50IG10a19wbGxfcHJlcGFyZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4gPiAgCXdyaXRl
+bChyLCBwbGwtPnB3cl9hZGRyKTsNCj4gPiAgCXVkZWxheSgxKTsNCj4gPiAgDQo+ID4gLQlyID0g
+cmVhZGwocGxsLT5iYXNlX2FkZHIgKyBSRUdfQ09OMCk7DQo+ID4gLQlyIHw9IHBsbC0+ZGF0YS0+
+ZW5fbWFzazsNCj4gPiArCXIgPSByZWFkbChwbGwtPmJhc2VfYWRkciArIFJFR19DT04wKSB8IENP
+TjBfQkFTRV9FTjsNCj4gPiAgCXdyaXRlbChyLCBwbGwtPmJhc2VfYWRkciArIFJFR19DT04wKTsN
+Cj4gPiAgDQo+ID4gKwlkaXZfZW5fbWFzayA9IHBsbC0+ZGF0YS0+ZW5fbWFzayAmIH5DT04wX0JB
+U0VfRU47DQo+ID4gKwlpZiAoZGl2X2VuX21hc2spIHsNCj4gPiArCQlyID0gcmVhZGwocGxsLT5i
+YXNlX2FkZHIgKyBSRUdfQ09OMCkgfCBkaXZfZW5fbWFzazsNCj4gPiArCQl3cml0ZWwociwgcGxs
+LT5iYXNlX2FkZHIgKyBSRUdfQ09OMCk7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICAJX19tdGtfcGxs
+X3R1bmVyX2VuYWJsZShwbGwpOw0KPiA+ICANCj4gPiAgCXVkZWxheSgyMCk7DQo+ID4gQEAgLTI2
+OCw2ICsyNzQsNyBAQCBzdGF0aWMgdm9pZCBtdGtfcGxsX3VucHJlcGFyZShzdHJ1Y3QgY2xrX2h3
+ICpodykNCj4gPiAgew0KPiA+ICAJc3RydWN0IG10a19jbGtfcGxsICpwbGwgPSB0b19tdGtfY2xr
+X3BsbChodyk7DQo+ID4gIAl1MzIgcjsNCj4gPiArCXUzMiBkaXZfZW5fbWFzazsNCj4gPiAgDQo+
+ID4gIAlpZiAocGxsLT5kYXRhLT5mbGFncyAmIEhBVkVfUlNUX0JBUikgew0KPiA+ICAJCXIgPSBy
+ZWFkbChwbGwtPmJhc2VfYWRkciArIFJFR19DT04wKTsNCj4gPiBAQCAtMjc3LDggKzI4NCwxMyBA
+QCBzdGF0aWMgdm9pZCBtdGtfcGxsX3VucHJlcGFyZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4gPiAg
+DQo+ID4gIAlfX210a19wbGxfdHVuZXJfZGlzYWJsZShwbGwpOw0KPiA+ICANCj4gPiAtCXIgPSBy
+ZWFkbChwbGwtPmJhc2VfYWRkciArIFJFR19DT04wKTsNCj4gPiAtCXIgJj0gfkNPTjBfQkFTRV9F
+TjsNCj4gPiArCWRpdl9lbl9tYXNrID0gcGxsLT5kYXRhLT5lbl9tYXNrICYgfkNPTjBfQkFTRV9F
+TjsNCj4gPiArCWlmIChkaXZfZW5fbWFzaykgew0KPiA+ICsJCXIgPSByZWFkbChwbGwtPmJhc2Vf
+YWRkciArIFJFR19DT04wKSAmIH5kaXZfZW5fbWFzazsNCj4gPiArCQl3cml0ZWwociwgcGxsLT5i
+YXNlX2FkZHIgKyBSRUdfQ09OMCk7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJciA9IHJlYWRsKHBs
+bC0+YmFzZV9hZGRyICsgUkVHX0NPTjApICYgfkNPTjBfQkFTRV9FTjsNCj4gPiAgCXdyaXRlbChy
+LCBwbGwtPmJhc2VfYWRkciArIFJFR19DT04wKTsNCj4gPiAgDQo+ID4gIAlyID0gcmVhZGwocGxs
+LT5wd3JfYWRkcikgfCBDT04wX0lTT19FTjsNCj4gPiAtLSANCj4gPiAxLjguMS4xLmRpcnR5DQo+
+ID4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPiBs
+aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdA0KPiA+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZw0KPiA+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlz
+dGluZm8vbGludXgtYXJtLWtlcm5lbA0KDQo=
 
-> Add crypto engine (CE) and CE BAM related nodes and definitions to
-> "sdm845.dtsi".
-> 
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 30 ++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 40e8c11f23ab..b5b2ea97681f 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -2138,6 +2138,36 @@ ufs_mem_phy_lanes: lanes@1d87400 {
->  			};
->  		};
->  
-> +		cryptobam: dma@1dc4000 {
-> +			compatible = "qcom,bam-v1.7.0";
-> +			reg = <0 0x01dc4000 0 0x24000>;
-> +			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&rpmhcc RPMH_CE_CLK>;
-> +			clock-names = "bam_clk";
-> +			#dma-cells = <1>;
-> +			qcom,ee = <0>;
-> +			qcom,controlled-remotely = <1>;
-> +			iommus = <&apps_smmu 0x704 0x1>,
-> +				 <&apps_smmu 0x706 0x1>,
-> +				 <&apps_smmu 0x714 0x1>,
-> +				 <&apps_smmu 0x716 0x1>;
-
-Can you confirm that this can't be written as:
-
-iommus = <&apps_smmu 0x704 0x3>,
-	 <&apps_smmu 0x714 0x3>;
-
-(and same below).
-
-Regards,
-Bjorn
-> +		};
-> +
-> +		crypto: crypto@1dfa000 {
-> +			compatible = "qcom,crypto-v5.4";
-> +			reg = <0 0x01dfa000 0 0x6000>;
-> +			clocks = <&gcc GCC_CE1_AHB_CLK>,
-> +				 <&gcc GCC_CE1_AHB_CLK>,
-> +				 <&rpmhcc RPMH_CE_CLK>;
-> +			clock-names = "iface", "bus", "core";
-> +			dmas = <&cryptobam 6>, <&cryptobam 7>;
-> +			dma-names = "rx", "tx";
-> +			iommus = <&apps_smmu 0x704 0x1>,
-> +				 <&apps_smmu 0x706 0x1>,
-> +				 <&apps_smmu 0x714 0x1>,
-> +				 <&apps_smmu 0x716 0x1>;
-> +		};
-> +
->  		ipa: ipa@1e40000 {
->  			compatible = "qcom,sdm845-ipa";
->  
-> -- 
-> 2.25.1
-> 
