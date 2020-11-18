@@ -2,143 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5341BC56202
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 10:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 246A3C56202
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 10:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD0C322228
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 10:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD3A2417E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 10:32:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="AyRqRtQV"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DwV6nxZ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbgKRKXJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 05:23:09 -0500
-Received: from mail-eopbgr40115.outbound.protection.outlook.com ([40.107.4.115]:20206
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1726141AbgKRKcC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 05:32:02 -0500
+Received: from mail-eopbgr70082.outbound.protection.outlook.com ([40.107.7.82]:10050
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725874AbgKRKXJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Nov 2020 05:23:09 -0500
+        id S1725804AbgKRKcC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Nov 2020 05:32:02 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mV9FKGc5WfbxSR4Z9daSB4p57FFFtryYdUuXs7KNuFbAGyPUFNMW8SSFkg+ea4CoaGlnyLklWIamGDBZypS6xMGkFEMzSZBf3VVEV/hyjA+yaG41XUdL3DFEyeyqe2lEb2/+F0LvyxseLOIL65fqTWDUnbvPSDVzf3onQInOdE4EnZhI8YFuo9wMjKLEiJLthRAooB1AH/hcBaGTGcsXaPHAEH9DUyw6stpkFjthRgrcoR7wvLseuwvAnF8AWw890N7SOSsO74aE2ZlgYsnMirRiJqb5v2L6ne2pdzEAbzQvnhuhJgKRJAg17YgG76YH9vytVXY0Gz44V48i40Wstw==
+ b=ItM/rCi4PT6bgP/obvwoPN3AHZG+7o0IzhF5YB37cNSpDXwG0vu1sWZ3Aok1ezrS+ymsxeXBmh5yGotx0N2VZ0VqkQqP7kFjOs86wWVXxcXZWz6LJEbXd7FRsgmL2fymY544/EFaQB0RSpFoqq1/2GUbUQVdTaE4sNat4zD1UllLzO3fdyo0iRek6mmd6TdbTD+2ySaMEhciSKCCKvzhxl+bhLxqrZES4fRMEkkF7s/tfjkT93XsQPtI7BgX/Ahc1t68aPqreYltOSiKbfypxhBpwVInSdB/4eEr+IMn5V7CIqyu2mmqRRNdQM65ktgG3asqc5MGp/4cKJHhpJSsIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eSsV819DNqQzp+F9TppxxBQm4eHaojNh9XMGJntbbno=;
- b=DzyqpGR+izrncrIscV1OXcpO1QOq4iysliUMc3W6d8to+jlLPeNaxmlg6erKSo9Pq4kLBbiKTgITwesPQzJEsA+YIr8yh44q2Xxqxq67RudlnSNO1p9TjUcAr/bwsIqkWNuJ9ZUiSJYC4R3I3JYEitZTi2Q8jOO99p6jTAbPZRag5XPFWXOt8ARkv3FmlfcayR6ErPcvB7z2hGVw5txv0t1MkLX24yxfooRZVS+t5SFRkGRN89ByIs08yC/KrW/00EmTwilOCAXWPpqEN3ssK9WNGvxXdWxpMcA4CO4VnebPxcwNWg3ZkOo2vIWADFIwH+yxCk7xhFqL/vz23WgWzQ==
+ bh=DYDq+BwaCd8sEBlnDs/Dwqie3DlVjmNbOBFRx2fVnlQ=;
+ b=XKhoZc7otUna/IWFKr1klrhkHBjB6zt61Z3L01LybF0llWw+z+iNX3PVkXQ9oLgyNeuNA1wzdrUF5K8hwoBQC0TWJT+GK0VSTt05zBLv7DIYEns5cgoR7xcu9GtI09pgGGePlCb/HhmXralo0O4yyaxeacCmruh+ds9pvSczixRdE8tZ6LImJs10raBMa/08i8eLs8DtS34dFg3oQKsOMiSkMwFk5BR+MjcPB4IgVY/z2/O4ToamI2OZjnqzbuh9YIt0BubFhe3vv1+O1oMX5v6sJSanGa9M+lXC4hJYMPJ2V0tzmPrQwvRPd5R1f9BEZE7EhPw6VSeEzU3hIZ9NLg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eSsV819DNqQzp+F9TppxxBQm4eHaojNh9XMGJntbbno=;
- b=AyRqRtQV5TDKatfqraVh50F3HxnT4yrTvvnbIJTDX/aMQeZEz3/Km0mSyG+VzDSOo5qo+2SVX4IATkcxFhGuQ/InTjlRNkMiFfsHz6y002huU+bQlGlFDYYCEdKISBlkAtf9lbAYpeo+Rxq6+Cxukq51f+sAtBT8jysJPcdJ8cg=
-Received: from AM7PR07MB6707.eurprd07.prod.outlook.com (2603:10a6:20b:1af::11)
- by AM6PR07MB3942.eurprd07.prod.outlook.com (2603:10a6:209:35::29) with
+ bh=DYDq+BwaCd8sEBlnDs/Dwqie3DlVjmNbOBFRx2fVnlQ=;
+ b=DwV6nxZ8g+CgkaSf6lIoNChnMbjH/OhuRSQqs2qmoVJH/f9GFHRSgWkYuPYfZ1iORvX+/Rz8G7/t56AN0m1R+8v6afjyCxrmDiuc3MivjmgeFDSAsx+QKEYk9VNyn18RCYDYUVs7bP4zivaI4TwYrTJVJYIWAW3xvTEAbVXt1II=
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR04MB5415.eurprd04.prod.outlook.com (2603:10a6:20b:93::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.16; Wed, 18 Nov
- 2020 10:23:02 +0000
-Received: from AM7PR07MB6707.eurprd07.prod.outlook.com
- ([fe80::f5d7:501f:102d:60c3]) by AM7PR07MB6707.eurprd07.prod.outlook.com
- ([fe80::f5d7:501f:102d:60c3%9]) with mapi id 15.20.3589.017; Wed, 18 Nov 2020
- 10:23:02 +0000
-From:   "Wiebe, Wladislav (Nokia - DE/Ulm)" <wladislav.wiebe@nokia.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3564.25; Wed, 18 Nov
+ 2020 10:31:58 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a%3]) with mapi id 15.20.3564.029; Wed, 18 Nov 2020
+ 10:31:58 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Ying Liu <victor.liu@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Wiebe, Wladislav (Nokia - DE/Ulm)" <wladislav.wiebe@nokia.com>
-Subject: [PATCH] clk: move orphan_list back to DEBUG_FS section
-Thread-Topic: [PATCH] clk: move orphan_list back to DEBUG_FS section
-Thread-Index: Ada9k+6gKWQKOxMWRaK2973BbyOELw==
-Date:   Wed, 18 Nov 2020 10:23:02 +0000
-Message-ID: <AM7PR07MB67076EAED784F061D17AC015FAE10@AM7PR07MB6707.eurprd07.prod.outlook.com>
-Accept-Language: de-DE, en-US
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: RE: [PATCH 0/5] Add some clocks support for i.MX8qxp DC0/MIPI-LVDS
+ subsystems
+Thread-Topic: [PATCH 0/5] Add some clocks support for i.MX8qxp DC0/MIPI-LVDS
+ subsystems
+Thread-Index: AQHWvYYzimpcOFcAO0W76T3fwlxjP6nNsAPg
+Date:   Wed, 18 Nov 2020 10:31:57 +0000
+Message-ID: <AM6PR04MB496665F6E9AAFB6B56F3E28A80E10@AM6PR04MB4966.eurprd04.prod.outlook.com>
+References: <1605688290-21805-1-git-send-email-victor.liu@nxp.com>
+In-Reply-To: <1605688290-21805-1-git-send-email-victor.liu@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=none action=none header.from=nokia.com;
-x-originating-ip: [109.192.217.238]
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.67]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 19ca8b69-2668-46da-3224-08d88babee4c
-x-ms-traffictypediagnostic: AM6PR07MB3942:
+x-ms-office365-filtering-correlation-id: c3133196-afa4-463f-a2f2-08d88bad2d67
+x-ms-traffictypediagnostic: AM6PR04MB5415:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR07MB3942547394822F71BD526317FAE10@AM6PR07MB3942.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:229;
+x-microsoft-antispam-prvs: <AM6PR04MB54154C9F87942873CF9F261380E10@AM6PR04MB5415.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xgicYTxIEsEUr8sVieyISRvqXdVG9+Noa+1hzAF+aeygkE4WnZ9SEZjEREHJoRJrYbdXlbgBDjeXVG138we/UkmMUz7UQ5alT6ZPZb9iz8P6XrmMMI+HO64PhMKavFlDSyxwW94hTusfGZtddyGYzpRicaet1xg9+ndmev7QUONQkbDSlx7ip8wKs/sWnduVH2YfUkczWCb5AcauE6K8GUkJEb7cCT9/02pXVKXNiYaC7/okZySVh75HVAFghxz3HcYVM/rHMX7q39VsmKtRc8G8o6XRGFaxcXqOjkIxDAOEsD8zGIf/wJAdQmhtB4GOTcB5iVJkfSPuLW9HsERtmA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR07MB6707.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(346002)(366004)(396003)(376002)(136003)(186003)(316002)(478600001)(54906003)(26005)(4326008)(76116006)(6506007)(110136005)(2906002)(55016002)(107886003)(8676002)(7696005)(8936002)(86362001)(33656002)(66446008)(52536014)(71200400001)(9686003)(66946007)(5660300002)(64756008)(66476007)(66556008)(83380400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: IjRijlDJBTrMZ7nvnhvU3uEhq4JggLCGQ2bJh4CmgzgWy+O2qC4Pr8sDyTN1EbQNlsKSje7G8/XijSCuTNEe7CZM3MT2TrNPU/QwHwy/NZs5Fa5fW4OOY4XUx/a1YDjZ7qS9yW1WF/+9IEnwRGB6C4OUaT+at7BvndND1zVWvbn8I0KnD6FV9qStV82cD+TFAda6ITeMCRwQlKpLiGnLtXFtmKuIRJ8C3sy6NPr9CGUVAl/JNuoCSoXt526E0EuZEyroUMGGrLudl9Rv494DvM5OFohKr2zEtOqQzAY0wtCV/QFDUc4A+bf5S49WNAaT+v/qSdBvVHAG52dmMyA9+ftSnot4w+wfIzExWQSElmBfyVTh+zZ2icZqmqHY06+YhgpLvGV5uRxJw1k9zOPzLgGD6PcJyenQrIGrbXuDSTn6y5Fj/vdihe458RnEZdVM+uGmffe63KzjpqOFZ3QSkuogy6sbgfzhou3fTBR4SZAizjpuQUFkV3AsdbwGqgVXgBJtaoIvvjDNpqPRX687YI+o1zbdwGGOL3HQMHv9PITwcC0kfhB+s4bL3F1mT1Myzt1md+7AsFH64CUZQRNHLtxbeUUJgp5xPc7apYjm7jOjcTS+2tKxt67m8HFxWiF6NRnv1oHqZZGckb+gV/VYOcvy/8Dl4+fqe4m13p6UpSkOs34l/v5rl7bgXckktv/jDpTjLH8K5Bf1G39x/cnUQtUM8z8SkWdiNCxHtwy8WqZ/jz/5qAXmD1Bh4c+lKGd9ZzlRzm8yp3YPcIj3aJAhPSiw9UHyhmHTdBFs2JG+c4Dcne9/uW4Li3B0LZr60oLn3JwUKSZS0QcRa4yr7njzqbzFsWTM95LWIrkSNySRM/w+ZLK7rXDKRgoTRxh6ODrzSogwO8TDQIG1DtyNbRgJog==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: Xf0TmyjdYnZzdbKLGHRv7bZ2myy3Be7qZWO0kGNeuF34pHWMdBMDqU4CACAdxXu2VW7Ky/F+GWikkgMQH+4x6KEmk3be01sfhkpTGlCVDMNOcKvtpls5jNE/QETgA3HX2fgl5YGjA7YcugLgfny7a1F338K+NAXW3k6BGMNuPphZQ3dJip7XCztWDkfNTwQ/vDqbtcDWOtVhFuP91iGvINyusVgqvSBWsn5BBPzCDdgqNNfJp/f2snALlH1GBaRusYKvH6/sZmv6LQ2FJsVZWpp38e+R3ZPHPsoAK2SpR1oOZ3NCScL+GpiIefgo646wvcfA7kYcabsAUTRsGQ4/7A==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(376002)(136003)(39860400002)(366004)(346002)(9686003)(2906002)(110136005)(55016002)(478600001)(26005)(7696005)(6506007)(86362001)(186003)(33656002)(8676002)(44832011)(52536014)(71200400001)(54906003)(7416002)(64756008)(66556008)(4326008)(66476007)(66946007)(66446008)(5660300002)(8936002)(316002)(83380400001)(76116006);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: YhpPECtWrsXi/LcJvrrLDi66CN2LrAy/8IknUXbDuwg+A6bKn+zsW5KSWJPgvRlL78Xw+kDDb/oK7XUpTmYDcziHcB5DEK9NBJqI7E2Nvhv8wwXkKsnEFJGr/SHbp8yRJ6oDPUy3hnpSNSD/1jVbrns5V0yf3NqaySd2TFeb2WZSOxXq+ZKJb/yy1ZppKykqvGcLL7hIRNvg1Mt4mVpcIjxZsS36n4QoW29Wp4gLfPYaAGdUaVc1vwvubklyst1swFJCN+OTVC7G+1f+e6Hj0b/MLJpzpDGNpdExfGMk8ixvNl+ZpbTQ2SnVm2ztpnpfh7OxlZbknScV1JcXS3mVOCbXGel6R0QjEgzbTmOn1MkupJzgR99lAzs52Gx2ImetyF8F1LLorIsYpqvoVZOmbgKVW8U8uzXlShjoeQCZAGS2MnHtxN6AJvR2c6OubF/MbIFh8CC8zZsQWmLoDcyNg2msTiAR/kj4zbcW8jm49c2eWyVtCVKjccDWs7eYacRftjcM7E5AqflATVab3xUnPMJwyCwBjKhPuJkQ4DJsgZ5JH+Lj1gWzdqiWe0VKNy/i70V9VbS1GMKilXpO0OLTGpgmTwg6pq96fM05PHVCy1u+eNhJU7LmnIS0OjlLDK3T1nNC1jv7QLBF8Ch+AX56Gw==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR07MB6707.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19ca8b69-2668-46da-3224-08d88babee4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2020 10:23:02.6086
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3133196-afa4-463f-a2f2-08d88bad2d67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2020 10:31:57.9645
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FklsNaNApjKVWtNZqArbsNloOvvhTS2krzIFvFeWhXl6Waf0fsxxeRf1XylUedOoNlDjnZoSx3pDtFhUX3cvlM5f5SPF52JFcDOAdXuh3aU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR07MB3942
+X-MS-Exchange-CrossTenant-userprincipalname: E28JlBM7lHYaYuIHSgB86j4evcfdN0DR8yo3M6JjwPNFYgIBj2Onk/szJHouoJQ4fM6zktSNeH0vCqfCxlnJ8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5415
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-commit 903c6bd937ca ("clk: Evict unregistered clks from parent caches")
-in v4.19.142 moves orphan_list to global section which is not used when
-CONFIG_DEBUG_FS is disabled.
-
-Fixes:
-drivers/clk/clk.c:49:27: error: 'orphan_list' defined but not used
-[-Werror=3Dunused-variable]
- static struct hlist_head *orphan_list[] =3D {
-                           ^~~~~~~~~~~
-
-Fixes: 903c6bd937ca ("clk: Evict unregistered clks from parent caches")
-
-Signed-off-by: Wladislav Wiebe <wladislav.wiebe@nokia.com>
-
----
- drivers/clk/clk.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c5cf9e77fe86..925dd84293f4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -46,11 +46,6 @@ static struct hlist_head *all_lists[] =3D {
- 	NULL,
- };
-=20
--static struct hlist_head *orphan_list[] =3D {
--	&clk_orphan_list,
--	NULL,
--};
--
- /***    private data structures    ***/
-=20
- struct clk_core {
-@@ -2629,6 +2624,11 @@ static int inited =3D 0;
- static DEFINE_MUTEX(clk_debug_lock);
- static HLIST_HEAD(clk_debug_list);
-=20
-+static struct hlist_head *orphan_list[] =3D {
-+	&clk_orphan_list,
-+	NULL,
-+};
-+
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
---=20
-2.29.2
+PiBGcm9tOiBZaW5nIExpdSA8dmljdG9yLmxpdUBueHAuY29tPg0KPiBTZW50OiBXZWRuZXNkYXks
+IE5vdmVtYmVyIDE4LCAyMDIwIDQ6MzEgUE0NCj4gDQo+IFRoaXMgcGF0Y2ggc2V0IGFkZHMgc29t
+ZSBjbG9ja3Mgc3VwcG9ydCBmb3IgaS5NWDhxeHAgREMwL01JUEktTFZEUw0KPiBzdWJzeXN0ZW1z
+LCB3aGljaCBpbmNsdWRlcyBzb21lIFNDVSBjb250cm9sbGVkIGNsb2NrcyBhbmQgc29tZSBMUENH
+IGNsb2Nrcy4NCj4gDQo+IFdpdGggdGhpcyBwYXRjaCBzZXQsIHNvbWUgYmFzaWMgY2xvY2tzIGZv
+ciBpLk1YOHF4cCBMVkRTIGRpc3BsYXlzIGNhbiBiZSBnb3QgYnkNCj4gZHJpdmVycy4NCj4gDQo+
+IFRoaXMgcGF0Y2ggc2V0IGZvbGxvd3MgdGhlIGxlZ2FjeS9kZXByZWNhdGVkIHdheSB0byBhZGQg
+dGhlIGNsb2NrcyBzdXBwb3J0IGluDQo+IGNsb2NrIGRyaXZlcnMgaW5zdGVhZCBvZiB0aGUgbmV3
+ICd0d28gY2VsbHMnIGR0LWJpbmRpbmcgd2F5LiAgVGhlIHJlYXNvbiBiZWhpbmQNCj4gdGhpcyBp
+cyB0aGF0IHRoZSBleGlzdGluZyBpLk1YOHF4cCBTb0MgZGV2aWNlIHRyZWUgaXMgdXNpbmcgdGhl
+IGxlZ2FjeSB3YXkobm8NCj4gY29udmVyc2lvbiBlZmZvcnQgaXMgc2VlbikgYW5kIHRoZXJlIGlz
+IG5vdCBpLk1YOHFtKHdpdGggYSBzaW1pbGFyDQo+IGFyY2hpdGVjdHVyZSkgU29DIGRldmljZSB0
+cmVlIGZvciB1cyB0byBlbmFibGUgZGlzcGxheSB5ZXQuDQoNCkhpIFlpbmcsDQoNClBsZWFzZSBk
+b24ndCBkbyB0aGlzLg0KWW91IGtub3cgdGhlIGxlZ2FjeSBjbG9jayBiaW5kaW5nIHdpbGwgYmUg
+cmVtb3ZlZCBhbmQgbm90IHVzZWQgYW55bW9yZS4NCg0KUmVnYXJkcw0KQWlzaGVuZw0KDQo+IA0K
+PiBMaXUgWWluZyAoNSk6DQo+ICAgY2xrOiBpbXg6IGNsay1pbXg4cXhwOiBBZGQgU0NVIGNsb2Nr
+cyBzdXBwb3J0IGZvciBEQzAgUExMIGNsb2Nrcw0KPiAgIGNsazogaW14OiBjbGstaW14OHF4cC1s
+cGNnOiBBZGQgZGlzcGxheSBjb250cm9sbGVyIExQQ0cgY2xvY2tzIHN1cHBvcnQNCj4gICBjbGs6
+IGlteDogY2xrLWlteDhxeHA6IEFkZCBzb21lIFNDVSBjbG9ja3Mgc3VwcG9ydCBmb3IgTUlQSS1M
+VkRTDQo+ICAgICBzdWJzeXN0ZW1zDQo+ICAgZHQtYmluZGluZ3M6IGNsb2NrOiBpbXg4cXhwLWxw
+Y2c6IEFkZCBjb21wYXRpYmxlcyBmb3IgTUlQSS1MVkRTDQo+ICAgICBzdWJzeXN0ZW1zDQo+ICAg
+Y2xrOiBpbXg6IGNsay1pbXg4cXhwLWxwY2c6IEFkZCBzb21lIExQQ0cgY2xvY2tzIHN1cHBvcnQg
+Zm9yIE1JUEktTFZEUw0KPiAgICAgc3Vic3lzdGVtcw0KPiANCj4gIC4uLi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2Nsb2NrL2lteDhxeHAtbHBjZy55YW1sICAgIHwgIDIgKw0KPiAgZHJpdmVycy9jbGsv
+aW14L2Nsay1pbXg4cXhwLWxwY2cuYyAgICAgICAgICAgICAgICAgfCA3OQ0KPiArKysrKysrKysr
+KysrKysrKysrKysrDQo+ICBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhxeHAtbHBjZy5oICAgICAg
+ICAgICAgICAgICB8IDI5ICsrKysrKysrDQo+ICBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhxeHAu
+YyAgICAgICAgICAgICAgICAgICAgICB8IDEyICsrKysNCj4gIGluY2x1ZGUvZHQtYmluZGluZ3Mv
+Y2xvY2svaW14OC1jbG9jay5oICAgICAgICAgICAgIHwgNjENCj4gKysrKysrKysrKysrKysrKysN
+Cj4gIDUgZmlsZXMgY2hhbmdlZCwgMTgzIGluc2VydGlvbnMoKykNCj4gDQo+IC0tDQo+IDIuNy40
+DQoNCg==
