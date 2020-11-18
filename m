@@ -2,131 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195B0C56202
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 01:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E454C2D0E4
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 02:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA2D724248
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 01:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 738C22100A
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 02:41:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFbG78XC"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P350qQqV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbgKRBtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 20:49:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbgKRBtd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Nov 2020 20:49:33 -0500
-Received: from kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44ECA241A7;
-        Wed, 18 Nov 2020 01:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605664172;
-        bh=M6DfrIdy95Ghs9mCFBL8Ngh2V0KHo7z65Isd9IgYS3s=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GFbG78XCZWOi7mQ937XcvONvdNNLDydGM450RdgNzpN3caAYSRmfTf1XerRwsaW4v
-         /Dq4pOCMsDsgx6QaqwNie1Vh5xT3xu/K5iXqy4/kNzP3h9O6j7MiQ10Rd/fbCJ/XCm
-         WxDk55uYFKWryDlqwJqlGunKSUMUCm0OLHbiZZSk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726287AbgKRCll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 21:41:41 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:47500 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725774AbgKRCll (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 21:41:41 -0500
+X-UUID: 3dcbb7d111ef483a845f226cd09a84d9-20201118
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=+WZEfb7k1YczY34xv0fToQ3dUxzEeZQPIUHuAbvFbuk=;
+        b=P350qQqV1KteqSvrE2hxhSoVXCItho1t/zVls4ZcITHhiBvbfugiY3jcZtZfnth+nm7bHw40RJVQTbkxtGkTkj078s4ZQ5Jo1mok/xsYmblNqnabNlvf6BqhX00GSXTl0/TCAyjYVQCWsUqriEZVHh6lhd08IvtD5a88edRmQT8=;
+X-UUID: 3dcbb7d111ef483a845f226cd09a84d9-20201118
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <yingjoe.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 267864660; Wed, 18 Nov 2020 10:41:36 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 18 Nov 2020 10:41:35 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 18 Nov 2020 10:41:34 +0800
+Message-ID: <1605667293.8636.5.camel@mtksdaap41>
+Subject: Re: [PATCH v5 14/24] clk: mediatek: Add MT8192 imp i2c wrapper
+ clock support
+From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Wed, 18 Nov 2020 10:41:33 +0800
+In-Reply-To: <1604887429-29445-15-git-send-email-weiyi.lu@mediatek.com>
+References: <1604887429-29445-1-git-send-email-weiyi.lu@mediatek.com>
+         <1604887429-29445-15-git-send-email-weiyi.lu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <24d975ca-1942-5f7f-ae89-7b572f48812c@microchip.com>
-References: <1604655988-353-1-git-send-email-claudiu.beznea@microchip.com> <1604655988-353-7-git-send-email-claudiu.beznea@microchip.com> <160538849947.60232.12002724470272520124@swboyd.mtv.corp.google.com> <24d975ca-1942-5f7f-ae89-7b572f48812c@microchip.com>
-Subject: Re: [PATCH v4 06/11] clk: at91: clk-sam9x60-pll: allow runtime changes for pll
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Eugen.Hristev@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Claudiu.Beznea@microchip.com, Ludovic.Desroches@microchip.com,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Tue, 17 Nov 2020 17:49:30 -0800
-Message-ID: <160566417078.60232.18106288530854376790@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu.Beznea@microchip.com (2020-11-16 03:24:54)
->=20
->=20
-> On 14.11.2020 23:14, Stephen Boyd wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
-the content is safe
-> >=20
-> > Quoting Claudiu Beznea (2020-11-06 01:46:23)
-> >> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk=
--sam9x60-pll.c
-> >> index 78f458a7b2ef..6fe5d8530a0c 100644
-> >> --- a/drivers/clk/at91/clk-sam9x60-pll.c
-> >> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
-> >> @@ -225,8 +225,51 @@ static int sam9x60_frac_pll_set_rate(struct clk_h=
-w *hw, unsigned long rate,
-> >>                                      unsigned long parent_rate)
-> >>  {
-> >>         struct sam9x60_pll_core *core =3D to_sam9x60_pll_core(hw);
-> >> +       struct sam9x60_frac *frac =3D to_sam9x60_frac(core);
-> >> +       struct regmap *regmap =3D core->regmap;
-> >> +       unsigned long irqflags, clkflags =3D clk_hw_get_flags(hw);
-> >> +       unsigned int val, cfrac, cmul;
-> >> +       long ret;
-> >> +
-> >> +       ret =3D sam9x60_frac_pll_compute_mul_frac(core, rate, parent_r=
-ate, true);
-> >> +       if (ret <=3D 0 || (clkflags & CLK_SET_RATE_GATE))
-> >=20
-> > Is this function being called when the clk is enabled and it has the
-> > CLK_SET_RATE_GATE flag set?
->=20
-> Yes, this function could be called when CLK_SET_RATE_GATE is set.
-> On SAMA7G5 there are multiple PLL blocks of the same type. All these PLLs
-> are controlled by clk-sam9x60-pll.c driver. One of this PLL block fed the
-> CPU who's frequency could be changed at run time. At the same time there
-> are PLLs that fed hardware block not glitch free aware or that we don't
-> want to allow the rate change (this is the case of SAM9X60's CPU PLL, or
-> the DDR PLL on SAMA7G5).
->=20
-> I'm confused why this driver needs to check
-> > this flag.
->=20
-> Because we have multiple PLLs of the same type, some of them feed hardware
-> blocks that are glitch free aware of these PLLs' frequencies changes, some
-> feed hardware blocks that are not glitch free aware of PLLs' frequencies
-> changes or for some of them we don't want the frequency changes at all.
+T24gTW9uLCAyMDIwLTExLTA5IGF0IDEwOjAzICswODAwLCBXZWl5aSBMdSB3cm90ZToNCj4gQWRk
+IE1UODE5MiBpbXAgaTJjIHdyYXBwZXIgY2xvY2sgcHJvdmlkZXINCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IFdlaXlpIEx1IDx3ZWl5aS5sdUBtZWRpYXRlay5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9j
+bGsvbWVkaWF0ZWsvS2NvbmZpZyAgICAgICAgICAgICAgICAgICB8ICAgNiArKw0KPiAgZHJpdmVy
+cy9jbGsvbWVkaWF0ZWsvTWFrZWZpbGUgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ICBkcml2
+ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWltcF9paWNfd3JhcC5jIHwgMTE5ICsrKysrKysr
+KysrKysrKysrKysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMTI2IGluc2VydGlvbnMoKykN
+Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWlt
+cF9paWNfd3JhcC5jDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvS2Nv
+bmZpZyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL0tjb25maWcNCj4gaW5kZXggZWI1NDlmOC4uOGFj
+YzdkNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvS2NvbmZpZw0KPiArKysg
+Yi9kcml2ZXJzL2Nsay9tZWRpYXRlay9LY29uZmlnDQo+IEBAIC01MTUsNiArNTE1LDEyIEBAIGNv
+bmZpZyBDT01NT05fQ0xLX01UODE5Ml9JTUdTWVMNCj4gIAloZWxwDQo+ICAJICBUaGlzIGRyaXZl
+ciBzdXBwb3J0cyBNZWRpYVRlayBNVDgxOTIgaW1nc3lzIGFuZCBpbWdzeXMyIGNsb2Nrcy4NCj4g
+IA0KPiArY29uZmlnIENPTU1PTl9DTEtfTVQ4MTkyX0lNUF9JSUNfV1JBUA0KPiArCWJvb2wgIkNs
+b2NrIGRyaXZlciBmb3IgTWVkaWFUZWsgTVQ4MTkyIGltcF9paWNfd3JhcCINCj4gKwlkZXBlbmRz
+IG9uIENPTU1PTl9DTEtfTVQ4MTkyDQo+ICsJaGVscA0KPiArCSAgVGhpcyBkcml2ZXIgc3VwcG9y
+dHMgTWVkaWFUZWsgTVQ4MTkyIGltcF9paWNfd3JhcCBjbG9ja3MuDQo+ICsNCj4gIGNvbmZpZyBD
+T01NT05fQ0xLX01UODUxNg0KPiAgCWJvb2wgIkNsb2NrIGRyaXZlciBmb3IgTWVkaWFUZWsgTVQ4
+NTE2Ig0KPiAgCWRlcGVuZHMgb24gQVJDSF9NRURJQVRFSyB8fCBDT01QSUxFX1RFU1QNCg0KPC4u
+Lj4NCg0KPiArDQo+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBjbGtfbXQ4MTkyX2lt
+cF9paWNfd3JhcF9kcnYgPSB7DQo+ICsJLnByb2JlID0gbXRrX2Nsa19zaW1wbGVfcHJvYmUsDQoN
+Ckdvb2QgdG8gaGF2ZSB0aGlzIGdlbmVyaWMgcHJvYmUgZnVuY3Rpb24uIE5vdyBzZXZlcmFsIG10
+ayBjbGsgZHJpdmVycw0KYXJlIGp1c3QgYSBmZXcgZGF0YS4NCg0KQnV0IHRoaXMgc2VyaWVzIHN0
+aWxsIGFkZCA+MTAgY29uZmlncyBmb3IgbXQ4MTkyIGNsb2NrIGRyaXZlcnMuIFdoeSBkbw0Kd2Ug
+bmVlZCBzZXBhcmF0ZSBjb25maWdzIGZvciBjbG9ja3Mgb2YgZGlmZmVyZW50IGRvbWFpbj8gSSBk
+b24ndCB0aGluaw0KdGhleSBuZWVkIGxvdHMgb2YgcmVzb3VyY2UuIFdlIHNob3VsZCByZXZpZXcg
+dGhlIHJhdGlvbmFsZSBhbmQgcmVkdWNlDQp0aGUgbnVtYmVycy4gDQoNCg0KSm9lLkMNCg0K
 
-Can we have different clk_ops for the different types of PLLs? It looks
-like the flag is being used to overload this function to do different
-things depending on how the flags are set. What happens if we decide to
-change the semantics of this clk flag? How does it map to this driver?
-Ideally this driver shouldn't need to worry about this flag, at least
-not in this function, except to figure out if it should do something
-different like not write the value to the hardware or something like
-that.
-
-The flag indicates to the clk framework that this clk should be gated
-when clk_set_rate() is called on it. The driver should be able to figure
-out that the clk is disabled by reading the hardware here and checking
-the enable state, or it could just have different clk_ops for the
-different type of PLL and do something different without checking the
-flag. Either way, checking the flag looks wrong.
-
-> >> -                 .c =3D 1,
-> >> +                 .f =3D CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
-> >=20
-> > Please indicate why clks are critical.
->=20
-> Sure! I'll do it in next version. I chose it like this because they are
-> feeding critical parts of the system like CPU or memory.
->=20
-> > Whenever the CLK_IS_CRITICAL flag
-> > is used we should have a comment indicating why.
->=20
-> I was not aware of this rule. I'll update the code accordingly.
-
-Sorry. I should put a document comment next to the flag.
