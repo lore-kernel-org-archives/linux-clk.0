@@ -2,49 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA34EC5519F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 07:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4609C5519F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 07:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E589246A7
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 07:42:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJw9vTE3"
+	by mail.kernel.org (Postfix) with ESMTP id 602622463F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 07:48:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgKRHmA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 02:42:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbgKRHl7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Nov 2020 02:41:59 -0500
-Received: from kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0D9024656;
-        Wed, 18 Nov 2020 07:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605685319;
-        bh=Q4jpEyGuwcCkj+Ak7YzDr/tG7X4Egxkvlz1mTnJ8TFQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SJw9vTE3zE3+IwA5FcC/Gc6ap8q20Ark7HFMfCaI5bNbYMRiKF22QEP6+MbTSf3O0
-         r6AiVfmnmNBDYarTXPNBwtt/cWi014DbhBMfe/hl4x2BF1z3k8/NOFFONf6DX1cwuz
-         bHhMD0xiWDmO++3Zu1g+bi4C9NqpSm06ozKIB+SQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201115170950.304460-2-krzk@kernel.org>
-References: <20201115170950.304460-1-krzk@kernel.org> <20201115170950.304460-2-krzk@kernel.org>
-Subject: Re: [PATCH 1/3] clk: fix redefinition of clk_prepare on MIPS with HAVE_LEGACY_CLK
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
+        id S1726204AbgKRHsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 02:48:17 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36417 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbgKRHsQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 02:48:16 -0500
+Received: by mail-ed1-f65.google.com with SMTP id m16so957325edr.3;
+        Tue, 17 Nov 2020 23:48:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/VBymVKVFuIaMs6diTaKJdglBbHoKWE5HN40ZxS82fM=;
+        b=ZoQXuxH+O+bMZf6e01a5OMk9ERHYOga+zduslROkrb0PoC1qdpsAMBS9m/r9xs3xdH
+         pOAsqdM5IZIe1OxHvwq5MbntFv8ZylO2ufc66o6O9BzN42J4XzXkM2kzOe2zcX4X50+J
+         8vfTwwj0xleWzXBBKaa0wNRfEjexpfgMkMVPS1jJbBsPNbakT5sK3J1r9WOZVI0DPg0U
+         EXSKz+EUgP3H4o8h8t7eu3FY72qnHRXJxGr/fs2Tw1qYAcbj0upMEdRAJfaphMMg7JEw
+         fBJzInSNZAL0tFu0X5HbAoaCGTIyHBJgjL+ojNgF51Ueb+99jWoTXX+Hc72pAr+Hxp+D
+         rlXQ==
+X-Gm-Message-State: AOAM532hxQ6o2qZiFQE4V99fQQOBcX0g+PRAVF52+kEU5JTFEIah4p27
+        ZhqHJry+Vx9AKUUNfEMFZpQ=
+X-Google-Smtp-Source: ABdhPJx+aZjGIA58JBNNsU2EYJuORCMi9eVDKQ3IfVQdHZjH8ummbU4/k0jvYclGpHK/bGP8ytcepg==
+X-Received: by 2002:aa7:c2c3:: with SMTP id m3mr24597168edp.361.1605685694599;
+        Tue, 17 Nov 2020 23:48:14 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id g7sm13224731edl.5.2020.11.17.23.48.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2020 23:48:13 -0800 (PST)
+Date:   Wed, 18 Nov 2020 08:48:12 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -55,21 +56,40 @@ To:     Chen-Yu Tsai <wens@csie.org>,
         devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org
-Date:   Tue, 17 Nov 2020 23:41:57 -0800
-Message-ID: <160568531746.60232.15496517544781609246@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Subject: Re: [PATCH 1/3] clk: fix redefinition of clk_prepare on MIPS with
+ HAVE_LEGACY_CLK
+Message-ID: <20201118074812.GA5803@kozik-lap>
+References: <20201115170950.304460-1-krzk@kernel.org>
+ <20201115170950.304460-2-krzk@kernel.org>
+ <160568531746.60232.15496517544781609246@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <160568531746.60232.15496517544781609246@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-11-15 09:09:48)
-> COMMON_CLK even though is a user-selectable symbol, is still selected by
-> multiple other config options.  COMMON_CLK should not be used when
-> legacy clocks are provided by architecture, so it correctly depends on
-> !HAVE_LEGACY_CLK.
->=20
-> However it is possible to create a config which selects both COMMON_CLK
-> (by SND_SUN8I_CODEC) and HAVE_LEGACY_CLK (by SOC_RT305X) which leads to
+On Tue, Nov 17, 2020 at 11:41:57PM -0800, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2020-11-15 09:09:48)
+> > COMMON_CLK even though is a user-selectable symbol, is still selected by
+> > multiple other config options.  COMMON_CLK should not be used when
+> > legacy clocks are provided by architecture, so it correctly depends on
+> > !HAVE_LEGACY_CLK.
+> > 
+> > However it is possible to create a config which selects both COMMON_CLK
+> > (by SND_SUN8I_CODEC) and HAVE_LEGACY_CLK (by SOC_RT305X) which leads to
+> 
+> Why is SND_SUN8I_CODEC selecting COMMON_CLK? Or really, why is
+> SOC_RT305X selecting HAVE_LEGACY_CLK?
 
-Why is SND_SUN8I_CODEC selecting COMMON_CLK? Or really, why is
-SOC_RT305X selecting HAVE_LEGACY_CLK?
+The SND_SUN8I_CODEC I fixed in following patch (I sent separately v2 of
+it).
+
+The SOC_RT305X select HAVE_LEGACY_CLK? because it is an old, Ralink
+platform, not converted to Common clock frm. Few clock operations are
+defined in: arch/mips/ralink/clk.c
+
+Best regards,
+Krzysztof
+
