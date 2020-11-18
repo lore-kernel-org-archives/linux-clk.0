@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26294C5519F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99994C6379D
 	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 13:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C03872078D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 13:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CA6E2078D
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 13:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItuNwInc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdF8xUVo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbgKRN6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 08:58:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+        id S1726635AbgKRN6j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 08:58:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbgKRN6h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 08:58:37 -0500
+        with ESMTP id S1726560AbgKRN6g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 08:58:36 -0500
 Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB42C061A48;
-        Wed, 18 Nov 2020 05:58:37 -0800 (PST)
-Received: by mail-ej1-x642.google.com with SMTP id o21so2892072ejb.3;
-        Wed, 18 Nov 2020 05:58:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CF7C0613D4;
+        Wed, 18 Nov 2020 05:58:34 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id dk16so2828952ejb.12;
+        Wed, 18 Nov 2020 05:58:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XzfD+8x/gl2vij+zxF0vgPJlMvOnmt8qPR/mutEO1AU=;
-        b=ItuNwInc2MBwj4FPc/vi8+RT3PaxeSvrL0xAoc2Um/9NAI/K/r5esaAf8vYLZvfi2N
-         Gn5FdFm8AcWSkuEj0mecew0gSpzUcKx2bY5Ys2T/SRcbCzEslZloWfRO9hpVGkfPdAUN
-         e4812uni4BzgCCh4xGpbNRXbyq9JcguzIWoNBt+64GLcVPlTtcMixYIZyjl4x64n2LhW
-         t5ygd/OxZWeGUFR8o+rwptKuSqP+1/EAkhuhHNw0Jz3yVtNr1I78EelRvf4MTthuMFaU
-         Susaq2zd7AYwogwUmtCBT0TwDkRMqBHNpGjG58LoW+PDY4Nf9gt7ECy3xXxAXeb4KMEw
-         DRkg==
+        bh=cfXI1Q85bb28+McjuHeu3xbkODr0lp86DQ42QSmzooY=;
+        b=fdF8xUVo3uIdHc6YyB775KnYhOIlFrGskqvtuYUq0+H0LEDxRf2FSjmE3MejSgdHTb
+         8WJWYId6ImRG9GGecYu1B32uSQt7oWDTxH2x+PqtWNUitn9YCxWI0EEes+tXEV1MP+XU
+         8D+YacIFqFcQzMWGR+LX6Mc6ITalnds5Ff3PCpT9y487iyq4fM4+FYc0vNpudn6aT1nA
+         f/tKSRmWc1iauHA8/2II7cKUJ/ro4adTzpQmNEnWYqgZZVVWV6vKzi91xqrWu/9Z/Wbk
+         IjGH8CQrSMvry7JmgYbGqaLBDpacNYpdVh4K8kq5qc3bN/DiIm8VHGvt37d6TGSFQwVl
+         vKaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XzfD+8x/gl2vij+zxF0vgPJlMvOnmt8qPR/mutEO1AU=;
-        b=qncbOoiXIPmt6A8SU1ZPUHwLiOjPT/KyTRz2OYNlxEgNDTxwxuyV6+qZkNOorwD3pw
-         RuYLUjS8MdSnVWz02Es3PYa9fDM8t3BhrcvVky8xc7f8S8en1Z0iD8egYGdKaOA1id9z
-         +H6fP7WuCNaZRQTqp+PwAF88E5aVCPmPwdIuYbjBz/oZkjcjv9UIpI1l4Jivx9LXsJwf
-         9kwEkMaJvguJY1NvFUEUQMkZq1fxLbUCqwyKpcqq+iPxy/79g38TiArw0Rz5mmnsKfJS
-         CUjpfBRBkNdpLlu6FEjjO7X1NoLO+eijfpM4Or4Vu54hpH09WaGxaNQcH30u/o2Uca2T
-         icAA==
-X-Gm-Message-State: AOAM533bm4KAjtoHtWtaxO7xpxqbUIhTqsukE1iDMoK2W991lIwsmaaE
-        NxxMoBsrXNFjE/I1QRxzTgE=
-X-Google-Smtp-Source: ABdhPJy6FxHe0EbiFMLb69ag6/AE/2uHZ1fKsTWtsbK6CS3f8YZgjTZfbNAGLYo8ILiVxlTQhXgfRQ==
-X-Received: by 2002:a17:906:6b86:: with SMTP id l6mr24155838ejr.524.1605707915976;
-        Wed, 18 Nov 2020 05:58:35 -0800 (PST)
+        bh=cfXI1Q85bb28+McjuHeu3xbkODr0lp86DQ42QSmzooY=;
+        b=lRTtTtkKLPnm7v9OJJXN1G4bdnAeLe4UizenXZ5NF2tv0nP3nJv47ojkeNQdHjckBK
+         01vanEy45Dhl0YaYygLIBPVtQIiHPHcvF+PdVp9yasRp6L6OPrG7J1PtzliOuTNvsb5I
+         cjlCWglvbM64WnJMNFc+Gk1Rc4OlDjqegvXe8BNGDVCrxGPrBErjEXsPU5swiwElXSr7
+         0+dbVtwLaOmkhpd1RoG4vQ5sL3Hm++xzOcJy3E3eaHSG2HX+iwqv40eTyL6EbmDDBEsa
+         FgHHiM289RswEcfghNM7rp2D0udiwGOebDLwdngUt/b9++3hGQlGN5oN+CTrzKhRZjEI
+         32aw==
+X-Gm-Message-State: AOAM530MwqGLViaYclTuDI3WbAioKBYKE1JiSMb6vSl4uDlwzNoJQ2/n
+        jWL715LX7+MsxzYdp5dJw5U=
+X-Google-Smtp-Source: ABdhPJwPUth9fHvvDX++NfqTDXzoOCsJv1H/KeHB1Jjd8310pAuysjnHkPHT+Mln9kBpRXazl3YUgg==
+X-Received: by 2002:a17:906:c08f:: with SMTP id f15mr23483362ejz.97.1605707913682;
+        Wed, 18 Nov 2020 05:58:33 -0800 (PST)
 Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id cx6sm13721384edb.61.2020.11.18.05.58.34
+        by smtp.gmail.com with ESMTPSA id cx6sm13721384edb.61.2020.11.18.05.58.32
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Nov 2020 05:58:35 -0800 (PST)
+        Wed, 18 Nov 2020 05:58:33 -0800 (PST)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de
 Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
@@ -65,9 +65,9 @@ Cc:     hjc@rock-chips.com, robh+dt@kernel.org, airlied@linux.ie,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/7] ARM: dts: rockchip: rk3066a: add #sound-dai-cells to hdmi node
-Date:   Wed, 18 Nov 2020 14:58:20 +0100
-Message-Id: <20201118135822.9582-6-jbx6244@gmail.com>
+Subject: [PATCH v5 3/7] dt-bindings: display: add #sound-dai-cells property to rockchip rk3066 hdmi
+Date:   Wed, 18 Nov 2020 14:58:18 +0100
+Message-Id: <20201118135822.9582-4-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20201118135822.9582-1-jbx6244@gmail.com>
 References: <20201118135822.9582-1-jbx6244@gmail.com>
@@ -76,26 +76,37 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 '#sound-dai-cells' is required to properly interpret
-the list of DAI specified in the 'sound-dai' property,
-so add them to the 'hdmi' node for 'rk3066a.dtsi'.
+the list of DAI specified in the 'sound-dai' property.
+Add it to rockchip,rk3066-hdmi.yaml to document that the
+rk3066 HDMI TX also can be used to transmit some audio.
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk3066a.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml    | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3066a.dtsi b/arch/arm/boot/dts/rk3066a.dtsi
-index 252750c97..67fcb0dc9 100644
---- a/arch/arm/boot/dts/rk3066a.dtsi
-+++ b/arch/arm/boot/dts/rk3066a.dtsi
-@@ -124,6 +124,7 @@
- 		pinctrl-0 = <&hdmii2c_xfer>, <&hdmi_hpd>;
- 		power-domains = <&power RK3066_PD_VIO>;
- 		rockchip,grf = <&grf>;
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
+index 4110d003c..585a8d3b9 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3066-hdmi.yaml
+@@ -42,6 +42,9 @@ properties:
+     description:
+       This soc uses GRF regs to switch the HDMI TX input between vop0 and vop1.
  
- 		ports {
++  "#sound-dai-cells":
++    const: 0
++
+   ports:
+     type: object
+ 
+@@ -101,6 +104,7 @@ examples:
+       pinctrl-names = "default";
+       power-domains = <&power RK3066_PD_VIO>;
+       rockchip,grf = <&grf>;
++      #sound-dai-cells = <0>;
+ 
+       ports {
+         #address-cells = <1>;
 -- 
 2.11.0
 
