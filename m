@@ -2,104 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA05C5519F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 03:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D7EC6369E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 03:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3650221FC
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 03:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5293524671
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 03:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WiYeA9PY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Rm8kt3Vp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725790AbgKRDuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Nov 2020 22:50:13 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46822 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725613AbgKRDuN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 22:50:13 -0500
-X-UUID: 5c27fc8608614bf597ab7e98b18e3bcd-20201118
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=kF/INCW/2jYXxM9LXFS6EoXUIq77hAmvBpBxqoM7wak=;
-        b=WiYeA9PYRytVY6p5c9gU/8YBSAk0bSP68tCA7ideHpQJX5WPJGQJAV1nwvdnM2YZZmcZootKZF0kuntPtpXBeLqS4Eq4KJrQdxnt1C3E8dp7+psTp9XJnR/c655J8VQj1DgONhnvbwukgLtx/jbm1XTexebE1xw55nX2iyWFly8=;
-X-UUID: 5c27fc8608614bf597ab7e98b18e3bcd-20201118
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1970448491; Wed, 18 Nov 2020 11:50:05 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 18 Nov 2020 11:49:42 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 18 Nov 2020 11:49:43 +0800
-Message-ID: <1605671382.23622.8.camel@mtksdaap41>
-Subject: Re: [PATCH v5 14/24] clk: mediatek: Add MT8192 imp i2c wrapper
- clock support
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Yingjoe Chen <yingjoe.chen@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1727336AbgKRDzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Nov 2020 22:55:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbgKRDzH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Nov 2020 22:55:07 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C23C0613D4
+        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 19:55:07 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id d17so269304plr.5
+        for <linux-clk@vger.kernel.org>; Tue, 17 Nov 2020 19:55:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NF71P8SL20XuWGpve1Ss/ZaRaSfeH/zBmcqp/hYzjCw=;
+        b=Rm8kt3VpI/aWCK8QuAXnBlKQgakkQESmJbYWI+EwQjN3Yhd6FbRj4gxVQKNgjbSmbZ
+         aAQ47/Wg+l6lGrGnnOQJJ5+KfsqV0N6Ud4/ecG9Xz1eQi65hzeq14Ct5S68NUsWhGwJX
+         3LPYA5gpgSwVClpU/N+5JpD4zCu629F+y6UQ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NF71P8SL20XuWGpve1Ss/ZaRaSfeH/zBmcqp/hYzjCw=;
+        b=tfSZFtjDJVYdE7m0ACFfqFqNRfLu787tNHwV+Og5itjI9HyxIdCbUvLJGHJa82YMjL
+         +EOb2QNCnRiWTN2vUoW9kS9fdayfw3Gfzl5HQbyxiyppXw1DHq36LMVE5sXbFabvUR5A
+         PZO/lcKSTkalQbRAMdIu5R5vArHRGm4STxkdEAxtghMDEfB6FUVGQzMuq6E5iNgvtuLy
+         wykHRhzYOyxFiQ9ihPpgQTShqCOayZQFn8Tw8Cr6uB6BuiGK6khGGg2yuAlhsGmdgQ0S
+         s/Jf+37aW0ViASHlVBiTM0PjZgfxXqkuRYJUhZi0xNqEaG001Y+74UdKFJRLq+9aUbnt
+         3aLw==
+X-Gm-Message-State: AOAM533xzydZNGNDa93H/FSoZ6CUpFMQe49pJs4dq4wYxdGjftvEwYgQ
+        Ohoy2Imc9TgYuUB+bGVTMHYTGQ==
+X-Google-Smtp-Source: ABdhPJwrYH4odcpeAEWrzKDSnTEwhm/OO88XM2k1g4IF7+ohxJxegV50JUMuGHCnQDzpm2sHh6Ng3g==
+X-Received: by 2002:a17:902:a705:b029:d6:e486:ef6 with SMTP id w5-20020a170902a705b02900d6e4860ef6mr2890732plq.0.1605671706956;
+        Tue, 17 Nov 2020 19:55:06 -0800 (PST)
+Received: from chromium.org ([2401:fa00:1:b:f693:9fff:fef4:a8fc])
+        by smtp.gmail.com with ESMTPSA id 131sm7798031pfw.117.2020.11.17.19.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Nov 2020 19:55:06 -0800 (PST)
+Date:   Wed, 18 Nov 2020 11:55:02 +0800
+From:   Ikjoon Jang <ikjn@chromium.org>
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>
-Date:   Wed, 18 Nov 2020 11:49:42 +0800
-In-Reply-To: <1605667293.8636.5.camel@mtksdaap41>
+        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 07/24] clk: mediatek: Fix asymmetrical PLL enable and
+ disable control
+Message-ID: <20201118035502.GB1049148@chromium.org>
 References: <1604887429-29445-1-git-send-email-weiyi.lu@mediatek.com>
-         <1604887429-29445-15-git-send-email-weiyi.lu@mediatek.com>
-         <1605667293.8636.5.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+ <1604887429-29445-8-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604887429-29445-8-git-send-email-weiyi.lu@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gV2VkLCAyMDIwLTExLTE4IGF0IDEwOjQxICswODAwLCBZaW5nam9lIENoZW4gd3JvdGU6DQo+
-IE9uIE1vbiwgMjAyMC0xMS0wOSBhdCAxMDowMyArMDgwMCwgV2VpeWkgTHUgd3JvdGU6DQo+ID4g
-QWRkIE1UODE5MiBpbXAgaTJjIHdyYXBwZXIgY2xvY2sgcHJvdmlkZXINCj4gPiANCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBXZWl5aSBMdSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+
-ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9LY29uZmlnICAgICAgICAgICAgICAgICAgIHwgICA2ICsr
-DQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL01ha2VmaWxlICAgICAgICAgICAgICAgICAgfCAg
-IDEgKw0KPiA+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWltcF9paWNfd3JhcC5j
-IHwgMTE5ICsrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAx
-MjYgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVk
-aWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXAuYw0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2Nsay9tZWRpYXRlay9LY29uZmlnIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvS2NvbmZp
-Zw0KPiA+IGluZGV4IGViNTQ5ZjguLjhhY2M3ZDYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9j
-bGsvbWVkaWF0ZWsvS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL0tjb25m
-aWcNCj4gPiBAQCAtNTE1LDYgKzUxNSwxMiBAQCBjb25maWcgQ09NTU9OX0NMS19NVDgxOTJfSU1H
-U1lTDQo+ID4gIAloZWxwDQo+ID4gIAkgIFRoaXMgZHJpdmVyIHN1cHBvcnRzIE1lZGlhVGVrIE1U
-ODE5MiBpbWdzeXMgYW5kIGltZ3N5czIgY2xvY2tzLg0KPiA+ICANCj4gPiArY29uZmlnIENPTU1P
-Tl9DTEtfTVQ4MTkyX0lNUF9JSUNfV1JBUA0KPiA+ICsJYm9vbCAiQ2xvY2sgZHJpdmVyIGZvciBN
-ZWRpYVRlayBNVDgxOTIgaW1wX2lpY193cmFwIg0KPiA+ICsJZGVwZW5kcyBvbiBDT01NT05fQ0xL
-X01UODE5Mg0KPiA+ICsJaGVscA0KPiA+ICsJICBUaGlzIGRyaXZlciBzdXBwb3J0cyBNZWRpYVRl
-ayBNVDgxOTIgaW1wX2lpY193cmFwIGNsb2Nrcy4NCj4gPiArDQo+ID4gIGNvbmZpZyBDT01NT05f
-Q0xLX01UODUxNg0KPiA+ICAJYm9vbCAiQ2xvY2sgZHJpdmVyIGZvciBNZWRpYVRlayBNVDg1MTYi
-DQo+ID4gIAlkZXBlbmRzIG9uIEFSQ0hfTUVESUFURUsgfHwgQ09NUElMRV9URVNUDQo+IA0KPiA8
-Li4uPg0KPiANCj4gPiArDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGNsa19t
-dDgxOTJfaW1wX2lpY193cmFwX2RydiA9IHsNCj4gPiArCS5wcm9iZSA9IG10a19jbGtfc2ltcGxl
-X3Byb2JlLA0KPiANCj4gR29vZCB0byBoYXZlIHRoaXMgZ2VuZXJpYyBwcm9iZSBmdW5jdGlvbi4g
-Tm93IHNldmVyYWwgbXRrIGNsayBkcml2ZXJzDQo+IGFyZSBqdXN0IGEgZmV3IGRhdGEuDQo+IA0K
-PiBCdXQgdGhpcyBzZXJpZXMgc3RpbGwgYWRkID4xMCBjb25maWdzIGZvciBtdDgxOTIgY2xvY2sg
-ZHJpdmVycy4gV2h5IGRvDQo+IHdlIG5lZWQgc2VwYXJhdGUgY29uZmlncyBmb3IgY2xvY2tzIG9m
-IGRpZmZlcmVudCBkb21haW4/IEkgZG9uJ3QgdGhpbmsNCj4gdGhleSBuZWVkIGxvdHMgb2YgcmVz
-b3VyY2UuIFdlIHNob3VsZCByZXZpZXcgdGhlIHJhdGlvbmFsZSBhbmQgcmVkdWNlDQo+IHRoZSBu
-dW1iZXJzLiANCj4gDQpIaSBKb2UsDQoNClRoYW5rcyBmb3IgcmV2aWV3aW5nLg0KDQpUaGVyZSBo
-YXZlIGJlZW4gc29tZSBkaXNjdXNzaW9ucyBpbiBwYXRjaFsxXSBhcyB0byB3aHkgdGhlIHN1YnN5
-c3RlbQ0KY2xvY2tzIGFyZSBub3cgc2VwYXJhdGVkIGJ5IGRpZmZlcmVudCBjb25maWdzLg0KQW5k
-IHdlIGRvIG5lZWQgdGhlc2UgY2xvY2tzIHRvIGJlIG9wdGlvbmFsIG9uIHNvbWUgTWVkaWF0VGVr
-IFNvQw0KcGxhdGZvcm0uDQoNCkkgdGhvdWdodCBpdCBpdCBub3cgYSByYXRpb25hbGUgbnVtYmVy
-IG9mIHN1YnN5c3RlbSBjbG9jayBwcm92aWRlcg0KZHJpdmVycy4gSW4gdGhpcyBzZXJpZXMsIHdl
-IGhhdmUgcmVkdWNlZCBmcm9tIDIzIHRvIDEyLg0KDQpbMV0NCmh0dHBzOi8vcGF0Y2h3b3JrLmtl
-cm5lbC5vcmcvcHJvamVjdC9saW51eC1tZWRpYXRlay9wYXRjaC8xNDYwNjIxNTE0LTY1MTkxLTUt
-Z2l0LXNlbmQtZW1haWwtamFtZXNqai5saWFvQG1lZGlhdGVrLmNvbS8NCg0KDQo+IA0KPiBKb2Uu
-Qw0KPiANCj4gDQoNCg==
+On Mon, Nov 09, 2020 at 10:03:32AM +0800, Weiyi Lu wrote:
+> In fact, the en_mask is a combination of divider enable mask
+> and pll enable bit(bit0).
+> Before this patch, we enabled both divider mask and bit0 in prepare(),
+> but only cleared the bit0 in unprepare().
+> In the future, we hope en_mask will only be used as divider enable mask.
+> The enable register(CON0) will be set in 2 steps:
+> first is divider mask, and then bit0 during prepare(), and vice versa.
+> But considering backward compatibility, at this stage we allow en_mask
+> to be a combination or a pure divider enable mask.
+> And then we will make en_mask a pure divider enable mask in another
+> following patch series.
 
+I have a question on this: Are there any possible problems on controlling
+divider_en and bit0 at the same time? Or is this only for cleanups?
+
+If mtk_pll_data::en_mask is not allowed to control with bit0 together,
+I guess register_pll() also needs to check en_mask::bit0 is cleared?
+
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-pll.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> index f440f2cd..11ed5d1 100644
+> --- a/drivers/clk/mediatek/clk-pll.c
+> +++ b/drivers/clk/mediatek/clk-pll.c
+> @@ -238,6 +238,7 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+>  {
+>  	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+>  	u32 r;
+> +	u32 div_en_mask;
+>  
+>  	r = readl(pll->pwr_addr) | CON0_PWR_ON;
+>  	writel(r, pll->pwr_addr);
+> @@ -247,10 +248,15 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+>  	writel(r, pll->pwr_addr);
+>  	udelay(1);
+>  
+> -	r = readl(pll->base_addr + REG_CON0);
+> -	r |= pll->data->en_mask;
+> +	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
+>  	writel(r, pll->base_addr + REG_CON0);
+>  
+> +	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
+> +	if (div_en_mask) {
+> +		r = readl(pll->base_addr + REG_CON0) | div_en_mask;
+> +		writel(r, pll->base_addr + REG_CON0);
+> +	}
+> +
+>  	__mtk_pll_tuner_enable(pll);
+>  
+>  	udelay(20);
+> @@ -268,6 +274,7 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+>  {
+>  	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+>  	u32 r;
+> +	u32 div_en_mask;
+>  
+>  	if (pll->data->flags & HAVE_RST_BAR) {
+>  		r = readl(pll->base_addr + REG_CON0);
+> @@ -277,8 +284,13 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+>  
+>  	__mtk_pll_tuner_disable(pll);
+>  
+> -	r = readl(pll->base_addr + REG_CON0);
+> -	r &= ~CON0_BASE_EN;
+> +	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
+> +	if (div_en_mask) {
+> +		r = readl(pll->base_addr + REG_CON0) & ~div_en_mask;
+> +		writel(r, pll->base_addr + REG_CON0);
+> +	}
+> +
+> +	r = readl(pll->base_addr + REG_CON0) & ~CON0_BASE_EN;
+>  	writel(r, pll->base_addr + REG_CON0);
+>  
+>  	r = readl(pll->pwr_addr) | CON0_ISO_EN;
+> -- 
+> 1.8.1.1.dirty
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
