@@ -2,326 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765E3C5519F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCFC6379F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1068D221EB
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F201D246CC
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:58:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="F9ZAUTOX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnFgYG5g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgKRTOJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 14:14:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54910 "EHLO
+        id S1726635AbgKRT6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 14:58:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgKRTOJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 14:14:09 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE16C0613D4
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:14:07 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id t21so1858513pgl.3
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:14:07 -0800 (PST)
+        with ESMTP id S1726624AbgKRT6V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 14:58:21 -0500
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E0BC061A4F
+        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:58:21 -0800 (PST)
+Received: by mail-qk1-x741.google.com with SMTP id l2so3135246qkf.0
+        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:58:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CJbd6NAuK4zlk/2VM88Eb/il13eEuk+zcEVaHewqSOA=;
-        b=F9ZAUTOXB4PvwjI5OKyGg9aSrohi4I8/hV+P3iJExjK+cAxhHmKbiJyRVIg2qq5fqF
-         AX7usD46YBq3UKmjU9uUXTRoCM/FR+I+bMlAoxzjXzw51pVCsZ38lMtHV9K/fzsrhRvq
-         Iw3ZUr79A9W46QqOF1FCnXCU0HGW6QkUBuIrsoh3SKHrTzH/A2cjhgNIFZXxVOydB91u
-         A14pm/xinLXv+ojRxcFcIxEtlN+X2ZyKPHyRx+TGp8b1MHMB7mMLXM6IBVFZa910VUAz
-         gYpasVSequJJUuMi8HaqCu4cHCQGGemfN4cChz+KkFA6YlAKDc6q+ktA/dtU3gBVK3gH
-         KQTQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VjaM+f+QFZwLQKDZ4ZTmgMDJ8f9Az2SK5T/knBnywXY=;
+        b=jnFgYG5gVAJ2oms8z2m6ffdBRZV6U9odnUVxDlqLkvQyQKuTkBCManYKf5qOsmXaiZ
+         ImN2Ps4AJtf/Twj313+ljstfydDjPN27wPf/9SXYD2XRPbdGRvYr+Im9fT0cfBHqI3wY
+         cxx4b6qPUN4b9eE8RXxYkRkTD8BsO02dTTJkAbsJ7zkuD2RFDHXUjAPjkCNlYEaO1A16
+         tAIITkoK+kceH+xz/NwU12Cje4zz7POeYTJJyrZ7NDVmlfLJH7naXO4jT8j6shlt2Dn5
+         O+3oZcejWMrWsYbPkT/KCAXT6+UoUbADMXlpBhWHD//VTQ8EwzWlmJcOQDpLvhkoT06O
+         1IcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=CJbd6NAuK4zlk/2VM88Eb/il13eEuk+zcEVaHewqSOA=;
-        b=H8qQTXDEimnuJIzvnwRIxdsL8UgmTBz/y5+ltgoSh38VEUlkD2H8SqEQS4VK6rKS2u
-         7UdZiwnMim10caxXByow5OsQyM+jtNcbD3FMeSSLzb3eXUyXFegpJZjKgv8BOWVQTA1G
-         dBlEPtAW5Tm2X96veUF3gyWpYnOc84FpYbPeJBFLgL7Ir93XdTpRkeQJ738TGtGt37/c
-         lTnGsvaJYkPE/jLwKUZVMlE+XjFYVTyS2MDlUQn4HSda8JdWq1ono75UDxi7HyPgFHsx
-         9X8Y2Pip/OFLZSj42x/lo9kcdo9i5cASJLXJBXHObemBqGwCipslgwUcU+8sAs1qowno
-         W3IA==
-X-Gm-Message-State: AOAM532YMAuJCmiSwgyw9GRowwyulDwYrwMNNtkKbC4QVEu1iE/h6NCs
-        qqV1eqbh+tkbsrfx9gLB50VB1A==
-X-Google-Smtp-Source: ABdhPJw3+8pGchiHDqnb1N5QhGtCQEXmxn3y3LDsHnYAFSXPKbYqo2bW+rTiwVRpF9c/JSY6jz6u2Q==
-X-Received: by 2002:a17:90a:9504:: with SMTP id t4mr535804pjo.82.1605726847179;
-        Wed, 18 Nov 2020 11:14:07 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id q18sm25665094pfs.150.2020.11.18.11.14.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 11:14:06 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Brunet?= <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH v2] clk: meson: enable building as modules
-Date:   Wed, 18 Nov 2020 11:14:05 -0800
-Message-Id: <20201118191405.36798-1-khilman@baylibre.com>
-X-Mailer: git-send-email 2.28.0
+        bh=VjaM+f+QFZwLQKDZ4ZTmgMDJ8f9Az2SK5T/knBnywXY=;
+        b=evTduhcwcE9IJL1prZSs36V161iV70r1U+kgVeDQ4tIz32nfKDe4eLu4QgJ3XQ1JmF
+         dw7HzDHEntOPvnbUf35oyTvP8jwnpTDcs0ND+czjXjLD9wZhQ3IiYzDC7M+o9qFSG3qv
+         oCet42/luEt6aPhM99pbiPfgYD0Ec05oHpPwouOfRWE5oSqb8CJONFxTutvb1oqDxDn0
+         GkS5ILEAnH2aDIzePKNMNQvHuyvX6NuIzmcaYmf+QnrkAG22zTPs5lfyRRM9o2nq2EC/
+         GFxrriwCSy8I3YKJtUEWhigJ8ss34d9u5OWvQZ9uWSW8DQnKoDLtywEp3uzbwvpjEGQy
+         xMGA==
+X-Gm-Message-State: AOAM531925e68ZLFPdUbg0aCLFGSmBK4MZe4cP3a9JIrGFwRSjoAd2tM
+        2mxBsaYBWe4A0ax8hd+O5Eha+CpT3HVjGA==
+X-Google-Smtp-Source: ABdhPJzAyijtIgkU8ysmO8Yu8ExUdE14ZVR8R9jKKJNAARHrhWd4xaNIouNLKbqBAPiV4QUesrvZbQ==
+X-Received: by 2002:a05:620a:62b:: with SMTP id 11mr7020809qkv.229.1605729500701;
+        Wed, 18 Nov 2020 11:58:20 -0800 (PST)
+Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
+        by smtp.gmail.com with ESMTPSA id m204sm7745048qke.117.2020.11.18.11.58.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Nov 2020 11:58:19 -0800 (PST)
+Subject: Re: [PATCH 5/6] dts:qcom:sdm845: Add dt entries to support crypto
+ engine.
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, robh+dt@kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20201117134714.3456446-1-thara.gopinath@linaro.org>
+ <20201117134714.3456446-6-thara.gopinath@linaro.org>
+ <20201118041051.GF8532@builder.lan>
+From:   Thara Gopinath <thara.gopinath@linaro.org>
+Message-ID: <36532dfd-4e13-79b2-d29f-d7684f638b22@linaro.org>
+Date:   Wed, 18 Nov 2020 14:58:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201118041051.GF8532@builder.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make it possible to build all clk drivers as modules, but default
-remains built-in.
 
-No functional changes.
 
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
-v2: drop G12A Kconfig fix, separated out into separate patch
+On 11/17/20 11:10 PM, Bjorn Andersson wrote:
+> On Tue 17 Nov 07:47 CST 2020, Thara Gopinath wrote:
+> 
+>> Add crypto engine (CE) and CE BAM related nodes and definitions to
+>> "sdm845.dtsi".
+>>
+>> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 30 ++++++++++++++++++++++++++++
+>>   1 file changed, 30 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index 40e8c11f23ab..b5b2ea97681f 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -2138,6 +2138,36 @@ ufs_mem_phy_lanes: lanes@1d87400 {
+>>   			};
+>>   		};
+>>   
+>> +		cryptobam: dma@1dc4000 {
+>> +			compatible = "qcom,bam-v1.7.0";
+>> +			reg = <0 0x01dc4000 0 0x24000>;
+>> +			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&rpmhcc RPMH_CE_CLK>;
+>> +			clock-names = "bam_clk";
+>> +			#dma-cells = <1>;
+>> +			qcom,ee = <0>;
+>> +			qcom,controlled-remotely = <1>;
+>> +			iommus = <&apps_smmu 0x704 0x1>,
+>> +				 <&apps_smmu 0x706 0x1>,
+>> +				 <&apps_smmu 0x714 0x1>,
+>> +				 <&apps_smmu 0x716 0x1>;
+> 
+> Can you confirm that this can't be written as:
+> 
+> iommus = <&apps_smmu 0x704 0x3>,
+> 	 <&apps_smmu 0x714 0x3>;
+> 
+> (and same below).
 
- drivers/clk/meson/Kconfig       | 6 +++---
- drivers/clk/meson/axg-aoclk.c   | 5 ++++-
- drivers/clk/meson/axg.c         | 5 ++++-
- drivers/clk/meson/g12a-aoclk.c  | 5 ++++-
- drivers/clk/meson/g12a.c        | 5 ++++-
- drivers/clk/meson/gxbb-aoclk.c  | 5 ++++-
- drivers/clk/meson/gxbb.c        | 5 ++++-
- drivers/clk/meson/meson-aoclk.c | 4 ++++
- drivers/clk/meson/meson-eeclk.c | 3 +++
- 9 files changed, 34 insertions(+), 9 deletions(-)
+Hi Bjorn,
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 034da203e8e0..a3417f82aa84 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -58,7 +58,7 @@ config COMMON_CLK_MESON8B
- 	  want peripherals and CPU frequency scaling to work.
- 
- config COMMON_CLK_GXBB
--	bool "GXBB and GXL SoC clock controllers support"
-+	tristate "GXBB and GXL SoC clock controllers support"
- 	depends on ARM64
- 	default y
- 	select COMMON_CLK_MESON_REGMAP
-@@ -74,7 +74,7 @@ config COMMON_CLK_GXBB
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
- 
- config COMMON_CLK_AXG
--	bool "AXG SoC clock controllers support"
-+	tristate "AXG SoC clock controllers support"
- 	depends on ARM64
- 	default y
- 	select COMMON_CLK_MESON_REGMAP
-@@ -100,7 +100,7 @@ config COMMON_CLK_AXG_AUDIO
- 	  aka axg, Say Y if you want audio subsystem to work.
- 
- config COMMON_CLK_G12A
--	bool "G12 and SM1 SoC clock controllers support"
-+	tristate "G12 and SM1 SoC clock controllers support"
- 	depends on ARM64
- 	default y
- 	select COMMON_CLK_MESON_REGMAP
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index b488b40c9d0e..af6db437bcd8 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include "meson-aoclk.h"
- #include "axg-aoclk.h"
- 
-@@ -326,6 +327,7 @@ static const struct of_device_id axg_aoclkc_match_table[] = {
- 	},
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, axg_aoclkc_match_table);
- 
- static struct platform_driver axg_aoclkc_driver = {
- 	.probe		= meson_aoclkc_probe,
-@@ -335,4 +337,5 @@ static struct platform_driver axg_aoclkc_driver = {
- 	},
- };
- 
--builtin_platform_driver(axg_aoclkc_driver);
-+module_platform_driver(axg_aoclkc_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 13fc0006f63d..7ca7ea7345e5 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -13,6 +13,7 @@
- #include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/module.h>
- 
- #include "clk-regmap.h"
- #include "clk-pll.h"
-@@ -1354,6 +1355,7 @@ static const struct of_device_id clkc_match_table[] = {
- 	{ .compatible = "amlogic,axg-clkc", .data = &axg_clkc_data },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, clkc_match_table);
- 
- static struct platform_driver axg_driver = {
- 	.probe		= meson_eeclkc_probe,
-@@ -1363,4 +1365,5 @@ static struct platform_driver axg_driver = {
- 	},
- };
- 
--builtin_platform_driver(axg_driver);
-+module_platform_driver(axg_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-index 62499563e4f5..b52990e574d2 100644
---- a/drivers/clk/meson/g12a-aoclk.c
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include "meson-aoclk.h"
- #include "g12a-aoclk.h"
- 
-@@ -461,6 +462,7 @@ static const struct of_device_id g12a_aoclkc_match_table[] = {
- 	},
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, g12a_aoclkc_match_table);
- 
- static struct platform_driver g12a_aoclkc_driver = {
- 	.probe		= meson_aoclkc_probe,
-@@ -470,4 +472,5 @@ static struct platform_driver g12a_aoclkc_driver = {
- 	},
- };
- 
--builtin_platform_driver(g12a_aoclkc_driver);
-+module_platform_driver(g12a_aoclkc_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index b814d44917a5..66094bfec2cc 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -15,6 +15,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/clk.h>
-+#include <linux/module.h>
- 
- #include "clk-mpll.h"
- #include "clk-pll.h"
-@@ -5370,6 +5371,7 @@ static const struct of_device_id clkc_match_table[] = {
- 	},
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, clkc_match_table);
- 
- static struct platform_driver g12a_driver = {
- 	.probe		= meson_g12a_probe,
-@@ -5379,4 +5381,5 @@ static struct platform_driver g12a_driver = {
- 	},
- };
- 
--builtin_platform_driver(g12a_driver);
-+module_platform_driver(g12a_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index e940861a396b..fce95cf89836 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/platform_device.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include "meson-aoclk.h"
- #include "gxbb-aoclk.h"
- 
-@@ -287,6 +288,7 @@ static const struct of_device_id gxbb_aoclkc_match_table[] = {
- 	},
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, gxbb_aoclkc_match_table);
- 
- static struct platform_driver gxbb_aoclkc_driver = {
- 	.probe		= meson_aoclkc_probe,
-@@ -295,4 +297,5 @@ static struct platform_driver gxbb_aoclkc_driver = {
- 		.of_match_table = gxbb_aoclkc_match_table,
- 	},
- };
--builtin_platform_driver(gxbb_aoclkc_driver);
-+module_platform_driver(gxbb_aoclkc_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 0a68af6eec3d..d6eed760327d 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -8,6 +8,7 @@
- #include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/module.h>
- 
- #include "gxbb.h"
- #include "clk-regmap.h"
-@@ -3519,6 +3520,7 @@ static const struct of_device_id clkc_match_table[] = {
- 	{ .compatible = "amlogic,gxl-clkc", .data = &gxl_clkc_data },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, clkc_match_table);
- 
- static struct platform_driver gxbb_driver = {
- 	.probe		= meson_eeclkc_probe,
-@@ -3528,4 +3530,5 @@ static struct platform_driver gxbb_driver = {
- 	},
- };
- 
--builtin_platform_driver(gxbb_driver);
-+module_platform_driver(gxbb_driver);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index bf8bea675d24..f0858fe789bc 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -14,6 +14,8 @@
- #include <linux/reset-controller.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_device.h>
-+#include <linux/module.h>
-+
- #include <linux/slab.h>
- #include "meson-aoclk.h"
- 
-@@ -84,3 +86,5 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 		(void *) data->hw_data);
- }
-+EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index a7cb1e7aedc4..8d5a5dab955a 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -9,6 +9,7 @@
- #include <linux/platform_device.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <linux/module.h>
- 
- #include "clk-regmap.h"
- #include "meson-eeclk.h"
-@@ -54,3 +55,5 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 					   data->hw_onecell_data);
- }
-+EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
-+MODULE_LICENSE("GPL v2");
+Thanks for the reviews. Yes, I can confirm that the above does not work.
+The tests hang. I will fix rest of your comments and post v2.
+
 -- 
-2.28.0
-
+Warm Regards
+Thara
