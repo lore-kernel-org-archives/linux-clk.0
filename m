@@ -2,170 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,
-	DATE_IN_FUTURE_06_12,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D6DC2D0E4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 11:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70F0C2D0E4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B65A9246EF
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 11:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32387246D3
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:00:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LCWkyXFv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgKSLhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Nov 2020 06:37:10 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7559 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgKSLhK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 06:37:10 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CcHhM0MqHzhbLB;
-        Thu, 19 Nov 2020 19:36:51 +0800 (CST)
-Received: from huawei.com (10.151.151.249) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.487.0; Thu, 19 Nov 2020
- 19:36:59 +0800
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <vkoul@kernel.org>,
-        <dan.j.williams@intel.com>, <p.zabel@pengutronix.de>,
-        <gengdongjiu@huawei.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>
-Subject: [PATCH v5 3/4] dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
-Date:   Thu, 19 Nov 2020 20:01:28 +0000
-Message-ID: <20201119200129.28532-4-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201119200129.28532-1-gengdongjiu@huawei.com>
-References: <20201119200129.28532-1-gengdongjiu@huawei.com>
-MIME-Version: 1.0
+        id S1726641AbgKSMAa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 07:00:30 -0500
+Received: from mail-am6eur05on2074.outbound.protection.outlook.com ([40.107.22.74]:28455
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726555AbgKSMA0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Nov 2020 07:00:26 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aC+tv463pB4f4PRK3FGGaBUerfAD/WoPh1lb8f3rPaLtoYEHdxRf2arNu9QuhcPbt2jn7k00xls/kR4Of+Av4jEmBYpQTmMu3w9amruXCBRGQ2gWRVrf7O1sKQcwshwJRSodZ4PYKfaFFLZIGPiBsT7nJcsrPeQqPbELDOMKWcQGyPwOc/WqAfpWkD0RnSVEy328zd7aN0RogJkznncuCmvPfvnqx4Cm0f+xzsDdhEhyUOPA6UQabCKIfURKeuTDpMlFev0Hgn1SqK27EBhAowqJcYiysW07lVD03fqcCFMFUkuWeH8D9OWoFIRwCEM4XC8UxKBVGq8FRI03EDfrsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R3k9qF0YfZ/991EtvwlBF72pm/Hc7pj0saTKJVN7L7E=;
+ b=h0cZQRAHoi652gx1uMHZpYT1rp0Oml7ccbS/FnkPsxIISgYyv60ea1R8MwPcv0Jt0vqXQzRWoaSOorpTmdDjYBI31YqubCXoTh85j1FgavkY+ks9f2X2FjuP9QfEX84vR6Sx5Rdfugzq+e5cOQDT7ARte6k0YjR4HfC1/3eMLApOwLpMbcxz05bYAkfHhI6Hd05ssspiktLmtoGmAWUKWlj5ltFaTl8qSyCHOSXTAnYUvGaFNldLy9SVA0mgQs4jIx1c/W0vg3dZZWWKlJ4OJh84eaw4/RA9A/Lmu91vlL9yqEkxtpycfpWpmbWXwlDvQ5JLQ7qJ6uAEe0iFFmEhgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R3k9qF0YfZ/991EtvwlBF72pm/Hc7pj0saTKJVN7L7E=;
+ b=LCWkyXFvRDI23p2DGExKRR+yPqnuEtb8o78sXrxhue9yDFDrgkYCdvF2qZMyOqVWlGvEo8aNMQgFoWYpRDBfG7SfT8ufyS8aiycCz433vw6eoQWTS2bZm8a3ph/U+NOzM+yXmzpBxowCU826l3DI/25OEN9p25eD9LtnXQ/gQ3E=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR0402MB3559.eurprd04.prod.outlook.com (2603:10a6:209:12::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.20; Thu, 19 Nov
+ 2020 12:00:22 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a%3]) with mapi id 15.20.3564.029; Thu, 19 Nov 2020
+ 12:00:22 +0000
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 1/1] clk: imx: scu: remove the calling of device_is_bound
+Date:   Thu, 19 Nov 2020 19:43:02 +0800
+Message-Id: <20201119114302.26263-1-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.23.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.151.151.249]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: SG2PR02CA0060.apcprd02.prod.outlook.com
+ (2603:1096:4:54::24) To AM6PR04MB4966.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2::14)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from b29396-OptiPlex-7040.ap.freescale.net (119.31.174.66) by SG2PR02CA0060.apcprd02.prod.outlook.com (2603:1096:4:54::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3589.20 via Frontend Transport; Thu, 19 Nov 2020 12:00:19 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: ad8d557c-49b7-4ed7-a0bd-08d88c82b14b
+X-MS-TrafficTypeDiagnostic: AM6PR0402MB3559:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR0402MB3559C48911514281915F7CB180E00@AM6PR0402MB3559.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QiL4FRr/vGHHo6FQDJNHwrTTaTzxk5MwEjJvImFcfjc3ucyy3aFK9dAk40W9LNUVYvrRCv4SnUCuwOaR6E2ghIT5oN5duny3Z5dz1wDAHTqW5K4Etyahgk/SwPfTND/4hN2dr8RA9t3+jDqmdjZzIq1/iNV28a7ml4WcW8tbus3A+YgEFuKrJz0Gec2dL/9kNjZYRVRyOSjNifnADRQcUf1XHk94/3NwBOPrHhIooyjG2vSkciBWPb2PKnhbhlc1yIV0FwO9s3g8qbzBuGCKK+sukrYSvdXGQVkXgYSVbyAEyH/cM5cZnqarAn6pbaZYiZFho5/Pf9IE58Qetu0lLA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(136003)(39850400004)(366004)(66476007)(86362001)(956004)(66946007)(66556008)(6486002)(2906002)(1076003)(6666004)(6916009)(8936002)(478600001)(52116002)(36756003)(2616005)(6512007)(4326008)(6506007)(5660300002)(8676002)(83380400001)(26005)(316002)(54906003)(16526019)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: e6wfvCdaTYDJun5t4pe0yeDEpkDmHvhl5yjmGj3aQv/0Gjx18Op/svZ8+gn+KLdcpItm63odwnUoXxjlRLihQ5vwU/42ft3vsneuhF2+vGQsLRLoJFGc0y5gdQzjjhLKOYgaIAOtuDA8vBl8+PbzDTUhj10T5yKuTzZJIsG/uAJsO9cap6MyzIGnNQPrYk/cnPWJpmTrVafAupUQHQ2hyRGxe7ohHQt4v2bHO+ukt/+cWkYTULn+u/Pmvr+Zf1MXmmWxbnWWwWPXZaYB/pNtw0nYpvTftcwoyvPGjQXN+NyCVO2NtTO+OmTVBOItDx7+Qqlry9zOKRUOTYwRJDCubj1P+Ul+m5JaWUUsE4VRNIBpvFMY3Vewge+T8zYqpzeqlqe7wEhKzpG8Trv8R5wmdnB+q22tZ/9KSsBCsVbiPDyKviOBtdEj0Xz5V90IYLhILbrCrmXGxHTB9jHHI+Ubo/LRc+fIx81jDkqYJiTLqFhlTWHDi82So+oyRXnYmYe9mhiYQSZYtZO6ze7Adx5VozPHR7V0v2IQdgXT1boSREVxIqSQauWihCa3z5gSU7xRX1t3hjMuyGntjXid3t17LXb8oLSzbir3GabE/FuRo++rA9ciLDfm/qYZsIlYHw8CFAkVEBcq/CII/a5prGCvAQ==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad8d557c-49b7-4ed7-a0bd-08d88c82b14b
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2020 12:00:22.3694
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Asl2ZvxJ+YhKH0kMgwP8GAuc4WCyWv6YYq/ltd1qaPLv3/KA267BfuSeuUw9IMTHj8PUIwcQ57+5vFw308mDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3559
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Hiedma Controller v310 Provides eight DMA channels, each
-channel can be configured for one-way transfer. The data can
-be transferred in 8-bit, 16-bit, 32-bit, or 64-bit mode. This
-documentation describes DT bindings of this controller.
+The device_is_bound() is unvisable to drivers when built as modules.
+It's also not aimed to be used by drivers according to Greg K.H.
+Let's remove it from clk-scu driver and find another way to do proper
+driver loading sequence.
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Fixes: 77d8f3068c63 ("clk: imx: scu: add two cells binding support")
+Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- .../bindings/dma/hisilicon,hiedmacv310.yaml   | 103 ++++++++++++++++++
- 1 file changed, 103 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
+ drivers/clk/imx/clk-scu.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-new file mode 100644
-index 000000000000..fe5c5af4d3e1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-@@ -0,0 +1,103 @@
-+# SPDX-License-Identifier:  GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/hisilicon,hiedmacv310.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index d10f60e48ece..1f5518b7ab39 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -153,7 +153,6 @@ static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
+ 
+ int imx_clk_scu_init(struct device_node *np)
+ {
+-	struct platform_device *pd_dev;
+ 	u32 clk_cells;
+ 	int ret, i;
+ 
+@@ -166,17 +165,11 @@ int imx_clk_scu_init(struct device_node *np)
+ 	if (clk_cells == 2) {
+ 		for (i = 0; i < IMX_SC_R_LAST; i++)
+ 			INIT_LIST_HEAD(&imx_scu_clks[i]);
+-		/*
+-		 * Note: SCU clock driver depends on SCU power domain to be ready
+-		 * first. As there're no power domains under scu clock node in dts,
+-		 * we can't use PROBE_DEFER automatically.
+-		 */
 +
-+title: HiSilicon Hiedma Controller v310 Device Tree Bindings
-+
-+description: |
-+  These bindings describe the DMA engine included in the HiSilicon Hiedma
-+  Controller v310 Device.
-+
-+maintainers:
-+  - Dongjiu Geng <gengdongjiu@huawei.com>
-+
-+allOf:
-+  - $ref: "dma-controller.yaml#"
-+
-+properties:
-+  "#dma-cells":
-+    const: 2
-+
-+  "#clock-cells":
-+    const: 2
-+
-+  compatible:
-+    const: hisilicon,hiedmacv310
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  misc_regmap:
-+    description: phandle pointing to the misc controller provider node.
-+
-+  misc_ctrl_base:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: apb clock
-+      - description: axi clock
-+
-+  clock-names:
-+    items:
-+      - const: apb_pclk
-+      - const: axi_aclk
-+
-+  resets:
-+    description: phandle pointing to the dma reset controller provider node.
-+
-+  reset-names:
-+    items:
-+      - const: dma-reset
-+
-+  dma-requests:
-+    maximum: 32
-+
-+  dma-channels:
-+    maximum: 8
-+
-+
-+required:
-+  - "#dma-cells"
-+  - "#clock-cells"
-+  - compatible
-+  - misc_regmap
-+  - misc_ctrl_base
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - dma-requests
-+  - dma-channels
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/hi3559av100-clock.h>
-+
-+    dma: dma-controller@10040000 {
-+      compatible = "hisilicon,hiedmacv310";
-+      reg = <0x10040000 0x1000>;
-+      misc_regmap = <&misc_ctrl>;
-+      misc_ctrl_base = <0x144>;
-+      interrupts = <0 82 4>;
-+      clocks = <&clock HI3559AV100_EDMAC1_CLK>, <&clock HI3559AV100_EDMAC1_AXICLK>;
-+      clock-names = "apb_pclk", "axi_aclk";
-+      #clock-cells = <2>;
-+      resets = <&clock 0x16c 7>;
-+      reset-names = "dma-reset";
-+      dma-requests = <32>;
-+      dma-channels = <8>;
-+      #dma-cells = <2>;
-+    };
-+
-+...
++		/* pd_np will be used to attach power domains later */
+ 		pd_np = of_find_compatible_node(NULL, NULL, "fsl,scu-pd");
+-		pd_dev = of_find_device_by_node(pd_np);
+-		if (!pd_dev || !device_is_bound(&pd_dev->dev)) {
+-			of_node_put(pd_np);
+-			return -EPROBE_DEFER;
+-		}
++		if (!pd_np)
++			return -EINVAL;
+ 	}
+ 
+ 	return platform_driver_register(&imx_clk_scu_driver);
 -- 
-2.17.1
+2.23.0
 
