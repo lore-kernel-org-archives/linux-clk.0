@@ -2,198 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB1FC2D0E4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 04:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9BAC2D0E4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 07:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21F0F22242
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 04:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1841246EB
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 07:27:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IakSS16g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725964AbgKSEKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 23:10:03 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2494 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgKSEKD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 23:10:03 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Cc5mW39LgzQrlF;
-        Thu, 19 Nov 2020 12:09:47 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 19 Nov 2020 12:10:00 +0800
-Subject: Re: [PATCH V3] clk: hisilicon: refine hi3620_mmc_clk_init() and fix
- memory leak issues
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20201112192214.48926-1-gengdongjiu@huawei.com>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <244c942c-ddd6-3dc0-083e-52f330e33c37@huawei.com>
-Date:   Thu, 19 Nov 2020 12:09:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20201112192214.48926-1-gengdongjiu@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+        id S1726287AbgKSH1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 02:27:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbgKSH1e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 02:27:34 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B24C0617A7
+        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 23:27:34 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id w14so3610409pfd.7
+        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 23:27:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=RU7wqKfv+LHgDxaPO29yong1ckKnttrhFl59yq3IpUI=;
+        b=IakSS16gwXF63uN3L/x39vp5/9lblBW8F+b0zHPH7e3uOQJRVHkChfagvvQX37XOij
+         z9TTJV95j8jUZUAWpZ1ijbL1Ggus5j9Gsv5mG4ksoQz+9EK9UmFkGusvAy2Jc7krt95+
+         noRLmeAmKDbDydaqVdEx9U0jOnCp2LaHzG3VD3K5BGXpf4bGEKf2E3W/IR750gHdKWpd
+         EmaecTOvHrVMYOMUBXCcOfTq/AdDZ/t0WEcgqfnolx6GQR8Yo/u4cPgZl5uzKfKSKhCB
+         2jpb6e+fKItPv8oVYTwahrsaREt/EjaZ48pJmelgU6uiNBrM45U02qB9rLphuuqRvhgH
+         yyPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RU7wqKfv+LHgDxaPO29yong1ckKnttrhFl59yq3IpUI=;
+        b=EeI71A+uBizlNJLKqWlLxGNU1OlEwUPKfOX4RTNj7slrf68U/6bQ9ei0vZUY5Oto/o
+         ii1LVOtONVUp5XT9PGFYPFXeB+U0ykUZoI3UOt354oKPv+EEUfUEA5zgzkpITtOBEUmE
+         9UxsopKcU+Jm3tKHjAawsm152y7N5JQzDsOGXsG5++Ts+oFlgS0GE+YX9F61W8UbjaoJ
+         YHYLhqa8tlz2qiPQtO56qvVs9sbYTg+b6OcHdnDFDOL6M+TeJUjHkQBw0pOaxgtZt2hK
+         SmAPQvuMoLsjbRXDNv9MFMCvoHrB6jtV5iE4HhgSK0ITzUB+GOgwbst8cDvUNxQCWbUv
+         cW0g==
+X-Gm-Message-State: AOAM533aaIDGyxEUDRXaLBbRAPCD/Si+BgnfXYGeMHvLBIPekoI5Ng9T
+        pWq3P4ir4RinQo0WvUb37Qtr
+X-Google-Smtp-Source: ABdhPJzDqCIzqK/L4m3tm0v2ROFYN/c2jaZW/pQwsTLEpr7eMivyAIwng7u4MmbNVAaAYgCpFDrtSg==
+X-Received: by 2002:a17:90a:6283:: with SMTP id d3mr3029466pjj.96.1605770853467;
+        Wed, 18 Nov 2020 23:27:33 -0800 (PST)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.googlemail.com with ESMTPSA id a8sm26802923pfa.132.2020.11.18.23.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2020 23:27:32 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/4] Add GCC and RPMh clock support for SDX55
+Date:   Thu, 19 Nov 2020 12:57:10 +0530
+Message-Id: <20201119072714.14460-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ping, sorry for this noise.
+Hello,
 
-On 2020/11/13 3:22, Dongjiu Geng wrote:
-> Refine hi3620_mmc_clk_init() to use of_clk_add_hw_provider()
-> instead of of_clk_add_provider(), the called function hisi_register_clk_mmc()
-> returns 'clk_hw *' to adapt to this change.  Also free memory mapping and
-> free hw_data if clock initialization is failed.
-> 
-> Fix the memory leak issues in hisi_clk_init().
-> 
-> Fixes: 75af25f581b1 ("clk: hisi: remove static variable")
-> Fixes: 62ac983b6141 ("clk: hisilicon: add hi3620_mmc_clks")
-> Cc: Markus Elfring <Markus.Elfring@web.de>
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
-> v2->v3:
-> 1. Refind hi3620_mmc_clk_init() and hisi_register_clk_mmc() in order to use
->    of_clk_add_hw_provider().
-> 2. Fix the issue that incorrectly free data even clock is initialized
->    successfully.
-> ---
->  drivers/clk/hisilicon/clk-hi3620.c | 44 ++++++++++++++++++------------
->  drivers/clk/hisilicon/clk.c        | 11 ++++----
->  2 files changed, 33 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-> index a3d04c7c3da8..3dec48174560 100644
-> --- a/drivers/clk/hisilicon/clk-hi3620.c
-> +++ b/drivers/clk/hisilicon/clk-hi3620.c
-> @@ -408,12 +408,13 @@ static const struct clk_ops clk_mmc_ops = {
->  	.recalc_rate = mmc_clk_recalc_rate,
->  };
->  
-> -static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
-> +static struct clk_hw *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
->  			void __iomem *base, struct device_node *np)
->  {
->  	struct clk_mmc *mclk;
-> -	struct clk *clk;
-> +	struct clk_hw *hw;
->  	struct clk_init_data init;
-> +	int err;
->  
->  	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
->  	if (!mclk)
-> @@ -439,17 +440,22 @@ static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
->  	mclk->sam_off = mmc_clk->sam_off;
->  	mclk->sam_bits = mmc_clk->sam_bits;
->  
-> -	clk = clk_register(NULL, &mclk->hw);
-> -	if (WARN_ON(IS_ERR(clk)))
-> +	hw = &mclk->hw;
-> +	err = clk_hw_register(NULL, hw);
-> +
-> +	if (err) {
->  		kfree(mclk);
-> -	return clk;
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return hw;
->  }
->  
->  static void __init hi3620_mmc_clk_init(struct device_node *node)
->  {
->  	void __iomem *base;
-> -	int i, num = ARRAY_SIZE(hi3620_mmc_clks);
-> -	struct clk_onecell_data *clk_data;
-> +	int i, ret, num = ARRAY_SIZE(hi3620_mmc_clks);
-> +	struct clk_hw_onecell_data *hw_data;
->  
->  	if (!node) {
->  		pr_err("failed to find pctrl node in DTS\n");
-> @@ -462,22 +468,26 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
->  		return;
->  	}
->  
-> -	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> -	if (WARN_ON(!clk_data))
-> -		return;
-> -
-> -	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
-> -	if (!clk_data->clks)
-> -		return;
-> +	hw_data = kzalloc(struct_size(hw_data, hws, num), GFP_KERNEL);
-> +	if (WARN_ON(!hw_data))
-> +		goto unmap_io;
->  
->  	for (i = 0; i < num; i++) {
->  		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
-> -		clk_data->clks[mmc_clk->id] =
-> +		hw_data->hws[mmc_clk->id] =
->  			hisi_register_clk_mmc(mmc_clk, base, node);
->  	}
->  
-> -	clk_data->clk_num = num;
-> -	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +	hw_data->num = num;
-> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, hw_data);
-> +	if (ret < 0)
-> +		goto free_hw_data;
-> +	return;
-> +
-> +free_hw_data:
-> +	kfree(hw_data);
-> +unmap_io:
-> +	iounmap(base);
->  }
->  
->  CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
-> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-> index 54d9fdc93599..da655683710f 100644
-> --- a/drivers/clk/hisilicon/clk.c
-> +++ b/drivers/clk/hisilicon/clk.c
-> @@ -65,25 +65,26 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
->  	base = of_iomap(np, 0);
->  	if (!base) {
->  		pr_err("%s: failed to map clock registers\n", __func__);
-> -		goto err;
-> +		return NULL;
->  	}
->  
->  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
->  	if (!clk_data)
-> -		goto err;
-> +		goto unmap_io;
->  
->  	clk_data->base = base;
->  	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
->  	if (!clk_table)
-> -		goto err_data;
-> +		goto free_clk_data;
->  
->  	clk_data->clk_data.clks = clk_table;
->  	clk_data->clk_data.clk_num = nr_clks;
->  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
->  	return clk_data;
-> -err_data:
-> +free_clk_data:
->  	kfree(clk_data);
-> -err:
-> +unmap_io:
-> +	iounmap(base);
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(hisi_clk_init);
-> 
+This series adds Global Clock Controller (GCC) and RPMh clock support
+for SDX55 SoC from Qualcomm with relevant DT bindings.
+
+This series has been tested on SDX55 MTP board. The dts patches for this
+SoC/board will be posted later.
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Documented core_bi_pll_test_se clock in dt binding
+* Collected reviews
+
+Changes in v2:
+
+* Modified the GCC Kconfig symbol from GCC_SDX55 to SDX_GCC_55
+* Added S-o-b tag to bindings patch
+* Incorporated review comments from Stephen on the gcc driver
+* Added review tag from Bjorn on RPMh patch
+
+Manivannan Sadhasivam (1):
+  clk: qcom: Add support for SDX55 RPMh clocks
+
+Naveen Yadav (1):
+  clk: qcom: Add SDX55 GCC support
+
+Vinod Koul (2):
+  dt-bindings: clock: Add SDX55 GCC clock bindings
+  dt-bindings: clock: Introduce RPMHCC bindings for SDX55
+
+ .../bindings/clock/qcom,gcc-sdx55.yaml        |   73 +
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   20 +
+ drivers/clk/qcom/gcc-sdx55.c                  | 1626 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdx55.h    |  112 ++
+ include/dt-bindings/clock/qcom,rpmh.h         |    1 +
+ 8 files changed, 1841 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sdx55.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx55.h
+
+-- 
+2.17.1
+
