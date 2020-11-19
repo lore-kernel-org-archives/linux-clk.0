@@ -2,93 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F44C388F9
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919F8C2D0E4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7C72225B
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E92A2224E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbgKSMB3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Nov 2020 07:01:29 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:4098 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbgKSMB1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 07:01:27 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4CcJDR0K8RzXnbW;
-        Thu, 19 Nov 2020 20:01:11 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 19 Nov 2020 20:01:23 +0800
-Subject: Re: [PATCH v3] clk: hisilicon: refine hi3620_mmc_clk_init() and fix
- memory leak issues
-To:     Markus Elfring <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>
-References: <20201112192214.48926-1-gengdongjiu@huawei.com>
- <ef1eac81-c4f9-ca4d-f056-3cdbddcaad73@web.de>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <5b976ad4-43e2-a021-6a93-25642b44cec5@huawei.com>
-Date:   Thu, 19 Nov 2020 20:01:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1726641AbgKSMvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 07:51:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbgKSMvB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 07:51:01 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBAF9C0613CF
+        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2020 04:51:00 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by laurent.telenet-ops.be with bizsmtp
+        id uCqx230034C55Sk01CqxKH; Thu, 19 Nov 2020 13:50:57 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kfjOq-003poU-SC; Thu, 19 Nov 2020 13:50:56 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kfjOq-00H3hJ-7X; Thu, 19 Nov 2020 13:50:56 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: sh73a0: Stop using __raw_*() I/O accessors
+Date:   Thu, 19 Nov 2020 13:50:53 +0100
+Message-Id: <20201119125053.4065746-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <ef1eac81-c4f9-ca4d-f056-3cdbddcaad73@web.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme709-chm.china.huawei.com (10.1.199.105) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020/11/19 17:07, Markus Elfring wrote:
->> Refine hi3620_mmc_clk_init() to use of_clk_add_hw_provider()
->> instead of of_clk_add_provider(), …
-> 
-> …
->> +++ b/drivers/clk/hisilicon/clk-hi3620.c
-> …
->> @@ -439,17 +440,22 @@  static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
-> …
->> +	err = clk_hw_register(NULL, hw);
->> +
->> +	if (err) {
-> 
-> I suggest to omit a blank line here.
-> 
-> 
-> …
->> +++ b/drivers/clk/hisilicon/clk.c
->> @@ -65,25 +65,26 @@  struct hisi_clock_data *hisi_clk_init(struct device_node *np,
-> …
->>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
->>  	return clk_data;
->> -err_data:
->> +free_clk_data:
-> 
-> How do you think about to adjust also such a function call for this function implementation?
-> 
-> Will further collateral evolution become interesting?
-> https://elixir.bootlin.com/linux/v5.10-rc4/C/ident/of_clk_add_provider
-Thanks for the review.
+There is no reason to keep on using the __raw_{read,write}l() I/O
+accessors in Renesas ARM driver code.  Switch to using the plain
+{read,write}l() I/O accessors, to have a chance that this works on
+big-endian.
 
-How about we adjust such a function call in another series patches?  I suggest do it in another series.
-For this patch, how about we firstly merge it after I fix the above comments(omit a blank line)?
+Suggested-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v5.11.
 
-> 
-> Regards,
-> Markus
-> .
-> 
+ drivers/clk/renesas/clk-sh73a0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
+index 5f25a70bc61c4046..4146c1d717b96f93 100644
+--- a/drivers/clk/renesas/clk-sh73a0.c
++++ b/drivers/clk/renesas/clk-sh73a0.c
+@@ -121,7 +121,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+ 			(phy_no ? CPG_DSI1PHYCR : CPG_DSI0PHYCR);
+ 
+ 		parent_name = phy_no ? "dsi1pck" : "dsi0pck";
+-		mult = __raw_readl(dsi_reg);
++		mult = readl(dsi_reg);
+ 		if (!(mult & 0x8000))
+ 			mult = 1;
+ 		else
+-- 
+2.25.1
+
