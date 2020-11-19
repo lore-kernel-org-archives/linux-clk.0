@@ -2,135 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DCFC6379F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E298C5519F
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 03:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F201D246CC
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Nov 2020 19:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B82E1246C0
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 03:24:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnFgYG5g"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+nTrI6x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgKRT6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 14:58:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbgKRT6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 14:58:21 -0500
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E0BC061A4F
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:58:21 -0800 (PST)
-Received: by mail-qk1-x741.google.com with SMTP id l2so3135246qkf.0
-        for <linux-clk@vger.kernel.org>; Wed, 18 Nov 2020 11:58:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VjaM+f+QFZwLQKDZ4ZTmgMDJ8f9Az2SK5T/knBnywXY=;
-        b=jnFgYG5gVAJ2oms8z2m6ffdBRZV6U9odnUVxDlqLkvQyQKuTkBCManYKf5qOsmXaiZ
-         ImN2Ps4AJtf/Twj313+ljstfydDjPN27wPf/9SXYD2XRPbdGRvYr+Im9fT0cfBHqI3wY
-         cxx4b6qPUN4b9eE8RXxYkRkTD8BsO02dTTJkAbsJ7zkuD2RFDHXUjAPjkCNlYEaO1A16
-         tAIITkoK+kceH+xz/NwU12Cje4zz7POeYTJJyrZ7NDVmlfLJH7naXO4jT8j6shlt2Dn5
-         O+3oZcejWMrWsYbPkT/KCAXT6+UoUbADMXlpBhWHD//VTQ8EwzWlmJcOQDpLvhkoT06O
-         1IcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VjaM+f+QFZwLQKDZ4ZTmgMDJ8f9Az2SK5T/knBnywXY=;
-        b=evTduhcwcE9IJL1prZSs36V161iV70r1U+kgVeDQ4tIz32nfKDe4eLu4QgJ3XQ1JmF
-         dw7HzDHEntOPvnbUf35oyTvP8jwnpTDcs0ND+czjXjLD9wZhQ3IiYzDC7M+o9qFSG3qv
-         oCet42/luEt6aPhM99pbiPfgYD0Ec05oHpPwouOfRWE5oSqb8CJONFxTutvb1oqDxDn0
-         GkS5ILEAnH2aDIzePKNMNQvHuyvX6NuIzmcaYmf+QnrkAG22zTPs5lfyRRM9o2nq2EC/
-         GFxrriwCSy8I3YKJtUEWhigJ8ss34d9u5OWvQZ9uWSW8DQnKoDLtywEp3uzbwvpjEGQy
-         xMGA==
-X-Gm-Message-State: AOAM531925e68ZLFPdUbg0aCLFGSmBK4MZe4cP3a9JIrGFwRSjoAd2tM
-        2mxBsaYBWe4A0ax8hd+O5Eha+CpT3HVjGA==
-X-Google-Smtp-Source: ABdhPJzAyijtIgkU8ysmO8Yu8ExUdE14ZVR8R9jKKJNAARHrhWd4xaNIouNLKbqBAPiV4QUesrvZbQ==
-X-Received: by 2002:a05:620a:62b:: with SMTP id 11mr7020809qkv.229.1605729500701;
-        Wed, 18 Nov 2020 11:58:20 -0800 (PST)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id m204sm7745048qke.117.2020.11.18.11.58.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2020 11:58:19 -0800 (PST)
-Subject: Re: [PATCH 5/6] dts:qcom:sdm845: Add dt entries to support crypto
- engine.
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     agross@kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, robh+dt@kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20201117134714.3456446-1-thara.gopinath@linaro.org>
- <20201117134714.3456446-6-thara.gopinath@linaro.org>
- <20201118041051.GF8532@builder.lan>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <36532dfd-4e13-79b2-d29f-d7684f638b22@linaro.org>
-Date:   Wed, 18 Nov 2020 14:58:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726216AbgKSDX4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 22:23:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725970AbgKSDX4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Nov 2020 22:23:56 -0500
+Received: from kernel.org (unknown [104.132.1.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 510C520679;
+        Thu, 19 Nov 2020 03:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605756235;
+        bh=foHNkQnrkydpP/j0TruYdwQhazxvbepEMOw0Gvl/Xv8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=u+nTrI6x/8vTSAOf2t/MQfTX2JQFKdcQTKLEn6/rJW2vUUvbAWjw4WP61caup0QuE
+         AYdpX4yd/GTBJnB/xBRLx+VQKl4+HRrRAoj5bYXJDEt4Z/1YwZCVW5UnBJPZ7Evmo0
+         sUApO7QzJz4LLTeP1L+hOeWe7rO0CCtAsVNvoMCs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20201118041051.GF8532@builder.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201118144401.GA8942@thinkpad>
+References: <20201105104817.15715-1-manivannan.sadhasivam@linaro.org> <20201105104817.15715-3-manivannan.sadhasivam@linaro.org> <20201106093819.GE2621@vkoul-mobl> <160538612750.60232.17440819605514427384@swboyd.mtv.corp.google.com> <20201118144401.GA8942@thinkpad>
+Subject: Re: [PATCH v2 2/4] clk: qcom: Add SDX55 GCC support
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, mturquette@baylibre.com,
+        robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Naveen Yadav <naveenky@codeaurora.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Date:   Wed, 18 Nov 2020 19:23:53 -0800
+Message-ID: <160575623386.2717324.1766580531259003708@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Manivannan Sadhasivam (2020-11-18 06:44:01)
+> On Sat, Nov 14, 2020 at 12:35:27PM -0800, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2020-11-06 01:38:19)
+> > > On 05-11-20, 16:18, Manivannan Sadhasivam wrote:
+> > > > +#include "reset.h"
+> > > > +
+> > > > +enum {
+> > > > +     P_BI_TCXO,
+> > > > +     P_CORE_BI_PLL_TEST_SE,
+> > >=20
+> > > This is for test and we removed this for upstream, so can you do that=
+ as
+> > > well (not parent will decrease for clks below)
+> > >=20
+> > > With that updated:
+> > >=20
+> > > Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> > >=20
+> >=20
+> > I half understood that. Just an FYI that I'm waiting for this update.
+>=20
+> Looks like this change is not needed. Can you please consider merging
+> this series?
+>=20
 
-
-On 11/17/20 11:10 PM, Bjorn Andersson wrote:
-> On Tue 17 Nov 07:47 CST 2020, Thara Gopinath wrote:
-> 
->> Add crypto engine (CE) and CE BAM related nodes and definitions to
->> "sdm845.dtsi".
->>
->> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 30 ++++++++++++++++++++++++++++
->>   1 file changed, 30 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index 40e8c11f23ab..b5b2ea97681f 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -2138,6 +2138,36 @@ ufs_mem_phy_lanes: lanes@1d87400 {
->>   			};
->>   		};
->>   
->> +		cryptobam: dma@1dc4000 {
->> +			compatible = "qcom,bam-v1.7.0";
->> +			reg = <0 0x01dc4000 0 0x24000>;
->> +			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&rpmhcc RPMH_CE_CLK>;
->> +			clock-names = "bam_clk";
->> +			#dma-cells = <1>;
->> +			qcom,ee = <0>;
->> +			qcom,controlled-remotely = <1>;
->> +			iommus = <&apps_smmu 0x704 0x1>,
->> +				 <&apps_smmu 0x706 0x1>,
->> +				 <&apps_smmu 0x714 0x1>,
->> +				 <&apps_smmu 0x716 0x1>;
-> 
-> Can you confirm that this can't be written as:
-> 
-> iommus = <&apps_smmu 0x704 0x3>,
-> 	 <&apps_smmu 0x714 0x3>;
-> 
-> (and same below).
-
-Hi Bjorn,
-
-Thanks for the reviews. Yes, I can confirm that the above does not work.
-The tests hang. I will fix rest of your comments and post v2.
-
--- 
-Warm Regards
-Thara
+No. Please document core_bi_pll_test_se in the binding.
