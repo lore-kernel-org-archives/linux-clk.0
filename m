@@ -2,186 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222D5C63697
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035C5C2D0E4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0B42246E8
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93AD122242
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:08:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PG79Cd2+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbgKSNHq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Nov 2020 08:07:46 -0500
-Received: from muru.com ([72.249.23.125]:48844 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727214AbgKSNHp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Nov 2020 08:07:45 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 67D3280C1;
-        Thu, 19 Nov 2020 13:07:50 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
-Subject: [PATCH 7/7] ARM: OMAP2+: Drop legacy platform data for omap4 gpmc
-Date:   Thu, 19 Nov 2020 15:07:20 +0200
-Message-Id: <20201119130720.63140-8-tony@atomide.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201119130720.63140-1-tony@atomide.com>
-References: <20201119130720.63140-1-tony@atomide.com>
+        id S1727214AbgKSNIE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 08:08:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbgKSNIE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 08:08:04 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5563C0613CF
+        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2020 05:08:03 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id k2so6420970wrx.2
+        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2020 05:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NAAhUY2tM6ccKrXkcBtqk0m/OvCIAeKgaA0HqteL1I0=;
+        b=PG79Cd2+DS87+UbCdfN6jpDWbVaod5BtQSjCj61EzVjP1VUK8LXCEXI/PeFKyjY/S4
+         tQItAEndiGIas89tJp1G9dAT9S0ezpFd3rYXXm0O0rwZ3DJMGdERGeEwL+3HuWs6pVei
+         ebjNS73aTYfXhFb428Z8Dr3fnlB2vlKX4DYf7xbsmC9IWgnR5H8u5eGGol3mV/bBXEIK
+         xIIvL3rNv3vRIhtOrPgQew4ff0EsMtlUxYYaltDJARQh1rOyrxem+m6oVDv9FCxXXGZM
+         dYzR6hePTiS9Fighpzk0ve2L7/YM2uGquWEw4F4SNBznfhowNeIMMAI58kbiIz3X6i8P
+         +S0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NAAhUY2tM6ccKrXkcBtqk0m/OvCIAeKgaA0HqteL1I0=;
+        b=KSHvlbkbZGlUWzYOTWa8oPqB+6nXzDQYy+cMyzcWLdAOHHGbZuCUuqRrTZPgxFgvV4
+         9EFqxSS5d14A3FUZO743OXAmOL8ttZRNNDSI1o+Mmsxn9TAxqCGIiFV8nCGz+CUNSYir
+         AXuBedw+NRJ9vgkHF2VFlQuRugLSZRO4k+pFOQjTdFj7VefqxS6sVhkcOAWNlZWcSGGy
+         zxitvIgKBOOG7FwA1mtV6GnRVdGUV6jSw0uFjZ6T/ZhBzoHHcqvhVdhYY/6tD2ZLvoKv
+         SV5eG/Qi/6UgmtUsb0pgnlBvyWRIcXdds/jSzZorkZ2Ycrds0VoZAUS2fVeM51p/TGZ3
+         UoAg==
+X-Gm-Message-State: AOAM532kX6z5PdYCv6VGqLyeoeiGlQqBbMlm6aMV0Ln2a4y0nea91BLM
+        HeiFXk23e+nXSMzaZJW01VM=
+X-Google-Smtp-Source: ABdhPJyRkQNmzdhTeBG5EQU3yUtO88iu9J1mhAHp8khiEBq3vwcR16ROHW5b/4pH2X3bgBm1H6HhSg==
+X-Received: by 2002:a5d:634c:: with SMTP id b12mr9938661wrw.130.1605791282471;
+        Thu, 19 Nov 2020 05:08:02 -0800 (PST)
+Received: from debian (host-92-5-241-147.as43234.net. [92.5.241.147])
+        by smtp.gmail.com with ESMTPSA id e6sm9440028wme.27.2020.11.19.05.08.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Nov 2020 05:08:02 -0800 (PST)
+Date:   Thu, 19 Nov 2020 13:08:00 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/1] clk: imx: scu: remove the calling of device_is_bound
+Message-ID: <20201119130800.boyqn4rtczq4wcvn@debian>
+References: <20201119114302.26263-1-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201119114302.26263-1-aisheng.dong@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We can now probe devices with ti-sysc interconnect driver and dts
-data. Let's drop the related platform data and custom ti,hwmods
-dts property.
+Hi Dong,
 
-Cc: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/omap4.dtsi               | 49 +++++++++++++++-------
- arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 45 --------------------
- 2 files changed, 33 insertions(+), 61 deletions(-)
+On Thu, Nov 19, 2020 at 07:43:02PM +0800, Dong Aisheng wrote:
+> The device_is_bound() is unvisable to drivers when built as modules.
+> It's also not aimed to be used by drivers according to Greg K.H.
+> Let's remove it from clk-scu driver and find another way to do proper
+> driver loading sequence.
 
-diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
---- a/arch/arm/boot/dts/omap4.dtsi
-+++ b/arch/arm/boot/dts/omap4.dtsi
-@@ -145,24 +145,41 @@ ocmcram: sram@40304000 {
- 			reg = <0x40304000 0xa000>; /* 40k */
- 		};
+Greg was asking to use device_link for this issue. Have you tried something
+like the following: (untested as I dont have the hardware).
+
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index 5b3d4ede7c7c..9ae6c768ea05 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -25,7 +25,7 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ 	u32 clk_cells;
+ 	int ret, i;
  
--		gpmc: gpmc@50000000 {
--			compatible = "ti,omap4430-gpmc";
--			reg = <0x50000000 0x1000>;
--			#address-cells = <2>;
--			#size-cells = <1>;
--			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
--			dmas = <&sdma 4>;
--			dma-names = "rxtx";
--			gpmc,num-cs = <8>;
--			gpmc,num-waitpins = <4>;
--			ti,hwmods = "gpmc";
-+		target-module@50000000 {
-+			compatible = "ti,sysc-omap2", "ti,sysc";
-+			reg = <0x50000000 4>,
-+			      <0x50000010 4>,
-+			      <0x50000014 4>;
-+			reg-names = "rev", "sysc", "syss";
-+			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>,
-+					<SYSC_IDLE_SMART>;
-+			ti,syss-mask = <1>;
- 			ti,no-idle-on-init;
--			clocks = <&l3_div_ck>;
-+			clocks = <&l3_2_clkctrl OMAP4_GPMC_CLKCTRL 0>;
- 			clock-names = "fck";
--			interrupt-controller;
--			#interrupt-cells = <2>;
--			gpio-controller;
--			#gpio-cells = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x50000000 0x50000000 0x00001000>, /* regs */
-+				 <0x00000000 0x00000000 0x40000000>; /* data */
-+
-+			gpmc: gpmc@50000000 {
-+				compatible = "ti,omap4430-gpmc";
-+				reg = <0x50000000 0x1000>;
-+				#address-cells = <2>;
-+				#size-cells = <1>;
-+				interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&sdma 4>;
-+				dma-names = "rxtx";
-+				gpmc,num-cs = <8>;
-+				gpmc,num-waitpins = <4>;
-+				clocks = <&l3_div_ck>;
-+				clock-names = "fck";
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+			};
- 		};
+-	ret = imx_clk_scu_init(ccm_node);
++	ret = imx_clk_scu_init(ccm_node, pdev);
+ 	if (ret)
+ 		return ret;
  
- 		target-module@52000000 {
-diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-@@ -353,42 +353,6 @@ static struct omap_hwmod omap44xx_emif2_hwmod = {
- 	},
- };
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index d10f60e48ece..e834bfadc2a6 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -151,8 +151,9 @@ static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
+ 	return container_of(hw, struct clk_scu, hw);
+ }
  
--/*
-- * 'gpmc' class
-- * general purpose memory controller
-- */
+-int imx_clk_scu_init(struct device_node *np)
++int imx_clk_scu_init(struct device_node *np, struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct platform_device *pd_dev;
+ 	u32 clk_cells;
+ 	int ret, i;
+@@ -173,12 +174,12 @@ int imx_clk_scu_init(struct device_node *np)
+ 		 */
+ 		pd_np = of_find_compatible_node(NULL, NULL, "fsl,scu-pd");
+ 		pd_dev = of_find_device_by_node(pd_np);
+-		if (!pd_dev || !device_is_bound(&pd_dev->dev)) {
++		if (!pd_dev || !device_link_add(dev, &pd_dev->dev,
++						DL_FLAG_AUTOREMOVE_CONSUMER)) {
+ 			of_node_put(pd_np);
+ 			return -EPROBE_DEFER;
+ 		}
+ 	}
 -
--static struct omap_hwmod_class_sysconfig omap44xx_gpmc_sysc = {
--	.rev_offs	= 0x0000,
--	.sysc_offs	= 0x0010,
--	.syss_offs	= 0x0014,
--	.sysc_flags	= (SYSC_HAS_AUTOIDLE | SYSC_HAS_SIDLEMODE |
--			   SYSC_HAS_SOFTRESET | SYSS_HAS_RESET_STATUS),
--	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
--	.sysc_fields	= &omap_hwmod_sysc_type1,
--};
--
--static struct omap_hwmod_class omap44xx_gpmc_hwmod_class = {
--	.name	= "gpmc",
--	.sysc	= &omap44xx_gpmc_sysc,
--};
--
--/* gpmc */
--static struct omap_hwmod omap44xx_gpmc_hwmod = {
--	.name		= "gpmc",
--	.class		= &omap44xx_gpmc_hwmod_class,
--	.clkdm_name	= "l3_2_clkdm",
--	/* Skip reset for CONFIG_OMAP_GPMC_DEBUG for bootloader timings */
--	.flags		= DEBUG_OMAP_GPMC_HWMOD_FLAGS,
--	.prcm = {
--		.omap4 = {
--			.clkctrl_offs = OMAP4_CM_L3_2_GPMC_CLKCTRL_OFFSET,
--			.context_offs = OMAP4_RM_L3_2_GPMC_CONTEXT_OFFSET,
--			.modulemode   = MODULEMODE_HWCTRL,
--		},
--	},
--};
--
- /*
-  * 'iss' class
-  * external images sensor pixel data processor
-@@ -787,14 +751,6 @@ static struct omap_hwmod_ocp_if omap44xx_l3_instr__debugss = {
- 	.user		= OCP_USER_MPU | OCP_USER_SDMA,
- };
+ 	return platform_driver_register(&imx_clk_scu_driver);
+ }
  
--/* l3_main_2 -> gpmc */
--static struct omap_hwmod_ocp_if omap44xx_l3_main_2__gpmc = {
--	.master		= &omap44xx_l3_main_2_hwmod,
--	.slave		= &omap44xx_gpmc_hwmod,
--	.clk		= "l3_div_ck",
--	.user		= OCP_USER_MPU | OCP_USER_SDMA,
--};
--
- /* l3_main_2 -> iss */
- static struct omap_hwmod_ocp_if omap44xx_l3_main_2__iss = {
- 	.master		= &omap44xx_l3_main_2_hwmod,
-@@ -900,7 +856,6 @@ static struct omap_hwmod_ocp_if *omap44xx_hwmod_ocp_ifs[] __initdata = {
- 	&omap44xx_l4_wkup__ctrl_module_wkup,
- 	&omap44xx_l4_wkup__ctrl_module_pad_wkup,
- 	&omap44xx_l3_instr__debugss,
--	&omap44xx_l3_main_2__gpmc,
- 	&omap44xx_l3_main_2__iss,
- 	&omap44xx_l3_main_2__ocmc_ram,
- 	&omap44xx_mpu_private__prcm_mpu,
--- 
-2.29.2
+diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+index e8352164923e..14e2baf14757 100644
+--- a/drivers/clk/imx/clk-scu.h
++++ b/drivers/clk/imx/clk-scu.h
+@@ -13,7 +13,7 @@
+ extern struct list_head imx_scu_clks[];
+ extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
+ 
+-int imx_clk_scu_init(struct device_node *np);
++int imx_clk_scu_init(struct device_node *np, struct platform_device *pdev);
+ struct clk_hw *imx_scu_of_clk_src_get(struct of_phandle_args *clkspec,
+ 				      void *data);
+ struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+
+--
+Regards
+Sudip
