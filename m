@@ -2,79 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 919F8C2D0E4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE3AC63798
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E92A2224E
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 12:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A082468B
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 13:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgKSMvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Nov 2020 07:51:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbgKSMvB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 07:51:01 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBAF9C0613CF
-        for <linux-clk@vger.kernel.org>; Thu, 19 Nov 2020 04:51:00 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id uCqx230034C55Sk01CqxKH; Thu, 19 Nov 2020 13:50:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kfjOq-003poU-SC; Thu, 19 Nov 2020 13:50:56 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kfjOq-00H3hJ-7X; Thu, 19 Nov 2020 13:50:56 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: sh73a0: Stop using __raw_*() I/O accessors
-Date:   Thu, 19 Nov 2020 13:50:53 +0100
-Message-Id: <20201119125053.4065746-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1726848AbgKSNHa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 08:07:30 -0500
+Received: from muru.com ([72.249.23.125]:48790 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726474AbgKSNH3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Nov 2020 08:07:29 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 96C6F80C1;
+        Thu, 19 Nov 2020 13:07:34 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
+Subject: [PATCH 0/7] Configure genpd domains for omap4
+Date:   Thu, 19 Nov 2020 15:07:13 +0200
+Message-Id: <20201119130720.63140-1-tony@atomide.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no reason to keep on using the __raw_{read,write}l() I/O
-accessors in Renesas ARM driver code.  Switch to using the plain
-{read,write}l() I/O accessors, to have a chance that this works on
-big-endian.
+Hi all,
 
-Suggested-by: Arnd Bergmann <arnd@kernel.org>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk for v5.11.
+Here are few patches to configure genpd domains for omap4 and
+enable it for dss, dsp and iva. And we also drop gpmc legacy
+platform data while at it.
 
- drivers/clk/renesas/clk-sh73a0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
-index 5f25a70bc61c4046..4146c1d717b96f93 100644
---- a/drivers/clk/renesas/clk-sh73a0.c
-+++ b/drivers/clk/renesas/clk-sh73a0.c
-@@ -121,7 +121,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- 			(phy_no ? CPG_DSI1PHYCR : CPG_DSI0PHYCR);
- 
- 		parent_name = phy_no ? "dsi1pck" : "dsi0pck";
--		mult = __raw_readl(dsi_reg);
-+		mult = readl(dsi_reg);
- 		if (!(mult & 0x8000))
- 			mult = 1;
- 		else
+Tony
+
+
+Tero Kristo (2):
+  soc: ti: omap-prm: omap4: add genpd support for remaining PRM
+    instances
+  ARM: dts: omap4: add remaining PRM instances
+
+Tony Lindgren (5):
+  clk: ti: omap4: Drop idlest polling from IVA clkctrl clocks
+  ARM: dts: Configure power domain for omap4 dss
+  ARM: dts: Configure power domain for omap4 dsp
+  ARM: OMAP2+: Drop legacy platform data for omap4 iva
+  ARM: OMAP2+: Drop legacy platform data for omap4 gpmc
+
+ arch/arm/boot/dts/omap4-l4.dtsi            |   1 +
+ arch/arm/boot/dts/omap4.dtsi               | 150 ++++++++++++++++++---
+ arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 114 ----------------
+ drivers/clk/ti/clk-44xx.c                  |   2 +-
+ drivers/soc/ti/omap_prm.c                  |  71 +++++++++-
+ 5 files changed, 198 insertions(+), 140 deletions(-)
+
 -- 
-2.25.1
-
+2.29.2
