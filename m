@@ -2,113 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7507EC388F9
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 09:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286CBC6369E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 10:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D34C2222A
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 09:35:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrL/jWDo"
+	by mail.kernel.org (Postfix) with ESMTP id C7BC2246CE
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 10:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgKSJfu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Nov 2020 04:35:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbgKSJfu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 04:35:50 -0500
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19717C0613CF;
-        Thu, 19 Nov 2020 01:35:50 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id n89so4686593otn.3;
-        Thu, 19 Nov 2020 01:35:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wM+ecfsKrvO3rc1/geqb60FiAxjMBeRileH+PC0H49Y=;
-        b=ZrL/jWDo+iFZh4HMoSucR3OspDcVXtUCX0SnrbDlA3+pS+5pP2E5Ma4ZKNV7090uiO
-         ygn2eGrRc7DSi/F9Z6WMx1xsrPhzGu5Ihulp7YPeA0sGulwwJUckXM7oS5WEzAjSucmi
-         b8+58YZezQiRbq8KG3yYzvc2jbOqMxmknF8NXj8hUnpk1OoQhOmNA5LRbPW0+S3B4o26
-         gtnYedDZVsTfTx93Ehd8jsMXSB3FjktBifq81Gk7Q3THOMW6ajd6o5GXJ4BmVTRQ9z9F
-         78Y3OSGwz5nD+E6oUGEvDjf2j8gYUsKq6snE7tPRtGl5S1PIjy/ONVIlpuuTguWL452R
-         SjRg==
+        id S1726768AbgKSK6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Nov 2020 05:58:04 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37043 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbgKSK6E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Nov 2020 05:58:04 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j15so523011oih.4;
+        Thu, 19 Nov 2020 02:58:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wM+ecfsKrvO3rc1/geqb60FiAxjMBeRileH+PC0H49Y=;
-        b=ZC/F3dOS4mjWKJJ+PWcd4fQLVg8SFHXZZlbTQSv3AW5UyQfg8lacsA1s2GMT3dYRuO
-         EmnCDt/CMw7oZQWvLFCD+RdZILHDmsgGdab1xYvBloVOKOo8Ptb4EeF9VfUiOPDZNZ7W
-         x4bZSVtADcY0nVJK7sMR1K7k/JcKPF29b2o72lQktdiDybk7vwK8aavHfL7m85UfSb2x
-         WRoo+IcNr2RIugLiWScxWsV6TGQakO2JG26aUUAXF0ytSpTOpVlHIsOAzd60YEZyeebh
-         lQ/o2/GfVhOCv7Xi9xwJqMg7Zul5kO891il4stljlx2tCIVgRkovceYfkcfBxsk1dj8T
-         SqBA==
-X-Gm-Message-State: AOAM532UT2D9BH0SDg3I4Lg0qhiPH31yk0n5crb0ed4qqudIbD5i7LBC
-        SXKhjQHADSgSJ+5hDjaWq3YJrAbEENS8IvlkizU=
-X-Google-Smtp-Source: ABdhPJykfMo2H23O1RLI3nZpHLSywArPKNbXytZU480c48TgWX4LYj4Md4b3bFUcty22u9/7rLAhNFml78/iIJqE6lU=
-X-Received: by 2002:a9d:4704:: with SMTP id a4mr9303980otf.236.1605778549518;
- Thu, 19 Nov 2020 01:35:49 -0800 (PST)
+        bh=PBDnVKEHNkn0XEpRmNcq0P71nm9E4KnrTMVqPCmJvVk=;
+        b=gULQlgNCCiAVA+08fePW9YwbLQCXpUvT6HSlj4SXQxAdixG7m+jsdqWIC2hQBvHQSh
+         L++Ut1o4psn1GS1g4yD/uCBXf5+tocQ5hJV/ZAAO1Li5W/QTgUkgBn9pIhwGc/IwkDcK
+         gaccRF+9nQXdTvAPETH7dRzRDlAPdCr33JejGKfzd5OfBh8ObZWAkpdX/N8MrgOjOsqQ
+         BPu3HG1GAB50Ft0QQ3al5fKeNtLcGoHpO9GtEkdfYDgs8QHPo2oiOeuKGFt+YaKA2jIr
+         p1vNrjwvF7gboGCmmwZWY5eT/ZvbBW5hYqmFNkcXf3qUesJTaztgyMOvue7Ia3gEVk9U
+         fjAQ==
+X-Gm-Message-State: AOAM533UIneEhpX4R5A4mszQ7K+WP4FjAe9XUL7m2Fvx6c4tOvG1qq0T
+        E6gfMhyfk0TU2zqZMrrroEWC1vdpqSgc/8F2fmUY7RaZec8=
+X-Google-Smtp-Source: ABdhPJyc0kbDdNA5pI8yJr3UWxbQERyJ/f1qUShZVxXxSs6+FyWRdbsuMRhkSp143Tedxp9sefucC/ULV5Ar4S3QU28=
+X-Received: by 2002:aca:c3c4:: with SMTP id t187mr2269568oif.148.1605783483057;
+ Thu, 19 Nov 2020 02:58:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20201113154632.24973-1-sergio.paracuellos@gmail.com>
- <20201113154632.24973-4-sergio.paracuellos@gmail.com> <CAJsYDVL1ZYc=OaCS7_NNu27aUKmpHp63nPuVq1V8xp8s6Vguxw@mail.gmail.com>
-In-Reply-To: <CAJsYDVL1ZYc=OaCS7_NNu27aUKmpHp63nPuVq1V8xp8s6Vguxw@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Thu, 19 Nov 2020 10:35:38 +0100
-Message-ID: <CAMhs-H8axFToyEYUwtc1ZGMd9mOb3ixnha_trJ7C5yFz06xdbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] clk: ralink: add clock driver for mt7621 SoC
-To:     Chuanhong Guo <gch981213@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-25-damien.lemoal@wdc.com>
+ <20201109153625.GB1330401@bogus> <04b266c7-bba9-d847-a526-f64f76c11a50@gmail.com>
+In-Reply-To: <04b266c7-bba9-d847-a526-f64f76c11a50@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 19 Nov 2020 11:57:51 +0100
+Message-ID: <CAMuHMdV0GL-GoY5=cgsW5QEWPB=ySK-8EyVeKLwt=6oODV4z3A@mail.gmail.com>
+Subject: Re: [PATCH 24/32] dt-bindings: Document kendryte,k210-fpioa bindings
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Sean Anderson <seanga2@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        NeilBrown <neil@brown.name>
+        Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Damien, Sean,
 
-On Thu, Nov 19, 2020 at 10:32 AM Chuanhong Guo <gch981213@gmail.com> wrote:
->
-> Hi!
->
-> On Fri, Nov 13, 2020 at 11:46 PM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
-> > [...]
-> > diff --git a/drivers/clk/ralink/Makefile b/drivers/clk/ralink/Makefile
-> > new file mode 100644
-> > index 000000000000..cf6f9216379d
-> > --- /dev/null
-> > +++ b/drivers/clk/ralink/Makefile
->
-> Why ralink? The clock design of mt7621 doesn't seem
-> to be part of ralink legacy stuff, and ralink is already
-> acquired by mediatek anyway.
-> I think it should be put in drivers/clk/mediatek instead.
+On Mon, Nov 9, 2020 at 4:46 PM Sean Anderson <seanga2@gmail.com> wrote:
+> On 11/9/20 10:36 AM, Rob Herring wrote:
+> > On Sat, Nov 07, 2020 at 05:14:12PM +0900, Damien Le Moal wrote:
+> >> Document the device tree bindings for the Kendryte K210 SoC Fully
+> >> Programmable IO Array (FPIOA) pinctrl driver in
+> >> Documentation/devicetree/bindings/pinctrl/kendryte,k210-fpioa.yaml
+> >>
+> >> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 
-I don't really know. It seems in that directory only arm arch related
-code from mediatek is included... but let's see what other people
-think about this.
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/pinctrl/kendryte,k210-fpioa.yaml
 
+> >> +  kendryte,power-offset:
+> >> +    minItems: 1
+> >> +    maxItems: 1
+> >> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >> +    description: |
+> >> +      Offset of the power domain control register of the system controller.
+> >
+> > Sounds like you should be using power-domains binding.
 >
-> --
-> Regards,
-> Chuanhong Guo
+> This is for pin power domains. E.g. pins 0-5 can be set to 1V8 or 3V3 logic levels.
 
-Best regards,
-    Sergio Paracuellos
+Which brings to my attention the power-source property is not
+documented below...
+
+> >> +      The value should be the macro K210_SYSCTL_POWER_SEL defined in
+> >> +      dt-bindings/mfd/k210-sysctl.h.
+> >> +
+> >> +patternProperties:
+> >> +  '^.*$':
+> >> +    if:
+> >> +      type: object
+> >> +    then:
+
+As the driver supports e.g. bias and drive-strength, these should be
+documented here, too.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
