@@ -2,79 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E298C5519F
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 03:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB1FC2D0E4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 04:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B82E1246C0
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 03:24:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+nTrI6x"
+	by mail.kernel.org (Postfix) with ESMTP id 21F0F22242
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Nov 2020 04:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgKSDX4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Nov 2020 22:23:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbgKSDX4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Nov 2020 22:23:56 -0500
-Received: from kernel.org (unknown [104.132.1.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 510C520679;
-        Thu, 19 Nov 2020 03:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605756235;
-        bh=foHNkQnrkydpP/j0TruYdwQhazxvbepEMOw0Gvl/Xv8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=u+nTrI6x/8vTSAOf2t/MQfTX2JQFKdcQTKLEn6/rJW2vUUvbAWjw4WP61caup0QuE
-         AYdpX4yd/GTBJnB/xBRLx+VQKl4+HRrRAoj5bYXJDEt4Z/1YwZCVW5UnBJPZ7Evmo0
-         sUApO7QzJz4LLTeP1L+hOeWe7rO0CCtAsVNvoMCs=
-Content-Type: text/plain; charset="utf-8"
+        id S1725964AbgKSEKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Nov 2020 23:10:03 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2494 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgKSEKD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Nov 2020 23:10:03 -0500
+Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Cc5mW39LgzQrlF;
+        Thu, 19 Nov 2020 12:09:47 +0800 (CST)
+Received: from [10.140.157.68] (10.140.157.68) by
+ dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Thu, 19 Nov 2020 12:10:00 +0800
+Subject: Re: [PATCH V3] clk: hisilicon: refine hi3620_mmc_clk_init() and fix
+ memory leak issues
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <Markus.Elfring@web.de>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20201112192214.48926-1-gengdongjiu@huawei.com>
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+Message-ID: <244c942c-ddd6-3dc0-083e-52f330e33c37@huawei.com>
+Date:   Thu, 19 Nov 2020 12:09:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201118144401.GA8942@thinkpad>
-References: <20201105104817.15715-1-manivannan.sadhasivam@linaro.org> <20201105104817.15715-3-manivannan.sadhasivam@linaro.org> <20201106093819.GE2621@vkoul-mobl> <160538612750.60232.17440819605514427384@swboyd.mtv.corp.google.com> <20201118144401.GA8942@thinkpad>
-Subject: Re: [PATCH v2 2/4] clk: qcom: Add SDX55 GCC support
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Vinod Koul <vkoul@kernel.org>, mturquette@baylibre.com,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Naveen Yadav <naveenky@codeaurora.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date:   Wed, 18 Nov 2020 19:23:53 -0800
-Message-ID: <160575623386.2717324.1766580531259003708@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20201112192214.48926-1-gengdongjiu@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.140.157.68]
+X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
+ dggeme755-chm.china.huawei.com (10.3.19.101)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2020-11-18 06:44:01)
-> On Sat, Nov 14, 2020 at 12:35:27PM -0800, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2020-11-06 01:38:19)
-> > > On 05-11-20, 16:18, Manivannan Sadhasivam wrote:
-> > > > +#include "reset.h"
-> > > > +
-> > > > +enum {
-> > > > +     P_BI_TCXO,
-> > > > +     P_CORE_BI_PLL_TEST_SE,
-> > >=20
-> > > This is for test and we removed this for upstream, so can you do that=
- as
-> > > well (not parent will decrease for clks below)
-> > >=20
-> > > With that updated:
-> > >=20
-> > > Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> > >=20
-> >=20
-> > I half understood that. Just an FYI that I'm waiting for this update.
->=20
-> Looks like this change is not needed. Can you please consider merging
-> this series?
->=20
+ping, sorry for this noise.
 
-No. Please document core_bi_pll_test_se in the binding.
+On 2020/11/13 3:22, Dongjiu Geng wrote:
+> Refine hi3620_mmc_clk_init() to use of_clk_add_hw_provider()
+> instead of of_clk_add_provider(), the called function hisi_register_clk_mmc()
+> returns 'clk_hw *' to adapt to this change.  Also free memory mapping and
+> free hw_data if clock initialization is failed.
+> 
+> Fix the memory leak issues in hisi_clk_init().
+> 
+> Fixes: 75af25f581b1 ("clk: hisi: remove static variable")
+> Fixes: 62ac983b6141 ("clk: hisilicon: add hi3620_mmc_clks")
+> Cc: Markus Elfring <Markus.Elfring@web.de>
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+> ---
+> v2->v3:
+> 1. Refind hi3620_mmc_clk_init() and hisi_register_clk_mmc() in order to use
+>    of_clk_add_hw_provider().
+> 2. Fix the issue that incorrectly free data even clock is initialized
+>    successfully.
+> ---
+>  drivers/clk/hisilicon/clk-hi3620.c | 44 ++++++++++++++++++------------
+>  drivers/clk/hisilicon/clk.c        | 11 ++++----
+>  2 files changed, 33 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
+> index a3d04c7c3da8..3dec48174560 100644
+> --- a/drivers/clk/hisilicon/clk-hi3620.c
+> +++ b/drivers/clk/hisilicon/clk-hi3620.c
+> @@ -408,12 +408,13 @@ static const struct clk_ops clk_mmc_ops = {
+>  	.recalc_rate = mmc_clk_recalc_rate,
+>  };
+>  
+> -static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
+> +static struct clk_hw *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
+>  			void __iomem *base, struct device_node *np)
+>  {
+>  	struct clk_mmc *mclk;
+> -	struct clk *clk;
+> +	struct clk_hw *hw;
+>  	struct clk_init_data init;
+> +	int err;
+>  
+>  	mclk = kzalloc(sizeof(*mclk), GFP_KERNEL);
+>  	if (!mclk)
+> @@ -439,17 +440,22 @@ static struct clk *hisi_register_clk_mmc(struct hisi_mmc_clock *mmc_clk,
+>  	mclk->sam_off = mmc_clk->sam_off;
+>  	mclk->sam_bits = mmc_clk->sam_bits;
+>  
+> -	clk = clk_register(NULL, &mclk->hw);
+> -	if (WARN_ON(IS_ERR(clk)))
+> +	hw = &mclk->hw;
+> +	err = clk_hw_register(NULL, hw);
+> +
+> +	if (err) {
+>  		kfree(mclk);
+> -	return clk;
+> +		return ERR_PTR(err);
+> +	}
+> +
+> +	return hw;
+>  }
+>  
+>  static void __init hi3620_mmc_clk_init(struct device_node *node)
+>  {
+>  	void __iomem *base;
+> -	int i, num = ARRAY_SIZE(hi3620_mmc_clks);
+> -	struct clk_onecell_data *clk_data;
+> +	int i, ret, num = ARRAY_SIZE(hi3620_mmc_clks);
+> +	struct clk_hw_onecell_data *hw_data;
+>  
+>  	if (!node) {
+>  		pr_err("failed to find pctrl node in DTS\n");
+> @@ -462,22 +468,26 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+>  		return;
+>  	}
+>  
+> -	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+> -	if (WARN_ON(!clk_data))
+> -		return;
+> -
+> -	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
+> -	if (!clk_data->clks)
+> -		return;
+> +	hw_data = kzalloc(struct_size(hw_data, hws, num), GFP_KERNEL);
+> +	if (WARN_ON(!hw_data))
+> +		goto unmap_io;
+>  
+>  	for (i = 0; i < num; i++) {
+>  		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
+> -		clk_data->clks[mmc_clk->id] =
+> +		hw_data->hws[mmc_clk->id] =
+>  			hisi_register_clk_mmc(mmc_clk, base, node);
+>  	}
+>  
+> -	clk_data->clk_num = num;
+> -	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +	hw_data->num = num;
+> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, hw_data);
+> +	if (ret < 0)
+> +		goto free_hw_data;
+> +	return;
+> +
+> +free_hw_data:
+> +	kfree(hw_data);
+> +unmap_io:
+> +	iounmap(base);
+>  }
+>  
+>  CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
+> diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
+> index 54d9fdc93599..da655683710f 100644
+> --- a/drivers/clk/hisilicon/clk.c
+> +++ b/drivers/clk/hisilicon/clk.c
+> @@ -65,25 +65,26 @@ struct hisi_clock_data *hisi_clk_init(struct device_node *np,
+>  	base = of_iomap(np, 0);
+>  	if (!base) {
+>  		pr_err("%s: failed to map clock registers\n", __func__);
+> -		goto err;
+> +		return NULL;
+>  	}
+>  
+>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+>  	if (!clk_data)
+> -		goto err;
+> +		goto unmap_io;
+>  
+>  	clk_data->base = base;
+>  	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
+>  	if (!clk_table)
+> -		goto err_data;
+> +		goto free_clk_data;
+>  
+>  	clk_data->clk_data.clks = clk_table;
+>  	clk_data->clk_data.clk_num = nr_clks;
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+>  	return clk_data;
+> -err_data:
+> +free_clk_data:
+>  	kfree(clk_data);
+> -err:
+> +unmap_io:
+> +	iounmap(base);
+>  	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(hisi_clk_init);
+> 
