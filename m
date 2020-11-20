@@ -2,134 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B90C6379F
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C99C2D0E4
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF7522470
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:19:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9292D2225B
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:37:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1srU+M/"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MY8zmLEe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbgKTQSo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Nov 2020 11:18:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729331AbgKTQSn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2020 11:18:43 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04177C0613CF;
-        Fri, 20 Nov 2020 08:18:43 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id c17so10547734wrc.11;
-        Fri, 20 Nov 2020 08:18:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bzdc5UA+fyIedMG+sR85R1gd64iwqKp7Gx7wpDOOTo0=;
-        b=C1srU+M/BeGZ69BLEW8DP78MF8Xnjr4+oAYhVnL9kOkCPSHOTKVYCj0T2S/qOaItoI
-         N8EVig7lM9bwRaMh6HC8IpCCHxYtnbErxtJdNO2f7tFmMOfy+tMcG8LhpHO92q4QqxtQ
-         sZ9E2oMsQnubMUwvJSJiEPqzI9T3FLDbIojXszcvnTCpHrF/5SHvOoj63O2ymAM50Sxm
-         JlNhUkjYIpnW7EN2VRyPFvMTMqbBAu+vtjxCBtjkNhI+x9WCR/1ZMgaQIPLEYdwBMcCJ
-         dG/MIhkGxmms65tfofCKZt19etwVF79t4eTbyrOARimYVxoHU+qcXfHtNFc2eslUAELT
-         59JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bzdc5UA+fyIedMG+sR85R1gd64iwqKp7Gx7wpDOOTo0=;
-        b=Q6yuKrbrVab4wiAsMq0gh1eN8CQBvsp07ArG+/AMGfMqvueZ8COsbmi2HyvlwnEcCP
-         Vlh3EkYR/yVhqW51XD84N+Fm3mcZRXS5uX6lQum+zSpnZsXvk2ktJSUBC8T9/xJ9PXAl
-         RqnCFUQL6HjeIQCkbH/GayAd9axbirjq0zl3BN+NY1XctTUFBIEclRVgPfnHhYUcqe1k
-         aW4WYJyYBxDkH9EudwZHWsYA2ADJggCNOijV2gPjMiz1UUOmHJgktu9LvuRBAGNPBzbN
-         fQFwvEASSWB5WUb8TQcTPu+FDMll2yb2EIRljguaVgp/Dp/NfPmMVvBsA8YCQBE+U308
-         6i9Q==
-X-Gm-Message-State: AOAM533MT7cLCmLfILlY7R24Wju1i4TK95MVoG9jeMJpJiM3YNXFst9a
-        DsF4oNfnDMIs+uI2SNhmhMQ=
-X-Google-Smtp-Source: ABdhPJz+HOrcXDrph6ZNn74l4ldsZN2ESkTa5W5UBJBpfdxfG9xniDfC/6kfVOD8P1mTn+9FrUgbzw==
-X-Received: by 2002:adf:9066:: with SMTP id h93mr17820577wrh.166.1605889121709;
-        Fri, 20 Nov 2020 08:18:41 -0800 (PST)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id k84sm5092885wmf.42.2020.11.20.08.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 08:18:40 -0800 (PST)
-Date:   Fri, 20 Nov 2020 17:18:39 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, jonathanh@nvidia.com,
-        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Do not return 0 on failure
-Message-ID: <20201120161839.GD3870099@ulmo>
-References: <20201029004820.9062-1-nicoleotsuka@gmail.com>
- <20201120161656.GC3870099@ulmo>
+        id S1729197AbgKTQgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Nov 2020 11:36:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728652AbgKTQgj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Nov 2020 11:36:39 -0500
+Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DF4B2225B;
+        Fri, 20 Nov 2020 16:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605890199;
+        bh=+6bZltzFpZ4MwiZnSxxhZ/CseoiCy6+hsLiO8faWlD0=;
+        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
+        b=MY8zmLEe/QE0BdrC68uX0K1xuhy2SkkVHfqAsWtkwIek7Vx4oy5F2X7ccpA/vRITX
+         XPmuL7T25W3RAdJAOSsNWh4ixSwSkWhRtJrGIpz4KdRXSzH8K/owd1QH8jt0Oq7MPB
+         sowyb5FxdJg+lXQhrEhgwzPq1oZvxpLcMWwBxuSY=
+Subject: Re: [PATCH] clk: samsung: allow compile testing of Exynos, S3C64xx
+ and S5Pv210
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+References: <20201119164509.754851-1-krzk@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
+Date:   Fri, 20 Nov 2020 17:36:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qGV0fN9tzfkG3CxV"
-Content-Disposition: inline
-In-Reply-To: <20201120161656.GC3870099@ulmo>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <20201119164509.754851-1-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 11/19/20 17:45, Krzysztof Kozlowski wrote:
+> So far all Exynos, S3C64xx and S5Pv210 clock units were selected by
+> respective SOC/ARCH Kconfig option.  On a kernel built for selected
+> SoCs, this allowed to build only limited set of matching clock drivers.
+> However compile testing was not possible in such case as Makefile object
+> depent on SOC/ARCH option.
 
---qGV0fN9tzfkG3CxV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"objects depend" or "object depends" ?
 
-On Fri, Nov 20, 2020 at 05:16:56PM +0100, Thierry Reding wrote:
-> On Wed, Oct 28, 2020 at 05:48:20PM -0700, Nicolin Chen wrote:
-> > Return values from read_dt_param() will be either TRUE (1) or
-> > FALSE (0), while dfll_fetch_pwm_params() returns 0 on success
-> > or an ERR code on failure.
-> >=20
-> > So this patch fixes the bug of returning 0 on failure.
-> >=20
-> > Fixes: 36541f0499fe ("clk: tegra: dfll: support PWM regulator control")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-dfll.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> Mike, Stephen,
->=20
-> if you don't mind, I'll pick this up in the Tegra tree since there are a
-> few other Tegra clock patches on the list that may require coordination
-> inside the Tegra tree.
+> Add separate Kconfig options for each of them to be able to compile
+> test.
+> 
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
 
-Also, I do plan on sending the collected set of patches to you for
-inclusion via PR at a later date, if that's okay with you.
+The patch look good to me, thanks.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Thierry
+I guess it's best now to merge it through your tree as it depends on 
+patches already sent to arm-soc? Next time it might be better to use 
+immutable branches right away to keep the clk changes in the clk 
+maintainer's tree.
 
---qGV0fN9tzfkG3CxV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+37F8ACgkQ3SOs138+
-s6FqBA//bISZURsZ2cBDNx10kQOBl/r8qyojxaqpR5H1TBpduOr/eK/XAf3zQxTg
-8kotRx/qWjP4/Wgmtg9SXTpOAx8GksX6MxKsoBQSafFTCkiZkq0yBo6CBpCQQ6vs
-pVv2iFfKpT71IifDFaQgol1YDcA+t9HpS3ma8Ss3IdPs9nv+QGrnwjv512KVRy5P
-eFQVlSYGjK9hPs+yPKTlmzmzaYRo5eTiGBSdXy3ha0CqxnuVh6AaNPC9B3lRQHmK
-6dsOVW9Fdt/8QRSS4JyadlN/XFE39xT28DzcEl2197YawmcBTrIbJCDuRH0D2fk5
-U0s5vmqNYOVMJd11oiIiiDnS4Zghd3TW0q4WbNnM3+58kXJPphAatpeyYUy6UJch
-fVT1kjXBx97Fc8fALYWp5PJte6evwpsIgRJR44/ELASPc+ml8/paUtZkMGf5TrgJ
-3A2Ba2kndOX+p0aKrVSMR/vAmAmLaT3NP/VGlKXUwkLx4x2tCuu1jJB1CiDK5rVa
-tcru7Fn4LXzLaMNIf2CV0lMQQj3lYqk6v1UvvgstGxq1yKjtdlaUshVHHbAFP30+
-BQmPbeOJpFAKmHZt4ysm1WoA1PkX/JWJtxdsvZ9sAeap+G8FfvFbO8yC4Sh1Ghc8
-rA+dN52mmbosvMC6xIDMiA0467pyB7BO0UkxKVfcI7SMmtYaRDs=
-=PS/4
------END PGP SIGNATURE-----
-
---qGV0fN9tzfkG3CxV--
+--
+Regards,
+Sylwester
