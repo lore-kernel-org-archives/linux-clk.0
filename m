@@ -2,84 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C99C2D0E4
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FFAC56201
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9292D2225B
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C97E9223B0
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Nov 2020 16:40:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MY8zmLEe"
+	dkim=pass (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="V3C43Gxm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgKTQgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Nov 2020 11:36:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49910 "EHLO mail.kernel.org"
+        id S1729685AbgKTQkj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Nov 2020 11:40:39 -0500
+Received: from z5.mailgun.us ([104.130.96.5]:15834 "EHLO z5.mailgun.us"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728652AbgKTQgj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Nov 2020 11:36:39 -0500
-Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728841AbgKTQkj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Nov 2020 11:40:39 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1605890439; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=u5J0GfVy+/VyMT1PA9pFklPWc/9n5dvJShGZaqKDPRo=; b=V3C43Gxmxdb1HPSaciLyE4QB5xa1K2i1QtjdZckDlTsyZC+SUxpXvzBaJBaPiCeC/sJWYDvT
+ x3cZdCp0sc1s2R6Sm661ruEI7UQ5R+VirEsNZkDYSggjheoSNRT0oVZKLRB8ZEYcvKzbXpKg
+ vEhSAwiPq7Y2dCKdtJpJkliu8Nc=
+X-Mailgun-Sending-Ip: 104.130.96.5
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 5fb7f181ba50d14f8812a3c8 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 20 Nov 2020 16:40:33
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 86925C433ED; Fri, 20 Nov 2020 16:40:32 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DF4B2225B;
-        Fri, 20 Nov 2020 16:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605890199;
-        bh=+6bZltzFpZ4MwiZnSxxhZ/CseoiCy6+hsLiO8faWlD0=;
-        h=Subject:To:References:Cc:From:Date:In-Reply-To:From;
-        b=MY8zmLEe/QE0BdrC68uX0K1xuhy2SkkVHfqAsWtkwIek7Vx4oy5F2X7ccpA/vRITX
-         XPmuL7T25W3RAdJAOSsNWh4ixSwSkWhRtJrGIpz4KdRXSzH8K/owd1QH8jt0Oq7MPB
-         sowyb5FxdJg+lXQhrEhgwzPq1oZvxpLcMWwBxuSY=
-Subject: Re: [PATCH] clk: samsung: allow compile testing of Exynos, S3C64xx
- and S5Pv210
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-References: <20201119164509.754851-1-krzk@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
-Date:   Fri, 20 Nov 2020 17:36:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201119164509.754851-1-krzk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6EC2EC433C6;
+        Fri, 20 Nov 2020 16:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EC2EC433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: lpasscc: Introduce pm autosuspend for SC7180
+Date:   Fri, 20 Nov 2020 22:10:17 +0530
+Message-Id: <1605890417-721-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/19/20 17:45, Krzysztof Kozlowski wrote:
-> So far all Exynos, S3C64xx and S5Pv210 clock units were selected by
-> respective SOC/ARCH Kconfig option.  On a kernel built for selected
-> SoCs, this allowed to build only limited set of matching clock drivers.
-> However compile testing was not possible in such case as Makefile object
-> depent on SOC/ARCH option.
+The LPASSCC driver's suspend/resume is invoked multiple number of times
+and thus allow the device to autosuspend for 500ms.
 
-"objects depend" or "object depends" ?
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/lpasscorecc-sc7180.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-> Add separate Kconfig options for each of them to be able to compile
-> test.
-> 
-> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 9081649..2e0ecc3 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -370,7 +370,10 @@ static int lpass_create_pm_clks(struct platform_device *pdev)
+ {
+ 	int ret;
 
-The patch look good to me, thanks.
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+ 	pm_runtime_enable(&pdev->dev);
++
+ 	ret = devm_add_action_or_reset(&pdev->dev, lpass_pm_runtime_disable, &pdev->dev);
+ 	if (ret)
+ 		return ret;
+@@ -423,7 +426,12 @@ static int lpass_core_cc_sc7180_probe(struct platform_device *pdev)
+ 	clk_fabia_pll_configure(&lpass_lpaaudio_dig_pll, regmap,
+ 				&lpass_lpaaudio_dig_pll_config);
 
-I guess it's best now to merge it through your tree as it depends on 
-patches already sent to arm-soc? Next time it might be better to use 
-immutable branches right away to keep the clk changes in the clk 
-maintainer's tree.
+-	return qcom_cc_really_probe(pdev, &lpass_core_cc_sc7180_desc, regmap);
++	ret = qcom_cc_really_probe(pdev, &lpass_core_cc_sc7180_desc, regmap);
++
++	pm_runtime_mark_last_busy(&pdev->dev);
++	pm_runtime_put_autosuspend(&pdev->dev);
++
++	return ret;
+ }
 
+ static int lpass_hm_core_probe(struct platform_device *pdev)
 --
-Regards,
-Sylwester
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
