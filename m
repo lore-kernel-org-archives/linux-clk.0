@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA803C2D0E4
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Nov 2020 01:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B723C63798
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Nov 2020 01:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76E122408E
+	by mail.kernel.org (Postfix) with ESMTP id CD09C2408E
 	for <linux-clk@archiver.kernel.org>; Sat, 21 Nov 2020 01:29:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20150623.gappssmtp.com header.i=@dabbelt-com.20150623.gappssmtp.com header.b="KsX3/vfX"
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20150623.gappssmtp.com header.i=@dabbelt-com.20150623.gappssmtp.com header.b="CJObZz3V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbgKUB33 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Nov 2020 20:29:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49986 "EHLO
+        id S1729062AbgKUB3c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Nov 2020 20:29:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgKUB32 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2020 20:29:28 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0C7C0613CF
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2020 17:29:28 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id 34so8818408pgp.10
-        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2020 17:29:28 -0800 (PST)
+        with ESMTP id S1729041AbgKUB3c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Nov 2020 20:29:32 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA3BC061A04
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2020 17:29:31 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id a18so9583041pfl.3
+        for <linux-clk@vger.kernel.org>; Fri, 20 Nov 2020 17:29:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
         h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
          :content-transfer-encoding;
-        bh=e9e+der4tiI8HJvByBrDgbWSHOA3bihkhP0KklSxXps=;
-        b=KsX3/vfX4tgCr+LUHs0syqeb7gDiIoj2kC/UmfWj60UV+yF7bYZvU/GOl4HYg+bT9p
-         sXNWXbokDTC2F/xZo+Y75rI54zvI1CpWeTpmIdXkKRcdhT1OFuzfRBCeoSMIG0ORflp+
-         trO6FGmKfa6Bw82PAwgOaqsVigFfwZX77W0eO44ZdgopVkTRzTx4cq9OadH3axfhIWX9
-         QpRP9NEpa26fh7Kz+l3p7fRKnFj4rj05N0I0xnWOh8i0gI2jPXoGBtXy6nDrYCQliUgm
-         cIclBukuyr8rUEaHeo1DVSLH3SXksUj8LPutEuDJbYwL56rlB6PuxgeMUGlIouswm6cd
-         NmnA==
+        bh=Gmc1ZQK4Z7FJ+nkEJlaWLOCIx0EhjlxA5CekSRKuc3I=;
+        b=CJObZz3VgypRprpxFzhnUStf/tm/ekOtG6WFuHqCtp/ZMpbd3Oj2pbzyN+GJS71Iai
+         z362qF1phkcs0996rdZexf2Kfo7j09o1fhCky5mY5Yry+kPlsNDTD1V+5bZdABnae95Z
+         E/E7Hc1Pk+CwKgQvZoatyLOi5/EjarSXcZUEs1zyVnPV32V60pZXR2e4IUtxClVQJEsd
+         2JuxYzeUXu5fGU6WLdzLYds/tMFJER9loZI4v2iUo6tI3Wq0hhfLl2+/X9h+iULdD3NO
+         gVGT6z0T1lzkUtMVe8MSjqUtfdpWSAuUh3elXiDVKRQvgY9z19Qdreizw2ssTsQkOff+
+         DVPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=e9e+der4tiI8HJvByBrDgbWSHOA3bihkhP0KklSxXps=;
-        b=ZfcHPnoHylZAKpKum7KkwbRtyFtIJF8w5v+SpHzlQhwTadGtDtcovS3IdL16V/0bLf
-         URUNUFFkaue8WKSc/DGL8eoBsAd4h84Th/x5i4Gfr6GFkLX4aKFGnIsbZv5JB/KD+tiB
-         cFQMY2Mf6ISxnUeXvE3xiqgy9y5JCI+hKwUdxDga8FjgXASTYvTAopPY1OysFGWGUJcM
-         9wD4Xf3aaym7i+9/gQ5R0Qn4w2sljmI6reQSeSENp9Xu+InPKQMt0aPHhDXQO/Uin+nk
-         +rc/bv+AqomCVQIWd3Cg+jhu9IAsJdwbnag2/gFV8fH4dQ1vU6dNPZ37BtieqZtDElis
-         X3Fg==
-X-Gm-Message-State: AOAM531Wb9FCVo2/2YbZ37d4AQG4VHLe3zvlL4u+eTQAYBJyAichv02h
-        qQjvvrsDkeg6cxBbTYdgBbiP0Q==
-X-Google-Smtp-Source: ABdhPJy2vHOjVX0NAQyRf9EzyqxIHxAx88tnQehv6TPKwHu1Y9/c1H5mUD50zU5wKyhARRGCWWuO8w==
-X-Received: by 2002:a62:17c8:0:b029:18b:5a97:a8d1 with SMTP id 191-20020a6217c80000b029018b5a97a8d1mr16393477pfx.15.1605922167939;
-        Fri, 20 Nov 2020 17:29:27 -0800 (PST)
+        bh=Gmc1ZQK4Z7FJ+nkEJlaWLOCIx0EhjlxA5CekSRKuc3I=;
+        b=rICHca+bPaS3OHiUc40wFZrKnUCrAm6W5EoqNkUQwwd7G9nf7WM7nV3iAg8Ivz3QfJ
+         mU8VXTQUc/ol6kyu7UD0c334h3IyCYfK7/PuddtUBOa78z1FP4BXGjSSln3URSM1phBP
+         NQrwy8IqTd1HwWdow7KvOOpTxn0xsxm3i+T0PASKlW/WKAtnFj37KgxIGNj2V1lkv3TC
+         lS+kk2EHOZIhuJdfdVrTklzItpYo41xY4iUHCQF+Ml+qpaV/ag9QS6Dfvbjwlekjx+OL
+         pqZekXR/O30+jzgwE2QfJCdLnveoBlB5HX92D9eFTKNAME3Q47H29m/cCoJ2Ipl349mv
+         wW4g==
+X-Gm-Message-State: AOAM531genZWGsk4BVqKra/b3BmTLsTXFNEqyhvRmD/O6wa4lwSjqjiQ
+        PEO11lxi+NZYun4Ps6jKafLcRg==
+X-Google-Smtp-Source: ABdhPJwvrCGGFh+uqhHBDn+ONmkr3peDB3CNtE971PXKihKlcH2YlRD3I2Yfw+VfEpSjfykRBSEbCg==
+X-Received: by 2002:a17:90a:d58e:: with SMTP id v14mr4401542pju.191.1605922171418;
+        Fri, 20 Nov 2020 17:29:31 -0800 (PST)
 Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id v7sm5010016pfu.39.2020.11.20.17.29.26
+        by smtp.gmail.com with ESMTPSA id l7sm5583805pjg.29.2020.11.20.17.29.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Nov 2020 17:29:27 -0800 (PST)
-Date:   Fri, 20 Nov 2020 17:29:27 -0800 (PST)
-X-Google-Original-Date: Fri, 20 Nov 2020 17:21:04 PST (-0800)
+        Fri, 20 Nov 2020 17:29:30 -0800 (PST)
+Date:   Fri, 20 Nov 2020 17:29:30 -0800 (PST)
+X-Google-Original-Date: Fri, 20 Nov 2020 17:28:04 PST (-0800)
 Subject:     Re: [PATCH v4 3/4] clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
 In-Reply-To: <20201111100608.108842-4-zong.li@sifive.com>
 CC:     Paul Walmsley <paul.walmsley@sifive.com>, sboyd@kernel.org,
@@ -70,7 +70,7 @@ CC:     Paul Walmsley <paul.walmsley@sifive.com>, sboyd@kernel.org,
         erik.danie@sifive.com, pragnesh.patel@sifive.com
 From:   Palmer Dabbelt <palmer@dabbelt.com>
 To:     zong.li@sifive.com
-Message-ID: <mhng-b245fbc4-01df-4e10-accb-6d6a569a705b@palmerdabbelt-glaptop1>
+Message-ID: <mhng-c9b6aff3-72de-4ccc-9b9d-8ec7229c101d@palmerdabbelt-glaptop1>
 Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
@@ -87,10 +87,6 @@ On Wed, 11 Nov 2020 02:06:07 PST (-0800), zong.li@sifive.com wrote:
 > Henry Styles <hes@sifive.com>
 > Erik Danie <erik.danie@sifive.com>
 > Pragnesh Patel <pragnesh.patel@sifive.com>
-
-Is there a datasheet for this chip?  It's geneally best to link to one, in case
-someone needs to sort out issues in the future.
-
 >
 > Signed-off-by: Zong Li <zong.li@sifive.com>
 > Reviewed-by: Pragnesh Patel <Pragnesh.patel@sifive.com>
@@ -105,6 +101,13 @@ someone needs to sort out issues in the future.
 >  drivers/clk/sifive/sifive-prci.c              | 120 +++++++++++++++++
 >  drivers/clk/sifive/sifive-prci.h              |  88 +++++++++++++
 >  include/dt-bindings/clock/sifive-fu740-prci.h |  23 ++++
+
+I don't see the bindings in Documentation, but assuming they're in flight
+
+Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+
+Thanks!
+
 >  7 files changed, 377 insertions(+), 2 deletions(-)
 >  create mode 100644 drivers/clk/sifive/fu740-prci.c
 >  create mode 100644 drivers/clk/sifive/fu740-prci.h
@@ -145,22 +148,7 @@ someone needs to sort out issues in the future.
 > + * Wesley Terpstra
 > + * Paul Walmsley
 > + * Zong Li
-
-Presumably it's copyright 2020 as well, as that's the current year?  Also, IIUC
-the copyright lines should be independent from each other.  In other words,
-rather than
-
-
-   C ... 2020 SiFive
-   Zong
-
-this should be 
-
-   C ... 2020 SiFive
-   C ... 2020 Zong
-
-and the rest of this should be dropped in favor of the SPDX.
-
+> + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
