@@ -2,241 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A7CC388F9
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Nov 2020 16:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BF0C56201
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 04:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4101B22226
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Nov 2020 16:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0230520781
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 04:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIH+iFQ3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gF+/WXrZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbgKUQXL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Nov 2020 11:23:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
+        id S1727188AbgKVEVQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Nov 2020 23:21:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbgKUQXK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Nov 2020 11:23:10 -0500
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49E60C0613CF;
-        Sat, 21 Nov 2020 08:23:10 -0800 (PST)
-Received: by mail-ot1-x343.google.com with SMTP id y24so6263376otk.3;
-        Sat, 21 Nov 2020 08:23:10 -0800 (PST)
+        with ESMTP id S1727095AbgKVEVQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Nov 2020 23:21:16 -0500
+Received: from mail-oo1-xc42.google.com (mail-oo1-xc42.google.com [IPv6:2607:f8b0:4864:20::c42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7B99C0613D2
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2020 20:21:15 -0800 (PST)
+Received: by mail-oo1-xc42.google.com with SMTP id y3so3202324ooq.2
+        for <linux-clk@vger.kernel.org>; Sat, 21 Nov 2020 20:21:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vtqi5ij/e5CH5+ZSs3AhBza3/9+Xfa/5fcKnLK+RPrA=;
-        b=kIH+iFQ3BUUlg+tlGd6B2l+hKxKVyuNrTGmH7ZplX/4YI3bLDPBG+pPEzpS1JmX5ra
-         kWucpgdF77cerMO2nidi832uxf5heJTbjCINUKtV2KwgIgPV/JTfBO5cC8XdDxICzOOe
-         oY8Za9uwR+hf2YiMarDaacIQ05CIMs4U+H73saGY6crN20QArp60mJmhVCpJp5fuvcST
-         eyN1qO8TyraFDOdelomYyLkAohbWu/hooAqGtnwvSP2U+45r8L5vbZxHMVGlfcUSAtQ3
-         uHr+GdAclrYIpLBUONIZ7CXOqvweqhr01AZbmj1NGhhH0PPLgaWMO8t4ZOptUREd/+F2
-         FRNA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OYohcQP098ylvBYISkee6mm40H7Iz7E4qk9gVli2edU=;
+        b=gF+/WXrZzx5XpcYakXWPQ+oU06Gsa9hIFUAfMhzRCPUZ/HZf2820Zlqj7eNff86FqI
+         hN09KUnDQoPTAs+wXn5+UigHnS5hcwLx2UHakXmaxutidYRb0CnSjn+AQSd93ce5YlV5
+         ZbCDDf2mlyD5ZD/9x/vVn0p3Eu7+ihJmEGc8BIBH1uCHo8XCIXneFRh+Ci0CxJmZALeV
+         shqdS6J65s66jtL5u7N2LqYveWlA212pSus56NW2L68dxChLmcOq1HH9GzpPvgFCzlX3
+         WDUt4GZzYsi7dLPCkc0JrJs1L3UwqW828DM98e/O7GTr/A+Vc29Oo2ix16JbBWoUMVOw
+         7PfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vtqi5ij/e5CH5+ZSs3AhBza3/9+Xfa/5fcKnLK+RPrA=;
-        b=gSBnlc90MA3Sz1ZOuCREvXqBXNjraAh6Dnm+EoYJWE6Azxue9/Vo7tS0MJ3xp2ynWR
-         9mX+LLqAwfAAWG9cKf/pBwnY+7T0WQicqENQbfZmv9PuNabT5PbbqmR7Tn0gzAITvb2A
-         d6gB1b6uL7mLftTv/oY5IY6QU+BvxRDKADZWv48KxkTN7QgfvoCWAnGBSruEZVpnId0q
-         IJtXuWvcLJ4/shuVlivwK/pNfAUMtO2IzdcNK+6n3vxOg8oltc1yPlObXkUNusiv6ad1
-         8D9yYOJ1HenrGEn0WYrRj5fynKC4ZXeWk8Qsgmjprg9709rRBhBZ5E9jqq68cYDbuxze
-         KQTQ==
-X-Gm-Message-State: AOAM530DCY1jIfKFCxp2x4y6hRvr5BthQQi1hhua7qRJQiMMzspQBF/M
-        yksdJ1MjyPAbcOa3ya2sE8DoLgscdPOpWJuYs08=
-X-Google-Smtp-Source: ABdhPJy8urnKhAW4YsIazNFzsark40KJjqxtfB85kGu9EHtyM8tHCU7JMU3OzFlZfGtRgtq6e2t1fXXP0fPdR2VsiL4=
-X-Received: by 2002:a05:6830:160d:: with SMTP id g13mr6763788otr.74.1605975789695;
- Sat, 21 Nov 2020 08:23:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20201113154632.24973-1-sergio.paracuellos@gmail.com>
- <20201113154632.24973-3-sergio.paracuellos@gmail.com> <20201121133432.GA2130098@robh.at.kernel.org>
- <CAMhs-H9JORHgPmq0-n=hx=yRo0SCT33mP_quxZoRtKYkiVDy_Q@mail.gmail.com>
-In-Reply-To: <CAMhs-H9JORHgPmq0-n=hx=yRo0SCT33mP_quxZoRtKYkiVDy_Q@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sat, 21 Nov 2020 17:22:58 +0100
-Message-ID: <CAMhs-H8j+OYmBuj-ZzTUr7jFYokS0H4+DSa-QCa4R=Fm00aagw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] dt: bindings: add mt7621-clk device tree binding documentation
-To:     Rob Herring <robh@kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OYohcQP098ylvBYISkee6mm40H7Iz7E4qk9gVli2edU=;
+        b=PEPe3z6wijzUH+oGZJWP/SorQhzdzs4D+8fKcLelgreajW+703LId2gle8QILpddAx
+         TkqXOxhKdUjl7ke7hQxcnv90G0z5Kr/U7acdKrMWmV9k5+E+BNCDSkzYzB7c1dUYZy6k
+         NR5ILunnnuCuMTuW/se6D/RaOZcY9s1hRi+gNp4p3czMxfeWgoygDMcR2qJFSs3AZFSH
+         qIF6aZyljMZCZEcGx0DLx9MKHNyeogQzgzjuUl4VQGMJwjiIe7uDjCETWBQaPfQ3KLQy
+         cs9tJu5E064ElWtIqehTDNlsCjQhyyRP82o7j36o1v6vQTQcEhR+bHDMqQIA2dNFmXKY
+         Ostw==
+X-Gm-Message-State: AOAM532hHWSuigzp8FBxyJQrp1qyqqXBcGd3ZIoOGcZX12k6sk9sYjce
+        wX5Hseok4f8BZUul9SsVckpbpmLQI3gyKA==
+X-Google-Smtp-Source: ABdhPJyw+lA5KBgYAes6cikhFdSosDtOcl6zRLvK1AJiOWPdXkJeWMvILDdxySvNLQKwzZhq/81C6g==
+X-Received: by 2002:a4a:5857:: with SMTP id f84mr18792335oob.34.1606018875244;
+        Sat, 21 Nov 2020 20:21:15 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id q132sm4794180oia.46.2020.11.21.20.21.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Nov 2020 20:21:14 -0800 (PST)
+Date:   Sat, 21 Nov 2020 22:21:12 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        John Crispin <john@phrozen.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Weijie Gao <hackpascal@gmail.com>, jiaxun.yang@flygoat.com,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Taniya Das <tdas@codeaurora.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] clk: qcom: camcc-sc7180: Use runtime PM ops instead of
+ clk ones
+Message-ID: <20201122042112.GF95182@builder.lan>
+References: <20201114174408.579047-1-sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201114174408.579047-1-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 21, 2020 at 3:50 PM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> Hi Rob,
->
-> Thanks for the review.
->
-> On Sat, Nov 21, 2020 at 2:34 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Fri, Nov 13, 2020 at 04:46:29PM +0100, Sergio Paracuellos wrote:
-> > > Adds device tree binding documentation for clocks in the
-> > > MT7621 SOC.
-> > >
-> > > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > > ---
-> > >  .../bindings/clock/mediatek,mt7621-clk.yaml   | 61 +++++++++++++++++++
-> > >  1 file changed, 61 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
-> > > new file mode 100644
-> > > index 000000000000..363bd9880e29
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
-> > > @@ -0,0 +1,61 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/mediatek,mt7621-clk.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: MT7621 Clock Device Tree Bindings
-> > > +
-> > > +maintainers:
-> > > +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > > +
-> > > +description: |
-> > > +  The MT7621 has a PLL controller from where the cpu clock is provided
-> > > +  as well as derived clocks for the bus and the peripherals. It also
-> > > +  can gate SoC device clocks.
-> > > +
-> > > +  Each clock is assigned an identifier and client nodes use this identifier
-> > > +  to specify the clock which they consume.
-> > > +
-> > > +  All these identifiers could be found in:
-> > > +  [1]: <include/dt-bindings/clock/mt7621-clk.h>.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: mediatek,mt7621-clk
-> > > +
-> > > +  ralink,sysctl:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description:
-> > > +      phandle to the syscon which is in the same address area with syscon
-> > > +      device.
-> > > +
-> > > +  "#clock-cells":
-> > > +    description:
-> > > +      The first cell indicates the clock gate number, see [1] for available
-> > > +      clocks.
-> > > +    const: 1
-> > > +
-> > > +  clock-output-names:
-> > > +    maxItems: 8
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - ralink,sysctl
-> > > +  - '#clock-cells'
-> > > +  - clock-output-names
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/clock/mt7621-clk.h>
-> > > +
-> > > +    pll {
-> > > +      compatible = "mediatek,mt7621-clk";
-> > > +      ralink,sysctl = <&sysc>;
-> >
-> > If this is the only control interface, then make this a child of 'sysc'.
-> > And use 'reg' if there's a dedicated range of registers.
->
-> This is the only one now in the device tree which is still in staging
-> but there are several places where this sys control registers are
-> accessed from. In the case of the clocks we need:
->
-> #define SYSC_REG_SYSTEM_CONFIG0         0x10
-> #define SYSC_REG_SYSTEM_CONFIG1         0x14
-> #define SYSC_REG_CLKCFG0                0x2c
-> #define SYSC_REG_CLKCFG1                0x30
-> #define SYSC_REG_CUR_CLK_STS            0x44
->
-> where there is not a range as it is but several different registers
-> from where we need to read or write things. I wrote the driver using
-> syscon and regmap because I thought in that way it might be more
-> maintainable but this architecture also has operations to read and
-> write registers from sysc and not using regmap at all. This operations
-> are defined in arch/mips/include/asm/mach-ralink/ralink_regs.h. But
-> because this sysc is currently mapped I cannot request its registers
-> using reg in the device tree. If you prefer me to avoid the use of
-> this syscon and regmap and use operations defined in ralink_regs.h,
-> this will become in a node without "regs" or  "ralink,sysctl"
-> property:
->
-> pll {
->     compatible = "mediatek,mt7621-clk";
->     #clock-cells = <1>;
->     clock-output-names = "xtal", "cpu", "bus",
->                       "50m", "125m", "150m",
->                        "250m", "270m";
-> };
->
-> What should I do then?
+On Sat 14 Nov 11:44 CST 2020, Stephen Boyd wrote:
 
-Ok, I think I understand now what you are saying. You meant just move
-this as a child if 'sysc' and
-avoid the phandle:
+> Let's call pm_runtime_get() here instead of calling the PM clk APIs
+> directly. This avoids a compilation problem on CONFIG_PM=n where the
+> pm_clk_runtime_{resume,suspend}() functions don't exist and covers the
+> intent, i.e. enable the clks for this device so we can program PLL
+> settings.
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Nathan Chancellor <natechancellor@gmail.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Taniya Das <tdas@codeaurora.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-    sysc: sysc@0 {
-            compatible = "mtk,mt7621-sysc", "syscon";
-            reg = <0x0 0x100>;
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-            pll: pll {
-                compatible = "mediatek,mt7621-clk";
-                #clock-cells = <1>;
-                clock-output-names = "xtal", "cpu", "bus",
-                                  "50m", "125m", "150m",
-                                 "250m", "270m";
-            };
-        };
+Regards,
+Bjorn
 
-And because there is not a range of registers 'reg' property is not
-needed, right?
-
-And in the driver side make use of 'syscon_node_to_regmap(node->parent)' instead
-of 'syscon_regmap_lookup_by_phandle(node, "ralink,sysctl")'.
-
-Ok, thanks for the clarification. Will change when v4 is sent.
-
-Best regards,
-    Sergio Paracuellos
->
-> Best regards,
->     Sergio Paracuellos
->
-> >
-> > > +      #clock-cells = <1>;
-> > > +      clock-output-names = "xtal", "cpu", "bus",
-> > > +                           "50m", "125m", "150m",
-> > > +                           "250m", "270m";
-> > > +    };
-> > > --
-> > > 2.25.1
-> > >
+> ---
+>  drivers/clk/qcom/camcc-sc7180.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+> index f51bf5b6decc..dbac5651ab85 100644
+> --- a/drivers/clk/qcom/camcc-sc7180.c
+> +++ b/drivers/clk/qcom/camcc-sc7180.c
+> @@ -1669,16 +1669,14 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
+>  		goto disable_pm_runtime;
+>  	}
+>  
+> -	ret = pm_clk_runtime_resume(&pdev->dev);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "pm runtime resume failed\n");
+> +	ret = pm_runtime_get(&pdev->dev);
+> +	if (ret)
+>  		goto destroy_pm_clk;
+> -	}
+>  
+>  	regmap = qcom_cc_map(pdev, &cam_cc_sc7180_desc);
+>  	if (IS_ERR(regmap)) {
+>  		ret = PTR_ERR(regmap);
+> -		pm_clk_runtime_suspend(&pdev->dev);
+> +		pm_runtime_put(&pdev->dev);
+>  		goto destroy_pm_clk;
+>  	}
+>  
+> @@ -1688,9 +1686,7 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
+>  	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
+>  
+>  	ret = qcom_cc_really_probe(pdev, &cam_cc_sc7180_desc, regmap);
+> -
+> -	pm_clk_runtime_suspend(&pdev->dev);
+> -
+> +	pm_runtime_put(&pdev->dev);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Failed to register CAM CC clocks\n");
+>  		goto destroy_pm_clk;
+> -- 
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> 
