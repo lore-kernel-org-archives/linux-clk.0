@@ -6,101 +6,89 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FFBC5519F
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 11:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23780C5519F
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 15:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C87142100A
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 11:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3A0C20773
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 15:16:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbgKVLec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Nov 2020 06:34:32 -0500
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:41695 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbgKVLea (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Nov 2020 06:34:30 -0500
-Received: by mail-ej1-f65.google.com with SMTP id gj5so19290809ejb.8;
-        Sun, 22 Nov 2020 03:34:28 -0800 (PST)
+        id S1727646AbgKVPQH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Nov 2020 10:16:07 -0500
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:39648 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbgKVPQG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Nov 2020 10:16:06 -0500
+Received: by mail-ej1-f66.google.com with SMTP id s25so19752496ejy.6;
+        Sun, 22 Nov 2020 07:16:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=SAUpgXkhpDLUuiNrzQtVU9JDr5pPgmZOexepaOR15kM=;
-        b=JY9nQojTgARxcqUTOOVIVtE3WcxwM1Yv+36Lvb9EiSLFMX2VG8FyX1ocP55Cxigztc
-         0rSBIRolSLRhpaGZkYjbW2GhHZhUbm1Nhywc1g7v3TQNw3MrbuaOkhjTQPJayLQqeZl4
-         wxi/qpglke7NwJ8n+Tjvo7bhjajwbtAZLLAPeJWOXpxbSWqOfxBRa37MBtfY+D7J1mwn
-         gbgihabgGJqLZdNvGEJYK2s36/+S+bv+O3PZRNudzt13JD+ANzD9czafLJIRJLmk4ADp
-         6QSqny8lTWdp26srDqkzunadTWHVoSn2Ry598h9Mksp1mwn87G9Wv9e1qp86tcpoDaH2
-         rGxg==
-X-Gm-Message-State: AOAM533p7k70MkpoU8HY3ZkMGkt4uzjwxkob2YrTETpxPdN6nML++vJ0
-        Jn/ykT1VIRX5XXkpIQl+ovw=
-X-Google-Smtp-Source: ABdhPJwf2cpSra61Bq1x3wiIFVpi+/rv8Zj0QYd2SeuETiIkDycslILQ3sAb1weDhQpNpkIzxFRX7g==
-X-Received: by 2002:a17:906:35da:: with SMTP id p26mr40421111ejb.256.1606044867906;
-        Sun, 22 Nov 2020 03:34:27 -0800 (PST)
+        bh=m40ePb0WowbyEBeP3p9wxNvULWshRU43UNkM2KlTYek=;
+        b=G0W4HmqABjAU5CONb2mblEfAcM/9sEQ4GfnKOMLnsSP5xMRw6/CDtTnjPKrUbIgUyQ
+         Sjl24PrwBiwHC/llp+IhWyIjcgZoFPI8MFak4yS3G0+DZ/PLdZM+37ENBeWFBNREEEHR
+         z1m/sw3hrTgQeRTZ8XQI4xrhveK8JNhveBjYGpYNaCemhft6eQWCbhwjf5+waAsFvtqL
+         olylJlIUze5MCNJP3LRU4YqjN7dCPII7KGz2p7DKUhe9tQHlm4MJd7QxT6e+bj47piv/
+         xU5W2TnVj9gmfSRdxxQBCL3yog4ZmXinatcVOm1IYwyFV52jo/lTnk9gQyR4lOlH+qvy
+         sVzA==
+X-Gm-Message-State: AOAM531c0IUFuN0mxcPh5XnzekVxr1iWOqdlcf8DQSOF4AfTF+33F6dy
+        vZTa/uvyl5soWIOk3OSwdtbIkBoiCLc=
+X-Google-Smtp-Source: ABdhPJycg25qQotskeOlIwboUWBXMQDXocn+7gf+sHWwOPyDFL2dv4FyyMO9CUAJTMLfGVfNSor4Gg==
+X-Received: by 2002:a17:906:f289:: with SMTP id gu9mr10602939ejb.514.1606058164678;
+        Sun, 22 Nov 2020 07:16:04 -0800 (PST)
 Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id rp28sm3481828ejb.77.2020.11.22.03.34.26
+        by smtp.googlemail.com with ESMTPSA id f25sm3671593edr.53.2020.11.22.07.16.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2020 03:34:26 -0800 (PST)
-Date:   Sun, 22 Nov 2020 12:34:25 +0100
+        Sun, 22 Nov 2020 07:16:03 -0800 (PST)
+Date:   Sun, 22 Nov 2020 16:16:02 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: allow compile testing of Exynos, S3C64xx
- and S5Pv210
-Message-ID: <20201122113425.GA6633@kozik-lap>
-References: <20201119164509.754851-1-krzk@kernel.org>
- <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-clk@vger.kernel.org, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, m.szyprowski@samsung.com, sboyd@kernel.org,
+        mturquette@baylibre.com, b.zolnierkie@samsung.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v5] clk: samsung: Prevent potential endless loop in the
+ PLL ops
+Message-ID: <20201122151602.GA5346@kozik-lap>
+References: <CGME20201120155747eucas1p248a1f0b71fbd8f329271494d7a207347@eucas1p2.samsung.com>
+ <20201120155731.26898-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
+In-Reply-To: <20201120155731.26898-1-s.nawrocki@samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 05:36:35PM +0100, Sylwester Nawrocki wrote:
-> On 11/19/20 17:45, Krzysztof Kozlowski wrote:
-> > So far all Exynos, S3C64xx and S5Pv210 clock units were selected by
-> > respective SOC/ARCH Kconfig option.  On a kernel built for selected
-> > SoCs, this allowed to build only limited set of matching clock drivers.
-> > However compile testing was not possible in such case as Makefile object
-> > depent on SOC/ARCH option.
+On Fri, Nov 20, 2020 at 04:57:31PM +0100, Sylwester Nawrocki wrote:
+> The PLL status polling loops in the set_rate callbacks of some PLLs
+> have no timeout detection and may become endless loops when something
+> goes wrong with the PLL.
 > 
-> "objects depend" or "object depends" ?
-
-"object depends"
-
+> For some PLLs there is already the ktime API based timeout detection,
+> but it will not work in all conditions when .set_rate gets called.
+> In particular, before the clocksource is initialized or when the
+> timekeeping is suspended.
 > 
-> > Add separate Kconfig options for each of them to be able to compile
-> > test.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+> This patch adds a common helper with the PLL status bit polling and
+> timeout detection. For conditions where the timekeeping API should not
+> be used a simple readl_relaxed/cpu_relax() busy loop is added with the
+> iterations limit derived from measurements of readl_relaxed() execution
+> time for various PLL types and Exynos SoCs variants.
 > 
-> The patch look good to me, thanks.
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Actual PLL lock time depends on the P divider value, the VCO frequency
+> and a constant PLL type specific LOCK_FACTOR and can be calculated as
 > 
-> I guess it's best now to merge it through your tree as it depends on 
-> patches already sent to arm-soc? Next time it might be better to use 
-> immutable branches right away to keep the clk changes in the clk 
-> maintainer's tree.
+>  lock_time = Pdiv * LOCK_FACTOR / VCO_freq
+> 
+> For the ktime API use cases a common timeout value of 20 ms is applied
+> for all the PLLs with an assumption that maximum possible value of Pdiv
+> is 64, maximum possible LOCK_FACTOR value is 3000 and minimum VCO
+> frequency is 24 MHz.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-At that time I had only one clk patch so I did not put it on separate
-branch.
-
-Anyway, this does not depend on the clkout patches and only minor patch
-adjustement is needed. Cherry-pick can solve it (you would need to apply
-on next/master and then cherry pick) or I can resend you one rebased on
-linus/master.
-
-There should be no conflicts when merging later into next or linus.
-
-I propose you should take it via clk tree.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
