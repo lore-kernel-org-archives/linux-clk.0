@@ -2,139 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B6EC8300A
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 09:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FFBC5519F
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 11:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3853621741
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 09:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBT0H1Dp"
+	by mail.kernel.org (Postfix) with ESMTP id C87142100A
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Nov 2020 11:34:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgKVJ4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Nov 2020 04:56:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727318AbgKVJ4B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Nov 2020 04:56:01 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F37AC0613D2;
-        Sun, 22 Nov 2020 01:56:01 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id m6so15427653wrg.7;
-        Sun, 22 Nov 2020 01:56:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0Ub3gKGJwLJRaryXIKn0038/d6bzjLaWe3sRPb09LY0=;
-        b=jBT0H1Dp2FdOl9/WZ1YWZ+a17R3h28nmfNH/n3MTXgBZvp0B0tFBVLrSX1eel3fws7
-         zczlkEU8MXE3OlLatadk4ioBE2wyEB8xDJuj8AVal3kayTkAnFQnYB9f3jwp+COyd6N8
-         PCVwR3PayXHMNyY/KZf5lkplIy2q3LQZxjQgRn2JE3ROeoTyc4yRuHDG5iyQavFoZAyx
-         CM6aEhZf6GvySbBfVeqGxijjM/KP7ugxV7qF799TjmM0hrXZKuu5jr578iXyR430Smgw
-         5adXJq28o3cBGvHc7sMflHk0dzLxBNPuK+4w5d+6yrgtpbVJNiAWWJLAJWMNcBchi+KZ
-         6YAQ==
+        id S1727740AbgKVLec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Nov 2020 06:34:32 -0500
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:41695 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbgKVLea (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Nov 2020 06:34:30 -0500
+Received: by mail-ej1-f65.google.com with SMTP id gj5so19290809ejb.8;
+        Sun, 22 Nov 2020 03:34:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0Ub3gKGJwLJRaryXIKn0038/d6bzjLaWe3sRPb09LY0=;
-        b=q8HBvBTNT69UAsy/YMP+AsQNaC6lur2lU0reOnp2x6rUR7Ib9DtTOxVzKp0M8wumDB
-         2CZjQcA/jdI6ki7A+LVDt4S4VMj5J+qjBnvA6YGPKBgG+C95Dv5KZzTYjIvbsMjm4UVP
-         /BeO+zheVfl5bYs4jrvutCeaIqIJ1SltGPh6bmMF3u6N2Erqus+S+kqmBjcrCLVDRG5N
-         VVUCvyLOS53cXU6/NUKZOTa0fcv+jbk+4n/pHMz7DsNMjC42jmP+RT4Ghu117qHvDcSJ
-         PWMKQgCobYgW0wthNH1S26NNTIuNhOj+wqBax8ioiZqVXC04uoK8liqP5FXTQnJCeiH6
-         iOoQ==
-X-Gm-Message-State: AOAM530ZaY/G8KHahUrSozeWWRDhu5Du2oqJwD1xkDnv9Idyl6elEYID
-        8n+qdq3CIGrirtVnGJOwcPdUcp/HIXITqSqU
-X-Google-Smtp-Source: ABdhPJwRL/xcxAwX7RQbo8ROZ7c59q0dn7A87ObIujR0wFzdpeevrwvC6al2Y2KMHD3wzntxlKexSw==
-X-Received: by 2002:adf:f083:: with SMTP id n3mr25048052wro.391.1606038960179;
-        Sun, 22 Nov 2020 01:56:00 -0800 (PST)
-Received: from localhost.localdomain (196.red-83-40-48.dynamicip.rima-tde.net. [83.40.48.196])
-        by smtp.gmail.com with ESMTPSA id p21sm10593570wma.41.2020.11.22.01.55.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Nov 2020 01:55:59 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, robh+dt@kernel.org, john@phrozen.org,
-        tsbogend@alpha.franken.de, gregkh@linuxfoundation.org,
-        gch981213@gmail.com, hackpascal@gmail.com,
-        linux-clk@vger.kernel.org, evicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 1/6] dt-bindings: clock: add dt binding header for mt7621 clocks
-Date:   Sun, 22 Nov 2020 10:55:51 +0100
-Message-Id: <20201122095556.21597-2-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201122095556.21597-1-sergio.paracuellos@gmail.com>
-References: <20201122095556.21597-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SAUpgXkhpDLUuiNrzQtVU9JDr5pPgmZOexepaOR15kM=;
+        b=JY9nQojTgARxcqUTOOVIVtE3WcxwM1Yv+36Lvb9EiSLFMX2VG8FyX1ocP55Cxigztc
+         0rSBIRolSLRhpaGZkYjbW2GhHZhUbm1Nhywc1g7v3TQNw3MrbuaOkhjTQPJayLQqeZl4
+         wxi/qpglke7NwJ8n+Tjvo7bhjajwbtAZLLAPeJWOXpxbSWqOfxBRa37MBtfY+D7J1mwn
+         gbgihabgGJqLZdNvGEJYK2s36/+S+bv+O3PZRNudzt13JD+ANzD9czafLJIRJLmk4ADp
+         6QSqny8lTWdp26srDqkzunadTWHVoSn2Ry598h9Mksp1mwn87G9Wv9e1qp86tcpoDaH2
+         rGxg==
+X-Gm-Message-State: AOAM533p7k70MkpoU8HY3ZkMGkt4uzjwxkob2YrTETpxPdN6nML++vJ0
+        Jn/ykT1VIRX5XXkpIQl+ovw=
+X-Google-Smtp-Source: ABdhPJwf2cpSra61Bq1x3wiIFVpi+/rv8Zj0QYd2SeuETiIkDycslILQ3sAb1weDhQpNpkIzxFRX7g==
+X-Received: by 2002:a17:906:35da:: with SMTP id p26mr40421111ejb.256.1606044867906;
+        Sun, 22 Nov 2020 03:34:27 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id rp28sm3481828ejb.77.2020.11.22.03.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2020 03:34:26 -0800 (PST)
+Date:   Sun, 22 Nov 2020 12:34:25 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: allow compile testing of Exynos, S3C64xx
+ and S5Pv210
+Message-ID: <20201122113425.GA6633@kozik-lap>
+References: <20201119164509.754851-1-krzk@kernel.org>
+ <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f44c5f4f-bda4-a1c1-dc6a-dc31efa314c6@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adds dt binding header for 'mediatek,mt7621-clk' clocks.
+On Fri, Nov 20, 2020 at 05:36:35PM +0100, Sylwester Nawrocki wrote:
+> On 11/19/20 17:45, Krzysztof Kozlowski wrote:
+> > So far all Exynos, S3C64xx and S5Pv210 clock units were selected by
+> > respective SOC/ARCH Kconfig option.  On a kernel built for selected
+> > SoCs, this allowed to build only limited set of matching clock drivers.
+> > However compile testing was not possible in such case as Makefile object
+> > depent on SOC/ARCH option.
+> 
+> "objects depend" or "object depends" ?
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- include/dt-bindings/clock/mt7621-clk.h | 41 ++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+"object depends"
 
-diff --git a/include/dt-bindings/clock/mt7621-clk.h b/include/dt-bindings/clock/mt7621-clk.h
-new file mode 100644
-index 000000000000..1422badcf9de
---- /dev/null
-+++ b/include/dt-bindings/clock/mt7621-clk.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MT7621_H
-+#define _DT_BINDINGS_CLK_MT7621_H
-+
-+#define MT7621_CLK_XTAL		0
-+#define MT7621_CLK_CPU		1
-+#define MT7621_CLK_BUS		2
-+#define MT7621_CLK_50M		3
-+#define MT7621_CLK_125M		4
-+#define MT7621_CLK_150M		5
-+#define MT7621_CLK_250M		6
-+#define MT7621_CLK_270M		7
-+
-+#define MT7621_CLK_HSDMA	8
-+#define MT7621_CLK_FE		9
-+#define MT7621_CLK_SP_DIVTX	10
-+#define MT7621_CLK_TIMER	11
-+#define MT7621_CLK_PCM		12
-+#define MT7621_CLK_PIO		13
-+#define MT7621_CLK_GDMA		14
-+#define MT7621_CLK_NAND		15
-+#define MT7621_CLK_I2C		16
-+#define MT7621_CLK_I2S		17
-+#define MT7621_CLK_SPI		18
-+#define MT7621_CLK_UART1	19
-+#define MT7621_CLK_UART2	20
-+#define MT7621_CLK_UART3	21
-+#define MT7621_CLK_ETH		22
-+#define MT7621_CLK_PCIE0	23
-+#define MT7621_CLK_PCIE1	24
-+#define MT7621_CLK_PCIE2	25
-+#define MT7621_CLK_CRYPTO	26
-+#define MT7621_CLK_SHXC		27
-+
-+#define MT7621_CLK_MAX		28
-+
-+#endif /* _DT_BINDINGS_CLK_MT7621_H */
--- 
-2.25.1
+> 
+> > Add separate Kconfig options for each of them to be able to compile
+> > test.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+> 
+> The patch look good to me, thanks.
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> I guess it's best now to merge it through your tree as it depends on 
+> patches already sent to arm-soc? Next time it might be better to use 
+> immutable branches right away to keep the clk changes in the clk 
+> maintainer's tree.
+
+At that time I had only one clk patch so I did not put it on separate
+branch.
+
+Anyway, this does not depend on the clkout patches and only minor patch
+adjustement is needed. Cherry-pick can solve it (you would need to apply
+on next/master and then cherry pick) or I can resend you one rebased on
+linus/master.
+
+There should be no conflicts when merging later into next or linus.
+
+I propose you should take it via clk tree.
+
+Best regards,
+Krzysztof
 
