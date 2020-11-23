@@ -2,95 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79869C63798
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 10:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676D5C56202
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 16:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F07F32078E
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 10:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23D8820717
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 16:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtSFegw/"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SxLSwWWi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgKWKUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Nov 2020 05:20:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbgKWKUO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Nov 2020 05:20:14 -0500
-Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94F212072C;
-        Mon, 23 Nov 2020 10:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606126813;
-        bh=lKWIE0xfvLNVmwvlh6n8fLQGdMFXyaSAl3QgCRzu1aM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dtSFegw/Yhyq993hTtZSIfwSEuFsrCkk8L8Ekyc64C6f+3eXL5ZdJfnp8MNcnRnf+
-         qVLtmjb3lzgK9UHDQn+ywMqprnd+d9JgRyXdsdDNFGF7PHG8EEgXEnTJtU9L8xZO4B
-         ToqlflHQBOvDoo8cluinH9R7YTJ9giRMO6VIrFQk=
-Subject: Re: [PATCH v5] clk: samsung: Prevent potential endless loop in the
- PLL ops
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-clk@vger.kernel.org, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, m.szyprowski@samsung.com, sboyd@kernel.org,
-        mturquette@baylibre.com, b.zolnierkie@samsung.com,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <CGME20201120155747eucas1p248a1f0b71fbd8f329271494d7a207347@eucas1p2.samsung.com>
- <20201120155731.26898-1-s.nawrocki@samsung.com>
- <20201122151602.GA5346@kozik-lap>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <cbc83ec7-57f3-8ced-34c6-8df5e0541fe9@kernel.org>
-Date:   Mon, 23 Nov 2020 11:20:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1732890AbgKWQiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Nov 2020 11:38:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732545AbgKWQiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 11:38:17 -0500
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5449CC0613CF
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:17 -0800 (PST)
+Received: by mail-wr1-x443.google.com with SMTP id m6so19217627wrg.7
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nWoVY3ymzk4cWTn4v1bXh+Sdx2khkGvdmAYTQ5FaBbQ=;
+        b=SxLSwWWikSEHrkcswd89DLnmpGU0XvkZ4As0oJ6nDX4yXVtzmohXimFSlhYvIZx6eT
+         DdkRfxY0QSpesU+aedtenhi7zp7OZlNYlrxVYvEEnonOqfwBtgUwHvdWvDZu5yJ6lJYU
+         5OcKgqup/6Ci+DmbTdcO8VnzLF5zRy9Onrn48R7O0/jNBpQzpEidn2KTdwvnxOlIuo4R
+         aLG89aQtiKToEimH91cAjypIMKgHZnREw7OESaJJUkjVKWgt07nVybKpRu2tZ9RPAqbv
+         QgczmFlfg/AFkryP0aQJk5FgggPsQveYH6uzZkTkt6Kq0+1P1oYMd99nImv7gBdZUlFx
+         8PsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nWoVY3ymzk4cWTn4v1bXh+Sdx2khkGvdmAYTQ5FaBbQ=;
+        b=o2koAc0i+kl43rs+EJA1DlTSZwCYPJCdhz27wUZRa0Zea6bcT4M2wTZ99XZu/P6jij
+         NSV+wWlpw188e5aHFurzysMs3IvNRdQa+Q+/u43E9gjwrLHEDA+Vrud/11SX6ksK69JC
+         qY8EOpuCaYb9wiSekpM2erjhl7QfgfnGzsajEIVXmxorbn73Oyny2ljAANf3IpNnLime
+         q+C4YYImA+tv5s/yqQH6PaQ3kF3LvoyKtdfXqaMvMQNQCzc5+wngmaJW39AZvYIWd0VQ
+         LB4sC4FtalDjQL7OAOBCxVL6ll62n2BNafcJMRooItsr8+vQwLRt0WQsG/tFS+LuRjex
+         NwvA==
+X-Gm-Message-State: AOAM531A7lgcZj9bArFhwJ6z+bJqONl0Sje5FdTWxsYUjPNpGXozUBqo
+        krza8bQKBHpt2vPkaTikC9N1P4IKqcGHglcP
+X-Google-Smtp-Source: ABdhPJwPUVxyobNEfXOdvktyz0fszKkrJa0DxbBhWMphOi5LtCs4uDIpZ6d6t6TRxess5meOoBwYOw==
+X-Received: by 2002:adf:c147:: with SMTP id w7mr611048wre.60.1606149495821;
+        Mon, 23 Nov 2020 08:38:15 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e35:2ec0:82b0:9541:d2fd:3a68:67ae])
+        by smtp.gmail.com with ESMTPSA id l3sm19566386wmf.0.2020.11.23.08.38.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2020 08:38:15 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/2] clk: meson: g12a: add MIPI DSI Host Pixel Clock
+Date:   Mon, 23 Nov 2020 17:38:09 +0100
+Message-Id: <20201123163811.353444-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20201122151602.GA5346@kozik-lap>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/22/20 16:16, Krzysztof Kozlowski wrote:
-> On Fri, Nov 20, 2020 at 04:57:31PM +0100, Sylwester Nawrocki wrote:
->> The PLL status polling loops in the set_rate callbacks of some PLLs
->> have no timeout detection and may become endless loops when something
->> goes wrong with the PLL.
->>
->> For some PLLs there is already the ktime API based timeout detection,
->> but it will not work in all conditions when .set_rate gets called.
->> In particular, before the clocksource is initialized or when the
->> timekeeping is suspended.
->>
->> This patch adds a common helper with the PLL status bit polling and
->> timeout detection. For conditions where the timekeeping API should not
->> be used a simple readl_relaxed/cpu_relax() busy loop is added with the
->> iterations limit derived from measurements of readl_relaxed() execution
->> time for various PLL types and Exynos SoCs variants.
->>
->> Actual PLL lock time depends on the P divider value, the VCO frequency
->> and a constant PLL type specific LOCK_FACTOR and can be calculated as
->>
->>   lock_time = Pdiv * LOCK_FACTOR / VCO_freq
->>
->> For the ktime API use cases a common timeout value of 20 ms is applied
->> for all the PLLs with an assumption that maximum possible value of Pdiv
->> is 64, maximum possible LOCK_FACTOR value is 3000 and minimum VCO
->> frequency is 24 MHz.
->>
->> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+This serie adss the MIPI DSI Host Pixel Clock used to feed the DSI pixel
+clock to the DSI Host controller.
 
-> Reviewed-by: Krzysztof Kozlowski<krzk@kernel.org>
+Unlike the AXG SoC, the DSI Pixel Clock has a supplementary mux, divider and gate
+stage before feeding the pixel clock to the MIPI DSI Host controller.
 
-Thanks, patch applied.
+Neil Armstrong (2):
+  dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
+  clk: meson: g12a: add MIPI DSI Host Pixel Clock
 
---
-Regards,
-Sylwester
+ drivers/clk/meson/g12a.c              | 72 +++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h              |  3 +-
+ include/dt-bindings/clock/g12a-clkc.h |  2 +
+ 3 files changed, 76 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
+
