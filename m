@@ -2,91 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676D5C56202
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 16:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38771C63798
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 16:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23D8820717
+	by mail.kernel.org (Postfix) with ESMTP id DA6FA2073C
 	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 16:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SxLSwWWi"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fK3T5zpN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732890AbgKWQiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Nov 2020 11:38:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
+        id S2388724AbgKWQiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Nov 2020 11:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732545AbgKWQiR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 11:38:17 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5449CC0613CF
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:17 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id m6so19217627wrg.7
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:17 -0800 (PST)
+        with ESMTP id S1732563AbgKWQiT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 11:38:19 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE16CC061A4E
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:18 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id 23so19199591wrc.8
+        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 08:38:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nWoVY3ymzk4cWTn4v1bXh+Sdx2khkGvdmAYTQ5FaBbQ=;
-        b=SxLSwWWikSEHrkcswd89DLnmpGU0XvkZ4As0oJ6nDX4yXVtzmohXimFSlhYvIZx6eT
-         DdkRfxY0QSpesU+aedtenhi7zp7OZlNYlrxVYvEEnonOqfwBtgUwHvdWvDZu5yJ6lJYU
-         5OcKgqup/6Ci+DmbTdcO8VnzLF5zRy9Onrn48R7O0/jNBpQzpEidn2KTdwvnxOlIuo4R
-         aLG89aQtiKToEimH91cAjypIMKgHZnREw7OESaJJUkjVKWgt07nVybKpRu2tZ9RPAqbv
-         QgczmFlfg/AFkryP0aQJk5FgggPsQveYH6uzZkTkt6Kq0+1P1oYMd99nImv7gBdZUlFx
-         8PsA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KBjcN4mFZs97LIMNRwXyk/FuZp47lAZQ6VC4MRI2zF8=;
+        b=fK3T5zpNtdFE4qkfblQOvZutqPBlD3t/zRsxTZQ1DwegYq6O8j9idVvZDz1yqtrcIw
+         KdjNOyImu+9ASuREdRApBcfK4GceU5+rZc4trGbarkKGPCMrOfppVKTEILzXEXeQ32CF
+         boBBiwmAwrUPDYsp/5HG346RA/4d3D4vDepKpYifN1th2mmdv2N2UtF1odHVgGVmInVM
+         7S9xizR7ziJn5nEyqRza1QdDg7jIRZyHlcrvToKIy100osWsGDYLRAHeDk9fn+5Z3x4l
+         ovGYm5Vu1NrbTGKgrJ3yB02AccjBmSFICqWs//Rv/QwBFJdf5Gg4RCgBp4Rbc9wGSoAo
+         rKpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nWoVY3ymzk4cWTn4v1bXh+Sdx2khkGvdmAYTQ5FaBbQ=;
-        b=o2koAc0i+kl43rs+EJA1DlTSZwCYPJCdhz27wUZRa0Zea6bcT4M2wTZ99XZu/P6jij
-         NSV+wWlpw188e5aHFurzysMs3IvNRdQa+Q+/u43E9gjwrLHEDA+Vrud/11SX6ksK69JC
-         qY8EOpuCaYb9wiSekpM2erjhl7QfgfnGzsajEIVXmxorbn73Oyny2ljAANf3IpNnLime
-         q+C4YYImA+tv5s/yqQH6PaQ3kF3LvoyKtdfXqaMvMQNQCzc5+wngmaJW39AZvYIWd0VQ
-         LB4sC4FtalDjQL7OAOBCxVL6ll62n2BNafcJMRooItsr8+vQwLRt0WQsG/tFS+LuRjex
-         NwvA==
-X-Gm-Message-State: AOAM531A7lgcZj9bArFhwJ6z+bJqONl0Sje5FdTWxsYUjPNpGXozUBqo
-        krza8bQKBHpt2vPkaTikC9N1P4IKqcGHglcP
-X-Google-Smtp-Source: ABdhPJwPUVxyobNEfXOdvktyz0fszKkrJa0DxbBhWMphOi5LtCs4uDIpZ6d6t6TRxess5meOoBwYOw==
-X-Received: by 2002:adf:c147:: with SMTP id w7mr611048wre.60.1606149495821;
-        Mon, 23 Nov 2020 08:38:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KBjcN4mFZs97LIMNRwXyk/FuZp47lAZQ6VC4MRI2zF8=;
+        b=ZtI3/GR3A3W3S565F80u3ah2jSGa4QUPJOr+Q0NYKoYmCpzw1XusDsO0zWRpxnldVV
+         /6kAlSfmXRsjaKmewl+FVSL2+gU1hRJ03vlKLewYyP1NC8mMUZNZaNyAV3j9W2TwioNb
+         gpvYwC8NpiOXQ2QO1RBhh3K5KmBhbUR34KTuo3c1ZBdsfVUJ9MhO4FczN9+HKozdHviB
+         RMofn7CriK1uTiQM+NlWBPZocmgRVWPtworZZ1juvdrEGEpMMXg3wnI82U+nhm0aASxt
+         KmndfglJZvjrBxs//bbEFWPUEDpJGQdLASCw/yVTZ1+CNz2NmxRalBKye4kFE80CHTQD
+         GY2Q==
+X-Gm-Message-State: AOAM530R3XD6Qns2xp3YVK13htAZMNDXKcmf9gkP9CCk7DjjD0FSPHyf
+        7gHGvr3R2g7NrTDw22N4hEx8PA==
+X-Google-Smtp-Source: ABdhPJxZuTuVAK9+n55is+GQzAN6UGY9JgbVtQ0zjEb8LC2wK2PgJkVpOv+zzDtsyXTi0up/sHeVKA==
+X-Received: by 2002:a5d:44d1:: with SMTP id z17mr491465wrr.423.1606149497579;
+        Mon, 23 Nov 2020 08:38:17 -0800 (PST)
 Received: from localhost.localdomain ([2a01:e35:2ec0:82b0:9541:d2fd:3a68:67ae])
-        by smtp.gmail.com with ESMTPSA id l3sm19566386wmf.0.2020.11.23.08.38.14
+        by smtp.gmail.com with ESMTPSA id l3sm19566386wmf.0.2020.11.23.08.38.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2020 08:38:15 -0800 (PST)
+        Mon, 23 Nov 2020 08:38:16 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com
 Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/2] clk: meson: g12a: add MIPI DSI Host Pixel Clock
-Date:   Mon, 23 Nov 2020 17:38:09 +0100
-Message-Id: <20201123163811.353444-1-narmstrong@baylibre.com>
+        Neil Armstrong <narmstrong@baylibre.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
+Date:   Mon, 23 Nov 2020 17:38:10 +0100
+Message-Id: <20201123163811.353444-2-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201123163811.353444-1-narmstrong@baylibre.com>
+References: <20201123163811.353444-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This serie adss the MIPI DSI Host Pixel Clock used to feed the DSI pixel
-clock to the DSI Host controller.
+This adds the MIPI DSI Host Pixel Clock bindings.
 
-Unlike the AXG SoC, the DSI Pixel Clock has a supplementary mux, divider and gate
-stage before feeding the pixel clock to the MIPI DSI Host controller.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ include/dt-bindings/clock/g12a-clkc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Neil Armstrong (2):
-  dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
-  clk: meson: g12a: add MIPI DSI Host Pixel Clock
-
- drivers/clk/meson/g12a.c              | 72 +++++++++++++++++++++++++++
- drivers/clk/meson/g12a.h              |  3 +-
- include/dt-bindings/clock/g12a-clkc.h |  2 +
- 3 files changed, 76 insertions(+), 1 deletion(-)
-
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+index 40d49940d8a8..a93b58c5e18e 100644
+--- a/include/dt-bindings/clock/g12a-clkc.h
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -147,5 +147,7 @@
+ #define CLKID_SPICC1_SCLK			261
+ #define CLKID_NNA_AXI_CLK			264
+ #define CLKID_NNA_CORE_CLK			267
++#define CLKID_MIPI_DSI_PXCLK_SEL		269
++#define CLKID_MIPI_DSI_PXCLK			270
+ 
+ #endif /* __G12A_CLKC_H */
 -- 
 2.25.1
 
