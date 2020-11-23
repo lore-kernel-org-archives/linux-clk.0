@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC995C63777
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 07:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E45C63697
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 07:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6606B20731
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 07:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3B7420738
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Nov 2020 07:31:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="R2+nqaQh"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Wg32dI0o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbgKWHWI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Nov 2020 02:22:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36624 "EHLO
+        id S1728085AbgKWHbH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Nov 2020 02:31:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbgKWHWG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 02:22:06 -0500
-Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58159C061A4D
-        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2020 23:22:05 -0800 (PST)
-Received: by mail-oo1-xc41.google.com with SMTP id h10so3727707ooi.10
-        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2020 23:22:05 -0800 (PST)
+        with ESMTP id S1726186AbgKWHbG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 02:31:06 -0500
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A782EC061A4D
+        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2020 23:31:06 -0800 (PST)
+Received: by mail-ot1-x342.google.com with SMTP id 11so2503174oty.9
+        for <linux-clk@vger.kernel.org>; Sun, 22 Nov 2020 23:31:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=veDkrlAP3vUASI5nWgzt1ja9Csyliot/DOyJrmX/+io=;
-        b=R2+nqaQhvt6dzwcWZ0RLarfwZKT4EgsIuGvAr8ZBG8vbJfnOp4s3o8BbZFyW5M1Ar/
-         cVpyx01AZR9tzR5RCQ2J2bg7dAFjLX957kIMlv/qJ4j4x6Yo0DJpTWiwH1lqH9WdRzb0
-         CMpEDKlRCpN86EOkW1JyXu0ZJkRB2bm7LddQP2m4vkFsEUhOI9TEWkO5sBUiuTw+qNVg
-         3FLfoJwob3cXi5PPw4UT2x2YBVCeOIX2NsU9aMsaz0RZw+oTC58oPrsoWm/tqU9iSDsZ
-         oGdsGAmCehMGhm8q/jBVIC2Wuaw1hExXZM4EbdNzg41iIQg1sOvZTjKRWJKn4Q/G++iu
-         PrbQ==
+        bh=nvzd84leekxZb1Ftygf07lWNtvjaa2ESlNoR+u/aGto=;
+        b=Wg32dI0o7uR6lqsCxJtcjjVyYOLyHXyROW+E5OFy7sjVXvPCtRUf3CkKVYPujL1BjK
+         9oc7uwRbM1PCcMiu7sFmMNrXxPKvRgyQpniDbbA1p21R+G+WsY6g00h4mFrmjU4/BGRc
+         KAu2Q42CQRYC99azzRfv048VyEf0nfCFuCQ9NBctLv3HmhosGN8u1o2aAcfbl6/ykgCi
+         dT4Nq4u3wbj6ypUUEA6+emASNSUWRaUwVNLVEZATIDJQmqx22dTcc/0YxdrkyUw9O/P8
+         +ZRxuI/ASQ6PI+4CKESjqk0lCY06xRWgdYjlpVmW/JSsaYeCIKLiffxJYWsu0vCU4chn
+         o1cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=veDkrlAP3vUASI5nWgzt1ja9Csyliot/DOyJrmX/+io=;
-        b=Wmp526kM9K8JyI6clkYvRdqJc4bTxiTDgAQUzY3WnZI8tNYrPWHhC36v+Yb1o7Wr3N
-         kQIlJ+t6TQfLKW5XK20BXU5/BON/LJDus53o0NZuXkRWC8O+yZjJDZi+Xh/ye0zNmWcu
-         zN3e1fyAV+SLNbTwvAWdtp4Ivg2C5XK0tsKGo+ZQkCji8ZQ1MG/WOhjZiWpEAw+yVXW6
-         D+hAb16SwhaET92rOpfdKWSz1SpldGdbjGRoGwRMYTLUen//UQa+yN9SPDItUHolL9d/
-         HmV1Fh+DOQUS9Ww45TbMt18TIfGevoWnES/Vbx39+qIQefe1GNhLoxn9E9UH0DQOndWF
-         jBLw==
-X-Gm-Message-State: AOAM532lpcy2MuIK0eQWPwUX5dXPbyH23Ybihz06drEQJZRwH/IW5r34
-        chdBauKaiVKAVtr0uhEUyQjeEreLg7EUivwTc6fSZA==
-X-Google-Smtp-Source: ABdhPJzkYatD8bxSRbgX2vw4sl37lxUmnbMXTYGT4rNUnbHtjcfLZyQvSZNaqc5p9NrL3OZN5YmoxRTGsmBB3lcHKsU=
-X-Received: by 2002:a4a:eac1:: with SMTP id s1mr22131872ooh.15.1606116123747;
- Sun, 22 Nov 2020 23:22:03 -0800 (PST)
+        bh=nvzd84leekxZb1Ftygf07lWNtvjaa2ESlNoR+u/aGto=;
+        b=NI//zR1k6MvXH++KuavgIUD3+YT+gP51STWsAcIQduc3IdLGma55jbDEoEpxDqjxvb
+         DJzmLU1AkJcAC0yt689tBVk2pJFq6sK7iaKriU274C9941jlhydU1aPLewwEcpjpT6jW
+         s4gYdxJDrA29A2G4NUcYnuckJXQdxb84YGtUy8X7YLhAWOIb9aZwG4Djjfg5klC8FwQ4
+         +0uQWUwEpTPDMTHKQjpnxU7BOmr3dap4hNeEie5t7HqJXGfsF+umsPHjH8EXgxDayPET
+         6W0YPT53dLOFnQZU083YJeEE+2DPsaUEWZhKqsa2c48xstoi2kt5hooiXVSq2FaKoyth
+         1xzA==
+X-Gm-Message-State: AOAM531SAhaRv5eqe8C/xoQTnQ/9XRf6TXB25ZOrxQLcKKd1M4S4fxYN
+        AYJKYOL28gnJ+V7uoGmYT5AirnrI57Kyy2tdO7Ltxw==
+X-Google-Smtp-Source: ABdhPJyftWmPWL3HuHLpQyfgod7csuDWn+XQN6uGSLd62YVxuVKF6hkeEFBhWbx8U6G+a9h7qOBXlMUC2Uh1pTE14Mc=
+X-Received: by 2002:a05:6830:1ad0:: with SMTP id r16mr22850487otc.160.1606116665953;
+ Sun, 22 Nov 2020 23:31:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20201111100608.108842-4-zong.li@sifive.com> <mhng-b245fbc4-01df-4e10-accb-6d6a569a705b@palmerdabbelt-glaptop1>
-In-Reply-To: <mhng-b245fbc4-01df-4e10-accb-6d6a569a705b@palmerdabbelt-glaptop1>
+References: <20201111100608.108842-4-zong.li@sifive.com> <mhng-c9b6aff3-72de-4ccc-9b9d-8ec7229c101d@palmerdabbelt-glaptop1>
+In-Reply-To: <mhng-c9b6aff3-72de-4ccc-9b9d-8ec7229c101d@palmerdabbelt-glaptop1>
 From:   Zong Li <zong.li@sifive.com>
-Date:   Mon, 23 Nov 2020 15:21:53 +0800
-Message-ID: <CANXhq0qQ_es0+ioVyMqge3hSmUfJz0Rn4eApVT4NmdgiQcDuWw@mail.gmail.com>
+Date:   Mon, 23 Nov 2020 15:30:55 +0800
+Message-ID: <CANXhq0rt=F5Zqf7oBsqQyJBSmQpO9Afj4Sgwmnv5gkjuDZUMtg@mail.gmail.com>
 Subject: Re: [PATCH v4 3/4] clk: sifive: Add a driver for the SiFive FU740
  PRCI IP block
 To:     Palmer Dabbelt <palmer@dabbelt.com>
@@ -91,15 +91,6 @@ On Sat, Nov 21, 2020 at 9:29 AM Palmer Dabbelt <palmer@dabbelt.com> wrote:
 > > Henry Styles <hes@sifive.com>
 > > Erik Danie <erik.danie@sifive.com>
 > > Pragnesh Patel <pragnesh.patel@sifive.com>
->
-> Is there a datasheet for this chip?  It's geneally best to link to one, in case
-> someone needs to sort out issues in the future.
->
-
-We have a product brief as follow in public now, I would add the link
-of it in the next version patch. Thanks.
-https://sifive.cdn.prismic.io/sifive/c05b8ddd-e043-45a6-8a29-2a137090236f_HiFive+Unmatched+Product+Brief+%28released%29.pdf
-
 > >
 > > Signed-off-by: Zong Li <zong.li@sifive.com>
 > > Reviewed-by: Pragnesh Patel <Pragnesh.patel@sifive.com>
@@ -114,6 +105,19 @@ https://sifive.cdn.prismic.io/sifive/c05b8ddd-e043-45a6-8a29-2a137090236f_HiFive
 > >  drivers/clk/sifive/sifive-prci.c              | 120 +++++++++++++++++
 > >  drivers/clk/sifive/sifive-prci.h              |  88 +++++++++++++
 > >  include/dt-bindings/clock/sifive-fu740-prci.h |  23 ++++
+>
+> I don't see the bindings in Documentation, but assuming they're in flight
+
+Yash is working on some DT bindings, but he suggests that I could
+integrate PRCI's binding in this patch set, and rename the prci
+binding file, so I would add the binding in the next version.
+
+
+>
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+>
+> Thanks!
+>
 > >  7 files changed, 377 insertions(+), 2 deletions(-)
 > >  create mode 100644 drivers/clk/sifive/fu740-prci.c
 > >  create mode 100644 drivers/clk/sifive/fu740-prci.h
@@ -154,27 +158,7 @@ https://sifive.cdn.prismic.io/sifive/c05b8ddd-e043-45a6-8a29-2a137090236f_HiFive
 > > + * Wesley Terpstra
 > > + * Paul Walmsley
 > > + * Zong Li
->
-> Presumably it's copyright 2020 as well, as that's the current year?  Also, IIUC
-> the copyright lines should be independent from each other.  In other words,
-> rather than
->
->
->    C ... 2020 SiFive
->    Zong
->
-> this should be
->
->    C ... 2020 SiFive
->    C ... 2020 Zong
->
-> and the rest of this should be dropped in favor of the SPDX.
-
-Ok, many thanks for correcting that, I would modify it in the next
-version patch.
-
-
->
+> > + *
 > > + * This program is free software; you can redistribute it and/or modify
 > > + * it under the terms of the GNU General Public License version 2 as
 > > + * published by the Free Software Foundation.
