@@ -7,141 +7,148 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8919CC2D0E4
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0293C2D0E4
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 12:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACDE206F9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D1D020708
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 12:18:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="l51j59CS"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YhN2yWhb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yrUzkSb8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbgKXKdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Nov 2020 05:33:36 -0500
-Received: from mail-db8eur05on2074.outbound.protection.outlook.com ([40.107.20.74]:40128
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731415AbgKXKdg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Nov 2020 05:33:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Cf9pRTS+neO3kb9GrHPsXfj0zke/rDKVmuDmFNu+zmXMNMeTa4Nvpqv+SAFMC5sjkZv9ROK4SUJa9RQDgmyJCmKriFNG+FnYbpBIhI9hn1KRe8OiQP6newp1Cs48X2eMmdCs7hz5fLyOVLTrhdQ6EQxE83Caloid0G9TK1RENvgb9PTLu+l255rRuhF1iK9TF12ttmG8dJZSCK6oz4DC3e9GBpDRouO0B864vfx7hEAhlgajNv4xRyexBe4U2bLmAZOLyE/sYlZrAoyQLCz7Dn/VS45alZstT5drGfvMnR+dsNZzMB2aV1ZeVxIPn4uQ08h39FDEEcv2iYIT7Trqeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eu8k+T55Qf7dhi6yXwqD1X2U9HwjK1cTF13J5AbSt+Q=;
- b=FzMGRlawwF+si4WZ0BPk8KO0jCRVwQ9jcJ3miwO5VWKuqu5y0OMi+uhswCzgWgq8jCVzHRyf8qP/ukm9sCTfJSdPkonwyakOGYdbSiBhc9e3Eb7wvCnXNrLvYMdYMqnrURNytm6KX48GxIZHA+Gjs4sXbbyzI8b6zoacd/HnJ65genVW10SexosPYG9ERyPPpbVDgWshmh294upYx4AGB34plw0HVGHaKjw7IuLWqqYoQws04VR1oVGlsul837wcb5hMjbQJLjE+b6gRbNbYy4V3eqZXPqtuTzJe8V7x1IHaLsNTj/9F/jfbdhkMZvJXmdqKnMHgbh8WD9zbzu/01w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eu8k+T55Qf7dhi6yXwqD1X2U9HwjK1cTF13J5AbSt+Q=;
- b=l51j59CScDoTFDcsvTWEK+rBY5ATZLWqVyMNhC5SjF5yNPDKC7aTlPXd9zPJb43EPPojYq+iPBdST3gjIpvg9jDg5bN2qJTtl5Pf8TInGpnKc7KKyYqZdSYpkOm+IaXG9Zl/3XFgQSYHRsW1kZQ63XlygEuGKtkpVsT3Zg/CAjc=
-Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
- by AM6PR0402MB3560.eurprd04.prod.outlook.com (2603:10a6:209:8::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.22; Tue, 24 Nov
- 2020 10:33:30 +0000
-Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
- ([fe80::3cfc:a92e:75ad:ce4a]) by AM6PR04MB4966.eurprd04.prod.outlook.com
- ([fe80::3cfc:a92e:75ad:ce4a%3]) with mapi id 15.20.3564.029; Tue, 24 Nov 2020
- 10:33:30 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        id S1733139AbgKXMRo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Nov 2020 07:17:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729172AbgKXMRn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Nov 2020 07:17:43 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63BDDC0613D6
+        for <linux-clk@vger.kernel.org>; Tue, 24 Nov 2020 04:17:43 -0800 (PST)
+Date:   Tue, 24 Nov 2020 13:17:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1606220261;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=kTDmb1nq5DsvYQtwEl53F/9vZGifeG6mz+DsJxGUu+E=;
+        b=YhN2yWhbwvzUGKovyNANDYlW+ka3jffakficckcHO+I4LLXn2KZYQkoiLZwzuZ1Gp2L8C9
+        l9CuA4sBLQw7a0fL/IzhRW9bid1EdCn4fn1XUg+6NJ1YgzUqmeo/jwzoijJWECggsW/yg4
+        B3N7YbVs5Tqk2rU47cv+J3a7lBSN8xlm+n875bszbd7FNCl77Ze3lKYL4mGgF2s8Xw3jer
+        Q8x1hntI3qhJik8kKLNuILrQLceneYugZSCwimc8FgLDjp9AWiRhXAQbjW4EhOA6HSq2k/
+        eBYg6xcnmlj4pCsBY0uPc++kkmoEkZWD3L/+P5CtwTxEH3fCX3QIG6aVUmSWLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1606220261;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=kTDmb1nq5DsvYQtwEl53F/9vZGifeG6mz+DsJxGUu+E=;
+        b=yrUzkSb8WpJMxXjPjQOJIHsVm9yqrLRUvlkyVQfMkpF+cWw9wmCHSbn10kYiHpIcVAGhN5
+        WzHA64TKvssixRCA==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: RE: [PATCH 1/1] clk: imx: scu: remove the calling of device_is_bound
-Thread-Topic: [PATCH 1/1] clk: imx: scu: remove the calling of device_is_bound
-Thread-Index: AQHWvmuOPqiM3Q9w+0qUhwE0BvUIAanXHCTQ
-Date:   Tue, 24 Nov 2020 10:33:30 +0000
-Message-ID: <AM6PR04MB4966BCF5B48936CD42B06A0480FB0@AM6PR04MB4966.eurprd04.prod.outlook.com>
-References: <20201119114302.26263-1-aisheng.dong@nxp.com>
-In-Reply-To: <20201119114302.26263-1-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 8a3abfb2-5c34-4da3-cfae-08d8906462f4
-x-ms-traffictypediagnostic: AM6PR0402MB3560:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0402MB3560ABE268B217AFEDE36DF480FB0@AM6PR0402MB3560.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: g41pIT1Yezcr237XWbj8Hjj1lRX2pYKIrA3fhT+NhDJ4NapXazVGQ5T2jSbptd/3wLPxrN5E/sX2HTsZBrbOPzSmkMWun0WQP8BN6nsh/zrqR/UT39SHRjdWVfmW/s68/htqERwDfP/kkAD4GdfuesErGuU2zzb8mj+r5IWBjw3v7bGV0vn7LxGjABjXJVpgyYhoA0CLmovPthbMfuAxXcJmJ2i+1/tpAcL7rFJ9gt/e/lCyNRu/MOje9mU7h6xIWnA3YwmVsGSuO7VeWiO07ep+7fMXlDzv2L9hJgaw7kkEBH7N1QjSw2bHiaV1IPSMqZX7mBCCouGFNnqOFIdYZqwiYXCr24uYMjXvGfyOa/xU9IBU2hJ8DBfmgJSvbZIEMteJn1mg36k4dcEflhXLvw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(39860400002)(136003)(346002)(376002)(86362001)(54906003)(83380400001)(966005)(76116006)(478600001)(186003)(9686003)(55016002)(66946007)(66476007)(26005)(5660300002)(44832011)(52536014)(66556008)(66446008)(64756008)(316002)(110136005)(8936002)(4326008)(8676002)(33656002)(6506007)(7696005)(71200400001)(2906002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: XzzZQIL5TN1Mzp+ICgGZQ1FiwjQcSq9KShEpvnkf7RLIz1AE+/9zfSxe97rMibTiofi49sK54hDvGzYDa9w2es6CvceP1iHyEPzK3lPJtY/8tRB6KiT5qOow3cHsSZeVRkOO134RsGJvFaKfJWn11N8qKc5yZWruE0loy/tYvn2RyXmcDMk9Dg1UB4jjYFyaunV664+nPXXko9lk1Irwp9U8aBr73qlWNYJTLLmLxuYznP+CLFRKZ4sOU+SpBHuLwgYUYVq5sDTn+tH2yWTthriyEDAQ31mZ4i2M+MtouQRTTfZW3g8SrumwkQ38OixftCL9AIUkX40t3sFoH5XdY8ZG/L/d5dV31W4aVjC0oHT3RSWKc05Bxeu6fE8Yr8YLIEXmi5D4Xcka/zHm15kc4qc/UB9uJTfiW4FH+WgrG3a0DbUkeME8y2TYnBjx3qpBrIfgaLhrdYVwLe+zWlSVss5tviTIjS/jU9dWdeiWVA5wNWjMGAXPpt62JQJv87A0yTYWVVsHV5x7JYzJXIINjc5Z535gHza3a2mOOgFfuEMfCsu2f+L+EWJTlK5XZBB7nLKzudNZKKWot0QVSPtGs9SuK21H7pPu/42yiWqhm8SMshud6ha7Rdj+y7AUNrH1sT3WkpfO/pwmilYDwX4h9A9r97gKqJ/mGTaoiT0YfPvq9TQxdmIw+8p4CLBmlrbk++UcdfuLqINDi3mlYO4gsbBeYf2lR1lOw7Y1yMsUrZJPc/vS3pB6xpZk5+VdsDTgA9EZ5yOdpzu42b7fPIQ3TM7miq7/Sjt8k0ltUatV2SxLpLDzYgYMYEFZ+wruG3occWzLhWj6nfVvbegknMacNIuo/wa8tvfGzsm3cocc+g6Sx/h5bLa3mD8rXUv8EL03BTaUmespFlpAnX0mXAcBuw==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [RFC PATCH] clk: imx8qxp: Unbreak auto module building for
+ MXC_CLK_SCU
+Message-ID: <20201124121740.ytag7rm53umi2qvm@linutronix.de>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a3abfb2-5c34-4da3-cfae-08d8906462f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Nov 2020 10:33:30.2366
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: w26cn2XiA0DMT9kPpBsEmCL44yoEcS+GfGiIip4pGyBFKSpl9bte6BsYTzL9V/Txzxr0uIe3YsIVRyByfLawtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3560
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgU2hhd24sDQoNCj4gRnJvbTogQWlzaGVuZyBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4N
-Cj4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDE5LCAyMDIwIDc6NDMgUE0NCj4gDQo+IFRoZSBk
-ZXZpY2VfaXNfYm91bmQoKSBpcyB1bnZpc2FibGUgdG8gZHJpdmVycyB3aGVuIGJ1aWx0IGFzIG1v
-ZHVsZXMuDQo+IEl0J3MgYWxzbyBub3QgYWltZWQgdG8gYmUgdXNlZCBieSBkcml2ZXJzIGFjY29y
-ZGluZyB0byBHcmVnIEsuSC4NCj4gTGV0J3MgcmVtb3ZlIGl0IGZyb20gY2xrLXNjdSBkcml2ZXIg
-YW5kIGZpbmQgYW5vdGhlciB3YXkgdG8gZG8gcHJvcGVyIGRyaXZlcg0KPiBsb2FkaW5nIHNlcXVl
-bmNlLg0KPiANCj4gQ2M6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCj4gQ2M6IFNh
-c2NoYSBIYXVlciA8a2VybmVsQHBlbmd1dHJvbml4LmRlPg0KPiBDYzogU3RlcGhlbiBCb3lkIDxz
-Ym95ZEBrZXJuZWwub3JnPg0KPiBGaXhlczogNzdkOGYzMDY4YzYzICgiY2xrOiBpbXg6IHNjdTog
-YWRkIHR3byBjZWxscyBiaW5kaW5nIHN1cHBvcnQiKQ0KPiBSZXBvcnRlZC1ieTogU3VkaXAgTXVr
-aGVyamVlIDxzdWRpcG0ubXVraGVyamVlQGdtYWlsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogRG9u
-ZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCg0KQ291bGQgeW91IGFwcGx5IHRoaXMg
-Zml4IGZpcnN0IGFzIGNsay1zY3UgaGFzIENPTVBJTEVfVEVTVCBlbmFibGVkIGFuZCBtYXkgYWZm
-ZWN0IG90aGVyDQpwbGF0Zm9ybXMgYnVpbGQgdGVzdD8NCg0KY29uZmlnIE1YQ19DTEtfU0NVDQog
-ICAgICAgIHRyaXN0YXRlICJJTVggU0NVIGNsb2NrIg0KICAgICAgICBkZXBlbmRzIG9uIEFSQ0hf
-TVhDIHx8IENPTVBJTEVfVEVTVA0KICAgICAgICBkZXBlbmRzIG9uIElNWF9TQ1UgJiYgSEFWRV9B
-Uk1fU01DQ0MNCg0KQlRXLCBJJ3ZlIHNlbnQgYW5vdGhlciBwYXRjaCBzZXJpZXMgWzFdIHRvIHN1
-cHBvcnQgZGVmZXIgcHJvYmUgd2l0aG91dCBjYWxsaW5nIGRldmljZV9pc19ib3VuZA0KcGVyIHRo
-ZSBsYXN0IGRpc2N1c3Npb24gd2l0aCBHcmVnIEsuSC4gWzJdLg0KDQoxLiBodHRwczovL3BhdGNo
-d29yay5rZXJuZWwub3JnL3Byb2plY3QvbGludXgtY2xrL2NvdmVyLzIwMjAxMTI0MTAwODAyLjIy
-Nzc1LTEtYWlzaGVuZy5kb25nQG54cC5jb20vDQoyLiBodHRwczovL2xvcmUua2VybmVsLm9yZy9w
-YXRjaHdvcmsvcGF0Y2gvMTMzNDY3MC8NCg0KUmVnYXJkcw0KQWlzaGVuZw0KDQo+IC0tLQ0KPiAg
-ZHJpdmVycy9jbGsvaW14L2Nsay1zY3UuYyB8IDE1ICsrKystLS0tLS0tLS0tLQ0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1zY3UuYyBiL2RyaXZlcnMvY2xrL2lteC9jbGstc2N1
-LmMgaW5kZXgNCj4gZDEwZjYwZTQ4ZWNlLi4xZjU1MThiN2FiMzkgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvY2xrL2lteC9jbGstc2N1LmMNCj4gKysrIGIvZHJpdmVycy9jbGsvaW14L2Nsay1zY3Uu
-Yw0KPiBAQCAtMTUzLDcgKzE1Myw2IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IGNsa19zY3UgKnRv
-X2Nsa19zY3Uoc3RydWN0IGNsa19odw0KPiAqaHcpDQo+IA0KPiAgaW50IGlteF9jbGtfc2N1X2lu
-aXQoc3RydWN0IGRldmljZV9ub2RlICpucCkgIHsNCj4gLQlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZF9kZXY7DQo+ICAJdTMyIGNsa19jZWxsczsNCj4gIAlpbnQgcmV0LCBpOw0KPiANCj4gQEAg
-LTE2NiwxNyArMTY1LDExIEBAIGludCBpbXhfY2xrX3NjdV9pbml0KHN0cnVjdCBkZXZpY2Vfbm9k
-ZSAqbnApDQo+ICAJaWYgKGNsa19jZWxscyA9PSAyKSB7DQo+ICAJCWZvciAoaSA9IDA7IGkgPCBJ
-TVhfU0NfUl9MQVNUOyBpKyspDQo+ICAJCQlJTklUX0xJU1RfSEVBRCgmaW14X3NjdV9jbGtzW2ld
-KTsNCj4gLQkJLyoNCj4gLQkJICogTm90ZTogU0NVIGNsb2NrIGRyaXZlciBkZXBlbmRzIG9uIFND
-VSBwb3dlciBkb21haW4gdG8gYmUgcmVhZHkNCj4gLQkJICogZmlyc3QuIEFzIHRoZXJlJ3JlIG5v
-IHBvd2VyIGRvbWFpbnMgdW5kZXIgc2N1IGNsb2NrIG5vZGUgaW4gZHRzLA0KPiAtCQkgKiB3ZSBj
-YW4ndCB1c2UgUFJPQkVfREVGRVIgYXV0b21hdGljYWxseS4NCj4gLQkJICovDQo+ICsNCj4gKwkJ
-LyogcGRfbnAgd2lsbCBiZSB1c2VkIHRvIGF0dGFjaCBwb3dlciBkb21haW5zIGxhdGVyICovDQo+
-ICAJCXBkX25wID0gb2ZfZmluZF9jb21wYXRpYmxlX25vZGUoTlVMTCwgTlVMTCwgImZzbCxzY3Ut
-cGQiKTsNCj4gLQkJcGRfZGV2ID0gb2ZfZmluZF9kZXZpY2VfYnlfbm9kZShwZF9ucCk7DQo+IC0J
-CWlmICghcGRfZGV2IHx8ICFkZXZpY2VfaXNfYm91bmQoJnBkX2Rldi0+ZGV2KSkgew0KPiAtCQkJ
-b2Zfbm9kZV9wdXQocGRfbnApOw0KPiAtCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7DQo+IC0JCX0N
-Cj4gKwkJaWYgKCFwZF9ucCkNCj4gKwkJCXJldHVybiAtRUlOVkFMOw0KPiAgCX0NCj4gDQo+ICAJ
-cmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmaW14X2Nsa19zY3VfZHJpdmVyKTsNCj4g
-LS0NCj4gMi4yMy4wDQoNCg==
+Automatic moudule building is broken by adding module support to
+i.MX8QXP clock driver. It can be tested by ARM defconfig +
+CONFIG_IMX_MBOX=m and CONFIG_MXC_CLK_SCU=m.
+
+The compile breaks because the modules and source files are mixed.
+After fixing that, the build breaks because the SCU driver has no
+license or symbols, which are required by the CLK_IMX8QXP driver, are
+not properly exported.
+
+The following patch is against -rc5:
+
+Compile module clk-imx-scu.o which contains of clk-scu.o clk-lpcg-scu.o
+if CONFIG_MXC_CLK_SCU is enabled.
+Compile modules clk-imx8qxp.o and clk-imx8qxp-lpcg.o if
+CONFIG_CLK_IMX8QXP is enabled.
+Add EXPORT_SYMBOL_GPL() to functions which fail to resolve once
+CONFIG_CLK_IMX8QXP is enabled as module.
+Add License GPL to clk-scu.c.
+
+In -next it breaks additionally because device_is_bound() is not made available
+to modules.
+Any suggestions? Should the original commit be revoked?
+
+Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock driver as module")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+
+ drivers/clk/imx/Makefile       | 6 +++---
+ drivers/clk/imx/clk-lpcg-scu.c | 1 +
+ drivers/clk/imx/clk-scu.c      | 4 ++++
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index dd6a737d060b4..b8bf9460c91d7 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -26,9 +26,9 @@ obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
+ obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
+ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+ 
+-obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
+-clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o
+-clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
++obj-$(CONFIG_MXC_CLK_SCU)	+= clk-imx-scu.o
++clk-imx-scu-y			:= clk-scu.o clk-lpcg-scu.o
++obj-$(CONFIG_CLK_IMX8QXP)	+= clk-imx8qxp.o clk-imx8qxp-lpcg.o
+ 
+ obj-$(CONFIG_CLK_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_CLK_IMX25)  += clk-imx25.o
+diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
+index 1f0e44f921aee..336dce43da82d 100644
+--- a/drivers/clk/imx/clk-lpcg-scu.c
++++ b/drivers/clk/imx/clk-lpcg-scu.c
+@@ -115,3 +115,4 @@ struct clk_hw *imx_clk_lpcg_scu(const char *name, const char *parent_name,
+ 
+ 	return hw;
+ }
++EXPORT_SYMBOL_GPL(imx_clk_lpcg_scu);
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index b8b2072742a56..026a33606ae53 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -9,6 +9,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/module.h>
+ 
+ #include "clk-scu.h"
+ 
+@@ -132,6 +133,7 @@ int imx_clk_scu_init(void)
+ {
+ 	return imx_scu_get_handle(&ccm_ipc_handle);
+ }
++EXPORT_SYMBOL_GPL(imx_clk_scu_init);
+ 
+ /*
+  * clk_scu_recalc_rate - Get clock rate for a SCU clock
+@@ -387,3 +389,5 @@ struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents,
+ 
+ 	return hw;
+ }
++EXPORT_SYMBOL_GPL(__imx_clk_scu);
++MODULE_LICENSE("GPL");
+-- 
+2.29.2
+
