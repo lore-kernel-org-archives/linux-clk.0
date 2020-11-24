@@ -2,257 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78850C2D0E4
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BEFC56201
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3930206FA
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79EB206E0
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 10:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="J+suLB1S";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="pK/I5+3L"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BP0kg5Lo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbgKXKFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Nov 2020 05:05:30 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:42125 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbgKXKF3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Nov 2020 05:05:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606212329; x=1637748329;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=e9l8e++pF/+TPdH+k7RyD/7T1jcZRcFhUKgVyMnPLNs=;
-  b=J+suLB1SrNl9o7QwbMzNttx30ns+t+sxSuZSgTU467OYVLbWzjn201wa
-   ZFiyo//LiH3UE77wIYznChEfgkQksxdcZ5xDfqD4TMQgTXBIe2XOtAFx6
-   7VNovkkeCdbOGVQM1t3yfA9+ictmUeF0FY1HMknQMADVPVJYUp8q6iEDp
-   nhXYcFI0IgiWrq77mwReqQ3R/9PuSfZI0KfEQAiMPOW4uJoYpWCEQrmd9
-   2xHRWswrSOcc9qu6NhgulI9P6WNLZ2WM+3PWVuGj7IGnfdkiFEmDx7U+p
-   cmMm12JSRO2OUAfJQhnIXHrU+W5CQugPNoonhiHgqCJOrF0NMeeoLfBmH
-   Q==;
-IronPort-SDR: S9lG7gYF/fuNpudSBwHZD5+0rf1N57FXBBfG2l9wWqdso320jiMcQCi2U3WzYNpYHiHcGsEqRl
- RpOKq7xokqcjEyogu1LLWgm1eMp1vB6SSRaRRrHUnmik7sUN4kcScIURde+00IHkro1idgtpvQ
- IIVixoLUxU2ayW24YdOBgWQUTaMNKbDhG+qSH8b+IGtXKK/cSwJ3/6IIFPxh0BocXV8T03mvU7
- QtjN9kpj15QdcYWnj3Yq0pTtF8I0c0di2Fkzzr1m167tagpi3TvZ4FBtuVfCyYJFW61U1PBc9S
- 42g=
-X-IronPort-AV: E=Sophos;i="5.78,366,1599494400"; 
-   d="scan'208";a="153248338"
-Received: from mail-dm6nam12lp2173.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.173])
-  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 18:05:27 +0800
+        id S1727982AbgKXKZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Nov 2020 05:25:18 -0500
+Received: from mail-eopbgr40072.outbound.protection.outlook.com ([40.107.4.72]:29187
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730944AbgKXKZS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Nov 2020 05:25:18 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U61omKiXvucSPLzGA67fLwu/UHPWY0F57OdVQelvJzO1EE7nGHCDduX1vOJ8K6GZmAAqCu8dVQsCf4Ev/1JmFttNieAymVTntxZ5BRYIs/5q9W/rQa4+/M4ibkwMeLY/BfqUCWrOPaLdgwcfMIQSTB24ZvpCcbaAQIwIwJjha5H0M5MHsJR2gMM6PobkIjCclwn4GkrpHXYh+lU5QugWzAnF9QWffm8NsNKzcuSy5/hIKIM7rgfZjLhIUoZ0vJn1BxzHyLoOfM3rBnIsHBm62ThhQfUu2XoZ1M+xx+LWvNFb3jD2KB5hiYOwf3G9sYrt0eHvM3dTsdOm6SAFXCtFPQ==
+ b=DuS4YaiqbNeedXC6ypA93VJXR/ixfvG4hMRC/SHveKBu6MjTOge5h9D1cwTHrQPYrFsgPeKSZDOuP3I5tw4kLWIrCVlAJ/am/FKthQ/NI77IU3JQE18lUwZNcvW8FIdh8s3e5YAFOzwUccw2cdEiCFNQYVR07RyP39x5X6KQeAo+IrVCJxwGRqAM1EvrxTVER0z+z/TBejCk+8IMYgcsiWFEQyiHIJpDLXaV6eTCPWmheNG5TpgoN2A2JRwOuR576jfxGGLKCfRrkwFNlXDTlg//dEupLphKuQ76j6b2XtVjy33f2+ST4rtxNLtVRobRj03qp9v+2GbTM/eOO/iQLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gU2qmvbV8wge+LjfgGsNeEMo8AKtCeuVRgfvH9NEunM=;
- b=dE3E2H953ogF0qFgg1NGvhY0vm3ucHhhIc22T9BXuzqIIJpsoooEt4pZZT+ZKBrgU4CSThzXev+owLDahDfF+EvBNcGLGFn20TgD4g0LW9ZU/5ogyFx8ZVOorwqgixZn5KkF++InR5M8xDtAwfoF/0co3yw9q9Rtse4UoBrJNVHY8IhOwy2qzxuyjb0dv69VmJk45kqB9i5dLiVvIEvSVHzzMZtvmTZqt3ItcCxQjWYSixKM15/u0SH/ClspTuabPaSmgK21cMqR5IDV0yghkfyIwI5g9J+jFV8anUtasyMu4uB2Og+5gY21uAVVPINPpTzHK2uNfA+snHlbO2KR9g==
+ bh=zmboxmljomqoekr7YZh5YF5wZUV4D3w6XE3LOEYr4Bs=;
+ b=lD7nzA9HP/a8I+ZQk9Lqdzh+EBDwy93ZZ4ppxvWx8ZCnUNnBoU+Idhkb1SUALT5Dz0B+Gb1nPmTPuMWl2157U9n8HvEcXyo7lXZxj8H/yVOtaP4f2+Qwcl4PfydWWBnR8TIASxXE6yUA1fagAjLlfuFM/Ui+uVA641FRWwW1MfJp5rKAb8lSEIptYa7kBdb7ZhIa662JYM0RMnBGJB2olWNma8hsScCuYPslxFXpQeCYCbgICo3pAFukQ3xusi664JtuhSxb4oRiQ/ppOEhvA68IlzPi5uHiiyVTYlsour2PdQBQnD8BKOslHrQ5UyxE7f30Ld3OP0qhLaQPygjYpA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gU2qmvbV8wge+LjfgGsNeEMo8AKtCeuVRgfvH9NEunM=;
- b=pK/I5+3LJIh2H/mfYlmkL/lSpshAQyORD38E/rLv/h64sAEXxGbgiyT47ZbBC7XHxzg8bBtqSzq1xD9WIQNcjHpHFS1WQvkVZfGmeCLs0krx5cCAdX8+WPs+lATTqOBIHYzWAu3R2AQn8zxSIcicBxDRYOA+4nqmbwS44ahlJ3c=
-Received: from CH2PR04MB6522.namprd04.prod.outlook.com (2603:10b6:610:34::19)
- by CH2PR04MB6871.namprd04.prod.outlook.com (2603:10b6:610:a3::17) with
+ bh=zmboxmljomqoekr7YZh5YF5wZUV4D3w6XE3LOEYr4Bs=;
+ b=BP0kg5LoUWLk3H+TTWuMM9lxwWKeD8w9eAOgZwiNnUq5GTmTAVdP1bUGOW+GQCezYY+GUvGwQULVerTRZ19w4CxC078vYXEWwgZHpT5rnabX1EIwv8vr5Ja4CcwEtiCALZH786+FW1iimpBfdCKI5A0KKgIU4qMfBccOrX9fPpw=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR04MB6648.eurprd04.prod.outlook.com (2603:10a6:20b:f9::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.22; Tue, 24 Nov
- 2020 10:05:25 +0000
-Received: from CH2PR04MB6522.namprd04.prod.outlook.com
- ([fe80::897c:a04b:4eb0:640a]) by CH2PR04MB6522.namprd04.prod.outlook.com
- ([fe80::897c:a04b:4eb0:640a%7]) with mapi id 15.20.3589.022; Tue, 24 Nov 2020
- 10:05:25 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Subject: Re: [PATCH v2 09/21] dt-bindings: Document canaan,k210-fpioa bindings
-Thread-Topic: [PATCH v2 09/21] dt-bindings: Document canaan,k210-fpioa
- bindings
-Thread-Index: AQHWwhuTTl+n9RngRUi4SREztTsSrg==
-Date:   Tue, 24 Nov 2020 10:05:25 +0000
-Message-ID: <CH2PR04MB6522F476C51D4C65F116BE9EE7FB0@CH2PR04MB6522.namprd04.prod.outlook.com>
-References: <20201124043728.199852-1-damien.lemoal@wdc.com>
- <20201124043728.199852-10-damien.lemoal@wdc.com>
- <CAMuHMdXov3Dr7EmAeE7yrKRmtu_L3539u9cjeiGiaRu32YVPQQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linux-m68k.org; dkim=none (message not signed)
- header.d=none;linux-m68k.org; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:ccb9:9212:86f5:6af]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c1a6edb0-737d-4e7b-aa8f-08d89060767d
-x-ms-traffictypediagnostic: CH2PR04MB6871:
-x-microsoft-antispam-prvs: <CH2PR04MB6871AA4F7C18E3587358A105E7FB0@CH2PR04MB6871.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3iWVproal6e0zlwDoujtfRSZym4VKuYcLFgDctOoXMmOVi1H6vC4eitNjFf2QniHCFnlRzeVvqlssAt6v58eTxnFIZ/Kwfi/oJgoWkgCWzl0wzQOhS7A4mRytFaOUuRapPkIl1V05AS7njcg7Y9c1VQtLEpznfCyNXDd/xVroThjNFdKPDZfea8he7/vnR3H9RSQUKxv2xk1DKw77wWAXnOgWe6l8tkvxUUdxIjyqR5yQmRJqDj5aZ980FSlQQ2dRqkcpFb67FcGBd69ouHPQVawsjo8uPQgxejbg0jcvpruNOgS5ALm/lZOXojhHCaeyBGJf7knIyfEpC2zWPWSuA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR04MB6522.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(376002)(136003)(366004)(396003)(86362001)(8936002)(66446008)(7696005)(66946007)(64756008)(52536014)(76116006)(91956017)(66476007)(66556008)(2906002)(71200400001)(7416002)(186003)(8676002)(53546011)(478600001)(33656002)(4326008)(55016002)(9686003)(54906003)(6916009)(6506007)(83380400001)(5660300002)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?fxN1S4osD4z7mDUA7H5ctzMFuFw/yPmbLrj/ic++rV3cIhVoWTUF+fmY9bZo?=
- =?us-ascii?Q?G/2e545qLi698qf2wJUTRvtfCAG+ieW0ftyfftGIpB+VzCglrnwdztg0S47F?=
- =?us-ascii?Q?922QdN9xzknpt009e9ENlS4wJyj0ltI0h4rEYMaCMTI8QFr4PqhRFEZvjFdq?=
- =?us-ascii?Q?k9gCbBjg6IkBQhtbKFYCdIK1jlApiBOHsxjTz234v4h4uRTnkYKyMif3KAhH?=
- =?us-ascii?Q?1+JE8B+utMrMxKdy7RvmmZpDvcQGDCWigvCKHAMkaj4UYv8R2vezokCxIyV0?=
- =?us-ascii?Q?1Sks6iGbWsk3IE9gLGBs5hif+7O8O/8lYqR+ROWqxygnK2trYH3gf4di/VGq?=
- =?us-ascii?Q?CuAz+6n6ah6oxrjUakN8HYPKyI5rwKdm1QO71JYP6wYNczgiKCxwxlE2qaZd?=
- =?us-ascii?Q?mQ8ZtpMg/1Fo27eg+rp6+VQzU2Kvgx4UmTPQmhG7+qwB6B/Pxzxc+4vBxO4w?=
- =?us-ascii?Q?RBqeM+D+V8b/8ZTZ7lsHP6zgGsfkT0adC0cXiS375UjwA3imkwPBnQwMq67O?=
- =?us-ascii?Q?hpeFDiTuCIZpfgz1gDsctjidH9MhvQPmX5rWCotshJBWQNHb+hAagb6aFtMZ?=
- =?us-ascii?Q?okYE3lwejfD7Kp7qa5LVZX6BXDameVgFKNk6ZC6UGp9+dusymGZN5IB8PWbI?=
- =?us-ascii?Q?GumVx3t+TW2duPZIHfo9rvhvqFdBNmxG5+O0LEI+vwEHm4SNvp3Zibl/QaIp?=
- =?us-ascii?Q?na5Xwh+naT2yHr1nTeJOm+1pvia0+hGOaxGOwECDWhSZmrcthPGcT1HYoKU3?=
- =?us-ascii?Q?OgrhejkEerWZswErkCFSr5e7+ASFyaBeZ3bVA8F/M73otEBnXiYplJbvzfW2?=
- =?us-ascii?Q?v+39B+g75E16HYe144UmoPorxmCLTBEtnIr9t7X8vyn5CCTG9nuGHu+0pJk/?=
- =?us-ascii?Q?uAHB3TS1uaavFIvLAZI4I6NwbcOrgGd2ZFL82nwOlmUmh2zo/1aHAeTBqB7x?=
- =?us-ascii?Q?zBCZq/9mRKPgXjUizE/ZhQ=3D=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.20; Tue, 24 Nov
+ 2020 10:25:10 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a%3]) with mapi id 15.20.3564.029; Tue, 24 Nov 2020
+ 10:25:10 +0000
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        sudipm.mukherjee@gmail.com, sboyd@kernel.org, shawnguo@kernel.org,
+        linux-pm@vger.kernel.org, dongas86@gmail.com,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 0/3] clk: imx: scu: support defer probe properly
+Date:   Tue, 24 Nov 2020 18:07:59 +0800
+Message-Id: <20201124100802.22775-1-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.23.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: SG2PR02CA0054.apcprd02.prod.outlook.com
+ (2603:1096:4:54::18) To AM6PR04MB4966.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2::14)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from b29396-OptiPlex-7040.ap.freescale.net (119.31.174.66) by SG2PR02CA0054.apcprd02.prod.outlook.com (2603:1096:4:54::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3589.20 via Frontend Transport; Tue, 24 Nov 2020 10:25:07 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 52ba2753-4786-41bb-45d0-08d8906338a5
+X-MS-TrafficTypeDiagnostic: AM6PR04MB6648:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB6648F77AEDE7A0E7D358096E80FB0@AM6PR04MB6648.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HMBuuh5anXKJK0Ne9Y2rBLQB1acP/uA0hzRRdiVZehc8x71SG8PUFmMDr1VPqSWUYxbXswyHQHYE6L9X+/HiTTtfh3eVen+vYnd+5RO/EJgSAqWiv2U4lO05B++j0kco+fBCa4w4yiReGzbOjyPh4xgFJJl9OZmbIb0bGT9WOq7zypOjWTsbWr/INHaI0KXyTHELi0PI9luVXbKaAaV0p0RjOv8t8eM3RDmN0qtJDCq429t7BbpKm+i7SyjYU0V63/RIMpGVkMMbqMriknYflz/ygi2X50hTRbFjUCB3qBznddPnqPPd5XngioEEgqPBOi0DODOe4+yT8WDBXiYFDIa80gDF4iq8AU1SvZHJQKYD4UmH5DhB1wnLml4+CjL23Wxb+jtgoMXb0igh+UQhtw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(366004)(396003)(39860400002)(346002)(376002)(66946007)(6512007)(66476007)(186003)(26005)(83380400001)(16526019)(966005)(66556008)(6916009)(6666004)(4326008)(86362001)(36756003)(316002)(2616005)(478600001)(2906002)(8676002)(6506007)(1076003)(5660300002)(52116002)(956004)(8936002)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: GxLf/TyaF7jtY1g1gMX5zqCH4eC29Ou7nLSEA7Ipygyej8hbBf8rq2K+YL7DVrBiwD8DzkXqwP/R+moNLclTztnrhemWdZN+y/bGiGqBYghDBoo6nfscOgLs+mh/Uy04sfInpIg5q7EWOrvMtT/VGsIcY+Q6hQtSa3q3ySbcO8dJSf7k6G1omvH2Ic9SpXw4OC7CFpj7x5SICXWArIMjpBE/9rvgC7tcQvs0TUB2ryFsQ5XtnS1gV4GnS7KOePTlp9oD+OnGWd92D9XnBMLWB9rrhoTmVDVC+lzuL2e5ESnwBWSDOFKzD7Waa6w2gADU0PTi50XGkSj0t5GR9wKQaHbgY2we5t+YxGF20KqxOolY/XSHNwlIlu+fPmCyupxWY8fuEExxMdIbRbPopoMp05njzqly0a9qMymCq2BH6dq2SmAvplOgtSqQtVsRqGUqfCReLintUgdG/+mB3JbEj3tIaKQm57MV0slJLSdnKbGyoO46hZI4fu3PCTySM5vmNflUEqmguZ0GJ8D7egU7pViu2MYpvs/seW0pusukKvkk64nn0A2EDth9fU6YMP2yW46ahs95UP1dMt2EfcoZvZ6iiGuMtuE8lQ1QYcAciP3u0kgll3cnj9MKC5jpeo8KFGQb4oiKuClv2HNZS/pqKS33d9fXmVz6/t8kZ2WVu3rpDaUmBP1IjyWqKfZ5NPVvOw/yD6I5oIyRE1nvdivOxY6Znedz8qs9lYSw6pLAG/E1Z3EgOAQnoy1t+nah3m7M/p9NWfm7FOS/laNnBwhS4cydnwqkaKB3YEPI1mzh0X36R00xoL9pCeXkzF4QsUaTJexVEq8cZ2h5nDJax76g9sFqS2dcon8CeTWVC5EnpG09ThEqqwmOigYVRFqGk9OOEbDHE8VBcMaeZCjqwYS1GA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52ba2753-4786-41bb-45d0-08d8906338a5
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR04MB6522.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1a6edb0-737d-4e7b-aa8f-08d89060767d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Nov 2020 10:05:25.1316
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2020 10:25:10.3030
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vk9snIOLBnSYs2nA2+i6rtqu/9fBRhJBB8KHNZpNj2yrd1CYu9l76vljG7gLmei+JfpcOZTjnyuYO1HZvb3yCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR04MB6871
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ylg9s02POudX/IAAvQyHS7YAv+Wcnj2+UmPnXkkxvJt6NNodbpr8TbE4t7WIgdTSfBGNEdodjAGo4r3kQX7yqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6648
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020/11/24 18:49, Geert Uytterhoeven wrote:=0A=
-> Hi Damien,=0A=
-> =0A=
-> On Tue, Nov 24, 2020 at 5:40 AM Damien Le Moal <damien.lemoal@wdc.com> wr=
-ote:=0A=
->> Document the device tree bindings for the Canaan Kendryte K210 SoC=0A=
->> Fully Programmable IO Array (FPIOA) pinctrl driver in=0A=
->> Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml. The=0A=
->> new header file include/dt-bindings/pinctrl/k210-fpioa.h is added to=0A=
->> define all 256 possible pin functions of the SoC IO pins, as well as=0A=
->> macros simplifying the definition of pin functions in a device tree.=0A=
->>=0A=
->> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
-> =0A=
-> Thanks for your patch!=0A=
-> =0A=
->> --- /dev/null=0A=
->> +++ b/Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml=
-=0A=
-> =0A=
->> +  canaan,k210-sysctl-power:=0A=
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array=0A=
->> +    description: |=0A=
->> +      phandle of the K210 system controller node and offset of the its=
-=0A=
-> =0A=
-> of its=0A=
-> =0A=
->> +      power domain control register.=0A=
-> =0A=
-> Your k210-sysctl-v15 branch has a bogus trailing space here.=0A=
-=0A=
-Oops. Forgot to push the fixed up patches. Just did it now (forced update=
-=0A=
-k210-sysctl-v15).=0A=
-=0A=
-> =0A=
->> +=0A=
->> +patternProperties:=0A=
-> =0A=
->> +  '-pins$':=0A=
->> +    type: object=0A=
->> +    $ref: /schemas/pinctrl/pincfg-node.yaml=0A=
->> +    description:=0A=
->> +      FPIOA client devices use sub-nodes to define the desired=0A=
->> +      configuration of pins. Client device sub-nodes use the=0A=
->> +      properties below.=0A=
->> +=0A=
->> +    properties:=0A=
-> =0A=
->> +      input-schmitt: true=0A=
->> +=0A=
->> +      input-schmitt-enable: true=0A=
-> =0A=
-> Do you need both?=0A=
-> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml documents=0A=
-> input-schmitt-enable and input-schmitt-disable, but not input-schmitt.=0A=
-=0A=
-Ah. Yes. My bad. Will correct that.=0A=
-=0A=
-> =0A=
->> +=0A=
->> +      intput-polarity-invert:=0A=
-> =0A=
-> input-polarity-invert=0A=
-> =0A=
->> +        description:=0A=
->> +          Enable or disable pin input polarity inversion.=0A=
-> =0A=
-> Still, this is a non-standard property.  Do you need it, or can this be=
-=0A=
-> handled by the software GPIO_ACTIVE_LOW flag?=0A=
-=0A=
-For GPIO, yes, that would work. But not all pin functions are GPIOs on this=
- SoC,=0A=
-and the hardware supports this. Strictly speaking, this is not really neces=
-sary=0A=
-as pins that needs inversion have that coded in the function code given by =
-the=0A=
-pinmux node. So we could remove this. But that is not a lot of code at all =
-in=0A=
-the driver to support it and the hardware allows that to be set per pin,=0A=
-regardless of the pin function assigned in the pinmux node.=0A=
-=0A=
-> =0A=
->> +      output-polarity-invert:=0A=
->> +        description:=0A=
->> +          Enable or disable pin output polarity inversion.=0A=
-> =0A=
-> Same comment as for input.=0A=
-=0A=
-Same answer :)=0A=
-=0A=
-> =0A=
-> Gr{oetje,eeting}s,=0A=
-> =0A=
->                         Geert=0A=
-> =0A=
-> --=0A=
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org=0A=
-> =0A=
-> In personal conversations with technical people, I call myself a hacker. =
-But=0A=
-> when I'm talking to journalists I just say "programmer" or something like=
- that.=0A=
->                                 -- Linus Torvalds=0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+This patch series is a continued solution for the issue discussed here:
+https://lore.kernel.org/patchwork/patch/1334670/
+
+As kernel doesn't want user to call device_is_bound() which is removed
+https://patchwork.kernel.org/project/linux-clk/patch/20201119114302.26263-1-aisheng.dong@nxp.com/
+
+Because SCU clock-controller (SCU clock protocol) itself does not have a power
+domain property in DT as it does not depend on power domain, but the sub
+clocks registered requires power domains to be ready first.
+We export an API for SCU clk driver to query the status in
+order to support -EPROBE_DEFER properly.
+
+Dong Aisheng (3):
+  clk: imx: scu: make scu clk driver depend on scu pd
+  firmware: imx: scu-pd: export SCU PD register status
+  clk: imx: scu: defer probe if scu pd is still not ready
+
+ drivers/clk/imx/Kconfig          |  4 ++--
+ drivers/clk/imx/clk-scu.c        |  3 +++
+ drivers/firmware/imx/scu-pd.c    | 20 +++++++++++++++++++-
+ include/linux/firmware/imx/sci.h |  6 ++++++
+ 4 files changed, 30 insertions(+), 3 deletions(-)
+
+-- 
+2.23.0
+
