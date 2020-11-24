@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5966BC8301F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F500C64E7C
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19E2620870
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C65020857
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="OGPS+AUj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SgP3RP43"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbgKXEiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Nov 2020 23:38:10 -0500
+        id S1728885AbgKXEiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Nov 2020 23:38:16 -0500
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:36189 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729276AbgKXEiI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 23:38:08 -0500
+        with ESMTP id S1728928AbgKXEiP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 23:38:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606192689; x=1637728689;
+  t=1606192695; x=1637728695;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Rc2RSPnBRWY/myYpbOIzJhXLv/SU9F0BII0ZoItAbwA=;
-  b=OGPS+AUj1bqW+sru5D3xJWZyH2GUSWLoPfEjQ9dl/6lPUeku3gQQQjDc
-   5NnjinTepGXDoJXBk4XWK+6KPZbsqaK0WbWA+KZHIOPMdk3Q+hzEZYeSk
-   H+OQgAJ54jNjZ1ZkIIXruZh0U/3dP1glrkXISqwrAOTdWLJQz6keCqLXv
-   wIcR6WG15ZX1IYv81v7Wf2uxbYMhrJyhA4CdIBTT/0bcp59MHZSs6WToK
-   qqr2WS271RPqS1hu4IxVdD+Z8o1p0TdqplpybUq4KILWtdvnXYwkCIV5E
-   0A/tvGZC5skeuMklxjvVLUk37MT3lE7EmkWsNkujoQh56qD7ykcxvm4yM
-   g==;
-IronPort-SDR: wvMDVxFQKPsM8Cjh/6yAvg8PMkcn6Qs0tLXuDiEiXQQYPMJs9iHBgASv4/p2lX/XdV4DWo2hYl
- IRuMsf7FRrXGpxneGozQ/sSATcUPhQ21BRp74fYPsmaKkBrovalU9ReERHpBuTOOGcytG6HAVJ
- fdj3rtZ7qN1OToZGesRK8ByWn4jdcIZcp1mxC9xXSTlWx8x/+rLzHKlo3D4hE76Fd3UmoiLp+G
- jdCVeupZVzREbrWq60IYZOU0c6TNT1X5FXYCKvNYdIL02f2DVM1ST+PEmxS+rk2QvE0047RMwk
- YKs=
+  bh=Dr60Dd5w6mhOffnaoMhKIVWagEomMPZTmljzPR2qAVg=;
+  b=SgP3RP43s6oyQHyYZ4C1CIg4DmFKIsSie7Dm7iBc35k4JsFBxtmFmgQE
+   umid+GepQsfnJvMyjm5coBbLmC3gRF5+w2ChRyiUJ1J72AvKb6iGWIY3A
+   KCwdHYCuZL48eBcz4UHlE0/t294fIHBazIyQAKx0l6UI0tVkOmoN05bPv
+   3wiubPF7798xG+giSLp3fQQhURnO8tpNQDJ5PLsxHXB+gQ1RqzmQU4Chb
+   pOsWq9EoIB79r23AGzaB0q/oskq/2yv0+ZfiXv+Z922eBl/bmiossWG4D
+   FJif/Y9BuND4ORfeqW96Vn/fqn3hk99nRn5RA4LWt/xrlCqhXiqy7000j
+   A==;
+IronPort-SDR: 1D+bQYAA1Cc7S6br/L7UlUBEljrUiuRMPjN2sOZQtU5Jjn+LrqzuTw00Vnjcz2d+IGysIvdYd3
+ Maq7KhVJmqKDWxmwUXncjTXXo5KHUrKNlhLpUiHCQfI7LeRkE5yy0NuvoZBRCMXlLiJP1v9oJC
+ jOKFe661pZRZl9PVMam4f3wjJ2bQGBr99NHzfasmRwVA4FH+v84e/zP13VacJtK7mzM3hIPFCv
+ lanmMun49SH4nmoZri0HKVpz/fVLdYQrIZdxSOw79PoSk+Ytr1SDYMJbdpvuY8fSaFcqmkSceJ
+ 0kI=
 X-IronPort-AV: E=Sophos;i="5.78,365,1599494400"; 
-   d="scan'208";a="154498207"
+   d="scan'208";a="154498218"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 12:38:09 +0800
-IronPort-SDR: trMpgRU+aYQjwOlscRwPLhFy5hHnJfy9Bx0z75J6AEJPnHj/fcH99UZaNL5dEyHbTfDclqGPCE
- iaEOm2EBN+7ZwDXEGg58p2nzTNhUoI888=
+  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 12:38:15 +0800
+IronPort-SDR: 2CzvQqHvKpnIjjH9noXeow9G+vvBhWSlJGD/b20C0yWj5VuwzNHt5ZkhRB+IIZh7bm38IRD3Qo
+ e9uB0QSTAGaYDWdBEyR3rByq4fQdkymfY=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 20:23:53 -0800
-IronPort-SDR: IwsYQa5vDLKmWbpMlSQjLLB/wL81swYfpgPlLK8qRaFnVonz2GGx8Ky1IK9ho91uDkIzbe4Xn7
- PLvZuE8ebPYw==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 20:23:59 -0800
+IronPort-SDR: OKMwJnqI3CivFmdAi2nKsXaw9v2HbAqaZQuRZZcMNz+hlVCgIV8BvaiKEifgVD3TbdYOO0sURX
+ QorA1R0nxVsw==
 WDCIronportException: Internal
 Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.163])
-  by uls-op-cesaip01.wdc.com with ESMTP; 23 Nov 2020 20:38:06 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 23 Nov 2020 20:38:12 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -60,9 +60,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v2 18/21] riscv: Add SiPeed MAIXDUINO board device tree
-Date:   Tue, 24 Nov 2020 13:37:25 +0900
-Message-Id: <20201124043728.199852-19-damien.lemoal@wdc.com>
+Subject: [PATCH v2 21/21] riscv: Add Canaan Kendryte K210 SD card defconfig
+Date:   Tue, 24 Nov 2020 13:37:28 +0900
+Message-Id: <20201124043728.199852-22-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201124043728.199852-1-damien.lemoal@wdc.com>
 References: <20201124043728.199852-1-damien.lemoal@wdc.com>
@@ -72,224 +72,124 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a device tree for the SiPeed MAIXDUINO board. This device tree
-enables LEDs and spi/mmc SD card device. Additionally, gpios and i2c
-are also enabled and mapped to the board header pins as indicated on
-the board itself.
+The nommu_k210_defconfig default configuration allows booting a K210
+SoC based board using an embedded intramfs cpio file. Modifying this
+configuration to enable support for the board SD card is not
+trivial for all users. To help beginners getting started with this
+board, add the nommu_k210_sdcard_defconfig default configuration file
+to set all configuration options necessary to use the board mmc-spi
+sd card for the root file system. This configuration adds support for
+the block layer, the mmc-spi driver and modifies the boot options to
+specify the rootfs device as mmcblk0p1 (first partition of the sd card
+block device). The ext2 file system is selected by default to encourage
+its use as that results in only about 4KB added to the kernel image
+size. The default device tree compiled in is unchanged and must be
+replaced by the user with the device tree suitable for the board being
+used (k210_maix_bit, k210_maix_dock, k210_maix_go, k210_maixduino or
+k210_kd233).
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/boot/dts/canaan/k210_maixduino.dts | 201 ++++++++++++++++++
- 1 file changed, 201 insertions(+)
- create mode 100644 arch/riscv/boot/dts/canaan/k210_maixduino.dts
+ .../riscv/configs/nommu_k210_sdcard_defconfig | 90 +++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
 
-diff --git a/arch/riscv/boot/dts/canaan/k210_maixduino.dts b/arch/riscv/boot/dts/canaan/k210_maixduino.dts
+diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
 new file mode 100644
-index 000000000000..681f12b46894
+index 000000000000..3d2cb4747e7f
 --- /dev/null
-+++ b/arch/riscv/boot/dts/canaan/k210_maixduino.dts
-@@ -0,0 +1,201 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (C) 2020 Western Digital Corporation or its affiliates.
-+ */
-+
-+/dts-v1/;
-+
-+#include "k210.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "SiPeed MAIXDUINO";
-+	compatible = "sipeed,maixduino", "canaan,kendryte-k210";
-+
-+	chosen {
-+		bootargs = "earlycon console=ttySIF0";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		boot {
-+			label = "BOOT";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		status = "disabled";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&mic>;
-+		};
-+	};
-+
-+	mic: mic {
-+		#sound-dai-cells = <0>;
-+		compatible = "memsensing,msm261s4030h0";
-+		status = "disabled";
-+	};
-+};
-+
-+&fpioa {
-+	status = "okay";
-+
-+	uarths_pinctrl: uarths-pinmux {
-+		pinmux = <K210_FPIOA(4, K210_PCF_UARTHS_RX)>, /* Header "0" */
-+			 <K210_FPIOA(5, K210_PCF_UARTHS_TX)>; /* Header "1" */
-+	};
-+
-+	gpio_pinctrl: gpio-pinmux {
-+		pinmux = <K210_FPIOA(8, K210_PCF_GPIO0)>,
-+			 <K210_FPIOA(9, K210_PCF_GPIO1)>;
-+	};
-+
-+	gpiohs_pinctrl: gpiohs-pinmux {
-+		pinmux = <K210_FPIOA(16, K210_PCF_GPIOHS0)>,  /* BOOT */
-+			 <K210_FPIOA(21, K210_PCF_GPIOHS2)>,  /* Header "2" */
-+			 <K210_FPIOA(22, K210_PCF_GPIOHS3)>,  /* Header "3" */
-+			 <K210_FPIOA(23, K210_PCF_GPIOHS4)>,  /* Header "4" */
-+			 <K210_FPIOA(24, K210_PCF_GPIOHS5)>,  /* Header "5" */
-+			 <K210_FPIOA(32, K210_PCF_GPIOHS6)>,  /* Header "6" */
-+			 <K210_FPIOA(15, K210_PCF_GPIOHS7)>,  /* Header "7" */
-+			 <K210_FPIOA(14, K210_PCF_GPIOHS8)>,  /* Header "8" */
-+			 <K210_FPIOA(13, K210_PCF_GPIOHS9)>,  /* Header "9" */
-+			 <K210_FPIOA(12, K210_PCF_GPIOHS10)>, /* Header "10" */
-+			 <K210_FPIOA(11, K210_PCF_GPIOHS11)>, /* Header "11" */
-+			 <K210_FPIOA(10, K210_PCF_GPIOHS12)>, /* Header "12" */
-+			 <K210_FPIOA(3,  K210_PCF_GPIOHS13)>; /* Header "13" */
-+	};
-+
-+	i2s0_pinctrl: i2s0-pinmux {
-+		pinmux = <K210_FPIOA(18, K210_PCF_I2S0_SCLK)>,
-+			 <K210_FPIOA(19, K210_PCF_I2S0_WS)>,
-+			 <K210_FPIOA(20, K210_PCF_I2S0_IN_D0)>;
-+	};
-+
-+	spi1_pinctrl: spi1-pinmux {
-+		pinmux = <K210_FPIOA(26, K210_PCF_SPI1_D1)>,
-+			 <K210_FPIOA(27, K210_PCF_SPI1_SCLK)>,
-+			 <K210_FPIOA(28, K210_PCF_SPI1_D0)>,
-+			 <K210_FPIOA(29, K210_PCF_GPIO2)>; /* cs */
-+	};
-+
-+	i2c1_pinctrl: i2c1-pinmux {
-+		pinmux = <K210_FPIOA(30, K210_PCF_I2C1_SCLK)>, /* Header "scl" */
-+			 <K210_FPIOA(31, K210_PCF_I2C1_SDA)>;  /* Header "sda" */
-+	};
-+
-+	i2s1_pinctrl: i2s1-pinmux {
-+		pinmux = <K210_FPIOA(33, K210_PCF_I2S1_WS)>,
-+			 <K210_FPIOA(34, K210_PCF_I2S1_IN_D0)>,
-+			 <K210_FPIOA(35, K210_PCF_I2S1_SCLK)>;
-+	};
-+
-+	spi0_pinctrl: spi0-pinmux {
-+		pinmux = <K210_FPIOA(36, K210_PCF_GPIOHS20)>,  /* cs */
-+			 <K210_FPIOA(37, K210_PCF_GPIOHS21)>,  /* rst */
-+			 <K210_FPIOA(38, K210_PCF_GPIOHS22)>,  /* dc */
-+			 <K210_FPIOA(39, K210_PCF_SPI0_SCLK)>; /* wr */
-+	};
-+
-+	dvp_pinctrl: dvp-pinmux {
-+		pinmux = <K210_FPIOA(40, K210_PCF_SCCB_SDA)>,
-+			 <K210_FPIOA(41, K210_PCF_SCCB_SCLK)>,
-+			 <K210_FPIOA(42, K210_PCF_DVP_RST)>,
-+			 <K210_FPIOA(43, K210_PCF_DVP_VSYNC)>,
-+			 <K210_FPIOA(44, K210_PCF_DVP_PWDN)>,
-+			 <K210_FPIOA(45, K210_PCF_DVP_HSYNC)>,
-+			 <K210_FPIOA(46, K210_PCF_DVP_XCLK)>,
-+			 <K210_FPIOA(47, K210_PCF_DVP_PCLK)>;
-+	};
-+};
-+
-+&uarths0 {
-+	pinctrl-0 = <&uarths_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&gpio0 {
-+	pinctrl-0 = <&gpiohs_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&gpio1 {
-+	pinctrl-0 = <&gpio_pinctrl>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&i2s0 {
-+	#sound-dai-cells = <1>;
-+	pinctrl-0 = <&i2s0_pinctrl>;
-+	pinctrl-names = "default";
-+};
-+
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pinctrl>;
-+	pinctrl-names = "default";
-+	clock-frequency = <400000>;
-+	status = "okay";
-+};
-+
-+&dvp0 {
-+	pinctrl-0 = <&dvp_pinctrl>;
-+	pinctrl-names = "default";
-+};
-+
-+&spi0 {
-+	pinctrl-0 = <&spi0_pinctrl>;
-+	pinctrl-names = "default";
-+	num-cs = <1>;
-+	cs-gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
-+
-+	panel@0 {
-+		compatible = "sitronix,st7789v";
-+		reg = <0>;
-+		reset-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
-+		dc-gpios = <&gpio0 22 0>;
-+		spi-max-frequency = <15000000>;
-+	};
-+};
-+
-+&spi1 {
-+	pinctrl-0 = <&spi1_pinctrl>;
-+	pinctrl-names = "default";
-+	num-cs = <1>;
-+	cs-gpios = <&gpio1_0 2 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	slot@0 {
-+		compatible = "mmc-spi-slot";
-+		reg = <0>;
-+		voltage-ranges = <3300 3300>;
-+		spi-max-frequency = <25000000>;
-+		broken-cd;
-+	};
-+};
-+
-+&spi3 {
-+	spi-flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		m25p,fast-read;
-+		broken-flash-reset;
-+	};
-+};
++++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
+@@ -0,0 +1,90 @@
++# CONFIG_CPU_ISOLATION is not set
++CONFIG_LOG_BUF_SHIFT=13
++CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++# CONFIG_SYSFS_SYSCALL is not set
++# CONFIG_FHANDLE is not set
++# CONFIG_BASE_FULL is not set
++# CONFIG_FUTEX is not set
++# CONFIG_EPOLL is not set
++# CONFIG_SIGNALFD is not set
++# CONFIG_TIMERFD is not set
++# CONFIG_EVENTFD is not set
++# CONFIG_AIO is not set
++# CONFIG_IO_URING is not set
++# CONFIG_ADVISE_SYSCALLS is not set
++# CONFIG_MEMBARRIER is not set
++# CONFIG_KALLSYMS is not set
++CONFIG_EMBEDDED=y
++# CONFIG_VM_EVENT_COUNTERS is not set
++# CONFIG_COMPAT_BRK is not set
++CONFIG_SLOB=y
++# CONFIG_MMU is not set
++CONFIG_SOC_CANAAN=y
++CONFIG_SOC_CANAAN_K210_DTB_SOURCE="k210_generic"
++CONFIG_MAXPHYSMEM_2GB=y
++CONFIG_SMP=y
++CONFIG_NR_CPUS=2
++CONFIG_CMDLINE="earlycon console=ttySIF0 rootdelay=2 root=/dev/mmcblk0p1 rw"
++CONFIG_CMDLINE_FORCE=y
++# CONFIG_SECCOMP is not set
++# CONFIG_STACKPROTECTOR is not set
++# CONFIG_BLK_DEV_BSG is not set
++CONFIG_BINFMT_FLAT=y
++# CONFIG_COREDUMP is not set
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++# CONFIG_FW_LOADER is not set
++# CONFIG_ALLOW_DEV_COREDUMP is not set
++# CONFIG_BLK_DEV is not set
++# CONFIG_INPUT_LEDS is not set
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++# CONFIG_SERIO is not set
++# CONFIG_LEGACY_PTYS is not set
++# CONFIG_LDISC_AUTOLOAD is not set
++# CONFIG_HW_RANDOM is not set
++# CONFIG_DEVMEM is not set
++CONFIG_I2C=y
++CONFIG_I2C_CHARDEV=y
++# CONFIG_I2C_HELPER_AUTO is not set
++CONFIG_I2C_DESIGNWARE_PLATFORM=y
++CONFIG_SPI=y
++# CONFIG_SPI_MEM is not set
++CONFIG_SPI_DESIGNWARE=y
++CONFIG_SPI_DW_MMIO=y
++CONFIG_GPIO_SYSFS=y
++# CONFIG_GPIO_CDEV_V1 is not set
++CONFIG_GPIO_DWAPB=y
++CONFIG_GPIO_SIFIVE=y
++CONFIG_POWER_RESET=y
++CONFIG_POWER_RESET_SYSCON=y
++# CONFIG_HWMON is not set
++# CONFIG_VGA_CONSOLE is not set
++# CONFIG_HID is not set
++# CONFIG_USB_SUPPORT is not set
++CONFIG_MMC=y
++# CONFIG_PWRSEQ_EMMC is not set
++# CONFIG_PWRSEQ_SIMPLE is not set
++CONFIG_MMC_SPI=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_USER=y
++# CONFIG_VIRTIO_MENU is not set
++# CONFIG_VHOST_MENU is not set
++CONFIG_EXT2_FS=y
++# CONFIG_FILE_LOCKING is not set
++# CONFIG_DNOTIFY is not set
++# CONFIG_INOTIFY_USER is not set
++# CONFIG_MISC_FILESYSTEMS is not set
++CONFIG_LSM="[]"
++CONFIG_PRINTK_TIME=y
++# CONFIG_SYMBOLIC_ERRNAME is not set
++# CONFIG_DEBUG_BUGVERBOSE is not set
++# CONFIG_DEBUG_MISC is not set
++CONFIG_PANIC_ON_OOPS=y
++# CONFIG_SCHED_DEBUG is not set
++# CONFIG_RCU_TRACE is not set
++# CONFIG_FTRACE is not set
++# CONFIG_RUNTIME_TESTING_MENU is not set
 -- 
 2.28.0
 
