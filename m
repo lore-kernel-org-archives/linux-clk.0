@@ -2,116 +2,232 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F608C56202
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 02:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AA1C6379F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF662071E
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 02:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134D72087D
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Nov 2020 04:37:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s4JDUqbr"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z0xAPpQA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgKXCnD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Nov 2020 21:43:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728531AbgKXCnD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 21:43:03 -0500
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B197C061A4E
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 18:43:03 -0800 (PST)
-Received: by mail-qk1-x744.google.com with SMTP id y18so2874648qki.11
-        for <linux-clk@vger.kernel.org>; Mon, 23 Nov 2020 18:43:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tNsYBLHLT9rrNvfsGBebo2tQKLhppSv7kANHpJdP/lI=;
-        b=s4JDUqbrpI3rYJL0OWcii5UkUUD8CaKQ66QI8UxdC5zm5henEoV2h3SKIcT4USD8Is
-         BxPdNoWkR8tYRTfFXFBrnAi9psiWgUpOSQtB5jKqoJ1ccx56LTdolESBS+vmRsjSWx4G
-         i4BbhFoZcKXAwPiSThUFIHzJh1QRHIRUxL+p1EHCXYhWJQSP6TdJ6A4ZqOAky7qrcpZ9
-         8DZgMnuEVlHYJO6X+foxpndqNcWTx+q0Eb0UgEyJH3PmA+VGF83fQsQn6QOnCW68PI+P
-         S+WqPKCnOUae2/UAyZEw6u3s+avVSwxCtkDbvuQWnID2rVyk35nz4hP5h/dTsPPMB00O
-         6I6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tNsYBLHLT9rrNvfsGBebo2tQKLhppSv7kANHpJdP/lI=;
-        b=J2JQBHUDbLZaPzIpqN3jOGifzBUlkAyFLzTj51UvGpof6mEqcg6Oe8Jy73bnRUOMIX
-         tXSyuhkFaRfYBiIupdD7Fx8htLLYvStXVbg7JY3QjlVLp89OQgrKFan1gw2E1Mo7bFUZ
-         zLbhqq1d5M6HP7ngnr3U/u8hDf2g5eEUJpPNRfbfUuqPZdHgfyKEjkVJSJWPOULo9uY7
-         88vOEPJoyS2NqNoOtvkcRP65pKL95fSyE/TghEBScwRQgMGu5mELIQQezLBcJMIwQT6l
-         99JCQyx4P1CP6OYBwBk4HQgllfDdxOvMJMLJVGE1DeK6p2s2DInI9NmcPc4iDaKR/56j
-         HRHQ==
-X-Gm-Message-State: AOAM530J4zyuMMZ4kHVQdXgilBmoeD1e9e6etz2TNtuJePHBbFKy0Rul
-        sg9UkdJWXQb0jOHSSr3zxlsnyoIrJTff6A==
-X-Google-Smtp-Source: ABdhPJw/2B3Xvuv7XA3fOYRpcJIpddnZFsIHjVXs8JpTBEDrceEvtKqoaAZU37k5M9FR5+uSqtg6wA==
-X-Received: by 2002:a37:a249:: with SMTP id l70mr2545611qke.79.1606185781595;
-        Mon, 23 Nov 2020 18:43:01 -0800 (PST)
-Received: from [192.168.1.93] (pool-71-163-245-5.washdc.fios.verizon.net. [71.163.245.5])
-        by smtp.gmail.com with ESMTPSA id 68sm5412251qkf.97.2020.11.23.18.43.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2020 18:43:00 -0800 (PST)
-Subject: Re: [Patch v2 0/6] Enable Qualcomm Crypto Engine on sdm845
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201119155233.3974286-1-thara.gopinath@linaro.org>
- <X7b1ZX5SEMq1PbVN@sol.localdomain>
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-Message-ID: <48ea0a56-397e-5345-d693-cdc73b20875d@linaro.org>
-Date:   Mon, 23 Nov 2020 21:42:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728791AbgKXEhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Nov 2020 23:37:33 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:49765 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727238AbgKXEhc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Nov 2020 23:37:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606192652; x=1637728652;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rVPzZ0fjLQkdg3mQrO9XGRTGd6aJnP0ZSaxgARJBgc8=;
+  b=Z0xAPpQAuT5E5uxyUzM2239QF3A6g5+Ng8Lkg5C3iEpx0OQscgA850Ft
+   W4z/CxYEWMqqbJiB0nOj2k8jLCpVxO0j+JRmdngEu10uc7r5MzOXzJ8q+
+   FkA3pooq4LmjU+Dgmeco42Thzn1yZ+GcnmLX9bzCayMMMBqsMSzkVbzmy
+   T1k8y8OEhoJoiOnpJ4AcM7S61Ys8wTrEBDAsnf+zIw8Q84CSCGbn4ITa5
+   LTcAUNvKFmN7zzKsipt0q+sryMW1tfE/COgs5BeK5mJYtDior9H/ePiYp
+   otuELeD8WnC88MGU1bsXmdal1eUjHXfVYFjil8GNNp76W+tKIh2WftcAG
+   A==;
+IronPort-SDR: AtQelxTOvIo7c+rAiZsAcd+yTvLoTDZW5tNfAFc7MYwe/htjynRkg2oX7QCuvV17HVztgdWbWo
+ 73up9YFdEq4INdzN/V61kU+xMIkblUvnpHyt+mrzzpV1iJVMefydS15Or+nMG1jt+hp+llTbPE
+ xFa/ldSAwy8HRqymIaNZ1c+DVyVsLUQeu1d6seFvvcaAiGKTfhR6kMScNDkz/tWoiyTn530MP6
+ nYMWDK24JW+izcy/Sp4z52FWSx8HHQh/f4kMwGT+vuAlqpyI8lR7IXkb9RZTjHhfJT8pDKhRjY
+ rUY=
+X-IronPort-AV: E=Sophos;i="5.78,365,1599494400"; 
+   d="scan'208";a="154498144"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2020 12:37:32 +0800
+IronPort-SDR: aK/VD+/K+w0PT6vMtS7G56GMF5HtWQPo38nbSRm8FqV34/SStHFMx3MflZVP7ITfUsvrsXyGdC
+ Dg2dDyLLeSI6XMu/UhEVbOkiMJrrgurDc=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 20:23:15 -0800
+IronPort-SDR: hjxFysibKgoYdhDu0tPHAI/6HON/X8/DuC03iesKED51lFdkezWcrts3I7FBCRRLZwKJGuW//b
+ KYx7/jHOdwMA==
+WDCIronportException: Internal
+Received: from hdrdzf2.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.163])
+  by uls-op-cesaip01.wdc.com with ESMTP; 23 Nov 2020 20:37:29 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH v2 00/21] RISC-V Kendryte K210 support improvements
+Date:   Tue, 24 Nov 2020 13:37:07 +0900
+Message-Id: <20201124043728.199852-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <X7b1ZX5SEMq1PbVN@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series of patches improves support for boards based on the Kendryte
+K210 RISC-V dual core SoC. Minimal support for this SoC is already
+included in the kernel. These patches complete it, enabling support for
+most peripherals present on the SoC as well as introducing device trees
+for the various K210 boards available on the market today from SiPeed
+and Kendryte.
 
+Pathes 1 to 4 are various fixes for riscv arch code and riscv
+dependent devices. Of note here is patch 3 which fix system calls
+execution in the no MMU case, and patch 4 which simplifies DTB builtin
+handling.
 
-On 11/19/20 5:44 PM, Eric Biggers wrote:
-> On Thu, Nov 19, 2020 at 10:52:27AM -0500, Thara Gopinath wrote:
->> Qualcomm crypto engine supports hardware accelerated algorithms for
->> encryption and authentication. Enable support for aes,des,3des encryption
->> algorithms and sha1,sha256, hmac(sha1),hmac(sha256) authentication
->> algorithms on sdm845.The patch series has been tested using the kernel
->> crypto testing module tcrypto.ko.
-> 
-> Can you please test CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y too?  Implementations of
-> crypto algorithms shouldn't be enabled unless they are passing all tests.
+Patch 5 fixes naming of directories and configuration options to use the
+K210 SoC vendor name (Canaan) instead of its branding name (Kendryte).
 
-Hi Eric,
-Yes. I will get around to this probably next week.
+The following patches 6 to 10 document device tree bindings for the SoC
+drivers. These drivers implementation is provided in patches 11, 12 and
+13, respectively implementing the SoC clock driver, SOC pin function
+control and reset controller.
 
-> 
-> Also, did you compare the performance of this hardware to ARMv8 CE?  I thought
-> that QCE (at least on other SoCs) isn't very useful because ARMv8 CE is faster.
+Patches 14 to 19 update the existing K210 device tree and add new
+device tree files for several K210 based boards: MAIX Bit, MAIXDUINO,
+MAIX Dock and MAIX Go boards from SiPeed and the KD233 development
+board from Canaan.
 
-That is surprising. No I did not compare performance. But I see the 
-Qualcomm crypto engine driver enabled and used in the downstream tree 
-for this platform. I see no reason for it not to be in mainline and to 
-be maintained as an out of tree solution. I will try to run some 
-performance benchmarks soon.
+Finally the last two patches updates the k210 nommu defconfig to include
+the newly implemented drivers and provide a new default configuration
+file enabling SD card support.
 
-> 
-> - Eric
-> 
+A lot of the work on the device tree and on the K210 drivers come from
+the work by Sean Anderson for the U-Boot project support of the K210
+SoC. Sean also helped with debugging many aspects of this series.
+
+A tree with all patches applied is available here:
+https://github.com/damien-lemoal/linux, k210-sysctl-v15 branch.
+A demonstration of this series used on a SiPeed MAIX Dock
+board together with an I2C servo controller can be seen here:
+https://damien-lemoal.github.io/linux-robot-arm/#example
+
+This tree was used to build userspace busybox environment image that is
+then copied onto an SD card formatted with ext2:
+https://github.com/damien-lemoal/buildroot
+Of note is that running this userspace environment requires a revert of
+commit 2217b982624680d19a80ebb4600d05c8586c4f96 introduced during the
+5.9 development cycle. Without this revert, execution of the init
+process fails. A problem with the riscv port of elf2flt is suspected but
+not confirmed. I am now starting to investigate this problem.
+
+Reviews and comments are as always much welcome.
+
+Changes from v1:
+* Improved DT bindings documentation
+* SPI and GPIO patches removed from this series (and being processed
+  directly through the relevant subsystems directly)
+* Improved device trees
+* Various cleanup and improvments of the drivers
+
+Damien Le Moal (21):
+  riscv: Fix kernel time_init()
+  riscv: Fix sifive serial driver
+  riscv: Enable interrupts during syscalls with M-Mode
+  riscv: Fix builtin DTB handling
+  riscv: Use vendor name for K210 SoC support
+  dt-bindings: Add Canaan vendor prefix
+  dt-binding: Document canaan,k210-clk bindings
+  dt-bindings: Document canaan,k210-rst bindings
+  dt-bindings: Document canaan,k210-fpioa bindings
+  dt-binding: Document canaan,k210-sysctl bindings
+  riscv: Add Canaan Kendryte K210 clock driver
+  riscv: Add Canaan Kendryte K210 FPIOA driver
+  riscv: Add Canaan Kendryte K210 reset controller
+  riscv: Update Kendryte K210 device tree
+  riscv: Add SiPeed MAIX BiT board device tree
+  riscv: Add SiPeed MAIX DOCK board device tree
+  riscv: Add SiPeed MAIX GO board device tree
+  riscv: Add SiPeed MAIXDUINO board device tree
+  riscv: Add Kendryte KD233 board device tree
+  riscv: Update Canaan Kendryte K210 defconfig
+  riscv: Add Canaan Kendryte K210 SD card defconfig
+
+ .../bindings/clock/canaan,k210-clk.yaml       |  55 +
+ .../bindings/mfd/canaan,k210-sysctl.yaml      | 116 ++
+ .../bindings/pinctrl/canaan,k210-fpioa.yaml   | 165 +++
+ .../bindings/reset/canaan,k210-rst.yaml       |  40 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/riscv/Kconfig.socs                       |  38 +-
+ arch/riscv/Makefile                           |   2 +-
+ arch/riscv/boot/dts/Makefile                  |   2 +-
+ arch/riscv/boot/dts/canaan/Makefile           |   5 +
+ arch/riscv/boot/dts/canaan/k210.dtsi          | 625 +++++++++++
+ arch/riscv/boot/dts/canaan/k210_generic.dts   |  46 +
+ arch/riscv/boot/dts/canaan/k210_kd233.dts     | 178 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_bit.dts  | 227 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_dock.dts | 229 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_go.dts   | 237 +++++
+ arch/riscv/boot/dts/canaan/k210_maixduino.dts | 201 ++++
+ arch/riscv/boot/dts/kendryte/Makefile         |   4 -
+ arch/riscv/boot/dts/kendryte/k210.dts         |  23 -
+ arch/riscv/boot/dts/kendryte/k210.dtsi        | 125 ---
+ arch/riscv/configs/nommu_k210_defconfig       |  36 +-
+ .../riscv/configs/nommu_k210_sdcard_defconfig |  90 ++
+ arch/riscv/include/asm/soc.h                  |  38 -
+ arch/riscv/kernel/entry.S                     |   9 +
+ arch/riscv/kernel/soc.c                       |  27 -
+ arch/riscv/kernel/time.c                      |   3 +
+ arch/riscv/mm/init.c                          |   6 +-
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-k210.c                        | 959 +++++++++++++++++
+ drivers/pinctrl/Kconfig                       |  13 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-k210.c                | 997 ++++++++++++++++++
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-k210.c                    | 150 +++
+ drivers/soc/Kconfig                           |   2 +-
+ drivers/soc/Makefile                          |   2 +-
+ drivers/soc/canaan/Kconfig                    |   9 +
+ drivers/soc/canaan/Makefile                   |   3 +
+ drivers/soc/canaan/k210-sysctl.c              |  89 ++
+ drivers/soc/kendryte/Kconfig                  |  14 -
+ drivers/soc/kendryte/Makefile                 |   3 -
+ drivers/soc/kendryte/k210-sysctl.c            | 260 -----
+ drivers/tty/serial/sifive.c                   |   1 +
+ include/dt-bindings/clock/k210-clk.h          |  61 +-
+ include/dt-bindings/pinctrl/k210-fpioa.h      | 276 +++++
+ include/dt-bindings/reset/k210-rst.h          |  42 +
+ include/soc/canaan/k210-sysctl.h              |  43 +
+ 48 files changed, 4944 insertions(+), 530 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+ create mode 100644 arch/riscv/boot/dts/canaan/Makefile
+ create mode 100644 arch/riscv/boot/dts/canaan/k210.dtsi
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_generic.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_kd233.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_bit.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_dock.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_go.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maixduino.dts
+ delete mode 100644 arch/riscv/boot/dts/kendryte/Makefile
+ delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dts
+ delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dtsi
+ create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+ create mode 100644 drivers/clk/clk-k210.c
+ create mode 100644 drivers/pinctrl/pinctrl-k210.c
+ create mode 100644 drivers/reset/reset-k210.c
+ create mode 100644 drivers/soc/canaan/Kconfig
+ create mode 100644 drivers/soc/canaan/Makefile
+ create mode 100644 drivers/soc/canaan/k210-sysctl.c
+ delete mode 100644 drivers/soc/kendryte/Kconfig
+ delete mode 100644 drivers/soc/kendryte/Makefile
+ delete mode 100644 drivers/soc/kendryte/k210-sysctl.c
+ create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
+ create mode 100644 include/dt-bindings/reset/k210-rst.h
+ create mode 100644 include/soc/canaan/k210-sysctl.h
 
 -- 
-Warm Regards
-Thara
+2.28.0
+
