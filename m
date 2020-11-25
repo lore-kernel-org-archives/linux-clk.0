@@ -2,82 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6991FC56202
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 15:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4D2C56201
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0580820872
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 15:18:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wnaXLjuA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BHR3LFiq"
+	by mail.kernel.org (Postfix) with ESMTP id C0AFD206D9
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbgKYPSs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Nov 2020 10:18:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47414 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbgKYPSs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2020 10:18:48 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6654DC0613D4
-        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2020 07:18:48 -0800 (PST)
-Date:   Wed, 25 Nov 2020 16:18:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1606317526;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ibXsPtN+t5QQYf2LnjcT66AADui7CCUZD4U93wE9y90=;
-        b=wnaXLjuArnASBXBI311FKXykInoikyqBp4sTklbOKbgzaSh03NqXd3S/3FAnEzEoezntR4
-        VcqimYwFFisf01AajkOsrEikwIcUle4WNa6rVHDgu1dLfQtI7cZb20fjOs0t3H1XcuEnk4
-        S7CW4GB9Khhz75jFcnyr7m7h4c9G1RSLwHRFV4vwSmleUj0+f3b52V0DZ88/YQ7LsU/Ict
-        rQnSTA6ahDCpuvqS2CmzLji+FRRNaichjv52YOxPCXrP5JjWAeJk5BIKbGdw3VJY171+Y5
-        bk60EKzQEo5bohQNLvQ+kSQWOxo+hi+Quh1ayWoCMCBIniCyHSDsS9PGXSxFVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1606317526;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ibXsPtN+t5QQYf2LnjcT66AADui7CCUZD4U93wE9y90=;
-        b=BHR3LFiqIxg381lTfXENvp3SDQQQ8eiJC6euSTGDPuiORkYgFleJPi63ONn8zUeMCG49Ul
-        l0vyWdaaVSAitGBA==
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, sudipm.mukherjee@gmail.com, sboyd@kernel.org,
-        shawnguo@kernel.org, dongas86@gmail.com
-Subject: Re: [PATCH 1/1] clk: imx: scu: fix MXC_CLK_SCU module build break
-Message-ID: <20201125151844.7vtr5curlhnnxiwg@linutronix.de>
-References: <20201125105037.22079-1-aisheng.dong@nxp.com>
+        id S1732767AbgKYR1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Nov 2020 12:27:15 -0500
+Received: from out28-219.mail.aliyun.com ([115.124.28.219]:51401 "EHLO
+        out28-219.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732763AbgKYR1P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2020 12:27:15 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1100795|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00509026-0.00170274-0.993207;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047208;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.J.BPrxs_1606325224;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.J.BPrxs_1606325224)
+          by smtp.aliyun-inc.com(10.147.41.137);
+          Thu, 26 Nov 2020 01:27:11 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     sboyd@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com,
+        paul@crapouillou.net
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, dongsheng.qiu@ingenic.com,
+        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
+        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com
+Subject: [PATCH 0/4] Add new clocks for Ingenic SoCs.
+Date:   Thu, 26 Nov 2020 01:26:14 +0800
+Message-Id: <20201125172618.112707-1-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201125105037.22079-1-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020-11-25 18:50:37 [+0800], Dong Aisheng wrote:
-> This issue can be reproduced by CONFIG_IMX_MBOX=m and CONFIG_MXC_CLK_SCU=m.
-> It's caused by current Makefile can't support build clk-scu.o and
-> clk-imx8qxp.o separately.
-> "obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
-> clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o"
-> Only enable MXC_CLK_SCU while CLK_IMX8QXP not is meaningless and buggy.
-> 
-> This patch makes MXC_CLK_SCU to be invisible to users and can only be
-> selected by CLK_IMX8QXP option to ensure they're built together.
-> 
-> Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock driver as module")
-> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+1.Add "jz4780_core1_disable()" for disable the second core of JZ4780,
+  prepare for later commits.
+2.Add CIM, AIC, DMIC clocks for the X1000 SoC, and CIM, AIC, DMIC, I2S
+  clocks for the X1830 SoC from Ingenic.
+3.Fill unused bits in parents in jz4780-cgu.c, x1000-cgu.c, and
+  x1830-cgu.c, these bits should be filled with -1.
+4.Reformat code, add missing blank lines, remove unnecessary tabs,
+  and align code.
 
-This works, thanks.
+周琰杰 (Zhou Yanjie) (4):
+  clk: JZ4780: Add function for disable the second core.
+  dt-bindings: clock: Add missing clocks for Ingenic SoCs.
+  clk: Ingenic: Add missing clocks for Ingenic SoCs.
+  clk: Ingenic: Fill unused bits in parents and reformat code.
 
-Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+ drivers/clk/ingenic/jz4780-cgu.c      |  33 ++++-
+ drivers/clk/ingenic/x1000-cgu.c       |  39 +++--
+ drivers/clk/ingenic/x1830-cgu.c       | 266 +++++++++++++++++++++++++++++-----
+ include/dt-bindings/clock/x1000-cgu.h |   3 +
+ include/dt-bindings/clock/x1830-cgu.h |   4 +
+ 5 files changed, 292 insertions(+), 53 deletions(-)
 
-Sebastian
+-- 
+2.7.4
+
