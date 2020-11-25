@@ -3,78 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3221BC63798
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2058DC2D0E4
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3EC420BED
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC3C020BED
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:17:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sif6kaXi"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xrWmL/rN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726158AbgKYCPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Nov 2020 21:15:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37946 "EHLO mail.kernel.org"
+        id S1726411AbgKYCRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Nov 2020 21:17:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbgKYCPC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Nov 2020 21:15:02 -0500
+        id S1725792AbgKYCRG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Nov 2020 21:17:06 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94D0F2075A;
-        Wed, 25 Nov 2020 02:15:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63E79206FB;
+        Wed, 25 Nov 2020 02:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606270501;
-        bh=aNkhkC1HJ7u96zWRmzOGh8EchI0HxA2iC0PeVNtialg=;
+        s=default; t=1606270626;
+        bh=tGU/wT5iJJXeOlK1y2/fj98GoCCTid9H7r1dMuS5neA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Sif6kaXiKXeLp9f1dpVGuPEfTIqowSCmv2+Y2D2pBINKvoP6CIB4i25cyHbfV2KjJ
-         rfMK1FXJTbFlUJey6olmPA/faigziofQh6dsn19wbbt+OZlRHzl9UA1Tl9DHCOw0tx
-         ThS53v0hCjqCOj1kTHc1ZxxtpGMimCmByQJyvaNw=
+        b=xrWmL/rNmiOQV7Gy/XkRJ6Fyhs1tuOdT76acQy2APHM2dersfKs1DTxBRC/yPY3fG
+         vqhJKYnqIeiHNA+l0ZE4dpUnmcxbWnVQflJHR0ngQ95Rlnm36gitaBkW/BqSEeuJLG
+         2QeGaHbzmjuI3VNRWIjCFJW4uLzdQUf/RinHjX2w=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b362195a-665d-5e1d-4c6e-26cbc2459777@gmail.com>
-References: <20201104134810.21026-1-digetx@gmail.com> <160538861846.60232.2236874455363048014@swboyd.mtv.corp.google.com> <b362195a-665d-5e1d-4c6e-26cbc2459777@gmail.com>
-Subject: Re: [PATCH v1] clk: tegra30: Use 300MHz for video decoder by default
+In-Reply-To: <20201113145310.8274-1-a.fatoum@pengutronix.de>
+References: <20201113145310.8274-1-a.fatoum@pengutronix.de>
+Subject: Re: [PATCH] clk: imx6q: demote warning about pre-boot ldb_di_clk reparenting
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Tue, 24 Nov 2020 18:15:00 -0800
-Message-ID: <160627050023.2717324.14379148787162509458@swboyd.mtv.corp.google.com>
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Date:   Tue, 24 Nov 2020 18:17:05 -0800
+Message-ID: <160627062508.2717324.2756565276373452151@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2020-11-15 06:10:04)
-> 15.11.2020 00:16, Stephen Boyd =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Quoting Dmitry Osipenko (2020-11-04 05:48:10)
-> >> The 600MHz is a too high clock rate for some SoC versions for the video
-> >> decoder hardware and this may cause stability issues. Use 300MHz for t=
-he
-> >> video decoder by default, which is supported by all hardware versions.
-> >>
-> >> Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementat=
-ion")
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >=20
-> > Should this go to clk-fixes? Thierry?
-> >=20
->=20
-> Either way should be good. The fix isn't critical because 600MHz seems
-> to be working okay on unsupported hardware.
->=20
-> Potentially this could vary depending on a board, but then I don't think
-> that there are actively-supported boards which would notice this change.
->=20
+Quoting Ahmad Fatoum (2020-11-13 06:53:09)
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index ba33c79158de..b2e4b6234ac0 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -337,10 +337,10 @@ static void init_ldb_clks(struct device_node *np, v=
+oid __iomem *ccm_base)
+>         of_assigned_ldb_sels(np, &sel[0][3], &sel[1][3]);
+> =20
+>         for (i =3D 0; i < 2; i++) {
+> -               /* Warn if a glitch might have been introduced already */
+> +               /* Print a notice if a glitch might have been introduced =
+already */
+>                 if (sel[i][0] !=3D 3) {
+> -                       pr_warn("ccm: ldb_di%d_sel already changed from r=
+eset value: %d\n",
+> -                               i, sel[i][0]);
+> +                       pr_notice("ccm: ldb_di%d_sel already changed from=
+ reset value: %d\n",
 
-Ok sounds like Thierry can pick it up.
+Maybe the print should also say "Possible glitch"?
