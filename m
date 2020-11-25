@@ -4,76 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5265C2D0E4
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 00:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5993C6379D
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61DD421534
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 00:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77B03221E9
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 02:05:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLU5QbBu"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDomvcmj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgKYAOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Nov 2020 19:14:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56390 "EHLO mail.kernel.org"
+        id S1726189AbgKYCFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Nov 2020 21:05:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbgKYAOn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Nov 2020 19:14:43 -0500
+        id S1726155AbgKYCFT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Nov 2020 21:05:19 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBB86206E5;
-        Wed, 25 Nov 2020 00:14:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BEEB2067D;
+        Wed, 25 Nov 2020 02:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606263283;
-        bh=yiZ84YEeFL0wWYezky6vF3yhpPWjHZ52uDhLhbMfJQM=;
+        s=default; t=1606269918;
+        bh=IaD8vgqknun5yb3c1lZWlj0pp//BzSr5goMQPI2QZWY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eLU5QbBunDunzGLbn35O61lp48dnCiQcXoMj6ntVLrpCl3D2hSb7EzYMD9E7xCufo
-         faLinbGoGYFCtqY3HR9mXHNu5faGJskKKN4nMkiF9Z0YrPcdbgRghR/v20re2SmSD7
-         rf5xyq57yHsYQeoFrG1CdVXncecGIlRjpGaTHnF4=
+        b=nDomvcmjyuhdSs8tCfQfgOMWcsKdct0vEx0HSf4SI2CT9UpK9fE8wCwW4IzANNOxm
+         gdVOTQ+mXPIYrFQ+Sz1qKa1YHXzk34xnQw46QnVG78gglVwJ9hkqPL2N8Yt5V/iXwq
+         vPYDG7ePSAeSuP/UYteDVA+6ayPXd224T2evd/Ts=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201115170950.304460-4-krzk@kernel.org>
-References: <20201115170950.304460-1-krzk@kernel.org> <20201115170950.304460-4-krzk@kernel.org>
-Subject: Re: [RFC 3/3] media: atomisp: do not select COMMON_CLK to fix builds
+In-Reply-To: <20201119155233.3974286-2-thara.gopinath@linaro.org>
+References: <20201119155233.3974286-1-thara.gopinath@linaro.org> <20201119155233.3974286-2-thara.gopinath@linaro.org>
+Subject: Re: [Patch v2 1/6] dt-bindings: clock: Add entry for crypto engine RPMH clock resource
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Date:   Tue, 24 Nov 2020 16:14:41 -0800
-Message-ID: <160626328163.2717324.18098835445527872342@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Thara Gopinath <thara.gopinath@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, davem@davemloft.net,
+        herbert@gondor.apana.org.au, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Tue, 24 Nov 2020 18:05:16 -0800
+Message-ID: <160626991679.2717324.8702902903746052278@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-11-15 09:09:50)
-> COMMON_CLK is a user-selectable option with its own dependencies.  The
-> most important dependency is !HAVE_LEGACY_CLK.  User-selectable drivers
-> should not select COMMON_CLK because they will create a dependency cycle
-> and build failures.
+Quoting Thara Gopinath (2020-11-19 07:52:28)
+> Add clock id forc CE clock resource which is required to bring up the
+> crypto engine on sdm845.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> ---
 
-This is fallout from making the COMMON_CLK symbol selectable in commit
-bbd7ffdbef68 ("clk: Allow the common clk framework to be selectable").
-Before then we needed drivers to select the COMMON_CLK config so that
-the framework was enabled. Now that isn't necessary and any
-user-selectable options should be moved to depends syntax.
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
