@@ -2,332 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1D1C71156
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300CCC56201
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB95206D9
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB29E206D9
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Nov 2020 17:32:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jK5CH9sE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732774AbgKYR10 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Nov 2020 12:27:26 -0500
-Received: from out28-97.mail.aliyun.com ([115.124.28.97]:45942 "EHLO
-        out28-97.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731336AbgKYR1T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2020 12:27:19 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436293|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0180627-0.000172114-0.981765;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.J.BPrxs_1606325224;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.J.BPrxs_1606325224)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Thu, 26 Nov 2020 01:27:15 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     sboyd@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com,
-        paul@crapouillou.net
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com
-Subject: [PATCH 4/4] clk: Ingenic: Fill unused bits in parents and reformat code.
-Date:   Thu, 26 Nov 2020 01:26:18 +0800
-Message-Id: <20201125172618.112707-5-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20201125172618.112707-1-zhouyanjie@wanyeetech.com>
-References: <20201125172618.112707-1-zhouyanjie@wanyeetech.com>
+        id S1732754AbgKYRcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Nov 2020 12:32:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40240 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732724AbgKYRcg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Nov 2020 12:32:36 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A9FC061A4F
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2020 09:32:28 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id e7so2707319wrv.6
+        for <linux-clk@vger.kernel.org>; Wed, 25 Nov 2020 09:32:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=YeiDrEc86xIycJfwKc5bLCqAgMKj5XTfNaIBX6lyjdA=;
+        b=jK5CH9sEY686hQgSKe1CwyrnXFmIAXDl+oH3T/yxkKLng6zt5CB9uStMQrqx9Kuuaw
+         dDKmaV/d8ZQr8XFFV5sl1t7MD1d6pjgw8aP/xEywbNs+e/hzP5/DBPH8X0xPoUj+kTm4
+         remvAq2JEgWSHMBKs4vp04i4hGdo0gz3l8hS4umApryHihbAC1gIycECc2qbeTQaiRqr
+         jq2u/U6sTX7pITA/7cceQIbjh0Na7Ci5G4TXL7mhjzMbbEe03kBP4vlbjOvFzmGq4omk
+         t3cpmgZrR0xklyKicea/ZejNOe4ojbtdwPPYOlPa0m9UdegnotnOg0dc3gF/vYu95dRy
+         X9eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=YeiDrEc86xIycJfwKc5bLCqAgMKj5XTfNaIBX6lyjdA=;
+        b=Ipa54rrJsoGHH1Ai0W8JOBPJGJpmB4yMUMtnsEv7VH6/PiG1zNv2L5gTMO/yodOqUZ
+         9VonkA/4lST4+aemV4a7Qnln4ThCjtpJqQtgAtFQuX+PfXvwhj2CzTlFMm+cqodGA9up
+         i1xJrUcLhy/N0V33tP8fu3+Ds+aNQ1znsc4FM3octiinDWnvQWTjXn32XHoNeu01AxFm
+         s/UnnwVzQr84EbW3xrrwzOpVUw2qAhMGDFkrE3TxWKcYNrCkdqoz2XuWrcKQ1HyLeDZt
+         mjjt3Yz93iiM30+o1yTOQjYWOzdNJ50VD9qxuHfqnqYurJ8k2Z+6rQnWSJtKwotG3r1M
+         +T0A==
+X-Gm-Message-State: AOAM532OX+yuOwit96tHL6FXis5rd5ZRqsHJlQf1Ka8h6rF7GsFUByKW
+        TRyRzMdzRKjXdSbISGZHGamvMJ+DZ0g053sf
+X-Google-Smtp-Source: ABdhPJyaibWquAMim/5GHYlHcizp6oZtp39RwCmendo1r++fTRExKmfqUjlExXkf4zP10ewkK4e+5w==
+X-Received: by 2002:a5d:514a:: with SMTP id u10mr5354145wrt.312.1606325547270;
+        Wed, 25 Nov 2020 09:32:27 -0800 (PST)
+Received: from localhost (253.35.17.109.rev.sfr.net. [109.17.35.253])
+        by smtp.gmail.com with ESMTPSA id p4sm5740947wrm.51.2020.11.25.09.32.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2020 09:32:26 -0800 (PST)
+References: <20201123163811.353444-1-narmstrong@baylibre.com>
+ <20201123163811.353444-3-narmstrong@baylibre.com>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: meson: g12a: add MIPI DSI Host Pixel Clock
+In-reply-to: <20201123163811.353444-3-narmstrong@baylibre.com>
+Message-ID: <1jlfep8hqu.fsf@starbuckisacylon.baylibre.com>
+Date:   Wed, 25 Nov 2020 18:32:25 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-1.Fill unused bits in parents in jz4780-cgu.c, x1000-cgu.c,
-  and x1830-cgu.c, these bits should be filled with -1.
-2.Reformat code, add missing blank lines, remove unnecessary
-  tabs, and align code.
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
- drivers/clk/ingenic/jz4780-cgu.c | 12 +++---
- drivers/clk/ingenic/x1000-cgu.c  | 20 +++++-----
- drivers/clk/ingenic/x1830-cgu.c  | 83 ++++++++++++++++++++--------------------
- 3 files changed, 60 insertions(+), 55 deletions(-)
+On Mon 23 Nov 2020 at 17:38, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index dcca74e..1b61eaa 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -178,6 +178,7 @@ static int jz4780_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
- 
- 	spin_unlock_irqrestore(&cgu->lock, flags);
-+
- 	return 0;
- }
- 
-@@ -188,6 +189,7 @@ static int jz4780_otg_phy_enable(struct clk_hw *hw)
- 
- 	writel(readl(reg_opcr) | OPCR_SPENDN0, reg_opcr);
- 	writel(readl(reg_usbpcr) & ~USBPCR_OTG_DISABLE & ~USBPCR_SIDDQ, reg_usbpcr);
-+
- 	return 0;
- }
- 
-@@ -215,9 +217,9 @@ static const struct clk_ops jz4780_otg_phy_ops = {
- 	.round_rate = jz4780_otg_phy_round_rate,
- 	.set_rate = jz4780_otg_phy_set_rate,
- 
--	.enable		= jz4780_otg_phy_enable,
--	.disable	= jz4780_otg_phy_disable,
--	.is_enabled	= jz4780_otg_phy_is_enabled,
-+	.enable = jz4780_otg_phy_enable,
-+	.disable = jz4780_otg_phy_disable,
-+	.is_enabled = jz4780_otg_phy_is_enabled,
- };
- 
- static int jz4780_core1_enable(struct clk_hw *hw)
-@@ -544,13 +546,13 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
- 
- 	[JZ4780_CLK_EXCLK_DIV512] = {
- 		"exclk_div512", CGU_CLK_FIXDIV,
--		.parents = { JZ4780_CLK_EXCLK },
-+		.parents = { JZ4780_CLK_EXCLK, -1, -1, -1 },
- 		.fixdiv = { 512 },
- 	},
- 
- 	[JZ4780_CLK_RTC] = {
- 		"rtc_ercs", CGU_CLK_MUX | CGU_CLK_GATE,
--		.parents = { JZ4780_CLK_EXCLK_DIV512, JZ4780_CLK_RTCLK },
-+		.parents = { JZ4780_CLK_EXCLK_DIV512, JZ4780_CLK_RTCLK, -1, -1 },
- 		.mux = { CGU_REG_OPCR, 2, 1},
- 	},
- 
-diff --git a/drivers/clk/ingenic/x1000-cgu.c b/drivers/clk/ingenic/x1000-cgu.c
-index d340bcd..fe2e274 100644
---- a/drivers/clk/ingenic/x1000-cgu.c
-+++ b/drivers/clk/ingenic/x1000-cgu.c
-@@ -126,6 +126,7 @@ static int x1000_otg_phy_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 	writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
- 
- 	spin_unlock_irqrestore(&cgu->lock, flags);
-+
- 	return 0;
- }
- 
-@@ -136,6 +137,7 @@ static int x1000_usb_phy_enable(struct clk_hw *hw)
- 
- 	writel(readl(reg_opcr) | OPCR_SPENDN0, reg_opcr);
- 	writel(readl(reg_usbpcr) & ~USBPCR_OTG_DISABLE & ~USBPCR_SIDDQ, reg_usbpcr);
-+
- 	return 0;
- }
- 
-@@ -163,9 +165,9 @@ static const struct clk_ops x1000_otg_phy_ops = {
- 	.round_rate = x1000_otg_phy_round_rate,
- 	.set_rate = x1000_otg_phy_set_rate,
- 
--	.enable		= x1000_usb_phy_enable,
--	.disable	= x1000_usb_phy_disable,
--	.is_enabled	= x1000_usb_phy_is_enabled,
-+	.enable = x1000_usb_phy_enable,
-+	.disable = x1000_usb_phy_disable,
-+	.is_enabled = x1000_usb_phy_is_enabled,
- };
- 
- static const s8 pll_od_encoding[8] = {
-@@ -298,7 +300,7 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
- 
- 	[X1000_CLK_MAC] = {
- 		"mac", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
--		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL },
-+		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
- 		.mux = { CGU_REG_MACCDR, 31, 1 },
- 		.div = { CGU_REG_MACCDR, 0, 1, 8, 29, 28, 27 },
- 		.gate = { CGU_REG_CLKGR, 25 },
-@@ -306,7 +308,7 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
- 
- 	[X1000_CLK_LCD] = {
- 		"lcd", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
--		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL },
-+		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
- 		.mux = { CGU_REG_LPCDR, 31, 1 },
- 		.div = { CGU_REG_LPCDR, 0, 1, 8, 28, 27, 26 },
- 		.gate = { CGU_REG_CLKGR, 23 },
-@@ -314,7 +316,7 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
- 
- 	[X1000_CLK_MSCMUX] = {
- 		"msc_mux", CGU_CLK_MUX,
--		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL},
-+		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
- 		.mux = { CGU_REG_MSC0CDR, 31, 1 },
- 	},
- 
-@@ -350,7 +352,7 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
- 
- 	[X1000_CLK_SSIPLL_DIV2] = {
- 		"ssi_pll_div2", CGU_CLK_FIXDIV,
--		.parents = { X1000_CLK_SSIPLL },
-+		.parents = { X1000_CLK_SSIPLL, -1, -1, -1 },
- 		.fixdiv = { 2 },
- 	},
- 
-@@ -369,13 +371,13 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
- 
- 	[X1000_CLK_EXCLK_DIV512] = {
- 		"exclk_div512", CGU_CLK_FIXDIV,
--		.parents = { X1000_CLK_EXCLK },
-+		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
- 		.fixdiv = { 512 },
- 	},
- 
- 	[X1000_CLK_RTC] = {
- 		"rtc_ercs", CGU_CLK_MUX | CGU_CLK_GATE,
--		.parents = { X1000_CLK_EXCLK_DIV512, X1000_CLK_RTCLK },
-+		.parents = { X1000_CLK_EXCLK_DIV512, X1000_CLK_RTCLK, -1, -1 },
- 		.mux = { CGU_REG_OPCR, 2, 1},
- 		.gate = { CGU_REG_CLKGR, 27 },
- 	},
-diff --git a/drivers/clk/ingenic/x1830-cgu.c b/drivers/clk/ingenic/x1830-cgu.c
-index e76e82c..4d6cca5 100644
---- a/drivers/clk/ingenic/x1830-cgu.c
-+++ b/drivers/clk/ingenic/x1830-cgu.c
-@@ -15,51 +15,51 @@
- #include "pm.h"
- 
- /* CGU register offsets */
--#define CGU_REG_CPCCR		0x00
--#define CGU_REG_CPPCR		0x0c
--#define CGU_REG_APLL		0x10
--#define CGU_REG_MPLL		0x14
--#define CGU_REG_CLKGR0		0x20
--#define CGU_REG_OPCR		0x24
--#define CGU_REG_CLKGR1		0x28
--#define CGU_REG_DDRCDR		0x2c
--#define CGU_REG_USBPCR		0x3c
--#define CGU_REG_USBRDT		0x40
--#define CGU_REG_USBVBFIL	0x44
--#define CGU_REG_USBPCR1		0x48
--#define CGU_REG_MACCDR		0x54
--#define CGU_REG_EPLL		0x58
--#define CGU_REG_I2SCDR		0x60
--#define CGU_REG_LPCDR		0x64
--#define CGU_REG_MSC0CDR		0x68
--#define CGU_REG_I2SCDR1		0x70
--#define CGU_REG_SSICDR		0x74
--#define CGU_REG_CIMCDR		0x7c
--#define CGU_REG_MSC1CDR		0xa4
--#define CGU_REG_CMP_INTR	0xb0
--#define CGU_REG_CMP_INTRE	0xb4
--#define CGU_REG_DRCG		0xd0
--#define CGU_REG_CPCSR		0xd4
--#define CGU_REG_VPLL		0xe0
--#define CGU_REG_MACPHYC		0xe8
-+#define CGU_REG_CPCCR			0x00
-+#define CGU_REG_CPPCR			0x0c
-+#define CGU_REG_APLL			0x10
-+#define CGU_REG_MPLL			0x14
-+#define CGU_REG_CLKGR0			0x20
-+#define CGU_REG_OPCR			0x24
-+#define CGU_REG_CLKGR1			0x28
-+#define CGU_REG_DDRCDR			0x2c
-+#define CGU_REG_USBPCR			0x3c
-+#define CGU_REG_USBRDT			0x40
-+#define CGU_REG_USBVBFIL		0x44
-+#define CGU_REG_USBPCR1			0x48
-+#define CGU_REG_MACCDR			0x54
-+#define CGU_REG_EPLL			0x58
-+#define CGU_REG_I2SCDR			0x60
-+#define CGU_REG_LPCDR			0x64
-+#define CGU_REG_MSC0CDR			0x68
-+#define CGU_REG_I2SCDR1			0x70
-+#define CGU_REG_SSICDR			0x74
-+#define CGU_REG_CIMCDR			0x7c
-+#define CGU_REG_MSC1CDR			0xa4
-+#define CGU_REG_CMP_INTR		0xb0
-+#define CGU_REG_CMP_INTRE		0xb4
-+#define CGU_REG_DRCG			0xd0
-+#define CGU_REG_CPCSR			0xd4
-+#define CGU_REG_VPLL			0xe0
-+#define CGU_REG_MACPHYC			0xe8
- 
- /* bits within the OPCR register */
--#define OPCR_GATE_USBPHYCLK	BIT(23)
--#define OPCR_SPENDN0		BIT(7)
--#define OPCR_SPENDN1		BIT(6)
-+#define OPCR_GATE_USBPHYCLK		BIT(23)
-+#define OPCR_SPENDN0			BIT(7)
-+#define OPCR_SPENDN1			BIT(6)
- 
- /* bits within the USBPCR register */
--#define USBPCR_SIDDQ		BIT(21)
--#define USBPCR_OTG_DISABLE	BIT(20)
-+#define USBPCR_SIDDQ			BIT(21)
-+#define USBPCR_OTG_DISABLE		BIT(20)
- 
- /* bits within the I2SCDR register */
--#define I2SCDR_I2PCS_SHIFT	30
--#define I2SCDR_I2PCS_MASK	(0x3 << I2SCDR_I2PCS_SHIFT)
-+#define I2SCDR_I2PCS_SHIFT		30
-+#define I2SCDR_I2PCS_MASK		(0x3 << I2SCDR_I2PCS_SHIFT)
- #define I2SCDR_I2SDIV_M_SHIFT	20
- #define I2SCDR_I2SDIV_M_MASK	(0x1ff << I2SCDR_I2SDIV_M_SHIFT)
- #define I2SCDR_I2SDIV_N_SHIFT	0
- #define I2SCDR_I2SDIV_N_MASK	(0xfffff << I2SCDR_I2SDIV_N_SHIFT)
--#define I2SCDR_CE_I2S		BIT(29)
-+#define I2SCDR_CE_I2S			BIT(29)
- 
- static struct ingenic_cgu *cgu;
- 
-@@ -70,6 +70,7 @@ static int x1830_usb_phy_enable(struct clk_hw *hw)
- 
- 	writel((readl(reg_opcr) | OPCR_SPENDN0) & ~OPCR_GATE_USBPHYCLK, reg_opcr);
- 	writel(readl(reg_usbpcr) & ~USBPCR_OTG_DISABLE & ~USBPCR_SIDDQ, reg_usbpcr);
-+
- 	return 0;
- }
- 
-@@ -93,9 +94,9 @@ static int x1830_usb_phy_is_enabled(struct clk_hw *hw)
- }
- 
- static const struct clk_ops x1830_otg_phy_ops = {
--	.enable		= x1830_usb_phy_enable,
--	.disable	= x1830_usb_phy_disable,
--	.is_enabled	= x1830_usb_phy_is_enabled,
-+	.enable = x1830_usb_phy_enable,
-+	.disable = x1830_usb_phy_disable,
-+	.is_enabled = x1830_usb_phy_is_enabled,
- };
- 
- static u8 x1830_i2s_get_parent(struct clk_hw *hw)
-@@ -486,7 +487,7 @@ static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
- 
- 	[X1830_CLK_SSIPLL_DIV2] = {
- 		"ssi_pll_div2", CGU_CLK_FIXDIV,
--		.parents = { X1830_CLK_SSIPLL },
-+		.parents = { X1830_CLK_SSIPLL, -1, -1, -1 },
- 		.fixdiv = { 2 },
- 	},
- 
-@@ -506,13 +507,13 @@ static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
- 
- 	[X1830_CLK_EXCLK_DIV512] = {
- 		"exclk_div512", CGU_CLK_FIXDIV,
--		.parents = { X1830_CLK_EXCLK },
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
- 		.fixdiv = { 512 },
- 	},
- 
- 	[X1830_CLK_RTC] = {
- 		"rtc_ercs", CGU_CLK_MUX | CGU_CLK_GATE,
--		.parents = { X1830_CLK_EXCLK_DIV512, X1830_CLK_RTCLK },
-+		.parents = { X1830_CLK_EXCLK_DIV512, X1830_CLK_RTCLK, -1, -1 },
- 		.mux = { CGU_REG_OPCR, 2, 1},
- 		.gate = { CGU_REG_CLKGR0, 29 },
- 	},
--- 
-2.7.4
+> This adds the MIPI DSI Host Pixel Clock, unlike AXG, the pixel clock can be different
+> from the VPU ENCL output clock to feed the DSI Host controller with a different clock rate.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Series looks good.
+2 minor comments below 
+
+> ---
+>  drivers/clk/meson/g12a.c | 72 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/g12a.h |  3 +-
+>  2 files changed, 74 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 3cb8196c8e29..3dedf8408405 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -3658,6 +3658,66 @@ static struct clk_regmap g12a_hdmi_tx = {
+>  	},
+>  };
+>  
+> +/* MIPI DSI Host Clocks */
+> +
+> +static const struct clk_hw *g12a_mipi_dsi_pxclk_parent_hws[] = {
+> +	&g12a_vid_pll.hw,
+> +	&g12a_gp0_pll.hw,
+> +	&g12a_hifi_pll.hw,
+> +	&g12a_mpll1.hw,
+> +	&g12a_fclk_div2.hw,
+> +	&g12a_fclk_div2p5.hw,
+> +	&g12a_fclk_div3.hw,
+> +	&g12a_fclk_div7.hw,
+> +};
+> +
+> +static struct clk_regmap g12a_mipi_dsi_pxclk_sel = {
+> +	.data = &(struct clk_regmap_mux_data){
+> +		.offset = HHI_MIPIDSI_PHY_CLK_CNTL,
+> +		.mask = 0x7,
+> +		.shift = 12,
+> +		.flags = CLK_MUX_ROUND_CLOSEST,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "mipi_dsi_pxclk_sel",
+> +		.ops = &clk_regmap_mux_ops,
+> +		.parent_hws = g12a_mipi_dsi_pxclk_parent_hws,
+> +		.num_parents = ARRAY_SIZE(g12a_mipi_dsi_pxclk_parent_hws),
+> +		.flags = CLK_SET_RATE_PARENT,
+
+The id of the mux is exposed which seems to hint the mux will be
+manually controller but CLK_SET_RATE_NO_REPARENT is not set. Is this on
+purpose ?
+
+> +	},
+> +};
+> +
+> +static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
+> +	.data = &(struct clk_regmap_div_data){
+> +		.offset = HHI_MIPIDSI_PHY_CLK_CNTL,
+> +		.shift = 0,
+> +		.width = 7,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "mipi_dsi_pxclk_div",
+> +		.ops = &clk_regmap_divider_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +					&g12a_mipi_dsi_pxclk_sel.hw },
+
+Alignment here is weird compared to the reset of the file
+
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static struct clk_regmap g12a_mipi_dsi_pxclk = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = HHI_MIPIDSI_PHY_CLK_CNTL,
+> +		.bit_idx = 8,
+> +	},
+> +	.hw.init = &(struct clk_init_data) {
+> +		.name = "mipi_dsi_pxclk",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +					&g12a_mipi_dsi_pxclk_div.hw },
+> +		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+>  /* HDMI Clocks */
+>  
+>  static const struct clk_parent_data g12a_hdmi_parent_data[] = {
+> @@ -4403,6 +4463,9 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
+>  		[CLKID_SPICC1_SCLK_SEL]		= &g12a_spicc1_sclk_sel.hw,
+>  		[CLKID_SPICC1_SCLK_DIV]		= &g12a_spicc1_sclk_div.hw,
+>  		[CLKID_SPICC1_SCLK]		= &g12a_spicc1_sclk.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_SEL]	= &g12a_mipi_dsi_pxclk_sel.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_DIV]	= &g12a_mipi_dsi_pxclk_div.hw,
+> +		[CLKID_MIPI_DSI_PXCLK]		= &g12a_mipi_dsi_pxclk.hw,
+>  		[NR_CLKS]			= NULL,
+>  	},
+>  	.num = NR_CLKS,
+> @@ -4658,6 +4721,9 @@ static struct clk_hw_onecell_data g12b_hw_onecell_data = {
+>  		[CLKID_SPICC1_SCLK_SEL]		= &g12a_spicc1_sclk_sel.hw,
+>  		[CLKID_SPICC1_SCLK_DIV]		= &g12a_spicc1_sclk_div.hw,
+>  		[CLKID_SPICC1_SCLK]		= &g12a_spicc1_sclk.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_SEL]	= &g12a_mipi_dsi_pxclk_sel.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_DIV]	= &g12a_mipi_dsi_pxclk_div.hw,
+> +		[CLKID_MIPI_DSI_PXCLK]		= &g12a_mipi_dsi_pxclk.hw,
+>  		[NR_CLKS]			= NULL,
+>  	},
+>  	.num = NR_CLKS,
+> @@ -4904,6 +4970,9 @@ static struct clk_hw_onecell_data sm1_hw_onecell_data = {
+>  		[CLKID_NNA_CORE_CLK_SEL]	= &sm1_nna_core_clk_sel.hw,
+>  		[CLKID_NNA_CORE_CLK_DIV]	= &sm1_nna_core_clk_div.hw,
+>  		[CLKID_NNA_CORE_CLK]		= &sm1_nna_core_clk.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_SEL]	= &g12a_mipi_dsi_pxclk_sel.hw,
+> +		[CLKID_MIPI_DSI_PXCLK_DIV]	= &g12a_mipi_dsi_pxclk_div.hw,
+> +		[CLKID_MIPI_DSI_PXCLK]		= &g12a_mipi_dsi_pxclk.hw,
+>  		[NR_CLKS]			= NULL,
+>  	},
+>  	.num = NR_CLKS,
+> @@ -5151,6 +5220,9 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
+>  	&sm1_nna_core_clk_sel,
+>  	&sm1_nna_core_clk_div,
+>  	&sm1_nna_core_clk,
+> +	&g12a_mipi_dsi_pxclk_sel,
+> +	&g12a_mipi_dsi_pxclk_div,
+> +	&g12a_mipi_dsi_pxclk,
+>  };
+>  
+>  static const struct reg_sequence g12a_init_regs[] = {
+> diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+> index 69b6a69549c7..a97613df38b3 100644
+> --- a/drivers/clk/meson/g12a.h
+> +++ b/drivers/clk/meson/g12a.h
+> @@ -264,8 +264,9 @@
+>  #define CLKID_NNA_AXI_CLK_DIV			263
+>  #define CLKID_NNA_CORE_CLK_SEL			265
+>  #define CLKID_NNA_CORE_CLK_DIV			266
+> +#define CLKID_MIPI_DSI_PXCLK_DIV		268
+>  
+> -#define NR_CLKS					268
+> +#define NR_CLKS					271
+>  
+>  /* include the CLKIDs that have been made part of the DT binding */
+>  #include <dt-bindings/clock/g12a-clkc.h>
 
