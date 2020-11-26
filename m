@@ -2,31 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1482C63697
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 12:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E5BC56202
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 12:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85E2E21741
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 12:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9565521D42
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 12:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389041AbgKZMlq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Nov 2020 07:41:46 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:54702 "EHLO inva021.nxp.com"
+        id S2389355AbgKZMlt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Nov 2020 07:41:49 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:43122 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388958AbgKZMlp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Nov 2020 07:41:45 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2A3502000E0;
-        Thu, 26 Nov 2020 13:41:44 +0100 (CET)
+        id S2389007AbgKZMlr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Nov 2020 07:41:47 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 50B6C1A0B97;
+        Thu, 26 Nov 2020 13:41:45 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1CDA52000AF;
-        Thu, 26 Nov 2020 13:41:44 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 392551A0BA9;
+        Thu, 26 Nov 2020 13:41:45 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 945EF2026B;
-        Thu, 26 Nov 2020 13:41:43 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B9EBC2026B;
+        Thu, 26 Nov 2020 13:41:44 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -38,44 +39,109 @@ To:     Stephen Boyd <sboyd@kernel.org>,
 Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 0/5] clk: imx: Register the dram_apb and dram_alt as read-only
-Date:   Thu, 26 Nov 2020 14:40:04 +0200
-Message-Id: <1606394409-12755-1-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v2 2/5] clk: Add CLK_GET_PARENT_NOCACHE flag
+Date:   Thu, 26 Nov 2020 14:40:06 +0200
+Message-Id: <1606394409-12755-3-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1606394409-12755-1-git-send-email-abel.vesa@nxp.com>
+References: <1606394409-12755-1-git-send-email-abel.vesa@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On i.MX8M platforms the dram_apb and dram_alt are controlled from EL3.
-So in order to keep track of the actual clock tree in kernel, we need to
-actually declare the clocks but never write to any of their registes.
-We do that by registering the clocks with only the ops that read but never
-write the registers.
+This can be used by the clocks that have their parents changed from EL3.
+This way the clk_get_parent will read the value from register instead of
+using the value stored in the core framework.
 
-Changes since v1:
- * allow generic composite clock registration with .is_enabled gate op
-   only
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Suggested-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/clk.c            | 31 +++++++++++++++++--------------
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 18 insertions(+), 14 deletions(-)
 
-Abel Vesa (5):
-  clk: Add clk_gate_ro_ops for read-only gate clocks
-  clk: Add CLK_GET_PARENT_NOCACHE flag
-  clk: composite: Allow gate ops with only .is_enabled op
-  clk: imx: composite-8m: Add DRAM clock registration variant
-  clk: imx8m: Use dram variant registration for dram clocks
-
- drivers/clk/clk-composite.c        | 19 ++++++++++---------
- drivers/clk/clk-gate.c             |  5 +++++
- drivers/clk/clk.c                  | 31 +++++++++++++++++--------------
- drivers/clk/imx/clk-composite-8m.c | 12 +++++++++++-
- drivers/clk/imx/clk-imx8mm.c       |  4 ++--
- drivers/clk/imx/clk-imx8mn.c       |  4 ++--
- drivers/clk/imx/clk-imx8mp.c       |  4 ++--
- drivers/clk/imx/clk-imx8mq.c       |  4 ++--
- drivers/clk/imx/clk.h              |  7 +++++++
- include/linux/clk-provider.h       |  2 ++
- 10 files changed, 60 insertions(+), 32 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c77feb6..2dd4bf4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2401,6 +2401,16 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_max_rate);
+ 
++static struct clk_core *__clk_get_parent(struct clk_core *core)
++{
++	u8 index = 0;
++
++	if (core->num_parents > 1 && core->ops->get_parent)
++		index = core->ops->get_parent(core->hw);
++
++	return clk_core_get_parent_by_index(core, index);
++}
++
+ /**
+  * clk_get_parent - return the parent of a clk
+  * @clk: the clk whose parent gets returned
+@@ -2415,24 +2425,17 @@ struct clk *clk_get_parent(struct clk *clk)
+ 		return NULL;
+ 
+ 	clk_prepare_lock();
+-	/* TODO: Create a per-user clk and change callers to call clk_put */
+-	parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
++	if (clk->core && (clk->core->flags & CLK_GET_PARENT_NOCACHE))
++		parent = __clk_get_parent(clk->core)->hw->clk;
++	else
++		/* TODO: Create a per-user clk and change callers to call clk_put */
++		parent = !clk->core->parent ? NULL : clk->core->parent->hw->clk;
+ 	clk_prepare_unlock();
+ 
+ 	return parent;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_parent);
+ 
+-static struct clk_core *__clk_init_parent(struct clk_core *core)
+-{
+-	u8 index = 0;
+-
+-	if (core->num_parents > 1 && core->ops->get_parent)
+-		index = core->ops->get_parent(core->hw);
+-
+-	return clk_core_get_parent_by_index(core, index);
+-}
+-
+ static void clk_core_reparent(struct clk_core *core,
+ 				  struct clk_core *new_parent)
+ {
+@@ -3352,7 +3355,7 @@ static void clk_core_reparent_orphans_nolock(void)
+ 	 * parent.
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+-		struct clk_core *parent = __clk_init_parent(orphan);
++		struct clk_core *parent = __clk_get_parent(orphan);
+ 
+ 		/*
+ 		 * We need to use __clk_set_parent_before() and _after() to
+@@ -3453,7 +3456,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			goto out;
+ 	}
+ 
+-	parent = core->parent = __clk_init_parent(core);
++	parent = core->parent = __clk_get_parent(core);
+ 
+ 	/*
+ 	 * Populate core->parent if parent has already been clk_core_init'd. If
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 81ba1aa..f871991b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -32,6 +32,7 @@
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
+ /* duty cycle call may be forwarded to the parent clock */
+ #define CLK_DUTY_CYCLE_PARENT	BIT(13)
++#define CLK_GET_PARENT_NOCACHE	BIT(14) /* read the parent from reg */
+ 
+ struct clk;
+ struct clk_hw;
 -- 
 2.7.4
 
