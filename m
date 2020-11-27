@@ -2,79 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2628DC63777
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AFEC3E8C5
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0D47206F7
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B420221EB
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1tKXYBiS"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1/Cvts2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730617AbgK0UW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 15:22:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
+        id S1732382AbgK0Udv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 15:33:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729845AbgK0UWQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Nov 2020 15:22:16 -0500
+        id S1732374AbgK0Ubj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Nov 2020 15:31:39 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15929206F7;
-        Fri, 27 Nov 2020 20:22:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CB3F21D7A;
+        Fri, 27 Nov 2020 20:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606508534;
-        bh=ocs0K9GhHcRXTT2o9qpeWQBtOAS1xI1U0fC2LN0HaLA=;
+        s=default; t=1606508354;
+        bh=o3RTkjTyHvzrrCB4moRhD+SXP7lFjO4qLgZ4zpDkqEw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=1tKXYBiSO8rkM/Trt8RPLXz7xQIspOzckRBinPnTIeI98iXdvRbSH0e65rA1Nhcx9
-         UJqIxUdhtzG5ps90Qo29fMmvDm/v9udlZ9++uGjr82WYyTftKO+SLtHS7459pJOJet
-         Ti1oSdva3rtOZ1uDWGVnGOtKE4+qzEBM87S2UC8A=
+        b=E1/Cvts2AleC6juqrgkFNASwChKaHV22sMpl7ga1RdwHhzr9Sxg1//qQRacMN5vTr
+         09SVpnPFbjA+/qQ+ocmDj0MCwXooOtNQMD0BH/9XJDSb0vcG51kZhsT47CJZAJVzyK
+         cOG8kTYQMOco+n84s865MMiBAncUY4edGYJUV4ls=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201127144545.125335-1-thierry.reding@gmail.com>
-References: <20201127144545.125335-1-thierry.reding@gmail.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v5.11-rc1
+In-Reply-To: <20201125141505.GA77733@kozik-lap>
+References: <20201115170950.304460-1-krzk@kernel.org> <20201115170950.304460-2-krzk@kernel.org> <160568531746.60232.15496517544781609246@swboyd.mtv.corp.google.com> <20201118074812.GA5803@kozik-lap> <160626309137.2717324.9318376048083763040@swboyd.mtv.corp.google.com> <20201125141505.GA77733@kozik-lap>
+Subject: Re: [PATCH 1/3] clk: fix redefinition of clk_prepare on MIPS with HAVE_LEGACY_CLK
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Fri, 27 Nov 2020 12:22:12 -0800
-Message-ID: <160650853267.2717324.12327283989442506759@swboyd.mtv.corp.google.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 27 Nov 2020 12:19:12 -0800
+Message-ID: <160650835295.2717324.6223337132204167294@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2020-11-27 06:45:45)
-> Hi Mike, Stephen,
+Quoting Krzysztof Kozlowski (2020-11-25 06:15:05)
+> On Tue, Nov 24, 2020 at 04:11:31PM -0800, Stephen Boyd wrote:
+> >=20
+> > Ok so this patch isn't necessary then?
 >=20
-> The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9=
-ec:
+> For this particular build failure - it is not necessary anymore.
 >=20
->   Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+> However there might more of such errors - just not discovered yet. Also,
+> the clock bulk API has such ifdefs so it kind of symmetrical and
+> consistent approach.
 >=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
-5.11-clk
->=20
-> for you to fetch changes up to a886c310d9fcb0e66253d4af225cba13f9bdf5d2:
->=20
->   clk: tegra: bpmp: Clamp clock rates on requests (2020-11-26 16:28:07 +0=
-100)
->=20
-> Turns out there were fewer patches than I thought. Some of the patches
-> I was planning to pick up will be going in through the memory controller
-> tree as dependencies, so here's the rest that are independent.
->=20
-> Thanks,
-> Thierry
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+Ok. Patches always welcome.
