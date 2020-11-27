@@ -2,68 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92A9C63777
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 23:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750D7C2D0E4
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 06:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A5DE2158C
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Nov 2020 23:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3130A221FF
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 06:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391920AbgKZXYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Nov 2020 18:24:04 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58199 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391918AbgKZXYE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Nov 2020 18:24:04 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1kiQcK-0001Ms-Q8; Thu, 26 Nov 2020 23:24:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        id S2392572AbgK0GZW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 01:25:22 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:33422 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728043AbgK0GZW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Nov 2020 01:25:22 -0500
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1kiXBx-0000x6-0Y; Fri, 27 Nov 2020 17:25:14 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 27 Nov 2020 17:25:12 +1100
+Date:   Fri, 27 Nov 2020 17:25:12 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, davem@davemloft.net,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: Kconfig: Fix spelling mistake "dyanmic" -> "dynamic"
-Date:   Thu, 26 Nov 2020 23:24:00 +0000
-Message-Id: <20201126232400.15011-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.29.2
+Subject: Re: [Patch v2 0/6] Enable Qualcomm Crypto Engine on sdm845
+Message-ID: <20201127062512.GB11448@gondor.apana.org.au>
+References: <20201119155233.3974286-1-thara.gopinath@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201119155233.3974286-1-thara.gopinath@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Nov 19, 2020 at 10:52:27AM -0500, Thara Gopinath wrote:
+> Qualcomm crypto engine supports hardware accelerated algorithms for
+> encryption and authentication. Enable support for aes,des,3des encryption
+> algorithms and sha1,sha256, hmac(sha1),hmac(sha256) authentication
+> algorithms on sdm845.The patch series has been tested using the kernel
+> crypto testing module tcrypto.ko.
+> 
+> v1->v2:
+> - Rebased to linux-next v5.10-rc4.
+> - Fixed subject line format in all patches as per Bjorn's feedback.
+> 
+> Thara Gopinath (6):
+>   dt-binding:clock: Add entry for crypto engine RPMH clock resource
+>   clk:qcom:rpmh: Add CE clock on sdm845.
+>   drivers:crypto:qce: Enable support for crypto engine on sdm845.
+>   drivers:crypto:qce: Fix SHA result buffer corruption issues.
+>   dts:qcom:sdm845: Add dt entries to support crypto engine.
+>   devicetree:bindings:crypto: Extend qcom-qce binding to add support for
+>     crypto engine version 5.4
+> 
+>  .../devicetree/bindings/crypto/qcom-qce.txt   |  4 ++-
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 30 +++++++++++++++++++
+>  drivers/clk/qcom/clk-rpmh.c                   |  2 ++
+>  drivers/crypto/qce/core.c                     | 17 ++++++++++-
+>  drivers/crypto/qce/sha.c                      |  2 +-
+>  include/dt-bindings/clock/qcom,rpmh.h         |  1 +
+>  6 files changed, 53 insertions(+), 3 deletions(-)
 
-There is a spelling mistake in the Kconfig help text. Fix it.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 48c624a1eff1..8c8b568609d4 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -44,7 +44,7 @@ config QCOM_CLK_APCC_MSM8996
- 	help
- 	  Support for the CPU clock controller on msm8996 devices.
- 	  Say Y if you want to support CPU clock scaling using CPUfreq
--	  drivers for dyanmic power management.
-+	  drivers for dynamic power management.
- 
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
+Patches 3-4 applied.  Thanks.
 -- 
-2.29.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
