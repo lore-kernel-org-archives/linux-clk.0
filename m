@@ -2,101 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-20.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BCAC2D0E4
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 13:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043F0C63798
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 14:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7562224C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 13:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE69D2223F
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 14:45:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMHA1L+0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbgK0NnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 08:43:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
+        id S1730957AbgK0Opv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 09:45:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729402AbgK0NnB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2020 08:43:01 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CD7C0613D1
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2020 05:43:00 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id xRiy2300f4C55Sk01Riy5t; Fri, 27 Nov 2020 14:42:59 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kie1a-0065Xi-Em; Fri, 27 Nov 2020 14:42:58 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kie1Z-000Kbx-Uv; Fri, 27 Nov 2020 14:42:57 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
+        with ESMTP id S1729913AbgK0Opu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2020 09:45:50 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C814C0613D1;
+        Fri, 27 Nov 2020 06:45:50 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id k14so5860656wrn.1;
+        Fri, 27 Nov 2020 06:45:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eD5tyVoTAsH68bnD9XqzP45KTYtONvr8pYzSU1Ul9rs=;
+        b=nMHA1L+07mGv+MoJykXr0hd+aH3HOW1MGET4akb9R/oSNitI5ojZlzd5glc7pDMcxJ
+         1YyEFa3Omsci/1E2nZUwv+Mdo7zB3pNGeE4H0lKXZmyR5/EUCEAIhlM9AA6gRxvb7e15
+         l5oVmjHwc4a6m5yFAGo/6cJSLyqG7rXOP8C7kLpx6EGc0N7zIz+T8U/SXzW80HLIFrx0
+         NL64AabRiBhUkj4DLd46oo6c36cLuXVt5yjYJ8+ZNQKxiYgUNExcHOSd+Q2VAz7CkJ+4
+         eNAdz4JTnkBYjb/IgS06vM2cxqu++SVXDCYkS/vUujpsbeuLI9tYY5nKGOs96vgG7QZ6
+         s8+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eD5tyVoTAsH68bnD9XqzP45KTYtONvr8pYzSU1Ul9rs=;
+        b=koq9kPqhebj0PviLTIfRoGEx+MwTVE7Tgk7oQRJbmKW2lNL+qek1tvIa8HzqoozD0/
+         TV+6Vjn2v6gPOvwtaPrpx6OLs95amgjyP6HzuJ29UjNJZfErG0Zdmc/5jXmaqUKfUQSF
+         TIb7MkenHmD+ooFzii997T1dAb4yW1VTzEzsLXHZKadJ6n2ILuhRYc6E3xKtqMiOXs6J
+         pz7+mIlJsxWttCBy0rjIT+qe7rkiHPQqpTq0btrBRbAMK9uaMuTgUSU7+h3LzGFPCMzf
+         kvM1/r+sdF+cDpFpHOImGHI06+B2h0L7cV8wsDsXhz3uO64RiiCJU4s82mMbXKdVbkr0
+         Vwbg==
+X-Gm-Message-State: AOAM532cW5oJ17wfIQVin32LSlOOK1iuXSH/nrmt/OipFCGvMzGS1DnB
+        RDinQXU5nsDAYgP7EOREBjQ=
+X-Google-Smtp-Source: ABdhPJwXWq6wpQCFtmwkrGwPJD6N7a8201FeIg5KdL1EPAjhzHMv7QA17z422m2U5bS6UeYd30vGjQ==
+X-Received: by 2002:a5d:4141:: with SMTP id c1mr5084872wrq.80.1606488347985;
+        Fri, 27 Nov 2020 06:45:47 -0800 (PST)
+Received: from localhost ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id f18sm14847542wru.42.2020.11.27.06.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2020 06:45:46 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] clk: renesas: Updates for v5.11 (take two)
-Date:   Fri, 27 Nov 2020 14:42:56 +0100
-Message-Id: <20201127134256.79186-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.25.1
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v5.11-rc1
+Date:   Fri, 27 Nov 2020 15:45:45 +0100
+Message-Id: <20201127144545.125335-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.29.2
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Hi Mike, Stephen,
 
-The following changes since commit cf5577a1cfc104c71f011738ab753bf2ac2f91ed:
+The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
-  clk: renesas: r8a779a0: Fix R and OSC clocks (2020-11-10 09:25:46 +0100)
+  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.11-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.11-clk
 
-for you to fetch changes up to acaece1de58901a7f56cc0d4e5149897a903ad23:
+for you to fetch changes up to a886c310d9fcb0e66253d4af225cba13f9bdf5d2:
 
-  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to json-schema (2020-11-27 09:01:25 +0100)
+  clk: tegra: bpmp: Clamp clock rates on requests (2020-11-26 16:28:07 +0100)
+
+Turns out there were fewer patches than I thought. Some of the patches
+I was planning to pick up will be going in through the memory controller
+tree as dependencies, so here's the rest that are independent.
+
+Thanks,
+Thierry
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v5.11 (take two)
+clk: tegra: Changes for v5.11-rc1
 
-  - Add RPC (QSPI/HyperFLASH) clocks on RZ/G2E,
-  - Stop using __raw_*() I/O accessors,
-  - One more conversion of DT bindings to json-schema.
+This set consists of two fixes for minor issues that rarely, if ever,
+happen, so not urgent enough for these to go into v5.10.
 
-Thanks for pulling!
 ----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      clk: renesas: sh73a0: Stop using __raw_*() I/O accessors
+Nicolin Chen (1):
+      clk: tegra: Do not return 0 on failure
 
-Lad Prabhakar (1):
-      clk: renesas: r8a774c0: Add RPC clocks
+Sivaram Nair (1):
+      clk: tegra: bpmp: Clamp clock rates on requests
 
-Yoshihiro Shimoda (1):
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to json-schema
-
- .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  68 --------------
- .../clock/renesas,rcar-usb2-clock-sel.yaml         | 100 +++++++++++++++++++++
- drivers/clk/renesas/clk-sh73a0.c                   |   2 +-
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   9 ++
- drivers/clk/renesas/rcar-gen3-cpg.c                |  28 ++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |   5 ++
- 6 files changed, 143 insertions(+), 69 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ drivers/clk/tegra/clk-bpmp.c | 6 +++---
+ drivers/clk/tegra/clk-dfll.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
