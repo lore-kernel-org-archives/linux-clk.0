@@ -2,75 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AFEC3E8C5
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A252FC3E8C5
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B420221EB
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 426A921D91
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:39:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1/Cvts2"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsQnKtmp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732382AbgK0Udv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 15:33:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42212 "EHLO mail.kernel.org"
+        id S1731500AbgK0UiL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 15:38:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbgK0Ubj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Nov 2020 15:31:39 -0500
+        id S1732423AbgK0UhH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Nov 2020 15:37:07 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CB3F21D7A;
-        Fri, 27 Nov 2020 20:19:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB0C21D7F;
+        Fri, 27 Nov 2020 20:37:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606508354;
-        bh=o3RTkjTyHvzrrCB4moRhD+SXP7lFjO4qLgZ4zpDkqEw=;
+        s=default; t=1606509426;
+        bh=ULgWkvmDlIUY55y1ofW2kwgDWhQZ95ZYXPdKqB+/lgo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=E1/Cvts2AleC6juqrgkFNASwChKaHV22sMpl7ga1RdwHhzr9Sxg1//qQRacMN5vTr
-         09SVpnPFbjA+/qQ+ocmDj0MCwXooOtNQMD0BH/9XJDSb0vcG51kZhsT47CJZAJVzyK
-         cOG8kTYQMOco+n84s865MMiBAncUY4edGYJUV4ls=
+        b=fsQnKtmpZxuoBo05efGaHxVWuRGEk4Gxwf8ZlJSI3Ctk5BA94wQgBlxzqKOGI+q/5
+         /YS65Z9XVbQOVeoehXnYFV6oMvwqkDvKr+WBW7HNPx99M759eldHMClyf3DDI0fAaC
+         xmO4fSuf9g7sL5r6U1G+ge5tVngqXjWrtKjHFXt0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201125141505.GA77733@kozik-lap>
-References: <20201115170950.304460-1-krzk@kernel.org> <20201115170950.304460-2-krzk@kernel.org> <160568531746.60232.15496517544781609246@swboyd.mtv.corp.google.com> <20201118074812.GA5803@kozik-lap> <160626309137.2717324.9318376048083763040@swboyd.mtv.corp.google.com> <20201125141505.GA77733@kozik-lap>
-Subject: Re: [PATCH 1/3] clk: fix redefinition of clk_prepare on MIPS with HAVE_LEGACY_CLK
+In-Reply-To: <20201127134256.79186-1-geert@linux-m68k.org>
+References: <20201127134256.79186-1-geert@linux-m68k.org>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.11 (take two)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 27 Nov 2020 12:19:12 -0800
-Message-ID: <160650835295.2717324.6223337132204167294@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 27 Nov 2020 12:37:05 -0800
+Message-ID: <160650942533.2717324.17625868257825974183@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2020-11-25 06:15:05)
-> On Tue, Nov 24, 2020 at 04:11:31PM -0800, Stephen Boyd wrote:
-> >=20
-> > Ok so this patch isn't necessary then?
+Quoting Geert Uytterhoeven (2020-11-27 05:42:56)
+>         Hi Mike, Stephen,
 >=20
-> For this particular build failure - it is not necessary anymore.
+> The following changes since commit cf5577a1cfc104c71f011738ab753bf2ac2f91=
+ed:
 >=20
-> However there might more of such errors - just not discovered yet. Also,
-> the clock bulk API has such ifdefs so it kind of symmetrical and
-> consistent approach.
+>   clk: renesas: r8a779a0: Fix R and OSC clocks (2020-11-10 09:25:46 +0100)
 >=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.11-tag2
+>=20
+> for you to fetch changes up to acaece1de58901a7f56cc0d4e5149897a903ad23:
+>=20
+>   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to j=
+son-schema (2020-11-27 09:01:25 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Ok. Patches always welcome.
+Thanks. Pulled into clk-next
