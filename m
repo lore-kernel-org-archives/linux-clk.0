@@ -2,79 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B517C2D0E4
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 09:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F5FC2D0E4
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 09:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 432542224A
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 09:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B1CB221F7
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 09:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbgK0JGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 04:06:08 -0500
-Received: from smtp25.cstnet.cn ([159.226.251.25]:60690 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726034AbgK0JGH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Nov 2020 04:06:07 -0500
-Received: from localhost.localdomain (unknown [124.16.141.242])
-        by APP-05 (Coremail) with SMTP id zQCowADnx+BxwcBf200QAA--.93S2;
-        Fri, 27 Nov 2020 17:05:54 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: Remove redundant null check before clk_prepare_enable
-Date:   Fri, 27 Nov 2020 09:05:51 +0000
-Message-Id: <20201127090551.50254-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: zQCowADnx+BxwcBf200QAA--.93S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFy8CFy8AFW5Ww4rWFykZrb_yoW3WFgEka
-        1Ygr4agr1IqrWayFWUJaykZ39093Z2vr1v93WIvF43Ja47Wr1fuFs2qw4rAa47JFW2kFyS
-        yryUuw47Cr13AjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb28YjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc2xSY4AK67AK6r4fMxAIw28I
-        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
-        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI
-        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
-        IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
-        87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jwL0nUUUUU=
-X-Originating-IP: [124.16.141.242]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCgkNA1z4jLOBIgAAs1
+        id S1726562AbgK0JNR convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 04:13:17 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45075 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgK0JNQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2020 04:13:16 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k3so4090303otp.12;
+        Fri, 27 Nov 2020 01:13:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EFMRDHK8b4cBosOGmmoEpo6+nuyXHFjHpiMakCNjazg=;
+        b=fY/tji03Dq/bgYoCxUX0iIDZ0mKTWI0+kvISlevuod8TkKtFNJCQZEN0QIG0KDT0j8
+         RUFg+D2BVElReeT6PTsRH1ednOE+Tdt5Xyy65qj1B2dZ2QT5gfVvZCrFWf+nmC9r4zg5
+         mLgfZG98QMxzyKos/rcfCOwOgEhgBkk3K/wckm7soQWO+x8GkyooZA6cevYGDMWqjYzR
+         YgyVUYYKMaf2jC3sfy81GqWAXNbeuLVHrEUueyuoiM/kQ+A42jl6oLmpDeKr1jSW92bE
+         GiFn3k6UnstSo1NR5lCwfz5OOTcR60QJ+kIZFsY0eeQQNVeEEm4My5s3Eh5ELOKtyEXT
+         DmpQ==
+X-Gm-Message-State: AOAM530yZ77w9YOOoWnoFQQ6bWgjIHXTEk6+ZJ+05+lf3c329MczscIK
+        uqDEkMPG0mjEeWUX8DdLFgr0DuwsUe8+OTuaek3nLEaK
+X-Google-Smtp-Source: ABdhPJzyt5CbZnD46moUfhogjkoN1NcWMCOqTdC9ciCNUITy5c0HGt3IRNNBYMtvtlGWdyn0/Im6/Iu754LLP/GXEmQ=
+X-Received: by 2002:a9d:686:: with SMTP id 6mr4786847otx.107.1606468394323;
+ Fri, 27 Nov 2020 01:13:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20201126221416.3110341-1-niklas.soderlund+renesas@ragnatech.se> <20201126221416.3110341-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20201126221416.3110341-3-niklas.soderlund+renesas@ragnatech.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 27 Nov 2020 10:13:03 +0100
+Message-ID: <CAMuHMdW34yrcbJ=pTXRTRoQyXXJ6_8_TPBjS-vHo6pxiuOqKCg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r8a779a0: Add THS/TSC clock
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Because clk_prepare_enable() already checked NULL clock parameter,
-so the additional check is unnecessary, just remove it.
+Hi Niklas,
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- drivers/clk/rockchip/clk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, Nov 26, 2020 at 11:14 PM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Implement support for the THS/TSC clock on V3U
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index b443169dd408..336481bc6cc7 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -603,8 +603,7 @@ void rockchip_clk_protect_critical(const char *const clocks[],
- 	for (i = 0; i < nclocks; i++) {
- 		struct clk *clk = __clk_lookup(clocks[i]);
- 
--		if (clk)
--			clk_prepare_enable(clk);
-+		clk_prepare_enable(clk);
- 	}
- }
- EXPORT_SYMBOL_GPL(rockchip_clk_protect_critical);
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> @@ -190,6 +190,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+>         DEF_MOD("vin35",        827,    R8A779A0_CLK_S1D1),
+>         DEF_MOD("vin36",        828,    R8A779A0_CLK_S1D1),
+>         DEF_MOD("vin37",        829,    R8A779A0_CLK_S1D1),
+> +       DEF_MOD("thermal",      919,    R8A779A0_CLK_CP),
+>  };
+
+The R-Car V3U Series User's Manual calls this clock "tsc", and states its
+parent is "cl16m".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
