@@ -3,95 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21B3C3E8C5
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2628DC63777
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF0221D7F
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0D47206F7
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Nov 2020 20:23:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOOfSjAp"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1tKXYBiS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732312AbgK0UQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 15:16:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40738 "EHLO mail.kernel.org"
+        id S1730617AbgK0UW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 15:22:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731379AbgK0UQa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Nov 2020 15:16:30 -0500
+        id S1729845AbgK0UWQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Nov 2020 15:22:16 -0500
 Received: from kernel.org (unknown [104.132.1.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB368206F7;
-        Fri, 27 Nov 2020 20:16:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15929206F7;
+        Fri, 27 Nov 2020 20:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606508188;
-        bh=FPQG/Gj4KnDrsVvZOjQIh9kS3ZFl/ooHI8AwGxcPYrE=;
+        s=default; t=1606508534;
+        bh=ocs0K9GhHcRXTT2o9qpeWQBtOAS1xI1U0fC2LN0HaLA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TOOfSjAprV1GZJ3xjrATnqrsm6aUeIQYFLCfB04tArVPlRubCJOGTn+UiIJLtYwAm
-         yVepdCYRQ63iHGe0OPe06gxStd00jIB+eeQ1/hVizJ4YFTy5TIuI7cuUZJlxaWxxLV
-         1rCTDAHFMFR3bmsCthiov4FVFIIyoP+Fw+6aZ+BI=
+        b=1tKXYBiSO8rkM/Trt8RPLXz7xQIspOzckRBinPnTIeI98iXdvRbSH0e65rA1Nhcx9
+         UJqIxUdhtzG5ps90Qo29fMmvDm/v9udlZ9++uGjr82WYyTftKO+SLtHS7459pJOJet
+         Ti1oSdva3rtOZ1uDWGVnGOtKE4+qzEBM87S2UC8A=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201125105037.22079-1-aisheng.dong@nxp.com>
-References: <20201125105037.22079-1-aisheng.dong@nxp.com>
-Subject: Re: [PATCH 1/1] clk: imx: scu: fix MXC_CLK_SCU module build break
+In-Reply-To: <20201127144545.125335-1-thierry.reding@gmail.com>
+References: <20201127144545.125335-1-thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.11-rc1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        sudipm.mukherjee@gmail.com, shawnguo@kernel.org,
-        dongas86@gmail.com, Dong Aisheng <aisheng.dong@nxp.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Date:   Fri, 27 Nov 2020 12:16:27 -0800
-Message-ID: <160650818748.2717324.6222265265679775690@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Fri, 27 Nov 2020 12:22:12 -0800
+Message-ID: <160650853267.2717324.12327283989442506759@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dong Aisheng (2020-11-25 02:50:37)
-> This issue can be reproduced by CONFIG_IMX_MBOX=3Dm and CONFIG_MXC_CLK_SC=
-U=3Dm.
-> It's caused by current Makefile can't support build clk-scu.o and
-
-What is the issue? Can you include the error message?
-
-> clk-imx8qxp.o separately.
-> "obj-$(CONFIG_MXC_CLK_SCU) +=3D clk-imx-scu.o clk-imx-lpcg-scu.o
-> clk-imx-scu-$(CONFIG_CLK_IMX8QXP) +=3D clk-scu.o clk-imx8qxp.o"
-> Only enable MXC_CLK_SCU while CLK_IMX8QXP not is meaningless and buggy.
-
-Ok. So CLK_IMX8QXP selects MXC_CLK_SCU?
-
+Quoting Thierry Reding (2020-11-27 06:45:45)
+> Hi Mike, Stephen,
 >=20
-> This patch makes MXC_CLK_SCU to be invisible to users and can only be
-> selected by CLK_IMX8QXP option to ensure they're built together.
+> The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9=
+ec:
 >=20
-> Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock driv=
-er as module")
-> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  drivers/clk/imx/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
 >=20
-> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> index 3b393cb07295..dbacdd70af2e 100644
-> --- a/drivers/clk/imx/Kconfig
-> +++ b/drivers/clk/imx/Kconfig
-> @@ -5,7 +5,7 @@ config MXC_CLK
->         depends on ARCH_MXC || COMPILE_TEST
-> =20
->  config MXC_CLK_SCU
-> -       tristate "IMX SCU clock"
-> +       tristate
->         depends on ARCH_MXC || COMPILE_TEST
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.11-clk
+>=20
+> for you to fetch changes up to a886c310d9fcb0e66253d4af225cba13f9bdf5d2:
+>=20
+>   clk: tegra: bpmp: Clamp clock rates on requests (2020-11-26 16:28:07 +0=
+100)
+>=20
+> Turns out there were fewer patches than I thought. Some of the patches
+> I was planning to pick up will be going in through the memory controller
+> tree as dependencies, so here's the rest that are independent.
+>=20
+> Thanks,
+> Thierry
+>=20
+> ----------------------------------------------------------------
 
-Is it a temporary workaround? Because COMPILE_TEST on an option that
-isn't selectable is meaningless.
-
->         depends on IMX_SCU && HAVE_ARM_SMCCC
->
+Thanks. Pulled into clk-next
