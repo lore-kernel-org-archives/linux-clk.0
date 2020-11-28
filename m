@@ -2,131 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BC7C3E8C5
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 02:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90582C56201
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 04:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1F552222A
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 02:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46EE621534
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 04:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbgK1ChM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Nov 2020 21:37:12 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8055 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729604AbgK1CgW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2020 21:36:22 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CjbFs0wC4zhcHy;
-        Sat, 28 Nov 2020 10:35:45 +0800 (CST)
-Received: from [10.74.191.121] (10.74.191.121) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Sat, 28 Nov 2020 10:36:00 +0800
-Subject: Re: [PATCH] powerpc: fix the allyesconfig build
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Daniel Axtens" <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20201128122819.32187696@canb.auug.org.au>
- <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <382701ba-c50e-18cf-83be-60eeab228372@huawei.com>
-Date:   Sat, 28 Nov 2020 10:36:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1732457AbgK1Eb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Nov 2020 23:31:57 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:2317 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731107AbgK1EbZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Nov 2020 23:31:25 -0500
+Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4CjdHN68zHz13NCK;
+        Sat, 28 Nov 2020 12:07:12 +0800 (CST)
+Received: from [10.140.157.68] (10.140.157.68) by
+ dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Sat, 28 Nov 2020 12:07:52 +0800
+Subject: Re: [PATCH v5 0/4] Enable Hi3559A SOC clock and HiSilicon Hiedma
+ Controller
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <vkoul@kernel.org>,
+        <dan.j.williams@intel.com>, <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
+References: <20201119200129.28532-1-gengdongjiu@huawei.com>
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+Message-ID: <bac15a2e-b9db-b7b0-6004-ad76fa8c5be5@huawei.com>
+Date:   Sat, 28 Nov 2020 12:07:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+In-Reply-To: <20201119200129.28532-1-gengdongjiu@huawei.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.191.121]
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.140.157.68]
+X-ClientProxiedBy: dggeme718-chm.china.huawei.com (10.1.199.114) To
+ dggeme755-chm.china.huawei.com (10.3.19.101)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020/11/28 9:56, Jakub Kicinski wrote:
-> On Sat, 28 Nov 2020 12:28:19 +1100 Stephen Rothwell wrote:
->> There are 2 drivers that have arrays of packed structures that contain
->> pointers that end up at unaligned offsets.  These produce warnings in
->> the PowerPC allyesconfig build like this:
->>
->> WARNING: 148 bad relocations
->> c00000000e56510b R_PPC64_UADDR64   .rodata+0x0000000001c72378
->> c00000000e565126 R_PPC64_UADDR64   .rodata+0x0000000001c723c0
->>
->> They are not drivers that are used on PowerPC (I assume), so mark them
->> to not be built on PPC64 when CONFIG_RELOCATABLE is enabled.
-> 
-> 😳😳
-> 
-> What's the offending structure in hisilicon? I'd rather have a look
-> packing structs with pointers in 'em sounds questionable.
-> 
-> I only see these two:
-> 
-> $ git grep packed drivers/net/ethernet/hisilicon/
-> drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
-> drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc {
+ping, sorry for the noise.
 
-I assmue "struct __packed hnae_desc" is the offending structure, because
-flag_ipoffset field is defined as __le32 and is not 32 bit aligned.
 
-struct __packed hnae_desc {
-	__le64 addr;							//0
-	union {
-		struct {						//64
-			union {
-				__le16 asid_bufnum_pid;
-				__le16 asid;
-			};
-			__le16 send_size;				//92
-			union {
-				__le32 flag_ipoffset;			//*108*
-				struct {
-					__u8 bn_pid;
-					__u8 ra_ri_cs_fe_vld;
-					__u8 ip_offset;
-					__u8 tse_vlan_snap_v6_sctp_nth;
-				};
-			};
-			__le16 mss;
-			__u8 l4_len;
-			__u8 reserved1;
-			__le16 paylen;
-			__u8 vmid;
-			__u8 qid;
-			__le32 reserved2[2];
-		} tx;
-
-		struct {
-			__le32 ipoff_bnum_pid_flag;
-			__le16 pkt_len;
-			__le16 size;
-			union {
-				__le32 vlan_pri_asid;
-				struct {
-					__le16 asid;
-					__le16 vlan_cfi_pri;
-				};
-			};
-			__le32 rss_hash;
-			__le32 reserved_1[2];
-		} rx;
-	};
-};
-
-> .
+On 2020/11/20 4:01, Dongjiu Geng wrote:
+> v4->v5:
+> 1. change the patch author mail name
+> 
+> v3->v4:
+> 1. fix the 'make dt_binding_check' issues.
+> 2. Combine the 'Enable HiSilicon Hiedma Controller' series patches to this series.
+> 3. fix the 'make dt_binding_check' issues in 'Enable HiSilicon Hiedma Controller' patchset
+> 
+> 
+> v2->v3:
+> 1. change dt-bindings documents from txt to yaml format.
+> 2. Add SHUB clock to access the devices of m7
+> 
+> Dongjiu Geng (4):
+>   dt-bindings: Document the hi3559a clock bindings
+>   clk: hisilicon: Add clock driver for hi3559A SoC
+>   dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
+>   dmaengine: dma: Add Hiedma Controller v310 Device Driver
+> 
+>  .../clock/hisilicon,hi3559av100-clock.yaml    |   66 +
+>  .../bindings/dma/hisilicon,hiedmacv310.yaml   |  103 ++
+>  drivers/clk/hisilicon/Kconfig                 |    7 +
+>  drivers/clk/hisilicon/Makefile                |    1 +
+>  drivers/clk/hisilicon/clk-hi3559a.c           |  865 ++++++++++
+>  drivers/dma/Kconfig                           |   14 +
+>  drivers/dma/Makefile                          |    1 +
+>  drivers/dma/hiedmacv310.c                     | 1441 +++++++++++++++++
+>  drivers/dma/hiedmacv310.h                     |  136 ++
+>  include/dt-bindings/clock/hi3559av100-clock.h |  165 ++
+>  10 files changed, 2799 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
+>  create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
+>  create mode 100644 drivers/dma/hiedmacv310.c
+>  create mode 100644 drivers/dma/hiedmacv310.h
+>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
 > 
