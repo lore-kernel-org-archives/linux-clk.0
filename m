@@ -2,43 +2,39 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73AC71156
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 17:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DA1C64E7B
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 22:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CAE8246E7
-	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 17:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE3622470
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Nov 2020 22:03:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XHHWgToQ"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRfGr7Rs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725839AbgK1FWT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 28 Nov 2020 00:22:19 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48829 "EHLO ozlabs.org"
+        id S2390146AbgK1Vur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 28 Nov 2020 16:50:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731234AbgK1FVc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 28 Nov 2020 00:21:32 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2387567AbgK1Thg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 28 Nov 2020 14:37:36 -0500
+Received: from kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com (c-67-180-217-166.hsd1.ca.comcast.net [67.180.217.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CjfwR6yCVz9sRR;
-        Sat, 28 Nov 2020 16:20:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1606540859;
-        bh=G/77mzVGVkJ1P21yhssVEcy7P8QkwU8Fmt2CZ6ER9dU=;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E23021527;
+        Sat, 28 Nov 2020 19:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606592215;
+        bh=c1x2VcILF4zR3MrshwEk2bDeOnWYpbs+y6qDeQ6KUus=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XHHWgToQWBNQiIj5urNkvUcFWLEOEOJr7nuz7VRQ0iudZqaDy2foY5rnPmU1x7WIF
-         UpApdenPnR3/MvtLskNqfM97OMZA+ugDgK1m/R5+u+vvOieWxikDpbyc5QnedfH9JX
-         izmbVDvMp9XH/BesR/Y6ODaLOu/90Tm/uqgffgdO/2lmCoRW01PGniSbfEIIdCCHJg
-         rYFT04geQrwr9JMJoPRpIoYuLJpA40+rZBh6xVs2S7rMk6cAPTWAaewj/gDRfyFg+1
-         1pBhzOkzE9SWGlnyydGHc1Cg0HQv4GJk8xu140490yXWa1WwkMvDZGEs3dGl9ABK1v
-         qQTEtn3a07sIw==
-Date:   Sat, 28 Nov 2020 16:20:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jakub Kicinski <kuba@kernel.org>
+        b=GRfGr7Rsp5EHCuDMUjcuQXQrQzvJqpRDGPnYhTHYbAOwRTCvNbJzBPXJu5bIEY6hK
+         7O2kalbqiakzUmGjJE1vGxR5DkAUykD8ZOHG/s6+soZOg/4dEPffwYFvjInnOmbRbQ
+         J0Rk5Q6Dxsw+KJ9No3/jUm7AD25/v7CDQ9bxAVv4=
+Date:   Sat, 28 Nov 2020 11:36:54 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
 Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         PowerPC <linuxppc-dev@lists.ozlabs.org>,
         Nicholas Piggin <npiggin@gmail.com>,
@@ -50,62 +46,44 @@ Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         Salil Mehta <salil.mehta@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>
 Subject: Re: [PATCH] powerpc: fix the allyesconfig build
-Message-ID: <20201128162054.575aea29@canb.auug.org.au>
-In-Reply-To: <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+Message-ID: <20201128113654.4f2dcabe@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+In-Reply-To: <20201128162054.575aea29@canb.auug.org.au>
 References: <20201128122819.32187696@canb.auug.org.au>
         <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+        <20201128162054.575aea29@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/I=3tiLN0XLZrAWSSuz2Ag_u";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/I=3tiLN0XLZrAWSSuz2Ag_u
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, 28 Nov 2020 16:20:54 +1100 Stephen Rothwell wrote:
+> On Fri, 27 Nov 2020 17:56:42 -0800 Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > What's the offending structure in hisilicon? I'd rather have a look
+> > packing structs with pointers in 'em sounds questionable.
+> > 
+> > I only see these two:
+> > 
+> > $ git grep packed drivers/net/ethernet/hisilicon/
+> > drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
+> > drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc {  
+> 
+> struct hclge_dbg_reg_type_info which is 28 bytes long due to the
+> included struct struct hclge_dbg_reg_common_msg (which is 12 bytes
+> long).  They are surrounded by #pragma pack(1)/pack().
+> 
+> This forces the 2 pointers in each second array element of
+> hclge_dbg_reg_info[] to be 4 byte aligned (where pointers are 8 bytes
+> long on PPC64).
 
-Hi Jakub,
+Ah! Thanks, I don't see a reason for these to be packed. 
+Looks  like an accident, there is no reason to pack anything 
+past struct hclge_dbg_reg_common_msg AFAICT.
 
-On Fri, 27 Nov 2020 17:56:42 -0800 Jakub Kicinski <kuba@kernel.org> wrote:
->
-> What's the offending structure in hisilicon? I'd rather have a look
-> packing structs with pointers in 'em sounds questionable.
->=20
-> I only see these two:
->=20
-> $ git grep packed drivers/net/ethernet/hisilicon/
-> drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
-> drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc=
- {
-
-struct hclge_dbg_reg_type_info which is 28 bytes long due to the
-included struct struct hclge_dbg_reg_common_msg (which is 12 bytes
-long).  They are surrounded by #pragma pack(1)/pack().
-
-This forces the 2 pointers in each second array element of
-hclge_dbg_reg_info[] to be 4 byte aligned (where pointers are 8 bytes
-long on PPC64).
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/I=3tiLN0XLZrAWSSuz2Ag_u
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/B3jYACgkQAVBC80lX
-0GwFIgf4pkvlqKpzmRgyqk+s0V1tc9Gl8zToJYwqce1hR4QciFVaTeVkvik1MpR5
-j6pW1eb5DB+1p7nDsEH9W2e/3Y8NZAH58xIuYz8DtoMhVFZC/ag/eQFeq8f7YPbG
-v1166AaoNoBmBQaFYuLk+3fBc5RsedFSRik82Lpkad24U2KpjkTuTxEh19er5/3y
-FKo5d37D1e2vSxwfggOJQ09Z1UsHU6RRb0V4vkLh9QI9h2bxzhiMmi6KvATA7Xg2
-ecqbSb9293xx2VWSSn8I8PYyyVgkt4N6AwMvCdrJG/wIPBljcTCSqVbuh3lnGUD7
-uz4kcTQF5VXbzVvq7Ph+kLFhBbnk
-=fRdP
------END PGP SIGNATURE-----
-
---Sig_/I=3tiLN0XLZrAWSSuz2Ag_u--
+Huawei folks, would you mind sending a fix if the analysis is correct?
