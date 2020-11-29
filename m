@@ -2,122 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEFAC3E8C5
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Nov 2020 20:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018E7C5519F
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Nov 2020 21:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9099020731
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Nov 2020 20:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6F6D2078D
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Nov 2020 21:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="AHfp4NMR"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzYwWyNh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbgK2UvZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Nov 2020 15:51:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54502 "EHLO
+        id S1728075AbgK2Veb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Nov 2020 16:34:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgK2UvY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Nov 2020 15:51:24 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A87FC0613CF
-        for <linux-clk@vger.kernel.org>; Sun, 29 Nov 2020 12:50:44 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id s8so12612440wrw.10
-        for <linux-clk@vger.kernel.org>; Sun, 29 Nov 2020 12:50:44 -0800 (PST)
+        with ESMTP id S1728015AbgK2Vea (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Nov 2020 16:34:30 -0500
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C59C0617A6
+        for <linux-clk@vger.kernel.org>; Sun, 29 Nov 2020 13:33:50 -0800 (PST)
+Received: by mail-lj1-x244.google.com with SMTP id f18so14018173ljg.9
+        for <linux-clk@vger.kernel.org>; Sun, 29 Nov 2020 13:33:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=user-agent:from:to:cc:subject:message-id:date:mime-version;
-        bh=11SVmcLjK6UeFfGAKdcpke7xMCZ9FSgIq3yT8lzKa94=;
-        b=AHfp4NMRjG8JWl/9iTpWPVMuwaSEbag4HV3CNGrEb/gF8xalghqVhjFJfXp5O0+N/A
-         R5Fknc1GS9LAIMwxVW4AZtCF5Q9EBT+v9fPMjs3d1Hvn8YI/ls5LLNj7vKWwhGbBdz9K
-         18zSm6Dp/ZdnV8x7HQ/pSfW4PdQIDI6/afWUC4lcmd5xCpeB8bX+EYDNQjVcvlNCBxdx
-         0wGeacQB2jt6fRXIPaKJCoNGdXFZEdWtjx86poYnkhJtoXiLvrJdE5NkewzmEaH9N44E
-         mYPrLidjCXwP7DeHvOjVYdjJW/nXkK01gKh0SUuShg2XQ0BjIqZsoGbtbke58qoynetl
-         W1XA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DRks1S+Ljz02h+7aEMkPQyYH0KJUMNRRjQT6vkjrJ6U=;
+        b=LzYwWyNh2aq60HnaalbW2E/tfDV3QS5ABPetwv/LjVocBlaMX7p8EW6wSpLS5A+xb6
+         3RYtKYPxh3tlC4eQbu6yQKmPtsDYTe+XHrG3aefbkfkGpkyuGSceFP20lxofOmU62OuZ
+         jCDZzZvOeeb9rr+liyzgPtp15kW0t5oMmCWPVHMtFmJUzKwYJoSvUw+IOgwl+OIitkEt
+         0GYNtHEFzYR21Fqyfr9LrWkLBvuAdd7WcEJWkhAd5/ypnjcyODBcG34cskFi3J5BnKCE
+         bwGyj3H502ljkfysjViKkFi0CqGDKaKGdxv8ZMvvVu2cqiGIfoSS8QAhEPPPNcA5KDjB
+         cyMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:user-agent:from:to:cc:subject:message-id:date
-         :mime-version;
-        bh=11SVmcLjK6UeFfGAKdcpke7xMCZ9FSgIq3yT8lzKa94=;
-        b=jhxGD9d515hArOFfoh8DXB/f2HPqRGjraU8Sh+a4ksCI8VhFNXFNuF0hfUQ26q2x35
-         WYxOJge6dekbem5JPwd+vR7YyFq+uq+BFutB1ZtNtO2o93bVsjKvfojZECtdDO2R2vU+
-         GY9NHdX91DaybQsVk/HTzbejnXbNsvMAR9025j5V6ds93BfMnRKSOQRV4fyB01W+oQH1
-         WQYmOjsp6MAMjxcYJF3gmdr7f6FtOJwDhEikMk3WlZ9rNztI/DbS/4QR+mk1/02rXRDn
-         riJbkMivJua/Rod2z4vCmaftrlNkmVOyW9nhbSWARgh6Hdd9iR/fREc+8YUBKzLIO5u3
-         j0jg==
-X-Gm-Message-State: AOAM532J2/Z9OKx+jQBDXG/H8tHV9gRLAXk18IBLLJP4CNZix3nkPzrs
-        fcxVXzvvLSUO2m6wxdnaH463r9FvABUAMg9/
-X-Google-Smtp-Source: ABdhPJyz9WSYSxftKGwJFmeQpGKUPueZj3cuy71FZGjwc2q0bk77rAfZOnzfT4/JFUi59k2stggxEQ==
-X-Received: by 2002:a5d:5552:: with SMTP id g18mr24466673wrw.145.1606683042908;
-        Sun, 29 Nov 2020 12:50:42 -0800 (PST)
-Received: from localhost (253.35.17.109.rev.sfr.net. [109.17.35.253])
-        by smtp.gmail.com with ESMTPSA id k11sm16065846wmj.42.2020.11.29.12.50.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Nov 2020 12:50:42 -0800 (PST)
-User-agent: mu4e 1.4.10; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [GIT PULL]: clk: meson: amlogic updates for v5.11 
-Message-ID: <1jtut7yjj3.fsf@starbuckisacylon.baylibre.com>
-Date:   Sun, 29 Nov 2020 21:50:40 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DRks1S+Ljz02h+7aEMkPQyYH0KJUMNRRjQT6vkjrJ6U=;
+        b=qxmuzq67fQlLQPpxQFkWj2r3XhDOJRo/MdWLgSOZ/4OHKFAszYtkw9mksMr8adlqSm
+         /4+z9/pVPEnrqKkA4AYRjEu2tp7cJFnoPtq3SmtFStmJ2DhGWyNxf84MiD4rkGP2P+9a
+         30+ClebeK4dR6EHKGjO+2k7HFN6/umGUsNZi9m3YncDQZKRIcifiW9mAuShlEweOG6yS
+         BYpo6jo/ocyrrGlUxsHTvBwMOc4xF2tl7BszxOS54EjuXScQB7ftQVkxMoQ7piTHNva8
+         ZnbRJZXTg/rKG5YodXakDEB4ZbAE2VuZ6BIumSyBrvvRKQ/a9smJpfYJTepoEZVFF9Ck
+         5cOg==
+X-Gm-Message-State: AOAM530REiOPiKPJaUklAV/m+lnvryHRb8wZ2cMwz9uEAbrl1Z6k1QAr
+        43oP5lE/4zObY1wrkQoH1KaHItB6VnhuFXxcqzoAvg==
+X-Google-Smtp-Source: ABdhPJytWDlyUMuTJm2jW8TQXYrQA7Ue6rxAsqM+YqSfqeqX2hNWQDHsQOsrBzNYb3DWeZ5mYjjq9y/2I8HLd94BvcY=
+X-Received: by 2002:a2e:321a:: with SMTP id y26mr7756884ljy.293.1606685627784;
+ Sun, 29 Nov 2020 13:33:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20201107081420.60325-1-damien.lemoal@wdc.com> <20201107081420.60325-21-damien.lemoal@wdc.com>
+ <CACRpkdZhOxz5NhrkFxZ5G4aOrmBoAcQodOvqzNROQtXpHVQGDQ@mail.gmail.com> <CH2PR04MB65228DE061918A4D2A08A0CFE7FB0@CH2PR04MB6522.namprd04.prod.outlook.com>
+In-Reply-To: <CH2PR04MB65228DE061918A4D2A08A0CFE7FB0@CH2PR04MB6522.namprd04.prod.outlook.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 29 Nov 2020 22:33:36 +0100
+Message-ID: <CACRpkdbA_JMiyraKC_3WT26mMUxfuLD=Q_HREmbEB=yNPpuHjw@mail.gmail.com>
+Subject: Re: [PATCH 20/32] riscv: Add Kendryte K210 FPIOA pinctrl driver
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Nov 24, 2020 at 9:53 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+> On 2020/11/24 17:43, Linus Walleij wrote:
 
-Hi Stephen,
+> > Would also be nice if the maintainer could add some comments?
+>
+> What do you mean ? I do not understand. scripts/get_maintainer.pl indicates that
+> you are the maintainer of the pinctrl drivers subsystem.
 
-Here are the updates for amlogic clocks for v5.11. This is based on your
-clk-hw branch, instead of the usual rc1, since it depends on clk_hw
-stuff you've already applied.
+Sorry I thought we had a RISCV driver already, and we don't
+so this is cool.
 
-Please Pull.
-Thx.
+> Do you mean adding an
+> entry to the MAINTAINER file for this driver ? I can do that and put my self as
+> maintainer. Or do you mean you would like a comment from Palmer (riscv arch
+> maintainer) ?
 
-Cheers
-Jerome
+That would be nice. Whoever will enthusiastically review patches to
+this driver and make sure it works and get modernized should ideally
+be listed as maintainer. I suggest you list yourself.
 
-----------------------------------------------------------------
-Amlogic clock changes for v5.11
+The only input I want from the RISCV arch maintainer would
+be on this code:
 
-* Add MIPI DSI clocks for axg and g12
-* Make it possible to build controllers as modules
-* Fix Video PLL clock dependency
++/*
++ * Most devices on the K210 SoC depend on pin mapping changes to initialize
++ * correctly. So initialize this driver early as part of the post core
++ * initialization.
++ */
++static int __init k210_fpioa_init(void)
++{
++       return platform_driver_register(&k210_fpioa_driver);
++}
++postcore_initcall(k210_fpioa_init);
 
-----------------------------------------------------------------
-Jerome Brunet (2):
-      Merge branch 'v5.11/headers' into integ
-      Merge branch 'v5.11/headers' into v5.11/drivers
+This is a bit nasty and we do not recommend it. But I will accept it
+if the arch maintainer claims it is necessary. What happens if you
+just make it initialize at driver level?
 
-Kevin Hilman (2):
-      clk: meson: Kconfig: fix dependency for G12A
-      clk: meson: enable building as modules
-
-Neil Armstrong (6):
-      dt-bindings: clk: axg-clkc: add Video Clocks
-      dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
-      clk: meson: axg: add Video Clocks
-      clk: meson: axg: add MIPI DSI Host clock
-      dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
-      clk: meson: g12a: add MIPI DSI Host Pixel Clock
-
- drivers/clk/meson/Kconfig             |   7 +-
- drivers/clk/meson/axg-aoclk.c         |   5 +-
- drivers/clk/meson/axg.c               | 824 +++++++++++++++++++++++++++++++++-
- drivers/clk/meson/axg.h               |  23 +-
- drivers/clk/meson/g12a-aoclk.c        |   5 +-
- drivers/clk/meson/g12a.c              |  79 +++-
- drivers/clk/meson/g12a.h              |   3 +-
- drivers/clk/meson/gxbb-aoclk.c        |   5 +-
- drivers/clk/meson/gxbb.c              |   5 +-
- drivers/clk/meson/meson-aoclk.c       |   4 +
- drivers/clk/meson/meson-eeclk.c       |   3 +
- include/dt-bindings/clock/axg-clkc.h  |  25 ++
- include/dt-bindings/clock/g12a-clkc.h |   2 +
- 13 files changed, 979 insertions(+), 11 deletions(-)
+Yours,
+Linus Walleij
