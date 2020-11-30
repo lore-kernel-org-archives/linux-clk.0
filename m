@@ -2,92 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5118BC63777
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F376C71156
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 083B5206C1
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58134208FE
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eMjMdoHg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbgK3VQA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Nov 2020 16:16:00 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36000 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgK3VQA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 16:16:00 -0500
-Received: by mail-io1-f65.google.com with SMTP id z136so13364259iof.3;
-        Mon, 30 Nov 2020 13:15:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Jwht71OxD5GRnfrTVHlZAHOwqpu6pUHtWSfdxPAhhe4=;
-        b=BNg4/OGGnTrwL1nW5Wtgce8tl4ZzC/gC3xbK2iJaM/lOGDOe+dFxPEr8lHXIZrLIQy
-         ULRl8bxMGxOXIjgtE8VTG5CCFaMjH0H4R8kukYI6RS8vyQE9mzlShJcOHtcQ6pxyykUv
-         oJvXdzYbKqCSxWWNqK12EpUI8L2SWKYxtTIz7gD2VJyGB0rE3VJUrmFl6VV9lG4Y7kM1
-         +oQmIePUScvudfqJniWnrHF5HUbU2qi6YaRLwuhWwODmg8Hc6wrM0Ru5RAv1IFvyr/WO
-         tfiV8tGFIWuemHoVEsVHZeIj4xTNZKs4oq4FzeyRIOSwrLedbWpxaMg2E1OSAQyKXr/i
-         c/qg==
-X-Gm-Message-State: AOAM533cmS8QUMUaDlZ/Qglx07BYxXNu2dCaEIUV6bllSfYxK8KLY2je
-        xbJVanSEG2ErgZiWNH//Rg==
-X-Google-Smtp-Source: ABdhPJxBxVUopJfyw4u+TG/AMxEzVixJJSObpTwD2wlDLL8a3YdNWFt17IuDYm5BToKWs/WtjrQ0/A==
-X-Received: by 2002:a5d:8042:: with SMTP id b2mr17558393ior.4.1606770919062;
-        Mon, 30 Nov 2020 13:15:19 -0800 (PST)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id v23sm2272237iol.21.2020.11.30.13.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 13:15:18 -0800 (PST)
-Received: (nullmailer pid 3035408 invoked by uid 1000);
-        Mon, 30 Nov 2020 21:15:16 -0000
-Date:   Mon, 30 Nov 2020 14:15:16 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     vkoul@kernel.org, kishon@ti.com, mturquette@baylibre.com,
-        robh+dt@kernel.org, rick.tyliu@ingenic.com, zhenwenjin@gmail.com,
-        paul@crapouillou.net, aric.pzqi@ingenic.com,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, linux-usb@vger.kernel.org,
-        sernia.zhou@foxmail.com, balbi@kernel.org
-Subject: Re: [PATCH v9 2/3] dt-bindings: USB: Add bindings for Ingenic JZ4775
- and X2000.
-Message-ID: <20201130211516.GA3035356@robh.at.kernel.org>
-References: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
- <20201116141906.11758-3-zhouyanjie@wanyeetech.com>
+        id S1730300AbgK3V61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Nov 2020 16:58:27 -0500
+Received: from ozlabs.org ([203.11.71.1]:34005 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbgK3V60 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Nov 2020 16:58:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4ClJxg2YMkz9sRK;
+        Tue,  1 Dec 2020 08:57:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1606773465;
+        bh=nqVDwgyOEZiLm2s85MNpU0RJnN+/CWkXa1ePB8H74O0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eMjMdoHg1nj3aaR/ihevGuljfQKC+8k6BgWcY1goCbVsxBU0fJLF6W28Yyw2Miqnx
+         rE1s2cl00rCqtgbN0YwiOyZspQBteiX7ySTPs1JXQBndGt6HzXMEoTdgyQtSmOyqFJ
+         56Y/AshGjcuPsexS1vUPumZj6YvOjdB6mOqqXF9/0WDPfWDU3peL+IJ8P3gN5dro/9
+         x4luHkQy3MSzkcfysb/+XYsKgSuz8wEUhwpNmuCesaRULVrwxkEmQsiIP5v6AxlD4E
+         2RP4pweF2PjCnzlK/c4P0EbyhCzGxlb/6eCi4YpSHqdmviDAJPj0OUPXHHnFMGUYj5
+         XgG2n1VE9BzaA==
+Date:   Tue, 1 Dec 2020 08:57:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for
+ portability
+Message-ID: <20201201085741.670f30d4@canb.auug.org.au>
+In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
+References: <20201130085743.1656317-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201116141906.11758-3-zhouyanjie@wanyeetech.com>
+Content-Type: multipart/signed; boundary="Sig_/8CcZFUCd6vvSy81ZVtgxF0K";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 16 Nov 2020 22:19:05 +0800, 周琰杰 (Zhou Yanjie) wrote:
-> Move Ingenic USB PHY bindings from Documentation/devicetree/bindings/usb
-> to Documentation/devicetree/bindings/phy, and add bindings for JZ4775 SoC
-> and X2000 SoC.
-> 
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> ---
-> 
-> Notes:
->     v8:
->     New patch.
-> 
->     v8->v9:
->     Correct the path errors in "ingenic,phy-usb.yaml" and "ingenic,cgu.yaml".
-> 
->  Documentation/devicetree/bindings/clock/ingenic,cgu.yaml              | 2 +-
->  .../{usb/ingenic,jz4770-phy.yaml => phy/ingenic,phy-usb.yaml}         | 4 +++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
->  rename Documentation/devicetree/bindings/{usb/ingenic,jz4770-phy.yaml => phy/ingenic,phy-usb.yaml} (89%)
-> 
+--Sig_/8CcZFUCd6vvSy81ZVtgxF0K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Geert,
+
+On Mon, 30 Nov 2020 09:57:43 +0100 Geert Uytterhoeven <geert+renesas@glider=
+.be> wrote:
+>
+> The R9A06G032 clock driver uses an array of packed structures to reduce
+> kernel size.  However, this array contains pointers, which are no longer
+> aligned naturally, and cannot be relocated on PPC64.  Hence when
+> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
+> PowerPC allyesconfig), the following warnings are produced:
+>=20
+>     WARNING: 136 bad relocations
+>     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
+>     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
+>     ...
+>=20
+> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
+> definition, trading a small size increase for portability.
+>=20
+> This increases the 156-entry clock table by 1 byte per entry, but due to
+> the compiler generating more efficient code for unpacked accesses, the
+> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Fix authorship.
+> ---
+>  drivers/clk/renesas/r9a06g032-clocks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Thanks.
+
+I have added that to my fixes tree until it gets picked up elsewhere.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8CcZFUCd6vvSy81ZVtgxF0K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/FatUACgkQAVBC80lX
+0Gwj4Qf7Bge2IGl5zmxh8L/d6Cxz8V2fApcuHXyQ2TF3PeQMWrF/07x4CKb6Ulka
+/l8LefVGxKMNJePlyDad7ZI2j893BnUiNbZIf78vbYdCvYMze/dZy7DJHPEjnYQI
+x90IS+NUTSWXI6HHZ2qDCZoCh+wrAXnKV29Gbi2tywb+F4eV9M7eu1s/XJHm80P1
+zHjiAClpipnbzl4O7LhOeKEkLfDFkv+6JX788FM5oYOoXXl7JKa2Cxw0DoUVSskN
+aXldweVNdjdlJWfQoDZ59So/HhcfS++W+6rrunrS+8nSCLQuK6rpop+hZzOvaaEB
+rxTngm9SqYXsCwnO0hq4Slv7Y4IkbQ==
+=/Pyh
+-----END PGP SIGNATURE-----
+
+--Sig_/8CcZFUCd6vvSy81ZVtgxF0K--
