@@ -2,395 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B554C83013
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 08:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C74C5519F
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 08:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7DC62086A
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 08:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68072074A
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 08:49:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bDI0Qxgm"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="avtXQOfq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgK3IZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Nov 2020 03:25:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbgK3IZD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 03:25:03 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0075C061A4B
-        for <linux-clk@vger.kernel.org>; Mon, 30 Nov 2020 00:23:50 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id t21so917497pjw.2
-        for <linux-clk@vger.kernel.org>; Mon, 30 Nov 2020 00:23:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rPhbw/l4Lmoi4e3/ZDqFT/uzpAV6A+cExXYfeDkimJ8=;
-        b=bDI0Qxgmr4Zz15nwVbhI3DwedTksGKQvS15CPyaHvnqPCATZE0qCNzDIuuM3EGFwR0
-         bO+8PFVJcPid4cAw4o3QCdY+tYYv65rw3NiFgjk4EQKQ6kgtwWeq4xBQyq9+ywrzD4Gs
-         FqP7i6NztduFqn8o4AXFz4VXPbL9zyPcENsxtfy/QnFNxKOORWNRGH0jAQfX3GzRGUuA
-         NxF+NZ6lgCZ1F4iTQS2AdW4y4Ene+ByNQM8CglsKJ/sAg+z23OUJEJkM3mYcF/XtUnP9
-         OeodXGTAZfSa4rfK0Bnva2uU/vdI9ESQ+NzC+p+N6OKBMCsrmZDSyuRnZlepmr8ZvKLC
-         dsAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rPhbw/l4Lmoi4e3/ZDqFT/uzpAV6A+cExXYfeDkimJ8=;
-        b=PuiqgMTMG9dZvqs+iFWcwIEfyVJlJ1/cBJ7AfmEf+X6gvrmFJCFe7jlt4avL97y6tS
-         1OGx8KwuExY1367+vU/UAWYkeZJGJVSd5AOnPH+8MiK57jlb5FQvHSVfe9YifL293GaA
-         1joldriFI4WyimJJUabWgQ/yt3ttFOCg5hHgAubuJf+t5ovLLOxqsMOmQIVk9ACau7yy
-         pOZI9sk9ZTNlxvdUVQv/hMl9UfzhiH0MkiDJTqg4IumgEwyA2T7lzRcJWXDbRIc1rVlp
-         4ML2bWJ0E87OD4Gpvi9cuD7EEDEpRjzJOEvuOqa9Jr1wIc6KvqPQQNf7tf2g0+be/W5T
-         whaQ==
-X-Gm-Message-State: AOAM533PkwxNPPu6st3EdIAOZ5pbObyDE/zRujH+PDwJvBgzQZk5E8FZ
-        SL3IJRrU+8Fo7kZMxgSzyyhj5g==
-X-Google-Smtp-Source: ABdhPJwOoZAq8B7P8OuprJhybILl7K+wH2zjntso/w2s9RHGMlj9VDlfelwVzqDn7bgjUZT5uUg1yw==
-X-Received: by 2002:a17:90a:b118:: with SMTP id z24mr15191256pjq.14.1606724630483;
-        Mon, 30 Nov 2020 00:23:50 -0800 (PST)
-Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
-        by smtp.gmail.com with ESMTPSA id u1sm21265338pjn.40.2020.11.30.00.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 00:23:50 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
-        schwab@linux-m68k.org, pragnesh.patel@openfive.com,
-        aou@eecs.berkeley.edu, mturquette@baylibre.com,
-        yash.shah@sifive.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>
-Subject: [PATCH v5 5/5] clk: sifive: Add clock enable and disable ops
-Date:   Mon, 30 Nov 2020 16:23:30 +0800
-Message-Id: <20201130082330.77268-6-zong.li@sifive.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201130082330.77268-1-zong.li@sifive.com>
-References: <20201130082330.77268-1-zong.li@sifive.com>
+        id S1726578AbgK3ItL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Nov 2020 03:49:11 -0500
+Received: from mail-eopbgr30075.outbound.protection.outlook.com ([40.107.3.75]:55748
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726596AbgK3ItJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Nov 2020 03:49:09 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BuuU9+GJnCBFhjflktyfTNLET91xay9OQ+dcyBC2sSsQQDHh8DEX+WdL6/ABo2CmfX9qpEvN3dk4yr4UR0AYqplIiwJkn79oOPHxcHJF9Fu652szZehey4W1RR8ZXCvgXjKq03sK+bAe3rCy999SUow34WeGedwN5tHA9p725LVUNJJdkXkcJs+vSL2Ecgc7+5YibTId1lgYvfyrx1BgAkkKWMeNEuPp0wiSKmTu5zYq9afwYERHtHHAOe1agH6GdCkBP3vr1SvKYQ5aVG7oF3Wf0Qc/BF9DQDGjnLnA7h8NLe8J0ajHv+V6VwacYjNRW41OoKJpupEvKzI3jMVDVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lD6YDe+qF914+DLGMP43HMqctyzNHh22CMZQpCRblVA=;
+ b=DOHX5iVKmNK0SdgQYXjz4zb/YiMhwatuGufYJxtzmKWbp37zzm9M38uGFbgOIbTMlfFAamu7uQ+tqAfTa2zh66zosPmsQmfn01NCfuFcIu8J9vZuCHKAVBam+KnUGuRdal24wRDURJ8nRJjVBR/M2zvtms468qVre5UjngW9q4XSdmO/rUwhKC9NYInQtsHmjxJCsJ7c9n4rD8JKFbL8Gyb6ewwpBSKm9ryZYFNIEtd0I9LMD2CVxGNrmIRAhdo9f4N8IhAkac3ExX6labcbWPi9IL2iinmA8WJouBqLHvL1qjsQy+pyWA9zX2ckR/nk4H3Daxfc4ZESM2ndUxADOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lD6YDe+qF914+DLGMP43HMqctyzNHh22CMZQpCRblVA=;
+ b=avtXQOfqGI1H6sDqZPy5ScrQOVVUOqOPz/4XkGgJmOlxeQpFvxsXZ6MvY7UqKdyG7+enMWR8+vxrllK4xmImxWF7a84UpnH/auYbOueaPhN/d/yN2fwoPadW9pbISrGo5Dbk4jU9xtcMriHPGmzo0iPCxm1ttKHxnpQB42MCFTY=
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM7PR04MB6871.eurprd04.prod.outlook.com (2603:10a6:20b:109::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.22; Mon, 30 Nov
+ 2020 08:48:19 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3cfc:a92e:75ad:ce4a%3]) with mapi id 15.20.3611.031; Mon, 30 Nov 2020
+ 08:48:19 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: RE: [PATCH 1/1] clk: imx: scu: fix MXC_CLK_SCU module build break
+Thread-Topic: [PATCH 1/1] clk: imx: scu: fix MXC_CLK_SCU module build break
+Thread-Index: AQHWwxtcOBAOcl2P/02xv3xvhsQLMqncbiiAgAP0gwA=
+Date:   Mon, 30 Nov 2020 08:48:19 +0000
+Message-ID: <AM6PR04MB496641731EE5A480889CA49A80F50@AM6PR04MB4966.eurprd04.prod.outlook.com>
+References: <20201125105037.22079-1-aisheng.dong@nxp.com>
+ <160650818748.2717324.6222265265679775690@swboyd.mtv.corp.google.com>
+In-Reply-To: <160650818748.2717324.6222265265679775690@swboyd.mtv.corp.google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d5ef8dc6-6339-4c4a-cb52-08d8950cafbf
+x-ms-traffictypediagnostic: AM7PR04MB6871:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM7PR04MB6871E7D9ECEE416816CABDED80F50@AM7PR04MB6871.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2803;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: U3N9uZcNcLHNaWHdmMQQTaTOsqiy+8KE+ZHVOdwVhomTjwos4ohelwz9pNJZcX7C3iDBjv9NHBOtbiWjiJSPqWLtO1NQp/1qWlly82UFH/+CUmiztsdNd/Pu1d75CIG6cxM8UwuhRao7d18NB1mKsL+iAOKORHikSsxRxPD66Su8xywQzaz2g4P8pvCnXsn41ygsfIH93expufS+FFYq7ZGJr+RNUa1/K1ZBNH0qhqorFU3yfNOCbpgnzN0A2AJAi/QYgcXodshWNsdHtFBHVpq8xT3eG4PRHopj0VncI0LrBniomJaXiIPZj6nHn6vV2c94xmrnflYGMZ5sU4wfXA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(376002)(136003)(396003)(366004)(64756008)(53546011)(186003)(52536014)(26005)(478600001)(8676002)(4001150100001)(66476007)(6506007)(66556008)(33656002)(66946007)(66446008)(44832011)(76116006)(8936002)(7696005)(71200400001)(9686003)(5660300002)(316002)(4326008)(55016002)(110136005)(2906002)(86362001)(54906003)(83380400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?SmRSQUhEZ1g5ZitjLy9mTDNIbm1KMElUcnZGcDg1ZUJ2SXlkc2gwQXUyRDR1?=
+ =?utf-8?B?VHg0QWJxR0piWTNjWFM3YVMzUE4wcXdYbWFuRFRrYmptdDZPSzZ4RnFwMDQ5?=
+ =?utf-8?B?b0pLVWJSMU13ZkdzL01kMmh4WkZranlURGVnc096WHBvNGQ5SzU3eWFpYUNK?=
+ =?utf-8?B?Z0ZMMHBhMjg5MlFoVmhNYVVrakRhWkc0dXc1OWRCOCt5clAyQVJuNzFObHJv?=
+ =?utf-8?B?MWlOY0lTUlhvRElmTkhvUUNFWTF2eHVtZXhYWXllb0N5dkIvSUozY0NRUHVN?=
+ =?utf-8?B?SkN1c09iTURTUlU4MnB4UzgvZ3B1M3NyMWxpSHNQT3ZKQlo4WmY2SStubGpj?=
+ =?utf-8?B?L0Q2N3dnN1N0Nzc3UGNtMm1FM1E4cktIMlI2ZFA4ZDVqT2NONUFnS0hZaVdC?=
+ =?utf-8?B?bzVRdnFodW95akZvcHR5SWxRdmRWU2FZQlZvd0pZdXJRWmZ5SGgyQlg0RlJV?=
+ =?utf-8?B?RkMzM1I2bzJaQURrT01aSmdVOFJLUEhMc3htbTlmL2hVby9ob1BqVlUxR21Q?=
+ =?utf-8?B?blVGek52dHBWeG9wWVp3bFpRZ3U5VjdVVGJ1cVhuVGtpczhaU0poZGNPVnlQ?=
+ =?utf-8?B?bzhOR3dyNEhWVDdha2RVbmluNk5pd3hkaW5RcytvS1pJYWVLTmN0ZHhlL1M1?=
+ =?utf-8?B?dWp2ZHVHSnpycVg3dkxuM0FSaTd2S2lTeTJtanNFSFFRZHYxM01ObzFCWE9Z?=
+ =?utf-8?B?R25sMmhlUWV5b1B3RmFvdGtqVG1rVnNoWXBKSkV0eVJRSkI5djRWVnp3RlZn?=
+ =?utf-8?B?Ry83TnVlajkxakhVYlNrZGc0MUoySHhIQWlIVGVMbmJMY3FURit5cWFwOXFS?=
+ =?utf-8?B?a3ZodjdxOFNTRnJ0OVVWM1FYNDczNVpqQUdPRFJMek1ub0JzR2dYTUVXZFlT?=
+ =?utf-8?B?YitCdEx4eG9aSXJ4Ym5aMTFZSnI3dWNqWEtwWmJNNjQzZ0RydjlnREFtSlkr?=
+ =?utf-8?B?ZDdjNml4R041T1Y3S3lEMHdqc0NaRW1IUjBvU21CNmxORGJVbWNWa3JXMFU0?=
+ =?utf-8?B?U0NyZFBjbC9EM1cvd05jdG9McWtSdXJkTHRNQ1BXQWQrUUdkUFFTTkl4aUo4?=
+ =?utf-8?B?bjRtWnkrNG5oKzVUL1JYZDlsZ200SkozNERtMVpCODNndkpUT0xkSjVqQXF4?=
+ =?utf-8?B?NjRTZkJqSE45MEdMejRpQ1ErM2YwMTFBOFNWVGNvZ3RrK0lzZGdBalFBbXVp?=
+ =?utf-8?B?TkN2VWFTckxJQWQ0aDFOTkY3bXhsY2dHcmVFNkttYXp5dDhHK043ZGRNYzYw?=
+ =?utf-8?B?SFpVREtpWkdsVkJ4VklCK1NIb2RLZ2hOOThoeXVONXhaRmh1ZE5TbUM5dWlw?=
+ =?utf-8?Q?oPlKVXkUJF8/A=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4966.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5ef8dc6-6339-4c4a-cb52-08d8950cafbf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 08:48:19.2374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FKwkd4SMvFDqnLtRuUoQdc2I3VgJSpmhPVeBvbU5quVXnKQycP+z0WgXoJAksH5InBsFmZwmS9D0qPrxSwXSLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6871
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Pragnesh Patel <pragnesh.patel@sifive.com>
-
-Add new functions "sifive_prci_clock_enable(), sifive_prci_clock_disable()
-and sifive_clk_is_enabled()" to enable or disable the PRCI clock
-
-Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
----
- drivers/clk/sifive/fu540-prci.c  |  6 +++
- drivers/clk/sifive/fu740-prci.c  |  9 ++++
- drivers/clk/sifive/sifive-prci.c | 91 ++++++++++++++++++++++++++++----
- drivers/clk/sifive/sifive-prci.h | 12 +++++
- 4 files changed, 109 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
-index 34dc4ea6a3af..3fbee1da9701 100644
---- a/drivers/clk/sifive/fu540-prci.c
-+++ b/drivers/clk/sifive/fu540-prci.c
-@@ -33,16 +33,19 @@
- 
- static struct __prci_wrpll_data __prci_corepll_data = {
- 	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
- 	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
- 	.disable_bypass = sifive_prci_coreclksel_use_corepll,
- };
- 
- static struct __prci_wrpll_data __prci_ddrpll_data = {
- 	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
- };
- 
- static struct __prci_wrpll_data __prci_gemgxlpll_data = {
- 	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
- };
- 
- /* Linux clock framework integration */
-@@ -51,6 +54,9 @@ static const struct clk_ops sifive_fu540_prci_wrpll_clk_ops = {
- 	.set_rate = sifive_prci_wrpll_set_rate,
- 	.round_rate = sifive_prci_wrpll_round_rate,
- 	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+	.enable = sifive_prci_clock_enable,
-+	.disable = sifive_prci_clock_disable,
-+	.is_enabled = sifive_clk_is_enabled,
- };
- 
- static const struct clk_ops sifive_fu540_prci_wrpll_ro_clk_ops = {
-diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
-index 41ddd4431497..db8300223745 100644
---- a/drivers/clk/sifive/fu740-prci.c
-+++ b/drivers/clk/sifive/fu740-prci.c
-@@ -12,32 +12,38 @@
- 
- static struct __prci_wrpll_data __prci_corepll_data = {
- 	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
- 	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
- 	.disable_bypass = sifive_prci_coreclksel_use_final_corepll,
- };
- 
- static struct __prci_wrpll_data __prci_ddrpll_data = {
- 	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
- };
- 
- static struct __prci_wrpll_data __prci_gemgxlpll_data = {
- 	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
- };
- 
- static struct __prci_wrpll_data __prci_dvfscorepll_data = {
- 	.cfg0_offs = PRCI_DVFSCOREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DVFSCOREPLLCFG1_OFFSET,
- 	.enable_bypass = sifive_prci_corepllsel_use_corepll,
- 	.disable_bypass = sifive_prci_corepllsel_use_dvfscorepll,
- };
- 
- static struct __prci_wrpll_data __prci_hfpclkpll_data = {
- 	.cfg0_offs = PRCI_HFPCLKPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_HFPCLKPLLCFG1_OFFSET,
- 	.enable_bypass = sifive_prci_hfpclkpllsel_use_hfclk,
- 	.disable_bypass = sifive_prci_hfpclkpllsel_use_hfpclkpll,
- };
- 
- static struct __prci_wrpll_data __prci_cltxpll_data = {
- 	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_CLTXPLLCFG1_OFFSET,
- };
- 
- /* Linux clock framework integration */
-@@ -46,6 +52,9 @@ static const struct clk_ops sifive_fu740_prci_wrpll_clk_ops = {
- 	.set_rate = sifive_prci_wrpll_set_rate,
- 	.round_rate = sifive_prci_wrpll_round_rate,
- 	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+	.enable = sifive_prci_clock_enable,
-+	.disable = sifive_prci_clock_disable,
-+	.is_enabled = sifive_clk_is_enabled,
- };
- 
- static const struct clk_ops sifive_fu740_prci_wrpll_ro_clk_ops = {
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index cc4b4c6b4437..5922be9edc17 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -113,7 +113,7 @@ static u32 __prci_wrpll_pack(const struct wrpll_cfg *c)
- }
- 
- /**
-- * __prci_wrpll_read_cfg() - read the WRPLL configuration from the PRCI
-+ * __prci_wrpll_read_cfg0() - read the WRPLL configuration from the PRCI
-  * @pd: PRCI context
-  * @pwd: PRCI WRPLL metadata
-  *
-@@ -124,14 +124,14 @@ static u32 __prci_wrpll_pack(const struct wrpll_cfg *c)
-  * Context: Any context.  Caller must prevent the records pointed to by
-  *          @pd and @pwd from changing during execution.
-  */
--static void __prci_wrpll_read_cfg(struct __prci_data *pd,
--				  struct __prci_wrpll_data *pwd)
-+static void __prci_wrpll_read_cfg0(struct __prci_data *pd,
-+				   struct __prci_wrpll_data *pwd)
- {
- 	__prci_wrpll_unpack(&pwd->c, __prci_readl(pd, pwd->cfg0_offs));
- }
- 
- /**
-- * __prci_wrpll_write_cfg() - write WRPLL configuration into the PRCI
-+ * __prci_wrpll_write_cfg0() - write WRPLL configuration into the PRCI
-  * @pd: PRCI context
-  * @pwd: PRCI WRPLL metadata
-  * @c: WRPLL configuration record to write
-@@ -144,15 +144,29 @@ static void __prci_wrpll_read_cfg(struct __prci_data *pd,
-  * Context: Any context.  Caller must prevent the records pointed to by
-  *          @pd and @pwd from changing during execution.
-  */
--static void __prci_wrpll_write_cfg(struct __prci_data *pd,
--				   struct __prci_wrpll_data *pwd,
--				   struct wrpll_cfg *c)
-+static void __prci_wrpll_write_cfg0(struct __prci_data *pd,
-+				    struct __prci_wrpll_data *pwd,
-+				    struct wrpll_cfg *c)
- {
- 	__prci_writel(__prci_wrpll_pack(c), pwd->cfg0_offs, pd);
- 
- 	memcpy(&pwd->c, c, sizeof(*c));
- }
- 
-+/**
-+ * __prci_wrpll_write_cfg1() - write Clock enable/disable configuration
-+ * into the PRCI
-+ * @pd: PRCI context
-+ * @pwd: PRCI WRPLL metadata
-+ * @enable: Clock enable or disable value
-+ */
-+static void __prci_wrpll_write_cfg1(struct __prci_data *pd,
-+				    struct __prci_wrpll_data *pwd,
-+				    u32 enable)
-+{
-+	__prci_writel(enable, pwd->cfg1_offs, pd);
-+}
-+
- /*
-  * Linux clock framework integration
-  *
-@@ -199,16 +213,73 @@ int sifive_prci_wrpll_set_rate(struct clk_hw *hw,
- 	if (pwd->enable_bypass)
- 		pwd->enable_bypass(pd);
- 
--	__prci_wrpll_write_cfg(pd, pwd, &pwd->c);
-+	__prci_wrpll_write_cfg0(pd, pwd, &pwd->c);
- 
- 	udelay(wrpll_calc_max_lock_us(&pwd->c));
- 
-+	return 0;
-+}
-+
-+int sifive_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-+	struct __prci_wrpll_data *pwd = pc->pwd;
-+	struct __prci_data *pd = pc->pd;
-+	u32 r;
-+
-+	r = __prci_readl(pd, pwd->cfg1_offs);
-+
-+	if (r & PRCI_COREPLLCFG1_CKE_MASK)
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+int sifive_prci_clock_enable(struct clk_hw *hw)
-+{
-+	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-+	struct __prci_wrpll_data *pwd = pc->pwd;
-+	struct __prci_data *pd = pc->pd;
-+	unsigned long flags = 0;
-+
-+	spin_lock_irqsave(&pd->lock, flags);
-+
-+	if (sifive_clk_is_enabled(hw)) {
-+		spin_unlock_irqrestore(&pd->lock, flags);
-+		return 0;
-+	}
-+
-+	__prci_wrpll_write_cfg1(pd, pwd, PRCI_COREPLLCFG1_CKE_MASK);
-+
- 	if (pwd->disable_bypass)
- 		pwd->disable_bypass(pd);
- 
-+	spin_unlock_irqrestore(&pd->lock, flags);
-+
- 	return 0;
- }
- 
-+void sifive_prci_clock_disable(struct clk_hw *hw)
-+{
-+	struct __prci_clock *pc = clk_hw_to_prci_clock(hw);
-+	struct __prci_wrpll_data *pwd = pc->pwd;
-+	struct __prci_data *pd = pc->pd;
-+	unsigned long flags = 0;
-+	u32 r;
-+
-+	spin_lock_irqsave(&pd->lock, flags);
-+
-+	r = __prci_readl(pd, pwd->cfg1_offs);
-+	r &= ~PRCI_COREPLLCFG1_CKE_MASK;
-+
-+	__prci_wrpll_write_cfg1(pd, pwd, r);
-+
-+	if (pwd->enable_bypass)
-+		pwd->enable_bypass(pd);
-+
-+	spin_unlock_irqrestore(&pd->lock, flags);
-+}
-+
- /* TLCLKSEL clock integration */
- 
- unsigned long sifive_prci_tlclksel_recalc_rate(struct clk_hw *hw,
-@@ -427,7 +498,7 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd,
- 		pic->pd = pd;
- 
- 		if (pic->pwd)
--			__prci_wrpll_read_cfg(pd, pic->pwd);
-+			__prci_wrpll_read_cfg0(pd, pic->pwd);
- 
- 		r = devm_clk_hw_register(dev, &pic->hw);
- 		if (r) {
-@@ -483,6 +554,8 @@ static int sifive_prci_probe(struct platform_device *pdev)
- 	if (IS_ERR(pd->va))
- 		return PTR_ERR(pd->va);
- 
-+	spin_lock_init(&pd->lock);
-+
- 	r = __prci_register_clocks(dev, pd, desc);
- 	if (r) {
- 		dev_err(dev, "could not register clocks: %d\n", r);
-diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive-prci.h
-index 88493f3b9edf..4180486047e4 100644
---- a/drivers/clk/sifive/sifive-prci.h
-+++ b/drivers/clk/sifive/sifive-prci.h
-@@ -40,6 +40,11 @@
- #define PRCI_COREPLLCFG0_LOCK_SHIFT	31
- #define PRCI_COREPLLCFG0_LOCK_MASK	(0x1 << PRCI_COREPLLCFG0_LOCK_SHIFT)
- 
-+/* COREPLLCFG1 */
-+#define PRCI_COREPLLCFG1_OFFSET		0x8
-+#define PRCI_COREPLLCFG1_CKE_SHIFT	31
-+#define PRCI_COREPLLCFG1_CKE_MASK	(0x1 << PRCI_COREPLLCFG1_CKE_SHIFT)
-+
- /* DDRPLLCFG0 */
- #define PRCI_DDRPLLCFG0_OFFSET		0xc
- #define PRCI_DDRPLLCFG0_DIVR_SHIFT	0
-@@ -205,12 +210,14 @@
- /**
-  * struct __prci_data - per-device-instance data
-  * @va: base virtual address of the PRCI IP block
-+ * @lock: spin lock for all clocks
-  * @hw_clks: encapsulates struct clk_hw records
-  *
-  * PRCI per-device instance data
-  */
- struct __prci_data {
- 	void __iomem *va;
-+	spinlock_t lock;
- 	struct clk_hw_onecell_data hw_clks;
- };
- 
-@@ -220,6 +227,7 @@ struct __prci_data {
-  * @enable_bypass: fn ptr to code to bypass the WRPLL (if applicable; else NULL)
-  * @disable_bypass: fn ptr to code to not bypass the WRPLL (or NULL)
-  * @cfg0_offs: WRPLL CFG0 register offset (in bytes) from the PRCI base address
-+ * @cfg1_offs: WRPLL CFG1 register offset (in bytes) from the PRCI base address
-  *
-  * @enable_bypass and @disable_bypass are used for WRPLL instances
-  * that contain a separate external glitchless clock mux downstream
-@@ -230,6 +238,7 @@ struct __prci_wrpll_data {
- 	void (*enable_bypass)(struct __prci_data *pd);
- 	void (*disable_bypass)(struct __prci_data *pd);
- 	u8 cfg0_offs;
-+	u8 cfg1_offs;
- };
- 
- /**
-@@ -279,6 +288,9 @@ long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long *parent_rate);
- int sifive_prci_wrpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 			       unsigned long parent_rate);
-+int sifive_clk_is_enabled(struct clk_hw *hw);
-+int sifive_prci_clock_enable(struct clk_hw *hw);
-+void sifive_prci_clock_disable(struct clk_hw *hw);
- unsigned long sifive_prci_wrpll_recalc_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate);
- unsigned long sifive_prci_tlclksel_recalc_rate(struct clk_hw *hw,
--- 
-2.29.2
-
+PiBGcm9tOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IFNhdHVyZGF5
+LCBOb3ZlbWJlciAyOCwgMjAyMCA0OjE2IEFNDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8xXSBj
+bGs6IGlteDogc2N1OiBmaXggTVhDX0NMS19TQ1UgbW9kdWxlIGJ1aWxkIGJyZWFrDQo+IA0KPiBR
+dW90aW5nIERvbmcgQWlzaGVuZyAoMjAyMC0xMS0yNSAwMjo1MDozNykNCj4gPiBUaGlzIGlzc3Vl
+IGNhbiBiZSByZXByb2R1Y2VkIGJ5IENPTkZJR19JTVhfTUJPWD1tIGFuZA0KPiBDT05GSUdfTVhD
+X0NMS19TQ1U9bS4NCj4gPiBJdCdzIGNhdXNlZCBieSBjdXJyZW50IE1ha2VmaWxlIGNhbid0IHN1
+cHBvcnQgYnVpbGQgY2xrLXNjdS5vIGFuZA0KPiANCj4gV2hhdCBpcyB0aGUgaXNzdWU/IENhbiB5
+b3UgaW5jbHVkZSB0aGUgZXJyb3IgbWVzc2FnZT8NCj4gDQoNCkl0J3MgdW5hYmxlIHRvIGxvY2F0
+ZSB0aGUgaW5wdXQgZmlsZXMgZHVyaW5nIGxpbmtpbmcgYmVjYXVzZSBDT05GSUdfQ0xLX0lNWDhR
+WFAgDQpub3QgZW5hYmxlZC4gVGhhdCdzIHdoeSB3ZSBjYW4ndCBvbmx5IGVuYWJsZSBNWENfQ0xL
+X1NDVS4NCg0KICBMRCBbTV0gIGRyaXZlcnMvY2xrL2lteC9jbGstaW14LXNjdS5vDQphcm0tcG9r
+eS1saW51eC1nbnVlYWJpLWxkOiBubyBpbnB1dCBmaWxlcw0KLi4vc2NyaXB0cy9NYWtlZmlsZS5i
+dWlsZDo0MzQ6IHJlY2lwZSBmb3IgdGFyZ2V0ICdkcml2ZXJzL2Nsay9pbXgvY2xrLWlteC1zY3Uu
+bycgZmFpbGVkDQptYWtlWzRdOiAqKiogW2RyaXZlcnMvY2xrL2lteC9jbGstaW14LXNjdS5vXSBF
+cnJvciAxDQouLi9zY3JpcHRzL01ha2VmaWxlLmJ1aWxkOjUwMDogcmVjaXBlIGZvciB0YXJnZXQg
+J2RyaXZlcnMvY2xrL2lteCcgZmFpbGVkDQptYWtlWzNdOiAqKiogW2RyaXZlcnMvY2xrL2lteF0g
+RXJyb3IgMg0KLi4vc2NyaXB0cy9NYWtlZmlsZS5idWlsZDo1MDA6IHJlY2lwZSBmb3IgdGFyZ2V0
+ICdkcml2ZXJzL2NsaycgZmFpbGVkDQptYWtlWzJdOiAqKiogW2RyaXZlcnMvY2xrXSBFcnJvciAy
+DQptYWtlWzJdOiAqKiogV2FpdGluZyBmb3IgdW5maW5pc2hlZCBqb2JzLi4uDQoNCj4gPiBjbGst
+aW14OHF4cC5vIHNlcGFyYXRlbHkuDQo+ID4gIm9iai0kKENPTkZJR19NWENfQ0xLX1NDVSkgKz0g
+Y2xrLWlteC1zY3UubyBjbGstaW14LWxwY2ctc2N1Lm8NCj4gPiBjbGstaW14LXNjdS0kKENPTkZJ
+R19DTEtfSU1YOFFYUCkgKz0gY2xrLXNjdS5vIGNsay1pbXg4cXhwLm8iDQo+ID4gT25seSBlbmFi
+bGUgTVhDX0NMS19TQ1Ugd2hpbGUgQ0xLX0lNWDhRWFAgbm90IGlzIG1lYW5pbmdsZXNzIGFuZA0K
+PiBidWdneS4NCj4gDQo+IE9rLiBTbyBDTEtfSU1YOFFYUCBzZWxlY3RzIE1YQ19DTEtfU0NVPw0K
+DQpZZXMNCg0KPiANCj4gPg0KPiA+IFRoaXMgcGF0Y2ggbWFrZXMgTVhDX0NMS19TQ1UgdG8gYmUg
+aW52aXNpYmxlIHRvIHVzZXJzIGFuZCBjYW4gb25seSBiZQ0KPiA+IHNlbGVjdGVkIGJ5IENMS19J
+TVg4UVhQIG9wdGlvbiB0byBlbnN1cmUgdGhleSdyZSBidWlsdCB0b2dldGhlci4NCj4gPg0KPiA+
+IEZpeGVzOiBlMGQwZDRkODZjNzY2ICgiY2xrOiBpbXg4cXhwOiBTdXBwb3J0IGJ1aWxkaW5nIGku
+TVg4UVhQIGNsb2NrDQo+ID4gZHJpdmVyIGFzIG1vZHVsZSIpDQo+ID4gUmVwb3J0ZWQtYnk6IFNl
+YmFzdGlhbiBBbmRyemVqIFNpZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+IC0tLQ0K
+PiA+ICBkcml2ZXJzL2Nsay9pbXgvS2NvbmZpZyB8IDIgKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9jbGsvaW14L0tjb25maWcgYi9kcml2ZXJzL2Nsay9pbXgvS2NvbmZpZyBpbmRleA0KPiA+
+IDNiMzkzY2IwNzI5NS4uZGJhY2RkNzBhZjJlIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xr
+L2lteC9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14L0tjb25maWcNCj4gPiBAQCAt
+NSw3ICs1LDcgQEAgY29uZmlnIE1YQ19DTEsNCj4gPiAgICAgICAgIGRlcGVuZHMgb24gQVJDSF9N
+WEMgfHwgQ09NUElMRV9URVNUDQo+ID4NCj4gPiAgY29uZmlnIE1YQ19DTEtfU0NVDQo+ID4gLSAg
+ICAgICB0cmlzdGF0ZSAiSU1YIFNDVSBjbG9jayINCj4gPiArICAgICAgIHRyaXN0YXRlDQo+ID4g
+ICAgICAgICBkZXBlbmRzIG9uIEFSQ0hfTVhDIHx8IENPTVBJTEVfVEVTVA0KPiANCj4gSXMgaXQg
+YSB0ZW1wb3Jhcnkgd29ya2Fyb3VuZD8gQmVjYXVzZSBDT01QSUxFX1RFU1Qgb24gYW4gb3B0aW9u
+IHRoYXQgaXNuJ3QNCj4gc2VsZWN0YWJsZSBpcyBtZWFuaW5nbGVzcy4NCj4gDQoNCkdvb2QgY2F0
+Y2gsIHlvdSdyZSByaWdodC4NCkkgd2lsbCByZW1vdmUgdGhpcyBDT01QSUxFX1RFU1QgYXMgQ0xL
+X0lNWDhRWFAgYWxyZWFkeSBoYXMgaXQgYW5kIHdpbGwgc2VsZWN0DQpNWENfQ0xLX1NDVS4NCldp
+bGwgc2VuZCB2Mi4NCg0KUmVnYXJkcw0KQWlzaGVuZw0KDQo+ID4gICAgICAgICBkZXBlbmRzIG9u
+IElNWF9TQ1UgJiYgSEFWRV9BUk1fU01DQ0MNCj4gPg0K
