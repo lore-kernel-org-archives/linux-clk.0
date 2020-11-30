@@ -2,113 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B006C64E8A
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 13:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665C5C64E7B
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E65DC20855
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 13:55:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="REI+paNk"
+	by mail.kernel.org (Postfix) with ESMTP id 10842206F9
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 16:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbgK3NzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Nov 2020 08:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726410AbgK3NzG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Nov 2020 08:55:06 -0500
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43EDD2084C;
-        Mon, 30 Nov 2020 13:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606744465;
-        bh=SFo+dD030Rr4VH/OCsfPF3+P8SWL/XdTtRWZSdtzCTM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=REI+paNkmZWCiqV3O/EMvRyyN0tUeXBIVNnIIT76V4zrGG2lxAZZiFOASMnXyO1Lb
-         nH4igZ7EtWUo08O6rmiSqc9A6q1enbNhXimC8CSMsYLX4K/83eVcTiipvbZGe2SmwK
-         PSs3qhj/XJpPIqnw1sdqbNa49KgXTjHFK1c/AXu8=
-Date:   Mon, 30 Nov 2020 21:54:19 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, Sascha Hauer <kernel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH 1/1] clk: imx: scu: remove the calling of device_is_bound
-Message-ID: <20201130135419.GI4072@dragon>
-References: <20201119114302.26263-1-aisheng.dong@nxp.com>
+        id S1728581AbgK3QkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Nov 2020 11:40:00 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:32945 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727924AbgK3QkA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 11:40:00 -0500
+Received: by mail-il1-f193.google.com with SMTP id y9so11901624ilb.0;
+        Mon, 30 Nov 2020 08:39:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GxbcPm40Z/OfvA3tX+RN9PfY6ghzBrA55YxrDnO7ysY=;
+        b=M6lpowL3qpdVRL5koaCCc14/I589CBqNBouWLk7DkXiVeRFnJeQqC8kUn0EThTRfPa
+         5Uk4V9IEP4DbTq/iSWClXh+LZgso1a9vNOeXa+UR82tkORmP0mlpB4VYhwGjAw49uiKO
+         j1WvdNNgm+1t6ed7ifac83QV9pokgjusQ9KN30LjGJoQxr0ilfPpR7JIVaxhOD9CiYk+
+         AyTTGmkGUxoH0guNya7lm7tqsWnr0Z1fj9GzrczIgdsavC2A/tfoY7ktsg0coCAdOLmy
+         db3cxGPo3abraxF4/q7LQbHWQ1jUcEIwv+bGSciS+KbkDgFA0P+d5BNrZEY3D1m6Bk9z
+         TH/w==
+X-Gm-Message-State: AOAM530TSZeGTNdFqwywg6NsDtecmQrG39BcxyoI8oy0wPupQk/nx+gn
+        Ta4VVNfvHCKfI3FSvmXP+w==
+X-Google-Smtp-Source: ABdhPJzY9MzktBK1OkYtWSDkzwOcRYCFt2VHyLCC7bUEJXijT3EkfPx6av4RZ3T4OMflXGgu5ppcjw==
+X-Received: by 2002:a92:607:: with SMTP id x7mr18906592ilg.34.1606754358863;
+        Mon, 30 Nov 2020 08:39:18 -0800 (PST)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id b9sm4311464iok.20.2020.11.30.08.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 08:39:18 -0800 (PST)
+Received: (nullmailer pid 2593543 invoked by uid 1000);
+        Mon, 30 Nov 2020 16:39:15 -0000
+Date:   Mon, 30 Nov 2020 09:39:15 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Sean Anderson <seanga2@gmail.com>,
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 09/21] dt-bindings: Document canaan,k210-fpioa bindings
+Message-ID: <20201130163915.GA2593105@robh.at.kernel.org>
+References: <20201124043728.199852-1-damien.lemoal@wdc.com>
+ <20201124043728.199852-10-damien.lemoal@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201119114302.26263-1-aisheng.dong@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20201124043728.199852-10-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 07:43:02PM +0800, Dong Aisheng wrote:
-> The device_is_bound() is unvisable to drivers when built as modules.
-
-s/unvisable/invisible?
-
-I fixed it up and applied the patch.
-
-Shawn
-
-> It's also not aimed to be used by drivers according to Greg K.H.
-> Let's remove it from clk-scu driver and find another way to do proper
-> driver loading sequence.
+On Tue, 24 Nov 2020 13:37:16 +0900, Damien Le Moal wrote:
+> Document the device tree bindings for the Canaan Kendryte K210 SoC
+> Fully Programmable IO Array (FPIOA) pinctrl driver in
+> Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml. The
+> new header file include/dt-bindings/pinctrl/k210-fpioa.h is added to
+> define all 256 possible pin functions of the SoC IO pins, as well as
+> macros simplifying the definition of pin functions in a device tree.
 > 
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Fixes: 77d8f3068c63 ("clk: imx: scu: add two cells binding support")
-> Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > ---
->  drivers/clk/imx/clk-scu.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
+>  .../bindings/pinctrl/canaan,k210-fpioa.yaml   | 165 +++++++++++
+>  include/dt-bindings/pinctrl/k210-fpioa.h      | 276 ++++++++++++++++++
+>  2 files changed, 441 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
 > 
-> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-> index d10f60e48ece..1f5518b7ab39 100644
-> --- a/drivers/clk/imx/clk-scu.c
-> +++ b/drivers/clk/imx/clk-scu.c
-> @@ -153,7 +153,6 @@ static inline struct clk_scu *to_clk_scu(struct clk_hw *hw)
->  
->  int imx_clk_scu_init(struct device_node *np)
->  {
-> -	struct platform_device *pd_dev;
->  	u32 clk_cells;
->  	int ret, i;
->  
-> @@ -166,17 +165,11 @@ int imx_clk_scu_init(struct device_node *np)
->  	if (clk_cells == 2) {
->  		for (i = 0; i < IMX_SC_R_LAST; i++)
->  			INIT_LIST_HEAD(&imx_scu_clks[i]);
-> -		/*
-> -		 * Note: SCU clock driver depends on SCU power domain to be ready
-> -		 * first. As there're no power domains under scu clock node in dts,
-> -		 * we can't use PROBE_DEFER automatically.
-> -		 */
-> +
-> +		/* pd_np will be used to attach power domains later */
->  		pd_np = of_find_compatible_node(NULL, NULL, "fsl,scu-pd");
-> -		pd_dev = of_find_device_by_node(pd_np);
-> -		if (!pd_dev || !device_is_bound(&pd_dev->dev)) {
-> -			of_node_put(pd_np);
-> -			return -EPROBE_DEFER;
-> -		}
-> +		if (!pd_np)
-> +			return -EINVAL;
->  	}
->  
->  	return platform_driver_register(&imx_clk_scu_driver);
-> -- 
-> 2.23.0
-> 
+
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml:59:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
+
+dtschema/dtc warnings/errors:
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-extract-example", line 45, in <module>
+    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 343, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 111, in get_single_data
+    node = self.composer.get_single_node()
+  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
+  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 731, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
+ruamel.yaml.scanner.ScannerError: while scanning a plain scalar
+  in "<unicode string>", line 58, column 11
+found a tab character that violates indentation
+  in "<unicode string>", line 59, column 1
+make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.example.dts] Error 1
+make[1]: *** Deleting file 'Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.example.dts'
+make[1]: *** Waiting for unfinished jobs....
+make[1]: *** [Documentation/devicetree/bindings/Makefile:59: Documentation/devicetree/bindings/processed-schema-examples.json] Error 123
+make: *** [Makefile:1364: dt_binding_check] Error 2
+
+
+See https://patchwork.ozlabs.org/patch/1405241
+
+The base for the patch is generally the last rc1. Any dependencies
+should be noted.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
