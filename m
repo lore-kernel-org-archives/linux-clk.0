@@ -2,92 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EADC3E8C5
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 00:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5232C83014
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 01:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E507620757
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 00:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ECC221973
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 01:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgK3A72 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Nov 2020 19:59:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:8471 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbgK3A71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Nov 2020 19:59:27 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Ckn0f6CFTzhkT4;
-        Mon, 30 Nov 2020 08:58:26 +0800 (CST)
-Received: from [10.74.191.121] (10.74.191.121) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 30 Nov 2020 08:58:38 +0800
-Subject: Re: [PATCH] powerpc: fix the allyesconfig build
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Daniel Axtens" <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-References: <20201128122819.32187696@canb.auug.org.au>
- <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
- <20201128162054.575aea29@canb.auug.org.au>
- <20201128113654.4f2dcabe@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <cfdea690-9866-7eda-904c-c097ea89a0ed@huawei.com>
-Date:   Mon, 30 Nov 2020 08:58:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1728015AbgK3Bw6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Nov 2020 20:52:58 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:40878 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727543AbgK3Bw5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Nov 2020 20:52:57 -0500
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1kjYME-0007OY-Vw; Mon, 30 Nov 2020 02:52:03 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, airlied@linux.ie,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        hjc@rock-chips.com, broonie@kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        daniel@ffwll.ch, robh+dt@kernel.org,
+        linux-rockchip@lists.infradead.org, lgirdwood@gmail.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/7] Enable rk3066a HDMI sound
+Date:   Mon, 30 Nov 2020 02:51:58 +0100
+Message-Id: <160670107988.1055391.2625216014157320355.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201118135822.9582-1-jbx6244@gmail.com>
+References: <20201118135822.9582-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201128113654.4f2dcabe@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020/11/29 3:36, Jakub Kicinski wrote:
-> On Sat, 28 Nov 2020 16:20:54 +1100 Stephen Rothwell wrote:
->> On Fri, 27 Nov 2020 17:56:42 -0800 Jakub Kicinski <kuba@kernel.org> wrote:
->>>
->>> What's the offending structure in hisilicon? I'd rather have a look
->>> packing structs with pointers in 'em sounds questionable.
->>>
->>> I only see these two:
->>>
->>> $ git grep packed drivers/net/ethernet/hisilicon/
->>> drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
->>> drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc {  
->>
->> struct hclge_dbg_reg_type_info which is 28 bytes long due to the
->> included struct struct hclge_dbg_reg_common_msg (which is 12 bytes
->> long).  They are surrounded by #pragma pack(1)/pack().
->>
->> This forces the 2 pointers in each second array element of
->> hclge_dbg_reg_info[] to be 4 byte aligned (where pointers are 8 bytes
->> long on PPC64).
+On Wed, 18 Nov 2020 14:58:15 +0100, Johan Jonker wrote:
+> First fix some legacy things in clk-rk3188.c that was never updated,
+> because probably nobody used rk3066a I2S before in the mainline kernel.
+> Update the rk3066a HDMI documents with a #sound-dai-cells property.
+> Include the code for sound in the HDMI driver.
+> Add a simple-sound-card compatible node to rk3066a.dtsi,
+> because I2S0 and HDMI TX are connected internally.
+> And as last enable rk3066a HDMI sound in the rk3066a-mk808.dts file.
 > 
-> Ah! Thanks, I don't see a reason for these to be packed. 
-> Looks  like an accident, there is no reason to pack anything 
-> past struct hclge_dbg_reg_common_msg AFAICT.
-> 
-> Huawei folks, would you mind sending a fix if the analysis is correct?
+> [...]
 
-Yes, will send a patch to fix that. Thanks for the analysis.
+Applied, thanks!
 
-> .
-> 
+[1/7] clk: rockchip: add CLK_SET_RATE_PARENT to sclk for rk3066a i2s and uart clocks
+      commit: 5868491e1257786628fdd2457dfb77609f49f91d
+[2/7] clk: rockchip: fix i2s gate bits on rk3066 and rk3188
+      commit: caa2fd752ecb80faf7a2e1cdadc737187934675e
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
