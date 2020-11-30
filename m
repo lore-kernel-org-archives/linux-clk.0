@@ -2,196 +2,247 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0C1C63777
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 22:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FE5C63777
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 23:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17EDC20709
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 22:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19AEB207BB
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 23:49:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="FvuvG7DL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbgK3WLw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Nov 2020 17:11:52 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37479 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbgK3WLv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 17:11:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id k3so5619471ioq.4;
-        Mon, 30 Nov 2020 14:11:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PwkJqLowzDL+9HXdnbrfZmKU7lasECCA1uDRYV9fPoQ=;
-        b=Ni7e23JfLMj3Y7LPVoy+aUDsLbScnlMfTcS1oCPIEWqlXWb6kFQ/AKkue7lmXk3vhG
-         F4Z304QITqjuXnbecuSUa/fxsx2G4UujA6JDamnCcn7ieWxRrAtJl4bXWeGrWN5BrmKJ
-         17CwlLCqeVBtRqeEaL/PDh8Hw8fJyZ7a6sewLBnwFdOoMm54vb4n/Mq/nIezDdRXhDND
-         Yr0kR/0CgJKor0MO6R3RMSxchNImiiaVDUhgS+DS9H/yNF82E+lSnZYNEsaT1b1HA+gz
-         JovTNUCHkt/CK2GwpPC8XudyfKFuYvkSZfpfS3LDaZ7gt1FerAbroZ3F38+LZ9/FJd8f
-         z0jQ==
-X-Gm-Message-State: AOAM530JSQ8j/OZzqSgrJP5hyB7c6nMEFnUcTE+Ll5M7UpaGfV6/FrFz
-        IP4QBH9aOccn4R1ftUBVhw==
-X-Google-Smtp-Source: ABdhPJzRrL6U7pdbMbCbLDE1gq9Xwe5CX+NGWTcG2eLvrnrXuqch8z1WKPajJAbyAjuyQxcgJXTV0w==
-X-Received: by 2002:a5e:8606:: with SMTP id z6mr15966064ioj.91.1606774270222;
-        Mon, 30 Nov 2020 14:11:10 -0800 (PST)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id d1sm3127532ioh.3.2020.11.30.14.11.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 14:11:09 -0800 (PST)
-Received: (nullmailer pid 3123248 invoked by uid 1000);
-        Mon, 30 Nov 2020 22:11:07 -0000
-Date:   Mon, 30 Nov 2020 15:11:07 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Dongjiu Geng <gengdongjiu@huawei.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, vkoul@kernel.org,
-        dan.j.williams@intel.com, p.zabel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] dt: bindings: dma: Add DT bindings for HiSilicon
- Hiedma Controller
-Message-ID: <20201130221107.GA3117412@robh.at.kernel.org>
-References: <20201119200129.28532-1-gengdongjiu@huawei.com>
- <20201119200129.28532-4-gengdongjiu@huawei.com>
+        id S2388707AbgK3Xtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Nov 2020 18:49:41 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7846 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387812AbgK3Xtl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 18:49:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606780572; x=1638316572;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fnmKSjO+7e/ctbTEIGBkQ41kSawchDGA3iHH6aL3+wU=;
+  b=FvuvG7DLS3LceSnowuJrd09b1hiUqZzVY/wsirYr4Ry3zNQ7N2zJVNsd
+   0VNC8oQkckDVCFKYZU1wgCscE23FkLXdrRjLqMnxwyZkt5VPRijJ9HeOS
+   8VKYx/jbN1OKF3A8vkx9ODsgtAJ6aDtF+uTa/SYdkUOkkEcvQitgjl74B
+   FPkVMxbIC1EyC7TR+JpW7dnOWfPBzvXOL6IqwspyunrN6DM5oh5YSbCAV
+   /XkZMWOHte+tHq8yIE1qSXSsHNee/w9Guw7h/muHmmZSH2VIJIPrue9d+
+   V9ug7SxOoKb8LyEIZkRpD3LDSv/mbwi8Ziju/TnXik7HXRyVynTXus06N
+   A==;
+IronPort-SDR: R9Fdl6duHHzMPuQkNTzAUtcl6KJnT2xZtldUSwEEOL3drw8hfoVfA3DLZQzxYdlLOPe6dYDnd9
+ ZBZaYp/GxK/cHgHFDmkczHSNbJnbDtyuD14jIQHVHUTJuSqOQmwgJO4IiZx3d1OVW0/H1mTPTS
+ ppYrHdq5t0XMXrClA+Mb/zLXXGrLlz8HKhEaUveGcE7qi9uKdau8rKbZN0w5UcbMfuaytd8G0d
+ ZTWjVqdqAob0L4ZbUVbyk8gmvlytdKY5wzVRAvjvQeCcsKzYydAIQJmv1sfDapSnZwVCPmUusl
+ t3c=
+X-IronPort-AV: E=Sophos;i="5.78,382,1599494400"; 
+   d="scan'208";a="257538286"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 07:54:33 +0800
+IronPort-SDR: kh+L2LBTls258WIzPwqqURcwS/VprKdjsmeW2VWJUu0oaKPY3Ol8JaTiilXqPbuTk0Z8C0KWMJ
+ XDuR2tZp4hASaszjAk8Cxm/24ov4sTzEQ=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2020 15:32:48 -0800
+IronPort-SDR: gX7wqsfLsXH8OS+a8zwznwDPffjp7OcaoygGKVar8NCVT27U3ItDrN8hSCTJuTJDgkAW2vwtsw
+ Lr5AdwG1soTA==
+WDCIronportException: Internal
+Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Nov 2020 15:48:32 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH v3 00/21] RISC-V Kendryte K210 support improvements
+Date:   Tue,  1 Dec 2020 08:48:08 +0900
+Message-Id: <20201130234829.118298-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201119200129.28532-4-gengdongjiu@huawei.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 08:01:28PM +0000, Dongjiu Geng wrote:
-> The Hiedma Controller v310 Provides eight DMA channels, each
-> channel can be configured for one-way transfer. The data can
-> be transferred in 8-bit, 16-bit, 32-bit, or 64-bit mode. This
-> documentation describes DT bindings of this controller.
-> 
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
->  .../bindings/dma/hisilicon,hiedmacv310.yaml   | 103 ++++++++++++++++++
->  1 file changed, 103 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-> new file mode 100644
-> index 000000000000..fe5c5af4d3e1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-> @@ -0,0 +1,103 @@
-> +# SPDX-License-Identifier:  GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/hisilicon,hiedmacv310.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: HiSilicon Hiedma Controller v310 Device Tree Bindings
-> +
-> +description: |
-> +  These bindings describe the DMA engine included in the HiSilicon Hiedma
-> +  Controller v310 Device.
-> +
-> +maintainers:
-> +  - Dongjiu Geng <gengdongjiu@huawei.com>
-> +
-> +allOf:
-> +  - $ref: "dma-controller.yaml#"
-> +
-> +properties:
-> +  "#dma-cells":
-> +    const: 2
-> +
-> +  "#clock-cells":
-> +    const: 2
+This series of patches improves support for boards based on the Kendryte
+K210 RISC-V dual core SoC. Minimal support for this SoC is already
+included in the kernel. These patches complete it, enabling support for
+most peripherals present on the SoC as well as introducing device trees
+for the various K210 boards available on the market today from SiPeed
+and Kendryte.
 
-The DMA controller is a clock provider? Odd. What does each cell 
-represent?
+Pathes 1 to 4 are various fixes for riscv arch code and riscv
+dependent devices. Of note here is patch 3 which fix system calls
+execution in the no MMU case, and patch 4 which simplifies DTB builtin
+handling.
 
-> +
-> +  compatible:
-> +    const: hisilicon,hiedmacv310
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  misc_regmap:
-> +    description: phandle pointing to the misc controller provider node.
-> +
-> +  misc_ctrl_base:
-> +    maxItems: 1
+Patch 5 fixes naming of directories and configuration options to use the
+K210 SoC vendor name (Canaan) instead of its branding name (Kendryte).
 
-These 2 can be a single property with phandle + reg offset.
+The following patches 6 to 10 document device tree bindings for the SoC
+drivers. The implementation of these drivers is provided in patches 11,
+12 and 13, respectively implementing the SoC clock driver, SOC pin
+function control and reset controller.
 
-Also, needs a vendor prefix and don't use '_'.
+Patches 14 to 19 update the existing K210 device tree and add new
+device tree files for several K210 based boards: MAIX Bit, MAIXDUINO,
+MAIX Dock and MAIX Go boards from SiPeed and the KD233 development
+board from Canaan.
 
-> +
-> +  clocks:
-> +    items:
-> +      - description: apb clock
-> +      - description: axi clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb_pclk
-> +      - const: axi_aclk
-> +
-> +  resets:
-> +    description: phandle pointing to the dma reset controller provider node.
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dma-reset
-> +
-> +  dma-requests:
-> +    maximum: 32
-> +
-> +  dma-channels:
-> +    maximum: 8
-> +
-> +
-> +required:
-> +  - "#dma-cells"
-> +  - "#clock-cells"
-> +  - compatible
-> +  - misc_regmap
-> +  - misc_ctrl_base
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - dma-requests
-> +  - dma-channels
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/hi3559av100-clock.h>
-> +
-> +    dma: dma-controller@10040000 {
-> +      compatible = "hisilicon,hiedmacv310";
-> +      reg = <0x10040000 0x1000>;
-> +      misc_regmap = <&misc_ctrl>;
-> +      misc_ctrl_base = <0x144>;
-> +      interrupts = <0 82 4>;
-> +      clocks = <&clock HI3559AV100_EDMAC1_CLK>, <&clock HI3559AV100_EDMAC1_AXICLK>;
-> +      clock-names = "apb_pclk", "axi_aclk";
-> +      #clock-cells = <2>;
-> +      resets = <&clock 0x16c 7>;
-> +      reset-names = "dma-reset";
-> +      dma-requests = <32>;
-> +      dma-channels = <8>;
-> +      #dma-cells = <2>;
-> +    };
-> +
-> +...
-> -- 
-> 2.17.1
-> 
+Finally the last two patches updates the k210 nommu defconfig to include
+the newly implemented drivers and provide a new default configuration
+file enabling SD card support.
+
+A lot of the work on the device tree and on the K210 drivers come from
+the work by Sean Anderson for the U-Boot project support of the K210
+SoC. Sean also helped with debugging many aspects of this series.
+
+A tree with all patches applied is available here:
+https://github.com/damien-lemoal/linux, k210-sysctl-v16 branch.
+A demonstration of this series used on a SiPeed MAIX Dock
+board together with an I2C servo controller can be seen here:
+https://damien-lemoal.github.io/linux-robot-arm/#example
+
+This tree was used to build userspace busybox environment image that is
+then copied onto an SD card formatted with ext2:
+https://github.com/damien-lemoal/buildroot
+Of note is that running this userspace environment requires a revert of
+commit 2217b982624680d19a80ebb4600d05c8586c4f96 introduced during the
+5.9 development cycle. Without this revert, execution of the init
+process fails. A problem with the riscv port of elf2flt is suspected but
+not confirmed. I am now starting to investigate this problem.
+
+Reviews and comments are as always much welcome.
+
+Changes from V2:
+* Add MAINTAINERS file entry for the SoC support, listing myself as
+  maintainer.
+* Removed use of postcore_initcall() for declaring the drivers, using
+  the regular builtin_platform_driver() instead.
+* Fixed fpio pinctrl driver bindings documentation as commented by
+  Geert: removed input-schmitt and added input-schmitt-disable, fixed
+  typo and added input-disable and output-disable.
+* Fixed device tree to have cs-gpios active low, as per the default, as
+  active high necessity was an artifact of the gpio level double
+  inversion bug fixed recently.
+* Removed CONFIG_VT from defconfigs to reduce the kernel image size as
+  suggested by Geert.
+
+Changes from v1:
+* Improved DT bindings documentation
+* SPI and GPIO patches removed from this series (and being processed
+  directly through the relevant subsystems directly)
+* Improved device trees
+* Various cleanup and improvments of the drivers
+
+Damien Le Moal (21):
+  riscv: Fix kernel time_init()
+  riscv: Fix sifive serial driver
+  riscv: Enable interrupts during syscalls with M-Mode
+  riscv: Fix builtin DTB handling
+  riscv: Use vendor name for K210 SoC support
+  dt-bindings: Add Canaan vendor prefix
+  dt-binding: clock: Document canaan,k210-clk bindings
+  dt-bindings: reset: Document canaan,k210-rst bindings
+  dt-bindings: pinctrl: Document canaan,k210-fpioa bindings
+  dt-binding: mfd: Document canaan,k210-sysctl bindings
+  riscv: Add Canaan Kendryte K210 clock driver
+  riscv: Add Canaan Kendryte K210 FPIOA driver
+  riscv: Add Canaan Kendryte K210 reset controller
+  riscv: Update Canaan Kendryte K210 device tree
+  riscv: Add SiPeed MAIX BiT board device tree
+  riscv: Add SiPeed MAIX DOCK board device tree
+  riscv: Add SiPeed MAIX GO board device tree
+  riscv: Add SiPeed MAIXDUINO board device tree
+  riscv: Add Kendryte KD233 board device tree
+  riscv: Update Canaan Kendryte K210 defconfig
+  riscv: Add Canaan Kendryte K210 SD card defconfig
+
+ .../bindings/clock/canaan,k210-clk.yaml       |  55 +
+ .../bindings/mfd/canaan,k210-sysctl.yaml      | 116 +++
+ .../bindings/pinctrl/canaan,k210-fpioa.yaml   | 171 +++
+ .../bindings/reset/canaan,k210-rst.yaml       |  40 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  16 +
+ arch/riscv/Kconfig.socs                       |  38 +-
+ arch/riscv/Makefile                           |   2 +-
+ arch/riscv/boot/dts/Makefile                  |   2 +-
+ arch/riscv/boot/dts/canaan/Makefile           |   5 +
+ arch/riscv/boot/dts/canaan/k210.dtsi          | 625 +++++++++++
+ arch/riscv/boot/dts/canaan/k210_generic.dts   |  46 +
+ arch/riscv/boot/dts/canaan/k210_kd233.dts     | 178 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_bit.dts  | 227 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_dock.dts | 229 ++++
+ arch/riscv/boot/dts/canaan/k210_maix_go.dts   | 237 +++++
+ arch/riscv/boot/dts/canaan/k210_maixduino.dts | 201 ++++
+ arch/riscv/boot/dts/kendryte/Makefile         |   4 -
+ arch/riscv/boot/dts/kendryte/k210.dts         |  23 -
+ arch/riscv/boot/dts/kendryte/k210.dtsi        | 125 ---
+ arch/riscv/configs/nommu_k210_defconfig       |  39 +-
+ .../riscv/configs/nommu_k210_sdcard_defconfig |  93 ++
+ arch/riscv/include/asm/soc.h                  |  38 -
+ arch/riscv/kernel/entry.S                     |   9 +
+ arch/riscv/kernel/soc.c                       |  27 -
+ arch/riscv/kernel/time.c                      |   3 +
+ arch/riscv/mm/init.c                          |   6 +-
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-k210.c                        | 959 +++++++++++++++++
+ drivers/pinctrl/Kconfig                       |  13 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-k210.c                | 984 ++++++++++++++++++
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-k210.c                    | 141 +++
+ drivers/soc/Kconfig                           |   2 +-
+ drivers/soc/Makefile                          |   2 +-
+ drivers/soc/canaan/Kconfig                    |   9 +
+ drivers/soc/canaan/Makefile                   |   3 +
+ drivers/soc/canaan/k210-sysctl.c              |  79 ++
+ drivers/soc/kendryte/Kconfig                  |  14 -
+ drivers/soc/kendryte/Makefile                 |   3 -
+ drivers/soc/kendryte/k210-sysctl.c            | 260 -----
+ drivers/tty/serial/sifive.c                   |   1 +
+ include/dt-bindings/clock/k210-clk.h          |  61 +-
+ include/dt-bindings/pinctrl/k210-fpioa.h      | 276 +++++
+ include/dt-bindings/reset/k210-rst.h          |  42 +
+ include/soc/canaan/k210-sysctl.h              |  43 +
+ 49 files changed, 4939 insertions(+), 531 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+ create mode 100644 arch/riscv/boot/dts/canaan/Makefile
+ create mode 100644 arch/riscv/boot/dts/canaan/k210.dtsi
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_generic.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_kd233.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_bit.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_dock.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_go.dts
+ create mode 100644 arch/riscv/boot/dts/canaan/k210_maixduino.dts
+ delete mode 100644 arch/riscv/boot/dts/kendryte/Makefile
+ delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dts
+ delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dtsi
+ create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+ create mode 100644 drivers/clk/clk-k210.c
+ create mode 100644 drivers/pinctrl/pinctrl-k210.c
+ create mode 100644 drivers/reset/reset-k210.c
+ create mode 100644 drivers/soc/canaan/Kconfig
+ create mode 100644 drivers/soc/canaan/Makefile
+ create mode 100644 drivers/soc/canaan/k210-sysctl.c
+ delete mode 100644 drivers/soc/kendryte/Kconfig
+ delete mode 100644 drivers/soc/kendryte/Makefile
+ delete mode 100644 drivers/soc/kendryte/k210-sysctl.c
+ create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
+ create mode 100644 include/dt-bindings/reset/k210-rst.h
+ create mode 100644 include/soc/canaan/k210-sysctl.h
+
+-- 
+2.28.0
+
