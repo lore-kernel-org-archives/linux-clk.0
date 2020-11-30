@@ -2,123 +2,332 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F376C71156
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8647DC63777
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 22:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58134208FE
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 21:58:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eMjMdoHg"
+	by mail.kernel.org (Postfix) with ESMTP id 354A520709
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Nov 2020 22:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbgK3V61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Nov 2020 16:58:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:34005 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbgK3V60 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Nov 2020 16:58:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4ClJxg2YMkz9sRK;
-        Tue,  1 Dec 2020 08:57:42 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1606773465;
-        bh=nqVDwgyOEZiLm2s85MNpU0RJnN+/CWkXa1ePB8H74O0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eMjMdoHg1nj3aaR/ihevGuljfQKC+8k6BgWcY1goCbVsxBU0fJLF6W28Yyw2Miqnx
-         rE1s2cl00rCqtgbN0YwiOyZspQBteiX7ySTPs1JXQBndGt6HzXMEoTdgyQtSmOyqFJ
-         56Y/AshGjcuPsexS1vUPumZj6YvOjdB6mOqqXF9/0WDPfWDU3peL+IJ8P3gN5dro/9
-         x4luHkQy3MSzkcfysb/+XYsKgSuz8wEUhwpNmuCesaRULVrwxkEmQsiIP5v6AxlD4E
-         2RP4pweF2PjCnzlK/c4P0EbyhCzGxlb/6eCi4YpSHqdmviDAJPj0OUPXHHnFMGUYj5
-         XgG2n1VE9BzaA==
-Date:   Tue, 1 Dec 2020 08:57:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for
- portability
-Message-ID: <20201201085741.670f30d4@canb.auug.org.au>
-In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
-References: <20201130085743.1656317-1-geert+renesas@glider.be>
+        id S1730423AbgK3WH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Nov 2020 17:07:56 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:45472 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729461AbgK3WH4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Nov 2020 17:07:56 -0500
+Received: by mail-il1-f194.google.com with SMTP id w8so12878303ilg.12;
+        Mon, 30 Nov 2020 14:07:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Il5bX+C/6AFCcXPkSp4GDC8FUcjzfQ4UtKU2jfJxUuU=;
+        b=TyTx369moS42kfKTGXs0al3LkpHJtTmZARxEhU29reT0/yK7JayKuAm1hA3Rux3IFl
+         cXPBmw6d58bx18ZKCQpEbcBiguG6gdR+KE83XWlIrvOvrPB/uIBLILd+lMY2kKVgnmIL
+         gsr5TSm3MChZG+G7lfbAL1p26upLJUqfFlcCZDNnwMKMtWVHYYAUqvEbdcQwuKETfa+i
+         OX9lPo8bJSgL+FHiXNKoisL0Ms5tB7LuaptCgXexxxEkCZPxAukP2n1TU4hLhs0xNXT2
+         3+ksnG2ZsnZwbg0bsRrBHT5svOKsEzIAmKTLoWoIry/Cv2CLFP6MFS8IQOkt0tOj1wgF
+         961w==
+X-Gm-Message-State: AOAM530+ITqiy+GoJnarwwLQdZVijLPFR4JY9vdvX5zrT2pfrD5+JhK5
+        QDw4HxyrBhS4U7X08xX9+A==
+X-Google-Smtp-Source: ABdhPJyHEYIlPLINmOKAGg88zs45cA/PyIQKFe86oDTQlgjR4fA9EKs6gMw9Hbut0YzVaFwN0JE23w==
+X-Received: by 2002:a92:d03:: with SMTP id 3mr21496223iln.197.1606774034237;
+        Mon, 30 Nov 2020 14:07:14 -0800 (PST)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id o7sm8287994iov.1.2020.11.30.14.07.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 14:07:13 -0800 (PST)
+Received: (nullmailer pid 3117129 invoked by uid 1000);
+        Mon, 30 Nov 2020 22:07:11 -0000
+Date:   Mon, 30 Nov 2020 15:07:11 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Dongjiu Geng <gengdongjiu@huawei.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, vkoul@kernel.org,
+        dan.j.williams@intel.com, p.zabel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: Document the hi3559a clock bindings
+Message-ID: <20201130220711.GA3112118@robh.at.kernel.org>
+References: <20201119200129.28532-1-gengdongjiu@huawei.com>
+ <20201119200129.28532-2-gengdongjiu@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8CcZFUCd6vvSy81ZVtgxF0K";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201119200129.28532-2-gengdongjiu@huawei.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/8CcZFUCd6vvSy81ZVtgxF0K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Geert,
-
-On Mon, 30 Nov 2020 09:57:43 +0100 Geert Uytterhoeven <geert+renesas@glider=
-.be> wrote:
->
-> The R9A06G032 clock driver uses an array of packed structures to reduce
-> kernel size.  However, this array contains pointers, which are no longer
-> aligned naturally, and cannot be relocated on PPC64.  Hence when
-> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
-> PowerPC allyesconfig), the following warnings are produced:
->=20
->     WARNING: 136 bad relocations
->     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
->     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
->     ...
->=20
-> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
-> definition, trading a small size increase for portability.
->=20
-> This increases the 156-entry clock table by 1 byte per entry, but due to
-> the compiler generating more efficient code for unpacked accesses, the
-> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Nov 19, 2020 at 08:01:26PM +0000, Dongjiu Geng wrote:
+> Add DT bindings documentation for hi3559a SoC clock.
+> 
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
 > ---
-> v2:
->   - Fix authorship.
-> ---
->  drivers/clk/renesas/r9a06g032-clocks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../clock/hisilicon,hi3559av100-clock.yaml    |  66 +++++++
+>  include/dt-bindings/clock/hi3559av100-clock.h | 165 ++++++++++++++++++
+>  2 files changed, 231 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml b/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+> new file mode 100644
+> index 000000000000..0f531e8186d2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/hisilicon,hi3559av100-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Hisilicon SOC Clock for HI3559AV100
+> +
+> +maintainers:
+> +  - Dongjiu Geng <gengdongjiu@huawei.com>
+> +
+> +description: |
+> +  Hisilicon SOC clock control module which supports the clocks, resets and
+> +  power domains on HI3559AV100.
+> +
+> +  See also:
+> +    dt-bindings/clock/hi3559av100-clock.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - hisilicon,hi3559av100-clock
+> +      - hisilicon,hi3559av100-shub-clock
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 2
 
-Thanks.
+What's in each cell?
 
-I have added that to my fixes tree until it gets picked up elsewhere.
+> +
+> +  '#address-cells':
+> +    const: 2
+> +
+> +  '#size-cells':
+> +    const: 2
 
---=20
-Cheers,
-Stephen Rothwell
+#address-cells and #size-cells are for child nodes, but you have none so 
+drop them.
 
---Sig_/8CcZFUCd6vvSy81ZVtgxF0K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock: clock0@12010000 {
 
------BEGIN PGP SIGNATURE-----
+clock-controller@...
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/FatUACgkQAVBC80lX
-0Gwj4Qf7Bge2IGl5zmxh8L/d6Cxz8V2fApcuHXyQ2TF3PeQMWrF/07x4CKb6Ulka
-/l8LefVGxKMNJePlyDad7ZI2j893BnUiNbZIf78vbYdCvYMze/dZy7DJHPEjnYQI
-x90IS+NUTSWXI6HHZ2qDCZoCh+wrAXnKV29Gbi2tywb+F4eV9M7eu1s/XJHm80P1
-zHjiAClpipnbzl4O7LhOeKEkLfDFkv+6JX788FM5oYOoXXl7JKa2Cxw0DoUVSskN
-aXldweVNdjdlJWfQoDZ59So/HhcfS++W+6rrunrS+8nSCLQuK6rpop+hZzOvaaEB
-rxTngm9SqYXsCwnO0hq4Slv7Y4IkbQ==
-=/Pyh
------END PGP SIGNATURE-----
+> +            compatible = "hisilicon,hi3559av100-clock";
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            #clock-cells = <1>;
+> +            #reset-cells = <2>;
+> +            reg = <0x0 0x12010000 0x0 0x10000>;
+> +        };
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/hi3559av100-clock.h b/include/dt-bindings/clock/hi3559av100-clock.h
+> new file mode 100644
+> index 000000000000..88baa86cff85
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/hi3559av100-clock.h
+> @@ -0,0 +1,165 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
 
---Sig_/8CcZFUCd6vvSy81ZVtgxF0K--
+Don't care about non-GPL OS/users?
+
+> +/*
+> + * Copyright (c) 2019-2020, Huawei Tech. Co., Ltd.
+> + *
+> + * Author: Dongjiu Geng <gengdongjiu@huawei.com>
+> + */
+> +
+> +#ifndef __DTS_HI3559AV100_CLOCK_H
+> +#define __DTS_HI3559AV100_CLOCK_H
+> +
+> +/*  fixed   rate    */
+> +#define HI3559AV100_FIXED_1188M     1
+> +#define HI3559AV100_FIXED_1000M     2
+> +#define HI3559AV100_FIXED_842M      3
+> +#define HI3559AV100_FIXED_792M      4
+> +#define HI3559AV100_FIXED_750M      5
+> +#define HI3559AV100_FIXED_710M      6
+> +#define HI3559AV100_FIXED_680M      7
+> +#define HI3559AV100_FIXED_667M      8
+> +#define HI3559AV100_FIXED_631M      9
+> +#define HI3559AV100_FIXED_600M      10
+> +#define HI3559AV100_FIXED_568M      11
+> +#define HI3559AV100_FIXED_500M      12
+> +#define HI3559AV100_FIXED_475M      13
+> +#define HI3559AV100_FIXED_428M      14
+> +#define HI3559AV100_FIXED_400M      15
+> +#define HI3559AV100_FIXED_396M      16
+> +#define HI3559AV100_FIXED_300M      17
+> +#define HI3559AV100_FIXED_250M      18
+> +#define HI3559AV100_FIXED_198M      19
+> +#define HI3559AV100_FIXED_187p5M    20
+> +#define HI3559AV100_FIXED_150M      21
+> +#define HI3559AV100_FIXED_148p5M    22
+> +#define HI3559AV100_FIXED_125M      23
+> +#define HI3559AV100_FIXED_107M      24
+> +#define HI3559AV100_FIXED_100M      25
+> +#define HI3559AV100_FIXED_99M       26
+> +#define HI3559AV100_FIXED_74p25M    27
+> +#define HI3559AV100_FIXED_72M       28
+> +#define HI3559AV100_FIXED_60M       29
+> +#define HI3559AV100_FIXED_54M       30
+> +#define HI3559AV100_FIXED_50M       31
+> +#define HI3559AV100_FIXED_49p5M     32
+> +#define HI3559AV100_FIXED_37p125M   33
+> +#define HI3559AV100_FIXED_36M       34
+> +#define HI3559AV100_FIXED_32p4M     35
+> +#define HI3559AV100_FIXED_27M       36
+> +#define HI3559AV100_FIXED_25M       37
+> +#define HI3559AV100_FIXED_24M       38
+> +#define HI3559AV100_FIXED_12M       39
+> +#define HI3559AV100_FIXED_3M        40
+> +#define HI3559AV100_FIXED_1p6M      41
+> +#define HI3559AV100_FIXED_400K      42
+> +#define HI3559AV100_FIXED_100K      43
+> +#define HI3559AV100_FIXED_200M      44
+> +#define HI3559AV100_FIXED_75M       75
+> +
+> +#define HI3559AV100_I2C0_CLK    50
+> +#define HI3559AV100_I2C1_CLK    51
+> +#define HI3559AV100_I2C2_CLK    52
+> +#define HI3559AV100_I2C3_CLK    53
+> +#define HI3559AV100_I2C4_CLK    54
+> +#define HI3559AV100_I2C5_CLK    55
+> +#define HI3559AV100_I2C6_CLK    56
+> +#define HI3559AV100_I2C7_CLK    57
+> +#define HI3559AV100_I2C8_CLK    58
+> +#define HI3559AV100_I2C9_CLK    59
+> +#define HI3559AV100_I2C10_CLK   60
+> +#define HI3559AV100_I2C11_CLK   61
+> +
+> +#define HI3559AV100_SPI0_CLK    62
+> +#define HI3559AV100_SPI1_CLK    63
+> +#define HI3559AV100_SPI2_CLK    64
+> +#define HI3559AV100_SPI3_CLK    65
+> +#define HI3559AV100_SPI4_CLK    66
+> +#define HI3559AV100_SPI5_CLK    67
+> +#define HI3559AV100_SPI6_CLK    68
+> +
+> +#define HI3559AV100_EDMAC_CLK     69
+> +#define HI3559AV100_EDMAC_AXICLK  70
+> +#define HI3559AV100_EDMAC1_CLK    71
+> +#define HI3559AV100_EDMAC1_AXICLK 72
+> +#define HI3559AV100_VDMAC_CLK     73
+> +
+> +/*  mux clocks  */
+> +#define HI3559AV100_FMC_MUX     80
+> +#define HI3559AV100_SYSAPB_MUX  81
+> +#define HI3559AV100_UART_MUX    82
+> +#define HI3559AV100_SYSBUS_MUX  83
+> +#define HI3559AV100_A73_MUX     84
+> +#define HI3559AV100_MMC0_MUX    85
+> +#define HI3559AV100_MMC1_MUX    86
+> +#define HI3559AV100_MMC2_MUX    87
+> +#define HI3559AV100_MMC3_MUX    88
+> +
+> +/*  gate    clocks  */
+> +#define HI3559AV100_FMC_CLK     90
+> +#define HI3559AV100_UART0_CLK   91
+> +#define HI3559AV100_UART1_CLK   92
+> +#define HI3559AV100_UART2_CLK   93
+> +#define HI3559AV100_UART3_CLK   94
+> +#define HI3559AV100_UART4_CLK   95
+> +#define HI3559AV100_MMC0_CLK    96
+> +#define HI3559AV100_MMC1_CLK    97
+> +#define HI3559AV100_MMC2_CLK    98
+> +#define HI3559AV100_MMC3_CLK    99
+> +
+> +#define HI3559AV100_ETH_CLK         100
+> +#define HI3559AV100_ETH_MACIF_CLK   101
+> +#define HI3559AV100_ETH1_CLK        102
+> +#define HI3559AV100_ETH1_MACIF_CLK  103
+> +
+> +/*  complex */
+> +#define HI3559AV100_MAC0_CLK                110
+> +#define HI3559AV100_MAC1_CLK                111
+> +#define HI3559AV100_SATA_CLK                112
+> +#define HI3559AV100_USB_CLK                 113
+> +#define HI3559AV100_USB1_CLK                114
+> +
+> +/* pll clocks */
+> +#define HI3559AV100_APLL_CLK                250
+> +#define HI3559AV100_GPLL_CLK                251
+> +
+> +#define HI3559AV100_CRG_NR_CLKS	            256
+> +
+> +#define HI3559AV100_SHUB_SOURCE_SOC_24M	    0
+> +#define HI3559AV100_SHUB_SOURCE_SOC_200M    1
+> +#define HI3559AV100_SHUB_SOURCE_SOC_300M    2
+> +#define HI3559AV100_SHUB_SOURCE_PLL         3
+> +#define HI3559AV100_SHUB_SOURCE_CLK         4
+> +
+> +#define HI3559AV100_SHUB_I2C0_CLK           10
+> +#define HI3559AV100_SHUB_I2C1_CLK           11
+> +#define HI3559AV100_SHUB_I2C2_CLK           12
+> +#define HI3559AV100_SHUB_I2C3_CLK           13
+> +#define HI3559AV100_SHUB_I2C4_CLK           14
+> +#define HI3559AV100_SHUB_I2C5_CLK           15
+> +#define HI3559AV100_SHUB_I2C6_CLK           16
+> +#define HI3559AV100_SHUB_I2C7_CLK           17
+> +
+> +#define HI3559AV100_SHUB_SPI_SOURCE_CLK     20
+> +#define HI3559AV100_SHUB_SPI4_SOURCE_CLK    21
+> +#define HI3559AV100_SHUB_SPI0_CLK           22
+> +#define HI3559AV100_SHUB_SPI1_CLK           23
+> +#define HI3559AV100_SHUB_SPI2_CLK           24
+> +#define HI3559AV100_SHUB_SPI3_CLK           25
+> +#define HI3559AV100_SHUB_SPI4_CLK           26
+> +
+> +#define HI3559AV100_SHUB_UART_CLK_32K       30
+> +#define HI3559AV100_SHUB_UART_SOURCE_CLK    31
+> +#define HI3559AV100_SHUB_UART_DIV_CLK       32
+> +#define HI3559AV100_SHUB_UART0_CLK          33
+> +#define HI3559AV100_SHUB_UART1_CLK          34
+> +#define HI3559AV100_SHUB_UART2_CLK          35
+> +#define HI3559AV100_SHUB_UART3_CLK          36
+> +#define HI3559AV100_SHUB_UART4_CLK          37
+> +#define HI3559AV100_SHUB_UART5_CLK          38
+> +#define HI3559AV100_SHUB_UART6_CLK          39
+> +
+> +#define HI3559AV100_SHUB_EDMAC_CLK          40
+> +
+> +#define HI3559AV100_SHUB_NR_CLKS            50
+> +
+> +#endif  /* __DTS_HI3559AV100_CLOCK_H */
+> +
+> -- 
+> 2.17.1
+> 
