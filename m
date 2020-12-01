@@ -2,116 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347B0C64E8A
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75CBC64E8A
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 10:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCB0A206C0
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722F8206DF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 10:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFhBUOqf"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IHjAgsfE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbgLAJri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Dec 2020 04:47:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56382 "EHLO mail.kernel.org"
+        id S1729313AbgLAKEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Dec 2020 05:04:00 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:57979 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387466AbgLAJri (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Dec 2020 04:47:38 -0500
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725912AbgLAKEA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:04:00 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60D10206C0;
-        Tue,  1 Dec 2020 09:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606816017;
-        bh=w3kwOokByEnA8Ps2WHcCoXlwpesQvmrePz9i2AHTGMk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OFhBUOqf+6W7jt8MjlUYx5iOfaUyfRU3ijEHBmqXxtNKXtr2KozSOuYlV6h9k4FGz
-         IukiyBuEaXrcHaz3UVoPD9/bqb+xoa9CiuH1DYbntVau3Da8o9QZO59Yz190GOuKow
-         l/hv5CbXUNrx5xrtmhNEdKk6Tj3EUwc8FEud9v8M=
-Received: by pali.im (Postfix)
-        id AE07C11CF; Tue,  1 Dec 2020 10:46:54 +0100 (CET)
-Date:   Tue, 1 Dec 2020 10:46:54 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Terry Zhou <bjzhou@marvell.com>,
-        Konstantin Porotchkin <kostap@marvell.com>
-Subject: Re: [PATCH] clk: mvebu: a3700: fix the XTAL MODE pin to MPP1_9
-Message-ID: <20201201094654.n3w632cmtnsg2irh@pali>
-References: <20201106100039.11385-1-pali@kernel.org>
- <20201106115118.43eab492@kernel.org>
- <20201113101919.wega756egs7dinth@pali>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Cld2r6g3fz9sVq;
+        Tue,  1 Dec 2020 21:03:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1606816997;
+        bh=FjlfdSawU3ve6xceGaXc0QUrfyKru3+HxazOT6mqyKY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IHjAgsfE79WFoxv6HT962TApwskmVwbg+TFoy4P2amGUPldXPj7dEfM9nw3ZY9obF
+         6mv9vDBWM37rVBi+54ouahzhn1+Q34Ksg15gbui959tLFvSVNcUPtIZlilSTAiFohj
+         IcHZNSm35vYFtawWC4FXpdJMm9m3IAi63A3pchrKKhC4v9beRrKFQ+NdiNNOrR9zVN
+         N2udVtB8YtgPnBPY91MYCCsEIsZnEkZu30wmmskANsb7NMk2hZn8Fx/jcb9+xjRuKR
+         6Pbd0kclOvdE10i7wstCH2KKjfh5QA5TVwcWDvtaFoYMc8dIMoqAHDLF62d0twCFqI
+         zKH07q16tc6oA==
+Date:   Tue, 1 Dec 2020 21:03:15 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for
+ portability
+Message-ID: <20201201210315.45a73673@canb.auug.org.au>
+In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
+References: <20201130085743.1656317-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201113101919.wega756egs7dinth@pali>
-User-Agent: NeoMutt/20180716
+Content-Type: multipart/signed; boundary="Sig_/x=8K5Ql==6p6MPT1Tt8f7jL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PING! I would like to remind this patch.
+--Sig_/x=8K5Ql==6p6MPT1Tt8f7jL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 13 November 2020 11:19:19 Pali Rohár wrote:
-> Michael, Stephen: Could you take this clk patch?
-> 
-> On Friday 06 November 2020 11:51:18 Marek Behún wrote:
-> > Also, this is how A3720 WTMI code and ATF determines XTAL clock rate.
-> > No reason for kernel to do it differently.
-> > 
-> > Reviewed-by: Marek Behún <kabel@kernel.org>
-> > 
-> > On Fri,  6 Nov 2020 11:00:39 +0100
-> > Pali Rohár <pali@kernel.org> wrote:
-> > 
-> > > From: Terry Zhou <bjzhou@marvell.com>
-> > > 
-> > > There is an error in the current code that the XTAL MODE
-> > > pin was set to NB MPP1_31 which should be NB MPP1_9.
-> > > The latch register of NB MPP1_9 has different offset of 0x8.
-> > > 
-> > > Signed-off-by: Terry Zhou <bjzhou@marvell.com>
-> > > [pali: Fix pin name in commit message]
-> > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > Fixes: 7ea8250406a6 ("clk: mvebu: Add the xtal clock for Armada 3700 SoC")
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > ---
-> > > This patch is present in Marvell SDK and also in Marvell's kernel fork:
-> > > https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/80d4cec4cef8282e5ac3aaf98ce3e68fb299a134
-> > > 
-> > > Konstantin Porotchkin wrote on Github that Gregory Clement was notified
-> > > about this patch, but as this patch is still not in mainline kernel I'm
-> > > sending it again for review.
-> > > 
-> > > In original commit message (only in commit message, not code) was
-> > > specified MPP9 pin on South Bridge, but correct is North Bridge.
-> > > ---
-> > >  drivers/clk/mvebu/armada-37xx-xtal.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-> > > index e9e306d4e9af..41271351cf1f 100644
-> > > --- a/drivers/clk/mvebu/armada-37xx-xtal.c
-> > > +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-> > > @@ -13,8 +13,8 @@
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/regmap.h>
-> > >  
-> > > -#define NB_GPIO1_LATCH	0xC
-> > > -#define XTAL_MODE	    BIT(31)
-> > > +#define NB_GPIO1_LATCH	0x8
-> > > +#define XTAL_MODE	    BIT(9)
-> > >  
-> > >  static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
-> > >  {
-> > 
+Hi Geert,
+
+On Mon, 30 Nov 2020 09:57:43 +0100 Geert Uytterhoeven <geert+renesas@glider=
+.be> wrote:
+>
+> The R9A06G032 clock driver uses an array of packed structures to reduce
+> kernel size.  However, this array contains pointers, which are no longer
+> aligned naturally, and cannot be relocated on PPC64.  Hence when
+> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
+> PowerPC allyesconfig), the following warnings are produced:
+>=20
+>     WARNING: 136 bad relocations
+>     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
+>     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
+>     ...
+>=20
+> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
+> definition, trading a small size increase for portability.
+>=20
+> This increases the 156-entry clock table by 1 byte per entry, but due to
+> the compiler generating more efficient code for unpacked accesses, the
+> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Fix authorship.
+> ---
+>  drivers/clk/renesas/r9a06g032-clocks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
+/r9a06g032-clocks.c
+> index d900f6bf53d0b944..892e91b92f2c80f5 100644
+> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> @@ -55,7 +55,7 @@ struct r9a06g032_clkdesc {
+>  			u16 sel, g1, r1, g2, r2;
+>  		} dual;
+>  	};
+> -} __packed;
+> +};
+> =20
+>  #define I_GATE(_clk, _rst, _rdy, _midle, _scon, _mirack, _mistat) \
+>  	{ .gate =3D _clk, .reset =3D _rst, \
+> --=20
+> 2.25.1
+>=20
+
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au> # PowerPC allyesconfig b=
+uild
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/x=8K5Ql==6p6MPT1Tt8f7jL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/GFOQACgkQAVBC80lX
+0Gx20wgAi6BiXoJObYe8V+LMkb6ZXfIlTf41CHmeVC6NHNznore2v1594BTP0Zgf
+gTyOp2mkrn+sKaunxMzoZt3aEwtKkSUs0t5ksN7WIS/Ilnp6RDqtUr3hk5L+Ig0H
+M6GBg+78RiPDvAgF5xjxGTaDh5SCtB1MFNqGy+Yf1pe+p6JZtpBqhaXDLv+cvHSV
+45Fj1RLJ23HYERQ/PUBPHwHI3hVco5EI5eEDuaXEJWGCtsAfWXsj3AYIylx3Emyp
+zYlfxgr5ZVEKsTY8DJBgVvn5K85hjFIy7ljRx+3kByQh6IyPpWWUDoPAS5TfepCj
+YvgHxHtnnei5Urke1xFol0P0jasF2A==
+=A+fg
+-----END PGP SIGNATURE-----
+
+--Sig_/x=8K5Ql==6p6MPT1Tt8f7jL--
