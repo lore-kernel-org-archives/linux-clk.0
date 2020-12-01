@@ -2,41 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD3EC83019
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 11:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42407C64E90
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 12:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B74B92080A
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 11:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7EE120857
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 12:36:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="PHuEMAw+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iELuIdiI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbgLALg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Dec 2020 06:36:28 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:43819 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730696AbgLALg2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Dec 2020 06:36:28 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id EA6C62400FD
-        for <linux-clk@vger.kernel.org>; Tue,  1 Dec 2020 12:35:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1606822528; bh=RNuzN2v+xN2WGT4Vb5WR96l0+9Yt3dhLly0LH5n48z0=;
-        h=To:Cc:From:Subject:Date:From;
-        b=PHuEMAw+/2+X6Pv6xENd1NAO8AXoyzTsLVT9ItkozdQxFyfp3QQfCJM5UZQDhtz1q
-         /VD5G3HODWbQUt0K5oRuxJBqtPDISbDjU3W2l3Vdv58isa0JVjK+oM+FqFHaPqE+i5
-         oReAB4B13MXaOP7JQHSr+O8bcBEDNV+bD8aLVA5dTVTHjIcYwzOpkn6RZ5KOsW5PPR
-         HSI+TWMQKXf66OLZ939gZnCvecJKfV6zO0IqBDvcyfSOcIPqqwLE5U3CfNSL+sCycB
-         WUAFK3xKDThd0TiVAxaK9VHMvo8qgkodzBaXEfkmCzxzAH9HML5Re6afhPbc6FGLW+
-         3dsRG51pJK3hA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4Clg5929S5z9rxY;
-        Tue,  1 Dec 2020 12:35:25 +0100 (CET)
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        id S1726619AbgLAMgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Dec 2020 07:36:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbgLAMgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Dec 2020 07:36:18 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF93C0613D4
+        for <linux-clk@vger.kernel.org>; Tue,  1 Dec 2020 04:35:37 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id k14so2404361wrn.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Dec 2020 04:35:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=PBhvOuHrmZrmozsg5XMjYiCxFZYNQufxltK5JmbALq0=;
+        b=iELuIdiIsfbdTnon0RwdU4ViNQR1lvN5o7hq43GDB9jGHjUiYuwgu5FmAFJmelXsRu
+         CiXYq36chppJ3ZMGiNSg1gRp6W2k0/QeIhOKsyC9bnQYiVnXGE8PpdaX4sccfG0f/dnZ
+         Kk/i61rssRWKF/RKdjMYhBAgmvtpCzV1V8mktOCk+LGlmwXaZstpn9txNyQTpJeTD8tX
+         e3oTmQ0SeRL0FU+/uK4IBW1EbDiog5qPRC//HnHDFNdS3tJk7urVMuOrqoTXbWogwt6F
+         REYqrircBdTXStuh41xD2I2hQhOhB7GegJzYw3KsjCekuatSjlZ5xTYvq3tvH1P63Be5
+         Enhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PBhvOuHrmZrmozsg5XMjYiCxFZYNQufxltK5JmbALq0=;
+        b=Y1VhjjWPMi1CwuLy6631zbBbpZvf6/0vF7qXobZePcSsW6ZDx+FBLQNPBHZRLa5cHJ
+         7rEgTSZdw8f6wPOqK4PbuZBLjP//tgF65PZBkqHuAraV0nZs48187zg8WkTGPyKVT++T
+         GIsIR80DVeLwtF+8R3U2ukYww3CUbwY2B9rsQOQIjb158mP85fdlhi3cCAIZwVHXzcXx
+         s8Ut5am6s7rnjvF4MSQwTO04h1W0DjPjB2ktg6uORIzS8oMjC/os6tQoRVlQEIyNvui8
+         kpDQhVqouW43DiepqlmpY6WfDgPwo/aUoqSuKU8wsxxfJAnw8qITVJTvFOZc/aAsZFcl
+         TGKQ==
+X-Gm-Message-State: AOAM5327tzqyLujmML7OSdx+5HUKfae6fANtTx/YRcQztB5902scwne2
+        JWjXu/vZwhInlJV4Ye8jEmgH6TiQpcQKsg==
+X-Google-Smtp-Source: ABdhPJzolK1z/MwyGdNPMWGm17UWGGNNhYA+6ywXkJaIKSw6bgsLCHCx+sDsqURy9VxE+NprDyS/IQ==
+X-Received: by 2002:adf:fe90:: with SMTP id l16mr3570046wrr.194.1606826136251;
+        Tue, 01 Dec 2020 04:35:36 -0800 (PST)
+Received: from MacBook-Pro.local ([212.45.64.13])
+        by smtp.googlemail.com with ESMTPSA id l14sm2683462wmi.33.2020.12.01.04.35.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Dec 2020 04:35:35 -0800 (PST)
+Subject: Re: question: interconnect: changes in 5.10 / imx8mq ?
+To:     Martin Kepplinger <martink@posteo.de>,
         Leonard Crestez <cdleonard@gmail.com>, akashast@codeaurora.org,
         Shawn Guo <shawnguo@kernel.org>, kernel@pengutronix.de
 Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
@@ -50,14 +72,12 @@ References: <c110af2f-635a-71f5-735c-1346b7af0ef9@posteo.de>
  <95ae2a9e-f0f7-fcfb-b113-c69286e85bad@posteo.de>
  <fa823263-4d1d-7f5c-2b25-12d450129c46@posteo.de>
  <a6e73aba-3dbc-51ee-f9f5-e6c32a0112c2@linaro.org>
-From:   Martin Kepplinger <martink@posteo.de>
-Subject: Re: question: interconnect: changes in 5.10 / imx8mq ?
-Message-ID: <a97dd90c-57d2-9e74-523f-24c9556a933a@posteo.de>
-Date:   Tue, 1 Dec 2020 12:35:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+ <a97dd90c-57d2-9e74-523f-24c9556a933a@posteo.de>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <d216ef41-46f0-59ff-5a9b-64c5cb80d26d@linaro.org>
+Date:   Tue, 1 Dec 2020 14:35:34 +0200
 MIME-Version: 1.0
-In-Reply-To: <a6e73aba-3dbc-51ee-f9f5-e6c32a0112c2@linaro.org>
+In-Reply-To: <a97dd90c-57d2-9e74-523f-24c9556a933a@posteo.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -65,118 +85,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01.12.20 10:10, Georgi Djakov wrote:
-> On 12/1/20 02:36, Martin Kepplinger wrote:
->> On 30.11.20 23:10, Martin Kepplinger wrote:
->>> On 30.11.20 22:18, Georgi Djakov wrote:
->>>> On 30.11.20 22:34, Martin Kepplinger wrote:
->>>>> hi,
->>>>>
->>>>> what I've used on v5.9 on imx8mq in order to hook up dram frequency 
->>>>> to interconnect (via mxsfb/lcdif) - and has worked fine - is:
->>>>>
->>>>> * add the NOC node description with "#interconnect-cells = <1>;"
->>>>> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/8a6b8486a3e94e2886bde01000f9532e03d243a4 
->>>>>
->>>>> (original author is Leonard. I'll preserve authorship when submitting)
->>>>>
->>>>> * add "interconnects = <&noc IMX8MQ_ICM_LCDIF &noc IMX8MQ_ICS_DRAM>;
->>>>> " to lcdif:
->>>>> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/6c4bbcdc315da01a9dc8bbda36290587ce1ed33a 
->>>>
->>>>
->>>>
->>>>
->>>> [..]
->>>>>
->>>>>   node                                  tag          avg         peak
->>>>> --------------------------------------------------------------------
->>>>> NOC                                          2147483647   2147483647
->>>>>    30320000.lcd-controller                0            0            0
->>>>> DRAM                                         2147483647   2147483647
->>>>>    30320000.lcd-controller                0            0            0
->>>>> (...)
->>>>>
->>>>>
->>>>>
->>>>> what am I doing wrong on recent kernels?
->>>>
->>>> Hi Martin,
->>>> This looks related to sync_state. Please try the change below.
->>>> It would be nice to get these DT patches merged into mainline.
+On 1.12.20 13:35, Martin Kepplinger wrote:
+> On 01.12.20 10:10, Georgi Djakov wrote:
+>> On 12/1/20 02:36, Martin Kepplinger wrote:
+>>> On 30.11.20 23:10, Martin Kepplinger wrote:
+>>>> On 30.11.20 22:18, Georgi Djakov wrote:
+>>>>> On 30.11.20 22:34, Martin Kepplinger wrote:
+[..]
 >>>
->>> that's the plan. I'll send them soon.
+>>> but there follows the next problem. it looks imx8m specific:
 >>>
->>>>
->>>> Thanks,
->>>> Georgi
->>>>
->>>> diff --git a/drivers/interconnect/imx/imx8mq.c 
->>>> b/drivers/interconnect/imx/imx8mq.c
->>>> index ba43a15aefec..9bb951b075e9 100644
->>>> --- a/drivers/interconnect/imx/imx8mq.c
->>>> +++ b/drivers/interconnect/imx/imx8mq.c
->>>> @@ -94,6 +94,7 @@ static struct platform_driver imx8mq_icc_driver = {
->>>>       .remove = imx8mq_icc_remove,
->>>>       .driver = {
->>>>           .name = "imx8mq-interconnect",
->>>> +        .sync_state = icc_sync_state,
->>>>       },
->>>>   };
+>>> On the librem5-devkit where I initially tested, switching works. FYI 
+>>> we have the 2 frequencies:
+>>> https://source.puri.sm/martin.kepplinger/linux-next/-/blob/5.10-rc5/librem5__integration/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts#L283 
 >>>
->>> that's exactly it. thanks a lot!
+>>> (the opp table also to be submitted to mainline soon)
 >>>
->>>                             martin
+>>> On the Librem5 itself (different SoC revision, different frequencies 
+>>> available) it fails:
+>>> https://source.puri.sm/martin.kepplinger/linux-next/-/blob/5.10-rc5/librem5__integration/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi#L387 
+>>>
+>>>
+>>> When I "request 0" (or disable the icc path) in order to switch to 
+>>> 25Mhz I now get:
+>>>
+>>> [  129.391755] imx8m-ddrc-devfreq 3d400000.memory-controller: failed 
+>>> to set dram_apb parent: -16
+>>> [  129.391959] imx8m-ddrc-devfreq 3d400000.memory-controller: ddrc 
+>>> failed freq switch to 25000000 from 800000000: error -16. now at 
+>>> 25000000
+>>> [  129.406133] imx8m-ddrc-devfreq 3d400000.memory-controller: failed 
+>>> to update frequency from PM QoS (-16)
 >>
->> but there follows the next problem. it looks imx8m specific:
+>> I am not familiar with the clock tree of this platform, but it looks 
+>> like -EBUSY is returned when the we are trying to change the parent of 
+>> the clock.
 >>
->> On the librem5-devkit where I initially tested, switching works. FYI 
->> we have the 2 frequencies:
->> https://source.puri.sm/martin.kepplinger/linux-next/-/blob/5.10-rc5/librem5__integration/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts#L283 
+>>> and the system hangs at this point.
+>>>
+>>> I'm not aware of any changes we do in our tree in that area to mainline.
+>>>
+>>> Only removing all but one frequency in the opp node, leaving only 
+>>> opp-800M, "works around" (not really) the error (just mentioning as a 
+>>> data point if that helps). I hope that's not misleading - no idea 
+>>> where exactly the problem lies.
 >>
->> (the opp table also to be submitted to mainline soon)
+>> When there is only a single frequency, then probably we do not try to 
+>> change the
+>> mux settings and that's why it does not hang. Maybe check the clock 
+>> tree and if
+>> all needed clocks and branches are enabled.
 >>
->> On the Librem5 itself (different SoC revision, different frequencies 
->> available) it fails:
->> https://source.puri.sm/martin.kepplinger/linux-next/-/blob/5.10-rc5/librem5__integration/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi#L387 
->>
->>
->> When I "request 0" (or disable the icc path) in order to switch to 
->> 25Mhz I now get:
->>
->> [  129.391755] imx8m-ddrc-devfreq 3d400000.memory-controller: failed 
->> to set dram_apb parent: -16
->> [  129.391959] imx8m-ddrc-devfreq 3d400000.memory-controller: ddrc 
->> failed freq switch to 25000000 from 800000000: error -16. now at 25000000
->> [  129.406133] imx8m-ddrc-devfreq 3d400000.memory-controller: failed 
->> to update frequency from PM QoS (-16)
 > 
-> I am not familiar with the clock tree of this platform, but it looks 
-> like -EBUSY is returned when the we are trying to change the parent of 
-> the clock.
-> 
->> and the system hangs at this point.
->>
->> I'm not aware of any changes we do in our tree in that area to mainline.
->>
->> Only removing all but one frequency in the opp node, leaving only 
->> opp-800M, "works around" (not really) the error (just mentioning as a 
->> data point if that helps). I hope that's not misleading - no idea 
->> where exactly the problem lies.
-> 
-> When there is only a single frequency, then probably we do not try to 
-> change the
-> mux settings and that's why it does not hang. Maybe check the clock tree 
-> and if
-> all needed clocks and branches are enabled.
-> 
+> thanks for taking the time here. I don't see notable changes to the 
+> clock tree compared to 5.9. Specifically, "dram_apb" where reparenting 
+> fails, is running on 5.10 too.
 
-thanks for taking the time here. I don't see notable changes to the 
-clock tree compared to 5.9. Specifically, "dram_apb" where reparenting 
-fails, is running on 5.10 too.
+It could be a DT change or something else.. Maybe try running git bisect
+and see if it gives any clue.
 
-It's strange that I see this error on imx8mq-librem5 but not on 
-imx8mq-librem5-devkit.
+Thanks,
+Georgi
 
-thanks,
-                              martin
+> It's strange that I see this error on imx8mq-librem5 but not on 
+> imx8mq-librem5-devkit.
