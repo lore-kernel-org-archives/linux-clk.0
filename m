@@ -2,111 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0BBC83011
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347B0C64E8A
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7A8F206CB
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCB0A206C0
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 09:47:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFhBUOqf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbgLAJlW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Dec 2020 04:41:22 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46858 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbgLAJlW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Dec 2020 04:41:22 -0500
-Received: by mail-ot1-f68.google.com with SMTP id z23so1029137oti.13;
-        Tue, 01 Dec 2020 01:41:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vmburLdzMZVoTI9RJt73JfvngZccAhArSX6w0ehlMGU=;
-        b=DJiwFHVgF2eyuWDIfbajPUj7hyEXWJUSNMZ8JoPzR/MOmKJu16fMkfXUu2+sAOtn2j
-         05PUXyreDN9JaOM7c2oWIoesHarXEVB7xAINsDuP56n6wGSalmfZVNnxzxPiLw0dEW8M
-         1Pp9YFM0F4NxdE0/6XzY43twWKWPB0mocClxlMA37Yzn87vTq+MBQACU09nUpUTZLjZO
-         M9Bzxrv6OySYQ3i32U6s5lI6lJeXeS4skUelHqMOsY3wFC1qwE54sgpx1LVR9E9Zfpxx
-         7o99/20M6jSR/TZqXj2jxSTKcO3zkAsCNMU7zomQxxJfBC4wv+/NENoWtW4XTIWQ7/Is
-         GcAg==
-X-Gm-Message-State: AOAM532Kx9LZB0sRsr2bQviNEjXJsV9LtZRX04a65+Fgc4529DXFaW5F
-        aO6NHOf/vtrdPpsaSvojeBPS38+4MOd5iwJm5T4=
-X-Google-Smtp-Source: ABdhPJyBSiaXmquOHT4sYGOidnZ1HN/Bou0gocyPltQemKL9W1PU2qA9upmXueyNHBCDM3S7Ff4bIfAjW92KbKtla90=
-X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr1274660oth.250.1606815641429;
- Tue, 01 Dec 2020 01:40:41 -0800 (PST)
+        id S1727892AbgLAJri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Dec 2020 04:47:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387466AbgLAJri (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Dec 2020 04:47:38 -0500
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60D10206C0;
+        Tue,  1 Dec 2020 09:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606816017;
+        bh=w3kwOokByEnA8Ps2WHcCoXlwpesQvmrePz9i2AHTGMk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OFhBUOqf+6W7jt8MjlUYx5iOfaUyfRU3ijEHBmqXxtNKXtr2KozSOuYlV6h9k4FGz
+         IukiyBuEaXrcHaz3UVoPD9/bqb+xoa9CiuH1DYbntVau3Da8o9QZO59Yz190GOuKow
+         l/hv5CbXUNrx5xrtmhNEdKk6Tj3EUwc8FEud9v8M=
+Received: by pali.im (Postfix)
+        id AE07C11CF; Tue,  1 Dec 2020 10:46:54 +0100 (CET)
+Date:   Tue, 1 Dec 2020 10:46:54 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Terry Zhou <bjzhou@marvell.com>,
+        Konstantin Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH] clk: mvebu: a3700: fix the XTAL MODE pin to MPP1_9
+Message-ID: <20201201094654.n3w632cmtnsg2irh@pali>
+References: <20201106100039.11385-1-pali@kernel.org>
+ <20201106115118.43eab492@kernel.org>
+ <20201113101919.wega756egs7dinth@pali>
 MIME-Version: 1.0
-References: <20201130234829.118298-1-damien.lemoal@wdc.com> <20201130234829.118298-13-damien.lemoal@wdc.com>
-In-Reply-To: <20201130234829.118298-13-damien.lemoal@wdc.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 1 Dec 2020 10:40:30 +0100
-Message-ID: <CAMuHMdX_HOQFm-9PXgsuOEK7BYu0B76CESkLmK4CH+qF_0T0yw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/21] riscv: Add Canaan Kendryte K210 FPIOA driver
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201113101919.wega756egs7dinth@pali>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Damien,
+PING! I would like to remind this patch.
 
-On Tue, Dec 1, 2020 at 12:50 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
-> Add the pinctrl-k210.c pinctrl driver for the Canaan Kendryte K210
-> field programmable IO array (FPIOA) to allow configuring the SoC pin
-> functions. The K210 has 48 programmable pins which can take any of 256
-> possible functions.
->
-> This patch is inspired from the k210 pinctrl driver for the u-boot
-> project and contains many direct contributions from Sean Anderson.
->
-> The MAINTAINERS file is updated to list myself as maintainer of this new
-> driver.
->
-> Signed-off-by: Sean Anderson <seanga2@gmail.com>
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-
-Thanks for your patch!
-
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3826,10 +3826,13 @@ CANAAN/KENDRYTE K210 RISC-V SOC SUPPORT
->  M:     Damien Le Moal <damien.lemoal@wdc.com>
->  L:     linux-riscv@lists.infradead.org
->  L:     linux-clk@vger.kernel.org (clock driver)
-> +L:     linux-gpio@vger.kernel.org (pinctrl driver)
->  S:     Maintained
->  F:     Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
->  F:     Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
-> +F:     Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
->  F:     drivers/clk/clk-k210.c
-> +F:     drivers/pinctrl/pinctrl-k210.c
->  F:     drivers/soc/canaan/
->  F:     include/soc/canaan/
-
-Please create separate sections for the clock and pinctrl drivers,
-to avoid all 3 mailing lists being suggested by get_maintainers for
-all changes to any of the file patterns.  People will blindly use the
-get_maintainers scripts' output.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On Friday 13 November 2020 11:19:19 Pali Rohár wrote:
+> Michael, Stephen: Could you take this clk patch?
+> 
+> On Friday 06 November 2020 11:51:18 Marek Behún wrote:
+> > Also, this is how A3720 WTMI code and ATF determines XTAL clock rate.
+> > No reason for kernel to do it differently.
+> > 
+> > Reviewed-by: Marek Behún <kabel@kernel.org>
+> > 
+> > On Fri,  6 Nov 2020 11:00:39 +0100
+> > Pali Rohár <pali@kernel.org> wrote:
+> > 
+> > > From: Terry Zhou <bjzhou@marvell.com>
+> > > 
+> > > There is an error in the current code that the XTAL MODE
+> > > pin was set to NB MPP1_31 which should be NB MPP1_9.
+> > > The latch register of NB MPP1_9 has different offset of 0x8.
+> > > 
+> > > Signed-off-by: Terry Zhou <bjzhou@marvell.com>
+> > > [pali: Fix pin name in commit message]
+> > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > Fixes: 7ea8250406a6 ("clk: mvebu: Add the xtal clock for Armada 3700 SoC")
+> > > Cc: stable@vger.kernel.org
+> > > 
+> > > ---
+> > > This patch is present in Marvell SDK and also in Marvell's kernel fork:
+> > > https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/80d4cec4cef8282e5ac3aaf98ce3e68fb299a134
+> > > 
+> > > Konstantin Porotchkin wrote on Github that Gregory Clement was notified
+> > > about this patch, but as this patch is still not in mainline kernel I'm
+> > > sending it again for review.
+> > > 
+> > > In original commit message (only in commit message, not code) was
+> > > specified MPP9 pin on South Bridge, but correct is North Bridge.
+> > > ---
+> > >  drivers/clk/mvebu/armada-37xx-xtal.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+> > > index e9e306d4e9af..41271351cf1f 100644
+> > > --- a/drivers/clk/mvebu/armada-37xx-xtal.c
+> > > +++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+> > > @@ -13,8 +13,8 @@
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/regmap.h>
+> > >  
+> > > -#define NB_GPIO1_LATCH	0xC
+> > > -#define XTAL_MODE	    BIT(31)
+> > > +#define NB_GPIO1_LATCH	0x8
+> > > +#define XTAL_MODE	    BIT(9)
+> > >  
+> > >  static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
+> > >  {
+> > 
