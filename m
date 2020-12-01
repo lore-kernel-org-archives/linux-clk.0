@@ -2,140 +2,203 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D75CBC64E8A
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 10:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5ECC83011
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 11:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 722F8206DF
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 10:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB81E20809
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Dec 2020 11:05:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IHjAgsfE"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qLt7Xhv6";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="hqnbUZF+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbgLAKEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Dec 2020 05:04:00 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgLAKEA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:04:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Cld2r6g3fz9sVq;
-        Tue,  1 Dec 2020 21:03:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1606816997;
-        bh=FjlfdSawU3ve6xceGaXc0QUrfyKru3+HxazOT6mqyKY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IHjAgsfE79WFoxv6HT962TApwskmVwbg+TFoy4P2amGUPldXPj7dEfM9nw3ZY9obF
-         6mv9vDBWM37rVBi+54ouahzhn1+Q34Ksg15gbui959tLFvSVNcUPtIZlilSTAiFohj
-         IcHZNSm35vYFtawWC4FXpdJMm9m3IAi63A3pchrKKhC4v9beRrKFQ+NdiNNOrR9zVN
-         N2udVtB8YtgPnBPY91MYCCsEIsZnEkZu30wmmskANsb7NMk2hZn8Fx/jcb9+xjRuKR
-         6Pbd0kclOvdE10i7wstCH2KKjfh5QA5TVwcWDvtaFoYMc8dIMoqAHDLF62d0twCFqI
-         zKH07q16tc6oA==
-Date:   Tue, 1 Dec 2020 21:03:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for
- portability
-Message-ID: <20201201210315.45a73673@canb.auug.org.au>
-In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
-References: <20201130085743.1656317-1-geert+renesas@glider.be>
+        id S1727569AbgLALFQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Dec 2020 06:05:16 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:43870 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbgLALFP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Dec 2020 06:05:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606820714; x=1638356714;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=4j83+Cmq11iXD7HQVZ0JujfSmDX6Ft1VnWfaagTo6Ec=;
+  b=qLt7Xhv6plH4Uw2ZHqU2No2Kb3ZGeHFifbpWvTtFCMvQ6aBt6aGRHkfx
+   S8bOiVfQmVIdzMxBqCPHiED9zdcezWh0qO569RoAl/tJECBWuki04MRPZ
+   7WTzo3URq9yO7ri5RFI5BLHUQJQ8MGLoNggb7ClvNAuy54LrS9fe0kbGp
+   dm0NhBGl5E+kPAMAYIwocoJAmPVfBL4ppgPYb5CsQdf0sIMdl5IiDS4sC
+   INhm+SmBNKHYQJQeXdyjyDvGNxEyWT1pdyUuHdAp1aPqS7gwQmZ/V10gD
+   8BtJMglgsRYxovYkgJNPTD+gcsO8RAXAeoNkq+jTCHeLltVePHvtXcqbc
+   A==;
+IronPort-SDR: H+oMrf7y62ipfxUWpzG48lasjE9nk2ZTeQBUy1ej4WFP8BmPyfqjPx0Fj5PrB9TGeMB/BW9Trn
+ RG9en6AAXwpIU2pszclwLUSEKcuA5qwn99+yXcYrtHz+MDWg+1NL4dxgsQr9Ut018iJcURruNs
+ Ambi+2m1BZ45RvAnGr4OctD3H3Mieni1TVH0FVZXtJOruGJuHozKq4ARKcrcdKfEoK8MKCTwRs
+ y7Yaehou+A5fnv5V9DCmxf7x7DE/pZtMkyjZ8l47mA9cDftvWw70mepCS5tPZ1iR8JyhxMkX0x
+ vZg=
+X-IronPort-AV: E=Sophos;i="5.78,384,1599494400"; 
+   d="scan'208";a="153844089"
+Received: from mail-co1nam11lp2171.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.171])
+  by ob1.hgst.iphmx.com with ESMTP; 01 Dec 2020 19:04:08 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gbH3ipD3APJR0XQvHdXQdBhMSXYT5jR0+IS8H3VtjAheXrmRkmto3mbH1MXSZ6UpU/Ay7glutzHM/8JdYrNSPomrvcEotZAbkFbUirKEjHeo4BfJKQp4Ld7CPDTgX09cALT33KZ8BVsnZVHSBv1Y+Edi1sxEY7KQVFILQJTlWzwnCrzwA8KnnH/s850wyyyfy8E23bpNXUlIdLz2WmA5UMIXLo4odkEGTqC+c31KlrTRe8/gfz+ue1ce2pdeA//L2JStZkMQ0rH835kMCRHGKRgttCX6Gs0KR+MWSKYnAociKjOkuz5PWGbKUrP5gB7h5DGa6POdJYeFi9dh3MHi+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ymOz8FAmeBCTD12Lp1g1vaPEcbGNXCv5GjZ0lhFEP4E=;
+ b=Jh01mqWunhwoZeL6Y1DjnlnFXPmiys65FXbh5J4gwnMcDKGM6ZM96DOQ5nUIrdwEnPMlro5//zR48IX3rJPaN0OvmL1w4SYOPgcBI5xWjPHTdVHGde+mDg/QAmjYyJv5G56PdSvOxD2TAblIC3KMIloEDHpUuoKYVl+HN8HmxX0bxqUqU+/7HC2Xdr4cIBgXXS1DbC5mcY5ksg53g+JJCREC7Ri6FOg353mdAybYU8Gc6hNuZw6wPlGcu1SSrKZ0qWigMmQRnGnaDQ2t5XhHC5Us5SajkdBDPgaVlbIVGnEOP3dp2T8K6NTlE3PE/9xpwDLKK5kHEZOACdFiXjW1GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ymOz8FAmeBCTD12Lp1g1vaPEcbGNXCv5GjZ0lhFEP4E=;
+ b=hqnbUZF+7Y3BXhRhyvxsEUUIfrBDKkWth5jjeEsuA4qRhNTJc2YAfDHmNBss+F1/KyIYSFpl+wV84btzwVBZB+tCKEi3phn9tQQEyOexvecjHQHyxPscMZUAryATWTHt3LglU4zjGfNMVXip8/a7YxmclSEhvNFMnmrpwmKKMZE=
+Received: from CH2PR04MB6522.namprd04.prod.outlook.com (2603:10b6:610:34::19)
+ by CH2PR04MB6726.namprd04.prod.outlook.com (2603:10b6:610:95::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.22; Tue, 1 Dec
+ 2020 11:04:07 +0000
+Received: from CH2PR04MB6522.namprd04.prod.outlook.com
+ ([fe80::897c:a04b:4eb0:640a]) by CH2PR04MB6522.namprd04.prod.outlook.com
+ ([fe80::897c:a04b:4eb0:640a%7]) with mapi id 15.20.3589.022; Tue, 1 Dec 2020
+ 11:04:07 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH v3 12/21] riscv: Add Canaan Kendryte K210 FPIOA driver
+Thread-Topic: [PATCH v3 12/21] riscv: Add Canaan Kendryte K210 FPIOA driver
+Thread-Index: AQHWx3NiesBoMKrs8Em4U55+hJDq6w==
+Date:   Tue, 1 Dec 2020 11:04:07 +0000
+Message-ID: <CH2PR04MB6522D092596237344F30AADDE7F40@CH2PR04MB6522.namprd04.prod.outlook.com>
+References: <20201130234829.118298-1-damien.lemoal@wdc.com>
+ <20201130234829.118298-13-damien.lemoal@wdc.com>
+ <CAMuHMdX_HOQFm-9PXgsuOEK7BYu0B76CESkLmK4CH+qF_0T0yw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.182.59]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 466d9a9d-0661-4537-5c7c-08d895e8d2b2
+x-ms-traffictypediagnostic: CH2PR04MB6726:
+x-microsoft-antispam-prvs: <CH2PR04MB6726255576337C0EE8D7067BE7F40@CH2PR04MB6726.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 6U/aZi1t4W0sI25vaezwSoogy2LBj/wCAU5flQaBqugydDGxK6wtc6KQNoS27a5hwAbTQ+Roj2m8qL0wl37bhPKk+7soAIE8y2Glf9yGxKA91mhuVYwxGCr/VO3muYDtSSDSoqiDFDmUVfvDZdlSO+H+SjaQs/1UtrePcioXXKC4Rbmlzn+vnlvreafEqieZzqTSeiusJp+9ObHH2So3C3Ul5r2uIzhB1pc6YPWLJYNaSV28/azrZXpUoUfgRR8NoRDfXtlAuD6ORVI+098Ix0nKv6VPoWyhjbHBYu7VO2zGz+PC8lgsS7Ib36E0aXbS8bm93v5KH/5Tda+TvK73LQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR04MB6522.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39860400002)(136003)(396003)(346002)(9686003)(7416002)(55016002)(33656002)(71200400001)(86362001)(478600001)(7696005)(2906002)(54906003)(8676002)(5660300002)(4326008)(26005)(83380400001)(52536014)(66446008)(186003)(91956017)(6916009)(6506007)(76116006)(66476007)(8936002)(66556008)(316002)(53546011)(64756008)(66946007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?5Hd53sP4Dy/opbbRkIItDe3+4PNEd86mLyN85HZHiJFYs/+EQG09eP7Bos4X?=
+ =?us-ascii?Q?x8+ihhUHNzLWQ4bLxYh1qvqOMSEW91S95+MbwppaGFfUMaifEkjc5FSHFcqs?=
+ =?us-ascii?Q?8mcBJV6VYwM+fiG/VphcdRlIuthwzHod6Z1ezix4QD2VHDf3HizpbM0rFFBx?=
+ =?us-ascii?Q?mOxoe1QS5/EPECA5VlAInApsuGXf5uE9YbWNyfyinBVkLvnRH9a3HSZmqjWb?=
+ =?us-ascii?Q?fN46rqb6+ZeBttqHST8076dEhFrbMdFUWDf3GY+hjx4e1sfIsDJkkSStH+lz?=
+ =?us-ascii?Q?YFgG/1Bl2E6cVXCVELzvJy5Gth/KUjrJX78NqHZ6I5MoAKjwCsa8RU2jd8Oq?=
+ =?us-ascii?Q?i9UpVepEj9vMJIhn3wbYul0qUPZrN82tiLH43yXc0kKuldoqme2NotrhJa0R?=
+ =?us-ascii?Q?BDpN/Tbh8jHQlsxWdClvol8anNGWUENJiBrfsOwGaziGB333AagxYmoR9Pvm?=
+ =?us-ascii?Q?8e44Gg1nOmtzjVo40fTZIRuyT8raBh6HltBjMWl85mBel0MsOYd6hugAcJY4?=
+ =?us-ascii?Q?IDkCAoeNgJ51KvXwhgwJ2W4cRIhW0yLYz2VCHO0uuzT0OwR9GkbgxoFeq4xO?=
+ =?us-ascii?Q?phHQfWqVgBQjoX8pZH6bSmiy+WPzPcf4LpH3ET8t0789OABz7WbXYvRCuWeL?=
+ =?us-ascii?Q?UftFPDe9/m+GUy7DpLyF56byBccTyuPc0A9C66kunc53nxX01eiA96cjLEYW?=
+ =?us-ascii?Q?reaPbZGbT91V0FO2Raavv+p3yTIpabi/+Tj+6GfDAAL77kaFQq49IyE3DWP8?=
+ =?us-ascii?Q?IN4dLTKZScFdpRhGHdj7hz50FGOvqLTXH+OaHpcDElUdtW/rNQnrdQYqlMbE?=
+ =?us-ascii?Q?v5hdVelYz1x10jZ8nIQpBYzcycXdDiE44HyFHnOK1BZ3Mo6Zz1vDhbqBilJH?=
+ =?us-ascii?Q?11sroTyCeJ94kEUb+sguhZNT1kPuOokCv4bktklew03LOFZo5wGoVvPlSzbb?=
+ =?us-ascii?Q?YN2fyp+WAkmSGr3GW5cvy39+l/nQsGdP88KXf22YYaCMbJQFnXiLhPk3GXif?=
+ =?us-ascii?Q?XNJj?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/x=8K5Ql==6p6MPT1Tt8f7jL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR04MB6522.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 466d9a9d-0661-4537-5c7c-08d895e8d2b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2020 11:04:07.1516
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RHeqPTeVuBnWW+C2bVIiyEHdJfRKCasjxaSqytJvufYgkRqfVjyFeXVMH9MpSk34CoJZ0NXv5jlxCPecZ5KisA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR04MB6726
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/x=8K5Ql==6p6MPT1Tt8f7jL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Geert,
-
-On Mon, 30 Nov 2020 09:57:43 +0100 Geert Uytterhoeven <geert+renesas@glider=
-.be> wrote:
->
-> The R9A06G032 clock driver uses an array of packed structures to reduce
-> kernel size.  However, this array contains pointers, which are no longer
-> aligned naturally, and cannot be relocated on PPC64.  Hence when
-> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
-> PowerPC allyesconfig), the following warnings are produced:
->=20
->     WARNING: 136 bad relocations
->     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
->     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
->     ...
->=20
-> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
-> definition, trading a small size increase for portability.
->=20
-> This increases the 156-entry clock table by 1 byte per entry, but due to
-> the compiler generating more efficient code for unpacked accesses, the
-> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Fix authorship.
-> ---
->  drivers/clk/renesas/r9a06g032-clocks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas=
-/r9a06g032-clocks.c
-> index d900f6bf53d0b944..892e91b92f2c80f5 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -55,7 +55,7 @@ struct r9a06g032_clkdesc {
->  			u16 sel, g1, r1, g2, r2;
->  		} dual;
->  	};
-> -} __packed;
-> +};
-> =20
->  #define I_GATE(_clk, _rst, _rdy, _midle, _scon, _mirack, _mistat) \
->  	{ .gate =3D _clk, .reset =3D _rst, \
-> --=20
-> 2.25.1
->=20
-
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au> # PowerPC allyesconfig b=
-uild
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/x=8K5Ql==6p6MPT1Tt8f7jL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/GFOQACgkQAVBC80lX
-0Gx20wgAi6BiXoJObYe8V+LMkb6ZXfIlTf41CHmeVC6NHNznore2v1594BTP0Zgf
-gTyOp2mkrn+sKaunxMzoZt3aEwtKkSUs0t5ksN7WIS/Ilnp6RDqtUr3hk5L+Ig0H
-M6GBg+78RiPDvAgF5xjxGTaDh5SCtB1MFNqGy+Yf1pe+p6JZtpBqhaXDLv+cvHSV
-45Fj1RLJ23HYERQ/PUBPHwHI3hVco5EI5eEDuaXEJWGCtsAfWXsj3AYIylx3Emyp
-zYlfxgr5ZVEKsTY8DJBgVvn5K85hjFIy7ljRx+3kByQh6IyPpWWUDoPAS5TfepCj
-YvgHxHtnnei5Urke1xFol0P0jasF2A==
-=A+fg
------END PGP SIGNATURE-----
-
---Sig_/x=8K5Ql==6p6MPT1Tt8f7jL--
+On 2020/12/01 18:40, Geert Uytterhoeven wrote:=0A=
+> Hi Damien,=0A=
+> =0A=
+> On Tue, Dec 1, 2020 at 12:50 AM Damien Le Moal <damien.lemoal@wdc.com> wr=
+ote:=0A=
+>> Add the pinctrl-k210.c pinctrl driver for the Canaan Kendryte K210=0A=
+>> field programmable IO array (FPIOA) to allow configuring the SoC pin=0A=
+>> functions. The K210 has 48 programmable pins which can take any of 256=
+=0A=
+>> possible functions.=0A=
+>>=0A=
+>> This patch is inspired from the k210 pinctrl driver for the u-boot=0A=
+>> project and contains many direct contributions from Sean Anderson.=0A=
+>>=0A=
+>> The MAINTAINERS file is updated to list myself as maintainer of this new=
+=0A=
+>> driver.=0A=
+>>=0A=
+>> Signed-off-by: Sean Anderson <seanga2@gmail.com>=0A=
+>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
+> =0A=
+> Thanks for your patch!=0A=
+> =0A=
+>> --- a/MAINTAINERS=0A=
+>> +++ b/MAINTAINERS=0A=
+>> @@ -3826,10 +3826,13 @@ CANAAN/KENDRYTE K210 RISC-V SOC SUPPORT=0A=
+>>  M:     Damien Le Moal <damien.lemoal@wdc.com>=0A=
+>>  L:     linux-riscv@lists.infradead.org=0A=
+>>  L:     linux-clk@vger.kernel.org (clock driver)=0A=
+>> +L:     linux-gpio@vger.kernel.org (pinctrl driver)=0A=
+>>  S:     Maintained=0A=
+>>  F:     Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml=0A=
+>>  F:     Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml=0A=
+>> +F:     Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml=
+=0A=
+>>  F:     drivers/clk/clk-k210.c=0A=
+>> +F:     drivers/pinctrl/pinctrl-k210.c=0A=
+>>  F:     drivers/soc/canaan/=0A=
+>>  F:     include/soc/canaan/=0A=
+> =0A=
+> Please create separate sections for the clock and pinctrl drivers,=0A=
+> to avoid all 3 mailing lists being suggested by get_maintainers for=0A=
+> all changes to any of the file patterns.  People will blindly use the=0A=
+> get_maintainers scripts' output.=0A=
+=0A=
+OK. Sending v4 with that fixed.=0A=
+=0A=
+Thanks !=0A=
+=0A=
+> =0A=
+> Gr{oetje,eeting}s,=0A=
+> =0A=
+>                         Geert=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
