@@ -2,180 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E506C8300F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 17:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B467C83013
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 18:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE23B221FC
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 17:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44E4221FC
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 18:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbgLBR5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 12:57:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgLBR5a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 12:57:30 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 617CBC0613CF
-        for <linux-clk@vger.kernel.org>; Wed,  2 Dec 2020 09:56:50 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id o5so1532288pgm.10
-        for <linux-clk@vger.kernel.org>; Wed, 02 Dec 2020 09:56:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to;
-        bh=JhB8HEKUNt+Mh9ikBBd6PhKZw2mEaY1taVFBzaJTNqw=;
-        b=WCug1AW6sgjJpbkU7G0ZI15ym+pUlEczBJ6z3Vj/m2+/Q8W2kTnVfdwDbmWiV0r1mW
-         dmF0hM+2tpYJB5mbYYWlqkQbR5LqP1p7FUn1mnl/adMU2+SPjXIakzO261lge4V+aFpz
-         zrx5iLA7m31Q4iqX1GHoTOqVBaZemgr3OTs5M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to;
-        bh=JhB8HEKUNt+Mh9ikBBd6PhKZw2mEaY1taVFBzaJTNqw=;
-        b=g7KaofuSWAt6rWwH383+S2xlTI+jQYCFOuqQrwsVuMWRL3KuCer+DeOPz0KIxnQ4e6
-         OawP3dxF3N8Iq5itHLxch7s6yx04rU5arJkhKz9dwnX959OLoPEoKKSXA1+leT9vsEaO
-         zubFWSJjIET6CmrsqYu3j8wFOLhPXj+kT1B9tw+6wtNgeKCqlTswLXbaYcqyadU5QBzw
-         pBtl//+D8P4UoD9n4hy1B524RcKeD4O5uzrTfLbaVC5mPWkUTWcXIY0HOiV90FvV1gve
-         K0/AWy7ZA36SYH7b3EsgMg2NNSZvzZF2PZup+Qmzb+WTBqWwdrVzrJaFvjYLKOGYeVFP
-         SzaQ==
-X-Gm-Message-State: AOAM531SQ4SmTomku8GXl+pgt2Qq0nGSkOtiUOhHNcjpzrq8FyQ951t1
-        Z1f8oHoP3fVQEkbH4x7CxTuZeQ==
-X-Google-Smtp-Source: ABdhPJxBe044BSxWCPiEeTi93ZhPm7YYKKxN40yOk58k6np08WWXwO/od1vrZpNwuxokEC+Wbx0dOQ==
-X-Received: by 2002:aa7:9606:0:b029:198:14c4:4f44 with SMTP id q6-20020aa796060000b029019814c44f44mr3903103pfg.80.1606931809755;
-        Wed, 02 Dec 2020 09:56:49 -0800 (PST)
-Received: from [10.230.28.242] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a21sm287155pjq.37.2020.12.02.09.56.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Dec 2020 09:56:48 -0800 (PST)
-Subject: Re: [PATCH v5 07/11] staging: vchiq: Release firmware handle on
- unbind
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
-Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-References: <20201123183833.18750-1-nsaenzjulienne@suse.de>
- <20201123183833.18750-8-nsaenzjulienne@suse.de>
-From:   Florian Fainelli <florian.fainelli@broadcom.com>
-Message-ID: <3bad2612-6280-b362-8239-493e4cc87509@broadcom.com>
-Date:   Wed, 2 Dec 2020 09:56:46 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.5.0
+        id S2389385AbgLBSP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 13:15:29 -0500
+Received: from mailoutvs32.siol.net ([185.57.226.223]:43810 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389384AbgLBSP2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 13:15:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 62C09522074;
+        Wed,  2 Dec 2020 19:14:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 1CDIGtcVqr1T; Wed,  2 Dec 2020 19:14:44 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id CD5CB522073;
+        Wed,  2 Dec 2020 19:14:44 +0100 (CET)
+Received: from kista.localnet (cpe1-5-97.cable.triera.net [213.161.5.97])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id 3B6E0521DDC;
+        Wed,  2 Dec 2020 19:14:44 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     Icenowy Zheng <icenowy@aosc.xyz>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Yangtao Li <frank@allwinnertech.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 4/8] clk: sunxi-ng: Add support for the Allwinner H616 R-CCU
+Date:   Wed, 02 Dec 2020 19:20:56 +0100
+Message-ID: <3151878.LmPXbFMbMm@kista>
+In-Reply-To: <20201202135409.13683-5-andre.przywara@arm.com>
+References: <20201202135409.13683-1-andre.przywara@arm.com> <20201202135409.13683-5-andre.przywara@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20201123183833.18750-8-nsaenzjulienne@suse.de>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000b92c8a05b57ef7b6"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---000000000000b92c8a05b57ef7b6
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-
-
-
-On 11/23/2020 10:38 AM, Nicolas Saenz Julienne wrote:
-> Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
-> interface when unbinding the device.
+Dne sreda, 02. december 2020 ob 14:54:05 CET je Andre Przywara napisal(a):
+> The clocks itself are identical to the H6 R-CCU, it's just that the H616
+> has not all of them implemented (or connected).
 > 
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 47 +++++++++++++++++++++++++-
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h |  3 +-
+>  2 files changed, 48 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/
+ccu-sun50i-h6-r.c
+> index 50f8d1bc7046..119d1797f501 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> @@ -136,6 +136,15 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
+>  	&w1_clk.common,
+>  };
+>  
+> +static struct ccu_common *sun50i_h616_r_ccu_clks[] = {
+> +	&r_apb1_clk.common,
+> +	&r_apb2_clk.common,
+> +	&r_apb1_twd_clk.common,
+> +	&r_apb2_i2c_clk.common,
+> +	&r_apb1_ir_clk.common,
+> +	&ir_clk.common,
+> +};
+> +
+>  static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
+>  	.hws	= {
+>  		[CLK_AR100]		= &ar100_clk.common.hw,
+> @@ -152,7 +161,20 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = 
+{
+>  		[CLK_IR]		= &ir_clk.common.hw,
+>  		[CLK_W1]		= &w1_clk.common.hw,
+>  	},
+> -	.num	= CLK_NUMBER,
+> +	.num	= CLK_NUMBER_H616,
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Above macro should be CLK_NUMBER_H6.
 
---000000000000b92c8a05b57ef7b6
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+> +};
+> +
+> +static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
+> +	.hws	= {
+> +		[CLK_R_AHB]		= &r_ahb_clk.hw,
+> +		[CLK_R_APB1]		= 
+&r_apb1_clk.common.hw,
+> +		[CLK_R_APB2]		= 
+&r_apb2_clk.common.hw,
+> +		[CLK_R_APB1_TWD]	= &r_apb1_twd_clk.common.hw,
 
-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
-NBgcnL8bS1GD7jRZUdtUvDm/XhPjv+5arhlrB5NmaKDsRaobcoQ0vtEyAnImSb64+wEvXgPF3y7V
-0LCIoQMCAwEAAaOCAdQwggHQMA4GA1UdDwEB/wQEAwIFoDCBngYIKwYBBQUHAQEEgZEwgY4wTQYI
-KwYBBQUHMAKGQWh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzcGVyc29uYWxz
-aWduMnNoYTJnM29jc3AuY3J0MD0GCCsGAQUFBzABhjFodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5j
-b20vZ3NwZXJzb25hbHNpZ24yc2hhMmczME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsG
-AQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAA
-MEQGA1UdHwQ9MDswOaA3oDWGM2h0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NwZXJzb25hbHNp
-Z24yc2hhMmczLmNybDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTAT
-BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBRpcoJiMWeVRIV3kYDEBDZJnXsLYTAdBgNV
-HQ4EFgQUjDSG6itHmsBGYhab0ncHg6PidD0wDQYJKoZIhvcNAQELBQADggEBAJD+OK9GMwW86kdo
-oTOaDH8VAbGtc3cvxHH/zTSRaq+XQOUwzXeB35AgKQ7VnnW+AYsU0NILbJUrAUGctIt4fMgPi+fZ
-1SJxTyzKxS0LCahS3l9aL3TEWyFOnDurmKeLcgVG5qMVXysLYDXiUGGg1I/zmOHefpv30RDNdUjD
-9oUbBggB6IHlL4Y6x21gV6Cduse0xOgMrY+dXhntQimTLmuPz0b3uUVJNdtTqVG5pZwZZ/cjsGCm
-QTlT5kx0VnHRHhYKS+1b2usAYk+pec77Wth9xL1gsEGVh4JmIdQpkhqGHA/m2nVkhW/WbbFsA7Im
-9CNMvmz2hVgGGipcf47g+EsxggJvMIICawIBATBtMF0xCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBH
-bG9iYWxTaWduIG52LXNhMTMwMQYDVQQDEypHbG9iYWxTaWduIFBlcnNvbmFsU2lnbiAyIENBIC0g
-U0hBMjU2IC0gRzMCDE64Wkk+BtY98mx37TANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQx
-IgQgCe0rNE/gu4F2iMflekC2RvUsUovFbc76TLB+OjWKpcwwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjAxMjAyMTc1NjUwWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCG
-SAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEB
-CjALBgkqhkiG9w0BAQcwCwYJYIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAHD2TQJkBFDdaKpx
-5IwGKRdVSCqafYi9EbCZzUnQGtDBQcWOUsgmkubyGiXUBajp1o/l2XBtjK4hRRi7VrDaF0f52yRw
-8QgxPWS6edKoaZuNQAtBbDLBv0g+V7xNFdqF6AvCVuCTjUPqbRYhJ7twF5sMX0iu0E9pyRAGInMz
-1QkHTwJ1sWQo7q5NG3mOHcSmitC8kyab2HLNa+GG18qPBO0HeVmR0P52EGoMWmELqJjKsMu6kJrv
-KBD2Ot6IW+hwXySsmcoiE19J+wZT0BE1oh7fkf8wbu3FQsk2u1VPCzstBCXwg72H0BAsHj8HAZFW
-+VX7ZvY68bRYsgHPurwWEZE=
---000000000000b92c8a05b57ef7b6--
+Do we know if TWD exists? I tested I2C and IR. What is your source for these 
+clocks?
+
+Best regards,
+Jernej
+
+> +		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
+> +		[CLK_R_APB1_IR]		= 
+&r_apb1_ir_clk.common.hw,
+> +		[CLK_IR]		= &ir_clk.common.hw,
+> +	},
+> +	.num	= CLK_NUMBER_H616,
+>  };
+>  
+>  static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+> @@ -165,6 +187,12 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = 
+{
+>  	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
+>  };
+>  
+> +static struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
+> +	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
+> +	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
+> +	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
+> +};
+> +
+>  static const struct sunxi_ccu_desc sun50i_h6_r_ccu_desc = {
+>  	.ccu_clks	= sun50i_h6_r_ccu_clks,
+>  	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_r_ccu_clks),
+> @@ -175,6 +203,16 @@ static const struct sunxi_ccu_desc sun50i_h6_r_ccu_desc 
+= {
+>  	.num_resets	= ARRAY_SIZE(sun50i_h6_r_ccu_resets),
+>  };
+>  
+> +static const struct sunxi_ccu_desc sun50i_h616_r_ccu_desc = {
+> +	.ccu_clks	= sun50i_h616_r_ccu_clks,
+> +	.num_ccu_clks	= ARRAY_SIZE(sun50i_h616_r_ccu_clks),
+> +
+> +	.hw_clks	= &sun50i_h616_r_hw_clks,
+> +
+> +	.resets		= sun50i_h616_r_ccu_resets,
+> +	.num_resets	= ARRAY_SIZE(sun50i_h616_r_ccu_resets),
+> +};
+> +
+>  static void __init sunxi_r_ccu_init(struct device_node *node,
+>  				    const struct sunxi_ccu_desc 
+*desc)
+>  {
+> @@ -195,3 +233,10 @@ static void __init sun50i_h6_r_ccu_setup(struct 
+device_node *node)
+>  }
+>  CLK_OF_DECLARE(sun50i_h6_r_ccu, "allwinner,sun50i-h6-r-ccu",
+>  	       sun50i_h6_r_ccu_setup);
+> +
+> +static void __init sun50i_h616_r_ccu_setup(struct device_node *node)
+> +{
+> +	sunxi_r_ccu_init(node, &sun50i_h616_r_ccu_desc);
+> +}
+> +CLK_OF_DECLARE(sun50i_h616_r_ccu, "allwinner,sun50i-h616-r-ccu",
+> +	       sun50i_h616_r_ccu_setup);
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/
+ccu-sun50i-h6-r.h
+> index 782117dc0b28..128302696ca1 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> @@ -14,6 +14,7 @@
+>  
+>  #define CLK_R_APB2	3
+>  
+> -#define CLK_NUMBER	(CLK_W1 + 1)
+> +#define CLK_NUMBER_H6	(CLK_W1 + 1)
+> +#define CLK_NUMBER_H616	(CLK_IR + 1)
+>  
+>  #endif /* _CCU_SUN50I_H6_R_H */
+> -- 
+> 2.17.5
+> 
+> 
+
+
