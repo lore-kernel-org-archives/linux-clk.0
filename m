@@ -2,78 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9F4C64E7C
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 16:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67222C83012
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 17:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B743921D7A
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 16:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 218A822247
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 17:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbgLBQSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 11:18:32 -0500
-Received: from mailoutvs44.siol.net ([185.57.226.235]:48973 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728611AbgLBQSb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 11:18:31 -0500
-X-Greylist: delayed 415 seconds by postgrey-1.27 at vger.kernel.org; Wed, 02 Dec 2020 11:18:31 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id A022E520516;
-        Wed,  2 Dec 2020 17:10:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id hmIEAFM6fW50; Wed,  2 Dec 2020 17:10:54 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 50050520F6E;
-        Wed,  2 Dec 2020 17:10:54 +0100 (CET)
-Received: from kista.localnet (cpe1-5-97.cable.triera.net [213.161.5.97])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 8F76E520516;
-        Wed,  2 Dec 2020 17:10:51 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     Icenowy Zheng <icenowy@aosc.xyz>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Yangtao Li <frank@allwinnertech.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/8] clk: sunxi-ng: h6: Fix clock divider range on some clocks
-Date:   Wed, 02 Dec 2020 17:17:03 +0100
-Message-ID: <2017247.PyFJg3gf1G@kista>
-In-Reply-To: <20201202135409.13683-2-andre.przywara@arm.com>
-References: <20201202135409.13683-1-andre.przywara@arm.com> <20201202135409.13683-2-andre.przywara@arm.com>
+        id S1726514AbgLBR1B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 12:27:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389280AbgLBR1B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 12:27:01 -0500
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B84C0613D4;
+        Wed,  2 Dec 2020 09:26:20 -0800 (PST)
+Received: by mail-pg1-x544.google.com with SMTP id q3so1499429pgr.3;
+        Wed, 02 Dec 2020 09:26:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+ImcfZLvvBHYTsDO30kABBGCYuRzWZL4tNLUXZUAuvg=;
+        b=MAQoRwiVDhTQ6Ub6BSmEB45rRexBqKhTBoqOebc0RP+LnrSgRXwxM68WZwNwl1UHNW
+         UJYMjaX3bXAjVzGfXz7DG+Zzm+9Jx8XWvy/L1MUbQIhv625BAbzflWfXSUUS48fVHNFD
+         eApJoZ+qchvmIPi21of4/K11CrOmV/yZpk12TmoiV2UaUlnszyUYLORhWLSeBrzam7HI
+         NhlYDfAumfunnJX6BCpzPmkzRCWqS55BC8Kfx0Y3UmVv1hOjFn3A9e400Fpe3ArJb2HY
+         FyebhMDtYqtyojkj0gyOMdZ6A7qy93Co51f77Zppx7pInGPb0ZpoJjXY4Tzsm1r1Hwjx
+         vahg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+ImcfZLvvBHYTsDO30kABBGCYuRzWZL4tNLUXZUAuvg=;
+        b=Cva+rXvOL4MoUu/spp3cKuKh059KfPmugxtXWvP/SRFrmOwv0/MaEUACZTkHMgI9Tu
+         mE17ekLreMsPWXlmloA4tqjMhkg+ANQ/NCP/I7jKFPBMg+mKNEgh+sjKw6Mfh0ZLwt8m
+         W8DM8pQWBhIobPli5Dx7UJW+JZDz/A4Y7fzzRUCEev0//8TQjzcs0VXIItyZoG9ur7dG
+         uHoVF3xMXGydWOY+YtTJ+j0LfNaDj0TWjwFIOQgPr8gTEuz+D2u1FlNNXQ/IoiuCheqr
+         9HUhddM+CCmwJ95jVyn7Yze3FBk4bgrCad4evFti9RofPe1qA6RSM1L2QYyNcbtWEe8b
+         1WDA==
+X-Gm-Message-State: AOAM532NA7sOl1xojScsjSha35cO1T3Unx0jPtSesiK55A8pD0coabgz
+        MRaA60e8RF/XfLfsCqXkTII=
+X-Google-Smtp-Source: ABdhPJyxF+Y0NQAkwkYnU2mgmQOhTo1yEH5GDBb1+SLp7aPVK2X1GOo8Gie7sldyvHPUZqw2992YFg==
+X-Received: by 2002:a63:5a22:: with SMTP id o34mr776276pgb.187.1606929980486;
+        Wed, 02 Dec 2020 09:26:20 -0800 (PST)
+Received: from [10.230.28.242] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id y21sm424018pfr.90.2020.12.02.09.26.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Dec 2020 09:26:19 -0800 (PST)
+Subject: Re: [PATCH v5 01/11] firmware: raspberrypi: Keep count of all
+ consumers
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, wahrenst@gmx.net,
+        linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
+References: <20201123183833.18750-1-nsaenzjulienne@suse.de>
+ <20201123183833.18750-2-nsaenzjulienne@suse.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <e78cde23-5a5e-5e46-fde4-a299629ec6d6@gmail.com>
+Date:   Wed, 2 Dec 2020 09:26:15 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20201123183833.18750-2-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sreda, 02. december 2020 ob 14:54:02 CET je Andre Przywara napisal(a):
-> While comparing clocks between the H6 and H616, some of the M factor
-> ranges were found to be wrong: the manual says they are only covering
-> two bits [1:0], but our code had "5" in the number-of-bits field.
+
+
+On 11/23/2020 10:38 AM, Nicolas Saenz Julienne wrote:
+> When unbinding the firmware device we need to make sure it has no
+> consumers left. Otherwise we'd leave them with a firmware handle
+> pointing at freed memory.
 > 
-> By writing 0xff into that register in U-Boot and via FEL, it could be
-> confirmed that bits [4:2] are indeed masked off, so the manual is right.
+> Keep a reference count of all consumers and introduce rpi_firmware_put()
+> which will permit automatically decrease the reference count upon
+> unbinding consumer drivers.
 > 
-> Change to number of bits in the affected clock's description.
-> 
-> Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+This looks fine to me, just one nit below:
 
-Best regards,
-Jernej
+[snip]
 
+>  /**
+> - * rpi_firmware_get - Get pointer to rpi_firmware structure.
 
+Is not removing this line going to create a kernel doc warning?
+
+With that fixed:
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
