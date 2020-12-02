@@ -2,98 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57E6C64E7C
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D888C64E7C
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78909221FE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8B702222E
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgLBMhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 07:37:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:51371 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbgLBMhd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 07:37:33 -0500
-Received: from orion.localdomain ([77.7.48.174]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N5VTm-1k8T4d24fC-016ugz; Wed, 02 Dec 2020 13:34:49 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH v3] drivers: clk: make gpio-gated clock support optional
-Date:   Wed,  2 Dec 2020 13:34:46 +0100
-Message-Id: <20201202123446.21902-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:WbLU9N2ykb1bYLaEdCmR6BikyMatnPo3jN3uCRNNZTmRVZT6YSO
- ArUF2XqM8GfeFIm/UHqsHgJ42Bk+dCKEwI2RSbd7XXs5rvHAPYuPq3w8X+ZnEM2VOXMLfTR
- 2Lwgt6M4fVeJhI+5vr4B6J7cb3iLuJJjbJ1OaGgCpJpJbDB14qUU/zXCK5XMRD36Nyx5MIA
- jBnFgo78BpzGQj2lBo/7g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zY3qHVWMGdc=:p6t0Vho9tx8xhvpEim4SZ4
- cyh0lNXAnLhP4zrruMA3DnvEBg0XuMS59pa50R/WUIogP/BKm+uCCcSHa4l4iyRVAsQaIFr0q
- 1nYmk8HO8EiCkmjfb7gXRmFWKHU0Gc515k+kmphY99YlrgSg7gMVAjOdNwXKbK6YFTqZuna9Z
- 7x5f3FOdZK9OudpF3+6G+d3yCG2J0Umoh4ktWNTfeRycqHyb/ob5Dk89voDtfar+NhSBY+UFF
- 1bSZAbZi6Eg0hjLuIf8clqmup+noDjFd+zc2h/YAGEnXmDzxduoHthNTctgMF0blgz/GSuDeT
- kmwGATo9voiizH4sV4Wn4A51GbRVxgHDQmeQTl7w4O5NZzL/poZOvSgihMikeq3xCpv2YREPg
- KR6zze1YkhB7KbiTfmJ8j1aUUb0GKthYUV67HziDmaa2JAyH7+Wz84JoeEJbY
+        id S1729960AbgLBM7Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 07:59:24 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:35567 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729956AbgLBM7Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 07:59:24 -0500
+Received: from localhost (lfbn-lyo-1-997-19.w86-194.abo.wanadoo.fr [86.194.74.19])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id BFA07200004;
+        Wed,  2 Dec 2020 12:58:41 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: at91: sam9x60: remove atmel,osc-bypass support
+Date:   Wed,  2 Dec 2020 13:58:15 +0100
+Message-Id: <20201202125816.168618-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gpio-gate-clock / gpio-mux-clock driver isn't used much,
-just by a few ARM SoCs, so there's no need to always include
-it unconditionally.
+The sam9x60 doesn't have the MOSCXTBY bit to enable the crystal oscillator
+bypass.
 
-Thus make it optional, but keep it enabled by default.
-
-changes v3: default to y when gpiolib enabled
-            fix depends on gpiolib to uppercase
-
-changes v2: added missing dependency on gpiolib
-
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
+Reported-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/clk/Kconfig  | 8 ++++++++
- drivers/clk/Makefile | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/clk/at91/sam9x60.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c715d4681a0b..e4fe406c4e7d 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -38,6 +38,14 @@ menuconfig COMMON_CLK
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 3c4c95603595..c8cbec5308f0 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -174,7 +174,6 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	struct regmap *regmap;
+ 	struct clk_hw *hw;
+ 	int i;
+-	bool bypass;
  
- if COMMON_CLK
+ 	i = of_property_match_string(np, "clock-names", "td_slck");
+ 	if (i < 0)
+@@ -209,10 +208,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
  
-+config COMMON_CLK_GPIO
-+	tristate "GPIO gated clock support"
-+	default y if GPIOLIB
-+	depends on GPIOLIB
-+	help
-+	  Supports gpio gated clocks, which can be enabled/disabled via
-+	  gpio output.
-+
- config COMMON_CLK_WM831X
- 	tristate "Clock driver for WM831x/2x PMICs"
- 	depends on MFD_WM831X
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index da8fcf147eb1..0692ab5abc6d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
--obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
-+obj-$(CONFIG_COMMON_CLK_GPIO)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
- endif
+-	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+-
+-	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
+-					bypass);
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, 0);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
+ 	main_osc_hw = hw;
 -- 
-2.11.0
+2.28.0
 
