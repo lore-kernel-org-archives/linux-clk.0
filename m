@@ -2,114 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E545C64E8A
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57E6C64E7C
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A51B22203
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78909221FE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 12:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbgLBMGi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 07:06:38 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49467 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726928AbgLBMGi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 07:06:38 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5A4E25C01C4;
-        Wed,  2 Dec 2020 07:05:52 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 02 Dec 2020 07:05:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=WzTVfJ9jLhPrO8LHxfJd3YQ4sSQ
-        zAeu+DPkJtA4PFYE=; b=Uqj8zSC9K/zZ0a63bX/HbWgh3bVB9YSjU/q5oFy5LI9
-        3rAVwRoLzZ21VCQyexGDfPBZHvsTIP6PPKhEolXFp2piTOt6h8qwrWFDwHacFoN7
-        gwweifUT8z6fucd5q19+hrfytQOz+iJKM6ditGztC8TPldGpQMWSxIHrjOlAQsJY
-        E6ZPgoUurEd79fYnu/13FO3Zr1bKsNlQ7h/LP3BASNuBdKXI8LDsqmkwuOS4mFlP
-        0ZvVIAhGvr3mim5HpJ5ASaOwObVlyM6WOPFAcaCD3oRoLQ1RxhmoI+P+XbISNxQq
-        DARgXTd7Zph3+4aR43/5MkbuDrXfjvWQO0GklMZX83A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=WzTVfJ
-        9jLhPrO8LHxfJd3YQ4sSQzAeu+DPkJtA4PFYE=; b=HvykbETLQuHf/8NEbKRel4
-        HFCEFdstJ6Dfjn7VnCm10cxIrG1krxdmi4PBFTfMYs3dIdcWkdMsAyAiqsAhfXXs
-        uBF4oaAi3BxTQyMKAH9HrqkDW8s0DISPaRwE3ENJMI8Z3fmM0QbEd2Zmua0a0T+O
-        4lsHoXbYsxMzhgBKvJC/b4nxacvDZpEPH5q01D2q/IjX7/Nq2RWmfO7Z18ZqxLtX
-        7NgKYmWE1ie6IH6A8KT0cgGYDQu76CIQdC6XlrTkO70+PV/lRb5dLlT9hiJR+v2z
-        dsQXgQ+g5UvZNs4PAPg57DPzx+o0fnyylbwspMVsxNoaAjj0gAzLrRZ9RD0xKHpQ
-        ==
-X-ME-Sender: <xms:HoPHX-8-w1MxNKg4BGMZPoNh8nD3WJaXDYhTSjF_A6FW9J84IUl-9A>
-    <xme:HoPHX-uh9qJm4pIS38gN7yElpeMAT8hU3_QWuoQMJK82VAJIyBa2ovZn8Hf2FM9UC
-    xXNIxip-oVc10YVIq8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeigedgfeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:HoPHX0BrgP5-DRwoj1uuEjDsBalHy8Hy3YtlrTWx4d9FNFjiFXE9jg>
-    <xmx:HoPHX2eW7GAx42Z_poLB4U5lkIVo4LdDZ0QWC2g0M62G_CYc4I8E8g>
-    <xmx:HoPHXzNYFAnzgXD_Va0tvOr2wymBqMvquLWfiyh3CUl_d1sHd6pqgQ>
-    <xmx:IIPHX_A9yppSgB874cECXdUQRgGRLYp5g98RMUU8lnegF7L-Q_82zw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0010124005C;
-        Wed,  2 Dec 2020 07:05:49 -0500 (EST)
-Date:   Wed, 2 Dec 2020 13:05:48 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: bcm: dvp: Add MODULE_DEVICE_TABLE()
-Message-ID: <20201202120548.3oiv7awjcauf72gd@gilmour>
-References: <20201202103518.21889-1-nsaenzjulienne@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2emeoleqdm4ve6ni"
-Content-Disposition: inline
-In-Reply-To: <20201202103518.21889-1-nsaenzjulienne@suse.de>
+        id S1726312AbgLBMhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 07:37:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:51371 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbgLBMhd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 07:37:33 -0500
+Received: from orion.localdomain ([77.7.48.174]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N5VTm-1k8T4d24fC-016ugz; Wed, 02 Dec 2020 13:34:49 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: [PATCH v3] drivers: clk: make gpio-gated clock support optional
+Date:   Wed,  2 Dec 2020 13:34:46 +0100
+Message-Id: <20201202123446.21902-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:WbLU9N2ykb1bYLaEdCmR6BikyMatnPo3jN3uCRNNZTmRVZT6YSO
+ ArUF2XqM8GfeFIm/UHqsHgJ42Bk+dCKEwI2RSbd7XXs5rvHAPYuPq3w8X+ZnEM2VOXMLfTR
+ 2Lwgt6M4fVeJhI+5vr4B6J7cb3iLuJJjbJ1OaGgCpJpJbDB14qUU/zXCK5XMRD36Nyx5MIA
+ jBnFgo78BpzGQj2lBo/7g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zY3qHVWMGdc=:p6t0Vho9tx8xhvpEim4SZ4
+ cyh0lNXAnLhP4zrruMA3DnvEBg0XuMS59pa50R/WUIogP/BKm+uCCcSHa4l4iyRVAsQaIFr0q
+ 1nYmk8HO8EiCkmjfb7gXRmFWKHU0Gc515k+kmphY99YlrgSg7gMVAjOdNwXKbK6YFTqZuna9Z
+ 7x5f3FOdZK9OudpF3+6G+d3yCG2J0Umoh4ktWNTfeRycqHyb/ob5Dk89voDtfar+NhSBY+UFF
+ 1bSZAbZi6Eg0hjLuIf8clqmup+noDjFd+zc2h/YAGEnXmDzxduoHthNTctgMF0blgz/GSuDeT
+ kmwGATo9voiizH4sV4Wn4A51GbRVxgHDQmeQTl7w4O5NZzL/poZOvSgihMikeq3xCpv2YREPg
+ KR6zze1YkhB7KbiTfmJ8j1aUUb0GKthYUV67HziDmaa2JAyH7+Wz84JoeEJbY
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The gpio-gate-clock / gpio-mux-clock driver isn't used much,
+just by a few ARM SoCs, so there's no need to always include
+it unconditionally.
 
---2emeoleqdm4ve6ni
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thus make it optional, but keep it enabled by default.
 
-On Wed, Dec 02, 2020 at 11:35:18AM +0100, Nicolas Saenz Julienne wrote:
-> Add MODULE_DEVICE_TABLE() so as to be able to use the driver as a
-> module. More precisely, for the driver to be loaded automatically at
-> boot.
->=20
-> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+changes v3: default to y when gpiolib enabled
+            fix depends on gpiolib to uppercase
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+changes v2: added missing dependency on gpiolib
 
-Maxime
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/clk/Kconfig  | 8 ++++++++
+ drivers/clk/Makefile | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
---2emeoleqdm4ve6ni
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c715d4681a0b..e4fe406c4e7d 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -38,6 +38,14 @@ menuconfig COMMON_CLK
+ 
+ if COMMON_CLK
+ 
++config COMMON_CLK_GPIO
++	tristate "GPIO gated clock support"
++	default y if GPIOLIB
++	depends on GPIOLIB
++	help
++	  Supports gpio gated clocks, which can be enabled/disabled via
++	  gpio output.
++
+ config COMMON_CLK_WM831X
+ 	tristate "Clock driver for WM831x/2x PMICs"
+ 	depends on MFD_WM831X
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index da8fcf147eb1..0692ab5abc6d 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -11,7 +11,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
+-obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
++obj-$(CONFIG_COMMON_CLK_GPIO)	+= clk-gpio.o
+ ifeq ($(CONFIG_OF), y)
+ obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
+ endif
+-- 
+2.11.0
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX8eDDAAKCRDj7w1vZxhR
-xbsOAPwP57y3xtZm5xmf5i2I+FtQ6WGUqy8zIcK1n8Avi9sA4gEAh3G8O5ETLAF8
-gcnyJN8vxqHXXlIMbcOZ3L/u7L97Swg=
-=PBlM
------END PGP SIGNATURE-----
-
---2emeoleqdm4ve6ni--
