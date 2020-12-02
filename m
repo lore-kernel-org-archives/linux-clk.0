@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C81C8300F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9F7C83017
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D503D22203
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31E322203
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbgLBFmw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 00:42:52 -0500
-Received: from mail-eopbgr40051.outbound.protection.outlook.com ([40.107.4.51]:14210
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1728558AbgLBFm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 00:42:56 -0500
+Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:23207
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbgLBFmu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Dec 2020 00:42:50 -0500
+        id S1726125AbgLBFmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Dec 2020 00:42:55 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ScNR2dA+VPb9KFem7Shc6Cn3oc7jEsGkKKokiitOaWDqIps7l8LJtgC76+kCnIVBiqWaLhQ/FzmaHI1F4hsSuOjka95B+vB9fJMifEazuyc/sQnaaQBFw2YKpOhBDLVVBBwYcrEM7iBKHs7jmBKnwWbn6cf0wi4IZ/t8ukjZeaNmzwTJmqG02MR5h2w4YPFu63BWppo3lz8s+RFoSK6O+RLyNHl9W02nGngunaVPHi160bkwN3pCjOEz8McOST+xbWRA/+7DHXDgJ7YX0s0Pm8rYbN78LPLNKRUZsbQT4fdiWgwYv7wsjolFysbVrHyFuEK7MGpX3drpzItYYM7tqw==
+ b=eNXtYdVxkuccLVhN8pBcLh87iFuc8XzvPXoncX+voTX4t8xJ0C4uNVTqY0LuiQCGdeABRgKvZriVPZrw/96Z5yS+uKQFR5lN/Rd/wiJstKNmCdX6KYtkbcbuKTlvenm1YRzP8fD9UIK7xKEUYB++rnv/71Tlw9dMC3H2SgM+xgfmKrDRUYgmCHRMwQ9kmIDF25FiwXqAqvmA6hbmavdyS6zavA5CswiqMTTf1iSsp9auiVhgs1hiuZdtcsxVAMGpQnseTimXIwbLeajqh3kfLAzlneFHh3iaw4g4hwfZpZbfg0DiBQSRoNsB7BGU0zNhilZQRc+l2KLmR/FEuaadRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nqb1e6tZbn+80Ff+X/HFR5KfBmLY17WVPemDojg57Ok=;
- b=RTFSk6v1qV/jVTc94/v1TGUv9MzQ/IR1eeslikKD3swmuStm7wDFxetAbqGgTG6XxV9Yil9pz73Byb57FpliDkgO9s7koSzJ1cxCI9rK25Nl4JXr7xE3Ez6WCRIn7mnn+CfE63RIsuheHv8MOXSDIwESITjBCivtnWz9z8GWcusYFgQDoBE4xqfnJLTOiBoUjKFRfr5HyMzfL0kLkCjv7KxY2FvDBtt3lIiop7Z+4x4UBeemzUIeID5YXQK+ybVbDW84sp6mqI1rzyrxplWIkP081PigCdgyl+Y/E5oml/LsAzW8XciecGI880pE/Bosh3n2EyOj7n5jFd3Cfkymrw==
+ bh=75vWFAhKvJ4eCHRq5/Rcu7lE64GAp/o9C/z8E2xA+FU=;
+ b=U2w0FRstim5DmFDLrQAzaETXgg5dsMYdHDr5SyStr3JqShoAy73S1bDIqQ3JznC5erySqyjX2XUWPJSpNeOxohegxo9lOnATMJft8c0bbOSjXshB4n93t28hRNp8yC83u8VE6ulravhlmb0MSPltNgSasxAoLfkeH8iUHVADx35oCoXCh4ZWwD4k/z3Osj+YXj30WRJRFckhG6fkjMo5fZwPx/VGRzWPz0A9qjMfnQswRVvgTJJB7pwX31+datckqo5MTytUCmRtY5zfPBkDcIC0nkgANrQtFzGa+8xl1f8nPfFS0up0vpcThpJGKq+qH4LP514Jo3KvYKc5onL7pw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nqb1e6tZbn+80Ff+X/HFR5KfBmLY17WVPemDojg57Ok=;
- b=OV0R4/YohIB6fawrzzcrR5wWo7d1imgxoYlwr+aylDRaEz2o4AiSlSYgbKOq5Onie2z3QaL5+R9A8iv5Cn1kLgXrXTjdWPvI1FhKFD+NIQUa04Hm7rYstM2EUNlVtetDL3Uw3TiNnrkA3j9Ynwhf0+BiLBU97e8ldbBz8Efs2cM=
+ bh=75vWFAhKvJ4eCHRq5/Rcu7lE64GAp/o9C/z8E2xA+FU=;
+ b=rn4yPpJ7jJyArQxMvz2bKyheUdHZSfOruaTm0QhApOBKh03+/A+euFMMTB2QfhiKQ8LDvHV4JyAGLTyYpniW0cb+RnQ4/9A723pwMnVGPEm41KC6pdrvKu+Ehk0FgqhxcHzJq0hMl20uxqFEQccdYWKZud3dBUGonQ70+8CnkMo=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
 Received: from VI1PR04MB3983.eurprd04.prod.outlook.com (2603:10a6:803:4c::16)
- by VI1PR04MB5184.eurprd04.prod.outlook.com (2603:10a6:803:5d::27) with
+ by VI1PR04MB7085.eurprd04.prod.outlook.com (2603:10a6:800:122::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.25; Wed, 2 Dec
- 2020 05:41:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.18; Wed, 2 Dec
+ 2020 05:41:35 +0000
 Received: from VI1PR04MB3983.eurprd04.prod.outlook.com
  ([fe80::dcb7:6117:3def:2685]) by VI1PR04MB3983.eurprd04.prod.outlook.com
  ([fe80::dcb7:6117:3def:2685%7]) with mapi id 15.20.3611.025; Wed, 2 Dec 2020
- 05:41:27 +0000
+ 05:41:35 +0000
 From:   Liu Ying <victor.liu@nxp.com>
 To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
         linux-imx@nxp.com, robh+dt@kernel.org, aisheng.dong@nxp.com
-Subject: [PATCH v2 1/4] clk: imx: clk-imx8qxp: Add SCU clocks support for DC0 PLL clocks
-Date:   Wed,  2 Dec 2020 13:33:36 +0800
-Message-Id: <1606887219-5854-2-git-send-email-victor.liu@nxp.com>
+Subject: [PATCH v2 3/4] clk: imx: clk-imx8qxp: Register DC0 display clocks with imx_clk_scu2()
+Date:   Wed,  2 Dec 2020 13:33:38 +0800
+Message-Id: <1606887219-5854-4-git-send-email-victor.liu@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1606887219-5854-1-git-send-email-victor.liu@nxp.com>
 References: <1606887219-5854-1-git-send-email-victor.liu@nxp.com>
@@ -65,52 +65,79 @@ X-ClientProxiedBy: SG2PR03CA0091.apcprd03.prod.outlook.com
  (2603:10a6:803:4c::16)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0091.apcprd03.prod.outlook.com (2603:1096:4:7c::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3632.8 via Frontend Transport; Wed, 2 Dec 2020 05:41:23 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0091.apcprd03.prod.outlook.com (2603:1096:4:7c::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3632.8 via Frontend Transport; Wed, 2 Dec 2020 05:41:31 +0000
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 84830c9a-1686-4152-474e-08d89684e951
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5184:
+X-MS-Office365-Filtering-Correlation-Id: c16ea287-6ce2-4bfb-34a7-08d89684ee31
+X-MS-TrafficTypeDiagnostic: VI1PR04MB7085:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <VI1PR04MB5184FFF6224EAC53416CC3AD98F30@VI1PR04MB5184.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:923;
+X-Microsoft-Antispam-PRVS: <VI1PR04MB70852DDB321D5F9D16B692EA98F30@VI1PR04MB7085.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: aZMH1W2fUbx8oKPbBFs+Y0T3KWp30auiWvzsq29PAr3i310UemOol+rEPUKmKt7DhXcGi1CfGfHDjI6QpB6M7K51FaC/pBk1vkWw4U0kv97OWjNtFOB2UGbk8st0YGXPgb6yQiy7MkBfTqFZpx0MwTAvOAax00jie+q84BUQILWR4X7iEDjX5Bqk8zXzDux+rToBCrR8vz6j5sz1LIdiyWHE0MMKSpTAmYrPrCgk/U4deDOEFdKnAnL1s5+QPLnrwVIUN/WC2Sif5Ate4ODiBRn/vTO5nWYF0OOKCUrozn21JK9v61RFWYoCYfRHfOA/VssH+7Cq82mpuTkpLPU3zbsW1gA17aeK9l6pI7AhzI3AyRUOtxxSSW2AmFGsE6u3
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB3983.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(396003)(366004)(376002)(346002)(136003)(6506007)(5660300002)(478600001)(26005)(36756003)(186003)(6512007)(69590400008)(16526019)(86362001)(6486002)(2616005)(66556008)(316002)(66946007)(8936002)(83380400001)(4326008)(52116002)(6666004)(66476007)(8676002)(2906002)(7416002)(956004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?8cwrEt/asy7cS7b6cCjnakkB+10tMTLs6tSPLZQGwy6JhLQ0IOYP9rST+17T?=
- =?us-ascii?Q?RdzVfwYt8R4Mr4hS2s7Eac14xWhqvecfn/BKlY5M8JZlL5u3kf5pddd5/gSC?=
- =?us-ascii?Q?o14i6kkQKHrHRE5YcTsmUlArwOBujuEHLVI0dDGWKfzqC8eG7nxAhQHiowKo?=
- =?us-ascii?Q?0UIYj7R/s1qWZCSpcmX6WLITHT5iOh6NwZQrTzipu1lIPTUhEPOSVVkK2fU4?=
- =?us-ascii?Q?iS9pEkqh62SV1e/34E+WId1TyuXaNyGHjg9urSofz09PqKx3rIWmnEs96BD0?=
- =?us-ascii?Q?pnnNpYzoondCjSQ3nnlJOncWMHKtOGthQ9a1v9B86zVRJUpVls//p8+8GGlT?=
- =?us-ascii?Q?YtDSqO2eNTAnoPEzSVXyF3DCl8W4D667V2sJwe+8kOO46rY3HhI706DyoPqU?=
- =?us-ascii?Q?nFLZ1a5vx8qKgASfJjqZzrXo/Qnz1uClvt8JlKW8QIcWyWNGcjKkqZyPkmjm?=
- =?us-ascii?Q?4yXtAgqS53MZjxFatrfvQRWSDQDr5tbhL5IBxdDENansBLiGHAzCzqhagLgm?=
- =?us-ascii?Q?OpcJqrnWiylXkXBmPZDzwbkb5CvtVldsXgf19KvI2i9DNXJZB4ZaAof4JqXb?=
- =?us-ascii?Q?pgTSjU7QrIgrKfHFtEi1FRtLduVU+rDXQbjZSaVX2JQbc2ceqM9/Yq490j5Z?=
- =?us-ascii?Q?Zlwj6H3ihIOt6MMhjuRzKFPbBUo1VdDbF29jwffDFhiGijx0OJQFJB829aWJ?=
- =?us-ascii?Q?M7noqgQv9BCjzJGnpKZsskti/nDszU1ctIZqA2YsU5bKG+ZxCZyXSQa0dLVj?=
- =?us-ascii?Q?bp07v+5HkEulEdyzHPqOjm7TNHZKwJRTTF0eU99kdBcqtP8Z18a1s8Pik/rE?=
- =?us-ascii?Q?e5zxqpkXlH6hhbwl5fT2WJ6TuFWg9fJ7vWEaz13PRbxIfqyH0wUwrrc5G79z?=
- =?us-ascii?Q?pOm8Ntjcu7rfOSI11JJRLEq8K1QmMfhNL+ntF3T92sxxKujodOez2Gii8hQA?=
- =?us-ascii?Q?mq8yuozkIXFiaYjgGmnLFdDPvTXbuEbpiIo9j88a6rtA8WK0Mvf/CsUDoHf6?=
- =?us-ascii?Q?vBIz?=
+X-Microsoft-Antispam-Message-Info: 9/jw7IJgIxXWJ1YiMqvBp6izN5sC8Vzt5r2twCMDCKdOVl1f1wXTQCa+qGyaGHbwGp6Mr62ltobdD+k+TB4LP9i2TZHV+zy+CkuQ63sn/ulWRwlb3sDdFaBrOAnWa1LtQ6hffzLxGg7TuA/KOgypfSIH5y+kqHT6fFDyuv2Ow/hgBRXstBGhpK5YZAWlA2FohzLYyLjNz7afxBrfC479Rikmvfr0RfhCrRwFdcgX3Om8h4VGT0lmt+bSp7c02Jn/zh3hIictw/RZz7ZDWEt6oxxTkq1xo3JwqyhSM1WJzP2iyfdhUFIuX2+1bFtIIiKFcgFsQEHBkWSxQmJZHW1oXk1WFccNNQjomf7iM69r0NUCs9IGTTOnukHNEistAEfy
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB3983.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(4326008)(6512007)(83380400001)(6486002)(7416002)(8676002)(36756003)(5660300002)(2906002)(66946007)(66476007)(66556008)(8936002)(26005)(956004)(2616005)(186003)(16526019)(86362001)(316002)(52116002)(69590400008)(6506007)(478600001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?PousRQVGrkt0VdfWkQhdIuL42531WWhwcOROZA0JLIo6DG5hXJRhfeIWYvag?=
+ =?us-ascii?Q?C3zHYmCd+WzsiXiJFfbwqxSIaUbS6gIz6ua54TDKduWDmrcQ3g2YAbilwhg0?=
+ =?us-ascii?Q?fFRnkOjO/tbC0F43l+YuKEJPWYYrFLJqTI54n9UQLkwtIa4eshdVuFgOhYnm?=
+ =?us-ascii?Q?hhYKDUU2bomulkIg80c/rXB2qqVnt3FsuwCulqVa/3G9DdxH45Gt4wT9syA0?=
+ =?us-ascii?Q?PsV/sNoWN+jSXawd0uAGDVPJho9li+YEtVNtNTOkQTj1v5b3agpxF4YG+xbE?=
+ =?us-ascii?Q?KNXcKICxRB05fHhSja5tqRA+1KvW1uopBzlpVFux8LyKDPOTnl3BWWDhq0fX?=
+ =?us-ascii?Q?RLUyodymYKAoYL3bVv/bV2Rh/3H9drheKbE+tfMtMsTY5zaJ9mzcPePa8ahK?=
+ =?us-ascii?Q?XX6aVbKhhTb/XCLqhLpZiy6+mjzjXJQ1p4rgdUoXdkY28g3r8SgDPw/ipHzl?=
+ =?us-ascii?Q?bfO9GNcZSnjngkIPRccUtiO0kSmlTDcJgHSOCcWCCgYYs3GTliQEznBI4fAX?=
+ =?us-ascii?Q?A5dAlEHS5tW1HF65PZ3OVdkf/54IcQz4d6F0nG5Nb9cRqmB0rBX25Gzm2BAx?=
+ =?us-ascii?Q?1BJY9+mg5279mRqGp6lQ59HdMu6bgFl8VLOPCOs6L1C3g6DMhRbnR3oOwnug?=
+ =?us-ascii?Q?5BXE6NmVW8lQ5wu/ZWsO/JYD2laTchFTWYLpaSd7uBnkNEQOmGzEzBhbiIQ4?=
+ =?us-ascii?Q?KD2RcSg+IHFWc9cDZQnWGeMbIHZPbtVxSm/vSHS9N2g1LuIQkfzuPuDInEbg?=
+ =?us-ascii?Q?e1gXo5MdurkDVdhPkHOxDMARrWQg1sq6tcY2If31CfrMNr0pyupzMLlRUanB?=
+ =?us-ascii?Q?cZuGP9lDR3HTqsjyvhIwHEs+W/PXT92ozlHJsu91tpU1ambEDqJuvlb6Y8VK?=
+ =?us-ascii?Q?IE0tRFep5nfoJynjLqzVi8AmhiA7t6vP722oD44jIZ4pUXmlPESeBPBVdc7W?=
+ =?us-ascii?Q?ewrNiz5US33q5glXLha4FxYeMpeHEjkXLHOsWxWvyQd9w51Hxo+8o19DBwM/?=
+ =?us-ascii?Q?m98B?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84830c9a-1686-4152-474e-08d89684e951
+X-MS-Exchange-CrossTenant-Network-Message-Id: c16ea287-6ce2-4bfb-34a7-08d89684ee31
 X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB3983.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2020 05:41:26.9021
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2020 05:41:35.1415
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MjJqEgO/bFnsCa6GP4Xygz5ojpt6TGbzCnin0e0diwfWX/003xhlac4vtgxKnDHjgoezz1D9Ocw8sN4OnITM9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5184
+X-MS-Exchange-CrossTenant-UserPrincipalName: mr2BLBU2DUYZZXP9DZxBBXEfd4ce2DdAwAPkTqc+4rtm9ZrfhgsgAlm+Z3v6Xah9fFJpfBLcO2YsNG8mCQ5eWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7085
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds SCU clocks support for i.MX8qxp DC0 subsystem PLL clocks.
+This patch corrects display clocks for i.MX8qxp DC0 subsystem by
+calling imx_clk_scu2() to register them, instead of calling
+imx_clk_scu().  The reason is that the clocks can source from
+various parents.  The clock source selection is controlled by
+Distributed Slave System Controller(DSC).  According to the DSC spec,
+the below table describes the generic source selections for clocks
+with the same type in various subsystems.  And, the display controller
+subsystem spec says the display clocks can source from PLL1, PLL2 or
+bypass clock, thus we may specify the correct parents for imx_clk_scu2().
+
+The bypass clock's parent is determined by the SCU firmware.
+Currently, the parent is 'pixel_link_clk_in' from HW point of view.
+To be more specific, the parent is dummy for i.MX8qxp DC0, while
+HDMI TX PHY PLL for i.MX8qm DC0.  In practice, the display clocks
+source from the bypass clock only when driving i.MX8qm HDMI TX.
+So, for the both display clocks, we simply specify 'dc0_bypass0_clk'
+bypass clock as a valid parent.
+
+ -----------------------------------------
+| src_sel[28:26] |                        |
+ -----------------------------------------
+| 0x0            | xtal24M                |
+| 0x1            | PLL0                   |
+| 0x2            | PLL1                   |
+| 0x3            | PLL2                   |
+| 0x4            | bypass reference clock |
+| 0x5 to 0x7     | reserved               |
+ -----------------------------------------
 
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
@@ -123,24 +150,41 @@ Cc: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Liu Ying <victor.liu@nxp.com>
 ---
 v1->v2:
-* Trivial tweak - Move PLL clocks down to display clocks.
+* Newly introduced in v2.
 
- drivers/clk/imx/clk-imx8qxp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/imx/clk-imx8qxp.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index 5b3d4ed..b48643e 100644
+index af6a545..0b4bb2c 100644
 --- a/drivers/clk/imx/clk-imx8qxp.c
 +++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -117,6 +117,8 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
- 	/* Display controller SS */
- 	clks[IMX_DC0_DISP0_CLK]		= imx_clk_scu("dc0_disp0_clk", IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC0, clk_cells);
- 	clks[IMX_DC0_DISP1_CLK]		= imx_clk_scu("dc0_disp1_clk", IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC1, clk_cells);
-+	clks[IMX_DC0_PLL0_CLK]		= imx_clk_scu("dc0_pll0_clk", IMX_SC_R_DC_0_PLL_0, IMX_SC_PM_CLK_PLL, clk_cells);
-+	clks[IMX_DC0_PLL1_CLK]		= imx_clk_scu("dc0_pll1_clk", IMX_SC_R_DC_0_PLL_1, IMX_SC_PM_CLK_PLL, clk_cells);
+@@ -17,6 +17,14 @@
+ #include <dt-bindings/clock/imx8-clock.h>
+ #include <dt-bindings/firmware/imx/rsrc.h>
  
- 	/* MIPI-LVDS SS */
- 	clks[IMX_MIPI0_I2C0_CLK]	= imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2, clk_cells);
++static const char *dc0_sels[] = {
++	"clk_dummy",
++	"clk_dummy",
++	"dc0_pll0_clk",
++	"dc0_pll1_clk",
++	"dc0_bypass0_clk",
++};
++
+ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *ccm_node = pdev->dev.of_node;
+@@ -115,8 +123,8 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+ 	clks[IMX_CONN_USB2_LPM_CLK]	= imx_clk_scu("usb3_lpm_div", IMX_SC_R_USB_2, IMX_SC_PM_CLK_MISC, clk_cells);
+ 
+ 	/* Display controller SS */
+-	clks[IMX_DC0_DISP0_CLK]		= imx_clk_scu("dc0_disp0_clk", IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC0, clk_cells);
+-	clks[IMX_DC0_DISP1_CLK]		= imx_clk_scu("dc0_disp1_clk", IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC1, clk_cells);
++	clks[IMX_DC0_DISP0_CLK]		= imx_clk_scu2("dc0_disp0_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC0, clk_cells);
++	clks[IMX_DC0_DISP1_CLK]		= imx_clk_scu2("dc0_disp1_clk", dc0_sels, ARRAY_SIZE(dc0_sels), IMX_SC_R_DC_0, IMX_SC_PM_CLK_MISC1, clk_cells);
+ 	clks[IMX_DC0_PLL0_CLK]		= imx_clk_scu("dc0_pll0_clk", IMX_SC_R_DC_0_PLL_0, IMX_SC_PM_CLK_PLL, clk_cells);
+ 	clks[IMX_DC0_PLL1_CLK]		= imx_clk_scu("dc0_pll1_clk", IMX_SC_R_DC_0_PLL_1, IMX_SC_PM_CLK_PLL, clk_cells);
+ 	clks[IMX_DC0_BYPASS0_CLK]	= imx_clk_scu("dc0_bypass0_clk", IMX_SC_R_DC_0_VIDEO0, IMX_SC_PM_CLK_BYPASS, clk_cells);
 -- 
 2.7.4
 
