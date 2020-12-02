@@ -2,203 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAE5C8300F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 03:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A21C8300F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B488820705
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 03:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23B022203
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Dec 2020 05:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbgLBDaE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Dec 2020 22:30:04 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:25510 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387436AbgLBDaE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Dec 2020 22:30:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606879804; x=1638415804;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2rnV5PkQIBCqcTmTBmP7vWqrn4eu+wULGdTFOzOGoCk=;
-  b=nIJIPRRIK4zWmTHf4aY6Brc/KFLe+f0mFYr+0TktCUUX4FXD87Dk65ql
-   iTe/FOrGScwkL+xr6BtdNNlpWPTa3v+o5Y/+/jbQDVVA3k7aue2bOcT6/
-   +DkUJ8tCTzWX8ywIFf4VPk1yGVZoNaDhgqX4TbW8bAyA3BAieXv6QgSLq
-   qh8KNTC1UQfxOZfRYuJpfYxw7h46F8KN9uLmz88vJM9arQZnY5fe1WZLQ
-   G8v7jf5cbYObqe04u4p+Yoldj+Ld1C5VRHnfRoh6ZsIsSGVLH4yCp+PeE
-   1jvmslAB4gcoqWmFkM/3/BgnrmDGeI9NvxVGP+bF+J1nXjXoLlQIhm3Fe
-   Q==;
-IronPort-SDR: jl4iK7/QFxXKT8i+6KWsl/ZAOZ5cObjoYuYZnXyU8ai7+bnCzo2MoRz3mWRqnfYzJoZ9ifrrsY
- //BEiANyLRWInq0nxQsHcmG052m/j6nrdrjnlVSgGFHWD4aB0AxAzPebP9+1qnaRyYC0lmK99z
- UITtjB5q3PvoksX/I8c9GOMDsNB2s8aMLyK4/f+g/1lUxGS0XT7lKgfdIFDc3xo7BCtqsknCoJ
- 9E7ZX7RJofJlFeeCtmbkZPSNxtLLKsqnaB3CAguhBhBeinpI/Uw8zgqJGFi7uVYWXqQI2Ptmlm
- 2Vw=
-X-IronPort-AV: E=Sophos;i="5.78,385,1599494400"; 
-   d="scan'208";a="155183591"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 02 Dec 2020 11:25:48 +0800
-IronPort-SDR: /IBSFGTZvz/9//6A+mPn8YGBm2yEwnzKMR4nu8jbRY1nXkdaYQ33YSL2nWVFtd/TGT20DU0981
- qC+iuI5SMGf09cMENR97l1p1nbQHSD2Po=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2020 19:11:22 -0800
-IronPort-SDR: MS9OsiVBM4B1QKtf7jsDJx4apuQmZUmJyy/j7WDyF+2mJKCsKtb3fj+7qB/oEMC2l11dGPRCuA
- zl/R1eVSD4OQ==
-WDCIronportException: Internal
-Received: from phd004834.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.71.196])
-  by uls-op-cesaip02.wdc.com with ESMTP; 01 Dec 2020 19:25:46 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v4 21/21] riscv: Add Canaan Kendryte K210 SD card defconfig
-Date:   Wed,  2 Dec 2020 12:25:00 +0900
-Message-Id: <20201202032500.206346-22-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201202032500.206346-1-damien.lemoal@wdc.com>
-References: <20201202032500.206346-1-damien.lemoal@wdc.com>
+        id S1726307AbgLBFmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 00:42:15 -0500
+Received: from mail-eopbgr70053.outbound.protection.outlook.com ([40.107.7.53]:64484
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726125AbgLBFmP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Dec 2020 00:42:15 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aNXKtGdeT3Bknsk3u7AAqaaRZCmTmW/8mYjmZGqt9IWwWJxER1zvYH7PR9Ry/BJ7P+Cq77ZLZ/1nzE7ENLFifHoZck6sul9mzNTGrUqJprnsW1tL5SNQMxakRHsWUskzZkAP2XNXArCfHvRzqA/WX7QTDWGLMPHXpcydktU2vkmNm8TFHFqIWx4zigG+zm3lmEAaTKQ+ntCl0InSk8cIbPfLVX7e4sRxgs0muF5QIWesWaj7T50WCyjVxJ7mLnucznTaYfwD1h7w6JGSlZPiMa2W5Hzrxh+EOfPGJ5c70bcn8LbO6Q1RUBEhDW6gi/nofjQiWiAL1OPCuaZEAxLJww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AboUG5hTPxCRp6RYFh+cuIP1xq21BuJDQp3067OveDs=;
+ b=hO9Pbc3QeN0TRHAuBXiXI+MUY/GZhK2NhLwOr7AGyzOPaWSmMhPiuo0e5PW53rQiB2wEKyswysLaFFQaF9gcb4h/qtO5zaATMpdNc3sYl2deqekU6VGP/EZCawuzfZKu/5IjF+YIho+EL3dwRkJHDtKUudP3ODJ5LTrONu5q8muujQVdzAI5q+8JqiPZBanOZO7A9W7STIwL4vxyTZUBAkUDkclLd1zvS/3YXKjX/EdxyQY/wesOwPqtqAWdK3Q7zrG7Xe9vHlIGudDvAAyy9X4fHF7aVshVnrN8AioRZMK853yEjkrFIPVkRALjB7J4EFWUeLyYCfKXvVH8AvA8FQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AboUG5hTPxCRp6RYFh+cuIP1xq21BuJDQp3067OveDs=;
+ b=DldHR65N5GZVGe6dmuCRYr5ba4J9BglGMn827782jJammXMIYHwNyQyg/JNbbgKZoJ7UgXF+REr0D0sA8CJhvO6GYHmks+GnqhuMoIAoQPa7fTWmVGPVcxRX7bcrPLdG3655y40A+AtwhiWxGUy4JPeOHJgAM4wDMnkKrJh9v9M=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB3983.eurprd04.prod.outlook.com (2603:10a6:803:4c::16)
+ by VI1PR04MB5184.eurprd04.prod.outlook.com (2603:10a6:803:5d::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.25; Wed, 2 Dec
+ 2020 05:41:23 +0000
+Received: from VI1PR04MB3983.eurprd04.prod.outlook.com
+ ([fe80::dcb7:6117:3def:2685]) by VI1PR04MB3983.eurprd04.prod.outlook.com
+ ([fe80::dcb7:6117:3def:2685%7]) with mapi id 15.20.3611.025; Wed, 2 Dec 2020
+ 05:41:23 +0000
+From:   Liu Ying <victor.liu@nxp.com>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, robh+dt@kernel.org, aisheng.dong@nxp.com
+Subject: [PATCH v2 0/4] Add some clocks support for i.MX8qxp DC0/MIPI-LVDS subsystems
+Date:   Wed,  2 Dec 2020 13:33:35 +0800
+Message-Id: <1606887219-5854-1-git-send-email-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: SG2PR03CA0091.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::19) To VI1PR04MB3983.eurprd04.prod.outlook.com
+ (2603:10a6:803:4c::16)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0091.apcprd03.prod.outlook.com (2603:1096:4:7c::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3632.8 via Frontend Transport; Wed, 2 Dec 2020 05:41:18 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: cfc1e6df-7019-447b-2e2e-08d89684e6bc
+X-MS-TrafficTypeDiagnostic: VI1PR04MB5184:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR04MB518497BFC8FA930669651C6798F30@VI1PR04MB5184.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: RGjbf7EgCvUIcD6OQ3LlD80LUDYoGWuLyNED2hBgmpAtsC/fzvbOuB8O30stX5u7z/RUfXdp+ImQiJpoPrQHdqJoFgtyrpWEYP9sCikJrc9/gV+leLMj9nUKrOaUOTAJDbknY9O2ToiS6YQTmBiXjF8JakqPP/yUBEar1wDic56ODHHktdkDBl+8glDZLLT0IrnyxHWTf4VuKrCfpP99ZgyYYiiR3lkb7p3ZYL/S2T/eP9jMpcSVKCpQxBoCSKclIc262sMSTEC6ogPV7rZvXdaxaZ/kKU0wRAl6G9EaFEoE5FjXVW46C2bCzv8Lk64ZIgRRoXs3VvxEop8bVM5uD47wQnwvT3/s6xi3FVCREAxgwdhji3UWumcZgc66khT7
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB3983.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(396003)(366004)(376002)(346002)(136003)(4744005)(6506007)(5660300002)(478600001)(26005)(36756003)(186003)(6512007)(69590400008)(16526019)(86362001)(6486002)(2616005)(66556008)(316002)(66946007)(8936002)(83380400001)(4326008)(52116002)(6666004)(66476007)(8676002)(2906002)(7416002)(956004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?sVldsF9zuQUWCvCy5zP3bIhvO+foYQLCVVAghQASttE0Ri8jWMq9XzKh0yUd?=
+ =?us-ascii?Q?qDgoDRuVITOzu6ALT8wNcmrBaNB78RwttAy9d2dQBoV4cxu6VcRd5pjO9jNa?=
+ =?us-ascii?Q?dwYbhiKx8Fu77riOkg64LcMcXqDNH5BAnMPhmLE8NR0Mdju5ON599XXvLTMi?=
+ =?us-ascii?Q?MFLkTnIwhvN0Pr8LpIpn/sbljd4U5xmK4wue/Jfsv+FDIj1YDKIewbThphIV?=
+ =?us-ascii?Q?Yfuk9WUqsM7ZeG9l+QNTScfMBzcA76TQ2hxmm213m9SuTuLD9jq57zqC/yqE?=
+ =?us-ascii?Q?cNyC7j5IcjqfThUqs9Bqr7wf7q1/6f2BaUhSvOAH6m4zapx67HUF1VmBb3hD?=
+ =?us-ascii?Q?tVwwnRurxgmlhI8Qsx5KD48RyXIgT1RgJJxkn2Tg8gw2YTZfUpmlxX6dKINj?=
+ =?us-ascii?Q?Z7qITT9fhhhlbS3GN5dD89svLT53EqGm7nqixVQ5IaB/1CeZRhxqY4Gm9HW3?=
+ =?us-ascii?Q?DTjR7bBzgAG4VJmLPr1ZKl/F00Y3PVtEnXd71sACTgrp7wW86fie1ixFM+Wz?=
+ =?us-ascii?Q?9l1lHmHHUVZJBC1j6Mxfnw2H7UGwMtBBMDhYF0D+/Vm8SB8wypId6GoXnq91?=
+ =?us-ascii?Q?4olrkLx9JiTG6hYWc7KuM0V7FNgDHl6a6UtlA39m2v+YmTNNyFONYrxOd+O6?=
+ =?us-ascii?Q?R69y2Vt8dV7AWzLOx74Rk4KLJOjY4GJCvXFdj9axOcVm7usPGUVZLPF40Oit?=
+ =?us-ascii?Q?ARjZuz0+euoVsZtchEX24myf8YPq9J6xTc3WGmP+Ll9N8zfS4UQr5jxw2XhR?=
+ =?us-ascii?Q?mNyV4xFI5W2mJ3+wO9bgDWc4yi2obGcLx9i+qBLmbGqu3tAWd/42C2ixgxrB?=
+ =?us-ascii?Q?X9DYt53GVsSzasx0N0b40yrFDCtfiFJTkTu8Sy9/gEJhwKc+ZW2j/P7eV6K3?=
+ =?us-ascii?Q?xQ0znLsj12kz4vBeM9OCKAVUa/9Wd/fEUXPRRGhVFmduzwBvDSbClKYOQePe?=
+ =?us-ascii?Q?ujjFqBnOlKdTWzvNPhckhylJB63yt9W5UXqXvSkMWoo+5IM1JlHSUJbYmcNY?=
+ =?us-ascii?Q?08gH?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfc1e6df-7019-447b-2e2e-08d89684e6bc
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB3983.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2020 05:41:22.8344
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /sKtHzoz5g2JNfR1xdPFLmBVa0BqBxWg+6yEsKCZnYUxJQOvK3Esxk3VZwDcG13oggM7jc1P1BEnZJPXS5WUlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5184
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The nommu_k210_defconfig default configuration allows booting a Canaan
-Kendryte K210 SoC based boards using an embedded intramfs cpio file.
-Modifying this configuration to enable support for the board SD card is
-not trivial for all users. To help beginners getting started with these
-boards, add the nommu_k210_sdcard_defconfig default configuration file
-to set all configuration options necessary to use the board mmc-spi sd
-card for the root file system.
+This patch set adds some SCU clocks support for i.MX8qxp DC0/MIPI-LVDS
+subsystems.
 
-This new configuration adds support for the block layer, the mmc-spi
-driver and modifies the boot options to specify the rootfs device as
-mmcblk0p1 (first partition of the sd card block device). The ext2 file
-system is selected by default to encourage its use as that results in
-only about 4KB added to the kernel image size. As ext2 does not have
-journaling, the boot options specify a read-only mount of the file
-system. Similarly to the smaller nommu_k210_defconfig, this new default
-configuration disables virtual terminal support to reduce the kernel
-image size.
+With this patch set, some basic clocks for i.MX8qxp LVDS displays can be got
+by drivers.
 
-The default device tree selected is unchanged, specifying the simple
-"k210_generic" device tree file. The user must change this setting to
-specify the device tree suitable for the board being used
-(k210_maix_bit, k210_maix_dock, k210_maix_go, k210_maixduino or
-k210_kd233).
+v1->v2:
+* Drop LPCG clocks as they can be registered directly in an in-tree new
+  DT binding way.
+* Add DC0 bypass clocks support.
+* Correct the way to register DC0 display clocks.
+* Trivial tweak.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- .../riscv/configs/nommu_k210_sdcard_defconfig | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+Liu Ying (4):
+  clk: imx: clk-imx8qxp: Add SCU clocks support for DC0 PLL clocks
+  clk: imx: clk-imx8qxp: Add SCU clocks support for DC0 bypass clocks
+  clk: imx: clk-imx8qxp: Register DC0 display clocks with imx_clk_scu2()
+  clk: imx: clk-imx8qxp: Add some SCU clocks support for MIPI-LVDS
+    subsystems
 
-diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-new file mode 100644
-index 000000000000..999905ee9d53
---- /dev/null
-+++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-@@ -0,0 +1,93 @@
-+# CONFIG_CPU_ISOLATION is not set
-+CONFIG_LOG_BUF_SHIFT=13
-+CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+# CONFIG_SYSFS_SYSCALL is not set
-+# CONFIG_FHANDLE is not set
-+# CONFIG_BASE_FULL is not set
-+# CONFIG_FUTEX is not set
-+# CONFIG_EPOLL is not set
-+# CONFIG_SIGNALFD is not set
-+# CONFIG_TIMERFD is not set
-+# CONFIG_EVENTFD is not set
-+# CONFIG_AIO is not set
-+# CONFIG_IO_URING is not set
-+# CONFIG_ADVISE_SYSCALLS is not set
-+# CONFIG_MEMBARRIER is not set
-+# CONFIG_KALLSYMS is not set
-+CONFIG_EMBEDDED=y
-+# CONFIG_VM_EVENT_COUNTERS is not set
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLOB=y
-+# CONFIG_MMU is not set
-+CONFIG_SOC_CANAAN=y
-+CONFIG_SOC_CANAAN_K210_DTB_SOURCE="k210_generic"
-+CONFIG_MAXPHYSMEM_2GB=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_CMDLINE="earlycon console=ttySIF0 rootdelay=2 root=/dev/mmcblk0p1 ro"
-+CONFIG_CMDLINE_FORCE=y
-+# CONFIG_SECCOMP is not set
-+# CONFIG_STACKPROTECTOR is not set
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_MQ_IOSCHED_DEADLINE is not set
-+# CONFIG_MQ_IOSCHED_KYBER is not set
-+CONFIG_BINFMT_FLAT=y
-+# CONFIG_COREDUMP is not set
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_FW_LOADER is not set
-+# CONFIG_ALLOW_DEV_COREDUMP is not set
-+# CONFIG_BLK_DEV is not set
-+# CONFIG_INPUT_LEDS is not set
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
-+# CONFIG_VT is not set
-+# CONFIG_UNIX98_PTYS is not set
-+# CONFIG_LEGACY_PTYS is not set
-+# CONFIG_LDISC_AUTOLOAD is not set
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_DEVMEM is not set
-+CONFIG_I2C=y
-+CONFIG_I2C_CHARDEV=y
-+# CONFIG_I2C_HELPER_AUTO is not set
-+CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_SPI=y
-+# CONFIG_SPI_MEM is not set
-+CONFIG_SPI_DESIGNWARE=y
-+CONFIG_SPI_DW_MMIO=y
-+CONFIG_GPIO_SYSFS=y
-+# CONFIG_GPIO_CDEV_V1 is not set
-+CONFIG_GPIO_DWAPB=y
-+CONFIG_GPIO_SIFIVE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+# CONFIG_HWMON is not set
-+# CONFIG_HID is not set
-+# CONFIG_USB_SUPPORT is not set
-+CONFIG_MMC=y
-+# CONFIG_PWRSEQ_EMMC is not set
-+# CONFIG_PWRSEQ_SIMPLE is not set
-+CONFIG_MMC_SPI=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_USER=y
-+# CONFIG_VIRTIO_MENU is not set
-+# CONFIG_VHOST_MENU is not set
-+CONFIG_EXT2_FS=y
-+# CONFIG_FILE_LOCKING is not set
-+# CONFIG_DNOTIFY is not set
-+# CONFIG_INOTIFY_USER is not set
-+# CONFIG_MISC_FILESYSTEMS is not set
-+CONFIG_LSM="[]"
-+CONFIG_PRINTK_TIME=y
-+# CONFIG_SYMBOLIC_ERRNAME is not set
-+# CONFIG_DEBUG_BUGVERBOSE is not set
-+# CONFIG_DEBUG_MISC is not set
-+CONFIG_PANIC_ON_OOPS=y
-+# CONFIG_SCHED_DEBUG is not set
-+# CONFIG_RCU_TRACE is not set
-+# CONFIG_FTRACE is not set
-+# CONFIG_RUNTIME_TESTING_MENU is not set
+ drivers/clk/imx/clk-imx8qxp.c          | 26 ++++++++++++++++++++++++--
+ include/dt-bindings/clock/imx8-clock.h |  2 ++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
 -- 
-2.28.0
+2.7.4
 
