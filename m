@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7900BC433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 22:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A196C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB3422285
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 22:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 306222245C
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 22:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgLCW1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 17:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53580 "EHLO mail.kernel.org"
+        id S1728001AbgLCWyC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 17:54:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbgLCW1w (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:27:52 -0500
+        id S1727533AbgLCWyC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Dec 2020 17:54:02 -0500
 From:   Arnd Bergmann <arnd@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jian Hu <jian.hu@amlogic.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: g12a: select COMMON_CLK_MESON_VID_PLL_DIV
-Date:   Thu,  3 Dec 2020 23:26:58 +0100
-Message-Id: <20201203222706.992440-1-arnd@kernel.org>
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: mark PM functions as __maybe_unused
+Date:   Thu,  3 Dec 2020 23:53:11 +0100
+Message-Id: <20201203225315.1477137-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,28 +41,40 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Without this, a g12a-only config produces a link error:
+drivers/clk/samsung/clk-exynos-clkout.c:219:12: error: 'exynos_clkout_resume' defined but not used [-Werror=unused-function]
+  219 | static int exynos_clkout_resume(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~
+drivers/clk/samsung/clk-exynos-clkout.c:210:12: error: 'exynos_clkout_suspend' defined but not used [-Werror=unused-function]
+  210 | static int exynos_clkout_suspend(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~
 
-aarch64-linux-ld: drivers/clk/meson/g12a.o:(.data+0xcb68): undefined reference to `meson_vid_pll_div_ro_ops'
-
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/meson/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/samsung/clk-exynos-clkout.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 034da203e8e0..9a8a548d839d 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -110,6 +110,7 @@ config COMMON_CLK_G12A
- 	select COMMON_CLK_MESON_AO_CLKC
- 	select COMMON_CLK_MESON_EE_CLKC
- 	select COMMON_CLK_MESON_CPU_DYNDIV
-+	select COMMON_CLK_MESON_VID_PLL_DIV
- 	select MFD_SYSCON
- 	help
- 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 9ec2f40cc400..e6d6cbf8c4e6 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -207,7 +207,7 @@ static int exynos_clkout_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int exynos_clkout_suspend(struct device *dev)
++static int __maybe_unused exynos_clkout_suspend(struct device *dev)
+ {
+ 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+ 
+@@ -216,7 +216,7 @@ static int exynos_clkout_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int exynos_clkout_resume(struct device *dev)
++static int __maybe_unused exynos_clkout_resume(struct device *dev)
+ {
+ 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+ 
 -- 
 2.27.0
 
