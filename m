@@ -2,209 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F1CC64E7B
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 07:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D1EC63777
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A187120C56
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 07:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27EDD20C56
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:00:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbgLCHrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 02:47:08 -0500
-Received: from mail-eopbgr680057.outbound.protection.outlook.com ([40.107.68.57]:38978
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729389AbgLCHrH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Dec 2020 02:47:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IJ8hS6J9mTupkD51gbgKZlsnaGSXgZRSApX7Gq1U9/BBgoelVKNMb4ZbMxUuXtuvYSpDmhuOwLswvztrmAbEgsNmM28LpM42a9l0ZeOvn+HXoq7w/1sAleDH+73ISKGAhqpxaMgD5FivDPyxLSIKbOaHczLdw1iQxVj0ca60Xz4x9nkxT8sTOY1PyH+IroQwSzIzROT9DYm5Fdb8LeI5HioznaHLykxtwLobo4VZum3m/F3wUdHBs72CyhpuN1vDanlEqLxkRxbZpSbNbXeCIzvSEGv8wJb6xt1X/7c/LC4ELA+IeQHN/H6JCXlg58oBbN2ZBsSjJKtaEx8daqdK1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CiZtw9AOU9NIIFxLExlBSL33XG1RYB+bFknJFm22uwg=;
- b=gNdmb3BIShOiTv/2sQG03Lp6oMQyTf6jj4EqWtLsTU6zQ6sh8EYlKAs2enMzqhd6fz/UqXzsV4OTyCIWwssk0DKcjUTprcDitSBJoFX0nilPBwadbVR0q3WvTgsuJ8m9MI8abic+gPtgu5abenEUCVYJERy6jIr3A5e4MgIXm+XE4PvSEix4Sx8ZpsCgPKEYN8WL8WWP1EqUmGH4CA++i1Ibv6Gh1bLtrVeuyf5JLe2NIIKLU+QT5cAXMxLv/mxR/q5TSJeoatMQtI9QN//MixXblzKwAEntijrq3iRYSASoXBD559TV8SnDRZN/4Z4d7xlXim7JueMIIRisQuitow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CiZtw9AOU9NIIFxLExlBSL33XG1RYB+bFknJFm22uwg=;
- b=IR6KPYn9jQOnBiuwF8BFoVh0Znf2IBheKE4OuCq8UtFufg1llBwQ1XDMMCfuYEbg4EzUTZOlUHAj1gOateuVq4x5dFHysFefzM6iAQ1V/qxKvPGI6vaS7IRkChUgZXwuynzI04yNnESYONOAHLJnuKZl7Aj8UFVP33QgOG+Lr8o=
-Received: from SA0PR11CA0118.namprd11.prod.outlook.com (2603:10b6:806:d1::33)
- by CO6PR02MB7683.namprd02.prod.outlook.com (2603:10b6:303:a0::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17; Thu, 3 Dec
- 2020 07:46:18 +0000
-Received: from SN1NAM02FT016.eop-nam02.prod.protection.outlook.com
- (2603:10b6:806:d1:cafe::ef) by SA0PR11CA0118.outlook.office365.com
- (2603:10b6:806:d1::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.21 via Frontend
- Transport; Thu, 3 Dec 2020 07:46:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT016.mail.protection.outlook.com (10.152.72.113) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3611.27 via Frontend Transport; Thu, 3 Dec 2020 07:46:18 +0000
-Received: from xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Wed, 2 Dec 2020 23:46:16 -0800
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Wed, 2 Dec 2020 23:46:16 -0800
-Envelope-to: rvisaval@xilinx.com,
- dshah@xilinx.com,
- tejasp@xilinx.com,
- rajanv@xilinx.com,
- sboyd@kernel.org,
- mturquette@baylibre.com,
- robh+dt@kernel.org,
- kernel@pengutronix.de,
- devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- m.tretter@pengutronix.de
-Received: from [172.30.17.109] (port=35872)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1kkjJg-0007qV-B2; Wed, 02 Dec 2020 23:46:16 -0800
-Subject: Re: [PATCH 00/12] soc: xilinx: vcu: Convert driver to clock provider
-To:     Michael Tretter <m.tretter@pengutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <rajanv@xilinx.com>, <tejasp@xilinx.com>, <dshah@xilinx.com>,
-        <rvisaval@xilinx.com>, <kernel@pengutronix.de>,
-        <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-References: <20201116075532.4019252-1-m.tretter@pengutronix.de>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <5dd16c21-b204-bb10-feb8-562a298faaf9@xilinx.com>
-Date:   Thu, 3 Dec 2020 08:46:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        id S1728079AbgLCIAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 03:00:05 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:51713 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728658AbgLCIAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 03:00:03 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 17E7FE26;
+        Thu,  3 Dec 2020 02:59:17 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 03 Dec 2020 02:59:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=IWFmKP/Mo0VDGFNgTJDZyQHV+k
+        tb+RO0adDkB3rVIps=; b=qu65OIIBzs1jOephqhxHBqRryeLwJy+Dsj1Izv+7Zi
+        B6aVRlgP0aaEBx57ygdRqR+1xrH3iHBKq1MiK+24gZzkMeET7nJgpB3EMMgzMYx5
+        40/v6JjSjsdiGeRFiWtzUGme22k4eTKFxLq5CBjCDnA/ANyi6Psnab3fi7lqsvYF
+        NcqhsYQWCbxMTZs1kMLmZsu7d3o67hGWJlN00cgLOybHmqLJ3YS13V7zj5Bk6YM7
+        KVG14ATXTu3e0Je0cfpY6lzeLN4WVC53RwrUA4h+qxZeSicdRit7M2h3yhVuwb6/
+        KT8UpYbZwlaXpEysgPaeH2OXFqxK2m78sm6IQyeOjHbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=IWFmKP/Mo0VDGFNgT
+        JDZyQHV+ktb+RO0adDkB3rVIps=; b=SZxQau4yLK97RIoLPyjkwF1yc1OIC7GgU
+        px1t+9499ss93O0UVudqtiYikJaDS58HR1sK/Rfaw62v4eR9If354aH2UrVOik9o
+        67aPVk9rI8LG1SshI4vkuAoIqXa4EuR42ECcQFOvIXFyedk+1zIri1gC4DUCIIHD
+        +SLqQC2v1XGiIPUGwFjoa4ZcI3hiEPbEP+s6aE85EqHPOmC7Ci6jb0n/3vRg3rcE
+        ZITa8M2Enfircp0fX4emelLhODCvR2xbhFr7tL4iezZqc900bV/Jxt9KVxETSgEh
+        qj/kKuX6k/37vQiEcG2kjF6aKK0DweYSHl0oCyMAVwZWaNL+Po1aw==
+X-ME-Sender: <xms:05rIX1dJEG-XpoUFnWRek0qIRgdZbxE8e2Tju3ie3uXAcL7vN5pnGw>
+    <xme:05rIXzOA_UGK7eoXQoF_A9MZZZE9SfNFAac6zsPJq03Ql0UApB8B9d7jGaKgnZDjA
+    Gl_XLMWE6bz0FDgfy0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeihedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeejffehuddvvddvlefhgeelleffgfeijedvhefgieejtdeiueetjeetfeeukeej
+    geenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:05rIX-i_gTr_C39M8Ci7Dcv1fI6hfCwgBO-QsCLQvBMBjAXxmfPPyA>
+    <xmx:05rIX--RbNqnZAp7JtiN7HlZUMiJ7VlRroYswpMdPvt5CXlppPJFAQ>
+    <xmx:05rIXxuh7pFTe6qq0EQrMFVHIG6ljSK9f7zZ1asN4iGC5140sqinDg>
+    <xmx:1JrIXyVMhDqagvJfHbYVMmZpEvPpCz0lp-kixDsnibxTNMtYqd0Lrw>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 509D2108005F;
+        Thu,  3 Dec 2020 02:59:15 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH] clk: trace: Trace range functions
+Date:   Thu,  3 Dec 2020 08:59:13 +0100
+Message-Id: <20201203075913.723046-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201116075532.4019252-1-m.tretter@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 912e74be-b2d9-4623-1971-08d8975f84ee
-X-MS-TrafficTypeDiagnostic: CO6PR02MB7683:
-X-Microsoft-Antispam-PRVS: <CO6PR02MB76836C594C26715A9B89C882C6F20@CO6PR02MB7683.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: c+uxbpUYr2/WVz8jyENrJqDn+oAubniaQLWsMhGvdPywyQx5i2jJ6/QdzWLIuO4Z9v/nO9QZaWmdGLPPX/tBAi0U+DeTpD2pkLA0w9bSHuztcGnJQ4hwlB6gjcFMrUvGM6QxBKTlyTh7iw+YYvz2QOj/0/ivDP7DTmkB1cXe03+4RiLgs6V8uBxlVBpA8xqhfEgNQk1SuQzSHfIyfNw/A1MEK0iO4fdh57jnPIGq0w+6KorhmslAdclN279UF84Eq5Lkd5wXEGW5s+8okzkft36qWbrVyUDwLC2CTCScZeG35ZQ+7T6PqXIhnypGA2RWEOvx8ALmAG8/5qpoAuKxcBIqWLx3kdnhP5VRoFIzyN9CrWqkrxryBJvJ0s4eLqzoE0TKRwotLWy8MeyRoDJSVxPRNBBbRl1GaPPt62QLvN4jt4eIC+RZDvb5pWEvbdgyWfrAuuCWXYR7Qak/i87Ot43A3giTPQ1WP68n8rj09qMNioE+sVrfoZK+nNYfeNWHDpB+F3agvP4XE/Se9wNbfRha2YBvbpcxvhHMJ6LC9LU=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(136003)(346002)(376002)(39860400002)(396003)(46966005)(4326008)(83380400001)(82740400003)(47076004)(70206006)(478600001)(70586007)(966005)(7636003)(82310400003)(2906002)(186003)(6666004)(356005)(26005)(426003)(2616005)(31686004)(31696002)(36906005)(54906003)(9786002)(44832011)(110136005)(8936002)(8676002)(5660300002)(36756003)(316002)(336012)(50156003)(2101003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2020 07:46:18.0019
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 912e74be-b2d9-4623-1971-08d8975f84ee
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT016.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR02MB7683
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The clk_set_range functions don't have any tracepoints even though it
+might be useful. Fix this.
 
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/clk/clk.c          |  6 ++++++
+ include/trace/events/clk.h | 44 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+)
 
-On 16. 11. 20 8:55, Michael Tretter wrote:
-> Hello,
-> 
-> the xlnx_vcu soc driver is actually a clock provider of a PLL and four output
-> clocks created from the PLL via dividers.
-> 
-> This series reworks the xlnx_vcu driver to use the common clock framework to
-> enable other drivers to use the clocks. I originally posted a series to expose
-> the output clocks as fixed clocks [0]. This series now implements the full
-> tree from the PLL to the output clocks. Therefore, I am sending a separate
-> series that focuses on the clocks, but it depends on v4 of the previous series
-> [1].
-> 
-> Possible consumers for the clocks are the allegro-dvt video encoder driver or
-> the Xilinx Video Codec Unit [2] out of tree driver.
-> 
-> Patch 1 defines the identifiers that shall be used by clock consumers in the
-> device tree.
-> 
-> Patch 2 fixes the generic clk-divider to correctly use parents that are passed
-> via struct clk_hw instead of the clock name.
-> 
-> Patches 3-6 refactor the existing driver and split the function to configure
-> the PLL into smaller helper functions.
-> 
-> Patch 7 registers a fixed rate clock for the PLL. The driver calculated and
-> set the PLL configuration during probe, and exposing a fixed rate clock for
-> that rate allows to use the existing configuration with output clocks from the
-> common clock framework.
-> 
-> Patches 8-10 switch the driver to the common clock framework and register the
-> clock provider.
-> 
-> Patches 11-12 are cleanup patches.
-> 
-> Michael
-> 
-> [0] https://lore.kernel.org/linux-arm-kernel/20200619075913.18900-1-m.tretter@pengutronix.de/
-> [1] https://lore.kernel.org/linux-arm-kernel/20201109134818.4159342-3-m.tretter@pengutronix.de/
-> [2] https://github.com/Xilinx/vcu-modules
-> 
-> Michael Tretter (12):
->   ARM: dts: define indexes for output clocks
->   clk: divider: fix initialization with parent_hw
->   soc: xilinx: vcu: drop coreclk from struct xlnx_vcu
->   soc: xilinx: vcu: add helper to wait for PLL locked
->   soc: xilinx: vcu: add helpers for configuring PLL
->   soc: xilinx: vcu: implement PLL disable
->   soc: xilinx: vcu: register PLL as fixed rate clock
->   soc: xilinx: vcu: implement clock provider for output clocks
->   soc: xilinx: vcu: make pll post divider explicit
->   soc: xilinx: vcu: make the PLL configurable
->   soc: xilinx: vcu: remove calculation of PLL configuration
->   soc: xilinx: vcu: use bitfields for register definition
-> 
->  drivers/clk/clk-divider.c            |   9 +-
->  drivers/soc/xilinx/Kconfig           |   2 +-
->  drivers/soc/xilinx/xlnx_vcu.c        | 613 ++++++++++++++++-----------
->  include/dt-bindings/clock/xlnx-vcu.h |  15 +
->  4 files changed, 383 insertions(+), 256 deletions(-)
->  create mode 100644 include/dt-bindings/clock/xlnx-vcu.h
-> 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f83dac54ed85..34c2fa18b732 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2314,6 +2314,8 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+ 	if (!clk)
+ 		return 0;
+ 
++	trace_clk_set_rate_range(clk->core, min, max);
++
+ 	if (min > max) {
+ 		pr_err("%s: clk %s dev %s con %s: invalid range [%lu, %lu]\n",
+ 		       __func__, clk->core->name, clk->dev_id, clk->con_id,
+@@ -2378,6 +2380,8 @@ EXPORT_SYMBOL_GPL(clk_set_rate_range);
+  */
+ int clk_set_min_rate(struct clk *clk, unsigned long rate)
+ {
++	trace_clk_set_min_rate(clk->core, rate);
++
+ 	if (!clk)
+ 		return 0;
+ 
+@@ -2394,6 +2398,8 @@ EXPORT_SYMBOL_GPL(clk_set_min_rate);
+  */
+ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+ {
++	trace_clk_set_max_rate(clk->core, rate);
++
+ 	if (!clk)
+ 		return 0;
+ 
+diff --git a/include/trace/events/clk.h b/include/trace/events/clk.h
+index cb1aea25c199..e19edc63ee95 100644
+--- a/include/trace/events/clk.h
++++ b/include/trace/events/clk.h
+@@ -118,6 +118,50 @@ DEFINE_EVENT(clk_rate, clk_set_rate_complete,
+ 	TP_ARGS(core, rate)
+ );
+ 
++DEFINE_EVENT(clk_rate, clk_set_min_rate,
++
++	TP_PROTO(struct clk_core *core, unsigned long rate),
++
++	TP_ARGS(core, rate)
++);
++
++DEFINE_EVENT(clk_rate, clk_set_max_rate,
++
++	TP_PROTO(struct clk_core *core, unsigned long rate),
++
++	TP_ARGS(core, rate)
++);
++
++DECLARE_EVENT_CLASS(clk_rate_range,
++
++	TP_PROTO(struct clk_core *core, unsigned long min, unsigned long max),
++
++	TP_ARGS(core, min, max),
++
++	TP_STRUCT__entry(
++		__string(        name,           core->name                )
++		__field(unsigned long,           min                       )
++		__field(unsigned long,           max                       )
++	),
++
++	TP_fast_assign(
++		__assign_str(name, core->name);
++		__entry->min = min;
++		__entry->max = max;
++	),
++
++	TP_printk("%s min %lu max %lu", __get_str(name),
++		  (unsigned long)__entry->min,
++		  (unsigned long)__entry->max)
++);
++
++DEFINE_EVENT(clk_rate_range, clk_set_rate_range,
++
++	TP_PROTO(struct clk_core *core, unsigned long min, unsigned long max),
++
++	TP_ARGS(core, min, max)
++);
++
+ DECLARE_EVENT_CLASS(clk_parent,
+ 
+ 	TP_PROTO(struct clk_core *core, struct clk_core *parent),
+-- 
+2.28.0
 
-I can't see any other problem with this series.
-When we are on this. Can you also please fix these issues reported by
-checkpatch to have new issues more visible?
-
-./scripts/checkpatch.pl --strict -f drivers/soc/xilinx/xlnx_vcu.c
-CHECK: Alignment should match open parenthesis
-#614: FILE: drivers/soc/xilinx/xlnx_vcu.c:614:
-+	xvcu->vcu_slcr_ba = devm_ioremap(&pdev->dev, res->start,
-+						 resource_size(res));
-
-WARNING: Possible repeated word: 'the'
-#707: FILE: drivers/soc/xilinx/xlnx_vcu.c:707:
-+	/* Add the the Gasket isolation and put the VCU in reset. */
-
-total: 0 errors, 1 warnings, 1 checks, 735 lines checked
-
-
-Thanks,
-Michal
