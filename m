@@ -2,104 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C4FC18E57
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAFCC4361A
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3237D207CA
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16C5206D6
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbgLCOrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 09:47:23 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:54843 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgLCOrW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 09:47:22 -0500
-Received: from [192.168.1.155] ([95.118.71.13]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N1Ofr-1k1DLm2wnr-012nGT; Thu, 03 Dec 2020 15:44:41 +0100
-Subject: Re: [PATCH] (v2) drivers: clk: make gpio-gated clock support optional
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20201117160306.21760-1-info@metux.net>
- <160566373556.60232.14730664139007414312@swboyd.mtv.corp.google.com>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <13a5d811-8ebb-9ac8-ac2a-04110f71ea16@metux.net>
-Date:   Thu, 3 Dec 2020 15:44:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726646AbgLCOxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 09:53:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57454 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726452AbgLCOxf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Dec 2020 09:53:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D6E6DAC6A;
+        Thu,  3 Dec 2020 14:52:53 +0000 (UTC)
+Message-ID: <25466e2a562765be1d67abd2d1bdae1a089a8d33.camel@suse.de>
+Subject: Re: [PATCH v5 08/11] input: raspberrypi-ts: Release firmware handle
+ when not needed
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
+        f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com
+Date:   Thu, 03 Dec 2020 15:52:52 +0100
+In-Reply-To: <20201202060347.GA2034289@dtor-ws>
+References: <20201123183833.18750-1-nsaenzjulienne@suse.de>
+         <20201123183833.18750-9-nsaenzjulienne@suse.de>
+         <20201202060347.GA2034289@dtor-ws>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ZvftALHIaTsXsRIracDG"
+User-Agent: Evolution 3.38.2 
 MIME-Version: 1.0
-In-Reply-To: <160566373556.60232.14730664139007414312@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:QSQB3khoAeQ91gi0PGE7IbDjLwBPDKiHqj1H43XTH8ofEMvrxQf
- feIo4eaNA7AC9f7QisxQlAqwm2p00voMbHur1aqXDevsFWo14yoFI/0NshawteQbFlD6QJl
- ktle5vxvh1u+RVqfgeioAyvSYMA9DAUu5LjsRUwCAGCGSgE8lBZ7YQP0Ni+h7S1YY5Uubux
- mlEJfO/QLmNF3PINEnDPQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9aOkMfjlCxI=:DXpPiaQDqGnYs6Y2IG7XND
- nDasW+/vV2u0t2FexpuOG/QICh3PmOoHQ6eiSo6uqxgXj3jEFJXv9ZpB5+9rrfi6Z+AhEyt4G
- ZttHG7CeDXXzCaYQoomPYXz73aFWW9Y2X4tSYmNwDV05vu43eU0w7FpXEYzPfO8EpGz7aOB1u
- lX4utFMYfjPkny/1pgXxLFOprYNM89Gz8zoyHKUkF01RPyq5QtoRzFHEWqh/TKY8ZT/0HKRp7
- 2zQcj9M13M4E8NibrsvG+f55NFBBBMH7dHfIikHzBg5PQ1dtlAHNJq8pN1JnmTBOrjkP4vRb4
- 7U+XujxRkyxQIeNNUpAJiv3kMCXxSH73qbN3VRAnNdJ4Y4yCH/LH3NLK1SKcFwD5vj9VVizZc
- 1A7uDbiE/VJOMNgrVso3NSWOeqFzv4JgEoTnyt7b1unWDnnKCNQd9IdaHIA78
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18.11.20 02:42, Stephen Boyd wrote:
-> Quoting Enrico Weigelt, metux IT consult (2020-11-17 08:03:06)
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index c715d4681a0b..99e0188a15be 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -38,6 +38,14 @@ menuconfig COMMON_CLK
->>  
->>  if COMMON_CLK
->>  
->> +config COMMON_CLK_GPIO
->> +       tristate "GPIO gated clock support"
->> +       default y
-> 
-> Maybe 'default GPIOLIB'?
-> 
->> +       select gpiolib
-> 
-> Does lowercase work here?
-> 
->> +       help
->> +         Supports gpio gated clocks, which can be enabled/disabled via
->> +         gpio output.
->> +
->>  config COMMON_CLK_WM831X
->>         tristate "Clock driver for WM831x/2x PMICs"
->>         depends on MFD_WM831X
+
+--=-ZvftALHIaTsXsRIracDG
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2020-12-01 at 22:03 -0800, Dmitry Torokhov wrote:
+> Hi Nicolas,
+>=20
+> On Mon, Nov 23, 2020 at 07:38:29PM +0100, Nicolas Saenz Julienne wrote:
+> > Use devm_rpi_firmware_get() so as to make sure we release RPi's firmwar=
+e
+> > interface when unbinding the device.
+>=20
+> I do not believe this comment is correct any longer. Otherwise:
+>=20
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Yes, sorry for that. I'll update it.
+
+Regards,
+Nicolas
 
 
-thanks, fixed it in v3.
+--=-ZvftALHIaTsXsRIracDG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
-BTW: just accidentially posted an outdated and broken version again
-(some submit helper script was running wild :() - please ignore that.
-the valid one is v3 from yesterday. sorry for the noise.
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl/I+8QACgkQlfZmHno8
+x/7NvQf+JfeK0Lnf/15akeGZ/8CgqH3D9RSZKgyFKFIcOAUVnKXWdodRdXxrVu0+
+1VgbGz2N5efgb/8exdYKRQqJine/T/NLCHW1PcrUE/NJPvJZ+JdM8P+JcOndFCv3
+ERWwKGhxK5gboL1Av3jiy9rUGSc/xDfmV5JZVDGnaANaDx7TWE0ZrznAqmwLhxfb
+qWo3bToylX8NAWP5vNs24bzPP7KyQHBwXDNuC3LIg3n9D5aj8s/qq/ZbHK3upjIG
+M/3jrHsvITNvyvy5xVhJhlzywtd2780n2VbwUW4JkfxELPxeCrJRmSyop46k98zX
+qBEeTzyBfM9kHKAcklkuqve2moyBtw==
+=2QiO
+-----END PGP SIGNATURE-----
 
+--=-ZvftALHIaTsXsRIracDG--
 
---mtx
-
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
