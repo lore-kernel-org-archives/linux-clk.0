@@ -2,135 +2,231 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A21F5C64E7C
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 02:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D97C63777
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 04:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C99922228
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 02:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F8C822203
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 04:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbgLCCpV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Dec 2020 21:45:21 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:42647 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725893AbgLCCpU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 21:45:20 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 9246858024A;
-        Wed,  2 Dec 2020 21:44:34 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 02 Dec 2020 21:44:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=w
-        +W9iSoo52ek703UN86yNavgaMJrE/oRl/AMe/FXqTw=; b=ElTXHPc6LnBBeo9vD
-        vipkY5202XP+551jbgD/kzr/xb9NwHy8uMg1h14c2xFF4tXofYN2Ui5dtei/ccbN
-        NR9tNAW9zl1KKCd6LEbDXLuH1lgGnK8Y1L3p+2xAG8b+74iu/1jK2Fu04ZTCJa8g
-        WSSBL3pn2MpkAoys/LfHTmGCfNNyDfa17GgDLMfJ0J/kmyCeIK01xe0TYXNKVQfe
-        Lnq3+t0aZy0JI2OTfa1BVJEQQdX50UBa3y8lCrPEi31vmsT2W2V02l1R8Jl9ofHw
-        +d3D5FYaiLuzQk9xzNmAzBscEFqUxoMEEn/LNFsnd++qk1DX54kbDXav5/kwWeMg
-        /GUyQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=w+W9iSoo52ek703UN86yNavgaMJrE/oRl/AMe/FXq
-        Tw=; b=j+K/uufc6RI4uR/Lxp+vZNRKTAGGq1AuPjZRk+qKqP2baYclsEVKwsfuq
-        haEZHICM73k6UpjdmSfjCB2U83dgoUK1lIyPw0v7JCuU9+ajyLRFZt9XUiY9/LJ+
-        mTJ+/sR6MeLrLlFvCkYkC1fF0ly0Z7HPMIz4nhlxtDWP47T//PYH98MwFKGnnItn
-        JWnSTJ5g3pkKj5EFdqloWhWxURk4laO6PK/YawszMipc5V3XMuciy09fQRBPHQDw
-        WaMaScE8YQwAXTQ07unynIUFb6uRwK5Xp9M77ce77EzjXPpGOz2szsk/7do6NN+o
-        N8HKQCnto926znql+64A7ZFkft9kw==
-X-ME-Sender: <xms:D1HIX1uBIPPxt_0bK1o_qbF9fws-Wv77GSm9yQqSr2Iq1SZtj4Uw9A>
-    <xme:D1HIX-fx6CrpNf4vbsQkLAEOWHk2Y4sjOsa9ncq-EZbju4SSGwnZJs-M-4HmZDDRx
-    kTpQK_nrGxiH0EDlg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeihedggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepuddvleffkeejhfduieelheejteehleefieeikefgteeugefhtdev
-    keefvefgheeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepjedtrddufe
-    ehrddugeekrdduhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:D1HIX4zh2NgtSlcRYk_RoURBg6aMso978BZFYezK1XwsRWxrlY-VfQ>
-    <xmx:D1HIX8M878gsPmttLro9Uv9yzo4926KV-0nEmrpU-PURO71eVw7VfA>
-    <xmx:D1HIX1_Ve9jjgYLQqiLyXEGqJ9bpN8lHJ2A7pCYMkV-eeP5cfOlmtQ>
-    <xmx:ElHIX4Vu_vAC6yc-71_H2BmRtdaDD8WEMDspfUoW24BZAx5CI5_FUw>
-Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D5EB6240059;
-        Wed,  2 Dec 2020 21:44:30 -0500 (EST)
-Subject: Re: [PATCH 4/8] clk: sunxi-ng: Add support for the Allwinner H616
- R-CCU
-To:     =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@siol.net>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Yangtao Li <frank@allwinnertech.com>,
+        id S1726332AbgLCErY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Dec 2020 23:47:24 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44132 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbgLCErY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Dec 2020 23:47:24 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b23so443383pls.11;
+        Wed, 02 Dec 2020 20:47:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aAG23Weit5T1H3h9q3ADXcaHYdrFnCkvvkEQnZGgOak=;
+        b=s2ZUfxM9OLxFpe8bsB6MvJsC7h4lJDuP9Q2eUI8e0LQxkd17T8ywZOmG6jisAFI0eK
+         ZNx5j5mZ+xE9jienA8f7miCsWH/fNHH0I3FlE17mnEQ0SeSi8VaDAZ5Pi8fSoRaVDNti
+         LudRvCNKHzhsbPVaK3WXO2Y4LNfX8Ybnw0rlct9q4CVrRE8I/EHNnckt+KsUVRduP/0u
+         yVStOtSCv9caEJ0Zsb0+dqs3OML0Y53oOfTojt4Js/AAiyqf8ShL8CAgdzY69ytlLnxc
+         FkC8DySIyGq+x2HlIq8HuO2SoBruUT2Y43kUW7mwsmrzTuoxZzGOubhTXTLxqQKtHWLF
+         JoDw==
+X-Gm-Message-State: AOAM533/9r9S88NJfzJjntbG0XsmJQDlNgTzHrVzmU7ZmvQDjF2DRxO/
+        44n0IFB+7vlEpgHuSYNOUu5kArwqqYMo8Q==
+X-Google-Smtp-Source: ABdhPJwLt5yYeK82HSLF33fmBokmFMoA8XyypfogEbdrJmwcYSVzBD+PdZRGq375DRH+ASZw2wOccA==
+X-Received: by 2002:a17:90a:d307:: with SMTP id p7mr1356778pju.214.1606970802649;
+        Wed, 02 Dec 2020 20:46:42 -0800 (PST)
+Received: from localhost ([2601:647:5b00:1162:1ac0:17a6:4cc6:d1ef])
+        by smtp.gmail.com with ESMTPSA id r7sm419816pjd.8.2020.12.02.20.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Dec 2020 20:46:41 -0800 (PST)
+Date:   Wed, 2 Dec 2020 20:46:40 -0800
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Cc:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20201202135409.13683-1-andre.przywara@arm.com>
- <20201202135409.13683-5-andre.przywara@arm.com> <3151878.LmPXbFMbMm@kista>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <55df8346-0330-4e7d-03ef-334622851a98@sholland.org>
-Date:   Wed, 2 Dec 2020 20:44:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Moritz Fischer <mdf@kernel.org>
+Subject: Re: [PATCH 1/2] clk: axi-clkgen: wrap limits in a struct and keep
+ copy on the state object
+Message-ID: <X8htsIO+iYMMSuaK@archbook>
+References: <20201019111809.56374-1-alexandru.ardelean@analog.com>
+ <CA+U=DsrpLTc7uti7pHSEDFzVSgVfbgxXzy3oiDb=csOSakmOZw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3151878.LmPXbFMbMm@kista>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+U=DsrpLTc7uti7pHSEDFzVSgVfbgxXzy3oiDb=csOSakmOZw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/2/20 12:20 PM, Jernej Škrabec wrote:
->> +};
->> +
->> +static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
->> +	.hws	= {
->> +		[CLK_R_AHB]		= &r_ahb_clk.hw,
->> +		[CLK_R_APB1]		= &r_apb1_clk.common.hw,
->> +		[CLK_R_APB2]		= &r_apb2_clk.common.hw,
->> +		[CLK_R_APB1_TWD]	= &r_apb1_twd_clk.common.hw,
+Hi Alex,
+
+On Wed, Dec 02, 2020 at 06:10:42PM +0200, Alexandru Ardelean wrote:
+> On Mon, Oct 19, 2020 at 2:14 PM Alexandru Ardelean
+> <alexandru.ardelean@analog.com> wrote:
+> >
+> > Up until now the these limits were global/hard-coded, since they are
+> > typically limits of the fabric.
+> >
+> > However, since this is an FPGA generated clock, this may run on setups
+> > where one clock is on a fabric, and another one synthesized on another
+> > fabric connected via PCIe (or some other inter-connect), and then these
+> > limits need to be adjusted for each instance of the AXI CLKGEN.
+> >
+> > This change wraps the current constants in 'axi_clkgen_limits' struct and
+> > the 'axi_clkgen' instance keeps a copy of these limits, which is
+> > initialized at probe from the default limits.
+> >
+> > The limits are stored on the device-tree OF table, so that we can adjust
+> > them via the compatible string.
 > 
-> Do we know if TWD exists? I tested I2C and IR. What is your source for these 
-> clocks?
+> ping on this;
+> should i do a re-send for this?
 
-Looking at https://github.com/orangepi-xunlong/linux-orangepi and comparing
-drivers/clk/sunxi/clk-sun50iw[69].h, I see:
+I'd try resending, yes.
+> 
+> >
+> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> > ---
+> >  drivers/clk/clk-axi-clkgen.c | 48 +++++++++++++++++++++++-------------
+> >  1 file changed, 31 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> > index 14d803e6af62..963a62e9c728 100644
+> > --- a/drivers/clk/clk-axi-clkgen.c
+> > +++ b/drivers/clk/clk-axi-clkgen.c
+> > @@ -46,9 +46,17 @@
+> >  #define MMCM_CLK_DIV_DIVIDE    BIT(11)
+> >  #define MMCM_CLK_DIV_NOCOUNT   BIT(12)
+> >
+> > +struct axi_clkgen_limits {
+> > +       unsigned int fpfd_min;
+> > +       unsigned int fpfd_max;
+> > +       unsigned int fvco_min;
+> > +       unsigned int fvco_max;
+> > +};
+> > +
+> >  struct axi_clkgen {
+> >         void __iomem *base;
+> >         struct clk_hw clk_hw;
+> > +       struct axi_clkgen_limits limits;
+> >  };
+> >
+> >  static uint32_t axi_clkgen_lookup_filter(unsigned int m)
+> > @@ -100,12 +108,15 @@ static uint32_t axi_clkgen_lookup_lock(unsigned int m)
+> >         return 0x1f1f00fa;
+> >  }
+> >
+> > -static const unsigned int fpfd_min = 10000;
+> > -static const unsigned int fpfd_max = 300000;
+> > -static const unsigned int fvco_min = 600000;
+> > -static const unsigned int fvco_max = 1200000;
+> > +static const struct axi_clkgen_limits axi_clkgen_zynq_default_limits = {
+> > +       .fpfd_min = 10000,
+> > +       .fpfd_max = 300000,
+> > +       .fvco_min = 600000,
+> > +       .fvco_max = 1200000,
+> > +};
+> >
+> > -static void axi_clkgen_calc_params(unsigned long fin, unsigned long fout,
+> > +static void axi_clkgen_calc_params(const struct axi_clkgen_limits *limits,
+> > +       unsigned long fin, unsigned long fout,
+> >         unsigned int *best_d, unsigned int *best_m, unsigned int *best_dout)
+> >  {
+> >         unsigned long d, d_min, d_max, _d_min, _d_max;
+> > @@ -122,12 +133,12 @@ static void axi_clkgen_calc_params(unsigned long fin, unsigned long fout,
+> >         *best_m = 0;
+> >         *best_dout = 0;
+> >
+> > -       d_min = max_t(unsigned long, DIV_ROUND_UP(fin, fpfd_max), 1);
+> > -       d_max = min_t(unsigned long, fin / fpfd_min, 80);
+> > +       d_min = max_t(unsigned long, DIV_ROUND_UP(fin, limits->fpfd_max), 1);
+> > +       d_max = min_t(unsigned long, fin / limits->fpfd_min, 80);
+> >
+> >  again:
+> > -       fvco_min_fract = fvco_min << fract_shift;
+> > -       fvco_max_fract = fvco_max << fract_shift;
+> > +       fvco_min_fract = limits->fvco_min << fract_shift;
+> > +       fvco_max_fract = limits->fvco_max << fract_shift;
+> >
+> >         m_min = max_t(unsigned long, DIV_ROUND_UP(fvco_min_fract, fin) * d_min, 1);
+> >         m_max = min_t(unsigned long, fvco_max_fract * d_max / fin, 64 << fract_shift);
+> > @@ -319,6 +330,7 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
+> >         unsigned long rate, unsigned long parent_rate)
+> >  {
+> >         struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
+> > +       const struct axi_clkgen_limits *limits = &axi_clkgen->limits;
+> >         unsigned int d, m, dout;
+> >         struct axi_clkgen_div_params params;
+> >         uint32_t power = 0;
+> > @@ -328,7 +340,7 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
+> >         if (parent_rate == 0 || rate == 0)
+> >                 return -EINVAL;
+> >
+> > -       axi_clkgen_calc_params(parent_rate, rate, &d, &m, &dout);
+> > +       axi_clkgen_calc_params(limits, parent_rate, rate, &d, &m, &dout);
+> >
+> >         if (d == 0 || dout == 0 || m == 0)
+> >                 return -EINVAL;
+> > @@ -368,10 +380,12 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
+> >  static long axi_clkgen_round_rate(struct clk_hw *hw, unsigned long rate,
+> >         unsigned long *parent_rate)
+> >  {
+> > +       struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(hw);
+> > +       const struct axi_clkgen_limits *limits = &axi_clkgen->limits;
+> >         unsigned int d, m, dout;
+> >         unsigned long long tmp;
+> >
+> > -       axi_clkgen_calc_params(*parent_rate, rate, &d, &m, &dout);
+> > +       axi_clkgen_calc_params(limits, *parent_rate, rate, &d, &m, &dout);
+> >
+> >         if (d == 0 || dout == 0 || m == 0)
+> >                 return -EINVAL;
+> > @@ -485,6 +499,7 @@ static const struct clk_ops axi_clkgen_ops = {
+> >  static const struct of_device_id axi_clkgen_ids[] = {
+> >         {
+> >                 .compatible = "adi,axi-clkgen-2.00.a",
+> > +               .data = &axi_clkgen_zynq_default_limits,
+> >         },
+> >         { },
+> >  };
+> > @@ -492,7 +507,7 @@ MODULE_DEVICE_TABLE(of, axi_clkgen_ids);
+> >
+> >  static int axi_clkgen_probe(struct platform_device *pdev)
+> >  {
+> > -       const struct of_device_id *id;
+> > +       const struct axi_clkgen_limits *dflt_limits;
+> >         struct axi_clkgen *axi_clkgen;
+> >         struct clk_init_data init;
+> >         const char *parent_names[2];
+> > @@ -501,11 +516,8 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+> >         unsigned int i;
+> >         int ret;
+> >
+> > -       if (!pdev->dev.of_node)
+> > -               return -ENODEV;
+> > -
+> > -       id = of_match_node(axi_clkgen_ids, pdev->dev.of_node);
+> > -       if (!id)
+> > +       dflt_limits = device_get_match_data(&pdev->dev);
+> > +       if (!dflt_limits)
+> >                 return -ENODEV;
+> >
+> >         axi_clkgen = devm_kzalloc(&pdev->dev, sizeof(*axi_clkgen), GFP_KERNEL);
+> > @@ -527,6 +539,8 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+> >                         return -EINVAL;
+> >         }
+> >
+> > +       memcpy(&axi_clkgen->limits, dflt_limits, sizeof(axi_clkgen->limits));
+> > +
+> >         clk_name = pdev->dev.of_node->name;
+> >         of_property_read_string(pdev->dev.of_node, "clock-output-names",
+> >                 &clk_name);
+> > --
+> > 2.17.1
+> >
 
- /* PRCM Register List */
- #define CPUS_CFG            0x0000
- #define CPUS_APBS1_CFG      0x000C
- #define CPUS_APBS2_CFG      0x0010
--#define CPUS_TIMER_GATE     0x011C
- #define CPUS_TWDOG_GATE     0x012C
--#define CPUS_PWM_GATE       0x013C
--#define CPUS_UART_GATE      0x018C
- #define CPUS_TWI_GATE       0x019C
- #define CPUS_RSB_GATE       0x01BC
- #define CPUS_CIR_CFG        0x01C0
- #define CPUS_CIR_GATE       0x01CC
- #define CPUS_OWC_CFG        0x01E0
- #define CPUS_OWC_GATE       0x01EC
- #define CPUS_RTC_GATE       0x020C
- #define CPUS_CLK_MAX_REG    0x020C
-
-which suggests that TWD is still there, along with OWC/W1 and an undocumented
-RSB controller like the one in H6. Jernej, can you check RSB? It should be
-PL0/PL1 function 2 and MMIO base 0x7083000.
-
-Cheers,
-Samuel
+- Moritz
