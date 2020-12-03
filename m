@@ -2,94 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69620C2BBCD
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C4FC18E57
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 391AB227BC
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3237D207CA
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 14:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbgLCOio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 09:38:44 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:49205 "EHLO
+        id S1726011AbgLCOrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 09:47:23 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:54843 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729375AbgLCOio (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 09:38:44 -0500
-Received: from orion.localdomain ([95.118.71.13]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N5FQJ-1k3xq12KJB-011BDE; Thu, 03 Dec 2020 15:35:52 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        with ESMTP id S1725903AbgLCOrW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 09:47:22 -0500
+Received: from [192.168.1.155] ([95.118.71.13]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N1Ofr-1k1DLm2wnr-012nGT; Thu, 03 Dec 2020 15:44:41 +0100
+Subject: Re: [PATCH] (v2) drivers: clk: make gpio-gated clock support optional
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
         linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH v2] drivers: clk: make gpio-gated clock support optional
-Date:   Thu,  3 Dec 2020 15:35:51 +0100
-Message-Id: <20201203143551.5482-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:lrjZSZO++TFuXVbnJJDgAvcXp/I+VeQY/3cXAxev1HCLVLq3xz+
- DrogOwTBhvcrHsn6mk7zXZCQQuPAXUMTr5uLVZw68FevVEvZLPLDT+Oe0bRGTEHAqx4nBGb
- mgeWVrvTnk7pY1BbJgKumhZ379SlMpXh0R4ahSixqhE2JqrTp/wyRYpnO8kgZvbiigw6wnX
- 8cD1OSpGr5DwDlFKqUbkA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yGqkFXJK1c4=:cV4c49wuMDcGfa/pPJ5sAO
- trdoyPkWEa7icfF/iMbO0PhgjeM5Ynif5LhwRHZUPFNA7WAPzbsTzGbJq4u0c5lQHkBAaPpyO
- st+uDGRtbTWh49T/R9yLYnDbRceVd9BM8X3duiEzKw2wqjz/dvA1X1yr7mkcclb5o6SFwbYE4
- aO4uQib9fjh0ML3Ohc6nLhtIuQ8EezYeOqRp/OE0tahjoXuytU+8yZ9WjZn2weFhBr1uwdZnf
- NGwLijMJ9PMCAYo0Gm6Q2ikEQjO5DzzkZfRotUstPOJSM2rzmRmJoX480pLcXeSAQyJ5xX6mO
- Hu1dYgZIJ2a5iztaREXCMeQx7l4s1wPiZlfihuS+yl0updnIExMBpBnL9R2wLFZ76EG9wdLQV
- VwU20oZb6If1RZ4l9jcGSupSssP1iHQkLqNuD50Nu08FPL5gc/8rVgfxQ2QHW
+References: <20201117160306.21760-1-info@metux.net>
+ <160566373556.60232.14730664139007414312@swboyd.mtv.corp.google.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <13a5d811-8ebb-9ac8-ac2a-04110f71ea16@metux.net>
+Date:   Thu, 3 Dec 2020 15:44:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <160566373556.60232.14730664139007414312@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:QSQB3khoAeQ91gi0PGE7IbDjLwBPDKiHqj1H43XTH8ofEMvrxQf
+ feIo4eaNA7AC9f7QisxQlAqwm2p00voMbHur1aqXDevsFWo14yoFI/0NshawteQbFlD6QJl
+ ktle5vxvh1u+RVqfgeioAyvSYMA9DAUu5LjsRUwCAGCGSgE8lBZ7YQP0Ni+h7S1YY5Uubux
+ mlEJfO/QLmNF3PINEnDPQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9aOkMfjlCxI=:DXpPiaQDqGnYs6Y2IG7XND
+ nDasW+/vV2u0t2FexpuOG/QICh3PmOoHQ6eiSo6uqxgXj3jEFJXv9ZpB5+9rrfi6Z+AhEyt4G
+ ZttHG7CeDXXzCaYQoomPYXz73aFWW9Y2X4tSYmNwDV05vu43eU0w7FpXEYzPfO8EpGz7aOB1u
+ lX4utFMYfjPkny/1pgXxLFOprYNM89Gz8zoyHKUkF01RPyq5QtoRzFHEWqh/TKY8ZT/0HKRp7
+ 2zQcj9M13M4E8NibrsvG+f55NFBBBMH7dHfIikHzBg5PQ1dtlAHNJq8pN1JnmTBOrjkP4vRb4
+ 7U+XujxRkyxQIeNNUpAJiv3kMCXxSH73qbN3VRAnNdJ4Y4yCH/LH3NLK1SKcFwD5vj9VVizZc
+ 1A7uDbiE/VJOMNgrVso3NSWOeqFzv4JgEoTnyt7b1unWDnnKCNQd9IdaHIA78
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gpio-gate-clock / gpio-mux-clock driver isn't used much,
-just by a few ARM SoCs, so there's no need to always include
-it unconditionally.
+On 18.11.20 02:42, Stephen Boyd wrote:
+> Quoting Enrico Weigelt, metux IT consult (2020-11-17 08:03:06)
+>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>> index c715d4681a0b..99e0188a15be 100644
+>> --- a/drivers/clk/Kconfig
+>> +++ b/drivers/clk/Kconfig
+>> @@ -38,6 +38,14 @@ menuconfig COMMON_CLK
+>>  
+>>  if COMMON_CLK
+>>  
+>> +config COMMON_CLK_GPIO
+>> +       tristate "GPIO gated clock support"
+>> +       default y
+> 
+> Maybe 'default GPIOLIB'?
+> 
+>> +       select gpiolib
+> 
+> Does lowercase work here?
+> 
+>> +       help
+>> +         Supports gpio gated clocks, which can be enabled/disabled via
+>> +         gpio output.
+>> +
+>>  config COMMON_CLK_WM831X
+>>         tristate "Clock driver for WM831x/2x PMICs"
+>>         depends on MFD_WM831X
 
-Thus make it optional, but keep it enabled by default.
 
-changes v2: fixed meanwhile removed '---help---'
+thanks, fixed it in v3.
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/clk/Kconfig  | 7 +++++++
- drivers/clk/Makefile | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c715d4681a0b..ec5b3a75bcf4 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -38,6 +38,13 @@ menuconfig COMMON_CLK
- 
- if COMMON_CLK
- 
-+config COMMON_CLK_GPIO
-+	tristate "GPIO gated clock support"
-+	default y
-+	help
-+	  Supports gpio gated clocks, which can be enabled/disabled via
-+	  gpio output.
-+
- config COMMON_CLK_WM831X
- 	tristate "Clock driver for WM831x/2x PMICs"
- 	depends on MFD_WM831X
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index da8fcf147eb1..0692ab5abc6d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -11,7 +11,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
--obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
-+obj-$(CONFIG_COMMON_CLK_GPIO)	+= clk-gpio.o
- ifeq ($(CONFIG_OF), y)
- obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
- endif
+BTW: just accidentially posted an outdated and broken version again
+(some submit helper script was running wild :() - please ignore that.
+the valid one is v3 from yesterday. sorry for the noise.
+
+
+--mtx
+
 -- 
-2.11.0
-
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
