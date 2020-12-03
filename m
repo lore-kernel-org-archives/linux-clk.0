@@ -2,174 +2,246 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D1EC63777
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B60C63777
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27EDD20C56
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5E120C56
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbgLCIAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 03:00:05 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:51713 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728658AbgLCIAD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 03:00:03 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 17E7FE26;
-        Thu,  3 Dec 2020 02:59:17 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 03 Dec 2020 02:59:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm1; bh=IWFmKP/Mo0VDGFNgTJDZyQHV+k
-        tb+RO0adDkB3rVIps=; b=qu65OIIBzs1jOephqhxHBqRryeLwJy+Dsj1Izv+7Zi
-        B6aVRlgP0aaEBx57ygdRqR+1xrH3iHBKq1MiK+24gZzkMeET7nJgpB3EMMgzMYx5
-        40/v6JjSjsdiGeRFiWtzUGme22k4eTKFxLq5CBjCDnA/ANyi6Psnab3fi7lqsvYF
-        NcqhsYQWCbxMTZs1kMLmZsu7d3o67hGWJlN00cgLOybHmqLJ3YS13V7zj5Bk6YM7
-        KVG14ATXTu3e0Je0cfpY6lzeLN4WVC53RwrUA4h+qxZeSicdRit7M2h3yhVuwb6/
-        KT8UpYbZwlaXpEysgPaeH2OXFqxK2m78sm6IQyeOjHbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=IWFmKP/Mo0VDGFNgT
-        JDZyQHV+ktb+RO0adDkB3rVIps=; b=SZxQau4yLK97RIoLPyjkwF1yc1OIC7GgU
-        px1t+9499ss93O0UVudqtiYikJaDS58HR1sK/Rfaw62v4eR9If354aH2UrVOik9o
-        67aPVk9rI8LG1SshI4vkuAoIqXa4EuR42ECcQFOvIXFyedk+1zIri1gC4DUCIIHD
-        +SLqQC2v1XGiIPUGwFjoa4ZcI3hiEPbEP+s6aE85EqHPOmC7Ci6jb0n/3vRg3rcE
-        ZITa8M2Enfircp0fX4emelLhODCvR2xbhFr7tL4iezZqc900bV/Jxt9KVxETSgEh
-        qj/kKuX6k/37vQiEcG2kjF6aKK0DweYSHl0oCyMAVwZWaNL+Po1aw==
-X-ME-Sender: <xms:05rIX1dJEG-XpoUFnWRek0qIRgdZbxE8e2Tju3ie3uXAcL7vN5pnGw>
-    <xme:05rIXzOA_UGK7eoXQoF_A9MZZZE9SfNFAac6zsPJq03Ql0UApB8B9d7jGaKgnZDjA
-    Gl_XLMWE6bz0FDgfy0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeihedguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeejffehuddvvddvlefhgeelleffgfeijedvhefgieejtdeiueetjeetfeeukeej
-    geenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:05rIX-i_gTr_C39M8Ci7Dcv1fI6hfCwgBO-QsCLQvBMBjAXxmfPPyA>
-    <xmx:05rIX--RbNqnZAp7JtiN7HlZUMiJ7VlRroYswpMdPvt5CXlppPJFAQ>
-    <xmx:05rIXxuh7pFTe6qq0EQrMFVHIG6ljSK9f7zZ1asN4iGC5140sqinDg>
-    <xmx:1JrIXyVMhDqagvJfHbYVMmZpEvPpCz0lp-kixDsnibxTNMtYqd0Lrw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 509D2108005F;
-        Thu,  3 Dec 2020 02:59:15 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH] clk: trace: Trace range functions
-Date:   Thu,  3 Dec 2020 08:59:13 +0100
-Message-Id: <20201203075913.723046-1-maxime@cerno.tech>
-X-Mailer: git-send-email 2.28.0
+        id S1729898AbgLCIGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 03:06:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729895AbgLCIGH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 03:06:07 -0500
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8A5C061A4F
+        for <linux-clk@vger.kernel.org>; Thu,  3 Dec 2020 00:05:27 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id m19so2051547ejj.11
+        for <linux-clk@vger.kernel.org>; Thu, 03 Dec 2020 00:05:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FZ8VxZZvqmh6ehr3KHE/PiRk3db+weOkpDGOlsh3YO8=;
+        b=haDseJv+D02T10aLAxQHXG0BsYACsfkijqaB+ELZmfch2JYU9g6y9ryqDyIqWShXaW
+         yaAZ88xKKVmpIrZKV/qetu3zM2AbVORk0wYWL03XQMh8ss+hr7Dc6CnNOdvjOspJC/vQ
+         R2df0RgSro0FHNGu8o3DpusAvPeMobIgNjOfc7hfwHJ6Nvy0U69h0GmKMctPOdP8JHuK
+         uCRMiqbef850rMYfMmIEUS0TzdqaTlcSg4Jgua9sT1AuBgZSfdy1txMa/Fszl/iCAsRa
+         6RBF8zj3OIpntYgPprvZoROYfpZUKnhmmTVDrR3O2ZTkmVat83g3y0aDOoH39HHPuS4h
+         RbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FZ8VxZZvqmh6ehr3KHE/PiRk3db+weOkpDGOlsh3YO8=;
+        b=NQ42YUelDBhYuV1ts8woV2az/GY2N/E2YqM7S3er6aBiCVQ/ku7AnAreXOJxibk5yY
+         F0rJxgzCrzbxe+FphjTvsZ7+LWr5DR/CbWs0dGMx0WU0lTBl7ZhBbTy8MmpF5SnkO7lF
+         lxUB715f4vqCz0AsxhrPzYQ3zjSs/hIAZxL95TPV0xyLzDeZaaVSBPatXXuUlTYHfbns
+         DRZpw0IHvv2DummJocXcgdXumgP/4OI83LjQfcTlT8/r5KkFu7Qv1C8kgq1gd/T4WaF/
+         U77aP/hgoWGVmtA87TGhoZ9K8gT/e/Ge3AzkNNVXM5wge9HhxFwx0tCxv4I5s0GJL1H0
+         tWHw==
+X-Gm-Message-State: AOAM531rdgYTB6NTnB1zQHEnBxSBi2+IpLK5C/Mvj8w2Gtc2UtT8VG/6
+        XEYdrxxUJQkNIDzE9agXbR7TceNOmYSEwpB4iEaoZA==
+X-Google-Smtp-Source: ABdhPJxP2EJznI3pbg+Rqtm4SZQefIKFXf0kkiRRTqzbUDyEG5oMEZvNtOYbyFNg3cm8vTl+G0cfLIdKavT7T0DOD1k=
+X-Received: by 2002:a17:906:7f01:: with SMTP id d1mr1414079ejr.429.1606982726027;
+ Thu, 03 Dec 2020 00:05:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201123183833.18750-1-nsaenzjulienne@suse.de> <20201123183833.18750-2-nsaenzjulienne@suse.de>
+In-Reply-To: <20201123183833.18750-2-nsaenzjulienne@suse.de>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 3 Dec 2020 09:05:15 +0100
+Message-ID: <CAMpxmJX6zdoYek2THEj2x8ycJYz-bxqE_5RnOz1sYv0vwLSFpA@mail.gmail.com>
+Subject: Re: [PATCH v5 01/11] firmware: raspberrypi: Keep count of all consumers
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
+        Linux Input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_set_range functions don't have any tracepoints even though it
-might be useful. Fix this.
+On Mon, Nov 23, 2020 at 7:38 PM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
+>
+> When unbinding the firmware device we need to make sure it has no
+> consumers left. Otherwise we'd leave them with a firmware handle
+> pointing at freed memory.
+>
+> Keep a reference count of all consumers and introduce rpi_firmware_put()
+> which will permit automatically decrease the reference count upon
+> unbinding consumer drivers.
+>
+> Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>
+> Changes since v3:
+> - Use kref instead of waiting on refcount
+>
+>  drivers/firmware/raspberrypi.c             | 37 +++++++++++++++++++---
+>  include/soc/bcm2835/raspberrypi-firmware.h |  2 ++
+>  2 files changed, 35 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberryp=
+i.c
+> index 30259dc9b805..ed793aef7851 100644
+> --- a/drivers/firmware/raspberrypi.c
+> +++ b/drivers/firmware/raspberrypi.c
+> @@ -7,6 +7,7 @@
+>   */
+>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/kref.h>
+>  #include <linux/mailbox_client.h>
+>  #include <linux/module.h>
+>  #include <linux/of_platform.h>
+> @@ -27,6 +28,8 @@ struct rpi_firmware {
+>         struct mbox_chan *chan; /* The property channel. */
+>         struct completion c;
+>         u32 enabled;
+> +
+> +       struct kref consumers;
+>  };
+>
+>  static DEFINE_MUTEX(transaction_lock);
+> @@ -225,12 +228,27 @@ static void rpi_register_clk_driver(struct device *=
+dev)
+>                                                 -1, NULL, 0);
+>  }
+>
+> +static void rpi_firmware_delete(struct kref *kref)
+> +{
+> +       struct rpi_firmware *fw =3D container_of(kref, struct rpi_firmwar=
+e,
+> +                                              consumers);
+> +
+> +       mbox_free_channel(fw->chan);
+> +       kfree(fw);
+> +}
+> +
+> +void rpi_firmware_put(struct rpi_firmware *fw)
+> +{
+> +       kref_put(&fw->consumers, rpi_firmware_delete);
+> +}
+> +EXPORT_SYMBOL_GPL(rpi_firmware_put);
+> +
+>  static int rpi_firmware_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         struct rpi_firmware *fw;
+>
+> -       fw =3D devm_kzalloc(dev, sizeof(*fw), GFP_KERNEL);
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c          |  6 ++++++
- include/trace/events/clk.h | 44 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
+One nit from my side: maybe add a comment here saying that you really
+want to use non-managed kzalloc() because you're going to get people
+blindly converting it to devm_kzalloc() very soon.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f83dac54ed85..34c2fa18b732 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2314,6 +2314,8 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 	if (!clk)
- 		return 0;
- 
-+	trace_clk_set_rate_range(clk->core, min, max);
-+
- 	if (min > max) {
- 		pr_err("%s: clk %s dev %s con %s: invalid range [%lu, %lu]\n",
- 		       __func__, clk->core->name, clk->dev_id, clk->con_id,
-@@ -2378,6 +2380,8 @@ EXPORT_SYMBOL_GPL(clk_set_rate_range);
-  */
- int clk_set_min_rate(struct clk *clk, unsigned long rate)
- {
-+	trace_clk_set_min_rate(clk->core, rate);
-+
- 	if (!clk)
- 		return 0;
- 
-@@ -2394,6 +2398,8 @@ EXPORT_SYMBOL_GPL(clk_set_min_rate);
-  */
- int clk_set_max_rate(struct clk *clk, unsigned long rate)
- {
-+	trace_clk_set_max_rate(clk->core, rate);
-+
- 	if (!clk)
- 		return 0;
- 
-diff --git a/include/trace/events/clk.h b/include/trace/events/clk.h
-index cb1aea25c199..e19edc63ee95 100644
---- a/include/trace/events/clk.h
-+++ b/include/trace/events/clk.h
-@@ -118,6 +118,50 @@ DEFINE_EVENT(clk_rate, clk_set_rate_complete,
- 	TP_ARGS(core, rate)
- );
- 
-+DEFINE_EVENT(clk_rate, clk_set_min_rate,
-+
-+	TP_PROTO(struct clk_core *core, unsigned long rate),
-+
-+	TP_ARGS(core, rate)
-+);
-+
-+DEFINE_EVENT(clk_rate, clk_set_max_rate,
-+
-+	TP_PROTO(struct clk_core *core, unsigned long rate),
-+
-+	TP_ARGS(core, rate)
-+);
-+
-+DECLARE_EVENT_CLASS(clk_rate_range,
-+
-+	TP_PROTO(struct clk_core *core, unsigned long min, unsigned long max),
-+
-+	TP_ARGS(core, min, max),
-+
-+	TP_STRUCT__entry(
-+		__string(        name,           core->name                )
-+		__field(unsigned long,           min                       )
-+		__field(unsigned long,           max                       )
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, core->name);
-+		__entry->min = min;
-+		__entry->max = max;
-+	),
-+
-+	TP_printk("%s min %lu max %lu", __get_str(name),
-+		  (unsigned long)__entry->min,
-+		  (unsigned long)__entry->max)
-+);
-+
-+DEFINE_EVENT(clk_rate_range, clk_set_rate_range,
-+
-+	TP_PROTO(struct clk_core *core, unsigned long min, unsigned long max),
-+
-+	TP_ARGS(core, min, max)
-+);
-+
- DECLARE_EVENT_CLASS(clk_parent,
- 
- 	TP_PROTO(struct clk_core *core, struct clk_core *parent),
--- 
-2.28.0
+Bartosz
 
+> +       fw =3D kzalloc(sizeof(*fw), GFP_KERNEL);
+>         if (!fw)
+>                 return -ENOMEM;
+>
+> @@ -247,6 +265,7 @@ static int rpi_firmware_probe(struct platform_device =
+*pdev)
+>         }
+>
+>         init_completion(&fw->c);
+> +       kref_init(&fw->consumers);
+>
+>         platform_set_drvdata(pdev, fw);
+>
+> @@ -275,25 +294,35 @@ static int rpi_firmware_remove(struct platform_devi=
+ce *pdev)
+>         rpi_hwmon =3D NULL;
+>         platform_device_unregister(rpi_clk);
+>         rpi_clk =3D NULL;
+> -       mbox_free_channel(fw->chan);
+> +
+> +       rpi_firmware_put(fw);
+>
+>         return 0;
+>  }
+>
+>  /**
+> - * rpi_firmware_get - Get pointer to rpi_firmware structure.
+>   * @firmware_node:    Pointer to the firmware Device Tree node.
+>   *
+> + * The reference to rpi_firmware has to be released with rpi_firmware_pu=
+t().
+> + *
+>   * Returns NULL is the firmware device is not ready.
+>   */
+>  struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
+>  {
+>         struct platform_device *pdev =3D of_find_device_by_node(firmware_=
+node);
+> +       struct rpi_firmware *fw;
+>
+>         if (!pdev)
+>                 return NULL;
+>
+> -       return platform_get_drvdata(pdev);
+> +       fw =3D platform_get_drvdata(pdev);
+> +       if (!fw)
+> +               return NULL;
+> +
+> +       if (!kref_get_unless_zero(&fw->consumers))
+> +               return NULL;
+> +
+> +       return fw;
+>  }
+>  EXPORT_SYMBOL_GPL(rpi_firmware_get);
+>
+> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm=
+2835/raspberrypi-firmware.h
+> index cc9cdbc66403..fdfef7fe40df 100644
+> --- a/include/soc/bcm2835/raspberrypi-firmware.h
+> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+> @@ -140,6 +140,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
+>                           u32 tag, void *data, size_t len);
+>  int rpi_firmware_property_list(struct rpi_firmware *fw,
+>                                void *data, size_t tag_size);
+> +void rpi_firmware_put(struct rpi_firmware *fw);
+>  struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)=
+;
+>  #else
+>  static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag=
+,
+> @@ -154,6 +155,7 @@ static inline int rpi_firmware_property_list(struct r=
+pi_firmware *fw,
+>         return -ENOSYS;
+>  }
+>
+> +static inline void rpi_firmware_put(struct rpi_firmware *fw) { }
+>  static inline struct rpi_firmware *rpi_firmware_get(struct device_node *=
+firmware_node)
+>  {
+>         return NULL;
+> --
+> 2.29.2
+>
