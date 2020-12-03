@@ -2,67 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=BAYES_20,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17676C83013
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F57C83012
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9E702084C
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8CBC22249
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Dec 2020 08:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbgLCIqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 03:46:40 -0500
-Received: from mail.boldwhite24.com ([80.211.42.67]:50902 "EHLO
-        mail.boldwhite24.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbgLCIqj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 03:46:39 -0500
-Received: by mail.boldwhite24.com (Postfix, from userid 1001)
-        id C99E4A2E91; Thu,  3 Dec 2020 08:45:20 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=boldwhite24.com;
-        s=mail; t=1606985139;
-        bh=hS3ibs4caZkahrzgcMN2TAJo2B2H5Muwb2NidDYlIzQ=;
-        h=Date:From:To:Subject:From;
-        b=RWVS6yqhDZyeQw6YfkFy8c8CS2/+BO0wGw59Lj2oxrxJ2odd1+E2ETLNjiAP4btxg
-         vDqJtn6qR+bGdUZAz5xVQ+8NXI11ANE8gv9YiC4dJx52IvaI5D9jGO2PcAsXy7OOxf
-         gI9ZA84t0E9vRhVNS/sRqD3xw44v5ienxLjHq+p8FeSbxpq3k+/Kw+jh6mWyK/H3i5
-         nQNzBG+VDRkBprmWqaxpsLzLugQPpB7+JyBhCvEAVx2NnW5nmkV6kGRpye6XOkw656
-         5ZGMPJYpO/ZBqUIudEFOK4nzWCL0J8zXXGar62IzfFR4Fm3gaCu10t+xap0h1UEJ0Q
-         fC0iotx9IDZYQ==
-Received: by mail.boldwhite24.com for <linux-clk@vger.kernel.org>; Thu,  3 Dec 2020 08:45:13 GMT
-Message-ID: <20201203074501-0.1.2m.amnb.0.eh11jsb3u3@boldwhite24.com>
-Date:   Thu,  3 Dec 2020 08:45:13 GMT
-From:   =?UTF-8?Q? "Diego_S=C3=A1nchez" ?= <diego.sanchez@boldwhite24.com>
-To:     <linux-clk@vger.kernel.org>
-Subject: Disinfection
-X-Mailer: mail.boldwhite24.com
+        id S1730061AbgLCIx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 03:53:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58580 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730016AbgLCIx4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Dec 2020 03:53:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6E0E5AC55;
+        Thu,  3 Dec 2020 08:53:14 +0000 (UTC)
+Message-ID: <401be3062e06f4896662da179a751a1a08b8a75a.camel@suse.de>
+Subject: Re: [PATCH v5 01/11] firmware: raspberrypi: Keep count of all
+ consumers
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
+        Linux Input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 03 Dec 2020 09:53:12 +0100
+In-Reply-To: <CAMpxmJX6zdoYek2THEj2x8ycJYz-bxqE_5RnOz1sYv0vwLSFpA@mail.gmail.com>
+References: <20201123183833.18750-1-nsaenzjulienne@suse.de>
+         <20201123183833.18750-2-nsaenzjulienne@suse.de>
+         <CAMpxmJX6zdoYek2THEj2x8ycJYz-bxqE_5RnOz1sYv0vwLSFpA@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-SBC+IJay38JRk592gNwQ"
+User-Agent: Evolution 3.38.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Good morning,
 
-looking for companies interested in raising additional capital by diversi=
-fying their offer in soaps, liquids and gels for hand disinfection and co=
-smetics for body and hair care.
+--=-SBC+IJay38JRk592gNwQ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The distribution of innovative products corresponding to the current pref=
-erences of customers in the field of hygiene and preventive healthcare al=
-lows our partners to gain new markets and achieve better economic results=
-=2E
+On Thu, 2020-12-03 at 09:05 +0100, Bartosz Golaszewski wrote:
+> On Mon, Nov 23, 2020 at 7:38 PM Nicolas Saenz Julienne
+> <nsaenzjulienne@suse.de> wrote:
+> >=20
+> > When unbinding the firmware device we need to make sure it has no
+> > consumers left. Otherwise we'd leave them with a firmware handle
+> > pointing at freed memory.
+> >=20
+> > Keep a reference count of all consumers and introduce rpi_firmware_put(=
+)
+> > which will permit automatically decrease the reference count upon
+> > unbinding consumer drivers.
+> >=20
+> > Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >=20
+> > Changes since v3:
+> > - Use kref instead of waiting on refcount
+> >=20
+> > =C2=A0drivers/firmware/raspberrypi.c             | 37 +++++++++++++++++=
+++---
+> > =C2=A0include/soc/bcm2835/raspberrypi-firmware.h |  2 ++
+> > =C2=A02 files changed, 35 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberr=
+ypi.c
+> > index 30259dc9b805..ed793aef7851 100644
+> > --- a/drivers/firmware/raspberrypi.c
+> > +++ b/drivers/firmware/raspberrypi.c
+> > @@ -7,6 +7,7 @@
+> > =C2=A0=C2=A0*/
+> >=20
+> > =C2=A0#include <linux/dma-mapping.h>
+> > +#include <linux/kref.h>
+> > =C2=A0#include <linux/mailbox_client.h>
+> > =C2=A0#include <linux/module.h>
+> > =C2=A0#include <linux/of_platform.h>
+> > @@ -27,6 +28,8 @@ struct rpi_firmware {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mbox_chan *chan;=
+ /* The property channel. */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct completion c;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 enabled;
+> > +
+> > +       struct kref consumers;
+> > =C2=A0};
+> >=20
+> > =C2=A0static DEFINE_MUTEX(transaction_lock);
+> > @@ -225,12 +228,27 @@ static void rpi_register_clk_driver(struct device=
+ *dev)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0-1, NU=
+LL, 0);
+> > =C2=A0}
+> >=20
+> > +static void rpi_firmware_delete(struct kref *kref)
+> > +{
+> > +       struct rpi_firmware *fw =3D container_of(kref, struct rpi_firmw=
+are,
+> > +                                              consumers);
+> > +
+> > +       mbox_free_channel(fw->chan);
+> > +       kfree(fw);
+> > +}
+> > +
+> > +void rpi_firmware_put(struct rpi_firmware *fw)
+> > +{
+> > +       kref_put(&fw->consumers, rpi_firmware_delete);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rpi_firmware_put);
+> > +
+> > =C2=A0static int rpi_firmware_probe(struct platform_device *pdev)
+> > =C2=A0{
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device *dev =3D =
+&pdev->dev;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct rpi_firmware *fw=
+;
+> >=20
+> > -       fw =3D devm_kzalloc(dev, sizeof(*fw), GFP_KERNEL);
+>=20
+> One nit from my side: maybe add a comment here saying that you really
+> want to use non-managed kzalloc() because you're going to get people
+> blindly converting it to devm_kzalloc() very soon.
 
-In addition to products with bactericidal action, our range includes show=
-er gels, shampoos and hair conditioners, as well as efficient, concentrat=
-ed detergents.
+Good point, I'll change it.
 
-The versatility (suitable for all skin types) combined with an affordable=
- price means that customers make an informed choice of a product among ot=
-hers available on the market.
+Regards,
+Nicolas
 
-Are you interested in cooperation?
 
-Diego S=C3=A1nchez
+--=-SBC+IJay38JRk592gNwQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl/Ip3gACgkQlfZmHno8
+x/5Ncwf8C0HFE7YBc4W1hWu3koQkBNupWVGDMLkAR36Dfmk6pph04kKcLSt6ZIu1
+2SMHgfQG4VikmJnqGQp66Y93QWodjPeglOr+09VL5rY7rehOGcdBICaNPJcS1vrl
+LnF+n0Lqyfirpq4rVd7qX5taBOz890GfthlZMmFsNcbFcSEuuUVogJC7iCDe+0cy
+nqEYLXfaCEVDE0jR4Zvmyvs20dEZpXHR0gfoc29hMBtRLDL2l1CClG7Vm9im7Ob1
+2Jm9YqHMduon8YCqLZF+jxnZesbb9ktTry5StYQ7lSZyfDxb32nOjAQqGeZfsYyF
+y1nknR5dNeL/6dbIqCn33h4p6HSTbA==
+=idux
+-----END PGP SIGNATURE-----
+
+--=-SBC+IJay38JRk592gNwQ--
+
