@@ -2,127 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396F5C1B0D8
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 08:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B88A9C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 09:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0913D22795
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 08:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6524122795
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 09:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbgLDIvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 03:51:54 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:32057 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729336AbgLDIvy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 03:51:54 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1607071895; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=KDVVzbG9GvJL/tCyDceYZiD1rBmyxebfv3YnVVi8et4=; b=sV3mYiBE6tNik0y/kZX17V5hBz2FoQyTmBOVvP2g3aRliUKIkDTKgfoobyKRa+QHdbFSHY/x
- EPCeShAiLC6zDDCyIg4Xee7lUtvogzMyU8W9v3MgDjK6IULfiWdv7xFYChg2rOsRjIeuHoAA
- 2vS+G7yswS9VBpglQg6fFL/VHLY=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 5fc9f87aaac9455097f0b389 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 04 Dec 2020 08:51:06
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6B5E7C43464; Fri,  4 Dec 2020 08:51:04 +0000 (UTC)
-Received: from [192.168.0.104] (unknown [49.204.182.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A514CC433C6;
-        Fri,  4 Dec 2020 08:50:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A514CC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH 5/5] clk: qcom: gcc: Add clock driver for SM8350
-To:     Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Vivek Aknurwar <viveka@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeevan Shriram <jshriram@codeaurora.org>
-References: <20201203070241.2648874-1-vkoul@kernel.org>
- <20201203070241.2648874-6-vkoul@kernel.org> <X8l9dRfo7qdRTAMe@builder.lan>
- <20201204043502.GJ8403@vkoul-mobl>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <302cf18a-080d-a521-8c7a-39c265fbceb8@codeaurora.org>
-Date:   Fri, 4 Dec 2020 14:20:55 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        id S1729453AbgLDJOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 04:14:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726471AbgLDJOQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Dec 2020 04:14:16 -0500
+X-Gm-Message-State: AOAM530A9XbRcLs8bNvqvlMpPm1wYHeIv6xzSYbtDREbJdWwx+6cZbY7
+        PMrSONXbYrJtI2FeRgV4gFaImCaFMTInSXxljvE=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607073215;
+        bh=5WtSlGb23+mbjhUPbJTZ80Wv7x5m/wrYGj2VEx0ukzo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VUa4wxyDYt3r+1GlYKGqfQN3XCuW6+SbwDyM106y0YFLQr87FO0BUpiqnuZZQ/61G
+         nSXkkWWMfcjLCW7dgLcDQW9vsPPMftBvT4F+fqF5tZBPtjXO7/5VjzpVM2VuZNT5rU
+         QcVvFviXNbpPGgiEJUiUDr9vb2U2j/ptG9XzzKPymloa9Lug3CwFaZf7gODZ5ONb2s
+         OjGIS6aDQIvmmRfM256Ry1ne7rTKfM8VFEG244qlMdWuFGubffwkktp20t39dqGP0i
+         NWDTXgcdshzprUyRyyljpbHFCNDKVQw/um/Jdk7mzQDKL1Kh6PH0JD7ADdzNx4LBZg
+         PUFzJw4KWIe7A==
+X-Google-Smtp-Source: ABdhPJz3chQLz40TpvGvgJerGH9E6SXtXIYBinIoPidHzLuCuhVrYP+NjqealiTMEzeZjAoU+u3xvxBYFXmufZwiIV0=
+X-Received: by 2002:a05:6830:22d2:: with SMTP id q18mr2875729otc.305.1607073215030;
+ Fri, 04 Dec 2020 01:13:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201204043502.GJ8403@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201203225315.1477137-1-arnd@kernel.org> <20201204083653.GA5418@kozik-lap>
+In-Reply-To: <20201204083653.GA5418@kozik-lap>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Fri, 4 Dec 2020 10:13:18 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3Qh1by1pL8GfjqVK+dnydK8fS2qQ2+7uSZYtksb93fUg@mail.gmail.com>
+Message-ID: <CAK8P3a3Qh1by1pL8GfjqVK+dnydK8fS2qQ2+7uSZYtksb93fUg@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: mark PM functions as __maybe_unused
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Vinod,
+On Fri, Dec 4, 2020 at 9:36 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Thu, Dec 03, 2020 at 11:53:11PM +0100, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+>
+> I understand this happens with !PM builds. It would be good to mention
+> this in commit msg. With commit msg improved:
+>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On 12/4/2020 10:05 AM, Vinod Koul wrote:
-> Hi Bjorn,
-> 
-> On 03-12-20, 18:06, Bjorn Andersson wrote:
->> On Thu 03 Dec 01:02 CST 2020, Vinod Koul wrote:
->>> diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
->> [..]
->>> +static int gcc_sm8350_probe(struct platform_device *pdev)
->>> +{
->>> +	struct regmap *regmap;
->>> +	int ret;
->>> +
->>> +	regmap = qcom_cc_map(pdev, &gcc_sm8350_desc);
->>> +	if (IS_ERR(regmap)) {
->>> +		dev_err(&pdev->dev, "Failed to map gcc registers\n");
->>> +		return PTR_ERR(regmap);
->>> +	}
->>> +
->>> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
->>> +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
->>> +
->>> +	/*
->>> +	 * Enable clocks required by the i2c-connected pm8008 regulators. Don't
->>> +	 * register them with the clock framework so that client requests are
->>> +	 * short-circuited before grabbing the enable/prepare locks. This
->>> +	 * prevents deadlocks between the clk/regulator frameworks.
->>> +	 *
->>> +	 *	gcc_qupv3_wrap_1_m_ahb_clk
->>> +	 *	gcc_qupv3_wrap_1_s_ahb_clk
->>> +	 *	gcc_qupv3_wrap1_s5_clk
->>> +	 */
->>
->> Isn't this a workaround inherited from the downstream control of
->> regulators from within the clock core? Does this still apply upstream?
-> 
-> Let me check on this bit...
-> 
-> Thanks
-> 
+Thanks for taking a look.
 
-No it should not apply.
+I had meant to add a changelog text and failed to notice that this only
+had the warning message and neither a Fixes tag nor a description when
+I sent it out.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+v2 coming.
 
---
+         Arnd
