@@ -2,97 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF8EC4167B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 04:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1A9C4361A
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 08:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E83C7224DF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 04:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9914B22516
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 08:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbgLDEfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 23:35:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33436 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbgLDEfs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Dec 2020 23:35:48 -0500
-Date:   Fri, 4 Dec 2020 10:05:02 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607056507;
-        bh=r9QqGHAxUoN0Wt1ZDWKtbhPJWPZyahn/zbEc44BEGZ4=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J0SgZopenmekB+JVHG/JMVkTylGScNJKJryiyfCIvixK1Ps1YWL+v9HvY0+6m4mLn
-         HHlBflj6CB2wXcrbQtcRvNpXylWspibXd0iroYp6XvOuPARIMPcBj/YT45Ucy81Lt3
-         xujemkX5pTyQCL44NBPU75YoXBXPBvdqAqi7cSLpI3TbG3HDgIGqKDcMQm+8my9LgS
-         Ovea5ZxYkexm19eK9jpBr9pK/4DYygMxy9qmWhMZ9UlpWmGGv+tz0/ZvigZGRW6+b7
-         CYILbo53d267/kfeq8n8SPRS0DGzHwx/+TbeJly4e02aiuPH2W8STkfXp/VMZJ+NgZ
-         hv04cpeuz5mLA==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Vivek Aknurwar <viveka@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
+        id S1726361AbgLDIhi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 03:37:38 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38274 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbgLDIhh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 03:37:37 -0500
+Received: by mail-ed1-f66.google.com with SMTP id cw27so4977719edb.5;
+        Fri, 04 Dec 2020 00:37:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pJCXVeKT0YInV5KmVtKjZ9w5dyQPtfdB5b3zCaK/BpQ=;
+        b=e8B6u/bawJtuZTWCIb7zZPeQR0nt2/1yBIrAfToZu1EPk87cprl08efkI+YFRjeca5
+         fvlBXst5SJ1+Du/rSEbgbwKqj/73324/Ox/7mRcMjHLem8VU7wVvIjt6uzwBK72BKSh+
+         nfFvv06iMzkPWR9vIQvPKv0glOYyC7/SkAmI2wnUS3idv5VReI86pbxT8DYMxStwTQpC
+         Sz77gGeEqnitso65N5W6XCaQuNdXliAsUlpEEQfzoGDqMa0QfOVJOVxzieN+H6RmDETO
+         UfhBluHaofZMOfPUSYFmGPhEb6Cz6AXoIdUL9AzYHN640ywwFa/LJ4/taTBqAXZ623CN
+         qXMg==
+X-Gm-Message-State: AOAM530RCHNzEbx/g/ypUpLbVlihYFAXFAuLCRq0OA+/SpskxLcD5vwV
+        WML61yK+BraDbO/krYF6VhQ=
+X-Google-Smtp-Source: ABdhPJxni+kovGD8RYWJWq7ZCGULqlHSM/J7qgILMqwplkVKElt6QKJeVFJFTMcLqQzz2gu3H/er8A==
+X-Received: by 2002:a50:9d04:: with SMTP id v4mr6483919ede.363.1607071015664;
+        Fri, 04 Dec 2020 00:36:55 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id r9sm2522408ejd.38.2020.12.04.00.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 00:36:54 -0800 (PST)
+Date:   Fri, 4 Dec 2020 10:36:53 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeevan Shriram <jshriram@codeaurora.org>
-Subject: Re: [PATCH 5/5] clk: qcom: gcc: Add clock driver for SM8350
-Message-ID: <20201204043502.GJ8403@vkoul-mobl>
-References: <20201203070241.2648874-1-vkoul@kernel.org>
- <20201203070241.2648874-6-vkoul@kernel.org>
- <X8l9dRfo7qdRTAMe@builder.lan>
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: mark PM functions as __maybe_unused
+Message-ID: <20201204083653.GA5418@kozik-lap>
+References: <20201203225315.1477137-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <X8l9dRfo7qdRTAMe@builder.lan>
+In-Reply-To: <20201203225315.1477137-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
-
-On 03-12-20, 18:06, Bjorn Andersson wrote:
-> On Thu 03 Dec 01:02 CST 2020, Vinod Koul wrote:
-> > diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-> [..]
-> > +static int gcc_sm8350_probe(struct platform_device *pdev)
-> > +{
-> > +	struct regmap *regmap;
-> > +	int ret;
-> > +
-> > +	regmap = qcom_cc_map(pdev, &gcc_sm8350_desc);
-> > +	if (IS_ERR(regmap)) {
-> > +		dev_err(&pdev->dev, "Failed to map gcc registers\n");
-> > +		return PTR_ERR(regmap);
-> > +	}
-> > +
-> > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
-> > +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
-> > +
-> > +	/*
-> > +	 * Enable clocks required by the i2c-connected pm8008 regulators. Don't
-> > +	 * register them with the clock framework so that client requests are
-> > +	 * short-circuited before grabbing the enable/prepare locks. This
-> > +	 * prevents deadlocks between the clk/regulator frameworks.
-> > +	 *
-> > +	 *	gcc_qupv3_wrap_1_m_ahb_clk
-> > +	 *	gcc_qupv3_wrap_1_s_ahb_clk
-> > +	 *	gcc_qupv3_wrap1_s5_clk
-> > +	 */
+On Thu, Dec 03, 2020 at 11:53:11PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Isn't this a workaround inherited from the downstream control of
-> regulators from within the clock core? Does this still apply upstream?
 
-Let me check on this bit...
+I understand this happens with !PM builds. It would be good to mention
+this in commit msg. With commit msg improved:
 
-Thanks
--- 
-~Vinod
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
+
+> drivers/clk/samsung/clk-exynos-clkout.c:219:12: error: 'exynos_clkout_resume' defined but not used [-Werror=unused-function]
+>   219 | static int exynos_clkout_resume(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~
+> drivers/clk/samsung/clk-exynos-clkout.c:210:12: error: 'exynos_clkout_suspend' defined but not used [-Werror=unused-function]
+>   210 | static int exynos_clkout_suspend(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~~
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 9ec2f40cc400..e6d6cbf8c4e6 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -207,7 +207,7 @@ static int exynos_clkout_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static int exynos_clkout_suspend(struct device *dev)
+> +static int __maybe_unused exynos_clkout_suspend(struct device *dev)
+>  {
+>  	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+>  
+> @@ -216,7 +216,7 @@ static int exynos_clkout_suspend(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int exynos_clkout_resume(struct device *dev)
+> +static int __maybe_unused exynos_clkout_resume(struct device *dev)
+>  {
+>  	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+>  
+> -- 
+> 2.27.0
+> 
