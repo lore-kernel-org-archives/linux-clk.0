@@ -2,150 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AA1C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 00:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA3AC4167B
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 02:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8564B22224
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 00:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA0322512
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 02:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbgLDAG7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Dec 2020 19:06:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45122 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbgLDAG7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 19:06:59 -0500
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7C8C061A52
-        for <linux-clk@vger.kernel.org>; Thu,  3 Dec 2020 16:06:18 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id k3so3567004otp.12
-        for <linux-clk@vger.kernel.org>; Thu, 03 Dec 2020 16:06:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jVsiot8Y1A046lL18k/UOo07aqMmS1df6VhZY+TySxc=;
-        b=xtyhAKYScBg0oa61H3UpkZ+gwuq/eRBTNYXRQ/raewLzXKt/Zr4XW1bJb5BUEBtogN
-         DNXa+F1syfTPU4figu57df/xPjKJOSYsicMV8NW9HEm2mujdehIsi4N05/WFQPskNr8l
-         x+ebglCl7vqW7GzfYmHmmNIg5Jv4cCxz9YonCpVHM601/ngTbo56DXBugETILuhWtBsd
-         pLih91zGwtH+AVt0HIV9HyMaUDaSwkun80zdU1yZp4MvsYYw0otLYhun87ySxfax4g+P
-         HdhwXZgWnbD6BGr7lblaKoS5+W+c9D6tnNUBQFOKpC/MDW7nSUBpIv44BSM/5mLLyJ+N
-         PqWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jVsiot8Y1A046lL18k/UOo07aqMmS1df6VhZY+TySxc=;
-        b=dFWW8DZOVb+Qtj4qsCw92Z0MnzsSI/A9btyX3ljyj65FqZaI0ibrQKIK2aq17tW1DX
-         vUN0g0qIO0Aa37uS8nWWxj/Z1Yeya9ODc2t27+753uhXYx2t0pqCx92DqlzD6vZRFW7O
-         HuflgP/W/3JbNSetgz9SPF+Mvpkb5h28x5Y+nTQpLQIBHFEsgcayknB6Pkn/NjWRxZ0l
-         +tSnKFpGzTFJ4rkuPqKaiznmf4cthSqyVdblVgs6OfykNhPizBRSdgwml1+3TvMTFDtk
-         vOOis8jq18xm3YT2fJ2X87/dN34yWtlpFE9LUC4mTKm1EHb+wjrM3AT4KNetvZAgFCbh
-         +pgw==
-X-Gm-Message-State: AOAM530EPqY0BrysetfZK/UaiGWlg1E6kIvwO9vpiS8jD4KVu1sPf8LI
-        WETVCfG8wmft3yztSGV2Mqaupw==
-X-Google-Smtp-Source: ABdhPJwQWWSoAqrs9pA1uzrM5WPFnN8NTlNcTYAh8mVHw3DLvRWAqlV8o+StC4xBzLxbaDAWU7YKaQ==
-X-Received: by 2002:a9d:410:: with SMTP id 16mr1448961otc.315.1607040376660;
-        Thu, 03 Dec 2020 16:06:16 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id m81sm241191oib.37.2020.12.03.16.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Dec 2020 16:06:15 -0800 (PST)
-Date:   Thu, 3 Dec 2020 18:06:13 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Vivek Aknurwar <viveka@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
+        id S1727010AbgLDCo0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Dec 2020 21:44:26 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8246 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726993AbgLDCoZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Dec 2020 21:44:25 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CnH7b3FMKzkl4x;
+        Fri,  4 Dec 2020 10:43:07 +0800 (CST)
+Received: from thunder-town.china.huawei.com (10.174.177.9) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 4 Dec 2020 10:43:33 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeevan Shriram <jshriram@codeaurora.org>
-Subject: Re: [PATCH 5/5] clk: qcom: gcc: Add clock driver for SM8350
-Message-ID: <X8l9dRfo7qdRTAMe@builder.lan>
-References: <20201203070241.2648874-1-vkoul@kernel.org>
- <20201203070241.2648874-6-vkoul@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "NXP Linux Team" <linux-imx@nxp.com>,
+        David Airlie <airlied@linux.ie>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Ricardo Ribalda" <ribalda@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        alsa-devel <alsa-devel@alsa-project.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 0/1] dt-bindings: eliminate yamllint warnings
+Date:   Fri, 4 Dec 2020 10:42:25 +0800
+Message-ID: <20201204024226.1222-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201203070241.2648874-6-vkoul@kernel.org>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.174.177.9]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 03 Dec 01:02 CST 2020, Vinod Koul wrote:
-> diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-[..]
-> +static int gcc_sm8350_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap = qcom_cc_map(pdev, &gcc_sm8350_desc);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(&pdev->dev, "Failed to map gcc registers\n");
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
-> +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
-> +
-> +	/*
-> +	 * Enable clocks required by the i2c-connected pm8008 regulators. Don't
-> +	 * register them with the clock framework so that client requests are
-> +	 * short-circuited before grabbing the enable/prepare locks. This
-> +	 * prevents deadlocks between the clk/regulator frameworks.
-> +	 *
-> +	 *	gcc_qupv3_wrap_1_m_ahb_clk
-> +	 *	gcc_qupv3_wrap_1_s_ahb_clk
-> +	 *	gcc_qupv3_wrap1_s5_clk
-> +	 */
+There're too many people, I just send to the maintainer, reviewer, supporter.
 
-Isn't this a workaround inherited from the downstream control of
-regulators from within the clock core? Does this still apply upstream?
+Eliminate below warnings:
+./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:32:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml:35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/display/intel,keembay-msscam.yaml:21:6: [warning] wrong indentation: expected 6 but found 5 (indentation)
+./Documentation/devicetree/bindings/display/bridge/analogix,anx7625.yaml:52:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
+./Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml:42:8: [warning] wrong indentation: expected 8 but found 7 (indentation)
+./Documentation/devicetree/bindings/display/bridge/intel,keembay-dsi.yaml:45:8: [warning] wrong indentation: expected 8 but found 7 (indentation)
+./Documentation/devicetree/bindings/display/panel/novatek,nt36672a.yaml:25:10: [warning] wrong indentation: expected 10 but found 9 (indentation)
+./Documentation/devicetree/bindings/media/i2c/adv7604.yaml:24:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/media/i2c/mipi-ccs.yaml:4:1: [error] missing document start "---" (document-start)
+./Documentation/devicetree/bindings/media/i2c/mipi-ccs.yaml:29:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/media/i2c/mipi-ccs.yaml:32:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml:79:17: [warning] wrong indentation: expected 14 but found 16 (indentation)
+./Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml:88:17: [warning] wrong indentation: expected 14 but found 16 (indentation)
+./Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml:72:17: [warning] wrong indentation: expected 18 but found 16 (indentation)
+./Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml:75:17: [warning] wrong indentation: expected 18 but found 16 (indentation)
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:20:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:30:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mmc/mtk-sd.yaml:33:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/sound/mt8192-mt6359-rt1015-rt5682.yaml:10:4: [warning] wrong indentation: expected 2 but found 3 (indentation)
 
-Regards,
-Bjorn
 
-> +	regmap_update_bits(regmap, 0x52008, BIT(20), BIT(20));
-> +	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
-> +	regmap_update_bits(regmap, 0x52008, BIT(27), BIT(27));
-> +
-> +	return qcom_cc_really_probe(pdev, &gcc_sm8350_desc, regmap);
-> +}
-> +
-> +static struct platform_driver gcc_sm8350_driver = {
-> +	.probe = gcc_sm8350_probe,
-> +	.driver = {
-> +		.name = "sm8350-gcc",
-> +		.of_match_table = gcc_sm8350_match_table,
-> +	},
-> +};
-> +
-> +static int __init gcc_sm8350_init(void)
-> +{
-> +	return platform_driver_register(&gcc_sm8350_driver);
-> +}
-> +subsys_initcall(gcc_sm8350_init);
-> +
-> +static void __exit gcc_sm8350_exit(void)
-> +{
-> +	platform_driver_unregister(&gcc_sm8350_driver);
-> +}
-> +module_exit(gcc_sm8350_exit);
-> +
-> +MODULE_DESCRIPTION("QTI GCC SM8350 Driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.26.2
-> 
+Zhen Lei (1):
+  dt-bindings: eliminate yamllint warnings
+
+ .../devicetree/bindings/clock/imx8qxp-lpcg.yaml    | 20 ++++++++---------
+ .../bindings/display/bridge/analogix,anx7625.yaml  |  4 ++--
+ .../bindings/display/bridge/intel,keembay-dsi.yaml |  4 ++--
+ .../bindings/display/intel,keembay-msscam.yaml     |  4 ++--
+ .../bindings/display/panel/novatek,nt36672a.yaml   |  2 +-
+ .../devicetree/bindings/media/i2c/adv7604.yaml     |  4 ++--
+ .../devicetree/bindings/media/i2c/mipi-ccs.yaml    | 11 ++++-----
+ .../devicetree/bindings/media/i2c/ovti,ov772x.yaml | 12 +++++-----
+ .../devicetree/bindings/media/i2c/sony,imx214.yaml | 12 +++++-----
+ Documentation/devicetree/bindings/mmc/mtk-sd.yaml  | 26 +++++++++++-----------
+ .../sound/mt8192-mt6359-rt1015-rt5682.yaml         |  4 ++--
+ 11 files changed, 52 insertions(+), 51 deletions(-)
+
+-- 
+1.8.3
+
+
