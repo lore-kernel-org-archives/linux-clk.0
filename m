@@ -2,119 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7D2C4167B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4A8C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5C3322B49
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C180E22B45
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbgLDPMK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 10:12:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38109 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgLDPMJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 10:12:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b62so5456300otc.5;
-        Fri, 04 Dec 2020 07:11:48 -0800 (PST)
+        id S1728938AbgLDPUx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 10:20:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbgLDPUw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 10:20:52 -0500
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2617C061A4F
+        for <linux-clk@vger.kernel.org>; Fri,  4 Dec 2020 07:20:04 -0800 (PST)
+Received: by mail-wr1-x444.google.com with SMTP id e7so5679262wrv.6
+        for <linux-clk@vger.kernel.org>; Fri, 04 Dec 2020 07:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
+         :date:mime-version;
+        bh=Ut70wCtSDVM0bqYgXmAgggZNWzyipgwqsdsGJjhBqoQ=;
+        b=j4C2JWHolEMbY0cQbERLHnxvJk+PT3gMBltNmTpp3rYpDIej3Bb6bDE4eSmsNb0zb7
+         cgUKN/Hnxcr9mgckn2z4BsjsVL8KpQWYJnxiekJACFwon2uwu+LdO9FfY76kxy1MUYiG
+         hUx+1cPmHCF9Cuf1TkbJsz11keCVoYMRNRUqFaGwnkjh8rUs9VvTzvYJQnn8BkHYB2JV
+         zDH38s8cPZfhvgOQvBJ1B5qwpejKesaIfXbHqSImXRoyCXwRXZSXGyg6uWP6LK1qkg5g
+         dURcOaHyPnXRrpZpW/AKMgE1c1BuIVI/3plmDWR+a5g/WTcoXA5RCNk1/yX2zNHqLCR1
+         WwFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mx7p3eLmIuWMmtE6mHb2ILEA4Fig5dyz0WFMcFJkzUI=;
-        b=dJPLMx5O8MhYAMbNBYYCk9tuT37Rso5GhU7P6GEQ3FD6Gd9R02rFDWYcDQf5naxf+p
-         BtQ6GKG0gqSpVdj2AOSjEm9CA6K6dixCf+8OH1o8g1tjq5SHBUQKL9nxCaKzBzh+3jX0
-         yyoipoam9AB5JjDHmeJqcgVjMsha8+r79ze5Md5txwt5DNzIxEoINwa5CTjgiVHl7GnW
-         rz5sAkjTuPCZQXC4gdzGr/Utorj0p0JCHd3VhXK3EICErY/eW5RTKL31EpXWOlHtmvbm
-         9AwCB1LS91luyQcgjCrvwyuYKzOVDBXcCx99pvIje7njJlBcl+5cV7lsDRbnBxnlhSDX
-         gcKQ==
-X-Gm-Message-State: AOAM533X0UhL7YtkPmTSmSsAItPY9Epy/gHLCAkK1gP7gkf6CjOLCmBS
-        R9b75tdAyjFm2eeiC3sU/83ehZmHZELD55LF5r0=
-X-Google-Smtp-Source: ABdhPJxwYLy9vqmxnrB8JtTc3YLu6dtlxp2mecVJQlpJfWk1truKlk75tY3Yz7qtoFs+L8+WzUHpvf/9+jzvBbV6wYE=
-X-Received: by 2002:a9d:2203:: with SMTP id o3mr4000589ota.107.1607094682844;
- Fri, 04 Dec 2020 07:11:22 -0800 (PST)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:message-id:date:mime-version;
+        bh=Ut70wCtSDVM0bqYgXmAgggZNWzyipgwqsdsGJjhBqoQ=;
+        b=uU9ktfTygRA3/Pn9T62p6FHr1WzHLa0zzanxB6j6eL2svC8oDgOKIu4qSmc1BhnEsR
+         ZfDMVScScgYCpU8HOPUpOuI415HW5FyqSM8MmaJAkC1204XmZAQOWq7YHk1EHaP6qneT
+         fp+VDxSPySXjYjnF4P6bmXW8QCl8p2UGn25uoU6QS4dLrUE6hZInTdhqC8XCOceM/Otv
+         0aImG9ZCc5kGXRnk69uSKNap63TRtHCZTiomPUW3ANH8qgQezGY9/BWt+DNuBQNQPolU
+         YOYXRe3f09ETzNVeeCvV3gW9ja+onx7zAKyoSQ3T1BmabX+f3SX1x1/42wQvHv8UkRp5
+         mT0A==
+X-Gm-Message-State: AOAM5321yJCJZE3OqT0ysgqgQ5dM+dNeTpnSIB1oIj90zi/PRKC+59O7
+        nildxieG9H+4ut0AkbZX7oGrAw==
+X-Google-Smtp-Source: ABdhPJw0nUCfvQkmwhontRyFojOjTf3y9u3sd2tlbcu+vv1/3tZWslLF+HrOfUfmrNuKtCH1C0AZKA==
+X-Received: by 2002:adf:d84e:: with SMTP id k14mr5516583wrl.34.1607095203236;
+        Fri, 04 Dec 2020 07:20:03 -0800 (PST)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id n123sm3685801wmn.7.2020.12.04.07.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 07:20:02 -0800 (PST)
+References: <20201203222706.992440-1-arnd@kernel.org>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jian Hu <jian.hu@amlogic.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: g12a: select COMMON_CLK_MESON_VID_PLL_DIV
+In-reply-to: <20201203222706.992440-1-arnd@kernel.org>
+Message-ID: <1ja6utppi6.fsf@starbuckisacylon.baylibre.com>
+Date:   Fri, 04 Dec 2020 16:20:01 +0100
 MIME-Version: 1.0
-References: <20201202032500.206346-1-damien.lemoal@wdc.com> <20201202032500.206346-5-damien.lemoal@wdc.com>
-In-Reply-To: <20201202032500.206346-5-damien.lemoal@wdc.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 4 Dec 2020 16:11:11 +0100
-Message-ID: <CAMuHMdUyA3gobmcUjPr6JM8KLpcM0WKhd6Gfk5=tCfneBYJWMA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/21] riscv: Fix builtin DTB handling
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Damien,
 
-On Wed, Dec 2, 2020 at 4:26 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
-> All SiPeed K210 MAIX boards have the exact same vendor, arch and
-> implementation IDs, preventing differentiation to select the correct
-> device tree to use through the SOC_BUILTIN_DTB_DECLARE() macro. This
-> result in this macro to be useless and mandates changing the code of
-> the sysctl driver to change the builtin device tree suitable for the
-> target board.
+On Thu 03 Dec 2020 at 23:26, Arnd Bergmann <arnd@kernel.org> wrote:
+
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Fix this problem by removing the SOC_BUILTIN_DTB_DECLARE() macro since
-> it is used only for the K210 support. The code searching the builtin
-> DTBs using the vendor, arch an implementation IDs is also removed.
-> Support for builtin DTB falls back to the simpler and more traditional
-> handling of builtin DTB using the CONFIG_BUILTIN_DTB option, similarly
-> to other architectures.
+> Without this, a g12a-only config produces a link error:
 >
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> aarch64-linux-ld: drivers/clk/meson/g12a.o:(.data+0xcb68): undefined reference to `meson_vid_pll_div_ro_ops'
+>
+> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> --- a/arch/riscv/boot/dts/kendryte/Makefile
-> +++ b/arch/riscv/boot/dts/kendryte/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -dtb-$(CONFIG_SOC_KENDRYTE_K210_DTB) += k210.dtb
-> -
-> +ifneq ($(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE),"")
-> +dtb-y += $(strip $(shell echo $(CONFIG_SOC_KENDRYTE_K210_DTB_SOURCE))).dtb
->  obj-$(CONFIG_SOC_KENDRYTE_K210_DTB_BUILTIN) += $(addsuffix .o, $(dtb-y))
-> +endif
+Hi Arnd,
 
-This break compiling a kernel for non-K210 systems (e.g. defconfig),
-as reported before in
-https://lore.kernel.org/linux-clk/202011151230.QP1ISPQo-lkp@intel.com/
+Thanks for sending this fix.
 
-I think this can be fixed using:
+Same change has already been applied:
+https://patchwork.kernel.org/project/linux-clk/patch/20201118190930.34352-1-khilman@baylibre.com/
 
---- a/arch/riscv/boot/dts/Makefile
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- subdir-y += sifive
--subdir-y += canaan
-+subdir-$(CONFIG_SOC_CANAAN) += canaan
+It was part of my last PR to Stephen
 
- obj-$(CONFIG_BUILTIN_DTB) := $(addsuffix /, $(subdir-y))
+Jerome
 
-(yes, I've already renamed kendryte to canaan ;-)
+> ---
+>  drivers/clk/meson/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 034da203e8e0..9a8a548d839d 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -110,6 +110,7 @@ config COMMON_CLK_G12A
+>  	select COMMON_CLK_MESON_AO_CLKC
+>  	select COMMON_CLK_MESON_EE_CLKC
+>  	select COMMON_CLK_MESON_CPU_DYNDIV
+> +	select COMMON_CLK_MESON_VID_PLL_DIV
+>  	select MFD_SYSCON
+>  	help
+>  	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
