@@ -2,107 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EDFC4361B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 10:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC73C4361A
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 10:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E1392251F
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 10:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D677229CA
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 10:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbgLDKUA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 05:20:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729282AbgLDKUA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Dec 2020 05:20:00 -0500
-Date:   Fri, 4 Dec 2020 15:49:14 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607077159;
-        bh=hNPxyUmSTItskXGbatM3qf8oZU1dgUwfiUVEC5qpV9c=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l5D36wcebTAZH7I+6HRLCp809Uqqs1+EVpWXwjwvHBwYu6HYG2vzsMvi2kAjSQXBJ
-         6e8u3ZP/Gvt5+s+pnMFlyNALEmx4ZLApMKlAtPQ6L73DWGlzZpe28wqfajovYbhJiZ
-         dJBuzxBIsqFf1LsD0uurRFbaQCWVrVIxif8DU2Qwlm5mP8YNwdfcn/9kaqoiQmtkiD
-         9SpmjMu7XEnPI0ZrhWWMLdjMXnRGge3PEPNEFzwRC32BCgJAZEQzathkRE4Df3n0iY
-         0tcRdNFGM0ZxnZ0bEghZagPLkw7xjgzRAR9OX4jhmHNyiNz1UE/uP2il9qQnTFH11u
-         ljqESjB6VSiew==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Vivek Aknurwar <viveka@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeevan Shriram <jshriram@codeaurora.org>
-Subject: Re: [PATCH 5/5] clk: qcom: gcc: Add clock driver for SM8350
-Message-ID: <20201204101914.GO8403@vkoul-mobl>
-References: <20201203070241.2648874-1-vkoul@kernel.org>
- <20201203070241.2648874-6-vkoul@kernel.org>
- <X8l9dRfo7qdRTAMe@builder.lan>
- <20201204043502.GJ8403@vkoul-mobl>
- <302cf18a-080d-a521-8c7a-39c265fbceb8@codeaurora.org>
+        id S1729603AbgLDKuN convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 05:50:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59974 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgLDKuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 05:50:12 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADBFFC0613D1
+        for <linux-clk@vger.kernel.org>; Fri,  4 Dec 2020 02:49:32 -0800 (PST)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1kl8eP-0003gF-BW; Fri, 04 Dec 2020 11:49:21 +0100
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1kl8eN-0005n7-VC; Fri, 04 Dec 2020 11:49:19 +0100
+Message-ID: <aad38b7cbaa2b22092ad466cf01ec7e0c1f08b72.camel@pengutronix.de>
+Subject: Re: [PATCH v4 13/21] riscv: Add Canaan Kendryte K210 reset
+ controller
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc:     Sean Anderson <seanga2@gmail.com>
+Date:   Fri, 04 Dec 2020 11:49:19 +0100
+In-Reply-To: <20201202032500.206346-14-damien.lemoal@wdc.com>
+References: <20201202032500.206346-1-damien.lemoal@wdc.com>
+         <20201202032500.206346-14-damien.lemoal@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <302cf18a-080d-a521-8c7a-39c265fbceb8@codeaurora.org>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
+Hi Damien,
 
-On 04-12-20, 14:20, Taniya Das wrote:
-> On 12/4/2020 10:05 AM, Vinod Koul wrote:
-> > On 03-12-20, 18:06, Bjorn Andersson wrote:
-> > > On Thu 03 Dec 01:02 CST 2020, Vinod Koul wrote:
-> > > > diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-> > > [..]
-> > > > +static int gcc_sm8350_probe(struct platform_device *pdev)
-> > > > +{
-> > > > +	struct regmap *regmap;
-> > > > +	int ret;
-> > > > +
-> > > > +	regmap = qcom_cc_map(pdev, &gcc_sm8350_desc);
-> > > > +	if (IS_ERR(regmap)) {
-> > > > +		dev_err(&pdev->dev, "Failed to map gcc registers\n");
-> > > > +		return PTR_ERR(regmap);
-> > > > +	}
-> > > > +
-> > > > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
-> > > > +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
-> > > > +
-> > > > +	/*
-> > > > +	 * Enable clocks required by the i2c-connected pm8008 regulators. Don't
-> > > > +	 * register them with the clock framework so that client requests are
-> > > > +	 * short-circuited before grabbing the enable/prepare locks. This
-> > > > +	 * prevents deadlocks between the clk/regulator frameworks.
-> > > > +	 *
-> > > > +	 *	gcc_qupv3_wrap_1_m_ahb_clk
-> > > > +	 *	gcc_qupv3_wrap_1_s_ahb_clk
-> > > > +	 *	gcc_qupv3_wrap1_s5_clk
-> > > > +	 */
-> > > 
-> > > Isn't this a workaround inherited from the downstream control of
-> > > regulators from within the clock core? Does this still apply upstream?
-> > 
-> > Let me check on this bit...
-> > 
-> > Thanks
-> > 
+On Wed, 2020-12-02 at 12:24 +0900, Damien Le Moal wrote:
+> Add a reset controller driver for the Canaan Kendryte K210 SoC. This
+> driver relies on its syscon compatible parent node (sysctl) for its
+> register mapping. Automatically select this driver for compilation
+> when the SOC_CANAAN option is selected.
 > 
-> No it should not apply.
+> The MAINTAINERS file is updated, adding the entry "CANAAN/KENDRYTE K210
+> SOC RESET CONTROLLER DRIVER" with myself listed as maintainer for this
+> driver.
+> 
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  MAINTAINERS                |   8 +++
+>  arch/riscv/Kconfig.socs    |   3 +
+>  drivers/reset/Kconfig      |   9 +++
+>  drivers/reset/Makefile     |   1 +
+>  drivers/reset/reset-k210.c | 141 +++++++++++++++++++++++++++++++++++++
+>  5 files changed, 162 insertions(+)
+>  create mode 100644 drivers/reset/reset-k210.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a059ab02fa8a..c2b3d6e48cd5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3837,6 +3837,14 @@ L:	linux-gpio@vger.kernel.org (pinctrl driver)
+>  F:	Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
+>  F:	drivers/pinctrl/pinctrl-k210.c
+>  
+> +CANAAN/KENDRYTE K210 SOC RESET CONTROLLER DRIVER
+> +M:	Damien Le Moal <damien.lemoal@wdc.com>
+> +L:	linux-kernel@vger.kernel.org
+> +L:	linux-riscv@lists.infradead.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
+> +F:	drivers/reset/reset-k210.c
+> +
+>  CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER
+>  M:	Damien Le Moal <damien.lemoal@wdc.com>
+>  L:	linux-riscv@lists.infradead.org
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 68bdd664b5c2..b3cd253ec2c2 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -33,6 +33,9 @@ config SOC_CANAAN
+>  	select CLK_K210
+>  	select PINCTRL
+>  	select PINCTRL_K210
+> +	select ARCH_HAS_RESET_CONTROLLER
+> +	select RESET_CONTROLLER
+> +	select RESET_K210
+>  	help
+>  	  This enables support for Canaan Kendryte K210 SoC platform hardware.
+>  
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 07d162b179fc..529d206cfdfd 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -245,6 +245,15 @@ config RESET_ZYNQ
+>  	help
+>  	  This enables the reset controller driver for Xilinx Zynq SoCs.
+>  
+> +config RESET_K210
+> +	bool "Reset controller driver for Canaan Kendryte K210 SoC"
+> +	depends on RISCV && SOC_CANAAN
+> +	depends on OF && MFD_SYSCON
+> +	help
+> +	  Support for the Canaan Kendryte K210 RISC-V SoC reset controller.
+> +	  Say Y if you want to control reset signals provided by this
+> +	  controller.
+> +
+>  source "drivers/reset/sti/Kconfig"
+>  source "drivers/reset/hisilicon/Kconfig"
+>  source "drivers/reset/tegra/Kconfig"
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 16947610cc3b..1730a31e6871 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -33,4 +33,5 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+>  obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
+>  obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+>  obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+> +obj-$(CONFIG_RESET_K210) += reset-k210.o
+>  
+> diff --git a/drivers/reset/reset-k210.c b/drivers/reset/reset-k210.c
+> new file mode 100644
+> index 000000000000..2cf9a63c763d
+> --- /dev/null
+> +++ b/drivers/reset/reset-k210.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+> + */
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <soc/canaan/k210-sysctl.h>
+> +
+> +#include <dt-bindings/reset/k210-rst.h>
+> +
+> +#define K210_RST_MASK	0x27FFFFFF
+> +
+> +struct k210_rst {
+> +	struct regmap *map;
+> +	struct reset_controller_dev rcdev;
+> +};
+> +
+> +static inline struct k210_rst *
+> +to_k210_rst(struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct k210_rst, rcdev);
+> +}
+> +
+> +static inline int k210_rst_assert(struct reset_controller_dev *rcdev,
+> +				  unsigned long id)
+> +{
+> +	struct k210_rst *ksr = to_k210_rst(rcdev);
+> +	u32 bit = BIT(id);
+> +
+> +	if (!(bit & K210_RST_MASK))
+> +		return -EINVAL;
 
-Thanks for confirmation, removed now. Will send v2
+Instead of checking this mask in the k210_rst_assert/deassert/status()
+functions, you could implement a custom .of_xlate callback and disallow
+requesting invalid resets in the first place.
 
--- 
-~Vinod
+regards
+Philipp
