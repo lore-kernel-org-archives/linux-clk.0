@@ -2,77 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6311EC4361B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD83C4167B
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 17:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C8B022C9C
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 15:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2E1C22B4E
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 17:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbgLDPhL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 10:37:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39670 "EHLO mail.kernel.org"
+        id S1731384AbgLDRmT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 12:42:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgLDPhL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Dec 2020 10:37:11 -0500
-Subject: Re: [PATCH] [v2] clk: samsung: mark PM functions as __maybe_unused
+        id S1731103AbgLDRmT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Dec 2020 12:42:19 -0500
+Date:   Fri, 4 Dec 2020 17:41:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607096191;
-        bh=/Cxi3igk0xF11OqK3oul234Dno+5ZCOdHZS2viwOIOE=;
-        h=To:Cc:References:From:Date:In-Reply-To:From;
-        b=I/VLYv/cgfPtmc/fZ6kYpUzmLWpev16erMeKmMPG70YgvA+Rqmus77UbFRD8LU1k2
-         rxSsrNvDj/66Rj5rtEkVO+ucQmMsFNbwnYIsqDXVG1u4qJQUiEra15joe+Q6WCub+a
-         HiEUuRn2QmuB7wc8MWXd6wsvLH30c1ZWxZSfh0Jjv4D3CtFmCkbkxB4JFpYs8mXQ5B
-         lP7Vsw7OQlNkF4KzD4girI0KA8aWWxZeRBsTLJDp1fTpjY4q5RWOXepBrnf1DOwPMS
-         pWkPi0szjUjk7852BYW5XOdEUVVJ5XKtvgG52bE8RO3t/dz0T452XB5Sqp6UOvU53o
-         Q86+5ZEFstwgg==
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20201204091616.4128366-1-arnd@kernel.org>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <72f6b613-b4c1-a570-d4cc-74540467280f@kernel.org>
-Date:   Fri, 4 Dec 2020 16:36:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        s=k20201202; t=1607103698;
+        bh=WGPvh/m1la/6pEZ0tQ/GOgG68+E+LycRUiq+bD3Iwkk=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g/TkCIMmBnQxPWxPF2qMZYVzCmn31CDUYt6k0CzRPEhcaQop/372ntwpVszp4hjIE
+         vIVuuPebp/OC1i7cGxGjhjvFCBH+ZOpJXrqSfBUsLkg92qAaqtHe1oRjW2/LiLKRoP
+         uV66KhSBbnh6OLWt+7k76XvCzSFsllU2Y5flxry9vND+O+lxolnf60O50XwwBPh+yq
+         SoPzZkAnY4VxswfQ2GzN2EHfELa7v8aeYr2tU6kH0grOPrleQ/frQmRoOuiQC9upQJ
+         YrsyZgnwacEkiNSykQCi1T9S/rE+RUrXs3/y3O5y2YsUSe/DVXEgxaJHuUZ1ya5ze9
+         iTXQfDZc1wffA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Ricardo Ribalda <ribalda@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        alsa-devel <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 1/1] dt-bindings: eliminate yamllint warnings
+Message-ID: <20201204174135.GC4558@sirena.org.uk>
+References: <20201204024226.1222-1-thunder.leizhen@huawei.com>
+ <20201204024226.1222-2-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20201204091616.4128366-1-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NU0Ex4SbNnrxsi6C"
+Content-Disposition: inline
+In-Reply-To: <20201204024226.1222-2-thunder.leizhen@huawei.com>
+X-Cookie: Not a flying toy.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/4/20 10:16, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The use of SIMPLE_DEV_PM_OPS() means that the suspend/resume
-> functions are now unused when CONFIG_PM is disabled:
-> 
-> drivers/clk/samsung/clk-exynos-clkout.c:219:12: error: 'exynos_clkout_resume' defined but not used [-Werror=unused-function]
->    219 | static int exynos_clkout_resume(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~
-> drivers/clk/samsung/clk-exynos-clkout.c:210:12: error: 'exynos_clkout_suspend' defined but not used [-Werror=unused-function]
->    210 | static int exynos_clkout_suspend(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~~
-> 
-> Mark them as __maybe_unused to shut up the otherwise harmless warning.
-> 
-> Fixes: 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to module driver")
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: add proper changelog text
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+--NU0Ex4SbNnrxsi6C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Dec 04, 2020 at 10:42:26AM +0800, Zhen Lei wrote:
+> All warnings are related only to "wrong indentation", except one:
+> Documentation/devicetree/bindings/media/i2c/mipi-ccs.yaml:4:1: \
+> [error] missing document start "---" (document-start)
+
+It would make life easier (and be more normal practice) to split this up
+by driver/subsystem and send a bunch of separate patches to the relevant
+maintainers, this makes it much easier to review and handle things.
+
+--NU0Ex4SbNnrxsi6C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/KdM4ACgkQJNaLcl1U
+h9BGjQf/UZkJEtI4D/7Y6K4QlL3HTskWfvSDmZF26Ea+sD/TdJ91T1YJulT15TOK
+sKNLzMI5ERHHR+su1GGx0czMqpipoPYLvlULn6wLpL6fMbOx94cA+dc8Akr/JcjX
+EfMthdqAlA+5P1Lz5FivyeWRk/B2YgNQ4+Pa9bbLW4iZogcNL2jZmN55GvBHYlSa
+oyLVbN2YlJwy/t9b+c8mvlCGa5NyPDe5JmpplcFkCbn5DVZ9aFTHrGaQ0Ml1rv5W
+DyyLnw1kpVUck0Phs49+unaEOb88Mh7FY4Jtsqz6SuqZDkHYZuWCwod5VHJG7q53
+cpaFjB5+6e3/mAA/aRnxyzuOxLmoMA==
+=82J7
+-----END PGP SIGNATURE-----
+
+--NU0Ex4SbNnrxsi6C--
