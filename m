@@ -2,37 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD83C4167B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 17:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E1BC4361A
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 18:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2E1C22B4E
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 17:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ECCF22C9C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 18:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbgLDRmT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 12:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731103AbgLDRmT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Dec 2020 12:42:19 -0500
-Date:   Fri, 4 Dec 2020 17:41:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607103698;
-        bh=WGPvh/m1la/6pEZ0tQ/GOgG68+E+LycRUiq+bD3Iwkk=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g/TkCIMmBnQxPWxPF2qMZYVzCmn31CDUYt6k0CzRPEhcaQop/372ntwpVszp4hjIE
-         vIVuuPebp/OC1i7cGxGjhjvFCBH+ZOpJXrqSfBUsLkg92qAaqtHe1oRjW2/LiLKRoP
-         uV66KhSBbnh6OLWt+7k76XvCzSFsllU2Y5flxry9vND+O+lxolnf60O50XwwBPh+yq
-         SoPzZkAnY4VxswfQ2GzN2EHfELa7v8aeYr2tU6kH0grOPrleQ/frQmRoOuiQC9upQJ
-         YrsyZgnwacEkiNSykQCi1T9S/rE+RUrXs3/y3O5y2YsUSe/DVXEgxaJHuUZ1ya5ze9
-         iTXQfDZc1wffA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        id S1726116AbgLDScw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Dec 2020 13:32:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbgLDScv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 13:32:51 -0500
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA3C0C061A51;
+        Fri,  4 Dec 2020 10:32:10 -0800 (PST)
+Received: by mail-il1-x132.google.com with SMTP id z10so6081585ilu.3;
+        Fri, 04 Dec 2020 10:32:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NzKZ943JGTNloiN146GZP9I+EpZC20D+gFEel4Gitb8=;
+        b=SeSqVhHl47UvFR6qCSbOqOwUPvIQm298r8//4V8E3E1wtei2+ml27FPsm6fF9oqWJi
+         JKLkIZSgtRmjYJEBXq8encd8/ps9kieq3N/Fk/jOxEOLXe1BmyUjnxz4wdv9j3ZOesml
+         ULm4YCbA7x9cs8vMJ0VhcsjLq+l6MqgQLP3ERg4jzYkrEgdgCOXcMzMynFWlm/yIInaT
+         oNxZX4R7UId/p162m8BDccGn99S/W3FsQUDKBtGmByPLIoS6qz+YOE9fUR0QrHTYocjr
+         yBQd1bZdoxNPWwjEmvejjcKyh9hNoGdkXOZwKufxeJGmLG90AhrfOUue8/w+dU4KDvhd
+         OqXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NzKZ943JGTNloiN146GZP9I+EpZC20D+gFEel4Gitb8=;
+        b=UFN/kw6W13QEwhSFJ68v8XX8j1h/YGVHQ0Xkno7ULixHlaHTmusAyX29jwhTFMFiWZ
+         BnLCi0ccNSqH/BlGHih4qpFp+5tAisBPyBCIEaG4FGaFJP9ICpHf0CUQfJ8VfDu8ve1Z
+         EUw6Noj3n5m0IhHDYLuLDLLlxxn5RGGL2ztQC5RAJbCIqZaZY6or5lJDoCQMCNshcZTi
+         dYwuQV/sg4tecGc0FFwgXlXRPnCKR7I+4NODi/agZ7pzqlayJMykunqYBLeRAEui/MpX
+         cECQseAycRYqhZL9tpVhvhQOzlh8h+39HerYuvRSRKFLEUMai6RJ4wauz8mpDGGF2OcA
+         1lKA==
+X-Gm-Message-State: AOAM531sTmP2mckh7OX8tlJPghf+mTE1jaISMWEL7cqhEiStvcyxKIgQ
+        /Ojvk51jRxbC59j1gRxO84FkmZuJVDo2iw==
+X-Google-Smtp-Source: ABdhPJxGsBLdSmKY8+m4xFcwZUgkJ1jukKmUe+1owxKbk3IXvQtv0d+e0qtlamj75Nr3azRE9cCSCQ==
+X-Received: by 2002:a05:6e02:929:: with SMTP id o9mr8055335ilt.42.1607106729669;
+        Fri, 04 Dec 2020 10:32:09 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:4c53:aff:c64:cd45])
+        by smtp.gmail.com with ESMTPSA id s17sm1955714ilj.25.2020.12.04.10.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 10:32:08 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, charles.steves@logicpd.com,
+        Adam Ford <aford173@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -40,69 +68,62 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mediatek <linux-mediatek@lists.infradead.org>,
-        alsa-devel <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 1/1] dt-bindings: eliminate yamllint warnings
-Message-ID: <20201204174135.GC4558@sirena.org.uk>
-References: <20201204024226.1222-1-thunder.leizhen@huawei.com>
- <20201204024226.1222-2-thunder.leizhen@huawei.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: Fix reparenting of UARTs not associated with sdout
+Date:   Fri,  4 Dec 2020 12:31:54 -0600
+Message-Id: <20201204183154.94002-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NU0Ex4SbNnrxsi6C"
-Content-Disposition: inline
-In-Reply-To: <20201204024226.1222-2-thunder.leizhen@huawei.com>
-X-Cookie: Not a flying toy.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The default clock source on i.MX8M Mini and Nano boards use a 24MHz clock,
+but users who need to re-parent the clock source run into issues because
+all the UART clocks are enabled whether or not they're needed by sdout.
 
---NU0Ex4SbNnrxsi6C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Any attempt to change the parent results in an busy error because the
+clocks have been enabled already.
 
-On Fri, Dec 04, 2020 at 10:42:26AM +0800, Zhen Lei wrote:
-> All warnings are related only to "wrong indentation", except one:
-> Documentation/devicetree/bindings/media/i2c/mipi-ccs.yaml:4:1: \
-> [error] missing document start "---" (document-start)
+  clk: failed to reparent uart1 to sys_pll1_80m: -16
 
-It would make life easier (and be more normal practice) to split this up
-by driver/subsystem and send a bunch of separate patches to the relevant
-maintainers, this makes it much easier to review and handle things.
+Instead of pre-initializing all UARTS, scan the device tree to see if UART
+clock is used as stdout before initializing it.  Only enable the UART clock
+if it's needed in order to delay the clock initialization until after the
+re-parenting of the clocks.
 
---NU0Ex4SbNnrxsi6C
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
+Suggested-by: Aisheng Dong <aisheng.dong@nxp.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index 47882c51cb85..6dcc5fbd8f3f 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -163,12 +163,18 @@ __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+ 
+ void imx_register_uart_clocks(struct clk ** const clks[])
+ {
++	struct clk *uart_clk;
+ 	if (imx_keep_uart_clocks) {
+ 		int i;
+ 
+ 		imx_uart_clocks = clks;
+-		for (i = 0; imx_uart_clocks[i]; i++)
+-			clk_prepare_enable(*imx_uart_clocks[i]);
++		for (i = 0; imx_uart_clocks[i]; i++) {
++			uart_clk = of_clk_get(of_stdout, i);
++			if (IS_ERR(uart_clk))
++				continue;
++			clk_prepare_enable(uart_clk);
++			clk_put(uart_clk);
++		}
+ 	}
+ }
+ 
+-- 
+2.25.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl/KdM4ACgkQJNaLcl1U
-h9BGjQf/UZkJEtI4D/7Y6K4QlL3HTskWfvSDmZF26Ea+sD/TdJ91T1YJulT15TOK
-sKNLzMI5ERHHR+su1GGx0czMqpipoPYLvlULn6wLpL6fMbOx94cA+dc8Akr/JcjX
-EfMthdqAlA+5P1Lz5FivyeWRk/B2YgNQ4+Pa9bbLW4iZogcNL2jZmN55GvBHYlSa
-oyLVbN2YlJwy/t9b+c8mvlCGa5NyPDe5JmpplcFkCbn5DVZ9aFTHrGaQ0Ml1rv5W
-DyyLnw1kpVUck0Phs49+unaEOb88Mh7FY4Jtsqz6SuqZDkHYZuWCwod5VHJG7q53
-cpaFjB5+6e3/mAA/aRnxyzuOxLmoMA==
-=82J7
------END PGP SIGNATURE-----
-
---NU0Ex4SbNnrxsi6C--
