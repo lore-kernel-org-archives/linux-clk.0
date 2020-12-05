@@ -2,385 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C78FC4361A
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C184C1B087
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD50C22E00
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC52022EBF
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbgLESTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728341AbgLESTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 5 Dec 2020 13:19:21 -0500
-Received: from out28-149.mail.aliyun.com ([115.124.28.149]:40631 "EHLO
-        out28-149.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbgLESDV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Dec 2020 13:03:21 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.120381-0.000385329-0.879234;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047201;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.J3J73c7_1607181087;
-Received: from 192.168.10.153(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.J3J73c7_1607181087)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Sat, 05 Dec 2020 23:11:28 +0800
-Subject: Re: [PATCH 3/4] clk: Ingenic: Add missing clocks for Ingenic SoCs.
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     sboyd@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com
-References: <20201125172618.112707-1-zhouyanjie@wanyeetech.com>
- <20201125172618.112707-4-zhouyanjie@wanyeetech.com>
- <1MGQKQ.5HYB5MK5YO192@crapouillou.net>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5ba28790-4ed7-b40d-47e2-3e03f5a4f901@wanyeetech.com>
-Date:   Sat, 5 Dec 2020 23:11:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728188AbgLESBB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Dec 2020 13:01:01 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2AEC061A54
+        for <linux-clk@vger.kernel.org>; Sat,  5 Dec 2020 10:00:20 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id 91so4544188wrj.7
+        for <linux-clk@vger.kernel.org>; Sat, 05 Dec 2020 10:00:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=user-agent:from:to:cc:subject:message-id:date:mime-version;
+        bh=PTXa6B/B0BNrbQJqk8SVfud/vMOBiyjb/emTUMto2ik=;
+        b=MPFfiBDQZxoubDp47KqhOPCsl0Uu0ERfIVCSN+PkGlf6uNfh324TLdfASYbZ/It3aY
+         UGAJtAI4+tkA8tViVrBNROjOxFZfeqB5FS34WHxbNS2r4Q1cDhVJu9rlzVPirDNZV/i8
+         60ARDDAW1ryo12WD+Xf+Im1RY5mIUczX72oXtDgjnBnAR2ov2Bnpvi7Ur9kayjpajUSi
+         z9l0YMrx3FQjr4OgCjaM/+TOodE80LNdzwt6SFqvUZDIAFnnxqVmsLF2XKswJa3QNmJj
+         kBykULaoWQcVioGIEXpTTc2n0Y8OjZU07jnfO4dtDPjOQQm+Ain57GxVWPlBoGC9stbg
+         P22A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:user-agent:from:to:cc:subject:message-id:date
+         :mime-version;
+        bh=PTXa6B/B0BNrbQJqk8SVfud/vMOBiyjb/emTUMto2ik=;
+        b=iiyLi5CHH238YOf5O1QXmXmbD00ELhmh8NIVhVtSrZBpw2zJagsx9C4q8Ofl0nt4UW
+         pmnxwOnSvbJiTlsUuz0Ie2UKp0bASzYK+jxQO5hmm6WZvy6juGEOLR629AWXpkSdIQrV
+         xo0YgzGVp8zl+LfQTtIWWoq8q3wbhD8cqfIfrQYE9FRrR8FdBbtx1IELyRXu6mCb2cjU
+         KUjZ8o7COo7B/bS9LsUonucWAtnKIJfF0IfVpDeHMEf1iYdVY072HU+hMJBkMJgWK3ce
+         L59axLRYKR31CI48FwDjbzlrSXurbQQTXqkfLhhqVt/kCsNiSIU8WfcfD7MKALDoPhyG
+         vcOA==
+X-Gm-Message-State: AOAM531DKKzuCRPNDSXX2QvlcgDkuMmaP9lXobA1MOD0M4NeUrJE57to
+        iofY4Srr9ktdsJPscY0DzWme+UAgnqVMWj0v
+X-Google-Smtp-Source: ABdhPJxDuNhmmBblFW6fyO7wkhOXA8WUFQ0W09dGX+p5ryihjGiJrwlmb4k0cJJijfX1nHIWVMrHRQ==
+X-Received: by 2002:a5d:4892:: with SMTP id g18mr11067256wrq.365.1607191219674;
+        Sat, 05 Dec 2020 10:00:19 -0800 (PST)
+Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
+        by smtp.gmail.com with ESMTPSA id h3sm21635wmm.4.2020.12.05.10.00.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Dec 2020 10:00:18 -0800 (PST)
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: [GIT PULL RESEND] clk: meson: amlogic updates for v5.11 
+Message-ID: <1j360kp1zh.fsf@starbuckisacylon.baylibre.com>
+Date:   Sat, 05 Dec 2020 19:00:18 +0100
 MIME-Version: 1.0
-In-Reply-To: <1MGQKQ.5HYB5MK5YO192@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+Hi Stephen,
 
-On 2020/12/3 上午6:18, Paul Cercueil wrote:
-> Hi Zhou,
->
-> Le jeu. 26 nov. 2020 à 1:26, 周琰杰 (Zhou Yanjie) 
-> <zhouyanjie@wanyeetech.com> a écrit :
->> Add CIM, AIC, DMIC clocks for the X1000 SoC, and CIM, AIC, DMIC, I2S
->> clocks for the X1830 SoC from Ingenic.
->>
->> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->> ---
->>  drivers/clk/ingenic/x1000-cgu.c |  19 ++++
->>  drivers/clk/ingenic/x1830-cgu.c | 189 
->> +++++++++++++++++++++++++++++++++++++++-
->>  2 files changed, 207 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/ingenic/x1000-cgu.c 
->> b/drivers/clk/ingenic/x1000-cgu.c
->> index 9aa20b5..d340bcd 100644
->> --- a/drivers/clk/ingenic/x1000-cgu.c
->> +++ b/drivers/clk/ingenic/x1000-cgu.c
->> @@ -360,6 +360,13 @@ static const struct ingenic_cgu_clk_info 
->> x1000_cgu_clocks[] = {
->>          .mux = { CGU_REG_SSICDR, 30, 1 },
->>      },
->>
->> +    [X1000_CLK_CIM] = {
->> +        "cim", CGU_CLK_MUX | CGU_CLK_DIV,
->> +        .parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
->> +        .mux = { CGU_REG_CIMCDR, 31, 1 },
->> +        .div = { CGU_REG_CIMCDR, 0, 1, 8, 29, 28, 27 },
->> +    },
->> +
->>      [X1000_CLK_EXCLK_DIV512] = {
->>          "exclk_div512", CGU_CLK_FIXDIV,
->>          .parents = { X1000_CLK_EXCLK },
->> @@ -411,6 +418,12 @@ static const struct ingenic_cgu_clk_info 
->> x1000_cgu_clocks[] = {
->>          .gate = { CGU_REG_CLKGR, 9 },
->>      },
->>
->> +    [X1000_CLK_AIC] = {
->> +        "aic", CGU_CLK_GATE,
->> +        .parents = { X1000_CLK_EXCLK, -1, -1, -1 },
->> +        .gate = { CGU_REG_CLKGR, 11 },
->> +    },
->> +
->>      [X1000_CLK_UART0] = {
->>          "uart0", CGU_CLK_GATE,
->>          .parents = { X1000_CLK_EXCLK, -1, -1, -1 },
->> @@ -429,6 +442,12 @@ static const struct ingenic_cgu_clk_info 
->> x1000_cgu_clocks[] = {
->>          .gate = { CGU_REG_CLKGR, 16 },
->>      },
->>
->> +    [X1000_CLK_DMIC] = {
->> +        "dmic", CGU_CLK_GATE,
->> +        .parents = { X1000_CLK_PCLK, -1, -1, -1 },
->> +        .gate = { CGU_REG_CLKGR, 17 },
->> +    },
->> +
->>      [X1000_CLK_TCU] = {
->>          "tcu", CGU_CLK_GATE,
->>          .parents = { X1000_CLK_EXCLK, -1, -1, -1 },
->> diff --git a/drivers/clk/ingenic/x1830-cgu.c 
->> b/drivers/clk/ingenic/x1830-cgu.c
->> index 950aee2..e76e82c 100644
->> --- a/drivers/clk/ingenic/x1830-cgu.c
->> +++ b/drivers/clk/ingenic/x1830-cgu.c
->> @@ -52,6 +52,15 @@
->>  #define USBPCR_SIDDQ        BIT(21)
->>  #define USBPCR_OTG_DISABLE    BIT(20)
->>
->> +/* bits within the I2SCDR register */
->> +#define I2SCDR_I2PCS_SHIFT    30
->> +#define I2SCDR_I2PCS_MASK    (0x3 << I2SCDR_I2PCS_SHIFT)
->> +#define I2SCDR_I2SDIV_M_SHIFT    20
->> +#define I2SCDR_I2SDIV_M_MASK    (0x1ff << I2SCDR_I2SDIV_M_SHIFT)
->> +#define I2SCDR_I2SDIV_N_SHIFT    0
->> +#define I2SCDR_I2SDIV_N_MASK    (0xfffff << I2SCDR_I2SDIV_N_SHIFT)
->> +#define I2SCDR_CE_I2S        BIT(29)
->> +
->>  static struct ingenic_cgu *cgu;
->>
->>  static int x1830_usb_phy_enable(struct clk_hw *hw)
->> @@ -89,6 +98,157 @@ static const struct clk_ops x1830_otg_phy_ops = {
->>      .is_enabled    = x1830_usb_phy_is_enabled,
->>  };
->>
->> +static u8 x1830_i2s_get_parent(struct clk_hw *hw)
->> +{
->> +    u32 i2scdr;
->> +
->> +    i2scdr = readl(cgu->base + CGU_REG_I2SCDR);
->> +
->> +    return (i2scdr & I2SCDR_I2PCS_MASK) >> I2SCDR_I2PCS_SHIFT;
->> +}
->> +
->> +static int x1830_i2s_set_parent(struct clk_hw *hw, u8 idx)
->> +{
->> +    writel(idx << I2SCDR_I2PCS_SHIFT, cgu->base + CGU_REG_I2SCDR);
->> +
->> +    return 0;
->> +}
->> +
->> +static unsigned long x1830_i2s_recalc_rate(struct clk_hw *hw,
->> +                        unsigned long parent_rate)
->> +{
->> +    unsigned m, n;
->> +    u32 i2scdr;
->> +
->> +    i2scdr = readl(cgu->base + CGU_REG_I2SCDR);
->> +
->> +    m = (i2scdr & I2SCDR_I2SDIV_M_MASK) >> I2SCDR_I2SDIV_M_SHIFT;
->> +    n = (i2scdr & I2SCDR_I2SDIV_N_MASK) >> I2SCDR_I2SDIV_N_SHIFT;
->> +
->> +    return div_u64((u64)parent_rate * m, n);
->
-> From what I can see here, your i2s clock is a PLL. You can probably 
-> use CGU_CLK_PLL, with od_bits = od_max = 0 (you'll need to remove the 
-> second BUG_ON() in ingenic_pll_recalc_rate).
->
+Here are the updates for amlogic clocks for v5.11. This is based on your
+clk-hw branch, instead of the usual rc1, since it depends on clk_hw
+stuff you've already applied.
 
-Unfortunately, due to constraints, we cannot use it for i2s with only 
-minor changes to the code related to CGU_CLK_PLL. Because in main PLLs 
-such as APLL and MPLL, the value of M is often much larger than the 
-value of N, but in i2s, the value of N must not be less than twice the 
-value of M. So there is no way to achieve these two constraints at the 
-same time, which leads us to use CGU_CLK_PLL, so I chose to use 
-CGU_CLK_CUSTOM as a last resort. I haven't figured out a better way yet. 
-Do you have any good ideas?
+Hopefully I got it right this time ...
 
+Please Pull.
+Thx.
 
-Thanks and best regards!
+Cheers
+Jerome
 
+The following changes since commit e6fb7aee486c7fbd4d94f4894feaa6f0424c1740:
 
-> Cheers,
-> -Paul
->
->> +}
->> +
->> +static unsigned long x1830_i2s_calc(unsigned long rate, unsigned 
->> long parent_rate,
->> +                        unsigned *pm, unsigned *pn)
->> +{
->> +    u64 curr_delta, curr_m, curr_n, delta, m, n;
->> +
->> +    if ((parent_rate % rate == 0) && ((parent_rate / rate) > 1)) {
->> +        m = 1;
->> +        n = parent_rate / rate;
->> +        goto out;
->> +    }
->> +
->> +    delta = rate;
->> +
->> +    /*
->> +     * The length of M is 9 bits, its value must be between 1 and 511.
->> +     * The length of N is 20 bits, its value must be between 2 and 
->> 1048575,
->> +     * and must not be less than 2 times of the value of M.
->> +     */
->> +    for (curr_m = 511; curr_m >= 1; curr_m--) {
->> +        curr_n = parent_rate * curr_m;
->> +        curr_delta = do_div(curr_n, rate);
->> +
->> +        if (curr_n < 2 * curr_m || curr_n > 1048575)
->> +            continue;
->> +
->> +        if (curr_delta == 0)
->> +            break;
->> +
->> +        if (curr_delta < delta) {
->> +            m = curr_m;
->> +            n = curr_n;
->> +            delta = curr_delta;
->> +        }
->> +    }
->> +
->> +out:
->> +    if (pm)
->> +        *pm = m;
->> +    if (pn)
->> +        *pn = n;
->> +
->> +    return div_u64((u64)parent_rate * m, n);
->> +}
->> +
->> +static long x1830_i2s_round_rate(struct clk_hw *hw, unsigned long 
->> req_rate,
->> +                        unsigned long *prate)
->> +{
->> +    return x1830_i2s_calc(req_rate, *prate, NULL, NULL);
->> +}
->> +
->> +static int x1830_i2s_set_rate(struct clk_hw *hw, unsigned long 
->> req_rate,
->> +                        unsigned long parent_rate)
->> +{
->> +    unsigned long rate;
->> +    unsigned m, n;
->> +    u32 ctl;
->> +
->> +    /*
->> +     * The parent clock rate of I2S must not be lower than 2 times
->> +     * of the target clock rate.
->> +     */
->> +    if (parent_rate < 2 * req_rate)
->> +        return -EINVAL;
->> +
->> +    rate = x1830_i2s_calc(req_rate, parent_rate, &m, &n);
->> +    if (rate != req_rate)
->> +        pr_info("%s: request I2S rate %luHz, actual %luHz\n", __func__,
->> +            req_rate, rate);
->> +
->> +    ctl = readl(cgu->base + CGU_REG_I2SCDR);
->> +    ctl &= ~I2SCDR_I2SDIV_M_MASK;
->> +    ctl |= m << I2SCDR_I2SDIV_M_SHIFT;
->> +    ctl &= ~I2SCDR_I2SDIV_N_MASK;
->> +    ctl |= n << I2SCDR_I2SDIV_N_SHIFT;
->> +    writel(ctl, cgu->base + CGU_REG_I2SCDR);
->> +
->> +    return 0;
->> +}
->> +
->> +static int x1830_i2s_enable(struct clk_hw *hw)
->> +{
->> +    u32 ctl;
->> +
->> +    ctl = readl(cgu->base + CGU_REG_I2SCDR);
->> +    ctl |= I2SCDR_CE_I2S;
->> +    writel(ctl, cgu->base + CGU_REG_I2SCDR);
->> +
->> +    return 0;
->> +}
->> +
->> +static void x1830_i2s_disable(struct clk_hw *hw)
->> +{
->> +    u32 ctl;
->> +
->> +    ctl = readl(cgu->base + CGU_REG_I2SCDR);
->> +    ctl &= ~I2SCDR_CE_I2S;
->> +    writel(ctl, cgu->base + CGU_REG_I2SCDR);
->> +}
->> +
->> +static int x1830_i2s_is_enabled(struct clk_hw *hw)
->> +{
->> +    u32 ctl;
->> +
->> +    ctl = readl(cgu->base + CGU_REG_I2SCDR);
->> +
->> +    return !!(ctl & I2SCDR_CE_I2S);
->> +}
->> +
->> +static const struct clk_ops x1830_i2s_ops = {
->> +    .get_parent = x1830_i2s_get_parent,
->> +    .set_parent = x1830_i2s_set_parent,
->> +
->> +    .recalc_rate = x1830_i2s_recalc_rate,
->> +    .round_rate = x1830_i2s_round_rate,
->> +    .set_rate = x1830_i2s_set_rate,
->> +
->> +    .enable = x1830_i2s_enable,
->> +    .disable = x1830_i2s_disable,
->> +    .is_enabled = x1830_i2s_is_enabled,
->> +};
->> +
->>  static const s8 pll_od_encoding[64] = {
->>      0x0, 0x1,  -1, 0x2,  -1,  -1,  -1, 0x3,
->>       -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x4,
->> @@ -201,7 +361,7 @@ static const struct ingenic_cgu_clk_info 
->> x1830_cgu_clocks[] = {
->>          },
->>      },
->>
->> -    /* Custom (SoC-specific) OTG PHY */
->> +    /* Custom (SoC-specific) */
->>
->>      [X1830_CLK_OTGPHY] = {
->>          "otg_phy", CGU_CLK_CUSTOM,
->> @@ -209,6 +369,13 @@ static const struct ingenic_cgu_clk_info 
->> x1830_cgu_clocks[] = {
->>          .custom = { &x1830_otg_phy_ops },
->>      },
->>
->> +    [X1830_CLK_I2S] = {
->> +        "i2s", CGU_CLK_CUSTOM,
->> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
->> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
->> +        .custom = { &x1830_i2s_ops },
->> +    },
->> +
->>      /* Muxes & dividers */
->>
->>      [X1830_CLK_SCLKA] = {
->> @@ -329,6 +496,14 @@ static const struct ingenic_cgu_clk_info 
->> x1830_cgu_clocks[] = {
->>          .mux = { CGU_REG_SSICDR, 29, 1 },
->>      },
->>
->> +    [X1830_CLK_CIM] = {
->> +        "cim", CGU_CLK_MUX | CGU_CLK_DIV,
->> +        .parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
->> +                     X1830_CLK_VPLL, X1830_CLK_EPLL },
->> +        .mux = { CGU_REG_CIMCDR, 30, 2 },
->> +        .div = { CGU_REG_CIMCDR, 0, 1, 8, 29, 28, 27 },
->> +    },
->> +
->>      [X1830_CLK_EXCLK_DIV512] = {
->>          "exclk_div512", CGU_CLK_FIXDIV,
->>          .parents = { X1830_CLK_EXCLK },
->> @@ -386,6 +561,18 @@ static const struct ingenic_cgu_clk_info 
->> x1830_cgu_clocks[] = {
->>          .gate = { CGU_REG_CLKGR0, 9 },
->>      },
->>
->> +    [X1830_CLK_AIC] = {
->> +        "aic", CGU_CLK_GATE,
->> +        .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
->> +        .gate = { CGU_REG_CLKGR0, 11 },
->> +    },
->> +
->> +    [X1830_CLK_DMIC] = {
->> +        "dmic", CGU_CLK_GATE,
->> +        .parents = { X1830_CLK_PCLK, -1, -1, -1 },
->> +        .gate = { CGU_REG_CLKGR0, 12 },
->> +    },
->> +
->>      [X1830_CLK_UART0] = {
->>          "uart0", CGU_CLK_GATE,
->>          .parents = { X1830_CLK_EXCLK, -1, -1, -1 },
->> -- 
->> 2.7.4
->>
->
+  clk: meson: g12: use devm variant to register notifiers (2020-11-14 12:58:31 -0800)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.11-1
+
+for you to fetch changes up to 88b9ae600138baff18c7f4c4870622584acc6111:
+
+  clk: meson: g12a: add MIPI DSI Host Pixel Clock (2020-11-26 15:25:20 +0100)
+
+----------------------------------------------------------------
+Amlogic clock changes for v5.11
+
+* Add MIPI DSI clocks for axg and g12
+* Make it possible to build controllers as modules
+* Fix Video PLL clock dependency
+
+----------------------------------------------------------------
+Jerome Brunet (2):
+      Merge branch 'v5.11/headers' into integ
+      Merge branch 'v5.11/headers' into v5.11/drivers
+
+Kevin Hilman (2):
+      clk: meson: Kconfig: fix dependency for G12A
+      clk: meson: enable building as modules
+
+Neil Armstrong (6):
+      dt-bindings: clk: axg-clkc: add Video Clocks
+      dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
+      clk: meson: axg: add Video Clocks
+      clk: meson: axg: add MIPI DSI Host clock
+      dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
+      clk: meson: g12a: add MIPI DSI Host Pixel Clock
+
+ drivers/clk/meson/Kconfig             |   7 +-
+ drivers/clk/meson/axg-aoclk.c         |   5 +-
+ drivers/clk/meson/axg.c               | 824 +++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/axg.h               |  23 +-
+ drivers/clk/meson/g12a-aoclk.c        |   5 +-
+ drivers/clk/meson/g12a.c              |  79 +++-
+ drivers/clk/meson/g12a.h              |   3 +-
+ drivers/clk/meson/gxbb-aoclk.c        |   5 +-
+ drivers/clk/meson/gxbb.c              |   5 +-
+ drivers/clk/meson/meson-aoclk.c       |   4 +
+ drivers/clk/meson/meson-eeclk.c       |   3 +
+ include/dt-bindings/clock/axg-clkc.h  |  25 ++
+ include/dt-bindings/clock/g12a-clkc.h |   2 +
+ 13 files changed, 979 insertions(+), 11 deletions(-)
