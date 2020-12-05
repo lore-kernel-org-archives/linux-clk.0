@@ -2,128 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E1BC4361A
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 18:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C99C18E57
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 05:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECCF22C9C
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Dec 2020 18:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA77E22D50
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 05:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbgLDScw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Dec 2020 13:32:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgLDScv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Dec 2020 13:32:51 -0500
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA3C0C061A51;
-        Fri,  4 Dec 2020 10:32:10 -0800 (PST)
-Received: by mail-il1-x132.google.com with SMTP id z10so6081585ilu.3;
-        Fri, 04 Dec 2020 10:32:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NzKZ943JGTNloiN146GZP9I+EpZC20D+gFEel4Gitb8=;
-        b=SeSqVhHl47UvFR6qCSbOqOwUPvIQm298r8//4V8E3E1wtei2+ml27FPsm6fF9oqWJi
-         JKLkIZSgtRmjYJEBXq8encd8/ps9kieq3N/Fk/jOxEOLXe1BmyUjnxz4wdv9j3ZOesml
-         ULm4YCbA7x9cs8vMJ0VhcsjLq+l6MqgQLP3ERg4jzYkrEgdgCOXcMzMynFWlm/yIInaT
-         oNxZX4R7UId/p162m8BDccGn99S/W3FsQUDKBtGmByPLIoS6qz+YOE9fUR0QrHTYocjr
-         yBQd1bZdoxNPWwjEmvejjcKyh9hNoGdkXOZwKufxeJGmLG90AhrfOUue8/w+dU4KDvhd
-         OqXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NzKZ943JGTNloiN146GZP9I+EpZC20D+gFEel4Gitb8=;
-        b=UFN/kw6W13QEwhSFJ68v8XX8j1h/YGVHQ0Xkno7ULixHlaHTmusAyX29jwhTFMFiWZ
-         BnLCi0ccNSqH/BlGHih4qpFp+5tAisBPyBCIEaG4FGaFJP9ICpHf0CUQfJ8VfDu8ve1Z
-         EUw6Noj3n5m0IhHDYLuLDLLlxxn5RGGL2ztQC5RAJbCIqZaZY6or5lJDoCQMCNshcZTi
-         dYwuQV/sg4tecGc0FFwgXlXRPnCKR7I+4NODi/agZ7pzqlayJMykunqYBLeRAEui/MpX
-         cECQseAycRYqhZL9tpVhvhQOzlh8h+39HerYuvRSRKFLEUMai6RJ4wauz8mpDGGF2OcA
-         1lKA==
-X-Gm-Message-State: AOAM531sTmP2mckh7OX8tlJPghf+mTE1jaISMWEL7cqhEiStvcyxKIgQ
-        /Ojvk51jRxbC59j1gRxO84FkmZuJVDo2iw==
-X-Google-Smtp-Source: ABdhPJxGsBLdSmKY8+m4xFcwZUgkJ1jukKmUe+1owxKbk3IXvQtv0d+e0qtlamj75Nr3azRE9cCSCQ==
-X-Received: by 2002:a05:6e02:929:: with SMTP id o9mr8055335ilt.42.1607106729669;
-        Fri, 04 Dec 2020 10:32:09 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:4c53:aff:c64:cd45])
-        by smtp.gmail.com with ESMTPSA id s17sm1955714ilj.25.2020.12.04.10.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Dec 2020 10:32:08 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, charles.steves@logicpd.com,
-        Adam Ford <aford173@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        id S1728266AbgLEFl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Dec 2020 00:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbgLEFlz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 5 Dec 2020 00:41:55 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607146875;
+        bh=BwVWvt9ye7Jk3XfjRUdb103S0m5tQzkQt0ncHbWSo3Q=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ZZDSHLrMV99D2VnkOq6BAZCUi9eWfOq6qeewSuFdWLQIy09cIhjlCJK1J8sij75EF
+         T23oPGXfsMbkhfmMqNfMFVis3SkEb4NZWqfsmiMT21NGTluogV7gSks/KGiqYxTY+4
+         NRnEqKYP51oKHWjrWxvQAL7MQIgE1dYWUc9QADSWN+4PKhoau2SC69vCl9cKVASuVq
+         o3mCWOppBRsUM1V4njp2LTWWKGPZmFFdEQGOayI5sS5LItVmIbWz17xJNTS1gydXcx
+         Bd653PV/YTbPWO5Rtd1/Qi0Ta7grsnu7/UGMFGR1GvGfpkhQpKW7xSvJc9lF4U6qH6
+         FSYXznxTSVL0Q==
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201203230756.1481397-1-arnd@kernel.org>
+References: <20201203230756.1481397-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: imx: fix build failure on i.MX SCU clk
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: Fix reparenting of UARTs not associated with sdout
-Date:   Fri,  4 Dec 2020 12:31:54 -0600
-Message-Id: <20201204183154.94002-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Anson Huang <Anson.Huang@nxp.com>, Arnd Bergmann <arnd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Date:   Fri, 04 Dec 2020 21:41:13 -0800
+Message-ID: <160714687371.1580929.2544289342352742335@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The default clock source on i.MX8M Mini and Nano boards use a 24MHz clock,
-but users who need to re-parent the clock source run into issues because
-all the UART clocks are enabled whether or not they're needed by sdout.
+Quoting Arnd Bergmann (2020-12-03 15:07:52)
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> When CONFIG_MXC_CLK_SCU is enabled, but CONFIG_CLK_IMX8QXP is not,
+> the kernel fails to link with:
+>=20
+> aarch64-linux-ld: no input files
+> make[5]: *** [scripts/Makefile.build:434: drivers/clk/imx/clk-imx-scu.o] =
+Error 1
+> aarch64-linux-ld: no input files
+> make[5]: *** [scripts/Makefile.build:434: drivers/clk/imx/clk-imx-lpcg-sc=
+u.o] Error 1
+>=20
+> The only sensible configuration at the moment is to have both mean
+> the same thing, so make hide the first one to avoid broken
+> configurations.
+>=20
+> Fixes: e0d0d4d86c76 ("clk: imx8qxp: Support building i.MX8QXP clock drive=
+r as module")
+> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Any attempt to change the parent results in an busy error because the
-clocks have been enabled already.
-
-  clk: failed to reparent uart1 to sys_pll1_80m: -16
-
-Instead of pre-initializing all UARTS, scan the device tree to see if UART
-clock is used as stdout before initializing it.  Only enable the UART clock
-if it's needed in order to delay the clock initialization until after the
-re-parenting of the clocks.
-
-Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
-Suggested-by: Aisheng Dong <aisheng.dong@nxp.com>
-Signed-off-by: Adam Ford <aford173@gmail.com>
-
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 47882c51cb85..6dcc5fbd8f3f 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -163,12 +163,18 @@ __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
- 
- void imx_register_uart_clocks(struct clk ** const clks[])
- {
-+	struct clk *uart_clk;
- 	if (imx_keep_uart_clocks) {
- 		int i;
- 
- 		imx_uart_clocks = clks;
--		for (i = 0; imx_uart_clocks[i]; i++)
--			clk_prepare_enable(*imx_uart_clocks[i]);
-+		for (i = 0; imx_uart_clocks[i]; i++) {
-+			uart_clk = of_clk_get(of_stdout, i);
-+			if (IS_ERR(uart_clk))
-+				continue;
-+			clk_prepare_enable(uart_clk);
-+			clk_put(uart_clk);
-+		}
- 	}
- }
- 
--- 
-2.25.1
-
+Dong sent something similar at
+https://lore.kernel.org/r/20201130084624.21113-1-aisheng.dong@nxp.com
