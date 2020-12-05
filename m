@@ -2,87 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C382C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 08:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D0FC433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 09:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5A3822D2A
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 08:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1130C22D2A
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 09:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbgLEISU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Dec 2020 03:18:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbgLEIRf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 5 Dec 2020 03:17:35 -0500
-Date:   Sat, 5 Dec 2020 13:39:41 +0530
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607155785;
-        bh=Sf1YRnbImSd7hCd/MVpu0h/SeRbvcgUw5D13UFupUfY=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vQAwG/I9uiCnAdeQScfLRocyscNpR3JypwXmHmRBl6cl0KLXAuNJxF14mzYZtIRU0
-         p3I+wHPtGKN8l+7cLONgqaSxeo/IHTkidd4B7gZblMAeoaYTc9i8HNSR4kVK2ODFQe
-         KvEpmYe0wqtQ9mSMxW+eQbFonQs88R3sSUceSwyBoDww6hGt1t/PkZCYqwrmy7Bhgs
-         oUyKAcy2GYvKPUIYKtSdgY51e4bhPqLtrlXuMv/9WijzbC8VYPt8Y6xfF6HWghO2Qm
-         YkMPI6a5OO/QD7sq/OVQ9d1ruasRH7G13Krq3X+iNywyxtZ4fBGw6JF+crr7TS98+F
-         /wa3Mahsu10cA==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        kishon@ti.com, linux-clk@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, paul@crapouillou.net
-Subject: Re: [PATCH v9 0/3] Use the generic PHY framework for Ingenic USB PHY.
-Message-ID: <20201205080941.GX8403@vkoul-mobl>
-References: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
+        id S1728160AbgLEJoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Dec 2020 04:44:34 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35541 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbgLEJnC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Dec 2020 04:43:02 -0500
+Received: by mail-oi1-f193.google.com with SMTP id t9so9280524oic.2;
+        Sat, 05 Dec 2020 01:40:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CGdaUmtB30TVsj7alwm/cJhVAoMWhBl+L16TLVJy0GU=;
+        b=MbRY9jP8BPa0TwKsYZZ+KmjhZluzLMGj2+QIdJPJQVmbQb2NZjZjF1yzZUsuI9Pr7Y
+         3YRyCgFuWkW1MH6NEe6dnkhheq6W0+TsdZpS+KVdeiyfjfZ0kgLH88mimBBgoGjXEqLe
+         Gpe4ojV3U3kz4Lwlzx2JbiF0LZ5LieMD6aX3b4pgQvoIM2dwSp5G/Of/vCX5kQ00Da04
+         j+NWypgGCxUcrElQg3diex5IPmn2IkLwZ6Aib2CpIi6aH0wCbEIt72bFl61seUq5LpXw
+         Fy2GmRNxtrylm5aH8EtBwPoqQVlOAHj9v0E0xxz5cfqKg1Eq2SGX9HODRfQvWeiD8ffg
+         MGEQ==
+X-Gm-Message-State: AOAM531AdNu7ldV73vYQs5OkyxzNiVyADAasocwNrNBhtKwNuzfxYgHQ
+        Mhtn0OUXi9qhJB+QNI4EVS8aSiu2uzMd9yB1jOFmF0rVkHY=
+X-Google-Smtp-Source: ABdhPJwLYvltQQGfaxz5Cw2w/zv1Y+C9MgjWhLpZYxRx4VvMLhZqNWb3xLk+V7UCvmYR02UJOryygCbm26eslneYzJA=
+X-Received: by 2002:aca:ec09:: with SMTP id k9mr5872940oih.153.1607159141323;
+ Sat, 05 Dec 2020 01:05:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201116141906.11758-1-zhouyanjie@wanyeetech.com>
+References: <20201130085743.1656317-1-geert+renesas@glider.be> <160714944657.1580929.4595234852977229885@swboyd.mtv.corp.google.com>
+In-Reply-To: <160714944657.1580929.4595234852977229885@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 5 Dec 2020 10:05:29 +0100
+Message-ID: <CAMuHMdWJhiO5A7b3B8CH2YpURe_G0dEPEmES6R8n_8D-Z+Q65A@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for portability
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16-11-20, 22:19, 周琰杰 (Zhou Yanjie) wrote:
-> v3->v4:
-> Only add new generic-PHY driver, without removing the old one. Because the
-> jz4740-musb driver is not ready to use the generic PHY framework. When the
-> jz4740-musb driver is modified to use the generic PHY framework, the old
-> jz4770-phy driver can be "retired".
-> 
-> v4->v5:
-> 1.Add an extra blank line between "devm_of_phy_provider_register" and "return".
-> 2.Remove unnecessary "phy_set_drvdata".
-> 3.Add Paul Cercueil's Reviewed-by.
-> 
-> v5->v6:
-> 1.Revert the removal of "phy_set_drvdata" in v5, removing "phy_set_drvdata" will
->   cause a kernel panic on CI20.
->   Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-> 2.Rewrite the macro definitions, replace the original code with "FIELD_PREP()"
->   and "u32p_replace_bits()" according to Vinod Koul's suggestion.
-> 
-> v6->v7:
-> 1.Remove the stray tab character.
-> 2.Remove unnecessary "platform_set_drvdata".
-> 3.Remove the "dev" field in priv structure, and use &phy->dev instead.
-> 
-> v7->v8:
-> Add support for Ingenic JZ4775 SoC and X2000 SoC.
-> 
-> v8->v9:
-> Correct the path errors in "ingenic,phy-usb.yaml" and "ingenic,cgu.yaml".
+Hi Stephen,
 
-Applied, thanks
+On Sat, Dec 5, 2020 at 7:24 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2020-11-30 00:57:43)
+> > The R9A06G032 clock driver uses an array of packed structures to reduce
+> > kernel size.  However, this array contains pointers, which are no longer
+> > aligned naturally, and cannot be relocated on PPC64.  Hence when
+> > compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=y (e.g.
+> > PowerPC allyesconfig), the following warnings are produced:
+> >
+> >     WARNING: 136 bad relocations
+> >     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
+> >     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
+> >     ...
+> >
+> > Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
+> > definition, trading a small size increase for portability.
+> >
+> > This increases the 156-entry clock table by 1 byte per entry, but due to
+> > the compiler generating more efficient code for unpacked accesses, the
+> > net size increase is only 76 bytes (gcc 9.3.0 on arm32).
+> >
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Unless you want me to pick this up for clk-fixes?
+
+Yes please. Forgot to retain this comment for v2:
+
+   "Please take directly (ppc or clk), as this is a build fix.
+    https://lore.kernel.org/linux-clk/20201128122819.32187696@canb.auug.org.au/"
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-~Vinod
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
