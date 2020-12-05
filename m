@@ -2,137 +2,339 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216C4C2BB40
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B48FC2BBCD
 	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2AD322EBF
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1589B230FD
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Dec 2020 18:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbgLESTU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728236AbgLESTU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 5 Dec 2020 13:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36994 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbgLER4f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Dec 2020 12:56:35 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769CCC061A56
-        for <linux-clk@vger.kernel.org>; Sat,  5 Dec 2020 09:55:49 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id h21so9876452wmb.2
-        for <linux-clk@vger.kernel.org>; Sat, 05 Dec 2020 09:55:49 -0800 (PST)
+        with ESMTP id S1727891AbgLERsl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Dec 2020 12:48:41 -0500
+Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8C1C02B8E4;
+        Sat,  5 Dec 2020 05:43:39 -0800 (PST)
+Received: by mail-qv1-xf42.google.com with SMTP id ec16so4260719qvb.0;
+        Sat, 05 Dec 2020 05:43:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:message-id
-         :date:mime-version;
-        bh=ShrpRxCRDSFuegFEC+mO5LWHn840hNK9yWMo6lf5Wpo=;
-        b=Yx+4BuKtf1C0Q7cWF7vF3DCElOWRkkl0ag14GQcBquVXOrNCUn6/n4DqkPD5t7+fQT
-         FU646OONhZrjbO3zHdCNsIHrRVul8i0RcL02Mx0b0yX2ST4tmylK86M4aMZ7yTlPKq/7
-         1D0fgf8KIju3Y0G7VLDEr6+v+0tj+nGtrmaRhaSaVGLu9CJzrAQFQCtlczbiJ1W+jFf5
-         aozTWwpQDxEh2anOkq2GU9cvBUnTJrYGilRztN9yF8YkQhRV7xjxdME4/Uy8EKLkSpVg
-         Hc2ca43KCWGV/TfLr7ZdPxo/JQFl7xGqkmaOrBjGNYKp1OYWXA4ed9UrlHUtj2ZEOVU9
-         sp6A==
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=7V54Z/5Mr/xxZxoJa6ftBYvRndPF7BKH8GwvUe0W1jo=;
+        b=nNe87USGiI5TXREYkoGvoEOqxnFeogR6rh+mcbxhir4ObpT9e7AokThh+c+w3ffXD6
+         M49MBBrH2tTaQ2B/XzKpMt9KTTSaWxmb5ZGL5W4WSayvK8E92czfLckqGCPG81DwNuBV
+         vlpGa6vdxIN7dknt76sod5Nri8oNnv8shGqoJgWBDwH1SsceR6gQtGELM3riabxWfkDX
+         vvyMrOODthd0vjj0WUbvvD88Kqy2NFYFklWJiKzblUosrHQooLXmPnsbMrbCkulvxHu/
+         PzM7Hx3ApImG7JG2GmPH65JrpMVzw0IpNiE3pL10QOZ30z2B38+92ZOSNGxjslJFE/cH
+         /Phw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:message-id:date:mime-version;
-        bh=ShrpRxCRDSFuegFEC+mO5LWHn840hNK9yWMo6lf5Wpo=;
-        b=Vb6Kx4/rV85pe6XV6q6TukDCMO3Etgy8+5CCjLPnf6HaUd/3lYxobAUy0xE0Xl07hM
-         CqFv4eouCR3K1LdjKMUQcQbx30JJ9t8J879Xqcn7EvjcNE9CIN/XaQuGooPf8m+zqw6H
-         sNH4qaGy5k5q0HA70Lux15wJEiBcKF7PR3ZY2/qK3hqs5XDsBtj4DEX6qfxIt1V0J8ny
-         tWTb9a+ve5DO5GjTJNr58Yp48yIongjmxfrpky5x4+lroCDrEEZqyao/sWbzHt/oDWSL
-         0MF+6pmhDr04VIkQtecP4SVrRgZ0xGSQAe54ii2R1AjwEkpkIQr7OXEBeeMIv/Gpr1ET
-         22ng==
-X-Gm-Message-State: AOAM530vCsdEIDjnYrafoxA/zi3L9v6DmaJC1ccKVvd5x9T+Bpyf/MEN
-        mxCkXhMlRCLiOsZ0I2cREs4Grw==
-X-Google-Smtp-Source: ABdhPJyqYfb/4J8xZBewMqf1WV9fEhMTai0WBw0KHvmhiRiCkRsRxDj2kn0GzmWxjy6uNo19tm8aIQ==
-X-Received: by 2002:a1c:4843:: with SMTP id v64mr10375605wma.186.1607190948174;
-        Sat, 05 Dec 2020 09:55:48 -0800 (PST)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id b12sm7619307wmj.2.2020.12.05.09.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Dec 2020 09:55:47 -0800 (PST)
-References: <1jtut7yjj3.fsf@starbuckisacylon.baylibre.com>
- <160714961471.1580929.6506196779990620974@swboyd.mtv.corp.google.com>
-User-agent: mu4e 1.4.10; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [GIT PULL]: clk: meson: amlogic updates for v5.11
-In-reply-to: <160714961471.1580929.6506196779990620974@swboyd.mtv.corp.google.com>
-Message-ID: <1j5z5gp271.fsf@starbuckisacylon.baylibre.com>
-Date:   Sat, 05 Dec 2020 18:55:46 +0100
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7V54Z/5Mr/xxZxoJa6ftBYvRndPF7BKH8GwvUe0W1jo=;
+        b=nyJctCFI9pAYc8IU9scnLGzrkcfsNydrkivdQXt3t47AbdnOun0czlJLrAyPczDl21
+         W8pF7CXEliv8L5Q/UnCl5EVcL4fIwZSslRaSp0S+fLqnuJTYK2tXn+/rBb/2P3B0kz/4
+         O7uRFcL50QQnbiD2lB+eO3pFea2h9dmq18xjLoGIaTs+yH+a9Wgl2WNrHr/Kh9i9Imsr
+         eE6DRyvcJ0lUAbbgYl70fyElSQ+80W7We0sXK2E/CQXBQyGVAOUk4JXLnqF2cJ9ohXHx
+         SqZsQ32/GmpXDVuVLfgZvQB+A2X21dFyYlb6H+dLETI8sw8LQwW/0/KKGd4yJJ3EJc9s
+         0zeg==
+X-Gm-Message-State: AOAM530MNNs1YrSyYGDesg623TKoy5YGw8nGpjuPdoBNPfA/Gk+bruTX
+        YlbEz8zOQn3v2lHjD6uJa4cTIQejJG5gsA==
+X-Google-Smtp-Source: ABdhPJwyIeonJaI/FDnQ3n3MDma2rUmE/Kfsw0jOlKbN/08tEtNoFDPIVd613z6xf+DOoONjAZjHvA==
+X-Received: by 2002:a0c:fa4f:: with SMTP id k15mr11346192qvo.62.1607175818286;
+        Sat, 05 Dec 2020 05:43:38 -0800 (PST)
+Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
+        by smtp.googlemail.com with ESMTPSA id r14sm8098427qtu.25.2020.12.05.05.43.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Dec 2020 05:43:37 -0800 (PST)
+Subject: Re: [PATCH v4 11/21] riscv: Add Canaan Kendryte K210 clock driver
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20201202032500.206346-1-damien.lemoal@wdc.com>
+ <20201202032500.206346-12-damien.lemoal@wdc.com>
+ <160714919628.1580929.1456162330322523777@swboyd.mtv.corp.google.com>
+ <d9aec92299e5f427aaf5c5e892194e27006f8bbc.camel@wdc.com>
+From:   Sean Anderson <seanga2@gmail.com>
+Message-ID: <3ef543a8-5709-d653-e347-78faa08f81d2@gmail.com>
+Date:   Sat, 5 Dec 2020 08:43:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <d9aec92299e5f427aaf5c5e892194e27006f8bbc.camel@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 12/5/20 2:43 AM, Damien Le Moal wrote:
+> Hi Stephen,
+> 
+> Thank you for the review. I will address all your comments.
+> I just have a few questions below.
+> 
+> On Fri, 2020-12-04 at 22:19 -0800, Stephen Boyd wrote:
+>> Quoting Damien Le Moal (2020-12-01 19:24:50)
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 2daa6ee673f7..3da9a7a02f61 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -3822,6 +3822,22 @@ W:       https://github.com/Cascoda/ca8210-linux.git
+>>>   F:     Documentation/devicetree/bindings/net/ieee802154/ca8210.txt
+>>>   F:     drivers/net/ieee802154/ca8210.c
+>>>   
+>>>
+>>>
+>>>
+>>> +CANAAN/KENDRYTE K210 SOC CLOCK DRIVER
+>>> +M:     Damien Le Moal <damien.lemoal@wdc.com>
+>>> +L:     linux-riscv@lists.infradead.org
+>>> +L:     linux-clk@vger.kernel.org (clock driver)
+>>
+>> Is this needed? I think we cover all of drivers/clk/ and bindings/clock
+>> already.
+> 
+> I was not sure about that so I added the entry. Will remove it.
+> 
+>>
+>>> +S:     Maintained
+>>> +F:     Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
+>>> +F:     drivers/clk/clk-k210.c
+>>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+>>> index 88ac0d1a5da4..f2f9633087d1 100644
+>>> --- a/arch/riscv/Kconfig.socs
+>>> +++ b/arch/riscv/Kconfig.socs
+>>> @@ -29,6 +29,8 @@ config SOC_CANAAN
+>>>          select SERIAL_SIFIVE if TTY
+>>>          select SERIAL_SIFIVE_CONSOLE if TTY
+>>>          select SIFIVE_PLIC
+>>> +       select SOC_K210_SYSCTL
+>>> +       select CLK_K210
+>>
+>> Any reason to do this vs. just make it the default?
+> 
+> I do not understand here... Just selecting the drivers needed for the SoC here.
+> Is there any other way of doing this ?
+> 
+> [...]
+>>> +
+>>> +       while (true) {
+>>> +               reg = readl(pll->lock);
+>>> +               if ((reg & mask) == mask)
+>>> +                       break;
+>>> +
+>>> +               reg |= BIT(pll->lock_shift + K210_PLL_CLEAR_SLIP);
+>>> +               writel(reg, pll->lock);
+>>
+>> Is this readl_poll_timeout?
+> 
+> Oh. Yes, it is. I did not know about this function. Will change the code to use
+> it.
 
-On Sat 05 Dec 2020 at 07:26, Stephen Boyd <sboyd@kernel.org> wrote:
+FWIW the timeout could be incorrect since we might be configuring a
+parent of ACLK. And realistically the only way this fails is if a user
+has edited this file and put in invalid PLL parameters. I don't think
+you gain much by adding a timeout.
 
-> Quoting Jerome Brunet (2020-11-29 12:50:40)
->> 
->> Hi Stephen,
->> 
->> Here are the updates for amlogic clocks for v5.11. This is based on your
->> clk-hw branch, instead of the usual rc1, since it depends on clk_hw
->> stuff you've already applied.
->> 
->> Please Pull.
->> Thx.
->
-> Ok. Where do I pull from!?
->
-> :)
->
+>>
+>>> +       }
+>>> +}
+>>> +
+>>> +static bool k210_pll_hw_is_enabled(struct k210_pll *pll)
+>>> +{
+>>> +       u32 reg = readl(pll->reg);
+>>> +       u32 mask = K210_PLL_PWRD | K210_PLL_EN;
+>>> +
+>>> +       if (reg & K210_PLL_RESET)
+>>> +               return false;
+>>> +
+>>> +       return (reg & mask) == mask;
+>>> +}
+>>> +
+>>> +static void k210_pll_enable_hw(struct k210_pll *pll)
+>>> +{
+>>> +       struct k210_pll_cfg *pll_cfg = &k210_plls_cfg[pll->id];
+>>> +       unsigned long flags;
+>>> +       u32 reg;
+>>> +
+>>> +       spin_lock_irqsave(&kcl->clk_lock, flags);
+>>> +
+>>> +       if (k210_pll_hw_is_enabled(pll))
+>>> +               goto unlock;
+>>> +
+>>> +       if (pll->id == K210_PLL0) {
+>>> +               /* Re-parent aclk to IN0 to keep the CPUs running */
+>>> +               k210_aclk_set_selector(0);
+>>> +       }
+>>> +
+>>> +       /* Set factors */
+>>> +       reg = readl(pll->reg);
+>>> +       reg &= ~GENMASK(19, 0);
+>>> +       reg |= FIELD_PREP(K210_PLL_CLKR, pll_cfg->r);
+>>> +       reg |= FIELD_PREP(K210_PLL_CLKF, pll_cfg->f);
+>>> +       reg |= FIELD_PREP(K210_PLL_CLKOD, pll_cfg->od);
+>>> +       reg |= FIELD_PREP(K210_PLL_BWADJ, pll_cfg->bwadj);
+>>> +       reg |= K210_PLL_PWRD;
+>>> +       writel(reg, pll->reg);
+>>> +
+>>> +       /* Ensure reset is low before asserting it */
+>>> +       reg &= ~K210_PLL_RESET;
+>>> +       writel(reg, pll->reg);
+>>> +       reg |= K210_PLL_RESET;
+>>> +       writel(reg, pll->reg);
+>>> +       nop();
+>>> +       nop();
+>>
+>> Are these nops needed for some reason? Any comment to add here? It's
+>> basically non-portable code and hopefully nothing is inserted into that
+>> writel function that shouldn't be there.
+> 
+> No clue... They are "magic" nops that are present in the K210 SDK from
+> Kendryte. I copied that, but do not actually know if they are really needed. I
+> am working without any specs for the hardware: the Kendryte SDK is my main
+> source of information here. I will try to remove them or just replace this with
+> a delay() call a nd see what happens.
 
-:) seems I forgot a tiny detail ... sorry about that, resending
+Basically any delay should work as long as it takes more than 2
+instructions ;) Of course, anything longer than that just delays startup
+for no reason.
 
->> 
->> Cheers
->> Jerome
->> 
->> ----------------------------------------------------------------
->> Amlogic clock changes for v5.11
->> 
->> * Add MIPI DSI clocks for axg and g12
->> * Make it possible to build controllers as modules
->> * Fix Video PLL clock dependency
->> 
->> ----------------------------------------------------------------
->> Jerome Brunet (2):
->>       Merge branch 'v5.11/headers' into integ
->>       Merge branch 'v5.11/headers' into v5.11/drivers
->> 
->> Kevin Hilman (2):
->>       clk: meson: Kconfig: fix dependency for G12A
->>       clk: meson: enable building as modules
->> 
->> Neil Armstrong (6):
->>       dt-bindings: clk: axg-clkc: add Video Clocks
->>       dt-bindings: clk: axg-clkc: add MIPI DSI Host clock binding
->>       clk: meson: axg: add Video Clocks
->>       clk: meson: axg: add MIPI DSI Host clock
->>       dt-bindings: clk: g12a-clkc: add DSI Pixel clock bindings
->>       clk: meson: g12a: add MIPI DSI Host Pixel Clock
->> 
->>  drivers/clk/meson/Kconfig             |   7 +-
->>  drivers/clk/meson/axg-aoclk.c         |   5 +-
->>  drivers/clk/meson/axg.c               | 824 +++++++++++++++++++++++++++++++++-
->>  drivers/clk/meson/axg.h               |  23 +-
->>  drivers/clk/meson/g12a-aoclk.c        |   5 +-
->>  drivers/clk/meson/g12a.c              |  79 +++-
->>  drivers/clk/meson/g12a.h              |   3 +-
->>  drivers/clk/meson/gxbb-aoclk.c        |   5 +-
->>  drivers/clk/meson/gxbb.c              |   5 +-
->>  drivers/clk/meson/meson-aoclk.c       |   4 +
->>  drivers/clk/meson/meson-eeclk.c       |   3 +
->>  include/dt-bindings/clock/axg-clkc.h  |  25 ++
->>  include/dt-bindings/clock/g12a-clkc.h |   2 +
->>  13 files changed, 979 insertions(+), 11 deletions(-)
+--Sean
+
+> 
+> [...]
+>>> +static int k210_aclk_set_parent(struct clk_hw *hw, u8 index)
+>>> +{
+>>> +       if (WARN_ON(index > 1))
+>>
+>> Is this possible? What am I going to do as a user if this happens?
+> 
+> No, it is not possible. Will remove this. I could put a BUG_ON(), but I am not
+> a fan this extreme.
+> 
+> [...]
+>>> +       /*
+>>> +        * in0 is the system base fixed-rate 26MHz oscillator which
+>>> +        * should already be defined by the device tree. If it is not,
+>>> +        * create it here.
+>>
+>> Are there old DTBs that don't have this? Sadface.
+> 
+> No, not any old DTB. Will remove that.
+> 
+>>
+>>> +        */
+>>> +       in0_clk = of_clk_get(np, 0);
+>>> +       if (IS_ERR(in0_clk)) {
+>>> +               pr_warn("%pOFP: in0 oscillator not found\n", np);
+>>> +               hws[K210_CLK_IN0] =
+>>> +                       clk_hw_register_fixed_rate(NULL, "in0", NULL,
+>>> +                                                  0, K210_IN0_RATE);
+>>> +       } else {
+>>> +               hws[K210_CLK_IN0] = __clk_get_hw(in0_clk);
+>>> +       }
+>>> +       if (IS_ERR(hws[K210_CLK_IN0])) {
+>>> +               pr_err("%pOFP: failed to get base oscillator\n", np);
+>>> +               goto err;
+>>> +       }
+>>> +
+>>> +       in0 = clk_hw_get_name(hws[K210_CLK_IN0]);
+>>> +       aclk_parents[0] = in0;
+>>> +       pll_parents[0] = in0;
+>>> +       mux_parents[0] = in0;
+>>
+>> Can we use the new way of specifying clk parents so that we don't have
+>> to use __clk_get_hw(), of_clk_get(), and clk_hw_get_name()? Hopefully
+>> the core can handl that all instead of this driver.
+> 
+> Not sure what new way of specifying the parent you are referring to here.
+> clk_hw_set_parent() ?
+> 
+>>
+>>> +
+>>> +       /* PLLs */
+>>> +       hws[K210_CLK_PLL0] =
+>>> +               k210_register_pll(K210_PLL0, "pll0", pll_parents, 1, 0);
+>>> +       hws[K210_CLK_PLL1] =
+>>> +               k210_register_pll(K210_PLL1, "pll1", pll_parents, 1, 0);
+>>> +       hws[K210_CLK_PLL2] =
+>>> +               k210_register_pll(K210_PLL2, "pll2", pll_parents, 3, 0);
+>>> +
+>>> +       /* aclk: muxed of in0 and pll0_d, no gate */
+>>> +       hws[K210_CLK_ACLK] = k210_register_aclk();
+>>> +
+>>> +       /*
+>>> +        * Clocks with aclk as source: the CPU clock is obviously critical.
+>>> +        * So is the CLINT clock as the scheduler clocksource.
+>>> +        */
+>>> +       hws[K210_CLK_CPU] =
+>>> +               k210_register_clk(K210_CLK_CPU, "cpu", "aclk", CLK_IS_CRITICAL);
+>>> +       hws[K210_CLK_CLINT] =
+>>> +               clk_hw_register_fixed_factor(NULL, "clint", "aclk",
+>>> +                                            CLK_IS_CRITICAL, 1, 50);
+>>
+>> Is anyone getting these clks? It's nice and all to model things in the
+>> clk framework but if they never have a consumer then it is sort of
+>> useless and just wastes memory and causes more overhead.
+> 
+> The CPU and SRAM clocks do not have any consumer, so I could remove them (just
+> enable the HW but not represent them as clocks in the driver). There is no
+> direct consumer of ACLK but it is the parent of multiple clocks, including the
+> SRAM clocks. So it needs to be represented as a clock and kept alive even if
+> all the peripheral drivers needing it are disabled. Otherwise, the system just
+> stops (SRAM accesses hang).
+> 
+> [...]
+>>> +       ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, kcl->clk_data);
+>>> +       if (ret)
+>>> +               pr_err("%pOFP: add clock provider failed %d\n", np, ret);
+>>> +       else
+>>> +               pr_info("%pOFP: CPU running at %lu MHz\n",
+>>
+>> Is this important? Is there a CPUfreq driver that runs and tells us the
+>> boot CPU frequency instead? Doesn't feel like we care in the clk driver
+>> about this.
+> 
+> There is no CPU freq driver that gives this frequency that I know of. That is
+> why I added the message since the driver basically just comes up using the
+> default HW settings for the SoC. CPU freq speed can be changed though by
+> increasing the PLL freq. Just not supporting this for now as it is tricky to
+> do: the SRAM clocks depend on aclk and PLL1 and if these are not the same
+> value, the system hangs (most likely because we end up with the sram banks
+> running at different speeds, which the SoC cache does not like).
+> 
+> [...]
+>>> +CLK_OF_DECLARE_DRIVER(k210_clk, "canaan,k210-clk", k210_clk_init);
+>>
+>> Is this needed or can this just be a plain platform driver? If something
+>> is needed early for a clocksource or clockevent then the driver can be
+>> split to register those few clks early from this hook and then register
+>> the rest later when the platform device probes. That's what
+>> CLK_OF_DECLARE_DRIVER is for. A DECLARE_DRIVER without a platform driver
+>> is incorrect.
+> 
+> I think I can clean this up: aclk and clint clocks are needed early but others
+> can likely be deferred. Will fix this up.
+> 
+> Thanks !
+> 
 
