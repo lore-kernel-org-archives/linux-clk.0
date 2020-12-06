@@ -2,110 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36EDC433FE
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Dec 2020 11:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843B3C4361B
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Dec 2020 18:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D92B22D2A
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Dec 2020 11:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44A5B2312E
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Dec 2020 18:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbgLFL2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Dec 2020 06:28:10 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:17948 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbgLFL2J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Dec 2020 06:28:09 -0500
-X-Greylist: delayed 361 seconds by postgrey-1.27 at vger.kernel.org; Sun, 06 Dec 2020 06:28:08 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1607253917;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=kqewSCjE+8blrc/kjg2xlvB1LONhp0VFAK2g/S1PWe4=;
-        b=MEtL5IOL2JMv5sbDuL1L2RUaekIlbHdcU1KXSSiKv/nspApFg/QTR/qfXFm8Gaeft4
-        WhzwUTlllvBw+QgR7bAr8sPxEoNn0SRfygz+iqW8poJhJqCShNvHPbG5A0vC3pJbfEFU
-        n4lAGvUkk35J9M3+t97/kXZML6gUJJmvk5sr0bDKBwbxu+4Yh9rlPwZ74Pj0Gt8Ssq9M
-        7tYIZ0Hbfihs1YqVhnMVpNhjYv5pnT0IELKZOSm+this6shnGmk5w/18ho7aG/dOIkQk
-        03gAWmVCj+jtpX2L+FePBkuQhTUHtjPruL8ExjTuLgN9M/9TmzkPFU4I/9MRMfpAJyIb
-        oCdQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH6G1+fL0A="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 47.3.4 DYNA|AUTH)
-        with ESMTPSA id N02faawB6BIqlQk
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sun, 6 Dec 2020 12:18:52 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, David Shah <dave@ds0.me>,
-        tony@atomide.com, "H . Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] clk: ti: omap5: Fix reboot DPLL lock failure when using ABE TIMERs
-Date:   Sun,  6 Dec 2020 12:18:51 +0100
-Message-Id: <1d3abe2512054866cc2ea7b2592238f4fa06502a.1607253531.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.26.2
+        id S1726440AbgLFS2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Dec 2020 13:28:19 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:58146 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726318AbgLFS2T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 6 Dec 2020 13:28:19 -0500
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1klyky-0003v5-Lx; Sun, 06 Dec 2020 19:27:36 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 5.11
+Date:   Sun, 06 Dec 2020 19:27:36 +0100
+Message-ID: <5662766.lOV4Wx5bFT@phil>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: David Shah <dave@ds0.me>
+Hi Mike, Stephen,
 
-Having the ABE DPLL ref and bypass muxes set to different inputs was
-causing the DPLL not to lock when TIMER8 was used, as it is in the Pyra
-for the backlight.
+please find below Rockchip clock changes for 5.11
 
-This patch fixes this by setting abe_dpll_bypass_clk_mux to sys_32k_ck
-in omap5xxx_dt_clk_init.
+Please pull, thanks
+Heiko
 
-A similar patch may also be needed for OMAP44xx which has similar code
-in omap4xxx_dt_clk_init, but I have not added this as I have no hardware
-to test on.
+The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
 
-Signed-off-by: David Shah <dave@ds0.me>
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/clk/ti/clk-54xx.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
 
-diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
-index 8694bc9f5fc7f..f0542391ca4bd 100644
---- a/drivers/clk/ti/clk-54xx.c
-+++ b/drivers/clk/ti/clk-54xx.c
-@@ -605,7 +605,7 @@ static struct ti_dt_clk omap54xx_clks[] = {
- int __init omap5xxx_dt_clk_init(void)
- {
- 	int rc;
--	struct clk *abe_dpll_ref, *abe_dpll, *sys_32k_ck, *usb_dpll;
-+	struct clk *abe_dpll_ref, *abe_dpll, *abe_dpll_byp, *sys_32k_ck, *usb_dpll;
- 
- 	ti_dt_clocks_register(omap54xx_clks);
- 
-@@ -616,6 +616,16 @@ int __init omap5xxx_dt_clk_init(void)
- 	abe_dpll_ref = clk_get_sys(NULL, "abe_dpll_clk_mux");
- 	sys_32k_ck = clk_get_sys(NULL, "sys_32k_ck");
- 	rc = clk_set_parent(abe_dpll_ref, sys_32k_ck);
-+
-+	/*
-+	 * This must also be set to sys_32k_ck to match or
-+	 * the ABE DPLL will not lock on a warm reboot when
-+	 * ABE timers are used.
-+	 */
-+	abe_dpll_byp = clk_get_sys(NULL, "abe_dpll_bypass_clk_mux");
-+	if (!rc)
-+		rc = clk_set_parent(abe_dpll_byp, sys_32k_ck);
-+
- 	abe_dpll = clk_get_sys(NULL, "dpll_abe_ck");
- 	if (!rc)
- 		rc = clk_set_rate(abe_dpll, OMAP5_DPLL_ABE_DEFFREQ);
--- 
-2.26.2
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.11-rockchip-clk-1
+
+for you to fetch changes up to caa2fd752ecb80faf7a2e1cdadc737187934675e:
+
+  clk: rockchip: fix i2s gate bits on rk3066 and rk3188 (2020-11-29 20:10:45 +0100)
+
+----------------------------------------------------------------
+Added arch-dependencies for the newly added per-soc config symbols,
+a unneeded redundancy removed and making i2s actually work on the
+rk3066.
+
+----------------------------------------------------------------
+Johan Jonker (2):
+      clk: rockchip: add CLK_SET_RATE_PARENT to sclk for rk3066a i2s and uart clocks
+      clk: rockchip: fix i2s gate bits on rk3066 and rk3188
+
+Robin Murphy (1):
+      clk: rockchip: Add appropriate arch dependencies
+
+Xu Wang (1):
+      clk: rockchip: Remove redundant null check before clk_prepare_enable
+
+ drivers/clk/rockchip/Kconfig      | 12 +++++++++++-
+ drivers/clk/rockchip/clk-rk3188.c | 35 ++++++++++++++++++-----------------
+ drivers/clk/rockchip/clk.c        |  3 +--
+ 3 files changed, 30 insertions(+), 20 deletions(-)
+
+
 
