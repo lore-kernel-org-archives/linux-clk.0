@@ -7,74 +7,56 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7059EC4361B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CFFC1B0D9
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A3CC23436
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0577B238EC
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbgLGV7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 16:59:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
+        id S1727786AbgLGWBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 17:01:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbgLGV7f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Dec 2020 16:59:35 -0500
+        id S1727758AbgLGWBi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Dec 2020 17:01:38 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607378335;
-        bh=Pi5GADo6j4UFpk7CEuwQxIw6GRAKpKOinEGB1LvlK40=;
+        s=k20201202; t=1607378457;
+        bh=ROj2E/DNz95dJeF/4hZqYnmHeYGnEnlXg8LBxRmkrTw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KGof9gI3o9RpVbn/pS5WFPRGlaLFmaat4RM4BGFeRNLSHlKSSHteQphl4wn4+azfu
-         KtERqlIJtZSCGenwUfPJkTcYW5ZJo6IBaJZoGiMapsW+KkrIKC2mdgS1XT7LAGDN0s
-         X8oHcPnPLb5vpHTdUsEyhcggEGCUIH0+SovzMe+isE8PeJLcTrgfeCOnJsxYhGv0Ix
-         YEYGj7ZZgjUm10GiavckoUcToMio2df5OtD8hXaMLZTbytitIOHIniT/e+vu/8vmsz
-         c27HS+3Y2UafuVnMgDcRFeLt04g1LbIpjZPSRhAfHIcKz9QI8OZkV7qkZ2RodmdEyF
-         MihTQOyjKVDdQ==
+        b=omaR4Cu98x+zL2ZGHihgajNvL70pOGbcA3YhpZfeHG95ak5Y4JhXDCm88xYBUkMGU
+         C4JGpkf+Q+pUyFjEdkodzz2+Dp8rcmN1yZFnE3YJpP8W+8X4UhkNeCBgPAuEFM9yRV
+         SkBSM/gE731bY0yi1IwrQ5//C6o7lS/S3wYkRxd7xsdWD7GaO5E7nF4XnnzYOObLIz
+         dwxaDZAbyaTdca5v2MCuV0h5F2qVBYDUfo1Q7BYQlNRM7PI3VpAmxtOIxjBOozqHB6
+         9Tbvl24NqCv5D4dJ6rIeqP17y6VrgmfRiJiNN6X7lwW4NL9ku4Jtq9hvzBWaou4Dig
+         cOE+ZzI7wHEEg==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
-References: <20201130085743.1656317-1-geert+renesas@glider.be>
-Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for portability
+In-Reply-To: <20201110155029.3286090-1-geert+renesas@glider.be>
+References: <20201110155029.3286090-1-geert+renesas@glider.be>
+Subject: Re: [PATCH resend v2] sh: boards: Replace <linux/clk-provider.h> by <linux/of_clk.h>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+Cc:     linux-sh@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Date:   Mon, 07 Dec 2020 13:58:53 -0800
-Message-ID: <160737833361.1580929.4851886406060076908@swboyd.mtv.corp.google.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Date:   Mon, 07 Dec 2020 14:00:56 -0800
+Message-ID: <160737845618.1580929.560371999645128087@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-11-30 00:57:43)
-> The R9A06G032 clock driver uses an array of packed structures to reduce
-> kernel size.  However, this array contains pointers, which are no longer
-> aligned naturally, and cannot be relocated on PPC64.  Hence when
-> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
-> PowerPC allyesconfig), the following warnings are produced:
+Quoting Geert Uytterhoeven (2020-11-10 07:50:29)
+> The SuperH/J2 DT platform code is not a clock provider, and just needs
+> to call of_clk_init().
 >=20
->     WARNING: 136 bad relocations
->     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
->     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
->     ...
+> Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 >=20
-> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
-> definition, trading a small size increase for portability.
->=20
-> This increases the 156-entry clock table by 1 byte per entry, but due to
-> the compiler generating more efficient code for unpacked accesses, the
-> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
