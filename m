@@ -2,64 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691DFC4167B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD95DC4361B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9C5238EC
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A526823976
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbgLGWDG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 17:03:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbgLGWDG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Dec 2020 17:03:06 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607378545;
-        bh=wNTk0gEVGVMlU4rzzTg6vknJYhnzgpdkDAJ6+uYsIPs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YbDhmbVsWFdrfYzCvILqGonxrMBaAVB/sSqWD8TzYjs/QCDKs4UF1ce6mntEgEaSL
-         hRFFC4v5g8Co06UTTDvYX5W9+wh4WSvA0BcmZq3BDs6WoHafnkcEEltzQq2Uu04AhB
-         lZUFQYiTwwUfWrg2TqfpehTaE8+93mSJNc7hTIQkZabmaQEfXrJ0Xopzsv3JIuTHIz
-         BExQ7R36sm1d8If6FvsgkNfZUZNhMdnQeUY5BLk7f61DMLFLIadYJ7Ki1sl5xK9dD7
-         JSnETkJNZb2UnYW0KUyWkY1uPT662N2elWKNKPENzlOQq1OML7NunJPvUVGIjHI+gu
-         kRY8A9LAAlccw==
+        id S1726370AbgLGWJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 17:09:58 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37552 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbgLGWJ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 17:09:58 -0500
+Received: by mail-ot1-f67.google.com with SMTP id o11so11364944ote.4;
+        Mon, 07 Dec 2020 14:09:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eEyuCq0orrK+zaG7y0s2/donzkzWcAZFmgt/A1f//Yk=;
+        b=oQsNqxXWeRo9cSnUQ1BDDThk5nzLZokrl0l3E6wJk1l7Isgb23jBPUqKDmn0XmJg0I
+         GUV5yeg3egcEr/putvp8O2wSco/x1UuFxlt/RP0dTOPLaqSZbqHsvRd8nBWla3PFlzeW
+         XbVIofLTwm6vOzd01ozmZRpo8JsYocHwYxdNuxQ2tAQ/sUE05l5HSwghgevZw3LAJ4wu
+         GmOeIlBzGWNbTM3JIMwPXAUUd6B8eg5h6ubVncj7wcA4nBgolV+uF/ddR5pBY8bpgaZL
+         8alYtpSafJxnhgPp5FWaGOA82JluVmg8r6zFj2a7A8Bch6Giw9t17wwL3zWLwqs3npnz
+         1lmg==
+X-Gm-Message-State: AOAM531fVdSW2LXCGX06xVkgYYWvIPVYQPfzKISCE7bOdrcN0qzbb6cQ
+        JiplwqnubwisgxG4vKuS9Q==
+X-Google-Smtp-Source: ABdhPJy+Zvpma0/n7ijbAgsnojTNissbUFf8+kWdcn9VvzvovXHlQI/qIhixgouaF2p/sDJ9KdZNsg==
+X-Received: by 2002:a9d:5f03:: with SMTP id f3mr14573953oti.91.1607378951694;
+        Mon, 07 Dec 2020 14:09:11 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 60sm2928735ott.32.2020.12.07.14.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Dec 2020 14:09:10 -0800 (PST)
+Received: (nullmailer pid 923974 invoked by uid 1000);
+        Mon, 07 Dec 2020 22:09:09 -0000
+Date:   Mon, 7 Dec 2020 16:09:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thara Gopinath <thara.gopinath@linaro.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [Patch v2 6/6] dt-bindings: crypto: qcom-qce: Add v5.4 to binding
+Message-ID: <20201207220909.GA918596@robh.at.kernel.org>
+References: <20201119155233.3974286-1-thara.gopinath@linaro.org>
+ <20201119155233.3974286-7-thara.gopinath@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201110154750.3285411-1-geert+renesas@glider.be>
-References: <20201110154750.3285411-1-geert+renesas@glider.be>
-Subject: Re: [PATCH v2] clk: qoriq: Add platform dependencies
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Arnd Bergmann <arnd@arndb.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 07 Dec 2020 14:02:23 -0800
-Message-ID: <160737854354.1580929.10822609640978673509@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201119155233.3974286-7-thara.gopinath@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-11-10 07:47:50)
-> The Freescale QorIQ clock controller is only present on Freescale E500MC
-> and Layerscape SoCs.  Add platform dependencies to the CLK_QORIQ config
-> symbol, to avoid asking the user about it when configuring a kernel
-> without E500MC or Layerscape support.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Li Yang <leoyang.li@nxp.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+On Thu, Nov 19, 2020 at 10:52:33AM -0500, Thara Gopinath wrote:
+> Add compatible string to support v5.4 crypto engine.
+> 
+> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
+>  Documentation/devicetree/bindings/crypto/qcom-qce.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.txt b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> index fdd53b184ba8..ed1ede9c0acc 100644
+> --- a/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> +++ b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> @@ -2,7 +2,9 @@ Qualcomm crypto engine driver
+>  
+>  Required properties:
+>  
+> -- compatible  : should be "qcom,crypto-v5.1"
+> +- compatible  : should be
+> +		"qcom,crypto-v5.1" for ipq6018
+> +		"qcom,crypto-v5.4" for sdm845
 
-Applied to clk-next
+An outstanding example of why to use SoC specific compatibles rather 
+than versions. Keep v5.1, but use SoC compatibles going forward.
+
+>  - reg         : specifies base physical address and size of the registers map
+>  - clocks      : phandle to clock-controller plus clock-specifier pair
+>  - clock-names : "iface" clocks register interface
+> -- 
+> 2.25.1
+> 
