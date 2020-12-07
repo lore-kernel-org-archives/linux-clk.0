@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35548C4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F54C1B0D9
 	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9065239CF
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A38B239FD
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:14:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgLGWOg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 17:14:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54796 "EHLO mail.kernel.org"
+        id S1727886AbgLGWOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 17:14:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbgLGWOf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Dec 2020 17:14:35 -0500
+        id S1727849AbgLGWOl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Dec 2020 17:14:41 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607379235;
-        bh=b8c3gJSYNP+zyxef9OIN6OKC059zdhGdsicePnOOh5o=;
+        s=k20201202; t=1607379241;
+        bh=X/PnSas8sLIZGzQjdY/GTgXT2nJNu4Cpd14sexT9VME=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=p7zMtQYtnfdyNwspyUC25HCqrI8JY46ckYVc82NKB7EeeLsVcOOduy3vBg/HAOd2n
-         MtOheHL3SKnLBx1lNAvnmSK/2sYelsU+olr7EXHTRqrXazZBldrhktX1D+4h5ctMAW
-         jTEW1jqNyxHVF5f7h7INolvr4SFsS8N02kv+Fp3jSshdSSL8M70RXFMlqg4Mkyi41H
-         t+Lpfyp9dMWkziVUy+7sqFWg1BaR34bcPr7058uSutjmnK1Uh+0TQxYV3glYjNDEZn
-         K1sR69aRpz1gYtLyWldVYBxvD2t0bdxDLNJWTZnFjdJhqWCLF0GAHuNVDCZLDZUGLE
-         KB3q9uvYGfgPQ==
+        b=MrFKKlhD74KF3Uq7NUCXhGBjOlNP8WVcHPtjXxp0d8XhyjiDC1H7BUhTgqsut18VB
+         0YnphHJkhHorrsUtsTyCJRHm1/X71nnuqwtQTlCSbcYLqojghDczBxPYprLzAc5ATn
+         5VnKzH8ipgNZUpm55LoylAZz/6I5eKRZkHQxktrOlvLei0yZAyPide3TyTr9xzXPTL
+         l5HLb2DOhlj8QRNJRuUdV5Sio4R+k60OsPJ3p194dq9Fb66NcYxVk9ufyCCGmI6iKI
+         583BjmuaZMFc7NjATjPY61MK9srivQU2kpJxDaTMp+fTkaH2tN6gEAgzl/WPTEeTJc
+         jMST8rTtNmq9g==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201105192746.19564-3-michael@walle.cc>
-References: <20201105192746.19564-1-michael@walle.cc> <20201105192746.19564-3-michael@walle.cc>
-Subject: Re: [PATCH v2 2/3] clk: composite: add devm_clk_hw_register_composite_pdata()
+In-Reply-To: <20201105192746.19564-4-michael@walle.cc>
+References: <20201105192746.19564-1-michael@walle.cc> <20201105192746.19564-4-michael@walle.cc>
+Subject: Re: [PATCH v2 3/3] clk: fsl-sai: use devm_clk_hw_register_composite_pdata()
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Michael Walle <michael@walle.cc>
 To:     Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 07 Dec 2020 14:13:53 -0800
-Message-ID: <160737923399.1580929.5070466286090829142@swboyd.mtv.corp.google.com>
+Date:   Mon, 07 Dec 2020 14:13:59 -0800
+Message-ID: <160737923980.1580929.5525130660855551561@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Walle (2020-11-05 11:27:45)
-> This will simplify drivers which would only unregister the clk in their
-> remove() op.
+Quoting Michael Walle (2020-11-05 11:27:46)
+> Simplify the driver by using that helper and drop the remove() function.
 >=20
 > Signed-off-by: Michael Walle <michael@walle.cc>
 > ---
