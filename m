@@ -2,93 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791E2C352A6
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 16:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E96EC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 16:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 574E6238E7
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 16:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A4A23877
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 16:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbgLGQek (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 11:34:40 -0500
-Received: from mga12.intel.com ([192.55.52.136]:51450 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727787AbgLGQek (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Dec 2020 11:34:40 -0500
-IronPort-SDR: QZJBdVm4QQdZzng+D4Haj/djl9+en+uOxh0UsT1GK1KyOsnYEiohQLyXWpE/QQRUiwgUcChmMb
- 1Q26I/lxxGVw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9827"; a="152970118"
-X-IronPort-AV: E=Sophos;i="5.78,400,1599548400"; 
-   d="scan'208";a="152970118"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 08:32:54 -0800
-IronPort-SDR: coNPy9GHDOkBDjLa82uh0mCydYyGFT5e8cF+5+dl1vrR0E0dThdvnumCB4Bqn+s9sGK+PF5jeU
- pPgSyaGEQxVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,400,1599548400"; 
-   d="scan'208";a="317246201"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2020 08:32:53 -0800
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726487AbgLGQyh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 11:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbgLGQyh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 11:54:37 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9CFFC061749
+        for <linux-clk@vger.kernel.org>; Mon,  7 Dec 2020 08:53:56 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1kmJli-0007Sk-Es; Mon, 07 Dec 2020 17:53:46 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1kmJlg-0000Ti-Qr; Mon, 07 Dec 2020 17:53:44 +0100
+Date:   Mon, 7 Dec 2020 17:53:44 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        charles.steves@logicpd.com, Aisheng Dong <aisheng.dong@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH 0/2] Fix kernel panic issues caused by AST2500 Video Engine
-Date:   Mon,  7 Dec 2020 08:42:38 -0800
-Message-Id: <20201207164240.15436-1-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx: Fix reparenting of UARTs not associated with
+ sdout
+Message-ID: <20201207165344.GP3977@pengutronix.de>
+References: <20201204183154.94002-1-aford173@gmail.com>
+ <20201207052438.GA3977@pengutronix.de>
+ <CAHCN7xJ8kmCxijvzpi+gj=R-QmPc6pqmsMzU5CRt3pQ9B98k+w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHCN7xJ8kmCxijvzpi+gj=R-QmPc6pqmsMzU5CRt3pQ9B98k+w@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 17:50:33 up 5 days,  5:17, 69 users,  load average: 0.36, 0.16, 0.16
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Video engine uses eclk and vclk for its clock sources and its reset
-control is coupled with eclk so the current clock enabling sequence works
-like below.
+Hi Adam,
 
- Enable eclk
- De-assert Video Engine reset
- 10ms delay
- Enable vclk
+On Mon, Dec 07, 2020 at 09:51:33AM -0600, Adam Ford wrote:
+> On Sun, Dec 6, 2020 at 11:24 PM Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> >
+> > Hi Adam,
+> >
+> > On Fri, Dec 04, 2020 at 12:31:54PM -0600, Adam Ford wrote:
+> > > The default clock source on i.MX8M Mini and Nano boards use a 24MHz clock,
+> > > but users who need to re-parent the clock source run into issues because
+> > > all the UART clocks are enabled whether or not they're needed by sdout.
+> > >
+> > > Any attempt to change the parent results in an busy error because the
+> > > clocks have been enabled already.
+> > >
+> > >   clk: failed to reparent uart1 to sys_pll1_80m: -16
+> > >
+> > > Instead of pre-initializing all UARTS, scan the device tree to see if UART
+> > > clock is used as stdout before initializing it.  Only enable the UART clock
+> > > if it's needed in order to delay the clock initialization until after the
+> > > re-parenting of the clocks.
+> > >
+> > > Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
+> > > Suggested-by: Aisheng Dong <aisheng.dong@nxp.com>
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > >
+> > > diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> > > index 47882c51cb85..6dcc5fbd8f3f 100644
+> > > --- a/drivers/clk/imx/clk.c
+> > > +++ b/drivers/clk/imx/clk.c
+> > > @@ -163,12 +163,18 @@ __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+> > >
+> > >  void imx_register_uart_clocks(struct clk ** const clks[])
+> > >  {
+> > > +     struct clk *uart_clk;
+> > >       if (imx_keep_uart_clocks) {
+> > >               int i;
+> > >
+> > >               imx_uart_clocks = clks;
+> > > -             for (i = 0; imx_uart_clocks[i]; i++)
+> > > -                     clk_prepare_enable(*imx_uart_clocks[i]);
+> > > +             for (i = 0; imx_uart_clocks[i]; i++) {
+> > > +                     uart_clk = of_clk_get(of_stdout, i);
+> >
+> > This looks wrong. imx_uart_clocks is an array containing all clocks that
+> > could possibly be used for an UART. With of_clk_get(of_stdout, i) you
+> > get the nth clock for one specific UART.
+> > What you have to do here is: For each of imx_uart_clocks[] you have to
+> > iterate over all clocks of the of_stdout node.
+> 
+> Sascha,
+> 
+> Thanks for the review.
+> 
+> I agree that I'm using the wrong index when checking of_stdout, but I
+> am not sure we need to loop through  imx_uart_clocks at all.
+> I looked at the NXP repo, and they just focus on looping through
+> of_stdout and don't reference the imx_uart_clocks. Can't we just loop
+> through the of_stdout and enable any clocks found in that?
 
-It introduces improper reset on the Video Engine hardware and eventually
-the hardware generates unexpected DMA memory transfers that can corrupt
-memory region in random and sporadic patterns. This issue is observed
-very rarely on some specific AST2500 SoCs but it causes a critical
-kernel panic with making a various shape of signature so it's extremely
-hard to debug. Moreover, the issue is observed even when the video
-engine is not actively used because udevd turns on the video engine
-hardware for a short time to make a query in every boot.
+This sounds good. That way we could get rid of the imx_uart_clocks array
+entirely.
 
-To fix this issue, this commit changes the clock handling logic to make
-the reset de-assertion triggered after enabling both eclk and vclk. Also,
-it adds clk_unprepare call for a case when probe fails.
+Note that right below imx_register_uart_clocks() there is imx_clk_disable_uart()
+which disables the previously enabled clocks again later when the real
+driver has taken over. You'll have to change that as well accordingly.
 
-In case of AST2600, the video engine reset setting should be coupled with
-eclk to match it with the setting for previous Aspeed SoCs which is defined
-in clk-aspeed.c since all Aspeed SoCs are sharing a single video engine
-driver. Also, reset bit 6 is defined as 'Video Engine' reset in datasheet
-so it should be de-asserted when eclk is enabled. This commit fixes the
-setting too.
-
-Please review this patch series.
-
-Jae Hyun Yoo (2):
-  clk: ast2600: fix reset settings for eclk and vclk
-  media: aspeed: fix clock handling logic
-
- drivers/clk/clk-ast2600.c             | 4 ++--
- drivers/media/platform/aspeed-video.c | 9 ++++++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
+Sascha
 
 -- 
-2.17.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
