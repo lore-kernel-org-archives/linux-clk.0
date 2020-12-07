@@ -7,79 +7,74 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C8EC4361B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7059EC4361B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3E00235F9
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A3CC23436
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgLGV4D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 16:56:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47332 "EHLO mail.kernel.org"
+        id S1726156AbgLGV7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 16:59:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727536AbgLGV4D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 7 Dec 2020 16:56:03 -0500
+        id S1725799AbgLGV7f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Dec 2020 16:59:35 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607378123;
-        bh=3EQFkmqIZkltTxJADw/b/Hs6gH8+FUgExT759gjOTxk=;
+        s=k20201202; t=1607378335;
+        bh=Pi5GADo6j4UFpk7CEuwQxIw6GRAKpKOinEGB1LvlK40=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vLrUm+r5C4Fk0NfKDIVKDqMnGc6C6IFVFQB0U6RPudekGohvvnXyDnFSbIZ3ltWAa
-         AAqaj9k8XLCHn4bizUA2XGo3YX907M7wPt577W+l+g4n/I1yfcDt4F0TMIEtJIrEn9
-         0FiDCBX7GJqGq4fgOuQFAGe91oAGEMKdN5Kt9WJ+2r22K2vTkd0ZuZYORByFBzgfEY
-         H7VDQwF0x2k527nsTvI/UfV1crzkxOVK09ZImIJJRtn+SWkCctGGDwAas0JgRMwTUZ
-         AgXFszCjo8dBj9Ljgbj+rSyr0cZ0/36D218KL+n4zM/5AA/TBJ8dtUa1DBlG0nS9mL
-         huj367HllK9TQ==
+        b=KGof9gI3o9RpVbn/pS5WFPRGlaLFmaat4RM4BGFeRNLSHlKSSHteQphl4wn4+azfu
+         KtERqlIJtZSCGenwUfPJkTcYW5ZJo6IBaJZoGiMapsW+KkrIKC2mdgS1XT7LAGDN0s
+         X8oHcPnPLb5vpHTdUsEyhcggEGCUIH0+SovzMe+isE8PeJLcTrgfeCOnJsxYhGv0Ix
+         YEYGj7ZZgjUm10GiavckoUcToMio2df5OtD8hXaMLZTbytitIOHIniT/e+vu/8vmsz
+         c27HS+3Y2UafuVnMgDcRFeLt04g1LbIpjZPSRhAfHIcKz9QI8OZkV7qkZ2RodmdEyF
+         MihTQOyjKVDdQ==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201130084624.21113-1-aisheng.dong@nxp.com>
-References: <20201130084624.21113-1-aisheng.dong@nxp.com>
-Subject: Re: [PATCH v2 1/1] clk: imx: scu: fix MXC_CLK_SCU module build break
+In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
+References: <20201130085743.1656317-1-geert+renesas@glider.be>
+Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for portability
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        sudipm.mukherjee@gmail.com, shawnguo@kernel.org,
-        dongas86@gmail.com, Dong Aisheng <aisheng.dong@nxp.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Date:   Mon, 07 Dec 2020 13:55:21 -0800
-Message-ID: <160737812159.1580929.2422809729561564029@swboyd.mtv.corp.google.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Mon, 07 Dec 2020 13:58:53 -0800
+Message-ID: <160737833361.1580929.4851886406060076908@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dong Aisheng (2020-11-30 00:46:24)
-> This issue can be reproduced by CONFIG_IMX_MBOX=3Dm and CONFIG_MXC_CLK_SC=
-U=3Dm.
-> It's caused by current Makefile writing can't support build clk-scu.o and
-> clk-imx8qxp.o independently. (e.g. MXC_CLK_SCU =3D y while CLK_IMX8QXP =
-=3D n)
+Quoting Geert Uytterhoeven (2020-11-30 00:57:43)
+> The R9A06G032 clock driver uses an array of packed structures to reduce
+> kernel size.  However, this array contains pointers, which are no longer
+> aligned naturally, and cannot be relocated on PPC64.  Hence when
+> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
+> PowerPC allyesconfig), the following warnings are produced:
 >=20
-> "obj-$(CONFIG_MXC_CLK_SCU) +=3D clk-imx-scu.o clk-imx-lpcg-scu.o
-> clk-imx-scu-$(CONFIG_CLK_IMX8QXP) +=3D clk-scu.o clk-imx8qxp.o"
+>     WARNING: 136 bad relocations
+>     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
+>     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
+>     ...
 >=20
-> Only enable MXC_CLK_SCU while CLK_IMX8QXP not will cause unable to locate
-> the input files during linking.
+> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
+> definition, trading a small size increase for portability.
 >=20
-> Error log:
->   LD [M]  drivers/clk/imx/clk-imx-scu.o
-> arm-poky-linux-gnueabi-ld: no input files
-> ../scripts/Makefile.build:434: recipe for target 'drivers/clk/imx/clk-imx=
--scu.o' failed
-> make[4]: *** [drivers/clk/imx/clk-imx-scu.o] Error 1
+> This increases the 156-entry clock table by 1 byte per entry, but due to
+> the compiler generating more efficient code for unpacked accesses, the
+> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
 >=20
-> This patch makes MXC_CLK_SCU to be invisible to users and can only be
-> selected by CLK_IMX8QXP option to ensure they're built together.
->=20
-> And COMPILE_TEST on an option that isn't selectable is meaningless.
-> We can remove it from MXC_CLK_SCU because CLK_IMX8QXP selecting MXC_CLK_S=
-CU
-> already has COMPILE_TEST.
->=20
-> Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock driv=
-er as module")
-> Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
-Applied to clk-fixes.
+Applied to clk-fixes
