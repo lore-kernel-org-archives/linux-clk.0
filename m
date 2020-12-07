@@ -2,75 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE29C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3947EC2BB48
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6D9238A0
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0614E221FA
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 21:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725804AbgLGTW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 14:22:27 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33422 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgLGTW1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 14:22:27 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so13598481ots.0;
-        Mon, 07 Dec 2020 11:22:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ewz8r/Um69j9WlwwRelugGfmPY426HhxQX11UEoZHdE=;
-        b=uKayHnt79eiqR/fUL56DLpf068TcbbMeIjqWK3iew46Jbehk2gLUD4/AEwzGAIUIh+
-         fXvffxGHDgw1QBRXPIHxlgih/7nQmDwZ1+DNg+c+RCxsizPfgQm0Urp5TdoJJYw8ATNK
-         Kbaa0LzmlS1pqCwoOdJ3lBSZ/Xdkz2vQrk3mLnO8IO5XeWwHfA1AXBNh7MPcoC8bRSrL
-         LkqgVJuHZUw8hTn62w7gcnilVnqJiQkDYX+utx8QQo2kfqMKVkNGn1hMdUfN2CTEUntZ
-         QT6wljLj9bhpgZ78wxKpJYbxyBUFG2v/0TvX+5hWuZ95dJlTrP2dsNvBS0p3Ks13aPyJ
-         f0lg==
-X-Gm-Message-State: AOAM5302UdkMJhbFHYdqGyjTGO4e2XkLg5qoWwWuBL4GrenbzWvzl2Ic
-        GCR88BFlwxOCSudNRMf2bw==
-X-Google-Smtp-Source: ABdhPJy8WLmAxdxDvthS0YTsB6MtgPeWo6fuiRQw0CcBglvY+DmIP1cJePvI/ormf1GEETxZ9Xx+ow==
-X-Received: by 2002:a9d:19a5:: with SMTP id k34mr14081853otk.100.1607368906195;
-        Mon, 07 Dec 2020 11:21:46 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u15sm409591oiv.28.2020.12.07.11.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 11:21:45 -0800 (PST)
-Received: (nullmailer pid 658110 invoked by uid 1000);
-        Mon, 07 Dec 2020 19:21:44 -0000
-Date:   Mon, 7 Dec 2020 13:21:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Cc:     kernel@pengutronix.de, mturquette@baylibre.com, rajanv@xilinx.com,
-        rvisaval@xilinx.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        michals@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        sboyd@kernel.org, dshah@xilinx.com, tejasp@xilinx.com
-Subject: Re: [PATCH 01/12] ARM: dts: define indexes for output clocks
-Message-ID: <20201207192144.GA658070@robh.at.kernel.org>
-References: <20201116075532.4019252-1-m.tretter@pengutronix.de>
- <20201116075532.4019252-2-m.tretter@pengutronix.de>
+        id S1727452AbgLGV1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 16:27:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726492AbgLGV1D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 7 Dec 2020 16:27:03 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607376382;
+        bh=UQLaibMgpyMvr32nuqQHPcu4qUSJSpj3TApSORzRpYM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=sCKOZGQwawg3hHnN1AVHz3SbrWRy8TX0HURsSa/VyKUp7STCV4N3sHzb7F01I4QAU
+         Qk60siVJfyCj+cIIj4uAx/ikffa8ZUO2+yx31fosBbBeTqRy/qQtTL9mvXl6o6G2wo
+         a7qqW2cqvDxfB35Jihuc1rVa5XqaXXcvzOFVIX2llvuPkpro5CyThPXEsE6M62kkvw
+         Wr9Zaf2sBn+DIJ0oudWm0dGr1fTjNMXLHg2tsEQnegodGBHOi83iLFA5cE9pXk99BQ
+         RR9h147N+z3JOgR2KlRVLSw5jOEL3ZXu11tFOFvqzIgiKBX5wCgapZfZBAB74KIQiu
+         oUVLz4YtiT4CA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201116075532.4019252-2-m.tretter@pengutronix.de>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1j360kp1zh.fsf@starbuckisacylon.baylibre.com>
+References: <1j360kp1zh.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL RESEND] clk: meson: amlogic updates for v5.11
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Date:   Mon, 07 Dec 2020 13:26:20 -0800
+Message-ID: <160737638080.1580929.6951606729739105639@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 16 Nov 2020 08:55:21 +0100, Michael Tretter wrote:
-> The VCU System-Level Control has 4 output clocks. Define indexes for
-> these clocks to allow to reference them in the device tree.
-> 
-> Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-> ---
->  include/dt-bindings/clock/xlnx-vcu.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 include/dt-bindings/clock/xlnx-vcu.h
-> 
+Quoting Jerome Brunet (2020-12-05 10:00:18)
+> Hi Stephen,
+>=20
+> Here are the updates for amlogic clocks for v5.11. This is based on your
+> clk-hw branch, instead of the usual rc1, since it depends on clk_hw
+> stuff you've already applied.
+>=20
+> Hopefully I got it right this time ...
+>=20
+> Please Pull.
+> Thx.
+>=20
+> Cheers
+> Jerome
+>=20
+> The following changes since commit e6fb7aee486c7fbd4d94f4894feaa6f0424c17=
+40:
+>=20
+>   clk: meson: g12: use devm variant to register notifiers (2020-11-14 12:=
+58:31 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.11-1
+>=20
+> for you to fetch changes up to 88b9ae600138baff18c7f4c4870622584acc6111:
+>=20
+>   clk: meson: g12a: add MIPI DSI Host Pixel Clock (2020-11-26 15:25:20 +0=
+100)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Rob Herring <robh@kernel.org>
+Thanks. Pulled into clk-next
