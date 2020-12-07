@@ -6,72 +6,69 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0DDC0018C
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7719C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA8AE238E2
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA42238E2
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 19:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbgLGTDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 14:03:00 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35201 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbgLGTC7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 14:02:59 -0500
-Received: by mail-oi1-f194.google.com with SMTP id s2so7101893oij.2;
-        Mon, 07 Dec 2020 11:02:38 -0800 (PST)
+        id S1726096AbgLGTDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 14:03:48 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37970 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbgLGTDr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 14:03:47 -0500
+Received: by mail-ot1-f68.google.com with SMTP id b62so13514860otc.5;
+        Mon, 07 Dec 2020 11:03:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=HY0hN7EFmwAeOpekASH1D+eW1UviLPnBJxGZclXefu0=;
-        b=jhs7ja41n/gDXd8s+PFaKKnCRAhQHH9Zyy9oIyDLk61qmXVXp++RnqMi7wi86m7QN7
-         r3m0350AeQHhkBVbm02BPc2zuSDj1zVLjFbkHdPM/dtVYavUD7On+7bKnDrUjrHV5p3M
-         6VD5Ao9DUFpPWRhaqJYILkSSZbblJTmcSmrQIWuXL1bgHQFxB2PHOAyaOMnegJ1g02Ec
-         2GaAYno8ryRXNTELn1t3KaKr4LU6XuWqJx2bcq0RisyVGVfW2GfdLIj9esMjqjPnhmel
-         KVTVPT2vAeY9xePMITOS6oB3gYaKTSZlHvxQikaBVZ2Rc60Om+fLK+IyhXZIqfOh7kWR
-         XANQ==
-X-Gm-Message-State: AOAM532/vXXUDWL/bW7hh3Ng+nTmPrX08YcJf/6n738eRehoQRRQlGrh
-        R0BincuPXV34CF+id/phqyz2fF0lFw==
-X-Google-Smtp-Source: ABdhPJzwSPMRrQKLv11ZINQGdwR6C69RDQ4j3GgSogCMZ11o/iijHddVfVmozpAzu46Xr3kRdgGsEw==
-X-Received: by 2002:aca:fc96:: with SMTP id a144mr217689oii.146.1607367732978;
-        Mon, 07 Dec 2020 11:02:12 -0800 (PST)
+        bh=xdn2VRO56uAFABzC8UZ3Pa3q02QQGItW2Iah+Zcfh3c=;
+        b=YiWqvt6hxn8VTh/vsFfSauXcOHqLWXkGzpS5wyj0DcF9IrDXAXLbAPVary6JdUf+Sk
+         9x98knQiEz65N4EDxxmn2U4j9nhYv5+TuzsdczPA7SeoH6N1tOGoI8lBYqH1BKhZP+7q
+         TUE6GjpyDN1ytxYmW54fMF7J8k5W+zZq4p8w45OiW65/4iaBy4EW9ayZXNdClpM9b/+b
+         2BQ1yCjD/iXhPXE/RNbqcwL0HCFE/wV4eaAUt16mNrK1mR07BER2yXv5AEk4Mxp/Iv+2
+         IQJcjI2btgXJO4ck3uyOTTY+5kLP0EG9NfvUTSg9JTBhXlJ2OGrH7Yn+K2/rSL8H4v7z
+         ka8g==
+X-Gm-Message-State: AOAM532l7AVyhMM6JtIAx++lcjFWIvtaW8I0qJJuNHK0w0O5RmYOndKE
+        8k9fHHFlqZoepd8VGxAemg==
+X-Google-Smtp-Source: ABdhPJwedWQa3ugHKeUrTyeT4B8u41zK9Wxrb1uEivXzCY6bsW7FO6pEir6ls/nBxQn/t08o6aBzzw==
+X-Received: by 2002:a9d:5a9:: with SMTP id 38mr13654440otd.173.1607367786920;
+        Mon, 07 Dec 2020 11:03:06 -0800 (PST)
 Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 73sm2822461otv.26.2020.12.07.11.02.11
+        by smtp.gmail.com with ESMTPSA id h17sm2763135oor.1.2020.12.07.11.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Dec 2020 11:02:11 -0800 (PST)
-Received: (nullmailer pid 626990 invoked by uid 1000);
-        Mon, 07 Dec 2020 19:02:10 -0000
-Date:   Mon, 7 Dec 2020 13:02:10 -0600
+        Mon, 07 Dec 2020 11:03:06 -0800 (PST)
+Received: (nullmailer pid 628529 invoked by uid 1000);
+        Mon, 07 Dec 2020 19:03:05 -0000
+Date:   Mon, 7 Dec 2020 13:03:05 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Daniel Palmer <daniel@0x0f.com>
-Cc:     linux-kernel@vger.kernel.org, w@1wt.eu,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clk: mstar msc313 mpll binding header
-Message-ID: <20201207190210.GA626827@robh.at.kernel.org>
+Cc:     linux-clk@vger.kernel.org, w@1wt.eu, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/6] dt-bindings: clk: mstar msc313 mpll binding
+ description
+Message-ID: <20201207190305.GA628475@robh.at.kernel.org>
 References: <20201114135044.724385-1-daniel@0x0f.com>
- <20201114135044.724385-2-daniel@0x0f.com>
+ <20201114135044.724385-3-daniel@0x0f.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201114135044.724385-2-daniel@0x0f.com>
+In-Reply-To: <20201114135044.724385-3-daniel@0x0f.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 14 Nov 2020 22:50:39 +0900, Daniel Palmer wrote:
-> Simple header to document the relationship between the MPLL outputs
-> and which divider they come from.
-> 
-> Output 0 is missing because it should not be consumed.
+On Sat, 14 Nov 2020 22:50:40 +0900, Daniel Palmer wrote:
+> Add a binding description for the MStar/SigmaStar MPLL clock block.
 > 
 > Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 > ---
+>  .../bindings/clock/mstar,msc313-mpll.yaml     | 58 +++++++++++++++++++
 >  MAINTAINERS                                   |  1 +
->  include/dt-bindings/clock/mstar-msc313-mpll.h | 19 +++++++++++++++++++
->  2 files changed, 20 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mstar-msc313-mpll.h
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-mpll.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
