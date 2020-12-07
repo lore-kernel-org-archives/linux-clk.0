@@ -2,133 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2078CC4361B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 05:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED60C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 08:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5FFC22838
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 05:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 325432151B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 08:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725803AbgLGFZc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 00:25:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgLGFZc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 00:25:32 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E55A7C0613D1
-        for <linux-clk@vger.kernel.org>; Sun,  6 Dec 2020 21:24:51 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1km90p-0000C3-J3; Mon, 07 Dec 2020 06:24:39 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1km90o-0000yR-6p; Mon, 07 Dec 2020 06:24:38 +0100
-Date:   Mon, 7 Dec 2020 06:24:38 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        charles.steves@logicpd.com, Aisheng Dong <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: Fix reparenting of UARTs not associated with
- sdout
-Message-ID: <20201207052438.GA3977@pengutronix.de>
-References: <20201204183154.94002-1-aford173@gmail.com>
+        id S1726286AbgLGIol (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 03:44:41 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42849 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbgLGIol (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 03:44:41 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 11so11772698oty.9;
+        Mon, 07 Dec 2020 00:44:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lDfLeyiGUVNCa3NdIdBr2x/jMgSf/H+Z78nqjlzXWBM=;
+        b=J2hN4u6U2gJWQOGdej5Ts8hltZ7/Yed0y5CkrmGWGgZySvpV4zRyutPF+I/BwGLDRi
+         3C9Gj+IkYGVgQI4VjI+eSZIe1EpfT7i1lBPVKHjJ1OBq7nfW9WhNfvLq1+6jJLMqdyAc
+         NCbYMiiEkAVHbfOMNHebmbJu05RwT7qZGITkTgQiSRd8rSt3GJcaVtDYIraKHqQVtbBG
+         pO5teyB5OtPd0jRzHWa9C6CGHBXxdIApR0XL5rQWA4mWNl3IdKSec2p/lq2bT2vJLvni
+         JANxYRYLrWiKn3Xe1wIzvtSA+mzokZJVUBB9r+VMjslp6wIDF+CCIWqzjCB7oRWocIYa
+         kXEw==
+X-Gm-Message-State: AOAM53210mGBeNx8L/R0E85yWFD2fHxqWa61IjXL7XoORJ8ilN2laFl8
+        ayPb8IOdHgDZ048NUygE9xE0daIgM5s6+d5OgKY=
+X-Google-Smtp-Source: ABdhPJz3F618tGQ+G8xttqsIo3X7QtPrBpfqy0tddGagSvKa3lbHtQAsUEeeyRDDYw11Hf5ZojwaoyzWHaAY0bkCXD0=
+X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr12384022oth.250.1607330640141;
+ Mon, 07 Dec 2020 00:44:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201204183154.94002-1-aford173@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 06:13:56 up 4 days, 17:40, 32 users,  load average: 0.04, 0.17, 0.17
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20201202032500.206346-1-damien.lemoal@wdc.com>
+ <20201202032500.206346-12-damien.lemoal@wdc.com> <160714919628.1580929.1456162330322523777@swboyd.mtv.corp.google.com>
+ <b5eb9c289fe58119185550bff7228501d95b730e.camel@wdc.com>
+In-Reply-To: <b5eb9c289fe58119185550bff7228501d95b730e.camel@wdc.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Dec 2020 09:43:49 +0100
+Message-ID: <CAMuHMdX+grQf=naU76Edvhbjap3BEayjDs_Rhkoy4FFfOZcTZw@mail.gmail.com>
+Subject: Re: [PATCH v4 11/21] riscv: Add Canaan Kendryte K210 clock driver
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "seanga2@gmail.com" <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
+Hi Damien,
 
-On Fri, Dec 04, 2020 at 12:31:54PM -0600, Adam Ford wrote:
-> The default clock source on i.MX8M Mini and Nano boards use a 24MHz clock,
-> but users who need to re-parent the clock source run into issues because
-> all the UART clocks are enabled whether or not they're needed by sdout.
-> 
-> Any attempt to change the parent results in an busy error because the
-> clocks have been enabled already.
-> 
->   clk: failed to reparent uart1 to sys_pll1_80m: -16
-> 
-> Instead of pre-initializing all UARTS, scan the device tree to see if UART
-> clock is used as stdout before initializing it.  Only enable the UART clock
-> if it's needed in order to delay the clock initialization until after the
-> re-parenting of the clocks.
-> 
-> Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
-> Suggested-by: Aisheng Dong <aisheng.dong@nxp.com>
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index 47882c51cb85..6dcc5fbd8f3f 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -163,12 +163,18 @@ __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
->  
->  void imx_register_uart_clocks(struct clk ** const clks[])
->  {
-> +	struct clk *uart_clk;
->  	if (imx_keep_uart_clocks) {
->  		int i;
->  
->  		imx_uart_clocks = clks;
-> -		for (i = 0; imx_uart_clocks[i]; i++)
-> -			clk_prepare_enable(*imx_uart_clocks[i]);
-> +		for (i = 0; imx_uart_clocks[i]; i++) {
-> +			uart_clk = of_clk_get(of_stdout, i);
+On Mon, Dec 7, 2020 at 4:52 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+> I prepared a v5 series addressing your comments (and other comments).
+> I will post that later today after some more tests.
 
-This looks wrong. imx_uart_clocks is an array containing all clocks that
-could possibly be used for an UART. With of_clk_get(of_stdout, i) you
-get the nth clock for one specific UART.
-What you have to do here is: For each of imx_uart_clocks[] you have to
-iterate over all clocks of the of_stdout node.
+Thanks, already looking at k210-sysctl-v18...
 
-Sascha
+> On Fri, 2020-12-04 at 22:19 -0800, Stephen Boyd wrote:
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-k210.c
 
-> +			if (IS_ERR(uart_clk))
-> +				continue;
-> +			clk_prepare_enable(uart_clk);
-> +			clk_put(uart_clk);
-> +		}
->  	}
->  }
->  
-> -- 
-> 2.25.1
-> 
-> 
+> > > +       in0_clk = of_clk_get(np, 0);
+> > > +       if (IS_ERR(in0_clk)) {
+> > > +               pr_warn("%pOFP: in0 oscillator not found\n", np);
+> > > +               hws[K210_CLK_IN0] =
+> > > +                       clk_hw_register_fixed_rate(NULL, "in0", NULL,
+> > > +                                                  0, K210_IN0_RATE);
+> > > +       } else {
+> > > +               hws[K210_CLK_IN0] = __clk_get_hw(in0_clk);
+> > > +       }
+> > > +       if (IS_ERR(hws[K210_CLK_IN0])) {
+> > > +               pr_err("%pOFP: failed to get base oscillator\n", np);
+> > > +               goto err;
+> > > +       }
+> > > +
+> > > +       in0 = clk_hw_get_name(hws[K210_CLK_IN0]);
+> > > +       aclk_parents[0] = in0;
+> > > +       pll_parents[0] = in0;
+> > > +       mux_parents[0] = in0;
+> >
+> > Can we use the new way of specifying clk parents so that we don't have
+> > to use __clk_get_hw(), of_clk_get(), and clk_hw_get_name()? Hopefully
+> > the core can handl that all instead of this driver.
+>
+> I removed all this by adding:
+>
+> clock-output-names = "in0";
+>
+> to the DT fixed-rate oscillator clock node (and documented that too). Doing so,
+> clk_hw_get_name(), __clk_get_hw() and of_clk_get() are not needed anymore and
+> the parents clock names arrays do not need run-time update.
+
+"clock-output-names" is deprecated for clocks with a single output:
+the clock name will be taken from the node name.
+However, relying on a clock name like this is fragile.
+Instead, your driver should use the phandle from the clocks property,
+using of_clk_get_by_name() or of_clk_get().
+
+Stephen: I'm a bit puzzled, as you suggest _not_ using of_clk_get()?
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
