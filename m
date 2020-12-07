@@ -2,195 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F120DC4361B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D62C9C1B0D9
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 23:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADE63239EE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 22:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99CDB23A40
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Dec 2020 23:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbgLGW6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Dec 2020 17:58:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbgLGW6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 17:58:44 -0500
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4787C061749;
-        Mon,  7 Dec 2020 14:58:03 -0800 (PST)
-Received: by mail-qk1-x742.google.com with SMTP id z11so5199291qkj.7;
-        Mon, 07 Dec 2020 14:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I6zOyly/VbctqZjifVWoiBMTs4M8CD/SiJU9q3QLjeQ=;
-        b=MkFGs90IiqWPrV8EBavbyv2dCQScGbizflrfYY5ExfWiqGQmTwp9ea9vmo1YvDJY4A
-         2c+ImuDV/6lN+vyeJgXblAX6e7QAmtNCVcSMBefMCUH9dOrWbyrp7j85uhXWRcbnfaLb
-         9H4yXgA5nK98kFAjAOFSCZ0YNlaGFs3onLdQMk2hykLpeZYD9DR/cLEo3HFI9n/ylKYM
-         SP1it4yp+9+2q2oaZOAwLTprqKWZ84kYdCrte0W4USF8/zEjT0BLCWmfJ6hZZqRaFqwk
-         7zfwnz5mLxRS4u7Ju+3CJIPOhbhWa8Fhl+Z1pjv7olTCIXHnnIiFUJlhu2JwHoyBn3bl
-         Albg==
+        id S1726720AbgLGXEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Dec 2020 18:04:24 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34940 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbgLGXEY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Dec 2020 18:04:24 -0500
+Received: by mail-oi1-f194.google.com with SMTP id s2so7911409oij.2;
+        Mon, 07 Dec 2020 15:04:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I6zOyly/VbctqZjifVWoiBMTs4M8CD/SiJU9q3QLjeQ=;
-        b=esZeVSp8jwCrKwnt0c08iwNDHOfl5HfYbUpe3THsABLjrAvf9dBKH8WMI7jMTK5W5q
-         BTBJb40g2AAMI64eddViNt8fwc5+0eC/iuI/ctOg5aHiElPW+L3VjC2krhfGIbYPQeMc
-         tyRpYjoEkbQ9QcdL5ubi9SPrgMGE6TLvWiaySHnQPCdWJKgmjf09waZFqTB8/VR7rMFN
-         cYw7YCz8vBhzd/8WAjIHfGI/IroTrnn78nM+weMlKndOWDzFu6+C+8aSzBXHpyWOd/hg
-         CqcJBtHM64QvMpE+QMkj5fmgwKJNRNLP/dtdbI1jAioTiO6LBh57shFTfxCH/jHP0cM/
-         0UtA==
-X-Gm-Message-State: AOAM5304Ulv8oYFia9sUNGma5DmP34nF4o6uq337ou/j9PnzKvBTaWg1
-        wHKeZmKrrBafQ/6VYBzl4Xp83YChLz4g6Q==
-X-Google-Smtp-Source: ABdhPJwzoS7/Ky0MntBp9qZ4NtSaiEihqd7hWuFpYR1luKx1MHX5eR4sPN13hH1/FdJIG0eMFSB0nQ==
-X-Received: by 2002:a37:d2c4:: with SMTP id f187mr26900594qkj.286.1607381882673;
-        Mon, 07 Dec 2020 14:58:02 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
-        by smtp.googlemail.com with ESMTPSA id r14sm12733046qtu.25.2020.12.07.14.58.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Dec 2020 14:58:01 -0800 (PST)
-Subject: Re: [PATCH v4 11/21] riscv: Add Canaan Kendryte K210 clock driver
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20201202032500.206346-1-damien.lemoal@wdc.com>
- <20201202032500.206346-12-damien.lemoal@wdc.com>
- <160714919628.1580929.1456162330322523777@swboyd.mtv.corp.google.com>
- <b5eb9c289fe58119185550bff7228501d95b730e.camel@wdc.com>
- <CAMuHMdX+grQf=naU76Edvhbjap3BEayjDs_Rhkoy4FFfOZcTZw@mail.gmail.com>
- <CH2PR04MB652207D253E79755D87F55DAE7CE0@CH2PR04MB6522.namprd04.prod.outlook.com>
- <CAMuHMdUVfaWSY1Ohn-_VtOzG1VeQrDCfhHTtkahXy8HsGOTS1Q@mail.gmail.com>
- <CH2PR04MB65224960F89E4EB1CE253743E7CE0@CH2PR04MB6522.namprd04.prod.outlook.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Message-ID: <f6b54c11-adf8-328e-e1d5-c759ac5ee2e2@gmail.com>
-Date:   Mon, 7 Dec 2020 17:58:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JDyEQxWXMtErR98/q4wOxR4ceF9zN8CopbLuOWAp1Hs=;
+        b=q7wgbNadz0NnYLt39YX30BjK4I4Iv1erHZwAVGFo9ermKkJHadPY0PogfqrwX71pWk
+         8BlXlZ51zI+aNYdJsVci1+GH1LP+tPzGPFz8f3fXRQgJDKXKiIPw3+/e+8FgInE36a9X
+         Eu7IDuIK9FVFxmF/+/H8BQaupKYDJ9Z7/fpD4a2gupQ6LbXmZqzd6RXjNTZ/xpg8aZgx
+         cwV939KbSI+URgB5jyRrSO3iKvnJvRR24sSudO8lb1ohApCqRrzPwJ49x7Ha/csnXJ03
+         z0+bwgtE5FChWyKwlUr9v3tnwO911jeT6DjMxcCGJ79rm0TSy2r9pz6bFjqkTmZAXYMa
+         IN6w==
+X-Gm-Message-State: AOAM531ZYd3RnNzYtP9RFyQ/BNsFZTS9V/NjYiqv/n9aFo02widyGsw6
+        FM/cx2IdgtwgxbgpKhVNg5uvCaUzTg==
+X-Google-Smtp-Source: ABdhPJyhvceWIftXpfjTcIiRH/weA9PgINyFjDiqVws7i4QdzaQMU+plcDBUtWO7TTq/Vw4flTSBMA==
+X-Received: by 2002:aca:df83:: with SMTP id w125mr777779oig.165.1607382223593;
+        Mon, 07 Dec 2020 15:03:43 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n63sm3281008oih.39.2020.12.07.15.03.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Dec 2020 15:03:42 -0800 (PST)
+Received: (nullmailer pid 1012896 invoked by uid 1000);
+        Mon, 07 Dec 2020 23:03:41 -0000
+Date:   Mon, 7 Dec 2020 17:03:41 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: clock: imx8qxp-lpcg: eliminate yamllint
+ warnings
+Message-ID: <20201207230341.GA1012843@robh.at.kernel.org>
+References: <20201207045527.1607-1-thunder.leizhen@huawei.com>
+ <20201207045527.1607-2-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CH2PR04MB65224960F89E4EB1CE253743E7CE0@CH2PR04MB6522.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201207045527.1607-2-thunder.leizhen@huawei.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/7/20 5:14 AM, Damien Le Moal wrote:
-> On 2020/12/07 19:06, Geert Uytterhoeven wrote:
->> Hi Damien,
->>
->> On Mon, Dec 7, 2020 at 10:55 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->>> On 2020/12/07 17:44, Geert Uytterhoeven wrote:
->>>> On Mon, Dec 7, 2020 at 4:52 AM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
->>>>> I prepared a v5 series addressing your comments (and other comments).
->>>>> I will post that later today after some more tests.
->>>>
->>>> Thanks, already looking at k210-sysctl-v18...
->>>>
->>>>> On Fri, 2020-12-04 at 22:19 -0800, Stephen Boyd wrote:
->>>>>>> --- /dev/null
->>>>>>> +++ b/drivers/clk/clk-k210.c
->>>>
->>>>>>> +       in0_clk = of_clk_get(np, 0);
->>>>>>> +       if (IS_ERR(in0_clk)) {
->>>>>>> +               pr_warn("%pOFP: in0 oscillator not found\n", np);
->>>>>>> +               hws[K210_CLK_IN0] =
->>>>>>> +                       clk_hw_register_fixed_rate(NULL, "in0", NULL,
->>>>>>> +                                                  0, K210_IN0_RATE);
->>>>>>> +       } else {
->>>>>>> +               hws[K210_CLK_IN0] = __clk_get_hw(in0_clk);
->>>>>>> +       }
->>>>>>> +       if (IS_ERR(hws[K210_CLK_IN0])) {
->>>>>>> +               pr_err("%pOFP: failed to get base oscillator\n", np);
->>>>>>> +               goto err;
->>>>>>> +       }
->>>>>>> +
->>>>>>> +       in0 = clk_hw_get_name(hws[K210_CLK_IN0]);
->>>>>>> +       aclk_parents[0] = in0;
->>>>>>> +       pll_parents[0] = in0;
->>>>>>> +       mux_parents[0] = in0;
->>>>>>
->>>>>> Can we use the new way of specifying clk parents so that we don't have
->>>>>> to use __clk_get_hw(), of_clk_get(), and clk_hw_get_name()? Hopefully
->>>>>> the core can handl that all instead of this driver.
->>>>>
->>>>> I removed all this by adding:
->>>>>
->>>>> clock-output-names = "in0";
->>>>>
->>>>> to the DT fixed-rate oscillator clock node (and documented that too). Doing so,
->>>>> clk_hw_get_name(), __clk_get_hw() and of_clk_get() are not needed anymore and
->>>>> the parents clock names arrays do not need run-time update.
->>>>
->>>> "clock-output-names" is deprecated for clocks with a single output:
->>>> the clock name will be taken from the node name.
->>>
->>> Arg. I missed that.
->>>
->>>> However, relying on a clock name like this is fragile.
->>>> Instead, your driver should use the phandle from the clocks property,
->>>> using of_clk_get_by_name() or of_clk_get().
->>>
->>> That is what all versions before V5 used. But Stephen mentioned that the driver
->>> should not, if possible, use of_clk_get()/__clk_get_name(). Hence the change.
->>> Easy to revert back.
->>>
->>>> Stephen: I'm a bit puzzled, as you suggest _not_ using of_clk_get()?
->>>
->>> Another solution to this would be to simply remove the fixed-rate clock node
->>> from the DT and have the k210 clock driver unconditionally create that clock
->>> (that is one line !). That actually may be even more simple than the previous
->>> version, albeit at the cost of having the DT not being a perfect description of
->>> the hardware. I am fine with that though.
->>>
->>> Thoughts ?
->>
->> If there's an external crystal, DT should describe it.
->> Does the K210 support different crystal frequencies?
+On Mon, 07 Dec 2020 12:55:27 +0800, Zhen Lei wrote:
+> Eliminate the following yamllint warnings:
+> ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+> :32:13:[warning] wrong indentation: expected 14 but found 12 (indentation)
+> :35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 > 
-> I am not 100% sure if this oscillator is part of the SoC or if it is an external
-> input to it. Probably not. Hard to tell by just looking at the boards.
-
-It's an external crystal. For example, it is U6 on the maix bit. This is
-why I put it as a separate clock instead of including it with the rest.
-
---Sean
-
-> I have
-> the boards drawings though, so  I will check. The frequency seems to be fixed by
-> hardware: frequencies of the PLLs can be changed to change the CPU frequency,
-> but the Kendryte SDK does not point to any way allowing changing the base
-> frequency of the oscillator> 
->> Anyway, I'm very interested in what the (new) proper way of handling this
->> is...
->>
->> Gr{oetje,eeting}s,
->>
->>                          Geert
->>
->> --
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But
->> when I'm talking to journalists I just say "programmer" or something like that.
->>                                  -- Linus Torvalds
->>
-> 
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>  .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
 
+Reviewed-by: Rob Herring <robh@kernel.org>
