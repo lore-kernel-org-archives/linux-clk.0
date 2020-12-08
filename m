@@ -2,396 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A894C2BBCA
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D153C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 07:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20B3323A6C
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E87D523A7A
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 07:15:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbgLHGsJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Dec 2020 01:48:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbgLHGsJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Dec 2020 01:48:09 -0500
-From:   Vinod Koul <vkoul@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] dt-bindings: clock: Add SM8350 GCC clock bindings
-Date:   Tue,  8 Dec 2020 12:17:00 +0530
-Message-Id: <20201208064702.3654324-4-vkoul@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201208064702.3654324-1-vkoul@kernel.org>
-References: <20201208064702.3654324-1-vkoul@kernel.org>
+        id S1726588AbgLHHPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Dec 2020 02:15:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbgLHHPT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2020 02:15:19 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 203ACC061749
+        for <linux-clk@vger.kernel.org>; Mon,  7 Dec 2020 23:14:39 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id d2so9159608pfq.5
+        for <linux-clk@vger.kernel.org>; Mon, 07 Dec 2020 23:14:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3qOlsloJgxQkZEy55JDorTCm1I5tHRxkFTRlp6EieeA=;
+        b=cDR/LIN65OUPo8a2wnb5yJ70LfqOZLtBPBOoVg4c6uOnZ2t0/tInUdpHMOmbTvVjaI
+         Vjvd9yBJv+VlVQghaLfPk5OX2gv8gySfFeB9EfaPqgUB7Rv2tGhYBa8unI4U7D2D3sqe
+         I8GfkolWWf32L6zlgAVfncXeW/k6B7001ZyTJi8GZBiEYkgDjBoq5DWL8mA3SeNvp7jG
+         RxNRSEVgAOTt9x3iLI1gXL434cWQDvty0Hcumq61d4ke+kEzhhiuhrN5bBIH5DdufpFt
+         2YALJWXOEYO2gp2KWc1fmYmw55De5H1kRYvJTbz0Pdh8uItsYzwacD3ahbGeUTZ+A8cy
+         vrvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3qOlsloJgxQkZEy55JDorTCm1I5tHRxkFTRlp6EieeA=;
+        b=Iq3YjVZYWOh4qbRx4GDFb7WrXugDiKV0jm9DQNyFNNKEtdllaYs8heAXm2LcNV79Ke
+         naGmOx1Hm7zMKFV6YPITE442qAoV4NpU2CrSV0VqBNh4v33yZtmSievfiycHzR9S0RmS
+         i1vDsl/5r0EFEftg1w5UmvYdPpBIeNzLxx9X4yFZsiAHXO0TmwMofprau9HbcfVWFtZo
+         XA+VV/k6DW7jRYqTsl8J7oE7fTbcwyu3bEA7Rj2qilgMl7QYKXvrQdDNLSv+JPowJxxY
+         Zx1J49xTmzDSZaPf4s9UJEskccvkbdNkdwbdJn92J8WfNs6H9sFYLO2JrBoCx9/mreHp
+         B0tw==
+X-Gm-Message-State: AOAM533Lbos0+HPtLXjRpupK7/Ak7mfnaGv0DiXS9Nou57JxAb4Jt5yx
+        ajd2LSolhJ41ZFdu4hsQxkRcBg==
+X-Google-Smtp-Source: ABdhPJxmZfF+CnAcve/pdIigoVV18lefAg/7CfvlDUYpdYDSaWxYPJidXa03T2kXUUGN1JSSBlGqDw==
+X-Received: by 2002:a63:561f:: with SMTP id k31mr21413333pgb.227.1607411678623;
+        Mon, 07 Dec 2020 23:14:38 -0800 (PST)
+Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
+        by smtp.gmail.com with ESMTPSA id gp17sm1801318pjb.0.2020.12.07.23.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Dec 2020 23:14:38 -0800 (PST)
+From:   Zong Li <zong.li@sifive.com>
+To:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
+        schwab@linux-m68k.org, pragnesh.patel@openfive.com,
+        aou@eecs.berkeley.edu, mturquette@baylibre.com,
+        yash.shah@sifive.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Zong Li <zong.li@sifive.com>
+Subject: [PATCH v6 0/5] clk: add driver for the SiFive FU740
+Date:   Tue,  8 Dec 2020 15:14:27 +0800
+Message-Id: <20201208071432.55583-1-zong.li@sifive.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for global clock controller on SM8350 SoCs.
+Add a driver for the SiFive FU740 PRCI IP block, which handles more
+clocks than FU540. These patches also refactor the original
+implementation by spliting the dependent-code of fu540 and fu740
+respectively.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- .../bindings/clock/qcom,gcc-sm8350.yaml       |  68 +++++
- include/dt-bindings/clock/qcom,gcc-sm8350.h   | 261 ++++++++++++++++++
- 2 files changed, 329 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
+We also add a separate patch for DT binding documentation of FU740 PRCI:
+https://patchwork.kernel.org/project/linux-riscv/patch/20201126030043.67390-1-zong.li@sifive.com/
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-new file mode 100644
-index 000000000000..2b0939f81162
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-sm8350.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Global Clock & Reset Controller Binding for SM8350
-+
-+maintainers:
-+  - Vinod Koul <vkoul@kernel.org>
-+
-+description: |
-+  Qualcomm global clock control module which supports the clocks, resets and
-+  power domains on SM8350.
-+
-+  See also:
-+  - dt-bindings/clock/qcom,gcc-sm8350.h
-+
-+properties:
-+  compatible:
-+    const: qcom,gcc-sm8350
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Sleep clock source
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: sleep_clk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - reg
-+  - '#clock-cells'
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    clock-controller@100000 {
-+      compatible = "qcom,gcc-sm8350";
-+      reg = <0x00100000 0x1f0000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&sleep_clk>;
-+      clock-names = "bi_tcxo", "sleep_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-+
-+...
-diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-new file mode 100644
-index 000000000000..2462f64f6e75
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-@@ -0,0 +1,261 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2020, Linaro Limited
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-+#define _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-+
-+/* GCC HW clocks */
-+#define CORE_BI_PLL_TEST_SE					0
-+#define PCIE_0_PIPE_CLK						1
-+#define PCIE_1_PIPE_CLK						2
-+#define UFS_CARD_RX_SYMBOL_0_CLK				3
-+#define UFS_CARD_RX_SYMBOL_1_CLK				4
-+#define UFS_CARD_TX_SYMBOL_0_CLK				5
-+#define UFS_PHY_RX_SYMBOL_0_CLK					6
-+#define UFS_PHY_RX_SYMBOL_1_CLK					7
-+#define UFS_PHY_TX_SYMBOL_0_CLK					8
-+#define USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK			9
-+#define USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK			10
-+
-+/* GCC clocks */
-+#define GCC_AGGRE_NOC_PCIE_0_AXI_CLK				11
-+#define GCC_AGGRE_NOC_PCIE_1_AXI_CLK				12
-+#define GCC_AGGRE_NOC_PCIE_TBU_CLK				13
-+#define GCC_AGGRE_UFS_CARD_AXI_CLK				14
-+#define GCC_AGGRE_UFS_CARD_AXI_HW_CTL_CLK			15
-+#define GCC_AGGRE_UFS_PHY_AXI_CLK				16
-+#define GCC_AGGRE_UFS_PHY_AXI_HW_CTL_CLK			17
-+#define GCC_AGGRE_USB3_PRIM_AXI_CLK				18
-+#define GCC_AGGRE_USB3_SEC_AXI_CLK				19
-+#define GCC_BOOT_ROM_AHB_CLK					20
-+#define GCC_CAMERA_AHB_CLK					21
-+#define GCC_CAMERA_HF_AXI_CLK					22
-+#define GCC_CAMERA_SF_AXI_CLK					23
-+#define GCC_CAMERA_XO_CLK					24
-+#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				25
-+#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				26
-+#define GCC_DDRSS_GPU_AXI_CLK					27
-+#define GCC_DDRSS_PCIE_SF_TBU_CLK				28
-+#define GCC_DISP_AHB_CLK					29
-+#define GCC_DISP_HF_AXI_CLK					30
-+#define GCC_DISP_SF_AXI_CLK					31
-+#define GCC_DISP_XO_CLK						32
-+#define GCC_GP1_CLK						33
-+#define GCC_GP1_CLK_SRC						34
-+#define GCC_GP2_CLK						35
-+#define GCC_GP2_CLK_SRC						36
-+#define GCC_GP3_CLK						37
-+#define GCC_GP3_CLK_SRC						38
-+#define GCC_GPLL0						39
-+#define GCC_GPLL0_OUT_EVEN					40
-+#define GCC_GPLL4						41
-+#define GCC_GPLL9						42
-+#define GCC_GPU_CFG_AHB_CLK					43
-+#define GCC_GPU_GPLL0_CLK_SRC					44
-+#define GCC_GPU_GPLL0_DIV_CLK_SRC				45
-+#define GCC_GPU_IREF_EN						46
-+#define GCC_GPU_MEMNOC_GFX_CLK					47
-+#define GCC_GPU_SNOC_DVM_GFX_CLK				48
-+#define GCC_PCIE0_PHY_RCHNG_CLK					49
-+#define GCC_PCIE1_PHY_RCHNG_CLK					50
-+#define GCC_PCIE_0_AUX_CLK					51
-+#define GCC_PCIE_0_AUX_CLK_SRC					52
-+#define GCC_PCIE_0_CFG_AHB_CLK					53
-+#define GCC_PCIE_0_CLKREF_EN					54
-+#define GCC_PCIE_0_MSTR_AXI_CLK					55
-+#define GCC_PCIE_0_PHY_RCHNG_CLK_SRC				56
-+#define GCC_PCIE_0_PIPE_CLK					57
-+#define GCC_PCIE_0_PIPE_CLK_SRC					58
-+#define GCC_PCIE_0_SLV_AXI_CLK					59
-+#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				60
-+#define GCC_PCIE_1_AUX_CLK					61
-+#define GCC_PCIE_1_AUX_CLK_SRC					62
-+#define GCC_PCIE_1_CFG_AHB_CLK					63
-+#define GCC_PCIE_1_CLKREF_EN					64
-+#define GCC_PCIE_1_MSTR_AXI_CLK					65
-+#define GCC_PCIE_1_PHY_RCHNG_CLK_SRC				66
-+#define GCC_PCIE_1_PIPE_CLK					67
-+#define GCC_PCIE_1_PIPE_CLK_SRC					68
-+#define GCC_PCIE_1_SLV_AXI_CLK					69
-+#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				70
-+#define GCC_PDM2_CLK						71
-+#define GCC_PDM2_CLK_SRC					72
-+#define GCC_PDM_AHB_CLK						73
-+#define GCC_PDM_XO4_CLK						74
-+#define GCC_QMIP_CAMERA_NRT_AHB_CLK				75
-+#define GCC_QMIP_CAMERA_RT_AHB_CLK				76
-+#define GCC_QMIP_DISP_AHB_CLK					77
-+#define GCC_QMIP_VIDEO_CVP_AHB_CLK				78
-+#define GCC_QMIP_VIDEO_VCODEC_AHB_CLK				79
-+#define GCC_QUPV3_WRAP0_CORE_2X_CLK				80
-+#define GCC_QUPV3_WRAP0_CORE_CLK				81
-+#define GCC_QUPV3_WRAP0_S0_CLK					82
-+#define GCC_QUPV3_WRAP0_S0_CLK_SRC				83
-+#define GCC_QUPV3_WRAP0_S1_CLK					84
-+#define GCC_QUPV3_WRAP0_S1_CLK_SRC				85
-+#define GCC_QUPV3_WRAP0_S2_CLK					86
-+#define GCC_QUPV3_WRAP0_S2_CLK_SRC				87
-+#define GCC_QUPV3_WRAP0_S3_CLK					88
-+#define GCC_QUPV3_WRAP0_S3_CLK_SRC				89
-+#define GCC_QUPV3_WRAP0_S4_CLK					90
-+#define GCC_QUPV3_WRAP0_S4_CLK_SRC				91
-+#define GCC_QUPV3_WRAP0_S5_CLK					92
-+#define GCC_QUPV3_WRAP0_S5_CLK_SRC				93
-+#define GCC_QUPV3_WRAP0_S6_CLK					94
-+#define GCC_QUPV3_WRAP0_S6_CLK_SRC				95
-+#define GCC_QUPV3_WRAP0_S7_CLK					96
-+#define GCC_QUPV3_WRAP0_S7_CLK_SRC				97
-+#define GCC_QUPV3_WRAP1_CORE_2X_CLK				98
-+#define GCC_QUPV3_WRAP1_CORE_CLK				99
-+#define GCC_QUPV3_WRAP1_S0_CLK					100
-+#define GCC_QUPV3_WRAP1_S0_CLK_SRC				101
-+#define GCC_QUPV3_WRAP1_S1_CLK					102
-+#define GCC_QUPV3_WRAP1_S1_CLK_SRC				103
-+#define GCC_QUPV3_WRAP1_S2_CLK					104
-+#define GCC_QUPV3_WRAP1_S2_CLK_SRC				105
-+#define GCC_QUPV3_WRAP1_S3_CLK					106
-+#define GCC_QUPV3_WRAP1_S3_CLK_SRC				107
-+#define GCC_QUPV3_WRAP1_S4_CLK					108
-+#define GCC_QUPV3_WRAP1_S4_CLK_SRC				109
-+#define GCC_QUPV3_WRAP1_S5_CLK					110
-+#define GCC_QUPV3_WRAP1_S5_CLK_SRC				111
-+#define GCC_QUPV3_WRAP2_CORE_2X_CLK				112
-+#define GCC_QUPV3_WRAP2_CORE_CLK				113
-+#define GCC_QUPV3_WRAP2_S0_CLK					114
-+#define GCC_QUPV3_WRAP2_S0_CLK_SRC				115
-+#define GCC_QUPV3_WRAP2_S1_CLK					116
-+#define GCC_QUPV3_WRAP2_S1_CLK_SRC				117
-+#define GCC_QUPV3_WRAP2_S2_CLK					118
-+#define GCC_QUPV3_WRAP2_S2_CLK_SRC				119
-+#define GCC_QUPV3_WRAP2_S3_CLK					120
-+#define GCC_QUPV3_WRAP2_S3_CLK_SRC				121
-+#define GCC_QUPV3_WRAP2_S4_CLK					122
-+#define GCC_QUPV3_WRAP2_S4_CLK_SRC				123
-+#define GCC_QUPV3_WRAP2_S5_CLK					124
-+#define GCC_QUPV3_WRAP2_S5_CLK_SRC				125
-+#define GCC_QUPV3_WRAP_0_M_AHB_CLK				126
-+#define GCC_QUPV3_WRAP_0_S_AHB_CLK				127
-+#define GCC_QUPV3_WRAP_1_M_AHB_CLK				128
-+#define GCC_QUPV3_WRAP_1_S_AHB_CLK				129
-+#define GCC_QUPV3_WRAP_2_M_AHB_CLK				130
-+#define GCC_QUPV3_WRAP_2_S_AHB_CLK				131
-+#define GCC_SDCC2_AHB_CLK					132
-+#define GCC_SDCC2_APPS_CLK					133
-+#define GCC_SDCC2_APPS_CLK_SRC					134
-+#define GCC_SDCC4_AHB_CLK					135
-+#define GCC_SDCC4_APPS_CLK					136
-+#define GCC_SDCC4_APPS_CLK_SRC					137
-+#define GCC_THROTTLE_PCIE_AHB_CLK				138
-+#define GCC_UFS_1_CLKREF_EN					139
-+#define GCC_UFS_CARD_AHB_CLK					140
-+#define GCC_UFS_CARD_AXI_CLK					141
-+#define GCC_UFS_CARD_AXI_CLK_SRC				142
-+#define GCC_UFS_CARD_AXI_HW_CTL_CLK				143
-+#define GCC_UFS_CARD_ICE_CORE_CLK				144
-+#define GCC_UFS_CARD_ICE_CORE_CLK_SRC				145
-+#define GCC_UFS_CARD_ICE_CORE_HW_CTL_CLK			146
-+#define GCC_UFS_CARD_PHY_AUX_CLK				147
-+#define GCC_UFS_CARD_PHY_AUX_CLK_SRC				148
-+#define GCC_UFS_CARD_PHY_AUX_HW_CTL_CLK				149
-+#define GCC_UFS_CARD_RX_SYMBOL_0_CLK				150
-+#define GCC_UFS_CARD_RX_SYMBOL_0_CLK_SRC			151
-+#define GCC_UFS_CARD_RX_SYMBOL_1_CLK				152
-+#define GCC_UFS_CARD_RX_SYMBOL_1_CLK_SRC			153
-+#define GCC_UFS_CARD_TX_SYMBOL_0_CLK				154
-+#define GCC_UFS_CARD_TX_SYMBOL_0_CLK_SRC			155
-+#define GCC_UFS_CARD_UNIPRO_CORE_CLK				156
-+#define GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC			157
-+#define GCC_UFS_CARD_UNIPRO_CORE_HW_CTL_CLK			158
-+#define GCC_UFS_PHY_AHB_CLK					159
-+#define GCC_UFS_PHY_AXI_CLK					160
-+#define GCC_UFS_PHY_AXI_CLK_SRC					161
-+#define GCC_UFS_PHY_AXI_HW_CTL_CLK				162
-+#define GCC_UFS_PHY_ICE_CORE_CLK				163
-+#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				164
-+#define GCC_UFS_PHY_ICE_CORE_HW_CTL_CLK				165
-+#define GCC_UFS_PHY_PHY_AUX_CLK					166
-+#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				167
-+#define GCC_UFS_PHY_PHY_AUX_HW_CTL_CLK				168
-+#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				169
-+#define GCC_UFS_PHY_RX_SYMBOL_0_CLK_SRC				170
-+#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				171
-+#define GCC_UFS_PHY_RX_SYMBOL_1_CLK_SRC				172
-+#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				173
-+#define GCC_UFS_PHY_TX_SYMBOL_0_CLK_SRC				174
-+#define GCC_UFS_PHY_UNIPRO_CORE_CLK				175
-+#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				176
-+#define GCC_UFS_PHY_UNIPRO_CORE_HW_CTL_CLK			177
-+#define GCC_USB30_PRIM_MASTER_CLK				178
-+#define GCC_USB30_PRIM_MASTER_CLK__FORCE_MEM_CORE_ON		179
-+#define GCC_USB30_PRIM_MASTER_CLK_SRC				180
-+#define GCC_USB30_PRIM_MOCK_UTMI_CLK				181
-+#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			182
-+#define GCC_USB30_PRIM_MOCK_UTMI_POSTDIV_CLK_SRC		183
-+#define GCC_USB30_PRIM_SLEEP_CLK				184
-+#define GCC_USB30_SEC_MASTER_CLK				185
-+#define GCC_USB30_SEC_MASTER_CLK__FORCE_MEM_CORE_ON		186
-+#define GCC_USB30_SEC_MASTER_CLK_SRC				187
-+#define GCC_USB30_SEC_MOCK_UTMI_CLK				188
-+#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				189
-+#define GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC			190
-+#define GCC_USB30_SEC_SLEEP_CLK					191
-+#define GCC_USB3_PRIM_PHY_AUX_CLK				192
-+#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				193
-+#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				194
-+#define GCC_USB3_PRIM_PHY_PIPE_CLK				195
-+#define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC				196
-+#define GCC_USB3_SEC_CLKREF_EN					197
-+#define GCC_USB3_SEC_PHY_AUX_CLK				198
-+#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				199
-+#define GCC_USB3_SEC_PHY_COM_AUX_CLK				200
-+#define GCC_USB3_SEC_PHY_PIPE_CLK				201
-+#define GCC_USB3_SEC_PHY_PIPE_CLK_SRC				202
-+#define GCC_VIDEO_AHB_CLK					203
-+#define GCC_VIDEO_AXI0_CLK					204
-+#define GCC_VIDEO_AXI1_CLK					205
-+#define GCC_VIDEO_XO_CLK					206
-+
-+/* GCC resets */
-+#define GCC_CAMERA_BCR						0
-+#define GCC_DISPLAY_BCR						1
-+#define GCC_GPU_BCR						2
-+#define GCC_MMSS_BCR						3
-+#define GCC_PCIE_0_BCR						4
-+#define GCC_PCIE_0_LINK_DOWN_BCR				5
-+#define GCC_PCIE_0_NOCSR_COM_PHY_BCR				6
-+#define GCC_PCIE_0_PHY_BCR					7
-+#define GCC_PCIE_0_PHY_NOCSR_COM_PHY_BCR			8
-+#define GCC_PCIE_1_BCR						9
-+#define GCC_PCIE_1_LINK_DOWN_BCR				10
-+#define GCC_PCIE_1_NOCSR_COM_PHY_BCR				11
-+#define GCC_PCIE_1_PHY_BCR					12
-+#define GCC_PCIE_1_PHY_NOCSR_COM_PHY_BCR			13
-+#define GCC_PCIE_PHY_CFG_AHB_BCR				14
-+#define GCC_PCIE_PHY_COM_BCR					15
-+#define GCC_PDM_BCR						16
-+#define GCC_QUPV3_WRAPPER_0_BCR					17
-+#define GCC_QUPV3_WRAPPER_1_BCR					18
-+#define GCC_QUPV3_WRAPPER_2_BCR					19
-+#define GCC_QUSB2PHY_PRIM_BCR					20
-+#define GCC_QUSB2PHY_SEC_BCR					21
-+#define GCC_SDCC2_BCR						22
-+#define GCC_SDCC4_BCR						23
-+#define GCC_UFS_CARD_BCR					24
-+#define GCC_UFS_PHY_BCR						25
-+#define GCC_USB30_PRIM_BCR					26
-+#define GCC_USB30_SEC_BCR					27
-+#define GCC_USB3_DP_PHY_PRIM_BCR				28
-+#define GCC_USB3_DP_PHY_SEC_BCR					29
-+#define GCC_USB3_PHY_PRIM_BCR					30
-+#define GCC_USB3_PHY_SEC_BCR					31
-+#define GCC_USB3PHY_PHY_PRIM_BCR				32
-+#define GCC_USB3PHY_PHY_SEC_BCR					33
-+#define GCC_USB_PHY_CFG_AHB2PHY_BCR				34
-+#define GCC_VIDEO_AXI0_CLK_ARES					35
-+#define GCC_VIDEO_AXI1_CLK_ARES					36
-+#define GCC_VIDEO_BCR						37
-+
-+#endif
+Changed in v6:
+ - Modify the patch "Add clock enable and disable ops"
+   by Pragnesh. The changes as follows:
+   - Remove spin lock in enable and disable functions
+   - Call enable_bypass() before PLL output disable
+
+Changed in v5:
+ - Fix copyright format
+ - Add a link of documentation in commit message
+ - Modify build dependency for sifive-prci.c
+ - Add enable and disable functions by Pragnesh Patel
+
+Changed in v4:
+ - Fix the wrong enable bit field shift for FU540 and FU740.
+
+Changed in v3:
+ - Fix the wrong enable bit field shift for FU740.
+
+Changed in v2:
+ - Remove the macro definition for __prci_clock_array.
+ - Indicate the functional changes in commit message.
+ - Using option -M and -C to create patches.
+ - Rebase code to kernel v5.10-rc3.
+
+Pragnesh Patel (1):
+  clk: sifive: Add clock enable and disable ops
+
+Zong Li (4):
+  clk: sifive: Extract prci core to common base
+  clk: sifive: Use common name for prci configuration
+  clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
+  clk: sifive: Fix the wrong bit field shift
+
+ arch/riscv/Kconfig.socs                       |   2 +-
+ drivers/clk/sifive/Kconfig                    |   8 +-
+ drivers/clk/sifive/Makefile                   |   5 +-
+ drivers/clk/sifive/fu540-prci.c               | 585 +-----------------
+ drivers/clk/sifive/fu540-prci.h               |  21 +
+ drivers/clk/sifive/fu740-prci.c               | 120 ++++
+ drivers/clk/sifive/fu740-prci.h               |  21 +
+ drivers/clk/sifive/sifive-prci.c              | 571 +++++++++++++++++
+ drivers/clk/sifive/sifive-prci.h              | 299 +++++++++
+ include/dt-bindings/clock/sifive-fu740-prci.h |  23 +
+ 10 files changed, 1089 insertions(+), 566 deletions(-)
+ create mode 100644 drivers/clk/sifive/fu540-prci.h
+ create mode 100644 drivers/clk/sifive/fu740-prci.c
+ create mode 100644 drivers/clk/sifive/fu740-prci.h
+ create mode 100644 drivers/clk/sifive/sifive-prci.c
+ create mode 100644 drivers/clk/sifive/sifive-prci.h
+ create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
+
 -- 
-2.26.2
+2.29.2
 
