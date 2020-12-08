@@ -2,36 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A87FAC2BB40
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805B0C2BBD4
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF9123A6C
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DBD223A6C
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 06:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgLHGsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Dec 2020 01:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57496 "EHLO mail.kernel.org"
+        id S1727023AbgLHGsP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Dec 2020 01:48:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbgLHGsE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Dec 2020 01:48:04 -0500
+        id S1726069AbgLHGsO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Dec 2020 01:48:14 -0500
 From:   Vinod Koul <vkoul@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Vivek Aknurwar <viveka@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: qcom: rpmh: add support for SM8350 rpmh clocks
-Date:   Tue,  8 Dec 2020 12:16:59 +0530
-Message-Id: <20201208064702.3654324-3-vkoul@kernel.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeevan Shriram <jshriram@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v2 4/5] clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE PLL
+Date:   Tue,  8 Dec 2020 12:17:01 +0530
+Message-Id: <20201208064702.3654324-5-vkoul@kernel.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201208064702.3654324-1-vkoul@kernel.org>
 References: <20201208064702.3654324-1-vkoul@kernel.org>
@@ -41,85 +43,273 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the RPMH clocks present in SM8350 SoC
+From: Vivek Aknurwar <viveka@codeaurora.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Lucid 5LPE is a slightly different Lucid PLL with different offsets and
+porgramming sequence so add support for these
+
+Signed-off-by: Vivek Aknurwar <viveka@codeaurora.org>
+Signed-off-by: Jeevan Shriram <jshriram@codeaurora.org>
+[vkoul: rebase and tidy up for upstream]
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/clk/qcom/clk-rpmh.c           | 34 +++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h |  8 +++++++
- 2 files changed, 42 insertions(+)
+ drivers/clk/qcom/clk-alpha-pll.c | 223 +++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |   4 +
+ 2 files changed, 227 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index e2c669b08aff..64cab4403a17 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -432,6 +432,39 @@ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
- 	.num_clks = ARRAY_SIZE(sm8250_rpmh_clocks),
- };
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 564431130a76..6a399663d564 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -146,6 +146,12 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ /* LUCID PLL specific settings and offsets */
+ #define LUCID_PCAL_DONE		BIT(27)
  
-+DEFINE_CLK_RPMH_VRM(sm8350, div_clk1, div_clk1_ao, "divclka1", 2);
-+DEFINE_CLK_RPMH_VRM(sm8350, rf_clk4, rf_clk4_ao, "rfclka4", 1);
-+DEFINE_CLK_RPMH_VRM(sm8350, rf_clk5, rf_clk5_ao, "rfclka5", 1);
-+DEFINE_CLK_RPMH_BCM(sm8350, pka, "PKA0");
-+DEFINE_CLK_RPMH_BCM(sm8350, hwkm, "HK0");
++/* LUCID 5LPE PLL specific settings and offsets */
++#define LUCID_5LPE_PCAL_DONE		BIT(11)
++#define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
++#define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
++#define LUCID_5LPE_ALPHA_PLL_ACK_LATCH	BIT(13)
 +
-+static struct clk_hw *sm8350_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_DIV_CLK1]		= &sm8350_div_clk1.hw,
-+	[RPMH_DIV_CLK1_A]	= &sm8350_div_clk1_ao.hw,
-+	[RPMH_LN_BB_CLK1]	= &sm8250_ln_bb_clk1.hw,
-+	[RPMH_LN_BB_CLK1_A]	= &sm8250_ln_bb_clk1_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-+	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
-+	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-+	[RPMH_RF_CLK4]		= &sm8350_rf_clk4.hw,
-+	[RPMH_RF_CLK4_A]	= &sm8350_rf_clk4_ao.hw,
-+	[RPMH_RF_CLK5]		= &sm8350_rf_clk5.hw,
-+	[RPMH_RF_CLK5_A]	= &sm8350_rf_clk5_ao.hw,
-+	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-+	[RPMH_PKA_CLK]		= &sm8350_pka.hw,
-+	[RPMH_HWKM_CLK]		= &sm8350_hwkm.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
-+	.clks = sm8350_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
-+};
-+
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -519,6 +552,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
- 	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
- 	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-+	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
- 	{ }
+ #define pll_alpha_width(p)					\
+ 		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+ 				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+@@ -1561,3 +1567,220 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
+ 	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
  };
- MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
-index 2e6c54e65455..6dbe5d398bf0 100644
---- a/include/dt-bindings/clock/qcom,rpmh.h
-+++ b/include/dt-bindings/clock/qcom,rpmh.h
-@@ -21,5 +21,13 @@
- #define RPMH_IPA_CLK				12
- #define RPMH_LN_BB_CLK1				13
- #define RPMH_LN_BB_CLK1_A			14
-+#define RPMH_DIV_CLK1				15
-+#define RPMH_DIV_CLK1_A				16
-+#define RPMH_RF_CLK4				17
-+#define RPMH_RF_CLK4_A				18
-+#define RPMH_RF_CLK5				19
-+#define RPMH_RF_CLK5_A				20
-+#define RPMH_PKA_CLK				21
-+#define RPMH_HWKM_CLK				22
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_ops);
++
++static int alpha_pll_lucid_5lpe_enable(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
++	if (ret)
++		return ret;
++
++	/* If in FSM mode, just vote for it */
++	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
++		ret = clk_enable_regmap(hw);
++		if (ret)
++			return ret;
++		return wait_for_pll_enable_lock(pll);
++	}
++
++	/* Check if PLL is already enabled */
++	ret = trion_pll_is_enabled(pll, pll->clkr.regmap);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
++	if (ret)
++		return ret;
++
++	/* Set operation mode to RUN */
++	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_RUN);
++
++	ret = wait_for_pll_enable_lock(pll);
++	if (ret)
++		return ret;
++
++	/* Enable the PLL outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, PLL_OUT_MASK);
++	if (ret)
++		return ret;
++
++	/* Enable the global PLL outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
++	if (ret)
++		return ret;
++
++	/* Ensure that the write above goes through before returning. */
++	mb();
++	return ret;
++}
++
++static void alpha_pll_lucid_5lpe_disable(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
++	if (ret)
++		return;
++
++	/* If in FSM mode, just unvote it */
++	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
++		clk_disable_regmap(hw);
++		return;
++	}
++
++	/* Disable the global PLL output */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
++	if (ret)
++		return;
++
++	/* Disable the PLL outputs */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, 0);
++	if (ret)
++		return;
++
++	/* Place the PLL mode in STANDBY */
++	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_STANDBY);
++}
++
++/*
++ * The Lucid 5LPE PLL requires a power-on self-calibration which happens
++ * when the PLL comes out of reset. Calibrate in case it is not completed.
++ */
++static int alpha_pll_lucid_5lpe_prepare(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	struct clk_hw *p;
++	u32 regval;
++	int ret;
++
++	/* Return early if calibration is not needed. */
++	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &regval);
++	if (regval & LUCID_5LPE_PCAL_DONE)
++		return 0;
++
++	p = clk_hw_get_parent(hw);
++	if (!p)
++		return -EINVAL;
++
++	ret = alpha_pll_lucid_5lpe_enable(hw);
++	if (ret)
++		return ret;
++
++	alpha_pll_lucid_5lpe_disable(hw);
++
++	return 0;
++}
++
++static int alpha_pll_lucid_5lpe_set_rate(struct clk_hw *hw, unsigned long rate,
++					 unsigned long prate)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	unsigned long rrate;
++	u32 regval, l;
++	u64 a;
++	int ret;
++
++	rrate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_16BIT_WIDTH);
++
++	/*
++	 * Due to a limited number of bits for fractional rate programming, the
++	 * rounded up rate could be marginally higher than the requested rate.
++	 */
++	if (rrate > (rate + PLL_RATE_MARGIN) || rrate < rate) {
++		pr_err("Call set rate on the PLL with rounded rates!\n");
++		return -EINVAL;
++	}
++
++	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
++	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
++
++	/* Latch the PLL input */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
++				 LUCID_5LPE_PLL_LATCH_INPUT, LUCID_5LPE_PLL_LATCH_INPUT);
++	if (ret)
++		return ret;
++
++	/* Wait for 2 reference cycles before checking the ACK bit. */
++	udelay(1);
++	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &regval);
++	if (!(regval & LUCID_5LPE_ALPHA_PLL_ACK_LATCH)) {
++		pr_err("Lucid 5LPE PLL latch failed. Output may be unstable!\n");
++		return -EINVAL;
++	}
++
++	/* Return the latch input to 0 */
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), LUCID_5LPE_PLL_LATCH_INPUT, 0);
++	if (ret)
++		return ret;
++
++	if (clk_hw_is_enabled(hw)) {
++		ret = wait_for_pll_enable_lock(pll);
++		if (ret)
++			return ret;
++	}
++
++	/* Wait for PLL output to stabilize */
++	udelay(100);
++	return 0;
++}
++
++static int clk_lucid_5lpe_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
++					       unsigned long parent_rate)
++{
++	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
++	int i, val = 0, div, ret;
++
++	/*
++	 * If the PLL is in FSM mode, then treat set_rate callback as a
++	 * no-operation.
++	 */
++	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
++	if (ret)
++		return ret;
++
++	if (val & LUCID_5LPE_ENABLE_VOTE_RUN)
++		return 0;
++
++	if (!pll->post_div_table) {
++		pr_err("Missing the post_div_table for the PLL\n");
++		return -EINVAL;
++	}
++
++	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++	for (i = 0; i < pll->num_post_div; i++) {
++		if (pll->post_div_table[i].div == div) {
++			val = pll->post_div_table[i].val;
++			break;
++		}
++	}
++
++	return regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++				(BIT(pll->width) - 1) << pll->post_div_shift,
++				val << pll->post_div_shift);
++}
++
++const struct clk_ops clk_alpha_pll_lucid_5lpe_ops = {
++	.prepare = alpha_pll_lucid_5lpe_prepare,
++	.enable = alpha_pll_lucid_5lpe_enable,
++	.disable = alpha_pll_lucid_5lpe_disable,
++	.set_rate = alpha_pll_lucid_5lpe_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_5lpe_ops);
++
++const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
++	.enable = alpha_pll_lucid_5lpe_enable,
++	.disable = alpha_pll_lucid_5lpe_disable,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_5lpe_ops);
++
++const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
++	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
++	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
++	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index d3201b87c0cd..d983b1aab8c8 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -142,6 +142,10 @@ extern const struct clk_ops clk_alpha_pll_lucid_ops;
+ #define clk_alpha_pll_fixed_lucid_ops clk_alpha_pll_fixed_trion_ops
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_ops;
  
- #endif
++extern const struct clk_ops clk_alpha_pll_lucid_5lpe_ops;
++extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
++extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
++
+ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config);
+ void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
 -- 
 2.26.2
 
