@@ -2,132 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC30C4361B
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 12:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F07C4361B
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 12:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C785122CF6
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 12:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EC1C23A84
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Dec 2020 12:43:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbgLHMhh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Dec 2020 07:37:37 -0500
-Received: from mail-eopbgr770057.outbound.protection.outlook.com ([40.107.77.57]:18593
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1729283AbgLHMnL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Dec 2020 07:43:11 -0500
+Received: from mail-dm6nam10on2049.outbound.protection.outlook.com ([40.107.93.49]:43241
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729432AbgLHMhh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Dec 2020 07:37:37 -0500
+        id S1729187AbgLHMnL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Dec 2020 07:43:11 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M4s68nMTEoqmUhEK/TgvG+PyVFt7ilYxS1p8UaORPWQPRwhNjRcudNTXK7ryQBnJCTuhT2njhoVCCahQrjaPPWu+N37ebvQ7vYZb9GQwPsOgc1v8EV8667Fx01iYF55sFHWe2ptqVpPWNQyrIBL6eTMR7mMiMMa+1lIQmGXPwmu7LLEjDB1TbkwWJjnQ1NjpxqoqYWWvtGu7uu633FbJwyeC0P2JjyCeQN5DaquhzYXzogsFokzdCS0AkrEcDSDpfsStzVGRxFFG+26B0kMwQoDUrjoePevZySu9tdXX/PbY4Tv+4RJQ06NX69YalcdJ6Q5QdAbLVWR7WXXTYNg0Mw==
+ b=KEydEG3MXyxVfp4DSdfGbYNZU0ViFmb7WnjxnoLc1sJuqo51sxH2l1S3tai2w/cPXk0o54E8UKewPmZfMHzWCIuOUq2tI3LHRZaiesebezfpKo7nsLXLE901sxLvEA3gPdZtz5yehgnqgv0OQbjRzWSwEYex1CHMKRSmpsTh9kzqlQgEU4g2ItsBInUV/KzjSBPXqFlR9vFh/zmjGKrgpJwB7DOtdo9wdykqCBGOTx/EJ1Ih6KBpqw/nLKDkjjryuQWLDFuzL/1Leinjz2RXE9TAHq51pg5wzvA4Oea4npDUjlcAqMi3br3igcpLWrBtfr6BySo7TVHxpDa5N6IWqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3gtcyCoTiChIytfGwyjWRc96xljB+mrO+FyvRHM+a7c=;
- b=ktPmDudsT0slQhqNyEbmLD1aSABtr3d2e8K3Fca9J8k6BB5YYVozJurUcx3JrkfC9ZDhKbz5LQvoLyDbWxYffrylPmcJ0oPOQbbpv9JttqTu27mi9OVebpLNtb5eVZDJsz0TD9N5QedI8kwqQwH97F4p+zBO2at4QbWsc31b8Oz6rUow7F1qMqMJ2ZzMFer5CfCYcrYFzx/VmtR+l7HpDXlws3MVXjdYpXGP7AWYDSHoUBiqJ5DQzm2jSfhQCnOjhwIelNNghuI35KZxQeYrIFjmD5O+elObCj71p53DvpF00WKICDwaxjabVTlCqHus0FD58SJZv483try4d9AyZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+ bh=6ST1iTD9FPGueL+LIJKIOXLLBrvv1chsnqQf6FqgsmQ=;
+ b=J2LRW+rdWY5HJQBoXnzMYuYtwDEl7Jpm7zpUapVRLKkBO2kFA+X/aR6GI5oKB3N+gxOwf8/DSJbqKmKWdZUlAO/V5Byu7Rd1XYDDNVORADMz6tgI0T/BqbifcplHN1ja1VrppQWAQM9IIHGN5y8Fcn8pKp9b4vLkX98/9vpXmriO24HqwjrPM79TgItXPmIoc/eJ4uP6JaD7yZYP3an3C65zLsfySeBINk8UVH72xC2law7lY3YozWTbmoTVoffmGIp4unzEYIigVJK52TdHbP5lKAYmqhrEW1AjrDe6otNru6f2HnHKwXKrtuHcqYulPCM1JDUNkNfxjeOk3Ze/8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3gtcyCoTiChIytfGwyjWRc96xljB+mrO+FyvRHM+a7c=;
- b=T+yP9qRartVWdpmbc5eH2wbnVnq+0SDHYGu5J25DUkx9SoCRjPCiQEy1/MRFSkPY32YcqJU8xK98j8EC7FAc1VxZwsEL8Pdleoq6diK2EK8AXMlrVhJSY84j9wz1vI6RRIrtpvmsmuGIFkV+0OV57u4wOdn5knwMuOIXEbUJ6y4=
-Authentication-Results: baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=none action=none header.from=windriver.com;
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com (2603:10b6:910:7a::30)
- by CY4PR1101MB2150.namprd11.prod.outlook.com (2603:10b6:910:18::11) with
+ bh=6ST1iTD9FPGueL+LIJKIOXLLBrvv1chsnqQf6FqgsmQ=;
+ b=TOc6+jRRawrjdrQaMGoga8D+opd09MNnlD1bv0Vd4y1ONseC4YpVRKZMRr32XdMmhK5jd+LnXiGbAf5MQpCb71e1WW44V4iLkBCwABNpQaJkeoR4u7F2cmiyEyColtYInxVCtIx8RLXRjofHwWgXxYLxHRzpHCPclv+EwktER+A=
+Received: from CY4PR18CA0037.namprd18.prod.outlook.com (2603:10b6:903:9a::23)
+ by CY4PR0201MB3572.namprd02.prod.outlook.com (2603:10b6:910:8c::32) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.21; Tue, 8 Dec
- 2020 12:36:24 +0000
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::501b:362c:9295:dad0]) by CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::501b:362c:9295:dad0%5]) with mapi id 15.20.3632.021; Tue, 8 Dec 2020
- 12:36:24 +0000
-From:   quanyang.wang@windriver.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com
-Cc:     quanyang.wang@windriver.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: zynqmp: enable COMMON_CLK_ZYNQMP for ARCH_ZYNQMP automatically
-Date:   Tue,  8 Dec 2020 20:35:08 +0800
-Message-Id: <20201208123508.998073-1-quanyang.wang@windriver.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [60.247.85.82]
-X-ClientProxiedBy: SJ0PR05CA0078.namprd05.prod.outlook.com
- (2603:10b6:a03:332::23) To CY4PR11MB0071.namprd11.prod.outlook.com
- (2603:10b6:910:7a::30)
+ 2020 12:42:18 +0000
+Received: from CY1NAM02FT030.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:903:9a:cafe::61) by CY4PR18CA0037.outlook.office365.com
+ (2603:10b6:903:9a::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend
+ Transport; Tue, 8 Dec 2020 12:42:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ CY1NAM02FT030.mail.protection.outlook.com (10.152.75.163) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.3632.21 via Frontend Transport; Tue, 8 Dec 2020 12:42:18 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Tue, 8 Dec 2020 04:42:18 -0800
+Received: from smtp.xilinx.com (172.19.127.95) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.1913.5 via Frontend Transport; Tue, 8 Dec 2020 04:42:18 -0800
+Envelope-to: michal.simek@xilinx.com,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org,
+ sboyd@kernel.org,
+ mturquette@baylibre.com,
+ quanyang.wang@windriver.com
+Received: from [172.30.17.109] (port=43702)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1kmcJt-0001dS-VW; Tue, 08 Dec 2020 04:42:18 -0800
+Subject: Re: [PATCH] clk: zynqmp: enable COMMON_CLK_ZYNQMP for ARCH_ZYNQMP
+ automatically
+To:     <quanyang.wang@windriver.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <michal.simek@xilinx.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20201208123508.998073-1-quanyang.wang@windriver.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <0a0d16a7-0d49-3a89-76a1-141758b138e7@xilinx.com>
+Date:   Tue, 8 Dec 2020 13:42:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from pek-qwang2-d1.wrs.com (60.247.85.82) by SJ0PR05CA0078.namprd05.prod.outlook.com (2603:10b6:a03:332::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.7 via Frontend Transport; Tue, 8 Dec 2020 12:36:01 +0000
+In-Reply-To: <20201208123508.998073-1-quanyang.wang@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a5d6410a-d0fe-407d-8b8f-08d89b75e01e
-X-MS-TrafficTypeDiagnostic: CY4PR1101MB2150:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CY4PR1101MB21507A0C714A825122951942F0CD0@CY4PR1101MB2150.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Office365-Filtering-Correlation-Id: ca24bfc4-124c-44ad-5d25-08d89b76b32c
+X-MS-TrafficTypeDiagnostic: CY4PR0201MB3572:
+X-Microsoft-Antispam-PRVS: <CY4PR0201MB3572E6655D81BEAC9437182EC6CD0@CY4PR0201MB3572.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: sPQeo9Zg+UeVadHXkdkrwvWjA5fhQaZuAejfDn9MqTRhRI009/fc3ZgSbS5UVdRwxMckJul8znIPl3RM914+5uiFCAlRTCbap+58wzhlYYnJJDMFEpnB9xrefz9YWQ8aT1Qi6td5nbF3Jrcz+hozggKisie3AHliiajH7v0P7WdwOTI5ussyb8c3hIxE8qr3VxJ5PSaEtkTqpZVEJWFw5dYqVj1ohtLOGJqw6rfQ6kYzRNsfQOEVwrnz0Vjfvf+gW9fCPItgWD9gsNCO6hr39HD3GQgoBGXft5cxyNcJHtmcSogNaSdjRBNus1moutBoNrw0y+Z9y6mVXgy4ryOspg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB0071.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(136003)(39850400004)(376002)(346002)(366004)(36756003)(86362001)(5660300002)(4326008)(6506007)(316002)(2906002)(83380400001)(52116002)(2616005)(8936002)(8676002)(6486002)(66476007)(186003)(66946007)(4744005)(26005)(956004)(478600001)(9686003)(1076003)(66556008)(16526019)(6512007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?C1NjHzsfVwXxH6l+MXq/An4SKLal5FSr6UZGHS3gKlTPIScaAkL3oH/G7C23?=
- =?us-ascii?Q?42dMPzKqpSt8GrWNCuxDzB8Oyqf1diiBuNNXqN7e7is/M1elmuHjHu+j6oc2?=
- =?us-ascii?Q?ucZL05PEKZ4eWv44erFceoPI4+qQV2ablBXpq3CpQIFIZmi+qJeEEPkbY85U?=
- =?us-ascii?Q?nR3kPWFaiyODkjwGLK1wnVPULtEmKM/30do4RZBKhPLGrrB/sh5rT8h+x3Ju?=
- =?us-ascii?Q?aNSV9SHW+1Dh9tmqgCvYGqORYW3Zf9Xk9A66dHiiJSfCi18wW1Bz0LqozbX/?=
- =?us-ascii?Q?FjQM3ap9wfBCz3CvRRX/ew5/DshsjQH0yIPlaWnVDzuQ0G2x3hTIR9lI9XY/?=
- =?us-ascii?Q?3q+AI4pIqqLhO0PAybV5RA4IZwXs9SCgxzHvgKzRDvvgdnkTmqz/UsWbah2p?=
- =?us-ascii?Q?qqAi1kAacWG6XDRWblG1axP+DFYPNQFco+KyXEQPjjXmUQWUj8nw3fYePcUM?=
- =?us-ascii?Q?8UNUkHUekZg+bpU1c1SllzBqALTKqM6xQKwohBWtBnyq4vudwiWpGWDQDt+t?=
- =?us-ascii?Q?Bwe8PzXTCahNXTJXBCM63iNOhugyAXAupC1WeXoyBbf34M//ESBqWacV9OoV?=
- =?us-ascii?Q?p+Hf3HbOWVJwdtEVXV1bYOLb/tgOwYk7xrTR41rUU/5W5AEfepBe8bNvbLVC?=
- =?us-ascii?Q?Ap1v4yaFS3FE79b8I4oNyi2qCcYku/mFkzPQZKcK2zNJR8t0waGx/eyTM5fy?=
- =?us-ascii?Q?eADtiXhZk9qpmgB87P2RqYB8CEWRqze3KTIWYwGe4gz7YA3C/uu75ipyIk8X?=
- =?us-ascii?Q?8ZP0fZ+H0mgCS1D5OiL0HmpXwR5J+ijGloYH/iX0Sw5WzwbmksU/Vy+7RoTm?=
- =?us-ascii?Q?Pc0c4uSquiZgw04e1tLJmJFN6dCMJ3CPERBLLiNPKYavCvSaMt6a0IAFwJ5f?=
- =?us-ascii?Q?kkvg6qe2pW8ZsWrC8gfWFFUuSNfPsdt6kqafvOG2WR9D0CleJ6QqHuPqTS8r?=
- =?us-ascii?Q?lL6BRSz1SrRoErUHJDXX8x15pWixyrW/yOQ8o8jNydI=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB0071.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2020 12:36:03.9911
+X-Microsoft-Antispam-Message-Info: DhZ1YE+7QKuYseBMcfvTsxY3EkkM/ERiQz+7vUoNx+R8p+1zX+ubEI5x+Ubooy3bQei5C0ptfwHY+FMg7X4iUADLMbcrxsGlCjpU4My2ohzUvm1pcxT9KuR2gsx7K6a9SbKcZ9AfY9aNhKNlkuQGNix4+5++KV3hpYAesq1j1H4H7hETF4JlZ2cBOKKCvlvw5mzrz4f8VsLm2EJSvM6f8nAzdvtP9csg4J5bKI6aV2XPB23Ns3FElhZQr4CKEbF0W6dKk8j67EJBZO7WFU6pLjV30ZMQbFaQEIFDONPPLjG1TIGiICPregOCaenbzLODRHH95Nq8FJN00zDNiT9pJ6KDPmUR2v+oPTMEKrGACNbJpEXQv6y5A7ktm92/x6Eiy5AWADDt0+HeDvYqyDZZd+fU1/gFcEEuDBqCt8ymKzkY0a4FbwM5vU4pOnbojMUfN7TbhaPzdgXJCWcQr3Y/KA==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(136003)(396003)(39860400002)(376002)(346002)(46966005)(356005)(4326008)(7636003)(26005)(8676002)(31696002)(8936002)(70586007)(70206006)(9786002)(31686004)(82310400003)(186003)(83380400001)(426003)(5660300002)(110136005)(36756003)(54906003)(47076004)(6666004)(316002)(478600001)(82740400003)(2616005)(44832011)(36906005)(2906002)(336012)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2020 12:42:18.6780
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5d6410a-d0fe-407d-8b8f-08d89b75e01e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7nq2v6OVSrJE9spyxUkyoUmxpErB20ro+1uV369D5kru7K93lx4zQ2OVC0Tu73ZptzIL4qJlDksY9ZvsPd+D8x/sNcJakR65Wgi74giri3I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1101MB2150
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca24bfc4-124c-44ad-5d25-08d89b76b32c
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT030.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3572
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+Hi,
 
-The Zynqmp Ultrascale clock controller generates clocks for peripherals,
-so we need to enable it when ARCH_ZYNQMP is selected.
+On 08. 12. 20 13:35, quanyang.wang@windriver.com wrote:
+> From: Quanyang Wang <quanyang.wang@windriver.com>
+> 
+> The Zynqmp Ultrascale clock controller generates clocks for peripherals,
+> so we need to enable it when ARCH_ZYNQMP is selected.
+> 
+> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+> ---
+>  drivers/clk/zynqmp/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/zynqmp/Kconfig b/drivers/clk/zynqmp/Kconfig
+> index 17086059be8b..a8aa58bbb790 100644
+> --- a/drivers/clk/zynqmp/Kconfig
+> +++ b/drivers/clk/zynqmp/Kconfig
+> @@ -4,6 +4,7 @@ config COMMON_CLK_ZYNQMP
+>  	bool "Support for Xilinx ZynqMP Ultrascale+ clock controllers"
+>  	depends on ARCH_ZYNQMP || COMPILE_TEST
+>  	depends on ZYNQMP_FIRMWARE
+> +	default ARCH_ZYNQMP
 
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
----
- drivers/clk/zynqmp/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This is not right. If you look 2 lines above.
 
-diff --git a/drivers/clk/zynqmp/Kconfig b/drivers/clk/zynqmp/Kconfig
-index 17086059be8b..a8aa58bbb790 100644
---- a/drivers/clk/zynqmp/Kconfig
-+++ b/drivers/clk/zynqmp/Kconfig
-@@ -4,6 +4,7 @@ config COMMON_CLK_ZYNQMP
- 	bool "Support for Xilinx ZynqMP Ultrascale+ clock controllers"
- 	depends on ARCH_ZYNQMP || COMPILE_TEST
- 	depends on ZYNQMP_FIRMWARE
-+	default ARCH_ZYNQMP
- 	help
- 	  Support for the Zynqmp Ultrascale clock controller.
- 	  It has a dependency on the PMU firmware.
--- 
-2.25.1
+>  	help
+>  	  Support for the Zynqmp Ultrascale clock controller.
+>  	  It has a dependency on the PMU firmware.
+> 
 
+And we were talking about enabling this driver in defconfig. Not via
+Kconfig. This fragment was designed in a way that this clock controller
+doesn't need to be used. It is our default but if you want to use for
+example fixed clock you also can.
+This enables space for being able to use for example different firmware.
+
+Thanks,
+Michal
