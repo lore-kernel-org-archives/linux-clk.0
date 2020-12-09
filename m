@@ -2,203 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA0FC2BBCF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A31C4361B
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 08:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CBCC23B6C
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5072A22D07
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 08:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgLIFkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Dec 2020 00:40:15 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15290 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbgLIFkO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 00:40:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607492414; x=1639028414;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ebjHG3E42Zd5Tmi97Xiocqj07Wczhf9NVnm3CYDtPR8=;
-  b=QbQF7pKrKuQ6VRiKIfBQbcbLEjpU2pkmcaGL4nu8HelqsItIWcjV8BjF
-   /XtIIdkEUQ4Xzcbe7mzBBy/1+BeKELPfSTyCaIrEZN+WsJY66DaFK1Bcd
-   kzWYu7jdv6LYPXF0y9E2JXwWwOcd93Ld1lXIxfnWwSzMHRMJyC9rml0sv
-   OsjtxRgh8myBgSrqSnwqoASo1+ahNWJnbtAgVcxXaz5x70MZ18iH8aclY
-   7WAmDenXC1qVzc7QXEtZMj60MmkUjdcwqq1ql61akJ/5Qo0pxAbmUgGop
-   sAY8xYjgyCEBnA2l19/9BuQDRhK88teyhLK0opHyyP0fOkXL1o5UJB6+d
-   g==;
-IronPort-SDR: 1SeNDaT1aeSF74eOwPCv20xZ/C5lCsaWAb/kXybB90JOHFAsd2tIWLA2zyk5VjrlTNrF93H6U8
- 5TZSX3Qabg2KWNHipr/SzrKfwD3pRaexUF/CKXoKsRjaMI21vL3nrSCbi0zGD3/D4+7BtDO25j
- 4egSTO0KfP9QyFL5rMCLLsSS5GHjJ3Er29x2EknMAEr6whPHfnZKhCk1JcQwKIyn35A20v7b6e
- wAQ+eeNYPS2jylB2atrxQfmkaSffkAAzROfWqnKXcX0u/MyO/ODxEJt0NenwS+JiVBKJZgEc5p
- cyo=
-X-IronPort-AV: E=Sophos;i="5.78,404,1599494400"; 
-   d="scan'208";a="154735954"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:55 +0800
-IronPort-SDR: CIkh+3PG9sTO/Wq7H18RbrzovmBUJYJemefPF4/yDUEGEL53Z4TFrhUPFxH6jsJtq0MarhG5b3
- y8rYFYxwRx/ouGjtGdmMFQFLisPgJ2DS0=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:21:22 -0800
-IronPort-SDR: aMBgGgKXHrbWCcOkEitJ2+glmPADuYSfBRxsctzyZzcuXiEPuCilOlfrfAFqme0crNbv0KfH5o
- 5vdks2095lug==
-WDCIronportException: Internal
-Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:54 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v6 22/22] riscv: Add Canaan Kendryte K210 SD card defconfig
-Date:   Wed,  9 Dec 2020 14:35:06 +0900
-Message-Id: <20201209053506.122582-23-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201209053506.122582-1-damien.lemoal@wdc.com>
-References: <20201209053506.122582-1-damien.lemoal@wdc.com>
+        id S1726263AbgLIIkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Dec 2020 03:40:13 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:50424 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726075AbgLIIkN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 03:40:13 -0500
+X-UUID: adb04f97576d44aaa76a927392078262-20201209
+X-UUID: adb04f97576d44aaa76a927392078262-20201209
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 581922512; Wed, 09 Dec 2020 16:39:29 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 9 Dec 2020 16:39:27 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 9 Dec 2020 16:39:28 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     <drinkcat@chromium.org>, <matthias.bgg@gmail.com>,
+        <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <weiyi.lu@mediatek.com>,
+        <ryan-jh.yu@mediatek.com>, <nathan.chung@mediatek.com>,
+        <erin.lo@mediatek.com>, Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH v2] clk: mediatek: Remove MT8192 unused clock
+Date:   Wed, 9 Dec 2020 16:39:21 +0800
+Message-ID: <20201209083921.879-1-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.15.GIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The nommu_k210_defconfig default configuration allows booting a Canaan
-Kendryte K210 SoC based boards using an embedded intramfs cpio file.
-Modifying this configuration to enable support for the board SD card is
-not trivial for all users. To help beginners getting started with these
-boards, add the nommu_k210_sdcard_defconfig default configuration file
-to set all configuration options necessary to use the board mmc-spi sd
-card for the root file system.
+From: "Tinghan Shen" <tinghan.shen@mediatek.com>
 
-This new configuration adds support for the block layer, the mmc-spi
-driver and modifies the boot options to specify the rootfs device as
-mmcblk0p1 (first partition of the sd card block device). The ext2 file
-system is selected by default to encourage its use as that results in
-only about 4KB added to the kernel image size. As ext2 does not have
-journaling, the boot options specify a read-only mount of the file
-system. Similarly to the smaller nommu_k210_defconfig, this new default
-configuration disables virtual terminal support to reduce the kernel
-image size.
+Remove MT8192 sspm clock
 
-The default device tree selected is unchanged, specifying the simple
-"k210_generic" device tree file. The user must change this setting to
-specify the device tree suitable for the board being used
-(k210_maix_bit, k210_maix_dock, k210_maix_go, k210_maixduino or
-k210_kd233).
-
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 ---
- .../riscv/configs/nommu_k210_sdcard_defconfig | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
+v2: resend patch to linux-mediatek because blocked by wrong mail setting.  
 
-diff --git a/arch/riscv/configs/nommu_k210_sdcard_defconfig b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-new file mode 100644
-index 000000000000..a75388defd44
---- /dev/null
-+++ b/arch/riscv/configs/nommu_k210_sdcard_defconfig
-@@ -0,0 +1,93 @@
-+# CONFIG_CPU_ISOLATION is not set
-+CONFIG_LOG_BUF_SHIFT=13
-+CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+# CONFIG_SYSFS_SYSCALL is not set
-+# CONFIG_FHANDLE is not set
-+# CONFIG_BASE_FULL is not set
-+# CONFIG_FUTEX is not set
-+# CONFIG_EPOLL is not set
-+# CONFIG_SIGNALFD is not set
-+# CONFIG_TIMERFD is not set
-+# CONFIG_EVENTFD is not set
-+# CONFIG_AIO is not set
-+# CONFIG_IO_URING is not set
-+# CONFIG_ADVISE_SYSCALLS is not set
-+# CONFIG_MEMBARRIER is not set
-+# CONFIG_KALLSYMS is not set
-+CONFIG_EMBEDDED=y
-+# CONFIG_VM_EVENT_COUNTERS is not set
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLOB=y
-+# CONFIG_MMU is not set
-+CONFIG_SOC_CANAAN=y
-+CONFIG_SOC_CANAAN_K210_DTB_SOURCE="k210_generic"
-+CONFIG_MAXPHYSMEM_2GB=y
-+CONFIG_SMP=y
-+CONFIG_NR_CPUS=2
-+CONFIG_CMDLINE="earlycon console=ttySIF0 rootdelay=2 root=/dev/mmcblk0p1 ro"
-+CONFIG_CMDLINE_FORCE=y
-+# CONFIG_SECCOMP is not set
-+# CONFIG_STACKPROTECTOR is not set
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_MQ_IOSCHED_DEADLINE is not set
-+# CONFIG_MQ_IOSCHED_KYBER is not set
-+CONFIG_BINFMT_FLAT=y
-+# CONFIG_COREDUMP is not set
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_FW_LOADER is not set
-+# CONFIG_ALLOW_DEV_COREDUMP is not set
-+# CONFIG_BLK_DEV is not set
-+# CONFIG_INPUT_LEDS is not set
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_SERIO is not set
-+# CONFIG_VT is not set
-+# CONFIG_UNIX98_PTYS is not set
-+# CONFIG_LEGACY_PTYS is not set
-+# CONFIG_LDISC_AUTOLOAD is not set
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_DEVMEM is not set
-+CONFIG_I2C=y
-+CONFIG_I2C_CHARDEV=y
-+# CONFIG_I2C_HELPER_AUTO is not set
-+CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_SPI=y
-+# CONFIG_SPI_MEM is not set
-+CONFIG_SPI_DESIGNWARE=y
-+CONFIG_SPI_DW_MMIO=y
-+# CONFIG_GPIO_SYSFS is not set
-+# CONFIG_GPIO_CDEV_V1 is not set
-+CONFIG_GPIO_DWAPB=y
-+CONFIG_GPIO_SIFIVE=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON=y
-+# CONFIG_HWMON is not set
-+# CONFIG_HID is not set
-+# CONFIG_USB_SUPPORT is not set
-+CONFIG_MMC=y
-+# CONFIG_PWRSEQ_EMMC is not set
-+# CONFIG_PWRSEQ_SIMPLE is not set
-+CONFIG_MMC_SPI=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_USER=y
-+# CONFIG_VIRTIO_MENU is not set
-+# CONFIG_VHOST_MENU is not set
-+CONFIG_EXT2_FS=y
-+# CONFIG_FILE_LOCKING is not set
-+# CONFIG_DNOTIFY is not set
-+# CONFIG_INOTIFY_USER is not set
-+# CONFIG_MISC_FILESYSTEMS is not set
-+CONFIG_LSM="[]"
-+CONFIG_PRINTK_TIME=y
-+# CONFIG_SYMBOLIC_ERRNAME is not set
-+# CONFIG_DEBUG_BUGVERBOSE is not set
-+# CONFIG_DEBUG_MISC is not set
-+CONFIG_PANIC_ON_OOPS=y
-+# CONFIG_SCHED_DEBUG is not set
-+# CONFIG_RCU_TRACE is not set
-+# CONFIG_FTRACE is not set
-+# CONFIG_RUNTIME_TESTING_MENU is not set
+This patch depends on series "Mediatek MT8192 clock support"[1].
+
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=379955 
+
+---
+ drivers/clk/mediatek/clk-mt8192.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+index 673dc60182f5..6983707e4ac9 100644
+--- a/drivers/clk/mediatek/clk-mt8192.c
++++ b/drivers/clk/mediatek/clk-mt8192.c
+@@ -403,15 +403,6 @@ static const char * const atb_parents[] = {
+ 	"mainpll_d5_d2"
+ };
+ 
+-static const char * const sspm_parents[] = {
+-	"clk26m",
+-	"mainpll_d5_d2",
+-	"univpll_d5_d2",
+-	"mainpll_d4_d2",
+-	"univpll_d4_d2",
+-	"mainpll_d6"
+-};
+-
+ static const char * const dpi_parents[] = {
+ 	"clk26m",
+ 	"tvdpll_d2",
+@@ -792,8 +783,6 @@ static const struct mtk_mux top_mtk_muxes[] = {
+ 		pwrap_ulposc_parents, 0x090, 0x094, 0x098, 8, 3, 15, 0x008, 2),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_ATB_SEL, "atb_sel",
+ 		atb_parents, 0x090, 0x094, 0x098, 16, 2, 23, 0x008, 3),
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_SSPM_SEL, "sspm_sel",
+-		sspm_parents, 0x090, 0x094, 0x098, 24, 3, 31, 0x008, 4),
+ 	/* CLK_CFG_9 */
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_DPI_SEL, "dpi_sel",
+ 		dpi_parents, 0x0a0, 0x0a4, 0x0a8, 0, 3, 7, 0x008, 5),
+@@ -1047,9 +1036,7 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA2(CLK_INFRA_UNIPRO_TICK, "infra_unipro_tick", "clk26m", 12),
+ 	GATE_INFRA2(CLK_INFRA_UFS_MP_SAP_B, "infra_ufs_mp_sap_b", "clk26m", 13),
+ 	GATE_INFRA2(CLK_INFRA_MD32_B, "infra_md32_b", "axi_sel", 14),
+-	GATE_INFRA2(CLK_INFRA_SSPM, "infra_sspm", "sspm_sel", 15),
+ 	GATE_INFRA2(CLK_INFRA_UNIPRO_MBIST, "infra_unipro_mbist", "axi_sel", 16),
+-	GATE_INFRA2(CLK_INFRA_SSPM_BUS_H, "infra_sspm_bus_h", "axi_sel", 17),
+ 	GATE_INFRA2(CLK_INFRA_I2C5, "infra_i2c5", "i2c_sel", 18),
+ 	GATE_INFRA2(CLK_INFRA_I2C5_ARBITER, "infra_i2c5_arbiter", "i2c_sel", 19),
+ 	GATE_INFRA2(CLK_INFRA_I2C5_IMM, "infra_i2c5_imm", "i2c_sel", 20),
+@@ -1068,8 +1055,6 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA3(CLK_INFRA_MSDC0_SELF, "infra_msdc0_self", "msdc50_0_sel", 0),
+ 	GATE_INFRA3(CLK_INFRA_MSDC1_SELF, "infra_msdc1_self", "msdc50_0_sel", 1),
+ 	GATE_INFRA3(CLK_INFRA_MSDC2_SELF, "infra_msdc2_self", "msdc50_0_sel", 2),
+-	GATE_INFRA3(CLK_INFRA_SSPM_26M_SELF, "infra_sspm_26m_self", "clk26m", 3),
+-	GATE_INFRA3(CLK_INFRA_SSPM_32K_SELF, "infra_sspm_32k_self", "clk32k", 4),
+ 	GATE_INFRA3(CLK_INFRA_UFS_AXI, "infra_ufs_axi", "axi_sel", 5),
+ 	GATE_INFRA3(CLK_INFRA_I2C6, "infra_i2c6", "i2c_sel", 6),
+ 	GATE_INFRA3(CLK_INFRA_AP_MSDC0, "infra_ap_msdc0", "msdc50_0_sel", 7),
 -- 
-2.28.0
+2.18.0
 
