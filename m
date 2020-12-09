@@ -2,118 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A31C4361B
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 08:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85474C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5072A22D07
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 08:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37BAD23433
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbgLIIkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Dec 2020 03:40:13 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50424 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726075AbgLIIkN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 03:40:13 -0500
-X-UUID: adb04f97576d44aaa76a927392078262-20201209
-X-UUID: adb04f97576d44aaa76a927392078262-20201209
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 581922512; Wed, 09 Dec 2020 16:39:29 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 9 Dec 2020 16:39:27 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 9 Dec 2020 16:39:28 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     <drinkcat@chromium.org>, <matthias.bgg@gmail.com>,
-        <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <weiyi.lu@mediatek.com>,
-        <ryan-jh.yu@mediatek.com>, <nathan.chung@mediatek.com>,
-        <erin.lo@mediatek.com>, Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH v2] clk: mediatek: Remove MT8192 unused clock
-Date:   Wed, 9 Dec 2020 16:39:21 +0800
-Message-ID: <20201209083921.879-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        id S1729166AbgLIJuE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Dec 2020 04:50:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729061AbgLIJuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 04:50:03 -0500
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FBEC0613CF
+        for <linux-clk@vger.kernel.org>; Wed,  9 Dec 2020 01:49:23 -0800 (PST)
+Received: by mail-pl1-x644.google.com with SMTP id p6so649105plr.7
+        for <linux-clk@vger.kernel.org>; Wed, 09 Dec 2020 01:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AL3YkBOv5b8sByiXoR73Ol/0eY4rxeAavz/QsSxvMII=;
+        b=EGHlGAIsmIclMzfOdAuhmFO/HFM6CkrW380E7NpmzwdrfRTpqgfCk0sjga5uyenLiN
+         H2yIZxwsTQhOjmP7BVMHBTGvafQ8705ZoFLGKdL6YHxSWhSjyMjQi1+QZf8rcJuP5VIS
+         ICWVUY1m0ip33W7qSJt5qTpDMVWCpPKq5oBpi6l9DzE9dJXa+7APZ5WNAN9tD/z6blVv
+         lsYFa2871HHWbbgAr2O/8v9VYXUnJOuGqa5myZ4DrrUhIM5fXl/fXvpy5RppEz0B00Eo
+         cLuUoKbvc0u2TLsCXXL313Xa6jyN8ocVM35xgBp2FSr28doO1Uer60LwTmBUeiDgcGwI
+         iUeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AL3YkBOv5b8sByiXoR73Ol/0eY4rxeAavz/QsSxvMII=;
+        b=T5lDy7tCQCb+Pp7eZT1IS0ecSEPhRlp6oRuEeFf3LnfIOibfRkkKTxUZgMfUbk6cRm
+         yxu6lPI690K/N7Q+5tvb1X6Xlc3ONKfIopCFLQnWnXqkfdZF4soZ7+e2YRg1Z3k0zekC
+         a6xLT7i0Z7BLDVG/5nkCl3hLv0CBPSRnA/UdERSZfYz6SCenvqAQkRzLUrlh0ymcRknX
+         BY0OLRQYUTYjEKTOAFvgcpjvVcthOoMYT51+30zwu5NOGhHCxej+TY9D2iZlugvDcZUS
+         IG4w5XndU5tDmD0U3QlECEhxAgDT2w58PNUqBEbOkLAqCl5tmdcrEOc/omyu59DH2713
+         Lazw==
+X-Gm-Message-State: AOAM533FEDU3hZotbNppnA5ntQlw4se3Xswc6Ze7zV8Fez0zUSns27gJ
+        LuxkiRw5I+SFOkkPQoSnxntXXQ==
+X-Google-Smtp-Source: ABdhPJw9bu6mcnqWxY0e+Od/1TRJARGDeLGom/lEpeDI6x4EAsCCzqcchepslIO1y79reQL1kfkGZA==
+X-Received: by 2002:a17:902:ed11:b029:da:3137:2695 with SMTP id b17-20020a170902ed11b02900da31372695mr1289502pld.1.1607507363144;
+        Wed, 09 Dec 2020 01:49:23 -0800 (PST)
+Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
+        by smtp.gmail.com with ESMTPSA id 129sm1890354pfw.86.2020.12.09.01.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Dec 2020 01:49:22 -0800 (PST)
+From:   Zong Li <zong.li@sifive.com>
+To:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
+        schwab@linux-m68k.org, pragnesh.patel@openfive.com,
+        aou@eecs.berkeley.edu, mturquette@baylibre.com,
+        yash.shah@sifive.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Zong Li <zong.li@sifive.com>
+Subject: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+Date:   Wed,  9 Dec 2020 17:49:11 +0800
+Message-Id: <20201209094916.17383-1-zong.li@sifive.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: "Tinghan Shen" <tinghan.shen@mediatek.com>
+Add a driver for the SiFive FU740 PRCI IP block, which handles more
+clocks than FU540. These patches also refactor the original
+implementation by spliting the dependent-code of fu540 and fu740
+respectively.
 
-Remove MT8192 sspm clock
+We also add a separate patch for DT binding documentation of FU740 PRCI:
+https://patchwork.kernel.org/project/linux-riscv/patch/20201126030043.67390-1-zong.li@sifive.com/
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
----
-v2: resend patch to linux-mediatek because blocked by wrong mail setting.  
+Changed in v7:
+ - Pick changes in v5 back up into this patch series.
 
-This patch depends on series "Mediatek MT8192 clock support"[1].
+Changed in v6:
+ - Modify the patch "Add clock enable and disable ops"
+   by Pragnesh. The changes as follows:
+   - Remove spin lock in enable and disable functions
+   - Call enable_bypass() before PLL output disable
+ - Rebase code to Linux v5.10-rc7
 
-[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=379955 
+Changed in v5:
+ - Fix copyright format
+ - Add a link of documentation in commit message
+ - Modify build dependency for sifive-prci.c
+ - Add enable and disable functions by Pragnesh Patel
 
----
- drivers/clk/mediatek/clk-mt8192.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+Changed in v4:
+ - Fix the wrong enable bit field shift for FU540 and FU740.
 
-diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index 673dc60182f5..6983707e4ac9 100644
---- a/drivers/clk/mediatek/clk-mt8192.c
-+++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -403,15 +403,6 @@ static const char * const atb_parents[] = {
- 	"mainpll_d5_d2"
- };
- 
--static const char * const sspm_parents[] = {
--	"clk26m",
--	"mainpll_d5_d2",
--	"univpll_d5_d2",
--	"mainpll_d4_d2",
--	"univpll_d4_d2",
--	"mainpll_d6"
--};
--
- static const char * const dpi_parents[] = {
- 	"clk26m",
- 	"tvdpll_d2",
-@@ -792,8 +783,6 @@ static const struct mtk_mux top_mtk_muxes[] = {
- 		pwrap_ulposc_parents, 0x090, 0x094, 0x098, 8, 3, 15, 0x008, 2),
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_ATB_SEL, "atb_sel",
- 		atb_parents, 0x090, 0x094, 0x098, 16, 2, 23, 0x008, 3),
--	MUX_GATE_CLR_SET_UPD(CLK_TOP_SSPM_SEL, "sspm_sel",
--		sspm_parents, 0x090, 0x094, 0x098, 24, 3, 31, 0x008, 4),
- 	/* CLK_CFG_9 */
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_DPI_SEL, "dpi_sel",
- 		dpi_parents, 0x0a0, 0x0a4, 0x0a8, 0, 3, 7, 0x008, 5),
-@@ -1047,9 +1036,7 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA2(CLK_INFRA_UNIPRO_TICK, "infra_unipro_tick", "clk26m", 12),
- 	GATE_INFRA2(CLK_INFRA_UFS_MP_SAP_B, "infra_ufs_mp_sap_b", "clk26m", 13),
- 	GATE_INFRA2(CLK_INFRA_MD32_B, "infra_md32_b", "axi_sel", 14),
--	GATE_INFRA2(CLK_INFRA_SSPM, "infra_sspm", "sspm_sel", 15),
- 	GATE_INFRA2(CLK_INFRA_UNIPRO_MBIST, "infra_unipro_mbist", "axi_sel", 16),
--	GATE_INFRA2(CLK_INFRA_SSPM_BUS_H, "infra_sspm_bus_h", "axi_sel", 17),
- 	GATE_INFRA2(CLK_INFRA_I2C5, "infra_i2c5", "i2c_sel", 18),
- 	GATE_INFRA2(CLK_INFRA_I2C5_ARBITER, "infra_i2c5_arbiter", "i2c_sel", 19),
- 	GATE_INFRA2(CLK_INFRA_I2C5_IMM, "infra_i2c5_imm", "i2c_sel", 20),
-@@ -1068,8 +1055,6 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA3(CLK_INFRA_MSDC0_SELF, "infra_msdc0_self", "msdc50_0_sel", 0),
- 	GATE_INFRA3(CLK_INFRA_MSDC1_SELF, "infra_msdc1_self", "msdc50_0_sel", 1),
- 	GATE_INFRA3(CLK_INFRA_MSDC2_SELF, "infra_msdc2_self", "msdc50_0_sel", 2),
--	GATE_INFRA3(CLK_INFRA_SSPM_26M_SELF, "infra_sspm_26m_self", "clk26m", 3),
--	GATE_INFRA3(CLK_INFRA_SSPM_32K_SELF, "infra_sspm_32k_self", "clk32k", 4),
- 	GATE_INFRA3(CLK_INFRA_UFS_AXI, "infra_ufs_axi", "axi_sel", 5),
- 	GATE_INFRA3(CLK_INFRA_I2C6, "infra_i2c6", "i2c_sel", 6),
- 	GATE_INFRA3(CLK_INFRA_AP_MSDC0, "infra_ap_msdc0", "msdc50_0_sel", 7),
+Changed in v3:
+ - Fix the wrong enable bit field shift for FU740.
+
+Changed in v2:
+ - Remove the macro definition for __prci_clock_array.
+ - Indicate the functional changes in commit message.
+ - Using option -M and -C to create patches.
+ - Rebase code to kernel v5.10-rc3.
+
+Pragnesh Patel (1):
+  clk: sifive: Add clock enable and disable ops
+
+Zong Li (4):
+  clk: sifive: Extract prci core to common base
+  clk: sifive: Use common name for prci configuration
+  clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
+  clk: sifive: Fix the wrong bit field shift
+
+ arch/riscv/Kconfig.socs                       |   2 +-
+ drivers/clk/sifive/Kconfig                    |   8 +-
+ drivers/clk/sifive/Makefile                   |   2 +-
+ drivers/clk/sifive/fu540-prci.c               | 598 +-----------------
+ drivers/clk/sifive/fu540-prci.h               |  21 +
+ drivers/clk/sifive/fu740-prci.c               | 120 ++++
+ drivers/clk/sifive/fu740-prci.h               |  21 +
+ drivers/clk/sifive/sifive-prci.c              | 574 +++++++++++++++++
+ drivers/clk/sifive/sifive-prci.h              | 299 +++++++++
+ include/dt-bindings/clock/sifive-fu740-prci.h |  23 +
+ 10 files changed, 1091 insertions(+), 577 deletions(-)
+ create mode 100644 drivers/clk/sifive/fu540-prci.h
+ create mode 100644 drivers/clk/sifive/fu740-prci.c
+ create mode 100644 drivers/clk/sifive/fu740-prci.h
+ create mode 100644 drivers/clk/sifive/sifive-prci.c
+ create mode 100644 drivers/clk/sifive/sifive-prci.h
+ create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
+
 -- 
-2.18.0
+2.29.2
 
