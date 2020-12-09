@@ -5,51 +5,51 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CCEC2BBCD
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE7BC2BBCF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52C0523B4B
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3147F23AFE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 05:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbgLIFhE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Dec 2020 00:37:04 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15306 "EHLO
+        id S1727276AbgLIFhn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Dec 2020 00:37:43 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:15253 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbgLIFg5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 00:36:57 -0500
+        with ESMTP id S1727154AbgLIFhn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 00:37:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1607492216; x=1639028216;
+  t=1607492262; x=1639028262;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=LAnvTxuCrxiYwbhYLblxFRB980/m85EFlvtWJ9EMVlc=;
-  b=ajxP6CyMhxms+DHFooIF1XhCVlLefT+jmb+0FgMdVRJ6lhJSb1ZdGWrw
-   ItOczqBz4rIcHMQVXBGZJsFon6F4F91TuzwGOhs78pfShhze5h05yssti
-   GVjCZYk6PimZuSYQraoShkpy34YwlwvZ5shCA6fqvHdSCAlLJDEpEFqTh
-   EB7b96sH9QCH9phnNKTrtrqUW6UCuxbQ0sO5fk3uUmLk53EzJG2KMll+L
-   DdFM1W8EV0NZMCnTRccQfUpkE82FycmActmN8C1fXakhw6EzAbIx6FEEP
-   +c5jgLPwmSTw9rbXUSbyV9+MHpUrjoR6UuJn8cU6fNwNEj3fN8BZv6M5V
-   w==;
-IronPort-SDR: 1BMNufRIsU0+/KPjWSd+XpQwEqtOBEQz4UlcG89vZPTn4KUSTwKD8MwfcFaVWhAWuyn87okyez
- 2/GDN28htlKF1zuGlWKC/H3bFneCUfepx/NfhuGPHLxnfuG0oZNfSyKn8Y6FNednwRZhXWrtSM
- Fzp6UDC856PJwbDF+WDsbXPrUU4cPdgmIMkEcX65DHL2ku4NG5I3/Ct7jJP9QE6xT1cIN4Xgo3
- vAit9a7mjWZXHC6x3/rDUAvvoBS32JGcyz0EzGp5RLCwOOJO1Y49qd+YPQoZXrJZ6teiIBHdyw
- 6cY=
+  bh=TxrkKxa9B/FbbF02pP19+yravWB9f2iZvayjqKxqkXQ=;
+  b=UUV36Evk/SyIj9XE2AG77U9InE6xkCgEac2wRq3bG3rc1Ke+qp7snEI/
+   h9vuZ+BL0IQAF/Z6ULm7Qc/aDIME3joSuBImJ7CilgRRo0j3fhyW/Jn5P
+   pFauDvueesuhxJwmhsqIqroBCYGEL0K2KsK1eO4yyjpApsZqHCR4DoqAb
+   4rOl5y1BoXntpLrmi2qwMEDn68HX0pFC9WmEdNyqPDSx4CDsAumcaTJ5u
+   Lbl9470cM15iKmaWoyH4z9aFEy3vYa5hcXAAuvxcvM8kWiRFkxSFGqzWZ
+   +zKZ3tjYM7zK59m/leL+VOpxH5RkIDtiPwok/F+2WTSjimr2ydR+omG4z
+   A==;
+IronPort-SDR: QzWAfRnrMfmh5EQj3toepmbkOXBz2Y3eiZnOyqu5o5vqtuyCYxCWzkCcvGXhduei7AHsvYJ+3T
+ GCMNLBH+wvFB/Do8ioeQnZVYrYb22Nci9DshKIwGJfkyTT5AN4bcUpO+cITmhdxP5a9kYUw2D9
+ Pv3hs1d715XbFREiFB9SuMmgM6dWuvH5K5jSKM/bSQ1AOVCjv7eIS6Dz6//jwEoGS8xXATHWuG
+ p9ct1IfpvImwaPEYFPmKYsj+0IG+G2Kkuo2dyWI63p1tQfhKPrsOJSoU9JRe4DG9KD2WRfZxLl
+ UmI=
 X-IronPort-AV: E=Sophos;i="5.78,404,1599494400"; 
-   d="scan'208";a="154735880"
+   d="scan'208";a="154735894"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:17 +0800
-IronPort-SDR: vbS9p1yGhmWnbbcUx9ZMD+GGq+67HFFWWcH538UwBO8F7EUxkFKtgbUfbpHcVk+PqRZ9P2NG83
- aK/Vzx3fQfNmFVAHyDXStYImp59r2S88s=
+  by ob1.hgst.iphmx.com with ESMTP; 09 Dec 2020 13:35:25 +0800
+IronPort-SDR: LkQw1TprxVMJVKuu9BjcL7wZ7SFckt4SbYBdUoiiBR/zheVV5cmA9PIbtfrXCQF8lL/z7dDrSr
+ 7axA4EnZAmzp2QBnMEq5+vuvhgN6Yh0x8=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:43 -0800
-IronPort-SDR: iu6zfrJ1Xxa9LJ6UMRH605p9zx2AKacZzxHV6epO9ppGgRlNxGjRn47Weu3fthLMtKE72CWvgD
- CNOoWUT6M0KQ==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 21:20:51 -0800
+IronPort-SDR: zKlNfBpUt0XZ5WXGViO15Km0ziS4/MVtN2v6nTqayqOvRVSS45/n1E1K4FpmyaWWRceOvVAQRt
+ 77Vs2ROhSlUw==
 WDCIronportException: Internal
 Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:15 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Dec 2020 21:35:23 -0800
 From:   Damien Le Moal <damien.lemoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
         linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
@@ -58,9 +58,9 @@ To:     Palmer Dabbelt <palmer@dabbelt.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v6 03/22] riscv: Enable interrupts during syscalls with M-Mode
-Date:   Wed,  9 Dec 2020 14:34:47 +0900
-Message-Id: <20201209053506.122582-4-damien.lemoal@wdc.com>
+Subject: [PATCH v6 07/22] dt-bindings: Add Canaan vendor prefix
+Date:   Wed,  9 Dec 2020 14:34:51 +0900
+Message-Id: <20201209053506.122582-8-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201209053506.122582-1-damien.lemoal@wdc.com>
 References: <20201209053506.122582-1-damien.lemoal@wdc.com>
@@ -70,37 +70,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When running is M-Mode (no MMU config), MPIE does not get set. This
-results in all syscalls being executed with interrupts disabled as
-handle_exception never sets SR_IE as it always sees SR_PIE being
-cleared. Fix this by always force enabling interrupts in
-handle_syscall when CONFIG_RISCV_M_MODE is enabled.
+Update Documentation/devicetree/bindings/vendor-prefixes.yaml to
+include "canaan" as a vendor prefix for "Canaan Inc.". Canaan is the
+vendor of the Kendryte K210 RISC-V SoC.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- arch/riscv/kernel/entry.S | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 524d918f3601..080eb8d78589 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -155,6 +155,15 @@ skip_context_tracking:
- 	tail do_trap_unknown
- 
- handle_syscall:
-+#ifdef CONFIG_RISCV_M_MODE
-+	/*
-+	 * When running is M-Mode (no MMU config), MPIE does not get set.
-+	 * As a result, we need to force enable interrupts here because
-+	 * handle_exception did not do set SR_IE as it always sees SR_PIE
-+	 * being cleared.
-+	 */
-+	csrs CSR_STATUS, SR_IE
-+#endif
- #if defined(CONFIG_TRACE_IRQFLAGS) || defined(CONFIG_CONTEXT_TRACKING)
- 	/* Recover a0 - a7 for system calls */
- 	REG_L a0, PT_A0(sp)
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 2735be1a8470..a07231aaf3e7 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -179,6 +179,8 @@ patternProperties:
+     description: CALAO Systems SAS
+   "^calxeda,.*":
+     description: Calxeda
++  "^canaan,.*":
++    description: Canaan, Inc.
+   "^caninos,.*":
+     description: Caninos Loucos Program
+   "^capella,.*":
 -- 
 2.28.0
 
