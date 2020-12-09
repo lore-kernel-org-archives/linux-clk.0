@@ -2,167 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA8AC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 01:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3A2C4361B
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 01:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A35923B6B
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 01:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9F2238E9
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 01:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725871AbgLIBP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Dec 2020 20:15:58 -0500
-Received: from mail-eopbgr760049.outbound.protection.outlook.com ([40.107.76.49]:65164
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725789AbgLIBP6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Dec 2020 20:15:58 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dM6uoBgVIeqpr0EUzAgg/b4whdXGj+RO3KId+QvvrOfb3roGGf5tVSGV0Vjy/s6DL/QdZkSU2tgpvPuIRvUCTIMmORuDrdGJEPLfEzao4c2PZrycbPq0GtxgPl68dPLynXwZ7pZDNsVbGuQj7X+1Q67ltkk7KojepwLyxrV8H6W0hdoPCmdeZw3kMNAztvQl3rapNyMm5SgLAfEefj1LvsiX1sRvYD+OI9ef0BelirgWzVR1Jo8IKigAegmvglbH84ypT3ZEfsRtkerMSt60pXl/voDJavZpIAw8Ws7EknIoFWrU73Hou36/aUq4o6hOYDePFbK7gkC92MQDFy7KwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sVObYYsyjj+cFmsjKD9DZIvxQ+ZFGP5/3XMVod8VKL0=;
- b=l8Fxk8Zg1ne7B9gSfea5afSvpYPGdad3UkShW2Wt6KnAVcfE+1hG7nW3SXUmc216McGNh1alZl+9BJ6eVajSyDlUHFifc8kQOIN78/oWJIzUC+HL2QO5naGLbxerlNsrkOPoHDRuCBfLWHERzUFJ6UOIAuzotwiyo/2Bg5fD1yloT4g3MRmqBlsixVz/4WfGTF/EmdhUKsoE3KAtxWykE58shASe/QAmSu2e1qUBNEGtVPrLMcEphAlgDnA7JoB8jDc7puXs88Ygs7kRB9xt1rcH7JdiHkXhiejijBTfKI2siSTUGtxbMBs8lyFnvCii2Xq85XyF/x+xHJG+J0A7Cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+        id S1725816AbgLIBgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Dec 2020 20:36:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgLIBgG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Dec 2020 20:36:06 -0500
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931CAC061793
+        for <linux-clk@vger.kernel.org>; Tue,  8 Dec 2020 17:35:25 -0800 (PST)
+Received: by mail-ot1-x344.google.com with SMTP id y24so714574otk.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Dec 2020 17:35:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sVObYYsyjj+cFmsjKD9DZIvxQ+ZFGP5/3XMVod8VKL0=;
- b=eFQvgErvbKVhsheYyvS2POeqe0WZ0ny9/EBlpGZ/1sniGqsnpnCfC3ZIgV9YNV9W5OyA+iWW4GpJzg6YfYF3DdtJOtMHh+Z2WA+n7r8qK4gi1nnrqzG7PNLYumFCYpmytHvFS4D2AlwQpEQPuHZuMXuKP2gOaWsps7i2TesE8Rw=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none
- header.from=windriver.com;
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com (2603:10b6:910:7a::30)
- by CY4PR11MB1527.namprd11.prod.outlook.com (2603:10b6:910:c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.19; Wed, 9 Dec
- 2020 01:15:14 +0000
-Received: from CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::501b:362c:9295:dad0]) by CY4PR11MB0071.namprd11.prod.outlook.com
- ([fe80::501b:362c:9295:dad0%5]) with mapi id 15.20.3632.021; Wed, 9 Dec 2020
- 01:15:14 +0000
-Subject: Re: [PATCH] clk: zynqmp: enable COMMON_CLK_ZYNQMP for ARCH_ZYNQMP
- automatically
-To:     Michal Simek <michal.simek@xilinx.com>, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20201208123508.998073-1-quanyang.wang@windriver.com>
- <0a0d16a7-0d49-3a89-76a1-141758b138e7@xilinx.com>
-From:   "quanyang.wang" <quanyang.wang@windriver.com>
-Message-ID: <d41c7f60-c9ea-f37b-65ed-4c9b4f5703a0@windriver.com>
-Date:   Wed, 9 Dec 2020 09:14:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-In-Reply-To: <0a0d16a7-0d49-3a89-76a1-141758b138e7@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [60.247.85.82]
-X-ClientProxiedBy: HK2PR02CA0176.apcprd02.prod.outlook.com
- (2603:1096:201:21::12) To CY4PR11MB0071.namprd11.prod.outlook.com
- (2603:10b6:910:7a::30)
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N9+OxDZjSo4wCo8oLDWS807OvNQxIgRZodAcG7UCd+I=;
+        b=c+FIQKRzvGpriFZSl9JtbrzU0NguMQjaMPEbpiHOTHcIFq3uhJuskhM97RuWyO6rT/
+         jWV3CWSv61wM3itCcUqI5AgZFxfqifjuZxGXA07jMUhBghT9I/JdxPwtLSpBazuDstSW
+         xy6siT4ao5gylL5EH9ebhFwScl3FXat3aVhSwAl3y7rdHk8TyQIeSv2imtSShpZ+9VyB
+         xYP7pyMc3SnS6vdAZZ4RlW7EVZMxdWjDZ3P0obL49rwBHc+lL3oJeTJwTrBNtvhKBKRD
+         5Fgyjyf1NbaVopWjgqC5qCmhPukDeVeU04Txc1FDIaVVwgPU6Vx3kHyd22hyxgcGxb8o
+         ST+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N9+OxDZjSo4wCo8oLDWS807OvNQxIgRZodAcG7UCd+I=;
+        b=nHGYlbqaUYB841Lpd/WJ6NALnOSIn65n6NBDdsViorREtn2SkNhxdFIaFLBR9BEhsJ
+         cEj70ud950W77RZcr0qxcdFcPbeo0QkQdaoade6FupDYazCUAzFW/3ti2DPLZv9yp15q
+         pmPoDCLD/zBLSUhQDtP8up2sOzKEHtVCC361jogXXm34UQiqaCR9oKKOTf0emKNa/AFH
+         cfXb5EhQcTug7PMYnPBnpPTf5iR8t/GECWxNom6tfFGQlYRNo1r4XvBIYuMyQk/IzZDY
+         No8dt/iNMcfGKixHTwcXvz4tlslDoGYBQ5S6SY9WksyJCMVwCkqDL+Kd4p2wWS7vUP5m
+         Jg8Q==
+X-Gm-Message-State: AOAM5336U/hajQbgywjdEBL1PT6gjvWxz1LQGtvi27z2FENYOqYj4NXv
+        lYVcWJuASCWWuX3OrzHnb/6HSAJ8MrmYM8BYPI6wjhyTP2M/Og==
+X-Google-Smtp-Source: ABdhPJxZcAcuOp4tKv7oC5X6OIAJoCrOyFzQcp9kYadOb9hq6dAqOMtYH8Zh5LSO46Ha/DsUJ/45YH7c21twa9tGjpo=
+X-Received: by 2002:a9d:646:: with SMTP id 64mr827164otn.18.1607477724926;
+ Tue, 08 Dec 2020 17:35:24 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [128.224.162.199] (60.247.85.82) by HK2PR02CA0176.apcprd02.prod.outlook.com (2603:1096:201:21::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12 via Frontend Transport; Wed, 9 Dec 2020 01:15:12 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 80aa6f90-a681-4fc3-bec1-08d89bdfe238
-X-MS-TrafficTypeDiagnostic: CY4PR11MB1527:
-X-Microsoft-Antispam-PRVS: <CY4PR11MB152716E7D4D5C8D4DC951CDFF0CC0@CY4PR11MB1527.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lfWs336yo+Ok+nIIrc4qruKZwOeDD2njURCRxuDjK3s0BfgD9Im2M0lM+H9wW3UMo/CFahzgVAyLtDuRdnAHvK89LRsRxTI6XDWDXZrl7wAojmdk/zxzdUdOacQ/YmmmySP0OB3WP+w4tGs31nHGyzCHgmFc9IfG8lh/3cWGYEy3i6bhta0+y5oAfgkB6kfogp7IYDx2nYf1/48oyIq2+b6kx2EWY4WfNdFGvaO9rEywaAdogTW6kdU9TVURRBUMndtAWKT6583eps3+Rh7hkQK5QpNaYwkK+QwlxPgp90H0ryaVs8YQ8Ful2s8nq20rpQgN5tQG8LsLf9LbEeoqqr0bLr8DHqgY+NMPnB7n54AGkS5pRRb6FUL7aDbTYMwgVtbBtsvfFPxR7fOOXQ8c5ZP78leaW13mhzXTXm3X12oDToXkmWnsGjyB4wTGcPImRkVFJ5lw5DcjtiefAjrg6g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR11MB0071.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(136003)(346002)(366004)(53546011)(66556008)(86362001)(83380400001)(16576012)(66476007)(6666004)(31686004)(508600001)(6486002)(66946007)(2906002)(8676002)(34490700003)(52116002)(4326008)(8936002)(2616005)(36756003)(956004)(31696002)(186003)(26005)(6706004)(16526019)(5660300002)(78286007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?c0hrbnBDK0o2aXVrdjZZZXY1RjlxMmNJWGs0aHJYUG5RL2NrbGpsNFVPYlh3?=
- =?utf-8?B?TDZBWmNSQ05NZk5mM25MM0dNKzBOZGwxU1dGVEJDRE1BUzhiQnhFc3lsM2dW?=
- =?utf-8?B?UUdoWjUrcjZWdVJPTlhrSHVZRTdpY3JLWjZpSXpKSTZ3WXIrRU13WWFoZjJ6?=
- =?utf-8?B?c3JvSVJlRVR5VmRqaHNXY1dxdXQ2b055cXlNdEJhdkpTT2hQeTBDdGk5dVQz?=
- =?utf-8?B?K2VvMk04YzBIdXEwcWU4eW1ObTNRM3RIdi9IWHJkc3RZTHZhbU9HSFVTYkJu?=
- =?utf-8?B?ZmJSVHQvVWxlcUxxQldmckhjRE85Z2YzWEp5cmwvVjhpK1NXbldJZ2pHVWNr?=
- =?utf-8?B?NmlXR28vSStUWXhObmwwWlEzb3ZYaG5pWnRjSVBVOFZMRFdINW9QZUs0eDZu?=
- =?utf-8?B?ZHlIS3F1c2ZVNWxOSlpmVkJRMXhnS1FJdUVNRmFYdHM1SjJlaExPY1RQb2lN?=
- =?utf-8?B?d0ROYWh2SC9MSE04SW1rSGxrd0hYTjRVbXBOUDRjYjFndkFoNktMTEtVcmM3?=
- =?utf-8?B?bzJnWmhsbHp0MGFIM2pQSHhrT28wL04zdTFuUnMrMXUwVFgrdlQwazQvVkNv?=
- =?utf-8?B?Q2cxeGVpb0Y2RnZRcFFqMUJqRjVoNnlPSXpBZENLUWZaL3lGOEg3SENUU3FB?=
- =?utf-8?B?RUNXUDNuWnZYMHAwaEYwbmptdkN4RDljNW1jMVBkUnpHOGVwanFsNlAwSWFq?=
- =?utf-8?B?VnMrTTdCQ2tsKzgvalNnT0VoU2hhRmp6M0lVSGNyaHpSMU1xOVZhcVFnQzVl?=
- =?utf-8?B?NTFZb1RsbXRkczlQQjEwTWt0ZHVBTDh3TUdSVGs4dmFjdjBxM1FicGNtdlJ3?=
- =?utf-8?B?c2NBb0p2cFg1ZWl1azVqaE95WjBielFkL3QvTlkxU2t5a1dwR1N6V0tDYnhk?=
- =?utf-8?B?NXl2VkoySTlhN2FsYXhUMHlmOXdRYlpaaEtuTlM4K2JET2YwMkNiRHZuSnZE?=
- =?utf-8?B?V1FNWStVVmlqSkRENUdDZ0V4NTBNem9ZUThQdHNFYnhreWl2TFVDT28yeVYr?=
- =?utf-8?B?V2JRUldKL0RUR1JPRk1uQlNzMldHeHQ4ZGJ6d0NyYmMvN2hnZThtSUxxd1Rp?=
- =?utf-8?B?SUZvV3huV0pPN1A1eStFTkh5M2NwRmFWSDBCYWJIc2FwR3kvc25pQzlVYTda?=
- =?utf-8?B?ZC9aMExZMUhmQWkvVi9qcGJ1NTZsUVd0ak9zYlhYRW9TYzNpeVF0Ykw3QjZV?=
- =?utf-8?B?QWxFYlpaYytBTXBOUFEyeHlNQitmTmJ6VUZrVEtiSUlDKzNBQTdMZVZnSFY0?=
- =?utf-8?B?cllTMGtpaFFGWGxjZjdiWERROE9XTkZsSk14NHJ6RTB4cmJnVlE2bEtWdUJG?=
- =?utf-8?Q?4i1megBjOKmKE=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR11MB0071.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2020 01:15:14.6997
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80aa6f90-a681-4fc3-bec1-08d89bdfe238
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rvwpGvdzUVDg4FjhEoage8uDVIBDCYe+1ZS8yb74cyYt72bzgwu1gYvUR+g8wGkNOrBbSmm62GaTbKkrNsmtoUMSLzWaPVLxheob6pVJnNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1527
+References: <20201208071432.55583-2-zong.li@sifive.com> <202012090131.cj4wycAZ-lkp@intel.com>
+In-Reply-To: <202012090131.cj4wycAZ-lkp@intel.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Wed, 9 Dec 2020 09:35:13 +0800
+Message-ID: <CANXhq0pGhyvevg7-D83V3+i_KRPWW1=RfzM8pBooPAeOQp00Wg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] clk: sifive: Extract prci core to common base
+To:     kernel test robot <lkp@intel.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Pragnesh Patel <pragnesh.patel@openfive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yash Shah <yash.shah@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, kbuild-all@lists.01.org,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Michal,
-
-On 12/8/20 8:42 PM, Michal Simek wrote:
-> Hi,
+On Wed, Dec 9, 2020 at 1:08 AM kernel test robot <lkp@intel.com> wrote:
 >
-> On 08. 12. 20 13:35, quanyang.wang@windriver.com wrote:
->> From: Quanyang Wang <quanyang.wang@windriver.com>
->>
->> The Zynqmp Ultrascale clock controller generates clocks for peripherals,
->> so we need to enable it when ARCH_ZYNQMP is selected.
->>
->> Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
->> ---
->>   drivers/clk/zynqmp/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/zynqmp/Kconfig b/drivers/clk/zynqmp/Kconfig
->> index 17086059be8b..a8aa58bbb790 100644
->> --- a/drivers/clk/zynqmp/Kconfig
->> +++ b/drivers/clk/zynqmp/Kconfig
->> @@ -4,6 +4,7 @@ config COMMON_CLK_ZYNQMP
->>   	bool "Support for Xilinx ZynqMP Ultrascale+ clock controllers"
->>   	depends on ARCH_ZYNQMP || COMPILE_TEST
->>   	depends on ZYNQMP_FIRMWARE
->> +	default ARCH_ZYNQMP
-> This is not right. If you look 2 lines above.
+> Hi Zong,
 >
->>   	help
->>   	  Support for the Zynqmp Ultrascale clock controller.
->>   	  It has a dependency on the PMU firmware.
->>
-> And we were talking about enabling this driver in defconfig. Not via
-> Kconfig. This fragment was designed in a way that this clock controller
-> doesn't need to be used. It is our default but if you want to use for
-> example fixed clock you also can.
-> This enables space for being able to use for example different firmware.
-
-Thanks for your reply. I will enable this driver in defconfig.
-
-Best Regards
-
-Quanyang
-
+> Thank you for the patch! Yet something to improve:
 >
-> Thanks,
-> Michal
+> [auto build test ERROR on clk/clk-next]
+> [also build test ERROR on robh/for-next linux/master linus/master v5.10-rc7 next-20201208]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
+>
+> url:    https://github.com/0day-ci/linux/commits/Zong-Li/clk-add-driver-for-the-SiFive-FU740/20201208-151711
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: x86_64-randconfig-a016-20201208 (attached as .config)
+> compiler: clang version 12.0.0 (https://github.com/llvm/llvm-project a2f922140f5380571fb74179f2bf622b3b925697)
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # install x86_64 cross compiling tool for clang build
+>         # apt-get install binutils-x86-64-linux-gnu
+>         # https://github.com/0day-ci/linux/commit/5bfdddc125b80d4541a5a925918efec9b6fe0282
+>         git remote add linux-review https://github.com/0day-ci/linux
+>         git fetch --no-tags linux-review Zong-Li/clk-add-driver-for-the-SiFive-FU740/20201208-151711
+>         git checkout 5bfdddc125b80d4541a5a925918efec9b6fe0282
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=x86_64
+>
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+> >> ld.lld: error: undefined symbol: wrpll_configure_for_rate
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(sifive_prci_wrpll_round_rate) in archive drivers/built-in.a
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(sifive_prci_wrpll_set_rate) in archive drivers/built-in.a
+> --
+> >> ld.lld: error: undefined symbol: wrpll_calc_output_rate
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(sifive_prci_wrpll_round_rate) in archive drivers/built-in.a
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(sifive_prci_wrpll_recalc_rate) in archive drivers/built-in.a
+> --
+> >> ld.lld: error: undefined symbol: wrpll_calc_max_lock_us
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(sifive_prci_wrpll_set_rate) in archive drivers/built-in.a
+> --
+> >> ld.lld: error: undefined symbol: __prci_init_clocks_fu540
+>    >>> referenced by sifive-prci.c
+>    >>> clk/sifive/sifive-prci.o:(prci_clk_fu540) in archive drivers/built-in.a
+>
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
+This issue should be fixed in the v5 version, it seems to be a mess in
+our v6 internal branch, I would rebase the codebase and send the v7
+patches.
