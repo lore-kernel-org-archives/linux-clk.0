@@ -2,139 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85474C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4FDC4167B
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37BAD23433
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCF3F23BC7
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Dec 2020 09:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbgLIJuE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Dec 2020 04:50:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49750 "EHLO
+        id S1729396AbgLIJuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Dec 2020 04:50:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729061AbgLIJuD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 04:50:03 -0500
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FBEC0613CF
-        for <linux-clk@vger.kernel.org>; Wed,  9 Dec 2020 01:49:23 -0800 (PST)
-Received: by mail-pl1-x644.google.com with SMTP id p6so649105plr.7
-        for <linux-clk@vger.kernel.org>; Wed, 09 Dec 2020 01:49:23 -0800 (PST)
+        with ESMTP id S1729368AbgLIJuK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 04:50:10 -0500
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3593C06179C
+        for <linux-clk@vger.kernel.org>; Wed,  9 Dec 2020 01:49:30 -0800 (PST)
+Received: by mail-pg1-x543.google.com with SMTP id w5so79409pgj.3
+        for <linux-clk@vger.kernel.org>; Wed, 09 Dec 2020 01:49:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AL3YkBOv5b8sByiXoR73Ol/0eY4rxeAavz/QsSxvMII=;
-        b=EGHlGAIsmIclMzfOdAuhmFO/HFM6CkrW380E7NpmzwdrfRTpqgfCk0sjga5uyenLiN
-         H2yIZxwsTQhOjmP7BVMHBTGvafQ8705ZoFLGKdL6YHxSWhSjyMjQi1+QZf8rcJuP5VIS
-         ICWVUY1m0ip33W7qSJt5qTpDMVWCpPKq5oBpi6l9DzE9dJXa+7APZ5WNAN9tD/z6blVv
-         lsYFa2871HHWbbgAr2O/8v9VYXUnJOuGqa5myZ4DrrUhIM5fXl/fXvpy5RppEz0B00Eo
-         cLuUoKbvc0u2TLsCXXL313Xa6jyN8ocVM35xgBp2FSr28doO1Uer60LwTmBUeiDgcGwI
-         iUeg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=swTJaeBCJSJ85jvGpvCNTGLd9zLi8EeqF0Ic677rVpg=;
+        b=RxFi9/p86xNpYk+bgvT10A5D8Q5O4kxMzyz75yKU8o4khbCrIEWDcrKszYL97lxjj8
+         qwxW4xuV0N1nn2pxp6Fu6TEnHrVA/00qzvN2jqVTVxFe02M0j+sI1+zO9bUvZylpgWsl
+         6LbFuO0YAI5n0F0SrC9I1j3nYS/lNjlQZHWRDvAiqOaNieugsUFobG1kjNGj7Y6BSjBk
+         cacQjbk9m9WuyhQPl/uJmJ+oyR1FPxtbRkLa84Gd4O8GELdBROCX6bbQYjlLz80fiss9
+         zXqr4IEkBA4FTgM4oO6jtiWz1rn1KKVNYxMDsUOOftukQ+3a/7oh6heI9uwAC83KvmGb
+         xfxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AL3YkBOv5b8sByiXoR73Ol/0eY4rxeAavz/QsSxvMII=;
-        b=T5lDy7tCQCb+Pp7eZT1IS0ecSEPhRlp6oRuEeFf3LnfIOibfRkkKTxUZgMfUbk6cRm
-         yxu6lPI690K/N7Q+5tvb1X6Xlc3ONKfIopCFLQnWnXqkfdZF4soZ7+e2YRg1Z3k0zekC
-         a6xLT7i0Z7BLDVG/5nkCl3hLv0CBPSRnA/UdERSZfYz6SCenvqAQkRzLUrlh0ymcRknX
-         BY0OLRQYUTYjEKTOAFvgcpjvVcthOoMYT51+30zwu5NOGhHCxej+TY9D2iZlugvDcZUS
-         IG4w5XndU5tDmD0U3QlECEhxAgDT2w58PNUqBEbOkLAqCl5tmdcrEOc/omyu59DH2713
-         Lazw==
-X-Gm-Message-State: AOAM533FEDU3hZotbNppnA5ntQlw4se3Xswc6Ze7zV8Fez0zUSns27gJ
-        LuxkiRw5I+SFOkkPQoSnxntXXQ==
-X-Google-Smtp-Source: ABdhPJw9bu6mcnqWxY0e+Od/1TRJARGDeLGom/lEpeDI6x4EAsCCzqcchepslIO1y79reQL1kfkGZA==
-X-Received: by 2002:a17:902:ed11:b029:da:3137:2695 with SMTP id b17-20020a170902ed11b02900da31372695mr1289502pld.1.1607507363144;
-        Wed, 09 Dec 2020 01:49:23 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=swTJaeBCJSJ85jvGpvCNTGLd9zLi8EeqF0Ic677rVpg=;
+        b=er6q/HJBtEm2FMV49EFBKeZ32e5JJSCoDmbKy8yTDz3XVmTG+29KswbI34+X2UsPa0
+         wSD0cK9ug/DGvQNrCU+2GX4oFhfsQC+txGRo0OGHbZxV9ig2QGw5uRqCJhXoxCEVRj8J
+         oPsui7cwX0UQkxjwwPwJUgsJTW+oKxN+im7VeAjm/myTdrv4V1XwmWw592V9EofII/DU
+         l7qKG0UAXq0gjRZZ3J0baU3JD3VRoIxePUAnH6SGUH6+7KRceCcdRH30Vjrm84XYj5OW
+         HaLq688y7OI6qAVPXcYdhKKMdAOzR57GkUaM9e2U6EiPHKVk0CJthBw+uinq3vQDfXJY
+         4TlQ==
+X-Gm-Message-State: AOAM531aT7rokDYOSzHPvmDf1Pram7fJh00tD/PKf5GXgkRbqO4icTlq
+        3P6I3rv+A56WcS6m8seuRDgskA==
+X-Google-Smtp-Source: ABdhPJxxFa9Co8dth0Y5535n/HOB9tOdSNShGd/e9jPuwNVWTmIZqj1EQu6nnWEdPn7oky+hRlUOPQ==
+X-Received: by 2002:a62:145:0:b029:19e:a395:bd3d with SMTP id 66-20020a6201450000b029019ea395bd3dmr133559pfb.13.1607507370226;
+        Wed, 09 Dec 2020 01:49:30 -0800 (PST)
 Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
-        by smtp.gmail.com with ESMTPSA id 129sm1890354pfw.86.2020.12.09.01.49.20
+        by smtp.gmail.com with ESMTPSA id 129sm1890354pfw.86.2020.12.09.01.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Dec 2020 01:49:22 -0800 (PST)
+        Wed, 09 Dec 2020 01:49:29 -0800 (PST)
 From:   Zong Li <zong.li@sifive.com>
 To:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
         schwab@linux-m68k.org, pragnesh.patel@openfive.com,
         aou@eecs.berkeley.edu, mturquette@baylibre.com,
         yash.shah@sifive.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v7 0/5] clk: add driver for the SiFive FU740
-Date:   Wed,  9 Dec 2020 17:49:11 +0800
-Message-Id: <20201209094916.17383-1-zong.li@sifive.com>
+Cc:     Zong Li <zong.li@sifive.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        Pragnesh Patel <Pragnesh.patel@sifive.com>
+Subject: [PATCH v7 2/5] clk: sifive: Use common name for prci configuration
+Date:   Wed,  9 Dec 2020 17:49:13 +0800
+Message-Id: <20201209094916.17383-3-zong.li@sifive.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201209094916.17383-1-zong.li@sifive.com>
+References: <20201209094916.17383-1-zong.li@sifive.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a driver for the SiFive FU740 PRCI IP block, which handles more
-clocks than FU540. These patches also refactor the original
-implementation by spliting the dependent-code of fu540 and fu740
-respectively.
+Use generic name CLK_SIFIVE_PRCI instead of CLK_SIFIVE_FU540_PRCI. This
+patch is prepared for fu740 support.
 
-We also add a separate patch for DT binding documentation of FU740 PRCI:
-https://patchwork.kernel.org/project/linux-riscv/patch/20201126030043.67390-1-zong.li@sifive.com/
+Signed-off-by: Zong Li <zong.li@sifive.com>
+Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+Reviewed-by: Pragnesh Patel <Pragnesh.patel@sifive.com>
+---
+ arch/riscv/Kconfig.socs     | 2 +-
+ drivers/clk/sifive/Kconfig  | 6 +++---
+ drivers/clk/sifive/Makefile | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Changed in v7:
- - Pick changes in v5 back up into this patch series.
-
-Changed in v6:
- - Modify the patch "Add clock enable and disable ops"
-   by Pragnesh. The changes as follows:
-   - Remove spin lock in enable and disable functions
-   - Call enable_bypass() before PLL output disable
- - Rebase code to Linux v5.10-rc7
-
-Changed in v5:
- - Fix copyright format
- - Add a link of documentation in commit message
- - Modify build dependency for sifive-prci.c
- - Add enable and disable functions by Pragnesh Patel
-
-Changed in v4:
- - Fix the wrong enable bit field shift for FU540 and FU740.
-
-Changed in v3:
- - Fix the wrong enable bit field shift for FU740.
-
-Changed in v2:
- - Remove the macro definition for __prci_clock_array.
- - Indicate the functional changes in commit message.
- - Using option -M and -C to create patches.
- - Rebase code to kernel v5.10-rc3.
-
-Pragnesh Patel (1):
-  clk: sifive: Add clock enable and disable ops
-
-Zong Li (4):
-  clk: sifive: Extract prci core to common base
-  clk: sifive: Use common name for prci configuration
-  clk: sifive: Add a driver for the SiFive FU740 PRCI IP block
-  clk: sifive: Fix the wrong bit field shift
-
- arch/riscv/Kconfig.socs                       |   2 +-
- drivers/clk/sifive/Kconfig                    |   8 +-
- drivers/clk/sifive/Makefile                   |   2 +-
- drivers/clk/sifive/fu540-prci.c               | 598 +-----------------
- drivers/clk/sifive/fu540-prci.h               |  21 +
- drivers/clk/sifive/fu740-prci.c               | 120 ++++
- drivers/clk/sifive/fu740-prci.h               |  21 +
- drivers/clk/sifive/sifive-prci.c              | 574 +++++++++++++++++
- drivers/clk/sifive/sifive-prci.h              | 299 +++++++++
- include/dt-bindings/clock/sifive-fu740-prci.h |  23 +
- 10 files changed, 1091 insertions(+), 577 deletions(-)
- create mode 100644 drivers/clk/sifive/fu540-prci.h
- create mode 100644 drivers/clk/sifive/fu740-prci.c
- create mode 100644 drivers/clk/sifive/fu740-prci.h
- create mode 100644 drivers/clk/sifive/sifive-prci.c
- create mode 100644 drivers/clk/sifive/sifive-prci.h
- create mode 100644 include/dt-bindings/clock/sifive-fu740-prci.h
-
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index 8a55f6156661..3284d5c291be 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -5,7 +5,7 @@ config SOC_SIFIVE
+ 	select SERIAL_SIFIVE if TTY
+ 	select SERIAL_SIFIVE_CONSOLE if TTY
+ 	select CLK_SIFIVE
+-	select CLK_SIFIVE_FU540_PRCI
++	select CLK_SIFIVE_PRCI
+ 	select SIFIVE_PLIC
+ 	help
+ 	  This enables support for SiFive SoC platform hardware.
+diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
+index f3b4eb9cb0f5..ab48cf7e0105 100644
+--- a/drivers/clk/sifive/Kconfig
++++ b/drivers/clk/sifive/Kconfig
+@@ -8,12 +8,12 @@ menuconfig CLK_SIFIVE
+ 
+ if CLK_SIFIVE
+ 
+-config CLK_SIFIVE_FU540_PRCI
+-	bool "PRCI driver for SiFive FU540 SoCs"
++config CLK_SIFIVE_PRCI
++	bool "PRCI driver for SiFive SoCs"
+ 	select CLK_ANALOGBITS_WRPLL_CLN28HPC
+ 	help
+ 	  Supports the Power Reset Clock interface (PRCI) IP block found in
+-	  FU540 SoCs.  If this kernel is meant to run on a SiFive FU540 SoC,
++	  FU540 SoCs. If this kernel is meant to run on a SiFive FU540 SoC,
+ 	  enable this driver.
+ 
+ endif
+diff --git a/drivers/clk/sifive/Makefile b/drivers/clk/sifive/Makefile
+index 51b6ebc359e4..3074cdbc6009 100644
+--- a/drivers/clk/sifive/Makefile
++++ b/drivers/clk/sifive/Makefile
+@@ -1,2 +1,2 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-$(CONFIG_CLK_SIFIVE_FU540_PRCI)	+= sifive-prci.o fu540-prci.o
++obj-$(CONFIG_CLK_SIFIVE_PRCI)	+= sifive-prci.o fu540-prci.o
 -- 
 2.29.2
 
