@@ -2,73 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6565C4361B
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 12:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A0CC4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 13:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A147D23D39
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 12:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 095B2204EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 13:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbgLJMmt convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 07:42:49 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36832 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgLJMmr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 07:42:47 -0500
-Received: by mail-ot1-f65.google.com with SMTP id y24so4700589otk.3;
-        Thu, 10 Dec 2020 04:42:32 -0800 (PST)
+        id S2389191AbgLJNXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 08:23:42 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34998 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389111AbgLJNXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 08:23:35 -0500
+Received: by mail-oi1-f194.google.com with SMTP id s2so5689300oij.2;
+        Thu, 10 Dec 2020 05:23:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SbywUHfxiOfCKevo8kgPT+2gmwbtXlw9HIdds9wF3Wg=;
-        b=ZqVMQUn+CBntT23w1LwW5MhXxnjeCko9YF8RG3ROt68yXq8bJP+wXdOPePd6Ysp1gA
-         siQc74deKqJGEZdi9SDIZpZKBwQNb7MA5fA+QgjHqLVqq6I4FSJsGWWQv2OGnpKxAGHv
-         Il82L0yG6GXt7dzpcZPwAnSaTaf+js8XPgDdzBo7XEMhhrrs+B3flKVTqgqQEBqxTM4N
-         se2PdgmJfnSre+69cv/BkC8xLxu0S0HHRBYNmrHg6vtuQczc2BWUPRHVBIGp57ZCJZ6Y
-         exTDTXd1rH3IfffNUH2Z3F03JDdhWpDMh8chTGmnpWqhQAy+qPv6Jh3Q6i7mVszub3MM
-         D8bQ==
-X-Gm-Message-State: AOAM531NDPomM5xi++TOOwYkZEk0WMsUpWr6Wvh7QjFu6B4hBjFRHsbE
-        1qupO2FvExnRG2iWnUgO/NBNsiBduxI0lcmUgSLZY0d4wSE=
-X-Google-Smtp-Source: ABdhPJxPtr/2RI5TwNa0irGhVZSSxkqr+uZk2ThZW3Uwq9vyr9IFhe/qviIhaxNb3Ym2GtxVsSU8OJb/vspmVw7/q0Q=
-X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr5620532oth.250.1607604126933;
- Thu, 10 Dec 2020 04:42:06 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=5YrrmDGBtPB40xWq8Xs0g2ZWc20nUchgMGGf+8yx/xg=;
+        b=RLhCONemDWXyMbPS7k4YD5J0H51u4xG1EKKxcHvE/WtCk8V/hjaTClOV9Eyo3tTi81
+         +1zgq0L0otTaGK9kbuEccGFj/kg03gr7+m96ERNisQS/sNT43we8NjUXIF0PHomPKjOB
+         dZzFhutLrvZytMoeViVp8S7Gz44a6TmKP5jx6pkE+pfHzd/Q331tnr1OokNohMSKIHgL
+         QhcYYoJIPJdHici4HkDxULEnDyTvd5vAttiOARYljM9Go0qZrnXw0mUXFoC7iWFguTRR
+         hCwpBHSv9C3RP5zVP0Whe1aVhhlUtbOv0bK8vqag1E0OlHw5kRRgQSep8FWY48rii0Ef
+         cYUw==
+X-Gm-Message-State: AOAM53070pAQc1sk16nM3qtkiNoCBKKnRAk5Dj9ilnp5QPX7LavuQymg
+        0yj2SsO1rSfQsCM5aKfiqtf1O7SqPZDgP8FF34w=
+X-Google-Smtp-Source: ABdhPJyqGfuC/drmAWDcS+9KsCPX7gcqJAznxiSfiFBUXqkMzi0Y9Mgi8ZYjpvm4VhAa0RHtEVcG55I8rIitOVjYj3s=
+X-Received: by 2002:aca:4b16:: with SMTP id y22mr5296436oia.148.1607606574747;
+ Thu, 10 Dec 2020 05:22:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20201209195343.803120-1-niklas.soderlund+renesas@ragnatech.se> <20201209195343.803120-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20201209195343.803120-6-niklas.soderlund+renesas@ragnatech.se>
+References: <20201210034003.222297-1-damien.lemoal@wdc.com>
+ <CAMuHMdVbU2kjKU3EVN5kszPc=VQcgzYLemV6AOyg+YyZBfc31Q@mail.gmail.com> <5389e421f884c43ff6a806ac4ec95b43a93d02f7.camel@wdc.com>
+In-Reply-To: <5389e421f884c43ff6a806ac4ec95b43a93d02f7.camel@wdc.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Dec 2020 13:41:56 +0100
-Message-ID: <CAMuHMdWtR4KEFj9Xri9BoX2outEfDyd3neU+eT6xpHQpwgPYyA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] clk: renesas: r8a77995: Add TMU clocks
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Thu, 10 Dec 2020 14:22:43 +0100
+Message-ID: <CAMuHMdVnR2E6+ANYuZLvsTW8Od4Sa=wDtjnio4h3z=W2ePPGGw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/22] RISC-V Kendryte K210 support improvements
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "seanga2@gmail.com" <seanga2@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 8:54 PM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> This patch adds TMU{0,1,2,3,4} clocks.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Damien,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.12.
+On Thu, Dec 10, 2020 at 1:36 PM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+> On Thu, 2020-12-10 at 11:04 +0100, Geert Uytterhoeven wrote:
+> > On Thu, Dec 10, 2020 at 4:41 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+> > > Changes from v6:
+> > > * Annotate struct platform_driver variables with __refdata to avoid
+> > >   section mismatch compilation errors
+> >
+> > Blindly following the advice from kernel test robot <lkp@intel.com> is
+> > not always a good idea:
+> >
+> >     The variable k210_rst_driver references
+> >     the function __init set_reset_devices()
+> >     If the reference is valid then annotate the
+> >     variable with or __refdata (see linux/init.h) or name the variable:
+> >
+> > If your driver's probe function is annotated with __init, you cannot
+> > have a pointer to it in the driver structure, as any binding done after
+> > the freeing of initmem will cause a crash.  Adding the __refdata merely
+> > suppresses the warning, and won't avoid the crash.
+>
+> Hmm... I must be misunderstanding something here. free_initmem() is called from
+> kernel_init() right before starting the user init process. That is late enough
+> that all drivers are already probed and initialized. At least that is what I
+> thought, especially considering that none of the k210 drivers can be modules
+> and are all builtin. What am I missing here ?
+
+For these specific cases, binding is indeed unlikely to happen after
+free_initmem(). In the generic case that is not true.
+However, you can still trigger it manually by unbinding and rebinding
+the device manually through sysfs.
+
+> So I think I will go with option 2. It is simpler and safer. We can always
+> revisit and optimize later. I would prefer this series to land first :)
+
+Right. Correctness first, performance later.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
