@@ -2,107 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22DCC4361B
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 01:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F180C4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 03:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 901A923BC7
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 01:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3846423A1D
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 03:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbgLJB1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Dec 2020 20:27:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728050AbgLJB1x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Dec 2020 20:27:53 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607563632;
-        bh=4fquuoXgeXKGOmKHsZ5csbna5WzsqVOwtrr9OcdcGt4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QoEV6Wb73MTk6RVv03QGdhzC9QChshkqShWs7zHgdbgmb+S1UwE18CCDXqlr4dpCz
-         emhS1Fl2MmYt2dxaDR9EjWA1U55ohBQt0NqWkW46lDIJ7R2DROpwXL0FFg8O/iuYaj
-         lL/anVqdLkaRGlcyHwbr/QTmTyUrKnXTZmLTmpJ7EOAkCKsyRW6/pjEb+XFL2OG+jC
-         CibqOORASvbtc0PPBWsrOwYsxE8gnbYmhg+dXWDogsTlxkLoqAKKPzZ6nn4R+sbTdd
-         7dHuLYIxEHKnNsk+oFyn+Nop1xkGRVghGIJXdRGicuphQwt4st39a4Z16yNeAREPks
-         NrqiNOUnIIIJA==
+        id S1730552AbgLJDlx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Dec 2020 22:41:53 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:39156 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729808AbgLJDls (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Dec 2020 22:41:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1607572418; x=1639108418;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=y2U65G64UeShjGJVOnYVAq9kfdKwB51xvYK09lHldEg=;
+  b=DA8bAAY7XROlcSREzYM3WA0EZ0tQT4aR2rNvlDo7UxnMUgazM8kKP8yd
+   6FZIsIMPYhf3YjXbRXvfP8oaGSefiwPFOtCwNl39dC3vZkfgH0U/HXNha
+   muafbDVNk9cQmeG+UsQeAGkrIGg71BUvy4oOK+I/hjfCf6pd4lcmfaUH3
+   AAfU72ZxJNZcesOksPDI5q1YlIyZF051C6E08rGPZQWru1/C+iGo7jbgm
+   gY7iTv1wuk5CQztJm6EUhbEa8XJXG5PLrempyYBoDX+TdCjaMhrI3bpeu
+   e+45Iskzo8GVu7hS3LtP/2vwmdOCSAL5+VoEBy6LW8s6fxuUdCGDyilTr
+   g==;
+IronPort-SDR: uUYU5dx4fgP5R/MvfF0lznD7S27n2cpICWB+XS1kTETTK+l8OT4dmBo7N+9MKU1HNCkMpaqmJr
+ d8Cd/3wTqQ9gD6hsP7McdP362wRUyYT0tM4gYhq2oY96Vb7QvEj6T+OCOKmTsQ2xHhUj2ypSSJ
+ PVM4a1i9d9g0t2mGxfTjuU39PYf883CfAOvXl8fXlVn1sSDHLnCegKIzwHYwrq3SUT8wgJgBWU
+ W7OQEJodIeKGiG0EsGGev5EZInW0CGdsxILEpJMZeyphNcNyUbfxKHb0t7sGsCl53OeABDOk5/
+ i3I=
+X-IronPort-AV: E=Sophos;i="5.78,407,1599494400"; 
+   d="scan'208";a="258551197"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Dec 2020 11:51:22 +0800
+IronPort-SDR: Q9H4hdyPjKVAPlz/4JvB7OG7VCeIMS9PhVkfEst3+Nqy+N96ppzEoqaZLTFvTyEV2E97pktq18
+ M41Y3AHrbvNrpeqnKAT6Y9Xow5U4EuVFo=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2020 19:24:13 -0800
+IronPort-SDR: XxOPwkiQzXQt2vNqM9234LBWN3pWe2e5lq0AG9XMnlSwKVWdN0LOK2v3aC+jzH7/9NGYbvct7e
+ /0v0UqUcg3uQ==
+WDCIronportException: Internal
+Received: from wdapacbjl0003.my.asia.wdc.com (HELO twashi.fujisawa.hgst.com) ([10.84.71.173])
+  by uls-op-cesaip01.wdc.com with ESMTP; 09 Dec 2020 19:40:15 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Sean Anderson <seanga2@gmail.com>
+Subject: [PATCH v7 02/22] riscv: Fix sifive serial driver
+Date:   Thu, 10 Dec 2020 12:39:43 +0900
+Message-Id: <20201210034003.222297-3-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201210034003.222297-1-damien.lemoal@wdc.com>
+References: <20201210034003.222297-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201025224212.7790-1-digetx@gmail.com>
-References: <20201025224212.7790-1-digetx@gmail.com>
-Subject: Re: [PATCH v1] clk: tegra: Fix duplicated SE clock entry
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Wed, 09 Dec 2020 17:27:10 -0800
-Message-ID: <160756363099.1580929.2375956922093495697@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2020-10-25 15:42:12)
-> The periph_clks[] array contains duplicated entry for Security Engine
-> clock which was meant to be defined for T210, but it wasn't added
-> properly. This patch corrects the T210 SE entry and fixes the following
-> error message on T114/T124: "Tegra clk 127: register failed with -17".
->=20
-> Fixes: dc37fec48314 ("clk: tegra: periph: Add new periph clks and muxes f=
-or Tegra210")
-> Tested-by Nicolas Chauvet <kwizart@gmail.com>
-> Reported-by Nicolas Chauvet <kwizart@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+Setup the port uartclk in sifive_serial_probe() so that the base baud
+rate is correctly printed during device probe instead of always showing
+"0".  I.e. the probe message is changed from
 
-Looks correct. Should I pick this up Thierry?
+38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
+base_baud = 0) is a SiFive UART v0
 
->  drivers/clk/tegra/clk-id.h           | 1 +
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index ff7da2d3e94d..24413812ec5b 100644
-> --- a/drivers/clk/tegra/clk-id.h
-> +++ b/drivers/clk/tegra/clk-id.h
-> @@ -227,6 +227,7 @@ enum clk_id {
->         tegra_clk_sdmmc4,
->         tegra_clk_sdmmc4_8,
->         tegra_clk_se,
-> +       tegra_clk_se_10,
->         tegra_clk_soc_therm,
->         tegra_clk_soc_therm_8,
->         tegra_clk_sor0,
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk=
--tegra-periph.c
-> index 2b2a3b81c16b..60cc34f90cb9 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -630,7 +630,7 @@ static struct tegra_periph_init_data periph_clks[] =
-=3D {
->         INT8("host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, =
-28, 0, tegra_clk_host1x_8),
->         INT8("host1x", mux_pllc4_out1_pllc_pllc4_out2_pllp_clkm_plla_pllc=
-4_out0, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x_9),
->         INT8("se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, TEG=
-RA_PERIPH_ON_APB, tegra_clk_se),
-> -       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
-RIPH_ON_APB, tegra_clk_se),
-> +       INT8("se", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_SE, 127, TEGRA_PE=
-RIPH_ON_APB, tegra_clk_se_10),
->         INT8("2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, 0, t=
-egra_clk_gr2d_8),
->         INT8("3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, 0, t=
-egra_clk_gr3d_8),
->         INT8("vic03", mux_pllm_pllc_pllp_plla_pllc2_c3_clkm, CLK_SOURCE_V=
-IC03, 178, 0, tegra_clk_vic03),
+to the correct:
+
+38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
+base_baud = 115200) is a SiFive UART v0
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ drivers/tty/serial/sifive.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
+index 13eadcb8aec4..214bf3086c68 100644
+--- a/drivers/tty/serial/sifive.c
++++ b/drivers/tty/serial/sifive.c
+@@ -999,6 +999,7 @@ static int sifive_serial_probe(struct platform_device *pdev)
+ 	/* Set up clock divider */
+ 	ssp->clkin_rate = clk_get_rate(ssp->clk);
+ 	ssp->baud_rate = SIFIVE_DEFAULT_BAUD_RATE;
++	ssp->port.uartclk = ssp->baud_rate * 16;
+ 	__ssp_update_div(ssp);
+ 
+ 	platform_set_drvdata(pdev, ssp);
+-- 
+2.29.2
+
