@@ -2,69 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26590C4361B
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 21:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962FAC0018C
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 21:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBC8E22DBF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 21:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6302623F57
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 21:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393919AbgLJVBz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:01:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56700 "EHLO mail.kernel.org"
+        id S2404863AbgLJV0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 16:26:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393908AbgLJVBp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:01:45 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607634064;
-        bh=xvDa/4mtJ2SRfR9N2eoju7R7AHC9Pb6GUPPP/ZxrkJY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JtJNR8VSCscgqXYGU7SP0lziJXEYRKuxQRNV8HXyjbNmztiPkmZ9uSvAo6KI4f5G6
-         PpsuE4gpBlZsYF4V5V51HxXozj+QtZdb9B5iOVUF888hO4z+2keErgrcVqrDV1CBGS
-         eNRD+wQG+Ojt5QGYbc6KpnbrWhtdsMcX0IQoH3sYUjT5eJC381lFYPCCXVnefRBGN2
-         lZ9f0TXfIrcdD1yQATMnYcOt34W+eqErDUkrXje+k6JHyjJs86v3vufyHKV/EVQbB/
-         I+bOSNLWko3EN5ySEP0adNW9n6QVbjZiOthcKUuE3rkjNBE1epWfuJTivLNIfJrxM0
-         79w1m0aSK/Kgg==
+        id S2404754AbgLJV0g (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Dec 2020 16:26:36 -0500
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
+        Matheus Castello <matheus@castello.eng.br>,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Angus Ainslie <angus@akkea.ca>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 03/18] ARM: dts: exynos: correct fuel gauge interrupt trigger level on Midas family
+Date:   Thu, 10 Dec 2020 22:25:19 +0100
+Message-Id: <20201210212534.216197-3-krzk@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
+References: <20201210212534.216197-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201210075018.2407915-1-geert+renesas@glider.be>
-References: <20201210075018.2407915-1-geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.11 (take three)
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 10 Dec 2020 13:01:03 -0800
-Message-ID: <160763406302.1580929.13900684378520875980@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-12-09 23:50:18)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9=
-ec:
->=20
->   Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.11-tag3
->=20
-> for you to fetch changes up to f5c50b1fed55332beb88e81e9e17c49673b77344:
->=20
->   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to j=
-son-schema (2020-12-10 08:34:01 +0100)
->=20
-> ----------------------------------------------------------------
+The Maxim fuel gauge datasheets describe the interrupt line as active
+low with a requirement of acknowledge from the CPU.  The falling edge
+interrupt will mostly work but it's not correct.
 
-Thanks. Pulled into clk-next
+Fixes: e8614292cd41 ("ARM: dts: Add Maxim 77693 fuel gauge node for exynos4412-trats2")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos4412-midas.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
+index 111c32bae02c..b8b75dc81aa1 100644
+--- a/arch/arm/boot/dts/exynos4412-midas.dtsi
++++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
+@@ -221,7 +221,7 @@ i2c_max77693_fuel: i2c-gpio-3 {
+ 		fuel-gauge@36 {
+ 			compatible = "maxim,max17047";
+ 			interrupt-parent = <&gpx2>;
+-			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++			interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&max77693_fuel_irq>;
+ 			reg = <0x36>;
+-- 
+2.25.1
+
