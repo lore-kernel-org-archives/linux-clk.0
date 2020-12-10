@@ -2,125 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606F6C4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 09:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC7DC4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 10:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2189623E22
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 09:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2488022DA9
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 10:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729892AbgLJJcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 04:32:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbgLJJcu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 04:32:50 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9E1C0613D6
-        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 01:32:09 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id 2ZY62400P4C55Sk01ZY6Pm; Thu, 10 Dec 2020 10:32:07 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1knIIw-009MGS-LZ; Thu, 10 Dec 2020 10:32:06 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1knGiS-00A6Q8-NU; Thu, 10 Dec 2020 08:50:20 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.11 (take three)
-Date:   Thu, 10 Dec 2020 08:50:18 +0100
-Message-Id: <20201210075018.2407915-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1728815AbgLJKFp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 05:05:45 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38978 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728557AbgLJKFp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 05:05:45 -0500
+Received: by mail-ot1-f65.google.com with SMTP id d8so4329605otq.6;
+        Thu, 10 Dec 2020 02:05:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DAZ8PgYzvtbc3rL4ZfV3e1oM3SXylqOqHN7opQzLty8=;
+        b=AlI5QLktMa/66fdGZpy4r2X9ShhLR0vB0CcEeYdBroV7Q9kJ+nKezLbVWKGWRK0bB6
+         RIx2Ku8mfEEuDFbVg4gfT07uYMYQ/Q075Nlj1zo9lY/lyc1OKy6FvxBzk//z4RDKDmJn
+         R0pFRGMrc/o5wz8C03471FxdllGZqzIZAWFH4IPt99N5f5Bok61kmcgVEBS0179DEVGi
+         hEqW/Eq5FKK+AlBBlGpLpalNBi/ej3eVTzgrHR8mDworKAWjpBNs0mL6021nGyyj5ztR
+         Y1WZc6yzxgnd60PNcovZX1hGrsf2e7xi89NkfZD8eBwTAri7fEQOyzKgX21ifa/B076T
+         lilA==
+X-Gm-Message-State: AOAM531VCzgeF+6tXj3rpQZrUcKa+D2OImukTnD4+UCCTfTLb3bvx5Ao
+        b8rOnHQZ8nOpZC5U8nert0MqCd87Dyw+maDBrBo=
+X-Google-Smtp-Source: ABdhPJyZli++OabJZH6oIk+doFCPUSskqqsQBvXQPxaex8q/acKKJGdIBrCVdCFmU/ZT7NKzZrrVrWx4c80BaVxZYR8=
+X-Received: by 2002:a9d:2203:: with SMTP id o3mr5253404ota.107.1607594704647;
+ Thu, 10 Dec 2020 02:05:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201210034003.222297-1-damien.lemoal@wdc.com>
+In-Reply-To: <20201210034003.222297-1-damien.lemoal@wdc.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 10 Dec 2020 11:04:53 +0100
+Message-ID: <CAMuHMdVbU2kjKU3EVN5kszPc=VQcgzYLemV6AOyg+YyZBfc31Q@mail.gmail.com>
+Subject: Re: [PATCH v7 00/22] RISC-V Kendryte K210 support improvements
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Hi Damien,
 
-The following changes since commit 3650b228f83adda7e5ee532e2b90429c03f7b9ec:
+On Thu, Dec 10, 2020 at 4:41 AM Damien Le Moal <damien.lemoal@wdc.com> wrote:
+> Changes from v6:
+> * Annotate struct platform_driver variables with __refdata to avoid
+>   section mismatch compilation errors
 
-  Linux 5.10-rc1 (2020-10-25 15:14:11 -0700)
+Blindly following the advice from kernel test robot <lkp@intel.com> is
+not always a good idea:
 
-are available in the Git repository at:
+    The variable k210_rst_driver references
+    the function __init set_reset_devices()
+    If the reference is valid then annotate the
+    variable with or __refdata (see linux/init.h) or name the variable:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.11-tag3
+If your driver's probe function is annotated with __init, you cannot
+have a pointer to it in the driver structure, as any binding done after
+the freeing of initmem will cause a crash.  Adding the __refdata merely
+suppresses the warning, and won't avoid the crash.
 
-for you to fetch changes up to f5c50b1fed55332beb88e81e9e17c49673b77344:
+There are two solutions for this:
+  1. Remove the .probe pointer, and use platform_driver_probe() instead
+     of platform_driver_register().
+     This guarantees the probe method will be called only once, before
+     initmem is freed, but does mean that probe deferral cannot work.
+  2. Drop the __init annotation.
+     This means the probe method can be called anytime, and supports
+     both probe deferral and driver unbind/rebind cycles.
 
-  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to json-schema (2020-12-10 08:34:01 +0100)
+Given the limited amount of RAM on k210, I think option 1 is preferred,
+but may require careful tuning of the initialization order using
+*_initcall*(), to make sure probe deferral won't ever be needed.
 
-----------------------------------------------------------------
-clk: renesas: Updates for v5.11 (take three)
+Gr{oetje,eeting}s,
 
-  - Update git repo branch for Renesas clock drivers,
-  - Add camera (CSI) and video-in (VIN) clocks on R-Car V3U,
-  - Add RPC (QSPI/HyperFLASH) clocks on RZ/G2M, RZ/G2N, and RZ/G2E,
-  - Stop using __raw_*() I/O accessors,
-  - One more conversion of DT bindings to json-schema,
-  - Minor fixes and improvements.
+                        Geert
 
-This pull request supersedes my previous two pull requests for v5.11
-("[GIT PULL] clk: renesas: Updates for v5.11" and "[GIT PULL] clk:
-renesas: Updates for v5.11 (take two)"), to fix the incorrect Fixes tag
-in commit c3f207f6d23d ("clk: renesas: r8a779a0: Make
-rcar_r8a779a0_cpg_clk_register() static").
 
-Sorry for the troubles, and thanks for pulling!
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: r8a774a1: Add RPC clocks
-      clk: renesas: r8a774b1: Add RPC clocks
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Geert Uytterhoeven (4):
-      clk: renesas: r8a779a0: Make rcar_r8a779a0_cpg_clk_register() static
-      MAINTAINERS: Update git repo for Renesas clock drivers
-      clk: renesas: r8a779a0: Fix R and OSC clocks
-      clk: renesas: sh73a0: Stop using __raw_*() I/O accessors
-
-Jacopo Mondi (2):
-      clk: renesas: r8a779a0: Add CSI4[0-3] clocks
-      clk: renesas: r8a779a0: Add VIN clocks
-
-Krzysztof Kozlowski (1):
-      clk: renesas: cpg-mssr: fix kerneldoc of cpg_mssr_priv
-
-Lad Prabhakar (1):
-      clk: renesas: r8a774c0: Add RPC clocks
-
-Wolfram Sang (1):
-      clk: renesas: rcar-gen3: Remove stp_ck handling for SDHI
-
-Yejune Deng (1):
-      clk: renesas: rcar-usb2-clock-sel: Replace devm_reset_control_array_get()
-
-Yoshihiro Shimoda (1):
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Convert bindings to json-schema
-
- .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  68 --------------
- .../clock/renesas,rcar-usb2-clock-sel.yaml         | 100 +++++++++++++++++++++
- MAINTAINERS                                        |   2 +-
- drivers/clk/renesas/clk-sh73a0.c                   |   2 +-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c            |   8 ++
- drivers/clk/renesas/r8a774b1-cpg-mssr.c            |   8 ++
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   9 ++
- drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  51 ++++++++++-
- drivers/clk/renesas/rcar-gen3-cpg.c                |  79 ++++++++++------
- drivers/clk/renesas/rcar-gen3-cpg.h                |   5 ++
- drivers/clk/renesas/rcar-usb2-clock-sel.c          |   2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |   3 +-
- 12 files changed, 235 insertions(+), 102 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
