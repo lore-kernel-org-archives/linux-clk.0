@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3637DC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC5BC4167B
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3CD523DE3
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EEA323E55
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389910AbgLKCKg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 21:10:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44126 "EHLO
+        id S2389898AbgLKCLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 21:11:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389877AbgLKCKU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 21:10:20 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BFBC061793
-        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:40 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id lb18so1414773pjb.5
-        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:40 -0800 (PST)
+        with ESMTP id S2389845AbgLKCKs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 21:10:48 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A5CFC0617B0
+        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:43 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id j1so3827401pld.3
+        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
         h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
          :content-transfer-encoding;
-        bh=yVFozMuS5TpszRtC1MBvI/trOQ0D1L3gHa0W/ax0oOA=;
-        b=k8FJa4VDPQKIdEmftoL3n6FUAM5QMAocbXYJ/7Soloen2phJ6pJB4fzg50cLxSiXxU
-         4YUNAzAtglKo3O4Z41JfsSrtx1lyK5pJRXjCl4l2lgOP70ydco3CHVlneuIgbiyFo+To
-         PlmwRhOL88+KOSgfDt8GPZyrwDUKhG1mQUy5PBKZGoxAYEvC+F50Fh+jdgTyhqAbnN9D
-         ffGC9tqXaDiOwCzG7YTn7PJPpgElYpp1wJ4akk5JB+Mui9sjz5VSzsAmGcUzKeZiT7ED
-         MAKx/bcYm1XSz+GvNPFj8sXXCGs6X7RwxxThYThNLPOJgEkMq01lBQGTimEdnq2ia6Q6
-         OwtA==
+        bh=YBlvYT4u5OxK5j8EJbV+g1HuI5bT3QSP3buVFiGA1os=;
+        b=ojGKW+CeYR5epryGbpALej+OHjrnYYY4F5AcYsJXq2QKzqeCscsKaThjnyeJ9Ylfqy
+         stNFexzvzSlxzo11CsCIrvXoot940KDLwNq6U8iyf6o2VVoJmXu5ZEkKzf0kZRN/XH4K
+         c5tUCpzDOXA7Qwj7udYJ0zJBRHGi1iHmlFcXB3SSu5MmB6K6QYJHE60hVdtnnFFfjJou
+         QdAUsr+MsXZjyQLPZzfO9RP8uOPeNbL+1RQZOuuOS0KF6mtZktlFReA0HtIO119vFWyv
+         IW4vS44VNOYcmqhfaGNCUzVPPSQDEa88yoo+n6tMPqyqdkQSNuqX75EHsGQJQxDMLzvr
+         UKkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=yVFozMuS5TpszRtC1MBvI/trOQ0D1L3gHa0W/ax0oOA=;
-        b=P3A2TIpeZRvtwgZODEBkqIQXA8N4Ejfl1LAkQzGmno0/X1Ih56KTppuACqtQ2IbKiZ
-         jpVcXRenGl5uzVs2WMFd++SiYgGzvmvGeh9ypsYcms19/n1gyX8fY0LenTX0waEsC2qJ
-         viorcg/qe2xgH14pu/gAH9yoWnmIsp0TtU0oEQ5T9YG9yXbkAB/SMUBQ7Hbpx/buSZwR
-         /hb5T9cHu8Ot3g6r9d8p2yB4S2tQCbqM2UDqS4yDN12ux/PCCaq5RXPumeBluyyJEm8v
-         Yrx6S8oTrbzOgDKQHzBZxsAyWZXklWSrab4Rv9xfE4BbxY2mLznjMQ5T9NGPI+Wd6N8M
-         0PmA==
-X-Gm-Message-State: AOAM532f4HOoIOfI1CtAraaLeXfmrSxfKbgG/ha8bSbnFDXsC/txfAmJ
-        INvPAh3HPM+5btbHU6WpWFHuuQ==
-X-Google-Smtp-Source: ABdhPJw58HhmM/mjbuMOx2SsgiglRfhjytbaRsij/nVyvfyVpwwnqcvH6Tb/NnFTINsd934ZwIz2Bw==
-X-Received: by 2002:a17:902:ed14:b029:da:9da4:3091 with SMTP id b20-20020a170902ed14b02900da9da43091mr8810178pld.29.1607652579869;
-        Thu, 10 Dec 2020 18:09:39 -0800 (PST)
+        bh=YBlvYT4u5OxK5j8EJbV+g1HuI5bT3QSP3buVFiGA1os=;
+        b=Y/LVJQO5wUbJXf1/y0g0G+u0gCFvZMYfPJCgouTxJLE7WeS+Fl4l9Ie7w4JXvqKe8N
+         j1Ai7GoaEUFcO558S7AqIAJf7uMUsx180SsYAaNzTgzqHDCrreb8lCeoIrN944VqoNcM
+         O3cC1/Iia+8yYjOdP/tFyk5k7vH98HCCpq7WqB7quThWpM4KlJMFm0wb1Bza/xi03wHP
+         yfkb3cl8y1t5inDv2sXgJlZDwVVRxfpyroAm3fZrgcyDkN6qCDgKm0DripS05JnoQkRB
+         o2rGhBRkx4JB7Noef3qqaTKtq745mXFE2JWoKZxzyxt17te/xsFVWUTg9w4E2dPuCWu1
+         ewJw==
+X-Gm-Message-State: AOAM533qh4JSQJ1L56C1bktIzqF5mjqsN7ukAu1tp9vEkgzixcTPtV00
+        FOKWPNUMzNeMPtopOCm+lweJEA==
+X-Google-Smtp-Source: ABdhPJzeGFWjq3hV8gFbllyK08YaWDVJZPTgEzBarNAGC/GyiCHgx9fKOPPu5k/w9L1BBKd6CjJLhw==
+X-Received: by 2002:a17:902:bf0b:b029:d8:f677:30f2 with SMTP id bi11-20020a170902bf0bb02900d8f67730f2mr8951276plb.25.1607652582712;
+        Thu, 10 Dec 2020 18:09:42 -0800 (PST)
 Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id u11sm7868211pjy.17.2020.12.10.18.09.39
+        by smtp.gmail.com with ESMTPSA id f126sm8252120pfg.153.2020.12.10.18.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 18:09:39 -0800 (PST)
-Date:   Thu, 10 Dec 2020 18:09:39 -0800 (PST)
-X-Google-Original-Date: Thu, 10 Dec 2020 17:59:16 PST (-0800)
-Subject:     Re: [PATCH v8 01/22] riscv: Fix kernel time_init()
-In-Reply-To: <20201210140313.258739-2-damien.lemoal@wdc.com>
+        Thu, 10 Dec 2020 18:09:42 -0800 (PST)
+Date:   Thu, 10 Dec 2020 18:09:42 -0800 (PST)
+X-Google-Original-Date: Thu, 10 Dec 2020 18:05:22 PST (-0800)
+Subject:     Re: [PATCH v8 03/22] riscv: Enable interrupts during syscalls with M-Mode
+In-Reply-To: <20201210140313.258739-4-damien.lemoal@wdc.com>
 CC:     linux-riscv@lists.infradead.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, sboyd@kernel.org,
         linux-clk@vger.kernel.org, linus.walleij@linaro.org,
@@ -66,7 +66,7 @@ CC:     linux-riscv@lists.infradead.org, robh+dt@kernel.org,
         seanga2@gmail.com
 From:   Palmer Dabbelt <palmer@dabbelt.com>
 To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Message-ID: <mhng-755e4570-fc57-48b7-9ca9-e032c5de0dc1@palmerdabbelt-glaptop1>
+Message-ID: <mhng-c9e2b17f-75ec-47d0-bfad-47b2ad1195dd@palmerdabbelt-glaptop1>
 Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
@@ -74,39 +74,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Dec 2020 06:02:52 PST (-0800), Damien Le Moal wrote:
-> If of_clk_init() is not called in time_init(), clock providers defined
-> in the system device tree are not initialized, resulting in failures for
-> other devices to initialize due to missing clocks.
-> Similarly to other architectures and to the default kernel time_init()
-> implementation, call of_clk_init() before executing timer_probe() in
-> time_init().
+On Thu, 10 Dec 2020 06:02:54 PST (-0800), Damien Le Moal wrote:
+> When running is M-Mode (no MMU config), MPIE does not get set. This
+> results in all syscalls being executed with interrupts disabled as
+> handle_exception never sets SR_IE as it always sees SR_PIE being
+> cleared. Fix this by always force enabling interrupts in
+> handle_syscall when CONFIG_RISCV_M_MODE is enabled.
 >
 > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  arch/riscv/kernel/time.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/riscv/kernel/entry.S | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-> index 4d3a1048ad8b..8a5cf99c0776 100644
-> --- a/arch/riscv/kernel/time.c
-> +++ b/arch/riscv/kernel/time.c
-> @@ -4,6 +4,7 @@
->   * Copyright (C) 2017 SiFive
->   */
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 524d918f3601..080eb8d78589 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -155,6 +155,15 @@ skip_context_tracking:
+>  	tail do_trap_unknown
 >
-> +#include <linux/of_clk.h>
->  #include <linux/clocksource.h>
->  #include <linux/delay.h>
->  #include <asm/sbi.h>
-> @@ -24,6 +25,8 @@ void __init time_init(void)
->  	riscv_timebase = prop;
->
->  	lpj_fine = riscv_timebase / HZ;
-> +
-> +	of_clk_init(NULL);
->  	timer_probe();
->  }
+>  handle_syscall:
+> +#ifdef CONFIG_RISCV_M_MODE
+> +	/*
+> +	 * When running is M-Mode (no MMU config), MPIE does not get set.
+> +	 * As a result, we need to force enable interrupts here because
+> +	 * handle_exception did not do set SR_IE as it always sees SR_PIE
+> +	 * being cleared.
+> +	 */
+> +	csrs CSR_STATUS, SR_IE
+> +#endif
+>  #if defined(CONFIG_TRACE_IRQFLAGS) || defined(CONFIG_CONTEXT_TRACKING)
+>  	/* Recover a0 - a7 for system calls */
+>  	REG_L a0, PT_A0(sp)
 
 Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
