@@ -7,42 +7,38 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF091C4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 18:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D22C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 18:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81E7423ED2
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 18:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 404D423D3C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 18:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391539AbgLKQu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Dec 2020 11:50:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34848 "EHLO mx2.suse.de"
+        id S2391450AbgLKQut (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Dec 2020 11:50:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34798 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390286AbgLKQtf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Dec 2020 11:49:35 -0500
+        id S2390079AbgLKQtc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Dec 2020 11:49:32 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 620BAB293;
-        Fri, 11 Dec 2020 16:48:19 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1322FB16A;
+        Fri, 11 Dec 2020 16:48:14 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>
-Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
         dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v6 09/11] dt-bindings: pwm: Add binding for RPi firmware PWM bus
-Date:   Fri, 11 Dec 2020 17:47:58 +0100
-Message-Id: <20201211164801.7838-10-nsaenzjulienne@suse.de>
+        devel@driverdev.osuosl.org, linux-gpio@vger.kernel.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        bgolaszewski@baylibre.com, andy.shevchenko@gmail.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH v6 05/11] reset: raspberrypi: Release firmware handle on unbind
+Date:   Fri, 11 Dec 2020 17:47:54 +0100
+Message-Id: <20201211164801.7838-6-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201211164801.7838-1-nsaenzjulienne@suse.de>
 References: <20201211164801.7838-1-nsaenzjulienne@suse.de>
@@ -52,83 +48,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PWM bus controlling the fan in RPi's official PoE hat can only be
-controlled by the board's co-processor.
+Use devm_rpi_firmware_get() so as to make sure we release RPi's firmware
+interface when unbinding the device.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
+ drivers/reset/reset-raspberrypi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v4:
- - Rename compatible string to be more explicit with the bus' limitations
-
-Changes since v3:
- - Fix example
-
-Changes since v1:
- - Update bindings to use 2 #pwm-cells
-
- .../arm/bcm/raspberrypi,bcm2835-firmware.yaml | 20 +++++++++++++++++++
- .../pwm/raspberrypi,firmware-poe-pwm.h        | 13 ++++++++++++
- 2 files changed, 33 insertions(+)
- create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h
-
-diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-index a2c63c8b1d10..e3664eab0f6a 100644
---- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-+++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-@@ -64,6 +64,21 @@ properties:
-       - compatible
-       - "#reset-cells"
+diff --git a/drivers/reset/reset-raspberrypi.c b/drivers/reset/reset-raspberrypi.c
+index 02f59c06f69b..fa23db554bcf 100644
+--- a/drivers/reset/reset-raspberrypi.c
++++ b/drivers/reset/reset-raspberrypi.c
+@@ -82,7 +82,7 @@ static int rpi_reset_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
  
-+  pwm:
-+    type: object
-+
-+    properties:
-+      compatible:
-+        const: raspberrypi,firmware-poe-pwm
-+
-+      "#pwm-cells":
-+        # See pwm.yaml in this directory for a description of the cells format.
-+        const: 2
-+
-+    required:
-+      - compatible
-+      - "#pwm-cells"
-+
-     additionalProperties: false
- 
- required:
-@@ -87,5 +102,10 @@ examples:
-             compatible = "raspberrypi,firmware-reset";
-             #reset-cells = <1>;
-         };
-+
-+        pwm: pwm {
-+            compatible = "raspberrypi,firmware-poe-pwm";
-+            #pwm-cells = <2>;
-+        };
-     };
- ...
-diff --git a/include/dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h b/include/dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h
-new file mode 100644
-index 000000000000..27c5ce68847b
---- /dev/null
-+++ b/include/dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2020 Nicolas Saenz Julienne
-+ * Author: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+ */
-+
-+#ifndef _DT_BINDINGS_RASPBERRYPI_FIRMWARE_PWM_H
-+#define _DT_BINDINGS_RASPBERRYPI_FIRMWARE_PWM_H
-+
-+#define RASPBERRYPI_FIRMWARE_PWM_POE		0
-+#define RASPBERRYPI_FIRMWARE_PWM_NUM		1
-+
-+#endif
+-	fw = rpi_firmware_get(np);
++	fw = devm_rpi_firmware_get(&pdev->dev, np);
+ 	of_node_put(np);
+ 	if (!fw)
+ 		return -EPROBE_DEFER;
 -- 
 2.29.2
 
