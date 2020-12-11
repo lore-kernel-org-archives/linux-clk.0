@@ -2,87 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0958C3527A
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 22:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD00C2BB9A
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 01:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D57ED223E0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Dec 2020 22:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8361B23C18
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 01:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404950AbgLJVpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 16:45:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
+        id S2404876AbgLKBVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 20:21:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:49294 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404849AbgLJV0l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Dec 2020 16:26:41 -0500
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        id S2404734AbgLKBUl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Dec 2020 20:20:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 003A131B;
+        Thu, 10 Dec 2020 17:19:56 -0800 (PST)
+Received: from localhost.localdomain (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7C953F66B;
+        Thu, 10 Dec 2020 17:19:53 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Icenowy Zheng <icenowy@aosc.xyz>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Cc:     Iskren Chernev <iskren.chernev@gmail.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Angus Ainslie <angus@akkea.ca>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 04/18] ARM: dts: exynos: correct MUIC interrupt trigger level on Midas family
-Date:   Thu, 10 Dec 2020 22:25:20 +0100
-Message-Id: <20201210212534.216197-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201210212534.216197-1-krzk@kernel.org>
-References: <20201210212534.216197-1-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 01/21] clk: sunxi-ng: h6: Fix clock divider range on some clocks
+Date:   Fri, 11 Dec 2020 01:19:14 +0000
+Message-Id: <20201211011934.6171-2-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20201211011934.6171-1-andre.przywara@arm.com>
+References: <20201211011934.6171-1-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Maxim MUIC datasheets describe the interrupt line as active low
-with a requirement of acknowledge from the CPU.  Without specifying the
-interrupt type in Devicetree, kernel might apply some fixed
-configuration, not necessarily working for this hardware.
+While comparing clocks between the H6 and H616, some of the M factor
+ranges were found to be wrong: the manual says they are only covering
+two bits [1:0], but our code had "5" in the number-of-bits field.
 
-Additionally, the interrupt line is shared so using level sensitive
-interrupt is here especially important to avoid races.
+By writing 0xff into that register in U-Boot and via FEL, it could be
+confirmed that bits [4:2] are indeed masked off, so the manual is right.
 
-Fixes: 7eec1266751b ("ARM: dts: Add Maxim 77693 PMIC to exynos4412-trats2")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Change to number of bits in the affected clock's description.
+
+Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/exynos4412-midas.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index b8b75dc81aa1..d75f554efde0 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -173,7 +173,7 @@ i2c_max77693: i2c-gpio-1 {
- 		pmic@66 {
- 			compatible = "maxim,max77693";
- 			interrupt-parent = <&gpx1>;
--			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+			interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&max77693_irq>;
- 			reg = <0x66>;
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index f2497d0a4683..d0565d378ea2 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -237,7 +237,7 @@ static const char * const psi_ahb1_ahb2_parents[] = { "osc24M", "osc32k",
+ static SUNXI_CCU_MP_WITH_MUX(psi_ahb1_ahb2_clk, "psi-ahb1-ahb2",
+ 			     psi_ahb1_ahb2_parents,
+ 			     0x510,
+-			     0, 5,	/* M */
++			     0, 2,	/* M */
+ 			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
+@@ -246,19 +246,19 @@ static const char * const ahb3_apb1_apb2_parents[] = { "osc24M", "osc32k",
+ 						       "psi-ahb1-ahb2",
+ 						       "pll-periph0" };
+ static SUNXI_CCU_MP_WITH_MUX(ahb3_clk, "ahb3", ahb3_apb1_apb2_parents, 0x51c,
+-			     0, 5,	/* M */
++			     0, 2,	/* M */
+ 			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
+ 
+ static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", ahb3_apb1_apb2_parents, 0x520,
+-			     0, 5,	/* M */
++			     0, 2,	/* M */
+ 			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
+ 
+ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", ahb3_apb1_apb2_parents, 0x524,
+-			     0, 5,	/* M */
++			     0, 2,	/* M */
+ 			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
 -- 
-2.25.1
+2.17.5
 
