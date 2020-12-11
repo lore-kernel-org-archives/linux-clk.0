@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE42CC4167B
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 07:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951F0C4361B
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 07:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71B1623F33
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 07:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4723423F2C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 07:12:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbgLKHKK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Dec 2020 02:10:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57910 "EHLO mail.kernel.org"
+        id S2391832AbgLKHLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Dec 2020 02:11:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388329AbgLKHKA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Dec 2020 02:10:00 -0500
+        id S2390203AbgLKHLK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Dec 2020 02:11:10 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607670559;
-        bh=BXdz3hjV9jTQAtUU5cp0nkac+pcOQK0P5JoqsDaeC7I=;
+        s=k20201202; t=1607670630;
+        bh=MGUXROce7wJw4hhD3KZgPZmZ4OzT5bDJNT+Pgi9c7SY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pPwddj/XzCH/y5kSeZ1YEPHZIHLnsz48i3uN6f7SD5OPrPsI8yalnC9+FAQFOKq4p
-         rquC9D6cGyeWgFOL0bZgRDaG+Z7uhtPUAiOA23M8k6zE2EhUF2l5OnXdu5cOoAekXC
-         pgpOebCGNXoiUSbhDrjlfAxMEQj9PftJxHUxVJp1uQ3MFHQxbmONBqFIpICK/beVeP
-         724d79IZHW4KM8yejj4xwMNiyn+zMjMXin1BXNBs2ieWgOnoA6ozHAAFlwfQhA/1Wl
-         s2AQgepvhfd1PqJH5/6FydT3dZoGO6DE5kj3vtNbfUlZJdMxDJTJoF4dGqV2HuMS2c
-         kUqD7x6G2mjxQ==
+        b=awr7f6t6dc5jBE/GCZuvqFO0r83Pv0kF/xc49jBYWAss5UHpOU2OrhOON37mzUAnb
+         cnD6THNBI1fSAI8JdE/jA/t7KpYDTMk4PbP+fpAUS8uxHHO/WDX/GcOOX81u5kP3Zr
+         JDzby1YBEdoJXuqAjkwRN7ZSSKSQ4k5uHA7df4/LRotGrV0hjLq7/vbBgg4UJshN29
+         OygonCS83i7+FwFxsoHHnWgsg8FbvIqDoGkYFSEomQZl/OxgqP7KXSslHkdVBYfakX
+         6LRpZ9h3xqokwyDjhP2PrIRnHXnzj7XW9o7qE86Tdd6fQNC5hMtIKOIyPIECBhseVB
+         yjoYiiyvd75ZQ==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201211050257.GR8403@vkoul-mobl>
-References: <20201208064702.3654324-1-vkoul@kernel.org> <20201208064702.3654324-5-vkoul@kernel.org> <160763259636.1580929.12912274485007017282@swboyd.mtv.corp.google.com> <20201211050257.GR8403@vkoul-mobl>
-Subject: Re: [PATCH v2 4/5] clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE PLL
+In-Reply-To: <20201211054349.GS8403@vkoul-mobl>
+References: <20201208064702.3654324-1-vkoul@kernel.org> <20201208064702.3654324-6-vkoul@kernel.org> <160763302790.1580929.10258660966995584297@swboyd.mtv.corp.google.com> <20201211054349.GS8403@vkoul-mobl>
+Subject: Re: [PATCH v2 5/5] clk: qcom: gcc: Add clock driver for SM8350
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -45,26 +45,33 @@ Cc:     linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jeevan Shriram <jshriram@codeaurora.org>
 To:     Vinod Koul <vkoul@kernel.org>
-Date:   Thu, 10 Dec 2020 23:09:18 -0800
-Message-ID: <160767055805.1580929.10874243981268932091@swboyd.mtv.corp.google.com>
+Date:   Thu, 10 Dec 2020 23:10:28 -0800
+Message-ID: <160767062876.1580929.14564723998233527816@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2020-12-10 21:02:57)
-> On 10-12-20, 12:36, Stephen Boyd wrote:
-> > > +
-> > > +       return regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-> > > +                               (BIT(pll->width) - 1) << pll->post_di=
-v_shift,
+Quoting Vinod Koul (2020-12-10 21:43:49)
+> On 10-12-20, 12:43, Stephen Boyd wrote:
+> > > +static struct clk_branch gcc_camera_ahb_clk =3D {
+> > > +       .halt_reg =3D 0x26004,
+> > > +       .halt_check =3D BRANCH_HALT_DELAY,
+> > > +       .hwcg_reg =3D 0x26004,
+> > > +       .hwcg_bit =3D 1,
+> > > +       .clkr =3D {
+> > > +               .enable_reg =3D 0x26004,
+> > > +               .enable_mask =3D BIT(0),
+> > > +               .hw.init =3D &(struct clk_init_data){
+> > > +                       .name =3D "gcc_camera_ahb_clk",
+> > > +                       .flags =3D CLK_IS_CRITICAL,
 > >=20
-> > Use GENMASK?
+> > Why is it critical? Can we just enable it in driver probe and stop
+> > modeling it as a clk?
 >=20
-> Looks like this can be:
->                 GENMASK(pll->width + pll->post_div_shift - 1, pll->post_d=
-iv_shift)
+> it does not have a parent we control, yeah it would make sense to do
+> that. Tanya do you folks agree ..?
 >=20
-> Not sure which one you like :)
 
-Preferably a local u32 mask =3D GENMASK(...)
+Maybe it is needed for camera clk controller? Have to check other SoCs
+and see if they're using it.
