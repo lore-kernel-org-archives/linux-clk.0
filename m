@@ -2,116 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01009C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A971C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 03:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1A5823ECD
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 02:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4763323EF4
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 03:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389915AbgLKCLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 21:11:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389822AbgLKCKs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 21:10:48 -0500
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF20C0617A7
-        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:41 -0800 (PST)
-Received: by mail-pj1-x1044.google.com with SMTP id b5so9413pjk.2
-        for <linux-clk@vger.kernel.org>; Thu, 10 Dec 2020 18:09:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vDb71w6uljZJayxlxiJgmuJdK657O4Ga+wyoAs72qjk=;
-        b=IaFxJDeWY3IjASSHDaru//dwrwZwddeNAKJv3YQuDt9Z5vUTYce6N3n2sY4Bf0c957
-         hwPzzvl/295YL2vbv7J3+v2tGny70sLdhhK9H5e1xYixjlTatjLA0IPi7P9nYXFOH0yF
-         NTKPuV9VDL/1vWDK8FJpI5geUSgeLY5/+wwjGXqW9CDNVgqucENlTRVRxp6rVt62KYLO
-         lTEAwqxMncm4g+GYwb0t+QKnnsB3ksgFwr/e8AM/CicJbxEb8m05RPAMLhLItJKt3aRR
-         evlvIYZIv7Tmjlm0zIQ+lO2rUgKO9hRe8gX0rSRkc0jrd97CKOUXWum81Vccn+wxQkN/
-         de1A==
+        id S2395229AbgLKDs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 22:48:56 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39850 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395235AbgLKDsZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 22:48:25 -0500
+Received: by mail-oi1-f193.google.com with SMTP id w124so5270787oia.6;
+        Thu, 10 Dec 2020 19:48:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=vDb71w6uljZJayxlxiJgmuJdK657O4Ga+wyoAs72qjk=;
-        b=cLn4m8brbxtnNCmu9QRuLh8FLIcTCS0Pcskod0sigM7byiImOgdSL1u0DZ3q7SqsRS
-         pSLnM+jg0XOgrQu1Y55xSpqE3IbFxfjP6oVbJM2Vc5kN4Qxgoqri3RHxaUzn5vrZk0fR
-         QeZlkI2yKbRoGPHq9sirXHI9NXp6zkyC+qjrMd79l0DEUk2UKktOiaDJZHT27qIfhSFJ
-         mMpsy0qAxJViz8IymuS7xsumZlFQBrwLajEz0MPqUrlHyu5uf3naAfIGiNqkS7ZQ+SLl
-         vu8ahBIzVe4AVUhYsqdPNBOhDAtXeaEmoQPvntaatBlhpzAD1JHoBAwKxB5eXkx0Z/Qk
-         wXFg==
-X-Gm-Message-State: AOAM532dXIiEBSC/9kXrt1PvfxZbWDC5ieAaB2gd8dnEcu/CVmihS1u5
-        d/mOOxmauZjQ/RXzD5SeNOug0gZMEI5qe36L
-X-Google-Smtp-Source: ABdhPJyZX1D9EzbjZxwXU1FI05UoaddizqsnGZZuS/SqZXszdCZT/ZD1MhKs4XCMpNaq8wV1nPdGJQ==
-X-Received: by 2002:a17:90b:19d2:: with SMTP id nm18mr11136016pjb.159.1607652581296;
-        Thu, 10 Dec 2020 18:09:41 -0800 (PST)
-Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id er23sm8095980pjb.12.2020.12.10.18.09.40
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XhSRab4aMQWwYyuTmi2vIMiRs/pePu7XSUwtatQgq6g=;
+        b=VeVtOIiNrYJOrHAA2Qa0N8ilT/jIsRgihHWShCe1w7zUN9d7zlSLt660yckFQWbFd9
+         gYfcA/LGLckpRVNEr2z678e09iA8nAq8p1UsYvARVvVMWRkMyAJaZIA47cKKI4MDS6bi
+         2dEUQ9H/f1EHqaOmnKyZ81kwULB5QWWr2B5l7EOPneIy7lQ+qDopUCtrKJKAgXQcHOVI
+         +AKzl9bELodmdQxOSGre580jkqIVvPR5SlTf8O9yKzR7b0r7uozivX+LLfjo2bKhlWeT
+         dVIji1rZJM57Hba2DnXaHJ/IAs74V+rBGbHfO0WdxP6xr1em+V1SPmRoo2y4fXTA1B9e
+         5sNw==
+X-Gm-Message-State: AOAM5326tlZzmwNHkURPV2BtXi5br6cp4BSTMW/9zv3RD2u5qlk8IajV
+        OtVeIFDZW1ToktJlXOEHFw==
+X-Google-Smtp-Source: ABdhPJxUY0qfNTBPh2nGN2/hb2xbvceB+PnFxN2dfniKPwJhm/a4XaBEIxkKPAEQaDy/NmYFelMwaQ==
+X-Received: by 2002:aca:d4cf:: with SMTP id l198mr7857127oig.170.1607658464855;
+        Thu, 10 Dec 2020 19:47:44 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d62sm1511737oia.6.2020.12.10.19.47.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 18:09:40 -0800 (PST)
-Date:   Thu, 10 Dec 2020 18:09:40 -0800 (PST)
-X-Google-Original-Date: Thu, 10 Dec 2020 18:04:43 PST (-0800)
-Subject:     Re: [PATCH v8 02/22] riscv: Fix sifive serial driver
-In-Reply-To: <20201210140313.258739-3-damien.lemoal@wdc.com>
-CC:     linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, p.zabel@pengutronix.de,
-        seanga2@gmail.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Message-ID: <mhng-b369aaef-f262-4ca3-bcda-5bd4ee893332@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 10 Dec 2020 19:47:44 -0800 (PST)
+Received: (nullmailer pid 3604500 invoked by uid 1000);
+        Fri, 11 Dec 2020 03:47:43 -0000
+Date:   Thu, 10 Dec 2020 21:47:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sean Anderson <seanga2@gmail.com>
+Subject: Re: [PATCH v8 07/22] dt-bindings: Add Canaan vendor prefix
+Message-ID: <20201211034743.GA3604451@robh.at.kernel.org>
+References: <20201210140313.258739-1-damien.lemoal@wdc.com>
+ <20201210140313.258739-8-damien.lemoal@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201210140313.258739-8-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Dec 2020 06:02:53 PST (-0800), Damien Le Moal wrote:
-> Setup the port uartclk in sifive_serial_probe() so that the base baud
-> rate is correctly printed during device probe instead of always showing
-> "0".  I.e. the probe message is changed from
->
-> 38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
-> base_baud = 0) is a SiFive UART v0
->
-> to the correct:
->
-> 38000000.serial: ttySIF0 at MMIO 0x38000000 (irq = 1,
-> base_baud = 115200) is a SiFive UART v0
->
+On Thu, 10 Dec 2020 23:02:58 +0900, Damien Le Moal wrote:
+> Update Documentation/devicetree/bindings/vendor-prefixes.yaml to
+> include "canaan" as a vendor prefix for "Canaan Inc.". Canaan is the
+> vendor of the Kendryte K210 RISC-V SoC.
+> 
 > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 > ---
->  drivers/tty/serial/sifive.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
-> index 13eadcb8aec4..214bf3086c68 100644
-> --- a/drivers/tty/serial/sifive.c
-> +++ b/drivers/tty/serial/sifive.c
-> @@ -999,6 +999,7 @@ static int sifive_serial_probe(struct platform_device *pdev)
->  	/* Set up clock divider */
->  	ssp->clkin_rate = clk_get_rate(ssp->clk);
->  	ssp->baud_rate = SIFIVE_DEFAULT_BAUD_RATE;
-> +	ssp->port.uartclk = ssp->baud_rate * 16;
->  	__ssp_update_div(ssp);
->
->  	platform_set_drvdata(pdev, ssp);
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
-Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
-
-As an aside: is this an intrinsic property of being a serial port, or specific
-to the SiFive driver?  We seem to multiply/divide by 16 quite a bit to convert
-between baud rates and clocks, so if it's specific to SiFive then it seems
-reasonable to name that constant in this driver.  If it's a serial thing then I
-guess we should just do whatever everyone else is doing.
-
-Don't think that blocks this patch, though, as it's all over the place.
+Acked-by: Rob Herring <robh@kernel.org>
