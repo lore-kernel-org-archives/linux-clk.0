@@ -2,216 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF6BC4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 03:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03B7C1B0D9
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 04:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDE823ECE
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 03:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCC9523F37
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 04:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395299AbgLKDzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Dec 2020 22:55:52 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42720 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395297AbgLKDzc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Dec 2020 22:55:32 -0500
-Received: by mail-oi1-f196.google.com with SMTP id l200so8384930oig.9;
-        Thu, 10 Dec 2020 19:55:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jg43q2n1KDadesdGGoPvRtgEcEu/bB0AmQcOaS55oHQ=;
-        b=s7JIJS2VrI2NK0X6hiC5i/WYbK5nZqjmCH1S7EMIEw2u4fvcemeS4B3lj6kxEOjJbe
-         PlVFj92s8HO85/h0mEjrbd3WHtnewvRZzO7dekNegxIcBxfR/l3H4AaU6f2PJZtf3oaA
-         fLSV85pYrcl6KcZLdxSi+300/bmLwD7JucK0SK5TnHCoP7KD4zmTo1/h797ewjOIxh8D
-         H+3XiTiR3rQDdct7C9V33wWCvfUu6s6eDAuXooC7CbytdQqMZdmcrysgowamq/CdjLnk
-         JHSgMZv8CCumygVa+Teeof+i29B1wf1ev9QZxHgu/Zp1BBEeh4o5UuxLp9xWpslBZAcM
-         cPyg==
-X-Gm-Message-State: AOAM531fFVNX3VnfJJquhTZHDjIAjYsP2N8EJxdvZu5EQg5kn+TXr8mF
-        3b3P+x0vptOzqS2/ZRqmtA==
-X-Google-Smtp-Source: ABdhPJyxsD7fhYNejCAuQal6tfRPHmBDNB2l51iUU5epxUE4gGdgMpqPe/gSgXx9TJRDGTwWA2afwQ==
-X-Received: by 2002:aca:1e03:: with SMTP id m3mr7898681oic.107.1607658891426;
-        Thu, 10 Dec 2020 19:54:51 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v13sm1507827ook.13.2020.12.10.19.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Dec 2020 19:54:50 -0800 (PST)
-Received: (nullmailer pid 3614115 invoked by uid 1000);
-        Fri, 11 Dec 2020 03:54:49 -0000
-Date:   Thu, 10 Dec 2020 21:54:49 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Sean Anderson <seanga2@gmail.com>
-Subject: Re: [PATCH v8 11/22] dt-binding: mfd: Document canaan,k210-sysctl
- bindings
-Message-ID: <20201211035449.GA3610311@robh.at.kernel.org>
-References: <20201210140313.258739-1-damien.lemoal@wdc.com>
- <20201210140313.258739-12-damien.lemoal@wdc.com>
+        id S2405378AbgLKEah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Dec 2020 23:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44390 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405377AbgLKEaf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Dec 2020 23:30:35 -0500
+Date:   Fri, 11 Dec 2020 09:59:50 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607660994;
+        bh=DxjGtU8api1RScRIaoXPFvfSg6+p81ymEsIxRw9JakY=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uJRL3Ul8ibENkss7LkCrZIJ+w4s7K6IIC3IBYejhHDJuvqZdnsVs2Hw3BWXO+KwzX
+         ffB5clzroM74Jri0XKQFxH/QUyrtwvRbDuhqkxuEWgrukq7soO3PgvEa6CjY8bjh2b
+         UDoYyWV6Qeq2XWl9zweTdF30zOtKkPwZ6du0FVTwl26LP4OuQa+0sZx+r5h9T+aQ3a
+         r3SOH8zcpOSCqs2rxa4wOSnh8RqVq1JCKgwimObnTWygGq9s81hvSb213h1nIaBSuS
+         MKaemzsUhWwUHlBV2T/3zobOtfoj2PJXDMkiIunQ4z2rfFNcZ8j6rllp8uvk1UuaDp
+         GNhvQOl/0ymiw==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] dt-bindings: clock: Add SM8350 GCC clock bindings
+Message-ID: <20201211042950.GQ8403@vkoul-mobl>
+References: <20201208064702.3654324-1-vkoul@kernel.org>
+ <20201208064702.3654324-4-vkoul@kernel.org>
+ <20201210040116.GA1639067@robh.at.kernel.org>
+ <20201210061159.GM8403@vkoul-mobl>
+ <160763226856.1580929.7399412663078488395@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201210140313.258739-12-damien.lemoal@wdc.com>
+In-Reply-To: <160763226856.1580929.7399412663078488395@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 10, 2020 at 11:03:02PM +0900, Damien Le Moal wrote:
-> Document the device tree bindings of the Canaan Kendryte K210 SoC
-> system controller driver in
-> Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml.
+On 10-12-20, 12:31, Stephen Boyd wrote:
+> Quoting Vinod Koul (2020-12-09 22:11:59)
+> > On 09-12-20, 22:01, Rob Herring wrote:
+> > > On Tue, Dec 08, 2020 at 12:17:00PM +0530, Vinod Koul wrote:
+> > 
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - clocks
+> > > > +  - clock-names
+> > > > +  - reg
+> > > > +  - '#clock-cells'
+> > > > +  - '#reset-cells'
+> > > 
+> > > You may or may not have power domains?
+> > 
+> > I have not added them in the driver yet, so I dont think it made sense
+> > to add them when they are not present. For basic stuff it is not
+> > required but eventually yes, so I plan to update binding and driver at
+> > that time
+> > 
 > 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  .../bindings/mfd/canaan,k210-sysctl.yaml      | 116 ++++++++++++++++++
->  1 file changed, 116 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml b/Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
-> new file mode 100644
-> index 000000000000..a61d8ea4fbec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/canaan,k210-sysctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Canaan Kendryte K210 System Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Damien Le Moal <damien.lemoal@wdc.com>
-> +
-> +description:
-> +  Canaan Inc. Kendryte K210 SoC system controller which provides a
-> +  register map for controlling the clocks, reset signals and pin power
-> +  domains of the SoC.
-> +
-> +properties:
-> +  compatible:
-> +    allOf:
+> They should still be required in the binding though if the hardware has
+> power domains. It's not like the hardware doesn't have power domains
+> already or can gain that ability after the fact. The driver should deal
+> with it when it is ready.
 
-Don't need 'allOf'.
+Yeah that is a valid argument, I will add and send updated revision
 
-> +      - items:
-> +          - const: canaan,k210-sysctl
-> +          - const: syscon
-> +          - const: simple-mfd
-> +
-> +  clocks:
-> +    description:
-> +      System controller Advanced Power Bus (APB) interface clock source.
-
-How many entries?
-
-> +
-> +  clock-names:
-> +    maxItems: 1
-
-Don't need maxItems as it is implied by length of 'items'.
-
-> +    items:
-> +      - const: pclk
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      Offset and length of the system controller register space.
-
-Drop. That's pretty much the description for all 'reg' entries.
-
-> +
-> +  reg-io-width:
-> +    const: 4
-
-Why is this needed if always 4?
-
-> +
-> +  clock-controller:
-> +    # Child node
-> +    type: object
-> +    $ref: "../clock/canaan,k210-clk.yaml"
-> +    description:
-> +      Clock controller for the SoC clocks. This child node definition
-> +      should follow the bindings specified in
-> +      Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml.
-> +
-> +  reset-controller:
-> +    # Child node
-> +    type: object
-> +    $ref: "../reset/canaan,k210-rst.yaml"
-> +    description:
-> +      Reset controller for the SoC. This child node definition
-> +      should follow the bindings specified in
-> +      Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml.
-> +
-> +  syscon-reboot:
-> +    # Child node
-> +    type: object
-> +    $ref: "../power/reset/syscon-reboot.yaml"
-> +    description:
-> +      Reboot method for the SoC. This child node definition
-> +      should follow the bindings specified in
-> +      Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml.
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - reg
-> +  - clock-controller
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/k210-clk.h>
-> +    #include <dt-bindings/reset/k210-rst.h>
-> +
-> +    clocks {
-> +      in0: oscllator {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-frequency = <26000000>;
-> +      };
-> +    };
-> +
-> +    sysctl: syscon@50440000 {
-> +      compatible = "canaan,k210-sysctl",
-> +                   "syscon", "simple-mfd";
-> +      reg = <0x50440000 0x100>;
-> +      reg-io-width = <4>;
-> +      clocks = <&sysclk K210_CLK_APB1>;
-> +      clock-names = "pclk";
-> +
-> +      sysclk: clock-controller {
-> +        #clock-cells = <1>;
-> +        compatible = "canaan,k210-clk";
-> +        clocks = <&in0>;
-> +      };
-> +
-> +      sysrst: reset-controller {
-> +        compatible = "canaan,k210-rst";
-> +        #reset-cells = <1>;
-> +      };
-> +
-> +      reboot: syscon-reboot {
-> +        compatible = "syscon-reboot";
-> +        regmap = <&sysctl>;
-> +        offset = <48>;
-> +        mask = <1>;
-> +        value = <1>;
-> +      };
-> +    };
-> -- 
-> 2.29.2
-> 
+Thanks
+-- 
+~Vinod
