@@ -2,149 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C92C4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 16:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2567FC4361B
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 17:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D022E23EB2
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 16:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECC0722D03
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Dec 2020 17:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391406AbgLKPwm convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Dec 2020 10:52:42 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41969 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388637AbgLKPwe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Dec 2020 10:52:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id a12so9502291wrv.8;
-        Fri, 11 Dec 2020 07:52:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=J7fcE0FENj78WD0WD0FAW2QvhAhKSbHLyC4gTCtkJlw=;
-        b=Dnv0/f0W92D/tj1hHIMIlhCVF5erZIEWcz2BDHVkwc6FgcJhejKsI1dYYSvNNMA6TR
-         UN0RWihNcxItvlA5Iqfm2ar2yShM3RMbK/JMGk6gImEm5N4Hwj1WrBnHqEX+RpIbNFLc
-         IXmcDaOhFzga5VRfYX+mVhgXRPvk/qoSE/5OAekMqDHk0dx50lU/xvjLDU8D+LoyR7En
-         VBZswG7Q8WPd7r2k334SfXCaSmIxM8JF/mQWPRy08cimjchRTH/rv2J9pxFkzAGzdRtT
-         wFPZetq2b81dfMZIEMaVKLgtOTB78XWD37fTnWhPKWjzpzOf7PA4wxcMXxGydjlt9XSi
-         +KwA==
-X-Gm-Message-State: AOAM533b1MeAVzeZ4faYynEsTdmriql1g5M/AFBjXfpJDMAfVKoV5dlM
-        vFiKNRcaaDXFMMd6P/JV3Bk=
-X-Google-Smtp-Source: ABdhPJz7D8U+j4gEfci2HdyqdoNrhC+P/LecmgdYR4fAygHIEvJvMXFU+xo1bWvYdsuq5i6Z4xJvgQ==
-X-Received: by 2002:adf:f94b:: with SMTP id q11mr14872438wrr.351.1607701910528;
-        Fri, 11 Dec 2020 07:51:50 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id h2sm15998667wme.45.2020.12.11.07.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Dec 2020 07:51:49 -0800 (PST)
-Date:   Fri, 11 Dec 2020 16:51:47 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Iskren Chernev <iskren.chernev@gmail.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-rtc@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Angus Ainslie <angus@akkea.ca>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [RFC 18/18] power: supply: max17040: Do not enforce (incorrect)
- interrupt trigger type
-Message-ID: <20201211155147.GA9732@kozik-lap>
-References: <20201210212534.216197-1-krzk@kernel.org>
- <20201210212534.216197-18-krzk@kernel.org>
- <20201211074755.GA4346@kozik-lap>
- <6f1cd4f0-21a7-ed8c-aafa-ba217c05ea5f@gmail.com>
+        id S2389827AbgLKQtN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Dec 2020 11:49:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34216 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389466AbgLKQsu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Dec 2020 11:48:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B06C2ADCD;
+        Fri, 11 Dec 2020 16:48:07 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org
+Cc:     f.fainelli@gmail.com, linux-pwm@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>
+Subject: [PATCH v6 00/11] Raspberry Pi PoE HAT fan support
+Date:   Fri, 11 Dec 2020 17:47:49 +0100
+Message-Id: <20201211164801.7838-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <6f1cd4f0-21a7-ed8c-aafa-ba217c05ea5f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 05:44:26PM +0200, Iskren Chernev wrote:
-> 
-> On 12/11/20 9:47 AM, Krzysztof Kozlowski wrote:
-> > On Thu, Dec 10, 2020 at 10:25:34PM +0100, Krzysztof Kozlowski wrote:
-> >> Interrupt line can be configured on different hardware in different way,
-> >> even inverted.  Therefore driver should not enforce specific trigger
-> >> type - edge falling - but instead rely on Devicetree to configure it.
-> >>
-> >> The Maxim 14577/77836 datasheets describe the interrupt line as active
-> >> low with a requirement of acknowledge from the CPU therefore the edge
-> >> falling is not correct.
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >>
-> >> ---
-> >>
-> >> This patch should wait till DTS changes are merged, as it relies on
-> >> proper Devicetree.
-> >> ---
-> >> .../devicetree/bindings/power/supply/max17040_battery.txt       | 2 +-
-> >> drivers/power/supply/max17040_battery.c                         | 2 +-
-> >>  2 files changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git
-> a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> >> index c802f664b508..194eb9fe574d 100644
-> >> --- a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> >> +++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> >> @@ -39,7 +39,7 @@ Example:
-> >>          reg = <0x36>;
-> >>          maxim,alert-low-soc-level = <10>;
-> >>          interrupt-parent = <&gpio7>;
-> >> -        interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-> >> +        interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-> >>          wakeup-source;
-> >>      };
-> >>
-> >> diff --git a/drivers/power/supply/max17040_battery.c
-> b/drivers/power/supply/max17040_battery.c
-> >> index d956c67d5155..f737de0470de 100644
-> >> --- a/drivers/power/supply/max17040_battery.c
-> >> +++ b/drivers/power/supply/max17040_battery.c
-> >> @@ -367,7 +367,7 @@ static int max17040_enable_alert_irq(struct
-> max17040_chip *chip)
-> >>
-> >>      flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
-> >
-> > This has to be removed. I will fix it in v2.
-> >
-> > Best regards,
-> > Krzysztof
-> 
-> I removed the IRQF_TRIGGER_FALLING, tweaked the DT as per the DT patch, and
-> it worked on the samsung klte.
-> 
-> I don't understand how the DT irq flag ends up being used by the kernel. It
-> is never explicitly read from DT or passed to interrupt API, only i2c->irq,
-> which is a pure int.
+The aim of this series is to add support to the fan found on RPi's PoE
+HAT. Some commentary on the design can be found below. But the imporant
+part to the people CC'd here not involved with PWM is that, in order to
+achieve this properly, we also have to fix the firmware interface the
+driver uses to communicate with the PWM bus (and many other low level
+functions). Specifically, we have to make sure the firmware interface
+isn't unbound while consumers are still up. So, patch #1 & #2 introduce
+reference counting in the firwmware interface driver and patches #3 to
+#8 update all firmware users. Patches #9 to #11 introduce the new PWM
+driver.
 
-The core __setup_irq() calls irqd_get_trigger_type() on IRQ data
-matching the IRQ.
+I sent everything as a single series as the final version of the PWM
+drivers depends on the firwmare fixes, but I'll be happy to split this
+into two separate series if you think it's better.
 
-Best regards,
-Krzysztof
+--- Original cover letter below ---
+
+This series aims at adding support to RPi's official PoE HAT fan[1].
+
+The HW setup is the following:
+
+| Raspberry Pi                               | PoE HAT                    |
+ arm core -> Mailbox -> RPi co-processor -> I2C -> Atmel MCU -> PWM -> FAN
+
+The arm cores have only access to the mailbox interface, as i2c0, even if
+physically accessible, is to be used solely by the co-processor
+(VideoCore 4/6).
+
+This series implements a PWM bus, and has pwm-fan sitting on top of it as per
+this discussion: https://lkml.org/lkml/2018/9/2/486. Although this design has a
+series of shortcomings:
+
+- It depends on a DT binding: it's not flexible if a new hat shows up with new
+  functionality, we're not 100% sure we'll be able to expand it without
+  breaking backwards compatibility. But without it we can't make use of DT
+  thermal-zones, which IMO is overkill.
+
+- We're using pwm-fan, writing a hwmon driver would, again, give us more
+  flexibility, but it's not really needed at the moment.
+
+I personally think that it's not worth the effort, it's unlikely we'll get
+things right in advance. And ultimately, if the RPi people come up with
+something new, we can always write a new driver/bindings from scratch (as in
+not reusing previous code).
+
+That said, I'm more than happy to change things if there is a consensus that
+another design will do the trick.
+
+[1] https://www.raspberrypi.org/blog/introducing-power-over-ethernet-poe-hat/
+
+---
+
+Changes since v5:
+ - Small cleanups
+ - Add extra code comments
+
+Changes since v4:
+ - Cleanup devm calls
+ - Rename compatible string so it's unique to the PoE HAT
+
+Changes since v3:
+ - Split first patch, #1 introduces refcount, then #2 the devm function
+ - Fix touchscreen function
+ - Use kref
+
+Changes since v2:
+ - Introduce devm_rpi_firmware_get()
+ - Small cleanups in PWM driver
+
+Changes since v1:
+ - Address PWM driver changes
+ - Fix binding, now with 2 cells
+
+Nicolas Saenz Julienne (11):
+  firmware: raspberrypi: Keep count of all consumers
+  firmware: raspberrypi: Introduce devm_rpi_firmware_get()
+  clk: bcm: rpi: Release firmware handle on unbind
+  gpio: raspberrypi-exp: Release firmware handle on unbind
+  reset: raspberrypi: Release firmware handle on unbind
+  soc: bcm: raspberrypi-power: Release firmware handle on unbind
+  staging: vchiq: Release firmware handle on unbind
+  input: raspberrypi-ts: Release firmware handle when not needed
+  dt-bindings: pwm: Add binding for RPi firmware PWM bus
+  DO NOT MERGE: ARM: dts: Add RPi's official PoE hat support
+  pwm: Add Raspberry Pi Firmware based PWM bus
+
+ .../arm/bcm/raspberrypi,bcm2835-firmware.yaml |  20 ++
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts         |  54 +++++
+ drivers/clk/bcm/clk-raspberrypi.c             |   2 +-
+ drivers/firmware/raspberrypi.c                |  69 +++++-
+ drivers/gpio/gpio-raspberrypi-exp.c           |   2 +-
+ drivers/input/touchscreen/raspberrypi-ts.c    |   2 +-
+ drivers/pwm/Kconfig                           |   9 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-raspberrypi-poe.c             | 216 ++++++++++++++++++
+ drivers/reset/reset-raspberrypi.c             |   2 +-
+ drivers/soc/bcm/raspberrypi-power.c           |   2 +-
+ .../interface/vchiq_arm/vchiq_arm.c           |   2 +-
+ .../pwm/raspberrypi,firmware-poe-pwm.h        |  13 ++
+ include/soc/bcm2835/raspberrypi-firmware.h    |  10 +
+ 14 files changed, 395 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/pwm/pwm-raspberrypi-poe.c
+ create mode 100644 include/dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h
+
+-- 
+2.29.2
+
