@@ -2,70 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27531C4361B
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Dec 2020 12:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B77DC4361B
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Dec 2020 13:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB1CF207C9
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Dec 2020 12:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 400F6224D1
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Dec 2020 13:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393436AbgLLMaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Dec 2020 07:30:07 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:36679 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389971AbgLLMaH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Dec 2020 07:30:07 -0500
-Received: from localhost.localdomain ([93.22.36.60])
-        by mwinf5d61 with ME
-        id 3QUL2400B1HrHD103QULvm; Sat, 12 Dec 2020 13:28:22 +0100
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 12 Dec 2020 13:28:22 +0100
-X-ME-IP: 93.22.36.60
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     krzk@kernel.org, b.zolnierkie@samsung.com, mturquette@baylibre.com,
-        sboyd@kernel.org, yadi.brar@samsung.com, mturquette@linaro.org
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] clk: s2mps11: Fix a resource leak in error handling paths in the probe function
-Date:   Sat, 12 Dec 2020 13:28:18 +0100
-Message-Id: <20201212122818.86195-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.27.0
+        id S1727072AbgLLN6c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Dec 2020 08:58:32 -0500
+Received: from aposti.net ([89.234.176.197]:47928 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437600AbgLLN62 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Dec 2020 08:58:28 -0500
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        stable@vger.kernel.org
+Subject: [PATCH] clk: ingenic: Fix divider calculation with div tables
+Date:   Sat, 12 Dec 2020 13:57:33 +0000
+Message-Id: <20201212135733.38050-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some resource should be released in the error handling path of the probe
-function, as already done in the remove function.
+The previous code assumed that a higher hardware value always resulted
+in a bigger divider, which is correct for the regular clocks, but is
+an invalid assumption when a divider table is provided for the clock.
 
-The remove function was fixed in commit bf416bd45738 ("clk: s2mps11: Add
-missing of_node_put and of_clk_del_provider")
+Perfect example of this is the PLL0_HALF clock, which applies a /2
+divider with the hardware value 0, and a /1 divider otherwise.
 
-Fixes: 7cc560dea415 ("clk: s2mps11: Add support for s2mps11")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: a9fa2893fcc6 ("clk: ingenic: Add support for divider tables")
+Cc: <stable@vger.kernel.org> # 5.2
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/clk-s2mps11.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/ingenic/cgu.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index aa21371f9104..a3e883a9f406 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -195,6 +195,7 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index dac6edc670cc..c8e9cb6c8e39 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -392,15 +392,21 @@ static unsigned int
+ ingenic_clk_calc_hw_div(const struct ingenic_cgu_clk_info *clk_info,
+ 			unsigned int div)
+ {
+-	unsigned int i;
++	unsigned int i, best_i = 0, best = (unsigned int)-1;
  
- err_reg:
-+	of_node_put(s2mps11_clks[0].clk_np);
- 	while (--i >= 0)
- 		clkdev_drop(s2mps11_clks[i].lookup);
+ 	for (i = 0; i < (1 << clk_info->div.bits)
+ 				&& clk_info->div.div_table[i]; i++) {
+-		if (clk_info->div.div_table[i] >= div)
+-			return i;
++		if (clk_info->div.div_table[i] >= div &&
++		    clk_info->div.div_table[i] < best) {
++			best = clk_info->div.div_table[i];
++			best_i = i;
++
++			if (div == best)
++				break;
++		}
+ 	}
  
+-	return i - 1;
++	return best_i;
+ }
+ 
+ static unsigned
 -- 
-2.27.0
+2.29.2
 
