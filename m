@@ -2,73 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DA0C4361B
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD17DC433FE
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E9712250E
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91FBF22D71
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbgLMFOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Dec 2020 00:14:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34184 "EHLO mail.kernel.org"
+        id S1728902AbgLMFhA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Dec 2020 00:37:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbgLMFOn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 13 Dec 2020 00:14:43 -0500
+        id S1728755AbgLMFg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 13 Dec 2020 00:36:59 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607836443;
-        bh=VaeAUus1rNjDVdpneM1XXAW2srOZQ+w5dltPlY5NNS0=;
+        s=k20201202; t=1607837779;
+        bh=t/n1tspDQdnKbiymnbRa69RsP87wuaQJFxpNY2WLfDY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TVSR2uV8fXibrDJR0JsFRK2z5DyNUykiQtSg7rHx7t60763vOPg5/eidNeG8tT1zW
-         u9zOoF1TQi0lCyDjSJ3GSUHjq44LtCbqOB34mPkWM+k2NbMWZH3KaqGhbF4o780yQY
-         6PNWK+rWJ8rCKerWpESwn7BlzoSFe4gv17J2aEVa3OUqvSVfgCLLdWiRu+pK4xkWzg
-         WAmafQpCldA8y/U4XSsZD02KWyOhiXyxGsWMQh5qnbTlKd8kxYpHQ3mmH+bBmc2y/A
-         v0Gfbv3pUnNrlJsqBY9oNZB4BbXCSU2SIt8hICHfLSKvYpYwqnB751wqsXTZxeeJsU
-         1SSrLT9hUv3Sg==
+        b=YLXW46D5IratvVVN0wvVSIWmUTmDUT4AsoTzm84dv6/1PbG8AFpQjawrzc89Fh0l9
+         eQMfSj7QTOHZKPKFq/Ypd8iVLB3Dj4f/H2V0ZUxBTF5IZ8r1LEhPZG8mRQokS11PYQ
+         +erVhTxe5Z10Lae541yGoPlPMnQ8fjd77hwUz9lefCd97iUMupIExg+CoXJFWP5h+I
+         5bPzoxJclEoUPaP1rPOp3AT1TKxXfNwiDXRvalOmX+olRCKN9FYxxcVD/vjiZpVBS6
+         c2iDW9eCvnF1/fpQ8tYs4Sy6/27nqmwjy+36roP2a5JsVBNJvHFgMUcS43AFow+fPn
+         TFYV1cWZ6G/Yw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201211164801.7838-2-nsaenzjulienne@suse.de>
-References: <20201211164801.7838-1-nsaenzjulienne@suse.de> <20201211164801.7838-2-nsaenzjulienne@suse.de>
-Subject: Re: [PATCH v6 01/11] firmware: raspberrypi: Keep count of all consumers
+In-Reply-To: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+References: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH v7 0/7] clk: clk-wizard: clock-wizard: Driver updates
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, wahrenst@gmx.net,
-        linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        p.zabel@pengutronix.de, linux-gpio@vger.kernel.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, u.kleine-koenig@pengutronix.de
-Date:   Sat, 12 Dec 2020 21:14:01 -0800
-Message-ID: <160783644171.1580929.15619962172135112128@swboyd.mtv.corp.google.com>
+Cc:     git@xilinx.com, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        linux-clk@vger.kernel.org
+Date:   Sat, 12 Dec 2020 21:36:17 -0800
+Message-ID: <160783777786.1580929.1950826106627397616@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nicolas Saenz Julienne (2020-12-11 08:47:50)
-> When unbinding the firmware device we need to make sure it has no
-> consumers left. Otherwise we'd leave them with a firmware handle
-> pointing at freed memory.
+Quoting Shubhrajyoti Datta (2020-11-04 07:06:40)
 >=20
-> Keep a reference count of all consumers and introduce rpi_firmware_put()
-> which will permit automatically decrease the reference count upon
-> unbinding consumer drivers.
->=20
-> Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
->=20
-> ---
+> Shubhrajyoti Datta (7):
+>   dt-bindings: add documentation of xilinx clocking wizard
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Any chance to respond to Robs comments?
+
+>   clk: clock-wizard: Add the clockwizard to clk directory
+
+Is it called 'wizard' anywhere in the documentation? I wonder if there
+is a better name that could be found for this.
+
+>   clk: clock-wizard: Fix kernel-doc warning
+>   clk: clock-wizard: Add support for dynamic reconfiguration
+>   clk: clock-wizard: Add support for fractional support
+>   clk: clock-wizard: Remove the hardcoding of the clock outputs
+>   clk: clock-wizard: Update the fixed factor divisors
+>
