@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D91C433FE
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181E9C433FE
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA18922D71
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F0C22D71
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Dec 2020 05:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbgLMFnF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Dec 2020 00:43:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44786 "EHLO mail.kernel.org"
+        id S1730067AbgLMFoq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Dec 2020 00:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727865AbgLMFnF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 13 Dec 2020 00:43:05 -0500
+        id S1727865AbgLMFoq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 13 Dec 2020 00:44:46 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607838144;
-        bh=vdos0gKRikK/H6Ze9NX2GP+UqbFvtdzEqMCIy5YESFs=;
+        s=k20201202; t=1607838245;
+        bh=aiuaDfzwVwEBQr8oCaMEsl5zwcVLsWS80aqlFa4/LHU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bAqYPR/M5CxBiEcjQ0XTh3HXMP2FyGX8o6ewDv2JcLF+hHaz4zUh2Brr1f5Crdx2E
-         txPWOgN8QLf6POSDriHi/ntklkP3D986aPyw4zcVkE1KHHfgdvDFai+7Rm/rCIQr+5
-         XpcxqUCuYsxNqNYxpgJoD7I8kfnE2uw+PlXUWZd5kt7tthpQF+c5hkoENs7Ju+5NdZ
-         cVLw04OVwOq40kaZT9lMy03W249AHaBXA9wyMI5NpXvRssrC2TlQFJp/mcp0rAwE9m
-         A4FdBJcY772nyxvzRuNmLHIuHvH9GHQIw0gAl98Df50rngCUIWSkZyUtYV1F0wGzZW
-         /cmBJvVVYzV2Q==
+        b=cuirGiXoxsE7CoEeWNdM8I0nOsgS/f9dY7DjUYzIG9/tmlf08YAQ7L2o2XPH70sxc
+         wLTtu9HxL3mOTIhFw+PiF96DrqVUL406WEZs2A/sybjhh+1DpafOH6lChB0KzpfMrL
+         iF9a1VE7hQ5BjulUyx/5YNty4YQ6PrdEzjG/HWCzI/j6zRl84i8+7fkRiywFDLi6wp
+         DiPIQ63uPWqfRxwBc7GdST6olellaoHrsOQOuM+jaOkoxd/diUvcoNAEj3qLcRzYHv
+         0RqdtqChsNV6gp90d9gOSFU5EdyqTJ3R84KfVCuMDAYwEfZ1dkDI8CWmRRFAaJrH0L
+         US23oQrtbBviw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201116075532.4019252-3-m.tretter@pengutronix.de>
-References: <20201116075532.4019252-1-m.tretter@pengutronix.de> <20201116075532.4019252-3-m.tretter@pengutronix.de>
-Subject: Re: [PATCH 02/12] clk: divider: fix initialization with parent_hw
+In-Reply-To: <20201116075532.4019252-2-m.tretter@pengutronix.de>
+References: <20201116075532.4019252-1-m.tretter@pengutronix.de> <20201116075532.4019252-2-m.tretter@pengutronix.de>
+Subject: Re: [PATCH 01/12] ARM: dts: define indexes for output clocks
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     rajanv@xilinx.com, tejasp@xilinx.com, dshah@xilinx.com,
         rvisaval@xilinx.com, michals@xilinx.com, kernel@pengutronix.de,
@@ -42,25 +42,18 @@ Cc:     rajanv@xilinx.com, tejasp@xilinx.com, dshah@xilinx.com,
 To:     Michael Tretter <m.tretter@pengutronix.de>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-Date:   Sat, 12 Dec 2020 21:42:23 -0800
-Message-ID: <160783814346.1580929.10685702721358767806@swboyd.mtv.corp.google.com>
+Date:   Sat, 12 Dec 2020 21:44:04 -0800
+Message-ID: <160783824459.1580929.13304747352812344302@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2020-11-15 23:55:22)
-> If a driver registers a divider clock with a parent_hw instead of the
-> parent_name, the parent_hw is ignored and the clock does not have a
-> parent.
->=20
-> Fix this by initializing the parents the same way they are initialized
-> for clock gates.
+Quoting Michael Tretter (2020-11-15 23:55:21)
+> The VCU System-Level Control has 4 output clocks. Define indexes for
+> these clocks to allow to reference them in the device tree.
 >=20
 > Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+> ---
 
-Any fixes tag?
-
-with the proper fixes tag
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
