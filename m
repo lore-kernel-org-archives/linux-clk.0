@@ -2,138 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73901C4361B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 00:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5230BC4361B
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 04:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4422389B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 00:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 135C62079A
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 04:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406978AbgLNAH2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Dec 2020 19:07:28 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:59695 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727178AbgLNAHV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Dec 2020 19:07:21 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id B9C9058031C;
-        Sun, 13 Dec 2020 18:55:09 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 13 Dec 2020 18:55:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=sGIZhzHz1FkZQ
-        G0+QrmOXj6Tw3VH/mhTS+rkKDVcsCg=; b=FrTtfyvogqIvxKdUFX7jJ1JMVQtwo
-        XKMgnj1yVmODuWaJbWKdTgEsPENp0+H5O6a4BD5QJ3x5UmIDbSalbJBfSHdCMf2i
-        L7hU4MOqSnvxFJqbBzRYAXbFO8UrEYSlBycSJmx1Tat1i3wNrZT5PBfwPIH6ut3Y
-        OfGNQF53CoxJpkRIapDpGws+HIIf6IaGcJua+o41H8hUSS2nrMW2bmyKjN8thA+s
-        s9Jj3nn5a8qW9sTb0XnlKZ50LYLFQ5AeWJ418H6l8/k0Vz2Hjq0qcOitkbW72GMr
-        a+pEIpyMBK5ifCRL2liz0fIrNl9skoF7lYikLlZU/ZNnkvV3rOtW9cCtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=sGIZhzHz1FkZQG0+QrmOXj6Tw3VH/mhTS+rkKDVcsCg=; b=BPUbXeFw
-        EA6oiCDciMSGpT4W1tgy0jnoWfAR7aJ5wQl2hIWII9wat0XsV2rvnJ8veVEVUkj4
-        p78pVAv5cMF988cNJS3tWoJrdRWkeh49yx7Hi9URlmqQheFrFpAHmxfddfRffYeG
-        rXiLojLZB103cdwSPvaE0meOuNX5o15Sv/DbXDdlKf/p92rnR67eFdr5lO7bur80
-        1EOjPVMlbiqMweu6IjSwsMnu1RjIykCFFeFmJcGoWmcxtPINb3ipP4Lz4kvCRa88
-        dBT0pi3R4lNuJOPi2c/g5dsRUhzVwXdg3mkr4jhFQm/wB+UQ1jFH7vn5rjsGiZW9
-        lvQX/VTB8d08Ow==
-X-ME-Sender: <xms:3anWX6c68Q5ppKtMX7ulMrU7SxL21McqrbjCoLmRICgcg0zt8PZShQ>
-    <xme:3anWX0MfUkMBRTjrQed3B1q-5n9Iv9fDvS8ehhIeYEazt03JGrxspqEvpu1EHVc0F
-    _1MYxUAS0fKpGENSg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekiedgudejlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheej
-    vdfgjeehueeinecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
-    nhgurdhorhhg
-X-ME-Proxy: <xmx:3anWX7jZMVWlBba2TU5WKOciWkCZ42zzSfCDMrKVOB6ZIypjwygllQ>
-    <xmx:3anWX39vWJoRCw31QnS9ngdjl_7noU2HS4esBqK71ZkpYFatb72tFg>
-    <xmx:3anWX2tXK1NBdBrUI8bfKLBS6iEwLGewsUxaJgcUJsZa1HDnCYSKuw>
-    <xmx:3anWX7PBO82vkderhqZoE5-hXBMs3oS11CJXJlG1mERyvqGN71o6xg>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E71B0108005C;
-        Sun, 13 Dec 2020 18:55:08 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S2438163AbgLNElQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Dec 2020 23:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727148AbgLNElQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 13 Dec 2020 23:41:16 -0500
+Date:   Mon, 14 Dec 2020 10:10:30 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607920835;
+        bh=Lo6u48Day0mUO4h1+Mhp4AqyFlf4ohZTOz9CjtOwmFA=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UkJR+Y16cxoSSnofwarCElwnxfN8ODoAh1tnzUrfssp05SRHZl7AhFkfZEudLbt5X
+         TdpZhGSUWbaOjjoBBvbXyvVeIr91XdPjzXUS9gkLSpDWNyc7N/ncYKuGH+Nn0lyD/t
+         U2kkbUeStLelyRiiAqcZxSqvSDCjMrfe2rgshTnJqZdNXcFBuDslE3fVLko3Jm+oed
+         RpDPLK26h19Pf8g3TzjHOotff0AUYbRUCztBkCZOwoDlcHSvyghl5JSYebWSbYGLVF
+         /LHkaUC9YAZhMzzvF8jW/fy3u6x2bE8fb0GWKyYP5F3X4G27dILFvfAKU81zVEANr5
+         R+uxYe4i75NrA==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vivek Aknurwar <viveka@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 3/4] arm64: dts: allwinner: h6: Add RSB controller node
-Date:   Sun, 13 Dec 2020 17:55:05 -0600
-Message-Id: <20201213235506.25201-4-samuel@sholland.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201213235506.25201-1-samuel@sholland.org>
-References: <20201213235506.25201-1-samuel@sholland.org>
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeevan Shriram <jshriram@codeaurora.org>
+Subject: Re: [PATCH v2 5/5] clk: qcom: gcc: Add clock driver for SM8350
+Message-ID: <20201214044030.GD8403@vkoul-mobl>
+References: <20201208064702.3654324-1-vkoul@kernel.org>
+ <20201208064702.3654324-6-vkoul@kernel.org>
+ <160763302790.1580929.10258660966995584297@swboyd.mtv.corp.google.com>
+ <20201211054349.GS8403@vkoul-mobl>
+ <160767062876.1580929.14564723998233527816@swboyd.mtv.corp.google.com>
+ <a6cc3d1e-4a72-63be-bf1c-5d560ecef9aa@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6cc3d1e-4a72-63be-bf1c-5d560ecef9aa@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The H6 SoC contains an undocumented but fully functional RSB controller.
-Add support for it. The MMIO register address matches other SoCs of the
-same generation, and the IRQ matches a hole in the documented IRQ list.
+Hi Taniya,
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+On 13-12-20, 14:00, Taniya Das wrote:
+> 
+> 
+> On 12/11/2020 12:40 PM, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2020-12-10 21:43:49)
+> > > On 10-12-20, 12:43, Stephen Boyd wrote:
+> > > > > +static struct clk_branch gcc_camera_ahb_clk = {
+> > > > > +       .halt_reg = 0x26004,
+> > > > > +       .halt_check = BRANCH_HALT_DELAY,
+> > > > > +       .hwcg_reg = 0x26004,
+> > > > > +       .hwcg_bit = 1,
+> > > > > +       .clkr = {
+> > > > > +               .enable_reg = 0x26004,
+> > > > > +               .enable_mask = BIT(0),
+> > > > > +               .hw.init = &(struct clk_init_data){
+> > > > > +                       .name = "gcc_camera_ahb_clk",
+> > > > > +                       .flags = CLK_IS_CRITICAL,
+> > > > 
+> > > > Why is it critical? Can we just enable it in driver probe and stop
+> > > > modeling it as a clk?
+> > > 
+> > > it does not have a parent we control, yeah it would make sense to do
+> > > that. Tanya do you folks agree ..?
+> > > 
+> > 
+> > Maybe it is needed for camera clk controller? Have to check other SoCs
+> > and see if they're using it.
+> > 
+> 
+> Yes, they would have to be left enabled.
+> 
+> Vinod, could you please move them to probe, similar to kona/sc7180 where all
+> the CRITICALs clocks are left enabled?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 34cfd68ca523..dd47176e432d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -1014,6 +1014,11 @@ r_ir_rx_pin: r-ir-rx-pin {
- 				pins = "PL9";
- 				function = "s_cir_rx";
- 			};
-+
-+			r_rsb_pins: r-rsb-pins {
-+				pins = "PL0", "PL1";
-+				function = "s_rsb";
-+			};
- 		};
- 
- 		r_ir: ir@7040000 {
-@@ -1045,6 +1050,20 @@ r_i2c: i2c@7081400 {
- 			#size-cells = <0>;
- 		};
- 
-+		r_rsb: rsb@7083000 {
-+			compatible = "allwinner,sun8i-a23-rsb";
-+			reg = <0x07083000 0x400>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB2_RSB>;
-+			clock-frequency = <3000000>;
-+			resets = <&r_ccu RST_R_APB2_RSB>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_rsb_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		ths: thermal-sensor@5070400 {
- 			compatible = "allwinner,sun50i-h6-ths";
- 			reg = <0x05070400 0x100>;
+Thanks for the pointer, will do
+
+Thanks
 -- 
-2.26.2
-
+~Vinod
