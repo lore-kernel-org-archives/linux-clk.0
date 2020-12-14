@@ -2,161 +2,213 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,
-	DATE_IN_FUTURE_24_48,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F5BC1B0D8
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF438C4361B
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 14:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61A6E229F0
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C19225AB
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 14:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgLNKCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Dec 2020 05:02:39 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:9440 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731412AbgLNJ60 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 04:58:26 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CvcHr4g5Dzhsfw;
-        Mon, 14 Dec 2020 17:57:12 +0800 (CST)
-Received: from huawei.com (10.151.151.249) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Mon, 14 Dec 2020
- 17:57:34 +0800
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <vkoul@kernel.org>,
-        <dan.j.williams@intel.com>, <p.zabel@pengutronix.de>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <gengdongjiu@huawei.com>
-Subject: [PATCH v7 3/4] dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
-Date:   Tue, 15 Dec 2020 11:09:46 +0000
-Message-ID: <20201215110947.41268-4-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201215110947.41268-1-gengdongjiu@huawei.com>
-References: <20201215110947.41268-1-gengdongjiu@huawei.com>
+        id S2408306AbgLNO6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Dec 2020 09:58:31 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:47335 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2407990AbgLNO6W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 09:58:22 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id E6D0F580533;
+        Mon, 14 Dec 2020 09:57:33 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 14 Dec 2020 09:57:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=0ZB+MYc697z9Gr7d2qx+FdVrJqV
+        GCWKQWbOHMlewf74=; b=lWrDVSzB0h30zFeZmGTkGel6GifvyuHDyrQtNfAu53d
+        jujuuIeaywRyeNfog1b08d4W8LNJ16/yTzSiTThhJA3XV5glhlkDMXQzBgY4byf7
+        N1SDqhidokk4NXbc4h8D5BeGphFd0J/scYe1LUjpfMAm9Qi6yaHEIMR9nL+vPQ+t
+        06V8gUj5XW3c9q4I+P2dqeITkej43Gzq9pldkJPPPfMBwLby9+oaVYX/mkjC2F2v
+        yjS/BOuuO8M5w3HNZ/DEo7AXXrlBVhGN+7OIr/+PQ78os1q45hQsobuRsxFQ/m1g
+        FPjuGekN0rfyHkOsB2OCHBFqjKiSzZUVeltHEQ8xUKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=0ZB+MY
+        c697z9Gr7d2qx+FdVrJqVGCWKQWbOHMlewf74=; b=i7Ch/3lnwWpfprI2UGf7Qr
+        k5ska+E1Owv2uLG6o/R8rJS2VSBEj++PN/nBHNgmKF/3+N928FHqpEzUeZbiyA5T
+        GXxT+tp59TaalVO23z0LS81KTyAIAcp/UsGntJp4SV+Ne5aYiEJSXSBATFebA2sD
+        QTr84pe7HCDIFjXm7pF2qcQ71ao8n015H9BAt7YKHV/ho7fHBvKbBzLE3d5k8AVP
+        zV8Xl3t3MQOLUcPVw0HLgj5bvWDTH2g2JnyyCCiCeUFhBX5DyfuxB2nJYYsRum7H
+        xiXKxijMzF7Nhk21CrxtEa4kRfuV6+4f+R7fXutrRHKWzBV4MLuqNmd+fDJNI5gg
+        ==
+X-ME-Sender: <xms:W33XX5CNGI3_QqMc6_NHC_rVohVc0zHNW4vrsL2DFnAx0Z96id7TeQ>
+    <xme:W33XX1GCp242Vq8yGO0xYz0B73ijw5RZfxvj3OcOo1VV672yXKec_ZGGodsYDI8ry
+    0aVC0JvQHnYUxc6q8A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekkedgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:W33XX7CwwovZ3fHmiOwLGNnf7iw6gflRMk0fwrWQ49tsO0_203PjuA>
+    <xmx:W33XX1UvmDYPTuJmok8rQRiEE8RnF7pb23JXXkt_7wcdpmFFMp6Izw>
+    <xmx:W33XX_rk-6MhvreQQIu9cnIbBB6ieFmB-rTbResSUe137YVZm8J2Hw>
+    <xmx:XX3XX35Q9cAKbbyaCqS1vvNFWtJOGiEt3D07EorfaVaPCKoqVFQ9Og>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 7245C24005E;
+        Mon, 14 Dec 2020 09:57:31 -0500 (EST)
+Date:   Mon, 14 Dec 2020 15:57:30 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/4] clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+Message-ID: <20201214145730.iz3tc4nasqwq6tym@gilmour>
+References: <20201213235506.25201-1-samuel@sholland.org>
+ <20201213235506.25201-2-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.151.151.249]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ulu7semfirp4jzzp"
+Content-Disposition: inline
+In-Reply-To: <20201213235506.25201-2-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Hiedma Controller v310 Provides eight DMA channels, each
-channel can be configured for one-way transfer. The data can
-be transferred in 8-bit, 16-bit, 32-bit, or 64-bit mode. This
-documentation describes DT bindings of this controller.
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
----
- .../bindings/dma/hisilicon,hiedmacv310.yaml   | 94 +++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
+--ulu7semfirp4jzzp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-new file mode 100644
-index 000000000000..06a1ebe76360
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier:  GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/hisilicon,hiedmacv310.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: HiSilicon Hiedma Controller v310 Device Tree Bindings
-+
-+description: |
-+  These bindings describe the DMA engine included in the HiSilicon Hiedma
-+  Controller v310 Device.
-+
-+maintainers:
-+  - Dongjiu Geng <gengdongjiu@huawei.com>
-+
-+allOf:
-+  - $ref: "dma-controller.yaml#"
-+
-+properties:
-+  "#dma-cells":
-+    const: 2
-+
-+  compatible:
-+    const: hisilicon,hiedmacv310
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  hisilicon,misc-control:
-+    $ref: /schemas/types.yaml#definitions/phandle-array
-+    description: phandle pointing to the misc controller provider node and base register.
-+
-+  clocks:
-+    items:
-+      - description: apb clock
-+      - description: axi clock
-+
-+  clock-names:
-+    items:
-+      - const: apb_pclk
-+      - const: axi_aclk
-+
-+  resets:
-+    description: phandle pointing to the dma reset controller provider node.
-+
-+  reset-names:
-+    items:
-+      - const: dma-reset
-+
-+  dma-requests:
-+    maximum: 32
-+
-+  dma-channels:
-+    maximum: 8
-+
-+
-+required:
-+  - "#dma-cells"
-+  - compatible
-+  - hisilicon,misc-control
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - dma-requests
-+  - dma-channels
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/hi3559av100-clock.h>
-+
-+    dma: dma-controller@10040000 {
-+      compatible = "hisilicon,hiedmacv310";
-+      reg = <0x10040000 0x1000>;
-+      hisilicon,misc-control = <&misc_ctrl 0x144>;
-+      interrupts = <0 82 4>;
-+      clocks = <&clock HI3559AV100_EDMAC1_CLK>, <&clock HI3559AV100_EDMAC1_AXICLK>;
-+      clock-names = "apb_pclk", "axi_aclk";
-+      resets = <&clock 0x16c 7>;
-+      reset-names = "dma-reset";
-+      dma-requests = <32>;
-+      dma-channels = <8>;
-+      #dma-cells = <2>;
-+    };
-+
-+...
--- 
-2.17.1
+Hi Samuel,
 
+On Sun, Dec 13, 2020 at 05:55:03PM -0600, Samuel Holland wrote:
+> While no information about the H6 RSB controller is included in the
+> datasheet or manual, the vendor BSP and power management blob both
+> reference the RSB clock parent and register address. These values were
+> verified by experimentation.
+>=20
+> Since this clock/reset are added late, the specifier is added at the end
+> to maintain the existing DT binding. The code is kept in register order.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 5 +++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
+>  include/dt-bindings/clock/sun50i-h6-r-ccu.h | 1 +
+>  include/dt-bindings/reset/sun50i-h6-r-ccu.h | 1 +
+>  4 files changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h6-r.c
+> index 50f8d1bc7046..56e351b513f3 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> @@ -91,6 +91,8 @@ static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"=
+r-apb2",
+>  		      0x18c, BIT(0), 0);
+>  static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
+>  		      0x19c, BIT(0), 0);
+> +static SUNXI_CCU_GATE(r_apb2_rsb_clk,	"r-apb2-rsb",	"r-apb2",
+> +		      0x1bc, BIT(0), 0);
+>  static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
+>  		      0x1cc, BIT(0), 0);
+>  static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
+> @@ -130,6 +132,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] =3D {
+>  	&r_apb1_pwm_clk.common,
+>  	&r_apb2_uart_clk.common,
+>  	&r_apb2_i2c_clk.common,
+> +	&r_apb2_rsb_clk.common,
+>  	&r_apb1_ir_clk.common,
+>  	&r_apb1_w1_clk.common,
+>  	&ir_clk.common,
+> @@ -147,6 +150,7 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks=
+ =3D {
+>  		[CLK_R_APB1_PWM]	=3D &r_apb1_pwm_clk.common.hw,
+>  		[CLK_R_APB2_UART]	=3D &r_apb2_uart_clk.common.hw,
+>  		[CLK_R_APB2_I2C]	=3D &r_apb2_i2c_clk.common.hw,
+> +		[CLK_R_APB2_RSB]	=3D &r_apb2_rsb_clk.common.hw,
+>  		[CLK_R_APB1_IR]		=3D &r_apb1_ir_clk.common.hw,
+>  		[CLK_R_APB1_W1]		=3D &r_apb1_w1_clk.common.hw,
+>  		[CLK_IR]		=3D &ir_clk.common.hw,
+> @@ -161,6 +165,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] =
+=3D {
+>  	[RST_R_APB1_PWM]	=3D  { 0x13c, BIT(16) },
+>  	[RST_R_APB2_UART]	=3D  { 0x18c, BIT(16) },
+>  	[RST_R_APB2_I2C]	=3D  { 0x19c, BIT(16) },
+> +	[RST_R_APB2_RSB]	=3D  { 0x1bc, BIT(16) },
+>  	[RST_R_APB1_IR]		=3D  { 0x1cc, BIT(16) },
+>  	[RST_R_APB1_W1]		=3D  { 0x1ec, BIT(16) },
+>  };
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h6-r.h
+> index 782117dc0b28..7e290b840803 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> @@ -14,6 +14,6 @@
+> =20
+>  #define CLK_R_APB2	3
+> =20
+> -#define CLK_NUMBER	(CLK_W1 + 1)
+> +#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
+> =20
+>  #endif /* _CCU_SUN50I_H6_R_H */
+> diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bin=
+dings/clock/sun50i-h6-r-ccu.h
+> index 76136132a13e..f46ec03848ca 100644
+> --- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+> +++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+> @@ -15,6 +15,7 @@
+>  #define CLK_R_APB1_PWM		6
+>  #define CLK_R_APB2_UART		7
+>  #define CLK_R_APB2_I2C		8
+> +#define CLK_R_APB2_RSB		13
+>  #define CLK_R_APB1_IR		9
+>  #define CLK_R_APB1_W1		10
+> =20
+> diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bin=
+dings/reset/sun50i-h6-r-ccu.h
+> index 01c84dba49a4..6fe199a7969d 100644
+> --- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+> +++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+> @@ -11,6 +11,7 @@
+>  #define RST_R_APB1_PWM		2
+>  #define RST_R_APB2_UART		3
+>  #define RST_R_APB2_I2C		4
+> +#define RST_R_APB2_RSB		7
+>  #define RST_R_APB1_IR		5
+>  #define RST_R_APB1_W1		6
+
+I think for the clock and reset binding, we'll want to sort by number.
+It's fairly easy to miss otherwise and if we end up adding another one
+it wouldn't be far fetched to assume the same indices would be used
+
+maxime
+
+--ulu7semfirp4jzzp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX9d9WQAKCRDj7w1vZxhR
+xWBKAQCp2jSd8gSwWD6coghwk+UL4rm8wKU377AUgkyubu0x2QEAlJEPrd2pAioW
+ZhRDWi8lIIu5ssVx1ms7JOjgMeQKeg4=
+=eX1s
+-----END PGP SIGNATURE-----
+
+--ulu7semfirp4jzzp--
