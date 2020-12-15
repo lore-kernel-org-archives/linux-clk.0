@@ -2,93 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7CCC4361B
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 12:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8F1C2BBCF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 17:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A99312220F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 12:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8725C22B4B
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 17:01:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbgLOMFO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Dec 2020 07:05:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46914 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbgLOL5Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Dec 2020 06:57:16 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850D8C0617A6
-        for <linux-clk@vger.kernel.org>; Tue, 15 Dec 2020 03:56:36 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kp8wT-0007W9-CP; Tue, 15 Dec 2020 12:56:33 +0100
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1kp8wS-0002Ce-QC; Tue, 15 Dec 2020 12:56:32 +0100
-Date:   Tue, 15 Dec 2020 12:56:32 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, rajanv@xilinx.com, tejasp@xilinx.com,
-        dshah@xilinx.com, rvisaval@xilinx.com, michals@xilinx.com,
-        kernel@pengutronix.de, robh+dt@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 00/12] soc: xilinx: vcu: Convert driver to clock provider
-Message-ID: <20201215115632.GB23407@pengutronix.de>
-References: <20201116075532.4019252-1-m.tretter@pengutronix.de>
- <160783860077.1580929.7577989890301235621@swboyd.mtv.corp.google.com>
+        id S1730229AbgLORBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Dec 2020 12:01:45 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37606 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729643AbgLORBk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Dec 2020 12:01:40 -0500
+Received: by mail-oi1-f194.google.com with SMTP id l207so24096830oib.4;
+        Tue, 15 Dec 2020 09:01:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=X8gCJMjUmleKLa/nPoLv/63eSrzRGptbGJqEgfH+stU=;
+        b=XgGnfkh/bDRK4yJ60HSpJ1Gq5V6XWr3Eq2VqaqMsgtvcOPlJtFkbgH6oneotp2vU1e
+         SbfqCFkpYNCmYaER+mlnbOdJa+qlDXQHYX6IcRNx9supHwpQPIJb3NjPTcsZ8WTRfj+o
+         H8IXMsqtOsKflwKmz6+vAbiqgx1AosfyRb0hw5pfxKH+EJ/kDWvY+2JvCJ4ObY+1/ov/
+         rQek50KB3LqiBrA62hdDHeLMm9sMre7MULMShdUl5QvvAxd+vWCg9XXHx53+vvkoa33E
+         drMN+Luz2/dFUdgXtlUrb8h3IEJPtgVryj1n3FhAaC8jJoTj7blS1vVChPntzyeA+7ge
+         xgUw==
+X-Gm-Message-State: AOAM532fz6BejMcOupj9r79mESqipOu+99bdHPszJNlFClNwUljzkbZ0
+        QL6eKOxIus4s1o3Ajv0feQ==
+X-Google-Smtp-Source: ABdhPJxBKssZb6QQehemTtLam4Yhhb6MzbIdTgEOXl9dxsoqsQm/sUt/QY7L3oNjBwyYbVfUOyty4g==
+X-Received: by 2002:aca:75cc:: with SMTP id q195mr999080oic.173.1608051658841;
+        Tue, 15 Dec 2020 09:00:58 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q77sm4770421ooq.15.2020.12.15.09.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Dec 2020 09:00:57 -0800 (PST)
+Received: (nullmailer pid 4025072 invoked by uid 1000);
+        Tue, 15 Dec 2020 17:00:56 -0000
+Date:   Tue, 15 Dec 2020 11:00:56 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sean Anderson <seanga2@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v10 12/23] dt-binding: mfd: Document canaan,k210-sysctl
+ bindings
+Message-ID: <20201215170056.GA4025018@robh.at.kernel.org>
+References: <20201213135056.24446-1-damien.lemoal@wdc.com>
+ <20201213135056.24446-13-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <160783860077.1580929.7577989890301235621@swboyd.mtv.corp.google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 12:38:56 up 13 days, 5 min, 63 users,  load average: 0.05, 0.10,
- 0.09
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20201213135056.24446-13-damien.lemoal@wdc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 12 Dec 2020 21:50:00 -0800, Stephen Boyd wrote:
-> Quoting Michael Tretter (2020-11-15 23:55:20)
-> > Hello,
-> > 
-> > the xlnx_vcu soc driver is actually a clock provider of a PLL and four output
-> > clocks created from the PLL via dividers.
-> > 
-> > This series reworks the xlnx_vcu driver to use the common clock framework to
-> > enable other drivers to use the clocks. I originally posted a series to expose
-> > the output clocks as fixed clocks [0]. This series now implements the full
-> > tree from the PLL to the output clocks. Therefore, I am sending a separate
-> > series that focuses on the clocks, but it depends on v4 of the previous series
-> > [1].
+On Sun, 13 Dec 2020 22:50:45 +0900, Damien Le Moal wrote:
+> Document the device tree bindings of the Canaan Kendryte K210 SoC
+> system controller driver in
+> Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml.
 > 
-> After this series is this anything besides a clk provider? If it's only
-> providing clks it would make sense to move the driver into drivers/clk/
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  .../bindings/mfd/canaan,k210-sysctl.yaml      | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
 > 
 
-1. The driver is also responsible for resetting the entire VCU (the
-VCU_GASKET_INIT register). This isn't something that an individual encoder or
-decoder driver should be doing. However, other clock drivers also implement a
-reset controller.
-
-2. There are several registers for AXI performance monitoring in the VCU
-System-Level Control register space. Right now, these are not used by the
-driver and I have no plans to actually use them, but this might be an argument
-against the move.
-
-I think it is OK to move the driver to drivers/clk/, but I don't have a strong
-opinion about it.
-
-Michael
+Reviewed-by: Rob Herring <robh@kernel.org>
