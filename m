@@ -2,197 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE8CC4361B
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 03:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D963DC2BB9A
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 09:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC78C223D6
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 03:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911F22222A
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 09:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgLOD0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Dec 2020 22:26:44 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:40889 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726763AbgLOD0e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 22:26:34 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A2A2B5802DF;
-        Mon, 14 Dec 2020 22:25:44 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 14 Dec 2020 22:25:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        to:cc:references:from:subject:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=O
-        poyrMA4zzWiGVw4tBShJdXeoCCLGa06Rcef+QPxYI0=; b=VguYu0HA6agSgVHrD
-        kjbr/VlUuHVAtMvscYSs/eUs1vWzmG8p3MyLT5B8QbaPojVPy7HzLkW6xECKiHUw
-        v/V7UcxhvNgVUh+Azn7Ei7VwnBVrNalixDWOxcRQGJadjBMEgH2Lzx1lKNQzWAhO
-        aV04LQZ7rfVkbsZNOmBYJw7+jOGkG/0TSZbD/wzDSNJvjsLluN/hUNf22L5qnVqW
-        o5L/NVLbmmQS+gClya5Fw8w5x77hEM9bYxoYaZAhTKT0Ous9JYWGHHt5o6ocvSYu
-        dls0ptU+TpDqiqLzknwLqaZ4oTuPEwtBYdvdGIebGhWr9mc9okNZSjUpslIhxFL2
-        VFc1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=OpoyrMA4zzWiGVw4tBShJdXeoCCLGa06Rcef+QPxY
-        I0=; b=Qr8PzC8J4l2KkMYmwJSjP0L/4KSSl2QY/ClAYD1LBAoMcaYJcZx0ZGml9
-        hBnapeNDpXrwCqDhv3GZvA7Y7u7O5QV6jpoqekWA8/Qoa15vLPG1vcYmJAdB0KYC
-        IOWoH672Ch05pFWUJHBBPPseGBnb+HiqotXlVNJW1P95W66YvT5B90Y4vo2FC2EU
-        9RkWZ+ZrBywGK1G2G3KzgWam2mBytGUir4uVIaRVCpS3xIfqJ7Xb+hP53kDGMRTJ
-        +1Eh0l/r2yh1grEUc/7g9HRWdU++GLPBG+FdE+Wheu/jVRxU4s/AzHNQstHtxYCQ
-        kwoaLCQJ1ri+DvvBVNmbwZU3LHeqA==
-X-ME-Sender: <xms:tizYX6wBs1N4Odm9rjkPQOHvxXAtUEFA-nqTZC1tkvrtXm647qFkOg>
-    <xme:tizYX2RaPnHRsxL-gvJkf0kKOk6V1rD66qK02pnGflPVETyKNnh0lbYX_g3tekaVe
-    dWdZXoKOhNE_8n2fg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudekledgiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepvfhfhffukffffgggjggtgfesthekredttdefheenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepheejgefhudeffeetleeigefgheetveeiteeuffehhfffkeeuvdff
-    veffveetudefnecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
-    nhgurdhorhhg
-X-ME-Proxy: <xmx:tizYX8WsUkAX7TdatK5IZqvJMytwpttdrQkEE_HpXMWgXgCpKD4wBQ>
-    <xmx:tizYXwj66wp8-NQAv9E6vxnRxP-ibn5pata7rIqBYtMHjrvFH8Odww>
-    <xmx:tizYX8BpwFSIf7UZNiIClho1beloNiofPNvv8alk4oFGd-Rvql35eQ>
-    <xmx:uCzYX44Y1BqTOe3gh43joKQomdlGQ6sFr07GY_S3xc1ONQST69VXBA>
-Received: from [70.135.148.151] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E205324005A;
-        Mon, 14 Dec 2020 22:25:41 -0500 (EST)
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20201213235506.25201-1-samuel@sholland.org>
- <20201213235506.25201-2-samuel@sholland.org>
- <20201214145730.iz3tc4nasqwq6tym@gilmour>
-From:   Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH 1/4] clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
-Message-ID: <8de2e0dc-465f-b4a8-bec9-763f1dee06f1@sholland.org>
-Date:   Mon, 14 Dec 2020 21:25:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1728236AbgLOJOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Dec 2020 04:14:49 -0500
+Received: from mail-eopbgr700070.outbound.protection.outlook.com ([40.107.70.70]:14561
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728186AbgLOJOm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 15 Dec 2020 04:14:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F55OGZQjTw7Dky+YhxZkiYwlPBgRM3N/otb1gzu7JoyUYwQ5x6AZrsIcKs5Rdcho8e+VX3oOyOSAmCjwOlTHC+Cw/Sr1UI/25oSc7gQ+hUUO5CIYsIqSxZYH5mLaIyumErcwiZfEGhXgPiwvWuy3KvHdt8idyZfHw8FaHxzEne0o6ihENRqXUz22JVf2yPp8pxFOlbQznWgy/F2X0DSqVq/n/LjrU78GMz1yH3I8AGVOr0pXWyKOLkS4cZBCNmSW2O+UWVIOBk0CMKnqs9vORaCnVanjKFUBpyYi+Z090xREvwZlLBSTbMl9iPpA2O7jfY0ZLYwkjVx6YO5vXxWVew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uiukqRLKLe9e23yXKpPvPyq+ED5RgzNbDC3lDfoCoNU=;
+ b=ZSyRsqEJgso7U1yQ+Vr8vr2fQAKKuXgRYYEoHmkURs8o62qoipsN1dw38GR8+sfw+4lv92p0y4SeYxHotLCivCdyTS2qxuLi2op+qFL1H9Sn3gIGCp+Ufhaj2orESbpIsnzVyZr12qzk+V83Q1+T/XC1nN0M7oiK2Bv9MPPh52XMoEyKoRhklRa3nv2sYwbWQGxlZySE2pmxocfRKUHW7rRpN0SlZ1kzhLwb3cYnGAmiUZvY0xg+xaKipyJCddHyF23VtYahYvLRkXeFHEL8HcHtQlNPIT6kGtdNrAMlIF4rPJHUOikhWtqEzGaNWXNrJ3tk2XbwrlqdbXiflC5aIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=driverdev.osuosl.org
+ smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uiukqRLKLe9e23yXKpPvPyq+ED5RgzNbDC3lDfoCoNU=;
+ b=OeLjaE+ehJ7NJhQj8ckUJsC2/VLpUPklTZKzFc+H3m3aLpd+UmTWNi4sOg5wBXpqmvOOBfE9xIStKOmcR7dY9sKQE6p3IT1u7TXygZ0MYWHsJ4IRi/3fTbQOvttOKAbC3gcOVCzXvLyEbtZW33yF0eBfgzm6D+W8KbG8+iCR7Vg=
+Received: from SN1PR12CA0060.namprd12.prod.outlook.com (2603:10b6:802:20::31)
+ by CH2PR02MB6661.namprd02.prod.outlook.com (2603:10b6:610:7c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12; Tue, 15 Dec
+ 2020 09:13:53 +0000
+Received: from SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:802:20:cafe::b8) by SN1PR12CA0060.outlook.office365.com
+ (2603:10b6:802:20::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12 via Frontend
+ Transport; Tue, 15 Dec 2020 09:13:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; driverdev.osuosl.org; dkim=none (message not
+ signed) header.d=none;driverdev.osuosl.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ SN1NAM02FT052.mail.protection.outlook.com (10.152.72.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.3654.12 via Frontend Transport; Tue, 15 Dec 2020 09:13:53 +0000
+Received: from xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Tue, 15 Dec 2020 01:13:50 -0800
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server id
+ 15.1.1913.5 via Frontend Transport; Tue, 15 Dec 2020 01:13:50 -0800
+Envelope-to: git@xilinx.com,
+ devel@driverdev.osuosl.org,
+ gregkh@linuxfoundation.org,
+ mturquette@baylibre.com,
+ devicetree@vger.kernel.org,
+ sboyd@kernel.org,
+ linux-clk@vger.kernel.org
+Received: from [172.30.17.109] (port=43944)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1kp6Oz-0006QG-Kc; Tue, 15 Dec 2020 01:13:49 -0800
+Subject: Re: [PATCH v7 0/7] clk: clk-wizard: clock-wizard: Driver updates
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>
+CC:     <git@xilinx.com>, <devicetree@vger.kernel.org>,
+        <mturquette@baylibre.com>, <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+References: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <a62e0871-d6bd-d233-fdea-014ba638e782@xilinx.com>
+Date:   Tue, 15 Dec 2020 10:13:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 MIME-Version: 1.0
-In-Reply-To: <20201214145730.iz3tc4nasqwq6tym@gilmour>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1604502407-14352-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0103caa6-f53f-43c0-c4ec-08d8a0d9be24
+X-MS-TrafficTypeDiagnostic: CH2PR02MB6661:
+X-Microsoft-Antispam-PRVS: <CH2PR02MB6661C552B52FD1D6378BF5D5C6C60@CH2PR02MB6661.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:556;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hIPzrEdpYCIC+D0f5rLgWFDoFDFQ0Xqtf4pbygDFfzAqhpJYbSiZmAGVKKQcGKMmsY3NxzjWSfB/pPdi3wVYpYh9hfaBbkB5T5HJAQdS8/5oRrzKOd4nK/xXez1IBCV6AKTyvefMb9rSKpw6GccRnjTZsX2qWAAGjGVpXtnJ1v9RA0/Ye7kOo49grLoYzZTzsGA38Jr7b77tDOuJ/zAkaUfSEWXuysXKsi7S/DfsMf941ISBsgwfWKHVXJ7NkyE6Tx3aBgMnpXxWb711vxGR8m9e+2AYeBWpI+pjA76eHcIzAGHra0jZAoGN06har/mUIyRF254dVutOZ4bIUXwvDV/9Gp0XVj2IJct5MglJmzeo/1C17iP56mwNjVvdzX8GILXPe1YH7vqjGBmc3U2ZLjFF/a1tUeqyr1ZYZ808DZIKuNTr6mCemb8nfcKzZfo23YO0vc4JKRcKLmOUjV/o9CC+sLdzuRynEw7icNR6Xmc0Bztogy8l9fYLZrTXQ2i3UDHNckCYouA2epwFQMfZFA==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(136003)(376002)(346002)(46966005)(31686004)(2616005)(31696002)(186003)(7636003)(2906002)(44832011)(110136005)(9786002)(47076004)(966005)(36756003)(26005)(70206006)(508600001)(8676002)(426003)(356005)(15650500001)(83380400001)(82310400003)(4326008)(336012)(36906005)(70586007)(8936002)(5660300002)(6666004)(54906003)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2020 09:13:53.0554
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0103caa6-f53f-43c0-c4ec-08d8a0d9be24
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6661
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/14/20 8:57 AM, Maxime Ripard wrote:
-> Hi Samuel,
-> 
-> On Sun, Dec 13, 2020 at 05:55:03PM -0600, Samuel Holland wrote:
->> While no information about the H6 RSB controller is included in the
->> datasheet or manual, the vendor BSP and power management blob both
->> reference the RSB clock parent and register address. These values were
->> verified by experimentation.
->>
->> Since this clock/reset are added late, the specifier is added at the end
->> to maintain the existing DT binding. The code is kept in register order.
->>
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 5 +++++
->>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
->>  include/dt-bindings/clock/sun50i-h6-r-ccu.h | 1 +
->>  include/dt-bindings/reset/sun50i-h6-r-ccu.h | 1 +
->>  4 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->> index 50f8d1bc7046..56e351b513f3 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->> @@ -91,6 +91,8 @@ static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"r-apb2",
->>  		      0x18c, BIT(0), 0);
->>  static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
->>  		      0x19c, BIT(0), 0);
->> +static SUNXI_CCU_GATE(r_apb2_rsb_clk,	"r-apb2-rsb",	"r-apb2",
->> +		      0x1bc, BIT(0), 0);
->>  static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
->>  		      0x1cc, BIT(0), 0);
->>  static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
->> @@ -130,6 +132,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
->>  	&r_apb1_pwm_clk.common,
->>  	&r_apb2_uart_clk.common,
->>  	&r_apb2_i2c_clk.common,
->> +	&r_apb2_rsb_clk.common,
->>  	&r_apb1_ir_clk.common,
->>  	&r_apb1_w1_clk.common,
->>  	&ir_clk.common,
->> @@ -147,6 +150,7 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
->>  		[CLK_R_APB1_PWM]	= &r_apb1_pwm_clk.common.hw,
->>  		[CLK_R_APB2_UART]	= &r_apb2_uart_clk.common.hw,
->>  		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
->> +		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
->>  		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
->>  		[CLK_R_APB1_W1]		= &r_apb1_w1_clk.common.hw,
->>  		[CLK_IR]		= &ir_clk.common.hw,
->> @@ -161,6 +165,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
->>  	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
->>  	[RST_R_APB2_UART]	=  { 0x18c, BIT(16) },
->>  	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
->> +	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
->>  	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
->>  	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
->>  };
->> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->> index 782117dc0b28..7e290b840803 100644
->> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->> @@ -14,6 +14,6 @@
->>  
->>  #define CLK_R_APB2	3
->>  
->> -#define CLK_NUMBER	(CLK_W1 + 1)
->> +#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
->>  
->>  #endif /* _CCU_SUN50I_H6_R_H */
->> diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->> index 76136132a13e..f46ec03848ca 100644
->> --- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->> +++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->> @@ -15,6 +15,7 @@
->>  #define CLK_R_APB1_PWM		6
->>  #define CLK_R_APB2_UART		7
->>  #define CLK_R_APB2_I2C		8
->> +#define CLK_R_APB2_RSB		13
->>  #define CLK_R_APB1_IR		9
->>  #define CLK_R_APB1_W1		10
->>  
->> diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->> index 01c84dba49a4..6fe199a7969d 100644
->> --- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->> +++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->> @@ -11,6 +11,7 @@
->>  #define RST_R_APB1_PWM		2
->>  #define RST_R_APB2_UART		3
->>  #define RST_R_APB2_I2C		4
->> +#define RST_R_APB2_RSB		7
->>  #define RST_R_APB1_IR		5
->>  #define RST_R_APB1_W1		6
-> 
-> I think for the clock and reset binding, we'll want to sort by number.
-> It's fairly easy to miss otherwise and if we end up adding another one
-> it wouldn't be far fetched to assume the same indices would be used
+Hi Stephen,
 
-I think GCC would complain about the duplicate array initialization in
-the driver, but I can move them for v2.
+On 04. 11. 20 16:06, Shubhrajyoti Datta wrote:
+> 
+> In the thread [1] Greg suggested that we move the driver
+> to the clk from the staging.
+> Add patches to address the concerns regarding the fractional and
+> set rate support in the TODO.
+> 
+> The patch set does the following
+> - Trivial fixes for kernel doc.
+> - Move the driver to the clk folder
+> - Add capability to set rate.
+> - Add fractional support.
+> - Add support for configurable outputs.
+> - Make the output names unique so that multiple instances
+> do not crib.
+> 
+> Changes in the v3:
+> Added the cover-letter.
+> Add patches for rate setting and fractional support
+> Add patches for warning.
+> Remove the driver from staging as suggested
+> 
+> v4:
+> Reorder the patches.
+> Merge the CLK_IS_BASIC patch.
+> Add the yaml form of binding document
+> 
+> v5:
+> Fix a mismerge
+> 
+> v6:
+> Fix the yaml warning
+> use poll timedout
+> 
+> v7:
+> Binding doc updates
+> Use common divisor function.
+> 
+> [1] https://spinics.net/lists/linux-driver-devel/msg117326.html
+> 
+> Shubhrajyoti Datta (7):
+>   dt-bindings: add documentation of xilinx clocking wizard
+>   clk: clock-wizard: Add the clockwizard to clk directory
+>   clk: clock-wizard: Fix kernel-doc warning
+>   clk: clock-wizard: Add support for dynamic reconfiguration
+>   clk: clock-wizard: Add support for fractional support
+>   clk: clock-wizard: Remove the hardcoding of the clock outputs
+>   clk: clock-wizard: Update the fixed factor divisors
+> 
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       |  65 ++
+>  drivers/clk/Kconfig                                |   9 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-xlnx-clock-wizard.c                | 689 +++++++++++++++++++++
+>  drivers/staging/Kconfig                            |   2 -
+>  drivers/staging/Makefile                           |   1 -
+>  drivers/staging/clocking-wizard/Kconfig            |  10 -
+>  drivers/staging/clocking-wizard/Makefile           |   2 -
+>  drivers/staging/clocking-wizard/TODO               |  12 -
+>  .../clocking-wizard/clk-xlnx-clock-wizard.c        | 333 ----------
+>  drivers/staging/clocking-wizard/dt-binding.txt     |  30 -
+>  11 files changed, 764 insertions(+), 390 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+>  create mode 100644 drivers/clk/clk-xlnx-clock-wizard.c
+>  delete mode 100644 drivers/staging/clocking-wizard/Kconfig
+>  delete mode 100644 drivers/staging/clocking-wizard/Makefile
+>  delete mode 100644 drivers/staging/clocking-wizard/TODO
+>  delete mode 100644 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
+>  delete mode 100644 drivers/staging/clocking-wizard/dt-binding.txt
+> 
 
-Cheers,
-Samuel
+Can you please take a look at this series?
+
+Thanks,
+Michal
