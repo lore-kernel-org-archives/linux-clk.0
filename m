@@ -2,79 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32373C4361B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 22:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38393C4361B
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 00:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 070D32250F
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 22:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDACE224D4
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 00:45:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441277AbgLNWyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Dec 2020 17:54:38 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33103 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441156AbgLNWyd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 17:54:33 -0500
-Received: by mail-ot1-f65.google.com with SMTP id b24so12994otj.0;
-        Mon, 14 Dec 2020 14:54:17 -0800 (PST)
+        id S1725945AbgLOApV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Dec 2020 19:45:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbgLOApN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 19:45:13 -0500
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440B0C061793;
+        Mon, 14 Dec 2020 16:44:33 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id u5so4621941qkf.0;
+        Mon, 14 Dec 2020 16:44:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vCxy4tLMQWYC9VVh3cCItDfMQ9M7vpTOjNyRTb5usTg=;
+        b=ai3bipDiioymIZzmPss6ujwy0oGpxSpDsREQ1Abe+DwpIYjbPZCAdSciukQ38MvpW5
+         G3Vf54WEEqnnmo5Z6++5lJ/UVvhV4CT4+HXDvCxjVIv4yk+OBbQcUpLJpzg3avNYMJRA
+         ps1mwVu2nfW7DN/faWPWHbzKaSWdhthDh/CyTFrvtWcZPgbNbu4HMYj90ZVwih6deJK5
+         jT2QQlQu0jkZCeEJaSKXMV3bOb+ccjEEMnkgEgXahMVZQXtW42+eiNLNiwhBRIvazVjH
+         TZO4xSQIFfvv6bPGZEa9VHgCVlN7sfLnJrK75JyV7CF2WfsHpqpo81GAIixNAe2IBQwS
+         YWcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rqra1QTGjIaQMS8ZO3kXNg7XHyLC+qgPhovHA2Dd1cY=;
-        b=ZAZAg0O5yE7bOMI/C9vE99Vv9toIwTEsaK998Vw7K0VVyxanFYy575yIiviQvfrH40
-         VjDqM/+z3ikfmPE4qJYZvnykjWvqNNitEmFEpgmGgqiVmlpl68QTDNj8RwBEAnuw5rO0
-         SBHgP+HA2Gt0JhVPa+9S0G/fTc9glwBU9MKZ4sW4mU4dQ+iJK/oPsPLCmplW/7YkT5vQ
-         2xKXaQggbSfSr/6JvcpPfSvp3+QQ6f6dxJZ5Uks6qNpa3LN3ix0fprYREePxBBilFNIi
-         k8hc2Hr/MlCFOlCtKWccJeH1Yxp0CNqmAw9S01566Ca2v+qzVrTEZ5G0bU3o0MxH+pZv
-         WyzA==
-X-Gm-Message-State: AOAM5313A95otq4ZXG7dIJCMzYfDvj87cl7xiAQD2DNjjjvFC3f9zKBQ
-        Ru0Aa0x0Za1xMDckXATFRA==
-X-Google-Smtp-Source: ABdhPJydZnn0tJjFmNOqdiiIDPOs6c6PDGcOlM5zpPu6lj/tickohyS5os9MPobP9kqx2P3AcAyz1w==
-X-Received: by 2002:a9d:223:: with SMTP id 32mr21528781otb.84.1607986431960;
-        Mon, 14 Dec 2020 14:53:51 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n16sm3502009oov.23.2020.12.14.14.53.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vCxy4tLMQWYC9VVh3cCItDfMQ9M7vpTOjNyRTb5usTg=;
+        b=NshXzcZJexW4BaqCDbNOu4Gmzzkgsh4G5aepOU6h38Fr6Gq916HjaPARUMk5rSz4DX
+         gyhSInSdWnQSb65OSxAZcN7g9DI5fttsnxQwHNCJHJ7M5Pc0h+ttrcyj7ddkg9n6fYdM
+         ObaK1dl0PSjzhKpnOE7mtmpmL+T8xnXOc8Qtx32+zpvj3GtbYcQMU4wl0nbaelMgXobA
+         nscFNVWagoR/CA/4yK60cVOrdjDJ9MZNHmPYa0gu6Gp4MKCsdQP2nYvGSURfDvdnut6B
+         dY+zO3TysRI+4tIys7k6oja5wPDUCZReLa+5AdXnEoV3D8olS87nrrjKFKJ+opfjrbgD
+         GCDw==
+X-Gm-Message-State: AOAM532M/oDZe/4IkBisMOZDR7j4K/AQgLmh9PG53w26wYgo/Bgh8FcW
+        2BBqZ75Q20ZF9X3gB8IBYo4=
+X-Google-Smtp-Source: ABdhPJzcSVAaBVu6JxUqc2+HquOtYsClaOF/npMB4CyHEtMTSeSExW7qVXZ1k9xJurFB7rzId3E9jg==
+X-Received: by 2002:a05:620a:66d:: with SMTP id a13mr10028610qkh.5.1607993072363;
+        Mon, 14 Dec 2020 16:44:32 -0800 (PST)
+Received: from atris.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
+        by smtp.gmail.com with ESMTPSA id e10sm14923039qte.48.2020.12.14.16.44.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Dec 2020 14:53:51 -0800 (PST)
-Received: (nullmailer pid 2533125 invoked by uid 1000);
-        Mon, 14 Dec 2020 22:53:50 -0000
-Date:   Mon, 14 Dec 2020 16:53:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Shuosheng Huang <huangshuosheng@allwinnertech.com>
-Subject: Re: [PATCH v2 05/21] dt-bindings: clk: sunxi-ccu: Add compatible
- string for Allwinner H616
-Message-ID: <20201214225350.GA2533079@robh.at.kernel.org>
-References: <20201211011934.6171-1-andre.przywara@arm.com>
- <20201211011934.6171-6-andre.przywara@arm.com>
+        Mon, 14 Dec 2020 16:44:31 -0800 (PST)
+From:   Liam Beguin <liambeguin@gmail.com>
+To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v1 0/1] add support for the LMK04832
+Date:   Mon, 14 Dec 2020 19:44:19 -0500
+Message-Id: <20201215004420.11342-1-liambeguin@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201211011934.6171-6-andre.przywara@arm.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 11 Dec 2020 01:19:18 +0000, Andre Przywara wrote:
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml      | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+From: Liam Beguin <lvb@xiphos.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Hi,
+
+The LMK04832 is an ultra-high performance clock conditioner with JEDEC
+JESD204B support and is also pin compatible with the LMK0482x family of
+devices.
+
+This driver adds minimal support to configure the LMK04832 clocks using
+the clock framework.
+
+At the moment, this doesn't fully support JESD204B subclass 1.
+I'm working on adding proper SYSREF support and will update this series
+as soon as it's ready.
+
+At this stage, I was hoping for some general feedback on the work done
+so far and advice on a few points:
+
+ - Currently, nothing sets the VCO frequency. In a local version,
+   I used a devicetree property and clk_set_rate(lmk->vco.clk, vco_rate).
+   Should this be set using the parent_rate from inside the
+   lmk04832_sclk_round_rate() and lmk04832_dclk_round_rate() functions.
+   How would this affect VCO sub clocks?
+
+ - Should round_rate error out when the calculated rate is too far from
+   the desired rate? Other drivers don't seem to do that.
+
+ - Since this is device is compatible with the LMK0482x family, should
+   the driver be renamed to lmk048xx?
+
+Thanks for your time,
+Liam
+
+Liam Beguin (1):
+  clk: add initial support for the lmk04832
+
+ .../devicetree/bindings/clock/ti,lmk04832.txt |   90 ++
+ drivers/clk/Kconfig                           |    7 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-lmk04832.c                    | 1357 +++++++++++++++++
+ 4 files changed, 1455 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.txt
+ create mode 100644 drivers/clk/clk-lmk04832.c
+
+
+base-commit: 2c85ebc57b3e1817b6ce1a6b703928e113a90442
+-- 
+2.27.0
+
