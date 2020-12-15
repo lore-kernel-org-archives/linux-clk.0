@@ -2,216 +2,258 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808F6C4361B
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 11:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D21DC2BB9A
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 11:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBC222285
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 11:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4518E224B8
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Dec 2020 11:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbgLOLaf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Dec 2020 06:30:35 -0500
-Received: from foss.arm.com ([217.140.110.172]:35164 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728444AbgLOLa0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Dec 2020 06:30:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B2BC1FB;
-        Tue, 15 Dec 2020 03:29:40 -0800 (PST)
-Received: from [192.168.2.22] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70BE13F66E;
-        Tue, 15 Dec 2020 03:29:38 -0800 (PST)
-Subject: Re: [PATCH 1/4] clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
-To:     Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20201213235506.25201-1-samuel@sholland.org>
- <20201213235506.25201-2-samuel@sholland.org>
- <20201214145730.iz3tc4nasqwq6tym@gilmour>
- <8de2e0dc-465f-b4a8-bec9-763f1dee06f1@sholland.org>
-From:   =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Autocrypt: addr=andre.przywara@arm.com; prefer-encrypt=mutual; keydata=
- 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
- i4aIXCH3Wv6K
-Organization: ARM Ltd.
-Message-ID: <675f08e3-f43a-c28a-9d42-3a5aa0ebe4cc@arm.com>
-Date:   Tue, 15 Dec 2020 11:29:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1728684AbgLOLi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Dec 2020 06:38:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728659AbgLOLix (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Dec 2020 06:38:53 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39769C06179C
+        for <linux-clk@vger.kernel.org>; Tue, 15 Dec 2020 03:38:13 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1kp8eg-0005T9-6J; Tue, 15 Dec 2020 12:38:10 +0100
+Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1kp8ef-0001Z9-DT; Tue, 15 Dec 2020 12:38:09 +0100
+Date:   Tue, 15 Dec 2020 12:38:09 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, rajanv@xilinx.com, tejasp@xilinx.com,
+        dshah@xilinx.com, rvisaval@xilinx.com, michals@xilinx.com,
+        kernel@pengutronix.de, robh+dt@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 08/12] soc: xilinx: vcu: implement clock provider for
+ output clocks
+Message-ID: <20201215113809.GA23407@pengutronix.de>
+References: <20201116075532.4019252-1-m.tretter@pengutronix.de>
+ <20201116075532.4019252-9-m.tretter@pengutronix.de>
+ <160783893475.1580929.17041767429276672732@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <8de2e0dc-465f-b4a8-bec9-763f1dee06f1@sholland.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <160783893475.1580929.17041767429276672732@swboyd.mtv.corp.google.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:37:16 up 12 days, 23:04, 61 users,  load average: 0.23, 0.11,
+ 0.10
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/12/2020 03:25, Samuel Holland wrote:
-> On 12/14/20 8:57 AM, Maxime Ripard wrote:
->> Hi Samuel,
->>
->> On Sun, Dec 13, 2020 at 05:55:03PM -0600, Samuel Holland wrote:
->>> While no information about the H6 RSB controller is included in the
->>> datasheet or manual, the vendor BSP and power management blob both
->>> reference the RSB clock parent and register address. These values were
->>> verified by experimentation.
->>>
->>> Since this clock/reset are added late, the specifier is added at the end
->>> to maintain the existing DT binding. The code is kept in register order.
->>>
->>> Signed-off-by: Samuel Holland <samuel@sholland.org>
->>> ---
->>>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 5 +++++
->>>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
->>>  include/dt-bindings/clock/sun50i-h6-r-ccu.h | 1 +
->>>  include/dt-bindings/reset/sun50i-h6-r-ccu.h | 1 +
->>>  4 files changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->>> index 50f8d1bc7046..56e351b513f3 100644
->>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->>> @@ -91,6 +91,8 @@ static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"r-apb2",
->>>  		      0x18c, BIT(0), 0);
->>>  static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
->>>  		      0x19c, BIT(0), 0);
->>> +static SUNXI_CCU_GATE(r_apb2_rsb_clk,	"r-apb2-rsb",	"r-apb2",
->>> +		      0x1bc, BIT(0), 0);
->>>  static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
->>>  		      0x1cc, BIT(0), 0);
->>>  static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
->>> @@ -130,6 +132,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
->>>  	&r_apb1_pwm_clk.common,
->>>  	&r_apb2_uart_clk.common,
->>>  	&r_apb2_i2c_clk.common,
->>> +	&r_apb2_rsb_clk.common,
->>>  	&r_apb1_ir_clk.common,
->>>  	&r_apb1_w1_clk.common,
->>>  	&ir_clk.common,
->>> @@ -147,6 +150,7 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
->>>  		[CLK_R_APB1_PWM]	= &r_apb1_pwm_clk.common.hw,
->>>  		[CLK_R_APB2_UART]	= &r_apb2_uart_clk.common.hw,
->>>  		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
->>> +		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
->>>  		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
->>>  		[CLK_R_APB1_W1]		= &r_apb1_w1_clk.common.hw,
->>>  		[CLK_IR]		= &ir_clk.common.hw,
->>> @@ -161,6 +165,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
->>>  	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
->>>  	[RST_R_APB2_UART]	=  { 0x18c, BIT(16) },
->>>  	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
->>> +	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
->>>  	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
->>>  	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
->>>  };
->>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->>> index 782117dc0b28..7e290b840803 100644
->>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->>> @@ -14,6 +14,6 @@
->>>  
->>>  #define CLK_R_APB2	3
->>>  
->>> -#define CLK_NUMBER	(CLK_W1 + 1)
->>> +#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
->>>  
->>>  #endif /* _CCU_SUN50I_H6_R_H */
->>> diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->>> index 76136132a13e..f46ec03848ca 100644
->>> --- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->>> +++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
->>> @@ -15,6 +15,7 @@
->>>  #define CLK_R_APB1_PWM		6
->>>  #define CLK_R_APB2_UART		7
->>>  #define CLK_R_APB2_I2C		8
->>> +#define CLK_R_APB2_RSB		13
->>>  #define CLK_R_APB1_IR		9
->>>  #define CLK_R_APB1_W1		10
->>>  
->>> diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->>> index 01c84dba49a4..6fe199a7969d 100644
->>> --- a/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->>> +++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
->>> @@ -11,6 +11,7 @@
->>>  #define RST_R_APB1_PWM		2
->>>  #define RST_R_APB2_UART		3
->>>  #define RST_R_APB2_I2C		4
->>> +#define RST_R_APB2_RSB		7
->>>  #define RST_R_APB1_IR		5
->>>  #define RST_R_APB1_W1		6
->>
->> I think for the clock and reset binding, we'll want to sort by number.
->> It's fairly easy to miss otherwise and if we end up adding another one
->> it wouldn't be far fetched to assume the same indices would be used
+On Sat, 12 Dec 2020 21:55:34 -0800, Stephen Boyd wrote:
+> Quoting Michael Tretter (2020-11-15 23:55:28)
+> > diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
+> > index 725e646aa726..cedc8b7859f7 100644
+> > --- a/drivers/soc/xilinx/xlnx_vcu.c
+> > +++ b/drivers/soc/xilinx/xlnx_vcu.c
+> > @@ -545,6 +512,146 @@ static int xvcu_set_pll(struct xvcu_device *xvcu)
+> >         return xvcu_pll_enable(xvcu);
+> >  }
+> >  
+> > +static struct clk_hw *xvcu_clk_hw_register_leaf(struct device *dev,
+> > +                                               const char *name,
+> > +                                               const char * const *parent_names,
+> > +                                               u8 num_parents,
+> > +                                               struct clk_hw *parent_default,
+> > +                                               void __iomem *reg,
+> > +                                               spinlock_t *lock)
+> > +{
+> > +       unsigned long flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT;
+> > +       u8 divider_flags = CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO |
+> 
+> Why u8?
 
-I agree here. Admittedly this whole approach is really fragile. I ended
-up with some tiny tool to check for consecutive numbers, reporting any
-outliers (some gaps are legit). Of course the "-r" versions of the CCU
-are not really a big issue, but with the 100+ clocks in the main CCU
-this is a problem. Also it becomes ABI, so is hard to fix.
+__clk_hw_register_divider expects u8 as divider_flags.
 
-I guess there is no nice kernel CPP hack to re-use enums as preprocessor
-symbols?
+> 
+> > +                          CLK_DIVIDER_ROUND_CLOSEST;
+> > +       struct clk_hw *mux = NULL;
+> > +       struct clk_hw *divider = NULL;
+> > +       struct clk_hw *gate = NULL;
+> > +       char *name_mux;
+> > +       char *name_div;
+> > +       int err;
+> > +
+> > +       name_mux = devm_kasprintf(dev, GFP_KERNEL, "%s%s", name, "_mux");
+> > +       if (!name_mux) {
+> > +               err = -ENOMEM;
+> > +               goto err;
+> > +       }
+> > +       mux = clk_hw_register_mux(dev, name_mux, parent_names, num_parents,
+> > +                                 flags, reg, 0, 1, 0, lock);
+> > +       if (IS_ERR(mux)) {
+> > +               err = PTR_ERR(divider);
+> > +               goto err;
+> > +       }
+> > +       clk_hw_set_parent(mux, parent_default);
+> 
+> Can this be done from assigned-clock-parents binding?
 
-> I think GCC would complain about the duplicate array initialization in
-> the driver, but I can move them for v2.
+Could be done, if the driver provides at least the PLL and the mux in addition
+to the actual output clocks. Otherwise, it is not possible to reference the
+PLL post divider and the mux from the device tree. I wanted to avoid to expose
+the complexity to the device tree. Would you prefer, if all clocks are
+provided instead of only the output clocks?
 
-It doesn't with -Wall, you need -Wextra for that. I actually had a
-subtle bug in my H616 CCU patch due to a double numbering.
+> 
+> > +
+> > +       name_div = devm_kasprintf(dev, GFP_KERNEL, "%s%s", name, "_div");
+> > +       if (!name_div) {
+> > +               err = -ENOMEM;
+> > +               goto err;
+> > +       }
+> > +       divider = clk_hw_register_divider_parent_hw(dev, name_div, mux, flags,
+> > +                                                   reg, 4, 6, divider_flags,
+> > +                                                   lock);
+> > +       if (IS_ERR(divider)) {
+> > +               err = PTR_ERR(divider);
+> > +               goto err;
+> > +       }
+> > +
+> > +       gate = clk_hw_register_gate_parent_hw(dev, name, divider,
+> > +                                             CLK_SET_RATE_PARENT, reg, 12, 0,
+> > +                                             lock);
+> > +       if (IS_ERR(gate)) {
+> > +               err = PTR_ERR(gate);
+> > +               goto err;
+> > +       }
+> > +
+> > +       return gate;
+> > +
+> > +err:
+> > +       if (!IS_ERR_OR_NULL(gate))
+> 
+> Would be nicer to have some more goto labels and skip the IS_ERR_OR_NULL
+> checks.
 
-Cheers,
-Andre
+Ack.
+
+> 
+> > +               clk_hw_unregister_gate(gate);
+> > +       if (!IS_ERR_OR_NULL(divider))
+> > +               clk_hw_unregister_divider(divider);
+> > +       if (!IS_ERR_OR_NULL(mux))
+> > +               clk_hw_unregister_divider(mux);
+> > +
+> > +       return ERR_PTR(err);
+> > +}
+> > +
+> > +static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+> > +{
+> > +       struct clk_hw *gate = hw;
+> > +       struct clk_hw *divider;
+> > +       struct clk_hw *mux;
+> > +
+> > +       if (!gate)
+> > +               return;
+> > +
+> > +       divider = clk_hw_get_parent(gate);
+> > +       clk_hw_unregister_gate(gate);
+> > +       if (!divider)
+> > +               return;
+> > +
+> > +       mux = clk_hw_get_parent(divider);
+> > +       clk_hw_unregister_mux(mux);
+> > +       if (!divider)
+> > +               return;
+> > +
+> > +       clk_hw_unregister_divider(divider);
+> > +}
+> > +
+> > +static DEFINE_SPINLOCK(venc_core_lock);
+> > +static DEFINE_SPINLOCK(venc_mcu_lock);
+> 
+> Any reason to not allocate these spinlocks too?
+
+I will change this.
+
+> 
+> > +
+> > +static int xvcu_register_clock_provider(struct xvcu_device *xvcu)
+> > +{
+> > +       struct device *dev = xvcu->dev;
+> > +       const char *parent_names[2];
+> > +       struct clk_hw *parent_default;
+> > +       struct clk_hw_onecell_data *data;
+> > +       struct clk_hw **hws;
+> > +       void __iomem *reg_base = xvcu->vcu_slcr_ba;
+> > +
+> > +       data = devm_kzalloc(dev, struct_size(data, hws, CLK_XVCU_NUM_CLOCKS), GFP_KERNEL);
+> > +       if (!data)
+> > +               return -ENOMEM;
+> > +       data->num = CLK_XVCU_NUM_CLOCKS;
+> > +       hws = data->hws;
+> > +
+> > +       xvcu->clk_data = data;
+> > +
+> > +       parent_default = xvcu->pll;
+> > +       parent_names[0] = "dummy";
+> 
+> What is "dummy"?
+
+According to the register reference [0], the output clocks can be driven by an
+external clock instead of the PLL, but the VCU Product Guide [1] does not
+mention any ports for actually driving the clock. From my understanding of the
+IP core, this is a clock mux which has a not-connected first parent. Maybe
+someone at Xilinx can clarify, what is happening here.
+
+[0] https://www.xilinx.com/html_docs/registers/ug1087/ug1087-zynq-ultrascale-registers.html
+[1] https://www.xilinx.com/support/documentation-navigation/see-all-versions.html?xlnxproducttypes=IP%20Cores&xlnxipcoresname=v-vcu
+
+What would be a better way to handle this?
+
+> 
+> > +       parent_names[1] = clk_hw_get_name(parent_default);
+> 
+> Can we use the new way of specifying clk parents from DT or by using
+> direct pointers instead of using string names? The idea is to get rid of
+> clk_hw_get_name() eventually.
+
+It should be possible to use the direct pointers, but this really depends on
+how the "dummy" clock is handled.
+
+Thanks,
+
+Michael
+
+> 
+> > +
+> > +       hws[CLK_XVCU_ENC_CORE] =
+> > +               xvcu_clk_hw_register_leaf(dev, "venc_core_clk",
+> > +                                         parent_names,
+> > +                                         ARRAY_SIZE(parent_names),
+> > +                                         parent_default,
+> > +                                         reg_base + VCU_ENC_CORE_CTRL,
+> > +                                         &venc_core_lock);
+> > +       hws[CLK_XVCU_ENC_MCU] =
+> > +               xvcu_clk_hw_register_leaf(dev, "venc_mcu_clk",
+> > +                                         parent_names,
+> > +                                         ARRAY_SIZE(parent_names),
+> > +                                         parent_default,
+> > +                                         reg_base + VCU_ENC_MCU_CTRL,
+> > +                                         &venc_mcu_lock);
+> > +
+> 
