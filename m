@@ -2,28 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DATE_IN_FUTURE_24_48,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,
+	DATE_IN_FUTURE_24_48,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2F1C4361B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F5BC1B0D8
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E76C522A84
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A6E229F0
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Dec 2020 10:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392000AbgLNJ6g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Dec 2020 04:58:36 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9601 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728717AbgLNJ60 (ORCPT
+        id S1726216AbgLNKCj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Dec 2020 05:02:39 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:9440 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731412AbgLNJ60 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Dec 2020 04:58:26 -0500
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CvcHV2tDhzM5hy;
-        Mon, 14 Dec 2020 17:56:54 +0800 (CST)
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CvcHr4g5Dzhsfw;
+        Mon, 14 Dec 2020 17:57:12 +0800 (CST)
 Received: from huawei.com (10.151.151.249) by DGGEMS412-HUB.china.huawei.com
  (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Mon, 14 Dec 2020
- 17:57:33 +0800
+ 17:57:34 +0800
 From:   Dongjiu Geng <gengdongjiu@huawei.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <vkoul@kernel.org>,
@@ -31,10 +32,12 @@ To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>,
         <gengdongjiu@huawei.com>
-Subject: [PATCH v7 0/4] Enable Hi3559A SOC clock and HiSilicon Hiedma Controller
-Date:   Tue, 15 Dec 2020 11:09:43 +0000
-Message-ID: <20201215110947.41268-1-gengdongjiu@huawei.com>
+Subject: [PATCH v7 3/4] dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
+Date:   Tue, 15 Dec 2020 11:09:46 +0000
+Message-ID: <20201215110947.41268-4-gengdongjiu@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201215110947.41268-1-gengdongjiu@huawei.com>
+References: <20201215110947.41268-1-gengdongjiu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.151.151.249]
@@ -43,51 +46,117 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-v6->v7:
-1. rename hisi,misc-control to hisi,misc-control to hisilicon,misc-control
+The Hiedma Controller v310 Provides eight DMA channels, each
+channel can be configured for one-way transfer. The data can
+be transferred in 8-bit, 16-bit, 32-bit, or 64-bit mode. This
+documentation describes DT bindings of this controller.
 
-v5->v6:
-1. Drop #size-cells and #address-cell in the hisilicon,hi3559av100-clock.yaml
-2. Add discription for #reset-cells in the hisilicon,hi3559av100-clock.yaml
-3. Remove #clock-cells in hisilicon,hiedmacv310.yaml 
-4. Merge property misc_ctrl_base and misc_regmap together for hiedmacv310 driver
-
-v4->v5:
-1. change the patch author mail name
-
-v3->v4:
-1. fix the 'make dt_binding_check' issues.
-2. Combine the 'Enable HiSilicon Hiedma Controller' series patches to this series.
-3. fix the 'make dt_binding_check' issues in 'Enable HiSilicon Hiedma Controller' patchset
-
-v2->v3:
-1. change dt-bindings documents from txt to yaml format.
-2. Add SHUB clock to access the devices of m7
-
-Dongjiu Geng (4):
-  dt-bindings: Document the hi3559a clock bindings
-  clk: hisilicon: Add clock driver for hi3559A SoC
-  dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
-  dmaengine: dma: Add Hiedma Controller v310 Device Driver
-
- .../clock/hisilicon,hi3559av100-clock.yaml    |   59 +
- .../bindings/dma/hisilicon,hiedmacv310.yaml   |   94 ++
- drivers/clk/hisilicon/Kconfig                 |    7 +
- drivers/clk/hisilicon/Makefile                |    1 +
- drivers/clk/hisilicon/clk-hi3559a.c           |  865 ++++++++++
- drivers/dma/Kconfig                           |   14 +
- drivers/dma/Makefile                          |    1 +
- drivers/dma/hiedmacv310.c                     | 1442 +++++++++++++++++
- drivers/dma/hiedmacv310.h                     |  136 ++
- include/dt-bindings/clock/hi3559av100-clock.h |  165 ++
- 10 files changed, 2784 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+---
+ .../bindings/dma/hisilicon,hiedmacv310.yaml   | 94 +++++++++++++++++++
+ 1 file changed, 94 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
- create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
- create mode 100644 drivers/dma/hiedmacv310.c
- create mode 100644 drivers/dma/hiedmacv310.h
- create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
 
+diff --git a/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
+new file mode 100644
+index 000000000000..06a1ebe76360
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
+@@ -0,0 +1,94 @@
++# SPDX-License-Identifier:  GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/hisilicon,hiedmacv310.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HiSilicon Hiedma Controller v310 Device Tree Bindings
++
++description: |
++  These bindings describe the DMA engine included in the HiSilicon Hiedma
++  Controller v310 Device.
++
++maintainers:
++  - Dongjiu Geng <gengdongjiu@huawei.com>
++
++allOf:
++  - $ref: "dma-controller.yaml#"
++
++properties:
++  "#dma-cells":
++    const: 2
++
++  compatible:
++    const: hisilicon,hiedmacv310
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  hisilicon,misc-control:
++    $ref: /schemas/types.yaml#definitions/phandle-array
++    description: phandle pointing to the misc controller provider node and base register.
++
++  clocks:
++    items:
++      - description: apb clock
++      - description: axi clock
++
++  clock-names:
++    items:
++      - const: apb_pclk
++      - const: axi_aclk
++
++  resets:
++    description: phandle pointing to the dma reset controller provider node.
++
++  reset-names:
++    items:
++      - const: dma-reset
++
++  dma-requests:
++    maximum: 32
++
++  dma-channels:
++    maximum: 8
++
++
++required:
++  - "#dma-cells"
++  - compatible
++  - hisilicon,misc-control
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - dma-requests
++  - dma-channels
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/hi3559av100-clock.h>
++
++    dma: dma-controller@10040000 {
++      compatible = "hisilicon,hiedmacv310";
++      reg = <0x10040000 0x1000>;
++      hisilicon,misc-control = <&misc_ctrl 0x144>;
++      interrupts = <0 82 4>;
++      clocks = <&clock HI3559AV100_EDMAC1_CLK>, <&clock HI3559AV100_EDMAC1_AXICLK>;
++      clock-names = "apb_pclk", "axi_aclk";
++      resets = <&clock 0x16c 7>;
++      reset-names = "dma-reset";
++      dma-requests = <32>;
++      dma-channels = <8>;
++      #dma-cells = <2>;
++    };
++
++...
 -- 
 2.17.1
 
