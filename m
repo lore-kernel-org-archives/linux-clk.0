@@ -2,179 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABE2C4361B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 01:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E2BC4361B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 01:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E331222EBD
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 01:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA37822D75
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 01:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725827AbgLPBKc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Dec 2020 20:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725275AbgLPBKc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Dec 2020 20:10:32 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608080991;
-        bh=xJALK+jNhT64ScJdHlAzbU/phSONliHPBpEunql1QGc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YGHx0ozpqyN2h/UiocUJFRhyYFXqXGl3YcQeZA3OixBy4Kuaza3lCs7vV0ZzUyRq+
-         lDohCFqesfSD72MhWHxSGtYMcay2O8I8PkR9b1zmICKbEkrZLL9H8yq5NrpsyTx4eT
-         aTEujuTsnOt2pCt2mDS8mAUrazKh63909rZDlU23kOrrn4faKUFPP1Nibdw+nQOW2n
-         RbO4yrKff2k5e5eeIGfRG/IWWhziPnJlSCyAkZk9GU/thRuIQr9tthf6Vi3oA2WpgG
-         clJZK1i0VpaCHt6E1WQ0Fr43IKVUzSgU6tFDAOKe/2RorGZH0xeOpS0i5b775oDDAs
-         PBketNfpas4/Q==
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201215113809.GA23407@pengutronix.de>
-References: <20201116075532.4019252-1-m.tretter@pengutronix.de> <20201116075532.4019252-9-m.tretter@pengutronix.de> <160783893475.1580929.17041767429276672732@swboyd.mtv.corp.google.com> <20201215113809.GA23407@pengutronix.de>
-Subject: Re: [PATCH 08/12] soc: xilinx: vcu: implement clock provider for output clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, rajanv@xilinx.com, tejasp@xilinx.com,
-        dshah@xilinx.com, rvisaval@xilinx.com, michals@xilinx.com,
-        kernel@pengutronix.de, robh+dt@kernel.org, mturquette@baylibre.com
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Date:   Tue, 15 Dec 2020 17:09:50 -0800
-Message-ID: <160808099008.1580929.16611149064276335127@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        id S1725308AbgLPBnl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Dec 2020 20:43:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35134 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725275AbgLPBnl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Dec 2020 20:43:41 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E8CC061794
+        for <linux-clk@vger.kernel.org>; Tue, 15 Dec 2020 17:43:01 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id w5so15708506pgj.3
+        for <linux-clk@vger.kernel.org>; Tue, 15 Dec 2020 17:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DGe/kRe3MPa9vd1aCEWGdtZxWk4QoHI77u2B0aTPVnk=;
+        b=QuNnQeUg3VuTh7gBLVXdIVgxTypFlOGy6oePrOx2wgkTrttR5ak2rIv7STrsRFoatP
+         fjv1prlnss/4pkuopcEJa1cNeW1zThsNa4mGSOMHXhBDRnZQwEr/+7Z5BbYGhxMkl1Qp
+         7NEMjOpUCkzq2liC0dhW38IdMnm+WmqmUiM0WVEU10mnaF6MYa3Pm3xhDMSfyK3XUgql
+         XnTeaoxOZo3m2wf518FOBMf03pVB/ns4Z1qGHCUE+oyjlUNhogEUlthqZ9QKuoT6ssCx
+         HY1NaeRuF8kGFlsZRtVDrPPqbMZHgm+Rh+UbiIe+7zDwGsHMSx05rWiz+uM6g4TRe4St
+         4v8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=DGe/kRe3MPa9vd1aCEWGdtZxWk4QoHI77u2B0aTPVnk=;
+        b=JlWIGy0RyYAgCtiFe0DMOIOUlabHTjp5ruMQ93AZwxYxKHY7fDxWZhzqY1G7asaQHh
+         87I6TQ0w8c69noH4nQVOZhPArVX06xotw5Q280t2f6Ge22ok5NzIX2ilzSTd4YCEFALx
+         lK+QBx/I8y1QcHHJWKKyFTtcec2AZ6eK3+ynI0saZGmFQneG0gbM3d1K1IUd/wBwEEI4
+         47y5Yino91mMojV2v5Rhj+d34KkO5j/1fBlnb+6ew8qTv481IuMCx0IfDWyTvDcsamgd
+         AUgRYwAJK3vmrpXwSQdJQ2jUn59uUQZKj+8soha4sMVour+5ABArJPQLtZNTxL6uYx6H
+         AktQ==
+X-Gm-Message-State: AOAM530WQk5HkEhp0A3OrEDMUR8uBzZYnzHaJmLfqYK6kzoCL0le5661
+        mOoVscxdp90LufPwM8eQIvhZWQ==
+X-Google-Smtp-Source: ABdhPJyD+Cum/1oT2A0wUWaIVXeLrYJ3kkq1S47NQ3+eDX2q876+qo+YidZox/GyTlXMcM5A3tbvNg==
+X-Received: by 2002:a63:4950:: with SMTP id y16mr31128740pgk.415.1608082980594;
+        Tue, 15 Dec 2020 17:43:00 -0800 (PST)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id o11sm154817pjs.36.2020.12.15.17.42.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Dec 2020 17:42:59 -0800 (PST)
+Date:   Tue, 15 Dec 2020 17:42:59 -0800 (PST)
+X-Google-Original-Date: Tue, 15 Dec 2020 17:42:58 PST (-0800)
+Subject:     Re: [PATCH v8 00/22] RISC-V Kendryte K210 support improvements
+In-Reply-To: <f47e089de657073d09ee5407af690e8f97bc6e95.camel@wdc.com>
+CC:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, sboyd@kernel.org,
+        linus.walleij@linaro.org, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org, seanga2@gmail.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Message-ID: <mhng-bdf9260d-0bbf-42e5-b32e-c75b870227b9@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2020-12-15 03:38:09)
-> On Sat, 12 Dec 2020 21:55:34 -0800, Stephen Boyd wrote:
-> > Quoting Michael Tretter (2020-11-15 23:55:28)
-> > > diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_=
-vcu.c
-> > > index 725e646aa726..cedc8b7859f7 100644
-> > > --- a/drivers/soc/xilinx/xlnx_vcu.c
-> > > +++ b/drivers/soc/xilinx/xlnx_vcu.c
-> > > @@ -545,6 +512,146 @@ static int xvcu_set_pll(struct xvcu_device *xvc=
-u)
-> > >         return xvcu_pll_enable(xvcu);
-> > >  }
-> > > =20
-> > > +static struct clk_hw *xvcu_clk_hw_register_leaf(struct device *dev,
-> > > +                                               const char *name,
-> > > +                                               const char * const *p=
-arent_names,
-> > > +                                               u8 num_parents,
-> > > +                                               struct clk_hw *parent=
-_default,
-> > > +                                               void __iomem *reg,
-> > > +                                               spinlock_t *lock)
-> > > +{
-> > > +       unsigned long flags =3D CLK_SET_RATE_NO_REPARENT | CLK_SET_RA=
-TE_PARENT;
-> > > +       u8 divider_flags =3D CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLO=
-W_ZERO |
-> >=20
-> > Why u8?
->=20
-> __clk_hw_register_divider expects u8 as divider_flags.
+On Sun, 13 Dec 2020 00:06:22 PST (-0800), Damien Le Moal wrote:
+> On Sat, 2020-12-12 at 22:04 -0800, Stephen Boyd wrote:
+>> Quoting Damien Le Moal (2020-12-10 06:02:51)
+>> > 
+>> > Finally the last two patches updates the k210 nommu defconfig to include
+>> > the newly implemented drivers and provide a new default configuration
+>> > file enabling SD card support.
+>> > 
+>> > A lot of the work on the device tree and on the K210 drivers come from
+>> > the work by Sean Anderson for the U-Boot project support of the K210
+>> > SoC. Sean also helped with debugging many aspects of this series.
+>> > 
+>> > A tree with all patches applied is available here:
+>> > https://github.com/damien-lemoal/linux, k210-sysctl-v20 branch.
+>> > A demonstration of this series used on a SiPeed MAIX Dock
+>> > board together with an I2C servo controller can be seen here:
+>> > https://damien-lemoal.github.io/linux-robot-arm/#example
+>> > 
+>> > This tree was used to build userspace busybox environment image that is
+>> > then copied onto an SD card formatted with ext2:
+>> > https://github.com/damien-lemoal/buildroot
+>> > Of note is that running this userspace environment requires a revert of
+>> > commit 2217b982624680d19a80ebb4600d05c8586c4f96 introduced during the
+>> > 5.9 development cycle. Without this revert, execution of the init
+>> > process fails. A problem with the riscv port of elf2flt is suspected but
+>> > not confirmed. I am now starting to investigate this problem.
+>> > 
+>> > Reviews and comments are as always much welcome.
+>> 
+>> What's the merge plan for this series? I'd like to apply the clk patches
+>> but they're combined with the sysctl driver so I guess I can't?
+> 
+> Not sure. Palmer ? What is your plan for this series ? Can you queue the
+> riscv/DT pieces for 5.11 ?
+> 
+> I will post a v9 to address Rob's comment on the sysctl and fpioa drivers
+> binding doc, not other with v8 changes beside that.
 
-Ok.
+I guess I got hung up on that bultin DT thing, but I've sort of decided I don't
+really care that much (though I guess I didn't decide enough to reply to the
+email...).  I don't think it's 5.11 material: we were told to be stricter this
+time around because of the timing, and I'm trying to sort out a boot issue
+that's manifesting post 5.10+for-next merge so I probably won't have time to
+take more stuff.
 
->=20
-> >=20
-> > > +                          CLK_DIVIDER_ROUND_CLOSEST;
-> > > +       struct clk_hw *mux =3D NULL;
-> > > +       struct clk_hw *divider =3D NULL;
-> > > +       struct clk_hw *gate =3D NULL;
-> > > +       char *name_mux;
-> > > +       char *name_div;
-> > > +       int err;
-> > > +
-> > > +       name_mux =3D devm_kasprintf(dev, GFP_KERNEL, "%s%s", name, "_=
-mux");
-> > > +       if (!name_mux) {
-> > > +               err =3D -ENOMEM;
-> > > +               goto err;
-> > > +       }
-> > > +       mux =3D clk_hw_register_mux(dev, name_mux, parent_names, num_=
-parents,
-> > > +                                 flags, reg, 0, 1, 0, lock);
-> > > +       if (IS_ERR(mux)) {
-> > > +               err =3D PTR_ERR(divider);
-> > > +               goto err;
-> > > +       }
-> > > +       clk_hw_set_parent(mux, parent_default);
-> >=20
-> > Can this be done from assigned-clock-parents binding?
->=20
-> Could be done, if the driver provides at least the PLL and the mux in add=
-ition
-> to the actual output clocks. Otherwise, it is not possible to reference t=
-he
-> PLL post divider and the mux from the device tree. I wanted to avoid to e=
-xpose
-> the complexity to the device tree. Would you prefer, if all clocks are
-> provided instead of only the output clocks?
-
-It is fine to do this in software too so not a big deal and no need to
-expose it from the device.
-
->=20
-> >=20
-> > > +
-> > > +static int xvcu_register_clock_provider(struct xvcu_device *xvcu)
-> > > +{
-> > > +       struct device *dev =3D xvcu->dev;
-> > > +       const char *parent_names[2];
-> > > +       struct clk_hw *parent_default;
-> > > +       struct clk_hw_onecell_data *data;
-> > > +       struct clk_hw **hws;
-> > > +       void __iomem *reg_base =3D xvcu->vcu_slcr_ba;
-> > > +
-> > > +       data =3D devm_kzalloc(dev, struct_size(data, hws, CLK_XVCU_NU=
-M_CLOCKS), GFP_KERNEL);
-> > > +       if (!data)
-> > > +               return -ENOMEM;
-> > > +       data->num =3D CLK_XVCU_NUM_CLOCKS;
-> > > +       hws =3D data->hws;
-> > > +
-> > > +       xvcu->clk_data =3D data;
-> > > +
-> > > +       parent_default =3D xvcu->pll;
-> > > +       parent_names[0] =3D "dummy";
-> >=20
-> > What is "dummy"?
->=20
-> According to the register reference [0], the output clocks can be driven =
-by an
-> external clock instead of the PLL, but the VCU Product Guide [1] does not
-> mention any ports for actually driving the clock. From my understanding o=
-f the
-> IP core, this is a clock mux which has a not-connected first parent. Maybe
-> someone at Xilinx can clarify, what is happening here.
->=20
-> [0] https://www.xilinx.com/html_docs/registers/ug1087/ug1087-zynq-ultrasc=
-ale-registers.html
-> [1] https://www.xilinx.com/support/documentation-navigation/see-all-versi=
-ons.html?xlnxproducttypes=3DIP%20Cores&xlnxipcoresname=3Dv-vcu
->=20
-> What would be a better way to handle this?
->=20
-> >=20
-> > > +       parent_names[1] =3D clk_hw_get_name(parent_default);
-> >=20
-> > Can we use the new way of specifying clk parents from DT or by using
-> > direct pointers instead of using string names? The idea is to get rid of
-> > clk_hw_get_name() eventually.
->=20
-> It should be possible to use the direct pointers, but this really depends=
- on
-> how the "dummy" clock is handled.
->=20
-
-I think if clk_parent_data is used then we can have the binding list the
-external clk as a 'clocks' property and then if it's not present in DT
-we will know that it can't ever be a parent. So it hopefully "just
-works" if clk_parent_data is used.
+Also: I'm kind of trying to avoid the whole thing where I take patches that
+have a bunch of versions sent either right before or during the merge window,
+as it just makes things too hard to keep track of.
