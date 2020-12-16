@@ -2,49 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7C6C2BBCD
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 14:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17346C4361B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 15:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB7C233F7
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 14:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6759233CF
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 15:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbgLPOxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Dec 2020 09:53:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbgLPOxS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 09:53:18 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F421C0617A7
-        for <linux-clk@vger.kernel.org>; Wed, 16 Dec 2020 06:52:37 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 52sa240094C55Sk012sa3M; Wed, 16 Dec 2020 15:52:34 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kpYAL-00BCBr-UG; Wed, 16 Dec 2020 15:52:33 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kpYAL-005djI-4Z; Wed, 16 Dec 2020 15:52:33 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1726416AbgLPPUX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Dec 2020 10:20:23 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42104 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbgLPPUX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 10:20:23 -0500
+Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A20C52CF;
+        Wed, 16 Dec 2020 16:19:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1608131981;
+        bh=puqGc6l1gMEZrDCZK7XfxsTzRYfb1lvbfHm83JHmGew=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ppiTrWPqTBB2uT9c6UVDnKLDd5j57selME+pkc1Riga0UXJamSVoVuT/gUVPOkkiN
+         m1fm2jlBfzZ4tTpFcUmm6IjciusH1aPuTMi2QFFZtRhc/SFVkA+gWm0m48JKGz8XTU
+         g6i4FVMmOtjctdpm1BhT/Mhjqdw8O+/e5A1fBXJQ=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@glider.be>,
         linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
-Date:   Wed, 16 Dec 2020 15:52:31 +0100
-Message-Id: <20201216145231.1344317-1-geert+renesas@glider.be>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 0/3] clk: renesas: r8a779a0: Add FCP and VSP support
+Date:   Wed, 16 Dec 2020 15:19:28 +0000
+Message-Id: <20201216151931.851547-1-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,133 +45,21 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  - Add reference to clock.yaml, and switch to unevaluatedProperties, to
-    stop complaining about the presence of "assigned-clock-rates" and
-    "assigned-clocks" in board DTS files,
-  - Fix typo in "idt,voltage-microvolts" property name, to match example
-    and driver code,
-  - Add missing reference for "idt,voltage-microvolts",
-  - Add missing "additionalProperties: false" for subnodes, to catch
-    typos in properties,
-  - There is no reason to wrap the (single) if condition in an allOf
-    block,
-  - Fix obsolete property names in example.
+Provide clocks for the FCP and VSP-{X,D} modules on the V3U.
 
-Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Notes:
-  1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
-     unfortunate, as Documentation/devicetree/bindings/property-units.txt
-     suggests to not have the trailing edge.
-     Can we still fix the driver and bindings?  While this entered
-     uptstream in v5.9, there are no users in next-20201216.
+There are also corresponding FCPvX for fcpvx{0,1,2,3} in register 11;
+however I have not been able to ascertain the clock domains for those so
+they are not included in this series.
 
-  2. Due to "clock-output-names" being part of
-     dt-schema/schemas/clock/clock.yaml, the presence of this property
-     does not trigger an error.  Adding "clock-output-names: false"
-     can fix that.  But given this property is deprecated, except for
-     very specific use cases, explicitly allowing it for those few use
-     cases would be better.
----
- .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
- 1 file changed, 29 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index 2ac1131fd9222a86..14851e76f6342095 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -33,6 +33,9 @@ description: |
- maintainers:
-   - Luca Ceresoli <luca@lucaceresoli.net>
- 
-+allOf:
-+  - $ref: clock.yaml#
-+
- properties:
-   compatible:
-     enum:
-@@ -73,40 +76,42 @@ patternProperties:
-         $ref: /schemas/types.yaml#/definitions/uint32
-         minimum: 0
-         maximum: 6
--      idt,voltage-microvolt:
-+      idt,voltage-microvolts:
-         description: The output drive voltage.
-+        $ref: /schemas/types.yaml#/definitions/uint32
-         enum: [ 1800000, 2500000, 3300000 ]
-       idt,slew-percent:
-         description: The Slew rate control for CMOS single-ended.
-         $ref: /schemas/types.yaml#/definitions/uint32
-         enum: [ 80, 85, 90, 100 ]
- 
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-   - '#clock-cells'
- 
--allOf:
--  - if:
--      properties:
--        compatible:
--          enum:
--            - idt,5p49v5933
--            - idt,5p49v5935
--    then:
--      # Devices with builtin crystal + optional external input
--      properties:
--        clock-names:
--          const: clkin
--        clocks:
--          maxItems: 1
--    else:
--      # Devices without builtin crystal
--      required:
--        - clock-names
--        - clocks
--
--additionalProperties: false
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - idt,5p49v5933
-+        - idt,5p49v5935
-+then:
-+  # Devices with builtin crystal + optional external input
-+  properties:
-+    clock-names:
-+      const: clkin
-+    clocks:
-+      maxItems: 1
-+else:
-+  # Devices without builtin crystal
-+  required:
-+    - clock-names
-+    - clocks
-+
-+unevaluatedProperties: false
- 
- examples:
-   - |
-@@ -135,13 +140,13 @@ examples:
-             clock-names = "xin";
- 
-             OUT1 {
--                idt,drive-mode = <VC5_CMOSD>;
-+                idt,mode = <VC5_CMOSD>;
-                 idt,voltage-microvolts = <1800000>;
-                 idt,slew-percent = <80>;
-             };
- 
-             OUT4 {
--                idt,drive-mode = <VC5_LVDS>;
-+                idt,mode = <VC5_LVDS>;
-             };
-         };
-     };
+Kieran Bingham (3):
+  clk: renesas: r8a779a0: Add FCPVD clock support
+  clk: renesas: r8a779a0: Add VSPD clock support
+  clk: renesas: r8a779a0: Add VSPX clock support
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
 -- 
 2.25.1
 
