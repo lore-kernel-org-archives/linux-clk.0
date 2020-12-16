@@ -5,63 +5,180 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891EDC4361B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 13:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7C6C2BBCD
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 14:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34189233A0
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 13:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB7C233F7
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 14:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725550AbgLPNGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Dec 2020 08:06:10 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9213 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725274AbgLPNGK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 08:06:10 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CwwM91DJkzkqWN;
-        Wed, 16 Dec 2020 21:04:37 +0800 (CST)
-Received: from ubuntu.network (10.175.138.68) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 16 Dec 2020 21:05:02 +0800
-From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Subject: [PATCH -next] ti/fapll: Delete useless kfree code
-Date:   Wed, 16 Dec 2020 21:05:34 +0800
-Message-ID: <20201216130534.13925-1-zhengyongjun3@huawei.com>
-X-Mailer: git-send-email 2.22.0
+        id S1725913AbgLPOxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Dec 2020 09:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbgLPOxS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 09:53:18 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F421C0617A7
+        for <linux-clk@vger.kernel.org>; Wed, 16 Dec 2020 06:52:37 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 52sa240094C55Sk012sa3M; Wed, 16 Dec 2020 15:52:34 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kpYAL-00BCBr-UG; Wed, 16 Dec 2020 15:52:33 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kpYAL-005djI-4Z; Wed, 16 Dec 2020 15:52:33 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+Date:   Wed, 16 Dec 2020 15:52:31 +0100
+Message-Id: <20201216145231.1344317-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.138.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The parameter of kfree function is NULL, so kfree code is useless, delete it.
+  - Add reference to clock.yaml, and switch to unevaluatedProperties, to
+    stop complaining about the presence of "assigned-clock-rates" and
+    "assigned-clocks" in board DTS files,
+  - Fix typo in "idt,voltage-microvolts" property name, to match example
+    and driver code,
+  - Add missing reference for "idt,voltage-microvolts",
+  - Add missing "additionalProperties: false" for subnodes, to catch
+    typos in properties,
+  - There is no reason to wrap the (single) if condition in an allOf
+    block,
+  - Fix obsolete property names in example.
 
-Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/ti/fapll.c | 1 -
- 1 file changed, 1 deletion(-)
+Notes:
+  1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
+     unfortunate, as Documentation/devicetree/bindings/property-units.txt
+     suggests to not have the trailing edge.
+     Can we still fix the driver and bindings?  While this entered
+     uptstream in v5.9, there are no users in next-20201216.
 
-diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
-index 95e36ba64acc..a61d69159e9a 100644
---- a/drivers/clk/ti/fapll.c
-+++ b/drivers/clk/ti/fapll.c
-@@ -523,7 +523,6 @@ static struct clk * __init ti_fapll_synth_setup(struct fapll_data *fd,
- 	return clk_register(NULL, &synth->hw);
+  2. Due to "clock-output-names" being part of
+     dt-schema/schemas/clock/clock.yaml, the presence of this property
+     does not trigger an error.  Adding "clock-output-names: false"
+     can fix that.  But given this property is deprecated, except for
+     very specific use cases, explicitly allowing it for those few use
+     cases would be better.
+---
+ .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 2ac1131fd9222a86..14851e76f6342095 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -33,6 +33,9 @@ description: |
+ maintainers:
+   - Luca Ceresoli <luca@lucaceresoli.net>
  
- free:
--	kfree(synth);
- 	kfree(init);
++allOf:
++  - $ref: clock.yaml#
++
+ properties:
+   compatible:
+     enum:
+@@ -73,40 +76,42 @@ patternProperties:
+         $ref: /schemas/types.yaml#/definitions/uint32
+         minimum: 0
+         maximum: 6
+-      idt,voltage-microvolt:
++      idt,voltage-microvolts:
+         description: The output drive voltage.
++        $ref: /schemas/types.yaml#/definitions/uint32
+         enum: [ 1800000, 2500000, 3300000 ]
+       idt,slew-percent:
+         description: The Slew rate control for CMOS single-ended.
+         $ref: /schemas/types.yaml#/definitions/uint32
+         enum: [ 80, 85, 90, 100 ]
  
- 	return ERR_PTR(-ENOMEM);
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+   - '#clock-cells'
+ 
+-allOf:
+-  - if:
+-      properties:
+-        compatible:
+-          enum:
+-            - idt,5p49v5933
+-            - idt,5p49v5935
+-    then:
+-      # Devices with builtin crystal + optional external input
+-      properties:
+-        clock-names:
+-          const: clkin
+-        clocks:
+-          maxItems: 1
+-    else:
+-      # Devices without builtin crystal
+-      required:
+-        - clock-names
+-        - clocks
+-
+-additionalProperties: false
++if:
++  properties:
++    compatible:
++      enum:
++        - idt,5p49v5933
++        - idt,5p49v5935
++then:
++  # Devices with builtin crystal + optional external input
++  properties:
++    clock-names:
++      const: clkin
++    clocks:
++      maxItems: 1
++else:
++  # Devices without builtin crystal
++  required:
++    - clock-names
++    - clocks
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+@@ -135,13 +140,13 @@ examples:
+             clock-names = "xin";
+ 
+             OUT1 {
+-                idt,drive-mode = <VC5_CMOSD>;
++                idt,mode = <VC5_CMOSD>;
+                 idt,voltage-microvolts = <1800000>;
+                 idt,slew-percent = <80>;
+             };
+ 
+             OUT4 {
+-                idt,drive-mode = <VC5_LVDS>;
++                idt,mode = <VC5_LVDS>;
+             };
+         };
+     };
 -- 
-2.22.0
+2.25.1
 
