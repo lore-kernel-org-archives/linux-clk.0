@@ -2,103 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAACC2BBCD
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 10:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891EDC4361B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 13:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1A6F2335A
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 10:38:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34189233A0
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 13:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbgLPKhz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Dec 2020 05:37:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgLPKhy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 05:37:54 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB15C0617B0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Dec 2020 02:37:14 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id dk8so24301136edb.1
-        for <linux-clk@vger.kernel.org>; Wed, 16 Dec 2020 02:37:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bsYmkfEVvQqgzD1O+aSIpPO4CsKO+u0Ea3O6N1E481c=;
-        b=E1gRWKOIK1EEv0yOYoQV3P1kGDMjSZejlfc9pBHAb3Ok+GL+cHeIuNDOxsqtxGH7Ef
-         TItAt0jy8MO6I7jrtnl/EtsFj0NIH1iYsicmOwSPqBC1WpEozE46gxcOkApFuK3yM67H
-         3kAry0qXXNXvRk60jFkvTEZAae8Qsj65vAyBAUKRnpHNAwnLStkzn9Vg5UxXlJKu3xpl
-         subhgINJugcYcDXVXRZF/R2lvLpHgjtSBDprPGBKaHegBUYMCngYjKnV0iQpkn1k/D1c
-         YT3MZIqrg5HTPLQjTDj2jiSiTcHfX6l7pl6tyiuZGhOajtlGx2wi/GcI+CwN3awjt/km
-         I9BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bsYmkfEVvQqgzD1O+aSIpPO4CsKO+u0Ea3O6N1E481c=;
-        b=PJ+DhUtbbn6bw8LhiU9jK9lzygvzbEL+Shxj1GQ0qIcilOlgy4qlcI9XgaesnJmdpd
-         wc1G2c2jWAHrZwZRj4rSG24UpDaSG8btf7GNdGJrOaK3FImbdeOYmXJGuZy+QnhEpwvF
-         tDj1TRC411pk+2ScjyZGujzMISMIX8JYfBS351k7oXxcNAwxwmFfHoatzAH4NnzM+0Ky
-         QcO9I/vJg6OXtlx+YVfHEs9WNlqsAhDAmDIufgA0O3sj4950BGeLpq12uy88aNhjnEv8
-         EDqv6ctr66CjA//p9W0m3F+XAz7VnTxZAdtkMrm4vZ9XwGc1j10H+rvuzPh9HTJWEpG9
-         ic/A==
-X-Gm-Message-State: AOAM5318JdG/t27M5xtgSgyae0V6C4xxNkWWXT5JNaaWQ3tqC9MWliul
-        ihoXb6jHbZA5NCMUuupt0FlBOYJvpKzAHG7Pw637Cw==
-X-Google-Smtp-Source: ABdhPJwS+suNBsnmqdweQsc8crfYev1Kw3Evg9H2jPGzz2d+ZRjYUcCPzp4JsF4gaLfvS+QySSxQ51abC3XScJaIYz4=
-X-Received: by 2002:a50:b742:: with SMTP id g60mr32617780ede.113.1608115033228;
- Wed, 16 Dec 2020 02:37:13 -0800 (PST)
+        id S1725550AbgLPNGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Dec 2020 08:06:10 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9213 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725274AbgLPNGK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Dec 2020 08:06:10 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CwwM91DJkzkqWN;
+        Wed, 16 Dec 2020 21:04:37 +0800 (CST)
+Received: from ubuntu.network (10.175.138.68) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 16 Dec 2020 21:05:02 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Subject: [PATCH -next] ti/fapll: Delete useless kfree code
+Date:   Wed, 16 Dec 2020 21:05:34 +0800
+Message-ID: <20201216130534.13925-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20201211164801.7838-1-nsaenzjulienne@suse.de> <20201211164801.7838-2-nsaenzjulienne@suse.de>
-In-Reply-To: <20201211164801.7838-2-nsaenzjulienne@suse.de>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 16 Dec 2020 11:37:02 +0100
-Message-ID: <CAMpxmJUoTHq+ZMm6UOH3tmhGMuDEG5sPn4hiXiZdwSP3FV-hjg@mail.gmail.com>
-Subject: Re: [PATCH v6 01/11] firmware: raspberrypi: Keep count of all consumers
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>, wahrenst@gmx.net,
-        Linux Input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.138.68]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 11, 2020 at 5:48 PM Nicolas Saenz Julienne
-<nsaenzjulienne@suse.de> wrote:
->
-> When unbinding the firmware device we need to make sure it has no
-> consumers left. Otherwise we'd leave them with a firmware handle
-> pointing at freed memory.
->
-> Keep a reference count of all consumers and introduce rpi_firmware_put()
-> which will permit automatically decrease the reference count upon
-> unbinding consumer drivers.
->
-> Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
->
-> ---
+The parameter of kfree function is NULL, so kfree code is useless, delete it.
 
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+---
+ drivers/clk/ti/fapll.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/ti/fapll.c b/drivers/clk/ti/fapll.c
+index 95e36ba64acc..a61d69159e9a 100644
+--- a/drivers/clk/ti/fapll.c
++++ b/drivers/clk/ti/fapll.c
+@@ -523,7 +523,6 @@ static struct clk * __init ti_fapll_synth_setup(struct fapll_data *fd,
+ 	return clk_register(NULL, &synth->hw);
+ 
+ free:
+-	kfree(synth);
+ 	kfree(init);
+ 
+ 	return ERR_PTR(-ENOMEM);
+-- 
+2.22.0
+
