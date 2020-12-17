@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF70AC2BBCD
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D061C3526B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 942CE2388E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49009238EF
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbgLQSIn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41996 "EHLO
+        id S1730262AbgLQSIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:08:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbgLQSIl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:08:41 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCD08C0611CC;
-        Thu, 17 Dec 2020 10:07:31 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id y19so59727332lfa.13;
-        Thu, 17 Dec 2020 10:07:31 -0800 (PST)
+        with ESMTP id S1730247AbgLQSIq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:08:46 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05872C0619D4;
+        Thu, 17 Dec 2020 10:07:40 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id s26so25134272lfc.8;
+        Thu, 17 Dec 2020 10:07:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UciLuLVan0P0SH0oR2Zf1mFiYSDrxBfVN7jaTPVHllw=;
-        b=aUHpk7k/bNFUizBJ9NAhFPP7O5TZO/wM8Ol/u8aIt3gZ9x3kH86JtXskjxBVjqT3VN
-         hgbgaSF/3nKKMcdizRSAFP8bRTPWk69Z9Gt4F8YqU2dJ+52b4MGNlZ6YWO5gYPjErj/a
-         hT5sWjNy0okhQ4km6Sa+6l8FwMx6iy5UBSD/PPb/QgXJBSzTUNx0rVq+i6viLDLHVwoV
-         i1szlSQyGrXl5jz+/N/ZM4FWQ3pzvaMCO/mA12PzGz743GTFBFTgh8LQBiH4inY3JVgx
-         6cMXpjHPHWIZyjbtsxU0pN5s0nz5bzQrAu+Sbzp7G90bLayZtcUOHSlsWBsfZ66iRjZP
-         1NUQ==
+        bh=vhvv1h1Ziyi3xIAcsdjZjVcJ6AYQzdZqyFUMLjoR+gU=;
+        b=mCQHS9XkKqyMibnw8kWGhj0y5I5wUfHzs6EhcQAYTQrcxVGcZQ4sqpiS8Cn8Tx/Vgc
+         K8vwNkiSYNNJLkRBebbt09t3sVsBqdUNSNtsPjqMLKXOGXGV4dlGjyEDXXYRM2cC+SVU
+         bE7Bn38TobzyFp1dohD8XSvG7rfjlxqF8Sm5uiY7d0VEfNNCo7wJa0PKHjj81i2bPo2J
+         WJzx7XbQlxIrFuM2MUM/VGJ6PIZV7KS/8a4B0rV1qmtskhY18YraI8ioH6itChj/t1k5
+         +kj1PiLcFY2+E3YsGxSymTnxRSL+MsXiAZJ6U7ldnz2pCqgj8mOKqfeXFPi+Xs7hEWeL
+         jjKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UciLuLVan0P0SH0oR2Zf1mFiYSDrxBfVN7jaTPVHllw=;
-        b=AddoZx2Pj2GVkXrcw0Jq7a0QJUt7LSDvSPweYHlzZjbcrAFcI6dl3uWv1U5j5TAK46
-         xpE8nljTLz3fEjiM49i1anZmZwTL76qQAJHSnDRF58T26oXqmLBqb63z7LO9TwMTaUnE
-         dl8bWHWc7lakG89oN80Q3pHkIofIcgefiyfiCeFMWcOVqwkj4JuhRsnfUVQ5MD72Ybdr
-         SFmNnAcRi3M8pXCimNzMntkmRRfHWXFs2oBF3JRZMzsMlcncOxzc7J1xiDRMc9DS2Y0t
-         QUtea3GTcpcgfqepX6LDC9YbduLOrJXMXhSF8otebrqHZEClrSSyk8KRXTiNiGLzqpO4
-         henw==
-X-Gm-Message-State: AOAM533WeqCMohson1mWDKtjjPRWhU58xHwom35FFAmbz7v2m9WZv95S
-        wmei98RZbFAixlNwDt+TNcSosQRwo10=
-X-Google-Smtp-Source: ABdhPJyqRF/GAfRVFFJhIN88THdxl4cwg3KVxuRdpu65i6dxhir2dh7Hvi6opFqgBO7mbKTSa0o+vw==
-X-Received: by 2002:a05:6512:2009:: with SMTP id a9mr674300lfb.575.1608228450395;
-        Thu, 17 Dec 2020 10:07:30 -0800 (PST)
+        bh=vhvv1h1Ziyi3xIAcsdjZjVcJ6AYQzdZqyFUMLjoR+gU=;
+        b=gMogBSHEtcDuNnUycg4LEnp6vSpNE2cJaaSeP//rloM7+KayMkgn4FwkfuSRQyc2az
+         JdefHj8HEYgUPnBvSySi4fHYnn/sf2gT1KChcMBBeCEpO0wK/E2jc7e6xdJJzbMCq3xs
+         4mFRN/c7EXcZgMRUrr9d2QSNh9rkrqPDhaUyCN4+Q8x0zccgp3dLWpOEeM2zzXsm58El
+         rSC3B1hK5FMseSnWz0c+oDFVyRS+oSFAmU3W0rY3227wdEB1yAQFWajfkN379X45P4z6
+         RtdrrWK9po0NHNfMAqtRqTW3s+gDbfrKnAb7inqD4Nld2IuLZ7jSh55BAboNpgP9hxaJ
+         mCcQ==
+X-Gm-Message-State: AOAM533LuRdI3ul44QKuThJZZS5K4gOvSAdZn455GYXbUFPgdhXm08Lb
+        JUynWd7/sfqN6nnh0i4HSRs=
+X-Google-Smtp-Source: ABdhPJwSqAw1lTij00AzVyWzgJA9yaLaIRHjYRL5G+gORDC0ff9W8dsUk7apucQlnXvHedXq3oMDVQ==
+X-Received: by 2002:a2e:8512:: with SMTP id j18mr212691lji.31.1608228458488;
+        Thu, 17 Dec 2020 10:07:38 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.29
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:29 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:38 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 09/48] opp: Add dev_pm_opp_sync_regulators()
-Date:   Thu, 17 Dec 2020 21:05:59 +0300
-Message-Id: <20201217180638.22748-10-digetx@gmail.com>
+Subject: [PATCH v2 16/48] opp: Handle missing OPP table in dev_pm_opp_xlate_performance_state()
+Date:   Thu, 17 Dec 2020 21:06:06 +0300
+Message-Id: <20201217180638.22748-17-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -89,101 +89,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Extend OPP API with dev_pm_opp_sync_regulators() function, which syncs
-voltage state of regulators.
+NVIDIA Tegra SoCs have a power domains topology such that child domains
+only clamp a power rail, while parent domain controls shared performance
+state of the multiple child domains. In this case child's domain doesn't
+need to have OPP table. Hence we want to allow children power domains to
+pass performance state to the parent domain if child's domain doesn't have
+OPP table.
+
+The dev_pm_opp_xlate_performance_state() gets src_table=NULL if a child
+power domain doesn't have OPP table and in this case we should pass the
+performance state to the parent domain.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/opp/core.c     | 42 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/pm_opp.h | 11 +++++++++++
- 2 files changed, 53 insertions(+)
+ drivers/opp/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 4268eb359915..500d6c716283 100644
+index 625dae7a5ecb..34f7e530d941 100644
 --- a/drivers/opp/core.c
 +++ b/drivers/opp/core.c
-@@ -2499,3 +2499,45 @@ void dev_pm_opp_remove_table(struct device *dev)
- 	dev_pm_opp_put_opp_table(opp_table);
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_remove_table);
-+
-+/**
-+ * dev_pm_opp_sync_regulators() - Sync state of voltage regulators
-+ * @dev:	device for which we do this operation
-+ *
-+ * Sync voltage state of the OPP table regulators.
-+ *
-+ * Return: 0 on success or a negative error value.
-+ */
-+int dev_pm_opp_sync_regulators(struct device *dev)
-+{
-+	struct opp_table *opp_table;
-+	struct regulator *reg;
-+	int i, ret = 0;
-+
-+	/* Device may not have OPP table */
-+	opp_table = _find_opp_table(dev);
-+	if (IS_ERR(opp_table))
-+		return 0;
-+
-+	/* Regulator may not be required for the device */
-+	if (!opp_table->regulators)
-+		goto put_table;
-+
-+	/* Nothing to sync if voltage wasn't changed */
-+	if (!opp_table->enabled)
-+		goto put_table;
-+
-+	for (i = 0; i < opp_table->regulator_count; i++) {
-+		reg = opp_table->regulators[i];
-+		ret = regulator_sync_voltage(reg);
-+		if (ret)
-+			break;
-+	}
-+
-+put_table:
-+	/* Drop reference taken by _find_opp_table() */
-+	dev_pm_opp_put_opp_table(opp_table);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_sync_regulators);
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 1435c054016a..4c79faa2025e 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -156,6 +156,7 @@ int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cp
- int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
- void dev_pm_opp_remove_table(struct device *dev);
- void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask);
-+int dev_pm_opp_sync_regulators(struct device *dev);
- #else
- static inline struct opp_table *dev_pm_opp_get_opp_table(struct device *dev)
- {
-@@ -366,6 +367,11 @@ static inline void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask
- {
- }
+@@ -2255,7 +2255,7 @@ int dev_pm_opp_xlate_performance_state(struct opp_table *src_table,
+ 	 * and so none of them have the "required-opps" property set. Return the
+ 	 * pstate of the src_table as it is in such cases.
+ 	 */
+-	if (!src_table->required_opp_count)
++	if (!src_table || !src_table->required_opp_count)
+ 		return pstate;
  
-+static inline int dev_pm_opp_sync_regulators(struct device *dev)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif		/* CONFIG_PM_OPP */
- 
- #if defined(CONFIG_PM_OPP) && defined(CONFIG_OF)
-@@ -442,6 +448,11 @@ static inline int dev_pm_opp_of_find_icc_paths(struct device *dev, struct opp_ta
- {
- 	return -ENOTSUPP;
- }
-+
-+static inline int dev_pm_opp_sync_regulators(struct device *dev)
-+{
-+	return -ENOTSUPP;
-+}
- #endif
- 
- #endif		/* __LINUX_OPP_H__ */
+ 	for (i = 0; i < src_table->required_opp_count; i++) {
 -- 
 2.29.2
 
