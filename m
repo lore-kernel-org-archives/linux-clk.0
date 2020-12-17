@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6293AC4361B
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C65DC2BB9A
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 362F52395A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25B672389E
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbgLQSJ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:09:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42122 "EHLO
+        id S1731412AbgLQSJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:09:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731128AbgLQSJW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:09:22 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C26AC0619DD;
-        Thu, 17 Dec 2020 10:07:52 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id o13so36634335lfr.3;
-        Thu, 17 Dec 2020 10:07:52 -0800 (PST)
+        with ESMTP id S1731143AbgLQSJ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:09:26 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A791C061A4C;
+        Thu, 17 Dec 2020 10:08:16 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id a12so59841861lfl.6;
+        Thu, 17 Dec 2020 10:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AcH1FS/cY17dY1GS/AeJ9Cc6wg6/sJS1m+8NI+VLW6c=;
-        b=A/eiWrTzy624Z6SUVpbBNu2n18qIJdY5Eb7ta7XoYimzF9bE9itZS3TwXefOcE0CwO
-         VuLLv6FI+f5Tisz7MYHdpbsRVGTzVJI0+PSZWYZ0hbjRnsd/5JZBmTMQA40ME9yJZJJV
-         2G7HlZGPklEWcsYRfdD0dH5i12hL+dCLLtkRCBkQw0w3eBS2p8ucEHB85Jtby/AcTmVA
-         uAtgew++vYSM8SMj54+2UwVVMiYlrAQmnslILrkpRq2yKBLbZRNRdG8m6pjq9evQNTTx
-         zjdgSA+2yT0D0q228HIWP7xI++hWpUzNn8NBp/6YsGm3ujIljxovE+HsNK2ug4boY0nm
-         DkUQ==
+        bh=4BCi2FA9cuc84aB3j2Dtgj2hYIKTYzldBGMNPDQ+ziE=;
+        b=r2zTV0LhxvbLLcRE/Q6upA3jHFFoIHhmeTHZH8k7Nfo6TEPtghv24CkOqquv0+y9xP
+         6+FZ+MXgdTx2ytHtR7Sk7W1UA2CPz43wyzcL6eN3hopQk/E3YteFKOLhzUro4h8CbQNU
+         +fgzGRIhTqgs+WbaL3TqMhWkuNzse6BJ4C/8X7Ixe3FMp1bc0jGwx6igCKOSE5vPOnJl
+         gKxDySx0IGEHosYP6Q0PXPEXhoddkGXNRY8r2Ow5AL11IX4RdEBmmxMv3sTV6ncFWhYG
+         PEoo8YrrVqcuWZEFkH1nd5jPACS2AUeM4P0FHx1ROikt0gKyKm/OLrSZrtjiGzDY2xKO
+         o/CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AcH1FS/cY17dY1GS/AeJ9Cc6wg6/sJS1m+8NI+VLW6c=;
-        b=d2cKGKA6UZ21XBgoOUsiv/+cYf6dViX1j8NI0gHxOqhLdLZdCqSTsm1h9cQogz5Tc0
-         dkWW4P/zIBQkttWurTK/ka/tD/Z5oPZaEc83iBrh8XXe4RzQbCOMl6h9xqqEqJo0C8Ij
-         as0qwLevOF1eME5kfKg6olrTpWLyNXiM+57tiB96MhKcQ8cmXdyLDk9L/psD5myVP+1l
-         9XEhcuFx9CeuvDA6gveXEp/hNOXECnGRPpivoWkdN0l0GDGBlnKXDEgph1q9Txo5BFjz
-         e4EPpLCYmNmVepjKDCK0+eJ7vfrOMzkp+gGhPpizmyQPgwANKuwW52tnwNNmWqz3hDP9
-         ShNQ==
-X-Gm-Message-State: AOAM532+IbEoZ8jqClhCrIUmJ2E/QoJ3TvwXd7e86T1L6QODbiGcbJ8x
-        cIqgM0q/3ZA11+/uErUUSJY=
-X-Google-Smtp-Source: ABdhPJxDAKi/w9xlyE0C+sGYBCXZ9YXsrV/Esex76tZjt69/6MpbZ3TUi8oDE2wG4nj3u41A5rs3sw==
-X-Received: by 2002:a05:6512:687:: with SMTP id t7mr14836899lfe.432.1608228471133;
-        Thu, 17 Dec 2020 10:07:51 -0800 (PST)
+        bh=4BCi2FA9cuc84aB3j2Dtgj2hYIKTYzldBGMNPDQ+ziE=;
+        b=Q0L24Z/kgQyW0HIBSOJ3RS4hnctEy1pP8flBXnbUxbQ9PpymV6os6iIcyHCW6JSrv2
+         T7K6QfmAZywPmu+siJ/GzZYXn0I2jgFRs8SaQ2p5j1MktqmfaPn3fSsYVTWjblNd/HaB
+         CS9woxMK71Ehnha/Um1q4osa51tLjNwC5WAL71MiKr+yWga3j6eznrXa0JEyS+VUgXfT
+         Aoarp3oE2uQn/TUbQRRC6rECWvlj0HW6NB9bQ1bxTURCLnZboq+0978SAnNB8Y0g5pkG
+         1y8Ag4v62dgvB6Kf2qQdIPJ52kDMvgTxNEd8RIytL+hOyD3bQ58QXbmud/MncuFgtYmp
+         asIQ==
+X-Gm-Message-State: AOAM532hHzUozQ+LpY3gmMhfYvWbVVHmd4ricAGSvKhQ35Vg41D6jXCo
+        jK0Rs2Wjgx8suyUK5dEaum4=
+X-Google-Smtp-Source: ABdhPJxWWr3saixXg4MMgzNRzLC4JnQkjYvJetomHe6o2KMKNy5SgOY8ZxCeWHixZTKkqqyu60wiaQ==
+X-Received: by 2002:a05:651c:2dc:: with SMTP id f28mr208929ljo.13.1608228494555;
+        Thu, 17 Dec 2020 10:08:14 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.50
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.08.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:50 -0800 (PST)
+        Thu, 17 Dec 2020 10:08:14 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 27/48] soc/tegra: Add CONFIG_SOC_TEGRA_COMMON and select PM_OPP by default
-Date:   Thu, 17 Dec 2020 21:06:17 +0300
-Message-Id: <20201217180638.22748-28-digetx@gmail.com>
+Subject: [PATCH v2 47/48] ARM: tegra: ventana: Support CPU voltage scaling and thermal throttling
+Date:   Thu, 17 Dec 2020 21:06:37 +0300
+Message-Id: <20201217180638.22748-48-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -89,103 +89,91 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add new Kconfig SOC_TEGRA_COMMON option which selects configuration
-options that are common for all Tegra SoCs. Select PM_OPP by default
-since from now on OPPs will be used by Tegra drivers which present on
-all SoC generations, like display controller driver for example.
+Enable CPU voltage scaling and thermal throttling on Tegra20 Ventana board.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/soc/tegra/Kconfig | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/tegra20-ventana.dts | 40 ++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 976dee036470..bcd61ae59ba3 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -13,6 +13,7 @@ config ARCH_TEGRA_2x_SOC
- 	select PINCTRL_TEGRA20
- 	select PL310_ERRATA_727915 if CACHE_L2X0
- 	select PL310_ERRATA_769419 if CACHE_L2X0
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	select SOC_TEGRA20_VOLTAGE_COUPLER
-@@ -27,6 +28,7 @@ config ARCH_TEGRA_3x_SOC
- 	select ARM_ERRATA_764369 if SMP
- 	select PINCTRL_TEGRA30
- 	select PL310_ERRATA_769419 if CACHE_L2X0
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	select SOC_TEGRA30_VOLTAGE_COUPLER
-@@ -40,6 +42,7 @@ config ARCH_TEGRA_114_SOC
- 	select ARM_ERRATA_798181 if SMP
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA114
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	select TEGRA_TIMER
-@@ -51,6 +54,7 @@ config ARCH_TEGRA_124_SOC
- 	bool "Enable support for Tegra124 family"
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA124
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	select TEGRA_TIMER
-@@ -66,6 +70,7 @@ if ARM64
- config ARCH_TEGRA_132_SOC
- 	bool "NVIDIA Tegra132 SoC"
- 	select PINCTRL_TEGRA124
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	help
-@@ -77,6 +82,7 @@ config ARCH_TEGRA_132_SOC
- config ARCH_TEGRA_210_SOC
- 	bool "NVIDIA Tegra210 SoC"
- 	select PINCTRL_TEGRA210
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_FLOWCTRL
- 	select SOC_TEGRA_PMC
- 	select TEGRA_TIMER
-@@ -99,6 +105,7 @@ config ARCH_TEGRA_186_SOC
- 	select TEGRA_BPMP
- 	select TEGRA_HSP_MBOX
- 	select TEGRA_IVC
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 features a
-@@ -115,6 +122,7 @@ config ARCH_TEGRA_194_SOC
- 	select TEGRA_BPMP
- 	select TEGRA_HSP_MBOX
- 	select TEGRA_IVC
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegra194 SoC.
-@@ -125,6 +133,7 @@ config ARCH_TEGRA_234_SOC
- 	select TEGRA_BPMP
- 	select TEGRA_HSP_MBOX
- 	select TEGRA_IVC
-+	select SOC_TEGRA_COMMON
- 	select SOC_TEGRA_PMC
- 	help
- 	  Enable support for the NVIDIA Tegra234 SoC.
-@@ -132,6 +141,10 @@ config ARCH_TEGRA_234_SOC
- endif
- endif
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 14ace2ef749c..c2d9f38960bc 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -2,8 +2,10 @@
+ /dts-v1/;
  
-+config SOC_TEGRA_COMMON
-+	bool
-+	select PM_OPP
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/thermal/thermal.h>
+ #include "tegra20.dtsi"
+ #include "tegra20-cpu-opp.dtsi"
++#include "tegra20-cpu-opp-microvolt.dtsi"
+ 
+ / {
+ 	model = "NVIDIA Tegra20 Ventana evaluation board";
+@@ -527,9 +529,10 @@ ldo_rtc {
+ 			};
+ 		};
+ 
+-		temperature-sensor@4c {
++		nct1008: temperature-sensor@4c {
+ 			compatible = "onnn,nct1008";
+ 			reg = <0x4c>;
++			#thermal-sensor-cells = <1>;
+ 		};
+ 	};
+ 
+@@ -615,10 +618,13 @@ clk32k_in: clock@0 {
+ 
+ 	cpus {
+ 		cpu0: cpu@0 {
++			cpu-supply = <&vdd_cpu>;
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu@1 {
++			cpu-supply = <&vdd_cpu>;
+ 			operating-points-v2 = <&cpu0_opp_table>;
+ 		};
+ 	};
+@@ -717,4 +723,36 @@ sound {
+ 			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
 +
- config SOC_TEGRA_FUSE
- 	def_bool y
- 	depends on ARCH_TEGRA
++	thermal-zones {
++		cpu-thermal {
++			polling-delay-passive = <1000>; /* milliseconds */
++			polling-delay = <5000>; /* milliseconds */
++
++			thermal-sensors = <&nct1008 1>;
++
++			trips {
++				trip0: cpu-alert0 {
++					/* start throttling at 50C */
++					temperature = <50000>;
++					hysteresis = <200>;
++					type = "passive";
++				};
++
++				trip1: cpu-crit {
++					/* shut down at 60C */
++					temperature = <60000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&trip0>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++	};
+ };
 -- 
 2.29.2
 
