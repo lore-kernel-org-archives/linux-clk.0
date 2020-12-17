@@ -3,62 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C84EC0018C
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 20:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20641C4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 573A123772
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Dec 2020 20:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4D622388B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbgLPUWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Dec 2020 15:22:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38030 "EHLO mail.kernel.org"
+        id S1727006AbgLQIKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 03:10:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728988AbgLPUWS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Dec 2020 15:22:18 -0500
+        id S1726488AbgLQIKm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Dec 2020 03:10:42 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608150098;
-        bh=7ckuVfE0d05hL3c+ScGa4gAayuEONTcC8xOhReADeyM=;
+        s=k20201202; t=1608192601;
+        bh=T619GpfnsNUVG7ybqE3r/JQVeRBCmUlACnAIeSE4AqA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YK2h4QuCqaxq6KZIXPkLIcKysjp9AyWuLXFN1crIGkTx8ArT9vkxFop93wGrdA2YG
-         axtvGpeb46FMFyrgUi84IGrNkokb+zs6xcdTCvS4RnqvVMo+yIZOa5qF1qipu02k+T
-         YyHNeJOwpy6PLsNzgCavmBD91ZXmCZY+nj7fWvE3qAbGTnyZO/w62frre0/s8gKad5
-         Gdz+Xwuaf3Cxr5XT0UBRWT5pJBSqXrLcePVcxPGGZEVnZnylz4eoNogqqbyCfNaSv3
-         Up+YDKcSLHPwKut/xXPYpYabR8UAbdzkAJe9diXkXKPA69MJ18ydtiWVw1DEIlWygT
-         p+DQYrx8tOfRQ==
+        b=OM8byHptyPa3OKLYRZOSAc14KRCWWU1twEt5rHxS5eARrOH+ZysLdhvatygQavIuc
+         0XflD+WPOVqpB2O3RrIhZoKGYIm9oBcBShJRRcVLzRqdDhGQKI+tkuvYXpgA2UFIeN
+         j10zGERr8pnso5JmPFsgLcGHrtZhoFeUjUrDg1oJ+Fyw5GOwUVrNBP0WxGKN79BXBu
+         eNIz2MLeP1qvE6rVisggyUS9kU6riYJnpzLv47VNzBgDIlYopQx01HhIpQ3sCcQpSy
+         C933xf963fhkOCz0zo9SpIVXWtkZhHuX9i9tGPDfOqZZt5aZSS/Yt58CG58bzjEjjM
+         fRu9mOjfIn4Zw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201209094916.17383-6-zong.li@sifive.com>
-References: <20201209094916.17383-1-zong.li@sifive.com> <20201209094916.17383-6-zong.li@sifive.com>
-Subject: Re: [PATCH v7 5/5] clk: sifive: Add clock enable and disable ops
+In-Reply-To: <20201213135056.24446-10-damien.lemoal@wdc.com>
+References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com>
+Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
-        Zong Li <zong.li@sifive.com>
-To:     Zong Li <zong.li@sifive.com>, aou@eecs.berkeley.edu,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, mturquette@baylibre.com,
-        palmer@dabbelt.com, paul.walmsley@sifive.com,
-        pragnesh.patel@openfive.com, schwab@linux-m68k.org,
-        yash.shah@sifive.com
-Date:   Wed, 16 Dec 2020 12:21:36 -0800
-Message-ID: <160815009666.1580929.1809751674908825268@swboyd.mtv.corp.google.com>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Thu, 17 Dec 2020 00:09:59 -0800
+Message-ID: <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2020-12-09 01:49:16)
-> From: Pragnesh Patel <pragnesh.patel@sifive.com>
->=20
-> Add new functions "sifive_prci_clock_enable(), sifive_prci_clock_disable()
-> and sifive_clk_is_enabled()" to enable or disable the PRCI clock
->=20
-> Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
-> Tested-by: Zong Li <zong.li@sifive.com>
-> ---
+Quoting Damien Le Moal (2020-12-13 05:50:42)
+> diff --git a/include/dt-bindings/clock/k210-clk.h b/include/dt-bindings/c=
+lock/k210-clk.h
+> index 5a2fd64d1a49..b2de702cbf75 100644
+> --- a/include/dt-bindings/clock/k210-clk.h
+> +++ b/include/dt-bindings/clock/k210-clk.h
+> @@ -3,18 +3,51 @@
+>   * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
+>   * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+>   */
+> -#ifndef K210_CLK_H
+> -#define K210_CLK_H
+> +#ifndef CLOCK_K210_CLK_H
+> +#define CLOCK_K210_CLK_H
+> =20
+>  /*
+> - * Arbitrary identifiers for clocks.
+> - * The structure is: in0 -> pll0 -> aclk -> cpu
+> - *
+> - * Since we use the hardware defaults for now, set all these to the same=
+ clock.
+> + * Kendryte K210 SoC clock identifiers (arbitrary values).
+>   */
+> -#define K210_CLK_PLL0   0
+> -#define K210_CLK_PLL1   0
+> -#define K210_CLK_ACLK   0
+> -#define K210_CLK_CPU    0
 
-Applied to clk-next
+This seems to open a bisection hole. I see that ACLK is used in the
+existing dtsi file, and that is the same as CLK_CPU, but after this
+patch it will change to not exist anymore. Can we leave ACLK around
+defined to be 0? I imagine it won't be used in the future so we can
+remove it later. I can then apply this for v5.11-rc1 and then merge the
+clk driver patch in clk tree.
+
+> +#define K210_CLK_CPU   0
+> +#define K210_CLK_SRAM0 1
+> +#define K210_CLK_SRAM1 2
