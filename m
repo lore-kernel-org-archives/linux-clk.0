@@ -6,77 +6,74 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF098C4361B
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8C9C4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 828B32389A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3B782389A
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:51:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbgLQKuI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 05:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        id S1726488AbgLQKvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 05:51:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbgLQKuG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Dec 2020 05:50:06 -0500
+        id S1726291AbgLQKvB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Dec 2020 05:51:01 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608202166;
-        bh=IHqvIzeT44TaD9aaUc8PyL7YXy3hvVBgUG/OHFSFaaA=;
+        s=k20201202; t=1608202220;
+        bh=Ro0hI3oK3wxsStmiMichCc3NaGtunDmMy0N4tSUrHvA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mdSvliX2x2jj1hqcaE9GugLxg+uvTty8dWlmPINRIQ73YGm4sgircwj3elJ7HmkCg
-         8PQsHRvtNf3X+Ds/dYrJhh4BmfYa8mSd5ywvLMvs90U8llnZEsS/2y6M7z1TJcs8OL
-         H1XOkWupOhiQK4v1F1n1hm/qMXJDkXQviX5ex6h5bXea7cBkNHZ3LT4MflavUn+DH4
-         F0P29NBqTlUtpqObZDVYltt4R2tLru7clWkB1/trvyjX2f4xuiBH165sEhmDqiqo8m
-         YVh9kP6S9mSXwEnR+2+axplesYCr8a4clFUxvwQ7vuEknnMdRXQFmbAmzBj+TCtEMA
-         3F8FHJdPtRXAQ==
+        b=mB5QRYpLLHdVyomEOKfAx5GO+7StHxvVBWjJMnhll97xs2z9dUkqt5tEjaRyUpXqp
+         olQRzZAUwBgfLvoK+kZzvmqqAR9Hfkb2KqFDBPv0ICd8XKPFiLCbQFiPfiqXmdHQMM
+         IQyMWBWd9Phwel4HlMY0tTB35bqlLZh2inDBz3v8yq/lkExn37Y8te0Iw4k9S+UCvo
+         P537SdVO7+cJD2xVq7Ub+SEVCU94MI+k0UaBFy6RX+TQXePf1JvDP4WW9iuuNALcj4
+         liBU4nWp27QAQfSc8SS4JNhrcwOyc3vYTccKFKT018hUyaKXRWX3HhyEtM8sOYLxSr
+         3XFJMGToAdfQw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CH2PR04MB6522E9EC44FF8FFA5981107CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
-References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com> <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com> <CH2PR04MB65227B0B94F919406CB84C28E7C40@CH2PR04MB6522.namprd04.prod.outlook.com> <160820021596.1580929.1686334340234415270@swboyd.mtv.corp.google.com> <CH2PR04MB6522E9EC44FF8FFA5981107CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
-Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
+In-Reply-To: <CAMhs-H9SiZ90NYCGL+3ad9UR7CDUiA1gb99ZcfHp10=SZtVPpg@mail.gmail.com>
+References: <20201122095556.21597-1-sergio.paracuellos@gmail.com> <20201122095556.21597-3-sergio.paracuellos@gmail.com> <160819550615.1580929.14234996916739809712@swboyd.mtv.corp.google.com> <CAMhs-H_EiDot_V4Qj1Q8noAf5RNi9BOyy0WmawE+70wY7=FxDg@mail.gmail.com> <160819962346.1580929.2348154780751858972@swboyd.mtv.corp.google.com> <CAMhs-H_ixfqMxVFOf+J0O-Tp0Q0ngviMm6jHrHJSgCLwZj+Tvw@mail.gmail.com> <160820116913.1580929.15821601182796836787@swboyd.mtv.corp.google.com> <CAMhs-H9SiZ90NYCGL+3ad9UR7CDUiA1gb99ZcfHp10=SZtVPpg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] dt: bindings: add mt7621-clk device tree binding documentation
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sean Anderson <seanga2@gmail.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Date:   Thu, 17 Dec 2020 02:49:24 -0800
-Message-ID: <160820216451.1580929.9401304620489565784@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Weijie Gao <hackpascal@gmail.com>,
+        COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:MIPS <linux-mips@vger.kernel.org>, open list:STAGING 
+        SUBSYSTEM <devel@driverdev.osuosl.org>, NeilBrown <neil@brown.name>, 
+        open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Thu, 17 Dec 2020 02:50:18 -0800
+Message-ID: <160820221883.1580929.5758849422177353179@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Damien Le Moal (2020-12-17 02:43:50)
+Quoting Sergio Paracuellos (2020-12-17 02:38:37)
+> On Thu, Dec 17, 2020 at 11:32 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Sergio Paracuellos (2020-12-17 02:14:10)
+> > > node is to use architecture operations in
+> > > 'arch/mips/include/asm/mach-ralink/ralink_regs.h'
+> > > instead of getting a phandle using the regmap is being currently used=
+...
+> >
+> > Can that be done with
+> >
+> > CLK_OF_DECLARE_DRIVER("mediatek,mt7621-sysc", my_timer_clk_init)
+> >
+> > ? Is the syscon used anywhere besides by the clk driver?
 >=20
-> I just did that. It works.
->=20
-> Ideally, patches 7, 8 and 9 need to go in together with the clk driver pa=
-tch.
-> Since the builtin DTB patch precedes the clock driver patch that touches =
-the
-> sysctl driver, I need to rework it a little, keeping the
-> SOC_DECLARE_BUILTIN_DTB() for now. And finally, a small DTS update patch =
-needs
-> to be added too for the sysctl & sysclk nodes update. That would make it =
-a 5
-> patch series for the clock driver addition. Would this work ?
->=20
-> Or, you just take patch 9 (clk doc) and patch 13 (clk driver), slightly m=
-odified
-> to move the sysctl register definitions into a common header (currently p=
-art of
-> patch 7). 2 patches only, without any other change, resulting in the clock
-> driver not being used until the rest of the series goes into 5.12. Do you=
- prefer
-> that solution ?
->=20
+> Yes, for example all the gates use them to access SYSC_REG_CLKCFG1 in
+> all of their 'mt7621_gate_ops' and also in all 'recalc_rate' functions
+> where SYSC_REG_SYSTEM_CONFIG0, is readed.
 
-I was thinking of just applying this DT binding patch now so it gets
-merged into the next -rc1. Then anyone can use the defines because
-they're in Linus' tree and wherever the dts file ends up can just base
-on -rc1. I probably won't merge the clk driver until v5.12 given that
-the merge window is open.
+That sounds like it's only used by the clk provider/driver? Any other
+code uses the syscon?
