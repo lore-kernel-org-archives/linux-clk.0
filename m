@@ -4,80 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0B0C2BB48
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF098C4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4B642389A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828B32389A
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgLQKrQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 05:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58076 "EHLO mail.kernel.org"
+        id S1725950AbgLQKuI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 05:50:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbgLQKrQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Dec 2020 05:47:16 -0500
+        id S1726160AbgLQKuG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Dec 2020 05:50:06 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608201995;
-        bh=Pue5gigex8jLd7iX7Y19MlVXPLtenFipsfqR9Dz+YM4=;
+        s=k20201202; t=1608202166;
+        bh=IHqvIzeT44TaD9aaUc8PyL7YXy3hvVBgUG/OHFSFaaA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QtT1U6O0JVdEkWREGobtHZUPwRol1SATKWy0EPGBHuEaXkxfISISnMSKYD9wskfIE
-         EVacZcGpuh+mZ+qWqMGlF+rdda8qETP2qmPLQyckTG4lDsYv5Y08lpwxZBB3WLQ+Ui
-         /WeTNXF/5BVMSkINYM0MRupJLYrXJ+1cK4Bpq2c+20VhSnwJchvrFM2KPJo3M2ilaE
-         /KtNSSTowXM59VW1/wQEQrYfxnSvveRplsgVnYuDilLtC9Ke+M76p9gEH8Wisc1His
-         oM+Kmj7zYb3P8XCVqFfB6uHP6Ww8WuLIE6Uu9T5pM7J9bq0/bzqq2b4bSLSEdSrIEc
-         e4ki9Pt2LUnmA==
+        b=mdSvliX2x2jj1hqcaE9GugLxg+uvTty8dWlmPINRIQ73YGm4sgircwj3elJ7HmkCg
+         8PQsHRvtNf3X+Ds/dYrJhh4BmfYa8mSd5ywvLMvs90U8llnZEsS/2y6M7z1TJcs8OL
+         H1XOkWupOhiQK4v1F1n1hm/qMXJDkXQviX5ex6h5bXea7cBkNHZ3LT4MflavUn+DH4
+         F0P29NBqTlUtpqObZDVYltt4R2tLru7clWkB1/trvyjX2f4xuiBH165sEhmDqiqo8m
+         YVh9kP6S9mSXwEnR+2+axplesYCr8a4clFUxvwQ7vuEknnMdRXQFmbAmzBj+TCtEMA
+         3F8FHJdPtRXAQ==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d3faea9e-e7d6-eba0-a6b2-c30bc9b6e147@linux.intel.com>
-References: <20201207164240.15436-1-jae.hyun.yoo@linux.intel.com> <20201207164240.15436-3-jae.hyun.yoo@linux.intel.com> <CACPK8Xd3dz1WLGNGqMiAZxhMEeGHbkPtvO2rYQ36Kbj=Uvy-jA@mail.gmail.com> <d3faea9e-e7d6-eba0-a6b2-c30bc9b6e147@linux.intel.com>
-Subject: Re: [PATCH 2/2] media: aspeed: fix clock handling logic
+In-Reply-To: <CH2PR04MB6522E9EC44FF8FFA5981107CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
+References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com> <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com> <CH2PR04MB65227B0B94F919406CB84C28E7C40@CH2PR04MB6522.namprd04.prod.outlook.com> <160820021596.1580929.1686334340234415270@swboyd.mtv.corp.google.com> <CH2PR04MB6522E9EC44FF8FFA5981107CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
+Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>
-Date:   Thu, 17 Dec 2020 02:46:33 -0800
-Message-ID: <160820199393.1580929.9806429719720580479@swboyd.mtv.corp.google.com>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Thu, 17 Dec 2020 02:49:24 -0800
+Message-ID: <160820216451.1580929.9401304620489565784@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jae Hyun Yoo (2020-12-08 09:16:29)
-> Hi Joel,
+Quoting Damien Le Moal (2020-12-17 02:43:50)
 >=20
-> On 12/7/2020 6:39 PM, Joel Stanley wrote:
-> > On Mon, 7 Dec 2020 at 16:33, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com=
-> wrote:
-> >>
-> >> Video engine uses eclk and vclk for its clock sources and its reset
-> >> control is coupled with eclk so the current clock enabling sequence wo=
-rks
-> >> like below.
-> >>
-> >>   Enable eclk
-> >>   De-assert Video Engine reset
-> >>   10ms delay
-> >>   Enable vclk
-> >=20
-> > This is the case after " clk: ast2600: fix reset settings for eclk and
-> > vclk" is applied, correct? Without that patch applied the reset
-> > sequence is correct by accident for the 2600, but it will be wrong for
-> > the 2500?
+> I just did that. It works.
 >=20
-> Correct. Video Engine reset was coupled with eclk for AST2500 and vclk
-> for AST2600 so above sequence was observed only in AST2500. As you said,
-> AST2600 didn't make the issue by accident but the clk/reset pair should
-> be fixed by this patch series.
+> Ideally, patches 7, 8 and 9 need to go in together with the clk driver pa=
+tch.
+> Since the builtin DTB patch precedes the clock driver patch that touches =
+the
+> sysctl driver, I need to rework it a little, keeping the
+> SOC_DECLARE_BUILTIN_DTB() for now. And finally, a small DTS update patch =
+needs
+> to be added too for the sysctl & sysclk nodes update. That would make it =
+a 5
+> patch series for the clock driver addition. Would this work ?
+>=20
+> Or, you just take patch 9 (clk doc) and patch 13 (clk driver), slightly m=
+odified
+> to move the sysctl register definitions into a common header (currently p=
+art of
+> patch 7). 2 patches only, without any other change, resulting in the clock
+> driver not being used until the rest of the series goes into 5.12. Do you=
+ prefer
+> that solution ?
+>=20
 
-So should the two patches be squashed together and go through the
-media tree?
+I was thinking of just applying this DT binding patch now so it gets
+merged into the next -rc1. Then anyone can use the defines because
+they're in Linus' tree and wherever the dts file ends up can just base
+on -rc1. I probably won't merge the clk driver until v5.12 given that
+the merge window is open.
