@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CE8C2BBD5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95208C47435
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A67372395A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78C64238EF
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbgLQSIm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:08:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41992 "EHLO
+        id S1731453AbgLQSN6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 13:13:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbgLQSIl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:08:41 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A669C0611CA;
-        Thu, 17 Dec 2020 10:07:29 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id x20so40283664lfe.12;
-        Thu, 17 Dec 2020 10:07:29 -0800 (PST)
+        with ESMTP id S1729976AbgLQSIa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 13:08:30 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA72C061257;
+        Thu, 17 Dec 2020 10:07:27 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id l11so59857334lfg.0;
+        Thu, 17 Dec 2020 10:07:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yP8wRMt2G/dKkoQz0kDkh+VFFd+KrJNpavXd55zD7Hc=;
-        b=Eevxt/jmSiXEagYpaEv4vTmdCIDS9N1+4fjs6XIYwYipyv36lpsy/C6pKYbwX3UiQu
-         VAu1mRAoSEvOvC9CFXWr2nMYvvWgaq6SnOLErxU8ODNmC5j5jGOa6Ib2PM6ZcCqmH38P
-         /ms4L91GUDsLbCwK3p/ykpA37+zlTT+eRvLma64wIszQWtha25BPEQkFpHNddqKyWQfT
-         +buwKXxL3bX53bNkQosbcNQQk/A6YGx+HMISS5X5MXNlAcmh2539N1EunFi1fSgAdPPc
-         lZu6y+bcf9lMXUeX6+mQg1Tjih0kF9Uxcyo55RH6sXDp4bTnJ3oHXwSLox21wctsWd9N
-         I+6Q==
+        bh=TJhYseBJYkwEkfQOyblPdMpOOHz4A7k16XFAy7Oga6w=;
+        b=F5gtx0dqcxZkkcTo7UWZnaw7Qj9Ra9yO77AeY5iLggl9m6erRwHxn4BW1pJ97VJKGq
+         YcV+1PWkv4C8mO3HuprA0toW5oQVPvXyvypDcHfQ3LBMW/83TcsKkn75giHcRn87HTw6
+         QHwCfKcwAJgFjFtNJWyVh1MOkNixWO0nCb0tiEwngi5LyZ7owU4oF7G1k/+5HCx3qSNJ
+         lCmnEQPNPTiNBzucIDBPweD4miL9n3PayTyhzS4PPj+lRRFXYO6GgrVItV4NhaeW9pUD
+         tZEr43oWkWFIJ+ExDBzEDwy7s8y7AfoiZuB0VBikcGqe27kygYQJ0VNNhK+CFDbU67Dt
+         ggHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yP8wRMt2G/dKkoQz0kDkh+VFFd+KrJNpavXd55zD7Hc=;
-        b=oWIKftE5r1ZoIYmVBnTe3LHD9lGC423gw40PZ3CtayCQbZaUKyl/NytWjgVeT/s5Q+
-         6pyG6nW9C1IwfjtOBSrIlztIgWvLsMvSsWcbw9uGhz1MS9H14twnqZZrMApS4+3EO8k6
-         2Km/+p/1UkPxWqRYx61sGRKzK+STnFeF+H5Rs6dk8/I5imB1jILB8PMEDQvq9ghH3EHe
-         5Owl3A/T0kaRRvlXxxSI6xq+0tNnBHwp5FDxaNpzjYedoCZ3aOzikxzNXbfgX07yKlGX
-         RC+RxDB3DokUtd0zG614/cqbzl+IP44JaCm3FFM23zn8HbSBq7L5zdxxOQeXSWmTRqeW
-         oHkw==
-X-Gm-Message-State: AOAM5327ECEZQoAnAP/puuTg0xB+KFJfG6epg43TTlAm6Q6Q8hNw/N7t
-        2Dw95jf2/IfMbr9MFzkiwfk=
-X-Google-Smtp-Source: ABdhPJxW3mip7l7QnT2EdI9cbqOdB8U51k+kpDGMuuvT5UJhcE0JXjG8oIyqWzLDIWmT1OVJbpI9yg==
-X-Received: by 2002:a19:c3c2:: with SMTP id t185mr1565lff.104.1608228448105;
-        Thu, 17 Dec 2020 10:07:28 -0800 (PST)
+        bh=TJhYseBJYkwEkfQOyblPdMpOOHz4A7k16XFAy7Oga6w=;
+        b=trMK2ChBX0g8gz3s9E+MNRORh++wvs2/c521BYozbT+b7u+Qd6+QSV/P5I/ViTsvBd
+         A5O425cqElDuHIgVeU/zno8sW5PD86nloPUjJpI4djUOLfRKXYnNohjStgowEIMJ4wN/
+         dSN251dg7yFMNMVbKwUv42js/uiRSk/3Iy9D/VLT9cGvvbgW1NN/UEzpRiwUT2RNSMMu
+         JFzIeI8Ady9+0XKJxPz6CXDxyT20mrfk+IoscQigfD1XDpAf/EJMd/4KrA19syA44wT1
+         ZnsYsPVyuXHOG7u9hhG2HYwXiLOP/dwXCPv4UTloq1REpNUc7UwCwseEKVjDkzrTqML5
+         er8Q==
+X-Gm-Message-State: AOAM532VDZCaLgk4oSDGOxR6/Yidi7JoCrIHUz41X8VCTh4FnOpWObi/
+        aKthjp2CUXuVd9Uc8zSi+Sc=
+X-Google-Smtp-Source: ABdhPJwIgGAwCQwaSYDTBeW0kNDGf+AD0VQyaJlAS233nqerThHuruFM4Tg3UsndwI906n0c5dBsSA==
+X-Received: by 2002:a2e:b558:: with SMTP id a24mr212325ljn.328.1608228445790;
+        Thu, 17 Dec 2020 10:07:25 -0800 (PST)
 Received: from localhost.localdomain (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.27
+        by smtp.gmail.com with ESMTPSA id u5sm655596lff.78.2020.12.17.10.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Dec 2020 10:07:27 -0800 (PST)
+        Thu, 17 Dec 2020 10:07:25 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -77,9 +77,9 @@ Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 07/48] dt-bindings: arm: tegra: Add binding for core power domain
-Date:   Thu, 17 Dec 2020 21:05:57 +0300
-Message-Id: <20201217180638.22748-8-digetx@gmail.com>
+Subject: [PATCH v2 05/48] media: dt: bindings: tegra-vde: Document OPP and power domain properties
+Date:   Thu, 17 Dec 2020 21:05:55 +0300
+Message-Id: <20201217180638.22748-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
 References: <20201217180638.22748-1-digetx@gmail.com>
@@ -89,69 +89,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All NVIDIA Tegra SoCs have a core power domain where majority of hardware
-blocks reside. Add binding for the core power domain.
+Document new DVFS OPP table and power domain properties of the video
+decoder engine.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../arm/tegra/nvidia,tegra20-core-domain.yaml | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+ .../devicetree/bindings/media/nvidia,tegra-vde.txt   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
-new file mode 100644
-index 000000000000..f3d8fd2d8371
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
-@@ -0,0 +1,48 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-core-domain.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+index 602169b8aa19..02fe2af3bd13 100644
+--- a/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
++++ b/Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+@@ -36,6 +36,16 @@ Optional properties:
+ - reset-names : Must include the following entries:
+   - mc
+ - iommus: Must contain phandle to the IOMMU device node.
++- operating-points-v2: See ../bindings/opp/opp.txt for details.
++- power-domains: Phandle to VDEC power domain.
 +
-+title: NVIDIA Tegra Core Power Domain
++For each opp entry in 'operating-points-v2' table:
++- opp-supported-hw: One bitfield indicating:
++	On Tegra20: SoC process ID mask
++	On Tegra30+: SoC speedo ID mask
 +
-+maintainers:
-+  - Dmitry Osipenko <digetx@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nvidia,tegra20-core-domain
-+      - nvidia,tegra30-core-domain
-+
-+  operating-points-v2:
-+    description:
-+      Should contain level, voltages and opp-supported-hw property.
-+      The supported-hw is a bitfield indicating SoC speedo or process
-+      ID mask.
-+
-+  "#power-domain-cells":
-+    const: 0
-+
-+  power-supply:
-+    description:
-+      Phandle to voltage regulator connected to the SoC Core power rail.
-+
-+required:
-+  - compatible
-+  - operating-points-v2
-+  - "#power-domain-cells"
-+  - power-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    core-domain {
-+        compatible = "nvidia,tegra20-core-domain";
-+        operating-points-v2 = <&opp_table>;
-+        power-supply = <&regulator>;
-+        #power-domain-cells = <0>;
-+    };
++	A bitwise AND is performed against the value and if any bit
++	matches, the OPP gets enabled.
+ 
+ Example:
+ 
+@@ -61,4 +71,6 @@ video-codec@6001a000 {
+ 	reset-names = "vde", "mc";
+ 	resets = <&tegra_car 61>, <&mc TEGRA20_MC_RESET_VDE>;
+ 	iommus = <&mc TEGRA_SWGROUP_VDE>;
++	operating-points-v2 = <&dvfs_opp_table>;
++	power-domains = <&domain>;
+ };
 -- 
 2.29.2
 
