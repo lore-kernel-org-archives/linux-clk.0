@@ -2,149 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76612C2BBCF
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 21:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEDEC2BBCD
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 00:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49B2123A54
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 21:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F89623A52
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 00:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731897AbgLQV46 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 16:56:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48986 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbgLQV46 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 16:56:58 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC4CC061794;
-        Thu, 17 Dec 2020 13:56:17 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id m12so240572lfo.7;
-        Thu, 17 Dec 2020 13:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8nG3HAuO5heZzY5IBy8swXxo8V6gUQeM6w2EgX9BXJQ=;
-        b=FH7Y4beKxDLn6FrH0io7GO1GcAX5VRh7n2CsH8PTCS52NL/g+LWWVpwhVjPSfruoOQ
-         5feO5PmWTZEIKT8KD+uKJxOnCkSmh/oK7rEs6ZU0dpNnmuC+BYgE1edLQspvzqdHce85
-         K46dHCsJiwm5jh912Pg12y96Pj9yNyGP/H9uN5s88X7sMd4pMZiioWuUhbS6PAZWq0CC
-         flNZnZ8VdVz2LdVZCJj+vLBruo51dfg4tatvoTN4szFr2B2N6KhTg+RWoa6eOEazu6B5
-         eLM/se9HsQwagAK1A4dLMLdX6sawyfkSf//yE+th40OP1Wy9rW614MGIGKyPp2zy/ux1
-         gM6Q==
+        id S1731893AbgLRAAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 19:00:03 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:33457 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbgLRAAC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Dec 2020 19:00:02 -0500
+Received: by mail-ot1-f53.google.com with SMTP id b24so376472otj.0;
+        Thu, 17 Dec 2020 15:59:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8nG3HAuO5heZzY5IBy8swXxo8V6gUQeM6w2EgX9BXJQ=;
-        b=AknJh3UWgmCQ0yjvPuIqLT7gVoI+3owo4rMrEDlxmV5LXiu4vSpVR/RS7s1FImo0Vt
-         691k0uItCsEN41m6cqvMHqP3Ab6Zmp6Vf/lLEADaUWEMcyzu3d69TAu6uWPOB7H5Rybg
-         xiFcKkmjSsQusUiR31RVEgjkElpp2ZStQ2zYXvrGuDSLDaAL7bDutDTcpStUXKYrc+fH
-         UnATuu2flpsA1kO2Ytqp4MKD6Nvupq4PMuchhgpHU9777uvkUASlXHNhwlIAiY+pxx94
-         ugL3dTvqagKsb5o1oHpgtwDPGxNwbsmhwqU6mi3/hPYt+++mtWy7ieYpghkEyXmRGAHs
-         hT5g==
-X-Gm-Message-State: AOAM530xawG/E8qbps0wGAQfgokPNigP0wjKCRx3YFak761qDkwdZbdA
-        AB3MU1EEnItKbCnQmJDM9h4IuhfOHUQ=
-X-Google-Smtp-Source: ABdhPJwEQwkebdm0xE5Y65k65p4/uFmrBbkvGqy6QOWj0pr2b6l8lKWwgORn22Sw3y8I8JTXiGH9dQ==
-X-Received: by 2002:a05:6512:358d:: with SMTP id m13mr300445lfr.435.1608242175976;
-        Thu, 17 Dec 2020 13:56:15 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id 20sm708668lfd.237.2020.12.17.13.56.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Dec 2020 13:56:15 -0800 (PST)
-Subject: Re: [PATCH v2 47/48] ARM: tegra: ventana: Support CPU voltage scaling
- and thermal throttling
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-48-digetx@gmail.com>
- <91139f8b-0b83-dd8a-ba53-8e7a499e6344@linaro.org>
- <b39ebfc1-42b3-1fa7-efe4-6ecbc8cfcb50@gmail.com>
- <776e0e84-e395-2bfb-f1ee-c34864b1cf16@linaro.org>
- <ce603c74-3a20-7331-36a7-d7bc43ce36b6@gmail.com>
- <6afaf91c-d0ce-265d-4b71-0ea8da19918b@linaro.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d6f5fb01-7fda-d08c-f909-b0f4ae731b74@gmail.com>
-Date:   Fri, 18 Dec 2020 00:56:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dZKU/N2rDiGepmdHI+QIgWAOTCpJLi/HFXnkkGcjIQU=;
+        b=eJ0ohjnarKDZS+MdT9phKSiYfT140OqlpQSVnliJS5NIOqEU7xV4sFQPL/JPKCkAFq
+         PwlbIjGPTRwduXoniNFkUbcZsjT3bgBSgBGHgjd9Io8ivGCMOdVkPO/ZWu+ExR8K4XPy
+         DZ70ljMqo4rp+a1znne4egQC4SD4tLUbIhiOARcme1O7RA9WncdUkkPeVg80ND5oDVmi
+         0KSwg9NErUiX9XlVNnc811d+t92gs/vdd7+sb5QszUnFi5+UA4jhO02qouFVy0/n6ZVl
+         bHzf39nr5D73s/4Ocx08i9q0l+Oiq+W7PaT8TeNDbbyv9J3MYJykWES0aM7zItneQOlj
+         NbxQ==
+X-Gm-Message-State: AOAM531fZe9au4B5MvuTEQTjKFTFYFerkWkwCXy6Ow5Fbk8Zott23o11
+        h7vVGz+1LCxNVsgPmGufgQ==
+X-Google-Smtp-Source: ABdhPJx4mqUeErTL5zMTBG9YHJaYCyB14MvsYiFFvSs7b9kRlnfDD+EsJoTB3qoU6UXWgac5Fd2V3A==
+X-Received: by 2002:a05:6830:22d3:: with SMTP id q19mr1007264otc.115.1608249561757;
+        Thu, 17 Dec 2020 15:59:21 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r14sm1571010ote.28.2020.12.17.15.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Dec 2020 15:59:20 -0800 (PST)
+Received: (nullmailer pid 467139 invoked by uid 1000);
+        Thu, 17 Dec 2020 23:59:19 -0000
+Date:   Thu, 17 Dec 2020 17:59:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and
+ improvements:
+Message-ID: <20201217235919.GA456454@robh.at.kernel.org>
+References: <20201216145231.1344317-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <6afaf91c-d0ce-265d-4b71-0ea8da19918b@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201216145231.1344317-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.12.2020 00:19, Daniel Lezcano пишет:
-> On 17/12/2020 21:28, Dmitry Osipenko wrote:
->> 17.12.2020 22:36, Daniel Lezcano пишет:
->>>>>> +					type = "critical";
->>>>>> +				};
->>>>>> +			};
->>>>>> +
->>>>>> +			cooling-maps {
->>>>>> +				map0 {
->>>>>> +					trip = <&trip0>;
->>>>>> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->>>>> You should add all CPUs here.
->>>>
->>>> All CPU cores are coupled on Tegra in regards to CPUFreq, hence I think
->>>> it won't make any difference if secondary CPU cores will be added here,
->>>> isn't it?
->>> The explanation is in the description of commit ef4734500407ce4d
->>
->> I think that really only makes sense if CPU cores have independent clock
->> rate management. 
-> 
-> ATM I did not see any ARM platform having a clock line per CPU but I may
-> be wrong.
-> 
->> IIRC, I actually made some research about this in the
->> past and intentionally removed the secondary cores from the
->> cooling-device since they didn't make any difference for a coupled CPU
->> cores.
->>
->> That commit also says:
->>
->> "But as soon as this CPU ordering changes and any other CPU is used to
->> bring up the cooling device, we will start seeing failures."
->>
->> I don't quite understand to what "failures" that commit referrers. I
->> tried to change the cpu0 to cpu1 in the cooling-device and don't see any
->> failures. Could you please clarify this?
->>
->> In general it should be fine to add all the cores to the cooling-device
->> and I'll do it in v3, but I want to make it clear why this is needed.
-> 
-> AFAIR, if CPU0 is unplugged the cooling device can not rebind to CPU1.
-> And if CPU0 is plugged in again, the cooling device fails to initialize.
-> 
-> And, if the CPUs are mapped with the physical CPU0 to Linux numbering
-> CPU1, the cooling device mapping will fail.
+On Wed, Dec 16, 2020 at 03:52:31PM +0100, Geert Uytterhoeven wrote:
+>   - Add reference to clock.yaml, and switch to unevaluatedProperties, to
+>     stop complaining about the presence of "assigned-clock-rates" and
+>     "assigned-clocks" in board DTS files,
+>   - Fix typo in "idt,voltage-microvolts" property name, to match example
+>     and driver code,
+>   - Add missing reference for "idt,voltage-microvolts",
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - There is no reason to wrap the (single) if condition in an allOf
+>     block,
 
-Alright, thank you.
+True, but more future proof with it and unnecessary churn IMO.
+
+>   - Fix obsolete property names in example.
+> 
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Notes:
+>   1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
+>      unfortunate, as Documentation/devicetree/bindings/property-units.txt
+>      suggests to not have the trailing edge.
+>      Can we still fix the driver and bindings?  While this entered
+>      uptstream in v5.9, there are no users in next-20201216.
+> 
+>   2. Due to "clock-output-names" being part of
+>      dt-schema/schemas/clock/clock.yaml, the presence of this property
+>      does not trigger an error.  Adding "clock-output-names: false"
+>      can fix that.  But given this property is deprecated, except for
+>      very specific use cases, explicitly allowing it for those few use
+>      cases would be better.
+> ---
+>  .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
+>  1 file changed, 29 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> index 2ac1131fd9222a86..14851e76f6342095 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> @@ -33,6 +33,9 @@ description: |
+>  maintainers:
+>    - Luca Ceresoli <luca@lucaceresoli.net>
+>  
+> +allOf:
+> +  - $ref: clock.yaml#
+
+No, that's not right. clock.yaml is already applied unconditionally.
+
+You need to define assigned-clocks, etc. here just like 'clocks' and 
+define how many entries. Or convince me they should be allowed on any 
+node.
+
+> +
+>  properties:
+>    compatible:
+>      enum:
+> @@ -73,40 +76,42 @@ patternProperties:
+>          $ref: /schemas/types.yaml#/definitions/uint32
+>          minimum: 0
+>          maximum: 6
+> -      idt,voltage-microvolt:
+> +      idt,voltage-microvolts:
+
+Can we fix the driver? No in tree users...
+
+>          description: The output drive voltage.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+>          enum: [ 1800000, 2500000, 3300000 ]
+>        idt,slew-percent:
+>          description: The Slew rate control for CMOS single-ended.
+>          $ref: /schemas/types.yaml#/definitions/uint32
+>          enum: [ 80, 85, 90, 100 ]
+>  
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+>    - '#clock-cells'
+>  
+> -allOf:
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          enum:
+> -            - idt,5p49v5933
+> -            - idt,5p49v5935
+> -    then:
+> -      # Devices with builtin crystal + optional external input
+> -      properties:
+> -        clock-names:
+> -          const: clkin
+> -        clocks:
+> -          maxItems: 1
+> -    else:
+> -      # Devices without builtin crystal
+> -      required:
+> -        - clock-names
+> -        - clocks
+> -
+> -additionalProperties: false
+> +if:
+> +  properties:
+> +    compatible:
+> +      enum:
+> +        - idt,5p49v5933
+> +        - idt,5p49v5935
+> +then:
+> +  # Devices with builtin crystal + optional external input
+> +  properties:
+> +    clock-names:
+> +      const: clkin
+> +    clocks:
+> +      maxItems: 1
+> +else:
+> +  # Devices without builtin crystal
+> +  required:
+> +    - clock-names
+> +    - clocks
+> +
+> +unevaluatedProperties: false
+>  
+>  examples:
+>    - |
+> @@ -135,13 +140,13 @@ examples:
+>              clock-names = "xin";
+>  
+>              OUT1 {
+> -                idt,drive-mode = <VC5_CMOSD>;
+> +                idt,mode = <VC5_CMOSD>;
+>                  idt,voltage-microvolts = <1800000>;
+>                  idt,slew-percent = <80>;
+>              };
+>  
+>              OUT4 {
+> -                idt,drive-mode = <VC5_LVDS>;
+> +                idt,mode = <VC5_LVDS>;
+>              };
+>          };
+>      };
+> -- 
+> 2.25.1
+> 
