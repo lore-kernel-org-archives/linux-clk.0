@@ -4,65 +4,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D93C2BBCA
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA2AC2BB40
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27C1423715
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2F7238E4
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 10:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbgLQKPG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 05:15:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47750 "EHLO mail.kernel.org"
+        id S1726291AbgLQKRj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 05:17:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbgLQKPG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Dec 2020 05:15:06 -0500
+        id S1726012AbgLQKRi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Dec 2020 05:17:38 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608200065;
-        bh=ozxZ6dxZmbFUVTMgivXPIwZxuBc4okdgQUn15Mxin2Q=;
+        s=k20201202; t=1608200218;
+        bh=R0x1PA8BvcIrgXrlUvqF6asRJGMm2WhicqNyzRbZC2o=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BW7ao28soZBekex1gecvum8HLhayaBnoeFjBUpcIUrfXdz0hMOFdKRzkCHXEIsOOZ
-         umcEjROyg/+BVIU6DaQFgMNB6RnATP0n9W/fQ4Jx8NBvZFF9wlNAOh+N8B3SOpDAxN
-         BOPcBBPr4XLrSTzd4JG0/iRWNdv+KUyK24SIIRSA+Atbzkm4cxBdgRv/pM3Iy+FWc1
-         KjVTvZFb/AgcDaXVMDxqcsRZn1ihupWrRVJVV0Cyc6dTGZPcliBnQ/sOJgm9tbqaQf
-         zvBjk2rBSNl4c9miJPek6g2nsOcKM9C12q0Cjoli0CpgjhChAZnVufQ3ofmb5ssqrk
-         r1sie8IyiNrkA==
+        b=mCL1L9zgdfqLhBl2s7Z9cWUEM5KEpflWhFZaOhh3dbYhlmraw4KTFW1Yh6wHlWEsS
+         Eu427VLD3QX6z2qjMeyRu7gLqwgHoiEJbuzK72wlgEYQMjpj66IKazEg3bIZCa0tS3
+         x14drQubinSh3dl3V1RbLu0itU7G9142RXMd3bMO9YFornBfgvT7byTXJcz706WCl2
+         DhVkteYoW7WUlR/JfEqu+NbvfpnB6F+FzQKyiO3PAujPt3HBZMSS9ChuQ+tRHiQsR4
+         taLbQSCM/AqHjaBNZixdrhHexcseMI3PvmqWJ/sxqc+53WDHEPCCCYeme3Zk6OycoJ
+         h2zjkylROTluw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20201024154346.9589-1-pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH] clk: exynos7: Mark aclk_fsys1_200 as critical
+In-Reply-To: <CH2PR04MB65227B0B94F919406CB84C28E7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
+References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com> <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com> <CH2PR04MB65227B0B94F919406CB84C28E7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
+Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, pawel.mikolaj.chmiel@gmail.com
-To:     pawel.mikolaj.chmiel@gmail.com, kgene@kernel.org, krzk@kernel.org,
-        mturquette@baylibre.com
-Date:   Thu, 17 Dec 2020 02:14:24 -0800
-Message-ID: <160820006410.1580929.8444804722224099547@swboyd.mtv.corp.google.com>
+Cc:     Sean Anderson <seanga2@gmail.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Date:   Thu, 17 Dec 2020 02:16:55 -0800
+Message-ID: <160820021596.1580929.1686334340234415270@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Not sure why this wasn't picked up in the samsung PR. Can you resend?
+Quoting Damien Le Moal (2020-12-17 00:13:57)
+> On 2020/12/17 17:10, Stephen Boyd wrote:
+> > Quoting Damien Le Moal (2020-12-13 05:50:42)
+> >> diff --git a/include/dt-bindings/clock/k210-clk.h b/include/dt-binding=
+s/clock/k210-clk.h
+> >> index 5a2fd64d1a49..b2de702cbf75 100644
+> >> --- a/include/dt-bindings/clock/k210-clk.h
+> >> +++ b/include/dt-bindings/clock/k210-clk.h
+> >> @@ -3,18 +3,51 @@
+> >>   * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
+> >>   * Copyright (c) 2020 Western Digital Corporation or its affiliates.
+> >>   */
+> >> -#ifndef K210_CLK_H
+> >> -#define K210_CLK_H
+> >> +#ifndef CLOCK_K210_CLK_H
+> >> +#define CLOCK_K210_CLK_H
+> >> =20
+> >>  /*
+> >> - * Arbitrary identifiers for clocks.
+> >> - * The structure is: in0 -> pll0 -> aclk -> cpu
+> >> - *
+> >> - * Since we use the hardware defaults for now, set all these to the s=
+ame clock.
+> >> + * Kendryte K210 SoC clock identifiers (arbitrary values).
+> >>   */
+> >> -#define K210_CLK_PLL0   0
+> >> -#define K210_CLK_PLL1   0
+> >> -#define K210_CLK_ACLK   0
+> >> -#define K210_CLK_CPU    0
+> >=20
+> > This seems to open a bisection hole. I see that ACLK is used in the
+> > existing dtsi file, and that is the same as CLK_CPU, but after this
+> > patch it will change to not exist anymore. Can we leave ACLK around
+> > defined to be 0? I imagine it won't be used in the future so we can
+> > remove it later. I can then apply this for v5.11-rc1 and then merge the
+> > clk driver patch in clk tree.
+> >=20
+> >> +#define K210_CLK_CPU   0
+> >> +#define K210_CLK_SRAM0 1
+> >> +#define K210_CLK_SRAM1 2
+> >=20
+>=20
+> Patch 6 of the series removes the use of K210_CLK_CPU and K210_CLK_ACLK f=
+rom the
+> device trees. I added that patch as the DT modification proper comes only=
+ at
+> patch 16. Maybe I should squash patch 6 into this one ?
+>=20
 
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-=
-exynos7.c
-> index c1ff715e960c..1048d83f097b 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -538,7 +538,8 @@ static const struct samsung_gate_clock top1_gate_clks=
-[] __initconst =3D {
->                 ENABLE_ACLK_TOP13, 28, CLK_SET_RATE_PARENT |
->                 CLK_IS_CRITICAL, 0),
->         GATE(CLK_ACLK_FSYS1_200, "aclk_fsys1_200", "dout_aclk_fsys1_200",
-> -               ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT, 0),
-> +               ENABLE_ACLK_TOP13, 24, CLK_SET_RATE_PARENT |
-> +               CLK_IS_CRITICAL, 0),
-> =20
-
-Please put a comment in the code why a clk is critical.
+Preferably the defines are just left alone forever and then forgotten.
+The dt-bindings directory is almost ABI and so changing numbers or
+removing defines is hard to do. Usually patches in this directory are an
+additive thing.
