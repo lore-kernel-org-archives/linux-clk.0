@@ -2,135 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7ABEC2BB9A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA0EC4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 898A82389E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D2A22389E
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Dec 2020 08:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbgLQIyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Dec 2020 03:54:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59754 "EHLO mail.kernel.org"
+        id S1727161AbgLQI4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Dec 2020 03:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbgLQIyl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Dec 2020 03:54:41 -0500
+        id S1726259AbgLQI4R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Dec 2020 03:56:17 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608195240;
-        bh=N4iCRKQ5T+IdPgDG6/JntbvuDR/5Iy5t84sQRrpsDaM=;
+        s=k20201202; t=1608195337;
+        bh=FL2t5hhudOLhIx0t130/8vEDyVq+PJWtHbS8rAyMkN0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OCohtkSGSmeckU3Jeo5YvNxdiDuc1KLDnm8UnKF5jSs7pnTbMH6Upz6XoiX6Y9684
-         bYIigips4cN0YKeQAfSMELNPVCGtG8/03MRdTQsNKh+FRuAJwxp+eVnFTRizuBLy5K
-         /NZWtl+0hBYR7PecKHEb2Lts4lG3SOFzpa8nBLW4grG3DROVvCKfLqAfYy0i63VvdA
-         UPxM6VzMnDX45pIZvckUyF60NluB5vHsj6dPAKXwL1Gr+TfeL3UeXnturfna1ew6bC
-         gPtDc6XB8YL3LEdio1m7XtrALo7D3ml7TWXSDiSKwz/YkhD3Pjv8rnOpMLk1Rv0teQ
-         oceMcokGDP+ZQ==
+        b=ZiG+mLQ5A3wW0ghkZBjIg8UDyUXMaOW8bwyNjDHUeNPtJ+mRhSIOmjjITTr+LAgIm
+         U8dp2cam+jr/Ae3xi5BMfDUUQ5w2qo+8EFiwtTrPNMpCtZu3XLFEn7HgEc5t8GQZXk
+         WKvTwuv3JyZJvVzsJgNkAlEHMP9q6CZhHeIiyEpnDJy9w+f2D8CSon1y/MMEZ9rHxG
+         6BI/5K5oZlUm6J6c6iPNTfvRSIocaxdOdeaJOxzgp6i1qM3MOEbiX0rgBgtP399gyq
+         knLkV0pXTzSp1/1XMwXfCSh7nfxvn/lhyLP8PUXSViR9TyTcKo+QOrt7LphgV2a93e
+         6vnnhPUso0KqQ==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201123040237.GA3013347@chromium.org>
-References: <1604887429-29445-1-git-send-email-weiyi.lu@mediatek.com> <1604887429-29445-24-git-send-email-weiyi.lu@mediatek.com> <20201123040237.GA3013347@chromium.org>
-Subject: Re: [PATCH v5 23/24] arm64: dts: mediatek: Add mt8192 clock controllers
+In-Reply-To: <20201209083921.879-1-tinghan.shen@mediatek.com>
+References: <20201209083921.879-1-tinghan.shen@mediatek.com>
+Subject: Re: [PATCH v2] clk: mediatek: Remove MT8192 unused clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
+Cc:     linux-clk@vger.kernel.org, srv_heupstream@mediatek.com,
         linux-mediatek@lists.infradead.org,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To:     Ikjoon Jang <ikjn@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>
-Date:   Thu, 17 Dec 2020 00:53:59 -0800
-Message-ID: <160819523908.1580929.4609336150609889474@swboyd.mtv.corp.google.com>
+        linux-arm-kernel@lists.infradead.org, weiyi.lu@mediatek.com,
+        ryan-jh.yu@mediatek.com, nathan.chung@mediatek.com,
+        erin.lo@mediatek.com, Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>, drinkcat@chromium.org,
+        matthias.bgg@gmail.com
+Date:   Thu, 17 Dec 2020 00:55:35 -0800
+Message-ID: <160819533548.1580929.12545650149091991895@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ikjoon Jang (2020-11-22 20:02:37)
-> On Mon, Nov 09, 2020 at 10:03:48AM +0800, Weiyi Lu wrote:
-> > Add clock controller nodes for SoC mt8192
-> >=20
-> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> > ---
-> >  arch/arm64/boot/dts/mediatek/mt8192.dtsi | 163 +++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 163 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot=
-/dts/mediatek/mt8192.dtsi
-> > index e12e024..92dcfbd 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-> > @@ -5,6 +5,7 @@
-> >   */
-> > =20
-> >  /dts-v1/;
-> > +#include <dt-bindings/clock/mt8192-clk.h>
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/pinctrl/mt8192-pinfunc.h>
-> > @@ -213,6 +214,24 @@
-> >                       };
-> >               };
-> > =20
-> > +             topckgen: syscon@10000000 {
-> > +                     compatible =3D "mediatek,mt8192-topckgen", "sysco=
-n";
-> > +                     reg =3D <0 0x10000000 0 0x1000>;
-> > +                     #clock-cells =3D <1>;
-> > +             };
-> > +
-> > +             infracfg: syscon@10001000 {
-> > +                     compatible =3D "mediatek,mt8192-infracfg", "sysco=
-n";
-> > +                     reg =3D <0 0x10001000 0 0x1000>;
-> > +                     #clock-cells =3D <1>;
-> > +             };
-> > +
-> > +             pericfg: syscon@10003000 {
-> > +                     compatible =3D "mediatek,mt8192-pericfg", "syscon=
-";
-> > +                     reg =3D <0 0x10003000 0 0x1000>;
-> > +                     #clock-cells =3D <1>;
-> > +             };
-> > +
+Quoting Tinghan Shen (2020-12-09 00:39:21)
+> From: "Tinghan Shen" <tinghan.shen@mediatek.com>
 >=20
-> There are 26 new bindings for mt8192 clock providers, "mediatek,mt8192-*'.
-> I guess the one reason of doing this is that those mmio blocks are
-> just scattered all around over different memory regions.
+> Remove MT8192 sspm clock
+>=20
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+> v2: resend patch to linux-mediatek because blocked by wrong mail setting.=
+ =20
+>=20
+> This patch depends on series "Mediatek MT8192 clock support"[1].
+>=20
+> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=3D37=
+9955=20
 
-Yeah it seems that Mediatek likes to scatter the clks into basically
-every IP block. The alternate approach would be to create virtual
-platform device children of those IP blocks to register the clks.
-
->=20
-> I wonder if there could be a simpler way of merging them into one
-> binding of "mediatek,mt8192-clocks" and converting all new bindings
-> into generic syscon:
->=20
->         mt8192-clocks: mt8192_clocks {
->                 compatible =3D "mediatek,mt8192-clocks";
->                 #clock-cells =3D <1>;
->=20
->                 infracfg: clk_infracfg {
->                         syscon =3D <&syscon_infracfg>;
->                 };
->                 pericfg: clk_pericfg {
->                         syscon =3D <&syscon_pericfg>:
->                 };
->         };
->=20
->         syscon_pericfg: syscon@10003000 {
->                 compatible =3D "syscon";
->                 reg =3D <0 0x10003000 0 0x1000>;
->         };
-
-Is the syscon used for anything besides a clk provider? Having a
-mt8192_clocks node is wrong. The syscon is the clk provider and it
-should have a #clock-cells property. Making up a node that doesn't have
-a reg property is usually a sign that something is wrong.
+Can this be rolled into that series?
