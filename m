@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FB2C2BBD4
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA28C2BBCF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15C3523AC2
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F234F23AC1
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgLRNao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 08:30:44 -0500
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:37908 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgLRNao (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 08:30:44 -0500
-Received: by mail-ot1-f41.google.com with SMTP id j20so1875658otq.5;
-        Fri, 18 Dec 2020 05:30:29 -0800 (PST)
+        id S1725857AbgLRNbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 08:31:46 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:44597 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbgLRNbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 08:31:46 -0500
+Received: by mail-oi1-f172.google.com with SMTP id d189so2752149oig.11;
+        Fri, 18 Dec 2020 05:31:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=V0B6SpAp400jy0Nr1f4hpRzCMLBpRIAKKSVGziUoQRU=;
-        b=Sr4gkXQQ5hjkCPnidBXFgF1Efu4plxWEA59I1DRKy4FXl6PDApn7+yCnQV2eFr8TNx
-         vO2/mrc+vRb4/sxq93lh3n7nITI9JNivLoFWmkX0ROBzLiy+7OG64Hf03Pw3gjWZcQgq
-         7Ek0btfpeS4apqoQfx9MGwf1BEhFhwUehzQVpdh+aZ55MYSSu15aAev6n2AsIdlT6a8H
-         XGZPVEyiydSykO3+uQqEFysdtdqcZcU229BZUhAVuQ31gZg8qIQtRk3AQEhvElDL4GcM
-         EFYsDyT94leed3hJ/3NFLWPDW7UsTqOqwZUNoACL0tb5LQPNzFWT5qDQlo9Qv0D/B3UF
-         gRJg==
-X-Gm-Message-State: AOAM530iHfpnVs3G5PqGnwz8+2Sc9FwB5xG+0WfNj5yvpXMZwr5HOcUR
-        34Ow7cviHy+L74BUPkjbodgBbNAz+iysYk7XZL0=
-X-Google-Smtp-Source: ABdhPJw8GsWQsuvQUI/YVpjBSgEoFcMekPJFzPxjFcVirzJKXEQ4aKMTs11jPN2JFsVN7d7kt2GgY+i0/pfqnIMecnQ=
-X-Received: by 2002:a9d:2203:: with SMTP id o3mr2774435ota.107.1608298203675;
- Fri, 18 Dec 2020 05:30:03 -0800 (PST)
+        bh=u/uHiSY1jzlikzMCWiqhEl6T7j9N3BvKiPHKYoaFlHE=;
+        b=SmQ6wwwxWH3e/vPVfcGCy3YYjLltvhH3FEO55CQYL++ZXv7vgoPFzamiEl2lI6LfEz
+         Q3BbfdmFtqXDxrLnAKFel2cpGB/W5rzwh7HqXVLCKuJawF9tWYDZvGXaJsqvQiPRHleY
+         vgM41X7o8c870JUEaoBX7EnAeG/cGbk+jYxGfY/xxayw3qnWgf70ks0VRPn/a4ZBlSST
+         5h8kHi5/6ERJddcY3of2BstgDGKsJ2cwKTP8vh9Z0SH9dx5QeYykmPncskgWKZXDNgIG
+         JPAGWrTWwKSFiXianMDlrnTjkim+dejcH9ChkJ6baTGNQsxnuHGx9TJ7x73yRFdFChjd
+         FepA==
+X-Gm-Message-State: AOAM531A8m8fpnLLXzP8GuKC13w6qNL2qPmDk2infXITE39KsFMZpXQt
+        yNuc5JpnUraU3EGN6gcCHeQgbAiebEY4gB/mKa31A+gOm6A=
+X-Google-Smtp-Source: ABdhPJwOatxzDMCcXfAY4GeVr8cxkf4K6NnALS+ss2ITlU60+UnJC15g9HdwZuUPOED5tNdy9jlTK+AKxoGpJyB3sf4=
+X-Received: by 2002:aca:3cc5:: with SMTP id j188mr1421999oia.54.1608298265381;
+ Fri, 18 Dec 2020 05:31:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20201216151931.851547-1-kieran.bingham+renesas@ideasonboard.com> <20201216151931.851547-3-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20201216151931.851547-3-kieran.bingham+renesas@ideasonboard.com>
+References: <20201216151931.851547-1-kieran.bingham+renesas@ideasonboard.com> <20201216151931.851547-4-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20201216151931.851547-4-kieran.bingham+renesas@ideasonboard.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Dec 2020 14:29:51 +0100
-Message-ID: <CAMuHMdUW7SGSVA9OvKaCnLVWfY4y_gGLqKg9tLhnpUhF2rBO=Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: r8a779a0: Add VSPD clock support
+Date:   Fri, 18 Dec 2020 14:30:54 +0100
+Message-ID: <CAMuHMdXcER3j9z2Uf8-XJjCw7N1Pg-VcVv9gFNNCiUQn_gpDnw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: renesas: r8a779a0: Add VSPX clock support
 To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,11 +56,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed, Dec 16, 2020 at 4:19 PM Kieran Bingham
 <kieran.bingham+renesas@ideasonboard.com> wrote:
-> Add clocks for the VSPD modules on the V3U.
+> Add clocks for the VSPX.
 >
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-In BSP we trust (for the parent clocks)...
+Let's trust the BSP on the parent clocks...
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-clk-for-v5.12.
