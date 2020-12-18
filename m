@@ -2,84 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A33C4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 21:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4869C3526D
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 22:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FADE23B88
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 21:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 882B423BA8
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 22:33:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbgLRVS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 16:18:59 -0500
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:39951 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbgLRVS7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 16:18:59 -0500
-Received: by mail-ot1-f48.google.com with SMTP id j12so3253386ota.7;
-        Fri, 18 Dec 2020 13:18:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=H68oJ1veub/N/sJgxu616Ofk95w8UIImHp8Gl1T/ERU=;
-        b=lQT7iRqmMs82opvO62N5C6jeWDmPtBCMQNwOQ1U8a8lKCSR2GwfTxi8fcd+mBmXrcy
-         RGcDdBDXdQ8T6aIPlWjE3utMZklaDxAobkjm82qAtYe8+pW5DWdHxF3nXNQ7ZFchGLT1
-         appaW5cKafJjqYSkf7qU4ZcUPFeB+eyXcmWs9rBhO+bz65Iddcf2LGa/8iPP1H0iTH5k
-         hAl5PXsO4bQH5yeRqDfwHdhBdLDNsRQCguzO7GWrP6CElsqzJ305Hl6TT8b7A21ut+DZ
-         NI7IaFSGPwov42zdeImjJDnprj1HQvdFs8QDsUwmOgknJUuXWX4IiY+Y4vRoqARL9Pnv
-         NyzQ==
-X-Gm-Message-State: AOAM530agVMDKv0/Of7CmbTphSYeruitdAWbbayEwJOQazRbvkC6XgeV
-        bhYJFkk3BIBbLglFUE80cA==
-X-Google-Smtp-Source: ABdhPJy8sQG5Cy69vLmv0EPAgz9Gu+Ggh0c7KDIAvES68hWv/VkEHe57wEWEs1xemVvo1hDc3Fmn/Q==
-X-Received: by 2002:a9d:208a:: with SMTP id x10mr4243581ota.260.1608326298191;
-        Fri, 18 Dec 2020 13:18:18 -0800 (PST)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t24sm2213662oou.4.2020.12.18.13.18.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Dec 2020 13:18:17 -0800 (PST)
-Received: (nullmailer pid 2192221 invoked by uid 1000);
-        Fri, 18 Dec 2020 21:18:15 -0000
-Date:   Fri, 18 Dec 2020 15:18:15 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/1] dt-bindings: clock: imx8qxp-lpcg: eliminate yamllint
- warnings
-Message-ID: <20201218211815.GF2190633@robh.at.kernel.org>
-References: <20201207045527.1607-1-thunder.leizhen@huawei.com>
- <20201207045527.1607-2-thunder.leizhen@huawei.com>
+        id S1726117AbgLRWd1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 17:33:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbgLRWd1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 18 Dec 2020 17:33:27 -0500
+X-Gm-Message-State: AOAM531xGHH4uwPJQabwPyW9wqjpKqR3SpZTlqrH3stFxMKqpSGLXz2N
+        u6IIndsTmuJ6bCWvCJS90JKihhQyIVj9I75+HA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608330766;
+        bh=9fdx5WlqMP3pT3GHHMBYbo7LX62Ad+VX0C8DiUhWuF8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fjb93JuE7gZk/1mLUbBUqoWkM1ddVOz4+IKaYcWM09nDcxqP/P0tTObKXz49JA+DH
+         cm4Ohb7fnx7P+ohBgeU/TgWMfbThBgs+8NNwlzZoza+yOAvt7QKAkyL4wGFtj+/JQ3
+         hlBnN8b5RvwFaUuL9bEKapgt6DEiXTYn5Pyu+mGOCNB43jz3bxuc367jv1HffU/CQ4
+         ejwejW5MNsvPE5GP6q0QHrAE/HUN6SkBPnWVgKX8pyOZpoiOKC88gIX+7y0aaizQvs
+         qoxf+750lIQKl5jCFE+Mc6OWClXlCWjf4YzEa9qqZ0AOOWIiHQjmZkOYzd8ggorbaJ
+         0cYsIer0ckhZg==
+X-Google-Smtp-Source: ABdhPJzOETG31WDEzknD8yJ8gpRVCi3kctdvpVOk4NcK0WFHXzCWvcU10Xdus/e6nXonbdeA3CiKSpG+AcAQl4R0/g8=
+X-Received: by 2002:a17:906:1197:: with SMTP id n23mr6097055eja.359.1608330765040;
+ Fri, 18 Dec 2020 14:32:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201207045527.1607-2-thunder.leizhen@huawei.com>
+References: <20201216145231.1344317-1-geert+renesas@glider.be>
+ <20201217235919.GA456454@robh.at.kernel.org> <CAMuHMdVO29He-KHDLp3S=2JyGwOT=tLcDCOw6MPqBvcBLdUCOw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVO29He-KHDLp3S=2JyGwOT=tLcDCOw6MPqBvcBLdUCOw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 18 Dec 2020 16:32:32 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLcjhRgkTh=SNEpbq-uuv3LixJ3ivSw+TQvPdCCEtFYNw@mail.gmail.com>
+Message-ID: <CAL_JsqLcjhRgkTh=SNEpbq-uuv3LixJ3ivSw+TQvPdCCEtFYNw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 07 Dec 2020 12:55:27 +0800, Zhen Lei wrote:
-> Eliminate the following yamllint warnings:
-> ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
-> :32:13:[warning] wrong indentation: expected 14 but found 12 (indentation)
-> :35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-> 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
+On Fri, Dec 18, 2020 at 5:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Rob,
+>
+> On Fri, Dec 18, 2020 at 12:59 AM Rob Herring <robh@kernel.org> wrote:
+> > On Wed, Dec 16, 2020 at 03:52:31PM +0100, Geert Uytterhoeven wrote:
+> > >   - Add reference to clock.yaml, and switch to unevaluatedProperties, to
+> > >     stop complaining about the presence of "assigned-clock-rates" and
+> > >     "assigned-clocks" in board DTS files,
+> > >   - Fix typo in "idt,voltage-microvolts" property name, to match example
+> > >     and driver code,
+> > >   - Add missing reference for "idt,voltage-microvolts",
+> > >   - Add missing "additionalProperties: false" for subnodes, to catch
+> > >     typos in properties,
+> > >   - There is no reason to wrap the (single) if condition in an allOf
+> > >     block,
+> >
+> > True, but more future proof with it and unnecessary churn IMO.
+>
+> OK, I'll drop that part.
+>
+> > >   - Fix obsolete property names in example.
+> > >
+> > > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > Notes:
+> > >   1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
+> > >      unfortunate, as Documentation/devicetree/bindings/property-units.txt
+> > >      suggests to not have the trailing edge.
+> > >      Can we still fix the driver and bindings?  While this entered
+> > >      uptstream in v5.9, there are no users in next-20201216.
+> > >
+> > >   2. Due to "clock-output-names" being part of
+> > >      dt-schema/schemas/clock/clock.yaml, the presence of this property
+> > >      does not trigger an error.  Adding "clock-output-names: false"
+> > >      can fix that.  But given this property is deprecated, except for
+> > >      very specific use cases, explicitly allowing it for those few use
+> > >      cases would be better.
+> > > ---
+> > >  .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
+> > >  1 file changed, 29 insertions(+), 24 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > index 2ac1131fd9222a86..14851e76f6342095 100644
+> > > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > @@ -33,6 +33,9 @@ description: |
+> > >  maintainers:
+> > >    - Luca Ceresoli <luca@lucaceresoli.net>
+> > >
+> > > +allOf:
+> > > +  - $ref: clock.yaml#
+> >
+> > No, that's not right. clock.yaml is already applied unconditionally.
+>
+> But without that, it complains about unevaluatedProperties?
 
-Applied, thanks!
+By design. You can't have other properties outside your binding unless
+you have a $ref to other schemas. Also, note that there's not a single
+other ref to clock.yaml.
+
+> > You need to define assigned-clocks, etc. here just like 'clocks' and
+> > define how many entries. Or convince me they should be allowed on any
+> > node.
+>
+> They are handled by of_clk_set_defaults(), which is applied to all
+> clock providers.
+
+What does that Linux implementation detail have to do with the bindings?
+
+The only other exception we have is pinctrl properties. They often
+aren't that interesting unless you have more than one (maybe we should
+only automatically allow the single case). That's maybe true in the
+assigned-clocks case too. However the big difference I see is pinctrl
+properties are almost always present whereas assign-clocks is more the
+exception. So I think it's good to be explicit where they are used.
+
+Rob
