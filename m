@@ -2,83 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F11C3527E
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B010BC3526B
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 20:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38945221E7
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7022023B8C
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 20:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgLRRib (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 12:38:31 -0500
-Received: from www.zeus03.de ([194.117.254.33]:35630 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729854AbgLRRiT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 18 Dec 2020 12:38:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=TGknKXM6Qe5ZJYWFCEHpNo135/r
-        ukfSQ0kDyG0JgwkA=; b=BJ6iOEdYqUKeqnbhrJluWZWEvjPnYIfGTutPlSfrA51
-        OjeaHjy59ii/kyEmSem58nEkB5FIiW1r/c6q4rvMWZZrCIxYyCU7tkRvANCKlb0r
-        9cpkbZlh7bIh/WWcCrQNneobkvJ3FwaU637gOLyCE7JMmLJTWbmt6Tzm4GHV6rjs
-        =
-Received: (qmail 3906654 invoked from network); 18 Dec 2020 18:37:35 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Dec 2020 18:37:35 +0100
-X-UD-Smtp-Session: l3s3148p1@pU8fkMC2ZJggAwDPXwIpAOUwDQytQs2L
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH 0/5] v3u: add support for RWDT
-Date:   Fri, 18 Dec 2020 18:37:25 +0100
-Message-Id: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.29.2
+        id S1726718AbgLRUOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 15:14:35 -0500
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:44009 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbgLRUOe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 15:14:34 -0500
+Received: by mail-ot1-f51.google.com with SMTP id q25so3068238otn.10;
+        Fri, 18 Dec 2020 12:14:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=g3RrY/5H2pNsMpu6ivf90VzQI9V5J/8AaKgeKCK7dbQ=;
+        b=YSQhqZ9YIDghOHfmWxXYxWXQwdbV2rdkCFx3AqQSnqnm+d7yBrbWmSNp14vFgnC+Ab
+         GZ1USHiviPy8j7Ots2wvKplRaWpa5KrM1rEgFgw4AnIdT0zFm90AutXtLUwKp/WgDd6y
+         PnKJhHQLxCV7w7sKfjYV2eEZOoCUfF6u0cw+DjlTSM3TSEJLac+km/RmGTq4GqdXxmHm
+         NbxqEuLE6gItIuVmq8CORD3qs6R56BUnUV9Sr6hKvlFWAIUh/ELVhwLFMBeEwSwnF7jP
+         81NQS7sJqyaoiVL1Zc47bP47Tn0uioIpOF+jMRoWF5jcbB3roX82yd7uO7EFdtsk6TN1
+         RhpA==
+X-Gm-Message-State: AOAM533OBslp2BtE/9wkA40NYXrqCOc/sRV2XLb1TzMoVYxO1fPpeCib
+        puYXRFZSSI8/xQ+4LuIILA==
+X-Google-Smtp-Source: ABdhPJyWxEs+KjRXMhcvoXJully+6tpRF+3fCMbOaLUN5jp5Oj0gdCDCFzDQrDoc79eGUooarLmJPQ==
+X-Received: by 2002:a9d:46f:: with SMTP id 102mr4185215otc.293.1608322433172;
+        Fri, 18 Dec 2020 12:13:53 -0800 (PST)
+Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u76sm451886oia.48.2020.12.18.12.13.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Dec 2020 12:13:52 -0800 (PST)
+Received: (nullmailer pid 2092213 invoked by uid 1000);
+        Fri, 18 Dec 2020 20:13:50 -0000
+Date:   Fri, 18 Dec 2020 14:13:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: clock: imx8qxp-lpcg: eliminate yamllint
+ warnings
+Message-ID: <20201218201350.GA2089699@robh.at.kernel.org>
+References: <20201207045527.1607-1-thunder.leizhen@huawei.com>
+ <20201207045527.1607-2-thunder.leizhen@huawei.com>
+ <160820093389.1580929.3915867007740168331@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <160820093389.1580929.3915867007740168331@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Here is the series to enable the RWDT on V3U. I took the DTS patches
-from the BSP, the rest was developed on mainline tree. Note that
-currently, the bootloader does not unmask the RWDT reset for us. This is
-why patch #5 is needed if you want a reboot. We need to see if this is
-going to be added to the bootloader later. Also, while the normal
-watchdog trigger works flawlessly, the 'reboot' command will triger a
-OOPS. This is a known issue also present on other Gen3 SoCs and will
-be addressed seperately soon.
+On Thu, Dec 17, 2020 at 02:28:53AM -0800, Stephen Boyd wrote:
+> Quoting Zhen Lei (2020-12-06 20:55:27)
+> > Eliminate the following yamllint warnings:
+> > ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+> > :32:13:[warning] wrong indentation: expected 14 but found 12 (indentation)
+> > :35:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+> > 
+> > Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> > ---
+> 
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-Other than that, patch #1 should go in via watchdog, the rest via
-Geert's various trees :)
+If I tagged it, I was expecting you to pick up. But I'm gathering up all 
+the fixes for what landed in Linus' tree, so I'll apply.
 
-Looking forward to comments.
-
-Happy hacking and have a nice weekend!
-
-
-Hoang Vo (2):
-  arm64: dts: renesas: r8a779a0: Add RWDT node
-  arm64: dts: renesas: falcon: Enable watchdog timer
-
-Wolfram Sang (3):
-  dt-bindings: watchdog: renesas,wdt: add r8a779a0 (V3U) support
-  clk: renesas: r8a779a0: Add RWDT clocks
-  WIP soc: v3u: allow WDT reset
-
- .../devicetree/bindings/watchdog/renesas,wdt.yaml      |  1 +
- arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts        |  5 +++++
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi              | 10 ++++++++++
- drivers/clk/renesas/r8a779a0-cpg-mssr.c                |  9 +++++++++
- drivers/soc/renesas/rcar-rst.c                         |  8 ++++++++
- 5 files changed, 33 insertions(+)
-
--- 
-2.29.2
-
+Rob
