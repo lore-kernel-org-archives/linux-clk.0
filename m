@@ -2,91 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C73C4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 12:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3F9C2BBD4
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61CBA239FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 12:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2D823AC1
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbgLRMxj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 07:53:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbgLRMxj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 07:53:39 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BFDC0617B0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Dec 2020 04:52:58 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 5osu2400Y4C55Sk01osuC8; Fri, 18 Dec 2020 13:52:55 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kqFFe-00Bgl9-IK; Fri, 18 Dec 2020 13:52:54 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kqFFd-00G0f3-VQ; Fri, 18 Dec 2020 13:52:53 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        id S1725535AbgLRN35 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 08:29:57 -0500
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:34284 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbgLRN35 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 08:29:57 -0500
+Received: by mail-ot1-f50.google.com with SMTP id a109so1898661otc.1;
+        Fri, 18 Dec 2020 05:29:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aMRGB449hjz5tfuR0cZWzoGKIVx7fyplgJfzyOfEfhg=;
+        b=gDDFz/XJgKSgwSuQr9nmO+kDJ58QntDkXnqWRb/aaZLawyjIEFYXaWckGsyFnqWjls
+         DKU74RbFhR25ikO5TdKtmfLhyIXoJJdZ6GDXxAB9zH7lbz1jl4JbV5E3Ue/juTPzKofb
+         HDih9RZTImU0VJ/sw2JaeRuBpLPSkFg+PqScOuUO/JbGZWdIhD8xKIQHWLXJbGVLXWyB
+         qKh6ZshC4gx+0mo8vipjzvEcoyfwIY8RV3HRvos+nXN8nIcRjWK0XzfUJ4B4sLjUI3yE
+         CjCAnLPB3jCs7dGsSxvqDiDDagy4eRht75jpP4bLZqTpd52/NygdC6SFwssPtSNQVelh
+         aneg==
+X-Gm-Message-State: AOAM531pYJ4z9Jh5zitGRp+IjmuaC/VmCkB1dtq0efUsR+nlMha5eQGv
+        Bs3BEUBu7SX2tgVqvsYdUZlufsr4xfPc6ICNw1w=
+X-Google-Smtp-Source: ABdhPJw0kFu8R3jrLPsYIAAeOQvwlI0hDakunZDCOY0invsd+TvMd3D7hg33Z1b4fYYABq8651r+PbX/xUjvDi7GQ/c=
+X-Received: by 2002:a9d:2203:: with SMTP id o3mr2771790ota.107.1608298156545;
+ Fri, 18 Dec 2020 05:29:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20201216151931.851547-1-kieran.bingham+renesas@ideasonboard.com> <20201216151931.851547-2-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20201216151931.851547-2-kieran.bingham+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 18 Dec 2020 14:29:04 +0100
+Message-ID: <CAMuHMdU-qXvV67czohtXm7j0--nmL9iHtED38i1f40guYKDxaA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a779a0: Add FCPVD clock support
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: vc5: Use "idt,voltage-microvolt" instead of "idt,voltage-microvolts"
-Date:   Fri, 18 Dec 2020 13:52:53 +0100
-Message-Id: <20201218125253.3815567-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to
-yaml") accidentally changed "idt,voltage-microvolts" to
-"idt,voltage-microvolt" in the DT bindings, while the driver still used
-the former.
+On Wed, Dec 16, 2020 at 4:19 PM Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Add clocks for the FCP for VSP-D module.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Update the driver to match the bindings, as
-Documentation/devicetree/bindings/property-units.txt actually recommends
-using "microvolt".
+Let's trust the BSP on the parent clocks...
 
-Fixes: 260249f929e81d3d ("clk: vc5: Enable addition output configurations of the Versaclock")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-There are no upstream users yet, but they are planned for v5.12, so I
-think this should be in v5.11-rc1.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.12.
 
-Thanks!
----
- drivers/clk/clk-versaclock5.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index c90460e7ef2153fe..43db67337bc06824 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -739,8 +739,8 @@ static int vc5_update_power(struct device_node *np_output,
- {
- 	u32 value;
- 
--	if (!of_property_read_u32(np_output,
--				  "idt,voltage-microvolts", &value)) {
-+	if (!of_property_read_u32(np_output, "idt,voltage-microvolt",
-+				  &value)) {
- 		clk_out->clk_output_cfg0_mask |= VC5_CLK_OUTPUT_CFG0_PWR_MASK;
- 		switch (value) {
- 		case 1800000:
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
