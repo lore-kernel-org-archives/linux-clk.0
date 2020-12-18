@@ -2,117 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CBBC2BBD5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11C8C2D0E4
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D71CD23B03
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 13:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65CF723B6C
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbgLRNwS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 08:52:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgLRNwR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 08:52:17 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25989C0617A7;
-        Fri, 18 Dec 2020 05:51:37 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id h205so5601449lfd.5;
-        Fri, 18 Dec 2020 05:51:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ud+ydgJ9az3Hiu3dG94tCj+AH/qmY9t585UF2V6T/f4=;
-        b=YU3/c4y3sS1EheZWjrflGG0HpXjJJh+/DPVIl2CatwZ1345AQ4Ps9XE9KOttvWkWfB
-         peJI/hYVrD79Qiu/52g+nyfaJH2iQHi9fESs9e7PSVrJLQHc07zXPCiP3ITLCpVWAREv
-         qwx9cAfmpQTao8nPDvEfblvcaXemydgisPKlrfX9PihSCkXKt7/1dRn16B8ThPctm/CV
-         ZH9TO87G8fCVtoY3YnsNGa1q53+i9enUSbke6lKkziiXHDIDgowFL/nbnOhxBRVQBjvP
-         JCPfR7HU53ThAtkHaJ4/gZyc3fVHY+CWI8lg+84lqNnatqsSbuTO6NpiZ7ccnulU64Z/
-         2C0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ud+ydgJ9az3Hiu3dG94tCj+AH/qmY9t585UF2V6T/f4=;
-        b=lRDInVLcDNe+Hdd52RtIPM9wOfU2EG64lMYcYCK7tM4w+mFZoyo1w3KWDxk3DFmmE3
-         53X/qJSyYzWPyOKhfhDT9G/jtXFccQsReJESSL6T0ZWFwccJAPtKcqzeeeOLTBgQ6Vg8
-         S5sI12Rxxendj0lAPx9ZXJOXHXFNVe7snLJmiwFMTg0zOxIFE+yXy52lDKqBYNGWEvy4
-         oNTPj9UNk1pZsG3Xlu0dzkx6z2wUxtr6oqiGlE5p8K81C2bXfiARed9yK8jO2OiY4tAR
-         Eka6XFOMWV6B0rq4xYLwQ3GfWqNcyjHsKzUc6NCFgkh5UMRkmJwswllYTrByNT9+GnEo
-         nX0w==
-X-Gm-Message-State: AOAM531knDPYfEq9aFiDCXD4/nW3cwY31qgZ9GG8xt/G/J1G/w8/CVzC
-        BWkRwC6ZUCdej8JefMFf0Apt3tfNZyw=
-X-Google-Smtp-Source: ABdhPJwlBZ8Blm2A+JOtuSZuYrjATZyxdK51+2jHdPBCMrrfUZ3Pxpve0dGkaB8ZmDWkCYbAToxNUg==
-X-Received: by 2002:a2e:b896:: with SMTP id r22mr1801148ljp.442.1608299495548;
-        Fri, 18 Dec 2020 05:51:35 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id i10sm934975lfd.202.2020.12.18.05.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Dec 2020 05:51:34 -0800 (PST)
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1728088AbgLRRiU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 12:38:20 -0500
+Received: from www.zeus03.de ([194.117.254.33]:35662 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730410AbgLRRiT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 18 Dec 2020 12:38:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=MYzs9HdZf1z8X0
+        +WtacPHW/SiQSQbqLwBKoeknbWpHI=; b=hykiViAxqC2NNKDPZ6Tc6ZN276SUww
+        u4MdqPAzQsNJysHHEWG5l2RZbgp/GxlRg4nvX1p3jOp8RrHkTlYWg2jbzQvG6Ker
+        M6TQgdPs8YdZeHi7W7RPuVyD1sfPp93ARunCplVJM5l1n1uX+FMLMM5pNL5U/4S3
+        Yx5sLbUQ7hcqE=
+Received: (qmail 3906722 invoked from network); 18 Dec 2020 18:37:36 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Dec 2020 18:37:36 +0100
+X-UD-Smtp-Session: l3s3148p1@0t1skMC2aJggAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c0976db7-ae66-740c-d95f-501d81c99fa0@gmail.com>
-Date:   Fri, 18 Dec 2020 16:51:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] clk: renesas: r8a779a0: Add RWDT clocks
+Date:   Fri, 18 Dec 2020 18:37:27 +0100
+Message-Id: <20201218173731.12839-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
+References: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.12.2020 10:14, Viresh Kumar пишет:
-> On 17-12-20, 21:05, Dmitry Osipenko wrote:
->> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
->> power consumption and heating of the Tegra chips. Tegra SoC has multiple
->> hardware units which belong to a core power domain of the SoC and share
->> the core voltage. The voltage must be selected in accordance to a minimum
->> requirement of every core hardware unit.
-> 
-> Please submit the OPP changes separately (alone), it will never get
-> merged this way. Send fixes at the top, any features you want later in
-> the series. It is fine for you to base your series of patches which
-> are under review, you just need to mention that in your cover letter
-> for your platform's patchset.
-> 
+And introduce critical clocks, too, because RWDT is one.
 
-Alright, although I haven't pretended that v2 patches should be merged
-right away since they are fundamentally different from v1, and thus, all
-patches need to be reviewed first.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-If the current OPP changes look good to you, then please give yours r-b
-to the patches. Thanks in advance!
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index aa5389b04d74..bf9fdcdd7d85 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -188,6 +188,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+ 	DEF_MOD("vin35",	827,	R8A779A0_CLK_S1D1),
+ 	DEF_MOD("vin36",	828,	R8A779A0_CLK_S1D1),
+ 	DEF_MOD("vin37",	829,	R8A779A0_CLK_S1D1),
++	DEF_MOD("rwdt",		907,	R8A779A0_CLK_R),
+ };
+ 
+ static spinlock_t cpg_lock;
+@@ -261,6 +262,10 @@ static struct clk * __init rcar_r8a779a0_cpg_clk_register(struct device *dev,
+ 					 __clk_get_name(parent), 0, mult, div);
+ }
+ 
++static const unsigned int r8a779a0_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(907),	/* RWDT */
++};
++
+ /*
+  * CPG Clock Data
+  */
+@@ -311,6 +316,10 @@ const struct cpg_mssr_info r8a779a0_cpg_mssr_info __initconst = {
+ 	.num_mod_clks = ARRAY_SIZE(r8a779a0_mod_clks),
+ 	.num_hw_mod_clks = 15 * 32,
+ 
++	/* Critical Module Clocks */
++	.crit_mod_clks		= r8a779a0_crit_mod_clks,
++	.num_crit_mod_clks	= ARRAY_SIZE(r8a779a0_crit_mod_clks),
++
+ 	/* Callbacks */
+ 	.init = r8a779a0_cpg_mssr_init,
+ 	.cpg_clk_register = rcar_r8a779a0_cpg_clk_register,
+-- 
+2.29.2
+
