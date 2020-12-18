@@ -2,107 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909B9C2BBD5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 07:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E85C4361B
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 11:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52E2923A23
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 07:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13E0B23A7D
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 11:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730125AbgLRHPj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 02:15:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbgLRHPi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 02:15:38 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91353C061282
-        for <linux-clk@vger.kernel.org>; Thu, 17 Dec 2020 23:14:58 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id j1so937394pld.3
-        for <linux-clk@vger.kernel.org>; Thu, 17 Dec 2020 23:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5uBH5KsWopbV7FffwP9cu3qwTCPbWsa/gpWuvPcUSsg=;
-        b=QAa+QgBNWGXQOzLHcEttslyMX7yfVRFnmsie63URsvH5GVYmCfqLASAvZuwYX9MIET
-         eDmE1hBXyewXRMKiWj91RDHrjpb/kMVBkEeGid+6WGS4/m50KcVQrRCW8T8QrPc/NQ/n
-         xkFA8qANdUY/ZMDZ1U10ACf2taGB60mF9xbpsuylhp3HoF/iXl+pGW94NzxojOGrxEL+
-         jbM/5E7N+gPH/W3t8wPwMcbtn6s1VbaU8LAIXwc8wN+nbdu3UYGXyxVvioFI2s3fGdha
-         qUWYb/n/DIAy3pLKM/lOTXvtnloCMYB9AUwFndWYRMY4bs1NSawqpvTYjUnjhU9MTH8e
-         72jA==
+        id S1726227AbgLRLmw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Dec 2020 06:42:52 -0500
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:45642 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgLRLmw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 06:42:52 -0500
+Received: by mail-ot1-f41.google.com with SMTP id h18so1594032otq.12;
+        Fri, 18 Dec 2020 03:42:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5uBH5KsWopbV7FffwP9cu3qwTCPbWsa/gpWuvPcUSsg=;
-        b=r9SwWrkSsEnuoMKj3ngNE2EnFGdSjlAGkh3Yd5RzLNCCiEzJF6NtcU0DK4+WvYndaz
-         mb9duXpOlVg954dU3V83+6ZIp9kJpiTVkmjsfZ1ozgKGLWrz+rrZTp0xTgB9DCbP8tnf
-         z48khwx+jB4w9wJOd9hZqeysaq5RYJXGvuZ1+ZQt9axyIZSJUjIR+MoLWtLe4bg+ZL4k
-         wqNq86Yh4b/f/RWVM8j0GkjlFtdnlkx0ViY5y4f0EV4y/Ed564jCMmJxlrXSEQAmyCBf
-         hIoxcmxfV6LNbvsCRya5xW5q3DrShN63GTIx2L3B7dJ1/455Hu388Qq/9pre7Uwu88ta
-         LthQ==
-X-Gm-Message-State: AOAM531I00Vhf0yRWVHFAfTK1WAJf6BgXYtduZAFKX7GdOikRWcZLb69
-        AuvfePGPYMlfKn421HKb5iMZSQ==
-X-Google-Smtp-Source: ABdhPJxh6Vc+BoEp2nvhSj4YmNHb7ku5mMkwmUaQUKeZHUbZ9rzCY6oJyHfeJDwsJp2g/i5HDfSMhg==
-X-Received: by 2002:a17:902:8f94:b029:da:d168:4443 with SMTP id z20-20020a1709028f94b02900dad1684443mr3091172plo.57.1608275697958;
-        Thu, 17 Dec 2020 23:14:57 -0800 (PST)
-Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id j20sm7721737pfd.106.2020.12.17.23.14.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Dec 2020 23:14:57 -0800 (PST)
-Date:   Fri, 18 Dec 2020 12:44:55 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-Message-ID: <20201218071455.vdeozvvnmkjtrejt@vireshk-i7>
-References: <20201217180638.22748-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hspCpWkXqd6IcgOQp9Fs7ymkdUd3LEicCVc4QESQhZQ=;
+        b=GEbIR59+qu+XtsJzQtsINYzI1uXUykUY9a/ALL45CHRdTYYWoFbv3stzX8Dm7E+i13
+         CWs1UNddggNp6XWxbFMYziW2wW0Wywo7KQKkt6Y2ZxTB2FTopsdDil/98YQbwAvzMPdn
+         BhtrQXBaXI3akDFSLfwz0gG61HnmnqzprhmpajjUaQ7Wr8I+nqg4xafUc8QcptyYlcEW
+         dmQalHtiV4jtq8mpKqZvsjBJmqRuVm2+QyiGebndhTkufu7b42xQO6J7nWe2Imvytq2U
+         GnBBbg0xpGRfvD+7md1OapmnJT6xF3bymY8JS9TjhGgvxNOY5GvQOwSMX8iXjRSNZW3O
+         FK9w==
+X-Gm-Message-State: AOAM5323K3QMrdJgY1x8vS1ejlZSzNcGcTQYqtdo0PNlGa4bHhk8xuHy
+        glhp62hmotakdbWqWsw/MYATaSmJITj1F4Gvj5o=
+X-Google-Smtp-Source: ABdhPJx3TFZxpMf8dvYUErvuGCH1MqJNhv78Sa50rDyIcFpCDau27vV7e3Lg9WjxQDJZ/8wNqgPT89ge177NB+i6UKw=
+X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr2481735oth.250.1608291731258;
+ Fri, 18 Dec 2020 03:42:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-1-digetx@gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20201216145231.1344317-1-geert+renesas@glider.be> <20201217235919.GA456454@robh.at.kernel.org>
+In-Reply-To: <20201217235919.GA456454@robh.at.kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 18 Dec 2020 12:42:00 +0100
+Message-ID: <CAMuHMdVO29He-KHDLp3S=2JyGwOT=tLcDCOw6MPqBvcBLdUCOw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+To:     Rob Herring <robh@kernel.org>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17-12-20, 21:05, Dmitry Osipenko wrote:
-> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
-> power consumption and heating of the Tegra chips. Tegra SoC has multiple
-> hardware units which belong to a core power domain of the SoC and share
-> the core voltage. The voltage must be selected in accordance to a minimum
-> requirement of every core hardware unit.
+Hi Rob,
 
-Please submit the OPP changes separately (alone), it will never get
-merged this way. Send fixes at the top, any features you want later in
-the series. It is fine for you to base your series of patches which
-are under review, you just need to mention that in your cover letter
-for your platform's patchset.
+On Fri, Dec 18, 2020 at 12:59 AM Rob Herring <robh@kernel.org> wrote:
+> On Wed, Dec 16, 2020 at 03:52:31PM +0100, Geert Uytterhoeven wrote:
+> >   - Add reference to clock.yaml, and switch to unevaluatedProperties, to
+> >     stop complaining about the presence of "assigned-clock-rates" and
+> >     "assigned-clocks" in board DTS files,
+> >   - Fix typo in "idt,voltage-microvolts" property name, to match example
+> >     and driver code,
+> >   - Add missing reference for "idt,voltage-microvolts",
+> >   - Add missing "additionalProperties: false" for subnodes, to catch
+> >     typos in properties,
+> >   - There is no reason to wrap the (single) if condition in an allOf
+> >     block,
+>
+> True, but more future proof with it and unnecessary churn IMO.
+
+OK, I'll drop that part.
+
+> >   - Fix obsolete property names in example.
+> >
+> > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Notes:
+> >   1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
+> >      unfortunate, as Documentation/devicetree/bindings/property-units.txt
+> >      suggests to not have the trailing edge.
+> >      Can we still fix the driver and bindings?  While this entered
+> >      uptstream in v5.9, there are no users in next-20201216.
+> >
+> >   2. Due to "clock-output-names" being part of
+> >      dt-schema/schemas/clock/clock.yaml, the presence of this property
+> >      does not trigger an error.  Adding "clock-output-names: false"
+> >      can fix that.  But given this property is deprecated, except for
+> >      very specific use cases, explicitly allowing it for those few use
+> >      cases would be better.
+> > ---
+> >  .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
+> >  1 file changed, 29 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > index 2ac1131fd9222a86..14851e76f6342095 100644
+> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > @@ -33,6 +33,9 @@ description: |
+> >  maintainers:
+> >    - Luca Ceresoli <luca@lucaceresoli.net>
+> >
+> > +allOf:
+> > +  - $ref: clock.yaml#
+>
+> No, that's not right. clock.yaml is already applied unconditionally.
+
+But without that, it complains about unevaluatedProperties?
+
+> You need to define assigned-clocks, etc. here just like 'clocks' and
+> define how many entries. Or convince me they should be allowed on any
+> node.
+
+They are handled by of_clk_set_defaults(), which is applied to all
+clock providers.
+
+> > @@ -73,40 +76,42 @@ patternProperties:
+> >          $ref: /schemas/types.yaml#/definitions/uint32
+> >          minimum: 0
+> >          maximum: 6
+> > -      idt,voltage-microvolt:
+> > +      idt,voltage-microvolts:
+>
+> Can we fix the driver? No in tree users...
+
+I think so.  Will do so.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-viresh
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
