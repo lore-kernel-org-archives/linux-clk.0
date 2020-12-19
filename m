@@ -2,105 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A70C4361B
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 23:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F349C0018C
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 10:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5DDA23BA8
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Dec 2020 23:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08967208C7
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 10:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbgLRXYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Dec 2020 18:24:12 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:47346 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726011AbgLRXYM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Dec 2020 18:24:12 -0500
-X-Greylist: delayed 3886 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Dec 2020 18:24:10 EST
-Received: from [77.244.183.192] (port=64434 helo=[192.168.178.24])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1kqO5D-00G3A9-EN; Fri, 18 Dec 2020 23:18:43 +0100
-Subject: Re: [PATCH] clk: vc5: Use "idt,voltage-microvolt" instead of
- "idt,voltage-microvolts"
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726479AbgLSK6G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 05:58:06 -0500
+Received: from mail-ej1-f53.google.com ([209.85.218.53]:34661 "EHLO
+        mail-ej1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbgLSK6G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Dec 2020 05:58:06 -0500
+Received: by mail-ej1-f53.google.com with SMTP id g20so6920291ejb.1;
+        Sat, 19 Dec 2020 02:57:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EpBQBebW9DJ389TpaCDahYCkX51lISZZEMe47kdJ6lQ=;
+        b=IAsruEHJrg2v6P8e0bPaSWQU27WQGHNOQafpZafuRhsmkORmMtmgK0WOjeWIBR1nvA
+         XABh1JLTemUs1aKwRp3FqKge3xIKSgZo4efxOUWUswCbdcZSNM95c4+xraIPgYoYpEDe
+         b8DX+xelZ7CTjfn9iK7U7dZGNqI0U8ZofDamSbwiR+Y0aKxEFDPXnlUfnDfxbWCoidmK
+         3IYUfWytgf/O4LoBR6NTbPzYK2Gi9VniI2nZbPkN0ulBZIGUmoG29h4suHjHWNIXJC9L
+         Qqmdw4GLqHCP0R3rG7IMHMUkCY8uX+uZiWEUAGREbjqP7dBM6lTcUU2/hq4qoL9JlCQv
+         egbA==
+X-Gm-Message-State: AOAM530McxTATj0tA4JvZg130C7LGBPxRV+9LHbVHfFDbwNyPO11M7G/
+        T3BiPwMUZNvqA5oQwQKxzGk=
+X-Google-Smtp-Source: ABdhPJyWR/64ayreIal22iSj58nHkNVe6iV5yUrUJ5pe5qe42bhP84ft40zxoVfZe823dJe4zocuIg==
+X-Received: by 2002:a17:906:4ec7:: with SMTP id i7mr8055250ejv.252.1608375443178;
+        Sat, 19 Dec 2020 02:57:23 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id pk19sm6666596ejb.32.2020.12.19.02.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Dec 2020 02:57:22 -0800 (PST)
+Date:   Sat, 19 Dec 2020 11:57:20 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201218125253.3815567-1-geert+renesas@glider.be>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <0b3f6954-273c-d15d-94c3-a80c7df23f56@lucaceresoli.net>
-Date:   Fri, 18 Dec 2020 23:18:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Michael Turquette <mturquette@baylibre.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 07/48] dt-bindings: arm: tegra: Add binding for core
+ power domain
+Message-ID: <20201219105720.GA5323@kozik-lap>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-8-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201218125253.3815567-1-geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Disposition: inline
+In-Reply-To: <20201217180638.22748-8-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
-
-On 18/12/20 13:52, Geert Uytterhoeven wrote:
-> Commit 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to
-> yaml") accidentally changed "idt,voltage-microvolts" to
-> "idt,voltage-microvolt" in the DT bindings, while the driver still used
-> the former.
+On Thu, Dec 17, 2020 at 09:05:57PM +0300, Dmitry Osipenko wrote:
+> All NVIDIA Tegra SoCs have a core power domain where majority of hardware
+> blocks reside. Add binding for the core power domain.
 > 
-> Update the driver to match the bindings, as
-> Documentation/devicetree/bindings/property-units.txt actually recommends
-> using "microvolt".
-> 
-> Fixes: 260249f929e81d3d ("clk: vc5: Enable addition output configurations of the Versaclock")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> There are no upstream users yet, but they are planned for v5.12, so I
-> think this should be in v5.11-rc1.
+>  .../arm/tegra/nvidia,tegra20-core-domain.yaml | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
 > 
-> Thanks!
-> ---
->  drivers/clk/clk-versaclock5.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+> new file mode 100644
+> index 000000000000..f3d8fd2d8371
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-core-domain.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/tegra/nvidia,tegra20-core-domain.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Core Power Domain
+> +
+> +maintainers:
+> +  - Dmitry Osipenko <digetx@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra20-core-domain
+> +      - nvidia,tegra30-core-domain
+
+The file should be in bindings/power.
+Include also the power-domain.yaml schema.
+
+> +
+> +  operating-points-v2:
+> +    description:
+> +      Should contain level, voltages and opp-supported-hw property.
+> +      The supported-hw is a bitfield indicating SoC speedo or process
+> +      ID mask.
+> +
+> +  "#power-domain-cells":
+> +    const: 0
+> +
+> +  power-supply:
+> +    description:
+> +      Phandle to voltage regulator connected to the SoC Core power rail.
+> +
+> +required:
+> +  - compatible
+> +  - operating-points-v2
+> +  - "#power-domain-cells"
+> +  - power-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    core-domain {
+
+power-domain (to follow schema and devicetree spec)
+
+Best regards,
+Krzysztof
+
+
+> +        compatible = "nvidia,tegra20-core-domain";
+> +        operating-points-v2 = <&opp_table>;
+> +        power-supply = <&regulator>;
+> +        #power-domain-cells = <0>;
+> +    };
+> -- 
+> 2.29.2
 > 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index c90460e7ef2153fe..43db67337bc06824 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -739,8 +739,8 @@ static int vc5_update_power(struct device_node *np_output,
->  {
->  	u32 value;
->  
-> -	if (!of_property_read_u32(np_output,
-> -				  "idt,voltage-microvolts", &value)) {
-> +	if (!of_property_read_u32(np_output, "idt,voltage-microvolt",
-> +				  &value)) {
-
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-
-Now the example in the bindings needs the same fix. I guess you doing it
-in your "Miscellaneous fixes and improvements" v2 series, otherwise I
-can do that.
-
-Thanks,
--- 
-Luca
