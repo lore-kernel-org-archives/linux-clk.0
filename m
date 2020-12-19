@@ -4,58 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF28C4361B
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411B3C4361B
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 584CD23131
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D7BD22D01
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgLSTtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Dec 2020 14:49:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41660 "EHLO mail.kernel.org"
+        id S1727435AbgLSTx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 14:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727426AbgLSTtO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 Dec 2020 14:49:14 -0500
+        id S1727427AbgLSTx7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 Dec 2020 14:53:59 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608407314;
-        bh=tw9RrhmPriJl25KLA4OPCo3uuWpUbQk/llrJeqULCXk=;
+        s=k20201202; t=1608407598;
+        bh=lXCGxiM/qJDKfqji1XsPLsDPRrxzfe8IUiSd0E578sw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=nIx48oEMaaRG1I95ddukVnP1UjdIhi7Oodypjo/QxqwFUjRyuM9fnGzmkVsqOOP8W
-         uMW8a6/6Q6n9g8pNN5NMzmYEN014OLJueNNuSlgyq/iHPe9TEH/W2nkxWpRAXsDfYf
-         QPjT7/tyKaUhj8D6w4xCrdMXOe2o4PEpUPKTcXikruqhy/95r8CAm3ybd8gG/gNCKi
-         vizRRtsL0g7PmnmPC86mk37p8MlCJNaexJL2za1sd9WfAWRJXs/gNm2UsItHvvKjEN
-         9LRzXDUoGUSwZnuCAeR0Dfk/h24d0SWkMHJkouMvquu0P9iyNYDx1uaGGffUD4LT2R
-         ynRTkqhnhvtIA==
+        b=Hlv+M+4ah132W755ydBX8YHs8P5MAEF9lp9QMGzRFe74Hlxp3T54SCj/DOHyhyL4l
+         5U57hWzfPI+Xdenynoh9z0/ez0Z56DgzOpDXdI0oiMFtk0m3NamcVwYhV/PwQYVPCF
+         r5OEGM0ZKDeNgirX4FJ8GVIUcEWjWAky3Wf2njhhHk63PRwCSTOl7pdjZcZStgcX3V
+         tuwLL0kgk7wjlKuj+zexSRFnwD6QbYhn4a7uwRCH58iuLNF6PHaEtXm9SKX3MM0N4C
+         7iF9uC/SVZuf1cj7beG0BEmZVj+h750DsUPpTvVjzLyIZhHDtCtbc/c3MJGS13A361
+         S0p8R6IZNYkhA==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201202103518.21889-1-nsaenzjulienne@suse.de>
-References: <20201202103518.21889-1-nsaenzjulienne@suse.de>
-Subject: Re: [PATCH] clk: bcm: dvp: Add MODULE_DEVICE_TABLE()
+In-Reply-To: <1605800597-16720-2-git-send-email-claudiu.beznea@microchip.com>
+References: <1605800597-16720-1-git-send-email-claudiu.beznea@microchip.com> <1605800597-16720-2-git-send-email-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH v6 01/11] clk: at91: sama7g5: fix compilation error
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Date:   Sat, 19 Dec 2020 11:48:33 -0800
-Message-ID: <160840731315.1580929.1043525207378404751@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        mturquette@baylibre.com, nicolas.ferre@microchip.com,
+        robh+dt@kernel.org
+Date:   Sat, 19 Dec 2020 11:53:17 -0800
+Message-ID: <160840759753.1580929.18297042693846426933@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nicolas Saenz Julienne (2020-12-02 02:35:18)
-> Add MODULE_DEVICE_TABLE() so as to be able to use the driver as a
-> module. More precisely, for the driver to be loaded automatically at
-> boot.
+Quoting Claudiu Beznea (2020-11-19 07:43:07)
+> pmc_data_allocate() has been changed. pmc_data_free() was removed.
+> Adapt the code taking this into consideration. With this the programmable
+> clocks were also saved in sama7g5_pmc so that they could be later
+> referenced.
 >=20
-> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Fixes: cb783bbbcf54 ("clk: at91: sama7g5: add clock support for sama7g5")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Tested-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 > ---
 
 Applied to clk-next
