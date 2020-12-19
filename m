@@ -2,118 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8F4C4361B
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F13C4361B
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E574B2388E
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B98CF2343E
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 19:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbgLSLcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Dec 2020 06:32:20 -0500
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:43756 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726447AbgLSLcT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Dec 2020 06:32:19 -0500
-Received: by mail-oi1-f181.google.com with SMTP id q25so5915877oij.10;
-        Sat, 19 Dec 2020 03:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VY5iQs1XdhMdo8fpc0q1mKuoMEvmaeqP5q2K2K+p/es=;
-        b=qT2DJ4fXKe2d1Tf2kk22/0aVau4AfBs7soy+EYLQAhqBcYPva2dmOzPe6dRUBVCySb
-         r7wUvyCiFQ50TzRN7wukwHtu8OBC6/AQU3DPiErCPrHhqig4FAFLmaQ/q+JvKqg2ZJDW
-         shvtubEAGiPhpDI3pD80ic2PVuWvJ76aaXvY9+xQWsm1fzEC+GHfhh14Xv0zBksoZ3S5
-         28NjcMkgS3SBxINvMBenqjSee1nDmJKcG3rQIw+XEwpf9U30sZ4ZM4sfllZt1wcEBzc7
-         pM17oVP7NzBW+I8F6kDgt/ZI01iPvLRF1zQ5q/J7ffN6JGOO7e0huUeImAYYSFsFafaz
-         CUWA==
-X-Gm-Message-State: AOAM533NofPgynSTWtwTskka7SmTS/drCvshOm7RI5eEL0WDUUjWL3oi
-        TqpXlV+fZca1e2/ViwGnEAjiDmjo3ggD/DGuI18=
-X-Google-Smtp-Source: ABdhPJyohC3iHj3sWc6wI923TS6Motje49bM1fIi6w9jBPt5DchZIB52L+vICKSlRW4BTwzDi1I2yqTL7kf3Ef8++SQ=
-X-Received: by 2002:aca:ec09:: with SMTP id k9mr5462186oih.153.1608377499098;
- Sat, 19 Dec 2020 03:31:39 -0800 (PST)
+        id S1727352AbgLSTpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 14:45:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727312AbgLSTpB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 Dec 2020 14:45:01 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608407061;
+        bh=fBn6lXZfV64Astfjzu3fdYVvoXy6Bi4EdeIjTgzOO3c=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=BaVxFyHCuzC8XJLD/skqqTnE3EdQyVjy7hCk8xP5vMcet3n1i62YL747IQ290G/IG
+         Skvy7D1k4p1pl+ouu1F6y5gZtMhUEipjZEHbeP/oXW2XPfxzq/8sVs5Bh/5UzcB9f0
+         KXnd66kQNUjqevXQMHr6iCS3NW5I0ZD++aCwLyCwS1ZMzUilg3iJZNrLFTvAcpfIKG
+         4itR3NJmTNn0WCk1lYId4+rT2H9tx3wirFIooqoivGrnsEBa84IJEkMdgRgc5GUebG
+         lbuMa7IZpTCcLYmkxNv9lD6PwHcb2VQfUu6uURQcUuGMyWuaoYE5EiQyBd14JgIYcD
+         Hxj2Gh4afleWw==
 MIME-Version: 1.0
-References: <20201218125253.3815567-1-geert+renesas@glider.be> <0b3f6954-273c-d15d-94c3-a80c7df23f56@lucaceresoli.net>
-In-Reply-To: <0b3f6954-273c-d15d-94c3-a80c7df23f56@lucaceresoli.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 19 Dec 2020 12:31:27 +0100
-Message-ID: <CAMuHMdVg7xaxMsY3jFgFrLQB=irVp5gxBC89TLVscBs2Y-rcUg@mail.gmail.com>
-Subject: Re: [PATCH] clk: vc5: Use "idt,voltage-microvolt" instead of "idt,voltage-microvolts"
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201218201350.GA2089699@robh.at.kernel.org>
+References: <20201207045527.1607-1-thunder.leizhen@huawei.com> <20201207045527.1607-2-thunder.leizhen@huawei.com> <160820093389.1580929.3915867007740168331@swboyd.mtv.corp.google.com> <20201218201350.GA2089699@robh.at.kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: clock: imx8qxp-lpcg: eliminate yamllint warnings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel <linux-kernel@vger.kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Date:   Sat, 19 Dec 2020 11:44:19 -0800
+Message-ID: <160840705988.1580929.18125222574166820024@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Luca,
+Quoting Rob Herring (2020-12-18 12:13:50)
+> On Thu, Dec 17, 2020 at 02:28:53AM -0800, Stephen Boyd wrote:
+> > Quoting Zhen Lei (2020-12-06 20:55:27)
+> > > Eliminate the following yamllint warnings:
+> > > ./Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+> > > :32:13:[warning] wrong indentation: expected 14 but found 12 (indenta=
+tion)
+> > > :35:9: [warning] wrong indentation: expected 10 but found 8 (indentat=
+ion)
+> > >=20
+> > > Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> > > ---
+> >=20
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>=20
+> If I tagged it, I was expecting you to pick up. But I'm gathering up all =
 
-On Fri, Dec 18, 2020 at 11:18 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
-> On 18/12/20 13:52, Geert Uytterhoeven wrote:
-> > Commit 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to
-> > yaml") accidentally changed "idt,voltage-microvolts" to
-> > "idt,voltage-microvolt" in the DT bindings, while the driver still used
-> > the former.
-> >
-> > Update the driver to match the bindings, as
-> > Documentation/devicetree/bindings/property-units.txt actually recommends
-> > using "microvolt".
-> >
-> > Fixes: 260249f929e81d3d ("clk: vc5: Enable addition output configurations of the Versaclock")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > There are no upstream users yet, but they are planned for v5.12, so I
-> > think this should be in v5.11-rc1.
-> >
-> > Thanks!
-> > ---
-> >  drivers/clk/clk-versaclock5.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> > index c90460e7ef2153fe..43db67337bc06824 100644
-> > --- a/drivers/clk/clk-versaclock5.c
-> > +++ b/drivers/clk/clk-versaclock5.c
-> > @@ -739,8 +739,8 @@ static int vc5_update_power(struct device_node *np_output,
-> >  {
-> >       u32 value;
-> >
-> > -     if (!of_property_read_u32(np_output,
-> > -                               "idt,voltage-microvolts", &value)) {
-> > +     if (!of_property_read_u32(np_output, "idt,voltage-microvolt",
-> > +                               &value)) {
->
-> Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+> the fixes for what landed in Linus' tree, so I'll apply.
+>=20
 
-Thanks!
-
-> Now the example in the bindings needs the same fix. I guess you doing it
-> in your "Miscellaneous fixes and improvements" v2 series, otherwise I
-> can do that.
-
-Yep, planned for v2.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks! I don't see this in clk tree so I guess it went through arm-soc.
