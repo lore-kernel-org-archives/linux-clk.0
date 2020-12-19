@@ -2,95 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531E6C3526D
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8F4C4361B
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2093622BF5
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E574B2388E
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Dec 2020 11:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgLSLDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Dec 2020 06:03:02 -0500
-Received: from mail-ej1-f43.google.com ([209.85.218.43]:45212 "EHLO
-        mail-ej1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgLSLDB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Dec 2020 06:03:01 -0500
-Received: by mail-ej1-f43.google.com with SMTP id qw4so6851050ejb.12;
-        Sat, 19 Dec 2020 03:02:44 -0800 (PST)
+        id S1726460AbgLSLcU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 06:32:20 -0500
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:43756 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbgLSLcT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Dec 2020 06:32:19 -0500
+Received: by mail-oi1-f181.google.com with SMTP id q25so5915877oij.10;
+        Sat, 19 Dec 2020 03:32:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uV8NM4ewui2V4x6VSIOE6oo6nIoQPudLTeEHvVfs8JQ=;
-        b=eReCBfLOw1653/4FSszhT3VTwnNYpyzIxBxVx/BbInNkOXlb5uLSkzsJ15xzrPmdvc
-         0BKWyf578T8rUmlDCNmrEJahfRGtuBPQ/KLEk5X06KLQW1G7UCV4CAejadt3tIRxzVe1
-         6ptC3rOfA3YYlS+k9v3IkWppzsIMdXjRPUnHGJE3HZQQ8jkQNmFVM43eIbS8IB1NV6wG
-         51JC1d/2kDj5k2RWIFu+8iqbevMw7v7iBr0THxmrpyB0DtQLX1X6XMHWuT2Xp5h6KNSw
-         gHlf3gqDKpWsyYFz5yDiu7N7ZY3daYmys1nGX5k8N5WAHcndQ3OUtMRbbjQ9Xlc2Ftqj
-         EdpA==
-X-Gm-Message-State: AOAM531n3vMbtwOmyYa0q3bl9mUuGTlgEfMlPRAhMAuDZR7Z6Y/ucYGC
-        5LNRxGCBOIhc79IJdy+a4L0=
-X-Google-Smtp-Source: ABdhPJzxz67/afVC/FecrdBWnQo3YhrStnV8UwyX/FnI8M7nQ7PMaAAZLXFCUP8jKCtTVxGcSTk9gg==
-X-Received: by 2002:a17:907:1004:: with SMTP id ox4mr7872260ejb.240.1608375739292;
-        Sat, 19 Dec 2020 03:02:19 -0800 (PST)
-Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.googlemail.com with ESMTPSA id i26sm6569740eja.23.2020.12.19.03.02.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Dec 2020 03:02:18 -0800 (PST)
-Date:   Sat, 19 Dec 2020 12:02:16 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 41/48] memory: tegra20-emc: Use
- devm_tegra_core_dev_init_opp_table()
-Message-ID: <20201219110216.GB5323@kozik-lap>
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-42-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VY5iQs1XdhMdo8fpc0q1mKuoMEvmaeqP5q2K2K+p/es=;
+        b=qT2DJ4fXKe2d1Tf2kk22/0aVau4AfBs7soy+EYLQAhqBcYPva2dmOzPe6dRUBVCySb
+         r7wUvyCiFQ50TzRN7wukwHtu8OBC6/AQU3DPiErCPrHhqig4FAFLmaQ/q+JvKqg2ZJDW
+         shvtubEAGiPhpDI3pD80ic2PVuWvJ76aaXvY9+xQWsm1fzEC+GHfhh14Xv0zBksoZ3S5
+         28NjcMkgS3SBxINvMBenqjSee1nDmJKcG3rQIw+XEwpf9U30sZ4ZM4sfllZt1wcEBzc7
+         pM17oVP7NzBW+I8F6kDgt/ZI01iPvLRF1zQ5q/J7ffN6JGOO7e0huUeImAYYSFsFafaz
+         CUWA==
+X-Gm-Message-State: AOAM533NofPgynSTWtwTskka7SmTS/drCvshOm7RI5eEL0WDUUjWL3oi
+        TqpXlV+fZca1e2/ViwGnEAjiDmjo3ggD/DGuI18=
+X-Google-Smtp-Source: ABdhPJyohC3iHj3sWc6wI923TS6Motje49bM1fIi6w9jBPt5DchZIB52L+vICKSlRW4BTwzDi1I2yqTL7kf3Ef8++SQ=
+X-Received: by 2002:aca:ec09:: with SMTP id k9mr5462186oih.153.1608377499098;
+ Sat, 19 Dec 2020 03:31:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-42-digetx@gmail.com>
+References: <20201218125253.3815567-1-geert+renesas@glider.be> <0b3f6954-273c-d15d-94c3-a80c7df23f56@lucaceresoli.net>
+In-Reply-To: <0b3f6954-273c-d15d-94c3-a80c7df23f56@lucaceresoli.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 19 Dec 2020 12:31:27 +0100
+Message-ID: <CAMuHMdVg7xaxMsY3jFgFrLQB=irVp5gxBC89TLVscBs2Y-rcUg@mail.gmail.com>
+Subject: Re: [PATCH] clk: vc5: Use "idt,voltage-microvolt" instead of "idt,voltage-microvolts"
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 09:06:31PM +0300, Dmitry Osipenko wrote:
-> Use common devm_tegra_core_dev_init_opp_table() helper for the OPP table
-> initialization.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/memory/tegra/tegra20-emc.c | 57 +++---------------------------
->  1 file changed, 4 insertions(+), 53 deletions(-)
+Hi Luca,
 
-If there was no more Tegra MC work planned, this could easily go via
-Tegra SoC tree. However I expect still work of your interconnect
-patches, so maybe it's better to stick these in same tree.
+On Fri, Dec 18, 2020 at 11:18 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+> On 18/12/20 13:52, Geert Uytterhoeven wrote:
+> > Commit 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to
+> > yaml") accidentally changed "idt,voltage-microvolts" to
+> > "idt,voltage-microvolt" in the DT bindings, while the driver still used
+> > the former.
+> >
+> > Update the driver to match the bindings, as
+> > Documentation/devicetree/bindings/property-units.txt actually recommends
+> > using "microvolt".
+> >
+> > Fixes: 260249f929e81d3d ("clk: vc5: Enable addition output configurations of the Versaclock")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > There are no upstream users yet, but they are planned for v5.12, so I
+> > think this should be in v5.11-rc1.
+> >
+> > Thanks!
+> > ---
+> >  drivers/clk/clk-versaclock5.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> > index c90460e7ef2153fe..43db67337bc06824 100644
+> > --- a/drivers/clk/clk-versaclock5.c
+> > +++ b/drivers/clk/clk-versaclock5.c
+> > @@ -739,8 +739,8 @@ static int vc5_update_power(struct device_node *np_output,
+> >  {
+> >       u32 value;
+> >
+> > -     if (!of_property_read_u32(np_output,
+> > -                               "idt,voltage-microvolts", &value)) {
+> > +     if (!of_property_read_u32(np_output, "idt,voltage-microvolt",
+> > +                               &value)) {
+>
+> Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
 
-In such case I would need a stable tag with the
-devm_tegra_core_dev_init_opp_table() helper for memory controller tree.
+Thanks!
 
-Best regards,
-Krzysztof
+> Now the example in the bindings needs the same fix. I guess you doing it
+> in your "Miscellaneous fixes and improvements" v2 series, otherwise I
+> can do that.
 
+Yep, planned for v2.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
