@@ -2,71 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1DCC2BBCD
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 18:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D83C4361B
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 18:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED34F22AEC
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 18:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C86C22AB0
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 18:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbgLTSov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Dec 2020 13:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
+        id S1726952AbgLTSqY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Dec 2020 13:46:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbgLTSov (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 20 Dec 2020 13:44:51 -0500
+        id S1726901AbgLTSqY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 20 Dec 2020 13:46:24 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608489850;
-        bh=q7CQdtmJ6I7XLlNUwEFcrFBqeXfXAvtLEXZ9U4L1q9c=;
+        s=k20201202; t=1608489943;
+        bh=7eSYram2H/tX8NdHtFAbDaTcFMwmrYRtTNEh0UVF9lg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LjplDPGJBLzzXrpAeWlxxCcPM6eULI/XdabcF4Dd9eozr4nyvC1Y/l0uJO01oEN8h
-         pyntpUSMvBEmtIu5V06LErZFdhFjd3lF1FvaHENgYLG8UyUYWZe7sA06KpNd9SD5nH
-         6r+eGmjGN46uRJqPz+4aJ0/WkcB4twgdPIBw6oUCUsElF+Dt4EyvDyPf2rgQzOVYKv
-         sIWGR0R3F7N5+AK1BBNQfQLXsx2uZtn0j18ENjzocO6x7hRrhazwhrJ1NQF+ApSaYm
-         3aQrwwcDDNhkfPvKahhSRCCNeqQlH4uMKtzSu5BZ0+TRFaBzLpSL9QZugnx5lOlHdX
-         5LAMAnVKtsjow==
+        b=fCUSJa8qWbQP04zIaVzxyQkBngyk0kFgZX5bNfl9aOkCfw4lvcP+gNWhJLUiDWjP2
+         qOPbC9vyu5laeymUBCNusLJZyrKggEQawjgT4/as4ioX4nurxYujLSn5TiAV+Se95/
+         eVOLP9EVNpjpQaGKZTCrh/UYTg5N3yKgHEYJl775N6D5sX6R7hmB2reS6dFf60c5SF
+         /IwtObCg+YFopoJv/P3NKG7Fi02DHPw/NbFbNYvaTp5xk4tOQuyE+7NckylPI7opuE
+         RSSWT/KdBNk26LdrOUdf1poHPwMwLvifWP/FdTUbzxVts8PThWt7mrNbA8UhNWGLrK
+         Al8l09BeE13sw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFr9PX=f=HyHBk4s3e_vnMDC53R1X18m7sKFCLMMjitPm+8oEQ@mail.gmail.com>
-References: <20201114135044.724385-1-daniel@0x0f.com> <20201114135044.724385-3-daniel@0x0f.com> <160843556037.1580929.13575770228476494246@swboyd.mtv.corp.google.com> <CAFr9PX=f=HyHBk4s3e_vnMDC53R1X18m7sKFCLMMjitPm+8oEQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clk: mstar msc313 mpll binding description
+In-Reply-To: <20201220085725.19545-2-damien.lemoal@wdc.com>
+References: <20201220085725.19545-1-damien.lemoal@wdc.com> <20201220085725.19545-2-damien.lemoal@wdc.com>
+Subject: Re: [PATCH 1/2] dt-bindings: Add Canaan vendor prefix
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>
-To:     Daniel Palmer <daniel@0x0f.com>
-Date:   Sun, 20 Dec 2020 10:44:09 -0800
-Message-ID: <160848984935.1580929.936824086681978646@swboyd.mtv.corp.google.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>, linux-clk@vger.kernel.org
+Date:   Sun, 20 Dec 2020 10:45:42 -0800
+Message-ID: <160848994239.1580929.9790308606179584934@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Palmer (2020-12-19 22:35:41)
-> Hi Stephen,
+Quoting Damien Le Moal (2020-12-20 00:57:24)
+> Update Documentation/devicetree/bindings/vendor-prefixes.yaml to
+> include "canaan" as a vendor prefix for "Canaan Inc.". Canaan is the
+> vendor of the Kendryte K210 RISC-V SoC.
 >=20
-> On Sun, 20 Dec 2020 at 12:39, Stephen Boyd <sboyd@kernel.org> wrote:
-> > > +  clock-output-names:
-> > > +    minItems: 8
-> > > +    maxItems: 8
-> > > +    description: |
-> > > +      This should provide a name for the internal PLL clock and then
-> > > +      a name for each of the divided outputs.
-> >
-> > Is this necessary?
->=20
-> I found without the names specified in the dt probing of muxes that
-> depend on the outputs but appear earlier didn't work.
-> Also this same PLL layout seems to be used in some other places so
-> eventually I was thinking this driver would get used for those PLLs
-> with different output names.
+> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-Still seems like it could be auto-generated based on dev_name() +
-number. Now that we have a way to specify clk parents via the clocks
-property in DT (without any clock-names required) we should be able to
-avoid needing clock-output-names in general.
+Applied to clk-next
