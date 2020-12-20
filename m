@@ -2,67 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BC8C4361B
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDF0C4361B
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBC022D3E
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 759FE23602
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgLTAIx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Dec 2020 19:08:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
+        id S1726725AbgLTAKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 19:10:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbgLTAIx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 Dec 2020 19:08:53 -0500
+        id S1726674AbgLTAKL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 Dec 2020 19:10:11 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608422893;
-        bh=UVTrMZxourzJKz+ucOr71OHfCIHAav4FVKKyWXHo1T0=;
+        s=k20201202; t=1608422971;
+        bh=MKyWKqxtLmjSFAl3+Uh0SrvrSUJ2XhlWk29Jd8OAYNM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=nlGohQ9EaQJER4bWhErBzsKFgu5gC0Sqqv1XmkzwNuK2iCYBEP/l/y4igLoCypsyS
-         5tjtQp/SNtWi6kIHO9GioxQpfmFNkmuoqO/S6XUgyeHb2VzOCxsijK4Tqr2WsXKXn7
-         QPn2MiVX7oK1x5xXBZ+7HRkOOOAoElcOieMkT9MlzFSZi3sXRnR9VroD5otNegiKkH
-         XquF3cbLDZlkg6x1nXB6OyX7luKIhiKIzN/ZmcxHKXrFQlhFvbXeQr8harbCR6+c4W
-         xJcRZSjKRPVwTOkgQT0d88BWbpjYDgD7qjUsXpl0NANdmbUSOJrs1SEXz1zpWWLRCt
-         8PNKwDUzcKqxA==
+        b=ig+dMCygwi3oqi1m3QBRefoto26eD+vf867VX23XXQReIWueKMHBJhNgBjfkMqwxS
+         bMJoa1HNusAW2tld1p4QtMyLcpiK0z9PbCsq355NdmaiEnsVQQyqempJLi+WOUzPp1
+         IUSn7dpHx3JEQACHkn2z8jOCoLaigcMr9UnzdA3E2waeJRNcSxK1LQ037Z1Z9C7HUI
+         T42q/r7FCLfK5pTvLzVsz3/pKVoRLPkE47nnGgY3qat8sLHCYnl8aN46FuChN5OJh/
+         Np3laDMZKSWgn9MSdwzMb+o8RBa3Vp8ymHgrZCy19UgOxmsHaANLpuR58If0Iz/zwy
+         zkYSX1okQzqHw==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d3f2d76c-40d9-b167-7002-5a25ec81c73a@linux.intel.com>
-References: <20201207164240.15436-1-jae.hyun.yoo@linux.intel.com> <20201207164240.15436-3-jae.hyun.yoo@linux.intel.com> <CACPK8Xd3dz1WLGNGqMiAZxhMEeGHbkPtvO2rYQ36Kbj=Uvy-jA@mail.gmail.com> <d3faea9e-e7d6-eba0-a6b2-c30bc9b6e147@linux.intel.com> <160820199393.1580929.9806429719720580479@swboyd.mtv.corp.google.com> <d3f2d76c-40d9-b167-7002-5a25ec81c73a@linux.intel.com>
-Subject: Re: [PATCH 2/2] media: aspeed: fix clock handling logic
+In-Reply-To: <20201218125253.3815567-1-geert+renesas@glider.be>
+References: <20201218125253.3815567-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: vc5: Use "idt,voltage-microvolt" instead of "idt,voltage-microvolts"
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-clk@vger.kernel.org, linux-media@vger.kernel.org
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>
-Date:   Sat, 19 Dec 2020 16:08:11 -0800
-Message-ID: <160842289176.1580929.13125223155803124427@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>
+Date:   Sat, 19 Dec 2020 16:09:30 -0800
+Message-ID: <160842297002.1580929.11789688031780676224@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jae Hyun Yoo (2020-12-17 11:54:15)
-> On 12/17/2020 2:46 AM, Stephen Boyd wrote:
-> > Quoting Jae Hyun Yoo (2020-12-08 09:16:29)
-> > So should the two patches be squashed together and go through the
-> > media tree?
-> >=20
+Quoting Geert Uytterhoeven (2020-12-18 04:52:53)
+> Commit 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to
+> yaml") accidentally changed "idt,voltage-microvolts" to
+> "idt,voltage-microvolt" in the DT bindings, while the driver still used
+> the former.
 >=20
-> The first patch should go through clk tree, and the second one (this
-> patch) should go through media tree. Both patches should be applied at
-> the same time. Should I squash them in this case?
+> Update the driver to match the bindings, as
+> Documentation/devicetree/bindings/property-units.txt actually recommends
+> using "microvolt".
+>=20
+> Fixes: 260249f929e81d3d ("clk: vc5: Enable addition output configurations=
+ of the Versaclock")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-If one depends on the other, and having the first one breaks something
-unless the second one is applied, then yes they should be squashed
-together.
+Applied to clk-next
