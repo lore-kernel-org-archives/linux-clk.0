@@ -2,62 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C19C0018C
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BC8C4361B
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9968323A23
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FBC022D3E
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 00:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgLTAGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Dec 2020 19:06:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38272 "EHLO mail.kernel.org"
+        id S1726912AbgLTAIx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Dec 2020 19:08:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbgLTAGI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 Dec 2020 19:06:08 -0500
+        id S1726771AbgLTAIx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 Dec 2020 19:08:53 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608422727;
-        bh=Q0PWZfGefOqpqkrphXHR9omvqfw1WAD/gcxwNcYBgAo=;
+        s=k20201202; t=1608422893;
+        bh=UVTrMZxourzJKz+ucOr71OHfCIHAav4FVKKyWXHo1T0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oCkdCv6Ppi0zfWKfoHhPWjl1Qu6dGhH86e+od1YnwpcjUsZc6QjroDMDRUenxmo0z
-         CzBD64OaEa4RYwINZCu0IcEI4f5Z+o5KsF4rRowGFaKgAjFREznFP+btdP9A9HvwFt
-         KFu6IujUI/mlqKtQTvVdR9gQqJDUB6dHgotVN4/paoOgIzC6Q1lPPbS9+hZF6Sp6wU
-         /SfMv54j9zxXJ355ucruLp+SlDXlaOaRQ5AEWcJuD81XuPgUHF69YmSJRhPR2vflVf
-         QTFixf8TykLJ/m4er+1pVDqD+riZA9lQ2Hf6e5b7TJWKDSTdHIvWSRVf878M02pzpa
-         mC6GHhuq38yLQ==
+        b=nlGohQ9EaQJER4bWhErBzsKFgu5gC0Sqqv1XmkzwNuK2iCYBEP/l/y4igLoCypsyS
+         5tjtQp/SNtWi6kIHO9GioxQpfmFNkmuoqO/S6XUgyeHb2VzOCxsijK4Tqr2WsXKXn7
+         QPn2MiVX7oK1x5xXBZ+7HRkOOOAoElcOieMkT9MlzFSZi3sXRnR9VroD5otNegiKkH
+         XquF3cbLDZlkg6x1nXB6OyX7luKIhiKIzN/ZmcxHKXrFQlhFvbXeQr8harbCR6+c4W
+         xJcRZSjKRPVwTOkgQT0d88BWbpjYDgD7qjUsXpl0NANdmbUSOJrs1SEXz1zpWWLRCt
+         8PNKwDUzcKqxA==
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201212135733.38050-1-paul@crapouillou.net>
-References: <20201212135733.38050-1-paul@crapouillou.net>
-Subject: Re: [PATCH] clk: ingenic: Fix divider calculation with div tables
+In-Reply-To: <d3f2d76c-40d9-b167-7002-5a25ec81c73a@linux.intel.com>
+References: <20201207164240.15436-1-jae.hyun.yoo@linux.intel.com> <20201207164240.15436-3-jae.hyun.yoo@linux.intel.com> <CACPK8Xd3dz1WLGNGqMiAZxhMEeGHbkPtvO2rYQ36Kbj=Uvy-jA@mail.gmail.com> <d3faea9e-e7d6-eba0-a6b2-c30bc9b6e147@linux.intel.com> <160820199393.1580929.9806429719720580479@swboyd.mtv.corp.google.com> <d3f2d76c-40d9-b167-7002-5a25ec81c73a@linux.intel.com>
+Subject: Re: [PATCH 2/2] media: aspeed: fix clock handling logic
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        stable@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Date:   Sat, 19 Dec 2020 16:05:26 -0800
-Message-ID: <160842272655.1580929.15045962405461927127@swboyd.mtv.corp.google.com>
+Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-clk@vger.kernel.org, linux-media@vger.kernel.org
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>
+Date:   Sat, 19 Dec 2020 16:08:11 -0800
+Message-ID: <160842289176.1580929.13125223155803124427@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2020-12-12 05:57:33)
-> The previous code assumed that a higher hardware value always resulted
-> in a bigger divider, which is correct for the regular clocks, but is
-> an invalid assumption when a divider table is provided for the clock.
+Quoting Jae Hyun Yoo (2020-12-17 11:54:15)
+> On 12/17/2020 2:46 AM, Stephen Boyd wrote:
+> > Quoting Jae Hyun Yoo (2020-12-08 09:16:29)
+> > So should the two patches be squashed together and go through the
+> > media tree?
+> >=20
 >=20
-> Perfect example of this is the PLL0_HALF clock, which applies a /2
-> divider with the hardware value 0, and a /1 divider otherwise.
->=20
-> Fixes: a9fa2893fcc6 ("clk: ingenic: Add support for divider tables")
-> Cc: <stable@vger.kernel.org> # 5.2
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+> The first patch should go through clk tree, and the second one (this
+> patch) should go through media tree. Both patches should be applied at
+> the same time. Should I squash them in this case?
 
-Applied to clk-next
+If one depends on the other, and having the first one breaks something
+unless the second one is applied, then yes they should be squashed
+together.
