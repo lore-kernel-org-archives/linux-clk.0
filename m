@@ -2,129 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03110C4361B
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 06:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFDFC3526C
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 08:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C88DD222F9
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 06:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 655BA22CF8
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 08:58:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgLTGnc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Dec 2020 01:43:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbgLTGnb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Dec 2020 01:43:31 -0500
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB830C0617B0
-        for <linux-clk@vger.kernel.org>; Sat, 19 Dec 2020 22:42:51 -0800 (PST)
-Received: by mail-qv1-xf35.google.com with SMTP id d11so3068216qvo.11
-        for <linux-clk@vger.kernel.org>; Sat, 19 Dec 2020 22:42:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WguVvw/vtMSeOUQpG1ZOK8abIBiR79EnZH6HCETFfGI=;
-        b=eAT7+oYosAS3VOmoH7hn64EGWYoMXlX0zHF2zzWWeKCeSdme+pwbiusT3KTNb/jD0k
-         93jONKiABvjA0dPcuLUBvcc6JgWRxqqcLg63Jpfuw+QIg5jz6X3Im/vVXlMqSwIpT/cc
-         vmYIFWgt4bgvXIyDLBNf6b4VkgsZP3jzGZOBg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WguVvw/vtMSeOUQpG1ZOK8abIBiR79EnZH6HCETFfGI=;
-        b=TZpWMrjzlRSwLGFbpamFDiPCohrE/ZtuLjMxQwk/rlLQ0/QMlMp/Y1URQrP9dQQHQI
-         dVGWfI/7cUvxGTUllWD6BUdzHFT6XW2aBmWKmP+R+VWysgT5LbECr41cEYMzafaHu2nj
-         tC4xdGMFYxbB54T12ZhptHykYx0AlCWTpLeNxuxHsVeE2QV6L3PLK4wxd//yWjhnolyf
-         z1xykwaCJ2ITEAgjUJ1pS+9pcgYyEB1J1qBRoltt2B5REIS2Ngl6N1GzZh3y1rxCbUMs
-         aY8sbazRI3I+OvxRHtB9dAz0Fo9jXPEKPxbQ19JtkzEVrFrin+xEIsTUBK6Ct77xC6cg
-         tR3g==
-X-Gm-Message-State: AOAM533EzfK9oEBgKXivKBesUuLDoa0AS7sXWpYZni9+zxo7EY4cJMtv
-        zAJeo7Rnr3M1ScOxCchYv0uquYbYtdNXBVILJSr5WA==
-X-Google-Smtp-Source: ABdhPJxjlAMSsP/Y/ZWXurDseNeDAb6c/quzmV0MWCHgCUexOBRdyUd0oTVwR7Al3n/h86HzMixJBzBgBN8sqeySa7E=
-X-Received: by 2002:a05:6214:140d:: with SMTP id n13mr12306172qvx.45.1608446570717;
- Sat, 19 Dec 2020 22:42:50 -0800 (PST)
+        id S1727408AbgLTI6f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Dec 2020 03:58:35 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:36597 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbgLTI6f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Dec 2020 03:58:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1608454714; x=1639990714;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=k+6cIfjqBLX4Y0qqbAYtcuVjCW//tzEez+xoQo5rciE=;
+  b=k/0/Ut2jbfFiZtq4LaoGYV9ujkGsNcnrYgaoOtGNyfdvQ6CGkYoiADIy
+   caHeE1G50g4BDXsWgDq8fdGJ/RstA3WeXMoKYvCC3YP4m/ESyBcPt7tns
+   uifvfNGvIA4fEjbl065zGxmQFn3IySHcWPsjiltNuLm53QFFVX+d2yzkQ
+   +SQIeemQYWu53fyP62H7drYTVqY0Se72ZI0wX3udY8skDBESTEPtAuVD4
+   xlxrNTuVoBJvrNbiNkYdQo5khWO14Uq81dyGt8/Fq52SBYIRl6Ev6tMS0
+   CJmJgAvoJbNiRwwp29S7VKiZQO79tE9Z84i1oIsCf1LYHOJlbF8AtKRh2
+   Q==;
+IronPort-SDR: CLrsRobWajL7tbJx6PHjQt9l9abNjKhYEj23EzBynKZdUR43oyK81/hpi1woGTbMtEx7UzZyKW
+ oxBnwapvL0HP1MMc01KJjCYm9IxO1swcAM/PA/n/8qMV8S7JNHh4dUHvBsH0t8pAkvDrBEs7EP
+ eJmOjcrJ0fLIe5srcGknuzb274eGaNX1joUt3Q+N9dcXmDdsy6gxTgYWKMiffIV4d2Dxax7WMc
+ J6luEWgIQtAJLoSD3JccHVLa8rygocpB642LUjaCBv8LhrIf+uIS77B1CjS8rdvgme5d+0C0Ua
+ dc4=
+X-IronPort-AV: E=Sophos;i="5.78,434,1599494400"; 
+   d="scan'208";a="155618012"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Dec 2020 16:57:29 +0800
+IronPort-SDR: Xn6wDylZdNhhOA/Mc/6CkisQUvkCbfeNF9ZQ0IvUHOcD6U3M3znE0Cqfn2HPvmt+vn7IjY0Vvo
+ CwHWi6ZIGZPL676dvONspd9E4QAXsxMeXFn81kYkaQsSpfwK58c7b0sJZNvd3DKisBD1crUa4y
+ pe3xgDpeiBNyJGEFmcTqZN9Il0mrW6Z9T4nz86k9phj512b0M2N1R6wwlHz66Rqu+W2jYylGAq
+ U11mrxFkBJs0va3eQ1DtfnVMzmzLTRT2qqkNIX6NuPMSYP0I5cqZ+HNMAw6uz0OIScz9ZSP7Oy
+ /QGnsXh4rTkW4G83IF7EMMYN
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2020 00:42:42 -0800
+IronPort-SDR: rXbpo0csq0YRke/BrWXlZFrMUpKvqm47qy9iz3LT1BgFKsX8yhxqt5o53VktRS3pnK9JkEFAFV
+ TNS4dDEam7B4pNIhQQSCEpfHF0SdBjnLUGS9UHzdcN/qcmk2QE5iG/oOLwqsHxdhWx4asFB66d
+ TDEE2qBLPCSCc5fu2uulyXAe2fwN7tA8sD3GOtA1DXbI8gQSPYIyHs5CT4cDcixIp0bJFunAuN
+ rqAaSp6vUwo1+ZfHfRsDVegTcTm7pfb2D30JU602tJg9l5NjEW0ou9Ugpdp+BmDVdWTZu7as4g
+ WPI=
+WDCIronportException: Internal
+Received: from twf009363.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.70.7])
+  by uls-op-cesaip02.wdc.com with ESMTP; 20 Dec 2020 00:57:28 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>
+Subject: [PATCH 0/2] RISC-V K210 SoC clock driver documentation
+Date:   Sun, 20 Dec 2020 17:57:23 +0900
+Message-Id: <20201220085725.19545-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20201114135044.724385-1-daniel@0x0f.com> <20201114135044.724385-4-daniel@0x0f.com>
- <160843899675.1580929.13271525932327387602@swboyd.mtv.corp.google.com>
-In-Reply-To: <160843899675.1580929.13271525932327387602@swboyd.mtv.corp.google.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Sun, 20 Dec 2020 15:42:40 +0900
-Message-ID: <CAFr9PXmAe9o5KtTG58twpumWi3A=7YfsM7b7pOwRTk1f=jCKQQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: mstar: MStar/SigmaStar MPLL driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Stephen,
 
-On Sun, 20 Dec 2020 at 13:36, Stephen Boyd <sboyd@kernel.org> wrote:
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index da8fcf147eb1..b758aae17ab8 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -124,3 +124,4 @@ endif
-> >  obj-$(CONFIG_ARCH_ZX)                  += zte/
-> >  obj-$(CONFIG_ARCH_ZYNQ)                        += zynq/
-> >  obj-$(CONFIG_COMMON_CLK_ZYNQMP)         += zynqmp/
-> > +obj-$(CONFIG_ARCH_MSTARV7)             += mstar/
->
-> This is in the wrong place. It looks to be sorted based on the path
-> name, so mstar/ comes much earlier in this file.
+Here is a couple of patches documenting the Canaan Kendryte K210 clock
+driver in preparation for the larger patch drop implemeting the driver
+in the next cycle.
 
-Noted. I'll fix this.
+Please consider these for addition to the current cycle.
 
-> > +
-> > +#include <linux/platform_device.h>
-> > +#include <linux/of.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/clkdev.h>
->
-> Please remove unused includes
->
-> > +#include <linux/of_address.h>
-> > +#include <linux/module.h>
->
-> Isn't it builtin? This include should be removed.
+Thanks !
 
-Yes. Sorry it was originally a module and there are some leftovers I
-didn't clean up when I changed it to builtin.
+Damien Le Moal (2):
+  dt-bindings: Add Canaan vendor prefix
+  dt-binding: clock: Document canaan,k210-clk bindings
 
-> > +#define to_mpll(_hw) container_of(_hw, struct msc313_mpll, clk_hw)
-> > +#define to_divider_hw(_mpll, _which) _mpll->clk_data->hws[_which + 1]
->
-> I'd rather not have this macro. It's confusing given that to_foo()
-> macros are usually a container_of() invocation. Given that it's only
-> used in the registration/unregistration loops please inline it and use a
-> local variable.
->
+ .../bindings/clock/canaan,k210-clk.yaml       | 54 ++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ include/dt-bindings/clock/k210-clk.h          | 56 +++++++++++++++----
+ 3 files changed, 101 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
 
-Ok I'll rework that.
+-- 
+2.29.2
 
-> > +
-> > +static int msc313_mpll_remove(struct platform_device *pdev)
-> > +{
-> > +       struct msc313_mpll *mpll = platform_get_drvdata(pdev);
-> > +       int i;
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(output_dividers); i++)
-> > +               clk_hw_unregister_fixed_factor(to_divider_hw(mpll, i));
->
-> Maybe add a devm_ for this if it doesn't exist.
-
-I did think about adding this. Would I need to do that in a separate
-series or would it be ok to roll it into this one?
-
-Thanks,
-
-Daniel
