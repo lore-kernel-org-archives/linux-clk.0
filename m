@@ -2,65 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A4BC4361B
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 05:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 149B3C4361B
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 06:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8B6233CE
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 05:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3C0E2312A
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Dec 2020 06:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbgLTFfp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Dec 2020 00:35:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbgLTFfo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 20 Dec 2020 00:35:44 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608442504;
-        bh=aIFosRjp0pvkc7SjVi5j1znmZz4mlFjF/3Le9rkNXvw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OUPgAhjqV84wDwcNTFEfgf5cCxdnSyI6X244yxCQ/4HKA8VLf+g6B8GYj/pRVYc/e
-         GkcMovrHkCP2M2Qkb6uYeqIpAodyDmSqZSN4GyQxIfpZCsxO0PV4c40SJkD/HNAg4p
-         slsRhyfuGBu/zmRxX8N+K5liQvNqYSw84cbLBB+ZYS7XxxL0S6wfeXUn8TnUp2Dg8e
-         RpHvkhcXp7SSvsIRBLf3MXgnxLvn8nLQ8RK+LCv3CoFYJc2rKf7hR5DSPonNLYNcNy
-         BRdIPrqMcS12RfywFvjY3jmNUOYAri/36JaeY5o8AYzNoykV34012mHoEQjAg2ZAA3
-         LauaD7TSl5pcg==
+        id S1726902AbgLTGgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Dec 2020 01:36:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbgLTGgl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Dec 2020 01:36:41 -0500
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC79C061282
+        for <linux-clk@vger.kernel.org>; Sat, 19 Dec 2020 22:35:52 -0800 (PST)
+Received: by mail-qv1-xf33.google.com with SMTP id a4so2767561qvd.12
+        for <linux-clk@vger.kernel.org>; Sat, 19 Dec 2020 22:35:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8KQzSwVhVPrMTFiKK5zcVnTGXaTdTl16gjC5nDFjrik=;
+        b=Ukp1RMF/5A86WTY3wlgY8TbBHP+KrFbjj7VPpakT259+bzIGqLx+zb8RNhwwNCJJbd
+         2N05RB14y3DufQkCs+S3+a7Q1/gtsg9UNurHFe0OLUpvbTtB8BQa2LA61jsJOKRoiF/W
+         si6VDNnGAIKUizeoNM/KNIFYU5h5SdOBPlc4M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8KQzSwVhVPrMTFiKK5zcVnTGXaTdTl16gjC5nDFjrik=;
+        b=Z49y6NlnfokHBsNtSXVVpJq8q6QerODXp45+IzvSCI3gqZpCkneMoTPSs39pbCK1ep
+         5Bm4FkOYQIHJ2GroK+nsg+G0MQQFcTOtkZAtaR7ynCyuujWydJRkB8hyeyEWPLTsLacE
+         V0v3Az2TPIggdUJfEWDV8Ybc0bPU/0lE7Sildj277l/ddCWqp/LabznD6Z1Hd0N2Vr+K
+         MJcz8zpiExi4GdjSYPnLkc+Vj2qmFNzaG4W+lFmObmUNRqMgZ1UvhNOapPLuj91v6a6c
+         TLGhToxXFhrmrgNdO0pBttZCykY6Nbl6YryFuESaOGClgoZc/YenH+zwmJzzIxRD2VPp
+         nvvA==
+X-Gm-Message-State: AOAM531IPphG5Dd0wj4RNYYxnGr3EvXusjHQmJnHudM5eSkhTEYFgvVs
+        8UTYSQaSmxREIQpCUUp4NlvKHCDEyNJlY+MLlhVoiA==
+X-Google-Smtp-Source: ABdhPJxdPhtXXaO5QG2qMf+7byySCoi8Od7JhDQ6s4ZtD71A+pcvqZBFderGkPMbt0Flapkt1yKBMoyrHutfFgIm+Yw=
+X-Received: by 2002:ad4:5a50:: with SMTP id ej16mr12406191qvb.25.1608446152018;
+ Sat, 19 Dec 2020 22:35:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CH2PR04MB652284F1607FD2A29275693CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
-References: <20201213135056.24446-1-damien.lemoal@wdc.com> <20201213135056.24446-10-damien.lemoal@wdc.com> <160819259979.1580929.9332027241734052085@swboyd.mtv.corp.google.com> <CH2PR04MB65227B0B94F919406CB84C28E7C40@CH2PR04MB6522.namprd04.prod.outlook.com> <160820021596.1580929.1686334340234415270@swboyd.mtv.corp.google.com> <CH2PR04MB6522E9EC44FF8FFA5981107CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com> <160820216451.1580929.9401304620489565784@swboyd.mtv.corp.google.com> <CH2PR04MB652284F1607FD2A29275693CE7C40@CH2PR04MB6522.namprd04.prod.outlook.com>
-Subject: Re: [PATCH v10 09/23] dt-binding: clock: Document canaan,k210-clk bindings
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sean Anderson <seanga2@gmail.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Date:   Sat, 19 Dec 2020 21:35:02 -0800
-Message-ID: <160844250293.1580929.6654681087428087193@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20201114135044.724385-1-daniel@0x0f.com> <20201114135044.724385-3-daniel@0x0f.com>
+ <160843556037.1580929.13575770228476494246@swboyd.mtv.corp.google.com>
+In-Reply-To: <160843556037.1580929.13575770228476494246@swboyd.mtv.corp.google.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Sun, 20 Dec 2020 15:35:41 +0900
+Message-ID: <CAFr9PX=f=HyHBk4s3e_vnMDC53R1X18m7sKFCLMMjitPm+8oEQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dt-bindings: clk: mstar msc313 mpll binding description
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Damien Le Moal (2020-12-17 02:51:20)
-> On 2020/12/17 19:49, Stephen Boyd wrote:
-> > I was thinking of just applying this DT binding patch now so it gets
-> > merged into the next -rc1. Then anyone can use the defines because
-> > they're in Linus' tree and wherever the dts file ends up can just base
-> > on -rc1. I probably won't merge the clk driver until v5.12 given that
-> > the merge window is open.
->=20
-> OK. Makes sense. Sending just the clk binding patch then, with the K210_C=
-LK_ACLK
-> clock definition left in.
->=20
+Hi Stephen,
 
-Did you send it?
+On Sun, 20 Dec 2020 at 12:39, Stephen Boyd <sboyd@kernel.org> wrote:
+> > +  clock-output-names:
+> > +    minItems: 8
+> > +    maxItems: 8
+> > +    description: |
+> > +      This should provide a name for the internal PLL clock and then
+> > +      a name for each of the divided outputs.
+>
+> Is this necessary?
+
+I found without the names specified in the dt probing of muxes that
+depend on the outputs but appear earlier didn't work.
+Also this same PLL layout seems to be used in some other places so
+eventually I was thinking this driver would get used for those PLLs
+with different output names.
+
+Thanks,
+
+Daniel
