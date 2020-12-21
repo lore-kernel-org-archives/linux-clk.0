@@ -2,158 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F0AC433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 22:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9B5C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 22:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F07A22CB2
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 22:24:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BB2B22B2B
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 22:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725844AbgLUWYy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 17:24:54 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42712 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725833AbgLUWYx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Dec 2020 17:24:53 -0500
-IronPort-SDR: DjRs2oC3rv8AG+HYecHsUV6M/aLYkYXU5amBjvfhcsnZCOUmLSnvnLKr08mKwU8W4FGkCsaOOZ
- O3tXH3hmBZfg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9842"; a="260521917"
-X-IronPort-AV: E=Sophos;i="5.78,437,1599548400"; 
-   d="scan'208";a="260521917"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2020 14:21:47 -0800
-IronPort-SDR: kFcfjsqV4Pipj84NLphvf/feutzypujI19wIr2o7BwQHvoHcKKjGsLchUG81EFSNvrHwNx2BOJ
- lCy4h/germcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,437,1599548400"; 
-   d="scan'208";a="372892712"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by orsmga008.jf.intel.com with ESMTP; 21 Dec 2020 14:21:47 -0800
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725961AbgLUWyD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 17:54:03 -0500
+Received: from mail-oo1-f41.google.com ([209.85.161.41]:42504 "EHLO
+        mail-oo1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgLUWyC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 17:54:02 -0500
+Received: by mail-oo1-f41.google.com with SMTP id x203so2564564ooa.9;
+        Mon, 21 Dec 2020 14:53:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PmiFErZsck8Eax6YSpPObi4oYX8shYbW2tl21KlUI5M=;
+        b=gXyRlORkyHi66Llm062zovdcdq/KdIbq5PUDI+TmYhoXIpKso5gfeDUkfHr0jvFjE4
+         2JIzuOHPqgqEC7mE92ToP6LWzLRZJPMYRJmQxoHNKiHFQYBEwp04UutP19/pxZu78xGm
+         EvWYJFY8sBpuao9fX257Wki8nIK84tCOd/iQLXL5b60RqpXqbxJGNq35CDx2vq3tA8LA
+         YaWdwERTZoB2R0JEeALQufP3Dy4vo/zFxMxwtEuZwEMIIbF6Ub25nYHSM9bW4ED/cOSJ
+         7BT8wYTD8g89yhi2bauQCI9ZYBqqxm/37Knd9cNP+hBrdomrI9bDEGmXFYKhLenVm9iv
+         N0NQ==
+X-Gm-Message-State: AOAM532Jk5KndoWb23Mmf3owIOL3WPDPIW1jVAZBOD7DdSfdNPXIPzPe
+        FPEKYCMKBFCflP1zTc/P8J3L1/tfrw==
+X-Google-Smtp-Source: ABdhPJwHk2mKXmiM9Be1g1hPiKx149bS8x31wABVYLXX21+EEEz/R18GHHbZiggzsaUq+ghMjOAzAg==
+X-Received: by 2002:a05:6820:503:: with SMTP id m3mr13176716ooj.83.1608591201539;
+        Mon, 21 Dec 2020 14:53:21 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id e25sm1849939oof.1.2020.12.21.14.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 14:53:20 -0800 (PST)
+Received: (nullmailer pid 723454 invoked by uid 1000);
+        Mon, 21 Dec 2020 22:53:16 -0000
+Date:   Mon, 21 Dec 2020 15:53:16 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        linux-media@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH v2 1/1] media: aspeed: fix clock handling logic
-Date:   Mon, 21 Dec 2020 14:32:25 -0800
-Message-Id: <20201221223225.14723-2-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201221223225.14723-1-jae.hyun.yoo@linux.intel.com>
-References: <20201221223225.14723-1-jae.hyun.yoo@linux.intel.com>
+        linux-kernel@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devel@driverdev.osuosl.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>, linux-clk@vger.kernel.org,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 01/48] dt-bindings: memory: tegra20: emc: Replace core
+ regulator with power domain
+Message-ID: <20201221225316.GA723398@robh.at.kernel.org>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-2-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217180638.22748-2-digetx@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Video engine uses eclk and vclk for its clock sources and its reset
-control is coupled with eclk so the current clock enabling sequence works
-like below.
+On Thu, 17 Dec 2020 21:05:51 +0300, Dmitry Osipenko wrote:
+> Power domain fits much better than a voltage regulator in regards to
+> a proper hardware description and from a software perspective as well.
+> Hence replace the core regulator with the power domain. Note that this
+> doesn't affect any existing DTBs because we haven't started to use the
+> regulator yet, and thus, it's okay to change it.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/memory-controllers/nvidia,tegra20-emc.txt        | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
- Enable eclk
- De-assert Video Engine reset
- 10ms delay
- Enable vclk
-
-It introduces improper reset on the Video Engine hardware and eventually
-the hardware generates unexpected DMA memory transfers that can corrupt
-memory region in random and sporadic patterns. This issue is observed
-very rarely on some specific AST2500 SoCs but it causes a critical
-kernel panic with making a various shape of signature so it's extremely
-hard to debug. Moreover, the issue is observed even when the video
-engine is not actively used because udevd turns on the video engine
-hardware for a short time to make a query in every boot.
-
-To fix this issue, this commit changes the clock handling logic to make
-the reset de-assertion triggered after enabling both eclk and vclk. Also,
-it adds clk_unprepare call for a case when probe fails.
-
-Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-
-clk: ast2600: fix reset settings for eclk and vclk
-
-Video engine reset setting should be coupled with eclk to match it
-with the setting for previous Aspeed SoCs which is defined in
-clk-aspeed.c since all Aspeed SoCs are sharing a single video engine
-driver. Also, reset bit 6 is defined as 'Video Engine' reset in
-datasheet so it should be de-asserted when eclk is enabled. This
-commit fixes the setting.
-
-Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
----
-Changes since v1:
-- Squashed two patches due to dependency.
-
- drivers/clk/clk-ast2600.c             | 4 ++--
- drivers/media/platform/aspeed-video.c | 9 ++++++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 177368cac6dd..882da16575d4 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -60,10 +60,10 @@ static void __iomem *scu_g6_base;
- static const struct aspeed_gate_data aspeed_g6_gates[] = {
- 	/*				    clk rst  name		parent	 flags */
- 	[ASPEED_CLK_GATE_MCLK]		= {  0, -1, "mclk-gate",	"mpll",	 CLK_IS_CRITICAL }, /* SDRAM */
--	[ASPEED_CLK_GATE_ECLK]		= {  1, -1, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
-+	[ASPEED_CLK_GATE_ECLK]		= {  1,  6, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
- 	[ASPEED_CLK_GATE_GCLK]		= {  2,  7, "gclk-gate",	NULL,	 0 },	/* 2D engine */
- 	/* vclk parent - dclk/d1clk/hclk/mclk */
--	[ASPEED_CLK_GATE_VCLK]		= {  3,  6, "vclk-gate",	NULL,	 0 },	/* Video Capture */
-+	[ASPEED_CLK_GATE_VCLK]		= {  3, -1, "vclk-gate",	NULL,	 0 },	/* Video Capture */
- 	[ASPEED_CLK_GATE_BCLK]		= {  4,  8, "bclk-gate",	"bclk",	 0 }, /* PCIe/PCI */
- 	/* From dpll */
- 	[ASPEED_CLK_GATE_DCLK]		= {  5, -1, "dclk-gate",	NULL,	 CLK_IS_CRITICAL }, /* DAC */
-diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
-index c46a79eace98..db072ff2df70 100644
---- a/drivers/media/platform/aspeed-video.c
-+++ b/drivers/media/platform/aspeed-video.c
-@@ -514,8 +514,8 @@ static void aspeed_video_off(struct aspeed_video *video)
- 	aspeed_video_write(video, VE_INTERRUPT_STATUS, 0xffffffff);
- 
- 	/* Turn off the relevant clocks */
--	clk_disable(video->vclk);
- 	clk_disable(video->eclk);
-+	clk_disable(video->vclk);
- 
- 	clear_bit(VIDEO_CLOCKS_ON, &video->flags);
- }
-@@ -526,8 +526,8 @@ static void aspeed_video_on(struct aspeed_video *video)
- 		return;
- 
- 	/* Turn on the relevant clocks */
--	clk_enable(video->eclk);
- 	clk_enable(video->vclk);
-+	clk_enable(video->eclk);
- 
- 	set_bit(VIDEO_CLOCKS_ON, &video->flags);
- }
-@@ -1719,8 +1719,11 @@ static int aspeed_video_probe(struct platform_device *pdev)
- 		return rc;
- 
- 	rc = aspeed_video_setup_video(video);
--	if (rc)
-+	if (rc) {
-+		clk_unprepare(video->vclk);
-+		clk_unprepare(video->eclk);
- 		return rc;
-+	}
- 
- 	return 0;
- }
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
