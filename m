@@ -2,148 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C437C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 17:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EF3C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 233A522CA1
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 17:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD8EC23103
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgLURWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 12:22:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbgLURWJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Dec 2020 12:22:09 -0500
-X-Gm-Message-State: AOAM531uEysNefMpx4fVbcz2zyHwSKHT5UWHm9jRJ8tdK18rSzTCLGGW
-        cQ2C5NnIDwXORJzlRZ+Mzgfi97R1nhT+gLBonA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608571288;
-        bh=p5L2uvw4Xw+mZGbmFeQMvwPwFMJocnpG1YnXWsC/ohg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AJhEeG3D0NCcWY94nRwWg0zaYAmvBrMIc2IbaEH2l4bQXK2Qa2qhdwcueWBnTjXJV
-         duNCE9wz/I4BRX54iuAJ/PNZP/qIMAy1h+eGSYZwEkt66dwYNs6Hmzm4ndgOSg09sx
-         8VwciqfN/zz8DS6Ty3fO0Yrfsh0JJVvyGxTii5vnzpo7mRFlVR+5iakkCpw/da5r3Y
-         Or7VJW1FJyhjy5VCVpYtmUs9NgvxeLSz+sCO7qN74Tw1AJdk5YrAVO5HCoOJwmdnfU
-         VssrjvVOrz0qRBE1c3JrFtaYlnQv5JlD/BfYkgXfVpEZiDipZAfHkvBmLm1t4S8y2j
-         WDTYPCK6lnAEQ==
-X-Google-Smtp-Source: ABdhPJxPmMLSn2dIoItk6K6RGiGZOaFEwhtsPT9myepBMIU4F8QBp+whNX0o/pIvd85eWVABdHjZUR2RaRzFyhLMM2k=
-X-Received: by 2002:aed:2c63:: with SMTP id f90mr17171370qtd.31.1608571287494;
- Mon, 21 Dec 2020 09:21:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20201216145231.1344317-1-geert+renesas@glider.be>
- <20201217235919.GA456454@robh.at.kernel.org> <CAMuHMdVO29He-KHDLp3S=2JyGwOT=tLcDCOw6MPqBvcBLdUCOw@mail.gmail.com>
- <CAL_JsqLcjhRgkTh=SNEpbq-uuv3LixJ3ivSw+TQvPdCCEtFYNw@mail.gmail.com> <CAMuHMdUqB9+3kKHe42nMHAzp5qrJbv2DbKh7fcPPw07R1yhcMA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUqB9+3kKHe42nMHAzp5qrJbv2DbKh7fcPPw07R1yhcMA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 21 Dec 2020 10:21:16 -0700
-X-Gmail-Original-Message-ID: <CAL_Jsq+qBmmR8pOabb21JRVVXdHGT1c6xPbeGEmr+OBMjjkV2A@mail.gmail.com>
-Message-ID: <CAL_Jsq+qBmmR8pOabb21JRVVXdHGT1c6xPbeGEmr+OBMjjkV2A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1725962AbgLUSEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 13:04:38 -0500
+Received: from m43-15.mailgun.net ([69.72.43.15]:44558 "EHLO
+        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbgLUSEi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:04:38 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1608573857; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=qtC1xnTwsZ/pq2bzAAmFHJGvkNgdm1UbjIJc3YraR48=; b=h0SSJ0RvSRig3zyU48R1JEbEgeIikoB2+r2u4HJUF7ByVkKvxQIEZjU7M/Ratl2hfCdBghYw
+ GeU75e3rs3+3QSV3of/W/smtvBi97VEjJ6kJPYrqdAYW5TwkNjUoaw4D/pPJI9yoWuf+8L9i
+ 0H7zb1pJUUJMcaojhd+O9BesamI=
+X-Mailgun-Sending-Ip: 69.72.43.15
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5fe0e3877036173f4f1290cb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Dec 2020 18:03:51
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D5532C433ED; Mon, 21 Dec 2020 18:03:50 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D870C43461;
+        Mon, 21 Dec 2020 18:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D870C43461
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: gcc-sc7180: Mark the camera abh clock always ON
+Date:   Mon, 21 Dec 2020 23:33:36 +0530
+Message-Id: <1608573816-1465-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 20, 2020 at 3:24 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Fri, Dec 18, 2020 at 11:32 PM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Dec 18, 2020 at 5:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Fri, Dec 18, 2020 at 12:59 AM Rob Herring <robh@kernel.org> wrote:
-> > > > On Wed, Dec 16, 2020 at 03:52:31PM +0100, Geert Uytterhoeven wrote:
-> > > > >   - Add reference to clock.yaml, and switch to unevaluatedProperties, to
-> > > > >     stop complaining about the presence of "assigned-clock-rates" and
-> > > > >     "assigned-clocks" in board DTS files,
->
-> > > > > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > ---
-> > > > > Notes:
-> > > > >   1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
-> > > > >      unfortunate, as Documentation/devicetree/bindings/property-units.txt
-> > > > >      suggests to not have the trailing edge.
-> > > > >      Can we still fix the driver and bindings?  While this entered
-> > > > >      uptstream in v5.9, there are no users in next-20201216.
-> > > > >
-> > > > >   2. Due to "clock-output-names" being part of
-> > > > >      dt-schema/schemas/clock/clock.yaml, the presence of this property
-> > > > >      does not trigger an error.  Adding "clock-output-names: false"
-> > > > >      can fix that.  But given this property is deprecated, except for
-> > > > >      very specific use cases, explicitly allowing it for those few use
-> > > > >      cases would be better.
-> > > > > ---
-> > > > >  .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
-> > > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > index 2ac1131fd9222a86..14851e76f6342095 100644
-> > > > > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > @@ -33,6 +33,9 @@ description: |
-> > > > >  maintainers:
-> > > > >    - Luca Ceresoli <luca@lucaceresoli.net>
-> > > > >
-> > > > > +allOf:
-> > > > > +  - $ref: clock.yaml#
-> > > >
-> > > > No, that's not right. clock.yaml is already applied unconditionally.
-> > >
-> > > But without that, it complains about unevaluatedProperties?
-> >
-> > By design. You can't have other properties outside your binding unless
-> > you have a $ref to other schemas. Also, note that there's not a single
-> > other ref to clock.yaml.
-> >
-> > > > You need to define assigned-clocks, etc. here just like 'clocks' and
-> > > > define how many entries. Or convince me they should be allowed on any
-> > > > node.
-> > >
-> > > They are handled by of_clk_set_defaults(), which is applied to all
-> > > clock providers.
-> >
-> > What does that Linux implementation detail have to do with the bindings?
->
-> I consider Linux the reference implementation.
-> Is there any other real reference implementation? ;-)
+The camera clock controller requires the AHB clock, the driver when
+moved to use the pm_runtime_get() API, the camera ahb clock failed turn
+on before access, thus mark it as always ON.
 
-No comment. ;)
+Reported-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-sc7180.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-> > The only other exception we have is pinctrl properties. They often
-> > aren't that interesting unless you have more than one (maybe we should
-> > only automatically allow the single case). That's maybe true in the
-> > assigned-clocks case too. However the big difference I see is pinctrl
-> > properties are almost always present whereas assign-clocks is more the
-> > exception. So I think it's good to be explicit where they are used.
->
-> The problem with the assigned-clock* properties is that the DT binding
-> writer has no idea if they will be ever used or not.  These properties
-> come into play at an even higher level than the pinctrl properties.
-> While the DT binding writer usually[1] knows if there can be pinctrl
-> properties or not, this is not the case for the assigned-clock*
-> properties.  The former are expected and mandatory, the latter are
-> optional, and are added only during the system integration phase, and
-> may appear everywhere.
->
-> So I think they should be allowed on any node.  Unless we decide
-> assigned-clock* properties are a bad idea in general.
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index d82d725..b05901b 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -891,21 +891,6 @@ static struct clk_branch gcc_boot_rom_ahb_clk = {
+ 	},
+ };
 
-Okay, let's add them automatically I guess. We can at least make them
-dependent on having a 'clocks' property.
+-static struct clk_branch gcc_camera_ahb_clk = {
+-	.halt_reg = 0xb008,
+-	.halt_check = BRANCH_HALT,
+-	.hwcg_reg = 0xb008,
+-	.hwcg_bit = 1,
+-	.clkr = {
+-		.enable_reg = 0xb008,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_camera_ahb_clk",
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_camera_hf_axi_clk = {
+ 	.halt_reg = 0xb020,
+ 	.halt_check = BRANCH_HALT,
+@@ -2317,7 +2302,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+ 	[GCC_AGGRE_UFS_PHY_AXI_CLK] = &gcc_aggre_ufs_phy_axi_clk.clkr,
+ 	[GCC_AGGRE_USB3_PRIM_AXI_CLK] = &gcc_aggre_usb3_prim_axi_clk.clkr,
+ 	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
+-	[GCC_CAMERA_AHB_CLK] = &gcc_camera_ahb_clk.clkr,
+ 	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
+ 	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
+ 	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
+@@ -2519,11 +2503,12 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
 
-Rob
+ 	/*
+ 	 * Keep the clocks always-ON
+-	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_DISP_AHB_CLK
+-	 * GCC_GPU_CFG_AHB_CLK
++	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK,
++	 * GCC_DISP_AHB_CLK, GCC_GPU_CFG_AHB_CLK
+ 	 */
+ 	regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
++	regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+ 	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
