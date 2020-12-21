@@ -7,304 +7,81 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE75C4321A
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331B2C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73F8322CB1
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F145122CAF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:33:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgLUPH0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 10:07:26 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56787 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbgLUPH0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 10:07:26 -0500
-Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1krMll-0007Vo-1O; Mon, 21 Dec 2020 16:06:41 +0100
-Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1krMle-003AbC-Pm; Mon, 21 Dec 2020 16:06:34 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc:     rajanv@xilinx.com, tejasp@xilinx.com, dshah@xilinx.com,
-        rvisaval@xilinx.com, michals@xilinx.com, kernel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v2 05/15] soc: xilinx: vcu: add helpers for configuring PLL
-Date:   Mon, 21 Dec 2020 16:06:24 +0100
-Message-Id: <20201221150634.755673-6-m.tretter@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201221150634.755673-1-m.tretter@pengutronix.de>
-References: <20201221150634.755673-1-m.tretter@pengutronix.de>
+        id S1725780AbgLUPcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 10:32:48 -0500
+Received: from retiisi.eu ([95.216.213.190]:52220 "EHLO hillosipuli.retiisi.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725497AbgLUPcs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 Dec 2020 10:32:48 -0500
+Received: from lanttu.localdomain (lanttu-e.localdomain [192.168.1.64])
+        by hillosipuli.retiisi.eu (Postfix) with ESMTP id E1FCB634C87;
+        Mon, 21 Dec 2020 17:29:57 +0200 (EET)
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     linux-media@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/1] Documentation: media: Document clock handling in camera sensor drivers
+Date:   Mon, 21 Dec 2020 17:25:29 +0200
+Message-Id: <20201221152529.25417-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The xvcu_set_vcu_pll_info function sets the rate of the PLL and enables
-it, which makes it difficult to cleanly convert the driver to the common
-clock framework.
+Document pratices of handling clocks in camera sensor drivers on both DT
+and ACPI.
 
-Split the function and add separate functions for setting the rate,
-enabling the clock and disabling the clock.
-
-Also move the enable of the reference clock from probe to the helper
-that enables the PLL.
-
-Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-Changelog:
+ .../driver-api/media/camera-sensor.rst        | 20 ++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-v2: none
----
- drivers/soc/xilinx/xlnx_vcu.c | 171 +++++++++++++++++++++-------------
- 1 file changed, 104 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index 0fd8356a3776..ff66551a5966 100644
---- a/drivers/soc/xilinx/xlnx_vcu.c
-+++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -272,6 +272,105 @@ static int xvcu_pll_wait_for_lock(struct xvcu_device *xvcu)
- 	return -ETIMEDOUT;
- }
+diff --git a/Documentation/driver-api/media/camera-sensor.rst b/Documentation/driver-api/media/camera-sensor.rst
+index ffb0cad8137a..4e8e92fdd8b4 100644
+--- a/Documentation/driver-api/media/camera-sensor.rst
++++ b/Documentation/driver-api/media/camera-sensor.rst
+@@ -15,7 +15,7 @@ Camera sensors have an internal clock tree including a PLL and a number of
+ divisors. The clock tree is generally configured by the driver based on a few
+ input parameters that are specific to the hardware:: the external clock frequency
+ and the link frequency. The two parameters generally are obtained from system
+-firmware. No other frequencies should be used in any circumstances.
++firmware. **No other frequencies should be used in any circumstances.**
  
-+static const struct xvcu_pll_cfg *xvcu_find_cfg(int div)
-+{
-+	const struct xvcu_pll_cfg *cfg = NULL;
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(xvcu_pll_cfg) - 1; i++)
-+		if (xvcu_pll_cfg[i].fbdiv == div)
-+			cfg = &xvcu_pll_cfg[i];
-+
-+	return cfg;
-+}
-+
-+static int xvcu_pll_set_div(struct xvcu_device *xvcu, int div)
-+{
-+	void __iomem *base = xvcu->vcu_slcr_ba;
-+	const struct xvcu_pll_cfg *cfg = NULL;
-+	u32 vcu_pll_ctrl;
-+	u32 cfg_val;
-+
-+	cfg = xvcu_find_cfg(div);
-+	if (!cfg)
-+		return -EINVAL;
-+
-+	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
-+	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_FBDIV_MASK << VCU_PLL_CTRL_FBDIV_SHIFT);
-+	vcu_pll_ctrl |= (cfg->fbdiv & VCU_PLL_CTRL_FBDIV_MASK) <<
-+			 VCU_PLL_CTRL_FBDIV_SHIFT;
-+	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
-+
-+	cfg_val = (cfg->res << VCU_PLL_CFG_RES_SHIFT) |
-+		   (cfg->cp << VCU_PLL_CFG_CP_SHIFT) |
-+		   (cfg->lfhf << VCU_PLL_CFG_LFHF_SHIFT) |
-+		   (cfg->lock_cnt << VCU_PLL_CFG_LOCK_CNT_SHIFT) |
-+		   (cfg->lock_dly << VCU_PLL_CFG_LOCK_DLY_SHIFT);
-+	xvcu_write(base, VCU_PLL_CFG, cfg_val);
-+
-+	return 0;
-+}
-+
-+static int xvcu_pll_set_rate(struct xvcu_device *xvcu,
-+			     unsigned long rate, unsigned long parent_rate)
-+{
-+	return xvcu_pll_set_div(xvcu, rate / parent_rate);
-+}
-+
-+static int xvcu_pll_enable(struct xvcu_device *xvcu)
-+{
-+	void __iomem *base = xvcu->vcu_slcr_ba;
-+	u32 vcu_pll_ctrl;
-+	int ret;
-+
-+	ret = clk_prepare_enable(xvcu->pll_ref);
-+	if (ret) {
-+		dev_err(xvcu->dev, "failed to enable pll_ref clock source\n");
-+		return ret;
-+	}
-+
-+	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
-+	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_POR_IN_MASK <<
-+			  VCU_PLL_CTRL_POR_IN_SHIFT);
-+	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_POR_IN_MASK) <<
-+			 VCU_PLL_CTRL_POR_IN_SHIFT;
-+	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_PWR_POR_MASK <<
-+			  VCU_PLL_CTRL_PWR_POR_SHIFT);
-+	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_PWR_POR_MASK) <<
-+			 VCU_PLL_CTRL_PWR_POR_SHIFT;
-+	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
-+
-+	xvcu_write_field_reg(base, VCU_PLL_CTRL,
-+			     1, VCU_PLL_CTRL_BYPASS_MASK,
-+			     VCU_PLL_CTRL_BYPASS_SHIFT);
-+	xvcu_write_field_reg(base, VCU_PLL_CTRL,
-+			     1, VCU_PLL_CTRL_RESET_MASK,
-+			     VCU_PLL_CTRL_RESET_SHIFT);
-+	xvcu_write_field_reg(base, VCU_PLL_CTRL,
-+			     0, VCU_PLL_CTRL_RESET_MASK,
-+			     VCU_PLL_CTRL_RESET_SHIFT);
-+
-+	ret = xvcu_pll_wait_for_lock(xvcu);
-+	if (ret) {
-+		dev_err(xvcu->dev, "PLL is not locked\n");
-+		goto err;
-+	}
-+
-+	xvcu_write_field_reg(base, VCU_PLL_CTRL,
-+			     0, VCU_PLL_CTRL_BYPASS_MASK,
-+			     VCU_PLL_CTRL_BYPASS_SHIFT);
-+
-+	return ret;
-+err:
-+	clk_disable_unprepare(xvcu->pll_ref);
-+	return ret;
-+}
-+
-+static void xvcu_pll_disable(struct xvcu_device *xvcu)
-+{
-+	clk_disable_unprepare(xvcu->pll_ref);
-+}
-+
- /**
-  * xvcu_set_vcu_pll_info - Set the VCU PLL info
-  * @xvcu:	Pointer to the xvcu_device structure
-@@ -292,8 +391,8 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	u32 refclk, coreclk, mcuclk, inte, deci;
- 	u32 divisor_mcu, divisor_core, fvco;
- 	u32 clkoutdiv, vcu_pll_ctrl, pll_clk;
--	u32 cfg_val, mod, ctrl;
--	int ret, i;
-+	u32 mod, ctrl;
-+	int i;
- 	const struct xvcu_pll_cfg *found = NULL;
+ The reason why the clock frequencies are so important is that the clock signals
+ come out of the SoC, and in many cases a specific frequency is designed to be
+@@ -23,6 +23,24 @@ used in the system. Using another frequency may cause harmful effects
+ elsewhere. Therefore only the pre-determined frequencies are configurable by the
+ user.
  
- 	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK, &inte);
-@@ -312,19 +411,6 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	dev_dbg(xvcu->dev, "Core clock from logicoreIP is %uHz\n", coreclk);
- 	dev_dbg(xvcu->dev, "Mcu clock from logicoreIP is %uHz\n", mcuclk);
++ACPI
++~~~~
++
++Read the "clock-frequency" _DSD property to denote the frequency. The driver can
++rely this frequency being used.
++
++Devicetree
++~~~~~~~~~~
++
++The currently preferred way to achieve this is using "assigned-clock-rates"
++property. See Documentation/devicetree/bindings/clock/clock-bindings.txt for
++more information.
++
++This approach has the drawback that there's no guarantee that the frequency
++hasn't been modified directly or indirectly by another driver, or supported by
++the board's clock tree to begin with. Changes to the Common Clock Framework API
++are required to ensure reliability.
++
+ Frame size
+ ----------
  
--	clk_disable_unprepare(xvcu->pll_ref);
--	ret = clk_set_rate(xvcu->pll_ref, refclk);
--	if (ret)
--		dev_warn(xvcu->dev, "failed to set logicoreIP refclk rate\n");
--
--	ret = clk_prepare_enable(xvcu->pll_ref);
--	if (ret) {
--		dev_err(xvcu->dev, "failed to enable pll_ref clock source\n");
--		return ret;
--	}
--
--	refclk = clk_get_rate(xvcu->pll_ref);
--
- 	/*
- 	 * The divide-by-2 should be always enabled (==1)
- 	 * to meet the timing in the design.
-@@ -378,19 +464,6 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	dev_dbg(xvcu->dev, "Actual Core clock freq is %uHz\n", coreclk);
- 	dev_dbg(xvcu->dev, "Actual Mcu clock freq is %uHz\n", mcuclk);
- 
--	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_FBDIV_MASK << VCU_PLL_CTRL_FBDIV_SHIFT);
--	vcu_pll_ctrl |= (found->fbdiv & VCU_PLL_CTRL_FBDIV_MASK) <<
--			 VCU_PLL_CTRL_FBDIV_SHIFT;
--	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_POR_IN_MASK <<
--			  VCU_PLL_CTRL_POR_IN_SHIFT);
--	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_POR_IN_MASK) <<
--			 VCU_PLL_CTRL_POR_IN_SHIFT;
--	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_PWR_POR_MASK <<
--			  VCU_PLL_CTRL_PWR_POR_SHIFT);
--	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_PWR_POR_MASK) <<
--			 VCU_PLL_CTRL_PWR_POR_SHIFT;
--	xvcu_write(xvcu->vcu_slcr_ba, VCU_PLL_CTRL, vcu_pll_ctrl);
--
- 	/* Set divisor for the core and mcu clock */
- 	ctrl = xvcu_read(xvcu->vcu_slcr_ba, VCU_ENC_CORE_CTRL);
- 	ctrl &= ~(VCU_PLL_DIVISOR_MASK << VCU_PLL_DIVISOR_SHIFT);
-@@ -422,15 +495,7 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	ctrl |= (VCU_SRCSEL_PLL & VCU_SRCSEL_MASK) << VCU_SRCSEL_SHIFT;
- 	xvcu_write(xvcu->vcu_slcr_ba, VCU_DEC_MCU_CTRL, ctrl);
- 
--	/* Set RES, CP, LFHF, LOCK_CNT and LOCK_DLY cfg values */
--	cfg_val = (found->res << VCU_PLL_CFG_RES_SHIFT) |
--		   (found->cp << VCU_PLL_CFG_CP_SHIFT) |
--		   (found->lfhf << VCU_PLL_CFG_LFHF_SHIFT) |
--		   (found->lock_cnt << VCU_PLL_CFG_LOCK_CNT_SHIFT) |
--		   (found->lock_dly << VCU_PLL_CFG_LOCK_DLY_SHIFT);
--	xvcu_write(xvcu->vcu_slcr_ba, VCU_PLL_CFG, cfg_val);
--
--	return 0;
-+	return xvcu_pll_set_rate(xvcu, fvco, refclk);
- }
- 
- /**
-@@ -452,27 +517,7 @@ static int xvcu_set_pll(struct xvcu_device *xvcu)
- 		return ret;
- 	}
- 
--	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
--			     1, VCU_PLL_CTRL_BYPASS_MASK,
--			     VCU_PLL_CTRL_BYPASS_SHIFT);
--	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
--			     1, VCU_PLL_CTRL_RESET_MASK,
--			     VCU_PLL_CTRL_RESET_SHIFT);
--	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
--			     0, VCU_PLL_CTRL_RESET_MASK,
--			     VCU_PLL_CTRL_RESET_SHIFT);
--
--	ret = xvcu_pll_wait_for_lock(xvcu);
--	if (ret) {
--		dev_err(xvcu->dev, "PLL is not locked\n");
--		return ret;
--	}
--
--	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
--			     0, VCU_PLL_CTRL_BYPASS_MASK,
--			     VCU_PLL_CTRL_BYPASS_SHIFT);
--
--	return ret;
-+	return xvcu_pll_enable(xvcu);
- }
- 
- /**
-@@ -555,12 +600,6 @@ static int xvcu_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = clk_prepare_enable(xvcu->pll_ref);
--	if (ret) {
--		dev_err(&pdev->dev, "pll_ref clock enable failed\n");
--		goto error_aclk;
--	}
--
- 	/*
- 	 * Do the Gasket isolation and put the VCU out of reset
- 	 * Bit 0 : Gasket isolation
-@@ -580,8 +619,6 @@ static int xvcu_probe(struct platform_device *pdev)
- 	return 0;
- 
- error_pll_ref:
--	clk_disable_unprepare(xvcu->pll_ref);
--error_aclk:
- 	clk_disable_unprepare(xvcu->aclk);
- 	return ret;
- }
-@@ -605,7 +642,7 @@ static int xvcu_remove(struct platform_device *pdev)
- 	/* Add the the Gasket isolation and put the VCU in reset. */
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
- 
--	clk_disable_unprepare(xvcu->pll_ref);
-+	xvcu_pll_disable(xvcu);
- 	clk_disable_unprepare(xvcu->aclk);
- 
- 	return 0;
 -- 
-2.20.1
+2.29.2
 
