@@ -2,124 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EF3C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B26C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD8EC23103
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6159122CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725962AbgLUSEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:04:38 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:44558 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbgLUSEi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:04:38 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1608573857; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=qtC1xnTwsZ/pq2bzAAmFHJGvkNgdm1UbjIJc3YraR48=; b=h0SSJ0RvSRig3zyU48R1JEbEgeIikoB2+r2u4HJUF7ByVkKvxQIEZjU7M/Ratl2hfCdBghYw
- GeU75e3rs3+3QSV3of/W/smtvBi97VEjJ6kJPYrqdAYW5TwkNjUoaw4D/pPJI9yoWuf+8L9i
- 0H7zb1pJUUJMcaojhd+O9BesamI=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 5fe0e3877036173f4f1290cb (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Dec 2020 18:03:51
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D5532C433ED; Mon, 21 Dec 2020 18:03:50 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D870C43461;
-        Mon, 21 Dec 2020 18:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D870C43461
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: gcc-sc7180: Mark the camera abh clock always ON
-Date:   Mon, 21 Dec 2020 23:33:36 +0530
-Message-Id: <1608573816-1465-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727020AbgLUShN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 13:37:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbgLUShM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:37:12 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 673B4C0613D6;
+        Mon, 21 Dec 2020 10:36:32 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id n26so14809042eju.6;
+        Mon, 21 Dec 2020 10:36:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fWkMbxsI1o+TKi40gvIKxOy8FUWY3wrnEaa8EBZzq+Y=;
+        b=YSnJ3X3KJ1HnAexXXg1QCJQQSdejcczuBUdYz9NqTnTkMwjP2n8x7yq5/4yvSgO/jD
+         iPcvjMPTevnDN1Dy6+O9vIM+gtaTcl8dbIz6wiGNlx/FqKLDGNWpXzlPc1t2xr8duVVe
+         wydaoV00COj0+X+mrHjieCOUZa4zYBp8cSq9/dceDzvn+adBoFZ8vgA/fYzHKIQL1PyS
+         xMbuPofmZiCl9T+PIYd9WWjh4Ow3TqYq1urW32enTAVV+l2vpB0I9mbM/qshXIYjP0z0
+         nkFwWhmBEPf/tLkUnXAjbLdn5BihMqkNUyjBsnL8DoCRI8WBJkb8qAIRektRryYljCyA
+         Yosg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fWkMbxsI1o+TKi40gvIKxOy8FUWY3wrnEaa8EBZzq+Y=;
+        b=finfbSao8Me/+5sg0VeFoFlQBqDFBoPtTw6J1THQDeugJGw1fpE+NKLReqQ7j4XdFA
+         mQML3xUNW0qOvZ99LK4vX0qS0OoMFgeSEqV9LqPo8xRvOY/Ps8kNyeEM9ghh6HviJHqa
+         VNXUMbGDSTijI6kc+wsJ8Avcw2zjd5lLpC233mR5gwHTwvgwxZtrs3zv0+LTyGzcwyB9
+         oyCjcs2CQTiBstO6QRwkEg4NIv52zpAxNEkY4K7it+dg21vjWkFWJyhR1NW3uWBuXJsy
+         OeXZBZ/ySTgNZktap8taNQY0GJzPtWcwuYgOSs+ILIzgwCxDex8Af3u2kSs0U0IOKIxN
+         NyGw==
+X-Gm-Message-State: AOAM533D5KSdFXI+73hHS5s5DgE5MQzILZBOG/4PoYgB0w8fCiQvES4w
+        3gbIFI4OveuX5+ZcX5hgl24=
+X-Google-Smtp-Source: ABdhPJzYTKKKK7YdSQG4z2k5CUmkaYUnguR49SQ7yzoPQZ6lp44/ihPAGPP2FhdQucQPXMQKgdVqBw==
+X-Received: by 2002:a17:906:eb49:: with SMTP id mc9mr16073411ejb.487.1608575791177;
+        Mon, 21 Dec 2020 10:36:31 -0800 (PST)
+Received: from localhost.localdomain (p200300f137019000428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:3701:9000:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id ld2sm9390408ejb.73.2020.12.21.10.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 10:36:30 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] clk: meson8b: cleanup unused code
+Date:   Mon, 21 Dec 2020 19:36:22 +0100
+Message-Id: <20201221183624.932649-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The camera clock controller requires the AHB clock, the driver when
-moved to use the pm_runtime_get() API, the camera ahb clock failed turn
-on before access, thus mark it as always ON.
+Hi Jerome,
 
-Reported-by: Stephen Boyd <sboyd@kernel.org>
-Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gcc-sc7180.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+these patches are two small cleanups for code we don't need anymore.
+The first patch removes support for old .dtbs. I am not sure if the
+"fallback" logic still works as I have not tried this in a long time.
 
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index d82d725..b05901b 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -891,21 +891,6 @@ static struct clk_branch gcc_boot_rom_ahb_clk = {
- 	},
- };
 
--static struct clk_branch gcc_camera_ahb_clk = {
--	.halt_reg = 0xb008,
--	.halt_check = BRANCH_HALT,
--	.hwcg_reg = 0xb008,
--	.hwcg_bit = 1,
--	.clkr = {
--		.enable_reg = 0xb008,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_camera_ahb_clk",
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_camera_hf_axi_clk = {
- 	.halt_reg = 0xb020,
- 	.halt_check = BRANCH_HALT,
-@@ -2317,7 +2302,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GCC_AGGRE_UFS_PHY_AXI_CLK] = &gcc_aggre_ufs_phy_axi_clk.clkr,
- 	[GCC_AGGRE_USB3_PRIM_AXI_CLK] = &gcc_aggre_usb3_prim_axi_clk.clkr,
- 	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
--	[GCC_CAMERA_AHB_CLK] = &gcc_camera_ahb_clk.clkr,
- 	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
- 	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
- 	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
-@@ -2519,11 +2503,12 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
+Martin Blumenstingl (2):
+  clk: meson: meson8b: remove compatibility code for old .dtbs
+  dt-bindings: clock: meson8b: remove non-existing clock macros
 
- 	/*
- 	 * Keep the clocks always-ON
--	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_DISP_AHB_CLK
--	 * GCC_GPU_CFG_AHB_CLK
-+	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK,
-+	 * GCC_DISP_AHB_CLK, GCC_GPU_CFG_AHB_CLK
- 	 */
- 	regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+ drivers/clk/meson/meson8b.c              | 45 +++---------------------
+ include/dt-bindings/clock/meson8b-clkc.h |  2 --
+ 2 files changed, 5 insertions(+), 42 deletions(-)
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+-- 
+2.29.2
 
