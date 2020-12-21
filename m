@@ -2,62 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F869C433E9
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EF3C43331
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 404E623C18
+	by mail.kernel.org (Postfix) with ESMTP id 04C1123C15
 	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbgLUSra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:47:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbgLUSra (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:47:30 -0500
-Subject: Re: [GIT PULL] clk changes for the merge window
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608576409;
-        bh=l+VP2sxQgfzOUk2jujgS/lJ3zv8PqDrwxIZeudAbYAg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vFUodvCEDwhsA0Bw8ZF9eOaCVlgEn7MO+eN+AzJ0g8hXOZmI6jQNvX5SfmF7dgPp2
-         exjJdAF5gEmAYG0PX6b6IpCviI43xDsh1skm1KGAuhn7ieP6RZYUP5/8RxMvzWw/vd
-         CnDTOsAsP1okuwh/4bxyfeOZzh9raOYMeGWClGyCnwHODk8I+4Z9Vdc66lWeeGRTWP
-         oEMRsp7IOuDi9JYs0DYgIamF/5Ao3DkNZhEYXVW6yPeDzyQPU93tDrgoIMiqrWbW6E
-         fSGRttFVQu+WW2nBcf9qr1QwYfdV5ybe4Opppze2IC2khfoLvBqTurRRD//N53EzAh
-         niX5S1628hmgA==
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20201221015214.3466681-1-sboyd@kernel.org>
-References: <20201221015214.3466681-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20201221015214.3466681-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: abe7e32f1d50392fbfb6391f4fe1a9f1348b24f3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8653b778e454a7708847aeafe689bce07aeeb94e
-Message-Id: <160857640927.14812.13500459603828465188.pr-tracker-bot@kernel.org>
-Date:   Mon, 21 Dec 2020 18:46:49 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1727139AbgLUSrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 13:47:52 -0500
+Received: from mail-oo1-f53.google.com ([209.85.161.53]:38575 "EHLO
+        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbgLUSrv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:47:51 -0500
+Received: by mail-oo1-f53.google.com with SMTP id i18so2441935ooh.5;
+        Mon, 21 Dec 2020 10:47:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9c4Z1cR0okEDOva6ZJZicR2jBIUZ+5XrWMqkg7M3kpw=;
+        b=hz3KlOPy99wyUWikmU8eY5avjkr6YqZ/MHNscLb8qTxnR5ow5mZQfkEp1BQhK9yvDD
+         QkvcBmjUMi1/Yd+yP+tGSDbHIGoAnTFW27ANdXx3mMbDS9ZYatSOFtQGKbnrsmvjW+K2
+         /dT870LPVAWhfhuDQEsiobUPs5+cuxn+1DViJZMhGjbBolk5+UJmlN2bkikgU22OTGhZ
+         4K9O8X7+l0yzF5d0s+mv1Xmy5d8gKGrooib30gPj42QqB2s3Vqb8ObvT9oPrLazGUg+x
+         aZCAnyWBnwY7KWt/vbq6CexJOUSZeN0646BBLp5MDT+2HuZH9qiP+eqjr3MdTaMxJMLE
+         rNcw==
+X-Gm-Message-State: AOAM5319kvPhdn1bD84KFShpOD53RplkYw4wKjIF+sSAW9e6/6kPqGCf
+        fLMjmbf1FU3L+7hCdBfblQ==
+X-Google-Smtp-Source: ABdhPJxHtxtQavMpTMYOeQXfbwlNAzcd18hUq1nv29288DdMCrjnzy/vnMDlD21MGqurHNxrq5tuvg==
+X-Received: by 2002:a4a:8353:: with SMTP id q19mr7538448oog.40.1608576430556;
+        Mon, 21 Dec 2020 10:47:10 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id t72sm3697688oie.47.2020.12.21.10.47.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 10:47:09 -0800 (PST)
+Received: (nullmailer pid 344465 invoked by uid 1000);
+        Mon, 21 Dec 2020 18:47:07 -0000
+Date:   Mon, 21 Dec 2020 11:47:07 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Matheus Castello <matheus@castello.eng.br>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Iskren Chernev <iskren.chernev@gmail.com>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Angus Ainslie <angus@akkea.ca>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-pm@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 17/18] mfd: max14577: Do not enforce (incorrect) interrupt
+ trigger type
+Message-ID: <20201221184707.GA344409@robh.at.kernel.org>
+References: <20201210212534.216197-1-krzk@kernel.org>
+ <20201210212534.216197-17-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201210212534.216197-17-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Sun, 20 Dec 2020 17:52:14 -0800:
+On Thu, 10 Dec 2020 22:25:33 +0100, Krzysztof Kozlowski wrote:
+> Interrupt line can be configured on different hardware in different way,
+> even inverted.  Therefore driver should not enforce specific trigger
+> type - edge falling - but instead rely on Devicetree to configure it.
+> 
+> The Maxim 14577/77836 datasheets describe the interrupt line as active
+> low with a requirement of acknowledge from the CPU therefore the edge
+> falling is not correct.
+> 
+> The interrupt line is shared between PMIC and charger driver, so using
+> level sensitive interrupt is here especially important to avoid races.
+> With an edge configuration in case if first PMIC signals interrupt
+> followed shortly after by the RTC, the interrupt might not be yet
+> cleared/acked thus the second one would not be noticed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> This patch should wait till DTS changes are merged, as it relies on
+> proper Devicetree.
+> ---
+>  Documentation/devicetree/bindings/mfd/max14577.txt | 4 ++--
+>  drivers/mfd/max14577.c                             | 6 +++---
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8653b778e454a7708847aeafe689bce07aeeb94e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Acked-by: Rob Herring <robh@kernel.org>
