@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAEBC4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F75C433E9
 	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8518922C9C
+	by mail.kernel.org (Postfix) with ESMTP id 9B50F22CA1
 	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725793AbgLUPHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1725841AbgLUPHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 21 Dec 2020 10:07:22 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37047 "EHLO
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39283 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725841AbgLUPHV (ORCPT
+        with ESMTP id S1725865AbgLUPHV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 10:07:21 -0500
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1krMlg-0007Vs-AC; Mon, 21 Dec 2020 16:06:36 +0100
+        id 1krMlg-0007Vq-AD; Mon, 21 Dec 2020 16:06:36 +0100
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1krMle-003AbO-S1; Mon, 21 Dec 2020 16:06:34 +0100
+        id 1krMle-003AbI-Qx; Mon, 21 Dec 2020 16:06:34 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Cc:     rajanv@xilinx.com, tejasp@xilinx.com, dshah@xilinx.com,
         rvisaval@xilinx.com, michals@xilinx.com, kernel@pengutronix.de,
         mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v2 09/15] soc: xilinx: vcu: make pll post divider explicit
-Date:   Mon, 21 Dec 2020 16:06:28 +0100
-Message-Id: <20201221150634.755673-10-m.tretter@pengutronix.de>
+Subject: [PATCH v2 07/15] soc: xilinx: vcu: register PLL as fixed rate clock
+Date:   Mon, 21 Dec 2020 16:06:26 +0100
+Message-Id: <20201221150634.755673-8-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201221150634.755673-1-m.tretter@pengutronix.de>
 References: <20201221150634.755673-1-m.tretter@pengutronix.de>
@@ -48,136 +48,102 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the downstream driver documentation due to timing
-constraints the output divider of the PLL has to be set to 1/2. Add a
-helper function for that check instead of burying the code in one large
-setup function.
-
-The bit is undocumented and marked as reserved in the register
-reference.
+Currently, xvcu_pll_set_rate configures the PLL to a clock rate that is
+pre-calculated when probing the driver. To still make the clock
+framework aware of the PLL and to allow to configure other clocks based
+on the PLL rate, register the PLL as a fixed rate clock.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 ---
 Changelog:
 
 v2:
-- Use clk_hw instead of name in xvcu_register_pll_post
+- Fix kernel-doc of struct xvcu_device
+- Add missing clk_hw_unregister_fixed_rate
 ---
- drivers/soc/xilinx/xlnx_vcu.c | 51 ++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 16 deletions(-)
+ drivers/soc/xilinx/Kconfig    |  2 +-
+ drivers/soc/xilinx/xlnx_vcu.c | 19 ++++++++++++++++++-
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/soc/xilinx/Kconfig b/drivers/soc/xilinx/Kconfig
+index 0b1708dae361..9fe703772e5a 100644
+--- a/drivers/soc/xilinx/Kconfig
++++ b/drivers/soc/xilinx/Kconfig
+@@ -3,7 +3,7 @@ menu "Xilinx SoC drivers"
+ 
+ config XILINX_VCU
+ 	tristate "Xilinx VCU logicoreIP Init"
+-	depends on HAS_IOMEM
++	depends on HAS_IOMEM && COMMON_CLK
+ 	select REGMAP_MMIO
+ 	help
+ 	  Provides the driver to enable and disable the isolation between the
 diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index e38e9c8325a7..6dc58cf58d77 100644
+index 34f3299afc0d..6a733a181982 100644
 --- a/drivers/soc/xilinx/xlnx_vcu.c
 +++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -81,6 +81,7 @@ struct xvcu_device {
+@@ -7,6 +7,7 @@
+  * Contacts   Dhaval Shah <dshah@xilinx.com>
+  */
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/io.h>
+@@ -73,6 +74,7 @@
+  * @aclk: axi clock source
+  * @logicore_reg_ba: logicore reg base address
+  * @vcu_slcr_ba: vcu_slcr Register base address
++ * @pll: handle for the VCU PLL
+  */
+ struct xvcu_device {
+ 	struct device *dev;
+@@ -80,6 +82,7 @@ struct xvcu_device {
+ 	struct clk *aclk;
  	struct regmap *logicore_reg_ba;
  	void __iomem *vcu_slcr_ba;
- 	struct clk_hw *pll;
-+	struct clk_hw *pll_post;
- 	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw *pll;
  };
  
-@@ -274,6 +275,29 @@ static int xvcu_pll_wait_for_lock(struct xvcu_device *xvcu)
- 	return -ETIMEDOUT;
- }
- 
-+static struct clk_hw *xvcu_register_pll_post(struct device *dev,
-+					     const char *name,
-+					     const struct clk_hw *parent_hw,
-+					     void __iomem *reg_base)
-+{
-+	u32 div;
-+	u32 vcu_pll_ctrl;
-+
-+	/*
-+	 * The output divider of the PLL must be set to 1/2 to meet the
-+	 * timing in the design.
-+	 */
-+	vcu_pll_ctrl = xvcu_read(reg_base, VCU_PLL_CTRL);
-+	div = vcu_pll_ctrl >> VCU_PLL_CTRL_CLKOUTDIV_SHIFT;
-+	div = div & VCU_PLL_CTRL_CLKOUTDIV_MASK;
-+	if (div != 1)
-+		return ERR_PTR(-EINVAL);
-+
-+	return clk_hw_register_fixed_factor(dev, "vcu_pll_post",
-+					    clk_hw_get_name(parent_hw),
-+					    CLK_SET_RATE_PARENT, 1, 2);
-+}
-+
- static const struct xvcu_pll_cfg *xvcu_find_cfg(int div)
- {
- 	const struct xvcu_pll_cfg *cfg = NULL;
-@@ -402,7 +426,7 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- {
- 	u32 refclk, coreclk, mcuclk, inte, deci;
- 	u32 divisor_mcu, divisor_core, fvco;
--	u32 clkoutdiv, vcu_pll_ctrl, pll_clk;
-+	u32 pll_clk;
- 	u32 mod;
+ static struct regmap_config vcu_settings_regmap_config = {
+@@ -403,7 +406,9 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
+ 	u32 clkoutdiv, vcu_pll_ctrl, pll_clk;
+ 	u32 mod, ctrl;
  	int i;
- 	int ret;
-@@ -425,19 +449,6 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	dev_dbg(xvcu->dev, "Core clock from logicoreIP is %uHz\n", coreclk);
- 	dev_dbg(xvcu->dev, "Mcu clock from logicoreIP is %uHz\n", mcuclk);
- 
--	/*
--	 * The divide-by-2 should be always enabled (==1)
--	 * to meet the timing in the design.
--	 * Otherwise, it's an error
--	 */
--	vcu_pll_ctrl = xvcu_read(xvcu->vcu_slcr_ba, VCU_PLL_CTRL);
--	clkoutdiv = vcu_pll_ctrl >> VCU_PLL_CTRL_CLKOUTDIV_SHIFT;
--	clkoutdiv = clkoutdiv & VCU_PLL_CTRL_CLKOUTDIV_MASK;
--	if (clkoutdiv != 1) {
--		dev_err(xvcu->dev, "clkoutdiv value is invalid\n");
--		return -EINVAL;
--	}
--
- 	for (i = ARRAY_SIZE(xvcu_pll_cfg) - 1; i >= 0; i--) {
- 		const struct xvcu_pll_cfg *cfg = &xvcu_pll_cfg[i];
- 
-@@ -484,7 +495,7 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 
- 	hw = clk_hw_register_fixed_rate(xvcu->dev, "vcu_pll",
- 					__clk_get_name(xvcu->pll_ref),
--					0, pll_clk);
-+					0, fvco);
- 	if (IS_ERR(hw))
- 		return PTR_ERR(hw);
- 	xvcu->pll = hw;
-@@ -607,6 +618,7 @@ static int xvcu_register_clock_provider(struct xvcu_device *xvcu)
- 	struct clk_parent_data parent_data[2] = { 0 };
- 	struct clk_hw_onecell_data *data;
- 	struct clk_hw **hws;
++	int ret;
+ 	const struct xvcu_pll_cfg *found = NULL;
 +	struct clk_hw *hw;
- 	void __iomem *reg_base = xvcu->vcu_slcr_ba;
  
- 	data = devm_kzalloc(dev, struct_size(data, hws, CLK_XVCU_NUM_CLOCKS), GFP_KERNEL);
-@@ -617,8 +629,13 @@ static int xvcu_register_clock_provider(struct xvcu_device *xvcu)
+ 	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK, &inte);
+ 	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK_DEC, &deci);
+@@ -505,7 +510,18 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
+ 	ctrl |= (VCU_SRCSEL_PLL & VCU_SRCSEL_MASK) << VCU_SRCSEL_SHIFT;
+ 	xvcu_write(xvcu->vcu_slcr_ba, VCU_DEC_MCU_CTRL, ctrl);
  
- 	xvcu->clk_data = data;
- 
-+	hw = xvcu_register_pll_post(dev, "vcu_pll_post", xvcu->pll, reg_base);
+-	return xvcu_pll_set_rate(xvcu, fvco, refclk);
++	ret = xvcu_pll_set_rate(xvcu, fvco, refclk);
++	if (ret)
++		return ret;
++
++	hw = clk_hw_register_fixed_rate(xvcu->dev, "vcu_pll",
++					__clk_get_name(xvcu->pll_ref),
++					0, pll_clk);
 +	if (IS_ERR(hw))
 +		return PTR_ERR(hw);
-+	xvcu->pll_post = hw;
++	xvcu->pll = hw;
 +
- 	parent_data[0].fw_name = "pll_ref";
--	parent_data[1].hw = xvcu->pll;
-+	parent_data[1].hw = xvcu->pll_post;
- 
- 	hws[CLK_XVCU_ENC_CORE] =
- 		xvcu_clk_hw_register_leaf(dev, "venc_core_clk",
-@@ -657,6 +674,8 @@ static void xvcu_unregister_clock_provider(struct xvcu_device *xvcu)
- 		xvcu_clk_hw_unregister_leaf(hws[CLK_XVCU_ENC_MCU]);
- 	if (!IS_ERR_OR_NULL(hws[CLK_XVCU_ENC_CORE]))
- 		xvcu_clk_hw_unregister_leaf(hws[CLK_XVCU_ENC_CORE]);
-+
-+	clk_hw_unregister_fixed_factor(xvcu->pll_post);
++	return 0;
  }
  
  /**
+@@ -652,6 +668,7 @@ static int xvcu_remove(struct platform_device *pdev)
+ 	/* Add the the Gasket isolation and put the VCU in reset. */
+ 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
+ 
++	clk_hw_unregister_fixed_rate(xvcu->pll);
+ 	xvcu_pll_disable(xvcu);
+ 	clk_disable_unprepare(xvcu->aclk);
+ 
 -- 
 2.20.1
 
