@@ -3,107 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EF3C43331
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC21C4332B
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04C1123C15
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 941DC225AA
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbgLUSrw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:47:52 -0500
-Received: from mail-oo1-f53.google.com ([209.85.161.53]:38575 "EHLO
-        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbgLUSrv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:47:51 -0500
-Received: by mail-oo1-f53.google.com with SMTP id i18so2441935ooh.5;
-        Mon, 21 Dec 2020 10:47:35 -0800 (PST)
+        id S1726156AbgLUSzL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 13:55:11 -0500
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:44505 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbgLUSzK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:55:10 -0500
+Received: by mail-oi1-f179.google.com with SMTP id d189so12243966oig.11;
+        Mon, 21 Dec 2020 10:54:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9c4Z1cR0okEDOva6ZJZicR2jBIUZ+5XrWMqkg7M3kpw=;
-        b=hz3KlOPy99wyUWikmU8eY5avjkr6YqZ/MHNscLb8qTxnR5ow5mZQfkEp1BQhK9yvDD
-         QkvcBmjUMi1/Yd+yP+tGSDbHIGoAnTFW27ANdXx3mMbDS9ZYatSOFtQGKbnrsmvjW+K2
-         /dT870LPVAWhfhuDQEsiobUPs5+cuxn+1DViJZMhGjbBolk5+UJmlN2bkikgU22OTGhZ
-         4K9O8X7+l0yzF5d0s+mv1Xmy5d8gKGrooib30gPj42QqB2s3Vqb8ObvT9oPrLazGUg+x
-         aZCAnyWBnwY7KWt/vbq6CexJOUSZeN0646BBLp5MDT+2HuZH9qiP+eqjr3MdTaMxJMLE
-         rNcw==
-X-Gm-Message-State: AOAM5319kvPhdn1bD84KFShpOD53RplkYw4wKjIF+sSAW9e6/6kPqGCf
-        fLMjmbf1FU3L+7hCdBfblQ==
-X-Google-Smtp-Source: ABdhPJxHtxtQavMpTMYOeQXfbwlNAzcd18hUq1nv29288DdMCrjnzy/vnMDlD21MGqurHNxrq5tuvg==
-X-Received: by 2002:a4a:8353:: with SMTP id q19mr7538448oog.40.1608576430556;
-        Mon, 21 Dec 2020 10:47:10 -0800 (PST)
+        bh=VxUDcWHEtVg+ff7we8+iFRq064frk9Mq/obRG6B8LUs=;
+        b=NRxukXkLJm/lLIc45Sed9QueFmqqiztTGcwL4uwLyXi75KKIXApkTFAt7oHwNl7QyR
+         +JEtfPLaWxcmsZk7D6lLMKsb/xbOmjGkoZ45t02ljnOPdNNXWwPCzPB6yX2ArnPCA6GY
+         AY6KrqRYetfB+EVIUpuLjEvyQXrwJiUBcxdP+23cpVjO7v1gsoOIOQohVnXi48Q0x950
+         vAC1a1yHkHTlXtzS5XLdImABgkt75wYfOc1TkrteSC9oTQQ6oedezlgfnppod6KHkN5m
+         HW2E5LkAwsJtCBPt9MLDm1AddlnCWS3Zj4zQP4uis3nZ/N+sfMEL/hr+tYYz23UAe0eo
+         fGhA==
+X-Gm-Message-State: AOAM532zXzLB1lqIU1MMzQ/BIalV0GuoFSDNXDxQQrUZ4wmauRMxOiB4
+        1GUJ9/deSkBTiW8cie8DpuNIk6lPVQ==
+X-Google-Smtp-Source: ABdhPJzwNvQJNxTDOqP+ioypfUuKRetmU4VcIdw2HS9cwjxOBbluxuuW7/120JXxAPspilV+Ro6O4A==
+X-Received: by 2002:aca:f58c:: with SMTP id t134mr1725213oih.68.1608576869587;
+        Mon, 21 Dec 2020 10:54:29 -0800 (PST)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id t72sm3697688oie.47.2020.12.21.10.47.08
+        by smtp.gmail.com with ESMTPSA id w138sm3733401oie.44.2020.12.21.10.54.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 10:47:09 -0800 (PST)
-Received: (nullmailer pid 344465 invoked by uid 1000);
-        Mon, 21 Dec 2020 18:47:07 -0000
-Date:   Mon, 21 Dec 2020 11:47:07 -0700
+        Mon, 21 Dec 2020 10:54:28 -0800 (PST)
+Received: (nullmailer pid 355917 invoked by uid 1000);
+        Mon, 21 Dec 2020 18:54:25 -0000
+Date:   Mon, 21 Dec 2020 11:54:25 -0700
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Iskren Chernev <iskren.chernev@gmail.com>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Angus Ainslie <angus@akkea.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-pm@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC 17/18] mfd: max14577: Do not enforce (incorrect) interrupt
- trigger type
-Message-ID: <20201221184707.GA344409@robh.at.kernel.org>
-References: <20201210212534.216197-1-krzk@kernel.org>
- <20201210212534.216197-17-krzk@kernel.org>
+To:     Dongjiu Geng <gengdongjiu@huawei.com>
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        robh+dt@kernel.org, p.zabel@pengutronix.de, vkoul@kernel.org,
+        linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        mturquette@baylibre.com
+Subject: Re: [PATCH v7 1/4] dt-bindings: Document the hi3559a clock bindings
+Message-ID: <20201221185425.GA355861@robh.at.kernel.org>
+References: <20201215110947.41268-1-gengdongjiu@huawei.com>
+ <20201215110947.41268-2-gengdongjiu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201210212534.216197-17-krzk@kernel.org>
+In-Reply-To: <20201215110947.41268-2-gengdongjiu@huawei.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Dec 2020 22:25:33 +0100, Krzysztof Kozlowski wrote:
-> Interrupt line can be configured on different hardware in different way,
-> even inverted.  Therefore driver should not enforce specific trigger
-> type - edge falling - but instead rely on Devicetree to configure it.
+On Tue, 15 Dec 2020 11:09:44 +0000, Dongjiu Geng wrote:
+> Add DT bindings documentation for hi3559a SoC clock.
 > 
-> The Maxim 14577/77836 datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU therefore the edge
-> falling is not correct.
-> 
-> The interrupt line is shared between PMIC and charger driver, so using
-> level sensitive interrupt is here especially important to avoid races.
-> With an edge configuration in case if first PMIC signals interrupt
-> followed shortly after by the RTC, the interrupt might not be yet
-> cleared/acked thus the second one would not be noticed.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
 > ---
-> 
-> This patch should wait till DTS changes are merged, as it relies on
-> proper Devicetree.
-> ---
->  Documentation/devicetree/bindings/mfd/max14577.txt | 4 ++--
->  drivers/mfd/max14577.c                             | 6 +++---
->  2 files changed, 5 insertions(+), 5 deletions(-)
+>  .../clock/hisilicon,hi3559av100-clock.yaml    |  59 +++++++
+>  include/dt-bindings/clock/hi3559av100-clock.h | 165 ++++++++++++++++++
+>  2 files changed, 224 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
