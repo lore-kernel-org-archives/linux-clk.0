@@ -2,115 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D31C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 14:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1F6C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 14:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F6AE22BEF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 14:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD2822CB1
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 14:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgLUOC6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 09:02:58 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45451 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbgLUOC5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 09:02:57 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1krLhJ-0000oh-1p; Mon, 21 Dec 2020 14:58:01 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1krLhG-0007DV-V1; Mon, 21 Dec 2020 14:57:58 +0100
-Date:   Mon, 21 Dec 2020 14:57:58 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-pwm@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        od@zcrc.me, Thierry Reding <thierry.reding@gmail.com>,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org
-Subject: Re: About rounding in the clk framework [Was: Re: [PATCH 4/7] pwm:
- jz4740: Improve algorithm of clock calculation]
-Message-ID: <20201221135758.edgskzkyyrw4lcx7@pengutronix.de>
-References: <20190813052726.g37upws5rlvrszc4@pengutronix.de>
- <1565694066.1856.1@crapouillou.net>
- <20190813123331.m4ttfhcgt6wyrcfi@pengutronix.de>
- <1565700448.1856.2@crapouillou.net>
- <20190813140903.rdwy7p3mhwetmlnt@pengutronix.de>
- <1565799035.1984.0@crapouillou.net>
- <20190814173218.zhg4se3pppano5m3@pengutronix.de>
- <1571662077.3.1@crapouillou.net>
- <20200212072911.nstwj7dgpvceebpy@pengutronix.de>
- <20200414092412.scsl6sekikc2tsv5@pengutronix.de>
+        id S1726408AbgLUOkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 09:40:13 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:53028 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726214AbgLUOkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 09:40:12 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 0BLEZCLI006619;
+        Mon, 21 Dec 2020 09:39:19 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 35hfa9w8gj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 21 Dec 2020 09:39:19 -0500
+Received: from SCSQMBX11.ad.analog.com (SCSQMBX11.ad.analog.com [10.77.17.10])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 0BLEdHbQ049459
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Mon, 21 Dec 2020 09:39:17 -0500
+Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 21 Dec 2020 06:39:16 -0800
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.721.2;
+ Mon, 21 Dec 2020 06:39:16 -0800
+Received: from zeus.spd.analog.com (10.66.68.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Mon, 21 Dec 2020 06:39:16 -0800
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 0BLEd9nG031672;
+        Mon, 21 Dec 2020 09:39:13 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <lars@metafoo.de>,
+        <linux-fpga@vger.kernel.org>, <mdf@kernel.org>,
+        <dragos.bogdan@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 2/2] dt-bindings: clock: adi,axi-clkgen: add Zynq & ZynqMP compatible strings
+Date:   Mon, 21 Dec 2020 16:42:24 +0200
+Message-ID: <20201221144224.50814-2-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201221144224.50814-1-alexandru.ardelean@analog.com>
+References: <20201221144224.50814-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ghhxmotjruvczaqo"
-Content-Disposition: inline
-In-Reply-To: <20200414092412.scsl6sekikc2tsv5@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2020-12-21_08:2020-12-21,2020-12-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012210104
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The axi-clkgen driver now supports ZynqMP (UltraScale) as well, however the
+driver needs to use different PFD & VCO limits.
 
---ghhxmotjruvczaqo
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For ZynqMP, these needs to be selected by using the
+'adi,zynqmp-axi-clkgen-2.00.a' string. For consistency a
+'adi,zynq-axi-clkgen-2.00.a' has been added which should behave as the
+original compatible string (i.e. 'adi,axi-clkgen-2.00.a').
 
-Hello,
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Tue, Apr 14, 2020 at 11:24:12AM +0200, Uwe Kleine-K=F6nig wrote:
-> Hello Stephen, hello Michael,
->=20
-> On Wed, Feb 12, 2020 at 08:29:11AM +0100, Uwe Kleine-K=F6nig wrote:
-> > Can you please explain what is the reason why clk_round_rate_up/down()
-> > is a bad idea? Would it help to create a patch that introduces these
-> > functions to get the discussion going?
->=20
-> I didn't get any feedback on my mail. Are you to busy working on more
-> important stuff? Is the answer so obvious that you don't consider it
-> worth your time to answer?
->=20
-> Looking a bit through the code I see there are two callbacks hwclks can
-> provide to implement rounding (determine_rate and round_rate). The docs
-> for both use the term "return the closes rate actually supported". Does
-> that mean "round-closest" is already the official policy and other
-> strategies in lowlevel drivers are a bug?
+diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+index 0d06387184d6..398954ec6767 100644
+--- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
++++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+@@ -20,6 +20,8 @@ properties:
+   compatible:
+     enum:
+       - adi,axi-clkgen-2.00.a
++      - adi,zynq-axi-clkgen-2.00.a
++      - adi,zynqmp-axi-clkgen-2.00.a
+ 
+   clocks:
+     description:
+-- 
+2.17.1
 
-Feedback here would be really appreciated. I intend to unify the rounding
-behaviour of PWMs to always round down. If there was a similar
-constraint for clks, some corner cases might be a bit simpler.
-
-Looking forward to read about your thoughts,
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---ghhxmotjruvczaqo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl/gqeMACgkQwfwUeK3K
-7AnnlAf8DSLvzEXMd2YTiuND2qxImw4seiPMfTrmw/UXrPQs3+y2Jirvryn9rZOi
-trg/AHx1nFiIK4z38ElvsJDovPU4sahlSZfXkYM2V3ZwOOQ0B6+1+vT79K1u3Vys
-pz1fKj0ohxzAZdGFG9PYMV3fU+QUOeP77OaRthuauSd0oIreitnyJEX8whBk3Eya
-oINBZO8+NL9ZOl95sFCMM+iRWbveg6OTvlIN+tibtr7YkPr2w1RWhVaX4C9ixkvP
-HiQPSOXZk7x7aBW279dt9F1j2IvL2z79PN/tSAt0XZhNA6e1puwVwKUjvJupTRny
-3RoH8OkBsOcsX4P4LNdWD7Jyh12aqg==
-=rnX6
------END PGP SIGNATURE-----
-
---ghhxmotjruvczaqo--
