@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27803C43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F10C43603
 	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05B9B22CB1
+	by mail.kernel.org (Postfix) with ESMTP id A0FF322BEA
 	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 15:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbgLUPHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 10:07:22 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45459 "EHLO
+        id S1725816AbgLUPH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 10:07:27 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44171 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbgLUPHV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 10:07:21 -0500
+        with ESMTP id S1725909AbgLUPH1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 10:07:27 -0500
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1krMlg-0007Vu-AE; Mon, 21 Dec 2020 16:06:36 +0100
+        id 1krMlg-0007Vv-AC; Mon, 21 Dec 2020 16:06:36 +0100
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1krMle-003AbU-T2; Mon, 21 Dec 2020 16:06:34 +0100
+        id 1krMle-003AbX-TZ; Mon, 21 Dec 2020 16:06:34 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Cc:     rajanv@xilinx.com, tejasp@xilinx.com, dshah@xilinx.com,
         rvisaval@xilinx.com, michals@xilinx.com, kernel@pengutronix.de,
         mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v2 11/15] soc: xilinx: vcu: remove calculation of PLL configuration
-Date:   Mon, 21 Dec 2020 16:06:30 +0100
-Message-Id: <20201221150634.755673-12-m.tretter@pengutronix.de>
+Subject: [PATCH v2 12/15] soc: xilinx: vcu: use bitfields for register definition
+Date:   Mon, 21 Dec 2020 16:06:31 +0100
+Message-Id: <20201221150634.755673-13-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201221150634.755673-1-m.tretter@pengutronix.de>
 References: <20201221150634.755673-1-m.tretter@pengutronix.de>
@@ -48,170 +48,221 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As the consumers are now responsible for setting the clock rate via
-clock framework, the clock rate is now calculated using round_rate and
-the driver does not need to calculate the clock rate beforehand.
-
-Remove the code that calculates the PLL configuration.
+This makes the register accesses more readable and is closer to what is
+usually used in the kernel.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
 Changelog:
 
 v2: none
 ---
- drivers/soc/xilinx/xlnx_vcu.c | 117 ----------------------------------
- 1 file changed, 117 deletions(-)
+ drivers/soc/xilinx/xlnx_vcu.c | 115 ++++++++++------------------------
+ 1 file changed, 34 insertions(+), 81 deletions(-)
 
 diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index c03075fc8779..a2de1f8ca7dd 100644
+index a2de1f8ca7dd..4ba9b40df983 100644
 --- a/drivers/soc/xilinx/xlnx_vcu.c
 +++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -59,10 +59,6 @@
+@@ -6,6 +6,7 @@
+  *
+  * Contacts   Dhaval Shah <dshah@xilinx.com>
+  */
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+@@ -20,41 +21,26 @@
+ 
+ #include <dt-bindings/clock/xlnx-vcu.h>
+ 
+-/* vcu slcr registers, bitmask and shift */
+ #define VCU_PLL_CTRL			0x24
+-#define VCU_PLL_CTRL_RESET_MASK		0x01
+-#define VCU_PLL_CTRL_RESET_SHIFT	0
+-#define VCU_PLL_CTRL_BYPASS_MASK	0x01
+-#define VCU_PLL_CTRL_BYPASS_SHIFT	3
+-#define VCU_PLL_CTRL_FBDIV_MASK		0x7f
+-#define VCU_PLL_CTRL_FBDIV_SHIFT	8
+-#define VCU_PLL_CTRL_POR_IN_MASK	0x01
+-#define VCU_PLL_CTRL_POR_IN_SHIFT	1
+-#define VCU_PLL_CTRL_PWR_POR_MASK	0x01
+-#define VCU_PLL_CTRL_PWR_POR_SHIFT	2
+-#define VCU_PLL_CTRL_CLKOUTDIV_MASK	0x03
+-#define VCU_PLL_CTRL_CLKOUTDIV_SHIFT	16
+-#define VCU_PLL_CTRL_DEFAULT		0
+-#define VCU_PLL_DIV2			2
++#define VCU_PLL_CTRL_RESET		BIT(0)
++#define VCU_PLL_CTRL_POR_IN		BIT(1)
++#define VCU_PLL_CTRL_PWR_POR		BIT(2)
++#define VCU_PLL_CTRL_BYPASS		BIT(3)
++#define VCU_PLL_CTRL_FBDIV		GENMASK(14, 8)
++#define VCU_PLL_CTRL_CLKOUTDIV		GENMASK(18, 16)
+ 
+ #define VCU_PLL_CFG			0x28
+-#define VCU_PLL_CFG_RES_MASK		0x0f
+-#define VCU_PLL_CFG_RES_SHIFT		0
+-#define VCU_PLL_CFG_CP_MASK		0x0f
+-#define VCU_PLL_CFG_CP_SHIFT		5
+-#define VCU_PLL_CFG_LFHF_MASK		0x03
+-#define VCU_PLL_CFG_LFHF_SHIFT		10
+-#define VCU_PLL_CFG_LOCK_CNT_MASK	0x03ff
+-#define VCU_PLL_CFG_LOCK_CNT_SHIFT	13
+-#define VCU_PLL_CFG_LOCK_DLY_MASK	0x7f
+-#define VCU_PLL_CFG_LOCK_DLY_SHIFT	25
++#define VCU_PLL_CFG_RES			GENMASK(3, 0)
++#define VCU_PLL_CFG_CP			GENMASK(8, 5)
++#define VCU_PLL_CFG_LFHF		GENMASK(12, 10)
++#define VCU_PLL_CFG_LOCK_CNT		GENMASK(22, 13)
++#define VCU_PLL_CFG_LOCK_DLY		GENMASK(31, 25)
+ #define VCU_ENC_CORE_CTRL		0x30
+ #define VCU_ENC_MCU_CTRL		0x34
+ #define VCU_DEC_CORE_CTRL		0x38
+ #define VCU_DEC_MCU_CTRL		0x3c
+-
+ #define VCU_PLL_STATUS			0x60
+-#define VCU_PLL_STATUS_LOCK_STATUS_MASK	0x01
++#define VCU_PLL_STATUS_LOCK_STATUS	BIT(0)
+ 
  #define MHZ				1000000
  #define FVCO_MIN			(1500U * MHZ)
- #define FVCO_MAX			(3000U * MHZ)
--#define DIVISOR_MIN			0
--#define DIVISOR_MAX			63
--#define FRAC				100
--#define LIMIT				(10 * MHZ)
- 
- /**
-  * struct xvcu_device - Xilinx VCU init device structure
-@@ -481,111 +477,6 @@ static struct clk_hw *xvcu_register_pll(struct device *dev,
- 	return hw;
+@@ -236,25 +222,6 @@ static inline void xvcu_write(void __iomem *iomem, u32 offset, u32 value)
+ 	iowrite32(value, iomem + offset);
  }
  
 -/**
-- * xvcu_set_vcu_pll_info - Set the VCU PLL info
-- * @xvcu:	Pointer to the xvcu_device structure
-- *
-- * Programming the VCU PLL based on the user configuration
-- * (ref clock freq, core clock freq, mcu clock freq).
-- * Core clock frequency has higher priority than mcu clock frequency
-- * Errors in following cases
-- *    - When mcu or clock clock get from logicoreIP is 0
-- *    - When VCU PLL DIV related bits value other than 1
-- *    - When proper data not found for given data
-- *    - When sis570_1 clocksource related operation failed
-- *
-- * Return:	Returns status, either success or error+reason
+- * xvcu_write_field_reg - Write to the vcu reg field
+- * @iomem:	vcu reg space base address
+- * @offset:	vcu reg offset from base
+- * @field:	vcu reg field to write to
+- * @mask:	vcu reg mask
+- * @shift:	vcu reg number of bits to shift the bitfield
 - */
--static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
+-static void xvcu_write_field_reg(void __iomem *iomem, int offset,
+-				 u32 field, u32 mask, int shift)
 -{
--	u32 refclk, coreclk, mcuclk, inte, deci;
--	u32 divisor_mcu, divisor_core, fvco;
--	u32 pll_clk;
--	u32 mod;
--	int i;
--	const struct xvcu_pll_cfg *found = NULL;
+-	u32 val = xvcu_read(iomem, offset);
 -
--	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK, &inte);
--	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK_DEC, &deci);
--	regmap_read(xvcu->logicore_reg_ba, VCU_CORE_CLK, &coreclk);
--	coreclk *= MHZ;
--	regmap_read(xvcu->logicore_reg_ba, VCU_MCU_CLK, &mcuclk);
--	mcuclk *= MHZ;
--	if (!mcuclk || !coreclk) {
--		dev_err(xvcu->dev, "Invalid mcu and core clock data\n");
--		return -EINVAL;
--	}
+-	val &= ~(mask << shift);
+-	val |= (field & mask) << shift;
 -
--	refclk = (inte * MHZ) + (deci * (MHZ / FRAC));
--	dev_dbg(xvcu->dev, "Ref clock from logicoreIP is %uHz\n", refclk);
--	dev_dbg(xvcu->dev, "Core clock from logicoreIP is %uHz\n", coreclk);
--	dev_dbg(xvcu->dev, "Mcu clock from logicoreIP is %uHz\n", mcuclk);
--
--	for (i = ARRAY_SIZE(xvcu_pll_cfg) - 1; i >= 0; i--) {
--		const struct xvcu_pll_cfg *cfg = &xvcu_pll_cfg[i];
--
--		fvco = cfg->fbdiv * refclk;
--		if (fvco >= FVCO_MIN && fvco <= FVCO_MAX) {
--			pll_clk = fvco / VCU_PLL_DIV2;
--			if (fvco % VCU_PLL_DIV2 != 0)
--				pll_clk++;
--			mod = pll_clk % coreclk;
--			if (mod < LIMIT) {
--				divisor_core = pll_clk / coreclk;
--			} else if (coreclk - mod < LIMIT) {
--				divisor_core = pll_clk / coreclk;
--				divisor_core++;
--			} else {
--				continue;
--			}
--			if (divisor_core >= DIVISOR_MIN &&
--			    divisor_core <= DIVISOR_MAX) {
--				found = cfg;
--				divisor_mcu = pll_clk / mcuclk;
--				mod = pll_clk % mcuclk;
--				if (mcuclk - mod < LIMIT)
--					divisor_mcu++;
--				break;
--			}
--		}
--	}
--
--	if (!found) {
--		dev_err(xvcu->dev, "Invalid clock combination.\n");
--		return -EINVAL;
--	}
--
--	coreclk = pll_clk / divisor_core;
--	mcuclk = pll_clk / divisor_mcu;
--	dev_dbg(xvcu->dev, "Actual Ref clock freq is %uHz\n", refclk);
--	dev_dbg(xvcu->dev, "Actual Core clock freq is %uHz\n", coreclk);
--	dev_dbg(xvcu->dev, "Actual Mcu clock freq is %uHz\n", mcuclk);
--
--	return 0;
+-	xvcu_write(iomem, offset, val);
 -}
 -
--/**
-- * xvcu_set_pll - PLL init sequence
-- * @xvcu:	Pointer to the xvcu_device structure
-- *
-- * Call the api to set the PLL info and once that is done then
-- * init the PLL sequence to make the PLL stable.
-- *
-- * Return:	Returns status, either success or error+reason
-- */
--static int xvcu_set_pll(struct xvcu_device *xvcu)
--{
--	int ret;
--
--	ret = xvcu_set_vcu_pll_info(xvcu);
--	if (ret) {
--		dev_err(xvcu->dev, "failed to set pll info\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static struct clk_hw *xvcu_clk_hw_register_leaf(struct device *dev,
- 						const char *name,
- 						const struct clk_parent_data *parent_data,
-@@ -833,13 +724,6 @@ static int xvcu_probe(struct platform_device *pdev)
+ #define to_vcu_pll(_hw) container_of(_hw, struct vcu_pll, hw)
+ 
+ struct vcu_pll {
+@@ -273,7 +240,7 @@ static int xvcu_pll_wait_for_lock(struct vcu_pll *pll)
+ 	timeout = jiffies + msecs_to_jiffies(2000);
+ 	do {
+ 		lock_status = xvcu_read(base, VCU_PLL_STATUS);
+-		if (lock_status & VCU_PLL_STATUS_LOCK_STATUS_MASK)
++		if (lock_status & VCU_PLL_STATUS_LOCK_STATUS)
+ 			return 0;
+ 	} while (!time_after(jiffies, timeout));
+ 
+@@ -293,8 +260,7 @@ static struct clk_hw *xvcu_register_pll_post(struct device *dev,
+ 	 * timing in the design.
  	 */
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, VCU_GASKET_VALUE);
+ 	vcu_pll_ctrl = xvcu_read(reg_base, VCU_PLL_CTRL);
+-	div = vcu_pll_ctrl >> VCU_PLL_CTRL_CLKOUTDIV_SHIFT;
+-	div = div & VCU_PLL_CTRL_CLKOUTDIV_MASK;
++	div = FIELD_GET(VCU_PLL_CTRL_CLKOUTDIV, vcu_pll_ctrl);
+ 	if (div != 1)
+ 		return ERR_PTR(-EINVAL);
  
--	/* Do the PLL Settings based on the ref clk,core and mcu clk freq */
--	ret = xvcu_set_pll(xvcu);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to set the pll\n");
--		goto error_pll_ref;
--	}
--
- 	ret = xvcu_register_clock_provider(xvcu);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register clock provider\n");
-@@ -852,7 +736,6 @@ static int xvcu_probe(struct platform_device *pdev)
+@@ -327,16 +293,15 @@ static int xvcu_pll_set_div(struct vcu_pll *pll, int div)
+ 		return -EINVAL;
  
- error_clk_provider:
- 	xvcu_unregister_clock_provider(xvcu);
--error_pll_ref:
- 	clk_disable_unprepare(xvcu->aclk);
- 	return ret;
+ 	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_FBDIV_MASK << VCU_PLL_CTRL_FBDIV_SHIFT);
+-	vcu_pll_ctrl |= (cfg->fbdiv & VCU_PLL_CTRL_FBDIV_MASK) <<
+-			 VCU_PLL_CTRL_FBDIV_SHIFT;
++	vcu_pll_ctrl &= ~VCU_PLL_CTRL_FBDIV;
++	vcu_pll_ctrl |= FIELD_PREP(VCU_PLL_CTRL_FBDIV, cfg->fbdiv);
+ 	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
+ 
+-	cfg_val = (cfg->res << VCU_PLL_CFG_RES_SHIFT) |
+-		   (cfg->cp << VCU_PLL_CFG_CP_SHIFT) |
+-		   (cfg->lfhf << VCU_PLL_CFG_LFHF_SHIFT) |
+-		   (cfg->lock_cnt << VCU_PLL_CFG_LOCK_CNT_SHIFT) |
+-		   (cfg->lock_dly << VCU_PLL_CFG_LOCK_DLY_SHIFT);
++	cfg_val = FIELD_PREP(VCU_PLL_CFG_RES, cfg->res) |
++		  FIELD_PREP(VCU_PLL_CFG_CP, cfg->cp) |
++		  FIELD_PREP(VCU_PLL_CFG_LFHF, cfg->lfhf) |
++		  FIELD_PREP(VCU_PLL_CFG_LOCK_CNT, cfg->lock_cnt) |
++		  FIELD_PREP(VCU_PLL_CFG_LOCK_DLY, cfg->lock_dly);
+ 	xvcu_write(base, VCU_PLL_CFG, cfg_val);
+ 
+ 	return 0;
+@@ -365,7 +330,7 @@ static unsigned long xvcu_pll_recalc_rate(struct clk_hw *hw,
+ 	u32 vcu_pll_ctrl;
+ 
+ 	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
+-	div = (vcu_pll_ctrl >> VCU_PLL_CTRL_FBDIV_SHIFT) & VCU_PLL_CTRL_FBDIV_MASK;
++	div = FIELD_GET(VCU_PLL_CTRL_FBDIV, vcu_pll_ctrl);
+ 
+ 	return div * parent_rate;
  }
+@@ -385,23 +350,14 @@ static int xvcu_pll_enable(struct clk_hw *hw)
+ 	u32 vcu_pll_ctrl;
+ 	int ret;
+ 
+-	xvcu_write_field_reg(base, VCU_PLL_CTRL,
+-			     1, VCU_PLL_CTRL_BYPASS_MASK,
+-			     VCU_PLL_CTRL_BYPASS_SHIFT);
+-
+ 	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_POR_IN_MASK <<
+-			  VCU_PLL_CTRL_POR_IN_SHIFT);
+-	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_POR_IN_MASK) <<
+-			 VCU_PLL_CTRL_POR_IN_SHIFT;
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_PWR_POR_MASK <<
+-			  VCU_PLL_CTRL_PWR_POR_SHIFT);
+-	vcu_pll_ctrl |= (VCU_PLL_CTRL_DEFAULT & VCU_PLL_CTRL_PWR_POR_MASK) <<
+-			 VCU_PLL_CTRL_PWR_POR_SHIFT;
++	vcu_pll_ctrl |= VCU_PLL_CTRL_BYPASS;
+ 	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
+ 
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_RESET_MASK << VCU_PLL_CTRL_RESET_SHIFT);
+-	vcu_pll_ctrl |= (0 & VCU_PLL_CTRL_RESET_MASK) << VCU_PLL_CTRL_RESET_SHIFT;
++	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
++	vcu_pll_ctrl &= ~VCU_PLL_CTRL_POR_IN;
++	vcu_pll_ctrl &= ~VCU_PLL_CTRL_PWR_POR;
++	vcu_pll_ctrl &= ~VCU_PLL_CTRL_RESET;
+ 	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
+ 
+ 	ret = xvcu_pll_wait_for_lock(pll);
+@@ -410,9 +366,9 @@ static int xvcu_pll_enable(struct clk_hw *hw)
+ 		goto err;
+ 	}
+ 
+-	xvcu_write_field_reg(base, VCU_PLL_CTRL,
+-			     0, VCU_PLL_CTRL_BYPASS_MASK,
+-			     VCU_PLL_CTRL_BYPASS_SHIFT);
++	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
++	vcu_pll_ctrl &= ~VCU_PLL_CTRL_BYPASS;
++	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
+ 
+ err:
+ 	return ret;
+@@ -425,12 +381,9 @@ static void xvcu_pll_disable(struct clk_hw *hw)
+ 	u32 vcu_pll_ctrl;
+ 
+ 	vcu_pll_ctrl = xvcu_read(base, VCU_PLL_CTRL);
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_POR_IN_MASK << VCU_PLL_CTRL_POR_IN_SHIFT);
+-	vcu_pll_ctrl |= (1 & VCU_PLL_CTRL_POR_IN_MASK) << VCU_PLL_CTRL_POR_IN_SHIFT;
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_PWR_POR_MASK << VCU_PLL_CTRL_PWR_POR_SHIFT);
+-	vcu_pll_ctrl |= (1 & VCU_PLL_CTRL_PWR_POR_MASK) << VCU_PLL_CTRL_PWR_POR_SHIFT;
+-	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_RESET_MASK << VCU_PLL_CTRL_RESET_SHIFT);
+-	vcu_pll_ctrl |= (1 & VCU_PLL_CTRL_RESET_MASK) << VCU_PLL_CTRL_RESET_SHIFT;
++	vcu_pll_ctrl |= VCU_PLL_CTRL_POR_IN;
++	vcu_pll_ctrl |= VCU_PLL_CTRL_PWR_POR;
++	vcu_pll_ctrl |= VCU_PLL_CTRL_RESET;
+ 	xvcu_write(base, VCU_PLL_CTRL, vcu_pll_ctrl);
+ }
+ 
 -- 
 2.20.1
 
