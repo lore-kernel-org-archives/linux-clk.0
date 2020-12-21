@@ -2,87 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68899C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD608C43381
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E941229C4
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A87B22CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Dec 2020 18:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbgLUSqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:46:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbgLUSqF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:46:05 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12AAAC061282
-        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 10:45:25 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id s26so26041621lfc.8
-        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 10:45:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z1NJtCKrT5aOW2x87MSIaGkuS9YMPQEi6Wvh0DzkfmQ=;
-        b=WGQF0hLI1ONKDp8qNn8LUAsqCC/F9IKlBvHTrClCmrxDT9zLY1ZU6+ec+NQhNtzVvu
-         FZqiru3fCqV5YvtYbFUpd13yXtge52/4d057zJrIp/0LjcPjEv9j78X3/PRSi24uDQJ3
-         7Hn655r/YAKN9E2BdIZdODUXJ3Ws6w164XMv0=
+        id S1727421AbgLUSq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Dec 2020 13:46:27 -0500
+Received: from mail-oi1-f181.google.com ([209.85.167.181]:34844 "EHLO
+        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbgLUSq0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 13:46:26 -0500
+Received: by mail-oi1-f181.google.com with SMTP id s2so12277914oij.2;
+        Mon, 21 Dec 2020 10:46:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z1NJtCKrT5aOW2x87MSIaGkuS9YMPQEi6Wvh0DzkfmQ=;
-        b=U+cULqXVivxY2wzTkSgc3zwrEHS6JZbhwKurGImCfQaGo85ECwFqmXCsQ/rm0gjSl5
-         sMVroR4WTqj3Odpcg9ZslQCksZDW2jeZzI13QSyoo0oc7TwgwXDpBXhSh7eVhU8YH1W0
-         iPsMNpLI73BocheASLWUXoE5ze/CAJj023aSHwBAnyBtcPNfvuFUr7KwmzinTMYhl7iG
-         b1LsH4V/FQ+2EBu38BkN9tu4xwtRaUPe1sweIfmxftfznM7zFPSQQZzv3st0BMal0GgM
-         nGhVOGZ4xWALNeJNAcnC9jFL0gy+a6qrGuznPJsB4qBfajiyDgxZiTiUCyn80jq+0if0
-         HL1Q==
-X-Gm-Message-State: AOAM530vaxVDVXy1hExdGRkL0AKH2G3inNec5q2pn6Aixtngvgornafd
-        WMP/3bicnC2bEVhWaMBkWKWYwnMsBgFqAQ==
-X-Google-Smtp-Source: ABdhPJy1GYe/NEj/JhAD9VZYWMifdkEQoG+uxU8vxRyA49ayGZ3Ip0hhhenjrg0X+sC4ayiNKZ312A==
-X-Received: by 2002:ac2:4576:: with SMTP id k22mr7567235lfm.110.1608576323205;
-        Mon, 21 Dec 2020 10:45:23 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id d23sm2170876lfl.115.2020.12.21.10.45.22
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Dec 2020 10:45:22 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id o13so26112973lfr.3
-        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 10:45:22 -0800 (PST)
-X-Received: by 2002:a2e:9d89:: with SMTP id c9mr8326818ljj.220.1608576321880;
- Mon, 21 Dec 2020 10:45:21 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=C9YKK11A4vCGj5j/fzBjsXO3fgizirMdIUh+8Fg05fI=;
+        b=clOMcac/mpAzXCPLZrjNtRmjc0yV/KtdfkIwUq0GEYQdt/A+dgKwN34diFx858EjIg
+         5IZOrzlYJGjnpfSohVcrw3Ra3OnyAcr/S9PaPAcxqt4w4RkddjNM92jAdFInBGRiqifT
+         0kKiBNB5YaNyFovt1QEiopNNtNnSPqFzrdZPMdNFdTnpoMc/8L7KsKgtbkLodKDLzoUr
+         jGNRMgyhCHYkBQMznCru2EaJMl7BPS9ToMKLW0fWRTTSbJ17/7JRHI4cfwS2/K8vrDjs
+         951IebVDfMjymLGdV7CUS8KuoOMtFZmbp3fFy9mVUobRvAgMWg95SVnQkspZu9EbNr5b
+         o71Q==
+X-Gm-Message-State: AOAM533akQcgwOuHO5YBkuj4sL5ZIxuCzj7Uw+0I2KvnOlRrcZGLBxMz
+        ehzyJp/dOsdx74ec2UPPfQ==
+X-Google-Smtp-Source: ABdhPJwrQo7oPkw60HM1iX43AnG0rd1ZwQBteBiGRAjzgAnn+m2o5dKSjOcluwF2SZZoZnF1ypSzkA==
+X-Received: by 2002:aca:ea42:: with SMTP id i63mr7148216oih.163.1608576345226;
+        Mon, 21 Dec 2020 10:45:45 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id x31sm3946058otb.4.2020.12.21.10.45.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 10:45:44 -0800 (PST)
+Received: (nullmailer pid 342072 invoked by uid 1000);
+        Mon, 21 Dec 2020 18:45:42 -0000
+Date:   Mon, 21 Dec 2020 11:45:42 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Angus Ainslie <angus@akkea.ca>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matheus Castello <matheus@castello.eng.br>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>,
+        Iskren Chernev <iskren.chernev@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-rtc@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC 13/18] mfd: max77686: Do not enforce (incorrect) interrupt
+ trigger type
+Message-ID: <20201221184542.GA342038@robh.at.kernel.org>
+References: <20201210212534.216197-1-krzk@kernel.org>
+ <20201210212534.216197-13-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20201221015214.3466681-1-sboyd@kernel.org>
-In-Reply-To: <20201221015214.3466681-1-sboyd@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 21 Dec 2020 10:45:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiJUQz6hoosBKpKtupiix1pAS6GCd1bPVK5nW8umPFzAw@mail.gmail.com>
-Message-ID: <CAHk-=wiJUQz6hoosBKpKtupiix1pAS6GCd1bPVK5nW8umPFzAw@mail.gmail.com>
-Subject: Re: [GIT PULL] clk changes for the merge window
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201210212534.216197-13-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 20, 2020 at 5:52 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+On Thu, 10 Dec 2020 22:25:29 +0100, Krzysztof Kozlowski wrote:
+> Interrupt line can be configured on different hardware in different way,
+> even inverted.  Therefore driver should not enforce specific trigger
+> type - edge falling - but instead rely on Devicetree to configure it.
+> 
+> The Maxim 77686 datasheet describes the interrupt line as active low
+> with a requirement of acknowledge from the CPU therefore the edge
+> falling is not correct.
+> 
+> The interrupt line is shared between PMIC and RTC driver, so using level
+> sensitive interrupt is here especially important to avoid races.  With
+> an edge configuration in case if first PMIC signals interrupt followed
+> shortly after by the RTC, the interrupt might not be yet cleared/acked
+> thus the second one would not be noticed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> This patch should wait till DTS changes are merged, as it relies on
+> proper Devicetree.
+> ---
+>  Documentation/devicetree/bindings/clock/maxim,max77686.txt | 4 ++--
+>  Documentation/devicetree/bindings/mfd/max77686.txt         | 2 +-
+>  Documentation/devicetree/bindings/regulator/max77686.txt   | 2 +-
+>  drivers/mfd/max77686.c                                     | 3 +--
+>  4 files changed, 5 insertions(+), 6 deletions(-)
+> 
 
-Of 134 non-merge commits, 22 were committed in the last 48 hours.
-
-I took this, but I'm somewhat pissed off about this. And the next
-person who does this to me will get a blunt reply to just go and hide
-in a cold, dark ditch somewhere, because between family xmas prep and
-people who do things too late, I know which one matters more.
-
-             Linus
+Acked-by: Rob Herring <robh@kernel.org>
