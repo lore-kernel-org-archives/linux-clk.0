@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8783C4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6870C4332D
 	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83E7123133
+	by mail.kernel.org (Postfix) with ESMTP id 98ECC23139
 	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbgLVNLc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 08:11:32 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56699 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726807AbgLVNLb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 08:11:31 -0500
-X-UUID: 93f2f71cd5894f40b10afffffaefd611-20201222
-X-UUID: 93f2f71cd5894f40b10afffffaefd611-20201222
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        id S1726807AbgLVNLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 08:11:35 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33847 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727255AbgLVNLe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 08:11:34 -0500
+X-UUID: 7988b7128a0f402ab203c8a1aa4b38ea-20201222
+X-UUID: 7988b7128a0f402ab203c8a1aa4b38ea-20201222
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1133726384; Tue, 22 Dec 2020 21:10:14 +0800
+        with ESMTP id 1374036555; Tue, 22 Dec 2020 21:09:53 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 22 Dec 2020 21:09:50 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 22 Dec 2020 21:09:49 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 22 Dec 2020 21:09:50 +0800
+ Transport; Tue, 22 Dec 2020 21:09:49 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -41,9 +41,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <srv_heupstream@mediatek.com>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v6 08/22] clk: mediatek: Add configurable enable control to mtk_pll_data
-Date:   Tue, 22 Dec 2020 21:09:33 +0800
-Message-ID: <1608642587-15634-9-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v6 05/22] dt-bindings: ARM: Mediatek: Document bindings of MT8192 clock controllers
+Date:   Tue, 22 Dec 2020 21:09:30 +0800
+Message-ID: <1608642587-15634-6-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
@@ -54,89 +54,206 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In all MediaTek PLL design, bit0 of CON0 register is always
-the enable bit.
-However, there's a special case of usbpll on MT8192.
-The enable bit of usbpll is moved to bit2 of other register.
-Add configurable en_reg and pll_en_bit for enable control or
-default 0 where pll data are static variables.
-Hence, CON0_BASE_EN could also be removed.
-And there might have another special case on other chips,
-the enable bit is still on CON0 register but not at bit0.
+This patch adds the binding documentation of topckgen, apmixedsys,
+infracfg, pericfg and subsystem clocks for Mediatek MT8192.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mtk.h |  2 ++
- drivers/clk/mediatek/clk-pll.c | 15 ++++++++++-----
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      | 22 ++++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |  2 ++
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
+ .../bindings/arm/mediatek/mediatek,ipesys.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |  1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.yaml    |  1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  8 ++++++++
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |  1 +
+ 12 files changed, 41 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index c3d6756..c580663 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -233,6 +233,8 @@ struct mtk_pll_data {
- 	uint32_t pcw_chg_reg;
- 	const struct mtk_pll_div_table *div_table;
- 	const char *parent_name;
-+	uint32_t en_reg;
-+	uint8_t pll_en_bit; /* Assume 0, indicates BIT(0) by default */
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index ea827e87..551c307 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -18,6 +18,7 @@ Required Properties:
+ 	- "mediatek,mt8167-apmixedsys", "syscon"
+ 	- "mediatek,mt8173-apmixedsys"
+ 	- "mediatek,mt8183-apmixedsys", "syscon"
++	- "mediatek,mt8192-apmixedsys", "syscon"
+ 	- "mediatek,mt8516-apmixedsys"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index b32d374..699776b 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -13,6 +13,7 @@ Required Properties:
+ 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
+ 	- "mediatek,mt8167-audiosys", "syscon"
+ 	- "mediatek,mt8183-audiosys", "syscon"
++	- "mediatek,mt8192-audsys", "syscon"
+ 	- "mediatek,mt8516-audsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+index a0ce820..7d0b14e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+@@ -9,6 +9,10 @@ Required Properties:
+ 	- "mediatek,mt6765-camsys", "syscon"
+ 	- "mediatek,mt6779-camsys", "syscon"
+ 	- "mediatek,mt8183-camsys", "syscon"
++	- "mediatek,mt8192-camsys", "syscon"
++	- "mediatek,mt8192-camsys_rawa", "syscon"
++	- "mediatek,mt8192-camsys_rawb", "syscon"
++	- "mediatek,mt8192-camsys_rawc", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The camsys controller uses the common clk binding from
+@@ -22,3 +26,21 @@ camsys: camsys@1a000000  {
+ 	reg = <0 0x1a000000  0 0x1000>;
+ 	#clock-cells = <1>;
  };
++
++camsys_rawa: syscon@1a04f000 {
++	compatible = "mediatek,mt8192-camsys_rawa", "syscon";
++	reg = <0 0x1a04f000 0 0x1000>;
++	#clock-cells = <1>;
++};
++
++camsys_rawb: syscon@1a06f000 {
++	compatible = "mediatek,mt8192-camsys_rawb", "syscon";
++	reg = <0 0x1a06f000 0 0x1000>;
++	#clock-cells = <1>;
++};
++
++camsys_rawc: syscon@1a08f000 {
++	compatible = "mediatek,mt8192-camsys_rawc", "syscon";
++	reg = <0 0x1a08f000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index dce4c924..b9e599e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -15,6 +15,8 @@ Required Properties:
+ 	- "mediatek,mt8167-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ 	- "mediatek,mt8183-imgsys", "syscon"
++	- "mediatek,mt8192-imgsys", "syscon"
++	- "mediatek,mt8192-imgsys2", "syscon"
+ - #clock-cells: Must be 1
  
- void mtk_clk_register_plls(struct device_node *node,
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 11ed5d1..7fb001a 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -44,6 +44,7 @@ struct mtk_clk_pll {
- 	void __iomem	*tuner_en_addr;
- 	void __iomem	*pcw_addr;
- 	void __iomem	*pcw_chg_addr;
-+	void __iomem	*en_addr;
- 	const struct mtk_pll_data *data;
+ The imgsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index eb3523c..6e05a00 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -19,6 +19,7 @@ Required Properties:
+ 	- "mediatek,mt8167-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+ 	- "mediatek,mt8183-infracfg", "syscon"
++	- "mediatek,mt8192-infracfg", "syscon"
+ 	- "mediatek,mt8516-infracfg", "syscon"
+ - #clock-cells: Must be 1
+ - #reset-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+index 2ce889b..9cd1035 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt6779-ipesys", "syscon"
++	- "mediatek,mt8192-ipesys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The ipesys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+index 054424f..6bfb49a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+@@ -10,6 +10,7 @@ Required Properties:
+ 	- "mediatek,mt6779-mfgcfg", "syscon"
+ 	- "mediatek,mt8167-mfgcfg", "syscon"
+ 	- "mediatek,mt8183-mfgcfg", "syscon"
++	- "mediatek,mt8192-mfgcfg", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mfgcfg controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index d8c9108..81fa345 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -15,6 +15,7 @@ Required Properties:
+ 	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ 	- "mediatek,mt8183-mmsys", "syscon"
++	- "mediatek,mt8192-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ For the clock control, the mmsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+index 8723dfe..b405cbc 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+@@ -26,6 +26,7 @@ properties:
+               - mediatek,mt8135-pericfg
+               - mediatek,mt8173-pericfg
+               - mediatek,mt8183-pericfg
++              - mediatek,mt8192-pericfg
+               - mediatek,mt8516-pericfg
+           - const: syscon
+       - items:
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index 5ce7578..1627e38 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -18,6 +18,7 @@ Required Properties:
+ 	- "mediatek,mt8167-topckgen", "syscon"
+ 	- "mediatek,mt8173-topckgen"
+ 	- "mediatek,mt8183-topckgen", "syscon"
++	- "mediatek,mt8192-topckgen", "syscon"
+ 	- "mediatek,mt8516-topckgen"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 9819516..376c82e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -14,6 +14,8 @@ Required Properties:
+ 	- "mediatek,mt8167-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+ 	- "mediatek,mt8183-vdecsys", "syscon"
++	- "mediatek,mt8192-vdecsys", "syscon"
++	- "mediatek,mt8192-vdecsys_soc", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The vdecsys controller uses the common clk binding from
+@@ -27,3 +29,9 @@ vdecsys: clock-controller@16000000 {
+ 	reg = <0 0x16000000 0 0x1000>;
+ 	#clock-cells = <1>;
  };
++
++vdecsys_soc: syscon@1600f000 {
++	compatible = "mediatek,mt8192-vdecsys_soc", "syscon";
++	reg = <0 0x1600f000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+index 6a6a14e..d22de01 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 	- "mediatek,mt6797-vencsys", "syscon"
+ 	- "mediatek,mt8173-vencsys", "syscon"
+ 	- "mediatek,mt8183-vencsys", "syscon"
++	- "mediatek,mt8192-vencsys", "syscon"
+ - #clock-cells: Must be 1
  
-@@ -56,7 +57,7 @@ static int mtk_pll_is_prepared(struct clk_hw *hw)
- {
- 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
- 
--	return (readl(pll->base_addr + REG_CON0) & CON0_BASE_EN) != 0;
-+	return (readl(pll->en_addr) & BIT(pll->data->pll_en_bit)) != 0;
- }
- 
- static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
-@@ -248,8 +249,8 @@ static int mtk_pll_prepare(struct clk_hw *hw)
- 	writel(r, pll->pwr_addr);
- 	udelay(1);
- 
--	r = readl(pll->base_addr + REG_CON0) | CON0_BASE_EN;
--	writel(r, pll->base_addr + REG_CON0);
-+	r = readl(pll->en_addr) | BIT(pll->data->pll_en_bit);
-+	writel(r, pll->en_addr);
- 
- 	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
- 	if (div_en_mask) {
-@@ -290,8 +291,8 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
- 		writel(r, pll->base_addr + REG_CON0);
- 	}
- 
--	r = readl(pll->base_addr + REG_CON0) & ~CON0_BASE_EN;
--	writel(r, pll->base_addr + REG_CON0);
-+	r = readl(pll->en_addr) & ~BIT(pll->data->pll_en_bit);
-+	writel(r, pll->en_addr);
- 
- 	r = readl(pll->pwr_addr) | CON0_ISO_EN;
- 	writel(r, pll->pwr_addr);
-@@ -333,6 +334,10 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 		pll->tuner_addr = base + data->tuner_reg;
- 	if (data->tuner_en_reg)
- 		pll->tuner_en_addr = base + data->tuner_en_reg;
-+	if (data->en_reg)
-+		pll->en_addr = base + data->en_reg;
-+	else
-+		pll->en_addr = pll->base_addr + REG_CON0;
- 	pll->hw.init = &init;
- 	pll->data = data;
- 
+ The vencsys controller uses the common clk binding from
 -- 
 1.8.1.1.dirty
 
