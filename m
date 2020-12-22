@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFCDC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852ACC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5650823103
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D56B23103
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:15:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbgLVJNk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 04:13:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47566 "EHLO
+        id S1726320AbgLVJOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 04:14:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgLVJNj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 04:13:39 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36DCC0613D3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:12:58 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id y8so7106969plp.8
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:12:58 -0800 (PST)
+        with ESMTP id S1726307AbgLVJOw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 04:14:52 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EBB7C06179C
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:14:11 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id d2so8104298pfq.5
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:14:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aRm1EWTlrTuCGHC7vrOatFzPVY2kkbfTNw0mXXouB3Y=;
-        b=Tz4gidYhRSQQPvxdsB7tqMzsVoYO3crt2ApaMJh6sBPNnz4QdlfPaFxg6Qw+Q9Ttkt
-         wKFwX+PObpzq/4fdMTp+4B5KTH7Re12uhYrXa3HvCaddYet13JjFo+rTTdsSEt5DlkKf
-         bp6SZO5FTIRmcpzQljrgkAITPVaV0bSdOcJWvfc30sM+iw3nPXkWpPYye4ZZWT5QEdXD
-         faqbA50HRxcmPr6Nr9VSBUdTtKxm6LXMJ4WI1xvuYIbxPBsTtG37wCAzUBTtYOR26zRD
-         K/mV0VlzeObZyhDbSnYISRJfGVOrWvx6nt6WqoFU5TRml3oWxZBdtwp7XRKvKR1Qp9D/
-         ptAw==
+        bh=MVpnGnCFYtu4ycJzZf+LSk9hEI84NI49MudCxGCR+HM=;
+        b=MH/242BQ7qGA/c7ZKFlxo9k35H+BRyW2M9A5zqCbM7dzzv0lHpYdUkBpCj7oEZp13m
+         Ffv/YsG7ikpYjSZ/eEGKTEqY8LO+IwgxlNhlguzw31ez4ZqJJXcjZLoVnBXGWPC6ErWp
+         C4MMWo1PjKz1dR7jRL3QB8SQVMUTHXfciaZm6EDwN6BotFowAPQcOqN9+kpF0OvIKtTd
+         1qrZG5oeRJU/1gmMrD39Gfgd5fELI6zV4kIgaf3rqokdN4f26P7QJMe8AgrauAKTYpgV
+         F65EaKqCccbzS16iksFwGpcNQ/HNxaTyiClovDAv6TCiG96SWFf14Mxu2pqAyQ6WpN2l
+         eGbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aRm1EWTlrTuCGHC7vrOatFzPVY2kkbfTNw0mXXouB3Y=;
-        b=hybxPdMxs3hhfNBWKgc4LA5jT+1skuTlP7PJfqKeF3KBSAJQ9cHPcOzOAFMDhdV/ZL
-         bwDGdWaDhnUsPvEElY8yiqoXfWM+uUZPifayAf8alX3o3t+3YbDFVwQmxOUN4jULx9zj
-         X5FtXn3Hf/Eogf4DoRnqFnplrY8vBb3N/e6mgaCv/JKas17U6FlrgZcTKfj1/+yb1804
-         xSC0FDW9FzlacjzNPgd1+H9wvCVqtz7NeOBifw9Xgaaqfm+wtUU887eOeHa+KdbhOt3m
-         rIwRsLpl3p7f3oIevxbApYnx6T8XfXcgOeHlKsO837iERNsKrSYW/me7XfuwJfp+m6S9
-         3ROg==
-X-Gm-Message-State: AOAM5321YvPVAJOqZ5lW3Wb1xeR2PXJi93yRMy+BzjZ9S5Bg2r8hb1nW
-        Nq1Wx7r4e20tVSE/xWJholKJ+g==
-X-Google-Smtp-Source: ABdhPJyTuAI/kmpjoi97riBT35OzUfQwSMT6NxASqK0wJXFrTdvspmvEYCyC6FWsQNUmwA+WXnqrWg==
-X-Received: by 2002:a17:902:6f01:b029:dc:3182:ce69 with SMTP id w1-20020a1709026f01b02900dc3182ce69mr16778961plk.10.1608628378460;
-        Tue, 22 Dec 2020 01:12:58 -0800 (PST)
+        bh=MVpnGnCFYtu4ycJzZf+LSk9hEI84NI49MudCxGCR+HM=;
+        b=dTYHkKZk1tuV20dCgpGWEYxKMFKym3XyJO50jcdUjaejoqf6CLDLXtTUaGEdYRS7Pn
+         nOo51WQf3NjfGQEHUezAGL3R4ajIkjsb0TFZRa0GeK5YhTd8dU/c5uY3Uf1Da8j7ibvR
+         /uz4XbqGy+B09LnhqOgD6HgAEX8mSM+IFytDbe2bn6YrxdJ5JS8PBuLAZ61h/joVE/Iu
+         sgmwQ/OetJOnz4z36NepOVgmJWPLgsb03C2/7J/eZKcu1aJ/Pdrx6DKPfchifF8Aab+k
+         gkHtxfsh++iLwI/po3o1aNKCZYG1Jr20QWN8uNVTKObrdmCCJ4ZDT2ofshXb4sWrjAEL
+         Z+Zg==
+X-Gm-Message-State: AOAM5300qcNdo+4fHvWUXM7qol62NIE8G7mDSPsceYb9bOD7X6Vni99m
+        z5JyWBIM8C5F85BFyqGSvZVHug==
+X-Google-Smtp-Source: ABdhPJxR442Its0VhdjNxmES11BozYg6f4jsASsSW6TfWxeI3592psXLb9CuQTRVoVKmE/eJsKTU5A==
+X-Received: by 2002:a05:6a00:230d:b029:18b:9cb:dead with SMTP id h13-20020a056a00230db029018b09cbdeadmr18667524pfh.24.1608628450994;
+        Tue, 22 Dec 2020 01:14:10 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id q12sm19544480pgj.24.2020.12.22.01.12.57
+        by smtp.gmail.com with ESMTPSA id t5sm18222978pjr.22.2020.12.22.01.14.09
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 01:12:57 -0800 (PST)
-Date:   Tue, 22 Dec 2020 14:42:55 +0530
+        Tue, 22 Dec 2020 01:14:10 -0800 (PST)
+Date:   Tue, 22 Dec 2020 14:44:08 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -78,117 +78,82 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 19/48] opp: Fix adding OPP entries in a wrong order if
- rate is unavailable
-Message-ID: <20201222091255.wentz5hyt726qezg@vireshk-i7>
+Subject: Re: [PATCH v2 44/48] ARM: tegra: Add OPP tables and power domains to
+ Tegra30 device-tree
+Message-ID: <20201222091408.vvputqs27olywdxq@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-20-digetx@gmail.com>
+ <20201217180638.22748-45-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-20-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-45-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> Fix adding OPP entries in a wrong (opposite) order if OPP rate is
-> unavailable. The OPP comparison is erroneously skipped if OPP rate is
-> missing, thus OPPs are left unsorted.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/opp/core.c | 23 ++++++++++++-----------
->  drivers/opp/opp.h  |  2 +-
->  2 files changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 34f7e530d941..5c7f130a8de2 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1531,9 +1531,10 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
->  	return true;
->  }
+> diff --git a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+> index cbe84d25e726..983db1a06682 100644
+> --- a/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-peripherals-opp.dtsi
+> @@ -1,6 +1,56 @@
+>  // SPDX-License-Identifier: GPL-2.0
 >  
-> -int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
-> +int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2,
-> +		     bool rate_not_available)
->  {
-> -	if (opp1->rate != opp2->rate)
-> +	if (!rate_not_available && opp1->rate != opp2->rate)
+>  / {
+> +	core_opp_table: core-power-domain-opp-table {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		core_opp_950: opp@950000 {
+> +			opp-microvolt = <950000 950000 1350000>;
+> +			opp-level = <950000>;
 
-rate will be 0 for both the OPPs here if rate_not_available is true and so this
-change shouldn't be required.
+Perhaps you don't need to exactly copy the voltage value into the level field.
+The level field can just be kept to 0, 1,2, 3, etc..
 
->  		return opp1->rate < opp2->rate ? -1 : 1;
->  	if (opp1->bandwidth && opp2->bandwidth &&
->  	    opp1->bandwidth[0].peak != opp2->bandwidth[0].peak)
-> @@ -1545,7 +1546,8 @@ int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
->  
->  static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
->  			     struct opp_table *opp_table,
-> -			     struct list_head **head)
-> +			     struct list_head **head,
-> +			     bool rate_not_available)
->  {
->  	struct dev_pm_opp *opp;
->  	int opp_cmp;
-> @@ -1559,13 +1561,13 @@ static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
->  	 * loop.
->  	 */
->  	list_for_each_entry(opp, &opp_table->opp_list, node) {
-> -		opp_cmp = _opp_compare_key(new_opp, opp);
-> +		opp_cmp = _opp_compare_key(new_opp, opp, rate_not_available);
->  		if (opp_cmp > 0) {
->  			*head = &opp->node;
->  			continue;
->  		}
->  
-> -		if (opp_cmp < 0)
-> +		if (opp_cmp < 0 || rate_not_available)
->  			return 0;
-
-This shouldn't be required as well, isn't it ?
-
->  
->  		/* Duplicate OPPs */
-> @@ -1601,12 +1603,11 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
->  	mutex_lock(&opp_table->lock);
->  	head = &opp_table->opp_list;
->  
-> -	if (likely(!rate_not_available)) {
-> -		ret = _opp_is_duplicate(dev, new_opp, opp_table, &head);
-> -		if (ret) {
-> -			mutex_unlock(&opp_table->lock);
-> -			return ret;
-> -		}
-> +	ret = _opp_is_duplicate(dev, new_opp, opp_table, &head,
-> +				rate_not_available);
-
-This is the only thing we need to do here I believe.
-
-> +	if (ret) {
-> +		mutex_unlock(&opp_table->lock);
-> +		return ret;
->  	}
->  
->  	list_add(&new_opp->node, head);
-> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-> index 4ced7ffa8158..6f5be6c72f13 100644
-> --- a/drivers/opp/opp.h
-> +++ b/drivers/opp/opp.h
-> @@ -219,7 +219,7 @@ struct opp_table *_find_opp_table(struct device *dev);
->  struct opp_device *_add_opp_dev(const struct device *dev, struct opp_table *opp_table);
->  struct dev_pm_opp *_opp_allocate(struct opp_table *opp_table);
->  void _opp_free(struct dev_pm_opp *opp);
-> -int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2);
-> +int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2, bool rate_not_available);
->  int _opp_add(struct device *dev, struct dev_pm_opp *new_opp, struct opp_table *opp_table, bool rate_not_available);
->  int _opp_add_v1(struct opp_table *opp_table, struct device *dev, unsigned long freq, long u_volt, bool dynamic);
->  void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, int last_cpu);
-> -- 
-> 2.29.2
+> +		};
+> +
+> +		core_opp_1000: opp@1000000 {
+> +			opp-microvolt = <1000000 1000000 1350000>;
+> +			opp-level = <1000000>;
+> +		};
+> +
+> +		core_opp_1050: opp@1050000 {
+> +			opp-microvolt = <1050000 1050000 1350000>;
+> +			opp-level = <1050000>;
+> +		};
+> +
+> +		core_opp_1100: opp@1100000 {
+> +			opp-microvolt = <1100000 1100000 1350000>;
+> +			opp-level = <1100000>;
+> +		};
+> +
+> +		core_opp_1150: opp@1150000 {
+> +			opp-microvolt = <1150000 1150000 1350000>;
+> +			opp-level = <1150000>;
+> +		};
+> +
+> +		core_opp_1200: opp@1200000 {
+> +			opp-microvolt = <1200000 1200000 1350000>;
+> +			opp-level = <1200000>;
+> +		};
+> +
+> +		core_opp_1250: opp@1250000 {
+> +			opp-microvolt = <1250000 1250000 1350000>;
+> +			opp-level = <1250000>;
+> +		};
+> +
+> +		core_opp_1300: opp@1300000 {
+> +			opp-microvolt = <1300000 1300000 1350000>;
+> +			opp-level = <1300000>;
+> +		};
+> +
+> +		core_opp_1350: opp@1350000 {
+> +			opp-microvolt = <1350000 1350000 1350000>;
+> +			opp-level = <1350000>;
+> +		};
+> +	};
 
 -- 
 viresh
