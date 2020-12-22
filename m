@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C10C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFFEC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 855B12076B
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 684D22253A
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgLVI4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 03:56:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
+        id S1726044AbgLVJAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 04:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbgLVI4j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 03:56:39 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BD8C0617A6
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:55:59 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id h186so8102586pfe.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:55:59 -0800 (PST)
+        with ESMTP id S1725999AbgLVJAY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 04:00:24 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C91C0613D3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:59:43 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id lb18so975832pjb.5
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:59:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vFzkf9KGKvhutZbig0u7i/t+IYvhk4nnFQKLcFcxsq4=;
-        b=vAsAJop5QL87eRDzT5DTHMtwoNPt0CQSIkdTqkJeziTI1AZMtMAcIEm3Kl9fhnTk5V
-         vB/lYkBRouI/12yFv6A1dCSOIC7zvTsWExhCNxYa4+Oefx74oga8DDnN983sE8WuR0Lw
-         A/n6+TWPt+hiOGv4RVjVlrk029VE+mVsDRs23XZwxscocW8GlofyFgohPX99nF5S7Xwf
-         uRZL+JFGs5YKyoIHowFMNinq/TGTNXJtfDFp0L89tHOseHc6j2SMhTv475d9VkLlcOL+
-         Iu/sAsOo0E5YMGvGAyoXhWoXv1Ygp7453JTCPAWJO9u4w7D6CKSImKmQS5VN3jjIJN38
-         c4fg==
+        bh=RHvyko5iU5xg8Cz45AVBchwM4SDGk3Y/8Etp7zQo/0E=;
+        b=LfPP06TVJTEK4xWL0o4Uusz6IXwXzk8z3S6CPrE/vyZ9qoOMFRUyzQJWUKQxWhuG/E
+         wY5edJUerDgkww2zd4lzbce6lRCficFwzejWrQiDZi/xwHlgy96zpj6C8ioFq0ZrQXBk
+         mSOkM2U+2pDJWLqA+j7R2srsKaCnOdyMwev89OKW8IKEfkAPs6AL+3xqznBpqvwnQ0NT
+         fjm9Rb+Xfn10diw8TlqXQy8/GkenTeXEg9jbL1dOeVHP/+gjymWREs9O4mMhUSRkCgx+
+         FWO4nhtVc54saAG5QAt6VsqTuAXLPGXWUixoDkMsUGzE1xB0aRN/Z6i4X+no1fBNw+u5
+         gkcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vFzkf9KGKvhutZbig0u7i/t+IYvhk4nnFQKLcFcxsq4=;
-        b=E7KsyssXj1zOQ6EJCMuLLtWz8X7doBqAXmJh9FeNTBUGyspyUEojFsJOx4CtooKv9W
-         ABUqOUOFeBYq4lHHqhZa8vQGcLiQUfbVD/cGFrCMWdF+AV4F3seQMbaSvf4dBAGx4dDG
-         nQAl3PGFmg86+fXx9rQVYp0IJcujq+bBchqBYZlO5XAUsDLHRsstXgy4CacOIJwrpcdC
-         RBZkNZNBP+qnC1He6mZ63vx+9OIupG3ZBUT5ZbU/C6Q+WrmU6D8RW10/N7NERZBZzEbR
-         kRKjC5iDldx8GkoX5Me8nIglleMCViFMw65HBsGq8+P7wJdQLCkGc42cY149jUfMOlVM
-         GKrQ==
-X-Gm-Message-State: AOAM532cCIeb2mJooJWcCMthfocxM6OCSKWwsZYxnuQ1XqI4pjp5DyUi
-        5fiIagrp7k6k/0HZ9fUkZBjAiQ==
-X-Google-Smtp-Source: ABdhPJywc6LY9gPB8aIXdU8FTmnJRcbIf3Irdo/T2lGMg7jN2SK9J2SNLPjpJEYbiKAaBbTsluyTwA==
-X-Received: by 2002:a63:6806:: with SMTP id d6mr18604366pgc.205.1608627358914;
-        Tue, 22 Dec 2020 00:55:58 -0800 (PST)
+        bh=RHvyko5iU5xg8Cz45AVBchwM4SDGk3Y/8Etp7zQo/0E=;
+        b=O0v62IluRfWu+7vaN26BGl8cxI6QBy0cPSYZ68w624mZ7/8RlTMJ+Adk6KJRUZzdCJ
+         r/2JWAHjzO4zHFGzZ7Lq3Rcb8D7sDLSJhF3SEoK9CuFa3WBJD4OCBdoQfY7u+t1AK6PX
+         u4r5ztPiTS37GqIxVtcMo68ZIKm1KOUUfHMzS4tvTt5NdmTO9n1srPNZCdjcJwdInQQt
+         t3+e1JXpKJDRASv2sZYsj2CZN31uKZEUS2cAAdSZn9+7w0BmpWSTUD3x3KdcauNW/RiL
+         B0jFFc5k+UNkrWcvxkmpHzQ0md2gVM2x0gLTfrOLGa59guUzwqN0dl6I4H6Zd8uQ3LyW
+         reBg==
+X-Gm-Message-State: AOAM531rk+cdEv9hyIHqTZ1JHkfkXaBfJrgJpqZR/9LzzneP+KcV/ALn
+        Hnz4hckYS6M2LYgnj8q/3Txi/w==
+X-Google-Smtp-Source: ABdhPJykL54UnjW4ciN4fGRWEBJgf6zWsJDjMds2/uHeESPpVfQNNcqkwOSZPGazCeKG973ySyugcg==
+X-Received: by 2002:a17:902:c584:b029:da:cc62:22f1 with SMTP id p4-20020a170902c584b02900dacc6222f1mr20408042plx.54.1608627583415;
+        Tue, 22 Dec 2020 00:59:43 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id t7sm19377680pfe.179.2020.12.22.00.55.57
+        by smtp.gmail.com with ESMTPSA id x4sm19796659pgg.94.2020.12.22.00.59.42
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 00:55:58 -0800 (PST)
-Date:   Tue, 22 Dec 2020 14:25:56 +0530
+        Tue, 22 Dec 2020 00:59:42 -0800 (PST)
+Date:   Tue, 22 Dec 2020 14:29:40 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -78,33 +78,65 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 13/48] opp: Add resource-managed versions of OPP API
- functions
-Message-ID: <20201222085556.kce4dcwumk4u6ttm@vireshk-i7>
+Subject: Re: [PATCH v2 14/48] opp: Filter out OPPs based on availability of a
+ required-OPP
+Message-ID: <20201222085940.y625zxee4tevbqm5@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-14-digetx@gmail.com>
+ <20201217180638.22748-15-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-14-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-15-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> Add resource-managed versions of OPP API functions. This removes a need
-> from drivers to store and manage OPP table pointers.
+> A required OPP may not be available, and thus, all OPPs which are using
+> this required OPP should be unavailable too.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/opp/core.c     | 173 +++++++++++++++++++++++++++++++++++++++++
->  drivers/opp/of.c       |  25 ++++++
->  include/linux/pm_opp.h |  51 ++++++++++++
->  3 files changed, 249 insertions(+)
+>  drivers/opp/core.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 
-Please send a patchset of its own for this patch, along with updates to all the
-existing code that can make use of these.
+Please send a separate patchset for fixes, as these can also go to 5.11 itself.
+
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index d9feb7639598..3d02fe33630b 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1588,7 +1588,7 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+>  	     struct opp_table *opp_table, bool rate_not_available)
+>  {
+>  	struct list_head *head;
+> -	int ret;
+> +	int i, ret;
+>  
+>  	mutex_lock(&opp_table->lock);
+>  	head = &opp_table->opp_list;
+> @@ -1615,6 +1615,15 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+>  			 __func__, new_opp->rate);
+>  	}
+>  
+> +	for (i = 0; i < opp_table->required_opp_count && new_opp->available; i++) {
+> +		if (new_opp->required_opps[i]->available)
+> +			continue;
+> +
+> +		new_opp->available = false;
+> +		dev_warn(dev, "%s: OPP not supported by required OPP %pOF (%lu)\n",
+> +			 __func__, new_opp->required_opps[i]->np, new_opp->rate);
+
+Why not just break from here ?
+
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.29.2
 
 -- 
 viresh
