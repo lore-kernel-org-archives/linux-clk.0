@@ -5,26 +5,26 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F04C43332
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4BDC4332D
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEB6623139
+	by mail.kernel.org (Postfix) with ESMTP id CA58023133
 	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbgLVNKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 08:10:55 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56699 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726840AbgLVNKz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 08:10:55 -0500
-X-UUID: 4212b20846e848779068bbb25dd109f8-20201222
-X-UUID: 4212b20846e848779068bbb25dd109f8-20201222
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        id S1725846AbgLVNKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 08:10:40 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33847 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726683AbgLVNKk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 08:10:40 -0500
+X-UUID: 369ec4d9f51048a6b0c8a3caec1e4948-20201222
+X-UUID: 369ec4d9f51048a6b0c8a3caec1e4948-20201222
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 806081595; Tue, 22 Dec 2020 21:09:54 +0800
+        with ESMTP id 639159414; Tue, 22 Dec 2020 21:09:55 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
  15.0.1497.2; Tue, 22 Dec 2020 21:09:51 +0800
@@ -41,9 +41,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <srv_heupstream@mediatek.com>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v6 15/22] clk: mediatek: Add MT8192 ipesys clock support
-Date:   Tue, 22 Dec 2020 21:09:40 +0800
-Message-ID: <1608642587-15634-16-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v6 17/22] clk: mediatek: Add MT8192 mfgcfg clock support
+Date:   Tue, 22 Dec 2020 21:09:42 +0800
+Message-ID: <1608642587-15634-18-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
@@ -54,50 +54,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8192 ipesys clock provider
+Add MT8192 mfgcfg clock provider
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/mediatek/Kconfig          |  6 ++++
+ drivers/clk/mediatek/Kconfig          |  6 +++++
  drivers/clk/mediatek/Makefile         |  1 +
- drivers/clk/mediatek/clk-mt8192-ipe.c | 57 +++++++++++++++++++++++++++++++++++
- 3 files changed, 64 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt8192-ipe.c
+ drivers/clk/mediatek/clk-mt8192-mfg.c | 50 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8192-mfg.c
 
 diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 8acc7d6..c6bc618 100644
+index a0a2efa9..3db8670 100644
 --- a/drivers/clk/mediatek/Kconfig
 +++ b/drivers/clk/mediatek/Kconfig
-@@ -521,6 +521,12 @@ config COMMON_CLK_MT8192_IMP_IIC_WRAP
+@@ -533,6 +533,12 @@ config COMMON_CLK_MT8192_MDPSYS
  	help
- 	  This driver supports MediaTek MT8192 imp_iic_wrap clocks.
+ 	  This driver supports MediaTek MT8192 mdpsys clocks.
  
-+config COMMON_CLK_MT8192_IPESYS
-+	bool "Clock driver for MediaTek MT8192 ipesys"
++config COMMON_CLK_MT8192_MFGCFG
++	bool "Clock driver for MediaTek MT8192 mfgcfg"
 +	depends on COMMON_CLK_MT8192
 +	help
-+	  This driver supports MediaTek MT8192 ipesys clocks.
++	  This driver supports MediaTek MT8192 mfgcfg clocks.
 +
  config COMMON_CLK_MT8516
  	bool "Clock driver for MediaTek MT8516"
  	depends on ARCH_MEDIATEK || COMPILE_TEST
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 3798162..33dc974 100644
+index 7b258cb..024841a 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
-@@ -72,5 +72,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
- obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
- obj-$(CONFIG_COMMON_CLK_MT8192_IMGSYS) += clk-mt8192-img.o
+@@ -74,5 +74,6 @@ obj-$(CONFIG_COMMON_CLK_MT8192_IMGSYS) += clk-mt8192-img.o
  obj-$(CONFIG_COMMON_CLK_MT8192_IMP_IIC_WRAP) += clk-mt8192-imp_iic_wrap.o
-+obj-$(CONFIG_COMMON_CLK_MT8192_IPESYS) += clk-mt8192-ipe.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_IPESYS) += clk-mt8192-ipe.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_MDPSYS) += clk-mt8192-mdp.o
++obj-$(CONFIG_COMMON_CLK_MT8192_MFGCFG) += clk-mt8192-mfg.o
  obj-$(CONFIG_COMMON_CLK_MT8516) += clk-mt8516.o
  obj-$(CONFIG_COMMON_CLK_MT8516_AUDSYS) += clk-mt8516-aud.o
-diff --git a/drivers/clk/mediatek/clk-mt8192-ipe.c b/drivers/clk/mediatek/clk-mt8192-ipe.c
+diff --git a/drivers/clk/mediatek/clk-mt8192-mfg.c b/drivers/clk/mediatek/clk-mt8192-mfg.c
 new file mode 100644
-index 0000000..218e688
+index 0000000..510be98
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8192-ipe.c
-@@ -0,0 +1,57 @@
++++ b/drivers/clk/mediatek/clk-mt8192-mfg.c
+@@ -0,0 +1,50 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// Copyright (c) 2020 MediaTek Inc.
@@ -112,49 +112,42 @@ index 0000000..218e688
 +
 +#include <dt-bindings/clock/mt8192-clk.h>
 +
-+static const struct mtk_gate_regs ipe_cg_regs = {
++static const struct mtk_gate_regs mfg_cg_regs = {
 +	.set_ofs = 0x4,
 +	.clr_ofs = 0x8,
 +	.sta_ofs = 0x0,
 +};
 +
-+#define GATE_IPE(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &ipe_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
++#define GATE_MFG(_id, _name, _parent, _shift)	\
++	GATE_MTK(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
 +
-+static const struct mtk_gate ipe_clks[] = {
-+	GATE_IPE(CLK_IPE_LARB19, "ipe_larb19", "ipe_sel", 0),
-+	GATE_IPE(CLK_IPE_LARB20, "ipe_larb20", "ipe_sel", 1),
-+	GATE_IPE(CLK_IPE_SMI_SUBCOM, "ipe_smi_subcom", "ipe_sel", 2),
-+	GATE_IPE(CLK_IPE_FD, "ipe_fd", "ipe_sel", 3),
-+	GATE_IPE(CLK_IPE_FE, "ipe_fe", "ipe_sel", 4),
-+	GATE_IPE(CLK_IPE_RSC, "ipe_rsc", "ipe_sel", 5),
-+	GATE_IPE(CLK_IPE_DPE, "ipe_dpe", "ipe_sel", 6),
-+	GATE_IPE(CLK_IPE_GALS, "ipe_gals", "ipe_sel", 8),
++static const struct mtk_gate mfg_clks[] = {
++	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_pll_sel", 0),
 +};
 +
-+static const struct mtk_clk_desc ipe_desc = {
-+	.clks = ipe_clks,
-+	.num_clks = ARRAY_SIZE(ipe_clks),
++static const struct mtk_clk_desc mfg_desc = {
++	.clks = mfg_clks,
++	.num_clks = ARRAY_SIZE(mfg_clks),
 +};
 +
-+static const struct of_device_id of_match_clk_mt8192_ipe[] = {
++static const struct of_device_id of_match_clk_mt8192_mfg[] = {
 +	{
-+		.compatible = "mediatek,mt8192-ipesys",
-+		.data = &ipe_desc,
++		.compatible = "mediatek,mt8192-mfgcfg",
++		.data = &mfg_desc,
 +	}, {
 +		/* sentinel */
 +	}
 +};
 +
-+static struct platform_driver clk_mt8192_ipe_drv = {
++static struct platform_driver clk_mt8192_mfg_drv = {
 +	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8192-ipe",
-+		.of_match_table = of_match_clk_mt8192_ipe,
++		.name = "clk-mt8192-mfg",
++		.of_match_table = of_match_clk_mt8192_mfg,
 +	},
 +};
 +
-+builtin_platform_driver(clk_mt8192_ipe_drv);
++builtin_platform_driver(clk_mt8192_mfg_drv);
 -- 
 1.8.1.1.dirty
 
