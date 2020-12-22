@@ -2,71 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447D2C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 10:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3701C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC1523105
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 10:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC41D2312E
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 13:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbgLVKvj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 05:51:39 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56163 "EHLO
+        id S1726949AbgLVNKi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 08:10:38 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56699 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725847AbgLVKvj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 05:51:39 -0500
-X-UUID: 7ab6e4c7ef4846bb8e1e4d628c890e65-20201222
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=rZA2GXxZH7t4kaVt16HKlqffGV0gmjkPmS1PjrXZIqM=;
-        b=AkczCm031GdoJJ8+1BnqVdmS8Q0GkeOINdY362ugedv/Hr8D/GGi9oZyFKs/nX6F7SFnEIAy3Y2MD1Qbhj4Alsi6pR4miKccKlJBJ8YrS4cxAQ5bMAm0wbQ/t58YGPbEt/o7majwNP05QJw6QHrlax4Mm0/ofb6YPPlbEE7pOfw=;
-X-UUID: 7ab6e4c7ef4846bb8e1e4d628c890e65-20201222
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        with ESMTP id S1725846AbgLVNKi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 08:10:38 -0500
+X-UUID: df602ddd255749168ae91f9ae27650a2-20201222
+X-UUID: df602ddd255749168ae91f9ae27650a2-20201222
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1887090278; Tue, 22 Dec 2020 18:50:54 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 22 Dec 2020 18:50:49 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas11.mediatek.inc
+        with ESMTP id 1668350726; Tue, 22 Dec 2020 21:09:54 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 22 Dec 2020 21:09:50 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 22 Dec 2020 18:50:49 +0800
-Message-ID: <1608634252.32765.3.camel@mtksdaap41>
-Subject: Re: [PATCH v2] clk: mediatek: Remove MT8192 unused clock
+ Transport; Tue, 22 Dec 2020 21:09:50 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Tinghan Shen <tinghan.shen@mediatek.com>, <drinkcat@chromium.org>,
-        <matthias.bgg@gmail.com>, <linux-clk@vger.kernel.org>,
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <ryan-jh.yu@mediatek.com>,
-        <nathan.chung@mediatek.com>, <erin.lo@mediatek.com>
-Date:   Tue, 22 Dec 2020 18:50:52 +0800
-In-Reply-To: <160819533548.1580929.12545650149091991895@swboyd.mtv.corp.google.com>
-References: <20201209083921.879-1-tinghan.shen@mediatek.com>
-         <160819533548.1580929.12545650149091991895@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v6 09/22] clk: mediatek: Add mtk_clk_simple_probe() to simplify clock providers
+Date:   Tue, 22 Dec 2020 21:09:34 +0800
+Message-ID: <1608642587-15634-10-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 X-MTK:  N
-Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gVGh1LCAyMDIwLTEyLTE3IGF0IDAwOjU1IC0wODAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
-IFF1b3RpbmcgVGluZ2hhbiBTaGVuICgyMDIwLTEyLTA5IDAwOjM5OjIxKQ0KPiA+IEZyb206ICJU
-aW5naGFuIFNoZW4iIDx0aW5naGFuLnNoZW5AbWVkaWF0ZWsuY29tPg0KPiA+IA0KPiA+IFJlbW92
-ZSBNVDgxOTIgc3NwbSBjbG9jaw0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFRpbmdoYW4gU2hl
-biA8dGluZ2hhbi5zaGVuQG1lZGlhdGVrLmNvbT4NCj4gPiAtLS0NCj4gPiB2MjogcmVzZW5kIHBh
-dGNoIHRvIGxpbnV4LW1lZGlhdGVrIGJlY2F1c2UgYmxvY2tlZCBieSB3cm9uZyBtYWlsIHNldHRp
-bmcuICANCj4gPiANCj4gPiBUaGlzIHBhdGNoIGRlcGVuZHMgb24gc2VyaWVzICJNZWRpYXRlayBN
-VDgxOTIgY2xvY2sgc3VwcG9ydCJbMV0uDQo+ID4gDQo+ID4gWzFdIGh0dHBzOi8vcGF0Y2h3b3Jr
-Lmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1tZWRpYXRlay9saXN0Lz9zZXJpZXM9Mzc5OTU1IA0K
-PiANCj4gQ2FuIHRoaXMgYmUgcm9sbGVkIGludG8gdGhhdCBzZXJpZXM/DQoNCkhpIFRpbmdoYW4s
-DQpUaGFuayB5b3UuIEknbGwgcm9sbCB0aGlzIHBhdGNoIGluIG15IG5leHQgdmVyc2lvbiB2NiBv
-ZiA4MTkyIGNsb2Nrcw0Kc2VyaWVzLg0KDQo=
+Most of subsystem clock providers only need to register clock gates
+in their probe() function.
+To reduce the duplicated code by add a generic function.
+
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 23 +++++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h |  8 ++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index cec1c8a..67693b7 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -13,6 +13,7 @@
+ #include <linux/clkdev.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/device.h>
++#include <linux/of_device.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -286,3 +287,25 @@ void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+ 			clk_data->clks[mcd->id] = clk;
+ 	}
+ }
++
++int mtk_clk_simple_probe(struct platform_device *pdev)
++{
++	const struct mtk_clk_desc *mcd;
++	struct clk_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++	int r;
++
++	mcd = of_device_get_match_data(&pdev->dev);
++	if (!mcd)
++		return -EINVAL;
++
++	clk_data = mtk_alloc_clk_data(mcd->num_clks);
++	if (!clk_data)
++		return -ENOMEM;
++
++	r = mtk_clk_register_gates(node, mcd->clks, mcd->num_clks, clk_data);
++	if (r)
++		return r;
++
++	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++}
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index c580663..2f61fba 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -10,6 +10,7 @@
+ #include <linux/regmap.h>
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
++#include <linux/platform_device.h>
+ 
+ struct clk;
+ struct clk_onecell_data;
+@@ -250,4 +251,11 @@ void mtk_register_reset_controller(struct device_node *np,
+ void mtk_register_reset_controller_set_clr(struct device_node *np,
+ 	unsigned int num_regs, int regofs);
+ 
++struct mtk_clk_desc {
++	const struct mtk_gate *clks;
++	size_t num_clks;
++};
++
++int mtk_clk_simple_probe(struct platform_device *pdev);
++
+ #endif /* __DRV_CLK_MTK_H */
+-- 
+1.8.1.1.dirty
 
