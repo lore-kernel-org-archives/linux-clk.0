@@ -2,101 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475DCC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C518FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6AEE23127
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BA1123120
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbgLVFgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 00:36:16 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34625 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725881AbgLVFgQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 00:36:16 -0500
-X-UUID: 036f7ad2a492424bb0d477bb187aec05-20201222
-X-UUID: 036f7ad2a492424bb0d477bb187aec05-20201222
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 175159508; Tue, 22 Dec 2020 13:35:33 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 22 Dec 2020 13:35:30 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 22 Dec 2020 13:35:30 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     <drinkcat@chromium.org>, <matthias.bgg@gmail.com>,
-        <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <weiyi.lu@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        TingHan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH] clk: mediatek: Remove unused MT8192 mcupm clock
-Date:   Tue, 22 Dec 2020 13:35:02 +0800
-Message-ID: <20201222053502.27872-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        id S1725790AbgLVFsa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 00:48:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44254 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbgLVFs3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 00:48:29 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED63C0613D6
+        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 21:47:49 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id p18so7685197pgm.11
+        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 21:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cCGMbIqC4XxP3YzkMZr/q4dVBJexuv/rEbrwR/RfRdY=;
+        b=Srk+K+UPjswKkg/1tVgElwXk8iXMo12S4lotAPM6oNqJRfLX4Akb4jCzrEVhJFkNcN
+         KwmEReFJdIBHT2WSRvLkd8i7wVFSz7dFKJm/2rVvjMB6ZGvTiX6hGy+DN4X/ZM868V00
+         73HzbED5vDA3gtnluSyszbP9FxpDsO4c7ybd4Z2kxt3KPzrU9HDkl0eZjifyL6ThwXeR
+         k0KGy+QQ3/ZEWuzY9D28U31GnJbEv+Z2ji2hUUETC1Z5OcgNUbZ9jIW5JLBjioaJAzAK
+         jXto8mCy8uH+aG0s1Wrs8f12pwSFRlOMMfPi/A2aGQydtoLszXVJRV7ZUkW2dkIIR5ja
+         0K2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cCGMbIqC4XxP3YzkMZr/q4dVBJexuv/rEbrwR/RfRdY=;
+        b=OWpAmRoXwaITeHRwwm1DyuQhNs9LBqqwOApXEteKRV97Yf3RO5e0+/NfrD1CvP2mF4
+         lA0OoLDG0aR2gBUiUfmTNQuNmHKY5zxqx0cxo/OJl3qyW/s+7qNOoRp3EDDeEbonsivQ
+         XNpjs+V4/MZ7K78S1+Onfy4cS8IE+59ZusKfyT/vNBo88Xrr34f2gC/tLXrLmNh6PVLv
+         JQeQ6q0dK6e4OJEzEG1NXrbmoBU+7noOGqa9POYwdX/O4K9mC8OhQp0DZEOmrMDoR2O3
+         DzI+/EPKP9NrVMvbGKF2dbaHfw9stzmh+N/OmxSfjNwK3x/3fJ/e0pu9TtA32vupzNeR
+         N5ng==
+X-Gm-Message-State: AOAM5312lWMGOJ3cKVH6dKay2z39kBFzxsEkkk4GC+E8C1MPtqeB4pty
+        6WGf8cpd4tY1cCwfEAyjll3Tzg==
+X-Google-Smtp-Source: ABdhPJwP8rj+wVobkUZDGozTZvrM4sLI7dbTq8nO4cY0ZzqShz5ME0L2t66M0IEjW5YQ3Z5zCN6kng==
+X-Received: by 2002:a62:e30c:0:b029:19d:932b:a1e2 with SMTP id g12-20020a62e30c0000b029019d932ba1e2mr18342199pfh.78.1608616068942;
+        Mon, 21 Dec 2020 21:47:48 -0800 (PST)
+Received: from localhost ([122.172.20.109])
+        by smtp.gmail.com with ESMTPSA id f29sm18854172pfk.32.2020.12.21.21.47.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Dec 2020 21:47:47 -0800 (PST)
+Date:   Tue, 22 Dec 2020 11:17:45 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 43/48] ARM: tegra: Add OPP tables and power domains to
+ Tegra20 device-tree
+Message-ID: <20201222054745.2am4bcbk5df5aqzj@vireshk-i7>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-44-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201217180638.22748-44-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: "TingHan Shen" <tinghan.shen@mediatek.com>
+On 17-12-20, 21:06, Dmitry Osipenko wrote:
+> diff --git a/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi b/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+> index b84afecea154..7e015cdfbc55 100644
+> --- a/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-peripherals-opp.dtsi
+> @@ -1,6 +1,46 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  / {
+> +	core_opp_table: core-power-domain-opp-table {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		core_opp_950: opp@950000 {
+> +			opp-microvolt = <950000 950000 1300000>;
+> +			opp-level = <950000>;
+> +		};
 
-Remove unused MT8192 mcupm clock
+I am not sure I fully understand this, why does it have both microvolt and level
+properties ?
 
-Signed-off-by: TingHan Shen <tinghan.shen@mediatek.com>
----
-This patch depends on series "Mediatek MT8192 clock support"[1].
-
-[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=379955
----
- drivers/clk/mediatek/clk-mt8192.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index 673dc60182f5..80df1903bd58 100644
---- a/drivers/clk/mediatek/clk-mt8192.c
-+++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -649,12 +649,6 @@ static const char * const aes_msdcfde_parents[] = {
- 	"univpll_d6"
- };
- 
--static const char * const mcupm_parents[] = {
--	"clk26m",
--	"mainpll_d6_d4",
--	"mainpll_d6_d2"
--};
--
- static const char * const sflash_parents[] = {
- 	"clk26m",
- 	"mainpll_d7_d8",
-@@ -856,8 +850,6 @@ static const struct mtk_mux top_mtk_muxes[] = {
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_AES_MSDCFDE_SEL, "aes_msdcfde_sel",
- 		aes_msdcfde_parents, 0x100, 0x104, 0x108, 24, 3, 31, 0x00c, 1),
- 	/* CLK_CFG_16 */
--	MUX_GATE_CLR_SET_UPD(CLK_TOP_MCUPM_SEL, "mcupm_sel",
--		mcupm_parents, 0x110, 0x114, 0x118, 0, 2, 7, 0x00c, 2),
- 	MUX_GATE_CLR_SET_UPD(CLK_TOP_SFLASH_SEL, "sflash_sel",
- 		sflash_parents, 0x110, 0x114, 0x118, 8, 2, 15, 0x00c, 3),
- };
-@@ -983,7 +975,6 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA0(CLK_INFRA_SCPSYS, "infra_scpsys", "scp_sel", 4),
- 	GATE_INFRA0(CLK_INFRA_SEJ, "infra_sej", "axi_sel", 5),
- 	GATE_INFRA0(CLK_INFRA_APXGPT, "infra_apxgpt", "axi_sel", 6),
--	GATE_INFRA0(CLK_INFRA_MCUPM, "infra_mcupm", "mcupm_sel", 7),
- 	GATE_INFRA0(CLK_INFRA_GCE, "infra_gce", "axi_sel", 8),
- 	GATE_INFRA0(CLK_INFRA_GCE2, "infra_gce2", "axi_sel", 9),
- 	GATE_INFRA0(CLK_INFRA_THERM, "infra_therm", "axi_sel", 10),
 -- 
-2.18.0
-
+viresh
