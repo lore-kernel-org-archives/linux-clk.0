@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFFEC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C390C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 684D22253A
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF482255F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 09:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbgLVJAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 04:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45502 "EHLO
+        id S1725902AbgLVJCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 04:02:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgLVJAY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 04:00:24 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C91C0613D3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:59:43 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id lb18so975832pjb.5
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:59:43 -0800 (PST)
+        with ESMTP id S1725300AbgLVJCW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 04:02:22 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E2EC0613D6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:01:42 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id x1so2390902pgh.12
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 01:01:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RHvyko5iU5xg8Cz45AVBchwM4SDGk3Y/8Etp7zQo/0E=;
-        b=LfPP06TVJTEK4xWL0o4Uusz6IXwXzk8z3S6CPrE/vyZ9qoOMFRUyzQJWUKQxWhuG/E
-         wY5edJUerDgkww2zd4lzbce6lRCficFwzejWrQiDZi/xwHlgy96zpj6C8ioFq0ZrQXBk
-         mSOkM2U+2pDJWLqA+j7R2srsKaCnOdyMwev89OKW8IKEfkAPs6AL+3xqznBpqvwnQ0NT
-         fjm9Rb+Xfn10diw8TlqXQy8/GkenTeXEg9jbL1dOeVHP/+gjymWREs9O4mMhUSRkCgx+
-         FWO4nhtVc54saAG5QAt6VsqTuAXLPGXWUixoDkMsUGzE1xB0aRN/Z6i4X+no1fBNw+u5
-         gkcg==
+        bh=3q7nnCnJmd4O4D32PC0P8xH1+bdbk1CdNF9NmfMW4t0=;
+        b=Sw8hWqsmWEV28OZ97FyOgXyFgk5shKHWAxZzHcRzRhaM/6+T4brrF3/aXanmbfPjRw
+         /A9CHWFxY/26ovZDBEoLzvrVEQgYuX/8xBOFFAOh2S++/KtpIaGJfhKZuA8vaiEUG6N5
+         RDqNcxOViH+za8EEfeOTF4OJ0FgNLYkqGyciyEF6yFonDS/ytj6QebompmK2qd5iwMxT
+         f60gJWZOOaEE42z2GFxRM7tJMnnNTqxHJqeFzNzO5GVHLT7/VnICWMEMwFNfUuNd7lT8
+         CMqaiMF7EhSgACQ9J+vlj6sz3hYK3bX6+CzSrtrtNmrSTvIrdM+em0PwSBTuQL1T2brh
+         GG/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RHvyko5iU5xg8Cz45AVBchwM4SDGk3Y/8Etp7zQo/0E=;
-        b=O0v62IluRfWu+7vaN26BGl8cxI6QBy0cPSYZ68w624mZ7/8RlTMJ+Adk6KJRUZzdCJ
-         r/2JWAHjzO4zHFGzZ7Lq3Rcb8D7sDLSJhF3SEoK9CuFa3WBJD4OCBdoQfY7u+t1AK6PX
-         u4r5ztPiTS37GqIxVtcMo68ZIKm1KOUUfHMzS4tvTt5NdmTO9n1srPNZCdjcJwdInQQt
-         t3+e1JXpKJDRASv2sZYsj2CZN31uKZEUS2cAAdSZn9+7w0BmpWSTUD3x3KdcauNW/RiL
-         B0jFFc5k+UNkrWcvxkmpHzQ0md2gVM2x0gLTfrOLGa59guUzwqN0dl6I4H6Zd8uQ3LyW
-         reBg==
-X-Gm-Message-State: AOAM531rk+cdEv9hyIHqTZ1JHkfkXaBfJrgJpqZR/9LzzneP+KcV/ALn
-        Hnz4hckYS6M2LYgnj8q/3Txi/w==
-X-Google-Smtp-Source: ABdhPJykL54UnjW4ciN4fGRWEBJgf6zWsJDjMds2/uHeESPpVfQNNcqkwOSZPGazCeKG973ySyugcg==
-X-Received: by 2002:a17:902:c584:b029:da:cc62:22f1 with SMTP id p4-20020a170902c584b02900dacc6222f1mr20408042plx.54.1608627583415;
-        Tue, 22 Dec 2020 00:59:43 -0800 (PST)
+        bh=3q7nnCnJmd4O4D32PC0P8xH1+bdbk1CdNF9NmfMW4t0=;
+        b=fmZQg+VY9OOMUEISTLG26yt/CDZLyI+UGDy5Wz+inAN32ow+eTM7ZfD5xdWdm/26L1
+         2JQFzGuMknhOY3QbNnhj3/YLOuqN9+mLZoE0d5o4LoAjuCSqfSrar+5nk6VE2QSv8IOB
+         WE2xUBRezA7g3+rnfEubwJeZHdZXUW8Rx8us5Nytdc/dLtJRiLp2OeyVcpI0n5bBZGWY
+         cnFqhbz+yLjLH7I0qFR4/x2CiRCjo+xr80xDFZqLmdaEldmOR2bsKMq695X9atniqHab
+         sZyNHeRava7OZl39wPmi8Av4R2I7S3GBmxpQQ3lTVRqWN1Cj4sSsKE575wtl2KV9JDWF
+         g7tg==
+X-Gm-Message-State: AOAM533+CCfRrENzmt8GKfdfjr7j5uClEkO6kmIFQ6OeyQ/rd4jYOtpp
+        ibUra8hOrqQehE1f/9VYHqJiUw==
+X-Google-Smtp-Source: ABdhPJzpaUuhCwigtZPkt7tXXBF91xrRM3nJ/y/UBldoNdmIzxgqD3l3BVqGdS+DNg3W0X8ggHASsA==
+X-Received: by 2002:a62:864e:0:b029:1ab:e82c:d724 with SMTP id x75-20020a62864e0000b02901abe82cd724mr15830943pfd.9.1608627701598;
+        Tue, 22 Dec 2020 01:01:41 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id x4sm19796659pgg.94.2020.12.22.00.59.42
+        by smtp.gmail.com with ESMTPSA id o14sm14548124pgr.44.2020.12.22.01.01.40
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 00:59:42 -0800 (PST)
-Date:   Tue, 22 Dec 2020 14:29:40 +0530
+        Tue, 22 Dec 2020 01:01:40 -0800 (PST)
+Date:   Tue, 22 Dec 2020 14:31:39 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -78,65 +78,72 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 14/48] opp: Filter out OPPs based on availability of a
- required-OPP
-Message-ID: <20201222085940.y625zxee4tevbqm5@vireshk-i7>
+Subject: Re: [PATCH v2 15/48] opp: Support set_opp() customization without
+ requiring to use regulators
+Message-ID: <20201222090139.vopgc2ju72kr4ujy@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-15-digetx@gmail.com>
+ <20201217180638.22748-16-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-15-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-16-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> A required OPP may not be available, and thus, all OPPs which are using
-> this required OPP should be unavailable too.
+> Support set_opp() customization without requiring to use regulators. This
+> is needed by drivers which want to use dev_pm_opp_set_rate() for changing
+> rates of a multiple clocks and don't need to touch regulator.
+> 
+> One example is NVIDIA Tegra30/114 SoCs which have two sibling 3D hardware
+> units which should be use to the same clock rate, meanwhile voltage
+> scaling is done using a power domain. In this case OPP table doesn't have
+> a regulator, causing a NULL dereference in _set_opp_custom().
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/opp/core.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-
-Please send a separate patchset for fixes, as these can also go to 5.11 itself.
-
+>  drivers/opp/core.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
 > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index d9feb7639598..3d02fe33630b 100644
+> index 3d02fe33630b..625dae7a5ecb 100644
 > --- a/drivers/opp/core.c
 > +++ b/drivers/opp/core.c
-> @@ -1588,7 +1588,7 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
->  	     struct opp_table *opp_table, bool rate_not_available)
+> @@ -828,17 +828,25 @@ static int _set_opp_custom(const struct opp_table *opp_table,
+>  			   struct dev_pm_opp_supply *old_supply,
+>  			   struct dev_pm_opp_supply *new_supply)
 >  {
->  	struct list_head *head;
-> -	int ret;
-> +	int i, ret;
+> -	struct dev_pm_set_opp_data *data;
+> +	struct dev_pm_set_opp_data *data, tmp_data;
+> +	unsigned int regulator_count;
+>  	int size;
 >  
->  	mutex_lock(&opp_table->lock);
->  	head = &opp_table->opp_list;
-> @@ -1615,6 +1615,15 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
->  			 __func__, new_opp->rate);
->  	}
->  
-> +	for (i = 0; i < opp_table->required_opp_count && new_opp->available; i++) {
-> +		if (new_opp->required_opps[i]->available)
-> +			continue;
-> +
-> +		new_opp->available = false;
-> +		dev_warn(dev, "%s: OPP not supported by required OPP %pOF (%lu)\n",
-> +			 __func__, new_opp->required_opps[i]->np, new_opp->rate);
-
-Why not just break from here ?
-
+> -	data = opp_table->set_opp_data;
+> +	if (opp_table->set_opp_data) {
+> +		data = opp_table->set_opp_data;
+> +		regulator_count = opp_table->regulator_count;
+> +	} else {
+> +		data = &tmp_data;
+> +		regulator_count = 0;
 > +	}
 > +
->  	return 0;
->  }
+>  	data->regulators = opp_table->regulators;
+> -	data->regulator_count = opp_table->regulator_count;
+> +	data->regulator_count = regulator_count;
+>  	data->clk = opp_table->clk;
+>  	data->dev = dev;
 >  
-> -- 
-> 2.29.2
+>  	data->old_opp.rate = old_freq;
+> -	size = sizeof(*old_supply) * opp_table->regulator_count;
+> +	size = sizeof(*old_supply) * regulator_count;
+>  	if (!old_supply)
+>  		memset(data->old_opp.supplies, 0, size);
+>  	else
+
+I don't see you making use of this in this patchset. How did you get this to
+crash ?
 
 -- 
 viresh
