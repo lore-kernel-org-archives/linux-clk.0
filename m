@@ -2,187 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B20F4C433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 00:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 475DCC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89BE422AED
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 00:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6AEE23127
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 05:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgLVAPm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Dec 2020 19:15:42 -0500
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:44989 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbgLVAPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Dec 2020 19:15:42 -0500
-Received: by mail-ot1-f50.google.com with SMTP id f16so10425491otl.11;
-        Mon, 21 Dec 2020 16:15:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CZCTVp7dSrXEn5R6AF0sfezyGRuCo+PRxp9JIcTZ/OQ=;
-        b=q0zSgVD9VF/uxyNks99qK/Q7DAfaj2ywzxRn5u4ufTSV4IF2noXNN9e21qu6W+PQ4P
-         1oDkWSsocv9jobZeVPyISgaZ3n/t5CPrkwaF70GwaVk8EkHx9E+NlBVKfNyRi6ntj//1
-         aKh9DM2ydRu5AZ7M08Af13X6SEy34ocHuEBPGF42umWoMe39WoK4GN/Yh7zYGm2r/GMp
-         kpiPFY/ww7cbdisuQH2pMZNTTczOkzWzX4jI4WlF+kgo93qh/891vtUBrWq/u53FILhU
-         YXAT2CNnGvK44E9mQsiNx1KvXXyZJ7+bAXBKio5/yfNLBXSpOjoqBROV9TyWOrAGi1lC
-         QNUQ==
-X-Gm-Message-State: AOAM532K9PjiM4F0AxUHzrG87FIK7BSLfhGtcWzOD383HlrhYrQmf/T7
-        l8vgGjTkCvdATI6B6AGwd/VGxHt90g==
-X-Google-Smtp-Source: ABdhPJzwI6oFeOVHPaze1aIeGaY36Y4EuT1YpNmyFUot22+xHR7ZIZmRzD/T0REyCMYip94Hk4WIlw==
-X-Received: by 2002:a9d:63c6:: with SMTP id e6mr13808424otl.326.1608596100596;
-        Mon, 21 Dec 2020 16:15:00 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id m7sm971797ool.29.2020.12.21.16.14.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 16:14:59 -0800 (PST)
-Received: (nullmailer pid 901351 invoked by uid 1000);
-        Tue, 22 Dec 2020 00:14:57 -0000
-Date:   Mon, 21 Dec 2020 17:14:57 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 06/48] dt-bindings: clock: tegra: Document clocks
- sub-node
-Message-ID: <20201222001457.GA891962@robh.at.kernel.org>
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-7-digetx@gmail.com>
+        id S1725882AbgLVFgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 00:36:16 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34625 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725881AbgLVFgQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 00:36:16 -0500
+X-UUID: 036f7ad2a492424bb0d477bb187aec05-20201222
+X-UUID: 036f7ad2a492424bb0d477bb187aec05-20201222
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 175159508; Tue, 22 Dec 2020 13:35:33 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 22 Dec 2020 13:35:30 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 22 Dec 2020 13:35:30 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     <drinkcat@chromium.org>, <matthias.bgg@gmail.com>,
+        <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <weiyi.lu@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        TingHan Shen <tinghan.shen@mediatek.com>
+Subject: [PATCH] clk: mediatek: Remove unused MT8192 mcupm clock
+Date:   Tue, 22 Dec 2020 13:35:02 +0800
+Message-ID: <20201222053502.27872-1-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.15.GIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-7-digetx@gmail.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 17, 2020 at 09:05:56PM +0300, Dmitry Osipenko wrote:
-> Document "clocks" sub-node which describes Tegra SoC clocks that require
-> a higher voltage of the core power domain in order to operate properly on
-> a higher rates.
+From: "TingHan Shen" <tinghan.shen@mediatek.com>
 
-Seems like an odd reason to have a bunch of child nodes. It very much 
-seems like a problem you'd need to solve after you design the binding 
-which should be fixed within the kernel.
+Remove unused MT8192 mcupm clock
 
-This is also above my threshold for 'convert to schema' first...
+Signed-off-by: TingHan Shen <tinghan.shen@mediatek.com>
+---
+This patch depends on series "Mediatek MT8192 clock support"[1].
 
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/clock/nvidia,tegra20-car.txt     | 26 +++++++++++++++++++
->  .../bindings/clock/nvidia,tegra30-car.txt     | 26 +++++++++++++++++++
->  2 files changed, 52 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
-> index 6c5901b503d0..353354477785 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
-> @@ -19,6 +19,16 @@ Required properties :
->    In clock consumers, this cell represents the bit number in the CAR's
->    array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
->  
-> +Optional child sub-node "clocks" should contain nodes matching the clocks
-> +on the Tegra SoC. Refer to Tegra TRM for mode details on the clock nodes.
-> +
-> +Required properties :
-> +- compatible : Should be "nvidia,tegra20-clock".
-> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
-> +- clocks : Should contain clock which corresponds to the node.
-> +- power-domains: Phandle to a power domain node as described by generic
-> +                 PM domain bindings.
-> +
->  Example SoC include file:
->  
->  / {
-> @@ -27,6 +37,22 @@ Example SoC include file:
->  		reg = <0x60006000 0x1000>;
->  		#clock-cells = <1>;
->  		#reset-cells = <1>;
-> +
-> +		clocks {
-> +			hdmi {
-> +				compatible = "nvidia,tegra20-clock";
-> +				operating-points-v2 = <&hdmi_opp_table>;
-> +				clocks = <&tegra_car TEGRA20_CLK_HDMI>;
-> +				power-domains = <&domain>;
-> +			};
-> +
-> +			pll_m {
-> +				compatible = "nvidia,tegra20-clock";
-> +				operating-points-v2 = <&pll_m_opp_table>;
-> +				clocks = <&tegra_car TEGRA20_CLK_PLL_M>;
-> +				power-domains = <&domain>;
-> +			};
-> +		};
->  	};
->  
->  	usb@c5004000 {
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
-> index 63618cde12df..bc7bbdaa9d3f 100644
-> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
-> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
-> @@ -19,6 +19,16 @@ Required properties :
->    In clock consumers, this cell represents the bit number in the CAR's
->    array of CLK_RST_CONTROLLER_RST_DEVICES_* registers.
->  
-> +Optional child sub-node "clocks" should contain nodes matching the clocks
-> +on the Tegra SoC. Refer to Tegra TRM for mode details on the clock nodes.
-> +
-> +Required properties :
-> +- compatible : Should be "nvidia,tegra30-clock".
-> +- operating-points-v2: See ../bindings/opp/opp.txt for details.
-> +- clocks : Should contain clock which corresponds to the node.
-> +- power-domains: Phandle to a power domain node as described by generic
-> +                 PM domain bindings.
-> +
->  Example SoC include file:
->  
->  / {
-> @@ -31,6 +41,22 @@ Example SoC include file:
->  
->  	usb@c5004000 {
->  		clocks = <&tegra_car TEGRA30_CLK_USB2>;
-> +
-> +		clocks {
-> +			hdmi {
-> +				compatible = "nvidia,tegra30-clock";
-> +				operating-points-v2 = <&hdmi_opp_table>;
-> +				clocks = <&tegra_car TEGRA30_CLK_HDMI>;
-> +				power-domains = <&domain>;
-> +			};
-> +
-> +			pll_m {
-> +				compatible = "nvidia,tegra30-clock";
-> +				operating-points-v2 = <&pll_m_opp_table>;
-> +				clocks = <&tegra_car TEGRA30_CLK_PLL_M>;
-> +				power-domains = <&domain>;
-> +			};
-> +		};
->  	};
->  };
->  
-> -- 
-> 2.29.2
-> 
+[1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=379955
+---
+ drivers/clk/mediatek/clk-mt8192.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+index 673dc60182f5..80df1903bd58 100644
+--- a/drivers/clk/mediatek/clk-mt8192.c
++++ b/drivers/clk/mediatek/clk-mt8192.c
+@@ -649,12 +649,6 @@ static const char * const aes_msdcfde_parents[] = {
+ 	"univpll_d6"
+ };
+ 
+-static const char * const mcupm_parents[] = {
+-	"clk26m",
+-	"mainpll_d6_d4",
+-	"mainpll_d6_d2"
+-};
+-
+ static const char * const sflash_parents[] = {
+ 	"clk26m",
+ 	"mainpll_d7_d8",
+@@ -856,8 +850,6 @@ static const struct mtk_mux top_mtk_muxes[] = {
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_AES_MSDCFDE_SEL, "aes_msdcfde_sel",
+ 		aes_msdcfde_parents, 0x100, 0x104, 0x108, 24, 3, 31, 0x00c, 1),
+ 	/* CLK_CFG_16 */
+-	MUX_GATE_CLR_SET_UPD(CLK_TOP_MCUPM_SEL, "mcupm_sel",
+-		mcupm_parents, 0x110, 0x114, 0x118, 0, 2, 7, 0x00c, 2),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_SFLASH_SEL, "sflash_sel",
+ 		sflash_parents, 0x110, 0x114, 0x118, 8, 2, 15, 0x00c, 3),
+ };
+@@ -983,7 +975,6 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA0(CLK_INFRA_SCPSYS, "infra_scpsys", "scp_sel", 4),
+ 	GATE_INFRA0(CLK_INFRA_SEJ, "infra_sej", "axi_sel", 5),
+ 	GATE_INFRA0(CLK_INFRA_APXGPT, "infra_apxgpt", "axi_sel", 6),
+-	GATE_INFRA0(CLK_INFRA_MCUPM, "infra_mcupm", "mcupm_sel", 7),
+ 	GATE_INFRA0(CLK_INFRA_GCE, "infra_gce", "axi_sel", 8),
+ 	GATE_INFRA0(CLK_INFRA_GCE2, "infra_gce2", "axi_sel", 9),
+ 	GATE_INFRA0(CLK_INFRA_THERM, "infra_therm", "axi_sel", 10),
+-- 
+2.18.0
+
