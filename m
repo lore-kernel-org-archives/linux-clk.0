@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D755CC433E9
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 06:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C10C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A75B523122
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 06:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 855B12076B
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Dec 2020 08:56:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgLVGnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 01:43:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
+        id S1726423AbgLVI4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 03:56:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgLVGng (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 01:43:36 -0500
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DBEAC061793
-        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 22:42:56 -0800 (PST)
-Received: by mail-pg1-x52e.google.com with SMTP id n7so7778956pgg.2
-        for <linux-clk@vger.kernel.org>; Mon, 21 Dec 2020 22:42:56 -0800 (PST)
+        with ESMTP id S1726242AbgLVI4j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 03:56:39 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61BD8C0617A6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:55:59 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id h186so8102586pfe.0
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 00:55:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=KcaYAZQ+AoDm9Jn9wokihL78HxRFsW+AhH8/h9c+1wA=;
-        b=uR9O2EdLr4l+d+J8DstQgDPJiLPo1oLcBQPLe9jc2o++kue1dXZm05qdnvOIStsjzl
-         LxGtFbuTHlEcESPdNBvcsJRRBnhcQ8k3qWJTtqEA9Vsn1CHhzGmqcZCHzFhyuPgQch7w
-         ZkBOnZ/IbbjQIn9Vy+DguNDJMixeiercHvgjsHdWn/QJte3DEZIiQdkulmFdS91Y43F1
-         vk9hBZZWmvz96CbVxWwTN4UuBDgRDzuMiUl3t0NwETYOL4uelpc2l16EUrg/gYEFZxFx
-         bnyZzEsIobaE2fETZkKFj8q6rzCf48SfT+Z3B1NG0u7NFx+M3/vmtvFpKgR2lL4ATFSB
-         92qA==
+        bh=vFzkf9KGKvhutZbig0u7i/t+IYvhk4nnFQKLcFcxsq4=;
+        b=vAsAJop5QL87eRDzT5DTHMtwoNPt0CQSIkdTqkJeziTI1AZMtMAcIEm3Kl9fhnTk5V
+         vB/lYkBRouI/12yFv6A1dCSOIC7zvTsWExhCNxYa4+Oefx74oga8DDnN983sE8WuR0Lw
+         A/n6+TWPt+hiOGv4RVjVlrk029VE+mVsDRs23XZwxscocW8GlofyFgohPX99nF5S7Xwf
+         uRZL+JFGs5YKyoIHowFMNinq/TGTNXJtfDFp0L89tHOseHc6j2SMhTv475d9VkLlcOL+
+         Iu/sAsOo0E5YMGvGAyoXhWoXv1Ygp7453JTCPAWJO9u4w7D6CKSImKmQS5VN3jjIJN38
+         c4fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KcaYAZQ+AoDm9Jn9wokihL78HxRFsW+AhH8/h9c+1wA=;
-        b=F3Il4+guZ7ZdI+fhMNDh0EXkawg30iBarpnSBwJL46+qUYcWTSz4e9fKsU5PNkXHMF
-         L9dH8dI6dyylawpWPBUyfeb7xRT+yBHHal+YXjCyuVKnBwrCDhgJkHj/ybkFaGVOLPoQ
-         LJIF1hF6aVsBysrlSSkpJ/+E2EHQR9E3gJoESsSGz33CSFBAI9Y6gO9CsdG+6eh2736Y
-         8xKTVYdRpRJ2IEKI4AnC4r4icLcbqLhs8d+/SL9j7i7UqtzBK/MlMiHrA95ZL8QfmAke
-         Fwmu6qyHRdjUi58OI2dc/Fw98xO10khgn7d/rI+hEOq5fjCZ48sfPbTAw7cmSVqiQ2py
-         xp2Q==
-X-Gm-Message-State: AOAM530x8iE3k27RrPtDsa/ELe/kFun5uwoEXePalH9rX1BRdoaK9WCR
-        uHZAD0le9H+wK/zwqk/V4UAdqA==
-X-Google-Smtp-Source: ABdhPJxBR/Z8Ma4PVg9ZbczgXmM2X91HSAXGveL8f8GmkDzgajqaFrdpkcD8mdHIemFfHzAJ0M1KFQ==
-X-Received: by 2002:a62:61c5:0:b029:1a9:5a82:4227 with SMTP id v188-20020a6261c50000b02901a95a824227mr18914548pfb.61.1608619375827;
-        Mon, 21 Dec 2020 22:42:55 -0800 (PST)
+        bh=vFzkf9KGKvhutZbig0u7i/t+IYvhk4nnFQKLcFcxsq4=;
+        b=E7KsyssXj1zOQ6EJCMuLLtWz8X7doBqAXmJh9FeNTBUGyspyUEojFsJOx4CtooKv9W
+         ABUqOUOFeBYq4lHHqhZa8vQGcLiQUfbVD/cGFrCMWdF+AV4F3seQMbaSvf4dBAGx4dDG
+         nQAl3PGFmg86+fXx9rQVYp0IJcujq+bBchqBYZlO5XAUsDLHRsstXgy4CacOIJwrpcdC
+         RBZkNZNBP+qnC1He6mZ63vx+9OIupG3ZBUT5ZbU/C6Q+WrmU6D8RW10/N7NERZBZzEbR
+         kRKjC5iDldx8GkoX5Me8nIglleMCViFMw65HBsGq8+P7wJdQLCkGc42cY149jUfMOlVM
+         GKrQ==
+X-Gm-Message-State: AOAM532cCIeb2mJooJWcCMthfocxM6OCSKWwsZYxnuQ1XqI4pjp5DyUi
+        5fiIagrp7k6k/0HZ9fUkZBjAiQ==
+X-Google-Smtp-Source: ABdhPJywc6LY9gPB8aIXdU8FTmnJRcbIf3Irdo/T2lGMg7jN2SK9J2SNLPjpJEYbiKAaBbTsluyTwA==
+X-Received: by 2002:a63:6806:: with SMTP id d6mr18604366pgc.205.1608627358914;
+        Tue, 22 Dec 2020 00:55:58 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id 198sm18893827pfw.29.2020.12.21.22.42.54
+        by smtp.gmail.com with ESMTPSA id t7sm19377680pfe.179.2020.12.22.00.55.57
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Dec 2020 22:42:55 -0800 (PST)
-Date:   Tue, 22 Dec 2020 12:12:53 +0530
+        Tue, 22 Dec 2020 00:55:58 -0800 (PST)
+Date:   Tue, 22 Dec 2020 14:25:56 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -78,27 +78,33 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
-Message-ID: <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
+Subject: Re: [PATCH v2 13/48] opp: Add resource-managed versions of OPP API
+ functions
+Message-ID: <20201222085556.kce4dcwumk4u6ttm@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-12-digetx@gmail.com>
+ <20201217180638.22748-14-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201217180638.22748-12-digetx@gmail.com>
+In-Reply-To: <20201217180638.22748-14-digetx@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
-> levels don't start from 0 in OPP table and zero usually means a minimal
-> level.
+> Add resource-managed versions of OPP API functions. This removes a need
+> from drivers to store and manage OPP table pointers.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/opp/core.c     | 173 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/opp/of.c       |  25 ++++++
+>  include/linux/pm_opp.h |  51 ++++++++++++
+>  3 files changed, 249 insertions(+)
 
-Why doesn't the exact version work for you here ?
+Please send a patchset of its own for this patch, along with updates to all the
+existing code that can make use of these.
 
 -- 
 viresh
