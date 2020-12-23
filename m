@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6F1C433E9
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Dec 2020 04:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F25ACC4332D
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Dec 2020 04:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 058F1207B1
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Dec 2020 04:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B988F20E65
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Dec 2020 04:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbgLWEWr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Dec 2020 23:22:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54754 "EHLO
+        id S1727261AbgLWEf5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Dec 2020 23:35:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbgLWEWr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 23:22:47 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52F6C0613D3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 20:22:06 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id b8so8518546plx.0
-        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 20:22:06 -0800 (PST)
+        with ESMTP id S1727038AbgLWEf4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Dec 2020 23:35:56 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DED2C0611CA
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 20:34:50 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id p18so9803827pgm.11
+        for <linux-clk@vger.kernel.org>; Tue, 22 Dec 2020 20:34:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=vFPBACuSZLmFwKfzTZBK29MSltq37ELB0qaT/YRoFRY=;
-        b=IpGc94bYryxmTwQjxV0XiBy+F4O5lVtghSrxEz/IB5lG/bE1epAtZMErAAzi3cYsf3
-         VvGlaBeqLlBLA4p3RCHh8GUg0YUIbEBfJJpYVXlBHEE0jAMFJRa95EKnwi2RqZ615dWN
-         YevqvsZaZWfs9EV1uQe8PwIvpJwXm6R19TuPZ8v8f7Rhw9+Hv9ETOM7t122FAz4tdO2c
-         L8avA55nUCv9EIjhwz3mGd07csNFfkX0fEz/ixCBF7Sz3iIDU5AY+DIld6fxQJefByQZ
-         KcwESs6ZbcAlvTm6yHttIP4VkC+QBk0ZbsUCyLUgLvc09112Gj99IpGEq533s7VebyPB
-         VOwg==
+        bh=n/wQ/8FF3ZQQmDW8wRJInIGGffY6h+3NeQmSLgJVsG0=;
+        b=OFVqi0FZly+cr6h2L4MgV3W+0bqGCFrv37DumbpBBHHWKR10mlk8j96RhehvYC0ZKZ
+         A7gveeGO4wUPNnptPGhKrlG+oY9ETV8EggwWNNJcSxmSKnIhp4D6iv6jEddwltALPRsH
+         XoYuBifhBdhegWVRfh980lFbJW3ZCSqNzWxi8omP37WhPmGjiRZ+cWui/1OKijohx3Ni
+         VZ3o0KDN4OIc1fPJ6UYDAexLzU558i9zpREZpptiCrCuZwWp74C+otCB7ziEAp6JpBCe
+         /0WINPCLg0o7wHc+WB03uTQnpOkKqeEM2Jo/o42Mju6zYgkhMy6UlsZnrI4SeRLP+Rxr
+         M+6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=vFPBACuSZLmFwKfzTZBK29MSltq37ELB0qaT/YRoFRY=;
-        b=spZmVKP3sq98guL89m2mqSeuZ4LyHskcOiEhwU9AJUPp+ldqJJ+BMhHejikZ/JPWIR
-         4VIF1Z2L8ccVEGGsljOvHY2g8g5MRNJujSxiv/mcxScILT10tQWunSSl13vNDp267NUc
-         sMNdrbGq5q/MwyhGLBuFiTW/8ZNSAtuBN+li8JaM3B434Vz7jO+eV5b58BC3FNhYvtVp
-         Nk9HaOgdGoWbxaNbuYUlcFVcj0pHatbpN5Opj21M9Fl4AHQP54PUUFU0pBmJhvFwcZEz
-         w8352/uCHP6dgiP1jtqpgimbvWMIGc4b+mvB995xoChihIOEReS5M4LSBDkD+plQHzy9
-         Q4HA==
-X-Gm-Message-State: AOAM531PTT0uJtvgUaEdQnFGMBBERofv61TcR7seKWU4GkKCJ4xfeiMO
-        KftzvqLNxq6y1DZk2fVVXxWQiA==
-X-Google-Smtp-Source: ABdhPJxgtdKyvR1thUteXsp8n8u1tUpiDzW8vaTCpk7yHVskegF0VKZCmCi8HGyvB/579lHHSRqmQA==
-X-Received: by 2002:a17:90a:67ce:: with SMTP id g14mr25301218pjm.33.1608697326249;
-        Tue, 22 Dec 2020 20:22:06 -0800 (PST)
+        bh=n/wQ/8FF3ZQQmDW8wRJInIGGffY6h+3NeQmSLgJVsG0=;
+        b=llBiIXLXkDFOvl4sEYptZ0IfXJRIuwUfFebo1LY+pJnObL5vYN8U52WHUDScXe3gXq
+         1RDZMeoQ/fLkIZnq0lBK3/WayTILmW/dwlwZWumPLzKUj5bMP7JmzOQY31zKxt3dY0kx
+         NCtMmo/9fwg4sXISE1XGszeVMyNVsApU5c9XpFsHKg9xPeo9kCnYTUFpT+AwnGBMGrNH
+         fCz4wFYOOWD3vzg+F0lVxckIqZ4NUbg/iq903Zi8/z12K+Scm8JLc1eqHznXegLAe7Hb
+         u2E7vHlDDooF8itSxty0Hu8WtXAm+WZmeB3f+zmHyACNhf/Rn56W4CB/qof4vpPV6rrj
+         7G4g==
+X-Gm-Message-State: AOAM533Yge+i3xwoJixyjWpswgjLdoblOMukqvrLcnN/Oj3s9KNPwivM
+        MttfimHwAHsOlrg/psznnPKl4g==
+X-Google-Smtp-Source: ABdhPJy/6iEXMfinC0IgZ7fpt7I2g+zIxTjZQnxLRTk8cjqPdAagKq6g9nUKUea3gO9B/DZE0Q9zrw==
+X-Received: by 2002:a63:6305:: with SMTP id x5mr22354072pgb.216.1608698089700;
+        Tue, 22 Dec 2020 20:34:49 -0800 (PST)
 Received: from localhost ([122.172.20.109])
-        by smtp.gmail.com with ESMTPSA id x23sm8679028pgk.14.2020.12.22.20.22.04
+        by smtp.gmail.com with ESMTPSA id p16sm21154516pju.47.2020.12.22.20.34.48
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Dec 2020 20:22:05 -0800 (PST)
-Date:   Wed, 23 Dec 2020 09:52:00 +0530
+        Tue, 22 Dec 2020 20:34:48 -0800 (PST)
+Date:   Wed, 23 Dec 2020 10:04:43 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -80,73 +80,78 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 14/48] opp: Filter out OPPs based on availability of a
- required-OPP
-Message-ID: <20201223042200.ey2azaqizazrz6bp@vireshk-i7>
+Subject: Re: [PATCH v2 19/48] opp: Fix adding OPP entries in a wrong order if
+ rate is unavailable
+Message-ID: <20201223043443.rklw5er6hck3gl4y@vireshk-i7>
 References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-15-digetx@gmail.com>
- <20201222085940.y625zxee4tevbqm5@vireshk-i7>
- <9ed8bde3-f7b5-025c-c038-87f35ea39e5f@gmail.com>
+ <20201217180638.22748-20-digetx@gmail.com>
+ <20201222091255.wentz5hyt726qezg@vireshk-i7>
+ <db6273e6-8406-b7ae-b51d-48ceb6d21962@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ed8bde3-f7b5-025c-c038-87f35ea39e5f@gmail.com>
+In-Reply-To: <db6273e6-8406-b7ae-b51d-48ceb6d21962@gmail.com>
 User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-12-20, 22:17, Dmitry Osipenko wrote:
-> 22.12.2020 11:59, Viresh Kumar пишет:
+On 22-12-20, 22:19, Dmitry Osipenko wrote:
+> 22.12.2020 12:12, Viresh Kumar пишет:
 > > On 17-12-20, 21:06, Dmitry Osipenko wrote:
-> >> A required OPP may not be available, and thus, all OPPs which are using
-> >> this required OPP should be unavailable too.
+> >> Fix adding OPP entries in a wrong (opposite) order if OPP rate is
+> >> unavailable. The OPP comparison is erroneously skipped if OPP rate is
+> >> missing, thus OPPs are left unsorted.
 > >>
 > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > >> ---
-> >>  drivers/opp/core.c | 11 ++++++++++-
-> >>  1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > Please send a separate patchset for fixes, as these can also go to 5.11 itself.
-> 
-> Alright, although I don't think that this patch fixes any problems for
-> existing OPP users.
-
-Because nobody is using this feature, but otherwise this is a fix for me.
-
+> >>  drivers/opp/core.c | 23 ++++++++++++-----------
+> >>  drivers/opp/opp.h  |  2 +-
+> >>  2 files changed, 13 insertions(+), 12 deletions(-)
+> >>
 > >> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> >> index d9feb7639598..3d02fe33630b 100644
+> >> index 34f7e530d941..5c7f130a8de2 100644
 > >> --- a/drivers/opp/core.c
 > >> +++ b/drivers/opp/core.c
-> >> @@ -1588,7 +1588,7 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
-> >>  	     struct opp_table *opp_table, bool rate_not_available)
+> >> @@ -1531,9 +1531,10 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
+> >>  	return true;
+> >>  }
+> >>  
+> >> -int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2)
+> >> +int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2,
+> >> +		     bool rate_not_available)
 > >>  {
-> >>  	struct list_head *head;
-> >> -	int ret;
-> >> +	int i, ret;
-> >>  
-> >>  	mutex_lock(&opp_table->lock);
-> >>  	head = &opp_table->opp_list;
-> >> @@ -1615,6 +1615,15 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
-> >>  			 __func__, new_opp->rate);
-> >>  	}
-> >>  
-> >> +	for (i = 0; i < opp_table->required_opp_count && new_opp->available; i++) {
-> >> +		if (new_opp->required_opps[i]->available)
-> >> +			continue;
-> >> +
-> >> +		new_opp->available = false;
-> >> +		dev_warn(dev, "%s: OPP not supported by required OPP %pOF (%lu)\n",
-> >> +			 __func__, new_opp->required_opps[i]->np, new_opp->rate);
+> >> -	if (opp1->rate != opp2->rate)
+> >> +	if (!rate_not_available && opp1->rate != opp2->rate)
 > > 
-> > Why not just break from here ?
+> > rate will be 0 for both the OPPs here if rate_not_available is true and so this
+> > change shouldn't be required.
 > 
-> The new_opp could be already marked as unavailable by a previous voltage
-> check, hence this loop should be skipped entirely in that case.
+> The rate_not_available is negated in the condition. This change is
+> required because both rates are 0 and then we should proceed to the
+> levels comparison.
 
-Then add a separate check for that before the loop as we don't need that check
-on every iteration here.
+Won't that happen without this patch ?
+
+> I guess it's not clear by looking at this patch, please see a full
+> version of the function:
+> 
+> int _opp_compare_key(struct dev_pm_opp *opp1, struct dev_pm_opp *opp2,
+>          bool rate_not_available)
+> {
+>   if (!rate_not_available && opp1->rate != opp2->rate)
+>     return opp1->rate < opp2->rate ? -1 : 1;
+>   if (opp1->bandwidth && opp2->bandwidth &&
+>       opp1->bandwidth[0].peak != opp2->bandwidth[0].peak)
+>     return opp1->bandwidth[0].peak < opp2->bandwidth[0].peak ? -1 : 1;
+>   if (opp1->level != opp2->level)
+>     return opp1->level < opp2->level ? -1 : 1;
+>   return 0;
+> }
+> 
+> Perhaps we could check whether opp1->rate=0, like it's done for the
+> opp1->bandwidth. I'll consider this variant for v3, thanks.
 
 -- 
 viresh
