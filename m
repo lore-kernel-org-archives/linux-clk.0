@@ -2,147 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733C1C433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627CDC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Dec 2020 14:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E11F224B1
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Dec 2020 13:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12DF12246B
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Dec 2020 14:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgLXNBe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Dec 2020 08:01:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727372AbgLXNBd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Dec 2020 08:01:33 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F462C061794;
-        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id m25so4539040lfc.11;
-        Thu, 24 Dec 2020 05:00:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
-        b=h35B/CGskQN9x2gajXsHnapJAn/oOdmJUPQzEUHvzlPUdoaVdWOHSvn0gRhd+h4Ola
-         kRThB7EwzP4zCJ6I/cDBaa2jz7i8GwFBJ3G3UgCUXtUfsT2g52TetI+SjB06v4QccX98
-         yOgW4XRztBS1Rb1sUB+HjV5efgFf1R3v/2FDKAIhyUg38TSfby9FdbMS/BOhsmpV8q93
-         2PXIilSxhr+6+5vRNFV8pb+G4eE9EQA1e1YzsE81H7g6mvgl8zL3naGYGYHQKfwNKpkP
-         FkcD6cP+0rX2PGwAlkOUF9fsFJlC40+sqMoNc+qDnwDTa8+wBi9oi10CEnKiniae650p
-         1/Aw==
+        id S1727114AbgLXOEM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Dec 2020 09:04:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32535 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727144AbgLXOEL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Dec 2020 09:04:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1608818564;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KBihBeE7FaK4G7GPAOp0NUP3AloiGzKbKb/E0jog36A=;
+        b=aZq1pHh2gy4vOzYkAKncLfPRauoD0gzIM9QVkacaBph5l82LjFDKP3Uh5fVAQyDVewbUxK
+        ztf3ZbUkrbAvrcUw56fBjE0gHtS7/a2yuNRb86O2eKGBmXVQrXUdJgDipHAzUjWF9an4zU
+        3UwFcN3R/i/XQfqSCWE4WlDXDTMsjbQ=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-393-ALWH0aBpOmyBo9aBavcLhQ-1; Thu, 24 Dec 2020 09:02:43 -0500
+X-MC-Unique: ALWH0aBpOmyBo9aBavcLhQ-1
+Received: by mail-oi1-f197.google.com with SMTP id e4so1047797oii.2
+        for <linux-clk@vger.kernel.org>; Thu, 24 Dec 2020 06:02:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PPrH0JQSkYTBUDfxgE5s9c2FpdNYSs+ZfAVKTdSJpOU=;
-        b=Dru+WFqKfQoeVwsu6JWjGquf9Rpvnsi2Klbb9fDUBucX6JCekDXcdk32mzMnhFQu53
-         ft/V8BgvMeO+s3osfZQleS8SpMtKI4SVszorEV6sSJZTu09fvmQR0Ase+G5SA/5iBq0o
-         iq6zsP92ubCVxBIUUx6zTDCZdVd4pBADD6+DOEnNukRojyTHMWjqM/xHRyev1iVhv/XZ
-         VVdgXNjnRB3mTT4ERua/lIs6E3xtOw2FB3bLFKK9/VNdrxE2m5C1//2GF/d2JphJdIOn
-         +jarpqcbHRpTQLeHd5IBxQSMtXPM4ngPwm1xNbIpDyXfhQOpbKvb0q4cAZKEhel5QqGQ
-         1CSw==
-X-Gm-Message-State: AOAM530uw+ZyjIg1kVdGjUIbVzXeNbmQvJVPslp2NWcskK1MnyzyEtFI
-        cBvXx0QKgeMUF2wFBZmSVQw2m0cIh+w=
-X-Google-Smtp-Source: ABdhPJy4dUISU54G6I/fcsUIBl9m9poD0jxB1pYpBLDFT4iw28ge43cAa/UiLwCH2jmZTgAPqvlFag==
-X-Received: by 2002:a05:6512:52c:: with SMTP id o12mr12294057lfc.559.1608814851636;
-        Thu, 24 Dec 2020 05:00:51 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id b4sm3594686lfa.261.2020.12.24.05.00.50
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=KBihBeE7FaK4G7GPAOp0NUP3AloiGzKbKb/E0jog36A=;
+        b=R1+54PF+o+LKai+rMUAmeT+t3hGmNb/PaEPwsJ2ffEd/KLL8TS3EX4cNdlCXRwTwMi
+         pqzQWArr8RTy6eiT5QhyQrRBQMidMHZIf2BJmxEwZZ044yO7sXUwm6UM1Ln5YUxEgtWI
+         AnQkt7jRYW+USFdCdTic1cD4+Gcg96WvJbrHL9PTYKE+QCsFxUd8IUppkWoS7ghK+IDW
+         zpCceFvVBb/uOcNVdfDBYuUlKQl1jGva9qvhO/IJaBNXroGkYUSA0XBO9Ouiq1JzUamH
+         ql/1Uw+TBRRK/NUlyIilWDbNsZ+HngHwQvSbHIz0mIETS2TCThkwyQNnFpKPCe3ptYmv
+         JhWA==
+X-Gm-Message-State: AOAM532AOgKqVKTXFAzy5nNoRDrFwsqnD49VQJImOG31scOEllmXEb5F
+        yad7uK5eUDhfsOmTv0QFaH/hYpuS+3p+13J5KQU2Fa3eVRPi4M+/csDOUzf32yFZ83W9Y8lQKr4
+        IxlLAeX+1+HBFz18s/BhU
+X-Received: by 2002:a9d:5c8b:: with SMTP id a11mr22357617oti.126.1608818562305;
+        Thu, 24 Dec 2020 06:02:42 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJy5TuK4g70Wa7LQ5fkxYOJAqadcOmmttNzmJip+R7fCyD06vTogTSKVmSmRkNY9QCefp2bAug==
+X-Received: by 2002:a9d:5c8b:: with SMTP id a11mr22357606oti.126.1608818562059;
+        Thu, 24 Dec 2020 06:02:42 -0800 (PST)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id g12sm6838873oos.8.2020.12.24.06.02.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Dec 2020 05:00:50 -0800 (PST)
-Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-12-digetx@gmail.com>
- <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
- <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
- <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
- <f00e0c74-8d9a-d3d3-81bb-3ac25a74175d@gmail.com>
- <20201224064339.zngidobhstnlu2a3@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <780db190-d93d-3bca-4819-790010f82c62@gmail.com>
-Date:   Thu, 24 Dec 2020 16:00:49 +0300
+        Thu, 24 Dec 2020 06:02:41 -0800 (PST)
+Subject: Re: [PATCH 1/2] clk: axi-clkgen: add support for ZynqMP (UltraScale)
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        lars@metafoo.de, linux-fpga@vger.kernel.org, mdf@kernel.org,
+        dragos.bogdan@analog.com, Mathias Tausen <mta@gomspace.com>
+References: <20201221144224.50814-1-alexandru.ardelean@analog.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <58111fcc-d4c7-4b26-e038-2882b636e17f@redhat.com>
+Date:   Thu, 24 Dec 2020 06:02:39 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201224064339.zngidobhstnlu2a3@vireshk-i7>
+In-Reply-To: <20201221144224.50814-1-alexandru.ardelean@analog.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-24.12.2020 09:43, Viresh Kumar пишет:
-> On 23-12-20, 23:37, Dmitry Osipenko wrote:
->> 23.12.2020 07:19, Viresh Kumar пишет:
->>> On 22-12-20, 22:15, Dmitry Osipenko wrote:
->>>> 22.12.2020 09:42, Viresh Kumar пишет:
->>>>> On 17-12-20, 21:06, Dmitry Osipenko wrote:
->>>>>> Add a ceil version of the dev_pm_opp_find_level(). It's handy to have if
->>>>>> levels don't start from 0 in OPP table and zero usually means a minimal
->>>>>> level.
->>>>>>
->>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>
->>>>> Why doesn't the exact version work for you here ?
->>>>>
->>>>
->>>> The exact version won't find OPP for level=0 if levels don't start with
->>>> 0, where 0 means that minimal level is desired.
->>>
->>> Right, but why do you need to send 0 for your platform ?
->>>
->>
->> To put power domain into the lowest performance state when device is idling.
-> 
-> I see. So you really want to set it to the lowest state or just take the vote
-> out ? Which may end up powering off the domain in the worst case ?
-> 
 
-In a device driver I want to set PD to the lowest performance state by
-removing the performance vote when dev_pm_opp_set_rate(dev, 0) is
-invoked by the driver.
+On 12/21/20 6:42 AM, Alexandru Ardelean wrote:
+> From: Dragos Bogdan <dragos.bogdan@analog.com>
+>
+> This IP core also works and is supported on the Xilinx ZynqMP (UltraScale)
+> FPGA boards.
+> This patch enables the driver to be available on these platforms as well.
+>
+> Since axi-clkgen is now supported on ZYNQMP, we need to make sure the
+> max/min frequencies of the PFD and VCO are respected.
+>
+> This change adds two new compatible strings to select limits for Zynq or
+> ZynqMP from the device data (in the OF table). The old compatible string
+> (i.e. adi,axi-clkgen-2.00.a) is the same as adi,zynq-axi-clkgen-2.00.a,
+> since the original version of this driver was designed on top of that
+> platform.
+>
+> Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+> Signed-off-by: Mathias Tausen <mta@gomspace.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>
+> This is a re-spin of an older series.
+> It needed to wait a txt -> yaml dt conversion:
+> https://patchwork.kernel.org/project/linux-clk/patch/20201013143421.84188-1-alexandru.ardelean@analog.com/
+>
+> It's 2 patches squashed into one:
+> https://patchwork.kernel.org/project/linux-clk/patch/20200929144417.89816-12-alexandru.ardelean@analog.com/
+> https://patchwork.kernel.org/project/linux-clk/patch/20200929144417.89816-14-alexandru.ardelean@analog.com/
+>
+> The series from where all this started is:
+> https://lore.kernel.org/linux-clk/20200929144417.89816-1-alexandru.ardelean@analog.com/
+>
+> Well, v4 was the point where I decided to split this into smaller
+> series, and also do the conversion of the binding to yaml.
+>
+>  drivers/clk/Kconfig          |  2 +-
+>  drivers/clk/clk-axi-clkgen.c | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 85856cff506c..252333e585e7 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -247,7 +247,7 @@ config CLK_TWL6040
+>  
+>  config COMMON_CLK_AXI_CLKGEN
+>  	tristate "AXI clkgen driver"
+> -	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
+> +	depends on ARCH_ZYNQ || ARCH_ZYNQMP || MICROBLAZE || COMPILE_TEST
+>  	help
+>  	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
+>  	  FPGAs. It is commonly used in Analog Devices' reference designs.
+> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> index ad86e031ba3e..a413c13334ff 100644
+> --- a/drivers/clk/clk-axi-clkgen.c
+> +++ b/drivers/clk/clk-axi-clkgen.c
+> @@ -108,6 +108,13 @@ static uint32_t axi_clkgen_lookup_lock(unsigned int m)
+>  	return 0x1f1f00fa;
+>  }
+>  
 
-The OPP core already does this, but if OPP levels don't start from 0 in
-a device-tree for PD, then it currently doesn't work since there is a
-need to get a rounded-up performance state because
-dev_pm_opp_set_voltage() takes OPP entry for the argument (patches 9 and
-28).
+Could something like
 
-The PD powering off and performance-changes are separate from each other
-in the GENPD core. The GENPD core automatically turns off domain when
-all devices within the domain are suspended by system-suspend or RPM.
+#ifdef ARCH_ZYNQMP
 
-The performance state of a power domain is controlled solely by a device
-driver. GENPD core only aggregates the performance requests, it doesn't
-change the performance state of a domain by itself when device is
-suspended or resumed, IIUC this is intentional. And I want to put domain
-into lowest performance state when device is suspended.
+> +static const struct axi_clkgen_limits axi_clkgen_zynqmp_default_limits = {
+> +	.fpfd_min = 10000,
+> +	.fpfd_max = 450000,
+> +	.fvco_min = 800000,
+> +	.fvco_max = 1600000,
+> +};
+
+#endif
+
+be added here and similar places to limit unused code ?
+
+> +
+>  static const struct axi_clkgen_limits axi_clkgen_zynq_default_limits = {
+>  	.fpfd_min = 10000,
+>  	.fpfd_max = 300000,
+> @@ -560,6 +567,14 @@ static int axi_clkgen_remove(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id axi_clkgen_ids[] = {
+> +	{
+> +		.compatible = "adi,zynqmp-axi-clkgen-2.00.a",
+> +		.data = &axi_clkgen_zynqmp_default_limits,
+> +	},
+> +	{
+> +		.compatible = "adi,zynq-axi-clkgen-2.00.a",
+> +		.data = &axi_clkgen_zynq_default_limits,
+> +	},
+
+This looks like zynqmp AND zynq are being added.
+
+Is this a mistake ?
+
+Tom
+
+>  	{
+>  		.compatible = "adi,axi-clkgen-2.00.a",
+>  		.data = &axi_clkgen_zynq_default_limits,
+
