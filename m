@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F45EC4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358ADC4332E
 	for <linux-clk@archiver.kernel.org>; Sat, 26 Dec 2020 12:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCB60221E7
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Dec 2020 12:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA44221E7
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Dec 2020 12:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgLZMUU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Dec 2020 07:20:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53892 "EHLO
+        id S1726239AbgLZMUZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Dec 2020 07:20:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbgLZMUR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Dec 2020 07:20:17 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E26C0613ED;
-        Sat, 26 Dec 2020 04:19:37 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id x16so8618949ejj.7;
-        Sat, 26 Dec 2020 04:19:37 -0800 (PST)
+        with ESMTP id S1726081AbgLZMUP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Dec 2020 07:20:15 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618DBC0613C1;
+        Sat, 26 Dec 2020 04:19:35 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id n26so8619549eju.6;
+        Sat, 26 Dec 2020 04:19:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jgtk+KcYyeTyKMF2wBck7uk+kOOkd8Plk6T6cyUk1SU=;
-        b=h0MV1bgX+w+hpPaEDwSDbkou5jwKH2cZNkqWGQYlliiu2AMHrlF2ho8iDlO9vofXAO
-         aGz2mnJENLqSqhGBCtvqTiuratZ/R9LSU1zSAcRJZvTteBi/lvdxd3AoXz7jmng7fm/R
-         VG7MpdnH17d3SFXK5/oeB8PjLdiZJKL5hHgYuxk1A5RxxEv2K47il3iB5+Ue+f+X/tey
-         agltcayNClMcjHi0IDZTW5xkR9eSesUqcBCMtu2j5XA7QiH2PMH3Qwm1kfHfAZSUd/rw
-         FS0kJajLFOJkpJ3yHuakUICrDiukBLweKzekiB1IOLcnGu1kOvqrtgsnusIQrf3cbhoG
-         j7xQ==
+        bh=91uzX9btarYwTY48OYqVxCEpJMafqGhM2WDmwvMf2Sw=;
+        b=o5krIQlBbFhNaKiyKPhMe1CnTfx/qpi2Q/3thkkIJvjGnJC72ealIx5Oh+pdBbZrTf
+         NmT/WpQ/EVCy8FMLda5DsUYxqSgCxDYv9GeACSMig54Z0/GaEw42/qFTRZ0pVOyZ8Po8
+         5DFy0lvRDSOH/90p5HXIFIAMMPzteeY0yjkQ0PcuzRlPkyI4qTcZorA1zhV3ToEgdsoi
+         AaXufWncHt28dOh3/qEudRyVq6BluZCktrI7JYDA9fVjl8B5rRvI/+cZABF9no9czPcV
+         a+ztkbfrEwVLtRSXzaMOV6YO8QQwRQW3n8GYB7P2cZJdA73d0M6OnLGS8cODr98tHB/8
+         Wp8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jgtk+KcYyeTyKMF2wBck7uk+kOOkd8Plk6T6cyUk1SU=;
-        b=LBABvYJJJlQabWLSpffNuYux/bYcxYsn+fP/Sptn2Ijt5vvpmmGC0k57YeuUuql9JZ
-         9Y9tvdcgNleccxPT5iQTYtkfUC/LNsV7PzBjrjoe3qxq1f0o3p+qkVAXrL5oxEki4AWC
-         Dp0qpF2xpGWGWagtFiDqVoekUHtD5X/ohJJHFPHo0xNbhtHHF+P8xwOth2ZkUb1PUW35
-         +/PUf59+wod3NGY9wOGEDICYwVOyMBwx1JNO7U6RHNxOphmglYBuJxFiJUV4ypVspwYa
-         d4wy3O+ojeQTHK8od/CTO41QCoBAxkXbnqv7hgXjKOUyd1HsupzfLLId7WjU9Bz2032L
-         0+pA==
-X-Gm-Message-State: AOAM531Q/sisKZ3GgAvSWkGgWv7JUKmo9DuQMbwENTB6nD3Brfcmavt1
-        BFwm/6zAktF4TuTnZBZHGx0=
-X-Google-Smtp-Source: ABdhPJzHaWUeLtjGXKYoDfO7HC3w7pkh1RekDFMx1JlDPGbafzIaTA84by+pmeSOGaq0otfnF7PKrg==
-X-Received: by 2002:a17:906:971a:: with SMTP id k26mr35375666ejx.515.1608985175831;
-        Sat, 26 Dec 2020 04:19:35 -0800 (PST)
+        bh=91uzX9btarYwTY48OYqVxCEpJMafqGhM2WDmwvMf2Sw=;
+        b=cP/aepdF6hDq99LSzlyPtKjliqZXOKLWoRotT1HMxQzh33urlJFFFoYoDYwBdY8a9U
+         Lgsazg5tDo0cJeOOgVLPHWUWQq2k9iNB8G72uYzuJMnbfveLQ3bQDPTj0pcseW1ofVHo
+         Th2kQZwMi2BFwaXoeuZ2onZ9V4M7qkKFDsimhL/oGa0oQEnzstTtfR7W0BLtMU15vov1
+         zqw18axZURaGxyShKjwTpwoqU/8Zwk0Yo8jsCdwEs7AJS5J/DV10pEAcby6Jwp7WspIR
+         zalh0zFWxQeZoKvUUyR6+lowZKrwpdEZS7TllDhEiviI8cJ/O9uvOcSenISUrTUcMnjO
+         NYrg==
+X-Gm-Message-State: AOAM531h4YhUVj8fqM16yYdhbIAIuM/xHBK2Llb/uW8bhZdJDnvcCNtr
+        lHCPjtQGiAJhZ2JMyjhO7AnzDaHK30U=
+X-Google-Smtp-Source: ABdhPJxW3YGRfa4J2RJQPTSv758UIElxdRO96NXJv6iOlUdtwSq6Q9RL32l7OoaHk5kn5ZtqlwHyUA==
+X-Received: by 2002:a17:906:174f:: with SMTP id d15mr28145594eje.52.1608985174028;
+        Sat, 26 Dec 2020 04:19:34 -0800 (PST)
 Received: from localhost.localdomain (p200300f137218200428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:3721:8200:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id j9sm33842662eds.66.2020.12.26.04.19.34
+        by smtp.googlemail.com with ESMTPSA id j9sm33842662eds.66.2020.12.26.04.19.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Dec 2020 04:19:35 -0800 (PST)
+        Sat, 26 Dec 2020 04:19:33 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/3] clk: meson: clk-pll: propagate the error from meson_clk_pll_set_rate()
-Date:   Sat, 26 Dec 2020 13:15:56 +0100
-Message-Id: <20201226121556.975418-4-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/3] clk: meson: clk-pll: fix initializing the old rate (fallback) for a PLL
+Date:   Sat, 26 Dec 2020 13:15:54 +0100
+Message-Id: <20201226121556.975418-2-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201226121556.975418-1-martin.blumenstingl@googlemail.com>
 References: <20201226121556.975418-1-martin.blumenstingl@googlemail.com>
@@ -74,38 +74,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Popagate the error code from meson_clk_pll_set_rate() when the PLL does
-not lock with the new settings.
+The "rate" parameter in meson_clk_pll_set_rate() contains the new rate.
+Retrieve the old rate with clk_hw_get_rate() so we don't inifinitely try
+to switch from the new rate to the same ratte again.
 
-Fixes: 722825dcd54b2e ("clk: meson: migrate plls clocks to clk_regmap")
+Fixes: 7a29a869434e8b ("clk: meson: Add support for Meson clock controller")
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/meson/clk-pll.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/meson/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 5b932976483f..49f27fe53213 100644
+index b17a13e9337c..9404609b5ebf 100644
 --- a/drivers/clk/meson/clk-pll.c
 +++ b/drivers/clk/meson/clk-pll.c
-@@ -394,7 +394,8 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!enabled)
- 		return 0;
+@@ -371,7 +371,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (parent_rate == 0 || rate == 0)
+ 		return -EINVAL;
  
--	if (meson_clk_pll_enable(hw)) {
-+	ret = meson_clk_pll_enable(hw);
-+	if (ret) {
- 		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
- 			__func__, old_rate);
- 		/*
-@@ -406,7 +407,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		meson_clk_pll_set_rate(hw, old_rate, parent_rate);
- 	}
+-	old_rate = rate;
++	old_rate = clk_hw_get_rate(hw);
  
--	return 0;
-+	return ret;
- }
- 
- /*
+ 	ret = meson_clk_get_pll_settings(rate, parent_rate, &m, &n, pll);
+ 	if (ret)
 -- 
 2.29.2
 
