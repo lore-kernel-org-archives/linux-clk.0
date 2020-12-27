@@ -2,43 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6047AC433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Dec 2020 14:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A49C433E6
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Dec 2020 13:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F21220829
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Dec 2020 14:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8598520809
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Dec 2020 13:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbgLZOK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Dec 2020 09:10:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbgLZOK0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Dec 2020 09:10:26 -0500
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD9CC0613C1;
-        Sat, 26 Dec 2020 06:09:45 -0800 (PST)
-Received: from localhost.localdomain (abac131.neoplus.adsl.tpnet.pl [83.6.166.131])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 64A293F0AC;
-        Sat, 26 Dec 2020 15:09:39 +0100 (CET)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: mmcc-msm8974: Fix mmss_s0_axi clock
-Date:   Sat, 26 Dec 2020 15:09:34 +0100
-Message-Id: <20201226140934.89856-1-konrad.dybcio@somainline.org>
+        id S1726198AbgL0NFA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Dec 2020 08:05:00 -0500
+Received: from www.zeus03.de ([194.117.254.33]:37814 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726178AbgL0NE7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Dec 2020 08:04:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=tmWbHOXfMeP55apGt7ZxVbzXHAl
+        N8ghGe1G17Q/QG3k=; b=AmVLBez7RFGgQaZlq3yBYEMYESI8XGJtVibMbJ2eLh7
+        JIsnMJb3OJs7v9sLGQan8nKupgiOkTnceBmDany1CqVp4ALqI/LBf1WZOhor/kPa
+        bgdbIDzxK7Defc76nfdi/7z3diRWDugxozTlgkYARQDyazqTPPOC2EwHVZ8qlUog
+        =
+Received: (qmail 1501056 invoked from network); 27 Dec 2020 14:04:17 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Dec 2020 14:04:17 +0100
+X-UD-Smtp-Session: l3s3148p1@y8yIy3G3YMEgAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Subject: [PATCH 0/5] v3u: add support for RAVB
+Date:   Sun, 27 Dec 2020 14:04:01 +0100
+Message-Id: <20201227130407.10991-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,35 +45,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On boards without cont_splash the clock wouldn't get enabled.
-Reparent it and strongly depend on the parent to make sure
-it's accessible. Access to MMSS depends on mmss_s0_axi being
-up and alive.
+Here is the series to enable RAVB on V3U. I took the DTS patches
+from the BSP, the rest was developed on mainline tree. Note that only
+RAVB0 could be tested because the other ones did not have PHYs attached.
 
-Fixes: d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia clock controller (MMCC)")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- drivers/clk/qcom/mmcc-msm8974.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Also, the last patch is a workaround. 'reset-gpios' cannot be obtained
+currently which makes the driver fail. The problem is that
+pinctrl_ready_for_gpio_range() returns EPROBE-DEFER. I hope Geert has an
+idea because I got lost in the GPIO and V3U pinctrl details there. It
+seems more of a PFC/CPG/GPIO problem to me.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 015426262d08..6220b62ece1e 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2101,11 +2101,11 @@ static struct clk_branch mmss_s0_axi_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mmss_s0_axi_clk",
- 			.parent_names = (const char *[]){
--				"mmss_axi_clk_src",
-+				"mmss_mmssnoc_axi_clk",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch2_ops,
--			.flags = CLK_IGNORE_UNUSED,
-+			.flags = CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 		},
- 	},
- };
+Without the reset-gpio, the driver binds to avb0 and I can ping the host
+successfully. So, I think at least the first three patches are ready.
+
+Let me know your thoughts!
+
+All the best,
+
+   Wolfram
+
+
+Tho Vu (2):
+  arm64: dts: renesas: r8a779a0: Add Ethernet-AVB support
+  arm64: dts: renesas: falcon: Add Ethernet-AVB support
+
+Wolfram Sang (3):
+  dt-bindings: net: renesas,etheravb: Add r8a779a0 support
+  clk: renesas: r8a779a0: add clocks for RAVB
+  arm64: dts: r8a779a0: WIP disable reset-gpios for AVB
+
+ .../bindings/net/renesas,etheravb.yaml        |   1 +
+ .../boot/dts/renesas/r8a779a0-falcon.dts      | 195 +++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 270 ++++++++++++++++++
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       |   6 +
+ 4 files changed, 472 insertions(+)
+
 -- 
 2.29.2
 
