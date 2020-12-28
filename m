@@ -2,142 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F10C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 15:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6BEC4646C
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 23:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A471225AB
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 15:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD29A223E8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 23:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437263AbgL1PRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Dec 2020 10:17:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57420 "EHLO
+        id S1729395AbgL1Wzx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Dec 2020 17:55:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437278AbgL1OEH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Dec 2020 09:04:07 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA96C06179B;
-        Mon, 28 Dec 2020 06:03:26 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id b26so24049748lff.9;
-        Mon, 28 Dec 2020 06:03:26 -0800 (PST)
+        with ESMTP id S1729400AbgL1UXL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Dec 2020 15:23:11 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A566C061793;
+        Mon, 28 Dec 2020 12:22:31 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id w17so10404979ilj.8;
+        Mon, 28 Dec 2020 12:22:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4qvAPOSnb3gCPzAXuw8OIJYZA27uuHy18ix0nvJW1CU=;
-        b=bl3r2U9yXYFzTcL+MMt8/u3WC03Tv2y9aGpfMDF+N5t5SOd8te41chnr2P+tYXgxap
-         qwi67ZrMGeBXFF6i2U1/h8fpFscRnAJlA+bG6BE++9jg1sJirjaO75C7ygUTfOp9iHPc
-         Yars2YYOMCQH/+4lrFdWgHgHubxtlUGfSVWkGmuTDRDCNETQoRFqyJm1yOemv2j+fOXU
-         5/WBa1SGMKBukcACZnAJkY1bpWqyZu0kDtPBWL8qeKDNz7QV8CxI3OuE7812UUrxl/Ya
-         aAvrf8QxKJLq4+dD8I+H5iaFUT2AaRAEOFTZRmLcbpirb4b1hMFAXt64Gu5605ULqSGz
-         0zSA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Xxquc3ewI0O/zXR70TYlCPWwGQHiUyK2IYglZ5RF74A=;
+        b=nI5EVkWP7ysJbwXaE7zmsLZdQIpnUzaFmfAVb+yYDkZMw+ujnURX3vBspKBr3RKPy3
+         rv78MVBaARcvwFI1zF0Exy+3KSCK/Ych6PD9ZYDcdCsPIePM8kOixqkI90jNLPsPtrym
+         jlyTQfM7Mu3JhUGwhnRA6Jews19b8wt+JHRvKwjv56SP1Agr37vePticr//k4eK6OMlt
+         /ra7faTENbsrWWl+ENowvOf87kjMoHclwzRl64/LhcIzUIyNKe+ateXagmHRwH4zU24N
+         XwOljSFcXXXcO1VpfenhtqlB5nJ+2cug6ogT888qP3bzFu4CMI9kcjpKlEmxrZmB+dKQ
+         J5WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4qvAPOSnb3gCPzAXuw8OIJYZA27uuHy18ix0nvJW1CU=;
-        b=na61UGSU/DZ0aenfWKJYKOyIzvSAOVDZiPphjqKuOeplwGhHkrph8xmMg/IZuyCQL5
-         hSGAWhJnZcSSoOf3Bql9CR9O3aL1Z5P73a7Wh8UUAECogRSe4BsWwM6b/I21U6qEAxy/
-         lRCrRg76Qf2RTEUzzbfw0o2C2jlcS+WGwSQNrOr2pMbcNyXff2wB7e9m5EQ96qFm8vFa
-         HbfWYnlmuJ9Ra2A7iDKOucMrj+cmrKdI9MXglVP1Yi3J3RDXJaz4Y+zFXWch7Wbet0vj
-         QcHmNgVXUu5iqG6K+JqKuFOd5mTPDS22jaLMoMASXxwOD3uX+5ZitXGkpQdokxUZRNSo
-         v8CQ==
-X-Gm-Message-State: AOAM531MIWHKrI2gdOXoPt8jjktN5MgdJUjd5RnmPmBssS0GUpbaIMXS
-        cyq2Mu57A0isWLm/5Vo5dKKBWfGWEIQ=
-X-Google-Smtp-Source: ABdhPJzUpl1/di7tj7MASZGrGRvUabOdas4lVkZNDhVFRvZuxbYB/Sicx781pXRzuHaMyLMY0tnsEQ==
-X-Received: by 2002:a19:ccc9:: with SMTP id c192mr12718066lfg.98.1609164205141;
-        Mon, 28 Dec 2020 06:03:25 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id d23sm5324052lfl.115.2020.12.28.06.03.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Dec 2020 06:03:24 -0800 (PST)
-Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Xxquc3ewI0O/zXR70TYlCPWwGQHiUyK2IYglZ5RF74A=;
+        b=sLXyfJsxu5kAuxMaKJ+Gt7iLnxEBIImK66htqjFtXoDsJZD8eLWAZ+P5VzzOkw54Jm
+         jfB8+tSzlvIl2HXuJbHP/Ch7fcPtVF8XCnQpZHGQUDk7ChOfB09T31/iQg8PTXn6pbOn
+         mT8YfVN7rLypuDulV0t69oJch8Yy9ImNAd5Asr+PjZ60nZVvgdPV1JsqghZftUXZAjMG
+         9sGGZPoglWEU9LJSgGJJrkR2piPn/a8pm6Pl72PF/orhRw3eApWa1ONfnolbKvYPQsdJ
+         c4dpGYp+AkbWaHf9wGjYY558VREVcM3T6Cg2RtYhz5jciT6LhZAkCdFo0uIYyoP2S7cX
+         EhZA==
+X-Gm-Message-State: AOAM533A52soE4jhf+WgqvUdigZkodzRSrO2xPeqe5vaIxL97neaMZCG
+        WJmcNM/0mkyyz9gw0mXs9VfEFl9IKjx5PA==
+X-Google-Smtp-Source: ABdhPJx18NiuthAgsp/AZRDVzF4gtVdZbpuTRTpo5OQMqYy22nfnMuxNCXmx9vuxHmmjGi7711yv8w==
+X-Received: by 2002:a92:8495:: with SMTP id y21mr44221168ilk.55.1609186950476;
+        Mon, 28 Dec 2020 12:22:30 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
+        by smtp.gmail.com with ESMTPSA id w3sm29043763ilk.17.2020.12.28.12.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Dec 2020 12:22:30 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20201217180638.22748-12-digetx@gmail.com>
- <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
- <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
- <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
- <f00e0c74-8d9a-d3d3-81bb-3ac25a74175d@gmail.com>
- <20201224064339.zngidobhstnlu2a3@vireshk-i7>
- <780db190-d93d-3bca-4819-790010f82c62@gmail.com>
- <20201228062254.ui727ka2ftijov4m@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c4a6336f-e7e6-b23e-4d60-a41d8e09aef3@gmail.com>
-Date:   Mon, 28 Dec 2020 17:03:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] arm64: dts: renesas: Add usb2_clksel to RZ/G2 M/N/H
+Date:   Mon, 28 Dec 2020 14:22:21 -0600
+Message-Id: <20201228202221.2327468-2-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201228202221.2327468-1-aford173@gmail.com>
+References: <20201228202221.2327468-1-aford173@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201228062254.ui727ka2ftijov4m@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-28.12.2020 09:22, Viresh Kumar пишет:
-> On 24-12-20, 16:00, Dmitry Osipenko wrote:
->> In a device driver I want to set PD to the lowest performance state by
->> removing the performance vote when dev_pm_opp_set_rate(dev, 0) is
->> invoked by the driver.
->>
->> The OPP core already does this, but if OPP levels don't start from 0 in
->> a device-tree for PD, then it currently doesn't work since there is a
->> need to get a rounded-up performance state because
->> dev_pm_opp_set_voltage() takes OPP entry for the argument (patches 9 and
->> 28).
->>
->> The PD powering off and performance-changes are separate from each other
->> in the GENPD core. The GENPD core automatically turns off domain when
->> all devices within the domain are suspended by system-suspend or RPM.
->>
->> The performance state of a power domain is controlled solely by a device
->> driver. GENPD core only aggregates the performance requests, it doesn't
->> change the performance state of a domain by itself when device is
->> suspended or resumed, IIUC this is intentional. And I want to put domain
->> into lowest performance state when device is suspended.
-> 
-> Right, so if you really want to just drop the performance vote, then with a
-> value of 0 for the performance state the call will reach to your genpd's
-> callback ->set_performance_state(). Just as dev_pm_opp_set_rate() accepts the
-> frequency to be 0, I would expect dev_pm_opp_set_rate() to accept opp argument
-> as NULL and in that case set voltage to 0 and do regulator_disable() as well.
-> Won't that work better than going for the lowest voltage ?
-> 
+Per the reference manal for the RZ/G Series, 2nd Generation,
+the RZ/G2M, RZ/G2N, and RZ/G2H have a bit that can be set to
+choose between a crystal oscillator and an external oscillator.
 
-We can make dev_pm_opp_set_voltage() to accept OPP=NULL in order to
-disable the regulator, like it's done for dev_pm_opp_set_rate(dev, 0).
-Although, I don't need this kind of behaviour for the Tegra PD driver,
-and thus, would prefer to leave this for somebody else to implement in
-the future, once it will be really needed.
+Because only boards that need this should enable it, it's marked
+as disabled by default for backwards compatibility with existing
+boards.
 
-Still we need the dev_pm_opp_find_level_ceil() because level=0 means
-that we want to set PD to the lowest (minimal) performance state, i.e.
-it doesn't necessarily mean that we want to set the voltage to 0 and
-disable the PD entirely. GENPD has a separate controls for on/off.
+Signed-off-by: Adam Ford <aford173@gmail.com>
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index d37ec42a1caa..60e150320ce8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -835,6 +835,21 @@ hsusb: usb@e6590000 {
+ 			status = "disabled";
+ 		};
+ 
++		usb2_clksel: clock-controller@e6590630 {
++			compatible = "renesas,r8a774a1-rcar-usb2-clock-sel",
++				     "renesas,rcar-gen3-usb2-clock-sel";
++			reg = <0 0xe6590630 0 0x02>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
++				 <&usb_extal_clk>, <&usb3s0_clk>;
++			clock-names = "ehci_ohci", "hs-usb-if",
++				      "usb_extal", "usb_xtal";
++			#clock-cells = <0>;
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 703>, <&cpg 704>;
++			reset-names = "ehci_ohci", "hs-usb-if";
++			status = "disabled";
++		};
++
+ 		usb_dmac0: dma-controller@e65a0000 {
+ 			compatible = "renesas,r8a774a1-usb-dmac",
+ 				     "renesas,usb-dmac";
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+index 83523916d360..20003a41a706 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+@@ -709,6 +709,21 @@ hsusb: usb@e6590000 {
+ 			status = "disabled";
+ 		};
+ 
++		usb2_clksel: clock-controller@e6590630 {
++			compatible = "renesas,r8a774b1-rcar-usb2-clock-sel",
++				     "renesas,rcar-gen3-usb2-clock-sel";
++			reg = <0 0xe6590630 0 0x02>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
++				 <&usb_extal_clk>, <&usb3s0_clk>;
++			clock-names = "ehci_ohci", "hs-usb-if",
++				      "usb_extal", "usb_xtal";
++			#clock-cells = <0>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 703>, <&cpg 704>;
++			reset-names = "ehci_ohci", "hs-usb-if";
++			status = "disabled";
++		};
++
+ 		usb_dmac0: dma-controller@e65a0000 {
+ 			compatible = "renesas,r8a774b1-usb-dmac",
+ 				     "renesas,usb-dmac";
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+index 1333b02d623a..2e6c12a46daf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+@@ -890,6 +890,21 @@ hsusb: usb@e6590000 {
+ 			status = "disabled";
+ 		};
+ 
++		usb2_clksel: clock-controller@e6590630 {
++			compatible = "renesas,r8a774e1-rcar-usb2-clock-sel",
++				     "renesas,rcar-gen3-usb2-clock-sel";
++			reg = <0 0xe6590630 0 0x02>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
++				 <&usb_extal_clk>, <&usb3s0_clk>;
++			clock-names = "ehci_ohci", "hs-usb-if",
++				      "usb_extal", "usb_xtal";
++			#clock-cells = <0>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			resets = <&cpg 703>, <&cpg 704>;
++			reset-names = "ehci_ohci", "hs-usb-if";
++			status = "disabled";
++		};
++
+ 		usb_dmac0: dma-controller@e65a0000 {
+ 			compatible = "renesas,r8a774e1-usb-dmac",
+ 				     "renesas,usb-dmac";
+-- 
+2.25.1
+
