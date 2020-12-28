@@ -2,72 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73481C43333
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE6C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D55222583
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F68C22583
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbgL1L2L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Dec 2020 06:28:11 -0500
-Received: from www.zeus03.de ([194.117.254.33]:37584 "EHLO mail.zeus03.de"
+        id S1727094AbgL1L2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Dec 2020 06:28:14 -0500
+Received: from www.zeus03.de ([194.117.254.33]:37432 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727326AbgL1L2L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Dec 2020 06:28:11 -0500
+        id S1727129AbgL1L16 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Dec 2020 06:27:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=K97IZtztq8hzAS
-        3RRELRYWQuWuDkaP/jU9xKY1/j0fY=; b=bz5fPiEmnGjG7xvw+lEfcbUaUBqkP+
-        Xd6pPquDW41RiHDBqIDClATbYi0bBLodoYz5b0HCwKFqYISzXAVsNKLN6FCBIbqn
-        gsCh+8eU1NhPnhZmV9+vjYL+WrwkfBZ4M/iu4xahlHnnP2Nsc83XLQ5jtsMI+c3O
-        96U3dZ22cBTSs=
-Received: (qmail 1739106 invoked from network); 28 Dec 2020 12:27:18 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 12:27:18 +0100
-X-UD-Smtp-Session: l3s3148p1@4+9/joS3zJQgAwDPXwIpAOUwDQytQs2L
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=GVxhTXLPfgHw1CkQt9T4NPJKwc9
+        uEgyIGg6fuAWxXH8=; b=0uz2JgKdg1DMm2gfKLOFm56B0CWCUIgmGbqN4sQpGBK
+        bu+SorzTfcR3mrCX9cdo/y7dApOVvi7Fc86XaFhYWY4lz7aR4oN0tFj55ldR2vSj
+        J9khEDn1QT0Ht7s7PmmGEk3tKKAqlZag0C4P66Xvc46Q1R2DU6/UPfwftMqpk9fE
+        =
+Received: (qmail 1738945 invoked from network); 28 Dec 2020 12:27:15 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 12:27:15 +0100
+X-UD-Smtp-Session: l3s3148p1@s1dYjoS3xJQgAwDPXwIpAOUwDQytQs2L
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] clk: renesas: r8a779a0: add HSCIF support
-Date:   Mon, 28 Dec 2020 12:27:11 +0100
-Message-Id: <20201228112715.14947-5-wsa+renesas@sang-engineering.com>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH 0/6] v3u: add & update (H)SCIF nodes
+Date:   Mon, 28 Dec 2020 12:27:07 +0100
+Message-Id: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
-References: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+SCIF0 already worked because of firmware settings, but let's have a
+proper node for it. Also add HSCIF0 because the last patch shows that it
+also works. Because these blocks work in general, let's add the other
+instances to the DTSI, too.
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index d85c31a465e1..f518c9e12a49 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -166,6 +166,10 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
- 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi43",	402,	R8A779A0_CLK_CSI0),
-+	DEF_MOD("hscif0",	514,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif1",	515,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif2",	516,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif3",	517,	R8A779A0_CLK_S1D2),
- 	DEF_MOD("i2c0",		518,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("i2c1",		519,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("i2c2",		520,	R8A779A0_CLK_S3D2),
+These additions make me a bit wonder about the 'reg'-based sorting in
+our DTSI files. It looks a bit messy to me, but I kept it for
+consistency. Same with the (H)SCIF reg sizes which are a tad too large
+but in sync with our other DTSI files.
+
+Looking forward to comments!
+
+All the best,
+
+   Wolfram
+
+
+Linh Phung (1):
+  arm64: dts: renesas: r8a779a0: Add HSCIF support
+
+Wolfram Sang (5):
+  arm64: dts: renesas: r8a779a0: add & update SCIF nodes
+  arm64: dts: renesas: falcon: add SCIF0 nodes
+  dt-bindings: serial: renesas,hscif: Add r8a779a0 support
+  clk: renesas: r8a779a0: add HSCIF support
+  WIP: arm64: dts: renesas: falcon: switch to from SCIF0 to HSCIF0
+
+ .../bindings/serial/renesas,hscif.yaml        |   1 +
+ .../boot/dts/renesas/r8a779a0-falcon.dts      |  31 ++++-
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 114 ++++++++++++++++++
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       |   4 +
+ 4 files changed, 149 insertions(+), 1 deletion(-)
+
 -- 
 2.29.2
 
