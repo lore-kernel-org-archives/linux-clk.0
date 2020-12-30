@@ -2,93 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAFFC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 15:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07384C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 16:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F23920575
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 15:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C145C22209
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 16:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgL3Pxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Dec 2020 10:53:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47872 "EHLO mail.kernel.org"
+        id S1726322AbgL3QFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Dec 2020 11:05:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbgL3Pxa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Dec 2020 10:53:30 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 702A420575;
-        Wed, 30 Dec 2020 15:52:47 +0000 (UTC)
+        id S1726230AbgL3QFU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Dec 2020 11:05:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DBC3820795;
+        Wed, 30 Dec 2020 16:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609343570;
-        bh=If92lNgtxrjJpLldr1ujm+H+dKa3tY7Be8vdNbpnWlI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kvc8KJK+NuLIYACrPNCNh26V7lhz6CX6jV8raDd65Z6mMaP6qVnNjBNos9r5CLyPg
-         C66vtjGFOWNcrCvWi1Cb/7830Yae6XGztAUBLP68FkAw8s+8enKKZIfpAAtv1BuETO
-         E6XhGL3uRBS5KuoKbz/T79r6diEbfdpYEijNH+lpim2kkUa5pXwbq364Ij/2kSQqOM
-         X/OEEaljLCCQhg2Q6547K1KqzkzZVJr+81dxMib7lUjmCAMrbUsT9j7frms1nKB2JN
-         WFtR4jehNhPsdLkdu/MuPrpEXHSvC7TaHxmPCUWVz3+SgWVfb5NqEHxF1dNHrqb0Au
-         dlRYby8I5Bb6w==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: fix Kconfig warning for i.MX SCU clk
-Date:   Wed, 30 Dec 2020 16:52:25 +0100
-Message-Id: <20201230155244.981757-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        s=k20201202; t=1609344279;
+        bh=7HiJr1hTNJXmtmcKCItl+wH40I7XBAJc6Cd4l7cmMOQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F69ulZUvI28RtuxGDb/EB1/FWLITXr5axG6/XmsqAKgsG3WMJQzDbEAmJRKo21mva
+         GEmwJnp1yNknTACMWbA3H4RKLVY6sXk3hUxL3PGMdMHWdgNJzH8N5jowhlvVrbZ8wz
+         JiSWAaVsF63LPfI54uavo9Ej+Q3mSA1vAshlAcnLPNJCVAC1a2GrLPSYY7cebbx4xQ
+         u9phUy1FxjGS9woIbcRVQ3tb5pa5ePsnFPlhNfLNvA98r4Jl/cf06+l3eUQC+0mfgX
+         Y5QwOKUm4k8oE+n13Zm0dEH/MRynWdBzlAn3H50CtEb5VcuWfw3KLKeqmnKBZo5pcy
+         8/LdojBKm6c8A==
+Date:   Wed, 30 Dec 2020 17:04:36 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH/RFC 1/6] clk: renesas: r8a779a0: Remove non-existent S2
+ clock
+Message-ID: <20201230160436.GA23641@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org
+References: <20201019120614.22149-1-geert+renesas@glider.be>
+ <20201019120614.22149-2-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <20201019120614.22149-2-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-A previous patch introduced a harmless randconfig warning:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-WARNING: unmet direct dependencies detected for MXC_CLK_SCU
-  Depends on [n]: COMMON_CLK [=y] && ARCH_MXC [=n] && IMX_SCU [=y] && HAVE_ARM_SMCCC [=y]
-  Selected by [m]:
-  - CLK_IMX8QXP [=m] && COMMON_CLK [=y] && (ARCH_MXC [=n] && ARM64 [=y] || COMPILE_TEST [=y]) && IMX_SCU [=y] && HAVE_ARM_SMCCC [=y]
+On Mon, Oct 19, 2020 at 02:06:09PM +0200, Geert Uytterhoeven wrote:
+> The S2 internal core clock does not exist on R-Car V3U. Remove it.
+>=20
+> Fixes: 17bcc8035d2d19fc ("clk: renesas: cpg-mssr: Add support for R-Car V=
+3U")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Since the symbol is now hidden and only selected by other symbols,
-just remove the dependencies and require the other drivers to
-get it right.
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fixes: 6247e31b7530 ("clk: imx: scu: fix MXC_CLK_SCU module build break")
-Reported-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/imx/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index 3061896503f3..47d9ec3abd2f 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -6,8 +6,6 @@ config MXC_CLK
- 
- config MXC_CLK_SCU
- 	tristate
--	depends on ARCH_MXC
--	depends on IMX_SCU && HAVE_ARM_SMCCC
- 
- config CLK_IMX1
- 	def_bool SOC_IMX1
--- 
-2.29.2
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/spREACgkQFA3kzBSg
+KbbcZg//X4nFN3aqSUqrpC/cB75NyDhgaxEruKz8z3IAJkp/41o6puBdW4NT03ip
+S7z6mjz+YAKJ9a+CkJfVFr1LFtMgoW1cSEtFZ5wPP1GH7/ONW0F18V7/a8hTjjAe
+IoXjjULVr9A3bQAK9TO0PtXbEQ98Wi45fUXxYzY5N/1dQrOUnvfDAJITjltWN/V/
+laUIC9JXSBW5UX+VFRzXRR1wSvDZh9+vE03Ezhs/7B7ZEnGA04lSXw2EgeOusD6X
+9972wBsqf2llXgzSIIhTxi68WiMCVeJwYWtH8JwO/No0DCtHg28yc1+XSnWTD861
+CMyZgHZLYvqzEYOKHpF9A+xx6sDeLI34XZRJ3e3/QpkAZQ/cHL7FwlVhdll/qnD+
+HYox7vyEQFNrmupkPlTpIBpLld3nQXYhxwEYOqVfnt64QWVqy70Vx5mN2wGOAma7
+fRADYmtG8aWkOXPL+ECV+9qQ8q8vu7DEt+jffMyhwzX66u1OTCiXHP0LZhmctrSc
+FtOSxsekGNNs2RLqP8YNXWd1B5BGi/qUu2QuD5jSLA1yoYgtU488vsOVXbtphIJM
+jkbzemFFAb337rbIKuHvnPt+WV4MgMtlUL0k+n3tu8/Wx2iJny27dC+eC1bVmAFa
+XfTxt/cemZleZfD7ygBII6zroKdRhj7nJoEhD7tgentqM36mVnM=
+=/76Z
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
