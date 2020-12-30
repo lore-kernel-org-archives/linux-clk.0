@@ -2,331 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D017DC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Dec 2020 22:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A510EC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 04:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE5E20867
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Dec 2020 22:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A63207BC
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 04:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbgL2WwI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Dec 2020 17:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50726 "EHLO
+        id S1726189AbgL3ErV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Dec 2020 23:47:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbgL2WwH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Dec 2020 17:52:07 -0500
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F164C0613D6
-        for <linux-clk@vger.kernel.org>; Tue, 29 Dec 2020 14:51:27 -0800 (PST)
-Received: by mail-il1-x131.google.com with SMTP id q1so13414828ilt.6
-        for <linux-clk@vger.kernel.org>; Tue, 29 Dec 2020 14:51:27 -0800 (PST)
+        with ESMTP id S1726198AbgL3ErU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Dec 2020 23:47:20 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB6EC06179E
+        for <linux-clk@vger.kernel.org>; Tue, 29 Dec 2020 20:46:40 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id c12so9104705pfo.10
+        for <linux-clk@vger.kernel.org>; Tue, 29 Dec 2020 20:46:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uR9xtt/OA3KwdmU344WBeToDK8NSL24Jp73H9MLvJx8=;
-        b=vZiluhzq2DA6hTrdTq38Lh0/3u7DhL55gdXlyWi52ikHOI/mH2pLv5ILg0h3LU5HQy
-         NVER0FIDcPYdk+za9CICRwjoeIjKjPT5pYI1iJRSg3sXkQXBY/cg+bIsP9L5Vp5bji8e
-         NywZI6j0PqITI3JUDzQgJn4tL/vfx2HmDhbm9ttf0nTBkx+qIIJcLGPlO+po0+qDxjEK
-         kLGEaDHYZaQFWIVvSs/lcvYWNaaEt/eqvOsg3trqOmSc98S1BtgQ/wLrQETlqBnd9c3k
-         L3e7QZbFl3wHAbSdcOvZ2l6vCWKphy7bqFDHQCvGoZ7+LzdX6yKOcrGJSITMyQGmJ/lJ
-         8e3g==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=S7TlR/t9efyKgBLIkX3DcwEJbaeI569mJCDTFS0GWK0=;
+        b=Bv4XDe7sX+slpuPaCMEL56juX3yWcw2LziUKmc37jW3yU5m7JGjQqk4PRfEMXq3dSa
+         S9Wm6+bIT58vZYkcjtmn1OBPVSUOwLWVIjUcAR8dv0GwdWNbGlmsyBow7j3AeXjSiamR
+         wRfhK9laeSI2I90Wv7A42bMayA7xIFS3tHWQP6zK2sKAnxj4HpDgSKZOu34RJEWuulPY
+         VGfEK8dc91Mv24zsAHjIqJIGPJoS1Z6DbE9cvjWFckZneGmXR16A4skyPxRGDcqZfLA8
+         aclz0r4zUfVV34NGxZ+HPm2hFYZjAfnzac1lYOIQ77mqKg9OF9S+j9B7VzhNnApi+5M7
+         /MvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uR9xtt/OA3KwdmU344WBeToDK8NSL24Jp73H9MLvJx8=;
-        b=VaVvyU12qpsLgN7cd+/CFERvfGwoHXiNgoKJ7QZNiLXHIM+6Ts0RGGgtMB2arDhEIV
-         5dwaZVmf/xcJeedHK40VDGkto+EzPpAZCFED2nepzk2u4WbehZoFu3mNvAtD0DbkOWRU
-         KSQcyXldfio8ceZo2OYbwkSFZUHs40yC9XEs1a+vdzI/zC9JzFHDj+7SE9laFOEEJ8xe
-         mS8/+5AlU5G7qffYTxzJR5j90E79g7gknh3sWdqDXTdVLbnKdlH0bUuW8dT4vJZxFmOi
-         ht2TDYWWJhK4dO5eVfVkx5jc4yyPpcS/nTFxOtxMLtS2xpd97VcP63WCeWuVtz5AIeQi
-         RPcQ==
-X-Gm-Message-State: AOAM532w8DFdU0iU+qyms4CbXyykvva9SResUms2XkIK/4UOvcgpEdtT
-        eGHY00fwb2SYYNo+71ty6WzLUEbYGgY9jbf0S9P7FA==
-X-Google-Smtp-Source: ABdhPJxg/dRD7gAKseIrbXj0QZ+yipjD4LXauwOYK/dT5EfO1Tx+irxvhLt0S/K6DiONQ5itrxYY+Lyxs8/i7oZjGyc=
-X-Received: by 2002:a92:cd8c:: with SMTP id r12mr48777108ilb.221.1609282286909;
- Tue, 29 Dec 2020 14:51:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20201217174602.22212-1-kostap@marvell.com> <20201217174602.22212-3-kostap@marvell.com>
- <160842340492.1580929.1761349313009973921@swboyd.mtv.corp.google.com>
-In-Reply-To: <160842340492.1580929.1761349313009973921@swboyd.mtv.corp.google.com>
-From:   Grzegorz Jaszczyk <jaz@semihalf.com>
-Date:   Tue, 29 Dec 2020 23:51:16 +0100
-Message-ID: <CAH76GKOQoroW4p3qTffXtFJLbhvSRfOWOnm0JPysqiy8K2wT_g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: mvebu: use firmware SiP service for accessing
- dfx register set
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=S7TlR/t9efyKgBLIkX3DcwEJbaeI569mJCDTFS0GWK0=;
+        b=Z5jHBFfpMNwWS4eMnGoA9WzxAGTX9Wv8trJh6zN+b/CSQLRU7kWdsMFOgtRf8yabdR
+         M4HIGBGxSzo5jY8KtCVSz91ll1CtOCq37WcZE5L8yqjqeEPawNj74rBpbiia5dqn4Li2
+         BfI7TmVTgfCJ+k8RbGqXCGgXdjZIi2SKnmwSXv0XkcyDrQVK9Ak8ij3au/MvAoCuDfKL
+         OvFubWN5beWEuf1p7j18D7aO9V5d6XRhZ8RYImJnRAFoe1/fRukKimR67Te6G8bEIp0+
+         CTvYxRQqg/HuC2k+leTnc6/K3a9hF1Aca3ABSYobnS1Ub55aQJapC/F+0mLLP8fbICiu
+         dS5w==
+X-Gm-Message-State: AOAM531y03dgLA8TZ4AgMUWmNvVJ9IYto+0hnoFg7wPa25SQsWTOlDIg
+        B6B2rq75lgRLJCdppL2hy5WMtA==
+X-Google-Smtp-Source: ABdhPJyAMIYVw5j0FbznclvAGjSkFr9eYljcNjUnJ9+BY9Q4/dP8WzEX/TWRPpJAEV49/79xQ6NUAg==
+X-Received: by 2002:a63:6fce:: with SMTP id k197mr24081334pgc.423.1609303599877;
+        Tue, 29 Dec 2020 20:46:39 -0800 (PST)
+Received: from localhost ([122.172.20.109])
+        by smtp.gmail.com with ESMTPSA id e65sm43548898pfh.175.2020.12.29.20.46.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Dec 2020 20:46:39 -0800 (PST)
+Date:   Wed, 30 Dec 2020 10:16:37 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amitk@kernel.org,
-        Marcin Wojtas <mw@semihalf.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Ben Peled <bpeled@marvell.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Konstantin Porotchkin <kostap@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 11/48] opp: Add dev_pm_opp_find_level_ceil()
+Message-ID: <20201230044637.jjyw5gwe73ovslbd@vireshk-i7>
+References: <20201217180638.22748-1-digetx@gmail.com>
+ <20201217180638.22748-12-digetx@gmail.com>
+ <20201222064253.x7vsurh7q5k7qzb5@vireshk-i7>
+ <fd7b9f42-d0a7-45eb-2a17-d46779011c58@gmail.com>
+ <20201223041931.klnppy4fu3sdgtsz@vireshk-i7>
+ <f00e0c74-8d9a-d3d3-81bb-3ac25a74175d@gmail.com>
+ <20201224064339.zngidobhstnlu2a3@vireshk-i7>
+ <780db190-d93d-3bca-4819-790010f82c62@gmail.com>
+ <20201228062254.ui727ka2ftijov4m@vireshk-i7>
+ <c4a6336f-e7e6-b23e-4d60-a41d8e09aef3@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c4a6336f-e7e6-b23e-4d60-a41d8e09aef3@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-niedz., 20 gru 2020 o 01:16 Stephen Boyd <sboyd@kernel.org> napisa=C5=82(a)=
-:
->
-> Quoting kostap@marvell.com (2020-12-17 09:46:02)
-> > diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-=
-clk.c
-> > index b4259b60dcfd..52721ef2d7d9 100644
-> > --- a/drivers/clk/mvebu/ap-cpu-clk.c
-> > +++ b/drivers/clk/mvebu/ap-cpu-clk.c
-> > @@ -139,8 +141,107 @@ struct ap_cpu_clk {
-> >         struct clk_hw hw;
-> >         struct regmap *pll_cr_base;
-> >         const struct cpu_dfs_regs *pll_regs;
-> > +       phys_addr_t phys;
-> >  };
-> >
-> > +static int dfx_sread_smc(unsigned long addr, unsigned int *reg)
-> > +{
-> > +       struct arm_smccc_res res;
-> > +
-> > +       arm_smccc_smc(MV_SIP_DFX, MV_SIP_DFX_SREAD, addr, 0, 0, 0, 0, 0=
-, &res);
-> > +
-> > +       if (res.a0 =3D=3D 0 && reg !=3D NULL)
-> > +               *reg =3D res.a1;
-> > +
-> > +       return res.a0;
-> > +}
-> > +
-> > +static int dfx_swrite_smc(unsigned long addr, unsigned long val)
-> > +{
-> > +       struct arm_smccc_res res;
-> > +
-> > +       arm_smccc_smc(MV_SIP_DFX, MV_SIP_DFX_SWRITE, addr, val,
-> > +                     0, 0, 0, 0, &res);
-> > +
-> > +       return res.a0;
-> > +}
->
-> Can this be implemented as a regmap, similar to the regmap-mmio? And
-> then the cpu clks use this instead of mmio regmap?
+On 28-12-20, 17:03, Dmitry Osipenko wrote:
+> 28.12.2020 09:22, Viresh Kumar пишет:
+> > On 24-12-20, 16:00, Dmitry Osipenko wrote:
+> >> In a device driver I want to set PD to the lowest performance state by
+> >> removing the performance vote when dev_pm_opp_set_rate(dev, 0) is
+> >> invoked by the driver.
+> >>
+> >> The OPP core already does this, but if OPP levels don't start from 0 in
+> >> a device-tree for PD, then it currently doesn't work since there is a
+> >> need to get a rounded-up performance state because
+> >> dev_pm_opp_set_voltage() takes OPP entry for the argument (patches 9 and
+> >> 28).
+> >>
+> >> The PD powering off and performance-changes are separate from each other
+> >> in the GENPD core. The GENPD core automatically turns off domain when
+> >> all devices within the domain are suspended by system-suspend or RPM.
+> >>
+> >> The performance state of a power domain is controlled solely by a device
+> >> driver. GENPD core only aggregates the performance requests, it doesn't
+> >> change the performance state of a domain by itself when device is
+> >> suspended or resumed, IIUC this is intentional. And I want to put domain
+> >> into lowest performance state when device is suspended.
+> > 
+> > Right, so if you really want to just drop the performance vote, then with a
+> > value of 0 for the performance state the call will reach to your genpd's
+> > callback ->set_performance_state(). Just as dev_pm_opp_set_rate() accepts the
+> > frequency to be 0, I would expect dev_pm_opp_set_rate() to accept opp argument
+> > as NULL and in that case set voltage to 0 and do regulator_disable() as well.
+> > Won't that work better than going for the lowest voltage ?
+> > 
+> 
+> We can make dev_pm_opp_set_voltage() to accept OPP=NULL in order to
+> disable the regulator, like it's done for dev_pm_opp_set_rate(dev, 0).
+> Although, I don't need this kind of behaviour for the Tegra PD driver,
+> and thus, would prefer to leave this for somebody else to implement in
+> the future, once it will be really needed.
+> 
+> Still we need the dev_pm_opp_find_level_ceil() because level=0 means
+> that we want to set PD to the lowest (minimal) performance state, i.e.
+> it doesn't necessarily mean that we want to set the voltage to 0 and
+> disable the PD entirely. GENPD has a separate controls for on/off.
 
-Yes, I think it is possible. Just to be sure: you suggest to provide a
-custom regmap reg_read/reg_write, based on current
-dfx_sread_smc/dfx_swrite_smc, only if it is needed (after some check
-in probe - please see also my answer below)?
+Ok.
 
->
-> > +
-> > +static int ap_clk_regmap_read(struct ap_cpu_clk *clk, unsigned int reg=
-,
-> > +                             unsigned int *val)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret =3D dfx_sread_smc(clk->phys + reg, val);
-> > +       if (ret !=3D SMCCC_RET_SUCCESS)
-> > +               ret =3D regmap_read(clk->pll_cr_base, reg, val);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int ap_clk_regmap_write(struct ap_cpu_clk *clk, unsigned int re=
-g,
-> > +                         unsigned int val)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret =3D dfx_swrite_smc(clk->phys + reg, val);
-> > +       if (ret !=3D SMCCC_RET_SUCCESS)
-> > +               ret =3D regmap_write(clk->pll_cr_base, reg, val);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int ap_clk_regmap_update_bits(struct ap_cpu_clk *clk, unsigned =
-int reg,
-> > +                                    unsigned int mask, unsigned int va=
-l)
-> > +{
-> > +       int ret;
-> > +       unsigned int tmp;
-> > +
-> > +       ret =3D dfx_sread_smc(clk->phys + reg, &tmp);
-> > +       if (ret !=3D SMCCC_RET_SUCCESS)
-> > +               goto try_legacy;
->
-> Can we try the legacy path at boot to read something and then if it
-> fails plug in the old regmap? If it works then use the new regmap. Let's
-> not keep both paths all the time if we can runtime detect it at boot.
-
-Trying legacy in case of a secured dfx region will result with an
-exception. Actually doing the opposite will do the job: during driver
-probe read something with the use of smc, in case of success we will
-know that we deal with updated fw and we can switch to custom, based
-on smc, regmap reg_read/reg_write (as described above). In case of
-failure we continue with "legacy" default regmap reg_read/reg_write.
-
->
-> > +
-> > +       tmp &=3D ~mask;
-> > +       tmp |=3D val & mask;
-> > +
-> > +       ret =3D dfx_swrite_smc(clk->phys + reg, tmp);
-> > +       if (ret =3D=3D SMCCC_RET_SUCCESS)
-> > +               return ret;
-> > +
-> > +try_legacy:
-> > +       return regmap_update_bits(clk->pll_cr_base, reg, mask, val);
-> > +}
-> > +
-> > +static int ap_clk_regmap_read_poll_timeout(struct ap_cpu_clk *clk,
-> > +                                           unsigned int reg,
-> > +                                           unsigned int stable_bit)
-> > +{
-> > +       int ret;
-> > +       u32 val;
-> > +       ktime_t timeout;
-> > +
-> > +       timeout =3D ktime_add_us(ktime_get(), STATUS_POLL_TIMEOUT_US);
-> > +       do {
-> > +               ret =3D dfx_sread_smc(clk->phys + reg, &val);
-> > +               if (ret || (val & stable_bit))
-> > +                       break;
-> > +
-> > +               usleep_range((STATUS_POLL_PERIOD_US >> 2) + 1,
-> > +                            STATUS_POLL_PERIOD_US);
-> > +
-> > +       } while (ktime_before(ktime_get(), timeout));
-> > +
-> > +       if (ret =3D=3D SMCCC_RET_SUCCESS)
-> > +               return (val & stable_bit) ? 0 : -ETIMEDOUT;
-> > +
-> > +       /* If above fail, try legacy */
-> > +       ret =3D regmap_read_poll_timeout(clk->pll_cr_base,
-> > +                                      reg, val,
-> > +                                      val & stable_bit, STATUS_POLL_PE=
-RIOD_US,
-> > +                                      STATUS_POLL_TIMEOUT_US);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
-> >                                             unsigned long parent_rate)
-> >  {
-> > @@ -150,7 +251,7 @@ static unsigned long ap_cpu_clk_recalc_rate(struct =
-clk_hw *hw,
-> >
-> >         cpu_clkdiv_reg =3D clk->pll_regs->divider_reg +
-> >                 (clk->cluster * clk->pll_regs->cluster_offset);
-> > -       regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &cpu_clkdiv_ratio=
-);
-> > +       ap_clk_regmap_read(clk, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
-> >         cpu_clkdiv_ratio &=3D clk->pll_regs->divider_mask;
-> >         cpu_clkdiv_ratio >>=3D clk->pll_regs->divider_offset;
-> >
-> > @@ -171,7 +272,7 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw, u=
-nsigned long rate,
-> >         cpu_ratio_reg =3D clk->pll_regs->ratio_reg +
-> >                 (clk->cluster * clk->pll_regs->cluster_offset);
-> >
-> > -       regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &reg);
-> > +       ap_clk_regmap_read(clk, cpu_clkdiv_reg, &reg);
-> >         reg &=3D ~(clk->pll_regs->divider_mask);
-> >         reg |=3D (divider << clk->pll_regs->divider_offset);
-> >
-> > @@ -184,29 +285,26 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw,=
- unsigned long rate,
-> >                 reg |=3D ((divider * clk->pll_regs->divider_ratio) <<
-> >                                 AP807_PLL_CR_1_CPU_CLK_DIV_RATIO_OFFSET=
-);
-> >         }
-> > -       regmap_write(clk->pll_cr_base, cpu_clkdiv_reg, reg);
-> > -
-> > +       ap_clk_regmap_write(clk, cpu_clkdiv_reg, reg);
-> >
-> > -       regmap_update_bits(clk->pll_cr_base, cpu_force_reg,
-> > -                          clk->pll_regs->force_mask,
-> > -                          clk->pll_regs->force_mask);
-> > +       ap_clk_regmap_update_bits(clk, cpu_force_reg, clk->pll_regs->fo=
-rce_mask,
-> > +                                 clk->pll_regs->force_mask);
-> >
-> > -       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
-> > -                          BIT(clk->pll_regs->ratio_offset),
-> > -                          BIT(clk->pll_regs->ratio_offset));
-> > +       ap_clk_regmap_update_bits(clk, cpu_ratio_reg,
-> > +                                 BIT(clk->pll_regs->ratio_offset),
-> > +                                 BIT(clk->pll_regs->ratio_offset));
-> >
-> >         stable_bit =3D BIT(clk->pll_regs->ratio_state_offset +
-> >                          clk->cluster *
-> >                          clk->pll_regs->ratio_state_cluster_offset);
-> > -       ret =3D regmap_read_poll_timeout(clk->pll_cr_base,
-> > -                                      clk->pll_regs->ratio_state_reg, =
-reg,
-> > -                                      reg & stable_bit, STATUS_POLL_PE=
-RIOD_US,
-> > -                                      STATUS_POLL_TIMEOUT_US);
-> > +       ret =3D ap_clk_regmap_read_poll_timeout(clk,
-> > +                                             clk->pll_regs->ratio_stat=
-e_reg,
-> > +                                             stable_bit);
-> >         if (ret)
-> >                 return ret;
-> >
-> > -       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
-> > -                          BIT(clk->pll_regs->ratio_offset), 0);
-> > +       ap_clk_regmap_update_bits(clk, cpu_ratio_reg,
-> > +                                 BIT(clk->pll_regs->ratio_offset), 0);
-> >
-> >         return 0;
-> >  }
-> > @@ -235,6 +333,11 @@ static int ap_cpu_clock_probe(struct platform_devi=
-ce *pdev)
-> >         struct clk_hw_onecell_data *ap_cpu_data;
-> >         struct ap_cpu_clk *ap_cpu_clk;
-> >         struct regmap *regmap;
-> > +       struct resource res;
-> > +
-> > +       ret =3D of_address_to_resource(np->parent, 0, &res);
-> > +       if (ret)
-> > +               return ret;
-> >
-> >         regmap =3D syscon_node_to_regmap(np->parent);
-> >         if (IS_ERR(regmap)) {
-> > @@ -313,6 +416,12 @@ static int ap_cpu_clock_probe(struct platform_devi=
-ce *pdev)
-> >                 ap_cpu_clk[cluster_index].dev =3D dev;
-> >                 ap_cpu_clk[cluster_index].pll_regs =3D of_device_get_ma=
-tch_data(&pdev->dev);
-> >
-> > +               /*
-> > +                * Hack to retrieve a physical addr that will be given =
-to the
->
-> I'd rather not enshrine "hack" in the code. "Get a physicall address to
-> hand to the firmware"? Presumably this address will work and isn't some
-> intermediate PA (IPA)?
-
-You are correct, let's update the comment as you suggested.
-
-Thank you for all your comments and suggestions,
-Grzegorz
-
->
-> > +                * firmware.
-> > +                */
-> > +               ap_cpu_clk[cluster_index].phys =3D res.start;
-> > +
-> >                 init.name =3D ap_cpu_clk[cluster_index].clk_name;
-> >                 init.ops =3D &ap_cpu_clk_ops;
-> >                 init.num_parents =3D 1;
+-- 
+viresh
