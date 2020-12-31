@@ -2,94 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7594C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 16:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C567C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 14:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A43CB21D1B
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Dec 2020 16:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A9D022475
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 14:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726161AbgL3QGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Dec 2020 11:06:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
+        id S1726707AbgLaOaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Dec 2020 09:30:23 -0500
+Received: from comms.puri.sm ([159.203.221.185]:60030 "EHLO comms.puri.sm"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbgL3QGq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Dec 2020 11:06:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D5BF421D1B;
-        Wed, 30 Dec 2020 16:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609344365;
-        bh=UpqNGsG+wja/cfpuYPIxFnaBgFjZdxSZs9FId9QevGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z6IVsEkAJ+7ZS/Xuw3kBQNGMChUfW1WIeBqNbIyXqOK6emNcMQwf3/uISDSCYVmQE
-         X7xKiBJAkUCbP6QD0374ZV/yw+AghDUdSGZ1CL8HfqgAQj2Xboh2nfEfsFucKjqEvk
-         KXCS3SrMw0HrpwpkacGAMeQDJ2UQgRt8N733wmxo91cvgVSyY7+kiQS5OhLs7+uT4b
-         jWxZ2tBG/QD7A0qfCBDnDs7aT0rvOynrXYDeHB9/YbntdIpz+GQS4QkkrAYvVDKyYQ
-         Wv9lOzvvmQqVDcew2fuTQlJ9WYUj1ToaCjGmkPI7o3zMISHZKvpnwMs3G9JmOmu4qx
-         FOe6FsCqmJQVQ==
-Date:   Wed, 30 Dec 2020 17:06:03 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH/RFC 6/6] arm64: dts: r8a779a0: Add GPIO nodes
-Message-ID: <20201230160603.GE23641@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>, linux-clk@vger.kernel.org
-References: <20201019120614.22149-1-geert+renesas@glider.be>
- <20201019120614.22149-7-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ey/N+yb7u/X9mFhi"
-Content-Disposition: inline
-In-Reply-To: <20201019120614.22149-7-geert+renesas@glider.be>
+        id S1726699AbgLaOaW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 31 Dec 2020 09:30:22 -0500
+X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Thu, 31 Dec 2020 09:30:22 EST
+Received: from localhost (localhost [127.0.0.1])
+        by comms.puri.sm (Postfix) with ESMTP id 31710E117D;
+        Thu, 31 Dec 2020 06:22:26 -0800 (PST)
+Received: from comms.puri.sm ([127.0.0.1])
+        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Uz3fBmt1EJap; Thu, 31 Dec 2020 06:22:25 -0800 (PST)
+From:   Martin Kepplinger <martin.kepplinger@puri.sm>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        festevam@gmail.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@puri.sm>
+Subject: [PATCH] Revert "clk: imx: fix composite peripheral flags"
+Date:   Thu, 31 Dec 2020 15:21:49 +0100
+Message-Id: <20201231142149.26062-1-martin.kepplinger@puri.sm>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This reverts commit 936c383673b9e3007432f17140ac62de53d87db9.
 
---ey/N+yb7u/X9mFhi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It breaks clock reparenting via devfreq on the imx8mq used in the
+Librem 5 phone. When switching dram frequency (which worked before)
+the system now hangs after this where the dram_apb clock cannot be
+set:
 
-On Mon, Oct 19, 2020 at 02:06:14PM +0200, Geert Uytterhoeven wrote:
-> Add device nodes for the General Purpose Input/Output (GPIO) block on
-> the Renesas R-Car V3u (r8a779a0) SoC.
->=20
-> As there is no node for the PFC yet, all "gpio-ranges" properties are
-> commented out.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[  129.391755] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
+set dram_apb parent: -16
+[  129.391959] imx8m-ddrc-devfreq 3d400000.memory-controller: ddrc
+failed freq switch to 25000000 from 800000000: error -16. now at 25000000
+[  129.406133] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
+update frequency from PM QoS (-16)
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Note that on the Librem 5 devkit that uses a different revision of the
+imx8mq SoC, the added flag does *not* break said clock reparenting so
+there might be subtle differences here.
 
+Signed-off-by: Martin Kepplinger <martin.kepplinger@puri.sm>
+---
+ drivers/clk/imx/clk-composite-8m.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---ey/N+yb7u/X9mFhi
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 2c309e3dc8e3..78fb7e52a42a 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -216,7 +216,6 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+ 		div->width = PCG_PREDIV_WIDTH;
+ 		divider_ops = &imx8m_clk_composite_divider_ops;
+ 		mux_ops = &clk_mux_ops;
+-		flags |= CLK_SET_PARENT_GATE;
+ 	}
+ 
+ 	div->lock = &imx_ccm_lock;
+-- 
+2.20.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/spWsACgkQFA3kzBSg
-Kbb1zg//RYp2TvfejzlzQsnk7JciDjZSphKlA3FrqEhDxJZUvUYCKBDC8mN6cXFe
-b7JIAnEt0Z+TtsOZerIdlKFazJjpBc91jtqA1IgRxtYd0NOC+vqYwVPITtuiISzR
-EXogB/mIQott6A9sizOPH20MCR+8OFYYoGegCJPHiKfWdfTVXaQ8rJ9pLlpHuR/7
-FeVXYNLTbM7Z6n80vK7rmY7aW0JZQSDwShx47NRfMPX0H4t2qD7h/rzcKELLoSEi
-S8lOyNwyO1SWup+GTma8T3JW4cW0nxIxFBPOEVfeI/nfmZIj3unbgekGhafFFnon
-2DLWHFbLeQLKdJP0M+360eiciDOAVLchpvDAwvwz+7H/S5qPo5zxjAPYJpqHH60c
-XE2dYRiGyRBW6PHiAjmswoMIkiI2DaC1ECYCb1ADaquXnZoOPzz7p6Mohbxnbh48
-NCXJxaifBC17pAbteFU561oQuNMzByk5x33JiZztvFyV/MHbtgeX+UMZGcjdorW/
-ewYbAKLgx7Mbc+NTsSeE45U4CNvOtzGmSKmaO0ijZRilFxAWIMgBq+znIdZVa1ns
-Y2/4iwsni6N4e2HojFGscxUs5vCkHQ2dsJngUDAcMz2Q23C8ui6Z5frl6JJuFudS
-a+p0R9bVfDNKg4A/oyThNsqz3OtPqIolFHUuGDTvXkdYHVbqwJU=
-=wJOm
------END PGP SIGNATURE-----
-
---ey/N+yb7u/X9mFhi--
