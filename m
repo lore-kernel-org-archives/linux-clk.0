@@ -2,118 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64994C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 20:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601D1C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 22:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 275E320BED
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 20:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2862A208B8
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Dec 2020 22:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgLaUec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Dec 2020 15:34:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbgLaUec (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Dec 2020 15:34:32 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89ECEC061573;
-        Thu, 31 Dec 2020 12:33:51 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id y19so45870478lfa.13;
-        Thu, 31 Dec 2020 12:33:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q4Z0pWIFGtM6X6R1FwLJcNBd0lwNFuPd++vDIFFZllo=;
-        b=uUOIM2OXNIp+oVW4jzxgmhE6xcMYp64DrAqVb3P34YVDcnpB6H20LpMsT5hcaT/wL9
-         HHnYbiVvRGFB+UMpRODO3co73qCfTGtasWmNK/2kLEcbuu2b2c9CWi65BvVkvJwgiXmi
-         ChEIxFg1LIXUTP6jtFEM1VEuSv6yr/S/vNTBvsk4JYciKJHWMWa719Ezqf7AENShRZyu
-         lbIcD8d2pxYF3GpvGkE9+b8rhpXgeVhILlmuBwQTUSjUbLu7aLRGe9IQ0uhgqnEXCJWs
-         vlIWUc78iijEoWbHUvQ8gjp3OaJy7v44Bpz2DVluq3SgmJZJubqBOc1EIJusIREr5M/A
-         gtOw==
+        id S1726651AbgLaWj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Dec 2020 17:39:27 -0500
+Received: from mail-il1-f174.google.com ([209.85.166.174]:35810 "EHLO
+        mail-il1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbgLaWj1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Dec 2020 17:39:27 -0500
+Received: by mail-il1-f174.google.com with SMTP id t9so18384423ilf.2;
+        Thu, 31 Dec 2020 14:39:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q4Z0pWIFGtM6X6R1FwLJcNBd0lwNFuPd++vDIFFZllo=;
-        b=jVBiAIrgLvjNNorKbPK4LR4VEkyViPzvyE9Ivw9Mz2yGfnAivrazeYm+kxdeMYVx1c
-         91X4czOxUTcyWpJfbmQPtmxjBJBhwOFHnS0AMBU93cI3DKYVEXnmjX+b421qdVkDp4V4
-         dv4o9uwKMBKJB64RyqJTIl91YALrIbuPkCgn5rXodnSDVZd0Q8Aml3VD8kBkyqVdstSs
-         MgZF6b7FERK+GivIo2UNCVVFOWpP8RslDcgPKSHb28ZyaD8YTr606U8EkzSISm54ADyE
-         17lxjlC3UKRmHHLbE0nUpd6S3/2gIsFN//er28GuBnn1ZlElxTqDAxvjUnRSbZTBHZt/
-         oa2w==
-X-Gm-Message-State: AOAM532ANfYZ4+RdLdKKrfUWwN1IWQKlC0y8iVSCXOftq1WjONMRd7Ig
-        gfBSnnLDkJNdA2zcdc5T+DH6wMdEZh3YsFt3jMw=
-X-Google-Smtp-Source: ABdhPJxI4tqOHYU3yeIJgOUKAcrZh0k3UM5YbfYFWUgpn8oO6cDqd0BsDvKtdWuIuThm6Pae8syL0gaL42+nZ5GO8YA=
-X-Received: by 2002:a2e:8416:: with SMTP id z22mr30306266ljg.347.1609446829839;
- Thu, 31 Dec 2020 12:33:49 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=An3yvvM30RFSSdQsTF6nqBc3O8X7QGJ6M/oMxqoqkDg=;
+        b=EsT/hlN9FLmFod1GJiV9xLOX5lwxvaMe7HtkH4zyjNnc6wJBMN+DScfCFDc9SFgHPw
+         wvJtoyUD4o67XSIq2Zbjm27n5kIsekqrcdbM0y2HYpXQy2aTG4f7e6rLZcxB2UT+F0c1
+         9wgU2SlVfaxliye6UUOkYrmN++rscI2mPaAs2wIAaCZYAs+PRd2zJMNpjpqfcGyYYPep
+         QOYEwslH903Ih7myFscx/0fkhtLeiQz+VkCYuAzg5QfJp76fvzvTcsUMc5zExYw02XGP
+         6JaGXZmiCCRWRwZQKolbBsp+x0N4695nWT1Q2pebfBBsPaVdraJQgM/Got1dhrn8d4m3
+         eDlw==
+X-Gm-Message-State: AOAM5308WtRDubxNINBDv3rLTwBn7d0ZyvEmpWHlvA1Rmo4klmN6arGT
+        ShPABfDN5MweO//i1AJ161Lw36Kx+w==
+X-Google-Smtp-Source: ABdhPJwygH2C/u5I/SjE5VeC8cY1a79JkJGb77NCs+fguLBs7jezfjqi4R48w8/4D9Xk0nvHBtGSJQ==
+X-Received: by 2002:a92:9510:: with SMTP id y16mr58767465ilh.26.1609454326373;
+        Thu, 31 Dec 2020 14:38:46 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id h2sm31671377ili.56.2020.12.31.14.38.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Dec 2020 14:38:45 -0800 (PST)
+Received: (nullmailer pid 2505330 invoked by uid 1000);
+        Thu, 31 Dec 2020 22:38:43 -0000
+Date:   Thu, 31 Dec 2020 15:38:43 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     sboyd@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
+        gregkh@linuxfoundation.org, gch981213@gmail.com,
+        hackpascal@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, devel@driverdev.osuosl.org,
+        neil@brown.name
+Subject: Re: [PATCH v5 2/6] dt: bindings: add mt7621-clk device tree binding
+ documentation
+Message-ID: <20201231223843.GA2494920@robh.at.kernel.org>
+References: <20201220093724.4906-1-sergio.paracuellos@gmail.com>
+ <20201220093724.4906-3-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-References: <20201231142149.26062-1-martin.kepplinger@puri.sm>
-In-Reply-To: <20201231142149.26062-1-martin.kepplinger@puri.sm>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 31 Dec 2020 17:33:40 -0300
-Message-ID: <CAOMZO5Bq5Qs90iZQTpouv5wW_xf0CQcP-i-+c-Jp-_Ftvhknnw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "clk: imx: fix composite peripheral flags"
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201220093724.4906-3-sergio.paracuellos@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Martin,
+On Sun, Dec 20, 2020 at 10:37:20AM +0100, Sergio Paracuellos wrote:
+> Adds device tree binding documentation for clocks in the
+> MT7621 SOC.
+> 
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  .../bindings/clock/mediatek,mt7621-clk.yaml   | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> new file mode 100644
+> index 000000000000..f58d01bdc82c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt7621-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MT7621 Clock Device Tree Bindings
+> +
+> +maintainers:
+> +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> +
+> +description: |
+> +  The MT7621 has a PLL controller from where the cpu clock is provided
+> +  as well as derived clocks for the bus and the peripherals. It also
+> +  can gate SoC device clocks.
+> +
+> +  Each clock is assigned an identifier and client nodes use this identifier
+> +  to specify the clock which they consume.
+> +
+> +  All these identifiers could be found in:
+> +  [1]: <include/dt-bindings/clock/mt7621-clk.h>.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt7621-clk
+> +
+> +  "#clock-cells":
+> +    description:
+> +      The first cell indicates the clock number, see [1] for available
+> +      clocks.
+> +    const: 1
+> +
+> +  clock-output-names:
+> +    maxItems: 8
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/mt7621-clk.h>
+> +
+> +    pll {
+> +      compatible = "mediatek,mt7621-clk";
+> +      #clock-cells = <1>;
+> +      clock-output-names = "xtal", "cpu", "bus",
+> +                           "50m", "125m", "150m",
+> +                           "250m", "270m";
 
-On Thu, Dec 31, 2020 at 11:22 AM Martin Kepplinger
-<martin.kepplinger@puri.sm> wrote:
->
-> This reverts commit 936c383673b9e3007432f17140ac62de53d87db9.
->
-> It breaks clock reparenting via devfreq on the imx8mq used in the
-> Librem 5 phone. When switching dram frequency (which worked before)
-> the system now hangs after this where the dram_apb clock cannot be
-> set:
->
-> [  129.391755] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
-> set dram_apb parent: -16
-> [  129.391959] imx8m-ddrc-devfreq 3d400000.memory-controller: ddrc
-> failed freq switch to 25000000 from 800000000: error -16. now at 25000000
-> [  129.406133] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
-> update frequency from PM QoS (-16)
+How do you access this h/w. There's nothing defined like 'reg' or 
+a parent node or...
 
-I am wondering whether IMX8MQ_CLK_DRAM_ALT should also be marked as
-CLK_IS_CRITICAL.
+The suggestion on v4 was to get rid of the child node by merging it with 
+the parent like this:
 
-Could you please try the following change without the revert?
++    sysc: sysc@0 {
++      compatible = "mediatek,mt7621-sysc", "syscon";
++      reg = <0x0 0x100>;
++      #clock-cells = <1>;
++      clock-output-names = "xtal", "cpu", "bus",
++                             "50m", "125m", "150m",
++                             "250m", "270m";
++    };
 
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -458,7 +458,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
-         * Mark with GET_RATE_NOCACHE to always read div value from hardware
-         */
-        hws[IMX8MQ_CLK_DRAM_CORE] =
-imx_clk_hw_mux2_flags("dram_core_clk", base + 0x9800, 24, 1,
-imx8mq_dram_core_sels, ARRAY_SIZE(imx8mq_dram_core_sels),
-CLK_IS_CRITICAL);
--       hws[IMX8MQ_CLK_DRAM_ALT] =
-__imx8m_clk_hw_composite("dram_alt", imx8mq_dram_alt_sels, base +
-0xa000, CLK_GET_RATE_NOCACHE);
-+       hws[IMX8MQ_CLK_DRAM_ALT] =
-__imx8m_clk_hw_composite("dram_alt", imx8mq_dram_alt_sels, base +
-0xa000, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
-        hws[IMX8MQ_CLK_DRAM_APB] =
-__imx8m_clk_hw_composite("dram_apb", imx8mq_dram_apb_sels, base +
-0xa080, CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
+Whether you need child nodes or not really depends on what all is in the 
+'mt7621-sysc' h/w block.
 
-Thanks
+Rob
