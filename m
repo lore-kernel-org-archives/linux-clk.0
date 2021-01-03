@@ -2,121 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582BAC43603
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1156BC433E6
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 13:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33D972228A
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 10:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6AED20C56
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 13:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbhACKBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jan 2021 05:01:22 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:47227 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726551AbhACKBR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jan 2021 05:01:17 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 063BE5803E6;
-        Sun,  3 Jan 2021 05:00:11 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 03 Jan 2021 05:00:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm1; bh=guJpiRmPNmpuay60jtLre2M1kZ
-        YS531pnroQeqKbbp8=; b=YLDuPULraX09Gwh5S9275jKOlHpmSStsqW94OkeYxn
-        Hh6Qil1iiurLo+nuzPV4bEpVKpyQJLUsWse5NAy8dmdCsct9RkzYP03e4kVJts/T
-        LaYfuqps8v+rZpM7oZPdjf0ypbWbYTjZlnu/RG0UDxfjrsPD5OjhIcn5RVH3nu+X
-        D8mMtSdrhMW3cbog1JF4CzfTxKAV1xuJOLpQkIa5WGQwO3fJTT+jAbLaHn27ix3c
-        wYwrGZD3qeSRSuwO862por3DxlXosye3jxCkm2pYfGz3JGEyRz6Hy+NkxxSm44Wv
-        HQl2LfXspvALgsknS2uFwbJWCYgqre8++bvqDBh2jSfQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=guJpiRmPNmpuay60j
-        tLre2M1kZYS531pnroQeqKbbp8=; b=XqukjVFBhkXyrlYdkIfVHin2RGLB+4Xrp
-        5kCugZ3nr/hjQUb4ulN0voovduXwX8ulsZ8nHcNGHKRFdHMPxPvA3apRc1fiZ4o2
-        AyZjnUNup7eG03QXH5nUwwO+MU/3Iz7X1ynoAQmbRjtL5+RSLXvzyvReXfgLk5iI
-        lg2qmy2zJ5kUvP86Qa3jNEQm8dwi6CfYDUBRYNuVSytb9JLaBsePz11gjfDbola7
-        OfFviaN/DQr0AlNAtGpHnz4ozkuJFRHciLNvYFKnYwYkbdPe4ptr7Lg0Lbyed72K
-        tL+BkAZjmaDWT53tQKYWWBby1ei+YZUw8z0oKaV11tXjnUo8r5Acg==
-X-ME-Sender: <xms:qZXxX0phcwZrR8dRkK3P7v8ZrkTS3YVxss9LyeYLCIiTaHzA2boatQ>
-    <xme:qZXxX6oEt4wmoX6PEIoRaNly11DRrzVkBLjfuLra6Z_so6q8If2H-p8AyrD51IQex
-    L9GfhxvMQsy79miqA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefuddguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
-    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
-    htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
-    vedtveenucfkphepjedtrddufeehrddugeekrdduhedunecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdr
-    ohhrgh
-X-ME-Proxy: <xmx:qZXxX5MQNgi5QNT9nVQ-OM0WoSlteqazr5vufWThLufZAOB9WCP9wQ>
-    <xmx:qZXxX76MUBgCyU2tuM0GBzX5yp7WlXtI9DvgRr92WAkmlo9C1a5Hlg>
-    <xmx:qZXxXz5lKngfOPJnYJ_3JpD8YHZD10fH6P3gX3j0dNFqBp5SGj1Gjg>
-    <xmx:qpXxX6L9aMUoSmBILSK09FG75vCLdiXSlGuLRfc9mHgBaO1FMMDAfA>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 82CD11080059;
-        Sun,  3 Jan 2021 05:00:08 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726923AbhACNzr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Jan 2021 08:55:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbhACNzr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 3 Jan 2021 08:55:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A00A208C7;
+        Sun,  3 Jan 2021 13:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609682106;
+        bh=XZX/b5YVkD4N7USwkCblU5HNc7owjYjpZHcjsELExUo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mSuFmRYqXphkUuNhO/x6H9mlDsIi0L0l9K7Ore9pESPCvFozDPaUWVE1e4Ji9l8QM
+         FhBIP/1ZLbHFcLY8pReipjYUmf/K1d3KCl5Afx4oyVB0LBNEnG7TKnFI/5X1zyflCv
+         Ilh1SQAldy8loy7UeS/b0sizKSRARpeT4JlBB461XbP2RiBtg/HCoWEYUU/ctaqTPp
+         W9NvXV2GaMiT/PwLmM+R9irZRMyBKXkwUgwyYoRey/mrUsaiUVABthIlWMCRI2awFn
+         7ZcUp7zqD0yNfKyYEoTbqPNKkAi7q4ktAgUsmZqzDFkgPcCvWs24MRxTcTlWcKwvLw
+         jl/6dgpK3kOTA==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v2 0/4] Allwinner H6 RSB support
-Date:   Sun,  3 Jan 2021 04:00:03 -0600
-Message-Id: <20210103100007.32867-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.26.2
+        Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: mmp2: fix build without CONFIG_PM
+Date:   Sun,  3 Jan 2021 14:54:53 +0100
+Message-Id: <20210103135503.3668784-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Allwinner H6 SoC contains an RSB controller. It is almost completely
-undocumented, so it was missed when doing the initial SoC bringup.
+From: Arnd Bergmann <arnd@arndb.de>
 
-This series adds the clock/reset, pin configuration, and device tree
-node needed to use the RSB controller. Since RSB is faster, simpler, and
-generally more reliable than the I2C controller IP in the SoC, switch to
-using it where possible.
+pm_clk_suspend()/pm_clk_resume() are defined as NULL pointers rather than
+empty inline stubs without CONFIG_PM:
 
-This was tested on an Orange Pi 3 and a Pine H64 model B. This series
-does not switch the Pine H64 to use RSB, as doing so would prevent
-accessing the external RTC that shares the I2C bus.
+drivers/clk/mmp/clk-audio.c:402:16: error: called object type 'void *' is not a function or function pointer
+        pm_clk_suspend(dev);
+drivers/clk/mmp/clk-audio.c:411:15: error: called object type 'void *' is not a function or function pointer
+        pm_clk_resume(dev);
 
-Changes v1->v2:
-  - Put the new values at the end of the DT binding headers
+I tried redefining the helper functions, but that caused additional
+problems. This is the simple solution of replacing the __maybe_unused
+trick with an #ifdef.
 
-Samuel Holland (4):
-  clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
-  pinctrl: sunxi: h6-r: Add s_rsb pin functions
-  arm64: dts: allwinner: h6: Add RSB controller node
-  arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
+Fixes: 725262d29139 ("clk: mmp2: Add audio clock controller driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/mmp/clk-audio.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
- .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |  5 +++
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h        |  2 +-
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c   |  2 +
- include/dt-bindings/clock/sun50i-h6-r-ccu.h   |  2 +
- include/dt-bindings/reset/sun50i-h6-r-ccu.h   |  1 +
- 9 files changed, 67 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
+index eea69d498bd2..7aa7f4a9564f 100644
+--- a/drivers/clk/mmp/clk-audio.c
++++ b/drivers/clk/mmp/clk-audio.c
+@@ -392,7 +392,8 @@ static int mmp2_audio_clk_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
++#ifdef CONFIG_PM
++static int mmp2_audio_clk_suspend(struct device *dev)
+ {
+ 	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
+ 
+@@ -404,7 +405,7 @@ static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
++static int mmp2_audio_clk_resume(struct device *dev)
+ {
+ 	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
+ 
+@@ -415,6 +416,7 @@ static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static const struct dev_pm_ops mmp2_audio_clk_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(mmp2_audio_clk_suspend, mmp2_audio_clk_resume, NULL)
 -- 
-2.26.2
+2.29.2
 
