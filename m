@@ -2,86 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D8FC433DB
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBD9C433DB
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 16:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FAC220782
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 285E4207FB
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 16:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbhACOUk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jan 2021 09:20:40 -0500
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:43683 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbhACOUj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jan 2021 09:20:39 -0500
-Received: by mail-lf1-f52.google.com with SMTP id 23so58495556lfg.10;
-        Sun, 03 Jan 2021 06:20:22 -0800 (PST)
+        id S1727318AbhACQaq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Jan 2021 11:30:46 -0500
+Received: from mail-io1-f45.google.com ([209.85.166.45]:42060 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbhACQaq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jan 2021 11:30:46 -0500
+Received: by mail-io1-f45.google.com with SMTP id q137so22824920iod.9;
+        Sun, 03 Jan 2021 08:30:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lyRDga/P88nXpUNSjHBPV4V01nLvTjv4Bg0ZMq7KWiw=;
-        b=Cs3qe7Y3sa+2q2LMYf0Bm7gIHJuTwHz6MmY4eRtwFa9XsmZNSFuNVrEackUJmhBlCY
-         PwhEHiZqJLiA3wwYy+AHKCXDsq7w/lvANqWtKWrDTbIUAEFo+XXFqmBxkSOEC8CGacmO
-         H2RDTHzEf9uAMy5Xz0AVd54y5PuqXgFPhkHyOUX8PVZvlHqBPNoWY6b9Ex8SlZ5Cen6x
-         9uQk/fIM/SyrojJgPswp5a3ZuHHt/XbPScYV7tZdLYm6T2IPkgJtEFVpZYEgNlJgx5My
-         Thf3kQnL5Y23KYjwxYOQVBo4hszTMDHSFpcOTyYzlAL15nMjJYdPgtOPn4zl6H0EGS5E
-         N/rA==
-X-Gm-Message-State: AOAM531YXMoc+jQ3/eKKoQ2GI3nqSmtj4K1QyWy1rne3R2vdh2awrWdH
-        L5nQLQuFO46DQOcymOKZo4atiyE6zkXQ1Q==
-X-Google-Smtp-Source: ABdhPJwqtCL2WZR2lgnS6qNkJmmik9smGPVjF1BAIHsjdmh83+L3Lk9l+Ce1n8Nn8PS141lKdVuKAA==
-X-Received: by 2002:ac2:430a:: with SMTP id l10mr10776662lfh.22.1609683596842;
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id c16sm7006237lfb.236.2021.01.03.06.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id a12so58583911lfl.6;
-        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
-X-Received: by 2002:a19:810:: with SMTP id 16mr33000667lfi.233.1609683595991;
- Sun, 03 Jan 2021 06:19:55 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=86i+Dk92lWWCyD4iVoVNNMNzfrvFDGHE0Q+u7Pv1tAg=;
+        b=BnshLM5DI3x/zFyh+cH8bnbsKOENfPM2CYRv/VA96kBxLGuJod5/N6OTxEvNP4xKwV
+         MLtthZXDotLtN4Isj4iAMROJZKVdP1/VXuysbe/eK5f/rW0Nm4kWZejQ0aja/kGCvNdw
+         ATDlBI/Su9fORTQZqFli1pD+C65VGzfpIEGVuC31t1Sbj6S/BrYN1F/Spv5pEJLdRziT
+         /0hH566TznW2v3lKCZhec7c8x4RYc80p9fxTVOMZCUsz2FbiN7rAfSvK5LTJoXpWCT98
+         LA+MppjOmmZ5P1urVrSPQDIwKBs2QrxqLtyWp/YkUblLDC2OaInWimY1dXIBnAd/6rah
+         8kWA==
+X-Gm-Message-State: AOAM533kUJi4yntfHuUAtl+JS1YpCrKhWY9677w3FnVWjx0UUNyZd6ll
+        YvJKKnPb2+WtWpx19wn2pRydX3rVHw==
+X-Google-Smtp-Source: ABdhPJwbqg/++dfS2HqoOG718/oumLOl4T5g1ipEFEAmCd+vT/JgXsxqDnYrVQNU3eFKCHV9q4arbw==
+X-Received: by 2002:a02:9f8b:: with SMTP id a11mr60036063jam.108.1609691404905;
+        Sun, 03 Jan 2021 08:30:04 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id 9sm41318898iob.28.2021.01.03.08.30.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Jan 2021 08:30:03 -0800 (PST)
+Received: (nullmailer pid 3994326 invoked by uid 1000);
+        Sun, 03 Jan 2021 16:30:00 -0000
+Date:   Sun, 3 Jan 2021 09:30:00 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, lars@metafoo.de, linux-fpga@vger.kernel.org,
+        mdf@kernel.org, dragos.bogdan@analog.com
+Subject: Re: [PATCH 2/2] dt-bindings: clock: adi,axi-clkgen: add Zynq &
+ ZynqMP compatible strings
+Message-ID: <20210103163000.GA3986534@robh.at.kernel.org>
+References: <20201221144224.50814-1-alexandru.ardelean@analog.com>
+ <20201221144224.50814-2-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-References: <20210103100007.32867-1-samuel@sholland.org> <20210103100007.32867-3-samuel@sholland.org>
-In-Reply-To: <20210103100007.32867-3-samuel@sholland.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 3 Jan 2021 22:19:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
-Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 2/4] pinctrl: sunxi: h6-r: Add s_rsb pin functions
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201221144224.50814-2-alexandru.ardelean@analog.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jan 3, 2021 at 6:00 PM Samuel Holland <samuel@sholland.org> wrote:
->
-> As there is an RSB controller in the H6 SoC, there should be some pin
-> configuration for it. While no such configuration is documented, the
-> "s_i2c" pins are suspiciously on the "alternate" function 3, with no
-> primary function 2 given. This suggests the primary function for these
-> pins is actually RSB, and that is indeed the case.
->
-> Add the "s_rsb" pin functions so the RSB controller can be used.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+On Mon, Dec 21, 2020 at 04:42:24PM +0200, Alexandru Ardelean wrote:
+> The axi-clkgen driver now supports ZynqMP (UltraScale) as well, however the
+> driver needs to use different PFD & VCO limits.
+> 
+> For ZynqMP, these needs to be selected by using the
+> 'adi,zynqmp-axi-clkgen-2.00.a' string. For consistency a
+> 'adi,zynq-axi-clkgen-2.00.a' has been added which should behave as the
+> original compatible string (i.e. 'adi,axi-clkgen-2.00.a').
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Version numbers and SoC are kind of rendundant.
+
+Does 'adi,axi-clkgen-2.00.a' apply to anything other than Zynq? If not, 
+you don't really need a new string. If so, you really want it to be:
+
+compatible = "adi,zynq-axi-clkgen-2.00.a", "adi,axi-clkgen-2.00.a";
+
+To be forwards and backwards compatible.
+
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>  Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> index 0d06387184d6..398954ec6767 100644
+> --- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> +++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+> @@ -20,6 +20,8 @@ properties:
+>    compatible:
+>      enum:
+>        - adi,axi-clkgen-2.00.a
+> +      - adi,zynq-axi-clkgen-2.00.a
+> +      - adi,zynqmp-axi-clkgen-2.00.a
+>  
+>    clocks:
+>      description:
+> -- 
+> 2.17.1
+> 
