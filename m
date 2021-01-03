@@ -2,102 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1156BC433E6
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 13:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D8FC433DB
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6AED20C56
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 13:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FAC220782
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 14:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbhACNzr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jan 2021 08:55:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbhACNzr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 3 Jan 2021 08:55:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A00A208C7;
-        Sun,  3 Jan 2021 13:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609682106;
-        bh=XZX/b5YVkD4N7USwkCblU5HNc7owjYjpZHcjsELExUo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mSuFmRYqXphkUuNhO/x6H9mlDsIi0L0l9K7Ore9pESPCvFozDPaUWVE1e4Ji9l8QM
-         FhBIP/1ZLbHFcLY8pReipjYUmf/K1d3KCl5Afx4oyVB0LBNEnG7TKnFI/5X1zyflCv
-         Ilh1SQAldy8loy7UeS/b0sizKSRARpeT4JlBB461XbP2RiBtg/HCoWEYUU/ctaqTPp
-         W9NvXV2GaMiT/PwLmM+R9irZRMyBKXkwUgwyYoRey/mrUsaiUVABthIlWMCRI2awFn
-         7ZcUp7zqD0yNfKyYEoTbqPNKkAi7q4ktAgUsmZqzDFkgPcCvWs24MRxTcTlWcKwvLw
-         jl/6dgpK3kOTA==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mmp2: fix build without CONFIG_PM
-Date:   Sun,  3 Jan 2021 14:54:53 +0100
-Message-Id: <20210103135503.3668784-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        id S1725845AbhACOUk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Jan 2021 09:20:40 -0500
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:43683 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbhACOUj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jan 2021 09:20:39 -0500
+Received: by mail-lf1-f52.google.com with SMTP id 23so58495556lfg.10;
+        Sun, 03 Jan 2021 06:20:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lyRDga/P88nXpUNSjHBPV4V01nLvTjv4Bg0ZMq7KWiw=;
+        b=Cs3qe7Y3sa+2q2LMYf0Bm7gIHJuTwHz6MmY4eRtwFa9XsmZNSFuNVrEackUJmhBlCY
+         PwhEHiZqJLiA3wwYy+AHKCXDsq7w/lvANqWtKWrDTbIUAEFo+XXFqmBxkSOEC8CGacmO
+         H2RDTHzEf9uAMy5Xz0AVd54y5PuqXgFPhkHyOUX8PVZvlHqBPNoWY6b9Ex8SlZ5Cen6x
+         9uQk/fIM/SyrojJgPswp5a3ZuHHt/XbPScYV7tZdLYm6T2IPkgJtEFVpZYEgNlJgx5My
+         Thf3kQnL5Y23KYjwxYOQVBo4hszTMDHSFpcOTyYzlAL15nMjJYdPgtOPn4zl6H0EGS5E
+         N/rA==
+X-Gm-Message-State: AOAM531YXMoc+jQ3/eKKoQ2GI3nqSmtj4K1QyWy1rne3R2vdh2awrWdH
+        L5nQLQuFO46DQOcymOKZo4atiyE6zkXQ1Q==
+X-Google-Smtp-Source: ABdhPJwqtCL2WZR2lgnS6qNkJmmik9smGPVjF1BAIHsjdmh83+L3Lk9l+Ce1n8Nn8PS141lKdVuKAA==
+X-Received: by 2002:ac2:430a:: with SMTP id l10mr10776662lfh.22.1609683596842;
+        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id c16sm7006237lfb.236.2021.01.03.06.19.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id a12so58583911lfl.6;
+        Sun, 03 Jan 2021 06:19:56 -0800 (PST)
+X-Received: by 2002:a19:810:: with SMTP id 16mr33000667lfi.233.1609683595991;
+ Sun, 03 Jan 2021 06:19:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210103100007.32867-1-samuel@sholland.org> <20210103100007.32867-3-samuel@sholland.org>
+In-Reply-To: <20210103100007.32867-3-samuel@sholland.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sun, 3 Jan 2021 22:19:44 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
+Message-ID: <CAGb2v64KioyzGK0uLTVNyhc38fH2A8DWRYc8FVkEVZDjVwr6RA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 2/4] pinctrl: sunxi: h6-r: Add s_rsb pin functions
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Sun, Jan 3, 2021 at 6:00 PM Samuel Holland <samuel@sholland.org> wrote:
+>
+> As there is an RSB controller in the H6 SoC, there should be some pin
+> configuration for it. While no such configuration is documented, the
+> "s_i2c" pins are suspiciously on the "alternate" function 3, with no
+> primary function 2 given. This suggests the primary function for these
+> pins is actually RSB, and that is indeed the case.
+>
+> Add the "s_rsb" pin functions so the RSB controller can be used.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-pm_clk_suspend()/pm_clk_resume() are defined as NULL pointers rather than
-empty inline stubs without CONFIG_PM:
-
-drivers/clk/mmp/clk-audio.c:402:16: error: called object type 'void *' is not a function or function pointer
-        pm_clk_suspend(dev);
-drivers/clk/mmp/clk-audio.c:411:15: error: called object type 'void *' is not a function or function pointer
-        pm_clk_resume(dev);
-
-I tried redefining the helper functions, but that caused additional
-problems. This is the simple solution of replacing the __maybe_unused
-trick with an #ifdef.
-
-Fixes: 725262d29139 ("clk: mmp2: Add audio clock controller driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/mmp/clk-audio.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
-index eea69d498bd2..7aa7f4a9564f 100644
---- a/drivers/clk/mmp/clk-audio.c
-+++ b/drivers/clk/mmp/clk-audio.c
-@@ -392,7 +392,8 @@ static int mmp2_audio_clk_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
-+#ifdef CONFIG_PM
-+static int mmp2_audio_clk_suspend(struct device *dev)
- {
- 	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
- 
-@@ -404,7 +405,7 @@ static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
-+static int mmp2_audio_clk_resume(struct device *dev)
- {
- 	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
- 
-@@ -415,6 +416,7 @@ static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
- 
- 	return 0;
- }
-+#endif
- 
- static const struct dev_pm_ops mmp2_audio_clk_pm_ops = {
- 	SET_RUNTIME_PM_OPS(mmp2_audio_clk_suspend, mmp2_audio_clk_resume, NULL)
--- 
-2.29.2
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
