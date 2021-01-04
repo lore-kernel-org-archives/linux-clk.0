@@ -2,103 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBD9C433DB
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 16:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771ECC43381
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 07:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 285E4207FB
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jan 2021 16:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D24222B6
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 07:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbhACQaq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jan 2021 11:30:46 -0500
-Received: from mail-io1-f45.google.com ([209.85.166.45]:42060 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbhACQaq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jan 2021 11:30:46 -0500
-Received: by mail-io1-f45.google.com with SMTP id q137so22824920iod.9;
-        Sun, 03 Jan 2021 08:30:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=86i+Dk92lWWCyD4iVoVNNMNzfrvFDGHE0Q+u7Pv1tAg=;
-        b=BnshLM5DI3x/zFyh+cH8bnbsKOENfPM2CYRv/VA96kBxLGuJod5/N6OTxEvNP4xKwV
-         MLtthZXDotLtN4Isj4iAMROJZKVdP1/VXuysbe/eK5f/rW0Nm4kWZejQ0aja/kGCvNdw
-         ATDlBI/Su9fORTQZqFli1pD+C65VGzfpIEGVuC31t1Sbj6S/BrYN1F/Spv5pEJLdRziT
-         /0hH566TznW2v3lKCZhec7c8x4RYc80p9fxTVOMZCUsz2FbiN7rAfSvK5LTJoXpWCT98
-         LA+MppjOmmZ5P1urVrSPQDIwKBs2QrxqLtyWp/YkUblLDC2OaInWimY1dXIBnAd/6rah
-         8kWA==
-X-Gm-Message-State: AOAM533kUJi4yntfHuUAtl+JS1YpCrKhWY9677w3FnVWjx0UUNyZd6ll
-        YvJKKnPb2+WtWpx19wn2pRydX3rVHw==
-X-Google-Smtp-Source: ABdhPJwbqg/++dfS2HqoOG718/oumLOl4T5g1ipEFEAmCd+vT/JgXsxqDnYrVQNU3eFKCHV9q4arbw==
-X-Received: by 2002:a02:9f8b:: with SMTP id a11mr60036063jam.108.1609691404905;
-        Sun, 03 Jan 2021 08:30:04 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id 9sm41318898iob.28.2021.01.03.08.30.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Jan 2021 08:30:03 -0800 (PST)
-Received: (nullmailer pid 3994326 invoked by uid 1000);
-        Sun, 03 Jan 2021 16:30:00 -0000
-Date:   Sun, 3 Jan 2021 09:30:00 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, lars@metafoo.de, linux-fpga@vger.kernel.org,
-        mdf@kernel.org, dragos.bogdan@analog.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: adi,axi-clkgen: add Zynq &
- ZynqMP compatible strings
-Message-ID: <20210103163000.GA3986534@robh.at.kernel.org>
-References: <20201221144224.50814-1-alexandru.ardelean@analog.com>
- <20201221144224.50814-2-alexandru.ardelean@analog.com>
+        id S1727037AbhADHMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jan 2021 02:12:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbhADHMu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 02:12:50 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52FDFC061793
+        for <linux-clk@vger.kernel.org>; Sun,  3 Jan 2021 23:12:10 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1kwK1x-00044f-Iy; Mon, 04 Jan 2021 08:11:53 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1kwK1w-0000k2-1v; Mon, 04 Jan 2021 08:11:52 +0100
+Date:   Mon, 4 Jan 2021 08:11:52 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx: enable the earlycon uart clocks by parsing
+ from dt
+Message-ID: <20210104071152.GA19063@pengutronix.de>
+References: <20201229145130.2680442-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201221144224.50814-2-alexandru.ardelean@analog.com>
+In-Reply-To: <20201229145130.2680442-1-aford173@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 07:55:54 up 32 days, 19:22, 49 users,  load average: 0.13, 0.08,
+ 0.10
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 21, 2020 at 04:42:24PM +0200, Alexandru Ardelean wrote:
-> The axi-clkgen driver now supports ZynqMP (UltraScale) as well, however the
-> driver needs to use different PFD & VCO limits.
+Hi Adam,
+
+On Tue, Dec 29, 2020 at 08:51:28AM -0600, Adam Ford wrote:
+> Remove the earlycon uart clocks that are hard cord in platforms
+> clock driver, instead of parsing the earlycon uart port from dt
+
+"instead parse the earlycon uart..."
+
+Otherwise it's confusing what you mean here.
+
+> and enable these clocks from clock property in dt node.
 > 
-> For ZynqMP, these needs to be selected by using the
-> 'adi,zynqmp-axi-clkgen-2.00.a' string. For consistency a
-> 'adi,zynq-axi-clkgen-2.00.a' has been added which should behave as the
-> original compatible string (i.e. 'adi,axi-clkgen-2.00.a').
-
-Version numbers and SoC are kind of rendundant.
-
-Does 'adi,axi-clkgen-2.00.a' apply to anything other than Zynq? If not, 
-you don't really need a new string. If so, you really want it to be:
-
-compatible = "adi,zynq-axi-clkgen-2.00.a", "adi,axi-clkgen-2.00.a";
-
-To be forwards and backwards compatible.
-
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
+> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 > ---
->  Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> Based on NXP's code base and adapted for 5.11-rc1.
+> https://source.codeaurora.org/external/imx/linux-imx/commit/drivers/clk/imx/clk.c?h=imx_5.4.47_2.2.0&id=754ae82cc55b7445545fc2f092a70e0f490e9c1b
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> index 0d06387184d6..398954ec6767 100644
-> --- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> +++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
-> @@ -20,6 +20,8 @@ properties:
->    compatible:
->      enum:
->        - adi,axi-clkgen-2.00.a
-> +      - adi,zynq-axi-clkgen-2.00.a
-> +      - adi,zynqmp-axi-clkgen-2.00.a
+> The original signed-off was retained.
+> Added the fixes tag.
+> ---
+>  drivers/clk/imx/clk.c | 43 +++++++++++++++++++++++++++++--------------
+>  1 file changed, 29 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> index 47882c51cb85..c32b46890945 100644
+> --- a/drivers/clk/imx/clk.c
+> +++ b/drivers/clk/imx/clk.c
+> @@ -148,7 +148,7 @@ void imx_cscmr1_fixup(u32 *val)
 >  
->    clocks:
->      description:
+>  #ifndef MODULE
+>  static int imx_keep_uart_clocks;
+> -static struct clk ** const *imx_uart_clocks;
+> +static bool imx_uart_clks_on;
+>  
+>  static int __init imx_keep_uart_clocks_param(char *str)
+>  {
+> @@ -161,25 +161,40 @@ __setup_param("earlycon", imx_keep_uart_earlycon,
+>  __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+>  	      imx_keep_uart_clocks_param, 0);
+>  
+> -void imx_register_uart_clocks(struct clk ** const clks[])
+> +static void imx_earlycon_uart_clks_onoff(bool is_on)
+
+"is_on" sounds like it's the current state of the clock, but actually
+the variable is used for the desired state, so I suggest using plain
+"on" as name.
+
+>  {
+> -	if (imx_keep_uart_clocks) {
+> -		int i;
+> +	struct clk *uart_clk;
+> +	int i = 0;
+>  
+> -		imx_uart_clocks = clks;
+> -		for (i = 0; imx_uart_clocks[i]; i++)
+> -			clk_prepare_enable(*imx_uart_clocks[i]);
+> -	}
+> +	if (!imx_keep_uart_clocks || (!is_on && !imx_uart_clks_on))
+> +		return;
+> +
+> +	/* only support dt */
+> +	if (!of_stdout)
+> +		return;
+> +
+> +	do {
+> +		uart_clk = of_clk_get(of_stdout, i++);
+
+of_clk_get() allocates memory and gets you a reference to the clock. You
+have to release the clock with clk_put(). I think what you have to do
+here is to fill an array with clks when called from
+imx_register_uart_clocks() and when called from imx_clk_disable_uart()
+use that array to clk_disable_unprepare()/clk_put() the clocks.
+
+Sascha
+
+> +		if (IS_ERR(uart_clk))
+> +			break;
+> +
+> +		if (is_on)
+> +			clk_prepare_enable(uart_clk);
+> +		else
+> +			clk_disable_unprepare(uart_clk);
+> +	} while (true);
+> +
+> +	if (is_on)
+> +		imx_uart_clks_on = true;
+> +}
+> +void imx_register_uart_clocks(struct clk ** const clks[])
+> +{
+> +	imx_earlycon_uart_clks_onoff(true);
+>  }
+>  
+>  static int __init imx_clk_disable_uart(void)
+>  {
+> -	if (imx_keep_uart_clocks && imx_uart_clocks) {
+> -		int i;
+> -
+> -		for (i = 0; imx_uart_clocks[i]; i++)
+> -			clk_disable_unprepare(*imx_uart_clocks[i]);
+> -	}
+> +	imx_earlycon_uart_clks_onoff(false);
+>  
+>  	return 0;
+>  }
 > -- 
-> 2.17.1
+> 2.25.1
 > 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
