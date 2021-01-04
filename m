@@ -2,145 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFA4C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6B2C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 10:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7369020798
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0776207BC
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 10:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726306AbhADIcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jan 2021 03:32:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
+        id S1726777AbhADKzb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jan 2021 05:55:31 -0500
+Received: from foss.arm.com ([217.140.110.172]:58888 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbhADIcb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 Jan 2021 03:32:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C3C9A20798;
-        Mon,  4 Jan 2021 08:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609749110;
-        bh=/l4LNgcZQuQKp8LjOcoiZ+3D5i2u+KxinFDst/ZT+Xw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bH9nLgUy6rQaKDLX1sw1beUf9Aq83lpTkkF5ADT9W2qKlL12x7qcISW2nja3aqI1Y
-         WzpG1HIteKGSrWtfL4/MJWWFZPBQZigPtLn7owPGJgh1SKwM/Z0NWd4326bSyG2UVp
-         cbtkAJ/BJ+ksAQAWS715qAMvFPntnXind4CHexEHnKoDA38+VGZGUq5N3KFvPcQKRJ
-         umggJKKxXJrxQebYyCNBK4D1yb/2Cva4LLilwnlwEgsxwCT0/1TdV5UeDY3sdvXAvG
-         TRTNprpXnycMUQpKcKL+L1jkCD7tuLfQvRYX6/z0/rd93m1CzYF32NtvmESwNcScE6
-         VCK/MmB55ljqQ==
-Received: by wens.tw (Postfix, from userid 1000)
-        id A190F5F823; Mon,  4 Jan 2021 16:31:48 +0800 (CST)
-Date:   Mon, 4 Jan 2021 16:31:48 +0800
-From:   Chen-Yu Tsai <wens@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        id S1726492AbhADKzb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 Jan 2021 05:55:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07EDDED1;
+        Mon,  4 Jan 2021 02:54:45 -0800 (PST)
+Received: from [192.168.2.22] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DA843F70D;
+        Mon,  4 Jan 2021 02:54:43 -0800 (PST)
+Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC
+ connection
+To:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v2 0/4] Allwinner H6 RSB support
-Message-ID: <X/LSdICpXl6vT65y@wens.csie.org>
 References: <20210103100007.32867-1-samuel@sholland.org>
+ <20210103100007.32867-5-samuel@sholland.org>
+From:   =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
+Organization: ARM Ltd.
+Message-ID: <a6c2eac4-7e98-ecb4-ee8a-d67a7f1b6871@arm.com>
+Date:   Mon, 4 Jan 2021 10:54:19 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
+In-Reply-To: <20210103100007.32867-5-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 03/01/2021 10:00, Samuel Holland wrote:
+> On boards where the only peripheral connected to PL0/PL1 is an X-Powers
+> PMIC, configure the connection to use the RSB bus rather than the I2C
+> bus. Compared to the I2C controller that shares the pins, the RSB
+> controller allows a higher bus frequency, and it is more CPU-efficient.
 
-On Sun, Jan 03, 2021 at 04:00:03AM -0600, Samuel Holland wrote:
-> The Allwinner H6 SoC contains an RSB controller. It is almost completely
-> undocumented, so it was missed when doing the initial SoC bringup.
-> 
-> This series adds the clock/reset, pin configuration, and device tree
-> node needed to use the RSB controller. Since RSB is faster, simpler, and
-> generally more reliable than the I2C controller IP in the SoC, switch to
-> using it where possible.
-> 
-> This was tested on an Orange Pi 3 and a Pine H64 model B. This series
-> does not switch the Pine H64 to use RSB, as doing so would prevent
-> accessing the external RTC that shares the I2C bus.
-> 
-> Changes v1->v2:
->   - Put the new values at the end of the DT binding headers
-> 
-> Samuel Holland (4):
->   clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
->   pinctrl: sunxi: h6-r: Add s_rsb pin functions
->   arm64: dts: allwinner: h6: Add RSB controller node
->   arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
+But is it really necessary to change the DTs for those boards in this
+way? It means those newer DTs now become incompatible with older
+kernels, and I don't know if those reasons above really justify this.
 
-I queued up patches 1, 3, and 4 locally for v5.12. Obviously this won't
-work unless the pinctrl patch is also queued up, so they won't be pushed
-out until that happens.
+I understand that we officially don't care about "newer DTs on older
+kernels", but do we really need to break this deliberately, for no
+pressing reasons?
 
-Regarding patch 3, I replaced the clock and reset macros with raw
-numbers to get rid of cross-tree dependencies. The following fix
-will be posted for v5.12 later on during its RC cycle.
+Cheers,
+Andre
 
------------------------- >8 ------------------------
+P.S. I am fine with supporting RSB on H6, and even using it on new DTs,
+just want to avoid breaking existing ones.
 
-commit 0b4781666adc5e19c4d4fb4a2bff33883181cc39
-Author: Chen-Yu Tsai <wens@csie.org>
-Date:   Mon Jan 4 16:19:17 2021 +0800
-
-    arm64: dts: allwinner: h6: Switch to macros for RSB clock/reset indices
-    
-    The macros for the clock and reset indices for the RSB hardware block
-    were replaced with raw numbers when the RSB controller node was added.
-    This was done to avoid cross-tree dependencies.
-    
-    Now that both the clk and DT changes have been merged, we can switch
-    back to using the macros.
-    
-    Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index d897697849d6..b043beea8e6e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -988,9 +988,9 @@ r_rsb: rsb@7083000 {
- 			compatible = "allwinner,sun8i-a23-rsb";
- 			reg = <0x07083000 0x400>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&r_ccu 13>;
-+			clocks = <&r_ccu CLK_R_APB2_RSB>;
- 			clock-frequency = <3000000>;
--			resets = <&r_ccu 7>;
-+			resets = <&r_ccu RST_R_APB2_RSB>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&r_rsb_pins>;
- 			status = "disabled";
------------------------- >8 ------------------------
-
-> 
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
 >  .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
 >  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
 >  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |  5 +++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h        |  2 +-
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c   |  2 +
->  include/dt-bindings/clock/sun50i-h6-r-ccu.h   |  2 +
->  include/dt-bindings/reset/sun50i-h6-r-ccu.h   |  1 +
->  9 files changed, 67 insertions(+), 38 deletions(-)
+>  3 files changed, 37 insertions(+), 37 deletions(-)
 > 
-> -- 
-> 2.26.2
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
+> index 7c9dbde645b5..3452add30cc4 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
+> @@ -150,12 +150,28 @@ &pio {
+>  	vcc-pg-supply = <&reg_aldo1>;
+>  };
+>  
+> -&r_i2c {
+> +&r_ir {
+> +	linux,rc-map-name = "rc-beelink-gs1";
+> +	status = "okay";
+> +};
+> +
+> +&r_pio {
+> +	/*
+> +	 * FIXME: We can't add that supply for now since it would
+> +	 * create a circular dependency between pinctrl, the regulator
+> +	 * and the RSB Bus.
+> +	 *
+> +	 * vcc-pl-supply = <&reg_aldo1>;
+> +	 */
+> +	vcc-pm-supply = <&reg_aldo1>;
+> +};
+> +
+> +&r_rsb {
+>  	status = "okay";
+>  
+> -	axp805: pmic@36 {
+> +	axp805: pmic@745 {
+>  		compatible = "x-powers,axp805", "x-powers,axp806";
+> -		reg = <0x36>;
+> +		reg = <0x745>;
+>  		interrupt-parent = <&r_intc>;
+>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>  		interrupt-controller;
+> @@ -273,22 +289,6 @@ sw {
+>  	};
+>  };
+>  
+> -&r_ir {
+> -	linux,rc-map-name = "rc-beelink-gs1";
+> -	status = "okay";
+> -};
+> -
+> -&r_pio {
+> -	/*
+> -	 * PL0 and PL1 are used for PMIC I2C
+> -	 * don't enable the pl-supply else
+> -	 * it will fail at boot
+> -	 *
+> -	 * vcc-pl-supply = <&reg_aldo1>;
+> -	 */
+> -	vcc-pm-supply = <&reg_aldo1>;
+> -};
+> -
+>  &rtc {
+>  	clocks = <&ext_osc32k>;
+>  };
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> index 15c9dd8c4479..16702293ac0b 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> @@ -175,12 +175,16 @@ &pio {
+>  	vcc-pg-supply = <&reg_vcc_wifi_io>;
+>  };
+>  
+> -&r_i2c {
+> +&r_ir {
+> +	status = "okay";
+> +};
+> +
+> +&r_rsb {
+>  	status = "okay";
+>  
+> -	axp805: pmic@36 {
+> +	axp805: pmic@745 {
+>  		compatible = "x-powers,axp805", "x-powers,axp806";
+> -		reg = <0x36>;
+> +		reg = <0x745>;
+>  		interrupt-parent = <&r_intc>;
+>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>  		interrupt-controller;
+> @@ -291,10 +295,6 @@ sw {
+>  	};
+>  };
+>  
+> -&r_ir {
+> -	status = "okay";
+> -};
+> -
+>  &rtc {
+>  	clocks = <&ext_osc32k>;
+>  };
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> index ebc120a9232f..23e3cb2ffd8d 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
+> @@ -112,12 +112,20 @@ &pio {
+>  	vcc-pg-supply = <&reg_aldo1>;
+>  };
+>  
+> -&r_i2c {
+> +&r_ir {
+> +	status = "okay";
+> +};
+> +
+> +&r_pio {
+> +	vcc-pm-supply = <&reg_bldo3>;
+> +};
+> +
+> +&r_rsb {
+>  	status = "okay";
+>  
+> -	axp805: pmic@36 {
+> +	axp805: pmic@745 {
+>  		compatible = "x-powers,axp805", "x-powers,axp806";
+> -		reg = <0x36>;
+> +		reg = <0x745>;
+>  		interrupt-parent = <&r_intc>;
+>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>  		interrupt-controller;
+> @@ -232,14 +240,6 @@ sw {
+>  	};
+>  };
+>  
+> -&r_ir {
+> -	status = "okay";
+> -};
+> -
+> -&r_pio {
+> -	vcc-pm-supply = <&reg_bldo3>;
+> -};
+> -
+>  &rtc {
+>  	clocks = <&ext_osc32k>;
+>  };
 > 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20210103100007.32867-1-samuel%40sholland.org.
+
