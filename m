@@ -2,185 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771ECC43381
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 07:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B72C433DB
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40D24222B6
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 07:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E509A20702
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbhADHMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jan 2021 02:12:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
+        id S1726605AbhADIMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jan 2021 03:12:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbhADHMu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 02:12:50 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52FDFC061793
-        for <linux-clk@vger.kernel.org>; Sun,  3 Jan 2021 23:12:10 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kwK1x-00044f-Iy; Mon, 04 Jan 2021 08:11:53 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1kwK1w-0000k2-1v; Mon, 04 Jan 2021 08:11:52 +0100
-Date:   Mon, 4 Jan 2021 08:11:52 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx: enable the earlycon uart clocks by parsing
- from dt
-Message-ID: <20210104071152.GA19063@pengutronix.de>
-References: <20201229145130.2680442-1-aford173@gmail.com>
+        with ESMTP id S1726163AbhADIMR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 03:12:17 -0500
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A03DC061574
+        for <linux-clk@vger.kernel.org>; Mon,  4 Jan 2021 00:11:37 -0800 (PST)
+Received: by mail-pg1-x536.google.com with SMTP id n7so18617205pgg.2
+        for <linux-clk@vger.kernel.org>; Mon, 04 Jan 2021 00:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N1N/VRl7IYxshCXfWBMhv9L4GKmc3hy8weZHQ7rGDVA=;
+        b=QghjExDFWmmI4IZigyH0QYWlIx8avgEsfnoIs9PxunNbsBTtE923wXAMJEJ+P8/91R
+         D6t4C9+Fl9vqSVyfoJtajrm0tne9TxIU3OUCnZ9dLy6Fvo26BpDAse8U9ksRrUOPwLl7
+         gExBmitmk3f8rEZLr1a0EnZzJNGzi8qtod2CWAITbLOWjezObnqxSZr4cbCz8V76+A6B
+         u4tyT2NFpiAjZa1pfG73A2Z+wTUym7bBHSoT4BcBkkY8VEQ/1THZTpwvCqm74ZXgZvIv
+         /Der4OumT93SCJijOyH7oZiqRctlteV9GhRMdxrFHE+mw5VHwsxGCKNBGklCsXEnx86F
+         MOlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N1N/VRl7IYxshCXfWBMhv9L4GKmc3hy8weZHQ7rGDVA=;
+        b=mBu8gYMz1CdkJ76Wg9EkxWUqp+03FVXHmtXOObeT0jdn1qcqHsDKfdSnfx5nQ1Z5aB
+         BcmJAhrxb1mdZwMQItJP9UITwxuwuAjj2g+6mNcQZcWdf8NQBYdNB9F4UZvWBX5dBfm+
+         CnIzXQ7Gn88wGJedClTyhrx26vPMDMs3Iu6jXL9notuT/c1jE2sVuHIc+dE7VM5c1CZ/
+         oxnzT7TM4OvXQAkj7FulR8ljpPCnK4vo4zL07SszCIP1E/uhL/O9sod0RuAPvRXk+ECJ
+         6t/AoAzkDFWGFa3sFbFE4bVHrwGkysUiBHsujd830WegXnTY/FYgSkPKhaYRd1/LTQYA
+         glpw==
+X-Gm-Message-State: AOAM533FX2yWEPDo4ZX24lr9DkrBdiA8U/8y2JpTqHgg/e5dWeGA47Sk
+        JKFEsFR4jhqpGMd0wn1oFy5l
+X-Google-Smtp-Source: ABdhPJwBWRJhGyCA+bGdgK0mKkSL72v59XaeOdVINrKkcwTDtJKJKyRpAqgAIYgmNPrd78ZrHLSCiw==
+X-Received: by 2002:a62:2585:0:b029:1ab:7fb7:b965 with SMTP id l127-20020a6225850000b02901ab7fb7b965mr62847150pfl.2.1609747896658;
+        Mon, 04 Jan 2021 00:11:36 -0800 (PST)
+Received: from localhost.localdomain ([103.77.37.160])
+        by smtp.gmail.com with ESMTPSA id n7sm55051339pfn.141.2021.01.04.00.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jan 2021 00:11:36 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        jassisinghbrar@gmail.com
+Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
+        bjorn.andersson@linaro.org, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/5] Add APCS support for SDX55
+Date:   Mon,  4 Jan 2021 13:41:20 +0530
+Message-Id: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201229145130.2680442-1-aford173@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:55:54 up 32 days, 19:22, 49 users,  load average: 0.13, 0.08,
- 0.10
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
+Hello,
 
-On Tue, Dec 29, 2020 at 08:51:28AM -0600, Adam Ford wrote:
-> Remove the earlycon uart clocks that are hard cord in platforms
-> clock driver, instead of parsing the earlycon uart port from dt
+This series adds APCS mailbox and clock support for SDX55. The APCS IP
+in SDX55 provides IPC and clock functionalities. Hence, mailbox support
+is added to the "qcom-apcs-ipc-mailbox" driver and a dedicated clock
+driver "apcs-sdx55" is added.
 
-"instead parse the earlycon uart..."
+Also, the clock to the APCS block is coming from 3 different sources:
 
-Otherwise it's confusing what you mean here.
+1. Board XO
+2. Fixed rate GPLL0
+3. A7 PLL
 
-> and enable these clocks from clock property in dt node.
-> 
-> Fixes: 9461f7b33d11c ("clk: fix CLK_SET_RATE_GATE with clock rate protection")
-> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> Based on NXP's code base and adapted for 5.11-rc1.
-> https://source.codeaurora.org/external/imx/linux-imx/commit/drivers/clk/imx/clk.c?h=imx_5.4.47_2.2.0&id=754ae82cc55b7445545fc2f092a70e0f490e9c1b
-> 
-> The original signed-off was retained.
-> Added the fixes tag.
-> ---
->  drivers/clk/imx/clk.c | 43 +++++++++++++++++++++++++++++--------------
->  1 file changed, 29 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index 47882c51cb85..c32b46890945 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -148,7 +148,7 @@ void imx_cscmr1_fixup(u32 *val)
->  
->  #ifndef MODULE
->  static int imx_keep_uart_clocks;
-> -static struct clk ** const *imx_uart_clocks;
-> +static bool imx_uart_clks_on;
->  
->  static int __init imx_keep_uart_clocks_param(char *str)
->  {
-> @@ -161,25 +161,40 @@ __setup_param("earlycon", imx_keep_uart_earlycon,
->  __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
->  	      imx_keep_uart_clocks_param, 0);
->  
-> -void imx_register_uart_clocks(struct clk ** const clks[])
-> +static void imx_earlycon_uart_clks_onoff(bool is_on)
+First source is from crystal osc, second is from GCC and third one is a
+separate clock source. Hence, a dedicated clk driver is added for the A7
+PLL as well.
 
-"is_on" sounds like it's the current state of the clock, but actually
-the variable is used for the desired state, so I suggest using plain
-"on" as name.
+Apart from the mailbox support, another intention of this series is to add
+the CPUFreq support to SDX55 platform. Since there is no dedicated hardware
+IP in SDX55 to do CPUFreq duties, this platform makes use of the clock and
+regulators directly via cpufreq-dt driver.
 
->  {
-> -	if (imx_keep_uart_clocks) {
-> -		int i;
-> +	struct clk *uart_clk;
-> +	int i = 0;
->  
-> -		imx_uart_clocks = clks;
-> -		for (i = 0; imx_uart_clocks[i]; i++)
-> -			clk_prepare_enable(*imx_uart_clocks[i]);
-> -	}
-> +	if (!imx_keep_uart_clocks || (!is_on && !imx_uart_clks_on))
-> +		return;
-> +
-> +	/* only support dt */
-> +	if (!of_stdout)
-> +		return;
-> +
-> +	do {
-> +		uart_clk = of_clk_get(of_stdout, i++);
+The trick here is attaching the power domain to cpudev. Usually the power
+domains for the target device is attached in the bus driver or in the
+dedicated device drivers. But in this case, there is no dedicated CPUFreq
+driver nor a bus driver. After discussing with Viresh, I concluded that
+A7 PLL driver might be the best place to do this!
 
-of_clk_get() allocates memory and gets you a reference to the clock. You
-have to release the clock with clk_put(). I think what you have to do
-here is to fill an array with clks when called from
-imx_register_uart_clocks() and when called from imx_clk_disable_uart()
-use that array to clk_disable_unprepare()/clk_put() the clocks.
+But this decision is subject to discussion, hence added Ulf and Viresh to
+this series.
 
-Sascha
+Thanks,
+Mani
 
-> +		if (IS_ERR(uart_clk))
-> +			break;
-> +
-> +		if (is_on)
-> +			clk_prepare_enable(uart_clk);
-> +		else
-> +			clk_disable_unprepare(uart_clk);
-> +	} while (true);
-> +
-> +	if (is_on)
-> +		imx_uart_clks_on = true;
-> +}
-> +void imx_register_uart_clocks(struct clk ** const clks[])
-> +{
-> +	imx_earlycon_uart_clks_onoff(true);
->  }
->  
->  static int __init imx_clk_disable_uart(void)
->  {
-> -	if (imx_keep_uart_clocks && imx_uart_clocks) {
-> -		int i;
-> -
-> -		for (i = 0; imx_uart_clocks[i]; i++)
-> -			clk_disable_unprepare(*imx_uart_clocks[i]);
-> -	}
-> +	imx_earlycon_uart_clks_onoff(false);
->  
->  	return 0;
->  }
-> -- 
-> 2.25.1
-> 
-> 
+Manivannan Sadhasivam (5):
+  dt-bindings: mailbox: Add binding for SDX55 APCS
+  mailbox: qcom: Add support for SDX55 APCS IPC
+  dt-bindings: clock: Add Qualcomm A7 PLL binding
+  clk: qcom: Add A7 PLL support
+  clk: qcom: Add SDX55 APCS clock controller support
+
+ .../devicetree/bindings/clock/qcom,a7pll.yaml |  51 ++++++
+ .../mailbox/qcom,apcs-kpss-global.yaml        |  59 +++++--
+ drivers/clk/qcom/Kconfig                      |  17 ++
+ drivers/clk/qcom/Makefile                     |   2 +
+ drivers/clk/qcom/a7-pll.c                     | 100 ++++++++++++
+ drivers/clk/qcom/apcs-sdx55.c                 | 149 ++++++++++++++++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c       |   5 +
+ 7 files changed, 374 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
+ create mode 100644 drivers/clk/qcom/a7-pll.c
+ create mode 100644 drivers/clk/qcom/apcs-sdx55.c
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
