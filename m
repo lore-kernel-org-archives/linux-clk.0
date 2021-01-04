@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9487DC43333
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D6C433DB
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A84121D79
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EE9920784
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbhADINQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jan 2021 03:13:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57510 "EHLO
+        id S1726308AbhADINl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jan 2021 03:13:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbhADINP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 03:13:15 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5610C0617B9
-        for <linux-clk@vger.kernel.org>; Mon,  4 Jan 2021 00:12:04 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id m6so16018460pfm.6
-        for <linux-clk@vger.kernel.org>; Mon, 04 Jan 2021 00:12:04 -0800 (PST)
+        with ESMTP id S1726505AbhADINk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 03:13:40 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB72C0617A9
+        for <linux-clk@vger.kernel.org>; Mon,  4 Jan 2021 00:11:59 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id c22so18567988pgg.13
+        for <linux-clk@vger.kernel.org>; Mon, 04 Jan 2021 00:11:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uOArHEk74zxp/6R3wPGuqn1ZRRiW7s9F52OXIpe5TrE=;
-        b=FivOHfrboOpdeFtFAuYKXJVPL2wZyskFjtEDu8GWnsIjVE6dSwfH03r+nk+7Xtoa6F
-         6ZwclVjWES1UGDfajr7p08X6qcizFw+Ib0P8DHA3Taou3RMa58vj3+UPBpusFZJ+Lw5n
-         7zINpXJR/eyDjNjt9lC59pndDtNM5eAXNbmwh9qsGV/80jgmFH83kYY8QW4LSUstrLuR
-         nadTGVt2/D/pT0lrkGrAOGLWBSWCQ1kjAseIGkZhLpFudivTwyyFNgTXXa6fmHQDtUSa
-         JdRNnUTkCwe97d07XW/NvJZzo97/F5YKnAJuwpfpUyrRIpS9ExiMRldfwIyTRrpuZSqw
-         CsxA==
+        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
+        b=hDEUNdAPJAtX++LhX22u+wNGUejjDE3QtoLzFGtKdF7HXXIxaXhOLHsrhp03rg5V/n
+         +IDIrrysw1k0ISM1TcTAJnTjp2xYV0krvwNYP+t7BR3o0KKzjJSqe3AJ/LWGIHAaJ2n7
+         boFOf0AvtZ3SQ2IY57IzUfM2k+Ve9sHwuaY9hDhB+abS5UHLpJtMnVew150/1chRYl4a
+         3qKWDVcwOcV6/4x6Px3+BS/DDZ26XSLZLN1LxJwo9D8I0LNIvVc0+jpCOfLQonbW4ycx
+         H18QB+NVqwx2N98Pkyq21hLHOKkVInAcux1eKarBboNmtBjyQjFlpjJCXvPcHBv+lEA4
+         Nejw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uOArHEk74zxp/6R3wPGuqn1ZRRiW7s9F52OXIpe5TrE=;
-        b=eOi0ErzfEecH7d42r5X21rxesmieeOHUlrEnYhPabZr8NkhO456BjMM/rne34yWqOX
-         nYeojjX03RL3IQReHkrL0odm+xafgrjevLSUNQOhxDDUeHHy5pVZ8Uejf6P43rjjBsCX
-         SddzRDJrrToZXfeasizdCTcdGfUzXjLkQRMoicZ6B1zFzaEMD9RaiU2vLpwAbyKgF/o4
-         LK6LmqlXFnf8+AZYVbd47NuIDiHdJV0aJmvI7+RlH6DH2q+MmtY9sa07HsMLvL9xFRo5
-         s0VwGtkBO3qTGE9JnV9z3iVgzAcp5Lunnaz/ktwwGXWa5PDleD/UEFaDzpo4Zplvi6hy
-         iC+Q==
-X-Gm-Message-State: AOAM530FTTcC4LnwWT2ds9xb975ZvFoh3+TEH4JNht4gZDvTG7bi0Utv
-        x/QmzPC4fgzT9EIU6XIX3QCy
-X-Google-Smtp-Source: ABdhPJxE3BqIJsJ8naQa/DIb8BS95/0zYLM4AFPVp6E3ZKDMwBqc7aVLk3bBVyovMIoie2bt7o/XUA==
-X-Received: by 2002:a63:5924:: with SMTP id n36mr58899261pgb.9.1609747924240;
-        Mon, 04 Jan 2021 00:12:04 -0800 (PST)
+        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
+        b=c/aQ00i34xtk8G0pra9OfWqBEaWhwxAHfZp8jfjbQrZNJ5dp6qtwFZXMzFo8wO0et9
+         99sRh0TxXParlqRSN4o14PS05HMLHCjkht9A50vrQfyppUhqiqAaeLDN/bOmG0qXTx1R
+         TyLF43ivOs/mEjzozhtFifTYNz6JJWHIq/XmvKv8B0w+s3hNB2Z49MMH0iRdX5U3PEfC
+         LwIj28tXu35RvXrhzYZWfu/0r5lc1Z1JmaVFCn6jf6avxHbPns9tV9m7NDyKDY5JIrqe
+         AbqZJylScL9EpRUV+bzxa6FOFJniVO2N9Qn8JE8nFrkUq3bv6qatzUwk3tBRX7thBZQz
+         ghBQ==
+X-Gm-Message-State: AOAM532aq2OCjgZMOSKHNvBT9RWQVXXWSdxbJ2VX8zrAe546tL5BX70d
+        9bcg/q7ctQJ6dK1D4FUUFVBv
+X-Google-Smtp-Source: ABdhPJwUHjiqIxuEhe8OSMHowC/PaOq86NbHf8v11huUtIh61+qm9ixhKtBb4F3zIAoAq8gyXSad7Q==
+X-Received: by 2002:a62:87c9:0:b029:1a5:9d56:7e24 with SMTP id i192-20020a6287c90000b02901a59d567e24mr64204861pfe.56.1609747918870;
+        Mon, 04 Jan 2021 00:11:58 -0800 (PST)
 Received: from localhost.localdomain ([103.77.37.160])
-        by smtp.gmail.com with ESMTPSA id n7sm55051339pfn.141.2021.01.04.00.11.59
+        by smtp.gmail.com with ESMTPSA id n7sm55051339pfn.141.2021.01.04.00.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 00:12:03 -0800 (PST)
+        Mon, 04 Jan 2021 00:11:58 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         jassisinghbrar@gmail.com
@@ -63,9 +63,9 @@ Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 5/5] clk: qcom: Add SDX55 APCS clock controller support
-Date:   Mon,  4 Jan 2021 13:41:25 +0530
-Message-Id: <20210104081125.147300-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/5] clk: qcom: Add A7 PLL support
+Date:   Mon,  4 Jan 2021 13:41:24 +0530
+Message-Id: <20210104081125.147300-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
 References: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
@@ -75,215 +75,160 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a driver for the SDX55 APCS clock controller. It is part of the APCS
-hardware block, which among other things implements also a combined mux
-and half integer divider functionality. The APCS clock controller has 3
-parent clocks:
+Add support for PLL found in Qualcomm SDX55 platforms which is used to
+provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
+frequency clock to the CPU above 1GHz as compared to the other sources
+like GPLL0.
 
-1. Board XO
-2. Fixed rate GPLL0
-3. A7 PLL
-
-The source and the divider can be set both at the same time.
-
-This is required for enabling CPU frequency scaling on SDX55-based
-platforms.
+In this driver, the power domain is attached to the cpudev. This is
+required for CPUFreq functionality and there seems to be no better place
+to do other than this driver (no dedicated CPUFreq driver).
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/qcom/Kconfig      |   9 ++
- drivers/clk/qcom/Makefile     |   1 +
- drivers/clk/qcom/apcs-sdx55.c | 149 ++++++++++++++++++++++++++++++++++
- 3 files changed, 159 insertions(+)
- create mode 100644 drivers/clk/qcom/apcs-sdx55.c
+ drivers/clk/qcom/Kconfig  |   8 +++
+ drivers/clk/qcom/Makefile |   1 +
+ drivers/clk/qcom/a7-pll.c | 100 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 109 insertions(+)
+ create mode 100644 drivers/clk/qcom/a7-pll.c
 
 diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d6f4aee4427a..2c67fdfae913 100644
+index d32bb12cd8d0..d6f4aee4427a 100644
 --- a/drivers/clk/qcom/Kconfig
 +++ b/drivers/clk/qcom/Kconfig
-@@ -45,6 +45,15 @@ config QCOM_CLK_APCS_MSM8916
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as msm8916.
+@@ -28,6 +28,14 @@ config QCOM_A53PLL
+ 	  Say Y if you want to support higher CPU frequencies on MSM8916
+ 	  devices.
  
-+config QCOM_CLK_APCS_SDX55
-+	tristate "SDX55 APCS Clock Controller"
-+	depends on QCOM_APCS_IPC || COMPILE_TEST
++config QCOM_A7PLL
++	tristate "SDX55 A7 PLL"
 +	help
-+	  Support for the APCS Clock Controller on SDX55 platform. The
-+	  APCS is managing the mux and divider which feeds the CPUs.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as SDX55.
++	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
++	  frequencies above 1GHz.
++	  Say Y if you want to support higher CPU frequencies on SDX55
++	  devices.
 +
- config QCOM_CLK_APCC_MSM8996
- 	tristate "MSM8996 CPU Clock Controller"
- 	select QCOM_KRYO_L2_ACCESSORS
+ config QCOM_CLK_APCS_MSM8916
+ 	tristate "MSM8916 APCS Clock Controller"
+ 	depends on QCOM_APCS_IPC || COMPILE_TEST
 diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index e7e0ac382176..a9271f40916c 100644
+index 9e5e0e3cb7b4..e7e0ac382176 100644
 --- a/drivers/clk/qcom/Makefile
 +++ b/drivers/clk/qcom/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
+@@ -44,6 +44,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
  obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
++obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
-+obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
  obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
-diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
+diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
 new file mode 100644
-index 000000000000..14413c957d83
+index 000000000000..e171d3caf2cf
 --- /dev/null
-+++ b/drivers/clk/qcom/apcs-sdx55.c
-@@ -0,0 +1,149 @@
++++ b/drivers/clk/qcom/a7-pll.c
+@@ -0,0 +1,100 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Qualcomm SDX55 APCS clock controller driver
++ * Qualcomm A7 PLL driver
 + *
 + * Copyright (c) 2020, Linaro Limited
 + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 + */
 +
-+#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/cpu.h>
-+#include <linux/kernel.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
 +#include <linux/regmap.h>
-+#include <linux/slab.h>
 +
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
-+#include "common.h"
++#include "clk-alpha-pll.h"
 +
-+static const u32 apcs_mux_clk_parent_map[] = { 0, 1, 5 };
++#define LUCID_PLL_OFF_L_VAL 0x04
 +
-+static const struct clk_parent_data pdata[] = {
-+	{ .fw_name = "ref", .name = "bi_tcxo", },
-+	{ .fw_name = "aux", .name = "gpll0", },
-+	{ .fw_name = "pll", .name = "a7pll", },
++static const struct pll_vco lucid_vco[] = {
++	{ 249600000, 2000000000, 0 },
 +};
 +
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the A7 PLL is reconfigured.
-+ */
-+static int a7cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			    void *data)
-+{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
-+	if (event == PRE_RATE_CHANGE)
-+		/* set the mux and divider to safe frequency (400mhz) */
-+		ret = mux_div_set_src_div(md, 1, 2);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device *parent = dev->parent;
-+	struct device *cpu_dev;
-+	struct clk_regmap_mux_div *a7cc;
-+	struct regmap *regmap;
-+	struct clk_init_data init = { };
-+	int ret = -ENODEV;
-+
-+	regmap = dev_get_regmap(parent, NULL);
-+	if (!regmap) {
-+		dev_err(dev, "Failed to get parent regmap: %d\n", ret);
-+		return ret;
-+	}
-+
-+	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
-+	if (!a7cc)
-+		return -ENOMEM;
-+
-+	init.name = "a7mux";
-+	init.parent_data = pdata;
-+	init.num_parents = ARRAY_SIZE(pdata);
-+	init.ops = &clk_regmap_mux_div_ops;
-+
-+	a7cc->clkr.hw.init = &init;
-+	a7cc->clkr.regmap = regmap;
-+	a7cc->reg_offset = 0x8;
-+	a7cc->hid_width = 5;
-+	a7cc->hid_shift = 0;
-+	a7cc->src_width = 3;
-+	a7cc->src_shift = 8;
-+	a7cc->parent_map = apcs_mux_clk_parent_map;
-+
-+	a7cc->pclk = devm_clk_get(parent, "pll");
-+	if (IS_ERR(a7cc->pclk)) {
-+		ret = PTR_ERR(a7cc->pclk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get PLL clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
-+	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
-+	if (ret) {
-+		dev_err(dev, "Failed to register clock notifier: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
-+	if (ret) {
-+		dev_err(dev, "Failed to register regmap clock: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &a7cc->clkr.hw);
-+	if (ret) {
-+		dev_err(dev, "Failed to add clock provider: %d\n", ret);
-+		goto err;
-+	}
-+
-+	platform_set_drvdata(pdev, a7cc);
-+
-+	/*
-+	 * Attach the power domain to cpudev. There seems to be no better place
-+	 * to do this, so do it here.
-+	 */
-+	cpu_dev = get_cpu_device(0);
-+	dev_pm_domain_attach(cpu_dev, true);
-+
-+	return 0;
-+
-+err:
-+	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
-+	return ret;
-+}
-+
-+static int qcom_apcs_sdx55_clk_remove(struct platform_device *pdev)
-+{
-+	struct device *cpu_dev = get_cpu_device(0);
-+	struct clk_regmap_mux_div *a7cc = platform_get_drvdata(pdev);
-+
-+	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
-+	dev_pm_domain_detach(cpu_dev, true);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qcom_apcs_sdx55_clk_driver = {
-+	.probe = qcom_apcs_sdx55_clk_probe,
-+	.remove = qcom_apcs_sdx55_clk_remove,
-+	.driver = {
-+		.name = "qcom-sdx55-acps-clk",
++static struct clk_alpha_pll a7pll = {
++	.offset = 0x100,
++	.vco_table = lucid_vco,
++	.num_vco = ARRAY_SIZE(lucid_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "a7pll",
++			.parent_data =  &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_lucid_ops,
++		},
 +	},
 +};
-+module_platform_driver(qcom_apcs_sdx55_clk_driver);
 +
-+MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
++static const struct alpha_pll_config a7pll_config = {
++	.l = 0x39,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x2261,
++	.config_ctl_hi1_val = 0x029A699C,
++	.user_ctl_val = 0x1,
++	.user_ctl_hi_val = 0x805,
++};
++
++static const struct regmap_config a7pll_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x1000,
++	.fast_io		= true,
++};
++
++static int qcom_a7pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	void __iomem *base;
++	u32 l_val;
++	int ret;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &a7pll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* Configure PLL only if the l_val is zero */
++	regmap_read(regmap, a7pll.offset + LUCID_PLL_OFF_L_VAL, &l_val);
++	if (!l_val)
++		clk_lucid_pll_configure(&a7pll, regmap, &a7pll_config);
++
++	ret = devm_clk_register_regmap(dev, &a7pll.clkr);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					   &a7pll.clkr.hw);
++}
++
++static const struct of_device_id qcom_a7pll_match_table[] = {
++	{ .compatible = "qcom,sdx55-a7pll" },
++	{ }
++};
++
++static struct platform_driver qcom_a7pll_driver = {
++	.probe = qcom_a7pll_probe,
++	.driver = {
++		.name = "qcom-a7pll",
++		.of_match_table = qcom_a7pll_match_table,
++	},
++};
++module_platform_driver(qcom_a7pll_driver);
++
++MODULE_DESCRIPTION("Qualcomm A7 PLL Driver");
 +MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm SDX55 APCS clock driver");
 -- 
 2.25.1
 
