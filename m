@@ -2,233 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D6C433DB
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFA4C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE9920784
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:13:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7369020798
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jan 2021 08:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbhADINl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jan 2021 03:13:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbhADINk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 03:13:40 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB72C0617A9
-        for <linux-clk@vger.kernel.org>; Mon,  4 Jan 2021 00:11:59 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id c22so18567988pgg.13
-        for <linux-clk@vger.kernel.org>; Mon, 04 Jan 2021 00:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
-        b=hDEUNdAPJAtX++LhX22u+wNGUejjDE3QtoLzFGtKdF7HXXIxaXhOLHsrhp03rg5V/n
-         +IDIrrysw1k0ISM1TcTAJnTjp2xYV0krvwNYP+t7BR3o0KKzjJSqe3AJ/LWGIHAaJ2n7
-         boFOf0AvtZ3SQ2IY57IzUfM2k+Ve9sHwuaY9hDhB+abS5UHLpJtMnVew150/1chRYl4a
-         3qKWDVcwOcV6/4x6Px3+BS/DDZ26XSLZLN1LxJwo9D8I0LNIvVc0+jpCOfLQonbW4ycx
-         H18QB+NVqwx2N98Pkyq21hLHOKkVInAcux1eKarBboNmtBjyQjFlpjJCXvPcHBv+lEA4
-         Nejw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
-        b=c/aQ00i34xtk8G0pra9OfWqBEaWhwxAHfZp8jfjbQrZNJ5dp6qtwFZXMzFo8wO0et9
-         99sRh0TxXParlqRSN4o14PS05HMLHCjkht9A50vrQfyppUhqiqAaeLDN/bOmG0qXTx1R
-         TyLF43ivOs/mEjzozhtFifTYNz6JJWHIq/XmvKv8B0w+s3hNB2Z49MMH0iRdX5U3PEfC
-         LwIj28tXu35RvXrhzYZWfu/0r5lc1Z1JmaVFCn6jf6avxHbPns9tV9m7NDyKDY5JIrqe
-         AbqZJylScL9EpRUV+bzxa6FOFJniVO2N9Qn8JE8nFrkUq3bv6qatzUwk3tBRX7thBZQz
-         ghBQ==
-X-Gm-Message-State: AOAM532aq2OCjgZMOSKHNvBT9RWQVXXWSdxbJ2VX8zrAe546tL5BX70d
-        9bcg/q7ctQJ6dK1D4FUUFVBv
-X-Google-Smtp-Source: ABdhPJwUHjiqIxuEhe8OSMHowC/PaOq86NbHf8v11huUtIh61+qm9ixhKtBb4F3zIAoAq8gyXSad7Q==
-X-Received: by 2002:a62:87c9:0:b029:1a5:9d56:7e24 with SMTP id i192-20020a6287c90000b02901a59d567e24mr64204861pfe.56.1609747918870;
-        Mon, 04 Jan 2021 00:11:58 -0800 (PST)
-Received: from localhost.localdomain ([103.77.37.160])
-        by smtp.gmail.com with ESMTPSA id n7sm55051339pfn.141.2021.01.04.00.11.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jan 2021 00:11:58 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com
-Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 4/5] clk: qcom: Add A7 PLL support
-Date:   Mon,  4 Jan 2021 13:41:24 +0530
-Message-Id: <20210104081125.147300-5-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
-References: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
+        id S1726306AbhADIcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jan 2021 03:32:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726258AbhADIcb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 Jan 2021 03:32:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C3C9A20798;
+        Mon,  4 Jan 2021 08:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609749110;
+        bh=/l4LNgcZQuQKp8LjOcoiZ+3D5i2u+KxinFDst/ZT+Xw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bH9nLgUy6rQaKDLX1sw1beUf9Aq83lpTkkF5ADT9W2qKlL12x7qcISW2nja3aqI1Y
+         WzpG1HIteKGSrWtfL4/MJWWFZPBQZigPtLn7owPGJgh1SKwM/Z0NWd4326bSyG2UVp
+         cbtkAJ/BJ+ksAQAWS715qAMvFPntnXind4CHexEHnKoDA38+VGZGUq5N3KFvPcQKRJ
+         umggJKKxXJrxQebYyCNBK4D1yb/2Cva4LLilwnlwEgsxwCT0/1TdV5UeDY3sdvXAvG
+         TRTNprpXnycMUQpKcKL+L1jkCD7tuLfQvRYX6/z0/rd93m1CzYF32NtvmESwNcScE6
+         VCK/MmB55ljqQ==
+Received: by wens.tw (Postfix, from userid 1000)
+        id A190F5F823; Mon,  4 Jan 2021 16:31:48 +0800 (CST)
+Date:   Mon, 4 Jan 2021 16:31:48 +0800
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] [PATCH v2 0/4] Allwinner H6 RSB support
+Message-ID: <X/LSdICpXl6vT65y@wens.csie.org>
+References: <20210103100007.32867-1-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for PLL found in Qualcomm SDX55 platforms which is used to
-provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
-frequency clock to the CPU above 1GHz as compared to the other sources
-like GPLL0.
+Hi,
 
-In this driver, the power domain is attached to the cpudev. This is
-required for CPUFreq functionality and there seems to be no better place
-to do other than this driver (no dedicated CPUFreq driver).
+On Sun, Jan 03, 2021 at 04:00:03AM -0600, Samuel Holland wrote:
+> The Allwinner H6 SoC contains an RSB controller. It is almost completely
+> undocumented, so it was missed when doing the initial SoC bringup.
+> 
+> This series adds the clock/reset, pin configuration, and device tree
+> node needed to use the RSB controller. Since RSB is faster, simpler, and
+> generally more reliable than the I2C controller IP in the SoC, switch to
+> using it where possible.
+> 
+> This was tested on an Orange Pi 3 and a Pine H64 model B. This series
+> does not switch the Pine H64 to use RSB, as doing so would prevent
+> accessing the external RTC that shares the I2C bus.
+> 
+> Changes v1->v2:
+>   - Put the new values at the end of the DT binding headers
+> 
+> Samuel Holland (4):
+>   clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+>   pinctrl: sunxi: h6-r: Add s_rsb pin functions
+>   arm64: dts: allwinner: h6: Add RSB controller node
+>   arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/qcom/Kconfig  |   8 +++
- drivers/clk/qcom/Makefile |   1 +
- drivers/clk/qcom/a7-pll.c | 100 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 109 insertions(+)
- create mode 100644 drivers/clk/qcom/a7-pll.c
+I queued up patches 1, 3, and 4 locally for v5.12. Obviously this won't
+work unless the pinctrl patch is also queued up, so they won't be pushed
+out until that happens.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d32bb12cd8d0..d6f4aee4427a 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -28,6 +28,14 @@ config QCOM_A53PLL
- 	  Say Y if you want to support higher CPU frequencies on MSM8916
- 	  devices.
- 
-+config QCOM_A7PLL
-+	tristate "SDX55 A7 PLL"
-+	help
-+	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
-+	  frequencies above 1GHz.
-+	  Say Y if you want to support higher CPU frequencies on SDX55
-+	  devices.
-+
- config QCOM_CLK_APCS_MSM8916
- 	tristate "MSM8916 APCS Clock Controller"
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 9e5e0e3cb7b4..e7e0ac382176 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-+obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-new file mode 100644
-index 000000000000..e171d3caf2cf
---- /dev/null
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -0,0 +1,100 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm A7 PLL driver
-+ *
-+ * Copyright (c) 2020, Linaro Limited
-+ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-alpha-pll.h"
-+
-+#define LUCID_PLL_OFF_L_VAL 0x04
-+
-+static const struct pll_vco lucid_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll a7pll = {
-+	.offset = 0x100,
-+	.vco_table = lucid_vco,
-+	.num_vco = ARRAY_SIZE(lucid_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "a7pll",
-+			.parent_data =  &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_ops,
-+		},
-+	},
-+};
-+
-+static const struct alpha_pll_config a7pll_config = {
-+	.l = 0x39,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x2261,
-+	.config_ctl_hi1_val = 0x029A699C,
-+	.user_ctl_val = 0x1,
-+	.user_ctl_hi_val = 0x805,
-+};
-+
-+static const struct regmap_config a7pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x1000,
-+	.fast_io		= true,
-+};
-+
-+static int qcom_a7pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	void __iomem *base;
-+	u32 l_val;
-+	int ret;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a7pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/* Configure PLL only if the l_val is zero */
-+	regmap_read(regmap, a7pll.offset + LUCID_PLL_OFF_L_VAL, &l_val);
-+	if (!l_val)
-+		clk_lucid_pll_configure(&a7pll, regmap, &a7pll_config);
-+
-+	ret = devm_clk_register_regmap(dev, &a7pll.clkr);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					   &a7pll.clkr.hw);
-+}
-+
-+static const struct of_device_id qcom_a7pll_match_table[] = {
-+	{ .compatible = "qcom,sdx55-a7pll" },
-+	{ }
-+};
-+
-+static struct platform_driver qcom_a7pll_driver = {
-+	.probe = qcom_a7pll_probe,
-+	.driver = {
-+		.name = "qcom-a7pll",
-+		.of_match_table = qcom_a7pll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_a7pll_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm A7 PLL Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.25.1
+Regarding patch 3, I replaced the clock and reset macros with raw
+numbers to get rid of cross-tree dependencies. The following fix
+will be posted for v5.12 later on during its RC cycle.
 
+------------------------ >8 ------------------------
+
+commit 0b4781666adc5e19c4d4fb4a2bff33883181cc39
+Author: Chen-Yu Tsai <wens@csie.org>
+Date:   Mon Jan 4 16:19:17 2021 +0800
+
+    arm64: dts: allwinner: h6: Switch to macros for RSB clock/reset indices
+    
+    The macros for the clock and reset indices for the RSB hardware block
+    were replaced with raw numbers when the RSB controller node was added.
+    This was done to avoid cross-tree dependencies.
+    
+    Now that both the clk and DT changes have been merged, we can switch
+    back to using the macros.
+    
+    Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index d897697849d6..b043beea8e6e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -988,9 +988,9 @@ r_rsb: rsb@7083000 {
+ 			compatible = "allwinner,sun8i-a23-rsb";
+ 			reg = <0x07083000 0x400>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&r_ccu 13>;
++			clocks = <&r_ccu CLK_R_APB2_RSB>;
+ 			clock-frequency = <3000000>;
+-			resets = <&r_ccu 7>;
++			resets = <&r_ccu RST_R_APB2_RSB>;
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&r_rsb_pins>;
+ 			status = "disabled";
+------------------------ >8 ------------------------
+
+> 
+>  .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
+>  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
+>  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |  5 +++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h        |  2 +-
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c   |  2 +
+>  include/dt-bindings/clock/sun50i-h6-r-ccu.h   |  2 +
+>  include/dt-bindings/reset/sun50i-h6-r-ccu.h   |  1 +
+>  9 files changed, 67 insertions(+), 38 deletions(-)
+> 
+> -- 
+> 2.26.2
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20210103100007.32867-1-samuel%40sholland.org.
