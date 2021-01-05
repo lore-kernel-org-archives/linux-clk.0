@@ -2,136 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1E8C433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71CAC433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 13:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2388A22AAB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C8B22240
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 13:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbhAEMso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 07:48:44 -0500
-Received: from mail-lf1-f44.google.com ([209.85.167.44]:40540 "EHLO
-        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728318AbhAEMso (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 07:48:44 -0500
-Received: by mail-lf1-f44.google.com with SMTP id m12so72260383lfo.7;
-        Tue, 05 Jan 2021 04:48:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=WVVIx6PVhLwLplystJZYvhWeXG//TClji/7GLWGokI8=;
-        b=GH+3aDIfIEnaSoFnFu/3KBG5w4E4ehNViUVPv5Aen+YqRSsE0+Yt5D/dSdpNHQUtYA
-         ewgl7DayBomFlv1zg3YSG3jIRaBJsgq8MjQXoGuexW6ttJ5AUOIbnAZQPsqZnJ4aVVFT
-         7Olcwme+or2lJhraAPvqJ9Z2wXV9KSiyvjwzJ9xZLG/QmDmap+fFRBtYGIubl0FwmS6e
-         N4lwuWJ4ORdsgt5z5F/bDT7aDF008s7r/JBin21B0o9Xg8qUt1wsNqfKLrTWXMlcx0Zo
-         uWTLthTGJGfbBUIBoUK0JFil8NC2rF4ZccTT/VvZm0AHv6ZL/+RGxilY5byXfZTvo3sw
-         2goQ==
-X-Gm-Message-State: AOAM533xmyMdTKkx4fuwZpuh9tcRnKdy+Jk92eceXBCBXJA6MlmG6nQm
-        EAMOFLJi0xxrdnFk4sWdHwY=
-X-Google-Smtp-Source: ABdhPJwynyN+uxLUCFSfpexwN6aD1GsIHPuTSLZtETHD0K2xhW+5jQnW2bSBTwfcDIv7SGh9zc9TWg==
-X-Received: by 2002:a19:cb12:: with SMTP id b18mr36124105lfg.480.1609850881466;
-        Tue, 05 Jan 2021 04:48:01 -0800 (PST)
-Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id v7sm7600621lfg.9.2021.01.05.04.48.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jan 2021 04:48:00 -0800 (PST)
-Date:   Tue, 5 Jan 2021 14:47:54 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-power@fi.rohmeurope.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: BD718x7: Do not depend on parent driver data
-Message-ID: <20210105123028.GA3409663@localhost.localdomain>
+        id S1729115AbhAENDc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 08:03:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729685AbhAENDc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Jan 2021 08:03:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E2CA22AAC;
+        Tue,  5 Jan 2021 13:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1609851770;
+        bh=/Tnbq4FC5ordGqRMZzBmEF2707cpXLotVuL1pB4INEg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b7A+HlihRW0BWkxuWeObIBnymtaP0ufAI6iZqP+I33dmJaItT4s02eE21hd20fF/X
+         d/gLGOgVM5jXbgjwt3xldxp8Yx05uXAdpw5ayzs7kX/HEqtzXpXUB3oUcRe35cTc//
+         0LAxDBVV/TNR3PSOx4/g/7uEn2gJ4Mz3qDyRHQzw=
+Date:   Tue, 5 Jan 2021 14:04:14 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
+Message-ID: <X/RjziK30y56uZUj@kroah.com>
+References: <20210104230253.2805217-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The bd718x7 only needs a regmap from parent device. This can be
-obtained by call to dev_get_regmap. Do not require parent to
-populate the driver data for this.
+On Mon, Jan 04, 2021 at 04:02:53PM -0700, Rob Herring wrote:
+> DT properties which can have multiple entries need to specify what the
+> entries are and define how many entries there can be. In the case of
+> only a single entry, just 'maxItems: 1' is sufficient.
+> 
+> Add the missing entry constraints. These were found with a modified
+> meta-schema. Unfortunately, there are a few cases where the size
+> constraints are not defined such as common bindings, so the meta-schema
+> can't be part of the normal checks.
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/clk-bd718x7.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+<snip>
 
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index b52e8d6f660c..17d90e09f1c0 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -31,12 +31,12 @@ struct bd718xx_clk {
- 	u8 reg;
- 	u8 mask;
- 	struct platform_device *pdev;
--	struct rohm_regmap_dev *mfd;
-+	struct regmap *regmap;
- };
- 
- static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
- {
--	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+	return regmap_update_bits(c->regmap, c->reg, c->mask, status);
- }
- 
- static void bd71837_clk_disable(struct clk_hw *hw)
-@@ -62,7 +62,7 @@ static int bd71837_clk_is_enabled(struct clk_hw *hw)
- 	int rval;
- 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
- 
--	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+	rval = regmap_read(c->regmap, c->reg, &enabled);
- 
- 	if (rval)
- 		return rval;
-@@ -82,7 +82,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	int rval = -ENOMEM;
- 	const char *parent_clk;
- 	struct device *parent = pdev->dev.parent;
--	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
- 	struct clk_init_data init = {
- 		.name = "bd718xx-32k-out",
- 		.ops = &bd71837_clk_ops,
-@@ -93,6 +92,10 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	if (!c)
- 		return -ENOMEM;
- 
-+	c->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!c->regmap)
-+		return -ENODEV;
-+
- 	init.num_parents = 1;
- 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
- 
-@@ -119,7 +122,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Unknown clk chip\n");
- 		return -EINVAL;
- 	}
--	c->mfd = mfd;
- 	c->pdev = pdev;
- 	c->hw.init = &init;
- 
--- 
-2.25.4
+> diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+> index 247ef00381ea..f76b25f7fc7a 100644
+> --- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+> +++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+> @@ -83,6 +83,7 @@ properties:
+>        Phandle of a companion.
+>  
+>    phys:
+> +    maxItems: 1
+>      description: PHY specifier for the USB PHY
+>  
+>    phy-names:
+> diff --git a/Documentation/devicetree/bindings/usb/generic-ohci.yaml b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
+> index 2178bcc401bc..8e2bd61f2075 100644
+> --- a/Documentation/devicetree/bindings/usb/generic-ohci.yaml
+> +++ b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
+> @@ -71,6 +71,7 @@ properties:
+>        Overrides the detected port count
+>  
+>    phys:
+> +    maxItems: 1
+>      description: PHY specifier for the USB PHY
+>  
+>    phy-names:
+> diff --git a/Documentation/devicetree/bindings/usb/ingenic,musb.yaml b/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
+> index 678396eeeb78..f506225a4d57 100644
+> --- a/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/ingenic,musb.yaml
+> @@ -40,7 +40,7 @@ properties:
+>        - const: mc
+>  
+>    phys:
+> -    description: PHY specifier for the USB PHY
+> +    maxItems: 1
+>  
+>    usb-role-switch:
+>      type: boolean
 
+Any reason you dropped the description for this entry, but not the other
+ones above?
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+> diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> index 388245b91a55..adce36e48bc9 100644
+> --- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> @@ -15,13 +15,14 @@ properties:
+>        - const: ti,j721e-usb
+>  
+>    reg:
+> -    description: module registers
+> +    maxItems: 1
+>  
+>    power-domains:
+>      description:
+>        PM domain provider node and an args specifier containing
+>        the USB device id value. See,
+>        Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+> +    maxItems: 1
+>  
+>    clocks:
+>      description: Clock phandles to usb2_refclk and lpm_clk
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+Same here, why remove the description?
+
+thanks,
+
+greg k-h
