@@ -2,269 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FC5C433E9
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 03:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2B2C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 06:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3198422597
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 03:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A292B227C3
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 06:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbhAEDcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jan 2021 22:32:52 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:50377 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726163AbhAEDcw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jan 2021 22:32:52 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 85093580292;
-        Mon,  4 Jan 2021 22:31:45 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 04 Jan 2021 22:31:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=C
-        itscExJ0arRYiy5q962saA1Ka78ZE8Lz2I4U5LlsgI=; b=AXq4as1R+3K6Dr99p
-        OCfwDtee43uQ3wZYHfqv2PXECzSLQyb/rCCszZ5f3VTbc/JWzIVkvZjYzqlFNhP6
-        VuiY6XiuFYfZazDHBzIjAsu2A2ecozObVeGaxxmK7mATruLy7Np485K90wF/bJtm
-        sCxvbeRiLI91aXa0jkD95GkzbxhBRIJdYzdGgyj0wYAgyq2z7uCJFmIIOmbAlRhn
-        oQb/p/K9CkYaEwIvZErqb4uid0et+ra46JkR+nd+P39Z6ZHTlJ4CJMe3g/whjmvQ
-        v6S8LshPpGy6adyV0g0SQ6vsLkSCVxTCBkybPjtp4c04anCpEFTCoUUV/di+aKmL
-        rW2eg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=CitscExJ0arRYiy5q962saA1Ka78ZE8Lz2I4U5Lls
-        gI=; b=Bi8FDIxDrHaXZzQuXWPMiKnY78DUuDcgY7mD3WP4bdCd8Karme4E+IC3Q
-        xBHCGwFAL/PlVO3O2SomYrHqU/pBjfHV89DIMlyrRGYkqdY3pu7ropp6IubF0XGe
-        J7hgO5185huew6J12ZnTrMT2XZzmTnHCcJVs/8VtciP4IQaSLgXPLCx6nXvN0qRz
-        XgTyX64+HZg/epnaMxxxzq24Aj1yp2eDa7Wb4FExGPyNpQjDf4TqaV8vt8d32fxc
-        pe4RKvl/cfNWatQ5ghcLX6R3txryvkaRB7TTfuG29k6scDhaOkHoVNVTgY3p3VgK
-        lHRT5fZ78I/OAUWUO6ZF4WzSaawsg==
-X-ME-Sender: <xms:n93zXx7y8N_ExZRTjCvSPP1RNJYfZgU975cjP1P9AddrFgoHJDfwvw>
-    <xme:n93zX-4mvFJhjTMXfSrrosTW5bmlw6IRkgI8bddB-XZ5nCfy4J_NsmWTr39X9C9e-
-    zaWRVL7vW6Dk9VIbw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefgedgheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
-    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepgfelkeduveejtdejhfeiledvhfeggeeiieeklefhfeefffffffeg
-    udetteelieejnecukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgr
-    nhgurdhorhhg
-X-ME-Proxy: <xmx:n93zX4e_3oP0nh9uj8a9bmVWbfnadkm4lv-iZ3pjCzBC7pcuHqLalQ>
-    <xmx:n93zX6JCQi3jBau4l1EK650mw0wK4lcki2glAEW_z9UnPBsvKedJcA>
-    <xmx:n93zX1Kvr_LwO1Bx5gp8q-nngEcxhO6h40ZOgouyHZbFwNIHgNmP-w>
-    <xmx:od3zX_BRIC1-WDiDrGTzXeK1bNY-2bEzt_w_Gx6QxKotkZBWrZHs7w>
-Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D0471108005F;
-        Mon,  4 Jan 2021 22:31:42 -0500 (EST)
-Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC
- connection
-To:     =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1725778AbhAEGbX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 01:31:23 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:16724 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbhAEGbW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 01:31:22 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff407920000>; Mon, 04 Jan 2021 22:30:42 -0800
+Received: from [10.25.100.71] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Jan
+ 2021 06:30:35 +0000
+Subject: Re: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+To:     Peter Geis <pgwipeout@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20210103100007.32867-1-samuel@sholland.org>
- <20210103100007.32867-5-samuel@sholland.org>
- <a6c2eac4-7e98-ecb4-ee8a-d67a7f1b6871@arm.com>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <b8d302da-9268-90ee-35b4-91971ccd460a@sholland.org>
-Date:   Mon, 4 Jan 2021 21:31:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        "Peter De Schrijver" <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Mohan Kumar <mkumard@nvidia.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        Ion Agorria <ion@agorria.com>
+References: <20201225012025.507803-1-pgwipeout@gmail.com>
+ <20201225012025.507803-3-pgwipeout@gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <0c3665b2-bac6-546a-bdd4-0ab7a90adf7c@nvidia.com>
+Date:   Tue, 5 Jan 2021 12:00:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <a6c2eac4-7e98-ecb4-ee8a-d67a7f1b6871@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201225012025.507803-3-pgwipeout@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1609828242; bh=+TbvEK70pgMeNJJMJSEFAbEVqczYIlNcn1A6iMFsvnE=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=VRFUKKclHq/2JaUXtTHG2IvmplsF4cEUVv+dvwRSHRNg9oDsK0HASEjYbR6dysveJ
+         hz5IEXn8h96NnUF4hw650hWsM4Npsn1Q4peEf6yOgPD5qf4KBoqdwEgr3HOkuJjq6y
+         VCtU5PeVRothSPjDO0pAphq5l/bCRR9zQJN63G16mcpuvtnto5XS8ixo4mLJ+jwNpi
+         TdOmEkn9RRteF8QEWVSIY+Zmc1Dc45G0uZGJZ1+fejUs+ll5D5OLqTmF1g2+wfsmA7
+         H3nO6isudhca8rAGTYv6fJmmoLWKKideLZldwEPmvKcwps3+951MupvV78dc/hPtud
+         Y2qtuKU+3NpnA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/4/21 4:54 AM, André Przywara wrote:
-> On 03/01/2021 10:00, Samuel Holland wrote:
->> On boards where the only peripheral connected to PL0/PL1 is an X-Powers
->> PMIC, configure the connection to use the RSB bus rather than the I2C
->> bus. Compared to the I2C controller that shares the pins, the RSB
->> controller allows a higher bus frequency, and it is more CPU-efficient.
-> 
-> But is it really necessary to change the DTs for those boards in this
-> way? It means those newer DTs now become incompatible with older
-> kernels, and I don't know if those reasons above really justify this.
-> 
-> I understand that we officially don't care about "newer DTs on older
-> kernels", but do we really need to break this deliberately, for no
-> pressing reasons?
 
-That's a reasonable concern. I am fine if you want to delay or drop patch 4.
 
-Cheers,
-Samuel
+On 12/25/2020 6:50 AM, Peter Geis wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Currently hda on tegra30 fails to open a stream with an input/output error.
+> This is similar to the issue referenced in [1].
+>
+> For example:
+> speaker-test -Dhw:0,3 -c 2
+>
+> speaker-test 1.2.2
+>
+> Playback device is hw:0,3
+> Stream parameters are 48000Hz, S16_LE, 2 channels
+> Using 16 octaves of pink noise
+> Rate set to 48000Hz (requested 48000Hz)
+> Buffer size range from 64 to 16384
+> Period size range from 32 to 8192
+> Using max buffer size 16384
+> Periods = 4
+> was set period_size = 4096
+> was set buffer_size = 16384
+>   0 - Front Left
+> Write error: -5,Input/output error
+> xrun_recovery failed: -5,Input/output error
+> Transfer failed: Input/output error
+>
+> [1] states "Due to a legacy HW design problem", implying the issue applies to all previous tegra-hda devices.
+> The tegra-hda device was introduced in tegra30 but only utilized in tegra124 until now.
+> For this reason it is unknown when this issue first manifested.
+>
+> Applying the fix in [1] universally resolves this issue on tegra30.
+> Tested on the Ouya game console and the tf201 tablet.
+>
+> [1] 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on Tegra194")
 
-> Cheers,
-> Andre
-> 
-> P.S. I am fine with supporting RSB on H6, and even using it on new DTs,
-> just want to avoid breaking existing ones.
-> 
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
->> ---
->>  .../dts/allwinner/sun50i-h6-beelink-gs1.dts   | 38 +++++++++----------
->>  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 14 +++----
->>  .../dts/allwinner/sun50i-h6-orangepi.dtsi     | 22 +++++------
->>  3 files changed, 37 insertions(+), 37 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
->> index 7c9dbde645b5..3452add30cc4 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
->> @@ -150,12 +150,28 @@ &pio {
->>  	vcc-pg-supply = <&reg_aldo1>;
->>  };
->>  
->> -&r_i2c {
->> +&r_ir {
->> +	linux,rc-map-name = "rc-beelink-gs1";
->> +	status = "okay";
->> +};
->> +
->> +&r_pio {
->> +	/*
->> +	 * FIXME: We can't add that supply for now since it would
->> +	 * create a circular dependency between pinctrl, the regulator
->> +	 * and the RSB Bus.
->> +	 *
->> +	 * vcc-pl-supply = <&reg_aldo1>;
->> +	 */
->> +	vcc-pm-supply = <&reg_aldo1>;
->> +};
->> +
->> +&r_rsb {
->>  	status = "okay";
->>  
->> -	axp805: pmic@36 {
->> +	axp805: pmic@745 {
->>  		compatible = "x-powers,axp805", "x-powers,axp806";
->> -		reg = <0x36>;
->> +		reg = <0x745>;
->>  		interrupt-parent = <&r_intc>;
->>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->>  		interrupt-controller;
->> @@ -273,22 +289,6 @@ sw {
->>  	};
->>  };
->>  
->> -&r_ir {
->> -	linux,rc-map-name = "rc-beelink-gs1";
->> -	status = "okay";
->> -};
->> -
->> -&r_pio {
->> -	/*
->> -	 * PL0 and PL1 are used for PMIC I2C
->> -	 * don't enable the pl-supply else
->> -	 * it will fail at boot
->> -	 *
->> -	 * vcc-pl-supply = <&reg_aldo1>;
->> -	 */
->> -	vcc-pm-supply = <&reg_aldo1>;
->> -};
->> -
->>  &rtc {
->>  	clocks = <&ext_osc32k>;
->>  };
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
->> index 15c9dd8c4479..16702293ac0b 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
->> @@ -175,12 +175,16 @@ &pio {
->>  	vcc-pg-supply = <&reg_vcc_wifi_io>;
->>  };
->>  
->> -&r_i2c {
->> +&r_ir {
->> +	status = "okay";
->> +};
->> +
->> +&r_rsb {
->>  	status = "okay";
->>  
->> -	axp805: pmic@36 {
->> +	axp805: pmic@745 {
->>  		compatible = "x-powers,axp805", "x-powers,axp806";
->> -		reg = <0x36>;
->> +		reg = <0x745>;
->>  		interrupt-parent = <&r_intc>;
->>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->>  		interrupt-controller;
->> @@ -291,10 +295,6 @@ sw {
->>  	};
->>  };
->>  
->> -&r_ir {
->> -	status = "okay";
->> -};
->> -
->>  &rtc {
->>  	clocks = <&ext_osc32k>;
->>  };
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
->> index ebc120a9232f..23e3cb2ffd8d 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
->> @@ -112,12 +112,20 @@ &pio {
->>  	vcc-pg-supply = <&reg_aldo1>;
->>  };
->>  
->> -&r_i2c {
->> +&r_ir {
->> +	status = "okay";
->> +};
->> +
->> +&r_pio {
->> +	vcc-pm-supply = <&reg_bldo3>;
->> +};
->> +
->> +&r_rsb {
->>  	status = "okay";
->>  
->> -	axp805: pmic@36 {
->> +	axp805: pmic@745 {
->>  		compatible = "x-powers,axp805", "x-powers,axp806";
->> -		reg = <0x36>;
->> +		reg = <0x745>;
->>  		interrupt-parent = <&r_intc>;
->>  		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
->>  		interrupt-controller;
->> @@ -232,14 +240,6 @@ sw {
->>  	};
->>  };
->>  
->> -&r_ir {
->> -	status = "okay";
->> -};
->> -
->> -&r_pio {
->> -	vcc-pm-supply = <&reg_bldo3>;
->> -};
->> -
->>  &rtc {
->>  	clocks = <&ext_osc32k>;
->>  };
->>
-> 
+This issue was never seen on Tegra210/Tegra186 and hence at that time it 
+was thought to be specific to Tegra194. I never tested this on Tegra30 
+since I don't have this device. I will clarify this with HW folks if 
+workaround is safer for all chips.
+
+>
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Ion Agorria <ion@agorria.com>
+> ---
+>   sound/pci/hda/hda_tegra.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> index 70164d1428d4..f8d61e677a09 100644
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
+>           * in powers of 2, next available ratio is 16 which can be
+>           * used as a limiting factor here.
+>           */
+> -       if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
+> -               chip->bus.core.sdo_limit = 16;
+> +       chip->bus.core.sdo_limit = 16;
+
+Future Tegra chips address this problem and hence cannot be enforced by 
+default. May be we can have like below:
+
+if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
+chip->bus.core.sdo_limit = 16;
+
+>
+>          /* codec detection */
+>          if (!bus->codec_mask) {
+> --
+> 2.25.1
+>
 
