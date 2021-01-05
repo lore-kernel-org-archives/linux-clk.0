@@ -4,112 +4,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26524C4332B
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1E8C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6070229F0
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2388A22AAB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbhAEM3a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 07:29:30 -0500
-Received: from mail.v3.sk ([167.172.186.51]:32846 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730282AbhAEM3A (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Jan 2021 07:29:00 -0500
-X-Greylist: delayed 636 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Jan 2021 07:28:59 EST
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 52AEFE0987;
-        Tue,  5 Jan 2021 12:14:03 +0000 (UTC)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id D5dhQFC0vdUF; Tue,  5 Jan 2021 12:14:02 +0000 (UTC)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 67D2BE0968;
-        Tue,  5 Jan 2021 12:14:02 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id B-_uerC0PAmZ; Tue,  5 Jan 2021 12:14:01 +0000 (UTC)
-Received: from localhost (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 7946AE0957;
-        Tue,  5 Jan 2021 12:14:01 +0000 (UTC)
-Date:   Tue, 5 Jan 2021 13:17:32 +0100
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Arnd Bergmann <arnd@kernel.org>
+        id S1728574AbhAEMso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 07:48:44 -0500
+Received: from mail-lf1-f44.google.com ([209.85.167.44]:40540 "EHLO
+        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbhAEMso (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 07:48:44 -0500
+Received: by mail-lf1-f44.google.com with SMTP id m12so72260383lfo.7;
+        Tue, 05 Jan 2021 04:48:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=WVVIx6PVhLwLplystJZYvhWeXG//TClji/7GLWGokI8=;
+        b=GH+3aDIfIEnaSoFnFu/3KBG5w4E4ehNViUVPv5Aen+YqRSsE0+Yt5D/dSdpNHQUtYA
+         ewgl7DayBomFlv1zg3YSG3jIRaBJsgq8MjQXoGuexW6ttJ5AUOIbnAZQPsqZnJ4aVVFT
+         7Olcwme+or2lJhraAPvqJ9Z2wXV9KSiyvjwzJ9xZLG/QmDmap+fFRBtYGIubl0FwmS6e
+         N4lwuWJ4ORdsgt5z5F/bDT7aDF008s7r/JBin21B0o9Xg8qUt1wsNqfKLrTWXMlcx0Zo
+         uWTLthTGJGfbBUIBoUK0JFil8NC2rF4ZccTT/VvZm0AHv6ZL/+RGxilY5byXfZTvo3sw
+         2goQ==
+X-Gm-Message-State: AOAM533xmyMdTKkx4fuwZpuh9tcRnKdy+Jk92eceXBCBXJA6MlmG6nQm
+        EAMOFLJi0xxrdnFk4sWdHwY=
+X-Google-Smtp-Source: ABdhPJwynyN+uxLUCFSfpexwN6aD1GsIHPuTSLZtETHD0K2xhW+5jQnW2bSBTwfcDIv7SGh9zc9TWg==
+X-Received: by 2002:a19:cb12:: with SMTP id b18mr36124105lfg.480.1609850881466;
+        Tue, 05 Jan 2021 04:48:01 -0800 (PST)
+Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
+        by smtp.gmail.com with ESMTPSA id v7sm7600621lfg.9.2021.01.05.04.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jan 2021 04:48:00 -0800 (PST)
+Date:   Tue, 5 Jan 2021 14:47:54 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>, linux-power@fi.rohmeurope.com,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mmp2: fix build without CONFIG_PM
-Message-ID: <20210105121732.GA811711@demiurge.local>
-References: <20210103135503.3668784-1-arnd@kernel.org>
+Subject: [PATCH] clk: BD718x7: Do not depend on parent driver data
+Message-ID: <20210105123028.GA3409663@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210103135503.3668784-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jan 03, 2021 at 02:54:53PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> pm_clk_suspend()/pm_clk_resume() are defined as NULL pointers rather than
-> empty inline stubs without CONFIG_PM:
-> 
-> drivers/clk/mmp/clk-audio.c:402:16: error: called object type 'void *' is not a function or function pointer
->         pm_clk_suspend(dev);
-> drivers/clk/mmp/clk-audio.c:411:15: error: called object type 'void *' is not a function or function pointer
->         pm_clk_resume(dev);
-> 
-> I tried redefining the helper functions, but that caused additional
-> problems. This is the simple solution of replacing the __maybe_unused
-> trick with an #ifdef.
-> 
-> Fixes: 725262d29139 ("clk: mmp2: Add audio clock controller driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The bd718x7 only needs a regmap from parent device. This can be
+obtained by call to dev_get_regmap. Do not require parent to
+populate the driver data for this.
 
-Thank you.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/clk-bd718x7.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-Acked-By: Lubomir Rintel <lkundrak@v3.sk>
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index b52e8d6f660c..17d90e09f1c0 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -31,12 +31,12 @@ struct bd718xx_clk {
+ 	u8 reg;
+ 	u8 mask;
+ 	struct platform_device *pdev;
+-	struct rohm_regmap_dev *mfd;
++	struct regmap *regmap;
+ };
+ 
+ static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
+ {
+-	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
++	return regmap_update_bits(c->regmap, c->reg, c->mask, status);
+ }
+ 
+ static void bd71837_clk_disable(struct clk_hw *hw)
+@@ -62,7 +62,7 @@ static int bd71837_clk_is_enabled(struct clk_hw *hw)
+ 	int rval;
+ 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
+ 
+-	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
++	rval = regmap_read(c->regmap, c->reg, &enabled);
+ 
+ 	if (rval)
+ 		return rval;
+@@ -82,7 +82,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	int rval = -ENOMEM;
+ 	const char *parent_clk;
+ 	struct device *parent = pdev->dev.parent;
+-	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
+ 	struct clk_init_data init = {
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+@@ -93,6 +92,10 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	if (!c)
+ 		return -ENOMEM;
+ 
++	c->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!c->regmap)
++		return -ENODEV;
++
+ 	init.num_parents = 1;
+ 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+ 
+@@ -119,7 +122,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Unknown clk chip\n");
+ 		return -EINVAL;
+ 	}
+-	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+ 
+-- 
+2.25.4
 
-> ---
->  drivers/clk/mmp/clk-audio.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
-> index eea69d498bd2..7aa7f4a9564f 100644
-> --- a/drivers/clk/mmp/clk-audio.c
-> +++ b/drivers/clk/mmp/clk-audio.c
-> @@ -392,7 +392,8 @@ static int mmp2_audio_clk_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
-> +#ifdef CONFIG_PM
-> +static int mmp2_audio_clk_suspend(struct device *dev)
->  {
->  	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
->  
-> @@ -404,7 +405,7 @@ static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
-> +static int mmp2_audio_clk_resume(struct device *dev)
->  {
->  	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
->  
-> @@ -415,6 +416,7 @@ static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
->  
->  	return 0;
->  }
-> +#endif
->  
->  static const struct dev_pm_ops mmp2_audio_clk_pm_ops = {
->  	SET_RUNTIME_PM_OPS(mmp2_audio_clk_suspend, mmp2_audio_clk_resume, NULL)
-> -- 
-> 2.29.2
-> 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
