@@ -2,417 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F11C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 19:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABFDC433E9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 20:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21D4622D6E
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 19:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48EE222D5B
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 20:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725939AbhAETap (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 14:30:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbhAETap (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Jan 2021 14:30:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B21C422D6E;
-        Tue,  5 Jan 2021 19:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609875004;
-        bh=BhKpj39Fj7yK0MVg7DnWHxgm/2qoucXj9xZO5y/hFqc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lFr44gci3pEfvnrg5QIk04vFTrE1EB0KtGQm+jGUX3ozo/EFRgDATgKutygRBe7tk
-         UGdGisTEtQekF0ACk6n0dMWnuWOHNuZEPKscqSJqhcEroIijeRdim4KbCrmQMMVDWk
-         oZXAqfhI3qJQ0PBL+fiHiq6UqBEjzQFLir+rA8j3sVQI7Nn141NHok1zPVdC3B++L2
-         j4ACaeIaQtqk2sCqwcsCRT8TgESriEU/a/acUoG5jECF6YbFyka+rZUszuuKmwrSYw
-         E4j7AojDajkLCTzTcjXXJE+SJFynjX2jV5KfJRONwrZwqiQIfFBP05jvSs2lAjJofW
-         xl/KPeOJUpfPQ==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     sboyd@kernel.org
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X platform
-Date:   Tue,  5 Jan 2021 13:29:56 -0600
-Message-Id: <20210105192956.2059505-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.30.0
+        id S1727239AbhAEUtN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 15:49:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729094AbhAEUtK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 15:49:10 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD69EC061796;
+        Tue,  5 Jan 2021 12:48:29 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id o13so1666280lfr.3;
+        Tue, 05 Jan 2021 12:48:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=VI6nFNhOrDBsKOeartd6J0bcnx10OA5inX4UBRpL4qE=;
+        b=XMzvAK1uTDP9sqD7pLv4Wz7WB5ahyaA4m6Kusb5//KKj6ORucbf4DEkHedVG2WYchx
+         ww5E+S2pe/MVFqDwCWn3GDiS2f5riKTPoV75h71RVrW0K2vBiy9ckj/U7dA9PWNjyCNI
+         nX5bomPKCcbVJeOgp/Cj7QeOBmzBoXkvbgT+W8lDuSsHgW8SMCpsK5rlGY82XsKP7qkx
+         a29IAV41Ls1xim5un7jcVMha0ymLBu7etMhtRuauiNm4Zo6NPbxuUdxGaFB5dXcGICKr
+         V9gREmCqoUjAr+3BJU51evd6QVFkDSbGIsK3A3GwKvAN8OhPsBEmC8Moy5N8LCKzSIDI
+         qz8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=VI6nFNhOrDBsKOeartd6J0bcnx10OA5inX4UBRpL4qE=;
+        b=FG6SNthz8P94I2FoXGzya5sRVgOPbypbkHtVdcNSFG+DgmibLQoPKra/TvrVh2Vdv2
+         leFN9mNc/tZ6Z4UUKldJnV85Us0eDPB13bP3XeE9gH/lmc3DkevR11UZd9LSJoXTffDe
+         RyicTBGoSPEGcw2FX1g47y0pym2m16A6Qx0hlHeuo0U5WFKzIdNGhGe/qLvRnC93YuOh
+         Eydg2fpeDYwxsB8C0dPUirx7huBeiVBTxGmuuB6L3ChsVSv84N7XjF602qo0pRsH0O6q
+         hli3IB4JvZYYOMjNrjEOHG/depgPQofXFEsga2m4M0bdWml3wvU2pnUloW3Zd9iOnjsZ
+         ux9g==
+X-Gm-Message-State: AOAM5305RrdE0AAtjoTNIhMuTR3cWMeBHvXkoyTtwcA7X2xnyV0sBVOx
+        5IzuPqY/Y3bZU7VBY3YC8bLFZ/Ojoxos58UUjcE=
+X-Google-Smtp-Source: ABdhPJxu0obS2EF+VNsGTCaRCOLzZxvocXJO+DOkx1q/eD1CrMCNDr6ayRfy6f/783TFKHGmdZ4OqMWe5HwKjoHK0HI=
+X-Received: by 2002:a2e:8084:: with SMTP id i4mr635086ljg.291.1609879708350;
+ Tue, 05 Jan 2021 12:48:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210104230253.2805217-1-robh@kernel.org>
+In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Wed, 6 Jan 2021 05:47:51 +0900
+Message-ID: <CAGTfZH11n8cRbrNB6XbzCydR4387d7V-gmRWou8hFFXbFBgvHQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-usb@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-ide@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        netdev@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Marc Zyngier <maz@kernel.org>, linux-riscv@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-serial@vger.kernel.org, linux-input@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>, linux-media@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-mmc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for Intel's eASIC N5X platform. The clock manager driver for
-the N5X is very similar to the Agilex platform, we can re-use most of
-the Agilex clock driver.
+Hi Rob,
 
-This patch makes the necessary changes for the driver to differentiate
-between the Agilex and the N5X platforms.
+On Tue, Jan 5, 2021 at 8:03 AM Rob Herring <robh@kernel.org> wrote:
+>
+> DT properties which can have multiple entries need to specify what the
+> entries are and define how many entries there can be. In the case of
+> only a single entry, just 'maxItems: 1' is sufficient.
+>
+> Add the missing entry constraints. These were found with a modified
+> meta-schema. Unfortunately, there are a few cases where the size
+> constraints are not defined such as common bindings, so the meta-schema
+> can't be part of the normal checks.
+>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-ide@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> ---
+>  .../socionext,uniphier-system-cache.yaml      |  4 ++--
+>  .../bindings/ata/sata_highbank.yaml           |  1 +
+>  .../bindings/clock/canaan,k210-clk.yaml       |  1 +
+>  .../bindings/display/brcm,bcm2711-hdmi.yaml   |  1 +
+>  .../bindings/display/brcm,bcm2835-hdmi.yaml   |  1 +
+>  .../display/panel/jdi,lt070me05000.yaml       |  1 +
+>  .../display/panel/mantix,mlaf057we51-x.yaml   |  3 ++-
+>  .../display/panel/novatek,nt36672a.yaml       |  1 +
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml      |  2 +-
+>  .../devicetree/bindings/eeprom/at25.yaml      |  3 +--
+>  .../bindings/extcon/extcon-ptn5150.yaml       |  2 ++
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
- drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
- drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
- drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
- 4 files changed, 238 insertions(+), 3 deletions(-)
+For extcon part,
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-index bb3e80928ebe..f9394ed8a41d 100644
---- a/drivers/clk/socfpga/clk-agilex.c
-+++ b/drivers/clk/socfpga/clk-agilex.c
-@@ -196,6 +196,17 @@ static const struct stratix10_pll_clock agilex_pll_clks[] = {
- 	  0, 0x9c},
- };
- 
-+static const struct n5x_perip_c_clock n5x_main_perip_c_clks[] = {
-+	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x54, 0},
-+	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x54, 8},
-+	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x54, 16},
-+	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x54, 24},
-+	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xA8, 0},
-+	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xA8, 8},
-+	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xA8, 16},
-+	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xA8, 24},
-+};
-+
- static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
- 	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
- 	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
-@@ -289,6 +300,25 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
- 	  10, 0, 0, 0, 0, 0, 4},
- };
- 
-+static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
-+				       int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = n5x_register_periph(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+	return 0;
-+}
-+
- static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
- 				       int nums, struct stratix10_clock_data *data)
- {
-@@ -367,6 +397,26 @@ static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
- 	return 0;
- }
- 
-+static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
-+				 int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk *clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		clk = n5x_register_pll(&clks[i], base);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.clks[clks[i].id] = clk;
-+	}
-+
-+	return 0;
-+}
-+
- static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
- 						    int nr_clks)
- {
-@@ -401,7 +451,7 @@ static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_de
- 	return clk_data;
- }
- 
--static int agilex_clkmgr_probe(struct platform_device *pdev)
-+static int agilex_clkmgr_init(struct platform_device *pdev)
- {
- 	struct stratix10_clock_data *clk_data;
- 
-@@ -423,9 +473,43 @@ static int agilex_clkmgr_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int n5x_clkmgr_init(struct platform_device *pdev)
-+{
-+	struct stratix10_clock_data *clk_data;
-+
-+	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
-+	if (IS_ERR(clk_data))
-+		return PTR_ERR(clk_data);
-+
-+	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-+
-+	n5x_clk_register_c_perip(n5x_main_perip_c_clks,
-+				 ARRAY_SIZE(n5x_main_perip_c_clks), clk_data);
-+
-+	agilex_clk_register_cnt_perip(agilex_main_perip_cnt_clks,
-+				   ARRAY_SIZE(agilex_main_perip_cnt_clks),
-+				   clk_data);
-+
-+	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
-+			      clk_data);
-+	return 0;
-+}
-+
-+static int agilex_clkmgr_probe(struct platform_device *pdev)
-+{
-+	int (*probe_func)(struct platform_device *);
-+
-+	probe_func = of_device_get_match_data(&pdev->dev);
-+	if (!probe_func)
-+		return -ENODEV;
-+	return	probe_func(pdev);;
-+}
-+
- static const struct of_device_id agilex_clkmgr_match_table[] = {
- 	{ .compatible = "intel,agilex-clkmgr",
--	  .data = agilex_clkmgr_probe },
-+	  .data = agilex_clkmgr_init },
-+	{ .compatible = "intel,n5x-clkmgr",
-+	  .data = n5x_clkmgr_init },
- 	{ }
- };
- 
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-index 397b77b89b16..135581c41c05 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -15,6 +15,21 @@
- 
- #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.hw)
- 
-+static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
-+					     unsigned long parent_rate)
-+{
-+	struct socfpga_periph_clk *socfpgaclk = to_periph_clk(hwclk);
-+	unsigned long div;
-+	unsigned long shift = socfpgaclk->shift;
-+	u32 val;
-+
-+	val = readl(socfpgaclk->hw.reg);
-+	val &= (0x1F << shift);
-+	div = (val >> shift) + 1;
-+
-+	return parent_rate / div;
-+}
-+
- static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
- 					     unsigned long parent_rate)
- {
-@@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
- 	return parent;
- }
- 
-+static const struct clk_ops n5x_peri_c_clk_ops = {
-+	.recalc_rate = n5x_clk_peri_c_clk_recalc_rate,
-+	.get_parent = clk_periclk_get_parent,
-+};
-+
- static const struct clk_ops peri_c_clk_ops = {
- 	.recalc_rate = clk_peri_c_clk_recalc_rate,
- 	.get_parent = clk_periclk_get_parent,
-@@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
- 	return clk;
- }
- 
-+struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
-+				void __iomem *regbase)
-+{
-+	struct clk *clk;
-+	struct socfpga_periph_clk *periph_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+	const char *parent_name = clks->parent_name;
-+
-+	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
-+	if (WARN_ON(!periph_clk))
-+		return NULL;
-+
-+	periph_clk->hw.reg = regbase + clks->offset;
-+	periph_clk->shift = clks->shift;
-+
-+	init.name = name;
-+	init.ops = &n5x_peri_c_clk_ops;
-+	init.flags = clks->flags;
-+
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+
-+	periph_clk->hw.hw.init = &init;
-+
-+	clk = clk_register(NULL, &periph_clk->hw.hw);
-+	if (WARN_ON(IS_ERR(clk))) {
-+		kfree(periph_clk);
-+		return NULL;
-+	}
-+	return clk;
-+}
-+
- struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
- 				    void __iomem *regbase)
- {
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 4e268953b7da..4bdf64be3ed4 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -27,10 +27,37 @@
- #define SWCTRLBTCLKSEL_MASK		0x200
- #define SWCTRLBTCLKSEL_SHIFT		9
- 
-+#define SOCFPGA_N5X_PLLDIV_FDIV_MASK	GENMASK(16, 8)
-+#define SOCFPGA_N5X_PLLDIV_FDIV_SHIFT	8
-+#define SOCFPGA_N5X_PLLDIV_RDIV_MASK	GENMASK(5, 0)
-+#define SOCFPGA_N5X_PLLDIV_QDIV_MASK	GENMASK(26, 24)
-+#define SOCFPGA_N5X_PLLDIV_QDIV_SHIFT	24
-+
- #define SOCFPGA_BOOT_CLK		"boot_clk"
- 
- #define to_socfpga_clk(p) container_of(p, struct socfpga_pll, hw.hw)
- 
-+static unsigned long n5x_clk_pll_recalc_rate(struct clk_hw *hwclk,
-+						unsigned long parent_rate)
-+{
-+	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-+	unsigned long fdiv, reg, rdiv, qdiv;
-+	u32 power = 1;
-+
-+	/* read VCO1 reg for numerator and denominator */
-+	reg = readl(socfpgaclk->hw.reg + 0x8);
-+	fdiv = (reg & SOCFPGA_N5X_PLLDIV_FDIV_MASK) >> SOCFPGA_N5X_PLLDIV_FDIV_SHIFT;
-+	rdiv = (reg & SOCFPGA_N5X_PLLDIV_RDIV_MASK);
-+	qdiv = (reg & SOCFPGA_N5X_PLLDIV_QDIV_MASK) >> SOCFPGA_N5X_PLLDIV_QDIV_SHIFT;
-+
-+	while (qdiv) {
-+		power *= 2;
-+		qdiv--;
-+	}
-+
-+	return ((parent_rate * 2 * (fdiv + 1)) / ((rdiv + 1) * power));
-+}
-+
- static unsigned long agilex_clk_pll_recalc_rate(struct clk_hw *hwclk,
- 						unsigned long parent_rate)
- {
-@@ -123,7 +150,26 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
- 	return 0;
- }
- 
--static const struct clk_ops agilex_clk_pll_ops = {
-+static int n5x_clk_pll_prepare(struct clk_hw *hwclk)
-+{
-+	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-+	u32 reg;
-+
-+	/* Bring PLL out of reset */
-+	reg = readl(socfpgaclk->hw.reg + 0x4);
-+	reg &= ~SOCFPGA_PLL_RESET_MASK;
-+	writel(reg, socfpgaclk->hw.reg + 0x4);
-+
-+	return 0;
-+}
-+
-+static struct clk_ops n5x_clk_pll_ops = {
-+	.recalc_rate = n5x_clk_pll_recalc_rate,
-+	.get_parent = clk_pll_get_parent,
-+	.prepare = n5x_clk_pll_prepare,
-+};
-+
-+static struct clk_ops agilex_clk_pll_ops = {
- 	.recalc_rate = agilex_clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
- 	.prepare = clk_pll_prepare,
-@@ -214,3 +260,40 @@ struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
- 	}
- 	return clk;
- }
-+
-+struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
-+			     void __iomem *reg)
-+{
-+	struct clk *clk;
-+	struct socfpga_pll *pll_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+
-+	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-+	if (WARN_ON(!pll_clk))
-+		return NULL;
-+
-+	pll_clk->hw.reg = reg + clks->offset;
-+
-+	if (streq(name, SOCFPGA_BOOT_CLK))
-+		init.ops = &clk_boot_ops;
-+	else
-+		init.ops = &n5x_clk_pll_ops;
-+
-+	init.name = name;
-+	init.flags = clks->flags;
-+
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = NULL;
-+	init.parent_data = clks->parent_data;
-+	pll_clk->hw.hw.init = &init;
-+
-+	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-+
-+	clk = clk_register(NULL, &pll_clk->hw.hw);
-+	if (WARN_ON(IS_ERR(clk))) {
-+		kfree(pll_clk);
-+		return NULL;
-+	}
-+	return clk;
-+}
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-index f9d5d724c694..90441c990855 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -30,6 +30,17 @@ struct stratix10_perip_c_clock {
- 	unsigned long		offset;
- };
- 
-+struct n5x_perip_c_clock {
-+	unsigned int		id;
-+	const char		*name;
-+	const char		*parent_name;
-+	const char		*const *parent_names;
-+	u8			num_parents;
-+	unsigned long		flags;
-+	unsigned long		offset;
-+	unsigned long		shift;
-+};
-+
- struct stratix10_perip_cnt_clock {
- 	unsigned int		id;
- 	const char		*name;
-@@ -64,8 +75,12 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *,
- 			     void __iomem *);
- struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
- 				void __iomem *);
-+struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-+			     void __iomem *);
- struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
- 				void __iomem *);
-+struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-+				void __iomem *);
- struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
- 				    void __iomem *);
- struct clk *s10_register_gate(const struct stratix10_gate_clock *,
--- 
-2.30.0
+(snip)
 
+Best Regards,
+Chanwoo Choi
