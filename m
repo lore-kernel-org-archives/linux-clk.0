@@ -2,87 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6279C433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 08:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADBDC433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 951272255F
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 08:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F0AA20739
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbhAEI4T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 03:56:19 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:62690 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbhAEI4S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 03:56:18 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1609836960; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=KuJNnND9gNxn87Ys5RVKbNSQ/froZkWCUykAcB4+ZmA=; b=VER/6SgbdPFc27ziWZG0Y+lhqq+POXSd9hy6e5iXCs6C+ZitNp1X1jikHmW0B2RGwJJOtxE6
- EG/8DML409zmNCyXq1Ry5LEDpO4Mw4X6QlxGcBvmfOeWYQAxtoCbxQZGtCDvTwUu1srVAjf8
- infUuQdSKP9RzoGTg+bzjB2q2/4=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n08.prod.us-west-2.postgun.com with SMTP id
- 5ff42980b73be0303d4c5428 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 05 Jan 2021 08:55:28
- GMT
-Sender: varada=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 37917C43464; Tue,  5 Jan 2021 08:55:28 +0000 (UTC)
-Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: varada)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A7D5C433C6;
-        Tue,  5 Jan 2021 08:55:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A7D5C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=varada@codeaurora.org
-Date:   Tue, 5 Jan 2021 14:25:16 +0530
-From:   Varadarajan Narayanan <varada@codeaurora.org>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
-        p.zabel@pengutronix.de, nsekar@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sricharan@codeaurora.org
-Subject: Re: [PATCH 1/7] clk: qcom: clk-alpha-pll: Add support for Stromer
- PLLs
-Message-ID: <20210105085515.GA30147@codeaurora.org>
-References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
- <1601270140-4306-2-git-send-email-varada@codeaurora.org>
- <51544129-a04e-16a2-64e5-e004ea19bf8c@somainline.org>
+        id S1728770AbhAEKNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 05:13:09 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12012 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728756AbhAEKNI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 05:13:08 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff43b8b0001>; Tue, 05 Jan 2021 02:12:27 -0800
+Received: from [10.26.72.150] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Jan
+ 2021 10:12:23 +0000
+Subject: Re: [PATCH 1/2] clk: tegra30: Add hda clock default rates to clock
+ driver
+To:     Peter Geis <pgwipeout@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Peter De Schrijver" <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Mohan Kumar <mkumard@nvidia.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        Ion Agorria <ion@agorria.com>
+References: <20201225012025.507803-1-pgwipeout@gmail.com>
+ <20201225012025.507803-2-pgwipeout@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <bcf7326a-37dc-afdc-82c6-58175e97f7d9@nvidia.com>
+Date:   Tue, 5 Jan 2021 10:12:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51544129-a04e-16a2-64e5-e004ea19bf8c@somainline.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20201225012025.507803-2-pgwipeout@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1609841547; bh=gYOyUlnAGiNfPiqs6BiSy7QAqM9dPQZMRYM5DfEygxk=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=fK760iSgSh3XodQJ9/CrvYqzAPZk+ZI93qyb1QZrNWR1uQAPpW+LZwZhnM/AFsA3n
+         FyriI80PBYkbrNSnQe9Sz85qgVfbPgmBifTD2EEXxT4577woLHSW95lgjpNaTh+OzI
+         qKF+ApgxxWTiP1+2eMJquLWZHobORR6iqdQP+gN8DAy+SQtCDJhOd+TZYLAXjUxBNL
+         VBYvj+AeoDXjG4ICyWjVoxJbzFstjcleCFz2v3LoKrYhlqDvjxOtXWsE/1C0Ery4Vv
+         tNYaqwltuXnS7BdH0dOoms1fJdHwQWr6mMlcAJmA+YV0j1HOdfXwNBJ8gAhIm3UsPZ
+         ahwBdesM3TKAw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Dec 26, 2020 at 01:51:28AM +0100, Konrad Dybcio wrote:
 
-Konrad,
+On 25/12/2020 01:20, Peter Geis wrote:
+> Current implementation defaults the hda clocks to clk_m.
+> This causes hda to run too slow to operate correctly.
+> Fix this by defaulting to pll_p and setting the frequency to the correct rate.
+> 
+> This matches upstream t124 and downstream t30.
+> 
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> Tested-by: Ion Agorria <ion@agorria.com>
+> ---
+>  drivers/clk/tegra/clk-tegra30.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> index 37244a7e68c2..9cf249c344d9 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -1256,6 +1256,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>  	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+>  	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+>  	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+> +	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
+> +	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>  	/* must be the last entry */
+>  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+>  };
 
-> Hi, are you going to resubmit this patch? Looks like
-> MDM9607 uses Stromer PLL for its CPU clocks and could
-> benefit from it.
 
-Yes. But will take some time since we are held up with
-additional activities.
+This looks good to me. So ...
 
-Thanks
-Varada
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Cheers
+Jon
+
+-- 
+nvpublic
