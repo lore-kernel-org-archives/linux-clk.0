@@ -2,124 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E165C432C3
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 11:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26524C4332B
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63614229EF
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 11:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6070229F0
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 12:29:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbhAELSy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 06:18:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729196AbhAELSy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Jan 2021 06:18:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 736B5229C5;
-        Tue,  5 Jan 2021 11:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609845492;
-        bh=GDmYQRHGn/AcnFt3hdxGi1mf2d4j0SgudD/3lB6HiLU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MGoc1AfjFEcjnH2LG9n6lBEYoM6Ri+jtRDQ3pMETkgkS4xWatgY5WzBCv7tGFTTX4
-         9deGZUIgeLAhm1VPGBdYES++ZORJDj29LOoOSG8tACOto7uS1nWJwFUZ5fw3Q/9+7t
-         9Rnjcz0F86y/qp986vAfUr6GinSVP0XwPgyXu3vSEN7cNL4OxE10chjJdGA85/nxVF
-         lPpoMqPvAHjIz+Tazlv2fQtQtSQARqHG/OYlCfxgVMRWyanIC2bLCSGkFIWiXyTy98
-         QR/IH6Kj4pkkDkHe387Q3RpA+JZkCdNIme8yoaM7itWnaNn71YrIoqeYgceFoOyLsB
-         SI0+F1HbHOM4g==
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4BD5B3C0C94; Tue,  5 Jan 2021 12:18:10 +0100 (CET)
-Date:   Tue, 5 Jan 2021 12:18:10 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
-Message-ID: <20210105111810.5sdfmjga5in5wgvx@earth.universe>
-References: <20210104230253.2805217-1-robh@kernel.org>
+        id S1730315AbhAEM3a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 07:29:30 -0500
+Received: from mail.v3.sk ([167.172.186.51]:32846 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730282AbhAEM3A (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Jan 2021 07:29:00 -0500
+X-Greylist: delayed 636 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Jan 2021 07:28:59 EST
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 52AEFE0987;
+        Tue,  5 Jan 2021 12:14:03 +0000 (UTC)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id D5dhQFC0vdUF; Tue,  5 Jan 2021 12:14:02 +0000 (UTC)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 67D2BE0968;
+        Tue,  5 Jan 2021 12:14:02 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id B-_uerC0PAmZ; Tue,  5 Jan 2021 12:14:01 +0000 (UTC)
+Received: from localhost (unknown [109.183.109.54])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 7946AE0957;
+        Tue,  5 Jan 2021 12:14:01 +0000 (UTC)
+Date:   Tue, 5 Jan 2021 13:17:32 +0100
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mmp2: fix build without CONFIG_PM
+Message-ID: <20210105121732.GA811711@demiurge.local>
+References: <20210103135503.3668784-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vyuzhxvp4ms2cjlb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
+In-Reply-To: <20210103135503.3668784-1-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sun, Jan 03, 2021 at 02:54:53PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> pm_clk_suspend()/pm_clk_resume() are defined as NULL pointers rather than
+> empty inline stubs without CONFIG_PM:
+> 
+> drivers/clk/mmp/clk-audio.c:402:16: error: called object type 'void *' is not a function or function pointer
+>         pm_clk_suspend(dev);
+> drivers/clk/mmp/clk-audio.c:411:15: error: called object type 'void *' is not a function or function pointer
+>         pm_clk_resume(dev);
+> 
+> I tried redefining the helper functions, but that caused additional
+> problems. This is the simple solution of replacing the __maybe_unused
+> trick with an #ifdef.
+> 
+> Fixes: 725262d29139 ("clk: mmp2: Add audio clock controller driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
---vyuzhxvp4ms2cjlb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you.
 
-Hi Rob,
+Acked-By: Lubomir Rintel <lkundrak@v3.sk>
 
-On Mon, Jan 04, 2021 at 04:02:53PM -0700, Rob Herring wrote:
-> DT properties which can have multiple entries need to specify what the
-> entries are and define how many entries there can be. In the case of
-> only a single entry, just 'maxItems: 1' is sufficient.
->=20
-> Add the missing entry constraints. These were found with a modified
-> meta-schema. Unfortunately, there are a few cases where the size
-> constraints are not defined such as common bindings, so the meta-schema
-> can't be part of the normal checks.
->=20
-> [...]
->  .../bindings/power/supply/bq25980.yaml        |  1 +
-> [...]
-
-Acked-by: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
---vyuzhxvp4ms2cjlb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl/0SucACgkQ2O7X88g7
-+ppIAQ/8CwCUtes2Mr7K09stdBuNtR3gBayMxcQnnIM6AQvBexKzq6gM2xpDIPB8
-YVpTjaGQkOcwS3BMu7BsRT4t2s3KXy9lVS5jkChykskjyAyr9a7QPsK7MVZVRh2Q
-U896qS+zI2nsNdeX6+kT10+29b7PcoEvTJRtEPEFlsq4UoFbMAsdJhtHBo9v1oUP
-cJMT7NSkqtcHM9HeSPZFCTLyAsoGFPYMTneKdN9ZVlPHoQRkCH0k3vyHMmKKPWAQ
-uafDLlP+nvs9Ug/FSsFsoaLcixHHAI+GkVj48muZL7EVAygGTbrRA27r0txduvfj
-DOxfT7BdNOMkmDge0RR2vk29V/2WYsEg4vwi3uyP2BDQsdXEYpwTn00IJ5IJgcqE
-EAjq7hWsSo7zd8VkMc/CLN1a1W+PEpIJ0CGfS4cLtAMwRLNLdPA+FS4UaBCAoS4k
-T9AZGFXABwtQQHyOAHD8/Hjs5vexDnWdvcRyCuDqgt6YeUX6Lu8pRTWx5lkWPkLy
-GZf/jppVAnP/gtnsOOJnPL37jxbOpelu+4UopYZ/j9YLJb+M7P2xYhsYuRlnKn0r
-aAgoNpEXu3TNpex2apw+Cm70EiidWAGcWqvrOCWhdqWBulGJ+O4v1DYe536LLoZN
-rdX4Hbkx7kBMNJ1ZZVIA3x9YzLwGKo/1nnV2q7fUdTzUEobcJWQ=
-=gWL0
------END PGP SIGNATURE-----
-
---vyuzhxvp4ms2cjlb--
+> ---
+>  drivers/clk/mmp/clk-audio.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mmp/clk-audio.c b/drivers/clk/mmp/clk-audio.c
+> index eea69d498bd2..7aa7f4a9564f 100644
+> --- a/drivers/clk/mmp/clk-audio.c
+> +++ b/drivers/clk/mmp/clk-audio.c
+> @@ -392,7 +392,8 @@ static int mmp2_audio_clk_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
+> +#ifdef CONFIG_PM
+> +static int mmp2_audio_clk_suspend(struct device *dev)
+>  {
+>  	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
+>  
+> @@ -404,7 +405,7 @@ static int __maybe_unused mmp2_audio_clk_suspend(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
+> +static int mmp2_audio_clk_resume(struct device *dev)
+>  {
+>  	struct mmp2_audio_clk *priv = dev_get_drvdata(dev);
+>  
+> @@ -415,6 +416,7 @@ static int __maybe_unused mmp2_audio_clk_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> +#endif
+>  
+>  static const struct dev_pm_ops mmp2_audio_clk_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(mmp2_audio_clk_suspend, mmp2_audio_clk_resume, NULL)
+> -- 
+> 2.29.2
+> 
