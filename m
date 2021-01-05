@@ -2,144 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2B2C433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 06:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6279C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 08:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A292B227C3
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 06:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 951272255F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 08:56:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725778AbhAEGbX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 01:31:23 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:16724 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbhAEGbW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 01:31:22 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff407920000>; Mon, 04 Jan 2021 22:30:42 -0800
-Received: from [10.25.100.71] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Jan
- 2021 06:30:35 +0000
-Subject: Re: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
-To:     Peter Geis <pgwipeout@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Peter De Schrijver" <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Mohan Kumar <mkumard@nvidia.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Ion Agorria <ion@agorria.com>
-References: <20201225012025.507803-1-pgwipeout@gmail.com>
- <20201225012025.507803-3-pgwipeout@gmail.com>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <0c3665b2-bac6-546a-bdd4-0ab7a90adf7c@nvidia.com>
-Date:   Tue, 5 Jan 2021 12:00:29 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726273AbhAEI4T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 03:56:19 -0500
+Received: from m43-15.mailgun.net ([69.72.43.15]:62690 "EHLO
+        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbhAEI4S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 03:56:18 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1609836960; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=KuJNnND9gNxn87Ys5RVKbNSQ/froZkWCUykAcB4+ZmA=; b=VER/6SgbdPFc27ziWZG0Y+lhqq+POXSd9hy6e5iXCs6C+ZitNp1X1jikHmW0B2RGwJJOtxE6
+ EG/8DML409zmNCyXq1Ry5LEDpO4Mw4X6QlxGcBvmfOeWYQAxtoCbxQZGtCDvTwUu1srVAjf8
+ infUuQdSKP9RzoGTg+bzjB2q2/4=
+X-Mailgun-Sending-Ip: 69.72.43.15
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n08.prod.us-west-2.postgun.com with SMTP id
+ 5ff42980b73be0303d4c5428 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 05 Jan 2021 08:55:28
+ GMT
+Sender: varada=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 37917C43464; Tue,  5 Jan 2021 08:55:28 +0000 (UTC)
+Received: from codeaurora.org (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: varada)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A7D5C433C6;
+        Tue,  5 Jan 2021 08:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A7D5C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=varada@codeaurora.org
+Date:   Tue, 5 Jan 2021 14:25:16 +0530
+From:   Varadarajan Narayanan <varada@codeaurora.org>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, nsekar@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sricharan@codeaurora.org
+Subject: Re: [PATCH 1/7] clk: qcom: clk-alpha-pll: Add support for Stromer
+ PLLs
+Message-ID: <20210105085515.GA30147@codeaurora.org>
+References: <1601270140-4306-1-git-send-email-varada@codeaurora.org>
+ <1601270140-4306-2-git-send-email-varada@codeaurora.org>
+ <51544129-a04e-16a2-64e5-e004ea19bf8c@somainline.org>
 MIME-Version: 1.0
-In-Reply-To: <20201225012025.507803-3-pgwipeout@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1609828242; bh=+TbvEK70pgMeNJJMJSEFAbEVqczYIlNcn1A6iMFsvnE=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-         Content-Language:X-Originating-IP:X-ClientProxiedBy;
-        b=VRFUKKclHq/2JaUXtTHG2IvmplsF4cEUVv+dvwRSHRNg9oDsK0HASEjYbR6dysveJ
-         hz5IEXn8h96NnUF4hw650hWsM4Npsn1Q4peEf6yOgPD5qf4KBoqdwEgr3HOkuJjq6y
-         VCtU5PeVRothSPjDO0pAphq5l/bCRR9zQJN63G16mcpuvtnto5XS8ixo4mLJ+jwNpi
-         TdOmEkn9RRteF8QEWVSIY+Zmc1Dc45G0uZGJZ1+fejUs+ll5D5OLqTmF1g2+wfsmA7
-         H3nO6isudhca8rAGTYv6fJmmoLWKKideLZldwEPmvKcwps3+951MupvV78dc/hPtud
-         Y2qtuKU+3NpnA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <51544129-a04e-16a2-64e5-e004ea19bf8c@somainline.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Dec 26, 2020 at 01:51:28AM +0100, Konrad Dybcio wrote:
 
+Konrad,
 
-On 12/25/2020 6:50 AM, Peter Geis wrote:
-> External email: Use caution opening links or attachments
->
->
-> Currently hda on tegra30 fails to open a stream with an input/output error.
-> This is similar to the issue referenced in [1].
->
-> For example:
-> speaker-test -Dhw:0,3 -c 2
->
-> speaker-test 1.2.2
->
-> Playback device is hw:0,3
-> Stream parameters are 48000Hz, S16_LE, 2 channels
-> Using 16 octaves of pink noise
-> Rate set to 48000Hz (requested 48000Hz)
-> Buffer size range from 64 to 16384
-> Period size range from 32 to 8192
-> Using max buffer size 16384
-> Periods = 4
-> was set period_size = 4096
-> was set buffer_size = 16384
->   0 - Front Left
-> Write error: -5,Input/output error
-> xrun_recovery failed: -5,Input/output error
-> Transfer failed: Input/output error
->
-> [1] states "Due to a legacy HW design problem", implying the issue applies to all previous tegra-hda devices.
-> The tegra-hda device was introduced in tegra30 but only utilized in tegra124 until now.
-> For this reason it is unknown when this issue first manifested.
->
-> Applying the fix in [1] universally resolves this issue on tegra30.
-> Tested on the Ouya game console and the tf201 tablet.
->
-> [1] 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on Tegra194")
+> Hi, are you going to resubmit this patch? Looks like
+> MDM9607 uses Stromer PLL for its CPU clocks and could
+> benefit from it.
 
-This issue was never seen on Tegra210/Tegra186 and hence at that time it 
-was thought to be specific to Tegra194. I never tested this on Tegra30 
-since I don't have this device. I will clarify this with HW folks if 
-workaround is safer for all chips.
+Yes. But will take some time since we are held up with
+additional activities.
 
->
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Ion Agorria <ion@agorria.com>
-> ---
->   sound/pci/hda/hda_tegra.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-> index 70164d1428d4..f8d61e677a09 100644
-> --- a/sound/pci/hda/hda_tegra.c
-> +++ b/sound/pci/hda/hda_tegra.c
-> @@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
->           * in powers of 2, next available ratio is 16 which can be
->           * used as a limiting factor here.
->           */
-> -       if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
-> -               chip->bus.core.sdo_limit = 16;
-> +       chip->bus.core.sdo_limit = 16;
+Thanks
+Varada
 
-Future Tegra chips address this problem and hence cannot be enforced by 
-default. May be we can have like below:
-
-if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
-chip->bus.core.sdo_limit = 16;
-
->
->          /* codec detection */
->          if (!bus->codec_mask) {
-> --
-> 2.25.1
->
-
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
