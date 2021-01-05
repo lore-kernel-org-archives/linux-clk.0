@@ -2,109 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BADBDC433E6
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A351C433E9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0AA20739
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD7922515
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 10:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbhAEKNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 05:13:09 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12012 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728756AbhAEKNI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 05:13:08 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff43b8b0001>; Tue, 05 Jan 2021 02:12:27 -0800
-Received: from [10.26.72.150] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 5 Jan
- 2021 10:12:23 +0000
-Subject: Re: [PATCH 1/2] clk: tegra30: Add hda clock default rates to clock
- driver
-To:     Peter Geis <pgwipeout@gmail.com>,
+        id S1729206AbhAEKl1 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 05:41:27 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:36779 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729193AbhAEKl1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 05:41:27 -0500
+Received: by mail-oi1-f169.google.com with SMTP id 9so35523518oiq.3;
+        Tue, 05 Jan 2021 02:41:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BhNvTa8G3ACpSXzNTr2YPqZ77khq1SLnQS1+ZvTkWb4=;
+        b=BtX1VM99o9XrYAIvGglxQAyxb39XUr1aE+Nev0MMUMpeR5EpQM0mtMUimGE84AX8Q7
+         kD/6KxG8zNDi3pEeHaYiOv6A3TfkyRb53fErK+sww2kWJ26kVhCoXyi6BtuogC9Ywiv+
+         hKqhh3XZfUw+MoGBPrMzbc/iqzMJvgOcPQD92JAhhs/d8z3IXN/D4beU+f12wtuKjC4h
+         Ml74AddofYmKTOhJYe0nenPeC8uoabe5ofJ0a9aImjqmm5Y9Bezf3Id4PewjVOwgn9T/
+         AjaR42ogrAEzOIcYWNG7nhJeyHgxF4OX56sPH19P69NfqT4x1MDRoLRO4iYFLIDAabRt
+         J4mg==
+X-Gm-Message-State: AOAM531Gr69IFK8FgWCFXd7bveD9Ggs7gnnw5C/vJ/Hopo2C4FiYH6eP
+        tK8oZkbr/LYPsNQs92a18edHd81vlT+RVPA5thI=
+X-Google-Smtp-Source: ABdhPJy8Upntzome+hHCzHzvupD1kjZGJllVBhKX3LHK5qrxPAZyZK23MdohxEU+SzXTcGO4EDSsgs+XEqxRl4mKu1o=
+X-Received: by 2002:aca:3cc5:: with SMTP id j188mr2176737oia.54.1609843246147;
+ Tue, 05 Jan 2021 02:40:46 -0800 (PST)
+MIME-Version: 1.0
+References: <20201223172505.34736-1-wsa+renesas@sang-engineering.com> <20201223172505.34736-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20201223172505.34736-3-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Jan 2021 11:40:35 +0100
+Message-ID: <CAMuHMdUkWoFzK6vdNSW2c21P01ee_HOtsmHG9sv7g9ogZrsm9g@mail.gmail.com>
+Subject: Re: [PATCH 2/5] clk: renesas: r8a779a0: add clocks for I2C
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "Peter De Schrijver" <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Mohan Kumar <mkumard@nvidia.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Ion Agorria <ion@agorria.com>
-References: <20201225012025.507803-1-pgwipeout@gmail.com>
- <20201225012025.507803-2-pgwipeout@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <bcf7326a-37dc-afdc-82c6-58175e97f7d9@nvidia.com>
-Date:   Tue, 5 Jan 2021 10:12:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201225012025.507803-2-pgwipeout@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1609841547; bh=gYOyUlnAGiNfPiqs6BiSy7QAqM9dPQZMRYM5DfEygxk=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=fK760iSgSh3XodQJ9/CrvYqzAPZk+ZI93qyb1QZrNWR1uQAPpW+LZwZhnM/AFsA3n
-         FyriI80PBYkbrNSnQe9Sz85qgVfbPgmBifTD2EEXxT4577woLHSW95lgjpNaTh+OzI
-         qKF+ApgxxWTiP1+2eMJquLWZHobORR6iqdQP+gN8DAy+SQtCDJhOd+TZYLAXjUxBNL
-         VBYvj+AeoDXjG4ICyWjVoxJbzFstjcleCFz2v3LoKrYhlqDvjxOtXWsE/1C0Ery4Vv
-         tNYaqwltuXnS7BdH0dOoms1fJdHwQWr6mMlcAJmA+YV0j1HOdfXwNBJ8gAhIm3UsPZ
-         ahwBdesM3TKAw==
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Wolfram,
 
-On 25/12/2020 01:20, Peter Geis wrote:
-> Current implementation defaults the hda clocks to clk_m.
-> This causes hda to run too slow to operate correctly.
-> Fix this by defaulting to pll_p and setting the frequency to the correct rate.
-> 
-> This matches upstream t124 and downstream t30.
-> 
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> Tested-by: Ion Agorria <ion@agorria.com>
-> ---
->  drivers/clk/tegra/clk-tegra30.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 37244a7e68c2..9cf249c344d9 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1256,6 +1256,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->  	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
->  	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
->  	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-> +	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-> +	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
->  	/* must be the last entry */
->  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
->  };
+On Wed, Dec 23, 2020 at 6:25 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Thanks for your patch!
 
-This looks good to me. So ...
+> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+> @@ -152,6 +152,13 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+>         DEF_MOD("csi41",        400,    R8A779A0_CLK_CSI0),
+>         DEF_MOD("csi42",        401,    R8A779A0_CLK_CSI0),
+>         DEF_MOD("csi43",        402,    R8A779A0_CLK_CSI0),
+> +       DEF_MOD("i2c0",         518,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c1",         519,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c2",         520,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c3",         521,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c4",         522,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c5",         523,    R8A779A0_CLK_S3D2),
+> +       DEF_MOD("i2c6",         524,    R8A779A0_CLK_S3D2),
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+The R-Car V3U Series User’s Manual Rev.0.5 says the parent clock is S1D4
+for all instances?
 
-Cheers
-Jon
+>         DEF_MOD("scif0",        702,    R8A779A0_CLK_S1D8),
+>         DEF_MOD("scif1",        703,    R8A779A0_CLK_S1D8),
+>         DEF_MOD("scif3",        704,    R8A779A0_CLK_S1D8),
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-nvpublic
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
