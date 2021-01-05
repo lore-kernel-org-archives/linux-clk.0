@@ -2,95 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78126C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 15:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 471E9C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 15:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4270E22B4E
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 15:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10E5622BF5
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jan 2021 15:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbhAEPWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 10:22:38 -0500
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:43330 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727155AbhAEPWi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 10:22:38 -0500
-Received: by mail-oi1-f181.google.com with SMTP id q25so36328257oij.10;
-        Tue, 05 Jan 2021 07:22:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SyJz6levXME/UC68QYJ+4uWzdWFE5a0wg54YwkbqupA=;
-        b=sFr/tVBKMYMXmvM59hcEeuqJM/4x9aYYEe+YCnLFwj5OiuNJvNTavTALsQhEbzA41q
-         e5DTvZsocWnPoydSPVrji+JGfbp3JSHIukjOgZ2NuKMdbyzhDsHJr+nf4d3AaydGrjOR
-         CTjE9SvKyimO+TPg+h8sByWjXz8qyMiDZ09I9hjcvIzbqGwdG/3TYtiI0GneBRm9KKR1
-         3jAp0GYhJh1z9eSY7/VeETslz/j3NTfpg+O5ZhL12lnKNnPkDzwkqn1zKaOPoJZQZDAE
-         TjL1TuhLGgNkWjuYPd21s3Lx4rxjp9/QlLg7gy7emzIIo2cOMvCZlvQw+kBIdAbu++ai
-         yiAg==
-X-Gm-Message-State: AOAM531bQ38XdoKCdR2xggok27yTeAiurHzKrsNAsh+FF8IUrkrzU+kN
-        QeaGOVCyhuaDV0M57aS9TneXa8rc7Jt+vQ3+bTA=
-X-Google-Smtp-Source: ABdhPJzkhKmVXnk0Pj461vV/IRhT+3JmtzHyPQ5LcBcKlrPuJ0N6+JVymPrMth8UpJzTmbW/WgwN/RKozZ0duOtuXg8=
-X-Received: by 2002:aca:3cc5:: with SMTP id j188mr39452oia.54.1609860117189;
- Tue, 05 Jan 2021 07:21:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20201227130407.10991-1-wsa+renesas@sang-engineering.com> <20201227130407.10991-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20201227130407.10991-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Jan 2021 16:21:46 +0100
-Message-ID: <CAMuHMdXaOQRjp1vMwRDKK2ckBKX9BpLrqSfzGXRMnbXyKzSygQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] clk: renesas: r8a779a0: add clocks for RAVB
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        id S1728413AbhAEPri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jan 2021 10:47:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728307AbhAEPrh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Jan 2021 10:47:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4342122BF3;
+        Tue,  5 Jan 2021 15:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1609861617;
+        bh=QM0PNbL6zQp9vWGkUHxqfDJNae8+Wq35ku+Qa+rO3mQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WBnhjteXRzovuldguMqi3552P5uZOIAcYDES3fRjzd5dAWHhfxXq64w5YOENhCWbq
+         Rx64h1KDogDyI+A+E3O5D2qTePZenSr72X1oSZaTERJn7MeVs2974FRk1nRreG1Gdp
+         FbiBzGjwQufEZ84CwaG/cZCe5ISFjirmGIH1hEQialmaV0k/b13ipxUpJPxyyAG7/Q
+         50K8geXjMyjO0KPPfzUgRiDjztoiZeoMS5vXC0mfRU6AutFMbBZ94JgKFR9nob6BKe
+         hGMJUWZRc5lRuKnAnMYw+ljB/syLtyo2UKZQEtFo7YQEcPuTaSR8W6zqHRZiBBGPms
+         rBKCLU7f2DslA==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4]  Add clock drivers for SM8350
+Date:   Tue,  5 Jan 2021 21:16:41 +0530
+Message-Id: <20210105154645.217998-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
+This adds gcc clock controller drivers for the controller found
+in SM8350 SoC
 
-On Sun, Dec 27, 2020 at 2:04 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Changes in v3:
+ - Drop rpmh clk patches applied
+ - Add a new patch to replace regval with val as suggested by Stephen
+ - Fix comments for new Lucid 5LPE PLL: sort new defines by BIT numbers, fix
+   comments, use alpha_pll_check_rate_margin(), rework
+   clk_lucid_5lpe_pll_postdiv_set_rate() logic
+ - Add power domains and optional clocks in bindings
+ - Fix comments for gcc sm8350 driver: clean includes used, use only
+   .fw_name for clocks defined in DT, use floor ops for sdcc clocks, remove
+   critical clocks and enable them in probe, add comments for clks using
+   BRANCH_HALT_SKIP and BRANCH_HALT_DELAY
 
-Thanks for your patch!
+Changes in v2:
+ - Add r-b from Bjorn
+ - Add the gcc_qupv3_wrap_1_{m|s}_ahb_clk and gcc_qupv3_wrap1_s5_clk
 
-> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> @@ -148,6 +148,12 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
->  };
->
->  static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
-> +       DEF_MOD("avb0",         211,    R8A779A0_CLK_S3D1),
-> +       DEF_MOD("avb1",         212,    R8A779A0_CLK_S3D1),
-> +       DEF_MOD("avb2",         213,    R8A779A0_CLK_S3D1),
-> +       DEF_MOD("avb3",         214,    R8A779A0_CLK_S3D1),
-> +       DEF_MOD("avb4",         215,    R8A779A0_CLK_S3D1),
-> +       DEF_MOD("avb5",         216,    R8A779A0_CLK_S3D1),
+Vinod Koul (2):
+  clk: qcom: clk-alpha-pll: replace regval with val
+  dt-bindings: clock: Add SM8350 GCC clock bindings
 
-For all other SoCs, we used the HP clock (S3D2 on R-Car V3U) instead
-of the ZS clock as the parent clock of the EtherAVB module clocks.
-Hence I think we should be consequent and use S3D2 here.
+Vivek Aknurwar (2):
+  clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE PLL
+  clk: qcom: gcc: Add clock driver for SM8350
 
->         DEF_MOD("csi40",        331,    R8A779A0_CLK_CSI0),
->         DEF_MOD("csi41",        400,    R8A779A0_CLK_CSI0),
->         DEF_MOD("csi42",        401,    R8A779A0_CLK_CSI0),
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/clock/qcom,gcc-sm8350.yaml       |   96 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  237 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |    4 +
+ drivers/clk/qcom/gcc-sm8350.c                 | 3790 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8350.h   |  261 ++
+ 7 files changed, 4387 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm8350.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.26.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
