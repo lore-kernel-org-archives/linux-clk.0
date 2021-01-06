@@ -2,136 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EECC433DB
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 11:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6621CC4332B
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 11:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA11622CA2
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 11:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3752C2310E
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 11:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbhAFLEv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jan 2021 06:04:51 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:50679 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725822AbhAFLEv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 06:04:51 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 87F0A580055;
-        Wed,  6 Jan 2021 06:04:04 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 06 Jan 2021 06:04:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=SG0jngfQb86fRNUTTrwZ6PDjCut
-        dxkonMnVRfFVhezw=; b=pIHOT/0WmC9nD1USAxUNB7b1LMUjHaOcQt1j1aPM78X
-        +as8WpDs8IP30nbAqM4Y37TmkxYl/E4EV1vIdyhFmN5wrWsqjAEDP+xRCVGSPz12
-        d7K+BqHKO1hsWKaWxDCmdQIQ/Rw4y/IVzLu14g1K4Scze6Xgy2M60HC/ICADj+dx
-        JFWZW8yW+c7bCBS5Rr+P2fSWgc0wGEsUl/S+Yu2VSf86HYJgNUrw/nsf0e96PAlS
-        hTJvLHs+jFEgDz7cLZ6eeJrm9m7Kyov2AV1OtC0xXw8QjOevf6CSY11PKKlqbDH8
-        /0whRrslw51+Cc4zBxGxmtS4hBMctSkIMCP+hYlKu/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=SG0jng
-        fQb86fRNUTTrwZ6PDjCutdxkonMnVRfFVhezw=; b=UQC2yPXQw+pTC+6NnJF9Y3
-        XlRT2wfF6j+eQbuVE6KWJHvok/u/DUQmNGIII/qLNvXNy3RpoW3l8K5x7t9SGvxf
-        R61GGGE6FnX3g1evbqfYcF46JDrtD+3w1qAZvmlTjWq5qYsoIiP991Jr7B9K86W7
-        znmK0P6Qm3hDtlW2AeI3HDy7ZyQ9AfAWBSLEfwTpbbT7wqgIiROlC8nNT5kTfzAr
-        P35sitIxILptqsy7pDgaay/bZjOCqEpHigraLBUjQ0w6VhlwFPlg4vYWI6QfLq1O
-        Iow2J9AOG3aRh0ydSYhLi0p63b4gRJnoGNqjZ4LFPVPtG3j0KtgjRJ7W+K152/EQ
-        ==
-X-ME-Sender: <xms:Ipn1XwZ70NTBxx38-HZ7wTlqwgfix_y-vkP-9RwO8Y8iSN6sVTa6gA>
-    <xme:Ipn1X7bhydC36R-7bNyjuCb9AoAaKBJTfoHTt8u386SfVB8YLv3BwRE5fGfLmsYad
-    FkVRQbq4ej3f0WD2_c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdefledgvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Ipn1X6_25iVF8WOEMgP5uyUzkntj1w0LHwIS5Sxi4r4VCS6C6sNzqQ>
-    <xmx:Ipn1X6quLxXu_B7DyE1XN7m-r_R1P_r7_L4SlbWgwRSGUsqPEuUsYg>
-    <xmx:Ipn1X7reNYk5c8tB38NY8jO6QSbUAqOvnepAfVrcOPkcdBxViCLO2g>
-    <xmx:JJn1X5iNBw9Lxke0lHuRVQXaq5f5U00IEwwP5-FKlc6s9_fguwxIfA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2E6E924005A;
-        Wed,  6 Jan 2021 06:04:02 -0500 (EST)
-Date:   Wed, 6 Jan 2021 12:04:00 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726062AbhAFLHZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jan 2021 06:07:25 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:40497 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725828AbhAFLHZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 06:07:25 -0500
+X-UUID: 4fb99a6a114c48d8b66be8a55556fefa-20210106
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=n9cbyTnLxMK+R+ro/xTvxzqRxwAZT51mv8Otnd9uK/Y=;
+        b=eHNCDuHT350CtdZlegNZKGBJhcGJ3xVUW2TfteeJKe+3MBZOS/AYr70qzKPaDtDmCvV3U0+l121ljhkKUM5Ggz4e5cLhJqGiSqEXXdyQMhNO1fjbelka/QMUiOGaMroEAkSblFTLxp0QpwwzvgTkrbeGoMTBsTIjF2g26sgzPoY=;
+X-UUID: 4fb99a6a114c48d8b66be8a55556fefa-20210106
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1295500764; Wed, 06 Jan 2021 19:06:37 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 6 Jan 2021 19:06:36 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 6 Jan 2021 19:06:36 +0800
+Message-ID: <1609931196.30620.3.camel@mtksdaap41>
+Subject: Re: [PATCH v6 10/22] clk: mediatek: Add MT8192 basic clocks support
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Ikjoon Jang <ikjn@chromium.org>
+CC:     Rob Herring <robh@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 0/4] Allwinner H6 RSB support
-Message-ID: <20210106110400.kjy2zjxgakpgya7z@gilmour>
-References: <20210103100007.32867-1-samuel@sholland.org>
+        open list <linux-kernel@vger.kernel.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-clk@vger.kernel.org>
+Date:   Wed, 6 Jan 2021 19:06:36 +0800
+In-Reply-To: <CAATdQgBJ7EVRJW7iJG63yW89fh5skpe9-UCd4pdZystV_JrvCg@mail.gmail.com>
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+         <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
+         <CAATdQgC_BnZywDxaZgmF72VRoAZ-1vFGrPD9GL4uEBhsKQTxnQ@mail.gmail.com>
+         <1609929721.7491.3.camel@mtksdaap41>
+         <CAATdQgBJ7EVRJW7iJG63yW89fh5skpe9-UCd4pdZystV_JrvCg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="la7j4ywkx3wucev4"
-Content-Disposition: inline
-In-Reply-To: <20210103100007.32867-1-samuel@sholland.org>
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+T24gV2VkLCAyMDIxLTAxLTA2IGF0IDE4OjUyICswODAwLCBJa2pvb24gSmFuZyB3cm90ZToNCj4g
+T24gV2VkLCBKYW4gNiwgMjAyMSBhdCA2OjQyIFBNIFdlaXlpIEx1IDx3ZWl5aS5sdUBtZWRpYXRl
+ay5jb20+IHdyb3RlOg0KPiA+DQo+ID4gT24gV2VkLCAyMDIxLTAxLTA2IGF0IDE4OjI1ICswODAw
+LCBJa2pvb24gSmFuZyB3cm90ZToNCj4gPiA+IE9uIFR1ZSwgRGVjIDIyLCAyMDIwIGF0IDk6MTQg
+UE0gV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4g
+PiA+IEFkZCBNVDgxOTIgYmFzaWMgY2xvY2sgcHJvdmlkZXJzLCBpbmNsdWRlIHRvcGNrZ2VuLCBh
+cG1peGVkc3lzLA0KPiA+ID4gPiBpbmZyYWNmZyBhbmQgcGVyaWNmZy4NCj4gPiA+ID4NCj4gPiA+
+ID4gU2lnbmVkLW9mZi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCj4gPiA+
+ID4gLS0tDQo+ID4gPiA+ICBkcml2ZXJzL2Nsay9tZWRpYXRlay9LY29uZmlnICAgICAgfCAgICA4
+ICsNCj4gPiA+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL01ha2VmaWxlICAgICB8ICAgIDEgKw0K
+PiA+ID4gPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi5jIHwgMTMyNiArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiA+ICBkcml2ZXJzL2Nsay9tZWRp
+YXRlay9jbGstbXV4LmggICAgfCAgIDE1ICsNCj4gPiA+ID4gIDQgZmlsZXMgY2hhbmdlZCwgMTM1
+MCBpbnNlcnRpb25zKCspDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi5jDQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gPHNuaXA+DQo+ID4g
+Pg0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5oIGIv
+ZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5oDQo+ID4gPiA+IGluZGV4IGY1NjI1ZjQuLmFm
+YmM3ZGYgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXgu
+aA0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmgNCj4gPiA+ID4g
+QEAgLTc3LDYgKzc3LDIxIEBAIHN0cnVjdCBtdGtfbXV4IHsNCj4gPiA+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgX3dpZHRoLCBfZ2F0ZSwgX3VwZF9vZnMsIF91cGQsICAgICAgICAgICAgICAg
+ICAgXA0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBDTEtfU0VUX1JBVEVfUEFSRU5U
+KQ0KPiA+ID4gPg0KPiA+ID4gPiArI2RlZmluZSBNVVhfQ0xSX1NFVF9VUERfRkxBR1MoX2lkLCBf
+bmFtZSwgX3BhcmVudHMsIF9tdXhfb2ZzLCAgICAgICAgICBcDQo+ID4gPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIF9tdXhfc2V0X29mcywgX211eF9jbHJfb2ZzLCBfc2hpZnQsIF93aWR0aCwg
+ICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgX3VwZF9vZnMsIF91cGQsIF9m
+bGFncykgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ID4gPiArICAgICAgICAgICAgICAg
+R0FURV9DTFJfU0VUX1VQRF9GTEFHUyhfaWQsIF9uYW1lLCBfcGFyZW50cywgX211eF9vZnMsICBc
+DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIF9tdXhfc2V0X29mcywgX211eF9jbHJf
+b2ZzLCBfc2hpZnQsIF93aWR0aCwgICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgMCwgX3VwZF9vZnMsIF91cGQsIF9mbGFncywgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+
+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBtdGtfbXV4X2Nscl9zZXRfdXBkX29wcykNCj4g
+PiA+ID4gKw0KPiA+ID4gPiArI2RlZmluZSBNVVhfQ0xSX1NFVF9VUEQoX2lkLCBfbmFtZSwgX3Bh
+cmVudHMsIF9tdXhfb2ZzLCAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gPiA+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgX211eF9zZXRfb2ZzLCBfbXV4X2Nscl9vZnMsIF9zaGlmdCwgX3dp
+ZHRoLCAgICAgXA0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBfdXBkX29mcywgX3Vw
+ZCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gPiA+ICsgICAgICAgICAg
+ICAgICBNVVhfQ0xSX1NFVF9VUERfRkxBR1MoX2lkLCBfbmFtZSwgX3BhcmVudHMsICAgICAgICAg
+ICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgX211eF9vZnMsIF9tdXhfc2V0
+X29mcywgX211eF9jbHJfb2ZzLCBfc2hpZnQsICAgXA0KPiA+ID4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICBfd2lkdGgsIF91cGRfb2ZzLCBfdXBkLCBDTEtfU0VUX1JBVEVfUEFSRU5UKQ0KPiA+
+ID4gPiArDQo+ID4gPg0KPiA+ID4gY29uZmxpY3RzLCB0aGVzZSBtYWNyb3MgYXJlIGFscmVhZHkg
+ZXhpc3RlZCBpbiB1cHN0cmVhbS4NCj4gPg0KPiA+IHJlYWxseT8gVGhlc2UgdHdvIG1hY3JvcyBk
+b24ndCBzaG93IHVwIGluIDUuMTEtcmMxIHlldC4NCj4gDQo+IHllcCwgbWF5YmUgdGhpcyBvbmU6
+IGEzYWU1NDk5MTdmMSAiY2xrOiBtZWRpYXRlazogQWRkIG5ldyBjbGttdXggcmVnaXN0ZXIgQVBJ
+Ig0KPiANCg0KVGhlIG5ldyBtYWNyb3MgaW4gdGhpcyBwYXRjaCBhcmUgZm9yIHRoZSBjbG9jayBN
+VVggd2l0aG91dCBnYXRlIGNvbnRyb2wuDQpJdCdzIGEgbGl0dGxlIGRpZmZlcmVudCBmcm9tIHRo
+b3NlIG11eCBtYWNyb3Mgd2l0aCBnYXRlIGNvbnRyb2wgaW4NCmEzYWU1NDk5MTdmMSAiY2xrOiBt
+ZWRpYXRlazogQWRkIG5ldyBjbGttdXggcmVnaXN0ZXIgQVBJIg0KDQo+ID4NCj4gPiA+ID4gIHN0
+cnVjdCBjbGsgKm10a19jbGtfcmVnaXN0ZXJfbXV4KGNvbnN0IHN0cnVjdCBtdGtfbXV4ICptdXgs
+DQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCByZWdtYXAg
+KnJlZ21hcCwNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3Bpbmxv
+Y2tfdCAqbG9jayk7DQo+ID4gPiA+IC0tDQo+ID4gPiA+IDEuOC4xLjEuZGlydHkNCj4gPiA+ID4g
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPiA+ID4g
+TGludXgtbWVkaWF0ZWsgbWFpbGluZyBsaXN0DQo+ID4gPiA+IExpbnV4LW1lZGlhdGVrQGxpc3Rz
+LmluZnJhZGVhZC5vcmcNCj4gPiA+ID4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eC1tZWRpYXRlaw0KPiA+DQo+ID4gX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPiBMaW51eC1tZWRpYXRlayBtYWlsaW5nIGxp
+c3QNCj4gPiBMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+ID4gaHR0cDovL2xp
+c3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1tZWRpYXRlaw0KDQo=
 
---la7j4ywkx3wucev4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jan 03, 2021 at 04:00:03AM -0600, Samuel Holland wrote:
-> The Allwinner H6 SoC contains an RSB controller. It is almost completely
-> undocumented, so it was missed when doing the initial SoC bringup.
->=20
-> This series adds the clock/reset, pin configuration, and device tree
-> node needed to use the RSB controller. Since RSB is faster, simpler, and
-> generally more reliable than the I2C controller IP in the SoC, switch to
-> using it where possible.
->=20
-> This was tested on an Orange Pi 3 and a Pine H64 model B. This series
-> does not switch the Pine H64 to use RSB, as doing so would prevent
-> accessing the external RTC that shares the I2C bus.
->=20
-> Changes v1->v2:
->   - Put the new values at the end of the DT binding headers
->=20
-> Samuel Holland (4):
->   clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
->   pinctrl: sunxi: h6-r: Add s_rsb pin functions
->   arm64: dts: allwinner: h6: Add RSB controller node
->   arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC connection
-
-For the whole series,
-
-Acked-by: Maxime Ripard <mripard@kernel.org>
-
-Thanks!
-Maxime
-
---la7j4ywkx3wucev4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCX/WZIAAKCRDj7w1vZxhR
-xYQfAP0d0eZgjSBWZRWwRpGm3npd9OZT4IBHcLq5qGPlR+h4WwEAjcQnNk4svGm7
-TgMNdaPKl4FKMqLUEGlbQ2VA7vMmCQw=
-=ENtI
------END PGP SIGNATURE-----
-
---la7j4ywkx3wucev4--
