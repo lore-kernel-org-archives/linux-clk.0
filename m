@@ -2,130 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8ABC433E6
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 07:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C05AC433DB
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 10:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFDAA23105
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 07:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E71D12310E
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 10:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbhAFHOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jan 2021 02:14:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45296 "EHLO
+        id S1725960AbhAFK02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jan 2021 05:26:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbhAFHOU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 02:14:20 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF635C061359
-        for <linux-clk@vger.kernel.org>; Tue,  5 Jan 2021 23:13:39 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id 6so3778595ejz.5
-        for <linux-clk@vger.kernel.org>; Tue, 05 Jan 2021 23:13:39 -0800 (PST)
+        with ESMTP id S1725926AbhAFK02 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 05:26:28 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E9FC06134D
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jan 2021 02:25:47 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id n10so1913700pgl.10
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jan 2021 02:25:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rT4Dc8swlK31/4OXAMfRD8Dy9QIvv8YpGOiKzBJjVS0=;
-        b=kW/FIQ9UMgiQ4U+TkdADVoEYk5gZPV3uhWmFEaBISm60k6X7HKncaLJMcm7Te12ixW
-         DmozTsbCxinSR4kw60jnPkTRpJcI2yoqWEX3PsYD1Gobe1MgtRCRsAYMvDuT6a2OmRZe
-         JA5aIaNzC2Qz1QI2pjKK7hj+qAEnukuAv07b9W7M8pBoGmUjZmXbHaL5522RR1fvjBcC
-         aUOByaCkN/CFtegf2L0lfAhcsuMiZ+e/Z0kGD0hJrq1CBcozlTfyZi2pX2qyg5tLtp5K
-         qfoj7U94CqKy1yfDXJToNFtVkn5zEBI7/9XBDJd/bwiyCn1gMrTQ4lsyGmJDatnR3P5D
-         m6RA==
+        bh=UXZIAZqh+xBfL6TUuJ2CLNmbqo4XogXEQ6f21aMa31Y=;
+        b=PvQYGRaylR7ZLMt781fGYH7PAdHnlOlFo5S+lEYXioh2rHtPWzCfHRyIVB+KUg4Uun
+         llL7GxDSh2AbRHH6DbNpOA9f7A+/V9L92awzQOhE+TKdAR3MMgLHjaPIjQ6xUL6X3MVN
+         2d7Wtvi6gGdp3FR36z7QbJlEGe62xFygXYpO0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rT4Dc8swlK31/4OXAMfRD8Dy9QIvv8YpGOiKzBJjVS0=;
-        b=Szd9yIyW0+u72L6VB/WfF9lL8+kmezG1QG7FV10VK7LwxvPGpwLB1zlxBJMnV4sP7E
-         s8Eg9V4/dbVkiWeraHV71o+m7kCvbhqkMBm8qy6inOPQuIUjsVKnJz5Rs8MSCs5nIHLh
-         TDrM3eUPGgAqEYymoQizVmVkebs78m/AeKMTCPliEKHtJvLp/TyxfVwngKo9M8ty9FAK
-         ioVrMDCOh+M0wZMN3CJrxwKmOuHmLcNVa5oW92AFfbQXexUPTj2tPDh/YbLSQ82aAbQE
-         5lnI/km+LYMVTvdMTDx2zlKf/SLGu9jwrSr2qfat2ZKgf6mqHl1hYobMwcuu4zeKMGhz
-         5aYg==
-X-Gm-Message-State: AOAM531tUV0/C9RdpMUR+DluM1lhnj7UOUlgtyd2OQdB/pJRJqoH6zMR
-        H7+UQH1ITeTll1lCp6mhdWt7vYI66tb655lWAR8zLw==
-X-Google-Smtp-Source: ABdhPJz7NZsjb4UgOGiErAdqwk42sh/yXenAjVlhxnzAVaOFNfM5U6i5Q3E7GI/VvU/IA448wOjGCY/95IeDdC3rxz4=
-X-Received: by 2002:a17:906:8594:: with SMTP id v20mr1986708ejx.470.1609917218321;
- Tue, 05 Jan 2021 23:13:38 -0800 (PST)
+        bh=UXZIAZqh+xBfL6TUuJ2CLNmbqo4XogXEQ6f21aMa31Y=;
+        b=FLeuvDnzXXIGXCEmIXEKTrjXuGRMu/Kh4iVcKT7W0QV+qQIt8wXZ6bwD17v5StxP/O
+         7xmKDPTmTNZ/Gs8z7JBx+04HoEYmYmPSe5WOX1P8XE4Qy+MleSTlCH13k+GdMswRThHC
+         1N04p6a3H3Nvrta+fJMaZLlhkePgLuYsHgfoD9L0lr+U6i/ApL0zZGEnbJXKUHppB1o1
+         5DpdXK84I0dnENu8R+zadCbT1/qqRidKQyARWYEcwYoO5kXXKyhrEPvn1SpWZvOEwYiQ
+         D5vGf2BnG5vCgCuMCaKT35Nyw1iVeitWJwVDJP7ofA9sxR1uOd/StKWunFX3L91Zp9IO
+         3jYg==
+X-Gm-Message-State: AOAM530zmIfe+ziIIRJZ2W+6LruDwhHSHDGtkfwPUtWa/2SPNt5wwaEF
+        mO2E4vH/AJACZH8TBIdCPetgzSRUOJRFHNDfAds7OvXAkDc=
+X-Google-Smtp-Source: ABdhPJxY96erNkAHFypfbHgSjjHgHmIdlQRpp9DupO/lBseGLPIpK4TW4GgJIKZxB8lnC4qd4HT1DmjRhCQope01kAI=
+X-Received: by 2002:a63:1a10:: with SMTP id a16mr3708292pga.317.1609928747355;
+ Wed, 06 Jan 2021 02:25:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20210104230253.2805217-1-robh@kernel.org>
-In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 6 Jan 2021 08:13:27 +0100
-Message-ID: <CAMpxmJVFFu6q53-O_iWCyhY3M3up2Hg1TMY_DpmOvED4eN8bJQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        linux-drm <dri-devel@lists.freedesktop.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-mmc@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-serial@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-spi@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com> <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
+From:   Ikjoon Jang <ikjn@chromium.org>
+Date:   Wed, 6 Jan 2021 18:25:36 +0800
+Message-ID: <CAATdQgC_BnZywDxaZgmF72VRoAZ-1vFGrPD9GL4uEBhsKQTxnQ@mail.gmail.com>
+Subject: Re: [PATCH v6 10/22] clk: mediatek: Add MT8192 basic clocks support
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 5, 2021 at 12:03 AM Rob Herring <robh@kernel.org> wrote:
+On Tue, Dec 22, 2020 at 9:14 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
 >
-> DT properties which can have multiple entries need to specify what the
-> entries are and define how many entries there can be. In the case of
-> only a single entry, just 'maxItems: 1' is sufficient.
+> Add MT8192 basic clock providers, include topckgen, apmixedsys,
+> infracfg and pericfg.
 >
-> Add the missing entry constraints. These were found with a modified
-> meta-schema. Unfortunately, there are a few cases where the size
-> constraints are not defined such as common bindings, so the meta-schema
-> can't be part of the normal checks.
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/clk/mediatek/Kconfig      |    8 +
+>  drivers/clk/mediatek/Makefile     |    1 +
+>  drivers/clk/mediatek/clk-mt8192.c | 1326 +++++++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mux.h    |   15 +
+>  4 files changed, 1350 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8192.c
 >
 
-[snip!]
+<snip>
 
->  .../bindings/gpio/gpio-pca95xx.yaml           |  1 +
-
-[snip!]
-
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> index f5ee23c2df60..57cdcfd4ff3c 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> @@ -81,6 +81,7 @@ properties:
->      const: 2
+> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> index f5625f4..afbc7df 100644
+> --- a/drivers/clk/mediatek/clk-mux.h
+> +++ b/drivers/clk/mediatek/clk-mux.h
+> @@ -77,6 +77,21 @@ struct mtk_mux {
+>                         _width, _gate, _upd_ofs, _upd,                  \
+>                         CLK_SET_RATE_PARENT)
 >
->    reset-gpios:
-> +    maxItems: 1
->      description:
->        GPIO specification for the RESET input. This is an active low signal to
->        the PCA953x.  Not valid for Maxim MAX732x devices.
+> +#define MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,          \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _upd_ofs, _upd, _flags)                         \
+> +               GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,  \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       0, _upd_ofs, _upd, _flags,                      \
+> +                       mtk_mux_clr_set_upd_ops)
+> +
+> +#define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,                        \
+> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> +                       _upd_ofs, _upd)                                 \
+> +               MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents,             \
+> +                       _mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,   \
+> +                       _width, _upd_ofs, _upd, CLK_SET_RATE_PARENT)
+> +
 
-Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+conflicts, these macros are already existed in upstream.
+
+>  struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+>                                  struct regmap *regmap,
+>                                  spinlock_t *lock);
+> --
+> 1.8.1.1.dirty
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
