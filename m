@@ -2,96 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DCC433E9
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 02:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8ABC433E6
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 07:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0E722D6E
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 02:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFDAA23105
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jan 2021 07:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725922AbhAFCk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jan 2021 21:40:59 -0500
-Received: from mail-lf1-f53.google.com ([209.85.167.53]:45029 "EHLO
-        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbhAFCk7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jan 2021 21:40:59 -0500
-Received: by mail-lf1-f53.google.com with SMTP id m25so3226296lfc.11;
-        Tue, 05 Jan 2021 18:40:42 -0800 (PST)
+        id S1725951AbhAFHOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jan 2021 02:14:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbhAFHOU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 02:14:20 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF635C061359
+        for <linux-clk@vger.kernel.org>; Tue,  5 Jan 2021 23:13:39 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id 6so3778595ejz.5
+        for <linux-clk@vger.kernel.org>; Tue, 05 Jan 2021 23:13:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rT4Dc8swlK31/4OXAMfRD8Dy9QIvv8YpGOiKzBJjVS0=;
+        b=kW/FIQ9UMgiQ4U+TkdADVoEYk5gZPV3uhWmFEaBISm60k6X7HKncaLJMcm7Te12ixW
+         DmozTsbCxinSR4kw60jnPkTRpJcI2yoqWEX3PsYD1Gobe1MgtRCRsAYMvDuT6a2OmRZe
+         JA5aIaNzC2Qz1QI2pjKK7hj+qAEnukuAv07b9W7M8pBoGmUjZmXbHaL5522RR1fvjBcC
+         aUOByaCkN/CFtegf2L0lfAhcsuMiZ+e/Z0kGD0hJrq1CBcozlTfyZi2pX2qyg5tLtp5K
+         qfoj7U94CqKy1yfDXJToNFtVkn5zEBI7/9XBDJd/bwiyCn1gMrTQ4lsyGmJDatnR3P5D
+         m6RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IvJTvH2rimxkqnfQ5FUZB8oT8Z78yOSFzTFON7khOFQ=;
-        b=p1NmxS5JsMiQRdm8dGjgW98QQiYznBL/k7RVJ8wN+1yWiEs4Td7CrMm5lOcam6BFBB
-         Wm8UPdimTaInYpJEWad8QqKEEW+RtVUlf9dOW11LcGzUZqd8zb89kdRWDqNJobjIuNqi
-         +ms9mUuXpg0KWFCwzEf5BoXFI1UKmsivv80MXENZxaZaXg1CFs6VInIuhKKn7F8hLs8P
-         OfJ9rkl4Y71QMXP+vdBfmNu4FvMKVkd1WmzR2SW4bMY1DKCGhixqj4FjB32YC7Q/1QPv
-         qRX4+pptHxITjGVwFp05Boqz7tRvXNZo77Z5gw/WP1R3RGRCq/jD7D4RjHrZndFtZg/F
-         fcqA==
-X-Gm-Message-State: AOAM532i4EDAPpBhjnf4wfOiFAQfosfvqldk48Og+ggkb/BMGymjo+IK
-        bXz7//MULp3Wb3XJjwWLbz57hMmUwA1RvQ==
-X-Google-Smtp-Source: ABdhPJys+8HE8MK92sM4I1Wf7hppX7XzJHemG9lARoJLI+3b+ySXw/a5EHDfvCHGEDdxwfLZ5CcIJg==
-X-Received: by 2002:a2e:b80d:: with SMTP id u13mr1084797ljo.143.1609900816240;
-        Tue, 05 Jan 2021 18:40:16 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id b207sm109074lfg.94.2021.01.05.18.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Jan 2021 18:40:15 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id m25so3226217lfc.11;
-        Tue, 05 Jan 2021 18:40:15 -0800 (PST)
-X-Received: by 2002:a19:c783:: with SMTP id x125mr914598lff.303.1609900815227;
- Tue, 05 Jan 2021 18:40:15 -0800 (PST)
+        bh=rT4Dc8swlK31/4OXAMfRD8Dy9QIvv8YpGOiKzBJjVS0=;
+        b=Szd9yIyW0+u72L6VB/WfF9lL8+kmezG1QG7FV10VK7LwxvPGpwLB1zlxBJMnV4sP7E
+         s8Eg9V4/dbVkiWeraHV71o+m7kCvbhqkMBm8qy6inOPQuIUjsVKnJz5Rs8MSCs5nIHLh
+         TDrM3eUPGgAqEYymoQizVmVkebs78m/AeKMTCPliEKHtJvLp/TyxfVwngKo9M8ty9FAK
+         ioVrMDCOh+M0wZMN3CJrxwKmOuHmLcNVa5oW92AFfbQXexUPTj2tPDh/YbLSQ82aAbQE
+         5lnI/km+LYMVTvdMTDx2zlKf/SLGu9jwrSr2qfat2ZKgf6mqHl1hYobMwcuu4zeKMGhz
+         5aYg==
+X-Gm-Message-State: AOAM531tUV0/C9RdpMUR+DluM1lhnj7UOUlgtyd2OQdB/pJRJqoH6zMR
+        H7+UQH1ITeTll1lCp6mhdWt7vYI66tb655lWAR8zLw==
+X-Google-Smtp-Source: ABdhPJz7NZsjb4UgOGiErAdqwk42sh/yXenAjVlhxnzAVaOFNfM5U6i5Q3E7GI/VvU/IA448wOjGCY/95IeDdC3rxz4=
+X-Received: by 2002:a17:906:8594:: with SMTP id v20mr1986708ejx.470.1609917218321;
+ Tue, 05 Jan 2021 23:13:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20210103100007.32867-1-samuel@sholland.org> <20210103100007.32867-3-samuel@sholland.org>
- <CACRpkdZbNUxizfV5Oo8F8b0bsjNcBF6JfP=ufykNLeqErvU-ug@mail.gmail.com>
-In-Reply-To: <CACRpkdZbNUxizfV5Oo8F8b0bsjNcBF6JfP=ufykNLeqErvU-ug@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 6 Jan 2021 10:39:59 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64MmtmpYiLjV_3H_K3i9FVEqmj2jp02HD1FBVzqK1N=eg@mail.gmail.com>
-Message-ID: <CAGb2v64MmtmpYiLjV_3H_K3i9FVEqmj2jp02HD1FBVzqK1N=eg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pinctrl: sunxi: h6-r: Add s_rsb pin functions
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20210104230253.2805217-1-robh@kernel.org>
+In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 6 Jan 2021 08:13:27 +0100
+Message-ID: <CAMpxmJVFFu6q53-O_iWCyhY3M3up2Hg1TMY_DpmOvED4eN8bJQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-ide@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        linux-drm <dri-devel@lists.freedesktop.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-serial@vger.kernel.org,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-spi@vger.kernel.org, USB list <linux-usb@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 6:35 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, Jan 5, 2021 at 12:03 AM Rob Herring <robh@kernel.org> wrote:
 >
-> On Sun, Jan 3, 2021 at 11:00 AM Samuel Holland <samuel@sholland.org> wrote:
+> DT properties which can have multiple entries need to specify what the
+> entries are and define how many entries there can be. In the case of
+> only a single entry, just 'maxItems: 1' is sufficient.
 >
-> > As there is an RSB controller in the H6 SoC, there should be some pin
-> > configuration for it. While no such configuration is documented, the
-> > "s_i2c" pins are suspiciously on the "alternate" function 3, with no
-> > primary function 2 given. This suggests the primary function for these
-> > pins is actually RSB, and that is indeed the case.
-> >
-> > Add the "s_rsb" pin functions so the RSB controller can be used.
-> >
-> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+> Add the missing entry constraints. These were found with a modified
+> meta-schema. Unfortunately, there are a few cases where the size
+> constraints are not defined such as common bindings, so the meta-schema
+> can't be part of the normal checks.
 >
-> Is it OK if I just apply this patch to the pinctrl tree?
 
-Please do.
+[snip!]
 
-Thanks
-ChenYu
+>  .../bindings/gpio/gpio-pca95xx.yaml           |  1 +
+
+[snip!]
+
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+> index f5ee23c2df60..57cdcfd4ff3c 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+> @@ -81,6 +81,7 @@ properties:
+>      const: 2
+>
+>    reset-gpios:
+> +    maxItems: 1
+>      description:
+>        GPIO specification for the RESET input. This is an active low signal to
+>        the PCA953x.  Not valid for Maxim MAX732x devices.
+
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
