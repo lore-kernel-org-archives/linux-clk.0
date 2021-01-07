@@ -2,170 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E52EC433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF40C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D58C423138
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AA172333E
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbhAGKLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jan 2021 05:11:10 -0500
-Received: from mail-eopbgr760045.outbound.protection.outlook.com ([40.107.76.45]:61771
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726313AbhAGKLK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Jan 2021 05:11:10 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XX6CwEV52ZjxmilgwLjAadVY00fxYOqc4cbatH2kC/JYvstT81dwn/Q+JBQRr+XzmVn5zO35XiwM0PjD5iMqX4kS+lQm7XinuwBhMqkWZ9ShEsUgsK/AnulkBYiG+V5dosk5zS5lKM9Q7bnE1uJVGRhQhKlUXD/F7wIM7ifHGwGHQBU3TaGxxrpzpKSCvSDrFeUH58hwRhsepetxNbcN+hNsLa5LG+7iyBAxE1CN3kH++utZvkuhTK8AbL3tM7tYFNBwSoELYO2w8zbalPnCdpox7GvHVIa6yrbbSLGO1qrXsUTrV42rzxxxp5joyaabDisqH9K2dv4cHllAkWGChw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xq5TmQnX69fF9CFCW6YvhFKyUHBI7ETJ/73jmn1a92A=;
- b=gtlWVs0EpEdhgALFxQ1rpBk39yeYzAOZzhKTctzVAjETADauJnb6D3S3r7VE6M7bCRC+UzolQZmguwhBLP2uCI9SRDiv6Zuf5r+EdNqPqMeYvVxk/7xDdBlzzlfBTNu6YWxovS3ofAg9TTUt4UnCxGNFKGoaCLd8Liv1zMOUu72SXSp6a2n31rCJYZyTzFkpdqHKSr8x/SGe5+Efty8W19MwTCCj/GZw7eonJu105clv6kUNkfEoZWFDJ5Hsj0h8BE94ZqKlM9+ieFcoFKu82v3JnKX//ZYqsB2WnTn+xX8zA4gb2qz3jfbxjFd6MLGcrzVzfSff6T4TXt4i7hV9Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xq5TmQnX69fF9CFCW6YvhFKyUHBI7ETJ/73jmn1a92A=;
- b=J04hxb2OG1xaB58A0IINQvaHIP5eqDLi6ufNbikjdY1Dr+8NBHkuw+3grytrVbgNPZfB1EIViwYMiIc79rYauzSa87lrLNItb2x8I/CiFlAaMk2Ji9IG7kmpjsdr9DPD/Jejmb1NlNrRzEwGDxyUdN5FT8wrtHTH+WL6cyvUPb4=
-Received: from MN2PR08CA0012.namprd08.prod.outlook.com (2603:10b6:208:239::17)
- by CH2PR02MB6373.namprd02.prod.outlook.com (2603:10b6:610:7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6; Thu, 7 Jan
- 2021 10:10:21 +0000
-Received: from BL2NAM02FT056.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:239:cafe::64) by MN2PR08CA0012.outlook.office365.com
- (2603:10b6:208:239::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6 via Frontend
- Transport; Thu, 7 Jan 2021 10:10:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- BL2NAM02FT056.mail.protection.outlook.com (10.152.77.221) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3742.6 via Frontend Transport; Thu, 7 Jan 2021 10:10:20 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 7 Jan 2021 02:10:17 -0800
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Thu, 7 Jan 2021 02:10:17 -0800
-Envelope-to: rvisaval@xilinx.com,
- dshah@xilinx.com,
- tejasp@xilinx.com,
- rajanv@xilinx.com,
- sboyd@kernel.org,
- mturquette@baylibre.com,
- kernel@pengutronix.de,
- linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- m.tretter@pengutronix.de
-Received: from [172.30.17.109] (port=44708)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1kxSFE-0004KT-UA; Thu, 07 Jan 2021 02:10:17 -0800
-Subject: Re: [PATCH v2 00/15] soc: xilinx: vcu: Convert driver to clock
- provider
-To:     Michael Tretter <m.tretter@pengutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     <rajanv@xilinx.com>, <tejasp@xilinx.com>, <dshah@xilinx.com>,
-        <rvisaval@xilinx.com>, <kernel@pengutronix.de>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-References: <20201221150634.755673-1-m.tretter@pengutronix.de>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <192e181d-c092-a647-7a50-c172291b944f@xilinx.com>
-Date:   Thu, 7 Jan 2021 11:10:13 +0100
+        id S1727394AbhAGKNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jan 2021 05:13:14 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:48385 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727366AbhAGKNO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 05:13:14 -0500
+X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jan 2021 05:13:13 EST
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id xSB7klznqbMeAxSBAkTDMc; Thu, 07 Jan 2021 11:06:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1610013968; bh=16EDQQrb7BzqYQP3Qhe8RixWHoJERl1tg+cwWJ1aub4=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=hD/yyhiMDJuTnTdra5BrJvSbIDzNR9aGRXrE6HqKlQjdyqrarsGRE0B1UYu27lFlr
+         ULJu6OENk7Zdw1XdkkrYDpA8a9FEpR1kUAjxOAZYUWWAG4+ETgBQ3V0BY+MmYYLoyC
+         MtZHNL8GP/0WbigKbb7aVO0URmhMyqmqOnRztVQBcPIyoxS7NLbW3UeGOustu3kxDD
+         OeNeSTjhAq3WHSpA3HyShi6Iw5xtma9R6yu2FWzsCwZe5/aSs6Ezna9ZTCchzIvFN9
+         wVFbBHqnNIkFYRQPhYA0HWCuHiNi7vG90iJ/Fk4WTJ/s3QbzJx+ad4iW1Cmh2iKE0c
+         5P5CDnHxPg/3w==
+Subject: Re: [PATCH v2 1/1] media: aspeed: fix clock handling logic
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
+References: <20201221223225.14723-1-jae.hyun.yoo@linux.intel.com>
+ <20201221223225.14723-2-jae.hyun.yoo@linux.intel.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <6cd30b60-87d9-0c92-4721-fdaa429acf3e@xs4all.nl>
+Date:   Thu, 7 Jan 2021 11:06:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20201221150634.755673-1-m.tretter@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20201221223225.14723-2-jae.hyun.yoo@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6ec71176-3415-4557-98db-08d8b2f47109
-X-MS-TrafficTypeDiagnostic: CH2PR02MB6373:
-X-Microsoft-Antispam-PRVS: <CH2PR02MB6373A1DCDC2B6382137A8B57C6AF0@CH2PR02MB6373.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: aBHTeqQeYifKS3+LynzsvrDYWJOQKLM0IjYP+7J66v2kk/sAMLac/kIedSPMPpAb/H9EfccTeALBn3RDPIrRUijfMCdmJoBsLj0BFV30AKd6QFdtw1aNe3BZWAbokJcB1xqKrDdpvb3e9BnwkGcBx+FLrr5yPdedukLepiumSvD13t+X/cxDeaWFznW3bUHvvCUVPbBNrIz/Fl//AfKM33h8/LfMpf6lrGDZy0DGqTrOGeRwDGckmDeYU8Qk5sWENjMtgM9WCMsROa+xMs5Da9hocW1qMmD3xGBbClhkTXjl7u7qDzgU57mXvBNNIlbxM1+mHE9/V3S2GasXWI19z56DD2SFLC6HcqTUxBGLKCZ5NdTaUL4vF5xdpM8QEfrf/8qcQ4b4de79ZUpm1t+fIPcwnWlSy3ks1AFIKUgoBVpP2BdMLQ0ODXMMwWyV0JPOIHr/xvXF5zuTdgEaZpbQW38sq6yQa4gNEzvG9oeUEsah8fQxEyCwmRSTNx5ADr4sVGF8teZHWUNtxqX18Yj4KUiOJTKJPmSW4O5AFP4RInuE/72YEd6nkDH9AtO4PVE6L5FbKgwSlZGsb1ieohT+bOxMKyDLQpgL6EwXSkDdzpzgnYfUdfUiIcaRkro8ZZGbutqOW05dyOoTHuCWcJz/CA==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(396003)(346002)(39860400002)(136003)(376002)(46966006)(82310400003)(34070700002)(7636003)(36756003)(82740400003)(356005)(8676002)(5660300002)(4326008)(83380400001)(47076005)(36906005)(966005)(478600001)(316002)(31686004)(54906003)(70206006)(70586007)(6666004)(110136005)(44832011)(31696002)(9786002)(336012)(2906002)(426003)(8936002)(26005)(2616005)(186003)(50156003)(2101003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2021 10:10:20.9744
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ec71176-3415-4557-98db-08d8b2f47109
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT056.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6373
+X-CMAE-Envelope: MS4xfOcMz+xa5kN04kzT6m2GYPfbqzY1WyAMxyJULZ5qXXxiAQiGEy7LMZ8JmRsijCIV9HAwiJZNGVZrra4NtRGrv7eoXTOzYr1cwcbfJdMIeAHKXBEFriFt
+ TXpt0s9ijAVw71WtvA7FIIB3zjQN8qZmFbCUIe543Cf1AXw3WovcYw3Jjyqh95QDxlPU65z1jMCaGhlHaMBEVqH5KkbB/OospdK83At3YOLBZRskxgMrS+0V
+ PFBksh3P8tlsPecgWYaazfFv/2Rs4xLS3OyrUcgCZ46a1BgTt0uY+wLh0Rvs29g2UV09JM51/d0zkrG1HUbIoe0massnqTk9IwCTOGDL0lhrbs8J7B5GVGbo
+ Vj0Wsme2a/p5Izc/he9hKSl6l3eGaSacjM139azJub8EA7NleLLUu2SMK59dxqWv+ian8u+eQFqABF5J9YxWszHcu9Eu318iWoqp46mky5L/HtFlCaY+bE35
+ F1lgT9/gXOua3QoqP3ETKoOrbZD7NwqywL8b2GG/BBkHoVQ4XV1YCl80jaolO0+Zl17WDDbKrDM9LyBw
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Stephen,
 
-On 21. 12. 20 16:06, Michael Tretter wrote:
-> Hello,
+On 21/12/2020 23:32, Jae Hyun Yoo wrote:
+> Video engine uses eclk and vclk for its clock sources and its reset
+> control is coupled with eclk so the current clock enabling sequence works
+> like below.
 > 
-> the xlnx_vcu soc driver is actually a clock provider of a PLL and four output
-> clocks created from the PLL via dividers.
+>  Enable eclk
+>  De-assert Video Engine reset
+>  10ms delay
+>  Enable vclk
 > 
-> This is v2 of the series to transform the driver into a proper clock provider
-> driver.
+> It introduces improper reset on the Video Engine hardware and eventually
+> the hardware generates unexpected DMA memory transfers that can corrupt
+> memory region in random and sporadic patterns. This issue is observed
+> very rarely on some specific AST2500 SoCs but it causes a critical
+> kernel panic with making a various shape of signature so it's extremely
+> hard to debug. Moreover, the issue is observed even when the video
+> engine is not actively used because udevd turns on the video engine
+> hardware for a short time to make a query in every boot.
 > 
-> The main changes compared to v1 are:
+> To fix this issue, this commit changes the clock handling logic to make
+> the reset de-assertion triggered after enabling both eclk and vclk. Also,
+> it adds clk_unprepare call for a case when probe fails.
 > 
-> Get rid of the "dummy" clock and remove the manual switching of the mux in the
-> output clocks. The driver now uses the pll_ref as a bypass clock. As this is
-> not documented, I am not sure if this is actually the case, but without
-> another signal for an external clock to the ip core, this seems plausible and
-> avoids changes to the device tree binding. The reparenting happens
-> automatically when setting a rate on the output clocks.
+> Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> Reviewed-by: Eddie James <eajames@linux.ibm.com>
 > 
-> Add a few patches to cleanup checkpatch warnings on the driver itself.
+> clk: ast2600: fix reset settings for eclk and vclk
 > 
-> Move the entire driver from drivers/soc to drivers/clk, because the driver is
-> now actually only clock provider driver.
+> Video engine reset setting should be coupled with eclk to match it
+> with the setting for previous Aspeed SoCs which is defined in
+> clk-aspeed.c since all Aspeed SoCs are sharing a single video engine
+> driver. Also, reset bit 6 is defined as 'Video Engine' reset in
+> datasheet so it should be de-asserted when eclk is enabled. This
+> commit fixes the setting.
 > 
-> A more detailed changelog is attached to the respective patches.
-> 
-> The series is based on the zynqmp/soc-next branch in the Xilinx downstream
-> repository [0] which should be merged to mainline soon.
-> 
-> Michael
-> 
-> [0] https://github.com/Xilinx/linux-xlnx/tree/zynqmp/soc-next
+> Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
 
-Series looks good to me but not clock expert.
+I think it makes sense to merge this via the media subsystem.
 
-Stephen: Please let me know if you want me to take it via my tree.
-If yes please ack that 15/15.
+Can you Ack this patch?
 
-For the whole series please add
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-when that minor kerneldoc issue in 9/15 is fixed.
+Thanks!
 
-Thanks,
-Michal
+	Hans
 
+> ---
+> Changes since v1:
+> - Squashed two patches due to dependency.
+> 
+>  drivers/clk/clk-ast2600.c             | 4 ++--
+>  drivers/media/platform/aspeed-video.c | 9 ++++++---
+>  2 files changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+> index 177368cac6dd..882da16575d4 100644
+> --- a/drivers/clk/clk-ast2600.c
+> +++ b/drivers/clk/clk-ast2600.c
+> @@ -60,10 +60,10 @@ static void __iomem *scu_g6_base;
+>  static const struct aspeed_gate_data aspeed_g6_gates[] = {
+>  	/*				    clk rst  name		parent	 flags */
+>  	[ASPEED_CLK_GATE_MCLK]		= {  0, -1, "mclk-gate",	"mpll",	 CLK_IS_CRITICAL }, /* SDRAM */
+> -	[ASPEED_CLK_GATE_ECLK]		= {  1, -1, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
+> +	[ASPEED_CLK_GATE_ECLK]		= {  1,  6, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
+>  	[ASPEED_CLK_GATE_GCLK]		= {  2,  7, "gclk-gate",	NULL,	 0 },	/* 2D engine */
+>  	/* vclk parent - dclk/d1clk/hclk/mclk */
+> -	[ASPEED_CLK_GATE_VCLK]		= {  3,  6, "vclk-gate",	NULL,	 0 },	/* Video Capture */
+> +	[ASPEED_CLK_GATE_VCLK]		= {  3, -1, "vclk-gate",	NULL,	 0 },	/* Video Capture */
+>  	[ASPEED_CLK_GATE_BCLK]		= {  4,  8, "bclk-gate",	"bclk",	 0 }, /* PCIe/PCI */
+>  	/* From dpll */
+>  	[ASPEED_CLK_GATE_DCLK]		= {  5, -1, "dclk-gate",	NULL,	 CLK_IS_CRITICAL }, /* DAC */
+> diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
+> index c46a79eace98..db072ff2df70 100644
+> --- a/drivers/media/platform/aspeed-video.c
+> +++ b/drivers/media/platform/aspeed-video.c
+> @@ -514,8 +514,8 @@ static void aspeed_video_off(struct aspeed_video *video)
+>  	aspeed_video_write(video, VE_INTERRUPT_STATUS, 0xffffffff);
+>  
+>  	/* Turn off the relevant clocks */
+> -	clk_disable(video->vclk);
+>  	clk_disable(video->eclk);
+> +	clk_disable(video->vclk);
+>  
+>  	clear_bit(VIDEO_CLOCKS_ON, &video->flags);
+>  }
+> @@ -526,8 +526,8 @@ static void aspeed_video_on(struct aspeed_video *video)
+>  		return;
+>  
+>  	/* Turn on the relevant clocks */
+> -	clk_enable(video->eclk);
+>  	clk_enable(video->vclk);
+> +	clk_enable(video->eclk);
+>  
+>  	set_bit(VIDEO_CLOCKS_ON, &video->flags);
+>  }
+> @@ -1719,8 +1719,11 @@ static int aspeed_video_probe(struct platform_device *pdev)
+>  		return rc;
+>  
+>  	rc = aspeed_video_setup_video(video);
+> -	if (rc)
+> +	if (rc) {
+> +		clk_unprepare(video->vclk);
+> +		clk_unprepare(video->eclk);
+>  		return rc;
+> +	}
+>  
+>  	return 0;
+>  }
+> 
 
