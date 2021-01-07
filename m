@@ -2,181 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF40C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7049C433E6
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA172333E
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7C623142
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 10:28:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbhAGKNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jan 2021 05:13:14 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:48385 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727366AbhAGKNO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 05:13:14 -0500
-X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jan 2021 05:13:13 EST
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id xSB7klznqbMeAxSBAkTDMc; Thu, 07 Jan 2021 11:06:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1610013968; bh=16EDQQrb7BzqYQP3Qhe8RixWHoJERl1tg+cwWJ1aub4=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=hD/yyhiMDJuTnTdra5BrJvSbIDzNR9aGRXrE6HqKlQjdyqrarsGRE0B1UYu27lFlr
-         ULJu6OENk7Zdw1XdkkrYDpA8a9FEpR1kUAjxOAZYUWWAG4+ETgBQ3V0BY+MmYYLoyC
-         MtZHNL8GP/0WbigKbb7aVO0URmhMyqmqOnRztVQBcPIyoxS7NLbW3UeGOustu3kxDD
-         OeNeSTjhAq3WHSpA3HyShi6Iw5xtma9R6yu2FWzsCwZe5/aSs6Ezna9ZTCchzIvFN9
-         wVFbBHqnNIkFYRQPhYA0HWCuHiNi7vG90iJ/Fk4WTJ/s3QbzJx+ad4iW1Cmh2iKE0c
-         5P5CDnHxPg/3w==
-Subject: Re: [PATCH v2 1/1] media: aspeed: fix clock handling logic
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726830AbhAGK2Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jan 2021 05:28:24 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:47183 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726541AbhAGK2Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 05:28:24 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id CDBB3581F10;
+        Thu,  7 Jan 2021 05:27:17 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 07 Jan 2021 05:27:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        to:cc:references:from:subject:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=X
+        gj/I97/wjHFqvQLCUga9SEfpGNGvWYOpUvSqDwlGKw=; b=lsPbzT8iNHeD6MyzN
+        VMOCR86cJmbWeaiEbAHmcEh2PkJ3dQOKNszI94re5RhvY5Dw0Cbdp+K1ivQ7Ywho
+        FxWKDlFiR8BlLw7w0UEXWnELmeYu47TUidpMpAzMfxRVSuT7PmM9i+Gsn9YUZiTn
+        QpJXd6yzq4cKWkT/FgXCcvj7WoWYGSB8BjnZJyUxweYTbaPK2QJDuV3YcGipqtd1
+        uW6ZWP8vu6ZEaYG52MxoZVXMa/O8XQpvBtkL68+bX5ywBaoAKaKiHwwWiSisdQa6
+        NaZMue5N8C9CQFJ3f4OG9MYG6TLEeFqkbUdpSiK5u/52G5JGR0E7CsFvUso20d92
+        +P9Lg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=Xgj/I97/wjHFqvQLCUga9SEfpGNGvWYOpUvSqDwlG
+        Kw=; b=IinqHH8Hp+zXWXTXPhaFNDMR4nZeR9qqmwb4zxGJ+Xndfw+JlT5DqAY/c
+        fFLPTKbjhSFfjFUvrQoqc6fwJ836+CWPwWG8+AHjl2DW8nozQ8OnYM+ZVnqtI47+
+        B2CGOB59NgVII7quW7m9n4msX554Ndo3TdVo+RXsq1eNCwiGpdtNdkllsTHXidY8
+        85vwOJUEC3uCJusVhrf8GhqHPy8hW/TV5OJzXOKBOWl7P6GDzIu6XdUxF/uFsqcz
+        sUUnRgVaSJxMdW+b+meyZsAUJf9uR76HyLq+UgdVROx4ZJ9soYRuHjotYgw8X3XI
+        G7sJ4fMyX1E3vTn/97IBenwIoRwZw==
+X-ME-Sender: <xms:BOL2XwvLpbuwfmF0DYaN4nYaEAWt2Kj6gktHcwCPjsAErUBCMyesOw>
+    <xme:BOL2X9dxHdoNEl8aWh7ZNkHk-jKLT9v8I63-5hF3ZTfoSYntQUOmbM6ZRRcn_p6TA
+    YoQhtHmS2-hN-Sabw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvdegvddgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepvfhfhffukffffgggjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepfeduhfegiefhffefleefhfffjeeuueehleeitefhkeehleehkeef
+    heejvdegvdeunecuffhomhgrihhnpehtrhhushhtvggufhhirhhmfigrrhgvrdhorhhgne
+    cukfhppeejtddrudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:BOL2X7z6ZK77f05GWuSSInyjxz675s1tNvu6dVzjd50AMLojkOYPaw>
+    <xmx:BOL2XzMWd2ytUQG_-SdNE_rnI8o6mzUbChBB8zolwatPGvhSO4Xovg>
+    <xmx:BOL2Xw8K7hlpj82EkXeunQ0CTM-VUyxQXVO0_pYkRViDKIEOx0cjbw>
+    <xmx:BeL2X7VWPM30rSlOZIuNCHHXYdYS3OddI433Et9vC6Ac4XFn2Yi0rg>
+Received: from [70.135.148.151] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9C6B8108005F;
+        Thu,  7 Jan 2021 05:27:15 -0500 (EST)
+To:     Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime@cerno.tech>
+Cc:     =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-media@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
-References: <20201221223225.14723-1-jae.hyun.yoo@linux.intel.com>
- <20201221223225.14723-2-jae.hyun.yoo@linux.intel.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <6cd30b60-87d9-0c92-4721-fdaa429acf3e@xs4all.nl>
-Date:   Thu, 7 Jan 2021 11:06:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <20210103100007.32867-1-samuel@sholland.org>
+ <20210103100007.32867-5-samuel@sholland.org>
+ <a6c2eac4-7e98-ecb4-ee8a-d67a7f1b6871@arm.com>
+ <20210106110643.agq3mjyhgvg3w4i6@gilmour>
+ <CAGb2v64mcLogZax8vVJJxG9feBzmGc8VyazTvp7XkBAoLXw9JA@mail.gmail.com>
+From:   Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805 PMIC
+ connection
+Message-ID: <bc95a8d2-ebec-489c-10af-fd5a80ea1276@sholland.org>
+Date:   Thu, 7 Jan 2021 04:27:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201221223225.14723-2-jae.hyun.yoo@linux.intel.com>
+In-Reply-To: <CAGb2v64mcLogZax8vVJJxG9feBzmGc8VyazTvp7XkBAoLXw9JA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfOcMz+xa5kN04kzT6m2GYPfbqzY1WyAMxyJULZ5qXXxiAQiGEy7LMZ8JmRsijCIV9HAwiJZNGVZrra4NtRGrv7eoXTOzYr1cwcbfJdMIeAHKXBEFriFt
- TXpt0s9ijAVw71WtvA7FIIB3zjQN8qZmFbCUIe543Cf1AXw3WovcYw3Jjyqh95QDxlPU65z1jMCaGhlHaMBEVqH5KkbB/OospdK83At3YOLBZRskxgMrS+0V
- PFBksh3P8tlsPecgWYaazfFv/2Rs4xLS3OyrUcgCZ46a1BgTt0uY+wLh0Rvs29g2UV09JM51/d0zkrG1HUbIoe0massnqTk9IwCTOGDL0lhrbs8J7B5GVGbo
- Vj0Wsme2a/p5Izc/he9hKSl6l3eGaSacjM139azJub8EA7NleLLUu2SMK59dxqWv+ian8u+eQFqABF5J9YxWszHcu9Eu318iWoqp46mky5L/HtFlCaY+bE35
- F1lgT9/gXOua3QoqP3ETKoOrbZD7NwqywL8b2GG/BBkHoVQ4XV1YCl80jaolO0+Zl17WDDbKrDM9LyBw
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 1/6/21 5:38 AM, Chen-Yu Tsai wrote:
+> On Wed, Jan 6, 2021 at 7:06 PM Maxime Ripard <maxime@cerno.tech> wrote:
+>>
+>> On Mon, Jan 04, 2021 at 10:54:19AM +0000, André Przywara wrote:
+>>> On 03/01/2021 10:00, Samuel Holland wrote:
+>>>> On boards where the only peripheral connected to PL0/PL1 is an X-Powers
+>>>> PMIC, configure the connection to use the RSB bus rather than the I2C
+>>>> bus. Compared to the I2C controller that shares the pins, the RSB
+>>>> controller allows a higher bus frequency, and it is more CPU-efficient.
+>>>
+>>> But is it really necessary to change the DTs for those boards in this
+>>> way? It means those newer DTs now become incompatible with older
+>>> kernels, and I don't know if those reasons above really justify this.
+>>>
+>>> I understand that we officially don't care about "newer DTs on older
+>>> kernels", but do we really need to break this deliberately, for no
+>>> pressing reasons?
+>>>
+>>> P.S. I am fine with supporting RSB on H6, and even using it on new DTs,
+>>> just want to avoid breaking existing ones.
+>>
+>> Doing so would also introduce some inconsistencies, one more thing to
+>> consider during reviews, and would require more testing effort.
+>>
+>> I'm not sure that stretching our - already fairly sparse - resources
+>> thin would be very wise here, especially for something that we don't
+>> have to do and for a setup that isn't really used that much.
+> 
+> As soon as some software component starts running RSB, (which I assume
+> is what Samuel is planning to do in Crust?), there's a chance that it
+> doesn't switch the chip back to I2C. And then Linux won't be able to
+> access it.
 
-On 21/12/2020 23:32, Jae Hyun Yoo wrote:
-> Video engine uses eclk and vclk for its clock sources and its reset
-> control is coupled with eclk so the current clock enabling sequence works
-> like below.
-> 
->  Enable eclk
->  De-assert Video Engine reset
->  10ms delay
->  Enable vclk
-> 
-> It introduces improper reset on the Video Engine hardware and eventually
-> the hardware generates unexpected DMA memory transfers that can corrupt
-> memory region in random and sporadic patterns. This issue is observed
-> very rarely on some specific AST2500 SoCs but it causes a critical
-> kernel panic with making a various shape of signature so it's extremely
-> hard to debug. Moreover, the issue is observed even when the video
-> engine is not actively used because udevd turns on the video engine
-> hardware for a short time to make a query in every boot.
-> 
-> To fix this issue, this commit changes the clock handling logic to make
-> the reset de-assertion triggered after enabling both eclk and vclk. Also,
-> it adds clk_unprepare call for a case when probe fails.
-> 
-> Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Reviewed-by: Joel Stanley <joel@jms.id.au>
-> Reviewed-by: Eddie James <eajames@linux.ibm.com>
-> 
-> clk: ast2600: fix reset settings for eclk and vclk
-> 
-> Video engine reset setting should be coupled with eclk to match it
-> with the setting for previous Aspeed SoCs which is defined in
-> clk-aspeed.c since all Aspeed SoCs are sharing a single video engine
-> driver. Also, reset bit 6 is defined as 'Video Engine' reset in
-> datasheet so it should be de-asserted when eclk is enabled. This
-> commit fixes the setting.
-> 
-> Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Reviewed-by: Joel Stanley <joel@jms.id.au>
+Crust can handle either way via a config option, which currently
+defaults to I2C for H6. It must use the same selection as Linux, not
+only because of the PMIC mode, but also because of the pinctrl.
 
-I think it makes sense to merge this via the media subsystem.
+TF-A is already converted to use RSB[1], and it does switch the PMIC
+back to I2C before handing off to U-Boot[2]. So new TF-A + old Linux is
+fine. However, Linux currently does not switch the PMIC back. So the
+most likely problem from this patch is that, with new Linux + old TF-A,
+TF-A will be unable to power down the board or access regulators after
+an SoC reset.
 
-Can you Ack this patch?
+I expect there will be a TF-A release between now and when 5.12 hits
+stable, but people tend not upgrade their U-Boot/TF-A very often.
 
-Thanks!
+We could solve this by having the Linux RSB driver switch all child
+devices back to I2C in .shutdown, or by dropping this patch and only
+using RSB for new boards (which would also address Andre's concern).
 
-	Hans
+Cheers,
+Samuel
 
-> ---
-> Changes since v1:
-> - Squashed two patches due to dependency.
+[1]: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/7576
+[2]: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/7575
+
+> So I'm for keeping things consistent and converting all users to RSB.
 > 
->  drivers/clk/clk-ast2600.c             | 4 ++--
->  drivers/media/platform/aspeed-video.c | 9 ++++++---
->  2 files changed, 8 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-> index 177368cac6dd..882da16575d4 100644
-> --- a/drivers/clk/clk-ast2600.c
-> +++ b/drivers/clk/clk-ast2600.c
-> @@ -60,10 +60,10 @@ static void __iomem *scu_g6_base;
->  static const struct aspeed_gate_data aspeed_g6_gates[] = {
->  	/*				    clk rst  name		parent	 flags */
->  	[ASPEED_CLK_GATE_MCLK]		= {  0, -1, "mclk-gate",	"mpll",	 CLK_IS_CRITICAL }, /* SDRAM */
-> -	[ASPEED_CLK_GATE_ECLK]		= {  1, -1, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
-> +	[ASPEED_CLK_GATE_ECLK]		= {  1,  6, "eclk-gate",	"eclk",	 0 },	/* Video Engine */
->  	[ASPEED_CLK_GATE_GCLK]		= {  2,  7, "gclk-gate",	NULL,	 0 },	/* 2D engine */
->  	/* vclk parent - dclk/d1clk/hclk/mclk */
-> -	[ASPEED_CLK_GATE_VCLK]		= {  3,  6, "vclk-gate",	NULL,	 0 },	/* Video Capture */
-> +	[ASPEED_CLK_GATE_VCLK]		= {  3, -1, "vclk-gate",	NULL,	 0 },	/* Video Capture */
->  	[ASPEED_CLK_GATE_BCLK]		= {  4,  8, "bclk-gate",	"bclk",	 0 }, /* PCIe/PCI */
->  	/* From dpll */
->  	[ASPEED_CLK_GATE_DCLK]		= {  5, -1, "dclk-gate",	NULL,	 CLK_IS_CRITICAL }, /* DAC */
-> diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
-> index c46a79eace98..db072ff2df70 100644
-> --- a/drivers/media/platform/aspeed-video.c
-> +++ b/drivers/media/platform/aspeed-video.c
-> @@ -514,8 +514,8 @@ static void aspeed_video_off(struct aspeed_video *video)
->  	aspeed_video_write(video, VE_INTERRUPT_STATUS, 0xffffffff);
->  
->  	/* Turn off the relevant clocks */
-> -	clk_disable(video->vclk);
->  	clk_disable(video->eclk);
-> +	clk_disable(video->vclk);
->  
->  	clear_bit(VIDEO_CLOCKS_ON, &video->flags);
->  }
-> @@ -526,8 +526,8 @@ static void aspeed_video_on(struct aspeed_video *video)
->  		return;
->  
->  	/* Turn on the relevant clocks */
-> -	clk_enable(video->eclk);
->  	clk_enable(video->vclk);
-> +	clk_enable(video->eclk);
->  
->  	set_bit(VIDEO_CLOCKS_ON, &video->flags);
->  }
-> @@ -1719,8 +1719,11 @@ static int aspeed_video_probe(struct platform_device *pdev)
->  		return rc;
->  
->  	rc = aspeed_video_setup_video(video);
-> -	if (rc)
-> +	if (rc) {
-> +		clk_unprepare(video->vclk);
-> +		clk_unprepare(video->eclk);
->  		return rc;
-> +	}
->  
->  	return 0;
->  }
+> ChenYu
 > 
 
