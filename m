@@ -2,96 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B43CC433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 15:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD9EC433E6
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 18:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4E8233FA
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 15:13:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 307E323406
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 18:02:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbhAGPMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jan 2021 10:12:48 -0500
-Received: from comms.puri.sm ([159.203.221.185]:54144 "EHLO comms.puri.sm"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726503AbhAGPMr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Jan 2021 10:12:47 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id 5F2A5E20F5;
-        Thu,  7 Jan 2021 07:12:06 -0800 (PST)
-Received: from comms.puri.sm ([127.0.0.1])
-        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id pw4j1bP4qm-t; Thu,  7 Jan 2021 07:12:05 -0800 (PST)
-Subject: Re: [PATCH] Revert "clk: imx: fix composite peripheral flags"
-To:     Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <festevam@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20201231142149.26062-1-martin.kepplinger@puri.sm>
- <CAOMZO5Bq5Qs90iZQTpouv5wW_xf0CQcP-i-+c-Jp-_Ftvhknnw@mail.gmail.com>
- <20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175>
-From:   Martin Kepplinger <martin.kepplinger@puri.sm>
-Message-ID: <805de301-29e0-72d4-05dd-c2873d26213b@puri.sm>
-Date:   Thu, 7 Jan 2021 16:11:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
-In-Reply-To: <20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729173AbhAGSC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jan 2021 13:02:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbhAGSC0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 13:02:26 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27FEC0612FC
+        for <linux-clk@vger.kernel.org>; Thu,  7 Jan 2021 10:01:22 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id Du1K2400H4C55Sk01u1Kjp; Thu, 07 Jan 2021 19:01:19 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kxZax-001uqV-CY; Thu, 07 Jan 2021 19:01:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kxZaw-008ANW-KY; Thu, 07 Jan 2021 19:01:10 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a779a0: Add SYS-DMAC clocks
+Date:   Thu,  7 Jan 2021 19:01:09 +0100
+Message-Id: <20210107180109.1946475-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04.01.21 13:05, Abel Vesa wrote:
-> On 20-12-31 17:33:40, Fabio Estevam wrote:
->> Hi Martin,
->>
->> On Thu, Dec 31, 2020 at 11:22 AM Martin Kepplinger
->> <martin.kepplinger@puri.sm> wrote:
->>>
->>> This reverts commit 936c383673b9e3007432f17140ac62de53d87db9.
->>>
->>> It breaks clock reparenting via devfreq on the imx8mq used in the
->>> Librem 5 phone. When switching dram frequency (which worked before)
->>> the system now hangs after this where the dram_apb clock cannot be
->>> set:
->>>
->>> [  129.391755] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
->>> set dram_apb parent: -16
->>> [  129.391959] imx8m-ddrc-devfreq 3d400000.memory-controller: ddrc
->>> failed freq switch to 25000000 from 800000000: error -16. now at 25000000
->>> [  129.406133] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
->>> update frequency from PM QoS (-16)
->>
->> I am wondering whether IMX8MQ_CLK_DRAM_ALT should also be marked as
->> CLK_IS_CRITICAL.
->>
-> 
-> Hmm, the way the DRAM clocks are right registered right now is a real mess.
-> The DRAM clocks on i.MX8M are changed in TF-A, but the kernel still needs to
-> register them to keep track of the clock tree.
-> 
-> Martin, I already have a patchset waiting to be shipped which doesn't
-> only fix the 8MQ, but all the 8M platforms. Unfortunately, I haven't had the time
-> to work on that in the last couple of weeks but I intend to switch back to it soon.
-> 
-> Fabio, marking the DRAM clocks as critical will not allow the set_parent to be done,
-> as CLK_IS_CRITICAL flag and set_parent do not go together. As of now the devfreq
-> tries to reparent to be consistent with TF-A configuration.
-> 
-> My approach here was to make the DRAM clocks read-only. This means adding some
-> stuff in the clock core subsystem too.
+Add the module clocks used by the Direct Memory Access Controller for
+System (SYS-DMAC) instances on the Renesas R-Car V3U (r8a779a0) SoC.
 
-Hi Abel, thanks a lot for the update. I'm looking forward to seeing your 
-patchset.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk-for-v5.12
 
-                               martin
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index 7993133983f9d130..3f0a6bf6f9dc8343 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -168,6 +168,8 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+ 	DEF_MOD("scif1",	703,	R8A779A0_CLK_S1D8),
+ 	DEF_MOD("scif3",	704,	R8A779A0_CLK_S1D8),
+ 	DEF_MOD("scif4",	705,	R8A779A0_CLK_S1D8),
++	DEF_MOD("sydm1",	709,	R8A779A0_CLK_S1D2),
++	DEF_MOD("sydm2",	710,	R8A779A0_CLK_S1D2),
+ 	DEF_MOD("vin00",	730,	R8A779A0_CLK_S1D1),
+ 	DEF_MOD("vin01",	731,	R8A779A0_CLK_S1D1),
+ 	DEF_MOD("vin02",	800,	R8A779A0_CLK_S1D1),
+-- 
+2.25.1
+
