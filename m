@@ -2,76 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BA9C433E6
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 04:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840BDC43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 09:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A85923139
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 04:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB1823333
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 09:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbhAGEMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jan 2021 23:12:20 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:2545 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbhAGEMU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jan 2021 23:12:20 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4DBCSD3M4LzVxqX;
-        Thu,  7 Jan 2021 12:10:04 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 7 Jan 2021 12:11:35 +0800
-Subject: Re: [PATCH v7 1/4] dt-bindings: Document the hi3559a clock bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <robh+dt@kernel.org>, <p.zabel@pengutronix.de>, <vkoul@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <mturquette@baylibre.com>
-References: <20201215110947.41268-1-gengdongjiu@huawei.com>
- <20201215110947.41268-2-gengdongjiu@huawei.com>
- <20201221185425.GA355861@robh.at.kernel.org>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <9e53ee69-f963-e0b8-e853-7a56ab8e45fd@huawei.com>
-Date:   Thu, 7 Jan 2021 12:11:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1727502AbhAGJLm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jan 2021 04:11:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbhAGJLl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 04:11:41 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767EDC0612FD
+        for <linux-clk@vger.kernel.org>; Thu,  7 Jan 2021 01:10:20 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id l11so13045897lfg.0
+        for <linux-clk@vger.kernel.org>; Thu, 07 Jan 2021 01:10:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T+iZKNW1gmpT+HQqIiqmRRpQMcaG8pgogUVWa/pKYOM=;
+        b=cyz7QwbTfHcC+qnorIFVkv7DnbL/oyA5L+VJJAN8XWkNMg42oKdig8X5tU4xa7X7pN
+         01zspKzmEcVvu5fY2nzlSr3geA/q2812tr8Wz0sUieGMHhvg1aGrsz+m0J4b8Wmr2jr4
+         Bxuqd5E5gXQb8ARkFssKYAOK0W62M412pmNUBd9NwRQD04zf23syAxjzcLmFBod8VeLt
+         Wkczn2W4OJkxg0o6mQ3tRUOpKTABRCCUpHtxAiPQFjxJEJCf/WQ1QzYZHEZTgGgMtnu2
+         jNC0bNdR63+2S3cfHE4fDoxHLsYIWb3l6Ja+q5Vt8aM4kBs1TbyhYMIEDY91gB4GZfH3
+         2CvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T+iZKNW1gmpT+HQqIiqmRRpQMcaG8pgogUVWa/pKYOM=;
+        b=MhY9V4bGDr8yKY7R9XqoOVwd3gxC6gl535ySoflCbWeYu01oY+e0ZiYD1UqZg/RNJS
+         ZCTZv6s5JkEZlWsdYAyz/O1ZYMsgPkX1taKDeUrDnK2sy/YKr1ecvz1D6oGMzl1PDrNo
+         ex0/M4NUVgkTUH/jRTjjhdXKZbAv1gMuywqFShj0ar/8kgGlrIoBNTKcHTUmHctyrQnV
+         2vof9BXSLiRDZXkiQWCIksI71FDCE7G0iSNVkMG0h+MleCeair4Fk3+s62vMbHHF5qqZ
+         WKugd9WNeKf9GLL4aIr1cMUWkPlh6UTXkgYnPVGQ7fimey8DcCG3EuMFbNPkRH5dhDG4
+         636w==
+X-Gm-Message-State: AOAM533LHSlZEgiOaJk7PQhbdnf3j5c9o4h+EKAYO4JQwHcouokBc5hE
+        3rKlA2OTkj+JVv2+cC1S9jlswe/sVXRaOBc3gih88g==
+X-Google-Smtp-Source: ABdhPJz6FNuZKYGADUxlk9Tv8Rh/lJVu/2CmZBJO3UIrMaB/edLmB9ZlsVBcuBoQ7GbjgHsRrGXCE/gOnIldpK4OwK0=
+X-Received: by 2002:a19:495d:: with SMTP id l29mr3392190lfj.465.1610010618615;
+ Thu, 07 Jan 2021 01:10:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201221185425.GA355861@robh.at.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+References: <20210104230253.2805217-1-robh@kernel.org>
+In-Reply-To: <20210104230253.2805217-1-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 7 Jan 2021 10:10:07 +0100
+Message-ID: <CACRpkdZVC8RE-DTes+p6g-1EAHxQWpu2u+sBCX2ei32cvaCrDA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Add missing array size constraints
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-usb <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Jan 5, 2021 at 12:03 AM Rob Herring <robh@kernel.org> wrote:
 
+> DT properties which can have multiple entries need to specify what the
+> entries are and define how many entries there can be. In the case of
+> only a single entry, just 'maxItems: 1' is sufficient.
+>
+> Add the missing entry constraints. These were found with a modified
+> meta-schema. Unfortunately, there are a few cases where the size
+> constraints are not defined such as common bindings, so the meta-schema
+> can't be part of the normal checks.
+>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-On 2020/12/22 2:54, Rob Herring wrote:
-> On Tue, 15 Dec 2020 11:09:44 +0000, Dongjiu Geng wrote:
->> Add DT bindings documentation for hi3559a SoC clock.
->>
->> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
->> ---
->>  .../clock/hisilicon,hi3559av100-clock.yaml    |  59 +++++++
->>  include/dt-bindings/clock/hi3559av100-clock.h | 165 ++++++++++++++++++
->>  2 files changed, 224 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
->>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
->>
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Thanks a lot for the Reviewed-by.
-Whether this series patches can be queued to mainline?
+This is good. The stricter the better.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> .
-> 
+Yours,
+Linus Walleij
