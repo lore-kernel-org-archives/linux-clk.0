@@ -2,128 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB634C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 19:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C15C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 08:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7656123443
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jan 2021 19:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84449235DD
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 08:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbhAGTjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jan 2021 14:39:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbhAGTjw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jan 2021 14:39:52 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B20FC0612F5;
-        Thu,  7 Jan 2021 11:39:12 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id a12so17349519lfl.6;
-        Thu, 07 Jan 2021 11:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ffFy7U5GHTO2EDTarXBfsvng3yi/U0HlVmDD4XbAyvk=;
-        b=Wyed8+zva/LYFJ10gJQ7x+ViNyXTsElCtmMUOpgTb/1YDegkPcwMsRWfb6bnPT+iKb
-         yyIaGP48HD/upBYUEQjlmhnaGmrTDy9me1CdAxCQI1Rt9cCh1vfk83W55UpQWTrfx4fq
-         on3q+XX+gRqs1lF4J6Dzk0wEr9tXNiH+ySbd07plWndwWUiv4F0ykGda/gBwJEg5vYOK
-         ATsgATXXNyU6xMDyYcnyAnQ213ZoX/ZXl6yf3ac43tSt0qdPngmmF29bG1+eUDSwgUw1
-         AzFECZcWDk9At66ZrGB8CFVrd2+qabP6np+CVOMLQJhpLToWrA6wWVQzNGJpmAyDhR53
-         AsKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ffFy7U5GHTO2EDTarXBfsvng3yi/U0HlVmDD4XbAyvk=;
-        b=nnkPIL+qmU7Pn9VV85Gqtyn9aDzojv5jm4mgl6ANhcy2fERHVf6LQo8NHnwL1lfCbD
-         dMs8CrczlWd7oi5j8NB4zKMhVUdIIKzOVtfQ0ETx7WItg++NOOQAwDosj4qkKziOaRkv
-         wpNWmJ0ObPp4xf3BNE/m1+vcxZQpIZho0kERmhuzSQSuue50e0Y4jq1AoikyqDD48JfM
-         Krb/Sl5qB9gIeHDV3iAOFWkt7tt7Pq/n1148mz6J3N6jpmbuigGv6QsVB9b/HsBBQIvU
-         kPJLRwi9T59wJL0ZJAOUaXfbEh+wGJruL16ePbzxcUnV7IUJ1nhaXEAejgTKncLruCZx
-         7SNg==
-X-Gm-Message-State: AOAM532uG5IfBPQJvyjteKNSU+30/4nF46zgIxRQMZs5dkQconHHP2PZ
-        o3fbMMZj3rWyOZMNuGcDwFDn91MM8Og=
-X-Google-Smtp-Source: ABdhPJwcjsVwi672lMyB3VRDqyLku+RskEcHu3FcswkJW1KB+hkV/1FIv9p7umOsoz2IRKSWh6yzhA==
-X-Received: by 2002:a19:230d:: with SMTP id j13mr148331lfj.378.1610048350619;
-        Thu, 07 Jan 2021 11:39:10 -0800 (PST)
-Received: from [192.168.2.145] (109-252-192-57.dynamic.spd-mgts.ru. [109.252.192.57])
-        by smtp.googlemail.com with ESMTPSA id q21sm1369032lff.280.2021.01.07.11.39.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Jan 2021 11:39:09 -0800 (PST)
-Subject: Re: [PATCH v2 00/48] Introduce core voltage scaling for NVIDIA
- Tegra20/30 SoCs
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
+        id S1726312AbhAHIAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 03:00:52 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9873 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbhAHIAw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 03:00:52 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff8110b0003>; Fri, 08 Jan 2021 00:00:11 -0800
+Received: from [10.25.98.33] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 8 Jan
+ 2021 08:00:06 +0000
+Subject: Re: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+To:     Peter Geis <pgwipeout@gmail.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20201217180638.22748-1-digetx@gmail.com>
- <20210105171111.GC26301@kozik-lap>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <988cf951-ff81-4b48-6baf-b393bd1613d2@gmail.com>
-Date:   Thu, 7 Jan 2021 22:39:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.2
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Mohan Kumar <mkumard@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, Ion Agorria <ion@agorria.com>
+References: <20201225012025.507803-1-pgwipeout@gmail.com>
+ <20201225012025.507803-3-pgwipeout@gmail.com>
+ <0c3665b2-bac6-546a-bdd4-0ab7a90adf7c@nvidia.com>
+ <CAMdYzYraT5AXzyscN3Pa+0FWZwHFsD-4ZwbA80kNxgtn7Y1PXw@mail.gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <b3a3ede2-22d5-b13d-f245-7c3b40ea411a@nvidia.com>
+Date:   Fri, 8 Jan 2021 13:30:02 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210105171111.GC26301@kozik-lap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMdYzYraT5AXzyscN3Pa+0FWZwHFsD-4ZwbA80kNxgtn7Y1PXw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610092811; bh=tAX7+nwrhbWHTaFDYsrLY7TV7AsIei6JzO5pznTK/EY=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=bVvAn6XMiAZ7FoTF4OYFwB8L3AnCfRZgNwnpAWTwq9iSt9JPgLv0hKIvDEi8xr8lQ
+         laUYCy+WEWqF1ED0lhDotEwuMGmsiMEXe4bD6D7pLqVems6d7NQ1MaoceT9HHi6S28
+         v9peEUWyStRs/KnaepmCvucDQ6yfUdK7HadQ3Sj4Ahyk7ma4QxN3eH21eoUd6zilMn
+         Z95vNauSua3gmlKEuJEUMk2qj+ChuLK0NS9bRnPgN/IC3LE7KRH5MMpKmnn/Dkcs81
+         C6hDOkSU+Xhj4hJldLe5pFoBhGdHHsqS9y9gOWy1mTyd1SebKlo/bjI5KTdVg9z9NU
+         ecaVWzLmv8wmw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-05.01.2021 20:11, Krzysztof Kozlowski пишет:
-> On Thu, Dec 17, 2020 at 09:05:50PM +0300, Dmitry Osipenko wrote:
->> Introduce core voltage scaling for NVIDIA Tegra20/30 SoCs, which reduces
->> power consumption and heating of the Tegra chips. Tegra SoC has multiple
->> hardware units which belong to a core power domain of the SoC and share
->> the core voltage. The voltage must be selected in accordance to a minimum
->> requirement of every core hardware unit.
->>
->> The minimum core voltage requirement depends on:
->>
->>   1. Clock enable state of a hardware unit.
->>   2. Clock frequency.
->>   3. Unit's internal idling/active state.
->>
->> This series is tested on Acer A500 (T20), AC100 (T20), Nexus 7 (T30),
->> Ouya (T30), TK1 (T124) and some others. I also added voltage scaling to
->> the Ventana (T20) and Cardhu (T30) boards which are tested by NVIDIA's CI
->> farm. Tegra30 is now couple degrees cooler on Nexus 7 and stays cool on
->> Ouya (instead of becoming burning hot) while system is idling. It should
->> be possible to improve this further by implementing a more advanced power
->> management features for the kernel drivers.
->>
->> The DVFS support is opt-in for all boards, meaning that older DTBs will
->> continue to work like they did it before this series. It should be possible
->> to easily add the core voltage scaling support for Tegra114+ SoCs based on
->> this grounding work later on, if anyone will want to implement it.
-> 
-> The same comment as for your interconnect work: for sets touching
-> multiple systems please mention the dependencies between patches in the
-> cover letter. Not as a reply to such remark like I make here, but as a
-> separate entry in the cover letter.
 
-I'll describe all the dependencies in the next revision, thanks.
+
+On 1/7/2021 2:51 AM, Peter Geis wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On Tue, Jan 5, 2021 at 1:30 AM Sameer Pujar <spujar@nvidia.com> wrote:
+>>
+>>
+>> On 12/25/2020 6:50 AM, Peter Geis wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> Currently hda on tegra30 fails to open a stream with an input/output er=
+ror.
+>>> This is similar to the issue referenced in [1].
+>>>
+>>> For example:
+>>> speaker-test -Dhw:0,3 -c 2
+>>>
+>>> speaker-test 1.2.2
+>>>
+>>> Playback device is hw:0,3
+>>> Stream parameters are 48000Hz, S16_LE, 2 channels
+>>> Using 16 octaves of pink noise
+>>> Rate set to 48000Hz (requested 48000Hz)
+>>> Buffer size range from 64 to 16384
+>>> Period size range from 32 to 8192
+>>> Using max buffer size 16384
+>>> Periods =3D 4
+>>> was set period_size =3D 4096
+>>> was set buffer_size =3D 16384
+>>>    0 - Front Left
+>>> Write error: -5,Input/output error
+>>> xrun_recovery failed: -5,Input/output error
+>>> Transfer failed: Input/output error
+>>>
+>>> [1] states "Due to a legacy HW design problem", implying the issue appl=
+ies to all previous tegra-hda devices.
+>>> The tegra-hda device was introduced in tegra30 but only utilized in teg=
+ra124 until now.
+>>> For this reason it is unknown when this issue first manifested.
+>>>
+>>> Applying the fix in [1] universally resolves this issue on tegra30.
+>>> Tested on the Ouya game console and the tf201 tablet.
+>>>
+>>> [1] 60019d8c650d ("ALSA: hda/tegra: workaround playback failure on Tegr=
+a194")
+>> This issue was never seen on Tegra210/Tegra186 and hence at that time it
+>> was thought to be specific to Tegra194. I never tested this on Tegra30
+>> since I don't have this device. I will clarify this with HW folks if
+>> workaround is safer for all chips.
+> So this is confirmed to not affect Tegra210 and Tegra186, but it does
+> affect Tegra194 and Tegra30.
+> Is it possible for the hardware team to pitch on on where the fix was
+> implemented?
+
+I discussed this with HW team. The issue is applicable to all Tegra chips.
+
+Below is the striping formula referenced from HD audio spec.
+ =C2=A0 { ((num_channels * bits_per_sample) / number of SDOs) >=3D 8 }
+
+The current issue is seen because Tegra HW has a problem with boundary=20
+condition (=3D 8) for striping. The reason why it is not seen on=20
+Tegra210/Tegra186 is because it uses max 2SDO lines. Max SDO lines is=20
+read from GCAP register.
+
+For the given stream (channels =3D 2, bps =3D 16);
+ratio =3D (channels * bps) / NSDO =3D 32 / NSDO;
+
+On Tegra30,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ratio =3D 32/4 =3D 8=C2=A0 (FAIL)
+On Tegra210/186, ratio =3D 32/2 =3D 16 (PASS)
+On Tegra194,=C2=A0=C2=A0=C2=A0=C2=A0 ratio =3D 32/4 =3D 8=C2=A0 (FAIL) =3D=
+=3D> Earlier workaround was=20
+applied for it
+
+If Tegra210/186 is forced to use 4SDO, it fails there as well. So the=20
+behavior is consistent across all these chips.
+
+>>> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+>>> Tested-by: Ion Agorria <ion@agorria.com>
+>>> ---
+>>>    sound/pci/hda/hda_tegra.c | 3 +--
+>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+>>> index 70164d1428d4..f8d61e677a09 100644
+>>> --- a/sound/pci/hda/hda_tegra.c
+>>> +++ b/sound/pci/hda/hda_tegra.c
+>>> @@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx *chip, s=
+truct platform_device *pdev)
+>>>            * in powers of 2, next available ratio is 16 which can be
+>>>            * used as a limiting factor here.
+>>>            */
+>>> -       if (of_device_is_compatible(np, "nvidia,tegra194-hda"))
+>>> -               chip->bus.core.sdo_limit =3D 16;
+>>> +       chip->bus.core.sdo_limit =3D 16;
+>> Future Tegra chips address this problem and hence cannot be enforced by
+>> default. May be we can have like below:
+>>
+>> if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
+>> chip->bus.core.sdo_limit =3D 16;
+>>
+> It will need to be a bit more complicated than that, since the
+> tegra186 and tegra210 device trees have "nvidia,tegra30-hda" as a
+> fallback.
+> Looking at the generation map, tegra30-hda can be the fallback for the
+> broken implementation and tegra210-hda can be the fallback for the
+> working implementation.
+> Does that work for you?
+
+As per above explanation, it is fine to apply the workaround for=20
+Tegra210/186 as well. So it simplifies things for all existing chips.
+
+>>>           /* codec detection */
+>>>           if (!bus->codec_mask) {
+>>> --
+>>> 2.25.1
+>>>
+
