@@ -2,90 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A012C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6241DC433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 15:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6BE22AAF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 140D523998
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 15:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726929AbhAHOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 09:11:31 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:44643 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbhAHOLa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 09:11:30 -0500
-Received: by mail-ot1-f49.google.com with SMTP id r9so9686475otk.11;
-        Fri, 08 Jan 2021 06:11:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QeYk3Oi14lctPirOqDY+dvPIpxoFv7o5eCISNkjrmKg=;
-        b=EVmRBgqVIrCZ7Y1mtQG4+eAQpyejtbZ7IxegXIphV+XT7fQNnh9571Au708Rp29CFJ
-         1wHEW7J7ivb3qey5AGQySCdAzJS71v7MgYQm852jW1CLkcu1OdpUFLwARTWc7SapVhS9
-         ZHJ1BBQB9m0RekXIvp+5ydsvUaFW8+zwK/qE5XSkufMZyzqd0uv5/sBJYEn4puPd1vTr
-         yghHnGyrapWbiVT+w5nUfB7+YiqDpHJx9aWJ1Zt3SMilTBSfp3DM4/M9vYHjmzli1ExL
-         LTzwhHK3NgRRQLZO9pqPKmnQx4ZC+0A8gQmT+vd2q7du/XAMwwItJ+PETSBwvzJy+S/W
-         8uRQ==
-X-Gm-Message-State: AOAM532tA7DFJnpTPz4FAjF8tuEUiiPo7Ms485dEycKnjMDgPuSTI0My
-        eTA/m4mBiUFch35LWeyqunYzyk682WoFuIbWLG8=
-X-Google-Smtp-Source: ABdhPJzHiZt1utq1lccdOWmQYnL5Mc5DUdRNRxrJnu6txh7Iz61gKp+GH0w1UAnnj6w0XkTZhpWlZ1+O0WK8wCXdHY8=
-X-Received: by 2002:a9d:c01:: with SMTP id 1mr2664713otr.107.1610115049556;
- Fri, 08 Jan 2021 06:10:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20201228202221.2327468-1-aford173@gmail.com> <20201228202221.2327468-2-aford173@gmail.com>
-In-Reply-To: <20201228202221.2327468-2-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Jan 2021 15:10:38 +0100
-Message-ID: <CAMuHMdUz_Vi7AoM-3co3BvYW6ojEx5=1vg4X-=JGMpHkDFzocg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: Add usb2_clksel to RZ/G2 M/N/H
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
+        id S1727483AbhAHPOG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 10:14:06 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16921 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbhAHPOG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 10:14:06 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff876950000>; Fri, 08 Jan 2021 07:13:25 -0800
+Received: from [10.25.98.33] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 8 Jan
+ 2021 15:13:20 +0000
+Subject: Re: [PATCH v2 1/2] clk: tegra30: Add hda clock default rates to clock
+ driver
+To:     Peter Geis <pgwipeout@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Peter De Schrijver" <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Mohan Kumar <mkumard@nvidia.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        Ion Agorria <ion@agorria.com>
+References: <20210108135913.2421585-1-pgwipeout@gmail.com>
+ <20210108135913.2421585-2-pgwipeout@gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <ea422151-b4df-f7d3-c695-b4ebcb251307@nvidia.com>
+Date:   Fri, 8 Jan 2021 20:43:16 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20210108135913.2421585-2-pgwipeout@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610118805; bh=OVh5cu6AG+BPRULLnidGp+AXOyPhHTYBhMs7JavYrOc=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+         Content-Language:X-Originating-IP:X-ClientProxiedBy;
+        b=sSidw/slIQ9npmyK4Om8U5bcnuD7kXNCpbqKEZuvuINwRSjfoqp54zM8HvBbDlLZ3
+         jVnKVrC9VLjaeqespOieFT2Zl0CckYNHZJ3qyeX/tET9IHdBojThZnZZlGxcgYAByr
+         kbpS0UpKkBZElJ51nb+5cz+is36K20nRGTg2bReJUDpu1HJI3UMh1xuuHjoem0/zom
+         PaE2nfPaqfLsmDewNNpLwXgZmjotjvxrDjdOFL5/dRpwLCtdkV1imSwpac9u1i/34V
+         RIEkL578uRA6bUKLHa52pfQ0S2ElfYO3L6YDTXhT5eHn/CBkEUbclYnDEQdm7gXgQE
+         jqNm7LQB5vD+g==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 28, 2020 at 9:22 PM Adam Ford <aford173@gmail.com> wrote:
-> Per the reference manal for the RZ/G Series, 2nd Generation,
 
-manual
 
-> the RZ/G2M, RZ/G2N, and RZ/G2H have a bit that can be set to
-> choose between a crystal oscillator and an external oscillator.
+On 1/8/2021 7:29 PM, Peter Geis wrote:
+> External email: Use caution opening links or attachments
 >
-> Because only boards that need this should enable it, it's marked
-> as disabled by default for backwards compatibility with existing
-> boards.
 >
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Current implementation defaults the hda clocks to clk_m. This causes hda
+> to run too slow to operate correctly. Fix this by defaulting to pll_p and
+> setting the frequency to the correct rate.
+>
+> This matches upstream t124 and downstream t30.
+>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Tested-by: Ion Agorria <ion@agorria.com>
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> ---
+>   drivers/clk/tegra/clk-tegra30.c | 2 ++
+>   1 file changed, 2 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.12 (with the typo fixed).
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Sameer Pujar <spujar@nvidia.com>
