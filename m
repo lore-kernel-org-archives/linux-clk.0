@@ -2,233 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82E6C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A353EC43219
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97299239FC
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AE2A221F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbhAHLeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 06:34:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbhAHLeV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:21 -0500
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F29C0612A2
-        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:33:05 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id c13so3369066pfi.12
-        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:33:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
-        b=Ua2XMhposk+JG9VoblsJbkOh1sUkeL9uznRFpJ4/+COC813mK6EaW8ZLPQ6mB1Tvb/
-         hr0cBmNLrAPLd+g3Mt+VxWKST4zrbh+A+5YBDfa3UFQeqA/SVjSmEx5BcELP8HkgftJK
-         82xPA722BwKwn/FprMSr5KyUh+ZLtqpgd5dKMl8bxXX4gFvGrwp82G789X6f+y3w3z2z
-         nLOsKEEnLWlHGMrnEgUJvJhW+VIgJ+dCQwaIvf1Z6VOTSopD4KCxIccOkCQ4E6hxDI7f
-         fOdzgUqxvC0JjsmdamsNuBH30SNlfluAyfMIcxsyAAKfFjMvehMcWNg1e+MvLTdXyC63
-         fYsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
-        b=AY9fK8MLWmJrKgU/qJscpCJYHtWEN3hRHY4tZRARWRh5CUoQhp9d6Bp0QF7kq6xHLF
-         cfUV15Si2PbGnRizecvSABm/MOaNKEHt0EhFHF9YBxCONQ2oMT8pjgeZdjt6Zq+7Y/AT
-         Kt/X+hJ8diMznIbQZ7OsfD4lx8hpBA0K14c4r0lodCepKDe9rtwSRPmL+8feEhxVNLo3
-         yPW3n+OLEHDIX9HEr9r3j3iwgASPKnYVSdxjwKq7SrsJRpMCMvJmTmDj4ENy5373J/Ld
-         fFakmZMN6FT4DOVJ3r2JQdF/8SWEgSoGyL0FBkEdv3gw115EbApRqBZc2uk7LuqJKx9a
-         rfjg==
-X-Gm-Message-State: AOAM532n9W+oU3F7Dsyw92kUEltFKz69NwMfcMM1jfMnWpY8hFRicNcr
-        dYXBDtiEnjYpTvdahgp5hdDf
-X-Google-Smtp-Source: ABdhPJwEvA5UKhRv2d7K67H0H4iOM3TVAcJr/CtbKe24fAc4DE1OED4ypyjcKQE2mMfqiU7+Wx41Tw==
-X-Received: by 2002:aa7:9afb:0:b029:19e:45d8:b102 with SMTP id y27-20020aa79afb0000b029019e45d8b102mr3237525pfp.48.1610105584922;
-        Fri, 08 Jan 2021 03:33:04 -0800 (PST)
-Received: from localhost.localdomain ([103.77.37.188])
-        by smtp.gmail.com with ESMTPSA id i25sm9261573pgb.33.2021.01.08.03.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 03:33:04 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com
-Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 4/5] clk: qcom: Add A7 PLL support
-Date:   Fri,  8 Jan 2021 17:02:32 +0530
-Message-Id: <20210108113233.75418-5-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
-References: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
+        id S1727047AbhAHLeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 06:34:23 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16493 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbhAHLeT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:19 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5ff843120001>; Fri, 08 Jan 2021 03:33:38 -0800
+Received: from [10.26.72.150] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 8 Jan
+ 2021 11:33:33 +0000
+Subject: Re: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Sameer Pujar <spujar@nvidia.com>, Peter Geis <pgwipeout@gmail.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Mohan Kumar <mkumard@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, Ion Agorria <ion@agorria.com>
+References: <20201225012025.507803-1-pgwipeout@gmail.com>
+ <20201225012025.507803-3-pgwipeout@gmail.com>
+ <0c3665b2-bac6-546a-bdd4-0ab7a90adf7c@nvidia.com>
+ <CAMdYzYraT5AXzyscN3Pa+0FWZwHFsD-4ZwbA80kNxgtn7Y1PXw@mail.gmail.com>
+ <b3a3ede2-22d5-b13d-f245-7c3b40ea411a@nvidia.com>
+ <a2c5c1d4-500b-6dad-d4ab-339154624c43@nvidia.com>
+Message-ID: <18f44f67-ba81-98d6-67d9-c6ddbb3c9302@nvidia.com>
+Date:   Fri, 8 Jan 2021 11:33:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <a2c5c1d4-500b-6dad-d4ab-339154624c43@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1610105618; bh=E2T06x4spWYNF2pWJ3DV1KaBnD+2MtnlPvmF7IoJDAA=;
+        h=Subject:From:To:CC:References:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=HNx7oyBTuCOKaDcKlAYfoNqMi3K8AqdYOh13qQ9jY66wuomGM+ECLZq2pay8AJMQI
+         AndHThEOXUqONBPEAA2+DjPOln6xTxqGn/h6BkIzvzgLxy4MKET6EnPfNU3DOdkuoO
+         /g4sJbjPNAaAbJbD344Ozu0iLSK0w+OFyORjbhhuuKLZU5NMtOly2Y49hjhJGwuUWn
+         eKWVMlM9gl4pOCDMlalNnuOJPTx0PP1CCpwNtaxkTyf1yzXHCLRHqpxue1S35rvyss
+         uzP6eN73+n+Hn5r65yXlv3+uXmM/K5ziyK1g03/DS+lPZuN5CPxObUxcP2lhk55oPj
+         L5VHv/U7u0lYA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for PLL found in Qualcomm SDX55 platforms which is used to
-provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
-frequency clock to the CPU above 1GHz as compared to the other sources
-like GPLL0.
 
-In this driver, the power domain is attached to the cpudev. This is
-required for CPUFreq functionality and there seems to be no better place
-to do other than this driver (no dedicated CPUFreq driver).
+On 08/01/2021 10:54, Jon Hunter wrote:
+>=20
+> On 08/01/2021 08:00, Sameer Pujar wrote:
+>=20
+> ...
+>=20
+>>>>> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+>>>>> Tested-by: Ion Agorria <ion@agorria.com>
+>>>>> ---
+>>>>> =C2=A0=C2=A0 sound/pci/hda/hda_tegra.c | 3 +--
+>>>>> =C2=A0=C2=A0 1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+>>>>> index 70164d1428d4..f8d61e677a09 100644
+>>>>> --- a/sound/pci/hda/hda_tegra.c
+>>>>> +++ b/sound/pci/hda/hda_tegra.c
+>>>>> @@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx
+>>>>> *chip, struct platform_device *pdev)
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * in pow=
+ers of 2, next available ratio is 16 which can be
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * used a=
+s a limiting factor here.
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_device_is_compatible(np,=
+ "nvidia,tegra194-hda"))
+>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 chip->bus.core.sdo_limit =3D 16;
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->bus.core.sdo_limit =3D 16=
+;
+>>>> Future Tegra chips address this problem and hence cannot be enforced b=
+y
+>>>> default. May be we can have like below:
+>>>>
+>>>> if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
+>>>> chip->bus.core.sdo_limit =3D 16;
+>>>>
+>>> It will need to be a bit more complicated than that, since the
+>>> tegra186 and tegra210 device trees have "nvidia,tegra30-hda" as a
+>>> fallback.
+>>> Looking at the generation map, tegra30-hda can be the fallback for the
+>>> broken implementation and tegra210-hda can be the fallback for the
+>>> working implementation.
+>>> Does that work for you?
+>>
+>> As per above explanation, it is fine to apply the workaround for
+>> Tegra210/186 as well. So it simplifies things for all existing chips.
+>=20
+>=20
+> FYI ... we now have minimal support for Tegra234 in upstream that should
+> not require this. Given that the Tegra234 device-tree does not include
+> support for HDA yet, I think it is fine to apply this as-is. However,
+> once we do add support for Tegra234 HDA, then we should ensure that this
+> is not applied. So that said ...
+>=20
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/qcom/Kconfig  |   8 +++
- drivers/clk/qcom/Makefile |   1 +
- drivers/clk/qcom/a7-pll.c | 100 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 109 insertions(+)
- create mode 100644 drivers/clk/qcom/a7-pll.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d32bb12cd8d0..d6f4aee4427a 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -28,6 +28,14 @@ config QCOM_A53PLL
- 	  Say Y if you want to support higher CPU frequencies on MSM8916
- 	  devices.
- 
-+config QCOM_A7PLL
-+	tristate "SDX55 A7 PLL"
-+	help
-+	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
-+	  frequencies above 1GHz.
-+	  Say Y if you want to support higher CPU frequencies on SDX55
-+	  devices.
-+
- config QCOM_CLK_APCS_MSM8916
- 	tristate "MSM8916 APCS Clock Controller"
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 9e5e0e3cb7b4..e7e0ac382176 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-+obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-new file mode 100644
-index 000000000000..e171d3caf2cf
---- /dev/null
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -0,0 +1,100 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm A7 PLL driver
-+ *
-+ * Copyright (c) 2020, Linaro Limited
-+ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-alpha-pll.h"
-+
-+#define LUCID_PLL_OFF_L_VAL 0x04
-+
-+static const struct pll_vco lucid_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll a7pll = {
-+	.offset = 0x100,
-+	.vco_table = lucid_vco,
-+	.num_vco = ARRAY_SIZE(lucid_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "a7pll",
-+			.parent_data =  &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_ops,
-+		},
-+	},
-+};
-+
-+static const struct alpha_pll_config a7pll_config = {
-+	.l = 0x39,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x2261,
-+	.config_ctl_hi1_val = 0x029A699C,
-+	.user_ctl_val = 0x1,
-+	.user_ctl_hi_val = 0x805,
-+};
-+
-+static const struct regmap_config a7pll_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x1000,
-+	.fast_io		= true,
-+};
-+
-+static int qcom_a7pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	void __iomem *base;
-+	u32 l_val;
-+	int ret;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &a7pll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	/* Configure PLL only if the l_val is zero */
-+	regmap_read(regmap, a7pll.offset + LUCID_PLL_OFF_L_VAL, &l_val);
-+	if (!l_val)
-+		clk_lucid_pll_configure(&a7pll, regmap, &a7pll_config);
-+
-+	ret = devm_clk_register_regmap(dev, &a7pll.clkr);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					   &a7pll.clkr.hw);
-+}
-+
-+static const struct of_device_id qcom_a7pll_match_table[] = {
-+	{ .compatible = "qcom,sdx55-a7pll" },
-+	{ }
-+};
-+
-+static struct platform_driver qcom_a7pll_driver = {
-+	.probe = qcom_a7pll_probe,
-+	.driver = {
-+		.name = "qcom-a7pll",
-+		.of_match_table = qcom_a7pll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_a7pll_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm A7 PLL Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.25.1
+Sorry I was chatting with Sameer offline and we think if we just switch
+the test to the following then this will take care of Tegra234 when we
+add it ...
 
+    if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
+
+Peter, would you be able to send a V2 with this?
+
+Thanks!
+Jon
+
+--=20
+nvpublic
