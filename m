@@ -2,169 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F76BC43381
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ED8C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD632396F
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60577235FF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbhAHN2g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:28:36 -0500
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:33605 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbhAHN2f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:28:35 -0500
-Received: by mail-lf1-f54.google.com with SMTP id l11so22985246lfg.0;
-        Fri, 08 Jan 2021 05:28:18 -0800 (PST)
+        id S1726730AbhAHNcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:32:48 -0500
+Received: from mail-lf1-f51.google.com ([209.85.167.51]:42003 "EHLO
+        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbhAHNcr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:32:47 -0500
+Received: by mail-lf1-f51.google.com with SMTP id b26so22903753lff.9;
+        Fri, 08 Jan 2021 05:32:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=XWXA/W4A7VYDZCeu7RyYjtQ4AHjG+9LzWwWw1pvb/iA=;
-        b=QKJTor8fK0h6F7NXNdeIHbH07r6Z/WX0hE8L0XwU3xhjEmcrymbh22j18vEunQC/Sv
-         X4zqn0ubLCzksltqPzmph28w9ecOWOraBvStzbhu7WkWuZdVawFrsiFtRfN619EVfbAR
-         7EiXY+WpThwiCpEZWKW4jgJcOhfrrYMkMqrv5i0A6290oMRz4qoHjnyDi36G10sVOyee
-         bT0L1gka1R7I9/9dWMhAl8GEFh6y4b0SV1h3fA81GB+Z2+uPhabTnfJbNH7+OAdTJLZI
-         69gEuMzwsUWVeAmb2d4rbKdK7WpunTnWbxt8C+seBTSscstRoA+7aT5hdeuDBt7qOZQO
-         dIoA==
-X-Gm-Message-State: AOAM53045xVzx2NLPvikBRmd8zgfTkKhc9CfLqxlzUylj+blX1gfX1lx
-        neyu08N8kdXullgBSfTMqa0=
-X-Google-Smtp-Source: ABdhPJySVsQlxXl/NaUUMRTow166ph9Z9KYmSNrdLhgWklFJaU++uQOYtIh4kPtIcby7SEPsZMpBXg==
-X-Received: by 2002:a2e:9b8a:: with SMTP id z10mr1435924lji.126.1610112472294;
-        Fri, 08 Jan 2021 05:27:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=W4lO/s0iMGk19qMdPoDZMWO0rMg1GjXtK6eR1C/M5p4=;
+        b=ayQAfDHlZnuCFZ8CIEBCIPFz/iPrHhSC+w7W4PzVSdi3fh0Bw110XjHm5yNx2SgFm6
+         fb6485AowWDSnB7qS7gh5PKA1XnWLuMH+cC2EOFntV6amYMcKX8B1kwTGFQBsaKlMNAO
+         oizfWvy9UDmCtPaC7DinE2Z6jJpwqN74ZAR9OrMiu4/lrj90y9mXm75UXDXIgf9YnsoF
+         te/W08MVAYwt08tl4x+DiZO7NZV5QalPKuMBcOixyBDEU+PdhF8svPUj9hU/zml9mxAL
+         F77XWIxncxqYEHcqUSTZMIm8G53MvBnHl+qfmMscIJQUEAAgB3Quw4cnFeWal3HdldgE
+         v5dQ==
+X-Gm-Message-State: AOAM5336IiMxpV6fazm398F1IDm5skkGMAGXNAsjseIPe/Eoctl1xy8C
+        l1pAq+W4D+2s8vJVpoc0hxA=
+X-Google-Smtp-Source: ABdhPJzNeNcWW331RO5MgKjZvd31biHvCz3tM5gWXozpEtYwSSjNaxmnc2YLuJL/rJz2qjsfbPXzOw==
+X-Received: by 2002:a2e:586:: with SMTP id 128mr1656161ljf.273.1610112725049;
+        Fri, 08 Jan 2021 05:32:05 -0800 (PST)
 Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id w204sm1969331lff.241.2021.01.08.05.27.50
+        by smtp.gmail.com with ESMTPSA id j18sm1960739lfb.77.2021.01.08.05.32.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 05:27:51 -0800 (PST)
-Date:   Fri, 8 Jan 2021 15:27:44 +0200
+        Fri, 08 Jan 2021 05:32:04 -0800 (PST)
+Date:   Fri, 8 Jan 2021 15:31:57 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Lee Jones <lee.jones@linaro.org>,
         Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH 00/15] Support ROHM BD71815 PMIC
-Message-ID: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+        linux-kernel@vger.kernel.org, linux-power@fi.rohmeurope.com,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 02/15] clk: BD718x7: Do not depend on parent driver data
+Message-ID: <831b5fd8f595599b628303c1b678a9c74d73907d.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Patch series introducing support for ROHM BD71815 PMIC
+The bd718x7 only needs a regmap from parent device. This can be
+obtained by call to dev_get_regmap. Do not require parent to
+populate the driver data for this.
 
-Please note that this series depend on previously sent patches.
-
-Already merged regulator patches (in regulator tree - not yet in Linus'
-tree):
-[PATCH] regulator: ROHM bd7xxxx: Do not depend on parent driver data
-https://lore.kernel.org/lkml/20210105130221.GA3438042@localhost.localdomain/
-[PATCH] regulator: bd718x7: Stop using parent data
-https://lore.kernel.org/lkml/20210107122355.GA35080@localhost.localdomain/
-
-Already merged GPIO patch (in GPIO tree - not yet in Linus' tree):
-[PATCH] gpio: bd7xxxx: Do not depend on parent driver data
-https://lore.kernel.org/lkml/20210105125335.GA3430233@localhost.localdomain/
-
-Also, the patches 1 and 2 have been sent separately to clk and rtc
-subsystems - but they have not yet been reviewed / applied. They are
-present also in this series because the series depends on those changes.
-I will drop those patches from this series if they get merged to clk/RTC
-trees from previous submissions.
-
-Please note that due to the dependencies all of the patches are probably
-not applying cleanly to all subsystem trees. (regulator/RTC patches to
-other subsystems). I understand it perfectly well if this series can't be
-merged before all dependencies are merged to all relevant subsystem trees
-but I would be grateful if I got the first set of review comments even
-before that.
-
-
-ROHM BD71815 is a power management IC used in some battery powered
-systems. It contains regulators, GPO(s), charger + coulomb counter, RTC
-and a clock gate.
-
-All regulators can be controlled via I2C. LDO4 can additionally be set to
-be enabled/disabled by a GPIO. LDO3 voltage could be selected from two
-voltages written into separate VSEL reisters using GPIO but this mode is
-not supported by driver. On top of that the PMIC has the typical HW
-state machine which is present also on many other ROHM PMICs.
-
-IC contains two GPOs - but one of the GPOs is marked as GND in
-data-sheet. Thus the driver by default only exposes one GPO. The second
-GPO can be enabled by special DT property.
-
-RTC is almost similar to what is on BD71828. For currently used features
-only the register address offset to RTC block differs.
-
-The charger driver is not included in this series. ROHM has a charger
-driver with some fuel-gauging logig written in but this is not included
-here. I am working on separating the logic from HW specific driver and
-supporting both BD71815 and BD71828 chargers in separate patch series.
-
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
 
-Matti Vaittinen (15):
-  rtc: bd70528: Do not require parent data
-  clk: BD718x7: Do not depend on parent driver data
-  mfd: bd718x7: simplify by cleaning unnecessary device data
-  dt_bindings: bd71828: Add clock output mode
-  dt_bindings: mfd: Add ROHM BD71815 PMIC
-  dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
-  mfd: Add ROHM BD71815 ID
-  mfd: Support for ROHM BD71815 PMIC core
-  gpio: support ROHM BD71815 GPOs
-  regulator: helpers: Export helper voltage listing
-  regulator: rohm-regulator: SNVS dvs and linear voltage support
-  regulator: Support ROHM BD71815 regulators
-  clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
-  rtc: bd70528: Support RTC on ROHM BD71815
-  MAINTAINERS: Add ROHM BD71815AGW
+Please note that this same change has been sent individually:
+https://lore.kernel.org/lkml/20210105123028.GA3409663@localhost.localdomain/
+It is present in this series only because some patches depend on it.
 
- .../bindings/mfd/rohm,bd71815-pmic.yaml       | 198 +++++
- .../bindings/mfd/rohm,bd71828-pmic.yaml       |   7 +
- .../regulator/rohm,bd71815-regulator.yaml     | 104 +++
- MAINTAINERS                                   |   3 +
- drivers/clk/clk-bd718x7.c                     |  21 +-
- drivers/gpio/Kconfig                          |  10 +
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-bd71815.c                   | 160 +++++
- drivers/mfd/Kconfig                           |  15 +-
- drivers/mfd/rohm-bd71828.c                    | 416 ++++++++++-
- drivers/mfd/rohm-bd718x7.c                    |  43 +-
- drivers/regulator/Kconfig                     |  11 +
- drivers/regulator/Makefile                    |   1 +
- drivers/regulator/bd71815-regulator.c         | 675 ++++++++++++++++++
- drivers/regulator/helpers.c                   |  36 +-
- drivers/regulator/rohm-regulator.c            |  23 +-
- drivers/rtc/Kconfig                           |   6 +-
- drivers/rtc/rtc-bd70528.c                     | 104 +--
- include/linux/mfd/rohm-bd71815.h              | 584 +++++++++++++++
- include/linux/mfd/rohm-bd71828.h              |   3 +
- include/linux/mfd/rohm-bd718x7.h              |  13 -
- include/linux/mfd/rohm-generic.h              |   7 +-
- include/linux/regulator/driver.h              |   2 +
- 23 files changed, 2300 insertions(+), 143 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71815-regulator.yaml
- create mode 100644 drivers/gpio/gpio-bd71815.c
- create mode 100644 drivers/regulator/bd71815-regulator.c
- create mode 100644 include/linux/mfd/rohm-bd71815.h
+ drivers/clk/clk-bd718x7.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index b52e8d6f660c..17d90e09f1c0 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -31,12 +31,12 @@ struct bd718xx_clk {
+ 	u8 reg;
+ 	u8 mask;
+ 	struct platform_device *pdev;
+-	struct rohm_regmap_dev *mfd;
++	struct regmap *regmap;
+ };
+ 
+ static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
+ {
+-	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
++	return regmap_update_bits(c->regmap, c->reg, c->mask, status);
+ }
+ 
+ static void bd71837_clk_disable(struct clk_hw *hw)
+@@ -62,7 +62,7 @@ static int bd71837_clk_is_enabled(struct clk_hw *hw)
+ 	int rval;
+ 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
+ 
+-	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
++	rval = regmap_read(c->regmap, c->reg, &enabled);
+ 
+ 	if (rval)
+ 		return rval;
+@@ -82,7 +82,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	int rval = -ENOMEM;
+ 	const char *parent_clk;
+ 	struct device *parent = pdev->dev.parent;
+-	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
+ 	struct clk_init_data init = {
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+@@ -93,6 +92,10 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	if (!c)
+ 		return -ENOMEM;
+ 
++	c->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!c->regmap)
++		return -ENODEV;
++
+ 	init.num_parents = 1;
+ 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+ 
+@@ -119,7 +122,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Unknown clk chip\n");
+ 		return -EINVAL;
+ 	}
+-	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+ 
 -- 
 2.25.4
 
