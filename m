@@ -2,129 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA53C433E6
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 10:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340EAC433E6
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A91423998
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 10:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0EB6239A1
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbhAHKzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 05:55:39 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8111 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbhAHKzi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 05:55:38 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5ff83a020000>; Fri, 08 Jan 2021 02:54:58 -0800
-Received: from [10.26.72.150] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 8 Jan
- 2021 10:54:54 +0000
-Subject: Re: [PATCH 2/2] ALSA: hda/tegra: fix tegra-hda on tegra30 soc
-To:     Sameer Pujar <spujar@nvidia.com>, Peter Geis <pgwipeout@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Mohan Kumar <mkumard@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, Ion Agorria <ion@agorria.com>
-References: <20201225012025.507803-1-pgwipeout@gmail.com>
- <20201225012025.507803-3-pgwipeout@gmail.com>
- <0c3665b2-bac6-546a-bdd4-0ab7a90adf7c@nvidia.com>
- <CAMdYzYraT5AXzyscN3Pa+0FWZwHFsD-4ZwbA80kNxgtn7Y1PXw@mail.gmail.com>
- <b3a3ede2-22d5-b13d-f245-7c3b40ea411a@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a2c5c1d4-500b-6dad-d4ab-339154624c43@nvidia.com>
-Date:   Fri, 8 Jan 2021 10:54:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727176AbhAHLPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 06:15:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbhAHLPg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:15:36 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D94C0612F8
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:14:55 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id z12so3475741pjn.1
+        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iDPzHwkjsTkAD1Mw6MWGrS58dCqLiAXWEIlIfgXIsz0=;
+        b=H+cAe7WRpd5OceyKAkBLVVK3lWt0NmaFOfNVrKpUD7w5kNqrFpsAuPUP8axFspVRkH
+         tv/CQ38zUF3CLl4A516dqH9ZcVZtY0PO+vlU2OGdJzBG4Jytg2PK1Jc5PIVfvPIkaJ+F
+         qL0aGActIFb7ShvkBEWopm+Szp+xFBspbKiUneyrwdUZBoFsZQTYdvjaPh3bfahAJzJ2
+         2HpFYKteLXXN1jDKmSipRWkNPeq8l1C/cjiRPMPTR29GWAa7ZNzqCN4gywlDApcyz9DC
+         CDw12P6gRhNgJEi8MCxHwnr/M3ozKycT3lqKvulsLsCUwsJi84nD/YHIypmarMV8OgXY
+         RQeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iDPzHwkjsTkAD1Mw6MWGrS58dCqLiAXWEIlIfgXIsz0=;
+        b=A9H0VvggIaEMubwSdOb2axmGMRy+c4Q5VkKOxkKIH/ugzQa2PenuD2bNChDvEl7cGd
+         vdh7mpIwMNulD4ARtcGhQYEAUiPS/BD3xKu9bVhlkViX92a+jMXEw+AlfbB8uQnj0Jc1
+         jKtXUZd7pIGHsBhNd1bQTkkQpisCup4Tk0hbCWHR0G9pDahx9KuKiEJsOzAga0jbVLy3
+         b/qke8bKbemrJKiFTXRjs4mYiqreO9Z0ZOUu2SiuFayLaqQIvPjxqQGpTKmJY0y0C4jk
+         Z/9rIFFnNx0qF0v6M3WU4uxpw1E9RbM1hXw2/tlpqoYID29PbQCN1cDPGxV90GepBL1k
+         6tRA==
+X-Gm-Message-State: AOAM530HvbX8YBKyA7m6i6aoxTs4/F/jQJfMUnOkXkDCORNo+ycHn3Gz
+        QIY/ORLkpG6r5hOWGLxAROwi
+X-Google-Smtp-Source: ABdhPJykxqlj1kTzfUydKgsPfFlM4j0Zz+C4wHy/9kI8sjN1024WhAXsPIlo7pUMSzjC0B6pabFphw==
+X-Received: by 2002:a17:902:7596:b029:da:b7a3:cdd0 with SMTP id j22-20020a1709027596b02900dab7a3cdd0mr3353005pll.14.1610104495148;
+        Fri, 08 Jan 2021 03:14:55 -0800 (PST)
+Received: from thinkpad ([103.77.37.188])
+        by smtp.gmail.com with ESMTPSA id p22sm9635613pgk.21.2021.01.08.03.14.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jan 2021 03:14:54 -0800 (PST)
+Date:   Fri, 8 Jan 2021 16:44:48 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        jassisinghbrar@gmail.com, viresh.kumar@linaro.org,
+        ulf.hansson@linaro.org, bjorn.andersson@linaro.org,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/5] clk: qcom: Add A7 PLL support
+Message-ID: <20210108111448.GA74017@thinkpad>
+References: <20210104081125.147300-1-manivannan.sadhasivam@linaro.org>
+ <20210104081125.147300-5-manivannan.sadhasivam@linaro.org>
+ <a880d96f-d879-52d0-48ff-cbcdb88a3f29@somainline.org>
 MIME-Version: 1.0
-In-Reply-To: <b3a3ede2-22d5-b13d-f245-7c3b40ea411a@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1610103298; bh=44OEuLq8rq8qx902zPtywsnxfjLSd17HpWJCsALsuoE=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=PrZgtF4czMmGEaFfElcaTYlFzdTHReGa9hnIzvZ3eZAR7j0wskwsHKRTYbeZMNOdU
-         6wstL/b2qpFuk5ocXBxVPILLlkDz/9zTyV1FjEQytFxFVe5kUcu8vp4ulQzkZuRpUx
-         8liMNrli47j4i75tU0A0VsimHVv3ErIRot9hGGr0kw4JKKDRGwmPcU4jVSBLnwCFph
-         CXV3Ntda7tKqbvt0yV0cGlY7CceuxX3Kx8rr+dfmCkS8Euek4Y7t4fglOlZgh9Ys1u
-         8rszZlujNE7Q6N17eNMKQo9omNXjC7ASaoR7mG+TefJHD+cOVqCxNwlhSLrhoq2MLa
-         9Ld4KpiW5yC3Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a880d96f-d879-52d0-48ff-cbcdb88a3f29@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jan 04, 2021 at 04:30:11PM +0100, Konrad Dybcio wrote:
+> Hi,
+> 
+> could you explicitly state in the probe function (or just in the driver in general, as there's not much more?) and the config structs that the target SoC is X55?
+> 
 
-On 08/01/2021 08:00, Sameer Pujar wrote:
+The compatible says it...
 
-...
+> A few more SoCs (MDM9607, MSM8x26 and some others) also use what's known as "A7PLL" downstream, but all of them have a separate configuration for their specific PLLs, which aren't compatible with each other.
+> 
 
->>>> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
->>>> Tested-by: Ion Agorria <ion@agorria.com>
->>>> ---
->>>> =C2=A0=C2=A0 sound/pci/hda/hda_tegra.c | 3 +--
->>>> =C2=A0=C2=A0 1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
->>>> index 70164d1428d4..f8d61e677a09 100644
->>>> --- a/sound/pci/hda/hda_tegra.c
->>>> +++ b/sound/pci/hda/hda_tegra.c
->>>> @@ -388,8 +388,7 @@ static int hda_tegra_first_init(struct azx
->>>> *chip, struct platform_device *pdev)
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * in powe=
-rs of 2, next available ratio is 16 which can be
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * used as=
- a limiting factor here.
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (of_device_is_compatible(np, =
-"nvidia,tegra194-hda"))
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 chip->bus.core.sdo_limit =3D 16;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->bus.core.sdo_limit =3D 16;
->>> Future Tegra chips address this problem and hence cannot be enforced by
->>> default. May be we can have like below:
->>>
->>> if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
->>> chip->bus.core.sdo_limit =3D 16;
->>>
->> It will need to be a bit more complicated than that, since the
->> tegra186 and tegra210 device trees have "nvidia,tegra30-hda" as a
->> fallback.
->> Looking at the generation map, tegra30-hda can be the fallback for the
->> broken implementation and tegra210-hda can be the fallback for the
->> working implementation.
->> Does that work for you?
->=20
-> As per above explanation, it is fine to apply the workaround for
-> Tegra210/186 as well. So it simplifies things for all existing chips.
+Yes, but that difference can be factored using the SoC specific compatibles in
+future. The idea here is to have a generic A7 PLL driver much like A53 one and
+use SoC specific PLL settings.
 
+Thanks,
+Mani
 
-FYI ... we now have minimal support for Tegra234 in upstream that should
-not require this. Given that the Tegra234 device-tree does not include
-support for HDA yet, I think it is fine to apply this as-is. However,
-once we do add support for Tegra234 HDA, then we should ensure that this
-is not applied. So that said ...
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
---=20
-nvpublic
+> 
+> Konrad
+> 
