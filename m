@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81009C433DB
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215DEC43381
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A5A5221F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE9D2239FC
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbhAHLeG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 06:34:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55796 "EHLO
+        id S1726293AbhAHLeM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 06:34:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbhAHLeG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:06 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C2DC0612FA
-        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:32:49 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id d2so6066013pfq.5
-        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:32:49 -0800 (PST)
+        with ESMTP id S1725942AbhAHLeK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:10 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECC45C061290
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:32:59 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id 15so7496054pgx.7
+        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:32:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CxihuApHeST5FtR1ic0MIOxlrYHGlIn3irwCDLvd5sM=;
-        b=Ywk/gPajX5//7GQMshPjTj9MnHRxcL6KC4lwq7LbB2IP01fdFz7eo80k75h3ei71+s
-         dAkWsmc4L5j3huT/PsV7RHFzZKPjvYb7LNrXHsjC488Cj2v8PIh2zkodRZsCbPYYxL2T
-         nOmK50mMGEJc1MFKxTCdeboNZSWUmOxgQjzLmy4pwOwxlRky/a45VFJB5Y5eInlZwvNG
-         ymEn5H52fFqqORtirxz7wT1cdg6AneznFMAAXXzYcfhpfqvvrS/xbXKgnzwzExtj/Kff
-         oqOyygJIK8VkBuQy5Qu/cu87dTXNFcNEcHx6qSd+MM5Z40dedsrAfWREb8hs0HOIQjRP
-         vYIA==
+        bh=SajeAnD/bM3T+Qtfi1lyQyoeSgIHCjSTfGa4G04tdEU=;
+        b=fJy7+QGBqAxxSegOAf62IGmG6rSwcILXGWqlg3Xvw5g+u56K0xj8AiR+FERB5y8EZg
+         XwEI3JPeS19Um/yvQZPCDUXuQVYSOSqLRpOmLsBLWxMlNFu1PP6OU8pa6C3I8j16ghzu
+         qVR5es2wVQDm/y1cVJo2kvler0i4tbLGrKkk60ZvkSI0GO2o3gFK04rT13OY8hR66V8N
+         tbeW8tN2JzmM5QIngmQFn4o85XlQSryucmI7XWswoHJ1iz7C0kK1kvv0td1hIiuwCfxQ
+         g2J8WksgoGlV04L61JOgjSYLmd4PntXgD7FYgTjmDheRF9Exj/plgGTeHC7cYm7Mp15l
+         KKXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CxihuApHeST5FtR1ic0MIOxlrYHGlIn3irwCDLvd5sM=;
-        b=idT4c/McsypeTBNz+Wdmp3n0OgQu0wcRHy6sEb14e9A4tGEYJzp0y1jEeYPcXTeHLM
-         5BbEfMFnp2e8JhDnpUVda2x9WwxV6oz9pWzGe3GtSaX2gs/G84IQQRecXRNjZJw9eves
-         J+FI119YUZxiVqNCFMF8KB3gwWc5kz8z4ofYlGKuCQaI9zR9kTuVUM2H5zhcP9g+GfVd
-         AMch82p11OxCHxzACps/ssWRsS90lEVqfNugdBIr4qa81GzbYIVgQJfctuwNl0h4Cy4q
-         dr722G1tkclZccfofUbWr5ZKws4ragbeg0a7Ij41K9Wnpj1xEpjWJ2qqXjPAvJ21xux3
-         zs0A==
-X-Gm-Message-State: AOAM533CWnTI2FRbpbJqNtzC6AyhzOcMfWlWQwuWVPTieLD8d5mEYOSc
-        VqsiVhInWybbzVbGEF8lR5DO
-X-Google-Smtp-Source: ABdhPJzmhADrk9TrzzhURDCX80ewl79QD8pzVmxFCkdw6jsYGG8Z7Y00xObhHbUHjvYEbx7QLiYPXg==
-X-Received: by 2002:a62:d142:0:b029:19e:62a0:ca16 with SMTP id t2-20020a62d1420000b029019e62a0ca16mr3243147pfl.46.1610105569213;
-        Fri, 08 Jan 2021 03:32:49 -0800 (PST)
+        bh=SajeAnD/bM3T+Qtfi1lyQyoeSgIHCjSTfGa4G04tdEU=;
+        b=jDF0L+XQ5KnOaq5WvmHwHX70M0IlES9+JaujoHH8PWvXXWWjJ8DnS2s1AQ+zcXHhGW
+         TtU7I7UsU99rRtYfsFFrKq2RZSGY69jVVAL9NZUjUWknnseidEJIyo3BVguUj/QaqL4+
+         a2DdK8SLJEdYlHUl1Ur3FugiB4jKBNEYbTsrWIHQCOBQhYf2W8X9BXF1XrD8in35gh/m
+         YM5bnmLSlKmmhUQoa5hqNt7n4x0qUyFQbkZVrcxWfy2mxEAMlLSb9n2BSoNzq5T31wcE
+         ZPgKQrXImUggV/CMg4dNx2BKnwdL7zFbHqws6BKLsIBFEOgx17bvyePWEOQNG0gp0lIE
+         rVIQ==
+X-Gm-Message-State: AOAM53204+YzPPqKLZPeC6QcuvLm+yzB3qwRkLtlszRQlOVG2NcbUwsd
+        WCXpbFGQct4ElbVx4t6KQn8B
+X-Google-Smtp-Source: ABdhPJwWOldoMw4h2aza5aaKvwjvJUmGJC7vRbeUobUvqk2/cnv1Fsioy0ztzWfw8kH9BRR4k0YOLg==
+X-Received: by 2002:a63:101d:: with SMTP id f29mr6576907pgl.165.1610105579458;
+        Fri, 08 Jan 2021 03:32:59 -0800 (PST)
 Received: from localhost.localdomain ([103.77.37.188])
-        by smtp.gmail.com with ESMTPSA id i25sm9261573pgb.33.2021.01.08.03.32.45
+        by smtp.gmail.com with ESMTPSA id i25sm9261573pgb.33.2021.01.08.03.32.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 03:32:48 -0800 (PST)
+        Fri, 08 Jan 2021 03:32:58 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         jassisinghbrar@gmail.com
@@ -63,9 +63,9 @@ Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/5] dt-bindings: mailbox: Add binding for SDX55 APCS
-Date:   Fri,  8 Jan 2021 17:02:29 +0530
-Message-Id: <20210108113233.75418-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 3/5] dt-bindings: clock: Add Qualcomm A7 PLL binding
+Date:   Fri,  8 Jan 2021 17:02:31 +0530
+Message-Id: <20210108113233.75418-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
 References: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
@@ -75,103 +75,72 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add devicetree YAML binding for SDX55 APCS GCC block. The APCS block
-acts as the mailbox controller and also provides a clock output and
-takes 3 clock sources (pll, aux, ref) as input.
+Add devicetree YAML binding for Cortex A7 PLL clock in Qualcomm
+platforms like SDX55.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../mailbox/qcom,apcs-kpss-global.yaml        | 59 ++++++++++++++++---
- 1 file changed, 50 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/clock/qcom,a7pll.yaml | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-index ffd09b664ff5..3c75ea0b6040 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-@@ -27,26 +27,24 @@ properties:
-       - qcom,sdm660-apcs-hmss-global
-       - qcom,sdm845-apss-shared
-       - qcom,sm8150-apss-shared
-+      - qcom,sdx55-apcs-gcc
- 
-   reg:
-     maxItems: 1
- 
--  clocks:
--    description: phandles to the parent clocks of the clock driver
--    items:
--      - description: primary pll parent of the clock driver
--      - description: auxiliary parent
--
-   '#mbox-cells':
-     const: 1
- 
-   '#clock-cells':
-     const: 0
- 
-+  clocks:
-+    minItems: 2
-+    maxItems: 3
+diff --git a/Documentation/devicetree/bindings/clock/qcom,a7pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
+new file mode 100644
+index 000000000000..8666e995725f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,a7pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-   clock-names:
--    items:
--      - const: pll
--      - const: aux
-+    minItems: 2
-+    maxItems: 3
- 
- required:
-   - compatible
-@@ -55,6 +53,49 @@ required:
- 
- additionalProperties: false
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,ipq6018-apcs-apps-global
-+            - qcom,ipq8074-apcs-apps-global
-+            - qcom,msm8916-apcs-kpss-global
-+            - qcom,msm8994-apcs-kpss-global
-+            - qcom,msm8996-apcs-hmss-global
-+            - qcom,msm8998-apcs-hmss-global
-+            - qcom,qcs404-apcs-apps-global
-+            - qcom,sc7180-apss-shared
-+            - qcom,sdm660-apcs-hmss-global
-+            - qcom,sdm845-apss-shared
-+            - qcom,sm8150-apss-shared
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Primary PLL parent of the clock driver
-+            - description: Auxiliary parent
-+        clock-names:
-+          items:
-+            - const: pll
-+            - const: aux
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sdx55-apcs-gcc
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Primary PLL parent of the clock driver
-+            - description: Auxiliary parent
-+            - description: Reference clock
-+        clock-names:
-+          items:
-+            - const: pll
-+            - const: aux
-+            - const: ref
- examples:
- 
-   # Example apcs with msm8996
++title: Qualcomm A7 PLL Binding
++
++maintainers:
++  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++description:
++  The A7 PLL on the Qualcomm platforms like SDX55 is used to provide high
++  frequency clock to the CPU.
++
++properties:
++  compatible:
++    enum:
++      - qcom,sdx55-a7pll
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 0
++
++  clocks:
++    items:
++      - description: board XO clock
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    a7pll: clock@17808000 {
++        compatible = "qcom,sdx55-a7pll";
++        reg = <0x17808000 0x1000>;
++        clocks = <&rpmhcc RPMH_CXO_CLK>;
++        clock-names = "bi_tcxo";
++        #clock-cells = <0>;
++    };
 -- 
 2.25.1
 
