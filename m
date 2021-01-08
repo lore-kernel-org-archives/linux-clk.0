@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92B0C433E6
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A012C43381
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C32C23718
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D6BE22AAF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 14:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbhAHOEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 09:04:36 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]:36119 "EHLO
-        mail-qk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbhAHOEf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 09:04:35 -0500
-Received: by mail-qk1-f182.google.com with SMTP id 186so8488709qkj.3;
-        Fri, 08 Jan 2021 06:04:19 -0800 (PST)
+        id S1726929AbhAHOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 09:11:31 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:44643 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbhAHOLa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 09:11:30 -0500
+Received: by mail-ot1-f49.google.com with SMTP id r9so9686475otk.11;
+        Fri, 08 Jan 2021 06:11:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E+kCGux/omP1yI0EiRCQI0501K+MWPCXiGLds36f5I4=;
-        b=RHPQe8WNABO3NZvKrOLaduFuY1Oa/eUVtZAP5nquYzd7TKYo2sZN5O0EpjGVTxmE0v
-         tRWsiBNhn6sjJ29BSLnCUF9MAvgbGA8Us2cV41LVqoOCDF1eqrY1gGXCAPBHcdimdLcJ
-         021iyxxN/ykh0zfDP0nLIeISVXy2r1dADt8CWnNSkCufETOl3m9SokpnrRW95coszous
-         Jc1Y0CypufBfFD8nUsxVBClosYc7G5rLElWPu2o1pG/tqcH16v2ohoPBslwlZLB0OvxL
-         qHhikmgnxog+HoA3MMw1FKkO14gcY5fnn1uCL4ZmES4eAHSf/qfyO+DRdGigW70BEzN2
-         Wllg==
-X-Gm-Message-State: AOAM533KfDFY2mnLMm/KKqKGbZHusDy+PrOtTnjWRLISbqLtRFAINce4
-        miTO0fSUVdhEqN8zUtTBH+AhtmMwFiIHZjMO5YA=
-X-Google-Smtp-Source: ABdhPJyzW+xd6B5A8MnR8V/ADzgjDX4F5c8RBsc79VqkeGnSeZA3MLKbo147FE7JDREZ21KFVRdD0jJUI/4jHflFzG8=
-X-Received: by 2002:a05:620a:11ad:: with SMTP id c13mr3866619qkk.134.1610114634225;
- Fri, 08 Jan 2021 06:03:54 -0800 (PST)
+        bh=QeYk3Oi14lctPirOqDY+dvPIpxoFv7o5eCISNkjrmKg=;
+        b=EVmRBgqVIrCZ7Y1mtQG4+eAQpyejtbZ7IxegXIphV+XT7fQNnh9571Au708Rp29CFJ
+         1wHEW7J7ivb3qey5AGQySCdAzJS71v7MgYQm852jW1CLkcu1OdpUFLwARTWc7SapVhS9
+         ZHJ1BBQB9m0RekXIvp+5ydsvUaFW8+zwK/qE5XSkufMZyzqd0uv5/sBJYEn4puPd1vTr
+         yghHnGyrapWbiVT+w5nUfB7+YiqDpHJx9aWJ1Zt3SMilTBSfp3DM4/M9vYHjmzli1ExL
+         LTzwhHK3NgRRQLZO9pqPKmnQx4ZC+0A8gQmT+vd2q7du/XAMwwItJ+PETSBwvzJy+S/W
+         8uRQ==
+X-Gm-Message-State: AOAM532tA7DFJnpTPz4FAjF8tuEUiiPo7Ms485dEycKnjMDgPuSTI0My
+        eTA/m4mBiUFch35LWeyqunYzyk682WoFuIbWLG8=
+X-Google-Smtp-Source: ABdhPJzHiZt1utq1lccdOWmQYnL5Mc5DUdRNRxrJnu6txh7Iz61gKp+GH0w1UAnnj6w0XkTZhpWlZ1+O0WK8wCXdHY8=
+X-Received: by 2002:a9d:c01:: with SMTP id 1mr2664713otr.107.1610115049556;
+ Fri, 08 Jan 2021 06:10:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20201228202221.2327468-1-aford173@gmail.com>
-In-Reply-To: <20201228202221.2327468-1-aford173@gmail.com>
+References: <20201228202221.2327468-1-aford173@gmail.com> <20201228202221.2327468-2-aford173@gmail.com>
+In-Reply-To: <20201228202221.2327468-2-aford173@gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Jan 2021 15:03:41 +0100
-Message-ID: <CAMuHMdVqEZQj8E_ZhS3G4hfLxtKiFG0muKW1+wu5oxyLE2UKeg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add
- support for RZ/G2 M/N/H
+Date:   Fri, 8 Jan 2021 15:10:38 +0100
+Message-ID: <CAMuHMdUz_Vi7AoM-3co3BvYW6ojEx5=1vg4X-=JGMpHkDFzocg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: Add usb2_clksel to RZ/G2 M/N/H
 To:     Adam Ford <aford173@gmail.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Adam Ford-BE <aford@beaconembedded.com>,
@@ -63,13 +62,22 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, Dec 28, 2020 at 9:22 PM Adam Ford <aford173@gmail.com> wrote:
-> The datasheet for the RZ/G2 Series show the bit for choosing between a crystal
-> oscillator and an external oscillator is present.  Add the bindings for
-> r8a774a1 (RZ/G2M), r8a774b1 (RZ/G2N), and r8a774e1 (RZ/G2H)
+> Per the reference manal for the RZ/G Series, 2nd Generation,
+
+manual
+
+> the RZ/G2M, RZ/G2N, and RZ/G2H have a bit that can be set to
+> choose between a crystal oscillator and an external oscillator.
+>
+> Because only boards that need this should enable it, it's marked
+> as disabled by default for backwards compatibility with existing
+> boards.
 >
 > Signed-off-by: Adam Ford <aford173@gmail.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.12 (with the typo fixed).
+
 
 Gr{oetje,eeting}s,
 
