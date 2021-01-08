@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1B1C433E6
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82E6C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7AD239FD
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97299239FC
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 11:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbhAHLeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 06:34:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55806 "EHLO
+        id S1727016AbhAHLeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 06:34:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbhAHLeG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:06 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C02C0612FF
-        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:32:55 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id c12so6053577pfo.10
-        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:32:55 -0800 (PST)
+        with ESMTP id S1727012AbhAHLeV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 06:34:21 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F29C0612A2
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 03:33:05 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id c13so3369066pfi.12
+        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 03:33:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HFCn4DrN5tcytFqIGARwmeCierFc1Kb78mBSzO9W+eo=;
-        b=b5bZ2NhkOjV7VellrHdmvW8UPCU1cxaZG8XswMDojv7DVRq7RuTaIazHWcVzuUOGNe
-         4xsVcKd90dTRaLlV6wkeGs9lmhysuRKMK6D4oHC9DwgNVD3FaJ8gQFBN+wQwHZPFEE9P
-         2cqmqxqeRWsp+5FqQXencD9HfxkTCn9Bd3i2on7FGFGJD8/M8JjWtRg7yP/bw5ArGeVL
-         ksVymKZi+nLUPiU4qkK3z7k93Szgd8FsPvbVWOQ/PMZfACwLfqwNgxq3nezxo95Rfcaf
-         peQlOpn6AOyLlLZSJwX/gFyC4JlVTMc8aTZMCWjYtLVl7YEb0yg3uJqzSY4e1gLdQfzp
-         07Zw==
+        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
+        b=Ua2XMhposk+JG9VoblsJbkOh1sUkeL9uznRFpJ4/+COC813mK6EaW8ZLPQ6mB1Tvb/
+         hr0cBmNLrAPLd+g3Mt+VxWKST4zrbh+A+5YBDfa3UFQeqA/SVjSmEx5BcELP8HkgftJK
+         82xPA722BwKwn/FprMSr5KyUh+ZLtqpgd5dKMl8bxXX4gFvGrwp82G789X6f+y3w3z2z
+         nLOsKEEnLWlHGMrnEgUJvJhW+VIgJ+dCQwaIvf1Z6VOTSopD4KCxIccOkCQ4E6hxDI7f
+         fOdzgUqxvC0JjsmdamsNuBH30SNlfluAyfMIcxsyAAKfFjMvehMcWNg1e+MvLTdXyC63
+         fYsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HFCn4DrN5tcytFqIGARwmeCierFc1Kb78mBSzO9W+eo=;
-        b=heIFTo4QF48/hUH/OCI4UBcioyypbYNKmbbX7o3lGXnuonySTuG7RMp0C9J+fW99D3
-         1u7BXUUQWoHb1CFC+5hSyMsyYz1B9gJq9jZaLo05JYIxi12z141GmCOd1idjxEc0HwtK
-         7FhcDziU+iZ0bcgO/NO+6omqCagnW089CohnqhqWa0n0Lb5KPhTG4i5sjCLSAOVVNLQ+
-         2Lmpgpc2bmYBCFhcAjZp2TZJRA93yWCtg4PO7YJEMtxUspwjlevBxMkDRlxAgEBsluXM
-         Ytl13CSniLRzhthEekD1qo2HZ2+XJvl1ljyMkLifJG0m7ZRwwwFL3gwboLc9L8oS+aWM
-         2fHA==
-X-Gm-Message-State: AOAM531b3skEzkJCJ4cMP/gUKM8xVwMvM7jwObuoJ2dSo6+lqvN7TNLb
-        njBNqIlw5y2kPKhd8nT+YmP+
-X-Google-Smtp-Source: ABdhPJwyt0lKR1eZ3+pay1gSvPHa300MNibDSeSAAHd4WmKUexHWuW37nVr3tNnBI3vHbxvd74LQDw==
-X-Received: by 2002:a62:528c:0:b029:19e:4a39:d9ea with SMTP id g134-20020a62528c0000b029019e4a39d9eamr3424004pfb.20.1610105575033;
-        Fri, 08 Jan 2021 03:32:55 -0800 (PST)
+        bh=9oCBXEeItNyLdmXrVsfC7b3QROxgUzyHxaMFoVN3rtU=;
+        b=AY9fK8MLWmJrKgU/qJscpCJYHtWEN3hRHY4tZRARWRh5CUoQhp9d6Bp0QF7kq6xHLF
+         cfUV15Si2PbGnRizecvSABm/MOaNKEHt0EhFHF9YBxCONQ2oMT8pjgeZdjt6Zq+7Y/AT
+         Kt/X+hJ8diMznIbQZ7OsfD4lx8hpBA0K14c4r0lodCepKDe9rtwSRPmL+8feEhxVNLo3
+         yPW3n+OLEHDIX9HEr9r3j3iwgASPKnYVSdxjwKq7SrsJRpMCMvJmTmDj4ENy5373J/Ld
+         fFakmZMN6FT4DOVJ3r2JQdF/8SWEgSoGyL0FBkEdv3gw115EbApRqBZc2uk7LuqJKx9a
+         rfjg==
+X-Gm-Message-State: AOAM532n9W+oU3F7Dsyw92kUEltFKz69NwMfcMM1jfMnWpY8hFRicNcr
+        dYXBDtiEnjYpTvdahgp5hdDf
+X-Google-Smtp-Source: ABdhPJwEvA5UKhRv2d7K67H0H4iOM3TVAcJr/CtbKe24fAc4DE1OED4ypyjcKQE2mMfqiU7+Wx41Tw==
+X-Received: by 2002:aa7:9afb:0:b029:19e:45d8:b102 with SMTP id y27-20020aa79afb0000b029019e45d8b102mr3237525pfp.48.1610105584922;
+        Fri, 08 Jan 2021 03:33:04 -0800 (PST)
 Received: from localhost.localdomain ([103.77.37.188])
-        by smtp.gmail.com with ESMTPSA id i25sm9261573pgb.33.2021.01.08.03.32.49
+        by smtp.gmail.com with ESMTPSA id i25sm9261573pgb.33.2021.01.08.03.32.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 03:32:53 -0800 (PST)
+        Fri, 08 Jan 2021 03:33:04 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         jassisinghbrar@gmail.com
@@ -63,9 +63,9 @@ Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 2/5] mailbox: qcom: Add support for SDX55 APCS IPC
-Date:   Fri,  8 Jan 2021 17:02:30 +0530
-Message-Id: <20210108113233.75418-3-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 4/5] clk: qcom: Add A7 PLL support
+Date:   Fri,  8 Jan 2021 17:02:32 +0530
+Message-Id: <20210108113233.75418-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
 References: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
@@ -75,44 +75,160 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In SDX55, the IPC bits are located in the APCS GCC block. Also, this block
-can provide clock functionality. Hence, add support for IPC with correct
-offset and name of the clock provider.
+Add support for PLL found in Qualcomm SDX55 platforms which is used to
+provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
+frequency clock to the CPU above 1GHz as compared to the other sources
+like GPLL0.
+
+In this driver, the power domain is attached to the cpudev. This is
+required for CPUFreq functionality and there seems to be no better place
+to do other than this driver (no dedicated CPUFreq driver).
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/Kconfig  |   8 +++
+ drivers/clk/qcom/Makefile |   1 +
+ drivers/clk/qcom/a7-pll.c | 100 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 109 insertions(+)
+ create mode 100644 drivers/clk/qcom/a7-pll.c
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 077e5c6a9ef7..1c205832a1cc 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -61,11 +61,15 @@ static const struct qcom_apcs_ipc_data apps_shared_apcs_data = {
- 	.offset = 12, .clk_name = NULL
- };
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d32bb12cd8d0..d6f4aee4427a 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -28,6 +28,14 @@ config QCOM_A53PLL
+ 	  Say Y if you want to support higher CPU frequencies on MSM8916
+ 	  devices.
  
-+static const struct qcom_apcs_ipc_data sdx55_apcs_data = {
-+	.offset = 0x1008, .clk_name = "qcom-sdx55-acps-clk"
++config QCOM_A7PLL
++	tristate "SDX55 A7 PLL"
++	help
++	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
++	  frequencies above 1GHz.
++	  Say Y if you want to support higher CPU frequencies on SDX55
++	  devices.
++
+ config QCOM_CLK_APCS_MSM8916
+ 	tristate "MSM8916 APCS Clock Controller"
+ 	depends on QCOM_APCS_IPC || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 9e5e0e3cb7b4..e7e0ac382176 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
++obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
+new file mode 100644
+index 000000000000..e171d3caf2cf
+--- /dev/null
++++ b/drivers/clk/qcom/a7-pll.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Qualcomm A7 PLL driver
++ *
++ * Copyright (c) 2020, Linaro Limited
++ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include "clk-alpha-pll.h"
++
++#define LUCID_PLL_OFF_L_VAL 0x04
++
++static const struct pll_vco lucid_vco[] = {
++	{ 249600000, 2000000000, 0 },
 +};
 +
- static const struct regmap_config apcs_regmap_config = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
- 	.val_bits = 32,
--	.max_register = 0xFFC,
-+	.max_register = 0x1008,
- 	.fast_io = true,
- };
- 
-@@ -162,6 +166,7 @@ static const struct of_device_id qcom_apcs_ipc_of_match[] = {
- 	{ .compatible = "qcom,sdm660-apcs-hmss-global", .data = &sdm660_apcs_data },
- 	{ .compatible = "qcom,sdm845-apss-shared", .data = &apps_shared_apcs_data },
- 	{ .compatible = "qcom,sm8150-apss-shared", .data = &apps_shared_apcs_data },
-+	{ .compatible = "qcom,sdx55-apcs-gcc", .data = &sdx55_apcs_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, qcom_apcs_ipc_of_match);
++static struct clk_alpha_pll a7pll = {
++	.offset = 0x100,
++	.vco_table = lucid_vco,
++	.num_vco = ARRAY_SIZE(lucid_vco),
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "a7pll",
++			.parent_data =  &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
++			},
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_lucid_ops,
++		},
++	},
++};
++
++static const struct alpha_pll_config a7pll_config = {
++	.l = 0x39,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x2261,
++	.config_ctl_hi1_val = 0x029A699C,
++	.user_ctl_val = 0x1,
++	.user_ctl_hi_val = 0x805,
++};
++
++static const struct regmap_config a7pll_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x1000,
++	.fast_io		= true,
++};
++
++static int qcom_a7pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	void __iomem *base;
++	u32 l_val;
++	int ret;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &a7pll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* Configure PLL only if the l_val is zero */
++	regmap_read(regmap, a7pll.offset + LUCID_PLL_OFF_L_VAL, &l_val);
++	if (!l_val)
++		clk_lucid_pll_configure(&a7pll, regmap, &a7pll_config);
++
++	ret = devm_clk_register_regmap(dev, &a7pll.clkr);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					   &a7pll.clkr.hw);
++}
++
++static const struct of_device_id qcom_a7pll_match_table[] = {
++	{ .compatible = "qcom,sdx55-a7pll" },
++	{ }
++};
++
++static struct platform_driver qcom_a7pll_driver = {
++	.probe = qcom_a7pll_probe,
++	.driver = {
++		.name = "qcom-a7pll",
++		.of_match_table = qcom_a7pll_match_table,
++	},
++};
++module_platform_driver(qcom_a7pll_driver);
++
++MODULE_DESCRIPTION("Qualcomm A7 PLL Driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.25.1
 
