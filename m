@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D9CC43381
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD025C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE745235FC
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C21235DD
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbhAHNA1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:00:27 -0500
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:37766 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbhAHNAZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:00:25 -0500
-Received: by mail-ot1-f52.google.com with SMTP id o11so9575991ote.4;
-        Fri, 08 Jan 2021 05:00:10 -0800 (PST)
+        id S1727754AbhAHNAh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:00:37 -0500
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:39053 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbhAHNAg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:00:36 -0500
+Received: by mail-oi1-f180.google.com with SMTP id w124so11240994oia.6;
+        Fri, 08 Jan 2021 05:00:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UU74Cn0/Xi0UY8mJY9QQZ0sYhgcykeAtPrL5gGmy/64=;
-        b=B8C/pmFuKdDic47EJD56aWGJqPhLD0Jhz4NC+DIZJaN2BO7/7LVceIS27cbGySzm0X
-         Th3D5Rvgqqr+63V33D3ZHPrrvq+PfuL36MOZAQGDa8w3/bkpUE4ae5aWK2xmZsZDu5i2
-         yy0VKBtnBrEi14+VgcAF/gMllIWYXVCi9EP5xdNoCIZnF55zTUl7M3e3OLH1yoID5lu+
-         8Mp1NcWd1AANYf4l/uDa5OWbQjTt/FO6iaYi4df+Jl3JW84wkikttkyLP+gJ4JW2bdZJ
-         dRoLBpfAi1cT1ApQoNOqHLg6mL1C9ClfJtLEjjGKJbN6kJc+RbCg7HAPqFgn5ARyFvwq
-         34mA==
-X-Gm-Message-State: AOAM531Du39WzXecSOE3N0LpAAWXuaN8iS5QUqCGzuo+vmpyorVm1RNB
-        49S2xHC2qqjzN1d0Htfp0d5QEJvw5Hht3GrPWKFr/9Hx
-X-Google-Smtp-Source: ABdhPJwlqXMY9WTzamy00U9ixLLVKTAcn93ejhXn3fhlacNo6t3JxmUv7YpdG56Xy9C3uD3oKULdnSj4cANrFWXsgNk=
-X-Received: by 2002:a05:6830:210a:: with SMTP id i10mr2449693otc.145.1610110784743;
- Fri, 08 Jan 2021 04:59:44 -0800 (PST)
+        bh=O3IR7iq4eo3wda6A5dtI0hW3IkSRK0oNkzH9O22jj6E=;
+        b=ppLmuuWGhsO+bQESDPHyDGddclcqz1COhn+1y93vDcnAMq6VQdYdGvbMq3LZbwo5xN
+         0Yr1k+FiGaMqe7EmJdeHQMWgiETboqtYV5waD1JluCsjxoyn3wm7W1357wlJTjrB71U9
+         yVvkA0R+HrYJONi/Sxz9/Kr1wKTkQDgvSDLJhbH8J60C+myTArnR4DmgOPx8wrLtEDXz
+         rTyeUL0hECuEUQcjVbnT10bKDSPt5vzZhxND7T3Z7GljLLujiv78VFJh4E2JPhZnBqpf
+         IOd2f9z+MVWo2trqR1yFoyafq0eLuFeGiqtX04XtUE5rXCy4+RTKPBVUqQs5XghvFF6x
+         Pt8w==
+X-Gm-Message-State: AOAM533cCVweJnAgEw+KXmVfewN7yvCTIz/1t5Cg8MyzKLwae+I4PR9A
+        vpFDVUq/6F0nd3fh6RMMLNdCZsVDQ3e0isQEE/I=
+X-Google-Smtp-Source: ABdhPJwuJMp7mU+ha1XsYXrf9H43msqffFgUOpFoQK6aCpTTkb1K/oFpkIZmYSr/YLjZEythcim+psnkXcVKqzLgPlg=
+X-Received: by 2002:aca:3cc5:: with SMTP id j188mr2234490oia.54.1610110795372;
+ Fri, 08 Jan 2021 04:59:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20201227174202.40834-1-wsa+renesas@sang-engineering.com> <20201227174202.40834-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20201227174202.40834-3-wsa+renesas@sang-engineering.com>
+References: <20201227174202.40834-1-wsa+renesas@sang-engineering.com> <20201227174202.40834-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20201227174202.40834-5-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Jan 2021 13:59:33 +0100
-Message-ID: <CAMuHMdX-_p7SKmuujtf0py76cPY3SC_SNAApd=L8sPdcrsFXUw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] clk: renesas: rcar-gen3: remove cpg_quirks access
- when registering SD clock
+Date:   Fri, 8 Jan 2021 13:59:43 +0100
+Message-ID: <CAMuHMdWt-s==dwMefvZXPvSEV76mZDU1KsZguE+jbVoe9QwD+w@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: renesas: r8a779a0: add SDHI support
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -58,8 +57,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sun, Dec 27, 2020 at 6:42 PM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> We want to reuse SD clock handling for other SoCs and, thus, need to
-> generalize it. So, don't access cpg_quirks in that realm.
+> We use the shiny new CPG library for that.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
