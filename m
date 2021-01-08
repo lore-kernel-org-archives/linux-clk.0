@@ -4,55 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ED8C433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F054C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60577235FF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B7E92396F
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jan 2021 13:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbhAHNcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 08:32:48 -0500
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:42003 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbhAHNcr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:32:47 -0500
-Received: by mail-lf1-f51.google.com with SMTP id b26so22903753lff.9;
-        Fri, 08 Jan 2021 05:32:30 -0800 (PST)
+        id S1726712AbhAHNdj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 08:33:39 -0500
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:33251 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbhAHNdi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 08:33:38 -0500
+Received: by mail-lf1-f41.google.com with SMTP id l11so23021563lfg.0;
+        Fri, 08 Jan 2021 05:33:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=W4lO/s0iMGk19qMdPoDZMWO0rMg1GjXtK6eR1C/M5p4=;
-        b=ayQAfDHlZnuCFZ8CIEBCIPFz/iPrHhSC+w7W4PzVSdi3fh0Bw110XjHm5yNx2SgFm6
-         fb6485AowWDSnB7qS7gh5PKA1XnWLuMH+cC2EOFntV6amYMcKX8B1kwTGFQBsaKlMNAO
-         oizfWvy9UDmCtPaC7DinE2Z6jJpwqN74ZAR9OrMiu4/lrj90y9mXm75UXDXIgf9YnsoF
-         te/W08MVAYwt08tl4x+DiZO7NZV5QalPKuMBcOixyBDEU+PdhF8svPUj9hU/zml9mxAL
-         F77XWIxncxqYEHcqUSTZMIm8G53MvBnHl+qfmMscIJQUEAAgB3Quw4cnFeWal3HdldgE
-         v5dQ==
-X-Gm-Message-State: AOAM5336IiMxpV6fazm398F1IDm5skkGMAGXNAsjseIPe/Eoctl1xy8C
-        l1pAq+W4D+2s8vJVpoc0hxA=
-X-Google-Smtp-Source: ABdhPJzNeNcWW331RO5MgKjZvd31biHvCz3tM5gWXozpEtYwSSjNaxmnc2YLuJL/rJz2qjsfbPXzOw==
-X-Received: by 2002:a2e:586:: with SMTP id 128mr1656161ljf.273.1610112725049;
-        Fri, 08 Jan 2021 05:32:05 -0800 (PST)
+        bh=qSLE7h9zoKQSOWFNe8fkmQbWcGg/f0KBYVoFpdlwRRA=;
+        b=SQW2+SfsPZq0iuoMb0Sq1OywabeayckX4zodF+hIymlmltgNOgAgAd4s0xJR7AJzWX
+         ZxZXUxgZJBNHDH6/VOlAf7iCdCRbqpzIUC2MgDTPcbnB+UVqcpPWNbnusif7srcpESVV
+         jBMz1pE95vqn03sHPotr5Q5a0U+Nm2ZUXHQJWQgj76oOY04EvFn0Zmxi1J/XPoFr6TPq
+         Cqg+l9GicX9e8c/oIA8qKUeW40ohUvO253RWeQghc9n8szQeBGMW7JY0dMj13CnvmMHV
+         zXgSzJ1pTaY8dqgQk2LbGjerIljxL7xe4gIUdPbIbCshhjQ/LY2TE5ArIcKC9Tg90fV4
+         +YEA==
+X-Gm-Message-State: AOAM5336wCIGml6LNCSce6n6kvTCWFfNRubSoefY97W19OnV1PuZ8ybj
+        9gW1vLPbzsKgkcPA1WbSsjhtYUjeom8=
+X-Google-Smtp-Source: ABdhPJyBy4PBxEppKCr4W06SxdnTdtW5h2wd0dIUln/hk3vCZ/tbnbk0MS+Y1+NKj02XMeSOxf3qfQ==
+X-Received: by 2002:a2e:80d4:: with SMTP id r20mr1492800ljg.495.1610112775697;
+        Fri, 08 Jan 2021 05:32:55 -0800 (PST)
 Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id j18sm1960739lfb.77.2021.01.08.05.32.03
+        by smtp.gmail.com with ESMTPSA id w15sm1960553lfd.95.2021.01.08.05.32.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 05:32:04 -0800 (PST)
-Date:   Fri, 8 Jan 2021 15:31:57 +0200
+        Fri, 08 Jan 2021 05:32:55 -0800 (PST)
+Date:   Fri, 8 Jan 2021 15:32:47 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>,
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-power@fi.rohmeurope.com,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 02/15] clk: BD718x7: Do not depend on parent driver data
-Message-ID: <831b5fd8f595599b628303c1b678a9c74d73907d.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH 03/15] mfd: bd718x7: simplify by cleaning unnecessary device
+ data
+Message-ID: <2860acdbecf91bfac83ab98f589bc6e861d212ff.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -62,75 +69,152 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The bd718x7 only needs a regmap from parent device. This can be
-obtained by call to dev_get_regmap. Do not require parent to
-populate the driver data for this.
+Most ROHM PMIC sub-devices only use the regmap pointer from
+parent device. They can obtain this by dev_get_regamap so in
+most cases the MFD device does not need to allocate and populate
+the driver data. Simplify drivers by removing this.
+
+The BD70528 still needs the access to watchdog mutex so keep
+rohm_regmap_dev in use on BD70528 RTC and WDG drivers for now.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
+ drivers/mfd/rohm-bd718x7.c       | 43 ++++++++++++--------------------
+ include/linux/mfd/rohm-bd718x7.h | 13 ----------
+ 2 files changed, 16 insertions(+), 40 deletions(-)
 
-Please note that this same change has been sent individually:
-https://lore.kernel.org/lkml/20210105123028.GA3409663@localhost.localdomain/
-It is present in this series only because some patches depend on it.
-
- drivers/clk/clk-bd718x7.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index b52e8d6f660c..17d90e09f1c0 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -31,12 +31,12 @@ struct bd718xx_clk {
- 	u8 reg;
- 	u8 mask;
- 	struct platform_device *pdev;
--	struct rohm_regmap_dev *mfd;
-+	struct regmap *regmap;
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index c32c1b6c98fa..bfd81f78beae 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -91,9 +91,9 @@ static const struct regmap_config bd718xx_regmap_config = {
+ 	.cache_type = REGCACHE_RBTREE,
  };
  
- static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
+-static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
++static int bd718xx_init_press_duration(struct regmap *regmap,
++				       struct device *dev)
  {
--	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+	return regmap_update_bits(c->regmap, c->reg, c->mask, status);
- }
- 
- static void bd71837_clk_disable(struct clk_hw *hw)
-@@ -62,7 +62,7 @@ static int bd71837_clk_is_enabled(struct clk_hw *hw)
- 	int rval;
- 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
- 
--	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+	rval = regmap_read(c->regmap, c->reg, &enabled);
- 
- 	if (rval)
- 		return rval;
-@@ -82,7 +82,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	int rval = -ENOMEM;
- 	const char *parent_clk;
- 	struct device *parent = pdev->dev.parent;
--	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
- 	struct clk_init_data init = {
- 		.name = "bd718xx-32k-out",
- 		.ops = &bd71837_clk_ops,
-@@ -93,6 +92,10 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	if (!c)
- 		return -ENOMEM;
- 
-+	c->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!c->regmap)
-+		return -ENODEV;
-+
- 	init.num_parents = 1;
- 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
- 
-@@ -119,7 +122,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Unknown clk chip\n");
+-	struct device* dev = bd718xx->chip.dev;
+ 	u32 short_press_ms, long_press_ms;
+ 	u32 short_press_value, long_press_value;
+ 	int ret;
+@@ -102,8 +102,7 @@ static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
+ 				   &short_press_ms);
+ 	if (!ret) {
+ 		short_press_value = min(15u, (short_press_ms + 250) / 500);
+-		ret = regmap_update_bits(bd718xx->chip.regmap,
+-					 BD718XX_REG_PWRONCONFIG0,
++		ret = regmap_update_bits(regmap, BD718XX_REG_PWRONCONFIG0,
+ 					 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 					 short_press_value);
+ 		if (ret) {
+@@ -116,8 +115,7 @@ static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
+ 				   &long_press_ms);
+ 	if (!ret) {
+ 		long_press_value = min(15u, (long_press_ms + 500) / 1000);
+-		ret = regmap_update_bits(bd718xx->chip.regmap,
+-					 BD718XX_REG_PWRONCONFIG1,
++		ret = regmap_update_bits(regmap, BD718XX_REG_PWRONCONFIG1,
+ 					 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 					 long_press_value);
+ 		if (ret) {
+@@ -132,7 +130,8 @@ static int bd718xx_init_press_duration(struct bd718xx *bd718xx)
+ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+-	struct bd718xx *bd718xx;
++	struct regmap *regmap;
++	struct regmap_irq_chip_data *irq_data;
+ 	int ret;
+ 	unsigned int chip_type;
+ 	struct mfd_cell *mfd;
+@@ -142,13 +141,6 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 		dev_err(&i2c->dev, "No IRQ configured\n");
  		return -EINVAL;
  	}
--	c->mfd = mfd;
- 	c->pdev = pdev;
- 	c->hw.init = &init;
+-
+-	bd718xx = devm_kzalloc(&i2c->dev, sizeof(struct bd718xx), GFP_KERNEL);
+-
+-	if (!bd718xx)
+-		return -ENOMEM;
+-
+-	bd718xx->chip_irq = i2c->irq;
+ 	chip_type = (unsigned int)(uintptr_t)
+ 		    of_device_get_match_data(&i2c->dev);
+ 	switch (chip_type) {
+@@ -164,29 +156,26 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 		dev_err(&i2c->dev, "Unknown device type");
+ 		return -EINVAL;
+ 	}
+-	bd718xx->chip.dev = &i2c->dev;
+-	dev_set_drvdata(&i2c->dev, bd718xx);
  
+-	bd718xx->chip.regmap = devm_regmap_init_i2c(i2c,
+-						    &bd718xx_regmap_config);
+-	if (IS_ERR(bd718xx->chip.regmap)) {
++	regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
++	if (IS_ERR(regmap)) {
+ 		dev_err(&i2c->dev, "regmap initialization failed\n");
+-		return PTR_ERR(bd718xx->chip.regmap);
++		return PTR_ERR(regmap);
+ 	}
+ 
+-	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->chip.regmap,
+-				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
+-				       &bd718xx_irq_chip, &bd718xx->irq_data);
++	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, i2c->irq,
++				       IRQF_ONESHOT, 0, &bd718xx_irq_chip,
++				       &irq_data);
+ 	if (ret) {
+ 		dev_err(&i2c->dev, "Failed to add irq_chip\n");
+ 		return ret;
+ 	}
+ 
+-	ret = bd718xx_init_press_duration(bd718xx);
++	ret = bd718xx_init_press_duration(regmap, &i2c->dev);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_irq_get_virq(bd718xx->irq_data, BD718XX_INT_PWRBTN_S);
++	ret = regmap_irq_get_virq(irq_data, BD718XX_INT_PWRBTN_S);
+ 
+ 	if (ret < 0) {
+ 		dev_err(&i2c->dev, "Failed to get the IRQ\n");
+@@ -195,9 +184,9 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 
+ 	button.irq = ret;
+ 
+-	ret = devm_mfd_add_devices(bd718xx->chip.dev, PLATFORM_DEVID_AUTO,
++	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+ 				   mfd, cells, NULL, 0,
+-				   regmap_irq_get_domain(bd718xx->irq_data));
++				   regmap_irq_get_domain(irq_data));
+ 	if (ret)
+ 		dev_err(&i2c->dev, "Failed to create subdevices\n");
+ 
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index bee2474a8f9f..df2918198d37 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -310,17 +310,4 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx {
+-	/*
+-	 * Please keep this as the first member here as some
+-	 * drivers (clk) supporting more than one chip may only know this
+-	 * generic struct 'struct rohm_regmap_dev' and assume it is
+-	 * the first chunk of parent device's private data.
+-	 */
+-	struct rohm_regmap_dev chip;
+-
+-	int chip_irq;
+-	struct regmap_irq_chip_data *irq_data;
+-};
+-
+ #endif /* __LINUX_MFD_BD718XX_H__ */
 -- 
 2.25.4
 
