@@ -2,29 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9434C433E0
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FC9C433E9
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6F0123A23
+	by mail.kernel.org (Postfix) with ESMTP id EF58E23A23
 	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbhAINzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726005AbhAINzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 9 Jan 2021 08:55:52 -0500
-Received: from relay07.th.seeweb.it ([5.144.164.168]:54221 "EHLO
-        relay07.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbhAINzw (ORCPT
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbhAINzw (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jan 2021 08:55:52 -0500
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9086C0617A4
+        for <linux-clk@vger.kernel.org>; Sat,  9 Jan 2021 05:54:56 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 858DD3EF11;
-        Sat,  9 Jan 2021 14:46:21 +0100 (CET)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E18C23EEB9;
+        Sat,  9 Jan 2021 14:46:19 +0100 (CET)
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
 To:     linux-arm-msm@vger.kernel.org
@@ -36,69 +38,45 @@ Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         devicetree@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Subject: [PATCH 5/9] clk: qcom: mmcc-msm8998: Set CLK_GET_RATE_NOCACHE to pixel/byte clks
-Date:   Sat,  9 Jan 2021 14:46:13 +0100
-Message-Id: <20210109134617.146275-6-angelogioacchino.delregno@somainline.org>
+Subject: [PATCH 0/9] Clock fixes for MSM8998 GCC, MMCC, GPUCC
+Date:   Sat,  9 Jan 2021 14:46:08 +0100
+Message-Id: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
-References: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pixel and byte clocks rate should not be cached, as a VCO shutdown
-may clear the frequency setup and this may not be set again due to the
-cached rate being present.
-This will also be useful when shadow clocks will be implemented in
-the DSI PLL for seamless timing/resolution switch.
+This patch series fixes some issues with the MSM8998 clocks and, in
+particular, brings a very important fix to the GCC PLLs.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
----
- drivers/clk/qcom/mmcc-msm8998.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+These fixes are enhancing this SoC's stability and also makes it
+possible to eventually enable the Adreno GPU (with proper clock
+scaling) and other components.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
-index dd68983fe22e..475e00a5fdf4 100644
---- a/drivers/clk/qcom/mmcc-msm8998.c
-+++ b/drivers/clk/qcom/mmcc-msm8998.c
-@@ -520,7 +520,7 @@ static struct clk_rcg2 byte0_clk_src = {
- 		.parent_data = mmss_xo_dsibyte,
- 		.num_parents = 4,
- 		.ops = &clk_byte2_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
- 	},
- };
- 
-@@ -533,7 +533,7 @@ static struct clk_rcg2 byte1_clk_src = {
- 		.parent_data = mmss_xo_dsibyte,
- 		.num_parents = 4,
- 		.ops = &clk_byte2_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
- 	},
- };
- 
-@@ -1084,7 +1084,7 @@ static struct clk_rcg2 pclk0_clk_src = {
- 		.parent_data = mmss_xo_dsi0pll_dsi1pll,
- 		.num_parents = 4,
- 		.ops = &clk_pixel_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
- 	},
- };
- 
-@@ -1098,7 +1098,7 @@ static struct clk_rcg2 pclk1_clk_src = {
- 		.parent_data = mmss_xo_dsi0pll_dsi1pll,
- 		.num_parents = 4,
- 		.ops = &clk_pixel_ops,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
- 	},
- };
- 
+This patch series was tested on:
+- Sony Xperia XZ Premium (MSM8998)
+- F(x)Tec Pro1 (MSM8998)
+
+AngeloGioacchino Del Regno (9):
+  clk: qcom: gcc-msm8998: Wire up gcc_mmss_gpll0 clock
+  clk: qcom: gcc-msm8998: Add missing hmss_gpll0_clk_src clock
+  clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as critical
+  clk: qcom: gcc-msm8998: Fix Alpha PLL type for all GPLLs
+  clk: qcom: mmcc-msm8998: Set CLK_GET_RATE_NOCACHE to pixel/byte clks
+  clk: qcom: mmcc-msm8998: Add hardware clockgating registers to some
+    clks
+  clk: qcom: mmcc-msm8998: Set bimc_smmu_gdsc always on
+  clk: qcom: gpucc-msm8998: Add resets, cxc, fix flags on gpu_gx_gdsc
+  clk: qcom: gpucc-msm8998: Allow fabia gpupll0 rate setting
+
+ drivers/clk/qcom/gcc-msm8998.c               | 143 ++++++++++++-------
+ drivers/clk/qcom/gpucc-msm8998.c             |  18 ++-
+ drivers/clk/qcom/mmcc-msm8998.c              |  20 ++-
+ include/dt-bindings/clock/qcom,gcc-msm8998.h |   2 +
+ 4 files changed, 125 insertions(+), 58 deletions(-)
+
 -- 
 2.29.2
 
