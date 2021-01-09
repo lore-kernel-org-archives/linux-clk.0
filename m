@@ -2,361 +2,164 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E55AC433E6
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 17:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B615CC433DB
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 18:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5052D2388E
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 17:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77BF723A01
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 18:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725970AbhAIRdB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Jan 2021 12:33:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbhAIRdB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jan 2021 12:33:01 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B387C06179F
-        for <linux-clk@vger.kernel.org>; Sat,  9 Jan 2021 09:32:15 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id q7so7832887pgm.5
-        for <linux-clk@vger.kernel.org>; Sat, 09 Jan 2021 09:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iPSaE+gTppr+0al+ZRJA/OKK8abbifI8OoOStZ7kwOE=;
-        b=xpKTkIOr2wtvZeExypOk/J7yPBmvPH2jnbjh8LMjzPR7SEZ+pOqUC+c+rlS1cY/2F6
-         NA2JH3IuDe/bFTv22p5GkuGFNm96cXfgeDPj5WeV4FlNf2reANgEXIE+WqJUJuwPWm6P
-         pNdiVpQxOloZyHTvd4t7XOQuitEWeR9tZVQ9djBEczdJtvJPcwgto32iSc+vekzUzcw4
-         XZL/F/+MtXOex/DmVhy+oXNAdoXQQtZdK7jxPElApTNvyGvS5MuogvSbYaCoVrU3tFNn
-         YQW0RHTn+tJPnba37MPmAVCm8kYnyOc4G9iY7K0XyQilZwBnxyVMLTCnGPlCi7WAjV4r
-         UlbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=iPSaE+gTppr+0al+ZRJA/OKK8abbifI8OoOStZ7kwOE=;
-        b=eWYXnDdr0KUxC0rFZuO8sZJDQischU0CJp9cDkfZdU6Fuy29X/hRXzhdBO4nNSpJHz
-         zxq4jaTFsc1JfwuDCy8dijBiVoMxHf3T1Yd7bH4w1GswfqiN1+s46M1NfQgpNtJ0hjFX
-         c0AO+ZYo3cAskh8PDFqUADz8hE+frQUAi3mBzd6OcpzDY31MtLjTan2186vH9u1qX497
-         2B9hOma7bprdkdPfBRT2cf4A6+z5yOkxoQC4yzhGuHDOuHvmj3Bc2qSiM4txBq7DUYqJ
-         lK23uRpefYfWjZV14OkyLUSD2XPBom10e8E10yihfsorKHaMNRD4ho30kf+MK4bs8tID
-         FqTA==
-X-Gm-Message-State: AOAM533UdVSyf6udvrX90fhe6z08smR4JbVEntOp5El1b6pWi4Ozenjb
-        t4mLURTEiUAha+TzD152hQhCYg==
-X-Google-Smtp-Source: ABdhPJzjYXJ8uXMFZioJ/gLOSW/KhJTUSY4+HcyL4aaCKdDsPeqcZpZ9MqWfG0Sx4tgYsTM+p0He9Q==
-X-Received: by 2002:a65:6405:: with SMTP id a5mr12344109pgv.389.1610213534771;
-        Sat, 09 Jan 2021 09:32:14 -0800 (PST)
-Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id f64sm13444672pfb.146.2021.01.09.09.32.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Jan 2021 09:32:13 -0800 (PST)
-Date:   Sat, 09 Jan 2021 09:32:13 -0800 (PST)
-X-Google-Original-Date: Sat, 09 Jan 2021 09:32:10 PST (-0800)
-Subject:     Re: [PATCH v10 00/23] RISC-V Kendryte K210 support improvements
-In-Reply-To: <20201213135056.24446-1-damien.lemoal@wdc.com>
-CC:     linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, p.zabel@pengutronix.de,
-        seanga2@gmail.com
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Message-ID: <mhng-a7443f7f-42ff-4835-9b25-be8f91884e04@palmerdabbelt-glaptop>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1725978AbhAISCx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Jan 2021 13:02:53 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:45068 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725951AbhAISCx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jan 2021 13:02:53 -0500
+Received: from [77.244.183.192] (port=62314 helo=[192.168.178.24])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1kyIZ0-005zFT-1I; Sat, 09 Jan 2021 19:02:10 +0100
+Subject: Re: [RFC 2/2] clk: vc5: Add support for optional load capacitance
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210106173900.388758-1-aford173@gmail.com>
+ <20210106173900.388758-2-aford173@gmail.com>
+ <c5a97aca-ce74-bbd3-e99d-358e079c4c4a@lucaceresoli.net>
+ <CAHCN7x+gUQwv4cWgg7Jt2oca1n4KW=o08rzoK9TB1Z_rKE0qog@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
+Date:   Sat, 9 Jan 2021 19:02:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHCN7x+gUQwv4cWgg7Jt2oca1n4KW=o08rzoK9TB1Z_rKE0qog@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 13 Dec 2020 05:50:33 PST (-0800), Damien Le Moal wrote:
-> This series of patches improves support for boards based on the Canaan
-> Kendryte K210 RISC-V dual core SoC. Minimal support for this SoC is
-> already included in the kernel. These patches complete it, enabling
-> support for most peripherals present on the SoC as well as introducing
-> device trees for the various K210 boards available on the market today
-> from SiPeed and Kendryte.
+Hi Adam,
 
-Putting everything together like this makes it overly difficult to get things
-merged: there's some actual fixes, some new arch/riscv stuff, and a handful of
-drivers.  I know we've been kind of mixing up the SiFive and RISC-V trees, but
-that's largely because things have been pretty quiet and it's the same people
-working on everything.  That'll probably change at some point, but it doesn't
-mean we can just start mixing up everything in here -- even for the SiFive
-stuff, we usulaly try to do it in the relevant subsystem tree.
+On 09/01/21 04:00, Adam Ford wrote:
+> On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+>>
+>> Hi Adam,
+>>
+>> On 06/01/21 18:39, Adam Ford wrote:
+>>> There are two registers which can set the load capacitance for
+>>> XTAL1 and XTAL2. These are optional registers when using an
+>>> external crystal.  Parse the device tree and set the
+>>> corresponding registers accordingly.
+>>
+>> No need to repeat the first 2 sentences, they are already in patch 1.
+> 
+> The reason I did that was because if someone does a git log on the
+> individual file, they'd see the comment.  While it's redundant not, it
+> might not be as obvious in the future when looking back.   Not
+> everyone reviews the history of the binding, but the source files' git
+> logs usually have some value.   However, if you want me to drop it or
+> rephrase it, I can do that.
 
-> Pathes 1 to 4 are various fixes for riscv arch code and riscv
-> dependent devices. Of note here is patch 3 which fix system calls
-> execution in the no MMU case, and patch 4 which simplifies DTB builtin
-> handling.
+Makes sense, I had never considered that before.
 
-The first three are on fixes, but the fourth isn't a fix: it's a fairly
-significant change to how portable our kernels can be.  The old scheme allows
-vendors the option of building systems with M-mode compatibility, this new one
-doesn't.  That said, I don't think anyone is actually going to build systems
-this way -- we really should have had some sort of mboardid, but that was shot
-down in favor of some sort of platform thing and it's unlikely we get that far
-over there.
+>>> +static int vc5_map_cap_value(u32 femtofarads)
+>>> +{
+>>> +     int mapped_value;
+>>> +
+>>> +     /* The datasheet explicitly states 9000 - 25000 */
+>>> +     if ((femtofarads < 9000) || (femtofarads > 25000))
+>>> +             return -EINVAL;
+>>> +
+>>> +     /* The lowest target we can hit is 9430, so exit if it's less */
+>>> +     if (femtofarads < 9430)
+>>> +             return 0;
+>>> +
+>>> +     /*
+>>> +      * According to VersaClock 6E Programming Guide, there are 6
+>>> +      * bits which translate to 64 entries in XTAL registers 12 and
+>>> +      * 13. Because bits 0 and 1 increase the capacitance the
+>>> +      * same, some of the values can be repeated.  Plugging this
+>>> +      * into a spreadsheet and generating a trendline, the output
+>>> +      * equation becomes x = (y-9098.29) / 216.44, where 'y' is
+>>> +      * the desired capacitance in femtofarads, and x is the value
+>>> +      * of XTAL[5:0].
+>>> +      * To help with rounding, do fixed point math
+>>> +      */
+>>> +     femtofarads *= 100;
+>>> +     mapped_value = (femtofarads - 909829) / 21644;
+>>
+>> Thanks for the extensive comment, but I am confused. Not by your code
+>> which is very clean and readable, but by the chip documentation
+>> (disclaimer: I haven't read it in full depth).
+> 
+> I was confused too since the datasheet and programmers manual differ a bit.
+>>
+>> The 5P49V6965 datasheet at page 17 clearly states capacitance can be
+>> increased in 0.5 pF steps. The "VersaClock 6E Family Register
+>> Descriptions and Programming Guide" at page 18 shows a table that allows
+>> 0.43 pF. Can you clarify how the thing works?
+> 
+> I used the Versaclock 6E doc which is based on the following:
+> 
+> BIT 5 - Add 6.92pF
+> BIT 4 - Add 3.46pF
+> BIT 3 - Add 1.73pF
+> BIT 2 - Add 0.86pF
+> Bit 1 - Add 0.43pF
+> Bit 0 - Add 0.43pF
+> 
+> Because the Datasheet starts at 9pF, the math I used, assumes these
+> numbers are added to 9pF.
+> Because the datasheet shows the increments are in .5pF increments, the
+> 430nF seems close.  The datasheet shows 9pF - 25pF and based on the
+> programmer table, we could get close to 25pF by enabling all bits and
+> adding 9pF, however the math doesn't quite hit 25pF.
+> 
+> For what it's worth I needed around 11.5pF, and with this patch, the
+> hardware engineer said our ppm went from around 70 ppm to around 4ppm.
 
-I'm not really sure I'm ready to throw in the towel on binary compatibility
-between vendors yet, at least in general.  In this specific case it seems fine,
-though -- accross the board we're just spending way too much time worrying
-about the small things while we have way bigger problems to deal with.
-Obviously it would be better if we had some scheme to handle this here, but I'd
-much rather focus on the basics.
+Did he measure what happens if you set the register according to the 0.5
+pF interpretation? Does it improve? I understand the difference is
+probably olwer than the noise, but who knows.
 
-I still hope we get to the point where we can have binary compatibility between
-systems from various vendors, while still having reasonably useful systems.
-Unfortunately we're quite far away from anything like that, so I'm fine taking
-this sort of thing as that's as good as we can do for the forseeable future.
+>>> +
+>>> +     /*
+>>> +      * The datasheet states, the maximum capacitance is 25000,
+>>> +      * but the programmer guide shows a max value is 22832,
+>>> +      * so values higher values could overflow, so cap it.
+>>> +      */
+>>
+>> The 22832 limit is if you assume 0.43 pF steps. Assuming 0.5 pF steps
+>> leads to 25000. Now I am more confused than before.
+> 
+> I agree.  It would be nice to get some clarification from Renesas.
 
-This is on for-next.
+Definitely. Do you have access to some support from them?
+I don't think I have, but I can ask next week.
 
-> Patch 5 fixes naming of directories and configuration options to use the
-> K210 SoC vendor name (Canaan) instead of its branding name (Kendryte).
->
-> Patch 6 is a preparatory patch cleaning up the K210 system controller
-> driver to facilitate introducing the SoC clock driver.
-
-These are also on for-next.
-
-> The following patches 7 to 11 document device tree bindings for the SoC
-> drivers. The implementation of these drivers is provided in patches 12,
-> 13 and 14, respectively implementing the SoC clock driver, reset
-> controller and SOC pin function control.
-
-The numbering is off a bit here.  The clock stuff has gone in through that tree
-and I'm fine  taking the reset controller as that's been reviewed, but I don't
-see any review on the pinctl driver so I haven't taken that yet.
-
-I'm happy to re-send that patch (likely with a more appropriate subject line,
-as it's a pinctl driver not a riscv patch).
-
-> Patches 15 to 20 update the existing K210 device tree and add new
-> device tree files for several K210 based boards: MAIX Bit, MAIXDUINO,
-> MAIX Dock and MAIX Go boards from SiPeed and the KD233 development
-> board from Canaan.
-
-There are tons of checkpatch warnings in these, mostly related to compat
-strings that don't have binding definitions.  It looks like there's just a lot
-of stuff in there that doesn't have any support on the Linux side, my guess
-would be that the best thing to do is to drop those until they're defined.
-
-> Finally the last two patches updates the k210 nommu defconfig to include
-> the newly implemented drivers and provide a new default configuration
-> file enabling SD card support.
-
-I'm also going to just leave these out for now, until we sort out the above
-issues.  Let me know if you're going to send another patch set, or 
-
-> A lot of the work on the device tree and on the K210 drivers come from
-> the work by Sean Anderson for the U-Boot project support of the K210
-> SoC. Sean also helped with debugging many aspects of this series.
->
-> A tree with all patches applied is available here:
-> https://github.com/damien-lemoal/linux, k210-sysctl-v22 branch.
-> A demonstration of this series used on a SiPeed MAIX Dock
-> board together with an I2C servo controller can be seen here:
-> https://damien-lemoal.github.io/linux-robot-arm/#example
->
-> This tree was used to build userspace busybox environment image that is
-> then copied onto an SD card formatted with ext2:
-> https://github.com/damien-lemoal/buildroot
-> Of note is that running this userspace environment requires a revert of
-> commit 2217b982624680d19a80ebb4600d05c8586c4f96 introduced during the
-> 5.9 development cycle. Without this revert, execution of the init
-> process fails. A problem with the riscv port of elf2flt is suspected but
-> not confirmed. I am now starting to investigate this problem.
->
-> Reviews and comments are as always much welcome.
->
-> Changes from v9:
-> * Added patch 6 to avoid DTS compilation errors after patch 9 is
->   applied and until patch 16 is applied.
->
-> Changes from v8:
-> * Addressed Rob's comments on the sysctl driver bindings documentation
-> * Fixed a typo in the fpios driver bindings documentation
->
-> Changes from v7:
-> * Removed the __init annotation for the drivers reset, pinctrl and
->   sysctl drivers probe functions as suggested by Geert. Also removed
->   the __refdata annotation for the struct platform_driver variables of
->   these drivers.
->
-> Changes from v6:
-> * Annotate struct platform_driver variables with __refdata to avoid
->   section mismatch compilation errors
-> * Add empty sentinel entry to of_device_id tables of the sysctl, reset
->   and pinctrl drivers.
->
-> Changes from v5:
-> * Addressed Philipp's comment on the reset controller driver
-> * Added patch 6 to reduce the size of the clock driver patch
->   (now patch 12).
->
-> Changes from v4:
-> * Simplified reset controller driver using of_xlate callback as
->   suggested by Philipp
-> * Fixed compilation error when using other configs than one of the
->   nommu_k210 defconfigs.
-> * Addressed most clock driver comments from Stephen.
-> * Removed CONFIG_GPIO_SYSFS from defconfigs
-> * Rebased on 5.10-rc7
->
-> Changes from V3:
-> * Add one entry per driver in MAINTAINERS file
->
-> Changes from V2:
-> * Add MAINTAINERS file entry for the SoC support, listing myself as
->   maintainer.
-> * Removed use of postcore_initcall() for declaring the drivers, using
->   the regular builtin_platform_driver() instead.
-> * Fixed fpio pinctrl driver bindings documentation as commented by
->   Geert: removed input-schmitt and added input-schmitt-disable, fixed
->   typo and added input-disable and output-disable.
-> * Fixed device tree to have cs-gpios active low, as per the default, as
->   active high necessity was an artifact of the gpio level double
->   inversion bug fixed recently.
-> * Removed CONFIG_VT from defconfigs to reduce the kernel image size as
->   suggested by Geert.
->
-> Changes from v1:
-> * Improved DT bindings documentation
-> * SPI and GPIO patches removed from this series (and being processed
->   directly through the relevant subsystems directly)
-> * Improved device trees
-> * Various cleanup and improvments of the drivers
->
-> Damien Le Moal (22):
->   riscv: Fix kernel time_init()
->   riscv: Fix sifive serial driver
->   riscv: Enable interrupts during syscalls with M-Mode
->   riscv: Fix builtin DTB handling
->   riscv: Use vendor name for K210 SoC support
->   riscv: cleanup Canaan Kendryte K210 sysctl driver
->   dt-bindings: Add Canaan vendor prefix
->   dt-binding: clock: Document canaan,k210-clk bindings
->   dt-bindings: reset: Document canaan,k210-rst bindings
->   dt-bindings: pinctrl: Document canaan,k210-fpioa bindings
->   dt-binding: mfd: Document canaan,k210-sysctl bindings
->   riscv: Add Canaan Kendryte K210 clock driver
->   riscv: Add Canaan Kendryte K210 reset controller
->   riscv: Add Canaan Kendryte K210 FPIOA driver
->   riscv: Update Canaan Kendryte K210 device tree
->   riscv: Add SiPeed MAIX BiT board device tree
->   riscv: Add SiPeed MAIX DOCK board device tree
->   riscv: Add SiPeed MAIX GO board device tree
->   riscv: Add SiPeed MAIXDUINO board device tree
->   riscv: Add Kendryte KD233 board device tree
->   riscv: Update Canaan Kendryte K210 defconfig
->   riscv: Add Canaan Kendryte K210 SD card defconfig
->
-> Damien Le Moal (23):
->   riscv: Fix kernel time_init()
->   riscv: Fix sifive serial driver
->   riscv: Enable interrupts during syscalls with M-Mode
->   riscv: Fix builtin DTB handling
->   riscv: Use vendor name for K210 SoC support
->   riscv: Fix Canaan Kendryte K210 device tree
->   riscv: cleanup Canaan Kendryte K210 sysctl driver
->   dt-bindings: Add Canaan vendor prefix
->   dt-binding: clock: Document canaan,k210-clk bindings
->   dt-bindings: reset: Document canaan,k210-rst bindings
->   dt-bindings: pinctrl: Document canaan,k210-fpioa bindings
->   dt-binding: mfd: Document canaan,k210-sysctl bindings
->   riscv: Add Canaan Kendryte K210 clock driver
->   riscv: Add Canaan Kendryte K210 reset controller
->   riscv: Add Canaan Kendryte K210 FPIOA driver
->   riscv: Update Canaan Kendryte K210 device tree
->   riscv: Add SiPeed MAIX BiT board device tree
->   riscv: Add SiPeed MAIX DOCK board device tree
->   riscv: Add SiPeed MAIX GO board device tree
->   riscv: Add SiPeed MAIXDUINO board device tree
->   riscv: Add Kendryte KD233 board device tree
->   riscv: Update Canaan Kendryte K210 defconfig
->   riscv: Add Canaan Kendryte K210 SD card defconfig
->
->  .../bindings/clock/canaan,k210-clk.yaml       |   54 +
->  .../bindings/mfd/canaan,k210-sysctl.yaml      |  109 ++
->  .../bindings/pinctrl/canaan,k210-fpioa.yaml   |  171 +++
->  .../bindings/reset/canaan,k210-rst.yaml       |   40 +
->  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
->  MAINTAINERS                                   |   23 +
->  arch/riscv/Kconfig.socs                       |   33 +-
->  arch/riscv/Makefile                           |    2 +-
->  arch/riscv/boot/dts/Makefile                  |    2 +-
->  arch/riscv/boot/dts/canaan/Makefile           |    5 +
->  arch/riscv/boot/dts/canaan/k210.dtsi          |  621 ++++++++++
->  arch/riscv/boot/dts/canaan/k210_generic.dts   |   46 +
->  arch/riscv/boot/dts/canaan/k210_kd233.dts     |  178 +++
->  arch/riscv/boot/dts/canaan/k210_maix_bit.dts  |  227 ++++
->  arch/riscv/boot/dts/canaan/k210_maix_dock.dts |  229 ++++
->  arch/riscv/boot/dts/canaan/k210_maix_go.dts   |  237 ++++
->  arch/riscv/boot/dts/canaan/k210_maixduino.dts |  201 ++++
->  arch/riscv/boot/dts/kendryte/Makefile         |    4 -
->  arch/riscv/boot/dts/kendryte/k210.dts         |   23 -
->  arch/riscv/boot/dts/kendryte/k210.dtsi        |  125 --
->  arch/riscv/configs/nommu_k210_defconfig       |   39 +-
->  .../riscv/configs/nommu_k210_sdcard_defconfig |   93 ++
->  arch/riscv/include/asm/soc.h                  |   38 -
->  arch/riscv/kernel/entry.S                     |    9 +
->  arch/riscv/kernel/soc.c                       |   27 -
->  arch/riscv/kernel/time.c                      |    3 +
->  arch/riscv/mm/init.c                          |    6 +-
->  drivers/clk/Kconfig                           |    8 +
->  drivers/clk/Makefile                          |    1 +
->  drivers/clk/clk-k210.c                        | 1005 +++++++++++++++++
->  drivers/pinctrl/Kconfig                       |   13 +
->  drivers/pinctrl/Makefile                      |    1 +
->  drivers/pinctrl/pinctrl-k210.c                |  985 ++++++++++++++++
->  drivers/reset/Kconfig                         |   10 +
->  drivers/reset/Makefile                        |    1 +
->  drivers/reset/reset-k210.c                    |  131 +++
->  drivers/soc/Kconfig                           |    2 +-
->  drivers/soc/Makefile                          |    2 +-
->  drivers/soc/canaan/Kconfig                    |   12 +
->  drivers/soc/canaan/Makefile                   |    3 +
->  drivers/soc/canaan/k210-sysctl.c              |   78 ++
->  drivers/soc/kendryte/Kconfig                  |   14 -
->  drivers/soc/kendryte/Makefile                 |    3 -
->  drivers/soc/kendryte/k210-sysctl.c            |  260 -----
->  drivers/tty/serial/sifive.c                   |    1 +
->  include/dt-bindings/clock/k210-clk.h          |   55 +-
->  include/dt-bindings/pinctrl/k210-fpioa.h      |  276 +++++
->  include/dt-bindings/reset/k210-rst.h          |   42 +
->  include/soc/canaan/k210-sysctl.h              |   43 +
->  49 files changed, 4962 insertions(+), 531 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/canaan,k210-clk.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k210-fpioa.yaml
->  create mode 100644 Documentation/devicetree/bindings/reset/canaan,k210-rst.yaml
->  create mode 100644 arch/riscv/boot/dts/canaan/Makefile
->  create mode 100644 arch/riscv/boot/dts/canaan/k210.dtsi
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_generic.dts
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_kd233.dts
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_bit.dts
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_dock.dts
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_maix_go.dts
->  create mode 100644 arch/riscv/boot/dts/canaan/k210_maixduino.dts
->  delete mode 100644 arch/riscv/boot/dts/kendryte/Makefile
->  delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dts
->  delete mode 100644 arch/riscv/boot/dts/kendryte/k210.dtsi
->  create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig
->  create mode 100644 drivers/clk/clk-k210.c
->  create mode 100644 drivers/pinctrl/pinctrl-k210.c
->  create mode 100644 drivers/reset/reset-k210.c
->  create mode 100644 drivers/soc/canaan/Kconfig
->  create mode 100644 drivers/soc/canaan/Makefile
->  create mode 100644 drivers/soc/canaan/k210-sysctl.c
->  delete mode 100644 drivers/soc/kendryte/Kconfig
->  delete mode 100644 drivers/soc/kendryte/Makefile
->  delete mode 100644 drivers/soc/kendryte/k210-sysctl.c
->  create mode 100644 include/dt-bindings/pinctrl/k210-fpioa.h
->  create mode 100644 include/dt-bindings/reset/k210-rst.h
->  create mode 100644 include/soc/canaan/k210-sysctl.h
+Regards.
+-- 
+Luca
