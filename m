@@ -2,31 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FC9C433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E35C43381
 	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF58E23A23
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2583A23A31
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 13:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbhAINzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Jan 2021 08:55:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbhAINzw (ORCPT
+        id S1726080AbhAINzx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Jan 2021 08:55:53 -0500
+Received: from relay08.th.seeweb.it ([5.144.164.169]:34327 "EHLO
+        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbhAINzw (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jan 2021 08:55:52 -0500
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9086C0617A4
-        for <linux-clk@vger.kernel.org>; Sat,  9 Jan 2021 05:54:56 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E18C23EEB9;
-        Sat,  9 Jan 2021 14:46:19 +0100 (CET)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 8BF653EEBB;
+        Sat,  9 Jan 2021 14:46:20 +0100 (CET)
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
 To:     linux-arm-msm@vger.kernel.org
@@ -38,45 +37,77 @@ Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         devicetree@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Subject: [PATCH 0/9] Clock fixes for MSM8998 GCC, MMCC, GPUCC
-Date:   Sat,  9 Jan 2021 14:46:08 +0100
-Message-Id: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
+Subject: [PATCH 2/9] clk: qcom: gcc-msm8998: Add missing hmss_gpll0_clk_src clock
+Date:   Sat,  9 Jan 2021 14:46:10 +0100
+Message-Id: <20210109134617.146275-3-angelogioacchino.delregno@somainline.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
+References: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series fixes some issues with the MSM8998 clocks and, in
-particular, brings a very important fix to the GCC PLLs.
+To achieve CPR-Hardened functionality this clock must be on: add it
+in order to be able to get it managed by the CPR3 driver.
 
-These fixes are enhancing this SoC's stability and also makes it
-possible to eventually enable the Adreno GPU (with proper clock
-scaling) and other components.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+---
+ drivers/clk/qcom/gcc-msm8998.c               | 20 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8998.h |  1 +
+ 2 files changed, 21 insertions(+)
 
-This patch series was tested on:
-- Sony Xperia XZ Premium (MSM8998)
-- F(x)Tec Pro1 (MSM8998)
-
-AngeloGioacchino Del Regno (9):
-  clk: qcom: gcc-msm8998: Wire up gcc_mmss_gpll0 clock
-  clk: qcom: gcc-msm8998: Add missing hmss_gpll0_clk_src clock
-  clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as critical
-  clk: qcom: gcc-msm8998: Fix Alpha PLL type for all GPLLs
-  clk: qcom: mmcc-msm8998: Set CLK_GET_RATE_NOCACHE to pixel/byte clks
-  clk: qcom: mmcc-msm8998: Add hardware clockgating registers to some
-    clks
-  clk: qcom: mmcc-msm8998: Set bimc_smmu_gdsc always on
-  clk: qcom: gpucc-msm8998: Add resets, cxc, fix flags on gpu_gx_gdsc
-  clk: qcom: gpucc-msm8998: Allow fabia gpupll0 rate setting
-
- drivers/clk/qcom/gcc-msm8998.c               | 143 ++++++++++++-------
- drivers/clk/qcom/gpucc-msm8998.c             |  18 ++-
- drivers/clk/qcom/mmcc-msm8998.c              |  20 ++-
- include/dt-bindings/clock/qcom,gcc-msm8998.h |   2 +
- 4 files changed, 125 insertions(+), 58 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index d51c556851ca..c8d4c0348952 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2160,6 +2160,25 @@ static struct clk_branch gcc_hmss_trig_clk = {
+ 	},
+ };
+ 
++static struct freq_tbl ftbl_hmss_gpll0_clk_src[] = {
++	F( 300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
++	F( 600000000, P_GPLL0_OUT_MAIN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 hmss_gpll0_clk_src = {
++	.cmd_rcgr = 0x4805c,
++	.hid_width = 5,
++	.parent_map = gcc_parent_map_1,
++	.freq_tbl = ftbl_hmss_gpll0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "hmss_gpll0_clk_src",
++		.parent_names = gcc_parent_names_1,
++		.num_parents = ARRAY_SIZE(gcc_parent_names_1),
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static struct clk_branch gcc_mmss_noc_cfg_ahb_clk = {
+ 	.halt_reg = 0x9004,
+ 	.halt_check = BRANCH_HALT,
+@@ -2961,6 +2980,7 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
+ 	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
+ 	[GCC_MSS_MNOC_BIMC_AXI_CLK] = &gcc_mss_mnoc_bimc_axi_clk.clkr,
+ 	[GCC_MMSS_GPLL0_CLK] = &gcc_mmss_gpll0_clk.clkr,
++	[HMSS_GPLL0_CLK_SRC] = &hmss_gpll0_clk_src.clkr,
+ };
+ 
+ static struct gdsc *gcc_msm8998_gdscs[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index 47ca17df780b..72c99e486d86 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -185,6 +185,7 @@
+ #define GCC_BIMC_GFX_CLK					176
+ #define UFS_UNIPRO_CORE_CLK_SRC					177
+ #define GCC_MMSS_GPLL0_CLK					178
++#define HMSS_GPLL0_CLK_SRC					179
+ 
+ #define PCIE_0_GDSC						0
+ #define UFS_GDSC						1
 -- 
 2.29.2
 
