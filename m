@@ -2,108 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E29C433DB
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 01:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6E5C433DB
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 02:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0494F23AAA
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 01:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D842333E
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jan 2021 02:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbhAIBd6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jan 2021 20:33:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
+        id S1726077AbhAICtg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jan 2021 21:49:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbhAIBd6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 20:33:58 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1ECC061573
-        for <linux-clk@vger.kernel.org>; Fri,  8 Jan 2021 17:33:17 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id o17so27383191lfg.4
-        for <linux-clk@vger.kernel.org>; Fri, 08 Jan 2021 17:33:17 -0800 (PST)
+        with ESMTP id S1725970AbhAICtg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jan 2021 21:49:36 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B05C061573;
+        Fri,  8 Jan 2021 18:48:55 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id h3so4642483ils.4;
+        Fri, 08 Jan 2021 18:48:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TGGL7MRmQ1s/aUig13t2N3SebYQRAiSHRFEw3Tw7vUU=;
-        b=oLncZA0VOxrBENvLxfad/vGxEmTu3VxjK+jyfd+6NyyR5nwksNus90IADtOC8RrNTR
-         YUO9Y4wdY98wrCS5CNhD34MmfaasfdZHADXs/IqhiSQXYD4H7sWiYc3SHWdlK/W6P4m/
-         06W5oHou8Z2UI4JXG5swbTNjBmQqEVj5VmV0zleiTlY2mnHjM6PgW+TwDvkttv0b32OP
-         VfbDi+p9bwfIvhhxl7rXy7F3ObRoY2UCo/4D5uby1i815vulg/UaJ97Gps+B2EcDkNhY
-         0o6Eoxg0vHOjKxMYHCOrP24I0/djgM1xhvLrnQA6/0lJ339Y8lsF9pNcRQFOF7nhgqzd
-         0C0Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4QxjVHH/k2EEheDURmsY7RVs3TpbxjnXeiCn/55GgY8=;
+        b=jv3Exx/ZPs37gY4yPcfBCzxcInUqxq76J3hRtGGDgHlB5Gjkcl+9go8ek7xlMjTR24
+         btCZGxszuFYXAevC0wWj/wXyyNTz1HiQcZoj6VIXamk62ayhc+A30jsGKGvlba5pdtzS
+         d/E4ALC0YWHS0MqHIB0MBeFfORXafXUYt+vGd32LGGZhCTNaGJFwb7Cnvra2R+JA86A4
+         tjWqX8YNe2f/E3D7A6oN1flOeLbWdWgi/nf744o/PkVh9yWe2ItHibMjjZTi4Tka41pq
+         zF0I+xAlj+Up5NIlq2USP/qxqgwpVP3wmLA6ekNP4EL1zOGQ4ZMCn3vd9EKeVmwzwyVx
+         v75A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TGGL7MRmQ1s/aUig13t2N3SebYQRAiSHRFEw3Tw7vUU=;
-        b=rpNM/l5dXMxp7pVo0ZcC8UruVP7c9WyZ9KfNAC+SsYww2k+jad2H1M4Gnn1meYQer7
-         2XcdpjgZIz6TRLg0x/nHWLGKuDOodxEqdUCYCe8ydsq6F6HIxI4QBoSYan/GwwrGXVNu
-         Lqh5bDpuLUA7QCeR38CPh2VDrq17VY/1vzU5vi2znJrx2stYuV976ioQMDJu5KQ0OHhh
-         HwTJfxXoM7n5DlVf8sJsW8xelm8EZLe0Cz6NYUVbEyA5td75bDeKX1RrVoqtXXQ3XUK1
-         Qt8DGYz1ivKaZWgMJc9JaeBIEhHqKH6GAMqNaYfF3bJun4F9WbZ8OPVX4aQOIqiP1xtJ
-         Yf+Q==
-X-Gm-Message-State: AOAM531r0j2SV0cPWGS9ruUfG0ZluexdZYRed01K+1xynaQYDfAkoIj9
-        X03RMJJHHz8t4iw8ApajkS57eg==
-X-Google-Smtp-Source: ABdhPJzAMB93IMXBMOBoiJnM0QcT6vQEB+xhIfti9AgxWh8qIdTppfGZXZ2vPNHA/02c29JDd5RGzg==
-X-Received: by 2002:ac2:5e6e:: with SMTP id a14mr2607645lfr.127.1610155996160;
-        Fri, 08 Jan 2021 17:33:16 -0800 (PST)
-Received: from eriador.lumag.spb.ru ([94.25.228.99])
-        by smtp.gmail.com with ESMTPSA id j23sm2197084lfh.194.2021.01.08.17.33.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jan 2021 17:33:15 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sm250: Use floor ops for sdcc clks
-Date:   Sat,  9 Jan 2021 04:33:14 +0300
-Message-Id: <20210109013314.3443134-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.29.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4QxjVHH/k2EEheDURmsY7RVs3TpbxjnXeiCn/55GgY8=;
+        b=JahkpEjxTT36rvo7KKkBKL5/N2CSt/tBizqXR8JFqZWwiElcEIlHkncpPW37+MsKqy
+         sC7ATFweTFPBme4Nri5ecpQRF2Q/bMGqRhk3V3wmfyaKMNUaWOeOdPl7/ZuCAMPlKTbR
+         IpT65rgmMuJxB/z11c7Bqc0r8LA/D3jNgv2DMzbcqCSXBG0IAgViLop7rw/FN9YGify+
+         +7qiCRSkKA530tn9pu8xWUR1OL8lCcc0/begrJ4Wdi1/TO6mrVngFJdEaldrdRYZZ2QH
+         voIP52u1k9z2/bAkCPoaEqSJK1D5/tk1Yp3clCjcExJ0BxukQe9/yKfdU860GXbhri+Y
+         XSwA==
+X-Gm-Message-State: AOAM531G/7aaQWlP/OWPoFQ92jHYeQnU2DDKV74dzrFRt4OaSxpfZrL0
+        RiKL2khXWKvbOzCyWDPiw9wPPrq9Tn0oiZjjhaI=
+X-Google-Smtp-Source: ABdhPJxS+9A57zLwR8bsRSnfqQl46R/uDEFOCJ8/ycwNV+IYQdMu9xqsIA8C2sOBHOQlxrCbPQwOWS7582sgHxIs+K8=
+X-Received: by 2002:a92:c081:: with SMTP id h1mr6487153ile.46.1610160534190;
+ Fri, 08 Jan 2021 18:48:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210106173900.388758-1-aford173@gmail.com> <833e228f-6fb5-ae98-a367-9566cf5fcf69@lucaceresoli.net>
+In-Reply-To: <833e228f-6fb5-ae98-a367-9566cf5fcf69@lucaceresoli.net>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 8 Jan 2021 20:48:42 -0600
+Message-ID: <CAHCN7x+57x4WLbq0+7OCPhJs-1=7SJidVHD2jYjdbqn_F+d3dA@mail.gmail.com>
+Subject: Re: [RFC 1/2] dt-bindings: clk: versaclock5: Add load capacitance properties
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Followup to the commits 5e4b7e82d497 ("clk: qcom: gcc-sdm845: Use floor
-ops for sdcc clks") and 6d37a8d19283 ("clk: qcom: gcc-sc7180: Use floor ops
-for sdcc clks"). Use floor ops for sdcc clocks on sm8250.
+On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+>
+> Hi Adam,
+>
+> On 06/01/21 18:38, Adam Ford wrote:
+> > There are two registers which can set the load capacitance for
+> > XTAL1 and XTAL2. These are optional registers when using an
+> > external crystal.  Update the bindings to support them.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > ---
+> >  .../devicetree/bindings/clock/idt,versaclock5.yaml   | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > index 2ac1131fd922..e5e55ffb266e 100644
+> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > @@ -59,6 +59,18 @@ properties:
+> >      minItems: 1
+> >      maxItems: 2
+> >
+> > +  idt,xtal1-load-femtofarads:
+>
+> I wonder whether we should have a common, vendor independent property.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Fixes: 3e5770921a88 ("clk: qcom: gcc: Add global clock controller driver
-for SM8250")
----
- drivers/clk/qcom/gcc-sm8250.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+That would be nice.
 
-diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
-index 86381ea8e37f..8e79d0077b55 100644
---- a/drivers/clk/qcom/gcc-sm8250.c
-+++ b/drivers/clk/qcom/gcc-sm8250.c
-@@ -724,7 +724,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
- 		.name = "gcc_sdcc2_apps_clk_src",
- 		.parent_data = gcc_parent_data_4,
- 		.num_parents = 5,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -747,7 +747,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
- 		.name = "gcc_sdcc4_apps_clk_src",
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = 3,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
--- 
-2.29.2
+> In mainline we have xtal-load-pf (ti,cdce925.txt bindings) which has no
+> vendor prefix. However I don't know how much common it is to need
 
+rtc-pcf85063.c uses  quartz-load-femtofarads, so there is already some
+discrepancy.
+
+Since the unit of measure here is femtofarads, using pF in the name seems wrong.
+We need to read the data as a u32, so femtofarads works better than
+pF, which would require a decimal point.
+
+> different loads for x1 and x2. Any hardware engineer around?
+
+I talked to a hardware engineer where I work, and he said it makes
+sense to keep them the same.  I only separated them because there are
+two registers, and I assumed there might be a reason to have X1 and X2
+be different, but I'm ok with reading one value and writing it to two
+different registers.
+
+adam
+>
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    minimum: 9000
+> > +    maximum: 25000
+> > +    description: Optional loading capacitor for XTAL1
+>
+> Nit: I think the common wording is "load capacitor", not "loading
+> capacitor".
+>
+> --
+> Luca
