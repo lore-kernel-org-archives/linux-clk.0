@@ -2,205 +2,238 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1C9C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 02:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2B2C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 16:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B5642222D
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 02:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E647A216C4
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 16:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbhAKCfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Jan 2021 21:35:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54076 "EHLO
+        id S1729821AbhAKQlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jan 2021 11:41:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbhAKCfN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jan 2021 21:35:13 -0500
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD06FC061786;
-        Sun, 10 Jan 2021 18:34:32 -0800 (PST)
-Received: by mail-qt1-x82c.google.com with SMTP id z20so10403061qtq.3;
-        Sun, 10 Jan 2021 18:34:32 -0800 (PST)
+        with ESMTP id S1727826AbhAKQlA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jan 2021 11:41:00 -0500
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71C1C061786;
+        Mon, 11 Jan 2021 08:40:19 -0800 (PST)
+Received: by mail-il1-x136.google.com with SMTP id w17so132694ilj.8;
+        Mon, 11 Jan 2021 08:40:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Wgjy9xILhvZ1iGkvuXUiXzK4vCg0w/7IKELJ+lduWIc=;
-        b=QYmUTLCYB0E/lwQuvxm9Ux4O3HkdgZVLu4O56Q//wzRVqfwDksRwGrJZnedcMJtVIb
-         VawlEZ1qir++uU0vDYN1RATdk6WyzcBZMURfuj12mZo4S3JQ3MgmpH4iIA+smDEIpHxc
-         8qcd/WWVSURL7e6E7UtEL9xnFy+kBA4NBrU+iF7fhKKrcPX5f6L5IwpguJRo6T4/SMpU
-         j1gcZI+pj3unKoP4apxCQQfzM0+j2VORqKcJGXXv+Pgb6gIwpTUEHNTMmdF9SK0qAuM3
-         RhQcwScHbY7kl/aGMo0hxmdG8XGca8jDqq7jKPUi7J1sJjVi8/+yjjwgCzHc0cypzH/v
-         yV/w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WmHhUoHujwB9690uWJo1Nnc/jVCu3y6M2V7fVUBJOS0=;
+        b=Pxb+51SAfh5Z+6jlD/tmi0nwza7s37RH8P63MMciRO/Amr00CtTJ/ae53eIVtKUrhp
+         jlm74YUIpvG//77UtmCJg8be5+aw4n+FPxuhjDfO19IBBWhdiRVBT0wG74vtGwU8IgsC
+         r2AGscLapRSMztqN2U+RZCCmCFLctfsdGrhBGPaXlLMT4RltAfZtUYhjfvT+oYD2l/gc
+         XtHb6d3ixDGF2moLbkdkOQa3K3MI8o0NnJP6X02jJT9NJm7aYD29GpXookHiEtR06saV
+         8bbcWGU0PGadvCscxh0/k+Q6aq7Y+oOxd582Xoqwl7GD6XO85tn8lmgfui5ZdSq8dgaG
+         Er3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Wgjy9xILhvZ1iGkvuXUiXzK4vCg0w/7IKELJ+lduWIc=;
-        b=VkrWUv3+M5eDtjO7FJosYTx1NK8a5d8LlJ34invitTr6Rc7EpaNu75tKroUwNvfpk5
-         /Swy3ipLbwp1EK9f3rVMVVmaUzKccUjDESwcLd7otY9iETBXEuLHjguvvesqPsItqXb6
-         8UsAKaEhHOytlFIwI52VZgqiFki/l/b/eZOyMQkrVSB8TPtduca6HFvUaxjAJ36Werx2
-         jKQm8u7cgRstxRpA4ZXCbZtxE2lR+7FZlrXFXY+n8/e26qq2UMa1AIlUNhGA+1JSzC2N
-         dvIlHitUMFFLPkty0n58s7gMboY6bJoCtPiYFl8v+KGlLb9UmZPvF59IYJuDHgNqHzoI
-         AYNQ==
-X-Gm-Message-State: AOAM533ZY/wsjq0yPXKZwqOVfb6uN3d08syByQUQrt35IGUp3VqxXsV4
-        QhoeVXhB+VgVEcuxQkJvnsM/tOTTmpk=
-X-Google-Smtp-Source: ABdhPJxKKb4fY63zjcoGGFJFqxO0kzVbWfdFvLQ7FkjBLGoAd/Wmu0WylPj7mcZlThsQ6JbhgHFv6Q==
-X-Received: by 2002:ac8:5acb:: with SMTP id d11mr13776541qtd.269.1610332472005;
-        Sun, 10 Jan 2021 18:34:32 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-51-35-162.washdc.fios.verizon.net. [108.51.35.162])
-        by smtp.googlemail.com with ESMTPSA id g3sm3179121qtc.3.2021.01.10.18.34.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Jan 2021 18:34:31 -0800 (PST)
-Subject: Re: [PATCH v10 00/23] RISC-V Kendryte K210 support improvements
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-References: <mhng-a7443f7f-42ff-4835-9b25-be8f91884e04@palmerdabbelt-glaptop>
- <7e0b4efd305d2c5deeff7dd263234a32aa093f58.camel@wdc.com>
-From:   Sean Anderson <seanga2@gmail.com>
-Message-ID: <03fb06e8-d587-3cf2-9b66-bf31449e7b8a@gmail.com>
-Date:   Sun, 10 Jan 2021 21:34:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WmHhUoHujwB9690uWJo1Nnc/jVCu3y6M2V7fVUBJOS0=;
+        b=tKqdt4uP4v7YtuwZCoCrIR55RWuKsQwFpTcqfvrIhATPhhAZ5Gt9SUyiLhbPgIY2lm
+         zB8jbG1fVPRgwW/lo3F6ODR5bIXa6wFWp30CDneLjxGLA6LSMQ9jaKN3Pv42vVw0GZvN
+         zWq5C1u0rh4YYpe6x2DEEePKTx/pSTUhPXJ2JxupGliEo6mXWIY7gFY0rlzefgtdb+kQ
+         LHUo4jS2OvlTVlHtK1N0dP+avZrGLToZAuHNTzGv6RjA+8ifDx2EN7A0ij9xetq80r4X
+         +6a4rqpjcjx08e2UqllA4WOf2ZE0HWvxn6yRylvNmFznNKKvqswlEhqfVfDjPlRI+TBz
+         gOnQ==
+X-Gm-Message-State: AOAM533zLoCIPvvJu3sECct9kjDNs0zYrivA6/gkObzPiaV72W4H/6M/
+        /L3fr8bzFyPHnE6vCWJLQMrwOvNtfI2v4juZkTIiuivtsV7Vnw==
+X-Google-Smtp-Source: ABdhPJzslw7wNd6k6kL5FnsJZzv6LYDK2TNrg+SHSsrkFU5je5jAGlN6TcV67i9eRZMei32Xej//jk7XGFIg85fcwHU=
+X-Received: by 2002:a92:c26f:: with SMTP id h15mr8223378ild.65.1610383218943;
+ Mon, 11 Jan 2021 08:40:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7e0b4efd305d2c5deeff7dd263234a32aa093f58.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210106173900.388758-1-aford173@gmail.com> <20210106173900.388758-2-aford173@gmail.com>
+ <c5a97aca-ce74-bbd3-e99d-358e079c4c4a@lucaceresoli.net> <CAHCN7x+gUQwv4cWgg7Jt2oca1n4KW=o08rzoK9TB1Z_rKE0qog@mail.gmail.com>
+ <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
+In-Reply-To: <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 11 Jan 2021 10:40:07 -0600
+Message-ID: <CAHCN7x+NFTn9Jqzbdm7d2UZt68DSAZ9Z-r+7Txwqi1=eE=W3Ug@mail.gmail.com>
+Subject: Re: [RFC 2/2] clk: vc5: Add support for optional load capacitance
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/10/21 8:56 PM, Damien Le Moal wrote:
-> On Sat, 2021-01-09 at 09:32 -0800, Palmer Dabbelt wrote:
->> On Sun, 13 Dec 2020 05:50:33 PST (-0800), Damien Le Moal wrote:
->>> This series of patches improves support for boards based on the Canaan
->>> Kendryte K210 RISC-V dual core SoC. Minimal support for this SoC is
->>> already included in the kernel. These patches complete it, enabling
->>> support for most peripherals present on the SoC as well as introducing
->>> device trees for the various K210 boards available on the market today
->>> from SiPeed and Kendryte.
->>
->> Putting everything together like this makes it overly difficult to get things
->> merged: there's some actual fixes, some new arch/riscv stuff, and a handful of
->> drivers.  I know we've been kind of mixing up the SiFive and RISC-V trees, but
->> that's largely because things have been pretty quiet and it's the same people
->> working on everything.  That'll probably change at some point, but it doesn't
->> mean we can just start mixing up everything in here -- even for the SiFive
->> stuff, we usulaly try to do it in the relevant subsystem tree.
-> 
-> I know that, but for some drivers (e.g. clock), there is overlap that would
-> prevent compiling if not all patches go to the same tree. And for people to
-> test, if not all drivers are in the same tree, nothing will work (e.g. without
-> the pinctrl driver, nothing device will work, even booting will fail). That is
-> why I kept sending everything together.
-> 
-> With what you applied, only the clock driver and the fpioa driver do not really
-> belong to the riscv tree. But since you queued the dt-bindings doc patches
-> which add the headers for these drivers, it may be necessary to keep them in
-> the riscv tree to avoid compilation failures.
-> 
-> Stephen, Linus, is that OK ?
-> 
->>> Pathes 1 to 4 are various fixes for riscv arch code and riscv
->>> dependent devices. Of note here is patch 3 which fix system calls
->>> execution in the no MMU case, and patch 4 which simplifies DTB builtin
->>> handling.
->>
->> The first three are on fixes, but the fourth isn't a fix: it's a fairly
->> significant change to how portable our kernels can be.  The old scheme allows
->> vendors the option of building systems with M-mode compatibility, this new one
->> doesn't.  That said, I don't think anyone is actually going to build systems
->> this way -- we really should have had some sort of mboardid, but that was shot
->> down in favor of some sort of platform thing and it's unlikely we get that far
->> over there.
->>
->> I'm not really sure I'm ready to throw in the towel on binary compatibility
->> between vendors yet, at least in general.  In this specific case it seems fine,
->> though -- accross the board we're just spending way too much time worrying
->> about the small things while we have way bigger problems to deal with.
->> Obviously it would be better if we had some scheme to handle this here, but I'd
->> much rather focus on the basics.
->>
->> I still hope we get to the point where we can have binary compatibility between
->> systems from various vendors, while still having reasonably useful systems.
->> Unfortunately we're quite far away from anything like that, so I'm fine taking
->> this sort of thing as that's as good as we can do for the forseeable future.
-> 
-> Yes, I agree that working on improving binary portability is very important.
-> However, I am not convinced at all that trying to do so using a device-tree
-> based environment is viable, or even desired. I think that true portability can
-> only be achieved using something like ACPI or equivalent allowing run-time
-> device discovery. But that is a discussion for another thread.
-> 
->> This is on for-next.
-> 
-> Thanks.
-> 
->>> The following patches 7 to 11 document device tree bindings for the SoC
->>> drivers. The implementation of these drivers is provided in patches 12,
->>> 13 and 14, respectively implementing the SoC clock driver, reset
->>> controller and SOC pin function control.
->>
->> The numbering is off a bit here.  The clock stuff has gone in through that tree
->> and I'm fine  taking the reset controller as that's been reviewed, but I don't
->> see any review on the pinctl driver so I haven't taken that yet.
->>
->> I'm happy to re-send that patch (likely with a more appropriate subject line,
->> as it's a pinctl driver not a riscv patch).
-> 
-> I rebased the series on the riscv tree fixes+for-next branches and changed the
-> subject line of these 2 patches. I am testing that now and will resend soon.
-> But so far so good. All is working fine.
-> 
->>> Patches 15 to 20 update the existing K210 device tree and add new
->>> device tree files for several K210 based boards: MAIX Bit, MAIXDUINO,
->>> MAIX Dock and MAIX Go boards from SiPeed and the KD233 development
->>> board from Canaan.
->>
->> There are tons of checkpatch warnings in these, mostly related to compat
->> strings that don't have binding definitions.  It looks like there's just a lot
->> of stuff in there that doesn't have any support on the Linux side, my guess
->> would be that the best thing to do is to drop those until they're defined.
-> 
-> Yes, I am aware of these warnings. Despite that, I kept the undocumented and
-> unsupported DT nodes as having the complete device-trees (soc k210.dtsi part
-> and boards dts) constitute the best documentation ever for the SoC and the
-> boards. Most of this work come from Sean (with some corrections from me) and
-> extracted all this information from the almost non-existent documentation
-> (basically only board layout doc is available) using mostly only the Kendryte
-> SDK is really hard. So despite the warning, I would really prefer that we keep
-> the DTs as complete as they are now. This would also allow us to point to
-> specific nodes that need support for new developers that want to get involved
-> with riscv (mentoring program of the foundation). These boards being extremely
-> cheap are the perfect platform for students and hobbyist to get involved.
-> 
-> So unless you insist, I am going to resend the DTs as-is.
+On Sat, Jan 9, 2021 at 12:02 PM Luca Ceresoli <luca@lucaceresoli.net> wrote=
+:
+>
+> Hi Adam,
+>
+> On 09/01/21 04:00, Adam Ford wrote:
+> > On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wr=
+ote:
+> >>
+> >> Hi Adam,
+> >>
+> >> On 06/01/21 18:39, Adam Ford wrote:
+> >>> There are two registers which can set the load capacitance for
+> >>> XTAL1 and XTAL2. These are optional registers when using an
+> >>> external crystal.  Parse the device tree and set the
+> >>> corresponding registers accordingly.
+> >>
+> >> No need to repeat the first 2 sentences, they are already in patch 1.
+> >
+> > The reason I did that was because if someone does a git log on the
+> > individual file, they'd see the comment.  While it's redundant not, it
+> > might not be as obvious in the future when looking back.   Not
+> > everyone reviews the history of the binding, but the source files' git
+> > logs usually have some value.   However, if you want me to drop it or
+> > rephrase it, I can do that.
+>
+> Makes sense, I had never considered that before.
+>
+> >>> +static int vc5_map_cap_value(u32 femtofarads)
+> >>> +{
+> >>> +     int mapped_value;
+> >>> +
+> >>> +     /* The datasheet explicitly states 9000 - 25000 */
+> >>> +     if ((femtofarads < 9000) || (femtofarads > 25000))
+> >>> +             return -EINVAL;
+> >>> +
+> >>> +     /* The lowest target we can hit is 9430, so exit if it's less *=
+/
+> >>> +     if (femtofarads < 9430)
+> >>> +             return 0;
+> >>> +
+> >>> +     /*
+> >>> +      * According to VersaClock 6E Programming Guide, there are 6
+> >>> +      * bits which translate to 64 entries in XTAL registers 12 and
+> >>> +      * 13. Because bits 0 and 1 increase the capacitance the
+> >>> +      * same, some of the values can be repeated.  Plugging this
+> >>> +      * into a spreadsheet and generating a trendline, the output
+> >>> +      * equation becomes x =3D (y-9098.29) / 216.44, where 'y' is
+> >>> +      * the desired capacitance in femtofarads, and x is the value
+> >>> +      * of XTAL[5:0].
+> >>> +      * To help with rounding, do fixed point math
+> >>> +      */
+> >>> +     femtofarads *=3D 100;
+> >>> +     mapped_value =3D (femtofarads - 909829) / 21644;
+> >>
+> >> Thanks for the extensive comment, but I am confused. Not by your code
+> >> which is very clean and readable, but by the chip documentation
+> >> (disclaimer: I haven't read it in full depth).
+> >
+> > I was confused too since the datasheet and programmers manual differ a =
+bit.
+> >>
+> >> The 5P49V6965 datasheet at page 17 clearly states capacitance can be
+> >> increased in 0.5 pF steps. The "VersaClock 6E Family Register
+> >> Descriptions and Programming Guide" at page 18 shows a table that allo=
+ws
+> >> 0.43 pF. Can you clarify how the thing works?
+> >
+> > I used the Versaclock 6E doc which is based on the following:
+> >
+> > BIT 5 - Add 6.92pF
+> > BIT 4 - Add 3.46pF
+> > BIT 3 - Add 1.73pF
+> > BIT 2 - Add 0.86pF
+> > Bit 1 - Add 0.43pF
+> > Bit 0 - Add 0.43pF
+> >
+> > Because the Datasheet starts at 9pF, the math I used, assumes these
+> > numbers are added to 9pF.
+> > Because the datasheet shows the increments are in .5pF increments, the
+> > 430nF seems close.  The datasheet shows 9pF - 25pF and based on the
+> > programmer table, we could get close to 25pF by enabling all bits and
+> > adding 9pF, however the math doesn't quite hit 25pF.
+> >
+> > For what it's worth I needed around 11.5pF, and with this patch, the
+> > hardware engineer said our ppm went from around 70 ppm to around 4ppm.
+>
+> Did he measure what happens if you set the register according to the 0.5
+> pF interpretation? Does it improve? I understand the difference is
+> probably olwer than the noise, but who knows.
+>
+> >>> +
+> >>> +     /*
+> >>> +      * The datasheet states, the maximum capacitance is 25000,
+> >>> +      * but the programmer guide shows a max value is 22832,
+> >>> +      * so values higher values could overflow, so cap it.
+> >>> +      */
+> >>
+> >> The 22832 limit is if you assume 0.43 pF steps. Assuming 0.5 pF steps
+> >> leads to 25000. Now I am more confused than before.
+> >
+> > I agree.  It would be nice to get some clarification from Renesas.
+>
+> Definitely. Do you have access to some support from them?
 
-Just a note, everything which isn't supported has been left disabled
-(usually implicitly). It could be possible to remove unsupported nodes,
-but I would like to keep the Linux and U-Boot device trees in-sync.
+Luca,
 
---Sean
+We reached out to  Renesas with the following questions:
 
-> 
->>
->>> Finally the last two patches updates the k210 nommu defconfig to include
->>> the newly implemented drivers and provide a new default configuration
->>> file enabling SD card support.
->>
->> I'm also going to just leave these out for now, until we sort out the above
->> issues.  Let me know if you're going to send another patch set, or
-> 
-> Thanks.
-> 
+1)
+I'm seeing a discrepancy between the datasheet and programming guide
+we have for the Versaclock 6e in regard to the crystal load
+programming registers.  The datasheet for the 5P49V6965A000NLGI
+indicates a 9pF minimum with 0.5pF steps, while the programming guide
+says that the lower two register bits both add 0.43pF, which would
+make the equation:
 
+Ci =3D 9pF + 0.43pF * XTAL[5:1] instead of
+Ci =3D 9pF + 0.5pF * XTAL[5:0] as is published in the datasheet.
+
+2)  The programming guide shows that the default setting is 01b, but
+the note says it's reserved, use D1 D0 =3D 00.  Can you confirm that we
+should set switch mode to 00 instead of the default 01?
+
+And we got the following answers:
+
+1)
+     The first one with 0.43pF steps is the correct one. Ci =3D 9pF +
+0.43pF * XTAL[5:1]
+     0.5pF steps was the design target.  When measuring actual
+silicon, we found 0.43pF steps.
+
+     There are 6 bits reserved for the CL setting but bits 0 and 1
+have the same 0.43pF step.  So it is actually 5 bits with an extra LSB
+of 0.43pF.
+
+2)
+      Please use D1 D0 =3D 01.   The =E2=80=9C00=E2=80=9D is a typo=E2=80=
+=A6..
+
+Based on the above response I think we should always assume XTAL bit 0
+is 0, and only use XTAL[5:1] which should make the math go easier,
+because the desired value in femtofarads would just be offset by 9000
+and divided by 430 and that value would be shifted 3 places instead fo
+two, and the  fixed-point math calculation can go away.
+
+In addition to that, I would also need to make sure that D0 is set to
+1, so instead of just writing the shifted XTAL value, I would also
+have to do a logic OR with 1 to set the low bit.
+
+I talked with the hardware guys from work who also suggested that we
+always write the same value to X1 and X2, so I can remove the X1 and
+X2 references from the bindings.
+
+Does that work for you?
+
+
+adam
+> I don't think I have, but I can ask next week.
+>
+> Regards.
+> --
+> Luca
