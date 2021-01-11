@@ -2,238 +2,321 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2B2C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 16:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF694C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 19:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E647A216C4
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 16:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFB5F22A84
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jan 2021 19:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbhAKQlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jan 2021 11:41:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbhAKQlA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jan 2021 11:41:00 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71C1C061786;
-        Mon, 11 Jan 2021 08:40:19 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id w17so132694ilj.8;
-        Mon, 11 Jan 2021 08:40:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WmHhUoHujwB9690uWJo1Nnc/jVCu3y6M2V7fVUBJOS0=;
-        b=Pxb+51SAfh5Z+6jlD/tmi0nwza7s37RH8P63MMciRO/Amr00CtTJ/ae53eIVtKUrhp
-         jlm74YUIpvG//77UtmCJg8be5+aw4n+FPxuhjDfO19IBBWhdiRVBT0wG74vtGwU8IgsC
-         r2AGscLapRSMztqN2U+RZCCmCFLctfsdGrhBGPaXlLMT4RltAfZtUYhjfvT+oYD2l/gc
-         XtHb6d3ixDGF2moLbkdkOQa3K3MI8o0NnJP6X02jJT9NJm7aYD29GpXookHiEtR06saV
-         8bbcWGU0PGadvCscxh0/k+Q6aq7Y+oOxd582Xoqwl7GD6XO85tn8lmgfui5ZdSq8dgaG
-         Er3g==
+        id S2390755AbhAKTHi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jan 2021 14:07:38 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:44155 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732114AbhAKTHi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jan 2021 14:07:38 -0500
+Received: by mail-oi1-f175.google.com with SMTP id d189so402316oig.11;
+        Mon, 11 Jan 2021 11:07:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WmHhUoHujwB9690uWJo1Nnc/jVCu3y6M2V7fVUBJOS0=;
-        b=tKqdt4uP4v7YtuwZCoCrIR55RWuKsQwFpTcqfvrIhATPhhAZ5Gt9SUyiLhbPgIY2lm
-         zB8jbG1fVPRgwW/lo3F6ODR5bIXa6wFWp30CDneLjxGLA6LSMQ9jaKN3Pv42vVw0GZvN
-         zWq5C1u0rh4YYpe6x2DEEePKTx/pSTUhPXJ2JxupGliEo6mXWIY7gFY0rlzefgtdb+kQ
-         LHUo4jS2OvlTVlHtK1N0dP+avZrGLToZAuHNTzGv6RjA+8ifDx2EN7A0ij9xetq80r4X
-         +6a4rqpjcjx08e2UqllA4WOf2ZE0HWvxn6yRylvNmFznNKKvqswlEhqfVfDjPlRI+TBz
-         gOnQ==
-X-Gm-Message-State: AOAM533zLoCIPvvJu3sECct9kjDNs0zYrivA6/gkObzPiaV72W4H/6M/
-        /L3fr8bzFyPHnE6vCWJLQMrwOvNtfI2v4juZkTIiuivtsV7Vnw==
-X-Google-Smtp-Source: ABdhPJzslw7wNd6k6kL5FnsJZzv6LYDK2TNrg+SHSsrkFU5je5jAGlN6TcV67i9eRZMei32Xej//jk7XGFIg85fcwHU=
-X-Received: by 2002:a92:c26f:: with SMTP id h15mr8223378ild.65.1610383218943;
- Mon, 11 Jan 2021 08:40:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20210106173900.388758-1-aford173@gmail.com> <20210106173900.388758-2-aford173@gmail.com>
- <c5a97aca-ce74-bbd3-e99d-358e079c4c4a@lucaceresoli.net> <CAHCN7x+gUQwv4cWgg7Jt2oca1n4KW=o08rzoK9TB1Z_rKE0qog@mail.gmail.com>
- <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
-In-Reply-To: <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 11 Jan 2021 10:40:07 -0600
-Message-ID: <CAHCN7x+NFTn9Jqzbdm7d2UZt68DSAZ9Z-r+7Txwqi1=eE=W3Ug@mail.gmail.com>
-Subject: Re: [RFC 2/2] clk: vc5: Add support for optional load capacitance
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=doYN/VTU/LMbcW85QKFBZ+DDV5pHYxLu7RvwDrqh2aM=;
+        b=ZoKDg5ylqtcnUZWlUDxkri2rcyM/d+aBJqdAeWHFpTZp66DfimRWxWo1V+rdmE2HJv
+         sAg1AswYFGSlDHlZWlHM7YDjzngQxKzMsMZhotuOIh5FOYZYgbfh8X02I3+4i7xBZ0fk
+         3ZeA6O2wwYf5d0rFtx909RyiNSzDgRRsF5qltkavstuGydubt3EVxhFQpu1uvn445iVR
+         dWcnDBOeXWOtgybnlsr07vSi2kNgbPcgryvKlHcSUCvGXXxgOTF0x0WgQJ4Hkoq5ifAD
+         djpcgje8k2Q6kqMRD/uWnOWfkVRkFMDB0g3J8h1Np6tkXN2ae2O+P8Y1q+7DxjIjvZaq
+         TR6w==
+X-Gm-Message-State: AOAM532euW1woNHzyyui5UFA8ytKN7fUYDuaITr7var6jkMgT0lrt1Jb
+        r4KRqp5GdtPCUZlerpgLbHUZJx2iTQ==
+X-Google-Smtp-Source: ABdhPJypeXLMwwFCBoQ1yFh3Fox9trSbxovSrkjmyFz1Ahh3jeRWL51l+U7Pv4le1HBI+MdqElQItA==
+X-Received: by 2002:aca:f48b:: with SMTP id s133mr180148oih.59.1610392016097;
+        Mon, 11 Jan 2021 11:06:56 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u3sm134292otk.31.2021.01.11.11.06.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jan 2021 11:06:55 -0800 (PST)
+Received: (nullmailer pid 2897458 invoked by uid 1000);
+        Mon, 11 Jan 2021 19:06:53 -0000
+Date:   Mon, 11 Jan 2021 13:06:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 05/15] dt_bindings: mfd: Add ROHM BD71815 PMIC
+Message-ID: <20210111190653.GA2890911@robh.at.kernel.org>
+References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+ <4b3a868c07312d630de32e85d31dee7501627b73.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b3a868c07312d630de32e85d31dee7501627b73.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jan 9, 2021 at 12:02 PM Luca Ceresoli <luca@lucaceresoli.net> wrote=
-:
->
-> Hi Adam,
->
-> On 09/01/21 04:00, Adam Ford wrote:
-> > On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wr=
-ote:
-> >>
-> >> Hi Adam,
-> >>
-> >> On 06/01/21 18:39, Adam Ford wrote:
-> >>> There are two registers which can set the load capacitance for
-> >>> XTAL1 and XTAL2. These are optional registers when using an
-> >>> external crystal.  Parse the device tree and set the
-> >>> corresponding registers accordingly.
-> >>
-> >> No need to repeat the first 2 sentences, they are already in patch 1.
-> >
-> > The reason I did that was because if someone does a git log on the
-> > individual file, they'd see the comment.  While it's redundant not, it
-> > might not be as obvious in the future when looking back.   Not
-> > everyone reviews the history of the binding, but the source files' git
-> > logs usually have some value.   However, if you want me to drop it or
-> > rephrase it, I can do that.
->
-> Makes sense, I had never considered that before.
->
-> >>> +static int vc5_map_cap_value(u32 femtofarads)
-> >>> +{
-> >>> +     int mapped_value;
-> >>> +
-> >>> +     /* The datasheet explicitly states 9000 - 25000 */
-> >>> +     if ((femtofarads < 9000) || (femtofarads > 25000))
-> >>> +             return -EINVAL;
-> >>> +
-> >>> +     /* The lowest target we can hit is 9430, so exit if it's less *=
-/
-> >>> +     if (femtofarads < 9430)
-> >>> +             return 0;
-> >>> +
-> >>> +     /*
-> >>> +      * According to VersaClock 6E Programming Guide, there are 6
-> >>> +      * bits which translate to 64 entries in XTAL registers 12 and
-> >>> +      * 13. Because bits 0 and 1 increase the capacitance the
-> >>> +      * same, some of the values can be repeated.  Plugging this
-> >>> +      * into a spreadsheet and generating a trendline, the output
-> >>> +      * equation becomes x =3D (y-9098.29) / 216.44, where 'y' is
-> >>> +      * the desired capacitance in femtofarads, and x is the value
-> >>> +      * of XTAL[5:0].
-> >>> +      * To help with rounding, do fixed point math
-> >>> +      */
-> >>> +     femtofarads *=3D 100;
-> >>> +     mapped_value =3D (femtofarads - 909829) / 21644;
-> >>
-> >> Thanks for the extensive comment, but I am confused. Not by your code
-> >> which is very clean and readable, but by the chip documentation
-> >> (disclaimer: I haven't read it in full depth).
-> >
-> > I was confused too since the datasheet and programmers manual differ a =
-bit.
-> >>
-> >> The 5P49V6965 datasheet at page 17 clearly states capacitance can be
-> >> increased in 0.5 pF steps. The "VersaClock 6E Family Register
-> >> Descriptions and Programming Guide" at page 18 shows a table that allo=
-ws
-> >> 0.43 pF. Can you clarify how the thing works?
-> >
-> > I used the Versaclock 6E doc which is based on the following:
-> >
-> > BIT 5 - Add 6.92pF
-> > BIT 4 - Add 3.46pF
-> > BIT 3 - Add 1.73pF
-> > BIT 2 - Add 0.86pF
-> > Bit 1 - Add 0.43pF
-> > Bit 0 - Add 0.43pF
-> >
-> > Because the Datasheet starts at 9pF, the math I used, assumes these
-> > numbers are added to 9pF.
-> > Because the datasheet shows the increments are in .5pF increments, the
-> > 430nF seems close.  The datasheet shows 9pF - 25pF and based on the
-> > programmer table, we could get close to 25pF by enabling all bits and
-> > adding 9pF, however the math doesn't quite hit 25pF.
-> >
-> > For what it's worth I needed around 11.5pF, and with this patch, the
-> > hardware engineer said our ppm went from around 70 ppm to around 4ppm.
->
-> Did he measure what happens if you set the register according to the 0.5
-> pF interpretation? Does it improve? I understand the difference is
-> probably olwer than the noise, but who knows.
->
-> >>> +
-> >>> +     /*
-> >>> +      * The datasheet states, the maximum capacitance is 25000,
-> >>> +      * but the programmer guide shows a max value is 22832,
-> >>> +      * so values higher values could overflow, so cap it.
-> >>> +      */
-> >>
-> >> The 22832 limit is if you assume 0.43 pF steps. Assuming 0.5 pF steps
-> >> leads to 25000. Now I am more confused than before.
-> >
-> > I agree.  It would be nice to get some clarification from Renesas.
->
-> Definitely. Do you have access to some support from them?
+On Fri, Jan 08, 2021 at 03:34:52PM +0200, Matti Vaittinen wrote:
+> Document DT bindings for ROHM BD71815.
+> 
+> BD71815 is a single-chip power management IC mainly for battery-powered
+> portable devices. The IC integrates 5 bucks, 7 LDOs, a boost driver for
+> LED, a battery charger with a Coulomb counter, a real-time clock, a 32kHz
+> clock and two general-purpose outputs although only one is documented by
+> the data-sheet.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../bindings/mfd/rohm,bd71815-pmic.yaml       | 198 ++++++++++++++++++
+>  1 file changed, 198 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+> new file mode 100644
+> index 000000000000..2206b2008acd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+> @@ -0,0 +1,198 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/rohm,bd71815-pmic.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ROHM BD71815 Power Management Integrated Circuit bindings
+> +
+> +maintainers:
+> +  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> +
+> +description: |
+> +  BD71815AGW is a single-chip power management ICs for battery-powered
+> +  portable devices. It integrates 5 buck converters, 8 LDOs, a boost driver
+> +  for LED and a 500 mA single-cell linear charger. Also included is a Coulomb
+> +  counter, a real-time clock (RTC), and a 32.768 kHz clock gate and two GPOs.
+> +
+> +properties:
+> +  compatible:
+> +    const: rohm,bd71815
+> +
+> +  reg:
+> +    description:
+> +      I2C slave address.
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-controller: true
 
-Luca,
+Add a blank line here.
 
-We reached out to  Renesas with the following questions:
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the pin number and the second cell is used to specify
+> +      flags. See ../gpio/gpio.txt for more information.
+> +
+> +  clocks:
+> +    maxItems: 1
 
-1)
-I'm seeing a discrepancy between the datasheet and programming guide
-we have for the Versaclock 6e in regard to the crystal load
-programming registers.  The datasheet for the 5P49V6965A000NLGI
-indicates a 9pF minimum with 0.5pF steps, while the programming guide
-says that the lower two register bits both add 0.43pF, which would
-make the equation:
+And here.
 
-Ci =3D 9pF + 0.43pF * XTAL[5:1] instead of
-Ci =3D 9pF + 0.5pF * XTAL[5:0] as is published in the datasheet.
+> +  "#clock-cells":
+> +    const: 0
 
-2)  The programming guide shows that the default setting is 01b, but
-the note says it's reserved, use D1 D0 =3D 00.  Can you confirm that we
-should set switch mode to 00 instead of the default 01?
+And here.
 
-And we got the following answers:
+> +  clock-output-names:
+> +    const: bd71815-32k-out
+> +
+> +  rohm,clkout-mode:
+> +    description: clk32kout mode. Can be set to "open-drain" or "cmos".
+> +    $ref: "/schemas/types.yaml#/definitions/string"
+> +    enum:
+> +      - open-drain
+> +      - cmos
+> +
+> +  rohm,charger-sense-resistor-ohms:
+> +    minimum: 10000000
+> +    maximum: 50000000
+> +    description: |
+> +      BD71827 and BD71828 have SAR ADC for measuring charging currents.
+> +      External sense resistor (RSENSE in data sheet) should be used. If some
+> +      other but 30MOhm resistor is used the resistance value should be given
 
-1)
-     The first one with 0.43pF steps is the correct one. Ci =3D 9pF +
-0.43pF * XTAL[5:1]
-     0.5pF steps was the design target.  When measuring actual
-silicon, we found 0.43pF steps.
+'something other'
 
-     There are 6 bits reserved for the CL setting but bits 0 and 1
-have the same 0.43pF step.  So it is actually 5 bits with an extra LSB
-of 0.43pF.
+Though this can be expressed as 'default: 30000000'
 
-2)
-      Please use D1 D0 =3D 01.   The =E2=80=9C00=E2=80=9D is a typo=E2=80=
-=A6..
+> +      here in Ohms.
+> +
+> +  regulators:
+> +    $ref: ../regulator/rohm,bd71815-regulator.yaml
 
-Based on the above response I think we should always assume XTAL bit 0
-is 0, and only use XTAL[5:1] which should make the math go easier,
-because the desired value in femtofarads would just be offset by 9000
-and divided by 430 and that value would be shifted 3 places instead fo
-two, and the  fixed-point math calculation can go away.
+This file needs to come first.
 
-In addition to that, I would also need to make sure that D0 is set to
-1, so instead of just writing the shifted XTAL value, I would also
-have to do a logic OR with 1 to set the low bit.
-
-I talked with the hardware guys from work who also suggested that we
-always write the same value to X1 and X2, so I can remove the X1 and
-X2 references from the bindings.
-
-Does that work for you?
-
-
-adam
-> I don't think I have, but I can ask next week.
->
-> Regards.
-> --
-> Luca
+> +    description:
+> +      List of child nodes that specify the regulators.
+> +
+> +  gpio-reserved-ranges:
+> +    description: |
+> +      Usage of BD71828 GPIO pins can be changed via OTP. This property can be
+> +      used to mark the pins which should not be configured for GPIO. Please see
+> +      the ../gpio/gpio.txt for more information.
+> +
+> +  rohm,enable-hidden-gpo:
+> +    description: |
+> +      The BD71815 has undocumented GPO at pin E5. Pin is marked as GND at the
+> +      data-sheet as it's location in the middle of GND pins makes it hard to
+> +      use on PCB. If your board has managed to use this pin you can enable the
+> +      second GPO by defining this property. Dont enable this if you are unsure
+> +      about how the E5 pin is connected on your board.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - "#clock-cells"
+> +  - regulators
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/leds/common.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        pmic: pmic@4b {
+> +            compatible = "rohm,bd71815";
+> +            reg = <0x4b>;
+> +
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +            clocks = <&osc 0>;
+> +            #clock-cells = <0>;
+> +            clock-output-names = "bd71815-32k-out";
+> +
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +
+> +            rohm,charger-sense-resistor-ohms = <10000000>;
+> +
+> +            regulators {
+> +                buck1: buck1 {
+> +                    regulator-name = "buck1";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-always-on;
+> +                    regulator-ramp-delay = <1250>;
+> +                    rohm,dvs-run-voltage = <1150000>;
+> +                    rohm,dvs-suspend-voltage = <950000>;
+> +                };
+> +                buck2: buck2 {
+> +                    regulator-name = "buck2";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <2000000>;
+> +                    regulator-always-on;
+> +                    regulator-ramp-delay = <1250>;
+> +                    rohm,dvs-run-voltage = <1150000>;
+> +                    rohm,dvs-suspend-voltage = <950000>;
+> +                };
+> +                buck3: buck3 {
+> +                    regulator-name = "buck3";
+> +                    regulator-min-microvolt = <1200000>;
+> +                    regulator-max-microvolt = <2700000>;
+> +                    regulator-always-on;
+> +                };
+> +                buck4: buck4 {
+> +                    regulator-name = "buck4";
+> +                    regulator-min-microvolt = <1100000>;
+> +                    regulator-max-microvolt = <1850000>;
+> +                    regulator-always-on;
+> +                };
+> +                buck5: buck5 {
+> +                    regulator-name = "buck5";
+> +                    regulator-min-microvolt = <1800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo1: ldo1 {
+> +                    regulator-name = "ldo1";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo2: ldo2 {
+> +                    regulator-name = "ldo2";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo3: ldo3 {
+> +                    regulator-name = "ldo3";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo4: ldo4 {
+> +                    regulator-name = "ldo4";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo5: ldo5 {
+> +                    regulator-name = "ldo5";
+> +                    regulator-min-microvolt = <800000>;
+> +                    regulator-max-microvolt = <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +                ldo6: ldodvref {
+> +                    regulator-name = "ldodvref";
+> +                    regulator-always-on;
+> +                };
+> +                ldo7: ldolpsr {
+> +                    regulator-name = "ldolpsr";
+> +                    regulator-always-on;
+> +                };
+> +
+> +                boost: wled {
+> +                    regulator-name = "wled";
+> +                    regulator-min-microamp = <10>;
+> +                    regulator-max-microamp = <25000>;
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.25.4
+> 
+> 
+> -- 
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+> 
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =] 
