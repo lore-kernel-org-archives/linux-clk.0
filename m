@@ -2,116 +2,215 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF2FC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 11:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03C9C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 11:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF1F323109
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 11:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E3723104
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 11:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbhALLXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jan 2021 06:23:30 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2856 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbhALLXa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2021 06:23:30 -0500
-Received: from dggeme755-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4DFSnk3NW1z59m7;
-        Tue, 12 Jan 2021 19:21:30 +0800 (CST)
-Received: from [10.140.157.68] (10.140.157.68) by
- dggeme755-chm.china.huawei.com (10.3.19.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Tue, 12 Jan 2021 19:22:46 +0800
-Subject: Re: [PATCH v7 0/4] Enable Hi3559A SOC clock and HiSilicon Hiedma
- Controller
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <dan.j.williams@intel.com>,
-        <p.zabel@pengutronix.de>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>
-References: <20201215110947.41268-1-gengdongjiu@huawei.com>
- <20210112104010.GN2771@vkoul-mobl>
-From:   Dongjiu Geng <gengdongjiu@huawei.com>
-Message-ID: <cd34cdfd-eee5-b217-a151-9ff7290c112f@huawei.com>
-Date:   Tue, 12 Jan 2021 19:22:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1731665AbhALLyS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jan 2021 06:54:18 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39564 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730724AbhALLyR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2021 06:54:17 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id 91B291F452F6
+Subject: Re: next/master bisection: baseline.bootrr.clk-mt8173-mm-probed on
+ mt8173-elm-hana
+To:     Saravana Kannan <saravanak@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <5ffc97ef.1c69fb81.447c7.037e@mx.google.com>
+Cc:     "kernelci-results@groups.io" <kernelci-results@groups.io>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, CK Hu <ck.hu@mediatek.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-clk@vger.kernel.org
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <429f3c2c-4dbe-39b7-dd93-d73f22425a0f@collabora.com>
+Date:   Tue, 12 Jan 2021 11:53:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <20210112104010.GN2771@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <5ffc97ef.1c69fb81.447c7.037e@mx.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.140.157.68]
-X-ClientProxiedBy: dggeme713-chm.china.huawei.com (10.1.199.109) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021/1/12 18:40, Vinod Koul wrote:
-> On 15-12-20, 11:09, Dongjiu Geng wrote:
->> v6->v7:
->> 1. rename hisi,misc-control to hisi,misc-control to hisilicon,misc-control
->>
->> v5->v6:
->> 1. Drop #size-cells and #address-cell in the hisilicon,hi3559av100-clock.yaml
->> 2. Add discription for #reset-cells in the hisilicon,hi3559av100-clock.yaml
->> 3. Remove #clock-cells in hisilicon,hiedmacv310.yaml 
->> 4. Merge property misc_ctrl_base and misc_regmap together for hiedmacv310 driver
->>
->> v4->v5:
->> 1. change the patch author mail name
->>
->> v3->v4:
->> 1. fix the 'make dt_binding_check' issues.
->> 2. Combine the 'Enable HiSilicon Hiedma Controller' series patches to this series.
->> 3. fix the 'make dt_binding_check' issues in 'Enable HiSilicon Hiedma Controller' patchset
->>
->> v2->v3:
->> 1. change dt-bindings documents from txt to yaml format.
->> 2. Add SHUB clock to access the devices of m7
->>
->> Dongjiu Geng (4):
->>   dt-bindings: Document the hi3559a clock bindings
->>   clk: hisilicon: Add clock driver for hi3559A SoC
->>   dt: bindings: dma: Add DT bindings for HiSilicon Hiedma Controller
->>   dmaengine: dma: Add Hiedma Controller v310 Device Driver
-> 
-> Is there a reason to have dma and clk drivers in a single series..? I am
-> sure I have skipping few versions thinking this is clock driver series..
-> 
-> Unless there is a dependency please split up.. If there is a dependency
-> please specify that
+Hi Saravana,
 
-Thank you very much for your pointing out.  I will split up.
+Please see the bisection report below about the clk-mt8173-mm and
+mtk-mmsys drivers failing to probe on mt8173-elm-hana with
+next-20210111.
 
+Reports aren't automatically sent to the public while we're
+trialing new bisection features on kernelci.org but this one
+looks valid.
+
+Some details can be found here:
+
+  https://kernelci.org/test/plan/id/5ffbeef7f97770d9ccc94cf0/
+
+The bisection was run with CONFIG_ARM64_64K_PAGES=y and only
+against the clk-mt8173-mm test case, but it can be reproduced
+with a plain arm64 defconfig and the mtk-mmsys driver is also
+confirmed to be failing to probe with this patch.
+
+Your commit message acknowledges the fact that it might "break"
+some drivers, or rather that some drivers might need to be fixed:
+
+>     If this patch prevents some devices from probing, it's very likely due
+>     to the system having one or more device drivers that "probe"/set up a
+>     device (DT node with compatible property) without creating a struct
+>     device for it. [...]
+
+It sounds like this is what needs to be done here, so I've also
+put some MediaTek maintainers on CC.
+
+Thanks,
+Guillaume
+
+On 11/01/2021 18:24, KernelCI bot wrote:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> next/master bisection: baseline.bootrr.clk-mt8173-mm-probed on mt8173-elm-hana
+> 
+> Summary:
+>   Start:      ef8b014ee4a1 Add linux-next specific files for 20210111
+>   Plain log:  https://storage.kernelci.org/next/master/next-20210111/arm64/defconfig+CONFIG_ARM64_64K_PAGES=y/clang-11/lab-collabora/baseline-mt8173-elm-hana.txt
+>   HTML log:   https://storage.kernelci.org/next/master/next-20210111/arm64/defconfig+CONFIG_ARM64_64K_PAGES=y/clang-11/lab-collabora/baseline-mt8173-elm-hana.html
+>   Result:     e590474768f1 driver core: Set fw_devlink=on by default
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       next
+>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   Branch:     master
+>   Target:     mt8173-elm-hana
+>   CPU arch:   arm64
+>   Lab:        lab-collabora
+>   Compiler:   clang-11
+>   Config:     defconfig+CONFIG_ARM64_64K_PAGES=y
+>   Test case:  baseline.bootrr.clk-mt8173-mm-probed
+> 
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit e590474768f1cc04852190b61dec692411b22e2a
+> Author: Saravana Kannan <saravanak@google.com>
+> Date:   Thu Dec 17 19:17:03 2020 -0800
+> 
+>     driver core: Set fw_devlink=on by default
+>     
+>     Cyclic dependencies in some firmware was one of the last remaining
+>     reasons fw_devlink=on couldn't be set by default. Now that cyclic
+>     dependencies don't block probing, set fw_devlink=on by default.
+>     
+>     Setting fw_devlink=on by default brings a bunch of benefits (currently,
+>     only for systems with device tree firmware):
+>     * Significantly cuts down deferred probes.
+>     * Device probe is effectively attempted in graph order.
+>     * Makes it much easier to load drivers as modules without having to
+>       worry about functional dependencies between modules (depmod is still
+>       needed for symbol dependencies).
+>     
+>     If this patch prevents some devices from probing, it's very likely due
+>     to the system having one or more device drivers that "probe"/set up a
+>     device (DT node with compatible property) without creating a struct
+>     device for it.  If we hit such cases, the device drivers need to be
+>     fixed so that they populate struct devices and probe them like normal
+>     device drivers so that the driver core is aware of the devices and their
+>     status. See [1] for an example of such a case.
+>     
+>     [1] - https://lore.kernel.org/lkml/CAGETcx9PiX==mLxB9PO8Myyk6u2vhPVwTMsA5NkD-ywH5xhusw@mail.gmail.com/
+>     Signed-off-by: Saravana Kannan <saravanak@google.com>
+>     Link: https://lore.kernel.org/r/20201218031703.3053753-6-saravanak@google.com
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 4e15193aafad..e61e62b624ce 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1457,7 +1457,7 @@ static void device_links_purge(struct device *dev)
+>  #define FW_DEVLINK_FLAGS_RPM		(FW_DEVLINK_FLAGS_ON | \
+>  					 DL_FLAG_PM_RUNTIME)
+>  
+> -static u32 fw_devlink_flags = FW_DEVLINK_FLAGS_PERMISSIVE;
+> +static u32 fw_devlink_flags = FW_DEVLINK_FLAGS_ON;
+>  static int __init fw_devlink_setup(char *arg)
+>  {
+>  	if (!arg)
+> -------------------------------------------------------------------------------
 > 
 > 
->>
->>  .../clock/hisilicon,hi3559av100-clock.yaml    |   59 +
->>  .../bindings/dma/hisilicon,hiedmacv310.yaml   |   94 ++
->>  drivers/clk/hisilicon/Kconfig                 |    7 +
->>  drivers/clk/hisilicon/Makefile                |    1 +
->>  drivers/clk/hisilicon/clk-hi3559a.c           |  865 ++++++++++
->>  drivers/dma/Kconfig                           |   14 +
->>  drivers/dma/Makefile                          |    1 +
->>  drivers/dma/hiedmacv310.c                     | 1442 +++++++++++++++++
->>  drivers/dma/hiedmacv310.h                     |  136 ++
->>  include/dt-bindings/clock/hi3559av100-clock.h |  165 ++
->>  10 files changed, 2784 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/hisilicon,hi3559av100-clock.yaml
->>  create mode 100644 Documentation/devicetree/bindings/dma/hisilicon,hiedmacv310.yaml
->>  create mode 100644 drivers/clk/hisilicon/clk-hi3559a.c
->>  create mode 100644 drivers/dma/hiedmacv310.c
->>  create mode 100644 drivers/dma/hiedmacv310.h
->>  create mode 100644 include/dt-bindings/clock/hi3559av100-clock.h
->>
->> -- 
->> 2.17.1
+> Git bisection log:
 > 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [5625dcfbbcf892e40e8d60abbb5f56701a1d031c] Documentation: kbuild: Fix section reference
+> git bisect good 5625dcfbbcf892e40e8d60abbb5f56701a1d031c
+> # bad: [ef8b014ee4a1ccd9e751732690a8c7cdeed945e7] Add linux-next specific files for 20210111
+> git bisect bad ef8b014ee4a1ccd9e751732690a8c7cdeed945e7
+> # good: [2233cdbefdf4ba65cd69c80708ee7e6b1c8ab3e5] Merge remote-tracking branch 'v4l-dvb/master'
+> git bisect good 2233cdbefdf4ba65cd69c80708ee7e6b1c8ab3e5
+> # good: [c337ba6fa02b1f2984ab6f97f3a17843313bdb25] Merge remote-tracking branch 'keys/keys-next'
+> git bisect good c337ba6fa02b1f2984ab6f97f3a17843313bdb25
+> # bad: [967973bebd34bffe1426ae93e886cdce1aacfcc2] Merge remote-tracking branch 'tty/tty-next'
+> git bisect bad 967973bebd34bffe1426ae93e886cdce1aacfcc2
+> # good: [ad596f5fbfab93493f928003b297c5e766cf54a2] sched/idle: Fix missing need_resched() check after rcu_idle_enter()
+> git bisect good ad596f5fbfab93493f928003b297c5e766cf54a2
+> # good: [fdf6c4ae933617fc7bbc7db73db297f5f74849f9] Merge remote-tracking branch 'leds/for-next'
+> git bisect good fdf6c4ae933617fc7bbc7db73db297f5f74849f9
+> # bad: [95d0b5d0ceb2e915c22ed4a9b513827309d09b0f] Merge remote-tracking branch 'usb/usb-next'
+> git bisect bad 95d0b5d0ceb2e915c22ed4a9b513827309d09b0f
+> # good: [77adb8bdf4227257e26b7ff67272678e66a0b250] usb: dwc3: gadget: Allow runtime suspend if UDC unbinded
+> git bisect good 77adb8bdf4227257e26b7ff67272678e66a0b250
+> # good: [c13b827927112ba6170bea31c638a8573c127461] driver core: fw_devlink_relax_cycle() can be static
+> git bisect good c13b827927112ba6170bea31c638a8573c127461
+> # good: [841081d89d5adf96759f2df50185de950f5d8694] usb: usbip: Use DEFINE_SPINLOCK() for spinlock
+> git bisect good 841081d89d5adf96759f2df50185de950f5d8694
+> # bad: [0fab972eef49ef8d30eb91d6bd98861122d083d1] drivers: core: Detach device from power domain on shutdown
+> git bisect bad 0fab972eef49ef8d30eb91d6bd98861122d083d1
+> # bad: [e590474768f1cc04852190b61dec692411b22e2a] driver core: Set fw_devlink=on by default
+> git bisect bad e590474768f1cc04852190b61dec692411b22e2a
+> # first bad commit: [e590474768f1cc04852190b61dec692411b22e2a] driver core: Set fw_devlink=on by default
+> -------------------------------------------------------------------------------
+> 
+> 
+> -=-=-=-=-=-=-=-=-=-=-=-
+> Groups.io Links: You receive all messages sent to this group.
+> View/Reply Online (#5341): https://groups.io/g/kernelci-results/message/5341
+> Mute This Topic: https://groups.io/mt/79603430/924702
+> Group Owner: kernelci-results+owner@groups.io
+> Unsubscribe: https://groups.io/g/kernelci-results/unsub [guillaume.tucker@collabora.com]
+> -=-=-=-=-=-=-=-=-=-=-=-
+> 
+> 
+
