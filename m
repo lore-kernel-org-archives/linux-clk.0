@@ -2,1457 +2,320 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87183C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 01:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB8EC4332D
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 01:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F2E722DFA
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 01:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC3B22EBE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 01:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbhALBDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jan 2021 20:03:49 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:32447 "EHLO
+        id S1731492AbhALBIp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jan 2021 20:08:45 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:32849 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731001AbhALBDs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jan 2021 20:03:48 -0500
+        with ESMTP id S1731459AbhALBIp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jan 2021 20:08:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610414014; x=1641950014;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kX83H+eCFFXInsUKNiOh7BWTwc3i3GiCp/RsljOsmxU=;
-  b=HR5zhJmJxpFQ4l8UjIFA1GX33kc6Q1q6W+7V6CNLcg6XEMyfKh0RETAH
-   9XGUiplI6VI39N6vguT58Z6uWA+w3cVEW+BD2eEy82SSbrAhmJiF9u5np
-   HMtzgb6FwnzOZ1w1qDLEEt2X5M9t0M4ahIJ9jannLop+igG050yTVCHa7
-   5nKstd5YYXzYq7jdYWA/HtLgkOQXMX5saKij77hEw9ZB/5n4sYn4uH72O
-   EA1WExN3p3EyvRUnAhXbEq1icRZAvHFObamPGaignAS65ISRFVSexhiyc
-   tU4m8phRizNvD7BpB3BzhVxO1WHnZ311c4vXT8i9qvF/uyRaINtjYU9Us
-   Q==;
-IronPort-SDR: OEm6RlUV3DbpzqeRPjZ5PjgavWVDGnd51/e8xV5GcC+q4AxWo0CfqqNsxvY7vRkQPbAqF7FS0u
- Bo3e5OWYoeknJRP1UiCsaLdN0YjtabhVOsk3F0NFMOYyobMHJgfmLbnDF9zkbsjMEdcQXsGwnc
- IeRzNid+vCklm6UPe6VwX2w5o5aNJArmT8hUyaAiy264eMH3IcZ+pF2ucPE6jgEnjiyurqPKsr
- eKW69sm6NVIpSwVZg1k79Q7UpAzVCT4SEqS+uQhYhx15GqFPRsvG3DIWF1HbGx8qN6c4NDx1m9
- aAw=
+  t=1610414460; x=1641950460;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=g4DY/f4bAaHbSwR3imj3xvIgHAl4vMLVMk3x/d6Iodo=;
+  b=fSbGVPr+KqdUFA2INmZgZd2rqd1Q5ChOUr4vRLJSe9SRXGPLwr+Yc9JG
+   LgxWuaSId5qfO1FQvwRKm/qj7eSn5zC1C8penmsWDGRMtm0tUwJT8otNc
+   f52tHMc37EdATXm4Y0LQSvgWEWnVPNeegVkn0Oso7iSjX42E2c5cVSqOu
+   tnrKR2Pt9Pmt3aHvVGRaj/bmeztyJjHRHBmcjNJJuGlrWidthd5X0f8ws
+   eg55uv+oMb6ThHS++S/Xnq6u3wJxx4xqPR41RamqWt5G8nTlkbZKhdYdS
+   FPKD/Z+gfcZ5D9sxNiEbyJxN6pm9hURPdd+brqRj5EdPIyGh/tNNprbUE
+   A==;
+IronPort-SDR: 4ZGsue3tJEKeljAjXIR/FUmiJBwi5HoCHh4NuwUp4XkTD0CHRLUBJIOLqo0Zlmk9MkM4vyxmVu
+ yCyg3ZcNj3aDJcUylCF5yzrefYPvxIPsoGaffNkw402Tgc0rmiXrf2q2o8cwUiIhDMwTL1ARXT
+ uLOFkBBSguen3fm0gZTFUmNE+MosCG5XPqmEhHyNLsfq7x9a3HWBK77VUNCsr2ZxxZ08byzcgk
+ hQr1A2XMo/5rdAzVk8Tmom6GtCOD3Kl4GEofcHfxHsFOAyuFIBY9Lw69s3Ag7PkxkNqjISRDTa
+ 4mA=
 X-IronPort-AV: E=Sophos;i="5.79,340,1602518400"; 
-   d="scan'208";a="261085356"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Jan 2021 09:11:55 +0800
-IronPort-SDR: JW+X12UezBr6DSib8R2xFa1GPqoCY972BZSIQ7XZ6RCdr2tZjVYchGKBj3BMUsF6mg18nqrf12
- OIVDOuhGNAtMfpFGSU6VtFZFZDYGYn6ca99tv1lsSQvEocKKUWXSktivOV9nh3/CoLecs8iYWC
- RO2Q0c97YirlUrfnhBoRf4mtHFTifGp06a+BzCwcGi7iq6LXZmKbRdGCGe2w4QZp5ncv6aRtV0
- unRl3+G7C4l1LvoQa2PrdNh08cYMxzE4P8h/Rk+4sE7wsdQlrT+r28b/jFL4thmF7O+5dqpUqn
- oXvnWED7PiRbjSHo3XdsjTN4
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jan 2021 16:47:28 -0800
-IronPort-SDR: 51b+Y/J0n3AH9lPGKVq5ZtDAzw54fuSpw7ESRyAdocQZxl3Ndph+BGb1sKYNLi52DliIx4ejW6
- GhKOxBdYJ6veasHgFuuc9pkcM16tie0B4cMihkosAh4wmnN+4SLOK1rsNCe4FMa7KOJ4U0KK8R
- Gw7uy+ginqGwBy0Bl8j4F7v0E6m0fcPqkgJsNo0M+Nj4rVqDIvY3N0gDoljEhLGRRfNlI5Fq9l
- JNJ15id1qkOyhHdLHFiDxtQPpLxf3EtIgZunDB6OYl+EObmuO46VquHcky+A893IAiBpVPvzAw
- xQ0=
-WDCIronportException: Internal
-Received: from cnf008148.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.70.175])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Jan 2021 17:02:41 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
+   d="scan'208";a="261085984"
+Received: from mail-bn8nam12lp2176.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.176])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Jan 2021 09:19:20 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Dj2ThM/K5tksIRazraQMT670b7WQLa3S0kXJgahZY8iYVfOgxswj0zJoipAMNUZfpwJyIk+0WzMA9yI6LCzzzz//q9Y1uWQ61J8Z5SgPv2nYsgC7htjPHQky5+SWXkGlpq2ccQIT9j/yCtCGAm058QfnoEye0y6rrP6WPVI/MyEW22dw9pRNTva8v938P2Hv5KkxjzSkCjBSkKNTE6Rc/ltQMVFw/PP277wY9+xc3vQhYMD/eFfBxRIS/nG9OGPiDBBLfpihDLMXvKYdWdou9/EwipORh6KTjfEN61guUcA7f+YleXy/d1VBo8tHHrsdeLhfQCYO+4Webp+93SR2hQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n8wTOo/BEO1SmiI3pAUoYCi5B1IHqwgP8WblquMoIhM=;
+ b=Yu7/5dP16Cgyz7mHdxMd04otmtzdpQyFOXorLYdzbRSgUNiRkbH2XSUfAPfvq5a6T3/7dNgd9PPT9ACbSGVSwb1dPev7WzLUr/XglAmQZWUXjbxmu1yECcyUTnhYZ7JojzHdbv3M9m2zWL7qz0z1kqc1niDSuGazCTCZGlQflxokXyIVu32IsvixWuGVeYGaJjIfiEORJVuJ3oINRgGcEutCqgkH3MUtRckaEjyHF+W7SFWxthSm2Br8rFm8hUXgmhc1DavSfXzLNBbSXj2wSuFZxKTRTa1QLmyILuK2KyPi/QlvAP3vnytquyOfzzOEK7aH4Il1mUWFeesA+76tcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n8wTOo/BEO1SmiI3pAUoYCi5B1IHqwgP8WblquMoIhM=;
+ b=jh1x1J+8AXwmad8JLeLB3zL8nQw5KTkjO6ZyESnOU62mk1kpVrQ/Z3Cf8aeL9Ipx25AQM0Hso3E7YGITdp3PTwe3hrdZLMI0PvfCLAAWAUNaXp7he4hTEujxR9HVtgmrM/BI8du9nr4BwtIJAgisZDXQ2YlbdkfcTPuuFllNXE8=
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
+ by BL0PR04MB4641.namprd04.prod.outlook.com (2603:10b6:208:26::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.7; Tue, 12 Jan
+ 2021 01:07:34 +0000
+Received: from BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::2dbb:7e01:f076:eca0]) by BL0PR04MB6514.namprd04.prod.outlook.com
+ ([fe80::2dbb:7e01:f076:eca0%9]) with mapi id 15.20.3742.012; Tue, 12 Jan 2021
+ 01:07:34 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
 To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org
-Cc:     Sean Anderson <seanga2@gmail.com>
-Subject: [PATCH v11 01/10] clk: Add RISC-V Canaan Kendryte K210 clock driver
-Date:   Tue, 12 Jan 2021 10:02:38 +0900
-Message-Id: <20210112010238.200241-1-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.29.2
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+CC:     Sean Anderson <seanga2@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v11 00/10] RISC-V Kendryte K210 support improvements
+Thread-Topic: [PATCH v11 00/10] RISC-V Kendryte K210 support improvements
+Thread-Index: AQHW6H4YA3l8oMWx7kmMNP0/pgzYLQ==
+Date:   Tue, 12 Jan 2021 01:07:34 +0000
+Message-ID: <BL0PR04MB65148451DF93AB82F79BB320E7AA0@BL0PR04MB6514.namprd04.prod.outlook.com>
+References: <20210112005848.199951-1-damien.lemoal@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dabbelt.com; dkim=none (message not signed)
+ header.d=none;dabbelt.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:5cb8:2b48:5f8c:2c03]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 59f2eac0-cbab-48c7-9550-08d8b6967203
+x-ms-traffictypediagnostic: BL0PR04MB4641:
+x-microsoft-antispam-prvs: <BL0PR04MB46412041155B26B88BE02942E7AA0@BL0PR04MB4641.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: gOeod7CJ3VcmvcZYeK7k2y4SuKd5P0+hkSBM7SNCOuGgpAeJ/667wbUexTKjE4g+zlPCYeIkFQ7m3ffMGHyNXZ7ayoJb+rZSGLAmhqtQYsrvJpNm7jQqk5+QyZYy192Ubv57edCsbYY9vUXUV61ZTkrfKJdXjD+58GD6h41XBAcBsByBauUk2GFxlMbkmB0HXm8XCZ95brYSigZxikpFVJEX/Zz8XWZTzgFFc4LeJIRlyKPD+V4CaYdQI2ctFot7a07hSxzWjE/+7TbIcXrkOWq6kNChGcIf8ta5MuyfpuWpc5CtbLWc197p1sDFAviaZQDkYreQF8MadljT8iXYg7+Mi7E0+ZboMNNRJoRXYsgBjNbG470fBKNb3ABW4atycyP3iswUphfeQEJii+Na4wo1V3YGLNkVgfnqQd3NrNKCsEmwvCXQIm+F7qpQtfXQr3VXXPx/MaRs++C1L51Olw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(39860400002)(366004)(376002)(346002)(186003)(71200400001)(33656002)(86362001)(83380400001)(6506007)(66556008)(53546011)(76116006)(66446008)(52536014)(4326008)(5660300002)(91956017)(66946007)(55016002)(7696005)(66476007)(8936002)(54906003)(110136005)(316002)(966005)(478600001)(9686003)(2906002)(8676002)(64756008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?Bh2ZPUKccppBgvG0RblZj5RueX+NNQmbYO2/G7ck6OO8J+vGEn8BxJ7rrFoG?=
+ =?us-ascii?Q?GAxwxp/DTxSfTz0iycOKcFHm9n/lcmcEpjYuW9p5qxQ0fita96ppneEANOwT?=
+ =?us-ascii?Q?ueBxOm80Yq0/m6p8QAYdaJheK6oXdfKapgoTY0+Bnsz8jdTzAdaPOKteyiqf?=
+ =?us-ascii?Q?WH6XfnLqPndbU7m9wq6jGzqi4kMhBHRUr95sIPb94BhCl02MWzkq7H5U//J/?=
+ =?us-ascii?Q?A6XLdBPZwDGDopoNxXqjyb0hxtbG7ogcbcACurf8EHRGt2RF/7VLgz3FPj/E?=
+ =?us-ascii?Q?3IrGxxMeR5g49Ko+Isnt0duMHTWtjjJu7i8eAUtoShKhpxrsIQa5nzSmAtNe?=
+ =?us-ascii?Q?e3bO1/K1IQL21oJqftEK76EztseepMH1Uq/R1CEWQdYYiebD4QuhKTi7avhi?=
+ =?us-ascii?Q?nXw+rH6RHvd1epTRfMOcp6rh8ApBQoKDI7vr84U1+AYhxcyuXfu128RPVFEh?=
+ =?us-ascii?Q?ZtR6yL18tAf4oZPGtBsmmfDDCF2pkphliddJl/+iXzadhKZMA3ndxTHKisLf?=
+ =?us-ascii?Q?eXivkHKI5TDnFB6HvtZ5kyJp1IR+HnJ/G1v5H+BBzRtvFuNgolb0wVBfc+v4?=
+ =?us-ascii?Q?cUzG6iXu1H6/gi5qkbyN5hsjsnmAaBVBqNGz+HvSu/zKQjtBGg/U0/zAujr+?=
+ =?us-ascii?Q?EQGJELfaCsSsOFEAPlFeqZ+C3H0envXte0eRRNhe2bEoRf/Gh5UJZOkj2t+L?=
+ =?us-ascii?Q?qbZNCdKoh6s99cnH2GbNggbv2jqMAycHeSUYhqPWXLHZ/tWE+wCVZNuwVI0N?=
+ =?us-ascii?Q?2VZCweXhDW6trEI//ZDi5S+t2LPY9Jqd59XZSaSwFZZbFRc4gU2Z4HIgRKqi?=
+ =?us-ascii?Q?vK7F3IKKxMWNu7T5LhDl8pMq65FTJbFcSDFxPG56ZY98CdtXTXtYdCNi2nlB?=
+ =?us-ascii?Q?NUB9SRoa1iJA3BFVsgYMn7be+Wh04guExGhTtD7udbB+VMP7AH8E04VGIROU?=
+ =?us-ascii?Q?29I9RNNabnr4opUdYbe7u/HnQloOGBzkzfKv/6TT+3tCXxPkVKKZp8/zE3ZM?=
+ =?us-ascii?Q?wHZ5ZzhUzxWdKUO1r0MG+H5f5Lk0TeN+caQ0BHOyhEah0gF9En90h1k23vaG?=
+ =?us-ascii?Q?LrU7ec+V?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59f2eac0-cbab-48c7-9550-08d8b6967203
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jan 2021 01:07:34.5798
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IPQ4HUgReltF8TODZM1I7sF1H/ZXO0CW3AuqwRGlEsrNyMEbk+830UAXSqcDJosHLVCKmp4i/kxDu+/iS/SX1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR04MB4641
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a clock provider driver for the Canaan Kendryte K210 RISC-V SoC.
-This new driver with the compatible string "canaan,k210-clk" implements
-support for the full clock structure of the K210 SoC. Since it is
-required for the correct operation of the SoC, this driver is
-selected by default for compilation when the SOC_CANAAN option is
-selected.
-
-With this change, the k210-sysctl driver is turned into a simple
-platform driver which enables its power bus clock and triggers
-populating its child nodes. This driver is also automatically selected
-for compilation with the selection of SOC_CANAAN. The sysctl driver
-retains the SOC early initialization code, but the implementation now
-relies on the new function k210_clk_early_init() provided by the new
-clk-k210 driver.
-
-The clock structure implemented and many of the coding ideas for the
-driver come from the work by Sean Anderson on the K210 support for the
-U-Boot project.
-
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- MAINTAINERS                      |    1 +
- drivers/clk/Kconfig              |    8 +
- drivers/clk/Makefile             |    1 +
- drivers/clk/clk-k210.c           | 1005 ++++++++++++++++++++++++++++++
- drivers/soc/canaan/Kconfig       |   18 +-
- drivers/soc/canaan/Makefile      |    2 +-
- drivers/soc/canaan/k210-sysctl.c |  205 ++----
- include/soc/canaan/k210-sysctl.h |    2 +
- 8 files changed, 1064 insertions(+), 178 deletions(-)
- create mode 100644 drivers/clk/clk-k210.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 380a446d4d4d..637b79eba693 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3872,6 +3872,7 @@ CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER
- M:	Damien Le Moal <damien.lemoal@wdc.com>
- L:	linux-riscv@lists.infradead.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
- F:	drivers/soc/canaan/
- F:	include/soc/canaan/
- 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 85856cff506c..cb971f6632e2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -368,6 +368,14 @@ config COMMON_CLK_FIXED_MMIO
- 	help
- 	  Support for Memory Mapped IO Fixed clocks
- 
-+config COMMON_CLK_K210
-+	bool "Clock driver for the Canaan Kendryte K210 SoC"
-+	depends on COMMON_CLK && OF
-+	depends on RISCV && SOC_CANAAN
-+	default SOC_CANAAN
-+	help
-+	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index dbdc590e7de3..5f8f9f135df5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
-+obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
- obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
-diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
-new file mode 100644
-index 000000000000..1d528395527c
---- /dev/null
-+++ b/drivers/clk/clk-k210.c
-@@ -0,0 +1,1005 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (c) 2019 Western Digital Corporation or its affiliates.
-+ */
-+#define pr_fmt(fmt)     "k210-clk: " fmt
-+
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <asm/soc.h>
-+#include <soc/canaan/k210-sysctl.h>
-+
-+#include <dt-bindings/clock/k210-clk.h>
-+
-+/*
-+ * Clocks parameters.
-+ */
-+struct k210_clk_cfg {
-+	const char *name;
-+	u8 gate_reg;
-+	u8 gate_bit;
-+	u8 div_reg;
-+	u8 div_shift;
-+	u8 div_width;
-+	u8 div_type;
-+	u8 mux_reg;
-+	u8 mux_bit;
-+};
-+
-+enum k210_clk_div_type {
-+	K210_DIV_NONE,
-+	K210_DIV_ONE_BASED,
-+	K210_DIV_DOUBLE_ONE_BASED,
-+	K210_DIV_POWER_OF_TWO,
-+};
-+
-+#define K210_GATE(_reg, _bit)	\
-+	.gate_reg = (_reg),	\
-+	.gate_bit = (_bit)
-+#define K210_DIV(_reg, _shift, _width, _type)	\
-+	.div_reg = (_reg),			\
-+	.div_shift = (_shift),			\
-+	.div_width = (_width),			\
-+	.div_type = (_type)
-+#define K210_MUX(_reg, _bit)	\
-+	.mux_reg = (_reg),	\
-+	.mux_bit = (_bit)
-+
-+static struct k210_clk_cfg k210_clks[K210_NUM_CLKS] = {
-+
-+	/* Gated clocks, no mux, no divider */
-+	[K210_CLK_CPU] = {
-+		.name = "cpu",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 0)
-+	},
-+	[K210_CLK_DMA] = {
-+		.name = "dma",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 1)
-+	},
-+	[K210_CLK_FFT] = {
-+		.name = "fft",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 4)
-+	},
-+	[K210_CLK_GPIO] = {
-+		.name = "gpio",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 5)
-+	},
-+	[K210_CLK_UART1] = {
-+		.name = "uart1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 16)
-+	},
-+	[K210_CLK_UART2] = {
-+		.name = "uart2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 17)
-+	},
-+	[K210_CLK_UART3] = {
-+		.name = "uart3",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 18)
-+	},
-+	[K210_CLK_FPIOA] = {
-+		.name = "fpioa",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 20)
-+	},
-+	[K210_CLK_SHA] = {
-+		.name = "sha",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 26)
-+	},
-+	[K210_CLK_AES] = {
-+		.name = "aes",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 19)
-+	},
-+	[K210_CLK_OTP] = {
-+		.name = "otp",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 27)
-+	},
-+	[K210_CLK_RTC] = {
-+		.name = "rtc",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 29)
-+	},
-+
-+	/* Gated divider clocks */
-+	[K210_CLK_SRAM0] = {
-+		.name = "sram0",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 1),
-+		K210_DIV(K210_SYSCTL_THR0, 0, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_SRAM1] = {
-+		.name = "sram1",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 2),
-+		K210_DIV(K210_SYSCTL_THR0, 4, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_ROM] = {
-+		.name = "rom",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 0),
-+		K210_DIV(K210_SYSCTL_THR0, 16, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_DVP] = {
-+		.name = "dvp",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 3),
-+		K210_DIV(K210_SYSCTL_THR0, 12, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB0] = {
-+		.name = "apb0",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 3),
-+		K210_DIV(K210_SYSCTL_SEL0, 3, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB1] = {
-+		.name = "apb1",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 4),
-+		K210_DIV(K210_SYSCTL_SEL0, 6, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB2] = {
-+		.name = "apb2",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 5),
-+		K210_DIV(K210_SYSCTL_SEL0, 9, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_AI] = {
-+		.name = "ai",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 2),
-+		K210_DIV(K210_SYSCTL_THR0, 8, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_SPI0] = {
-+		.name = "spi0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 6),
-+		K210_DIV(K210_SYSCTL_THR1, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_SPI1] = {
-+		.name = "spi1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 7),
-+		K210_DIV(K210_SYSCTL_THR1, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_SPI2] = {
-+		.name = "spi2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 8),
-+		K210_DIV(K210_SYSCTL_THR1, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C0] = {
-+		.name = "i2c0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 13),
-+		K210_DIV(K210_SYSCTL_THR5, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C1] = {
-+		.name = "i2c1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 14),
-+		K210_DIV(K210_SYSCTL_THR5, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C2] = {
-+		.name = "i2c2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 15),
-+		K210_DIV(K210_SYSCTL_THR5, 24, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_WDT0] = {
-+		.name = "wdt0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 24),
-+		K210_DIV(K210_SYSCTL_THR6, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_WDT1] = {
-+		.name = "wdt1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 25),
-+		K210_DIV(K210_SYSCTL_THR6, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S0] = {
-+		.name = "i2s0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 10),
-+		K210_DIV(K210_SYSCTL_THR3, 0, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S1] = {
-+		.name = "i2s1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 11),
-+		K210_DIV(K210_SYSCTL_THR3, 16, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S2] = {
-+		.name = "i2s2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 12),
-+		K210_DIV(K210_SYSCTL_THR4, 0, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+
-+	/* Divider clocks, no gate, no mux */
-+	[K210_CLK_I2S0_M] = {
-+		.name = "i2s0_m",
-+		K210_DIV(K210_SYSCTL_THR4, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S1_M] = {
-+		.name = "i2s1_m",
-+		K210_DIV(K210_SYSCTL_THR4, 24, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S2_M] = {
-+		.name = "i2s2_m",
-+		K210_DIV(K210_SYSCTL_THR4, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+
-+	/* Muxed gated divider clocks */
-+	[K210_CLK_SPI3] = {
-+		.name = "spi3",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 9),
-+		K210_DIV(K210_SYSCTL_THR1, 24, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 12)
-+	},
-+	[K210_CLK_TIMER0] = {
-+		.name = "timer0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 21),
-+		K210_DIV(K210_SYSCTL_THR2,  0, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 13)
-+	},
-+	[K210_CLK_TIMER1] = {
-+		.name = "timer1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 22),
-+		K210_DIV(K210_SYSCTL_THR2, 8, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 14)
-+	},
-+	[K210_CLK_TIMER2] = {
-+		.name = "timer2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 23),
-+		K210_DIV(K210_SYSCTL_THR2, 16, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 15)
-+	},
-+};
-+
-+/*
-+ * PLL control register bits.
-+ */
-+#define K210_PLL_CLKR		GENMASK(3, 0)
-+#define K210_PLL_CLKF		GENMASK(9, 4)
-+#define K210_PLL_CLKOD		GENMASK(13, 10)
-+#define K210_PLL_BWADJ		GENMASK(19, 14)
-+#define K210_PLL_RESET		(1 << 20)
-+#define K210_PLL_PWRD		(1 << 21)
-+#define K210_PLL_INTFB		(1 << 22)
-+#define K210_PLL_BYPASS		(1 << 23)
-+#define K210_PLL_TEST		(1 << 24)
-+#define K210_PLL_EN		(1 << 25)
-+#define K210_PLL_SEL		GENMASK(27, 26) /* PLL2 only */
-+
-+/*
-+ * PLL lock register bits.
-+ */
-+#define K210_PLL_LOCK		0
-+#define K210_PLL_CLEAR_SLIP	2
-+#define K210_PLL_TEST_OUT	3
-+
-+/*
-+ * Clock selector register bits.
-+ */
-+#define K210_ACLK_SEL		BIT(0)
-+#define K210_ACLK_DIV		GENMASK(2, 1)
-+
-+/*
-+ * PLLs.
-+ */
-+enum k210_pll_id {
-+	K210_PLL0, K210_PLL1, K210_PLL2, K210_PLL_NUM
-+};
-+
-+struct k210_pll {
-+	enum k210_pll_id id;
-+	void __iomem *reg;
-+	void __iomem *lock;
-+	u8 lock_shift;
-+	u8 lock_width;
-+	struct clk_hw hw;
-+};
-+#define to_k210_pll(hw)	container_of(hw, struct k210_pll, hw)
-+
-+/*
-+ * PLLs configuration: by default PLL0 runs at 780 MHz and PLL1 at 299 MHz.
-+ * The first 2 SRAM banks depend on ACLK/CPU clock which is by default PLL0
-+ * rate divided by 2. Set PLL1 to 390 MHz so that the third SRAM bank has the
-+ * same clock as the first 2.
-+ */
-+struct k210_pll_cfg {
-+	u32 reg;
-+	u8 lock_shift;
-+	u8 lock_width;
-+	u32 r;
-+	u32 f;
-+	u32 od;
-+	u32 bwadj;
-+};
-+
-+static struct k210_pll_cfg k210_plls_cfg[] = {
-+	{ K210_SYSCTL_PLL0,  0, 2, 0, 59, 1, 59 }, /* 780 MHz */
-+	{ K210_SYSCTL_PLL1,  8, 1, 0, 59, 3, 59 }, /* 390 MHz */
-+	{ K210_SYSCTL_PLL2, 16, 1, 0, 22, 1, 22 }, /* 299 MHz */
-+};
-+
-+/*
-+ * Indexes in the parents array of clocks used as parents to other clocks.
-+ */
-+enum k210_parent_idx {
-+	K210_PARENT_IN0 = 0,
-+	K210_PARENT_PLL0,
-+	K210_PARENT_PLL1,
-+	K210_PARENT_PLL2,
-+	K210_PARENT_ACLK,
-+	K210_PARENT_APB0,
-+	K210_PARENT_APB1,
-+	K210_PARENT_NUM_CLKS,
-+};
-+
-+/**
-+ * struct k210_clk - Driver data
-+ * @regs: system controller registers start address
-+ * @clk_lock: clock setting spinlock
-+ * @plls: SoC PLLs descriptors
-+ * @aclk: ACLK clock
-+ * @clks: All other clocks
-+ * @parents: array of pointers to clocks used as parents for muxed clocks.
-+ * @clk_data: clock specifier translation for all clocks
-+ */
-+struct k210_clk {
-+	void __iomem			*regs;
-+	spinlock_t			clk_lock;
-+	struct k210_pll			plls[K210_PLL_NUM];
-+	struct clk_hw			aclk;
-+	struct clk_hw			clks[K210_NUM_CLKS];
-+	const struct clk_hw		*parents[K210_PARENT_NUM_CLKS];
-+	struct clk_hw_onecell_data	*clk_data;
-+};
-+
-+static struct k210_clk *kcl;
-+
-+/*
-+ * Set ACLK parent selector: 0 for IN0, 1 for PLL0.
-+ */
-+static void k210_aclk_set_selector(u8 sel)
-+{
-+	u32 reg = readl(kcl->regs + K210_SYSCTL_SEL0);
-+
-+	if (sel)
-+		reg |= K210_ACLK_SEL;
-+	else
-+		reg &= K210_ACLK_SEL;
-+	writel(reg, kcl->regs + K210_SYSCTL_SEL0);
-+}
-+
-+static void k210_init_pll(struct k210_pll *pll, enum k210_pll_id id,
-+			  void __iomem *base)
-+{
-+	pll->id = id;
-+	pll->lock = base + K210_SYSCTL_PLL_LOCK;
-+	pll->reg = base + k210_plls_cfg[id].reg;
-+	pll->lock_shift = k210_plls_cfg[id].lock_shift;
-+	pll->lock_width = k210_plls_cfg[id].lock_width;
-+}
-+
-+static void k210_pll_wait_for_lock(struct k210_pll *pll)
-+{
-+	u32 reg, mask = GENMASK(pll->lock_shift + pll->lock_width - 1,
-+				pll->lock_shift);
-+
-+	while (true) {
-+		reg = readl(pll->lock);
-+		if ((reg & mask) == mask)
-+			break;
-+
-+		reg |= BIT(pll->lock_shift + K210_PLL_CLEAR_SLIP);
-+		writel(reg, pll->lock);
-+	}
-+}
-+
-+static bool k210_pll_hw_is_enabled(struct k210_pll *pll)
-+{
-+	u32 reg = readl(pll->reg);
-+	u32 mask = K210_PLL_PWRD | K210_PLL_EN;
-+
-+	if (reg & K210_PLL_RESET)
-+		return false;
-+
-+	return (reg & mask) == mask;
-+}
-+
-+static void k210_pll_enable_hw(struct k210_pll *pll)
-+{
-+	struct k210_pll_cfg *pll_cfg = &k210_plls_cfg[pll->id];
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+
-+	if (k210_pll_hw_is_enabled(pll))
-+		goto unlock;
-+
-+	/*
-+	 * For PLL0, we need to re-parent ACLK to IN0 to keep the CPU cores and
-+	 * SRAM running.
-+	 */
-+	if (pll->id == K210_PLL0)
-+		k210_aclk_set_selector(0);
-+
-+	/* Set PLL factors */
-+	reg = readl(pll->reg);
-+	reg &= ~GENMASK(19, 0);
-+	reg |= FIELD_PREP(K210_PLL_CLKR, pll_cfg->r);
-+	reg |= FIELD_PREP(K210_PLL_CLKF, pll_cfg->f);
-+	reg |= FIELD_PREP(K210_PLL_CLKOD, pll_cfg->od);
-+	reg |= FIELD_PREP(K210_PLL_BWADJ, pll_cfg->bwadj);
-+	reg |= K210_PLL_PWRD;
-+	writel(reg, pll->reg);
-+
-+	/*
-+	 * Reset the PLL: ensure reset is low before asserting it.
-+	 * The magic NOPs come from the Kendryte reference SDK.
-+	 */
-+	reg &= ~K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+	reg |= K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+	nop();
-+	nop();
-+	reg &= ~K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+
-+	k210_pll_wait_for_lock(pll);
-+
-+	reg &= ~K210_PLL_BYPASS;
-+	reg |= K210_PLL_EN;
-+	writel(reg, pll->reg);
-+
-+	if (pll->id == K210_PLL0)
-+		k210_aclk_set_selector(1);
-+
-+unlock:
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+}
-+
-+static void k210_pll_disable_hw(struct k210_pll *pll)
-+{
-+	unsigned long flags;
-+	u32 reg;
-+
-+	/*
-+	 * Bypassing before powering off is important so child clocks do not
-+	 * stop working. This is especially important for pll0, the indirect
-+	 * parent of the cpu clock.
-+	 */
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+	reg = readl(pll->reg);
-+	reg |= K210_PLL_BYPASS;
-+	writel(reg, pll->reg);
-+
-+	reg &= ~K210_PLL_PWRD;
-+	reg &= ~K210_PLL_EN;
-+	writel(reg, pll->reg);
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+}
-+
-+static int k210_pll_enable(struct clk_hw *hw)
-+{
-+	k210_pll_enable_hw(to_k210_pll(hw));
-+
-+	return 0;
-+}
-+
-+static void k210_pll_disable(struct clk_hw *hw)
-+{
-+	k210_pll_disable_hw(to_k210_pll(hw));
-+}
-+
-+static int k210_pll_is_enabled(struct clk_hw *hw)
-+{
-+	return k210_pll_hw_is_enabled(to_k210_pll(hw));
-+}
-+
-+static unsigned long k210_pll_get_rate(struct clk_hw *hw,
-+				       unsigned long parent_rate)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	u32 reg = readl(pll->reg);
-+	u32 r, f, od;
-+
-+	if (reg & K210_PLL_BYPASS)
-+		return parent_rate;
-+
-+	if (!(reg & K210_PLL_PWRD))
-+		return 0;
-+
-+	r = FIELD_GET(K210_PLL_CLKR, reg) + 1;
-+	f = FIELD_GET(K210_PLL_CLKF, reg) + 1;
-+	od = FIELD_GET(K210_PLL_CLKOD, reg) + 1;
-+
-+	return (u64)parent_rate * f / (r * od);
-+}
-+
-+static const struct clk_ops k210_pll_ops = {
-+	.enable		= k210_pll_enable,
-+	.disable	= k210_pll_disable,
-+	.is_enabled	= k210_pll_is_enabled,
-+	.recalc_rate	= k210_pll_get_rate,
-+};
-+
-+static int k210_pll2_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+
-+	reg = readl(pll->reg);
-+	reg &= ~K210_PLL_SEL;
-+	reg |= FIELD_PREP(K210_PLL_SEL, index);
-+	writel(reg, pll->reg);
-+
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 k210_pll2_get_parent(struct clk_hw *hw)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	u32 reg = readl(pll->reg);
-+
-+	return FIELD_GET(K210_PLL_SEL, reg);
-+}
-+
-+static const struct clk_ops k210_pll2_ops = {
-+	.enable		= k210_pll_enable,
-+	.disable	= k210_pll_disable,
-+	.is_enabled	= k210_pll_is_enabled,
-+	.recalc_rate	= k210_pll_get_rate,
-+	.set_parent	= k210_pll2_set_parent,
-+	.get_parent	= k210_pll2_get_parent,
-+};
-+
-+static int k210_register_pll(struct k210_pll *pll, const char *name,
-+			     int num_parents, const struct clk_ops *ops)
-+{
-+	struct clk_init_data init = {};
-+
-+	init.name = name;
-+	init.parent_hws = kcl->parents;
-+	init.num_parents = num_parents;
-+	init.ops = ops;
-+	pll->hw.init = &init;
-+
-+	return clk_hw_register(NULL, &pll->hw);
-+}
-+
-+static int k210_register_plls(struct device_node *np)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < K210_PLL_NUM; i++)
-+		k210_init_pll(&kcl->plls[i], i, kcl->regs);
-+
-+	/* PLL0 and PLL1 only have IN0 as parent */
-+	ret = k210_register_pll(&kcl->plls[K210_PLL0], "pll0", 1,
-+				&k210_pll_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL0 failed\n", np);
-+		return ret;
-+	}
-+	kcl->parents[K210_PARENT_PLL0] = &kcl->plls[K210_PLL0].hw;
-+
-+	ret = k210_register_pll(&kcl->plls[K210_PLL1], "pll1", 1,
-+				&k210_pll_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL1 failed\n", np);
-+		return ret;
-+	}
-+	kcl->parents[K210_PARENT_PLL1] = &kcl->plls[K210_PLL1].hw;
-+
-+	/* PLL2 has IN0, PLL0 and PLL1 as parents */
-+	ret = k210_register_pll(&kcl->plls[K210_PLL2], "pll2", 3,
-+				&k210_pll2_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL2 failed\n", np);
-+		return ret;
-+	}
-+	kcl->parents[K210_PARENT_PLL2] = &kcl->plls[K210_PLL2].hw;
-+
-+	return 0;
-+}
-+
-+static int k210_aclk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	k210_aclk_set_selector(index);
-+
-+	return 0;
-+}
-+
-+static u8 k210_aclk_get_parent(struct clk_hw *hw)
-+{
-+	u32 sel;
-+
-+	sel = readl(kcl->regs + K210_SYSCTL_SEL0) & K210_ACLK_SEL;
-+
-+	return sel ? 1 : 0;
-+}
-+
-+static unsigned long k210_aclk_get_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	u32 reg = readl(kcl->regs + K210_SYSCTL_SEL0);
-+	unsigned int shift;
-+
-+	if (!(reg & 0x1))
-+		return parent_rate;
-+
-+	shift = FIELD_GET(K210_ACLK_DIV, reg);
-+
-+	return parent_rate / (2UL << shift);
-+}
-+
-+static const struct clk_ops k210_aclk_ops = {
-+	.set_parent	= k210_aclk_set_parent,
-+	.get_parent	= k210_aclk_get_parent,
-+	.recalc_rate	= k210_aclk_get_rate,
-+};
-+
-+static int k210_register_aclk(struct device_node *np)
-+{
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	/* ACLK has IN0 and PLL0 as parents */
-+	init.name = "aclk";
-+	init.parent_hws = kcl->parents;
-+	init.num_parents = 2;
-+	init.ops = &k210_aclk_ops;
-+	kcl->aclk.init = &init;
-+
-+	ret = clk_hw_register(NULL, &kcl->aclk);
-+	if (ret) {
-+		pr_err("%pOFP: register aclk failed\n", np);
-+		return ret;
-+	}
-+
-+	kcl->parents[K210_PARENT_ACLK] = &kcl->aclk;
-+
-+	return 0;
-+}
-+
-+#define to_k210_clk_id(hw)	((unsigned int)((hw) - &kcl->clks[0]))
-+#define to_k210_clk_cfg(hw)	(&k210_clks[to_k210_clk_id(hw)])
-+
-+static u32 k210_clk_get_div_val(struct k210_clk_cfg *kclk)
-+{
-+	u32 reg = readl(kcl->regs + kclk->div_reg);
-+
-+	return (reg >> kclk->div_shift) & GENMASK(kclk->div_width - 1, 0);
-+}
-+
-+static unsigned long k210_clk_divider(struct k210_clk_cfg *kclk,
-+				      u32 div_val)
-+{
-+	switch (kclk->div_type) {
-+	case K210_DIV_ONE_BASED:
-+		return div_val + 1;
-+	case K210_DIV_DOUBLE_ONE_BASED:
-+		return (div_val + 1) * 2;
-+	case K210_DIV_POWER_OF_TWO:
-+		return 2UL << div_val;
-+	case K210_DIV_NONE:
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int k210_clk_enable(struct clk_hw *hw)
-+{
-+	struct k210_clk_cfg *kclk = to_k210_clk_cfg(hw);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!kclk->gate_reg)
-+		return 0;
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+	reg = readl(kcl->regs + kclk->gate_reg);
-+	reg |= BIT(kclk->gate_bit);
-+	writel(reg, kcl->regs + kclk->gate_reg);
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static void k210_clk_disable(struct clk_hw *hw)
-+{
-+	struct k210_clk_cfg *kclk = to_k210_clk_cfg(hw);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!kclk->gate_reg)
-+		return;
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+	reg = readl(kcl->regs + kclk->gate_reg);
-+	reg &= ~BIT(kclk->gate_bit);
-+	writel(reg, kcl->regs + kclk->gate_reg);
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+}
-+
-+static int k210_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct k210_clk_cfg *kclk = to_k210_clk_cfg(hw);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!kclk->mux_reg) {
-+		if (WARN_ON(index != 0))
-+			return -EINVAL;
-+		return 0;
-+	}
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+	reg = readl(kcl->regs + kclk->mux_reg);
-+	if (index)
-+		reg |= BIT(kclk->mux_bit);
-+	else
-+		reg &= ~BIT(kclk->mux_bit);
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 k210_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct k210_clk_cfg *kclk = to_k210_clk_cfg(hw);
-+	unsigned long flags;
-+	u32 reg, idx;
-+
-+	if (!kclk->mux_reg)
-+		return 0;
-+
-+	spin_lock_irqsave(&kcl->clk_lock, flags);
-+	reg = readl(kcl->regs + kclk->mux_reg);
-+	idx = (reg & BIT(kclk->mux_bit)) ? 1 : 0;
-+	spin_unlock_irqrestore(&kcl->clk_lock, flags);
-+
-+	return idx;
-+}
-+
-+static unsigned long k210_clk_get_rate(struct clk_hw *hw,
-+				       unsigned long parent_rate)
-+{
-+	struct k210_clk_cfg *kclk = to_k210_clk_cfg(hw);
-+	unsigned long divider;
-+
-+	if (!kclk->div_reg)
-+		return parent_rate;
-+
-+	divider = k210_clk_divider(kclk, k210_clk_get_div_val(kclk));
-+	if (WARN_ON(!divider))
-+		return 0;
-+
-+	return parent_rate / divider;
-+}
-+
-+static const struct clk_ops k210_clk_ops = {
-+	.enable		= k210_clk_enable,
-+	.disable	= k210_clk_disable,
-+	.set_parent	= k210_clk_set_parent,
-+	.get_parent	= k210_clk_get_parent,
-+	.recalc_rate	= k210_clk_get_rate,
-+};
-+
-+static struct clk_hw *k210_register_clk(int id, enum k210_parent_idx parent_idx,
-+					int num_parents, unsigned long flags)
-+{
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	init.name = k210_clks[id].name;
-+	init.parent_hws = &kcl->parents[parent_idx];
-+	init.num_parents = num_parents;
-+	init.flags = flags;
-+	init.ops = &k210_clk_ops;
-+	kcl->clks[id].init = &init;
-+
-+	ret = clk_hw_register(NULL, &kcl->clks[id]);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &kcl->clks[id];
-+}
-+
-+static inline struct clk_hw *k210_register_mux_clk(int id)
-+{
-+	/*
-+	 * All muxed clocks have IN0 and PLL0 as parents: these are the
-+	 * first two entries of the parents array.
-+	 */
-+	return k210_register_clk(id, K210_PARENT_IN0, 2, 0);
-+}
-+
-+static inline struct clk_hw *k210_register_critical_clk(int id,
-+					enum k210_parent_idx parent_idx)
-+{
-+	return k210_register_clk(id, parent_idx, 1, CLK_IS_CRITICAL);
-+}
-+
-+static inline struct clk_hw *k210_register_child(int id,
-+					enum k210_parent_idx parent_idx)
-+{
-+	return k210_register_clk(id, parent_idx, 1, 0);
-+}
-+
-+static inline struct clk_hw *k210_register_in0_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_IN0);
-+}
-+
-+static inline struct clk_hw *k210_register_pll0_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_PLL0);
-+}
-+
-+static inline struct clk_hw *k210_register_pll2_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_PLL2);
-+}
-+
-+static inline struct clk_hw *k210_register_aclk_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_ACLK);
-+}
-+
-+static inline struct clk_hw *k210_register_apb0_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_APB0);
-+}
-+
-+static inline struct clk_hw *k210_register_apb1_child(int id)
-+{
-+	return k210_register_child(id, K210_PARENT_APB1);
-+}
-+
-+static void __init k210_clk_init(struct device_node *np)
-+{
-+	struct device_node *sysctl_np;
-+	struct clk_hw **hws;
-+	struct clk *in0;
-+	int i, ret;
-+
-+	kcl = kzalloc(sizeof(*kcl), GFP_KERNEL);
-+	if (!kcl)
-+		return;
-+
-+	kcl->clk_data = kzalloc(struct_size(kcl->clk_data, hws, K210_NUM_CLKS),
-+				GFP_KERNEL);
-+	if (!kcl->clk_data)
-+		return;
-+
-+	sysctl_np = of_get_parent(np);
-+	kcl->regs = of_iomap(sysctl_np, 0);
-+	of_node_put(sysctl_np);
-+	if (!kcl->regs) {
-+		pr_err("%pOFP: failed to map registers\n", np);
-+		return;
-+	}
-+
-+	spin_lock_init(&kcl->clk_lock);
-+	kcl->clk_data->num = K210_NUM_CLKS;
-+	hws = kcl->clk_data->hws;
-+	for (i = 0; i < K210_NUM_CLKS; i++)
-+		hws[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	/* Get the system base fixed-rate 26MHz oscillator clock */
-+	in0 = of_clk_get(np, 0);
-+	if (IS_ERR(in0)) {
-+		pr_err("%pOFP: failed to get base fixed-rate oscillator\n", np);
-+		return;
-+	}
-+	kcl->parents[K210_PARENT_IN0] = __clk_get_hw(in0);
-+
-+	ret = k210_register_plls(np);
-+	if (ret)
-+		return;
-+
-+	ret = k210_register_aclk(np);
-+	if (ret)
-+		return;
-+
-+	/*
-+	 * Critical clocks: there are no consumers of the SRAM clocks,
-+	 * including the AI clock for the third SRAM bank. The CPU clock
-+	 * is only referenced by the uarths serial device and so would be
-+	 * disabled if the serial console is disabled. Mark all these clocks
-+	 * as critical so that they are never disabled by the core clock
-+	 * management.
-+	 */
-+	hws[K210_CLK_CPU] =
-+		k210_register_critical_clk(K210_CLK_CPU, K210_PARENT_ACLK);
-+	hws[K210_CLK_SRAM0] =
-+		k210_register_critical_clk(K210_CLK_SRAM0, K210_PARENT_ACLK);
-+	hws[K210_CLK_SRAM1] =
-+		k210_register_critical_clk(K210_CLK_SRAM1, K210_PARENT_ACLK);
-+	hws[K210_CLK_AI] =
-+		 k210_register_critical_clk(K210_CLK_AI, K210_PARENT_PLL1);
-+
-+	/* Clocks with aclk as source */
-+	hws[K210_CLK_DMA] = k210_register_aclk_child(K210_CLK_DMA);
-+	hws[K210_CLK_FFT] = k210_register_aclk_child(K210_CLK_FFT);
-+	hws[K210_CLK_ROM] = k210_register_aclk_child(K210_CLK_ROM);
-+	hws[K210_CLK_DVP] = k210_register_aclk_child(K210_CLK_DVP);
-+	hws[K210_CLK_APB0] = k210_register_aclk_child(K210_CLK_APB0);
-+	hws[K210_CLK_APB1] = k210_register_aclk_child(K210_CLK_APB1);
-+	hws[K210_CLK_APB2] = k210_register_aclk_child(K210_CLK_APB2);
-+
-+	/* Clocks with PLL0 as source */
-+	hws[K210_CLK_SPI0] = k210_register_pll0_child(K210_CLK_SPI0);
-+	hws[K210_CLK_SPI1] = k210_register_pll0_child(K210_CLK_SPI1);
-+	hws[K210_CLK_SPI2] = k210_register_pll0_child(K210_CLK_SPI2);
-+	hws[K210_CLK_I2C0] = k210_register_pll0_child(K210_CLK_I2C0);
-+	hws[K210_CLK_I2C1] = k210_register_pll0_child(K210_CLK_I2C1);
-+	hws[K210_CLK_I2C2] = k210_register_pll0_child(K210_CLK_I2C2);
-+
-+	/* Clocks with PLL2 as source */
-+	hws[K210_CLK_I2S0] = k210_register_pll2_child(K210_CLK_I2S0);
-+	hws[K210_CLK_I2S1] = k210_register_pll2_child(K210_CLK_I2S1);
-+	hws[K210_CLK_I2S2] = k210_register_pll2_child(K210_CLK_I2S2);
-+	hws[K210_CLK_I2S0_M] = k210_register_pll2_child(K210_CLK_I2S0_M);
-+	hws[K210_CLK_I2S1_M] = k210_register_pll2_child(K210_CLK_I2S1_M);
-+	hws[K210_CLK_I2S2_M] = k210_register_pll2_child(K210_CLK_I2S2_M);
-+
-+	/* Clocks with IN0 as source */
-+	hws[K210_CLK_WDT0] = k210_register_in0_child(K210_CLK_WDT0);
-+	hws[K210_CLK_WDT1] = k210_register_in0_child(K210_CLK_WDT1);
-+	hws[K210_CLK_RTC] = k210_register_in0_child(K210_CLK_RTC);
-+
-+	/* Clocks with APB0 as source */
-+	kcl->parents[K210_PARENT_APB0] = hws[K210_CLK_APB0];
-+	hws[K210_CLK_GPIO] = k210_register_apb0_child(K210_CLK_GPIO);
-+	hws[K210_CLK_UART1] = k210_register_apb0_child(K210_CLK_UART1);
-+	hws[K210_CLK_UART2] = k210_register_apb0_child(K210_CLK_UART2);
-+	hws[K210_CLK_UART3] = k210_register_apb0_child(K210_CLK_UART3);
-+	hws[K210_CLK_FPIOA] = k210_register_apb0_child(K210_CLK_FPIOA);
-+	hws[K210_CLK_SHA] = k210_register_apb0_child(K210_CLK_SHA);
-+
-+	/* Clocks with APB1 as source */
-+	kcl->parents[K210_PARENT_APB1] = hws[K210_CLK_APB1];
-+	hws[K210_CLK_AES] = k210_register_apb1_child(K210_CLK_AES);
-+	hws[K210_CLK_OTP] = k210_register_apb1_child(K210_CLK_OTP);
-+
-+	/* Mux clocks with in0 or pll0 as source */
-+	hws[K210_CLK_SPI3] = k210_register_mux_clk(K210_CLK_SPI3);
-+	hws[K210_CLK_TIMER0] = k210_register_mux_clk(K210_CLK_TIMER0);
-+	hws[K210_CLK_TIMER1] = k210_register_mux_clk(K210_CLK_TIMER1);
-+	hws[K210_CLK_TIMER2] = k210_register_mux_clk(K210_CLK_TIMER2);
-+
-+	for (i = 0; i < K210_NUM_CLKS; i++) {
-+		if (IS_ERR(hws[i])) {
-+			pr_err("%pOFP: register clock %s failed %ld\n",
-+			       np, k210_clks[i].name, PTR_ERR(hws[i]));
-+			return;
-+		}
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, kcl->clk_data);
-+	if (ret) {
-+		pr_err("%pOFP: add clock provider failed %d\n", np, ret);
-+		return;
-+	}
-+
-+	pr_info("%pOFP: CPU running at %lu MHz\n",
-+		np, clk_hw_get_rate(hws[K210_CLK_CPU]) / 1000000);
-+}
-+
-+CLK_OF_DECLARE(k210_clk, "canaan,k210-clk", k210_clk_init);
-+
-+/*
-+ * Enable PLL1 to be able to use the AI SRAM.
-+ */
-+void __init k210_clk_early_init(void __iomem *regs)
-+{
-+	struct k210_pll pll1;
-+
-+	/* Make sure ACLK selector is set to PLL0 */
-+	k210_aclk_set_selector(1);
-+
-+	/* Startup PLL1 to enable the aisram bank for general memory use */
-+	k210_init_pll(&pll1, K210_PLL1, regs);
-+	k210_pll_enable_hw(&pll1);
-+}
-diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
-index 5232d13f07e5..8179b69518b4 100644
---- a/drivers/soc/canaan/Kconfig
-+++ b/drivers/soc/canaan/Kconfig
-@@ -1,14 +1,12 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--if SOC_CANAAN
--
--config K210_SYSCTL
-+config SOC_K210_SYSCTL
- 	bool "Canaan Kendryte K210 SoC system controller"
--	default y
--	depends on RISCV
-+	depends on RISCV && SOC_CANAAN && OF
-+	default SOC_CANAAN
-+        select PM
-+        select SIMPLE_PM_BUS
-+        select SYSCON
-+        select MFD_SYSCON
- 	help
--	  Enables controlling the K210 various clocks and to enable
--	  general purpose use of the extra 2MB of SRAM normally
--	  reserved for the AI engine.
--
--endif
-+	  Canaan Kendryte K210 SoC system controller driver.
-diff --git a/drivers/soc/canaan/Makefile b/drivers/soc/canaan/Makefile
-index 002d9ce95c0d..570280ad7967 100644
---- a/drivers/soc/canaan/Makefile
-+++ b/drivers/soc/canaan/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_K210_SYSCTL)	+= k210-sysctl.o
-+obj-$(CONFIG_SOC_K210_SYSCTL)	+= k210-sysctl.o
-diff --git a/drivers/soc/canaan/k210-sysctl.c b/drivers/soc/canaan/k210-sysctl.c
-index 60b474c33d45..27a346c406bc 100644
---- a/drivers/soc/canaan/k210-sysctl.c
-+++ b/drivers/soc/canaan/k210-sysctl.c
-@@ -3,165 +3,45 @@
-  * Copyright (c) 2019 Christoph Hellwig.
-  * Copyright (c) 2019 Western Digital Corporation or its affiliates.
-  */
--#include <linux/types.h>
- #include <linux/io.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/clk-provider.h>
--#include <linux/clkdev.h>
--#include <linux/bitfield.h>
-+#include <linux/of_platform.h>
-+#include <linux/clk.h>
- #include <asm/soc.h>
- 
- #include <soc/canaan/k210-sysctl.h>
- 
--#define K210_SYSCTL_CLK0_FREQ		26000000UL
--
--/* Registers base address */
--#define K210_SYSCTL_SYSCTL_BASE_ADDR	0x50440000ULL
--
--/* Register bits */
--/* K210_SYSCTL_PLL1: clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
--#define PLL_RESET		(1 << 20)
--#define PLL_PWR			(1 << 21)
--#define PLL_BYPASS		(1 << 23)
--#define PLL_OUT_EN		(1 << 25)
--/* K210_SYSCTL_PLL_LOCK */
--#define PLL1_LOCK1		(1 << 8)
--#define PLL1_LOCK2		(1 << 9)
--#define PLL1_SLIP_CLEAR		(1 << 10)
--/* K210_SYSCTL_SEL0 */
--#define CLKSEL_ACLK		(1 << 0)
--/* K210_SYSCTL_CLKEN_CENT */
--#define CLKEN_CPU		(1 << 0)
--#define CLKEN_SRAM0		(1 << 1)
--#define CLKEN_SRAM1		(1 << 2)
--/* K210_SYSCTL_EN_PERI */
--#define CLKEN_ROM		(1 << 0)
--#define CLKEN_TIMER0		(1 << 21)
--#define CLKEN_RTC		(1 << 29)
--
--struct k210_sysctl {
--	void __iomem		*regs;
--	struct clk_hw		hw;
--};
--
--static void k210_set_bits(u32 val, void __iomem *reg)
--{
--	writel(readl(reg) | val, reg);
--}
--
--static void k210_clear_bits(u32 val, void __iomem *reg)
--{
--	writel(readl(reg) & ~val, reg);
--}
--
--static void k210_pll1_enable(void __iomem *regs)
--{
--	u32 val;
--
--	val = readl(regs + K210_SYSCTL_PLL1);
--	val &= ~GENMASK(19, 0);				/* clkr1 = 0 */
--	val |= FIELD_PREP(GENMASK(9, 4), 0x3B);		/* clkf1 = 59 */
--	val |= FIELD_PREP(GENMASK(13, 10), 0x3);	/* clkod1 = 3 */
--	val |= FIELD_PREP(GENMASK(19, 14), 0x3B);	/* bwadj1 = 59 */
--	writel(val, regs + K210_SYSCTL_PLL1);
--
--	k210_clear_bits(PLL_BYPASS, regs + K210_SYSCTL_PLL1);
--	k210_set_bits(PLL_PWR, regs + K210_SYSCTL_PLL1);
--
--	/*
--	 * Reset the pll. The magic NOPs come from the Kendryte reference SDK.
--	 */
--	k210_clear_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--	k210_set_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--	nop();
--	nop();
--	k210_clear_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--
--	for (;;) {
--		val = readl(regs + K210_SYSCTL_PLL_LOCK);
--		if (val & PLL1_LOCK2)
--			break;
--		writel(val | PLL1_SLIP_CLEAR, regs + K210_SYSCTL_PLL_LOCK);
--	}
--
--	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL1);
--}
--
--static unsigned long k210_sysctl_clk_recalc_rate(struct clk_hw *hw,
--		unsigned long parent_rate)
--{
--	struct k210_sysctl *s = container_of(hw, struct k210_sysctl, hw);
--	u32 clksel0, pll0;
--	u64 pll0_freq, clkr0, clkf0, clkod0;
--
--	/*
--	 * If the clock selector is not set, use the base frequency.
--	 * Otherwise, use PLL0 frequency with a frequency divisor.
--	 */
--	clksel0 = readl(s->regs + K210_SYSCTL_SEL0);
--	if (!(clksel0 & CLKSEL_ACLK))
--		return K210_SYSCTL_CLK0_FREQ;
--
--	/*
--	 * Get PLL0 frequency:
--	 * freq = base frequency * clkf0 / (clkr0 * clkod0)
--	 */
--	pll0 = readl(s->regs + K210_SYSCTL_PLL0);
--	clkr0 = 1 + FIELD_GET(GENMASK(3, 0), pll0);
--	clkf0 = 1 + FIELD_GET(GENMASK(9, 4), pll0);
--	clkod0 = 1 + FIELD_GET(GENMASK(13, 10), pll0);
--	pll0_freq = clkf0 * K210_SYSCTL_CLK0_FREQ / (clkr0 * clkod0);
--
--	/* Get the frequency divisor from the clock selector */
--	return pll0_freq / (2ULL << FIELD_GET(0x00000006, clksel0));
--}
--
--static const struct clk_ops k210_sysctl_clk_ops = {
--	.recalc_rate	= k210_sysctl_clk_recalc_rate,
--};
--
--static const struct clk_init_data k210_clk_init_data = {
--	.name		= "k210-sysctl-pll1",
--	.ops		= &k210_sysctl_clk_ops,
--};
--
- static int k210_sysctl_probe(struct platform_device *pdev)
- {
--	struct k210_sysctl *s;
--	int error;
--
--	pr_info("Kendryte K210 SoC sysctl\n");
--
--	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
--	if (!s)
--		return -ENOMEM;
--
--	s->regs = devm_ioremap_resource(&pdev->dev,
--			platform_get_resource(pdev, IORESOURCE_MEM, 0));
--	if (IS_ERR(s->regs))
--		return PTR_ERR(s->regs);
--
--	s->hw.init = &k210_clk_init_data;
--	error = devm_clk_hw_register(&pdev->dev, &s->hw);
--	if (error) {
--		dev_err(&pdev->dev, "failed to register clk");
--		return error;
-+	struct device *dev = &pdev->dev;
-+	struct clk *pclk;
-+	int ret;
-+
-+	dev_info(dev, "K210 system controller\n");
-+
-+	/* Get power bus clock */
-+	pclk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(pclk))
-+		return dev_err_probe(dev, PTR_ERR(pclk),
-+				     "Get bus clock failed\n");
-+
-+	ret = clk_prepare_enable(pclk);
-+	if (ret) {
-+		dev_err(dev, "Enable bus clock failed\n");
-+		return ret;
- 	}
- 
--	error = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get,
--					    &s->hw);
--	if (error) {
--		dev_err(&pdev->dev, "adding clk provider failed\n");
--		return error;
--	}
-+	/* Populate children */
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		dev_err(dev, "Populate platform failed %d\n", ret);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct of_device_id k210_sysctl_of_match[] = {
--	{ .compatible = "kendryte,k210-sysctl", },
--	{}
-+	{ .compatible = "canaan,k210-sysctl", },
-+	{ /* sentinel */ },
- };
- 
- static struct platform_driver k210_sysctl_driver = {
-@@ -171,12 +51,13 @@ static struct platform_driver k210_sysctl_driver = {
- 	},
- 	.probe			= k210_sysctl_probe,
- };
-+builtin_platform_driver(k210_sysctl_driver);
- 
--static int __init k210_sysctl_init(void)
--{
--	return platform_driver_register(&k210_sysctl_driver);
--}
--core_initcall(k210_sysctl_init);
-+/*
-+ * System controller registers base address and size.
-+ */
-+#define K210_SYSCTL_BASE_ADDR	0x50440000ULL
-+#define K210_SYSCTL_BASE_SIZE	0x1000
- 
- /*
-  * This needs to be called very early during initialization, given that
-@@ -184,24 +65,14 @@ core_initcall(k210_sysctl_init);
-  */
- static void __init k210_soc_early_init(const void *fdt)
- {
--	void __iomem *regs;
--
--	regs = ioremap(K210_SYSCTL_SYSCTL_BASE_ADDR, 0x1000);
--	if (!regs)
--		panic("K210 sysctl ioremap");
--
--	/* Enable PLL1 to make the KPU SRAM useable */
--	k210_pll1_enable(regs);
--
--	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL0);
-+	void __iomem *sysctl_base;
- 
--	k210_set_bits(CLKEN_CPU | CLKEN_SRAM0 | CLKEN_SRAM1,
--		      regs + K210_SYSCTL_EN_CENT);
--	k210_set_bits(CLKEN_ROM | CLKEN_TIMER0 | CLKEN_RTC,
--		      regs + K210_SYSCTL_EN_PERI);
-+	sysctl_base = ioremap(K210_SYSCTL_BASE_ADDR, K210_SYSCTL_BASE_SIZE);
-+	if (!sysctl_base)
-+		panic("k210-sysctl: ioremap failed");
- 
--	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_SEL0);
-+	k210_clk_early_init(sysctl_base);
- 
--	iounmap(regs);
-+	iounmap(sysctl_base);
- }
--SOC_EARLY_INIT_DECLARE(generic_k210, "kendryte,k210", k210_soc_early_init);
-+SOC_EARLY_INIT_DECLARE(k210_soc, "canaan,kendryte-k210", k210_soc_early_init);
-diff --git a/include/soc/canaan/k210-sysctl.h b/include/soc/canaan/k210-sysctl.h
-index 2e037db68f35..0c2b2c2dabca 100644
---- a/include/soc/canaan/k210-sysctl.h
-+++ b/include/soc/canaan/k210-sysctl.h
-@@ -38,4 +38,6 @@
- #define K210_SYSCTL_DMA_SEL1	0x68 /* DMA handshake selector 1 */
- #define K210_SYSCTL_POWER_SEL	0x6C /* IO Power Mode Select controller */
- 
-+void k210_clk_early_init(void __iomem *regs);
-+
- #endif
--- 
-2.29.2
-
+On 2021/01/12 9:58, Damien Le Moal wrote:=0A=
+> This series of patches improves support for boards based on the Canaan=0A=
+> Kendryte K210 RISC-V dual core SoC. Minimal support for this SoC is=0A=
+> already included in the kernel. These patches complete it, enabling=0A=
+> support for most peripherals present on the SoC as well as introducing=0A=
+> device trees for the various K210 boards available on the market today=0A=
+> from SiPeed and Kendryte.=0A=
+> =0A=
+> The patches here are the remaining patches of the series not applied=0A=
+> yet. Patch 1 adds the SoC clock driver and patch 2 adds the pinctrl=0A=
+> driver.=0A=
+=0A=
+I screwed up with my git-send-email setup and patch 1 and 2 went only to Pa=
+lmer=0A=
+and the riscv list. I resent these eparately to Stephen/linux-clk and=0A=
+Linus/linux-gpio respectively (suppress-cc and other related cc&to control=
+=0A=
+options interactions are a bit obscure to me...).=0A=
+=0A=
+My apologies for the mess. Please let me know if I should resend correctly =
+the=0A=
+entire series.=0A=
+=0A=
+> =0A=
+> Patches 3 to 8 update the existing K210 device tree and add new=0A=
+> device tree files for several K210 based boards: MAIX Bit, MAIXDUINO,=0A=
+> MAIX Dock and MAIX Go boards from SiPeed and the KD233 development=0A=
+> board from Canaan.=0A=
+> =0A=
+> Finally the last two patches updates the k210 nommu defconfig to include=
+=0A=
+> the newly implemented drivers and provide a new default configuration=0A=
+> file enabling SD card support.=0A=
+> =0A=
+> A lot of the work on the device tree and on the K210 drivers come from=0A=
+> the work by Sean Anderson for the U-Boot project support of the K210=0A=
+> SoC. Sean also helped with debugging many aspects of this series.=0A=
+> =0A=
+> A tree with all patches applied is available here:=0A=
+> https://github.com/damien-lemoal/linux, k210-sysctl-v24 branch.=0A=
+> A demonstration of this series used on a SiPeed MAIX Dock=0A=
+> board together with an I2C servo controller can be seen here:=0A=
+> https://damien-lemoal.github.io/linux-robot-arm/#example=0A=
+> =0A=
+> This tree was used to build userspace busybox environment image that is=
+=0A=
+> then copied onto an SD card formatted with ext2:=0A=
+> https://github.com/damien-lemoal/buildroot=0A=
+> Of note is that running this userspace environment requires a revert of=
+=0A=
+> commit 2217b982624680d19a80ebb4600d05c8586c4f96 introduced during the=0A=
+> 5.9 development cycle. Without this revert, execution of the init=0A=
+> process fails. A problem with the riscv port of elf2flt is suspected but=
+=0A=
+> not confirmed. I am now starting to investigate this problem.=0A=
+> =0A=
+> Reviews and comments are as always much welcome.=0A=
+> =0A=
+> Changes from v10:=0A=
+> * Rebased on riscv tree fixes+for-next branches. Patches already applied=
+=0A=
+>   to these branches were removed from this series.=0A=
+> * Fixed the clock driver and pinctrl driver patch titles to indicate the=
+=0A=
+>   correct target sub-components.=0A=
+> * Applied reviewed-by tags from Anup.=0A=
+> =0A=
+> Changes from v9:=0A=
+> * Added patch 6 to avoid DTS compilation errors after patch 9 is=0A=
+>   applied and until patch 16 is applied.=0A=
+> =0A=
+> Changes from v8:=0A=
+> * Addressed Rob's comments on the sysctl driver bindings documentation=0A=
+> * Fixed a typo in the fpios driver bindings documentation=0A=
+> =0A=
+> Changes from v7:=0A=
+> * Removed the __init annotation for the drivers reset, pinctrl and=0A=
+>   sysctl drivers probe functions as suggested by Geert. Also removed=0A=
+>   the __refdata annotation for the struct platform_driver variables of=0A=
+>   these drivers.=0A=
+> =0A=
+> Changes from v6:=0A=
+> * Annotate struct platform_driver variables with __refdata to avoid=0A=
+>   section mismatch compilation errors=0A=
+> * Add empty sentinel entry to of_device_id tables of the sysctl, reset=0A=
+>   and pinctrl drivers.=0A=
+> =0A=
+> Changes from v5:=0A=
+> * Addressed Philipp's comment on the reset controller driver=0A=
+> * Added patch 6 to reduce the size of the clock driver patch=0A=
+>   (now patch 12).=0A=
+> =0A=
+> Changes from v4:=0A=
+> * Simplified reset controller driver using of_xlate callback as=0A=
+>   suggested by Philipp=0A=
+> * Fixed compilation error when using other configs than one of the=0A=
+>   nommu_k210 defconfigs.=0A=
+> * Addressed most clock driver comments from Stephen.=0A=
+> * Removed CONFIG_GPIO_SYSFS from defconfigs=0A=
+> * Rebased on 5.10-rc7=0A=
+> =0A=
+> Changes from V3:=0A=
+> * Add one entry per driver in MAINTAINERS file=0A=
+> =0A=
+> Changes from V2:=0A=
+> * Add MAINTAINERS file entry for the SoC support, listing myself as=0A=
+>   maintainer.=0A=
+> * Removed use of postcore_initcall() for declaring the drivers, using=0A=
+>   the regular builtin_platform_driver() instead.=0A=
+> * Fixed fpio pinctrl driver bindings documentation as commented by=0A=
+>   Geert: removed input-schmitt and added input-schmitt-disable, fixed=0A=
+>   typo and added input-disable and output-disable.=0A=
+> * Fixed device tree to have cs-gpios active low, as per the default, as=
+=0A=
+>   active high necessity was an artifact of the gpio level double=0A=
+>   inversion bug fixed recently.=0A=
+> * Removed CONFIG_VT from defconfigs to reduce the kernel image size as=0A=
+>   suggested by Geert.=0A=
+> =0A=
+> Changes from v1:=0A=
+> * Improved DT bindings documentation=0A=
+> * SPI and GPIO patches removed from this series (and being processed=0A=
+>   directly through the relevant subsystems directly)=0A=
+> * Improved device trees=0A=
+> * Various cleanup and improvments of the drivers=0A=
+> =0A=
+> Damien Le Moal (10):=0A=
+>   clk: Add RISC-V Canaan Kendryte K210 clock driver=0A=
+>   pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver=0A=
+>   riscv: Update Canaan Kendryte K210 device tree=0A=
+>   riscv: Add SiPeed MAIX BiT board device tree=0A=
+>   riscv: Add SiPeed MAIX DOCK board device tree=0A=
+>   riscv: Add SiPeed MAIX GO board device tree=0A=
+>   riscv: Add SiPeed MAIXDUINO board device tree=0A=
+>   riscv: Add Kendryte KD233 board device tree=0A=
+>   riscv: Update Canaan Kendryte K210 defconfig=0A=
+>   riscv: Add Canaan Kendryte K210 SD card defconfig=0A=
+> =0A=
+>  MAINTAINERS                                   |    8 +=0A=
+>  arch/riscv/Kconfig.socs                       |    3 +-=0A=
+>  arch/riscv/boot/dts/canaan/canaan_kd233.dts   |  178 +++=0A=
+>  arch/riscv/boot/dts/canaan/k210.dts           |   23 -=0A=
+>  arch/riscv/boot/dts/canaan/k210.dtsi          |  551 ++++++++-=0A=
+>  arch/riscv/boot/dts/canaan/k210_generic.dts   |   46 +=0A=
+>  .../riscv/boot/dts/canaan/sipeed_maix_bit.dts |  227 ++++=0A=
+>  .../boot/dts/canaan/sipeed_maix_dock.dts      |  229 ++++=0A=
+>  arch/riscv/boot/dts/canaan/sipeed_maix_go.dts |  237 ++++=0A=
+>  .../boot/dts/canaan/sipeed_maixduino.dts      |  201 ++++=0A=
+>  arch/riscv/configs/nommu_k210_defconfig       |   44 +-=0A=
+>  .../riscv/configs/nommu_k210_sdcard_defconfig |   92 ++=0A=
+>  drivers/clk/Kconfig                           |    8 +=0A=
+>  drivers/clk/Makefile                          |    1 +=0A=
+>  drivers/clk/clk-k210.c                        | 1005 +++++++++++++++++=
+=0A=
+>  drivers/pinctrl/Kconfig                       |   13 +=0A=
+>  drivers/pinctrl/Makefile                      |    1 +=0A=
+>  drivers/pinctrl/pinctrl-k210.c                |  985 ++++++++++++++++=0A=
+>  drivers/soc/canaan/Kconfig                    |   18 +-=0A=
+>  drivers/soc/canaan/Makefile                   |    2 +-=0A=
+>  drivers/soc/canaan/k210-sysctl.c              |  205 +---=0A=
+>  include/dt-bindings/clock/k210-clk.h          |    1 -=0A=
+>  include/soc/canaan/k210-sysctl.h              |    2 +=0A=
+>  23 files changed, 3844 insertions(+), 236 deletions(-)=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/canaan_kd233.dts=0A=
+>  delete mode 100644 arch/riscv/boot/dts/canaan/k210.dts=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/k210_generic.dts=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/sipeed_maix_bit.dts=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/sipeed_maix_dock.dts=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/sipeed_maix_go.dts=0A=
+>  create mode 100644 arch/riscv/boot/dts/canaan/sipeed_maixduino.dts=0A=
+>  create mode 100644 arch/riscv/configs/nommu_k210_sdcard_defconfig=0A=
+>  create mode 100644 drivers/clk/clk-k210.c=0A=
+>  create mode 100644 drivers/pinctrl/pinctrl-k210.c=0A=
+> =0A=
+> Cc: Stephen Boyd <sboyd@kernel.org>=0A=
+> Cc: Michael Turquette <mturquette@baylibre.com>=0A=
+> Cc: linux-clk@vger.kernel.org=0A=
+> Cc: Linus Walleij <linus.walleij@linaro.org>=0A=
+> Cc: linux-gpio@vger.kernel.org=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
