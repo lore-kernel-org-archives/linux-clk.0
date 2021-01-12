@@ -2,201 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1E3C433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 14:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F495C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 16:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9430923127
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 14:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5B3E23110
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 16:45:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388067AbhALN7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jan 2021 08:59:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58614 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388054AbhALN7a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2021 08:59:30 -0500
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C01C0617A3
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jan 2021 05:58:18 -0800 (PST)
-Received: by mail-vk1-xa35.google.com with SMTP id k9so621385vke.4
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jan 2021 05:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NXadZdz8Ctiv1n9eDAHyiJm1Q2gQ3cn9xSsA8PIpIy8=;
-        b=X6eafdEk/mhZKGkplAkeZlHtw5MHYiPGzuLqaU/8QIJNUYdB77gAnLlDUNAiD4hMNh
-         xtLhe6wxwEiVq1lSHcSdByEjddJcVv0v0t0oPEFeAc9L27R7dcQSR2snp4mzm54uhMOV
-         QKMmK332VJC9oTr7isDNxdOmzA+cqgmtgUlK1ECND3GRn5P+0A4DXM4oMIsVo0M63aHu
-         tz/gPl2J8bw3GAsqZAj7v5VCFpg1TO+MjzWZoFbxAP5iVZXNmoKqZLzr4y4p5HBfjEPW
-         z4ZdM03MFp9BUDCj2gplHxCyRyXtyF1F2XMD9c4mZY1sgSAu7ecGDfwd89/tv+VfhSp4
-         YzPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NXadZdz8Ctiv1n9eDAHyiJm1Q2gQ3cn9xSsA8PIpIy8=;
-        b=eKNp6A68g1ya3AjtNLcB4w/jvpdr/Cr5/NQereG6WstJELzmgS876h7MwD72+9Y9FJ
-         UsUptFY0s/mPW0AvUErIt86+SrSNF/u09BwZXepOemyTefHdzAULwoVBb3+HodkGBzXO
-         com31ZKPOKUnT2S7OSSkm+sQUh9rhcZlew4uULJMfRF+aUzg+S5SIe7q8voLAXzIT7td
-         l1XvfoeK9SfZyZ/nsx6YJnMIr/oTxP3zuuh7tyAINDXCjoVIlZdm4Mf0GECgnZMf0wlc
-         0joeX2B1wABfIrvkuji3sE+XvM54cYSiGwNOPm5FmCm2GV0lb4iIOygU+5jI3hB393iZ
-         A14Q==
-X-Gm-Message-State: AOAM533/EzFiQ5E+KYKfCDL9c3xlgJc/hiHNMJcB1xWEzYD6Enp4Pv7p
-        6dQjzxLvfQZl61Faxg3wJl+/SDa8AOZMF814zI4FVQ==
-X-Google-Smtp-Source: ABdhPJy+B3y/eESbyu3OC6gky5khJjR8g/IPWLuj2VIXLHRwiMv4vqF7OT9LeQIvE4BHFVFqSxmsFb+5AO9DEtsQ0nY=
-X-Received: by 2002:a1f:8f08:: with SMTP id r8mr3665187vkd.15.1610459897870;
- Tue, 12 Jan 2021 05:58:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20201217180638.22748-1-digetx@gmail.com> <20201217180638.22748-32-digetx@gmail.com>
-In-Reply-To: <20201217180638.22748-32-digetx@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Jan 2021 14:57:41 +0100
-Message-ID: <CAPDyKFrRKbQS1+t_nGH9RRKf0WGcAf-Pjzo1rJt=Sz=SMWOa7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 31/48] soc/tegra: regulators: Support Core domain state syncing
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1727219AbhALQp4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jan 2021 11:45:56 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:44433 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728150AbhALQp4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2021 11:45:56 -0500
+Received: from [185.56.157.72] (port=32796 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1kzMn9-0031SN-97; Tue, 12 Jan 2021 17:45:11 +0100
+Subject: Re: [RFC 2/2] clk: vc5: Add support for optional load capacitance
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210106173900.388758-1-aford173@gmail.com>
+ <20210106173900.388758-2-aford173@gmail.com>
+ <c5a97aca-ce74-bbd3-e99d-358e079c4c4a@lucaceresoli.net>
+ <CAHCN7x+gUQwv4cWgg7Jt2oca1n4KW=o08rzoK9TB1Z_rKE0qog@mail.gmail.com>
+ <e64a590d-1b3a-73cd-fb93-970013385224@lucaceresoli.net>
+ <CAHCN7x+NFTn9Jqzbdm7d2UZt68DSAZ9Z-r+7Txwqi1=eE=W3Ug@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <e50740b9-4ab1-bb14-da51-acd3f98fab1b@lucaceresoli.net>
+Date:   Tue, 12 Jan 2021 17:45:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHCN7x+NFTn9Jqzbdm7d2UZt68DSAZ9Z-r+7Txwqi1=eE=W3Ug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 17 Dec 2020 at 19:07, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> The core voltage shall not drop until state of Core domain is synced,
-> i.e. all device drivers that use Core domain are loaded and ready.
->
-> Support Core domain state syncing. The Core domain driver invokes the
-> core-regulator voltage syncing once the state of domain is synced, at
-> this point the Core voltage is allowed to go lower.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Hi Adam,
 
-This looks reasonable to me, feel free to add:
+On 11/01/21 17:40, Adam Ford wrote:
+> On Sat, Jan 9, 2021 at 12:02 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+>>
+>> Hi Adam,
+>>
+>> On 09/01/21 04:00, Adam Ford wrote:
+>>> On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+>>>>
+>>>> Hi Adam,
+>>>>
+>>>> On 06/01/21 18:39, Adam Ford wrote:
+>>>>> There are two registers which can set the load capacitance for
+>>>>> XTAL1 and XTAL2. These are optional registers when using an
+>>>>> external crystal.  Parse the device tree and set the
+>>>>> corresponding registers accordingly.
+>>>>
+>>>> No need to repeat the first 2 sentences, they are already in patch 1.
+>>>
+>>> The reason I did that was because if someone does a git log on the
+>>> individual file, they'd see the comment.  While it's redundant not, it
+>>> might not be as obvious in the future when looking back.   Not
+>>> everyone reviews the history of the binding, but the source files' git
+>>> logs usually have some value.   However, if you want me to drop it or
+>>> rephrase it, I can do that.
+>>
+>> Makes sense, I had never considered that before.
+>>
+>>>>> +static int vc5_map_cap_value(u32 femtofarads)
+>>>>> +{
+>>>>> +     int mapped_value;
+>>>>> +
+>>>>> +     /* The datasheet explicitly states 9000 - 25000 */
+>>>>> +     if ((femtofarads < 9000) || (femtofarads > 25000))
+>>>>> +             return -EINVAL;
+>>>>> +
+>>>>> +     /* The lowest target we can hit is 9430, so exit if it's less */
+>>>>> +     if (femtofarads < 9430)
+>>>>> +             return 0;
+>>>>> +
+>>>>> +     /*
+>>>>> +      * According to VersaClock 6E Programming Guide, there are 6
+>>>>> +      * bits which translate to 64 entries in XTAL registers 12 and
+>>>>> +      * 13. Because bits 0 and 1 increase the capacitance the
+>>>>> +      * same, some of the values can be repeated.  Plugging this
+>>>>> +      * into a spreadsheet and generating a trendline, the output
+>>>>> +      * equation becomes x = (y-9098.29) / 216.44, where 'y' is
+>>>>> +      * the desired capacitance in femtofarads, and x is the value
+>>>>> +      * of XTAL[5:0].
+>>>>> +      * To help with rounding, do fixed point math
+>>>>> +      */
+>>>>> +     femtofarads *= 100;
+>>>>> +     mapped_value = (femtofarads - 909829) / 21644;
+>>>>
+>>>> Thanks for the extensive comment, but I am confused. Not by your code
+>>>> which is very clean and readable, but by the chip documentation
+>>>> (disclaimer: I haven't read it in full depth).
+>>>
+>>> I was confused too since the datasheet and programmers manual differ a bit.
+>>>>
+>>>> The 5P49V6965 datasheet at page 17 clearly states capacitance can be
+>>>> increased in 0.5 pF steps. The "VersaClock 6E Family Register
+>>>> Descriptions and Programming Guide" at page 18 shows a table that allows
+>>>> 0.43 pF. Can you clarify how the thing works?
+>>>
+>>> I used the Versaclock 6E doc which is based on the following:
+>>>
+>>> BIT 5 - Add 6.92pF
+>>> BIT 4 - Add 3.46pF
+>>> BIT 3 - Add 1.73pF
+>>> BIT 2 - Add 0.86pF
+>>> Bit 1 - Add 0.43pF
+>>> Bit 0 - Add 0.43pF
+>>>
+>>> Because the Datasheet starts at 9pF, the math I used, assumes these
+>>> numbers are added to 9pF.
+>>> Because the datasheet shows the increments are in .5pF increments, the
+>>> 430nF seems close.  The datasheet shows 9pF - 25pF and based on the
+>>> programmer table, we could get close to 25pF by enabling all bits and
+>>> adding 9pF, however the math doesn't quite hit 25pF.
+>>>
+>>> For what it's worth I needed around 11.5pF, and with this patch, the
+>>> hardware engineer said our ppm went from around 70 ppm to around 4ppm.
+>>
+>> Did he measure what happens if you set the register according to the 0.5
+>> pF interpretation? Does it improve? I understand the difference is
+>> probably olwer than the noise, but who knows.
+>>
+>>>>> +
+>>>>> +     /*
+>>>>> +      * The datasheet states, the maximum capacitance is 25000,
+>>>>> +      * but the programmer guide shows a max value is 22832,
+>>>>> +      * so values higher values could overflow, so cap it.
+>>>>> +      */
+>>>>
+>>>> The 22832 limit is if you assume 0.43 pF steps. Assuming 0.5 pF steps
+>>>> leads to 25000. Now I am more confused than before.
+>>>
+>>> I agree.  It would be nice to get some clarification from Renesas.
+>>
+>> Definitely. Do you have access to some support from them?
+> 
+> Luca,
+> 
+> We reached out to  Renesas with the following questions:
+> 
+> 1)
+> I'm seeing a discrepancy between the datasheet and programming guide
+> we have for the Versaclock 6e in regard to the crystal load
+> programming registers.  The datasheet for the 5P49V6965A000NLGI
+> indicates a 9pF minimum with 0.5pF steps, while the programming guide
+> says that the lower two register bits both add 0.43pF, which would
+> make the equation:
+> 
+> Ci = 9pF + 0.43pF * XTAL[5:1] instead of
+> Ci = 9pF + 0.5pF * XTAL[5:0] as is published in the datasheet.
+> 
+> 2)  The programming guide shows that the default setting is 01b, but
+> the note says it's reserved, use D1 D0 = 00.  Can you confirm that we
+> should set switch mode to 00 instead of the default 01?
+> 
+> And we got the following answers:
+> 
+> 1)
+>      The first one with 0.43pF steps is the correct one. Ci = 9pF +
+> 0.43pF * XTAL[5:1]
+>      0.5pF steps was the design target.  When measuring actual
+> silicon, we found 0.43pF steps.
+> 
+>      There are 6 bits reserved for the CL setting but bits 0 and 1
+> have the same 0.43pF step.  So it is actually 5 bits with an extra LSB
+> of 0.43pF.
+> 
+> 2)
+>       Please use D1 D0 = 01.   The “00” is a typo…..
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Great thing you got all those info from Renesas!
 
-Kind regards
-Uffe
+> 
+> Based on the above response I think we should always assume XTAL bit 0
+> is 0, and only use XTAL[5:1] which should make the math go easier,
+> because the desired value in femtofarads would just be offset by 9000
+> and divided by 430 and that value would be shifted 3 places instead fo
+> two, and the  fixed-point math calculation can go away.
+> 
+> In addition to that, I would also need to make sure that D0 is set to
+> 1, so instead of just writing the shifted XTAL value, I would also
+> have to do a logic OR with 1 to set the low bit.
+> 
+> I talked with the hardware guys from work who also suggested that we
+> always write the same value to X1 and X2, so I can remove the X1 and
+> X2 references from the bindings.
+> 
+> Does that work for you?
 
+Yes.
 
-> ---
->  drivers/soc/tegra/regulators-tegra20.c | 19 ++++++++++++++++++-
->  drivers/soc/tegra/regulators-tegra30.c | 18 +++++++++++++++++-
->  2 files changed, 35 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/soc/tegra/regulators-tegra20.c b/drivers/soc/tegra/regulators-tegra20.c
-> index 367a71a3cd10..e2c11d442591 100644
-> --- a/drivers/soc/tegra/regulators-tegra20.c
-> +++ b/drivers/soc/tegra/regulators-tegra20.c
-> @@ -16,6 +16,8 @@
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/machine.h>
->
-> +#include <soc/tegra/common.h>
-> +
->  struct tegra_regulator_coupler {
->         struct regulator_coupler coupler;
->         struct regulator_dev *core_rdev;
-> @@ -38,6 +40,21 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
->         int core_cur_uV;
->         int err;
->
-> +       /*
-> +        * Tegra20 SoC has critical DVFS-capable devices that are
-> +        * permanently-active or active at a boot time, like EMC
-> +        * (DRAM controller) or Display controller for example.
-> +        *
-> +        * The voltage of a CORE SoC power domain shall not be dropped below
-> +        * a minimum level, which is determined by device's clock rate.
-> +        * This means that we can't fully allow CORE voltage scaling until
-> +        * the state of all DVFS-critical CORE devices is synced.
-> +        */
-> +       if (tegra_soc_core_domain_state_synced()) {
-> +               pr_info_once("voltage state synced\n");
-> +               return 0;
-> +       }
-> +
->         if (tegra->core_min_uV > 0)
->                 return tegra->core_min_uV;
->
-> @@ -58,7 +75,7 @@ static int tegra20_core_limit(struct tegra_regulator_coupler *tegra,
->          */
->         tegra->core_min_uV = core_max_uV;
->
-> -       pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-> +       pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
->
->         return tegra->core_min_uV;
->  }
-> diff --git a/drivers/soc/tegra/regulators-tegra30.c b/drivers/soc/tegra/regulators-tegra30.c
-> index 0e776b20f625..42d675b79fa3 100644
-> --- a/drivers/soc/tegra/regulators-tegra30.c
-> +++ b/drivers/soc/tegra/regulators-tegra30.c
-> @@ -16,6 +16,7 @@
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/machine.h>
->
-> +#include <soc/tegra/common.h>
->  #include <soc/tegra/fuse.h>
->
->  struct tegra_regulator_coupler {
-> @@ -39,6 +40,21 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
->         int core_cur_uV;
->         int err;
->
-> +       /*
-> +        * Tegra30 SoC has critical DVFS-capable devices that are
-> +        * permanently-active or active at a boot time, like EMC
-> +        * (DRAM controller) or Display controller for example.
-> +        *
-> +        * The voltage of a CORE SoC power domain shall not be dropped below
-> +        * a minimum level, which is determined by device's clock rate.
-> +        * This means that we can't fully allow CORE voltage scaling until
-> +        * the state of all DVFS-critical CORE devices is synced.
-> +        */
-> +       if (tegra_soc_core_domain_state_synced()) {
-> +               pr_info_once("voltage state synced\n");
-> +               return 0;
-> +       }
-> +
->         if (tegra->core_min_uV > 0)
->                 return tegra->core_min_uV;
->
-> @@ -59,7 +75,7 @@ static int tegra30_core_limit(struct tegra_regulator_coupler *tegra,
->          */
->         tegra->core_min_uV = core_max_uV;
->
-> -       pr_info("core minimum voltage limited to %duV\n", tegra->core_min_uV);
-> +       pr_info("core voltage initialized to %duV\n", tegra->core_min_uV);
->
->         return tegra->core_min_uV;
->  }
-> --
-> 2.29.2
->
+We are only losing the ability to set 9 + (0.43 * 32) pF using all bits.
+I'm OK with that. Should it be needed in the future we can just add it
+as a special case, maybe just add a comment saying that, like "XTAL[5:0]
+= b111111 not supported".
+
+-- 
+Luca
