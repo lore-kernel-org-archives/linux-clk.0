@@ -2,119 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EC4C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE1CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F176323441
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46349235FF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbhAMOkT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jan 2021 09:40:19 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:54778 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725858AbhAMOkS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 09:40:18 -0500
-Received: from [185.56.157.72] (port=39782 helo=[192.168.101.73])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1kzhJA-00E61H-5h; Wed, 13 Jan 2021 15:39:36 +0100
-Subject: Re: [RFC 1/2] dt-bindings: clk: versaclock5: Add load capacitance
- properties
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
+        id S1727903AbhAMOxa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jan 2021 09:53:30 -0500
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:38516 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbhAMOx3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 09:53:29 -0500
+Received: by mail-lf1-f46.google.com with SMTP id h205so3154786lfd.5;
+        Wed, 13 Jan 2021 06:53:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc
+         :in-reply-to:references:mime-version:date:user-agent
+         :content-transfer-encoding;
+        bh=l5ZLL3HVbz3X8xP5ZmbGilDYTblL2ih6VXU4JrkBYVE=;
+        b=d+AjSmd312bzQtmQpEPZ8bPKBfXgXS5vOUoQBgVPFpwhKm94vTc1CSOYaZ+N56WuI7
+         E0+poT2wwKb9xlJ2udxPhOqlOVltQWNFX/n2Rb1GxichxXyOg8tNKQHTesEPNs0t1i5y
+         L3ifX/vHsvwrzpGTRa2WewBSdY5YY5I3AI/nIL7mR+V/ZA8Q9fm/qeC2xSWJJL9QHtUL
+         pG/ducgm3T5wwOog2eXLrA6e4Nzb/RtuhvJNelxgs84k0O6RFqL7MbykMXwuIcP2amDT
+         nGdXnwvdzrpEwCrMjcPtS3p9yfZpW/d3zc8WiMo6VfUOp1qhfLyRw+1XXuVz2o2+VCoO
+         2Kiw==
+X-Gm-Message-State: AOAM530Ck/gPlWgdvtShRrrUXASJk0z8+2yq4TjamNDISXefCK0rvVBY
+        1AzQABDqxb8LYzPYWrN5WVg=
+X-Google-Smtp-Source: ABdhPJxVJAozLF+NK9vI49rngSl80ul7RvHhKpviU+vgCXuE0XnVTsokwh+rPxpgWRga6oaBKmbUeA==
+X-Received: by 2002:ac2:4437:: with SMTP id w23mr1069721lfl.618.1610549566561;
+        Wed, 13 Jan 2021 06:52:46 -0800 (PST)
+Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
+        by smtp.gmail.com with ESMTPSA id 68sm202199ljj.23.2021.01.13.06.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jan 2021 06:52:45 -0800 (PST)
+Message-ID: <629dbc81badc9facea538733bfa8ddc0842b1df7.camel@fi.rohmeurope.com>
+Subject: Re: [PATCH 04/15] dt_bindings: bd71828: Add clock output mode
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reply-To: matti.vaittinen@fi.rohmeurope.com
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210106173900.388758-1-aford173@gmail.com>
- <833e228f-6fb5-ae98-a367-9566cf5fcf69@lucaceresoli.net>
- <CAHCN7x+57x4WLbq0+7OCPhJs-1=7SJidVHD2jYjdbqn_F+d3dA@mail.gmail.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <7bad753d-a551-8810-7b12-5ec5ea9263d4@lucaceresoli.net>
-Date:   Wed, 13 Jan 2021 15:39:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org
+In-Reply-To: <20210113135201.GA2328369@robh.at.kernel.org>
+References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+         <a91eb6288331bb80b30534a31049cde508307fc0.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+         <20210113135201.GA2328369@robh.at.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7x+57x4WLbq0+7OCPhJs-1=7SJidVHD2jYjdbqn_F+d3dA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Date:   Wed, 13 Jan 2021 16:52:42 +0200
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
 
-On 09/01/21 03:48, Adam Ford wrote:
-> On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
->>
->> Hi Adam,
->>
->> On 06/01/21 18:38, Adam Ford wrote:
->>> There are two registers which can set the load capacitance for
->>> XTAL1 and XTAL2. These are optional registers when using an
->>> external crystal.  Update the bindings to support them.
->>>
->>> Signed-off-by: Adam Ford <aford173@gmail.com>
->>> ---
->>>  .../devicetree/bindings/clock/idt,versaclock5.yaml   | 12 ++++++++++++
->>>  1 file changed, 12 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
->>> index 2ac1131fd922..e5e55ffb266e 100644
->>> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
->>> @@ -59,6 +59,18 @@ properties:
->>>      minItems: 1
->>>      maxItems: 2
->>>
->>> +  idt,xtal1-load-femtofarads:
->>
->> I wonder whether we should have a common, vendor independent property.
+On Wed, 2021-01-13 at 07:52 -0600, Rob Herring wrote:
+> On Fri, Jan 08, 2021 at 03:34:16PM +0200, Matti Vaittinen wrote:
+> > The BD71828 allows configuring the clk32kout pin mode to CMOS or
+> > open-drain. Add device-tree property for specifying the preferred
+> > mode.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml         | 7
+> > +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-
+> > pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-
+> > pmic.yaml
+> > index 3a6a1a26e2b3..cba085836bc0 100644
+> > --- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> > @@ -44,6 +44,13 @@ properties:
+> >    clock-output-names:
+> >      const: bd71828-32k-out
+> >  
+> > +  rohm,clkout-mode:
+> > +    description: clk32kout mode. Can be set to "open-drain" or
+> > "cmos".
+> > +    $ref: "/schemas/types.yaml#/definitions/string"
+> > +    enum:
+> > +      - open-drain
+> > +      - cmos
+> > +
 > 
-> That would be nice.
-> 
->> In mainline we have xtal-load-pf (ti,cdce925.txt bindings) which has no
->> vendor prefix. However I don't know how much common it is to need
-> 
-> rtc-pcf85063.c uses  quartz-load-femtofarads, so there is already some
-> discrepancy.
-> 
-> Since the unit of measure here is femtofarads, using pF in the name seems wrong.
-> We need to read the data as a u32, so femtofarads works better than
-> pF, which would require a decimal point.
-> 
->> different loads for x1 and x2. Any hardware engineer around?
-> 
-> I talked to a hardware engineer where I work, and he said it makes
-> sense to keep them the same.  I only separated them because there are
-> two registers, and I assumed there might be a reason to have X1 and X2
-> be different, but I'm ok with reading one value and writing it to two
-> different registers.
+> I think a boolean or tristate ((0/1/not present) if you need 'leave 
+> default') would be better.
 
-If both your HW engineer and the Renesas docs say setting different
-values is not useful in real life, and other drivers don't set different
-values as well, it looks like that is the reasonable way. I think it
-also increases likelihood of establishing a unique property name to be
-used for all future chips.
+I was thinking of boolean but I hit the exact problem of leaving the
+default. (Booleans are so tempting for a lazy coder like me :] ) Do you
+mean uint with allowed values of 0/1 with the tristated? I can sure do
+that - but wouldn't open-drain / cmos be more descriptive?
 
--- 
-Luca
+Best Regards
+	Matti Vaittinen
+
