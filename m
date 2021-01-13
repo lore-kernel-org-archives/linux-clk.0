@@ -2,28 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DB9C433E9
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 18:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9C8C43219
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 18:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 996B12074A
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 18:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE83F20780
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 18:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbhAMSjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jan 2021 13:39:17 -0500
-Received: from relay02.th.seeweb.it ([5.144.164.163]:36127 "EHLO
-        relay02.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728488AbhAMSjR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 13:39:17 -0500
+        id S1728526AbhAMSjU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jan 2021 13:39:20 -0500
+Received: from relay01.th.seeweb.it ([5.144.164.162]:51383 "EHLO
+        relay01.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbhAMSjT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 13:39:19 -0500
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 3368620072;
-        Wed, 13 Jan 2021 19:38:19 +0100 (CET)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1060D2007F;
+        Wed, 13 Jan 2021 19:38:22 +0100 (CET)
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
 To:     agross@kernel.org
@@ -35,66 +36,109 @@ Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
         martin.botka@somainline.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Subject: [PATCH v2 0/9] SDM630/660 GCC/MMCC/GPUCC clock controllers
-Date:   Wed, 13 Jan 2021 19:38:08 +0100
-Message-Id: <20210113183817.447866-1-angelogioacchino.delregno@somainline.org>
+Subject: [PATCH v2 9/9] dt-bindings: clock: Add QCOM SDM630 and SDM660 graphics clock bindings
+Date:   Wed, 13 Jan 2021 19:38:17 +0100
+Message-Id: <20210113183817.447866-10-angelogioacchino.delregno@somainline.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210113183817.447866-1-angelogioacchino.delregno@somainline.org>
+References: <20210113183817.447866-1-angelogioacchino.delregno@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series brings up the MultiMedia Clock Controller (MMCC)
-and the GPU Clock Controller (GPUCC), plus includes some fixes for
-the SDM660 GCC, which are necessary for correct functionality of
-the clocks from the two new drivers, without causing lockups.
+Add device tree bindings for graphics clock controller for
+Qualcomm Technology Inc's SDM630 and SDM660 SoCs.
 
-There is also a change in the RCG2 GFX3D, which generalizes the
-gfx3d pingpong handling functions, in order to be able to reuse
-them for more than just one specific SoC (MSM8996), bringing no
-functional changes to the aforementioned SoC, which got a MMCC
-driver gfx3d clock fix for the generalization... obviously.
-
-This patch series has been tested against the following devices:
- - Sony Xperia XA2 Ultra (SDM630 Nile Discovery)
- - Sony Xperia 10        (SDM630 Ganges Kirin)
- - Sony Xperia 10 Plus   (SDM636 Ganges Mermaid)
-
-AngeloGioacchino Del Regno (8):
-  clk: qcom: gcc-sdm660: Mark MMSS NoC CFG AHB clock as critical
-  clk: qcom: gcc-sdm660: Mark GPU CFG AHB clock as critical
-  dt-bindings: clock: Add support for the SDM630 and SDM660 mmcc
-  clk: qcom: rcg2: Stop hardcoding gfx3d pingpong parent numbers
-  clk: qcom: mmcc-msm8996: Migrate gfx3d clock to clk_rcg2_gfx3d
-  clk: qcom: gdsc: Implement NO_RET_PERIPH flag
-  clk: qcom: Add SDM660 GPU Clock Controller (GPUCC) driver
-  dt-bindings: clock: Add QCOM SDM630 and SDM660 graphics clock bindings
-
-Martin Botka (1):
-  clk: qcom: Add SDM660 Multimedia Clock Controller (MMCC) driver
-
- .../bindings/clock/qcom,gpucc-sdm660.yaml     |   76 +
- .../devicetree/bindings/clock/qcom,mmcc.yaml  |    2 +
- drivers/clk/qcom/Kconfig                      |   18 +
- drivers/clk/qcom/Makefile                     |    2 +
- drivers/clk/qcom/clk-rcg.h                    |    9 +
- drivers/clk/qcom/clk-rcg2.c                   |   56 +-
- drivers/clk/qcom/gcc-sdm660.c                 |    7 +
- drivers/clk/qcom/gdsc.c                       |   10 +-
- drivers/clk/qcom/gdsc.h                       |    3 +-
- drivers/clk/qcom/gpucc-sdm660.c               |  349 ++
- drivers/clk/qcom/mmcc-msm8996.c               |   29 +-
- drivers/clk/qcom/mmcc-sdm660.c                | 2864 +++++++++++++++++
- include/dt-bindings/clock/qcom,gpucc-sdm660.h |   28 +
- include/dt-bindings/clock/qcom,mmcc-sdm660.h  |  162 +
- 14 files changed, 3581 insertions(+), 34 deletions(-)
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+---
+ .../bindings/clock/qcom,gpucc-sdm660.yaml     | 76 +++++++++++++++++++
+ 1 file changed, 76 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sdm660.yaml
- create mode 100644 drivers/clk/qcom/gpucc-sdm660.c
- create mode 100644 drivers/clk/qcom/mmcc-sdm660.c
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm660.h
- create mode 100644 include/dt-bindings/clock/qcom,mmcc-sdm660.h
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc-sdm660.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc-sdm660.yaml
+new file mode 100644
+index 000000000000..6631f25d7699
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc-sdm660.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gpucc-sdm660.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Graphics Clock & Reset Controller Binding for SDM630 and SDM660
++
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
++
++description: |
++  Qualcomm graphics clock control module which supports the clocks, resets and
++  power domains on SDM630 and SDM660.
++
++  See also dt-bindings/clock/qcom,gpucc-sdm660.h.
++
++properties:
++  compatible:
++    enum:
++      - qcom,gpucc-sdm630
++      - qcom,gpucc-sdm660
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: GPLL0 main gpu branch
++      - description: GPLL0 divider gpu branch
++
++  clock-names:
++    items:
++      - const: xo
++      - const: gcc_gpu_gpll0_clk
++      - const: gcc_gpu_gpll0_div_clk
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-sdm660.h>
++    #include <dt-bindings/clock/qcom,rpmcc.h>
++
++    clock-controller@5065000 {
++      compatible = "qcom,gpucc-sdm660";
++      reg = <0x05065000 0x9038>;
++      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++               <&gcc GCC_GPU_GPLL0_CLK>,
++               <&gcc GCC_GPU_GPLL0_DIV_CLK>;
++      clock-names = "xo", "gcc_gpu_gpll0_clk",
++                    "gcc_gpu_gpll0_div_clk";
++      #clock-cells = <1>;
++      #power-domain-cells = <1>;
++      #reset-cells = <1>;
++    };
++...
 -- 
 2.29.2
 
