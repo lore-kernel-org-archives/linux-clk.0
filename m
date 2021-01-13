@@ -2,317 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11573C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 08:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D78C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 08:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF6CA2333B
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 08:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5790E23341
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 08:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbhAMIaG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jan 2021 03:30:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44292 "EHLO
+        id S1726831AbhAMIb3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jan 2021 03:31:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbhAMIaG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 03:30:06 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF533C061794
-        for <linux-clk@vger.kernel.org>; Wed, 13 Jan 2021 00:29:25 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id c12so774495pfo.10
-        for <linux-clk@vger.kernel.org>; Wed, 13 Jan 2021 00:29:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=l1GKa3x7ZNgVpRkmStUdrHjbkYZ9SQFyhIcPJwTf7mQ=;
-        b=mkqpTDKsvFlyxfobrl3O59d7IIHahU3PS8A71e5YzOZlHDWbI3MZUbGb7SzszcCOyu
-         ra2rQP1FSmDItU3qJfiNzVtBotM4pk1nDOdIWiocpHRFBWI+S0aBNwxNh1RwdCZZ+Rwp
-         vJpkXqohwYvayJKj2IWCmXCkacrtPqGcL2BHppSgchlP96jHviCQysvI7Xz+pku+moTs
-         atreTPYdyRmAfTwx9WIMJwNvu78nuz7zE27UOtTVp2scjPLS4OWyMWhXb7c69SVWsYrO
-         U2xkipy3HDuKbaGqqSaXPSGjU5KWEkqeeEva2ELwpPdqkTgVnAk9wEOkVC+9SXeY8dWj
-         nQsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=l1GKa3x7ZNgVpRkmStUdrHjbkYZ9SQFyhIcPJwTf7mQ=;
-        b=Fl2ho0rDv58RZG867YwqBjfzGngGwOyfnu9Ah71rHAW/V/e+g9UCw8kIz8JaoOokA3
-         SJlLqjKBBWJSI0CkTLfYrVyr/O/iY/ZyUcuvqA46bVAf6vGBXUmu4Tp/A6S7yBWI3+bQ
-         dyRZvVM0Fbz/9OgloztnkHG+sbgqMkSu8l77zvW54fwDfcyu3/N0KeW8Kq00K1WQq1bI
-         LAF3VOovSo2W3zcTd7TQBpoRDuHP1UU54PnCCMsszUQVCeve80nQIsXwLWWLG/gta5QX
-         PJASD8064r0mxafyljtoSPrT98285zEJpe7Si4ZEmdqFR21mxNk4p49X9OPpTND5ota/
-         l2Jw==
-X-Gm-Message-State: AOAM532qMEzT88e+wijASsJYBxHnHsizgHxeM7g7XbONs9psrr2sBJbi
-        wFq1pc7zON8IVia0wciiA3Fv
-X-Google-Smtp-Source: ABdhPJzhbChFX7E4odlTkqAVRn4oQYVX+m5ZecCHfZJcCca/kNL2kle2MNutGtYW7mRpy6pztpTV/w==
-X-Received: by 2002:a63:ef14:: with SMTP id u20mr1076416pgh.93.1610526565041;
-        Wed, 13 Jan 2021 00:29:25 -0800 (PST)
-Received: from thinkpad ([2409:4072:6199:4cc7:6c7e:de01:2568:5545])
-        by smtp.gmail.com with ESMTPSA id p15sm1705977pgl.19.2021.01.13.00.29.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Jan 2021 00:29:24 -0800 (PST)
-Date:   Wed, 13 Jan 2021 13:59:15 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     jassisinghbrar@gmail.com, mturquette@baylibre.com,
-        robh+dt@kernel.org, viresh.kumar@linaro.org,
-        ulf.hansson@linaro.org, bjorn.andersson@linaro.org,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] clk: qcom: Add SDX55 APCS clock controller support
-Message-ID: <20210113082915.GB3763@thinkpad>
-References: <20210108113233.75418-1-manivannan.sadhasivam@linaro.org>
- <20210108113233.75418-6-manivannan.sadhasivam@linaro.org>
- <161052342416.3661239.16154742996506371048@swboyd.mtv.corp.google.com>
+        with ESMTP id S1726736AbhAMIb2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 03:31:28 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8633AC061786
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jan 2021 00:30:48 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kzbYB-0005td-LM; Wed, 13 Jan 2021 09:30:43 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1kzbYA-0006tF-R3; Wed, 13 Jan 2021 09:30:42 +0100
+Date:   Wed, 13 Jan 2021 09:30:42 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Simon South <simon@simonsouth.net>, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH] clk: Warn when clk_get_rate is called for a disabled clk
+Message-ID: <20210113083042.tezxr5sim2oevtvm@pengutronix.de>
+References: <20201221092713.vq6cfo2jyxl5l2rm@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="meaki2s2yzngoesd"
 Content-Disposition: inline
-In-Reply-To: <161052342416.3661239.16154742996506371048@swboyd.mtv.corp.google.com>
+In-Reply-To: <20201221092713.vq6cfo2jyxl5l2rm@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 12, 2021 at 11:37:04PM -0800, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2021-01-08 03:32:33)
-> > Add a driver for the SDX55 APCS clock controller. It is part of the APCS
-> > hardware block, which among other things implements also a combined mux
-> > and half integer divider functionality. The APCS clock controller has 3
-> > parent clocks:
-> > 
-> > 1. Board XO
-> > 2. Fixed rate GPLL0
-> > 3. A7 PLL
-> > 
-> > The source and the divider can be set both at the same time.
-> 
-> I don't understand what that means. Presumably it's a mux/divider
-> combined?
-> 
 
-Yeah, will make it clear.
+--meaki2s2yzngoesd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > This is required for enabling CPU frequency scaling on SDX55-based
-> > platforms.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/clk/qcom/Kconfig      |   9 ++
-> >  drivers/clk/qcom/Makefile     |   1 +
-> >  drivers/clk/qcom/apcs-sdx55.c | 149 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 159 insertions(+)
-> >  create mode 100644 drivers/clk/qcom/apcs-sdx55.c
-> > 
-> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > index d6f4aee4427a..2c67fdfae913 100644
-> > --- a/drivers/clk/qcom/Kconfig
-> > +++ b/drivers/clk/qcom/Kconfig
-> > @@ -45,6 +45,15 @@ config QCOM_CLK_APCS_MSM8916
-> >           Say Y if you want to support CPU frequency scaling on devices
-> >           such as msm8916.
-> >  
-> > +config QCOM_CLK_APCS_SDX55
-> 
-> APCC comes before APCS
-> 
+<linux/clk.h> claims that clk_get_rate() must only be called for enabled
+clocks. So emit a warning if a consumer calls this function without
+ensuring the clock being on.
 
-Okay
+Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+---
+Hello,
 
-> > +       tristate "SDX55 APCS Clock Controller"
-> > +       depends on QCOM_APCS_IPC || COMPILE_TEST
-> > +       help
-> > +         Support for the APCS Clock Controller on SDX55 platform. The
-> > +         APCS is managing the mux and divider which feeds the CPUs.
-> > +         Say Y if you want to support CPU frequency scaling on devices
-> > +         such as SDX55.
-> > +
-> >  config QCOM_CLK_APCC_MSM8996
-> >         tristate "MSM8996 CPU Clock Controller"
-> >         select QCOM_KRYO_L2_ACCESSORS
-> > diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> > index e7e0ac382176..a9271f40916c 100644
-> > --- a/drivers/clk/qcom/Makefile
-> > +++ b/drivers/clk/qcom/Makefile
-> > @@ -46,6 +46,7 @@ obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
-> >  obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
-> >  obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
-> >  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
-> > +obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
-> >  obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
-> >  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-> >  obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
-> > diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
-> > new file mode 100644
-> > index 000000000000..14413c957d83
-> > --- /dev/null
-> > +++ b/drivers/clk/qcom/apcs-sdx55.c
-> > @@ -0,0 +1,149 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Qualcomm SDX55 APCS clock controller driver
-> > + *
-> > + * Copyright (c) 2020, Linaro Limited
-> > + * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/cpu.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_domain.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include "clk-regmap.h"
-> > +#include "clk-regmap-mux-div.h"
-> > +#include "common.h"
-> 
-> Curious what common is needed for?
-> 
+I didn't hear back, so went on to create a proper patch now.
 
-Not needed, will remove.
+On Mon, Dec 21, 2020 at 10:27:13AM +0100, Uwe Kleine-K=F6nig wrote:
+> the documentation about clk_get_rate in include/linux/clk.h reads:
+>=20
+> 	[...] obtain the current clock rate (in Hz) for a clock source.
+> 	This is only valid once the clock source has been enabled.
+>=20
+> The second part isn't enforced and (I think) there are many consumers
+> who don't ensure the clock being enabled. (I just stumbled over
+> rockchip_pwm_get_state().)
+>=20
+> I wonder if it would be sensible to add a development check to
+> clk_get_rate, something like:
+>=20
+> 	if (WARN(!clk->usecount, "Trying to get rate of a disabled clk"))
+> 		return 0;
+>=20
+> (or something less consequent like not returning 0 but the value it also
+> returns today).
 
-> > +
-> > +static const u32 apcs_mux_clk_parent_map[] = { 0, 1, 5 };
-> > +
-> > +static const struct clk_parent_data pdata[] = {
-> > +       { .fw_name = "ref", .name = "bi_tcxo", },
-> > +       { .fw_name = "aux", .name = "gpll0", },
-> > +       { .fw_name = "pll", .name = "a7pll", },
-> 
-> Please remove name from here. It shouldn't be necessary if the DT
-> describes things properly. Or there isn't DT for this device?
-> 
+This conservative approach is what I implemented now, and I only emit 1
+warning to not overflow systems that trigger that problem several times.
 
-Will remove.
+I'm unsure if I really must take the enable_lock, but it is not
+completely wrong.
 
-> > +};
-> > +
-> > +/*
-> > + * We use the notifier function for switching to a temporary safe configuration
-> > + * (mux and divider), while the A7 PLL is reconfigured.
-> > + */
-> > +static int a7cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-> > +                           void *data)
-> > +{
-> > +       int ret = 0;
-> > +       struct clk_regmap_mux_div *md = container_of(nb,
-> > +                                                    struct clk_regmap_mux_div,
-> > +                                                    clk_nb);
-> > +       if (event == PRE_RATE_CHANGE)
-> > +               /* set the mux and divider to safe frequency (400mhz) */
-> > +               ret = mux_div_set_src_div(md, 1, 2);
-> > +
-> > +       return notifier_from_errno(ret);
-> > +}
-> > +
-> > +static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device *dev = &pdev->dev;
-> > +       struct device *parent = dev->parent;
-> > +       struct device *cpu_dev;
-> > +       struct clk_regmap_mux_div *a7cc;
-> > +       struct regmap *regmap;
-> > +       struct clk_init_data init = { };
-> > +       int ret = -ENODEV;
-> 
-> Drop assignement..
-> 
-> > +
-> > +       regmap = dev_get_regmap(parent, NULL);
-> > +       if (!regmap) {
-> > +               dev_err(dev, "Failed to get parent regmap: %d\n", ret);
-> > +               return ret;
-> 
-> .. and Just return -ENODEV?
-> 
-> > +       }
-> > +
-> > +       a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
-> > +       if (!a7cc)
-> > +               return -ENOMEM;
-> > +
-> > +       init.name = "a7mux";
-> > +       init.parent_data = pdata;
-> > +       init.num_parents = ARRAY_SIZE(pdata);
-> > +       init.ops = &clk_regmap_mux_div_ops;
-> > +
-> > +       a7cc->clkr.hw.init = &init;
-> > +       a7cc->clkr.regmap = regmap;
-> > +       a7cc->reg_offset = 0x8;
-> > +       a7cc->hid_width = 5;
-> > +       a7cc->hid_shift = 0;
-> > +       a7cc->src_width = 3;
-> > +       a7cc->src_shift = 8;
-> > +       a7cc->parent_map = apcs_mux_clk_parent_map;
-> > +
-> > +       a7cc->pclk = devm_clk_get(parent, "pll");
-> > +       if (IS_ERR(a7cc->pclk)) {
-> > +               ret = PTR_ERR(a7cc->pclk);
-> > +               if (ret != -EPROBE_DEFER)
-> > +                       dev_err(dev, "Failed to get PLL clk: %d\n", ret);
-> 
-> Use dev_err_probe() please.
-> 
-> > +               return ret;
-> > +       }
-> > +
-> > +       a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
-> > +       ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to register clock notifier: %d\n", ret);
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = devm_clk_register_regmap(dev, &a7cc->clkr);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to register regmap clock: %d\n", ret);
-> > +               goto err;
-> > +       }
-> > +
-> > +       ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-> > +                                         &a7cc->clkr.hw);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to add clock provider: %d\n", ret);
-> > +               goto err;
-> > +       }
-> > +
-> > +       platform_set_drvdata(pdev, a7cc);
-> > +
-> > +       /*
-> > +        * Attach the power domain to cpudev. There seems to be no better place
-> > +        * to do this, so do it here.
-> > +        */
-> > +       cpu_dev = get_cpu_device(0);
-> > +       dev_pm_domain_attach(cpu_dev, true);
-> 
-> I guess this works given that we don't have CPU drivers. The comment
-> says what the code is doing but doesn't say why it's doing it. Adding
-> why may help understand in the future and would be a better comment.
-> Why can't cpufreq-dt attach a power domain from DT for a cpu device? Is
-> that a bad idea?
-> 
+ drivers/clk/clk.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Yeah, I talked with Viresh about using cpufreq-dt for attaching the power
-domain but he said it isn't the appropriate place. Hence, I decided to use
-this driver.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8c1d04db990d..7558753883dc 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1614,6 +1614,16 @@ static void __clk_recalc_rates(struct clk_core *core=
+, unsigned long msg)
+=20
+ static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+ {
++	unsigned long flags;
++	unsigned int enable_count;
++
++	flags =3D clk_enable_lock();
++	enable_count =3D core->enable_count;
++	clk_enable_unlock(flags);
++
++	WARN_ONCE(enable_count =3D=3D 0,
++		  "A clock must be enabled to determine its rate\n");
++
+ 	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
+ 		__clk_recalc_rates(core, 0);
+=20
+--=20
+2.29.2
 
-Will make the comment more elaborate.
+>=20
+> --=20
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
+  |
+> Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-Thanks,
-Mani
 
-> > +
-> > +       return 0;
-> > +
-> > +err:
-> > +       clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
-> > +       return ret;
-> > +}
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--meaki2s2yzngoesd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl/+r68ACgkQwfwUeK3K
+7AlwTAf+JfZDhu0Ns0UKv6ko7x76kABgLcu3DP7XyRdaznfF17fScTTH+eHtowN5
+MnnZaoaGO0v8tz41IAyN1+i94dIaHBNlt+AxKiSgLeiRzMglojl1CYitRHxSlf7d
+6DJbqTKP55YG2aqWaTgEnSKzEkFDI2hxjFzovJPNqzJxGyn2XWpHlMSAg1r8geS6
+bd/6q976A35D5NM4LDBRWbHxbKV2lbnaVwcmgTKDdkFR3AGbtv5gyGZQ6TZVztYK
+C4ioJNFuWVBWnRjcsNfJv1m7SP4E8JTOAj+iyfCDLyd5w3Ohxx1BRqYSY+0MnBFR
+yybuIWu+DzUaAvp2ol9j0zBRSzKvaw==
+=r+6A
+-----END PGP SIGNATURE-----
+
+--meaki2s2yzngoesd--
