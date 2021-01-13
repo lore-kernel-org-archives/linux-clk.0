@@ -2,74 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18EEC433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 12:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC764C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 13:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AE03233F9
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 12:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8811823339
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 13:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbhAMMyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jan 2021 07:54:04 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:44084 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbhAMMyE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Jan 2021 07:54:04 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3462B200400;
-        Wed, 13 Jan 2021 13:53:17 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2724E2003FE;
-        Wed, 13 Jan 2021 13:53:17 +0100 (CET)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C673220309;
-        Wed, 13 Jan 2021 13:53:16 +0100 (CET)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S1725809AbhAMNwp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jan 2021 08:52:45 -0500
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:40890 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbhAMNwo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 08:52:44 -0500
+Received: by mail-oi1-f176.google.com with SMTP id p5so2140446oif.7;
+        Wed, 13 Jan 2021 05:52:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iH2g7J4XG8RzNzVmZnHZVT+JqGY+hdY/33bx1pFnWwI=;
+        b=DU0g64qB7czo0leXRwURFXJo4+gSyjAxjF5MrUjHkqPEPHtvNAZvdj+KSE13Pn3Z2a
+         eX7JtUpTiRu9XJ80uxoTAxG2s5gSPrInDoVK6rm53Xg4cxPhv1pUIofdE5SM5LnNOIsX
+         UDgjDDMOhqaBkMj9hOM28DZohl8ZxRZyob2mNY4yaUsSzXEgPrquHr2RzH3IRrmdEpH6
+         yCnmTacMWddH172yhxAmwpT1wclZkE+f2AyuWPS8cMVbeB63KlipUDyq5k1VMjFL5S7r
+         Kh4l1LzR20BJtzmh2uI57Mw8mnNuFyrHWwEktbtrGY5bRGYdakgvmB/T1GjDxKPIVuZI
+         v6KA==
+X-Gm-Message-State: AOAM531ZVX2z7eUbaP9P37BTKYRk71KQ/r0+FYyl7GoCPEFCyVgZKQs9
+        NTItUuQFw8aa41Iq2fUYGA==
+X-Google-Smtp-Source: ABdhPJx98abR7w2TYrwOdtJGzoId5Juzy7ogVrU/NhArH7rIk92RS8vLpVTjjAT53tqXpX3wkBqlnw==
+X-Received: by 2002:aca:cd85:: with SMTP id d127mr1181720oig.59.1610545923888;
+        Wed, 13 Jan 2021 05:52:03 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z38sm411622ooi.34.2021.01.13.05.52.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jan 2021 05:52:02 -0800 (PST)
+Received: (nullmailer pid 2331971 invoked by uid 1000);
+        Wed, 13 Jan 2021 13:52:01 -0000
+Date:   Wed, 13 Jan 2021 07:52:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] MAINTAINERS: Add section for NXP i.MX clock drivers
-Date:   Wed, 13 Jan 2021 14:53:08 +0200
-Message-Id: <1610542388-12078-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/15] dt_bindings: bd71828: Add clock output mode
+Message-ID: <20210113135201.GA2328369@robh.at.kernel.org>
+References: <cover.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+ <a91eb6288331bb80b30534a31049cde508307fc0.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a91eb6288331bb80b30534a31049cde508307fc0.1610110144.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a section for NXP i.MX clock drivers and list myself
-as the maintainer.
+On Fri, Jan 08, 2021 at 03:34:16PM +0200, Matti Vaittinen wrote:
+> The BD71828 allows configuring the clk32kout pin mode to CMOS or
+> open-drain. Add device-tree property for specifying the preferred mode.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml         | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> index 3a6a1a26e2b3..cba085836bc0 100644
+> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> @@ -44,6 +44,13 @@ properties:
+>    clock-output-names:
+>      const: bd71828-32k-out
+>  
+> +  rohm,clkout-mode:
+> +    description: clk32kout mode. Can be set to "open-drain" or "cmos".
+> +    $ref: "/schemas/types.yaml#/definitions/string"
+> +    enum:
+> +      - open-drain
+> +      - cmos
+> +
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+I think a boolean or tristate ((0/1/not present) if you need 'leave 
+default') would be better.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2894657..9eafd4d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12827,6 +12827,13 @@ F:	drivers/iio/gyro/fxas21002c_core.c
- F:	drivers/iio/gyro/fxas21002c_i2c.c
- F:	drivers/iio/gyro/fxas21002c_spi.c
- 
-+NXP i.MX CLOCK DRIVERS
-+M:	Abel Vesa <abel.vesa@nxp.com>
-+L:	linux-clk@vger.kernel.org
-+L:	linux-imx@nxp.com
-+S:	Maintained
-+F:	drivers/clk/imx/
-+
- NXP i.MX 8MQ DCSS DRIVER
- M:	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
- R:	Lucas Stach <l.stach@pengutronix.de>
--- 
-2.7.4
-
+>    rohm,charger-sense-resistor-ohms:
+>      minimum: 10000000
+>      maximum: 50000000
+> -- 
+> 2.25.4
+> 
+> 
+> -- 
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+> 
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =] 
