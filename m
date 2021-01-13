@@ -5,44 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8639C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EC4C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85E7E2343E
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F176323441
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 14:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbhAMOhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jan 2021 09:37:33 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:58913 "EHLO
+        id S1727115AbhAMOkT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jan 2021 09:40:19 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:54778 "EHLO
         hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726433AbhAMOhc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 09:37:32 -0500
-Received: from [185.56.157.72] (port=39770 helo=[192.168.101.73])
+        by vger.kernel.org with ESMTP id S1725858AbhAMOkS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jan 2021 09:40:18 -0500
+Received: from [185.56.157.72] (port=39782 helo=[192.168.101.73])
         by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1kzhGT-00E4X8-5N; Wed, 13 Jan 2021 15:36:49 +0100
+        id 1kzhJA-00E61H-5h; Wed, 13 Jan 2021 15:39:36 +0100
 Subject: Re: [RFC 1/2] dt-bindings: clk: versaclock5: Add load capacitance
  properties
-To:     Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
 Cc:     linux-clk <linux-clk@vger.kernel.org>,
         Adam Ford-BE <aford@beaconembedded.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <20210106173900.388758-1-aford173@gmail.com>
- <20210113031602.GA1443816@robh.at.kernel.org>
- <CAHCN7xKLRj=bbMQAXNDZ+8cHh+jon5Bb7GdQYpVUos91uiV5Tw@mail.gmail.com>
+ <833e228f-6fb5-ae98-a367-9566cf5fcf69@lucaceresoli.net>
+ <CAHCN7x+57x4WLbq0+7OCPhJs-1=7SJidVHD2jYjdbqn_F+d3dA@mail.gmail.com>
 From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <8f896ca0-d270-787c-74c9-2bca91ccf7f2@lucaceresoli.net>
-Date:   Wed, 13 Jan 2021 15:36:48 +0100
+Message-ID: <7bad753d-a551-8810-7b12-5ec5ea9263d4@lucaceresoli.net>
+Date:   Wed, 13 Jan 2021 15:39:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKLRj=bbMQAXNDZ+8cHh+jon5Bb7GdQYpVUos91uiV5Tw@mail.gmail.com>
+In-Reply-To: <CAHCN7x+57x4WLbq0+7OCPhJs-1=7SJidVHD2jYjdbqn_F+d3dA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,10 +63,12 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Adam,
 
-On 13/01/21 13:31, Adam Ford wrote:
-> On Tue, Jan 12, 2021 at 9:16 PM Rob Herring <robh@kernel.org> wrote:
+On 09/01/21 03:48, Adam Ford wrote:
+> On Fri, Jan 8, 2021 at 4:49 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
 >>
->> On Wed, Jan 06, 2021 at 11:38:59AM -0600, Adam Ford wrote:
+>> Hi Adam,
+>>
+>> On 06/01/21 18:38, Adam Ford wrote:
 >>> There are two registers which can set the load capacitance for
 >>> XTAL1 and XTAL2. These are optional registers when using an
 >>> external crystal.  Update the bindings to support them.
@@ -84,25 +87,34 @@ On 13/01/21 13:31, Adam Ford wrote:
 >>>      maxItems: 2
 >>>
 >>> +  idt,xtal1-load-femtofarads:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
 >>
->> Already has a type, so you can drop the $ref.
->>
->>> +    minimum: 9000
->>> +    maximum: 25000
+>> I wonder whether we should have a common, vendor independent property.
 > 
-> Luca,
+> That would be nice.
 > 
-> Do you want the range to the 9000 - 25000 per the datasheet, or should
-> I use the max value based on the programmer guide?  Currently, my
-> intent was to cap the value to 11111b, so anyone who writes 23000,
-> 24000, or 25000 will all be the same value based on the feedback I got
-> from Renesas.
+>> In mainline we have xtal-load-pf (ti,cdce925.txt bindings) which has no
+>> vendor prefix. However I don't know how much common it is to need
+> 
+> rtc-pcf85063.c uses  quartz-load-femtofarads, so there is already some
+> discrepancy.
+> 
+> Since the unit of measure here is femtofarads, using pF in the name seems wrong.
+> We need to read the data as a u32, so femtofarads works better than
+> pF, which would require a decimal point.
+> 
+>> different loads for x1 and x2. Any hardware engineer around?
+> 
+> I talked to a hardware engineer where I work, and he said it makes
+> sense to keep them the same.  I only separated them because there are
+> two registers, and I assumed there might be a reason to have X1 and X2
+> be different, but I'm ok with reading one value and writing it to two
+> different registers.
 
-DT should describe the HW, so I'd use the same range that can be set in
-hardware, regardless of driver support. Thus it should be:
-
-9000 - [9000 + 430 * 32] = 9000 - 22760
+If both your HW engineer and the Renesas docs say setting different
+values is not useful in real life, and other drivers don't set different
+values as well, it looks like that is the reasonable way. I think it
+also increases likelihood of establishing a unique property name to be
+used for all future chips.
 
 -- 
 Luca
