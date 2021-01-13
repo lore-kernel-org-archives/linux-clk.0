@@ -2,155 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BF8C43333
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 21:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0DCC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 03:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3646F20720
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jan 2021 21:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDD32312F
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jan 2021 03:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393318AbhALVgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jan 2021 16:36:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33476 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436645AbhALUG4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Jan 2021 15:06:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A514F22202;
-        Tue, 12 Jan 2021 20:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610481975;
-        bh=R+BCcR/MhTRR2NIT8E6o0tV4cFGyb+NeUAwC/5Db1G0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OXhkcmnTMOIvFLE9z0buC5FPpYL2xv2ml8Fakg+DacUYTxSLbXKyenyZduopjiXyS
-         uaoYqRkym9u+DfdHam7knTDRZNwmMxhTu7ip2HOXwQC5ap2KKBe135sAphKAlvY0BZ
-         Hl/LRH93XXEHS4+4USHQEKAdLnpWej45tRUb7zndk6wiqfKgAavMMAoLL6djHa6XZ+
-         ysF6IZXwW/5OzMmJn99CNmw9Ji5FoavD1s9UPbAZrvhLF12zVuP9uJnQ+YAspjsKRQ
-         tF1Vx0ntBWLQZNo01+rLVUofXV8plxKFf3LEMwsdeQYmjJRSUzTKMwuFnRT6tf927P
-         KJLwiqzg4qcYw==
-Content-Type: text/plain; charset="utf-8"
+        id S1728916AbhAMDQq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jan 2021 22:16:46 -0500
+Received: from mail-oo1-f45.google.com ([209.85.161.45]:38092 "EHLO
+        mail-oo1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728105AbhAMDQp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jan 2021 22:16:45 -0500
+Received: by mail-oo1-f45.google.com with SMTP id i18so178834ooh.5;
+        Tue, 12 Jan 2021 19:16:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Vxk5MOdtzou/F1fb9Y4udKZA5zOP9DO/LQOh+zLeug4=;
+        b=WWvBv7y+VEVe4PB6uRq1bnF0d6J9XEoilztp4rHYfzLvgzrLBGk6OtEE2iwWfPxxOp
+         T/6qnLcjs1zvnRKxkM//dhx1YY49MgmVPWm60WoqbTUtUM94KZW4hNkrpVPxqOiYbPx8
+         Fo2237KLSNcKxWfdSOnWU6PHN5wfVTquteychv9nYhhzTk16uq9pg6Q4zAoelxEGOOs7
+         nyWd+DiqMWMPNDotjRAJMstcBUVLsHXR3NgiIDrqjo+KPEFJWb+V8stetzjJk3wwDCv3
+         h7TOK8TC4RZuiiBCIMUYHxDwnQeKFvAXXVljZmi9z4DGPz86WVQtyj9tFkuIcQKY1UwA
+         uoXA==
+X-Gm-Message-State: AOAM5338Ski02CYlIIuF6K2o2oGqbQJJzguZBpXNza7xf0ICGU77pKZS
+        i6k/Gh614++GA8bhmiGrQY9JucUSDQ==
+X-Google-Smtp-Source: ABdhPJycc1IEtgj1+eyQPcsWs+pizJRNvXrFwG/iiHyFJk0I5S1AKHjVLa37RumE46vQOUc1izoWdw==
+X-Received: by 2002:a4a:bf14:: with SMTP id r20mr1401442oop.2.1610507764859;
+        Tue, 12 Jan 2021 19:16:04 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 59sm154107oti.69.2021.01.12.19.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jan 2021 19:16:03 -0800 (PST)
+Received: (nullmailer pid 1458550 invoked by uid 1000);
+        Wed, 13 Jan 2021 03:16:02 -0000
+Date:   Tue, 12 Jan 2021 21:16:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 1/2] dt-bindings: clk: versaclock5:  Add load capacitance
+ properties
+Message-ID: <20210113031602.GA1443816@robh.at.kernel.org>
+References: <20210106173900.388758-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1608058114-29025-2-git-send-email-tdas@codeaurora.org>
-References: <1608058114-29025-1-git-send-email-tdas@codeaurora.org> <1608058114-29025-2-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add SC7280 GCC clock binding
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 12 Jan 2021 12:06:14 -0800
-Message-ID: <161048197433.3661239.10431667618674179787@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210106173900.388758-1-aford173@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-12-15 10:48:33)
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-> new file mode 100644
-> index 0000000..79c64d8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
-> @@ -0,0 +1,85 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc7280.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for SC7280
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets=
- and
-> +  power domains on SC7280.
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,gcc-sc7280.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,gcc-sc7280
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board active XO source
-> +      - description: Sleep clock source
-> +      - description: PCIE-0 pipe clock source
-> +      - description: PCIE-1 pipe clock source
-> +      - description: USB30 phy wrapper pipe clock source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: bi_tcxo_ao
-> +      - const: sleep_clk
-> +      - const: pcie_0_pipe_clk
-> +      - const: pcie_1_pipe_clk
-> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
+On Wed, Jan 06, 2021 at 11:38:59AM -0600, Adam Ford wrote:
+> There are two registers which can set the load capacitance for
+> XTAL1 and XTAL2. These are optional registers when using an
+> external crystal.  Update the bindings to support them.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.yaml   | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> index 2ac1131fd922..e5e55ffb266e 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> @@ -59,6 +59,18 @@ properties:
+>      minItems: 1
+>      maxItems: 2
+>  
+> +  idt,xtal1-load-femtofarads:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
-Don't ufs phy clks also go into gcc?
+Already has a type, so you can drop the $ref.
 
+> +    minimum: 9000
+> +    maximum: 25000
+> +    description: Optional loading capacitor for XTAL1
 > +
-> +  '#clock-cells':
-> +    const: 1
+> +  idt,xtal2-load-femtofarads:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 9000
+> +    maximum: 25000
+> +    description: Optional loading capacitor for XTAL2
 > +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  protected-clocks:
-> +    description:
-> +      Protected clock specifier list as per common clock binding.
-
-I suppose this is fine.
-
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - reg
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@100000 {
-> +      compatible =3D "qcom,gcc-sc7280";
-> +      reg =3D <0x00100000 0x1f0000>;
-> +      clocks =3D <&rpmhcc RPMH_CXO_CLK>,
-> +               <&rpmhcc RPMH_CXO_CLK_A>,
-> +               <&sleep_clk>,
-> +               <&pcie_0_pipe_clk>, <&pcie_1_pipe_clk>,
-> +               <&usb3_phy_wrapper_gcc_usb30_pipe_clk>;
-> +      clock-names =3D "bi_tcxo", "bi_tcxo_ao", "sleep_clk", "pcie_0_pipe=
-_clk",
-> +                     "pcie_1_pipe_clk", "usb3_phy_wrapper_gcc_usb30_pipe=
-_clk";
-> +      #clock-cells =3D <1>;
-> +      #reset-cells =3D <1>;
-> +      #power-domain-cells =3D <1>;
-> +    };
-> +...
+>  patternProperties:
+>    "^OUT[1-4]$":
+>      type: object
+> -- 
+> 2.25.1
+> 
