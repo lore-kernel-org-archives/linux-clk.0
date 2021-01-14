@@ -2,135 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BB2C433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 18:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A15C43381
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 19:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D782A2076E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 18:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D6A23B55
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 19:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbhANSpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 13:45:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39726 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727346AbhANSpa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Jan 2021 13:45:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 248D5B77E;
-        Thu, 14 Jan 2021 18:44:48 +0000 (UTC)
-Message-ID: <99a7d6e80646ff7ac6c1fc615146fc4ad1428552.camel@suse.de>
-Subject: Re: [PATCH v6 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, f.fainelli@gmail.com,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Date:   Thu, 14 Jan 2021 19:44:46 +0100
-In-Reply-To: <20210112091842.3th64ardbqjafvuq@pengutronix.de>
-References: <20201211164801.7838-1-nsaenzjulienne@suse.de>
-         <20201211164801.7838-12-nsaenzjulienne@suse.de>
-         <20210112091842.3th64ardbqjafvuq@pengutronix.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Gc66jpwjN4JFK05BfjVR"
-User-Agent: Evolution 3.38.2 
+        id S1728211AbhANTIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jan 2021 14:08:14 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:40722 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbhANTIO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 14:08:14 -0500
+Received: by mail-ot1-f53.google.com with SMTP id j12so6196937ota.7;
+        Thu, 14 Jan 2021 11:07:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mZwsgvKSWJZAJ4CH2N/UlUigQHip7rxk7Ry0cLMON8M=;
+        b=IcqL8uD0EaRUr4G9RV/R5EC1qEGDA4Z1Z0aX47caiSEQGER7sFOohi9H9x+Kng1YDo
+         Ioq3GcOWDFLL+/ZP2y+BgwRhotNWmNHoREAPNWJ7yksoiW3MlZjqcjFVXjG90aSlzmtY
+         aCJERUB/HWQQBBzPJmYdomsswDpkVKmJ/ObfCNAZS8VVmPYis1A6Ft6zQiqosPx1EiDq
+         UWrh8fWSudKqpORIZN+VnoQ8xd7TPwRO01OAc/kLv1fllLLW/nLKjnAzVD8qNterLTG2
+         MtgHzHsC4Au2TCn2NUVMCbwtO50MHT/xl9bRRM5FFpyQ8pmgy/g7W3z0SA4Du2XlR0W4
+         darg==
+X-Gm-Message-State: AOAM531PzftmyhqqFwa3NL+/plqBNeE+fOBQe0kOqPRRAYOvI8FNSkfy
+        dDToQt6sz2pTos/3DYCzaEEuGgU+6A==
+X-Google-Smtp-Source: ABdhPJw+9TEDn4HpbdJVryEihHOZfKukSA/Wmx3kcWOtdOpv2HTYrt7Zs+pKSXCPkEoTMAo+7MkJIg==
+X-Received: by 2002:a9d:f66:: with SMTP id 93mr5434307ott.289.1610651253224;
+        Thu, 14 Jan 2021 11:07:33 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g12sm1274999oos.8.2021.01.14.11.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jan 2021 11:07:31 -0800 (PST)
+Received: (nullmailer pid 3386229 invoked by uid 1000);
+        Thu, 14 Jan 2021 19:07:30 -0000
+Date:   Thu, 14 Jan 2021 13:07:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Cc:     linux-arm-msm@vger.kernel.org, konrad.dybcio@somainline.org,
+        marijn.suijten@somainline.org, martin.botka@somainline.org,
+        phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/9] clk: qcom: gcc-msm8998: Wire up gcc_mmss_gpll0 clock
+Message-ID: <20210114190730.GA3384844@robh.at.kernel.org>
+References: <20210109134617.146275-1-angelogioacchino.delregno@somainline.org>
+ <20210109134617.146275-2-angelogioacchino.delregno@somainline.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210109134617.146275-2-angelogioacchino.delregno@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Jan 09, 2021 at 02:46:09PM +0100, AngeloGioacchino Del Regno wrote:
+> This clock enables the GPLL0 output to the multimedia subsystem
+> clock controller.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8998.c               | 17 +++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8998.h |  1 +
 
---=-Gc66jpwjN4JFK05BfjVR
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Please put all the dt header changes in their own patch.
 
-Hi Uwe, thanks for the review.
-
-On Tue, 2021-01-12 at 10:18 +0100, Uwe Kleine-K=C3=B6nig wrote:
-
-[...]
-
-> > +                duty_cycle =3D DIV_ROUND_CLOSEST_ULL(state->duty_cycle=
- * RPI_PWM_MAX_DUTY,
-> > +					           RPI_PWM_PERIOD_NS);
->=20
-> ... and round down here.
->=20
-> Just to be sure: writing RPI_PWM_MAX_DUTY (i.e. 255) yields 100% duty
-> cycle, right?
-
-Yes, at 255 the signal is flat.
-
-> > +        else
-> > +                duty_cycle =3D RPI_PWM_MAX_DUTY;
-> > +
-> > +	if (duty_cycle =3D=3D rpipwm->duty_cycle)
-> > +		return 0;
-> > +
-> > +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DU=
-TY_REG,
-> > +					   duty_cycle);
-> > +	if (ret) {
-> > +		dev_err(chip->dev, "Failed to set duty cycle: %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	/*
-> > +	 * This sets the default duty cycle after resetting the board, we
-> > +	 * updated it every time to mimic Raspberry Pi's downstream's driver
-> > +	 * behaviour.
-> > +	 */
-> > +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DU=
-TY_REG,
-> > +					   duty_cycle);
-> > +	if (ret) {
-> > +		dev_err(chip->dev, "Failed to set default duty cycle: %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +        rpipwm->duty_cycle =3D duty_cycle;
->=20
-> Please use tabs for indention. (The general hint is to use checkpatch
-> which (I hope) tells you about problems like this.)
-
-Sorry for that.
-
-I took note of the rest of comments and will update the code.
-
-Regards,
-Nicolas
-
-
-
---=-Gc66jpwjN4JFK05BfjVR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAAkR4ACgkQlfZmHno8
-x/7WpAf+OcmBebYI8HGJFfpFhX3gBSdN6587Todi3RNaMrm6loRFFbe3HDS3rO0u
-pv9Zl7lrjVKV1+Fug2/3rTL4Kh0/w98EZJ5mpf6n5k0EG+EoMqGqfqElaLL0mvW9
-7NpiNF15W4/v/U22BH3jtFUkt0PpjN1J2WPclOl+ZPEe31vjdiEauq7zAhRT9Gpr
-XHH9ZbY9f4oXR2s91ZaYGdni3ikxxB4cG/aS50GAM019KW/RIkEibfYpDjrCNOml
-M4Z4Y15Mqi8aouumlLNKiuxNmNhtyCilx3jHPeNm+2b5GeBp/S9jtAVkVaUaYQ9I
-N8qh4QzVUk4qMeucxLeRRemzuIWCOw==
-=pJN/
------END PGP SIGNATURE-----
-
---=-Gc66jpwjN4JFK05BfjVR--
-
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+> index 9d7016bcd680..d51c556851ca 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -1341,6 +1341,22 @@ static struct clk_branch gcc_boot_rom_ahb_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch gcc_mmss_gpll0_clk = {
+> +	.halt_check = BRANCH_HALT_DELAY,
+> +	.clkr = {
+> +		.enable_reg = 0x5200c,
+> +		.enable_mask = BIT(1),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_mmss_gpll0_clk",
+> +			.parent_names = (const char *[]){
+> +				"gpll0_out_main",
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch gcc_mss_gpll0_div_clk_src = {
+>  	.halt_check = BRANCH_HALT_DELAY,
+>  	.clkr = {
+> @@ -2944,6 +2960,7 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
+>  	[GCC_MSS_GPLL0_DIV_CLK_SRC] = &gcc_mss_gpll0_div_clk_src.clkr,
+>  	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
+>  	[GCC_MSS_MNOC_BIMC_AXI_CLK] = &gcc_mss_mnoc_bimc_axi_clk.clkr,
+> +	[GCC_MMSS_GPLL0_CLK] = &gcc_mmss_gpll0_clk.clkr,
+>  };
+>  
+>  static struct gdsc *gcc_msm8998_gdscs[] = {
+> diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+> index 6a73a174f049..47ca17df780b 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+> @@ -184,6 +184,7 @@
+>  #define GCC_MSS_MNOC_BIMC_AXI_CLK				175
+>  #define GCC_BIMC_GFX_CLK					176
+>  #define UFS_UNIPRO_CORE_CLK_SRC					177
+> +#define GCC_MMSS_GPLL0_CLK					178
+>  
+>  #define PCIE_0_GDSC						0
+>  #define UFS_GDSC						1
+> -- 
+> 2.29.2
+> 
