@@ -2,144 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED54C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 15:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BB2C433E9
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 18:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F049A23B00
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 15:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D782A2076E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 18:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbhANPR6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 10:17:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728249AbhANPR6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 10:17:58 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C78C061786
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jan 2021 07:16:42 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1l04MS-00021i-Rp; Thu, 14 Jan 2021 16:16:32 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1l04MR-00012i-O9; Thu, 14 Jan 2021 16:16:31 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        id S1727521AbhANSpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jan 2021 13:45:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39726 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727346AbhANSpa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Jan 2021 13:45:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 248D5B77E;
+        Thu, 14 Jan 2021 18:44:48 +0000 (UTC)
+Message-ID: <99a7d6e80646ff7ac6c1fc615146fc4ad1428552.camel@suse.de>
+Subject: Re: [PATCH v6 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@kernel.org>
-List-Id: <soc.lore.kernel.org>
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <uwe.kleine-koenig@pengutronix.de>, soc@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v1 0/7] Remove ARM platform efm32
-Date:   Thu, 14 Jan 2021 16:16:23 +0100
-Message-Id: <20210114151630.128830-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
+Cc:     linux-kernel@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, f.fainelli@gmail.com,
+        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com
+Date:   Thu, 14 Jan 2021 19:44:46 +0100
+In-Reply-To: <20210112091842.3th64ardbqjafvuq@pengutronix.de>
+References: <20201211164801.7838-1-nsaenzjulienne@suse.de>
+         <20201211164801.7838-12-nsaenzjulienne@suse.de>
+         <20210112091842.3th64ardbqjafvuq@pengutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Gc66jpwjN4JFK05BfjVR"
+User-Agent: Evolution 3.38.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Uwe Kleine-König <uwe.kleine-koenig@pengutronix.de>
 
-Hello,
+--=-Gc66jpwjN4JFK05BfjVR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-there are no known active users of the efm32 platform. Given that the
-only machine that is supported has only 4 MiB of RAM its use is also
-quite limited.
+Hi Uwe, thanks for the review.
 
-Back then it served as the platform to develop ARMv7-M support in Linux
-which was quite fun and still is a blissful memory.
+On Tue, 2021-01-12 at 10:18 +0100, Uwe Kleine-K=C3=B6nig wrote:
 
-Still given that the code serves no purpose and this probably won't
-change anytime soon, remove all platform support.
+[...]
 
-I'm unsure what to do with the device tree bindings. Should we delete
-them, too?
+> > +                duty_cycle =3D DIV_ROUND_CLOSEST_ULL(state->duty_cycle=
+ * RPI_PWM_MAX_DUTY,
+> > +					           RPI_PWM_PERIOD_NS);
+>=20
+> ... and round down here.
+>=20
+> Just to be sure: writing RPI_PWM_MAX_DUTY (i.e. 255) yields 100% duty
+> cycle, right?
 
-Best regards
-Uwe
+Yes, at 255 the signal is flat.
 
-Uwe Kleine-König (7):
-  ARM: drop efm32 platform
-  clk: Drop unused efm32gg driver
-  clocksource: Drop unused efm32 timer code
-  spi: Drop unused efm32 bus driver
-  i2c: Drop unused efm32 bus driver
-  tty: Drop unused efm32 serial driver
-  MAINTAINERS: Remove deleted platform efm32
+> > +        else
+> > +                duty_cycle =3D RPI_PWM_MAX_DUTY;
+> > +
+> > +	if (duty_cycle =3D=3D rpipwm->duty_cycle)
+> > +		return 0;
+> > +
+> > +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DU=
+TY_REG,
+> > +					   duty_cycle);
+> > +	if (ret) {
+> > +		dev_err(chip->dev, "Failed to set duty cycle: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	/*
+> > +	 * This sets the default duty cycle after resetting the board, we
+> > +	 * updated it every time to mimic Raspberry Pi's downstream's driver
+> > +	 * behaviour.
+> > +	 */
+> > +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DU=
+TY_REG,
+> > +					   duty_cycle);
+> > +	if (ret) {
+> > +		dev_err(chip->dev, "Failed to set default duty cycle: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +        rpipwm->duty_cycle =3D duty_cycle;
+>=20
+> Please use tabs for indention. (The general hint is to use checkpatch
+> which (I hope) tells you about problems like this.)
 
- MAINTAINERS                              |   7 -
- arch/arm/Kconfig                         |  10 +-
- arch/arm/Kconfig.debug                   |  17 -
- arch/arm/Makefile                        |   1 -
- arch/arm/boot/dts/Makefile               |   2 -
- arch/arm/boot/dts/efm32gg-dk3750.dts     |  88 ---
- arch/arm/boot/dts/efm32gg.dtsi           | 177 -----
- arch/arm/configs/efm32_defconfig         |  98 ---
- arch/arm/include/debug/efm32.S           |  45 --
- arch/arm/mach-efm32/Makefile             |   2 -
- arch/arm/mach-efm32/Makefile.boot        |   4 -
- arch/arm/mach-efm32/dtmachine.c          |  16 -
- arch/arm/mm/Kconfig                      |   1 -
- drivers/clk/Makefile                     |   1 -
- drivers/clk/clk-efm32gg.c                |  84 ---
- drivers/clocksource/Kconfig              |   9 -
- drivers/clocksource/Makefile             |   1 -
- drivers/clocksource/timer-efm32.c        | 278 --------
- drivers/i2c/busses/Kconfig               |   7 -
- drivers/i2c/busses/Makefile              |   1 -
- drivers/i2c/busses/i2c-efm32.c           | 469 -------------
- drivers/spi/Kconfig                      |   7 -
- drivers/spi/Makefile                     |   1 -
- drivers/spi/spi-efm32.c                  | 462 ------------
- drivers/tty/serial/Kconfig               |  13 -
- drivers/tty/serial/Makefile              |   1 -
- drivers/tty/serial/efm32-uart.c          | 852 -----------------------
- include/linux/platform_data/efm32-spi.h  |  15 -
- include/linux/platform_data/efm32-uart.h |  19 -
- include/uapi/linux/serial_core.h         |   3 -
- 30 files changed, 1 insertion(+), 2690 deletions(-)
- delete mode 100644 arch/arm/boot/dts/efm32gg-dk3750.dts
- delete mode 100644 arch/arm/boot/dts/efm32gg.dtsi
- delete mode 100644 arch/arm/configs/efm32_defconfig
- delete mode 100644 arch/arm/include/debug/efm32.S
- delete mode 100644 arch/arm/mach-efm32/Makefile
- delete mode 100644 arch/arm/mach-efm32/Makefile.boot
- delete mode 100644 arch/arm/mach-efm32/dtmachine.c
- delete mode 100644 drivers/clk/clk-efm32gg.c
- delete mode 100644 drivers/clocksource/timer-efm32.c
- delete mode 100644 drivers/i2c/busses/i2c-efm32.c
- delete mode 100644 drivers/spi/spi-efm32.c
- delete mode 100644 drivers/tty/serial/efm32-uart.c
- delete mode 100644 include/linux/platform_data/efm32-spi.h
- delete mode 100644 include/linux/platform_data/efm32-uart.h
+Sorry for that.
+
+I took note of the rest of comments and will update the code.
+
+Regards,
+Nicolas
 
 
-base-commit: 5c8fe583cce542aa0b84adc939ce85293de36e5e
--- 
-2.29.2
+
+--=-Gc66jpwjN4JFK05BfjVR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAAkR4ACgkQlfZmHno8
+x/7WpAf+OcmBebYI8HGJFfpFhX3gBSdN6587Todi3RNaMrm6loRFFbe3HDS3rO0u
+pv9Zl7lrjVKV1+Fug2/3rTL4Kh0/w98EZJ5mpf6n5k0EG+EoMqGqfqElaLL0mvW9
+7NpiNF15W4/v/U22BH3jtFUkt0PpjN1J2WPclOl+ZPEe31vjdiEauq7zAhRT9Gpr
+XHH9ZbY9f4oXR2s91ZaYGdni3ikxxB4cG/aS50GAM019KW/RIkEibfYpDjrCNOml
+M4Z4Y15Mqi8aouumlLNKiuxNmNhtyCilx3jHPeNm+2b5GeBp/S9jtAVkVaUaYQ9I
+N8qh4QzVUk4qMeucxLeRRemzuIWCOw==
+=pJN/
+-----END PGP SIGNATURE-----
+
+--=-Gc66jpwjN4JFK05BfjVR--
 
