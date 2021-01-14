@@ -7,27 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F79C4332D
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171F2C4361B
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE5E423AC8
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9A3323A5C
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbhANWLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 17:11:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51916 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbhANWLt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 17:11:49 -0500
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1A9C0613D3
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jan 2021 14:11:09 -0800 (PST)
+        id S1730208AbhANWLx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jan 2021 17:11:53 -0500
+Received: from relay06.th.seeweb.it ([5.144.164.167]:43361 "EHLO
+        relay06.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbhANWLx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 17:11:53 -0500
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id BB25E3EBA7;
-        Thu, 14 Jan 2021 23:11:07 +0100 (CET)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 043D63F1D1;
+        Thu, 14 Jan 2021 23:11:09 +0100 (CET)
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
 To:     linux-arm-msm@vger.kernel.org
@@ -39,9 +36,9 @@ Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         devicetree@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Subject: [PATCH v2 01/11] dt-bindings: clocks: gcc-msm8998: Add GCC_MMSS_GPLL0_CLK definition
-Date:   Thu, 14 Jan 2021 23:10:49 +0100
-Message-Id: <20210114221059.483390-2-angelogioacchino.delregno@somainline.org>
+Subject: [PATCH v2 05/11] clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as critical
+Date:   Thu, 14 Jan 2021 23:10:53 +0100
+Message-Id: <20210114221059.483390-6-angelogioacchino.delregno@somainline.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
 References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
@@ -51,25 +48,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add new clock definition to gcc-msm8998 dt-bindings.
+The GPU IOMMU depends on this clock and the hypervisor will crash
+the SoC if this clock gets disabled because the secure contexts
+that have been set on this IOMMU by the bootloader will become
+unaccessible (or they get reset).
+Mark this clock as critical to avoid this issue when the Adreno
+GPU is enabled.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 ---
- include/dt-bindings/clock/qcom,gcc-msm8998.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/gcc-msm8998.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-index 6a73a174f049..47ca17df780b 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-@@ -184,6 +184,7 @@
- #define GCC_MSS_MNOC_BIMC_AXI_CLK				175
- #define GCC_BIMC_GFX_CLK					176
- #define UFS_UNIPRO_CORE_CLK_SRC					177
-+#define GCC_MMSS_GPLL0_CLK					178
- 
- #define PCIE_0_GDSC						0
- #define UFS_GDSC						1
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index c8d4c0348952..afea60a3ef43 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2081,6 +2081,12 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_gpu_cfg_ahb_clk",
+ 			.ops = &clk_branch2_ops,
++			/*
++			 * The GPU IOMMU depends on this clock and hypervisor
++			 * will crash the SoC if this clock goes down, due to
++			 * secure contexts protection.
++			 */
++			.flags = CLK_IS_CRITICAL,
+ 		},
+ 	},
+ };
 -- 
 2.29.2
 
