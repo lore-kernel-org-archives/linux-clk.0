@@ -4,27 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FDBC4321A
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E236C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAC223A9F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D45822A84
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 22:13:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbhANWMI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 17:12:08 -0500
-Received: from m-r2.th.seeweb.it ([5.144.164.171]:46777 "EHLO
-        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730483AbhANWMH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 17:12:07 -0500
+        id S1730562AbhANWMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jan 2021 17:12:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729846AbhANWMo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 17:12:44 -0500
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50722C061794;
+        Thu, 14 Jan 2021 14:11:10 -0800 (PST)
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id DACAB3F1E5;
-        Thu, 14 Jan 2021 23:11:09 +0100 (CET)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id B1D2D3F17F;
+        Thu, 14 Jan 2021 23:11:08 +0100 (CET)
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
 To:     linux-arm-msm@vger.kernel.org
@@ -36,9 +39,9 @@ Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         devicetree@vger.kernel.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Subject: [PATCH v2 08/11] clk: qcom: mmcc-msm8998: Add hardware clockgating registers to some clks
-Date:   Thu, 14 Jan 2021 23:10:56 +0100
-Message-Id: <20210114221059.483390-9-angelogioacchino.delregno@somainline.org>
+Subject: [PATCH v2 04/11] clk: qcom: gcc-msm8998: Add missing hmss_gpll0_clk_src clock
+Date:   Thu, 14 Jan 2021 23:10:52 +0100
+Message-Id: <20210114221059.483390-5-angelogioacchino.delregno@somainline.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
 References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
@@ -48,68 +51,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hardware clock gating is supported on some of the clocks declared in
-there: ignoring that it does exist may lead to unstabilities on some
-firmwares.
-Add the HWCG registers where applicable to stop potential crashes.
-
-This was verified on a smartphone shipped with a recent MSM8998
-firmware, which will experience random crashes without this change.
+To achieve CPR-Hardened functionality this clock must be on: add it
+in order to be able to get it managed by the CPR3 driver.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 ---
- drivers/clk/qcom/mmcc-msm8998.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/qcom/gcc-msm8998.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
-index 475e00a5fdf4..f9510a248a36 100644
---- a/drivers/clk/qcom/mmcc-msm8998.c
-+++ b/drivers/clk/qcom/mmcc-msm8998.c
-@@ -1211,6 +1211,8 @@ static struct clk_rcg2 vfe1_clk_src = {
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index d51c556851ca..c8d4c0348952 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2160,6 +2160,25 @@ static struct clk_branch gcc_hmss_trig_clk = {
+ 	},
+ };
  
- static struct clk_branch misc_ahb_clk = {
- 	.halt_reg = 0x328,
-+	.hwcg_reg = 0x328,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x328,
- 		.enable_mask = BIT(0),
-@@ -1241,6 +1243,8 @@ static struct clk_branch video_core_clk = {
++static struct freq_tbl ftbl_hmss_gpll0_clk_src[] = {
++	F( 300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
++	F( 600000000, P_GPLL0_OUT_MAIN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 hmss_gpll0_clk_src = {
++	.cmd_rcgr = 0x4805c,
++	.hid_width = 5,
++	.parent_map = gcc_parent_map_1,
++	.freq_tbl = ftbl_hmss_gpll0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "hmss_gpll0_clk_src",
++		.parent_names = gcc_parent_names_1,
++		.num_parents = ARRAY_SIZE(gcc_parent_names_1),
++		.ops = &clk_rcg2_ops,
++	},
++};
++
+ static struct clk_branch gcc_mmss_noc_cfg_ahb_clk = {
+ 	.halt_reg = 0x9004,
+ 	.halt_check = BRANCH_HALT,
+@@ -2961,6 +2980,7 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
+ 	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
+ 	[GCC_MSS_MNOC_BIMC_AXI_CLK] = &gcc_mss_mnoc_bimc_axi_clk.clkr,
+ 	[GCC_MMSS_GPLL0_CLK] = &gcc_mmss_gpll0_clk.clkr,
++	[HMSS_GPLL0_CLK_SRC] = &hmss_gpll0_clk_src.clkr,
+ };
  
- static struct clk_branch video_ahb_clk = {
- 	.halt_reg = 0x1030,
-+	.hwcg_reg = 0x1030,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x1030,
- 		.enable_mask = BIT(0),
-@@ -1315,6 +1319,8 @@ static struct clk_branch video_subcore1_clk = {
- 
- static struct clk_branch mdss_ahb_clk = {
- 	.halt_reg = 0x2308,
-+	.hwcg_reg = 0x2308,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x2308,
- 		.enable_mask = BIT(0),
-@@ -2496,6 +2502,8 @@ static struct clk_branch mnoc_ahb_clk = {
- 
- static struct clk_branch bimc_smmu_ahb_clk = {
- 	.halt_reg = 0xe004,
-+	.hwcg_reg = 0xe004,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0xe004,
- 		.enable_mask = BIT(0),
-@@ -2511,6 +2519,8 @@ static struct clk_branch bimc_smmu_ahb_clk = {
- 
- static struct clk_branch bimc_smmu_axi_clk = {
- 	.halt_reg = 0xe008,
-+	.hwcg_reg = 0xe008,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0xe008,
- 		.enable_mask = BIT(0),
+ static struct gdsc *gcc_msm8998_gdscs[] = {
 -- 
 2.29.2
 
