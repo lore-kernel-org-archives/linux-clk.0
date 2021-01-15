@@ -2,129 +2,272 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC65C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 09:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D30C4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 13:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5FE023899
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 09:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C772256F
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 13:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbhAOJxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Jan 2021 04:53:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729581AbhAOJxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jan 2021 04:53:36 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBED8C0613C1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Jan 2021 01:52:56 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Gxsu2400L4C55Sk01xsuz8; Fri, 15 Jan 2021 10:52:55 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l0Lmo-003j20-Bk; Fri, 15 Jan 2021 10:52:54 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l0Lmn-009nLa-Tf; Fri, 15 Jan 2021 10:52:53 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.12
-Date:   Fri, 15 Jan 2021 10:52:48 +0100
-Message-Id: <20210115095248.2334597-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id S1732783AbhAONDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Jan 2021 08:03:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732594AbhAONDP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Jan 2021 08:03:15 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ED709221FA;
+        Fri, 15 Jan 2021 13:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610715754;
+        bh=ecEu9xVKi9pky1OPVUSqIbl4j8EhR8DIBnOEeNIL5V4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hWmt9Xc0Kxq+bcUtvPNzlCo5BOUJVvCpBdUhQzwyEIU+09ebIzLuCxlzcUzwnILeo
+         ILbKlnifzAhxqfHu0kvK5rkFhbyKhxx6EoR63F5UW1ft7Kz078LC7hluuRCf6RrRGL
+         DcgpyfsAqOQN/juc57ICGmj12K7VREZK8l4rQuv9YKT2pd12385sN4GnLbVpR8MF3A
+         s4ZkUV7S+3jC3ake8U6KXyQXm+ECpvKtTJQTghuImVJxXIWcoZI2CwE5ewzDj21o8M
+         pdr+Hb42wb5rKnz0gFdriDT/OeMozDrMjktdVHcfPELrm9+Db1NP3B66dZmDzNZGi9
+         6citvBgVzGO9g==
+Date:   Fri, 15 Jan 2021 18:32:29 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vivek Aknurwar <viveka@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeevan Shriram <jshriram@codeaurora.org>,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org
+Subject: Re: [PATCH 2/4] clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE
+ PLL
+Message-ID: <20210115130229.GG2771@vkoul-mobl>
+References: <20210105154645.217998-1-vkoul@kernel.org>
+ <20210105154645.217998-3-vkoul@kernel.org>
+ <c1354fed-7887-f60f-e288-df7b64d419b7@somainline.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1354fed-7887-f60f-e288-df7b64d419b7@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+On 13-01-21, 23:39, AngeloGioacchino Del Regno wrote:
+> Il 05/01/21 16:46, Vinod Koul ha scritto:
+> > From: Vivek Aknurwar <viveka@codeaurora.org>
+> > 
+> > Lucid 5LPE is a slightly different Lucid PLL with different offsets and
+> > porgramming sequence so add support for these
+> > 
+> > Signed-off-by: Vivek Aknurwar <viveka@codeaurora.org>
+> > Signed-off-by: Jeevan Shriram <jshriram@codeaurora.org>
+> > [vkoul: rebase and tidy up for upstream]
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> >   drivers/clk/qcom/clk-alpha-pll.c | 217 +++++++++++++++++++++++++++++++
+> >   drivers/clk/qcom/clk-alpha-pll.h |   4 +
+> >   2 files changed, 221 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > index f7721088494c..843c43649a5a 100644
+> > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > @@ -156,6 +156,12 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+> >   /* LUCID PLL specific settings and offsets */
+> >   #define LUCID_PCAL_DONE		BIT(27)
+> > +/* LUCID 5LPE PLL specific settings and offsets */
+> > +#define LUCID_5LPE_PCAL_DONE		BIT(11)
+> > +#define LUCID_5LPE_ALPHA_PLL_ACK_LATCH	BIT(13)
+> > +#define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
+> > +#define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
+> > +
+> >   #define pll_alpha_width(p)					\
+> >   		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+> >   				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+> > @@ -1600,3 +1606,214 @@ const struct clk_ops clk_alpha_pll_agera_ops = {
+> >   	.set_rate = clk_alpha_pll_agera_set_rate,
+> >   };
+> >   EXPORT_SYMBOL_GPL(clk_alpha_pll_agera_ops);
+> > +
+> > +static int alpha_pll_lucid_5lpe_enable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* If in FSM mode, just vote for it */
+> > +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> > +		ret = clk_enable_regmap(hw);
+> > +		if (ret)
+> > +			return ret;
+> > +		return wait_for_pll_enable_lock(pll);
+> > +	}
+> > +
+> > +	/* Check if PLL is already enabled, return if enabled */
+> > +	ret = trion_pll_is_enabled(pll, pll->clkr.regmap);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_RUN);
+> > +
+> > +	ret = wait_for_pll_enable_lock(pll);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable the PLL outputs */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, PLL_OUT_MASK);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable the global PLL outputs */
+> > +	return regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
+> > +}
+> > +
+> > +static void alpha_pll_lucid_5lpe_disable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* If in FSM mode, just unvote it */
+> > +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> > +		clk_disable_regmap(hw);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Disable the global PLL output */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* Disable the PLL outputs */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, 0);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* Place the PLL mode in STANDBY */
+> > +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_STANDBY);
+> > +}
+> > +
+> > +/*
+> > + * The Lucid 5LPE PLL requires a power-on self-calibration which happens
+> > + * when the PLL comes out of reset. Calibrate in case it is not completed.
+> > + */
+> > +static int alpha_pll_lucid_5lpe_prepare(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	struct clk_hw *p;
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	/* Return early if calibration is not needed. */
+> > +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> > +	if (val & LUCID_5LPE_PCAL_DONE)
+> > +		return 0;
+> > +
+> > +	p = clk_hw_get_parent(hw);
+> > +	if (!p)
+> > +		return -EINVAL;
+> > +
+> > +	ret = alpha_pll_lucid_5lpe_enable(hw);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	alpha_pll_lucid_5lpe_disable(hw);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int alpha_pll_lucid_5lpe_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +					 unsigned long prate)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	unsigned long rrate;
+> > +	u32 val, l;
+> > +	u64 a;
+> > +	int ret;
+> > +
+> > +	rrate = alpha_pll_round_rate(rate, prate, &l, &a, ALPHA_REG_16BIT_WIDTH);
+> > +
+> > +	/*
+> > +	 * Due to a limited number of bits for fractional rate programming, the
+> > +	 * rounded up rate could be marginally higher than the requested rate.
+> > +	 */
+> > +	ret = alpha_pll_check_rate_margin(hw, rrate, rate);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> > +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> > +
+> > +	/* Latch the PLL input */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
+> > +				 LUCID_5LPE_PLL_LATCH_INPUT, LUCID_5LPE_PLL_LATCH_INPUT);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Wait for 2 reference cycles before checking the ACK bit. */
+> > +	udelay(1);
+> > +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> > +	if (!(val & LUCID_5LPE_ALPHA_PLL_ACK_LATCH)) {
+> > +		pr_err("Lucid 5LPE PLL latch failed. Output may be unstable!\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Return the latch input to 0 */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), LUCID_5LPE_PLL_LATCH_INPUT, 0);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (clk_hw_is_enabled(hw)) {
+> > +		ret = wait_for_pll_enable_lock(pll);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	/* Wait for PLL output to stabilize */
+> > +	udelay(100);
+> > +	return 0;
+> > +}
+> > +
+> 
+> This one looks exactly like alpha_pll_trion_set_rate() but:
+> 1. You are forcing ALPHA_REG_16BIT_WIDTH for the alpha_pll_round_rate
+>    call: this is bad, you should actually use pll_alpha_width(pll) here,
+>    unless you have a very good reason that I didn't understand...
+> 2. The only change between these two functions (trion and
+>    lucid_5lpe_set_rate) is that PLL_UPDATE becomes
+>    LUCID_5LPE_PLL_LATCH_INPUT, and that you check for
+>    LUCID_5LPE_ALPHA_PLL_ACK_LATCH instead of ALPHA_PLL_ACK_LATCH: this
+>    looks like being 95% code duplication.
+> 
+> The best options here, in my opinion, would be to commonize the function
+> alpha_pll_trion_set_rate: that will avoid this huge duplication.
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+Yeah I agree we could reuse, I can redo this. I was thinking of making
+this bit as one of the values in register and use that but that does not
+look good as this is not a register offset, so only option is to have a
+new type of PLL for this and use that as here..
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.12-tag1
-
-for you to fetch changes up to c706121386fe8414ac0a0acab37c74aac698c51d:
-
-  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2 M/N/H (2021-01-12 12:35:13 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.12
-
-  - Add timer (TMU) clocks on most R-Car Gen3 SoCs,
-  - Add video-related (FCPVD/VSPD/VSPX), watchdog (RWDT), serial
-    (HSCIF), pincontrol/GPIO (PFC/GPIO), SPI (MSIOF), SDHI, and DMA
-    (SYS-DMAC) clocks on R-Car V3U,
-  - Add support for the USB 2.0 clock selector on RZ/G2 SoCs,
-  - Minor fixes and improvements.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Adam Ford (1):
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2 M/N/H
-
-Geert Uytterhoeven (5):
-      clk: renesas: r8a779a0: Remove non-existent S2 clock
-      clk: renesas: r8a779a0: Fix parent of CBFUSA clock
-      clk: renesas: r8a779a0: Add PFC/GPIO clocks
-      clk: renesas: r8a779a0: Add MSIOF clocks
-      clk: renesas: r8a779a0: Add SYS-DMAC clocks
-
-Kieran Bingham (3):
-      clk: renesas: r8a779a0: Add FCPVD clock support
-      clk: renesas: r8a779a0: Add VSPD clock support
-      clk: renesas: r8a779a0: Add VSPX clock support
-
-Niklas Söderlund (4):
-      clk: renesas: r8a7796: Add TMU clocks
-      clk: renesas: r8a77965: Add TMU clocks
-      clk: renesas: r8a77990: Add TMU clocks
-      clk: renesas: r8a77995: Add TMU clocks
-
-Wolfram Sang (5):
-      clk: renesas: r8a779a0: Add RWDT clocks
-      clk: renesas: r8a779a0: Add HSCIF support
-      clk: renesas: rcar-gen3: Remove cpg_quirks access when registering SD clock
-      clk: renesas: rcar-gen3: Factor out CPG library
-      clk: renesas: r8a779a0: Add SDHI support
-
- .../clock/renesas,rcar-usb2-clock-sel.yaml         |   3 +
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |   5 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c            |   5 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c            |   5 +
- drivers/clk/renesas/r8a77995-cpg-mssr.c            |   5 +
- drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  54 ++++-
- drivers/clk/renesas/rcar-cpg-lib.c                 | 270 +++++++++++++++++++++
- drivers/clk/renesas/rcar-cpg-lib.h                 |  33 +++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 267 +-------------------
- 11 files changed, 391 insertions(+), 262 deletions(-)
- create mode 100644 drivers/clk/renesas/rcar-cpg-lib.c
- create mode 100644 drivers/clk/renesas/rcar-cpg-lib.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+~Vinod
