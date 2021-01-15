@@ -2,111 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9215C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 00:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC65C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 09:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A406623AA9
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 00:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FE023899
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 09:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbhAOAKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 19:10:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
+        id S1729929AbhAOJxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Jan 2021 04:53:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731040AbhAOAKc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 19:10:32 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A5CC061575;
-        Thu, 14 Jan 2021 16:09:52 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id w18so14958232iot.0;
-        Thu, 14 Jan 2021 16:09:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s5ahcu3v2MVuo3zeW5uMRThAdBUDPKXNvYYU61ViJ9I=;
-        b=VKBPrIpYnYXWPv2Gi/XJn25zjX8+K8yazAvNQnEkXwlGFYOyh6/KQSRP0AI2MGyLti
-         aPfHueYC2xldLbkHLQSMhnf4Qdl8buhcjOvkyFDXC/9SJ/BxVjJuM/WAhlrjmnAJ+HnF
-         tkIfXxW77kjRqKHitJukz0NhjUFukfMC6yImosyDrP7EGfTMo7lzjNC3FiTWzPDkgq63
-         CZLsK1v6uSsxQFrkCFJNpdGgi24I83Gf1c1XcBuWqgbIfUhC5GR9g0cBRRdVTNwVokHK
-         fJKi3u1hVaAr7n3XZXd5jU51YC19YMm3rFLtMPArp+Swo1Jufxqf3SdCMBxegpHTNTcl
-         SkQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s5ahcu3v2MVuo3zeW5uMRThAdBUDPKXNvYYU61ViJ9I=;
-        b=W+nFBpZKBjfe0RuiLYNJP1iE/nF+YM0lnD6IMLfiwBUUDiMb+hvzqJlBXeznOLzoHA
-         7xEGp/IrI4QsW5kuAJXQ+1Yg5fNdAQvwydcczPpA0Lfqd/psOZOowIlR1QUpYHvj3wZ3
-         WzfShiokgRgZBMw3bPN3qA6a4pgtcFGQBFpEX0nYD0kAc9EqY/gMXP49UNIDfokbom/h
-         Tb+iSKnGvR9OrGD1mafQQSynSZWBcNBLLWnJ74lDrRShrPUGa0AGXAihUZGHSo+sTVj5
-         u11CmAhsbsbPWmjUn/3Jr32PA1nU3ZkAXCfw1T9PJQQxU4QOKIvlq1Eg4UDFDbLmFSPq
-         +Z8w==
-X-Gm-Message-State: AOAM5313XUTSdE2d0zN2bYIWUDx5aslluwFEDYFZTGQY5KP7j8YXxo/+
-        7dUKEDYRofcnHcCQRbUpMWCsjWasa+DWKrAtFDk=
-X-Google-Smtp-Source: ABdhPJzJv2544H8hyL4xbmLEwbu03dvdhy7FZ5hh2Q0NWYCYKcpC+vBm12AIw7aDElnq7AmtXJ6U36Y6ToWNJC6lt5E=
-X-Received: by 2002:a92:1f09:: with SMTP id i9mr8738065ile.288.1610669392008;
- Thu, 14 Jan 2021 16:09:52 -0800 (PST)
+        with ESMTP id S1729581AbhAOJxg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jan 2021 04:53:36 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBED8C0613C1
+        for <linux-clk@vger.kernel.org>; Fri, 15 Jan 2021 01:52:56 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Gxsu2400L4C55Sk01xsuz8; Fri, 15 Jan 2021 10:52:55 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1l0Lmo-003j20-Bk; Fri, 15 Jan 2021 10:52:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1l0Lmn-009nLa-Tf; Fri, 15 Jan 2021 10:52:53 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.12
+Date:   Fri, 15 Jan 2021 10:52:48 +0100
+Message-Id: <20210115095248.2334597-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
- <20210114221059.483390-6-angelogioacchino.delregno@somainline.org>
- <CAOCk7NoVts21FjhhLtZp-0Xdw6-BnrKio_-tuZBRsgapsUdwfw@mail.gmail.com> <25d40e7d-fbd6-697f-7d4d-a7233aeb652c@somainline.org>
-In-Reply-To: <25d40e7d-fbd6-697f-7d4d-a7233aeb652c@somainline.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Thu, 14 Jan 2021 17:09:41 -0700
-Message-ID: <CAOCk7NoGPSsimtM03jPAGx9deXWmOFYR=nNBsfO6o-YZ6z8OBg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as critical
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>, konrad.dybcio@somainline.org,
-        marijn.suijten@somainline.org, martin.botka@somainline.org,
-        phone-devel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 4:05 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@somainline.org> wrote:
->
-> Il 14/01/21 23:37, Jeffrey Hugo ha scritto:
-> > On Thu, Jan 14, 2021 at 3:13 PM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@somainline.org> wrote:
-> >>
-> >> The GPU IOMMU depends on this clock and the hypervisor will crash
-> >> the SoC if this clock gets disabled because the secure contexts
-> >> that have been set on this IOMMU by the bootloader will become
-> >> unaccessible (or they get reset).
-> >> Mark this clock as critical to avoid this issue when the Adreno
-> >> GPU is enabled.
-> >>
-> >
-> > You should go review the last attempt to do this -
-> > https://lkml.org/lkml/2019/12/17/881
-> >
->
-> Thanks for the tip, but unfortunately this isn't possible on the
-> gpu_cfg_ahb_clk, as it is also needed for the Adreno IOMMU, which has
-> secure contexts that are set up from one of the bootloader stages and if
-> you reset/"mess up" one of them (by - in this case - un-clocking the
-> MMU), then the hypervisor will kick in and generate a fault, rebooting
-> the SoC.
->
-> Of course, this scenario is for the case in which you want to boot the
-> device without any gpucc nor any runtime pm user of that.. and the
-> aforementioned issue makes that solution not really usable.
->
-> Again, unfortunately.
+	Hi Mike, Stephen,
 
-Intresting, that's not true on all devices, but presumably you have
-devices where it is.  Fun.
+The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+
+  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.12-tag1
+
+for you to fetch changes up to c706121386fe8414ac0a0acab37c74aac698c51d:
+
+  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2 M/N/H (2021-01-12 12:35:13 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.12
+
+  - Add timer (TMU) clocks on most R-Car Gen3 SoCs,
+  - Add video-related (FCPVD/VSPD/VSPX), watchdog (RWDT), serial
+    (HSCIF), pincontrol/GPIO (PFC/GPIO), SPI (MSIOF), SDHI, and DMA
+    (SYS-DMAC) clocks on R-Car V3U,
+  - Add support for the USB 2.0 clock selector on RZ/G2 SoCs,
+  - Minor fixes and improvements.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Adam Ford (1):
+      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2 M/N/H
+
+Geert Uytterhoeven (5):
+      clk: renesas: r8a779a0: Remove non-existent S2 clock
+      clk: renesas: r8a779a0: Fix parent of CBFUSA clock
+      clk: renesas: r8a779a0: Add PFC/GPIO clocks
+      clk: renesas: r8a779a0: Add MSIOF clocks
+      clk: renesas: r8a779a0: Add SYS-DMAC clocks
+
+Kieran Bingham (3):
+      clk: renesas: r8a779a0: Add FCPVD clock support
+      clk: renesas: r8a779a0: Add VSPD clock support
+      clk: renesas: r8a779a0: Add VSPX clock support
+
+Niklas Söderlund (4):
+      clk: renesas: r8a7796: Add TMU clocks
+      clk: renesas: r8a77965: Add TMU clocks
+      clk: renesas: r8a77990: Add TMU clocks
+      clk: renesas: r8a77995: Add TMU clocks
+
+Wolfram Sang (5):
+      clk: renesas: r8a779a0: Add RWDT clocks
+      clk: renesas: r8a779a0: Add HSCIF support
+      clk: renesas: rcar-gen3: Remove cpg_quirks access when registering SD clock
+      clk: renesas: rcar-gen3: Factor out CPG library
+      clk: renesas: r8a779a0: Add SDHI support
+
+ .../clock/renesas,rcar-usb2-clock-sel.yaml         |   3 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   5 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |   5 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |   5 +
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |   5 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  54 ++++-
+ drivers/clk/renesas/rcar-cpg-lib.c                 | 270 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-cpg-lib.h                 |  33 +++
+ drivers/clk/renesas/rcar-gen3-cpg.c                | 267 +-------------------
+ 11 files changed, 391 insertions(+), 262 deletions(-)
+ create mode 100644 drivers/clk/renesas/rcar-cpg-lib.c
+ create mode 100644 drivers/clk/renesas/rcar-cpg-lib.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
