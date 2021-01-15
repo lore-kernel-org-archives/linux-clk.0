@@ -2,35 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B016C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 23:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9215C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 00:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3053823A5E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jan 2021 23:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A406623AA9
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jan 2021 00:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbhANXGm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jan 2021 18:06:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35418 "EHLO
+        id S1731158AbhAOAKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jan 2021 19:10:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbhANXGm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 18:06:42 -0500
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 426F7C061575
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jan 2021 15:05:47 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 801033F0AF;
-        Fri, 15 Jan 2021 00:05:45 +0100 (CET)
-Subject: Re: [PATCH v2 05/11] clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as
- critical
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+        with ESMTP id S1731040AbhAOAKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jan 2021 19:10:32 -0500
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A5CC061575;
+        Thu, 14 Jan 2021 16:09:52 -0800 (PST)
+Received: by mail-io1-xd34.google.com with SMTP id w18so14958232iot.0;
+        Thu, 14 Jan 2021 16:09:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s5ahcu3v2MVuo3zeW5uMRThAdBUDPKXNvYYU61ViJ9I=;
+        b=VKBPrIpYnYXWPv2Gi/XJn25zjX8+K8yazAvNQnEkXwlGFYOyh6/KQSRP0AI2MGyLti
+         aPfHueYC2xldLbkHLQSMhnf4Qdl8buhcjOvkyFDXC/9SJ/BxVjJuM/WAhlrjmnAJ+HnF
+         tkIfXxW77kjRqKHitJukz0NhjUFukfMC6yImosyDrP7EGfTMo7lzjNC3FiTWzPDkgq63
+         CZLsK1v6uSsxQFrkCFJNpdGgi24I83Gf1c1XcBuWqgbIfUhC5GR9g0cBRRdVTNwVokHK
+         fJKi3u1hVaAr7n3XZXd5jU51YC19YMm3rFLtMPArp+Swo1Jufxqf3SdCMBxegpHTNTcl
+         SkQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s5ahcu3v2MVuo3zeW5uMRThAdBUDPKXNvYYU61ViJ9I=;
+        b=W+nFBpZKBjfe0RuiLYNJP1iE/nF+YM0lnD6IMLfiwBUUDiMb+hvzqJlBXeznOLzoHA
+         7xEGp/IrI4QsW5kuAJXQ+1Yg5fNdAQvwydcczPpA0Lfqd/psOZOowIlR1QUpYHvj3wZ3
+         WzfShiokgRgZBMw3bPN3qA6a4pgtcFGQBFpEX0nYD0kAc9EqY/gMXP49UNIDfokbom/h
+         Tb+iSKnGvR9OrGD1mafQQSynSZWBcNBLLWnJ74lDrRShrPUGa0AGXAihUZGHSo+sTVj5
+         u11CmAhsbsbPWmjUn/3Jr32PA1nU3ZkAXCfw1T9PJQQxU4QOKIvlq1Eg4UDFDbLmFSPq
+         +Z8w==
+X-Gm-Message-State: AOAM5313XUTSdE2d0zN2bYIWUDx5aslluwFEDYFZTGQY5KP7j8YXxo/+
+        7dUKEDYRofcnHcCQRbUpMWCsjWasa+DWKrAtFDk=
+X-Google-Smtp-Source: ABdhPJzJv2544H8hyL4xbmLEwbu03dvdhy7FZ5hh2Q0NWYCYKcpC+vBm12AIw7aDElnq7AmtXJ6U36Y6ToWNJC6lt5E=
+X-Received: by 2002:a92:1f09:: with SMTP id i9mr8738065ile.288.1610669392008;
+ Thu, 14 Jan 2021 16:09:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
+ <20210114221059.483390-6-angelogioacchino.delregno@somainline.org>
+ <CAOCk7NoVts21FjhhLtZp-0Xdw6-BnrKio_-tuZBRsgapsUdwfw@mail.gmail.com> <25d40e7d-fbd6-697f-7d4d-a7233aeb652c@somainline.org>
+In-Reply-To: <25d40e7d-fbd6-697f-7d4d-a7233aeb652c@somainline.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Thu, 14 Jan 2021 17:09:41 -0700
+Message-ID: <CAOCk7NoGPSsimtM03jPAGx9deXWmOFYR=nNBsfO6o-YZ6z8OBg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/11] clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as critical
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
 Cc:     MSM <linux-arm-msm@vger.kernel.org>, konrad.dybcio@somainline.org,
         marijn.suijten@somainline.org, martin.botka@somainline.org,
         phone-devel@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
@@ -40,49 +71,42 @@ Cc:     MSM <linux-arm-msm@vger.kernel.org>, konrad.dybcio@somainline.org,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         DTML <devicetree@vger.kernel.org>
-References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
- <20210114221059.483390-6-angelogioacchino.delregno@somainline.org>
- <CAOCk7NoVts21FjhhLtZp-0Xdw6-BnrKio_-tuZBRsgapsUdwfw@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Message-ID: <25d40e7d-fbd6-697f-7d4d-a7233aeb652c@somainline.org>
-Date:   Fri, 15 Jan 2021 00:05:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAOCk7NoVts21FjhhLtZp-0Xdw6-BnrKio_-tuZBRsgapsUdwfw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 14/01/21 23:37, Jeffrey Hugo ha scritto:
-> On Thu, Jan 14, 2021 at 3:13 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@somainline.org> wrote:
->>
->> The GPU IOMMU depends on this clock and the hypervisor will crash
->> the SoC if this clock gets disabled because the secure contexts
->> that have been set on this IOMMU by the bootloader will become
->> unaccessible (or they get reset).
->> Mark this clock as critical to avoid this issue when the Adreno
->> GPU is enabled.
->>
-> 
-> You should go review the last attempt to do this -
-> https://lkml.org/lkml/2019/12/17/881
-> 
+On Thu, Jan 14, 2021 at 4:05 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@somainline.org> wrote:
+>
+> Il 14/01/21 23:37, Jeffrey Hugo ha scritto:
+> > On Thu, Jan 14, 2021 at 3:13 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@somainline.org> wrote:
+> >>
+> >> The GPU IOMMU depends on this clock and the hypervisor will crash
+> >> the SoC if this clock gets disabled because the secure contexts
+> >> that have been set on this IOMMU by the bootloader will become
+> >> unaccessible (or they get reset).
+> >> Mark this clock as critical to avoid this issue when the Adreno
+> >> GPU is enabled.
+> >>
+> >
+> > You should go review the last attempt to do this -
+> > https://lkml.org/lkml/2019/12/17/881
+> >
+>
+> Thanks for the tip, but unfortunately this isn't possible on the
+> gpu_cfg_ahb_clk, as it is also needed for the Adreno IOMMU, which has
+> secure contexts that are set up from one of the bootloader stages and if
+> you reset/"mess up" one of them (by - in this case - un-clocking the
+> MMU), then the hypervisor will kick in and generate a fault, rebooting
+> the SoC.
+>
+> Of course, this scenario is for the case in which you want to boot the
+> device without any gpucc nor any runtime pm user of that.. and the
+> aforementioned issue makes that solution not really usable.
+>
+> Again, unfortunately.
 
-Thanks for the tip, but unfortunately this isn't possible on the 
-gpu_cfg_ahb_clk, as it is also needed for the Adreno IOMMU, which has 
-secure contexts that are set up from one of the bootloader stages and if 
-you reset/"mess up" one of them (by - in this case - un-clocking the 
-MMU), then the hypervisor will kick in and generate a fault, rebooting 
-the SoC.
-
-Of course, this scenario is for the case in which you want to boot the 
-device without any gpucc nor any runtime pm user of that.. and the 
-aforementioned issue makes that solution not really usable.
-
-Again, unfortunately.
+Intresting, that's not true on all devices, but presumably you have
+devices where it is.  Fun.
