@@ -2,275 +2,541 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9C9C433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Jan 2021 14:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94736C433DB
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Jan 2021 23:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D11F42075E
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Jan 2021 14:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD5F2076A
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Jan 2021 23:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbhAQOUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Jan 2021 09:20:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54686 "EHLO
+        id S1728499AbhAQXuj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Jan 2021 18:50:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbhAQOU2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jan 2021 09:20:28 -0500
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58AC3C061573;
-        Sun, 17 Jan 2021 06:19:48 -0800 (PST)
-Received: by mail-oi1-x230.google.com with SMTP id w124so15017771oia.6;
-        Sun, 17 Jan 2021 06:19:48 -0800 (PST)
+        with ESMTP id S1729093AbhAQXu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jan 2021 18:50:27 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEFBC061574
+        for <linux-clk@vger.kernel.org>; Sun, 17 Jan 2021 15:49:47 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id w79so17279133qkb.5
+        for <linux-clk@vger.kernel.org>; Sun, 17 Jan 2021 15:49:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Brwn/7+ZmOI0Syh1i/4d/aeihHuPyP4rZQrZ8fYf/FA=;
-        b=nIInBjkgxsHYEMSFkMycHzEXMWQGclKjYqX1PTbXSsKrBOroyJ6ALCYdbsCoN8By0l
-         ++cIamjhq3AD2pWRyrt4CEhrc11h1rihn7RZ4V7jnayx3ZMgS6DnS9SNDk2V4NEeAZe5
-         LlewmjFn8+a00WWP4QLAD1bU+oUm3ZoHdBKSCmgE7OGTJCKPDHvnr0wLGVCO+X9uGci5
-         x1o4p3OW62oybZKxWIEzheAvBJPeWrFLv7/EWC71kd76CtYUKswuPFiXIj/3vfu3MY0D
-         WSO520XehT260MQ5LXUC6XKgoEfoQDGaYSjdgr6AJCMIqznRe/J8pR0ishYORnFxWT3r
-         YypA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=+JQheMbyH26pUUUh/F44IE0AYhYH/goXKo8XJGktNT4=;
+        b=wXlbuzlT6zTHI1SfZSpgqbwxvT3ikuVDb0NxIhbKV+SGdieZKAioBhM5ar2E9F0roL
+         mbRrywROtmwaZW9ijVLx39dlQCNLRf9Yn6PiCmZyZ5YQ9tLz7KNdeoUGoxyu6vAIz33F
+         Rt1DVvg3WLYritpI6cPOsqHHLr44ecp88WPy7RkV4tu/t+hFXz7D319ABnE9MkE4P1cV
+         kuf+9k0Nj1ztfLJ2BHwf+b5ODf6F4gAcYEUBd1EnMAH2Pltp3XzHAoyhdn2+P1DRY4v8
+         +E5eWFWLUnZJ10ODkxTgiaSfi0zv47nx1+J0KpIGZJB5e7MBY/QqaL7T54kJDQMUnu4b
+         QHhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Brwn/7+ZmOI0Syh1i/4d/aeihHuPyP4rZQrZ8fYf/FA=;
-        b=Gr+XpuamUz7FAwgPpnw+QdlcZASq95vB1HzR8BQL04Pyk4UbnUn6WO8TZZdjIdWH6e
-         VMm4qFMg8rt8W4qWIyGexX9bVGu0C0eOpd0iv54ZNMseH2jtEmRvi2cbln6OflHD9cad
-         UUJfmovtaUoRwY4twnklbxMIeSmVbut7ylTH5Snj6gxugV3t80o60NHAzxhgxnpvRr98
-         wWeS0rzWIhrRra9ZSgOHot1ICR1cOEUp+XAT+TKq+LOrUPaYbT1XpMC3oTr5UfgFk9ql
-         Z/qApCpP4751CGjTrPfbKcFichK2yKlUk8mzxkeKu2nEuWV9KGrY3fuDpK20GbPUYaKo
-         XEXA==
-X-Gm-Message-State: AOAM532npl6PAmqhb7MW8LpaNPk7ACWJg+z2YZ5I5gVcJqGNoaV72s8A
-        sML0GPUqg+iqu+zPmmgrgRIuoSmEm0jboS0jsQA=
-X-Google-Smtp-Source: ABdhPJymVFK4+IY43zE3dBqMHm5sgwwFVFkkkd7ZJ2ChTrYNG9U48WgIfcGKdmfPdyLKbbhGiVfU66aKI8m2/VvJsE0=
-X-Received: by 2002:a54:4817:: with SMTP id j23mr11055958oij.158.1610893187531;
- Sun, 17 Jan 2021 06:19:47 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=+JQheMbyH26pUUUh/F44IE0AYhYH/goXKo8XJGktNT4=;
+        b=JHEQt8m+jCDHQrnxpgpJ2ncgJGrLtCIhSfZEHrqkrW3rYB+p722rHNRMmWydJ5T8p9
+         Q+wr9C4aIf33hGrhJvwcWL4SgbEhnrYi6hbKJwiD7cflkEqEFQwRXcs+FVp9mNVFg00w
+         1suWUboITXmt36AHTmZB6BbwUqAS+q786Tx0P/4TFYmkPsNlbZm6X7UAaGI8W1DDWrT4
+         ck8uGW2RMzPYE9G8H3DAdkPkiebNm5PRyDNXDiGbpbBtWjb+3R4a0Kc4eDJKXDoP5ToH
+         Qy+WbmfzYcg/LHPT6kQF+1/sC8l1dNmzTefv/8PMXfYBmEj7Z9LjavFLPpUYMHJ9SYfb
+         ydmQ==
+X-Gm-Message-State: AOAM532umQqgpkSm6ThdkGXYRrDAmpCnE795Fy0i1tVQSG6NPnfZAJHt
+        l8cg/iNCSvBLuXmRxJOblIdeOg==
+X-Google-Smtp-Source: ABdhPJztrBSzbz4YC5uQR4bReZ6Ae3BglWrygVGEDXbBvFIMFNP0aXQtTj1Wd8Vt/Sgjys9tFFy1mA==
+X-Received: by 2002:a37:9c8:: with SMTP id 191mr21675181qkj.434.1610927386664;
+        Sun, 17 Jan 2021 15:49:46 -0800 (PST)
+Received: from xanadu.home (modemcable076.50-203-24.mc.videotron.ca. [24.203.50.76])
+        by smtp.gmail.com with ESMTPSA id d123sm9443553qke.95.2021.01.17.15.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Jan 2021 15:49:46 -0800 (PST)
+Date:   Sun, 17 Jan 2021 18:49:44 -0500 (EST)
+From:   Nicolas Pitre <npitre@baylibre.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+cc:     linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / clk: make PM clock layer compatible with clocks
+ that must sleep
+In-Reply-To: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
+Message-ID: <3o6s1sr4-60o2-2o54-259o-oq7o635sqo4p@onlyvoer.pbz>
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
 MIME-Version: 1.0
-References: <20201220093724.4906-1-sergio.paracuellos@gmail.com>
-In-Reply-To: <20201220093724.4906-1-sergio.paracuellos@gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sun, 17 Jan 2021 15:19:36 +0100
-Message-ID: <CAMhs-H92MHRO9RqkBW-c_+dVEtVUF-eHH4-zVXO2wCpdX0A55g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] MIPS: ralink: add CPU clock detection and clock
- driver for MT7621
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, John Crispin <john@phrozen.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Weijie Gao <hackpascal@gmail.com>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
+Ping.
 
-On Sun, Dec 20, 2020 at 10:37 AM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> This patchset ports CPU clock detection for MT7621 from OpenWrt
-> and adds a complete clock plan for the mt7621 SOC.
->
-> The documentation for this SOC only talks about two registers
-> regarding to the clocks:
-> * SYSC_REG_CPLL_CLKCFG0 - provides some information about boostrapped
-> refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
-> * SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
-> all or some ip cores.
->
-> No documentation about a probably existent set of dividers for each ip
-> core is included in the datasheets. So we cannot make anything better,
-> AFAICT.
->
-> Looking into driver code, and some openWRT patched there are
-> another frequences which are used in some drivers (uart, sd...).
-> According to all of this information the clock plan for this
-> SoC is set as follows:
->  - Main top clock "xtal" from where all the rest of the world is
->    derived.
->  - CPU clock "cpu" derived from "xtal" frequencies and a bunch of
->    register reads and predividers.
->  - BUS clock "bus" derived from "cpu" and with (cpu / 4) MHz.
->  - Fixed clocks from "xtal":
->     * "50m": 50 MHz.
->     * "125m": 125 MHz.
->     * "150m": 150 MHz.
->     * "250m": 250 MHz.
->     * "270m": 270 MHz.
->
-> We also have a buch of gate clocks with their parents:
->  - "hsdma": "150m"
->  - "fe": "250m"
->  - "sp_divtx": "270m"
->  - "timer": "50m"
->  - "pcm": "270m"
->  - "pio": "50m"
->  - "gdma": "bus"
->  - "nand": "125m"
->  - "i2c": "50m"
->  - "i2s": "270m"
->  - "spi": "bus"
->  - "uart1": "50m"
->  - "uart2": "50m"
->  - "uart3": "50m"
->  - "eth": "50m"
->  - "pcie0": "125m"
->  - "pcie1": "125m"
->  - "pcie2": "125m"
->  - "crypto": "250m"
->  - "shxc": "50m"
->
-> There was a previous attempt of doing this here[0] but the author
-> (Chuanhong Guo) did not wanted to make assumptions of a clock plan
-> for the platform that time. It seems that now he has a better idea of
-> how the clocks are dispossed for this SoC so he share code[1] where
-> some frequencies and clock parents for the gates are coded from a
-> real mediatek private clock plan.
->
-> I do really want this to be upstreamed so according to the comments
-> in previous attempt[0] from Oleksij Rempel and the frequencies in
-> code[1] I have tried to do this by myself.
->
-> All of this patches have been tested in a GNUBee PC1 resulting in a
-> working platform.
->
-> Changes in v5:
->  - Avoid the use of syscon. All drivers of this platform are just using
->    platform operations defined in 'asm/mach-ralink/ralink_regs.h'. We also
->    need them for some PLL registers that are not in the sys control area.
->    Hence, since we must use this dependency avoid to define clock driver
->    as a child of the sysc node in the device tree and follow current
->    platform code style.
->  - Update bindings documentation to don't refer the syscon and make
->    remove 'clock-output-names' property from required ones.
->  - Use 'asm/mach-ralink/ralink_regs.h' platform read and write operations
->    instead of regmap from the syscon node.
->  - Remove 'mt7621_clk_provider' and directly declare 'clk_hw_onecell_data'
->    pointer in 'mt7621_clk_init' and pass from there into different register
->    functions. Remove pointers to 'mt7621_clk_provider' in the rest fo structs
->    used in this driver.
->  - Remove MHZ macro and just pass values directly in hertzs.
->  - Avoid 'CLK_IGNORE_UNUSED' flag for gates and add a new function called
->    'mt7621_prepare_enable_clocks' to prepare all of them to make clocks
->    referenced and don't affect current driver code.
->  - Remove COMPILE_TEST from Kconfig because of the use of especific arch
->    stuff.
->  - Fix commit message where a typo for "frequencies" word was present.
->  - Make use of parent_clk_data in 'CLK_BASE' macro.
->  - Remove MODULE_* macros from code since this is not a module.
->  - Remove not needed includes.
->  - Hardcode "xtal" as parent in FIXED macro.
->  - Change 'else if' clause into 'if' clause since a return statement was
->    being used in 'mt7621_xtal_recalc_rate'.
->
->  NOTES:
->    - Driver is still being declared using 'CLK_OF_DECLARE' for all the
->      clocks. I have explored the possibility to make some of them available
->      afterwards using 'CLK_OF_DECLARE_DRIVER' for top clocks and the rest
->      using a platform driver. The resulting code was uglier since we only want
->      to use the same device tree node and the top clocks must be copied again
->      for the new platform register stuff to properly have a good hierarchy.
->      New globals needs to be introduced and in this particular case I don't
->      really see the benefits of doing in this way. I am totally ok to have all
->      the clocks registered at early stage since from other drivers perspective
->      we only really need to enable gates. So, I prefer to have them in that
->      way if it is not a real problem, of course.
+On Mon, 4 Jan 2021, Nicolas Pitre wrote:
 
-Any comments on this? Is ok to maintain this as it is done in this
-version or should I change this to any other approach taking into
-account my comments in device tree related PATCH? Nothing has been
-suggested there yet.
-
-Thanks in advance for your time.
-
-Best regards,
-    Sergio Paracuellos
->
-> Changes in v4:
->  - Add Acked-by from Rob Herring for binding headers (PATCH 1/6).
->  - Convert bindings to not use syscon phandle and declare clock as
->    a child of the syscon node. Update device tree and binding doc
->    accordly.
->  - Make use of 'syscon_node_to_regmap' in driver code instead of
->    get this using the phandle function.
->  - Properly unregister clocks for the error path of the function
->    'mt7621_clk_init'.
->  - Include ARRAY_SIZE of fixed clocks in the 'count' to kzalloc
->    of 'clk_data'.
->  - Add new patch changing invalid vendor 'mtk' in favour of 'mediatek'
->    which is the one listed in 'vendor-prefixes.yaml'. Update mt7621 code
->    accordly. I have added this patch inside this series because clk
->    binding is referring syscon node and the string for that node was
->    with not listed vendor. Hence update and have all of this correct
->    in the same series.
->
-> Changes in v3:
->  - Fix compilation warnings reported by kernel test robot because of
->    ignoring return values of 'of_clk_hw_register' in functions
->    'mt7621_register_top_clocks' and 'mt7621_gate_ops_init'.
->  - Fix dts file and binding documentation 'clock-output-names'.
->
-> Changes in v2:
->  - Remove the following patches:
->    * dt: bindings: add mt7621-pll device tree binding documentation.
->    * MIPS: ralink: add clock device providing cpu/ahb/apb clock for mt7621.
->  - Move all relevant clock code to 'drivers/clk/ralink/clk-mt7621.c' and
->    unify there previous 'mt7621-pll' and 'mt7621-clk' into a unique driver
->    and binding 'mt7621-clk'.
->  - Driver is not a platform driver anymore and now make use of 'CLK_OF_DECLARE'
->    because we need clocks available in 'plat_time_init' before setting up
->    the timer for the GIC.
->  - Use new fixed clocks as parents for different gates and deriving from 'xtal'
->    using frequencies in[1].
->  - Adapt dts file and bindings header and documentation for new changes.
->  - Change MAINTAINERS file to only contains clk-mt7621.c code and
->    mediatek,mt7621-clk.yaml file.
->
-> [0]: https://www.lkml.org/lkml/2019/7/23/1044
-> [1]: https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
->
-> Sergio Paracuellos (6):
->   dt-bindings: clock: add dt binding header for mt7621 clocks
->   dt: bindings: add mt7621-clk device tree binding documentation
->   clk: ralink: add clock driver for mt7621 SoC
->   staging: mt7621-dts: make use of new 'mt7621-clk'
->   staging: mt7621-dts: use valid vendor 'mediatek' instead of invalid
->     'mtk'
->   MAINTAINERS: add MT7621 CLOCK maintainer
->
->  .../bindings/clock/mediatek,mt7621-clk.yaml   |  52 +++
->  MAINTAINERS                                   |   6 +
->  arch/mips/ralink/mt7621.c                     |   6 +-
->  drivers/clk/Kconfig                           |   1 +
->  drivers/clk/Makefile                          |   1 +
->  drivers/clk/ralink/Kconfig                    |  14 +
->  drivers/clk/ralink/Makefile                   |   2 +
->  drivers/clk/ralink/clk-mt7621.c               | 411 ++++++++++++++++++
->  drivers/staging/mt7621-dts/gbpc1.dts          |  11 -
->  drivers/staging/mt7621-dts/mt7621.dtsi        |  85 ++--
->  include/dt-bindings/clock/mt7621-clk.h        |  41 ++
->  11 files changed, 571 insertions(+), 59 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
->  create mode 100644 drivers/clk/ralink/Kconfig
->  create mode 100644 drivers/clk/ralink/Makefile
->  create mode 100644 drivers/clk/ralink/clk-mt7621.c
->  create mode 100644 include/dt-bindings/clock/mt7621-clk.h
->
-> --
-> 2.25.1
->
+> The clock API splits its interface into sleepable ant atomic contexts:
+> 
+> - clk_prepare/clk_unprepare for stuff that might sleep
+> 
+> - clk_enable_clk_disable for anything that may be done in atomic context
+> 
+> The code handling runtime PM for clocks only calls clk_disable() on
+> suspend requests, and clk_enable on resume requests. This means that
+> runtime PM with clock providers that only have the prepare/unprepare
+> methods implemented is basically useless.
+> 
+> Many clock implementations can't accommodate atomic contexts. This is
+> often the case when communication with the clock happens through another
+> subsystem like I2C or SCMI.
+> 
+> Let's make the clock PM code useful with such clocks by safely invoking
+> clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
+> such clocks are registered with the PM layer then pm_runtime_irq_safe()
+> can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
+> may be invoked in atomic context.
+> 
+> For clocks that do implement the enable and disable methods then 
+> everything just works as before.
+> 
+> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> 
+> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+> index ced6863a16..a62fb0f9b1 100644
+> --- a/drivers/base/power/clock_ops.c
+> +++ b/drivers/base/power/clock_ops.c
+> @@ -23,6 +23,7 @@
+>  enum pce_status {
+>  	PCE_STATUS_NONE = 0,
+>  	PCE_STATUS_ACQUIRED,
+> +	PCE_STATUS_PREPARED,
+>  	PCE_STATUS_ENABLED,
+>  	PCE_STATUS_ERROR,
+>  };
+> @@ -32,8 +33,102 @@ struct pm_clock_entry {
+>  	char *con_id;
+>  	struct clk *clk;
+>  	enum pce_status status;
+> +	bool enabled_when_prepared;
+>  };
+>  
+> +/**
+> + * pm_clk_list_lock - ensure exclusive access for modifying the PM clock
+> + *		      entry list.
+> + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
+> + *	 and clk_op_might_sleep count to be modified.
+> + *
+> + * Get exclusive access before modifying the PM clock entry list and the
+> + * clock_op_might_sleep count to guard against concurrent modifications.
+> + * This also protects against a concurrent clock_op_might_sleep and PM clock
+> + * entry list usage in pm_clk_suspend()/pm_clk_resume() that may or may not
+> + * happen in atomic context, hence both the mutex and the spinlock must be
+> + * taken here.
+> + */
+> +static void pm_clk_list_lock(struct pm_subsys_data *psd)
+> +{
+> +	mutex_lock(&psd->clock_mutex);
+> +	spin_lock_irq(&psd->lock);
+> +}
+> +
+> +/**
+> + * pm_clk_list_unlock - counterpart to pm_clk_list_lock().
+> + * @psd: the same pm_subsys_data instance previously passed to
+> + *	 pm_clk_list_lock().
+> + */
+> +static void pm_clk_list_unlock(struct pm_subsys_data *psd)
+> +{
+> +	spin_unlock_irq(&psd->lock);
+> +	mutex_unlock(&psd->clock_mutex);
+> +}
+> +
+> +/**
+> + * pm_clk_op_lock - ensure exclusive access for performing clock operations.
+> + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
+> + *	 and clk_op_might_sleep count being used.
+> + * @flags: stored irq flags.
+> + * @fn: string for the caller function's name.
+> + *
+> + * This is used by pm_clk_suspend() and pm_clk_resume() to guard
+> + * against concurrent modifications to the clock entry list and the
+> + * clock_op_might_sleep count. If clock_op_might_sleep is != 0 then
+> + * only the mutex can be locked and those functions can only be used in
+> + * non atomic context. If clock_op_might_sleep == 0 then these functions
+> + * may be used in any context and only the spinlock can be locked.
+> + * Returns -EINVAL if called in atomic context when clock ops might sleep.
+> + */
+> +static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
+> +			  const char *fn)
+> +{
+> +	bool atomic_context = in_atomic() || irqs_disabled();
+> +
+> +try_again:
+> +	spin_lock_irqsave(&psd->lock, *flags);
+> +	if (!psd->clock_op_might_sleep)
+> +		return 0;
+> +
+> +	/* bail out if in atomic context */
+> +	if (atomic_context) {
+> +		pr_err("%s: atomic context with clock_ops_might_sleep = %d",
+> +		       fn, psd->clock_op_might_sleep);
+> +		spin_unlock_irqrestore(&psd->lock, *flags);
+> +		might_sleep();
+> +		return -EPERM;
+> +	}
+> +
+> +	/* we must switch to the mutex */
+> +	spin_unlock_irqrestore(&psd->lock, *flags);
+> +	mutex_lock(&psd->clock_mutex);
+> +
+> +	/*
+> +	 * There was a possibility for psd->clock_op_might_sleep
+> +	 * to become 0 above. Keep the mutex only if not the case.
+> +	 */
+> +	if (likely(psd->clock_op_might_sleep))
+> +		return 0;
+> +
+> +	mutex_unlock(&psd->clock_mutex);
+> +	goto try_again;
+> +}
+> +
+> +/**
+> + * pm_clk_op_unlock - counterpart to pm_clk_op_lock().
+> + * @psd: the same pm_subsys_data instance previously passed to
+> + *	 pm_clk_op_lock().
+> + * @flags: irq flags provided by pm_clk_op_lock().
+> + */
+> +static void pm_clk_op_unlock(struct pm_subsys_data *psd, unsigned long *flags)
+> +{
+> +	if (psd->clock_op_might_sleep)
+> +		mutex_unlock(&psd->clock_mutex);
+> +	else
+> +		spin_unlock_irqrestore(&psd->lock, *flags);
+> +}
+> +
+>  /**
+>   * pm_clk_enable - Enable a clock, reporting any errors
+>   * @dev: The device for the given clock
+> @@ -43,14 +138,21 @@ static inline void __pm_clk_enable(struct device *dev, struct pm_clock_entry *ce
+>  {
+>  	int ret;
+>  
+> -	if (ce->status < PCE_STATUS_ERROR) {
+> +	switch (ce->status) {
+> +	case PCE_STATUS_ACQUIRED:
+> +		ret = clk_prepare_enable(ce->clk);
+> +		break;
+> +	case PCE_STATUS_PREPARED:
+>  		ret = clk_enable(ce->clk);
+> -		if (!ret)
+> -			ce->status = PCE_STATUS_ENABLED;
+> -		else
+> -			dev_err(dev, "%s: failed to enable clk %p, error %d\n",
+> -				__func__, ce->clk, ret);
+> +		break;
+> +	default:
+> +		return;
+>  	}
+> +	if (!ret)
+> +		ce->status = PCE_STATUS_ENABLED;
+> +	else
+> +		dev_err(dev, "%s: failed to enable clk %p, error %d\n",
+> +			__func__, ce->clk, ret);
+>  }
+>  
+>  /**
+> @@ -64,17 +166,20 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
+>  		ce->clk = clk_get(dev, ce->con_id);
+>  	if (IS_ERR(ce->clk)) {
+>  		ce->status = PCE_STATUS_ERROR;
+> +		return;
+> +	} else if (clk_is_enabled_when_prepared(ce->clk)) {
+> +		/* we defer preparing the clock in that case */
+> +		ce->status = PCE_STATUS_ACQUIRED;
+> +		ce->enabled_when_prepared = true;
+> +	} else if (clk_prepare(ce->clk)) {
+> +		ce->status = PCE_STATUS_ERROR;
+> +		dev_err(dev, "clk_prepare() failed\n");
+> +		return;
+>  	} else {
+> -		if (clk_prepare(ce->clk)) {
+> -			ce->status = PCE_STATUS_ERROR;
+> -			dev_err(dev, "clk_prepare() failed\n");
+> -		} else {
+> -			ce->status = PCE_STATUS_ACQUIRED;
+> -			dev_dbg(dev,
+> -				"Clock %pC con_id %s managed by runtime PM.\n",
+> -				ce->clk, ce->con_id);
+> -		}
+> +		ce->status = PCE_STATUS_PREPARED;
+>  	}
+> +	dev_dbg(dev, "Clock %pC con_id %s managed by runtime PM.\n",
+> +		ce->clk, ce->con_id);
+>  }
+>  
+>  static int __pm_clk_add(struct device *dev, const char *con_id,
+> @@ -106,9 +211,11 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
+>  
+>  	pm_clk_acquire(dev, ce);
+>  
+> -	spin_lock_irq(&psd->lock);
+> +	pm_clk_list_lock(psd);
+>  	list_add_tail(&ce->node, &psd->clock_list);
+> -	spin_unlock_irq(&psd->lock);
+> +	if (ce->enabled_when_prepared)
+> +		psd->clock_op_might_sleep++;
+> +	pm_clk_list_unlock(psd);
+>  	return 0;
+>  }
+>  
+> @@ -239,14 +346,20 @@ static void __pm_clk_remove(struct pm_clock_entry *ce)
+>  	if (!ce)
+>  		return;
+>  
+> -	if (ce->status < PCE_STATUS_ERROR) {
+> -		if (ce->status == PCE_STATUS_ENABLED)
+> -			clk_disable(ce->clk);
+> -
+> -		if (ce->status >= PCE_STATUS_ACQUIRED) {
+> -			clk_unprepare(ce->clk);
+> +	switch (ce->status) {
+> +	case PCE_STATUS_ENABLED:
+> +		clk_disable(ce->clk);
+> +		fallthrough;
+> +	case PCE_STATUS_PREPARED:
+> +		clk_unprepare(ce->clk);
+> +		fallthrough;
+> +	case PCE_STATUS_ACQUIRED:
+> +	case PCE_STATUS_ERROR:
+> +		if (!IS_ERR(ce->clk))
+>  			clk_put(ce->clk);
+> -		}
+> +		break;
+> +	default:
+> +		break;
+>  	}
+>  
+>  	kfree(ce->con_id);
+> @@ -269,7 +382,7 @@ void pm_clk_remove(struct device *dev, const char *con_id)
+>  	if (!psd)
+>  		return;
+>  
+> -	spin_lock_irq(&psd->lock);
+> +	pm_clk_list_lock(psd);
+>  
+>  	list_for_each_entry(ce, &psd->clock_list, node) {
+>  		if (!con_id && !ce->con_id)
+> @@ -280,12 +393,14 @@ void pm_clk_remove(struct device *dev, const char *con_id)
+>  			goto remove;
+>  	}
+>  
+> -	spin_unlock_irq(&psd->lock);
+> +	pm_clk_list_unlock(psd);
+>  	return;
+>  
+>   remove:
+>  	list_del(&ce->node);
+> -	spin_unlock_irq(&psd->lock);
+> +	if (ce->enabled_when_prepared)
+> +		psd->clock_op_might_sleep--;
+> +	pm_clk_list_unlock(psd);
+>  
+>  	__pm_clk_remove(ce);
+>  }
+> @@ -307,19 +422,21 @@ void pm_clk_remove_clk(struct device *dev, struct clk *clk)
+>  	if (!psd || !clk)
+>  		return;
+>  
+> -	spin_lock_irq(&psd->lock);
+> +	pm_clk_list_lock(psd);
+>  
+>  	list_for_each_entry(ce, &psd->clock_list, node) {
+>  		if (clk == ce->clk)
+>  			goto remove;
+>  	}
+>  
+> -	spin_unlock_irq(&psd->lock);
+> +	pm_clk_list_unlock(psd);
+>  	return;
+>  
+>   remove:
+>  	list_del(&ce->node);
+> -	spin_unlock_irq(&psd->lock);
+> +	if (ce->enabled_when_prepared)
+> +		psd->clock_op_might_sleep--;
+> +	pm_clk_list_unlock(psd);
+>  
+>  	__pm_clk_remove(ce);
+>  }
+> @@ -330,13 +447,16 @@ EXPORT_SYMBOL_GPL(pm_clk_remove_clk);
+>   * @dev: Device to initialize the list of PM clocks for.
+>   *
+>   * Initialize the lock and clock_list members of the device's pm_subsys_data
+> - * object.
+> + * object, set the count of clocks that might sleep to 0.
+>   */
+>  void pm_clk_init(struct device *dev)
+>  {
+>  	struct pm_subsys_data *psd = dev_to_psd(dev);
+> -	if (psd)
+> +	if (psd) {
+>  		INIT_LIST_HEAD(&psd->clock_list);
+> +		mutex_init(&psd->clock_mutex);
+> +		psd->clock_op_might_sleep = 0;
+> +	}
+>  }
+>  EXPORT_SYMBOL_GPL(pm_clk_init);
+>  
+> @@ -372,12 +492,13 @@ void pm_clk_destroy(struct device *dev)
+>  
+>  	INIT_LIST_HEAD(&list);
+>  
+> -	spin_lock_irq(&psd->lock);
+> +	pm_clk_list_lock(psd);
+>  
+>  	list_for_each_entry_safe_reverse(ce, c, &psd->clock_list, node)
+>  		list_move(&ce->node, &list);
+> +	psd->clock_op_might_sleep = 0;
+>  
+> -	spin_unlock_irq(&psd->lock);
+> +	pm_clk_list_unlock(psd);
+>  
+>  	dev_pm_put_subsys_data(dev);
+>  
+> @@ -397,23 +518,30 @@ int pm_clk_suspend(struct device *dev)
+>  	struct pm_subsys_data *psd = dev_to_psd(dev);
+>  	struct pm_clock_entry *ce;
+>  	unsigned long flags;
+> +	int ret;
+>  
+>  	dev_dbg(dev, "%s()\n", __func__);
+>  
+>  	if (!psd)
+>  		return 0;
+>  
+> -	spin_lock_irqsave(&psd->lock, flags);
+> +	ret = pm_clk_op_lock(psd, &flags, __func__);
+> +	if (ret)
+> +		return ret;
+>  
+>  	list_for_each_entry_reverse(ce, &psd->clock_list, node) {
+> -		if (ce->status < PCE_STATUS_ERROR) {
+> -			if (ce->status == PCE_STATUS_ENABLED)
+> +		if (ce->status == PCE_STATUS_ENABLED) {
+> +			if (ce->enabled_when_prepared) {
+> +				clk_disable_unprepare(ce->clk);
+> +				ce->status = PCE_STATUS_ACQUIRED;
+> +			} else {
+>  				clk_disable(ce->clk);
+> -			ce->status = PCE_STATUS_ACQUIRED;
+> +				ce->status = PCE_STATUS_PREPARED;
+> +			}
+>  		}
+>  	}
+>  
+> -	spin_unlock_irqrestore(&psd->lock, flags);
+> +	pm_clk_op_unlock(psd, &flags);
+>  
+>  	return 0;
+>  }
+> @@ -428,18 +556,21 @@ int pm_clk_resume(struct device *dev)
+>  	struct pm_subsys_data *psd = dev_to_psd(dev);
+>  	struct pm_clock_entry *ce;
+>  	unsigned long flags;
+> +	int ret;
+>  
+>  	dev_dbg(dev, "%s()\n", __func__);
+>  
+>  	if (!psd)
+>  		return 0;
+>  
+> -	spin_lock_irqsave(&psd->lock, flags);
+> +	ret = pm_clk_op_lock(psd, &flags, __func__);
+> +	if (ret)
+> +		return ret;
+>  
+>  	list_for_each_entry(ce, &psd->clock_list, node)
+>  		__pm_clk_enable(dev, ce);
+>  
+> -	spin_unlock_irqrestore(&psd->lock, flags);
+> +	pm_clk_op_unlock(psd, &flags);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 8c1d04db99..3d751ae5bc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1164,6 +1164,27 @@ int clk_enable(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_enable);
+>  
+> +/**
+> + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
+> + * @clk: clock source
+> + *
+> + * Returns true if clk_prepare() implicitly enables the clock, effectively
+> + * making clk_enable()/clk_disable() no-ops, false otherwise.
+> + *
+> + * This is of interest mainly to power management code where actually
+> + * disabling the clock also requires unpreparing it to have any material
+> + * effect.
+> + *
+> + * Regardless of the value returned here, the caller must always invoke
+> + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
+> + * to be right.
+> + */
+> +bool clk_is_enabled_when_prepared(struct clk *clk)
+> +{
+> +	return clk && !(clk->core->ops->enable && clk->core->ops->disable);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_is_enabled_when_prepared);
+> +
+>  static int clk_core_prepare_enable(struct clk_core *core)
+>  {
+>  	int ret;
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 31ff1bf1b7..71295906a2 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -554,6 +554,23 @@ void clk_disable(struct clk *clk);
+>   */
+>  void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
+>  
+> +/**
+> + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
+> + * @clk: clock source
+> + *
+> + * Returns true if clk_prepare() implicitly enables the clock, effectively
+> + * making clk_enable()/clk_disable() no-ops, false otherwise.
+> + *
+> + * This is of interest mainly to the power management code where actually
+> + * disabling the clock also requires unpreparing it to have any material
+> + * effect.
+> + *
+> + * Regardless of the value returned here, the caller must always invoke
+> + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
+> + * to be right.
+> + */
+> +bool clk_is_enabled_when_prepared(struct clk *clk);
+> +
+>  /**
+>   * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+>   *		  This is only valid once the clock source has been enabled.
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 47aca6bac1..482313a8cc 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -537,6 +537,8 @@ struct pm_subsys_data {
+>  	spinlock_t lock;
+>  	unsigned int refcount;
+>  #ifdef CONFIG_PM_CLK
+> +	unsigned int clock_op_might_sleep;
+> +	struct mutex clock_mutex;
+>  	struct list_head clock_list;
+>  #endif
+>  #ifdef CONFIG_PM_GENERIC_DOMAINS
+> 
