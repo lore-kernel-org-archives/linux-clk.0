@@ -2,162 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AACC433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 16:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5C6C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 21:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62D48222F9
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 16:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D7D22CB1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 21:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406334AbhARQQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jan 2021 11:16:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406539AbhARQPs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 11:15:48 -0500
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D5AC061573;
-        Mon, 18 Jan 2021 08:15:06 -0800 (PST)
-Received: from localhost.localdomain (abaf224.neoplus.adsl.tpnet.pl [83.6.169.224])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id E1BC41F524;
-        Mon, 18 Jan 2021 17:15:02 +0100 (CET)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH] clk: qcom: smd: Add missing RPM clocks for msm8992/4
-Date:   Mon, 18 Jan 2021 17:14:41 +0100
-Message-Id: <20210118161442.104660-1-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.29.2
+        id S2388268AbhARV0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jan 2021 16:26:46 -0500
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:58748 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388486AbhARKKW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 05:10:22 -0500
+Received: from mail.aspeedtech.com ([192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id 10IA2xvj051674;
+        Mon, 18 Jan 2021 18:02:59 +0800 (GMT-8)
+        (envelope-from ryan_chen@aspeedtech.com)
+Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 18 Jan
+ 2021 18:08:17 +0800
+From:   Ryan Chen <ryan_chen@aspeedtech.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <andrewrj@au1.ibm.com>,
+        <joel@linux.ibm.com>, <BMC-SW@aspeedtech.com>
+CC:     Ryan Chen <ryan_chen@aspeedtech.com>
+Subject: [PATCH 0/1] Fix AST2600A2 APLL calculate formuula
+Date:   Mon, 18 Jan 2021 18:08:12 +0800
+Message-ID: <20210118100813.30821-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.10.9]
+X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
+ (192.168.0.24)
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com 10IA2xvj051674
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This was omitted when first adding the clocks for these SoCs.
+AST2600 A1/A2 have different pll, this patch fix for AST2600 A2
+APLL calculate.
 
-Fixes: b4297844995 ("clk: qcom: smd: Add support for MSM8992/4 rpm clocks")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- drivers/clk/qcom/clk-smd-rpm.c         | 16 ++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h |  2 ++
- include/linux/soc/qcom/smd-rpm.h       |  1 +
- 3 files changed, 19 insertions(+)
+Ryan Chen (1):
+  clk: aspeed: Fix APLL calculate formula for ast2600-A2
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 0e1dfa89489e..91d610042a5d 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -624,6 +624,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
- };
- 
- /* msm8992 */
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8992, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0,
-+								19200000);
- DEFINE_CLK_SMD_RPM(msm8992, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8992, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
- DEFINE_CLK_SMD_RPM(msm8992, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-@@ -642,6 +644,8 @@ DEFINE_CLK_SMD_RPM(msm8992, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, ln_bb_clk, ln_bb_a_clk, 8);
- DEFINE_CLK_SMD_RPM(msm8992, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
- 		   QCOM_SMD_RPM_BUS_CLK, 3);
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8992, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk,
-+			QCOM_SMD_RPM_MFFG_CLK, 0, 19200000);
- DEFINE_CLK_SMD_RPM_QDSS(msm8992, qdss_clk, qdss_a_clk,
- 			QCOM_SMD_RPM_MISC_CLK, 1);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, rf_clk1, rf_clk1_a, 4);
-@@ -653,6 +657,8 @@ DEFINE_CLK_SMD_RPM(msm8992, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8992, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
- 
- static struct clk_smd_rpm *msm8992_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &msm8992_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &msm8992_bi_tcxo_a,
- 	[RPM_SMD_PNOC_CLK] = &msm8992_pnoc_clk,
- 	[RPM_SMD_PNOC_A_CLK] = &msm8992_pnoc_a_clk,
- 	[RPM_SMD_OCMEMGX_CLK] = &msm8992_ocmemgx_clk,
-@@ -685,6 +691,8 @@ static struct clk_smd_rpm *msm8992_clks[] = {
- 	[RPM_SMD_LN_BB_A_CLK] = &msm8992_ln_bb_a_clk,
- 	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8992_mmssnoc_ahb_clk,
- 	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8992_mmssnoc_ahb_a_clk,
-+	[RPM_SMD_MSS_CFG_AHB_CLK] = &msm8992_mss_cfg_ahb_clk,
-+	[RPM_SMD_MSS_CFG_AHB_A_CLK] = &msm8992_mss_cfg_ahb_a_clk,
- 	[RPM_SMD_QDSS_CLK] = &msm8992_qdss_clk,
- 	[RPM_SMD_QDSS_A_CLK] = &msm8992_qdss_a_clk,
- 	[RPM_SMD_RF_CLK1] = &msm8992_rf_clk1,
-@@ -707,6 +715,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8992 = {
- };
- 
- /* msm8994 */
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8994, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0,
-+								19200000);
- DEFINE_CLK_SMD_RPM(msm8994, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8994, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
- DEFINE_CLK_SMD_RPM(msm8994, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-@@ -725,6 +735,8 @@ DEFINE_CLK_SMD_RPM(msm8994, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8994, ln_bb_clk, ln_bb_a_clk, 8);
- DEFINE_CLK_SMD_RPM(msm8994, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
- 		   QCOM_SMD_RPM_BUS_CLK, 3);
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8994, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk,
-+			QCOM_SMD_RPM_MFFG_CLK, 0, 19200000);
- DEFINE_CLK_SMD_RPM_QDSS(msm8994, qdss_clk, qdss_a_clk,
- 			QCOM_SMD_RPM_MISC_CLK, 1);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8994, rf_clk1, rf_clk1_a, 4);
-@@ -737,6 +749,8 @@ DEFINE_CLK_SMD_RPM(msm8994, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
- DEFINE_CLK_SMD_RPM(msm8994, ce3_clk, ce3_a_clk, QCOM_SMD_RPM_CE_CLK, 2);
- 
- static struct clk_smd_rpm *msm8994_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &msm8994_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &msm8994_bi_tcxo_a,
- 	[RPM_SMD_PNOC_CLK] = &msm8994_pnoc_clk,
- 	[RPM_SMD_PNOC_A_CLK] = &msm8994_pnoc_a_clk,
- 	[RPM_SMD_OCMEMGX_CLK] = &msm8994_ocmemgx_clk,
-@@ -769,6 +783,8 @@ static struct clk_smd_rpm *msm8994_clks[] = {
- 	[RPM_SMD_LN_BB_A_CLK] = &msm8994_ln_bb_a_clk,
- 	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8994_mmssnoc_ahb_clk,
- 	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8994_mmssnoc_ahb_a_clk,
-+	[RPM_SMD_MSS_CFG_AHB_CLK] = &msm8994_mss_cfg_ahb_clk,
-+	[RPM_SMD_MSS_CFG_AHB_A_CLK] = &msm8994_mss_cfg_ahb_a_clk,
- 	[RPM_SMD_QDSS_CLK] = &msm8994_qdss_clk,
- 	[RPM_SMD_QDSS_A_CLK] = &msm8994_qdss_a_clk,
- 	[RPM_SMD_RF_CLK1] = &msm8994_rf_clk1,
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 8aaba7cd9589..e8e256dbcc8a 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -149,5 +149,7 @@
- #define RPM_SMD_CE2_A_CLK			103
- #define RPM_SMD_CE3_CLK				104
- #define RPM_SMD_CE3_A_CLK			105
-+#define RPM_SMD_MSS_CFG_AHB_CLK			106
-+#define RPM_SMD_MSS_CFG_AHB_A_CLK		107
- 
- #endif
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index f2645ec52520..ce51b18f7128 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -37,6 +37,7 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_IPA_CLK	0x617069
- #define QCOM_SMD_RPM_CE_CLK	0x6563
- #define QCOM_SMD_RPM_AGGR_CLK	0x72676761
-+#define QCOM_SMD_RPM_MFFG_CLK	0x6766636d
- 
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
+ drivers/clk/clk-ast2600.c | 37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
+
 -- 
-2.29.2
+2.17.1
 
