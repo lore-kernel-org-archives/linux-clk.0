@@ -2,1465 +2,1515 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EC6C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 02:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A3DC433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 02:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05A992250E
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 02:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0813422516
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 02:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbhARCEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Jan 2021 21:04:10 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:17309 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbhARCEF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jan 2021 21:04:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1610935444; x=1642471444;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aaINW+/qynZPKDgG+f49I9GGL+8uG9HivGJZjjhy6F4=;
-  b=cK/c0zP8ET5/yLeKaYGzRVHd3WPKMXBIQE/Fuy80/ElpKVn01s+4osTm
-   Mdf7Jy92vyHpHIblrLeOl/zAV/8Iy6BT+ScN3c3AuvBEmIIGe1R2NgtqL
-   FveFPrUODrA4kxhbn5fFQDLUuUXGzALfot0Q+mz3OBFslG/3cMsWejgTp
-   WluwpQ7eP86DSACZRM4GrHvgfIlu+ouIDa7vMsD6Q/BmTLZmawVwzeR0p
-   5E2AVRyOG3uAq8Y/yLDtzcTGKoTlJHNf/nrRyfpsBAIIFnoIwHOdXQZv3
-   R0QNMA/dAZlC2j0Ar0kOMJkcVcZra5M6Elyxgsdvn9nWcKfsqQET01l0k
-   g==;
-IronPort-SDR: CYZ5tStybJ1pyRRJFzDg7snU13P68sLCyLVIyt7YkFrz2ToZoAw9jvsfnbB9oilu156wlEVXD0
- pMlR2oSHFvclN8BZlwI73u0Ps6oteBcPnt6lR8G+V+IYrgGd+tWcEwP45c3dwHFaNvfsjJWedW
- yHkkDuBrMspxXf844sPed2PHJA7GmxyYZmHsY6erBy/90GOf9IntnlarLbHZeeCxAwt+rLKwF0
- /udt2WpEA2CFbep/e1tmYWZInZdgYYYBV8iZNW6R8pdEKiBUxpV7MWBPvjS4KRIIj4oXxJGOUK
- j4c=
-X-IronPort-AV: E=Sophos;i="5.79,355,1602518400"; 
-   d="scan'208";a="158840842"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Jan 2021 10:02:58 +0800
-IronPort-SDR: b9WToPixVmuagDwEvjRQRtPjKRN8qSEaWzMVP8pYQoZfCt6o1sFTQ0aG91Fq/Aocm+gSb7B2uo
- aLiC/lWULOds574JHFx0zE1ryixsmFE+mqihR7i1aALBnyF5HtyE2W/bJwqWu8WQAhk+Yfs1Qr
- U28MR9Ao1JtQ4meRLg4ZdQuUmS2vZ2R9bOL4jnvEVBm7kNYgWRMQ4cztJbxWkfTRH9SdYXc9OJ
- OqW+sKmgI4MNpg2oUbsyBIWl/3xgL/eV+jb7DhIYsITZFJUWGIOs0qroxyP5U5zNNLCf7+LA5H
- oEOrgSRi1sPITfWHWC4Kvgbp
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2021 17:47:35 -0800
-IronPort-SDR: VkAblTxFXBCt3Z4uos0xK4tfj5E6Hl911/S+Y9+bESDKEK7me9ODSvJTnubDj4PRwn1hyXROyR
- G3J+QfqFogBoLemjnJLc137cCl8ukWKFT5UcIGg7M+T/pBNSiIjp+8gc6/BwcTpg5Yj0v9+vr3
- bnEXytc9qdK76jQ4j8vJSnEMhiY2nSV0l6d+kGmn3DeGShEifEXjk7Z4XKKgThJoaMZZfhhQxD
- ZBxzGfeRJ+O/ocAfMyvkEB9y0J3YGAr0dufoeCkYG5KNkdyFz9rwpfku3KA9eJidCdZRhqK/9d
- iTE=
-WDCIronportException: Internal
-Received: from cnf011319.ad.shared (HELO twashi.fujisawa.hgst.com) ([10.84.70.208])
-  by uls-op-cesaip02.wdc.com with ESMTP; 17 Jan 2021 18:02:56 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv@lists.infradead.org
-Cc:     Sean Anderson <seanga2@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+        id S1731116AbhARCLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Jan 2021 21:11:08 -0500
+Received: from foss.arm.com ([217.140.110.172]:48638 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731087AbhARCLC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 Jan 2021 21:11:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D42A13A1;
+        Sun, 17 Jan 2021 18:09:46 -0800 (PST)
+Received: from localhost.localdomain (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7323F719;
+        Sun, 17 Jan 2021 18:09:43 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v13 01/17] clk: Add RISC-V Canaan Kendryte K210 clock driver
-Date:   Mon, 18 Jan 2021 11:02:28 +0900
-Message-Id: <20210118020244.103451-2-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210118020244.103451-1-damien.lemoal@wdc.com>
-References: <20210118020244.103451-1-damien.lemoal@wdc.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v3 08/21] clk: sunxi-ng: Add support for the Allwinner H616 CCU
+Date:   Mon, 18 Jan 2021 02:08:35 +0000
+Message-Id: <20210118020848.11721-9-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20210118020848.11721-1-andre.przywara@arm.com>
+References: <20210118020848.11721-1-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a clock provider driver for the Canaan Kendryte K210 RISC-V SoC.
-This new driver with the compatible string "canaan,k210-clk" implements
-support for the full clock structure of the K210 SoC. Since it is
-required for the correct operation of the SoC, this driver is
-selected by default for compilation when the SOC_CANAAN option is
-selected.
+While the clocks are fairly similar to the H6, many differ in tiny
+details, so a separate clock driver seems indicated.
 
-With this change, the k210-sysctl driver is turned into a simple
-platform driver which enables its power bus clock and triggers
-populating its child nodes. The sysctl driver retains the SOC early
-initialization code, but the implementation now relies on the new
-function k210_clk_early_init() provided by the new clk-k210 driver.
+Derived from the H6 clock driver, and adjusted according to the manual.
 
-The clock structure implemented and many of the coding ideas for the
-driver come from the work by Sean Anderson on the K210 support for the
-U-Boot project.
-
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- MAINTAINERS                      |    1 +
- drivers/clk/Kconfig              |    8 +
- drivers/clk/Makefile             |    1 +
- drivers/clk/clk-k210.c           | 1012 ++++++++++++++++++++++++++++++
- drivers/soc/canaan/Kconfig       |   18 +-
- drivers/soc/canaan/Makefile      |    2 +-
- drivers/soc/canaan/k210-sysctl.c |  205 ++----
- include/soc/canaan/k210-sysctl.h |    2 +
- 8 files changed, 1071 insertions(+), 178 deletions(-)
- create mode 100644 drivers/clk/clk-k210.c
+ drivers/clk/sunxi-ng/Kconfig                |    5 +
+ drivers/clk/sunxi-ng/Makefile               |    1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c      | 1150 +++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.h      |   56 +
+ include/dt-bindings/clock/sun50i-h616-ccu.h |  115 ++
+ include/dt-bindings/reset/sun50i-h616-ccu.h |   70 ++
+ 6 files changed, 1397 insertions(+)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+ create mode 100644 include/dt-bindings/clock/sun50i-h616-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h616-ccu.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d56f32b0140b..d5559d325088 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3870,6 +3870,7 @@ CANAAN/KENDRYTE K210 SOC SYSTEM CONTROLLER DRIVER
- M:	Damien Le Moal <damien.lemoal@wdc.com>
- L:	linux-riscv@lists.infradead.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/canaan,k210-sysctl.yaml
- F:	drivers/soc/canaan/
- F:	include/soc/canaan/
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index feeb8d2074ee..cd46d8853876 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -32,6 +32,11 @@ config SUN50I_H6_CCU
+ 	default ARM64 && ARCH_SUNXI
+ 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
  
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 85856cff506c..cb971f6632e2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -368,6 +368,14 @@ config COMMON_CLK_FIXED_MMIO
- 	help
- 	  Support for Memory Mapped IO Fixed clocks
- 
-+config COMMON_CLK_K210
-+	bool "Clock driver for the Canaan Kendryte K210 SoC"
-+	depends on COMMON_CLK && OF
-+	depends on RISCV && SOC_CANAAN
-+	default SOC_CANAAN
-+	help
-+	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
++config SUN50I_H616_CCU
++	bool "Support for the Allwinner H616 CCU"
++	default ARM64 && ARCH_SUNXI
++	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
 +
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/baikal-t1/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index dbdc590e7de3..5f8f9f135df5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
-+obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
- obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
-diff --git a/drivers/clk/clk-k210.c b/drivers/clk/clk-k210.c
+ config SUN50I_H6_R_CCU
+ 	bool "Support for the Allwinner H6 and H616 PRCM CCU"
+ 	default ARM64 && ARCH_SUNXI
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 3eb5cff40eac..96c324306d97 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+ obj-$(CONFIG_SUN50I_A100_CCU)	+= ccu-sun50i-a100.o
+ obj-$(CONFIG_SUN50I_A100_R_CCU)	+= ccu-sun50i-a100-r.o
+ obj-$(CONFIG_SUN50I_H6_CCU)	+= ccu-sun50i-h6.o
++obj-$(CONFIG_SUN50I_H616_CCU)	+= ccu-sun50i-h616.o
+ obj-$(CONFIG_SUN50I_H6_R_CCU)	+= ccu-sun50i-h6-r.o
+ obj-$(CONFIG_SUN4I_A10_CCU)	+= ccu-sun4i-a10.o
+ obj-$(CONFIG_SUN5I_CCU)		+= ccu-sun5i.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
 new file mode 100644
-index 000000000000..429db4904ad6
+index 000000000000..225307305880
 --- /dev/null
-+++ b/drivers/clk/clk-k210.c
-@@ -0,0 +1,1012 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -0,0 +1,1150 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2019-20 Sean Anderson <seanga2@gmail.com>
-+ * Copyright (c) 2019 Western Digital Corporation or its affiliates.
++ * Copyright (c) 2020 Arm Ltd.
++ * Based on the H6 CCU driver, which is:
++ *   Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.io>
 + */
-+#define pr_fmt(fmt)     "k210-clk: " fmt
 +
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_clk.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
 +#include <linux/clk-provider.h>
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <asm/soc.h>
-+#include <soc/canaan/k210-sysctl.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
 +
-+#include <dt-bindings/clock/k210-clk.h>
++#include "ccu_common.h"
++#include "ccu_reset.h"
++
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++#include "ccu_mult.h"
++#include "ccu_nk.h"
++#include "ccu_nkm.h"
++#include "ccu_nkmp.h"
++#include "ccu_nm.h"
++
++#include "ccu-sun50i-h616.h"
 +
 +/*
-+ * Clocks parameters.
++ * The CPU PLL is actually NP clock, with P being /1, /2 or /4. However
++ * P should only be used for output frequencies lower than 288 MHz.
++ *
++ * For now we can just model it as a multiplier clock, and force P to /1.
++ *
++ * The M factor is present in the register's description, but not in the
++ * frequency formula, and it's documented as "M is only used for backdoor
++ * testing", so it's not modelled and then force to 0.
 + */
-+struct k210_sysclk;
-+
-+struct k210_clk {
-+	int id;
-+	struct k210_sysclk *ksc;
-+	struct clk_hw hw;
++#define SUN50I_H616_PLL_CPUX_REG	0x000
++static struct ccu_mult pll_cpux_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.mult		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.common		= {
++		.reg		= 0x000,
++		.hw.init	= CLK_HW_INIT("pll-cpux", "osc24M",
++					      &ccu_mult_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
 +};
 +
-+struct k210_clk_cfg {
-+	const char *name;
-+	u8 gate_reg;
-+	u8 gate_bit;
-+	u8 div_reg;
-+	u8 div_shift;
-+	u8 div_width;
-+	u8 div_type;
-+	u8 mux_reg;
-+	u8 mux_bit;
++/* Some PLLs are input * N / div1 / P. Model them as NKMP with no K */
++#define SUN50I_H616_PLL_DDR0_REG	0x010
++static struct ccu_nkmp pll_ddr0_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.common		= {
++		.reg		= 0x010,
++		.hw.init	= CLK_HW_INIT("pll-ddr0", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
 +};
 +
-+enum k210_clk_div_type {
-+	K210_DIV_NONE,
-+	K210_DIV_ONE_BASED,
-+	K210_DIV_DOUBLE_ONE_BASED,
-+	K210_DIV_POWER_OF_TWO,
++#define SUN50I_H616_PLL_DDR1_REG	0x018
++static struct ccu_nkmp pll_ddr1_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.common		= {
++		.reg		= 0x018,
++		.hw.init	= CLK_HW_INIT("pll-ddr1", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
 +};
 +
-+#define K210_GATE(_reg, _bit)	\
-+	.gate_reg = (_reg),	\
-+	.gate_bit = (_bit)
-+#define K210_DIV(_reg, _shift, _width, _type)	\
-+	.div_reg = (_reg),			\
-+	.div_shift = (_shift),			\
-+	.div_width = (_width),			\
-+	.div_type = (_type)
-+#define K210_MUX(_reg, _bit)	\
-+	.mux_reg = (_reg),	\
-+	.mux_bit = (_bit)
++#define SUN50I_H616_PLL_PERIPH0_REG	0x020
++static struct ccu_nkmp pll_periph0_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.fixed_post_div	= 2,
++	.common		= {
++		.reg		= 0x020,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-periph0", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
 +
-+static struct k210_clk_cfg k210_clk_cfgs[K210_NUM_CLKS] = {
++#define SUN50I_H616_PLL_PERIPH1_REG	0x028
++static struct ccu_nkmp pll_periph1_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.fixed_post_div	= 2,
++	.common		= {
++		.reg		= 0x028,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-periph1", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
 +
-+	/* Gated clocks, no mux, no divider */
-+	[K210_CLK_CPU] = {
-+		.name = "cpu",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 0)
-+	},
-+	[K210_CLK_DMA] = {
-+		.name = "dma",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 1)
-+	},
-+	[K210_CLK_FFT] = {
-+		.name = "fft",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 4)
-+	},
-+	[K210_CLK_GPIO] = {
-+		.name = "gpio",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 5)
-+	},
-+	[K210_CLK_UART1] = {
-+		.name = "uart1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 16)
-+	},
-+	[K210_CLK_UART2] = {
-+		.name = "uart2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 17)
-+	},
-+	[K210_CLK_UART3] = {
-+		.name = "uart3",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 18)
-+	},
-+	[K210_CLK_FPIOA] = {
-+		.name = "fpioa",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 20)
-+	},
-+	[K210_CLK_SHA] = {
-+		.name = "sha",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 26)
-+	},
-+	[K210_CLK_AES] = {
-+		.name = "aes",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 19)
-+	},
-+	[K210_CLK_OTP] = {
-+		.name = "otp",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 27)
-+	},
-+	[K210_CLK_RTC] = {
-+		.name = "rtc",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 29)
-+	},
-+
-+	/* Gated divider clocks */
-+	[K210_CLK_SRAM0] = {
-+		.name = "sram0",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 1),
-+		K210_DIV(K210_SYSCTL_THR0, 0, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_SRAM1] = {
-+		.name = "sram1",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 2),
-+		K210_DIV(K210_SYSCTL_THR0, 4, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_ROM] = {
-+		.name = "rom",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 0),
-+		K210_DIV(K210_SYSCTL_THR0, 16, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_DVP] = {
-+		.name = "dvp",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 3),
-+		K210_DIV(K210_SYSCTL_THR0, 12, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB0] = {
-+		.name = "apb0",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 3),
-+		K210_DIV(K210_SYSCTL_SEL0, 3, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB1] = {
-+		.name = "apb1",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 4),
-+		K210_DIV(K210_SYSCTL_SEL0, 6, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_APB2] = {
-+		.name = "apb2",
-+		K210_GATE(K210_SYSCTL_EN_CENT, 5),
-+		K210_DIV(K210_SYSCTL_SEL0, 9, 3, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_AI] = {
-+		.name = "ai",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 2),
-+		K210_DIV(K210_SYSCTL_THR0, 8, 4, K210_DIV_ONE_BASED)
-+	},
-+	[K210_CLK_SPI0] = {
-+		.name = "spi0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 6),
-+		K210_DIV(K210_SYSCTL_THR1, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_SPI1] = {
-+		.name = "spi1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 7),
-+		K210_DIV(K210_SYSCTL_THR1, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_SPI2] = {
-+		.name = "spi2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 8),
-+		K210_DIV(K210_SYSCTL_THR1, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C0] = {
-+		.name = "i2c0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 13),
-+		K210_DIV(K210_SYSCTL_THR5, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C1] = {
-+		.name = "i2c1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 14),
-+		K210_DIV(K210_SYSCTL_THR5, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2C2] = {
-+		.name = "i2c2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 15),
-+		K210_DIV(K210_SYSCTL_THR5, 24, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_WDT0] = {
-+		.name = "wdt0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 24),
-+		K210_DIV(K210_SYSCTL_THR6, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_WDT1] = {
-+		.name = "wdt1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 25),
-+		K210_DIV(K210_SYSCTL_THR6, 8, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S0] = {
-+		.name = "i2s0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 10),
-+		K210_DIV(K210_SYSCTL_THR3, 0, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S1] = {
-+		.name = "i2s1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 11),
-+		K210_DIV(K210_SYSCTL_THR3, 16, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S2] = {
-+		.name = "i2s2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 12),
-+		K210_DIV(K210_SYSCTL_THR4, 0, 16, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+
-+	/* Divider clocks, no gate, no mux */
-+	[K210_CLK_I2S0_M] = {
-+		.name = "i2s0_m",
-+		K210_DIV(K210_SYSCTL_THR4, 16, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S1_M] = {
-+		.name = "i2s1_m",
-+		K210_DIV(K210_SYSCTL_THR4, 24, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+	[K210_CLK_I2S2_M] = {
-+		.name = "i2s2_m",
-+		K210_DIV(K210_SYSCTL_THR4, 0, 8, K210_DIV_DOUBLE_ONE_BASED)
-+	},
-+
-+	/* Muxed gated divider clocks */
-+	[K210_CLK_SPI3] = {
-+		.name = "spi3",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 9),
-+		K210_DIV(K210_SYSCTL_THR1, 24, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 12)
-+	},
-+	[K210_CLK_TIMER0] = {
-+		.name = "timer0",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 21),
-+		K210_DIV(K210_SYSCTL_THR2,  0, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 13)
-+	},
-+	[K210_CLK_TIMER1] = {
-+		.name = "timer1",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 22),
-+		K210_DIV(K210_SYSCTL_THR2, 8, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 14)
-+	},
-+	[K210_CLK_TIMER2] = {
-+		.name = "timer2",
-+		K210_GATE(K210_SYSCTL_EN_PERI, 23),
-+		K210_DIV(K210_SYSCTL_THR2, 16, 8, K210_DIV_DOUBLE_ONE_BASED),
-+		K210_MUX(K210_SYSCTL_SEL0, 15)
++#define SUN50I_H616_PLL_GPU_REG		0x030
++static struct ccu_nkmp pll_gpu_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.common		= {
++		.reg		= 0x030,
++		.hw.init	= CLK_HW_INIT("pll-gpu", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
 +	},
 +};
 +
 +/*
-+ * PLL control register bits.
++ * For Video PLLs, the output divider is described as "used for testing"
++ * in the user manual. So it's not modelled and forced to 0.
 + */
-+#define K210_PLL_CLKR		GENMASK(3, 0)
-+#define K210_PLL_CLKF		GENMASK(9, 4)
-+#define K210_PLL_CLKOD		GENMASK(13, 10)
-+#define K210_PLL_BWADJ		GENMASK(19, 14)
-+#define K210_PLL_RESET		(1 << 20)
-+#define K210_PLL_PWRD		(1 << 21)
-+#define K210_PLL_INTFB		(1 << 22)
-+#define K210_PLL_BYPASS		(1 << 23)
-+#define K210_PLL_TEST		(1 << 24)
-+#define K210_PLL_EN		(1 << 25)
-+#define K210_PLL_SEL		GENMASK(27, 26) /* PLL2 only */
-+
-+/*
-+ * PLL lock register bits.
-+ */
-+#define K210_PLL_LOCK		0
-+#define K210_PLL_CLEAR_SLIP	2
-+#define K210_PLL_TEST_OUT	3
-+
-+/*
-+ * Clock selector register bits.
-+ */
-+#define K210_ACLK_SEL		BIT(0)
-+#define K210_ACLK_DIV		GENMASK(2, 1)
-+
-+/*
-+ * PLLs.
-+ */
-+enum k210_pll_id {
-+	K210_PLL0, K210_PLL1, K210_PLL2, K210_PLL_NUM
++#define SUN50I_H616_PLL_VIDEO0_REG	0x040
++static struct ccu_nm pll_video0_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.fixed_post_div	= 4,
++	.min_rate	= 288000000,
++	.max_rate	= 2400000000UL,
++	.common		= {
++		.reg		= 0x040,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-video0", "osc24M",
++					      &ccu_nm_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
 +};
 +
-+struct k210_pll {
-+	enum k210_pll_id id;
-+	struct k210_sysclk *ksc;
-+	void __iomem *base;
++#define SUN50I_H616_PLL_VIDEO1_REG	0x048
++static struct ccu_nm pll_video1_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.fixed_post_div	= 4,
++	.min_rate	= 288000000,
++	.max_rate	= 2400000000UL,
++	.common		= {
++		.reg		= 0x048,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-video1", "osc24M",
++					      &ccu_nm_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
++
++#define SUN50I_H616_PLL_VIDEO2_REG	0x050
++static struct ccu_nm pll_video2_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.fixed_post_div	= 4,
++	.min_rate	= 288000000,
++	.max_rate	= 2400000000UL,
++	.common		= {
++		.reg		= 0x050,
++		.features	= CCU_FEATURE_FIXED_POSTDIV,
++		.hw.init	= CLK_HW_INIT("pll-video2", "osc24M",
++					      &ccu_nm_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
++
++#define SUN50I_H616_PLL_VE_REG		0x058
++static struct ccu_nkmp pll_ve_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.common		= {
++		.reg		= 0x058,
++		.hw.init	= CLK_HW_INIT("pll-ve", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
++
++#define SUN50I_H616_PLL_DE_REG		0x060
++static struct ccu_nkmp pll_de_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.common		= {
++		.reg		= 0x060,
++		.hw.init	= CLK_HW_INIT("pll-de", "osc24M",
++					      &ccu_nkmp_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
++
++/*
++ * TODO: Determine SDM settings for the audio PLL. The manual suggests
++ * PLL_FACTOR_N=16, PLL_POST_DIV_P=2, OUTPUT_DIV=2, pattern=0xe000c49b
++ * for 24.576 MHz, and PLL_FACTOR_N=22, PLL_POST_DIV_P=3, OUTPUT_DIV=2,
++ * pattern=0xe001288c for 22.5792 MHz.
++ * This clashes with our fixed PLL_POST_DIV_P.
++ */
++#define SUN50I_H616_PLL_AUDIO_REG	0x078
++static struct ccu_nm pll_audio_hs_clk = {
++	.enable		= BIT(31),
++	.lock		= BIT(28),
++	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
++	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
++	.common		= {
++		.reg		= 0x078,
++		.hw.init	= CLK_HW_INIT("pll-audio-hs", "osc24M",
++					      &ccu_nm_ops,
++					      CLK_SET_RATE_UNGATE),
++	},
++};
++
++static const char * const cpux_parents[] = { "osc24M", "osc32k",
++					"iosc", "pll-cpux", "pll-periph0" };
++static SUNXI_CCU_MUX(cpux_clk, "cpux", cpux_parents,
++		     0x500, 24, 3, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++static SUNXI_CCU_M(axi_clk, "axi", "cpux", 0x500, 0, 2, 0);
++static SUNXI_CCU_M(cpux_apb_clk, "cpux-apb", "cpux", 0x500, 8, 2, 0);
++
++static const char * const psi_ahb1_ahb2_parents[] = { "osc24M", "osc32k",
++						      "iosc", "pll-periph0" };
++static SUNXI_CCU_MP_WITH_MUX(psi_ahb1_ahb2_clk, "psi-ahb1-ahb2",
++			     psi_ahb1_ahb2_parents,
++			     0x510,
++			     0, 2,	/* M */
++			     8, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static const char * const ahb3_apb1_apb2_parents[] = { "osc24M", "osc32k",
++						       "psi-ahb1-ahb2",
++						       "pll-periph0" };
++static SUNXI_CCU_MP_WITH_MUX(ahb3_clk, "ahb3", ahb3_apb1_apb2_parents, 0x51c,
++			     0, 2,	/* M */
++			     8, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", ahb3_apb1_apb2_parents, 0x520,
++			     0, 2,	/* M */
++			     8, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", ahb3_apb1_apb2_parents, 0x524,
++			     0, 2,	/* M */
++			     8, 2,	/* P */
++			     24, 2,	/* mux */
++			     0);
++
++static const char * const mbus_parents[] = { "osc24M", "pll-periph0-2x",
++					     "pll-ddr0", "pll-ddr1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(mbus_clk, "mbus", mbus_parents, 0x540,
++					0, 3,	/* M */
++					24, 2,	/* mux */
++					BIT(31),	/* gate */
++					CLK_IS_CRITICAL);
++
++static const char * const de_parents[] = { "pll-de", "pll-periph0-2x" };
++static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents, 0x600,
++				       0, 4,	/* M */
++				       24, 1,	/* mux */
++				       BIT(31),	/* gate */
++				       CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(bus_de_clk, "bus-de", "psi-ahb1-ahb2",
++		      0x60c, BIT(0), 0);
++
++static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
++				       de_parents,
++				       0x620,
++				       0, 4,	/* M */
++				       24, 1,	/* mux */
++				       BIT(31),	/* gate */
++				       0);
++
++static SUNXI_CCU_GATE(bus_deinterlace_clk, "bus-deinterlace", "psi-ahb1-ahb2",
++		      0x62c, BIT(0), 0);
++
++static SUNXI_CCU_M_WITH_MUX_GATE(g2d_clk, "g2d", de_parents, 0x630,
++				       0, 4,	/* M */
++				       24, 1,	/* mux */
++				       BIT(31),	/* gate */
++				       0);
++
++static SUNXI_CCU_GATE(bus_g2d_clk, "bus-g2d", "psi-ahb1-ahb2",
++		      0x63c, BIT(0), 0);
++
++static const char * const gpu0_parents[] = { "pll-gpu", "gpu1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(gpu0_clk, "gpu0", gpu0_parents, 0x670,
++				       0, 2,	/* M */
++				       24, 1,	/* mux */
++				       BIT(31),	/* gate */
++				       CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
++					0, 2,	/* M */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
++		      0x67c, BIT(0), 0);
++
++static const char * const ce_parents[] = { "osc24M", "pll-periph0-2x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ce_clk, "ce", ce_parents, 0x680,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 1,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_GATE(bus_ce_clk, "bus-ce", "psi-ahb1-ahb2",
++		      0x68c, BIT(0), 0);
++
++static const char * const ve_parents[] = { "pll-ve" };
++static SUNXI_CCU_M_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
++				       0, 3,	/* M */
++				       24, 1,	/* mux */
++				       BIT(31),	/* gate */
++				       CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(bus_ve_clk, "bus-ve", "psi-ahb1-ahb2",
++		      0x69c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_dma_clk, "bus-dma", "psi-ahb1-ahb2",
++		      0x70c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_hstimer_clk, "bus-hstimer", "psi-ahb1-ahb2",
++		      0x73c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(avs_clk, "avs", "osc24M", 0x740, BIT(31), 0);
++
++static SUNXI_CCU_GATE(bus_dbg_clk, "bus-dbg", "psi-ahb1-ahb2",
++		      0x78c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_psi_clk, "bus-psi", "psi-ahb1-ahb2",
++		      0x79c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x7ac, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_iommu_clk, "bus-iommu", "apb1", 0x7bc, BIT(0), 0);
++
++static const char * const dram_parents[] = { "pll-ddr0", "pll-ddr1" };
++static struct ccu_div dram_clk = {
++	.div		= _SUNXI_CCU_DIV(0, 2),
++	.mux		= _SUNXI_CCU_MUX(24, 2),
++	.common	= {
++		.reg		= 0x800,
++		.hw.init	= CLK_HW_INIT_PARENTS("dram",
++						      dram_parents,
++						      &ccu_div_ops,
++						      CLK_IS_CRITICAL),
++	},
++};
++
++static SUNXI_CCU_GATE(mbus_dma_clk, "mbus-dma", "mbus",
++		      0x804, BIT(0), 0);
++static SUNXI_CCU_GATE(mbus_ve_clk, "mbus-ve", "mbus",
++		      0x804, BIT(1), 0);
++static SUNXI_CCU_GATE(mbus_ce_clk, "mbus-ce", "mbus",
++		      0x804, BIT(2), 0);
++static SUNXI_CCU_GATE(mbus_ts_clk, "mbus-ts", "mbus",
++		      0x804, BIT(3), 0);
++static SUNXI_CCU_GATE(mbus_nand_clk, "mbus-nand", "mbus",
++		      0x804, BIT(5), 0);
++static SUNXI_CCU_GATE(mbus_g2d_clk, "mbus-g2d", "mbus",
++		      0x804, BIT(10), 0);
++
++static SUNXI_CCU_GATE(bus_dram_clk, "bus-dram", "psi-ahb1-ahb2",
++		      0x80c, BIT(0), CLK_IS_CRITICAL);
++
++static const char * const nand_spi_parents[] = { "osc24M", "pll-periph0",
++					     "pll-periph1", "pll-periph0-2x",
++					     "pll-periph1-2x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(nand0_clk, "nand0", nand_spi_parents, 0x810,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 3,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(nand1_clk, "nand1", nand_spi_parents, 0x814,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 3,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
++
++static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
++					    "pll-periph1-2x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 2,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 2,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 2,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_mmc2_clk, "bus-mmc2", "ahb3", 0x84c, BIT(2), 0);
++
++static SUNXI_CCU_GATE(bus_uart0_clk, "bus-uart0", "apb2", 0x90c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_uart1_clk, "bus-uart1", "apb2", 0x90c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_uart2_clk, "bus-uart2", "apb2", 0x90c, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_uart3_clk, "bus-uart3", "apb2", 0x90c, BIT(3), 0);
++static SUNXI_CCU_GATE(bus_uart4_clk, "bus-uart4", "apb2", 0x90c, BIT(4), 0);
++static SUNXI_CCU_GATE(bus_uart5_clk, "bus-uart5", "apb2", 0x90c, BIT(5), 0);
++
++static SUNXI_CCU_GATE(bus_i2c0_clk, "bus-i2c0", "apb2", 0x91c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_i2c1_clk, "bus-i2c1", "apb2", 0x91c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_i2c2_clk, "bus-i2c2", "apb2", 0x91c, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_i2c3_clk, "bus-i2c3", "apb2", 0x91c, BIT(3), 0);
++static SUNXI_CCU_GATE(bus_i2c4_clk, "bus-i2c4", "apb2", 0x91c, BIT(4), 0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi0_clk, "spi0", nand_spi_parents, 0x940,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 3,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", nand_spi_parents, 0x944,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 3,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_GATE(bus_spi0_clk, "bus-spi0", "ahb3", 0x96c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_spi1_clk, "bus-spi1", "ahb3", 0x96c, BIT(1), 0);
++
++static SUNXI_CCU_GATE(emac_25m_clk, "emac-25m", "ahb3", 0x970,
++		      BIT(31) | BIT(30), 0);
++
++static SUNXI_CCU_GATE(bus_emac0_clk, "bus-emac0", "ahb3", 0x97c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_emac1_clk, "bus-emac1", "ahb3", 0x97c, BIT(1), 0);
++
++static const char * const ts_parents[] = { "osc24M", "pll-periph0" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ts_clk, "ts", ts_parents, 0x9b0,
++					0, 4,	/* M */
++					8, 2,	/* N */
++					24, 1,	/* mux */
++					BIT(31),/* gate */
++					0);
++
++static SUNXI_CCU_GATE(bus_ts_clk, "bus-ts", "ahb3", 0x9bc, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_ths_clk, "bus-ths", "apb1", 0x9fc, BIT(0), 0);
++
++static const char * const audio_parents[] = { "pll-audio-1x", "pll-audio-2x",
++					      "pll-audio-4x", "pll-audio-hs" };
++static struct ccu_div spdif_clk = {
++	.enable		= BIT(31),
++	.div		= _SUNXI_CCU_DIV_FLAGS(8, 2, CLK_DIVIDER_POWER_OF_TWO),
++	.mux		= _SUNXI_CCU_MUX(24, 2),
++	.common		= {
++		.reg		= 0xa20,
++		.hw.init	= CLK_HW_INIT_PARENTS("spdif",
++						      audio_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static SUNXI_CCU_GATE(bus_spdif_clk, "bus-spdif", "apb1", 0xa2c, BIT(0), 0);
++
++static struct ccu_div dmic_clk = {
++	.enable		= BIT(31),
++	.div		= _SUNXI_CCU_DIV_FLAGS(8, 2, CLK_DIVIDER_POWER_OF_TWO),
++	.mux		= _SUNXI_CCU_MUX(24, 2),
++	.common		= {
++		.reg		= 0xa40,
++		.hw.init	= CLK_HW_INIT_PARENTS("dmic",
++						      audio_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static SUNXI_CCU_GATE(bus_dmic_clk, "bus-dmic", "apb1", 0xa4c, BIT(0), 0);
++
++static SUNXI_CCU_M_WITH_MUX_GATE(audio_codec_1x_clk, "audio-codec-1x",
++				 audio_parents, 0xa50,
++				 0, 4,	/* M */
++				 24, 2,	/* mux */
++				 BIT(31),	/* gate */
++				 CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M_WITH_MUX_GATE(audio_codec_4x_clk, "audio-codec-4x",
++				 audio_parents, 0xa54,
++				 0, 4,	/* M */
++				 24, 2,	/* mux */
++				 BIT(31),	/* gate */
++				 CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(bus_audio_codec_clk, "bus-audio-codec", "apb1", 0xa5c,
++		BIT(0), 0);
++
++static struct ccu_div audio_hub_clk = {
++	.enable		= BIT(31),
++	.div		= _SUNXI_CCU_DIV_FLAGS(8, 2, CLK_DIVIDER_POWER_OF_TWO),
++	.mux		= _SUNXI_CCU_MUX(24, 2),
++	.common		= {
++		.reg		= 0xa60,
++		.hw.init	= CLK_HW_INIT_PARENTS("audio-hub",
++						      audio_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
++
++static SUNXI_CCU_GATE(bus_audio_hub_clk, "bus-audio-hub", "apb1", 0xa6c, BIT(0), 0);
++
++/*
++ * There are OHCI 12M clock source selection bits for the four USB 2.0 ports.
++ * We will force them to 0 (12M divided from 48M).
++ */
++#define SUN50I_H616_USB0_CLK_REG		0xa70
++#define SUN50I_H616_USB1_CLK_REG		0xa74
++#define SUN50I_H616_USB2_CLK_REG		0xa78
++#define SUN50I_H616_USB3_CLK_REG		0xa7c
++
++static SUNXI_CCU_GATE(usb_ohci0_clk, "usb-ohci0", "osc12M", 0xa70, BIT(31), 0);
++static SUNXI_CCU_GATE(usb_phy0_clk, "usb-phy0", "osc24M", 0xa70, BIT(29), 0);
++
++static SUNXI_CCU_GATE(usb_ohci1_clk, "usb-ohci1", "osc12M", 0xa74, BIT(31), 0);
++static SUNXI_CCU_GATE(usb_phy1_clk, "usb-phy1", "osc24M", 0xa74, BIT(29), 0);
++
++static SUNXI_CCU_GATE(usb_ohci2_clk, "usb-ohci2", "osc12M", 0xa78, BIT(31), 0);
++static SUNXI_CCU_GATE(usb_phy2_clk, "usb-phy2", "osc24M", 0xa78, BIT(29), 0);
++
++static SUNXI_CCU_GATE(usb_ohci3_clk, "usb-ohci3", "osc12M", 0xa7c, BIT(31), 0);
++static SUNXI_CCU_GATE(usb_phy3_clk, "usb-phy3", "osc24M", 0xa7c, BIT(29), 0);
++
++static SUNXI_CCU_GATE(bus_ohci0_clk, "bus-ohci0", "ahb3", 0xa8c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_ohci1_clk, "bus-ohci1", "ahb3", 0xa8c, BIT(1), 0);
++static SUNXI_CCU_GATE(bus_ohci2_clk, "bus-ohci2", "ahb3", 0xa8c, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_ohci3_clk, "bus-ohci3", "ahb3", 0xa8c, BIT(3), 0);
++static SUNXI_CCU_GATE(bus_ehci0_clk, "bus-ehci0", "ahb3", 0xa8c, BIT(4), 0);
++static SUNXI_CCU_GATE(bus_ehci1_clk, "bus-ehci1", "ahb3", 0xa8c, BIT(5), 0);
++static SUNXI_CCU_GATE(bus_ehci2_clk, "bus-ehci2", "ahb3", 0xa8c, BIT(6), 0);
++static SUNXI_CCU_GATE(bus_ehci3_clk, "bus-ehci3", "ahb3", 0xa8c, BIT(7), 0);
++static SUNXI_CCU_GATE(bus_otg_clk, "bus-otg", "ahb3", 0xa8c, BIT(8), 0);
++
++static SUNXI_CCU_GATE(bus_keyadc_clk, "bus-keyadc", "apb1", 0xa9c, BIT(0), 0);
++
++static const char * const hdmi_parents[] = { "pll-video0", "pll-video0-4x",
++					     "pll-video2", "pll-video2-4x" };
++static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents, 0xb00,
++				 0, 4,		/* M */
++				 24, 2,		/* mux */
++				 BIT(31),	/* gate */
++				 0);
++
++static SUNXI_CCU_GATE(hdmi_slow_clk, "hdmi-slow", "osc24M", 0xb04, BIT(31), 0);
++
++static const char * const hdmi_cec_parents[] = { "osc32k", "pll-periph0-2x" };
++static const struct ccu_mux_fixed_prediv hdmi_cec_predivs[] = {
++	{ .index = 1, .div = 36621 },
++};
++
++#define SUN50I_H616_HDMI_CEC_CLK_REG		0xb10
++static struct ccu_mux hdmi_cec_clk = {
++	.enable		= BIT(31) | BIT(30),
++
++	.mux		= {
++		.shift	= 24,
++		.width	= 2,
++
++		.fixed_predivs	= hdmi_cec_predivs,
++		.n_predivs	= ARRAY_SIZE(hdmi_cec_predivs),
++	},
++
++	.common		= {
++		.reg		= 0xb10,
++		.features	= CCU_FEATURE_FIXED_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("hdmi-cec",
++						      hdmi_cec_parents,
++						      &ccu_mux_ops,
++						      0),
++	},
++};
++
++static SUNXI_CCU_GATE(bus_hdmi_clk, "bus-hdmi", "ahb3", 0xb1c, BIT(0), 0);
++
++static SUNXI_CCU_GATE(bus_tcon_top_clk, "bus-tcon-top", "ahb3",
++		      0xb5c, BIT(0), 0);
++
++static const char * const tcon_tv_parents[] = { "pll-video0",
++						"pll-video0-4x",
++						"pll-video1",
++						"pll-video1-4x" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0",
++				  tcon_tv_parents, 0xb80,
++				  0, 4,		/* M */
++				  8, 2,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  CLK_SET_RATE_PARENT);
++static SUNXI_CCU_MP_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1",
++				  tcon_tv_parents, 0xb84,
++				  0, 4,		/* M */
++				  8, 2,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(bus_tcon_tv0_clk, "bus-tcon-tv0", "ahb3",
++		      0xb9c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_tcon_tv1_clk, "bus-tcon-tv1", "ahb3",
++		      0xb9c, BIT(1), 0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE(tve0_clk, "tve0",
++				  tcon_tv_parents, 0xbb0,
++				  0, 4,		/* M */
++				  8, 2,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  CLK_SET_RATE_PARENT);
++
++static SUNXI_CCU_GATE(bus_tve_top_clk, "bus-tve-top", "ahb3",
++		      0xbbc, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_tve0_clk, "bus-tve0", "ahb3",
++		      0xbbc, BIT(1), 0);
++
++static const char * const hdcp_parents[] = { "pll-periph0", "pll-periph1" };
++static SUNXI_CCU_M_WITH_MUX_GATE(hdcp_clk, "hdcp", hdcp_parents, 0xc40,
++				 0, 4,		/* M */
++				 24, 2,		/* mux */
++				 BIT(31),	/* gate */
++				 0);
++
++static SUNXI_CCU_GATE(bus_hdcp_clk, "bus-hdcp", "ahb3", 0xc4c, BIT(0), 0);
++
++/* Fixed factor clocks */
++static CLK_FIXED_FACTOR_FW_NAME(osc12M_clk, "osc12M", "hosc", 2, 1, 0);
++
++static const struct clk_hw *clk_parent_pll_audio[] = {
++	&pll_audio_hs_clk.common.hw
++};
++
++/*
++ * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
++ * rates can be set exactly in conjunction with sigma-delta modulation.
++ */
++static CLK_FIXED_FACTOR_HWS(pll_audio_1x_clk, "pll-audio-1x",
++			    clk_parent_pll_audio,
++			    96, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
++			    clk_parent_pll_audio,
++			    48, 1, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HWS(pll_audio_4x_clk, "pll-audio-4x",
++			    clk_parent_pll_audio,
++			    24, 1, CLK_SET_RATE_PARENT);
++
++static const struct clk_hw *pll_periph0_parents[] = {
++	&pll_periph0_clk.common.hw
++};
++
++static CLK_FIXED_FACTOR_HWS(pll_periph0_2x_clk, "pll-periph0-2x",
++			    pll_periph0_parents,
++			    1, 2, 0);
++
++static const struct clk_hw *pll_periph1_parents[] = {
++	&pll_periph1_clk.common.hw
++};
++
++static CLK_FIXED_FACTOR_HWS(pll_periph1_2x_clk, "pll-periph1-2x",
++			    pll_periph1_parents,
++			    1, 2, 0);
++
++static CLK_FIXED_FACTOR_HW(pll_video0_4x_clk, "pll-video0-4x",
++			   &pll_video0_clk.common.hw,
++			   1, 4, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HW(pll_video1_4x_clk, "pll-video1-4x",
++			   &pll_video1_clk.common.hw,
++			   1, 4, CLK_SET_RATE_PARENT);
++static CLK_FIXED_FACTOR_HW(pll_video2_4x_clk, "pll-video2-4x",
++			   &pll_video2_clk.common.hw,
++			   1, 4, CLK_SET_RATE_PARENT);
++
++static struct ccu_common *sun50i_h616_ccu_clks[] = {
++	&pll_cpux_clk.common,
++	&pll_ddr0_clk.common,
++	&pll_ddr1_clk.common,
++	&pll_periph0_clk.common,
++	&pll_periph1_clk.common,
++	&pll_gpu_clk.common,
++	&pll_video0_clk.common,
++	&pll_video1_clk.common,
++	&pll_video2_clk.common,
++	&pll_ve_clk.common,
++	&pll_de_clk.common,
++	&pll_audio_hs_clk.common,
++	&cpux_clk.common,
++	&axi_clk.common,
++	&cpux_apb_clk.common,
++	&psi_ahb1_ahb2_clk.common,
++	&ahb3_clk.common,
++	&apb1_clk.common,
++	&apb2_clk.common,
++	&mbus_clk.common,
++	&de_clk.common,
++	&bus_de_clk.common,
++	&deinterlace_clk.common,
++	&bus_deinterlace_clk.common,
++	&g2d_clk.common,
++	&bus_g2d_clk.common,
++	&gpu0_clk.common,
++	&bus_gpu_clk.common,
++	&gpu1_clk.common,
++	&ce_clk.common,
++	&bus_ce_clk.common,
++	&ve_clk.common,
++	&bus_ve_clk.common,
++	&bus_dma_clk.common,
++	&bus_hstimer_clk.common,
++	&avs_clk.common,
++	&bus_dbg_clk.common,
++	&bus_psi_clk.common,
++	&bus_pwm_clk.common,
++	&bus_iommu_clk.common,
++	&dram_clk.common,
++	&mbus_dma_clk.common,
++	&mbus_ve_clk.common,
++	&mbus_ce_clk.common,
++	&mbus_ts_clk.common,
++	&mbus_nand_clk.common,
++	&mbus_g2d_clk.common,
++	&bus_dram_clk.common,
++	&nand0_clk.common,
++	&nand1_clk.common,
++	&bus_nand_clk.common,
++	&mmc0_clk.common,
++	&mmc1_clk.common,
++	&mmc2_clk.common,
++	&bus_mmc0_clk.common,
++	&bus_mmc1_clk.common,
++	&bus_mmc2_clk.common,
++	&bus_uart0_clk.common,
++	&bus_uart1_clk.common,
++	&bus_uart2_clk.common,
++	&bus_uart3_clk.common,
++	&bus_uart4_clk.common,
++	&bus_uart5_clk.common,
++	&bus_i2c0_clk.common,
++	&bus_i2c1_clk.common,
++	&bus_i2c2_clk.common,
++	&bus_i2c3_clk.common,
++	&bus_i2c4_clk.common,
++	&spi0_clk.common,
++	&spi1_clk.common,
++	&bus_spi0_clk.common,
++	&bus_spi1_clk.common,
++	&emac_25m_clk.common,
++	&bus_emac0_clk.common,
++	&bus_emac1_clk.common,
++	&ts_clk.common,
++	&bus_ts_clk.common,
++	&bus_ths_clk.common,
++	&spdif_clk.common,
++	&bus_spdif_clk.common,
++	&dmic_clk.common,
++	&bus_dmic_clk.common,
++	&audio_codec_1x_clk.common,
++	&audio_codec_4x_clk.common,
++	&bus_audio_codec_clk.common,
++	&audio_hub_clk.common,
++	&bus_audio_hub_clk.common,
++	&usb_ohci0_clk.common,
++	&usb_phy0_clk.common,
++	&usb_ohci1_clk.common,
++	&usb_phy1_clk.common,
++	&usb_ohci2_clk.common,
++	&usb_phy2_clk.common,
++	&usb_ohci3_clk.common,
++	&usb_phy3_clk.common,
++	&bus_ohci0_clk.common,
++	&bus_ohci1_clk.common,
++	&bus_ohci2_clk.common,
++	&bus_ohci3_clk.common,
++	&bus_ehci0_clk.common,
++	&bus_ehci1_clk.common,
++	&bus_ehci2_clk.common,
++	&bus_ehci3_clk.common,
++	&bus_otg_clk.common,
++	&bus_keyadc_clk.common,
++	&hdmi_clk.common,
++	&hdmi_slow_clk.common,
++	&hdmi_cec_clk.common,
++	&bus_hdmi_clk.common,
++	&bus_tcon_top_clk.common,
++	&tcon_tv0_clk.common,
++	&tcon_tv1_clk.common,
++	&bus_tcon_tv0_clk.common,
++	&bus_tcon_tv1_clk.common,
++	&tve0_clk.common,
++	&bus_tve_top_clk.common,
++	&bus_tve0_clk.common,
++	&hdcp_clk.common,
++	&bus_hdcp_clk.common,
++};
++
++static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
++	.hws	= {
++		[CLK_OSC12M]		= &osc12M_clk.hw,
++		[CLK_PLL_CPUX]		= &pll_cpux_clk.common.hw,
++		[CLK_PLL_DDR0]		= &pll_ddr0_clk.common.hw,
++		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
++		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
++		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
++		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
++		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
++		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
++		[CLK_PLL_VIDEO0]	= &pll_video0_clk.common.hw,
++		[CLK_PLL_VIDEO0_4X]	= &pll_video0_4x_clk.hw,
++		[CLK_PLL_VIDEO1]	= &pll_video1_clk.common.hw,
++		[CLK_PLL_VIDEO1_4X]	= &pll_video1_4x_clk.hw,
++		[CLK_PLL_VIDEO2]	= &pll_video2_clk.common.hw,
++		[CLK_PLL_VIDEO2_4X]	= &pll_video2_4x_clk.hw,
++		[CLK_PLL_VE]		= &pll_ve_clk.common.hw,
++		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
++		[CLK_PLL_AUDIO_HS]	= &pll_audio_hs_clk.common.hw,
++		[CLK_PLL_AUDIO_1X]	= &pll_audio_1x_clk.hw,
++		[CLK_PLL_AUDIO_2X]	= &pll_audio_2x_clk.hw,
++		[CLK_PLL_AUDIO_4X]	= &pll_audio_4x_clk.hw,
++		[CLK_CPUX]		= &cpux_clk.common.hw,
++		[CLK_AXI]		= &axi_clk.common.hw,
++		[CLK_CPUX_APB]		= &cpux_apb_clk.common.hw,
++		[CLK_PSI_AHB1_AHB2]	= &psi_ahb1_ahb2_clk.common.hw,
++		[CLK_AHB3]		= &ahb3_clk.common.hw,
++		[CLK_APB1]		= &apb1_clk.common.hw,
++		[CLK_APB2]		= &apb2_clk.common.hw,
++		[CLK_MBUS]		= &mbus_clk.common.hw,
++		[CLK_DE]		= &de_clk.common.hw,
++		[CLK_BUS_DE]		= &bus_de_clk.common.hw,
++		[CLK_DEINTERLACE]	= &deinterlace_clk.common.hw,
++		[CLK_BUS_DEINTERLACE]	= &bus_deinterlace_clk.common.hw,
++		[CLK_G2D]		= &g2d_clk.common.hw,
++		[CLK_BUS_G2D]		= &bus_g2d_clk.common.hw,
++		[CLK_GPU0]		= &gpu0_clk.common.hw,
++		[CLK_BUS_GPU]		= &bus_gpu_clk.common.hw,
++		[CLK_GPU1]		= &gpu1_clk.common.hw,
++		[CLK_CE]		= &ce_clk.common.hw,
++		[CLK_BUS_CE]		= &bus_ce_clk.common.hw,
++		[CLK_VE]		= &ve_clk.common.hw,
++		[CLK_BUS_VE]		= &bus_ve_clk.common.hw,
++		[CLK_BUS_DMA]		= &bus_dma_clk.common.hw,
++		[CLK_BUS_HSTIMER]	= &bus_hstimer_clk.common.hw,
++		[CLK_AVS]		= &avs_clk.common.hw,
++		[CLK_BUS_DBG]		= &bus_dbg_clk.common.hw,
++		[CLK_BUS_PSI]		= &bus_psi_clk.common.hw,
++		[CLK_BUS_PWM]		= &bus_pwm_clk.common.hw,
++		[CLK_BUS_IOMMU]		= &bus_iommu_clk.common.hw,
++		[CLK_DRAM]		= &dram_clk.common.hw,
++		[CLK_MBUS_DMA]		= &mbus_dma_clk.common.hw,
++		[CLK_MBUS_VE]		= &mbus_ve_clk.common.hw,
++		[CLK_MBUS_CE]		= &mbus_ce_clk.common.hw,
++		[CLK_MBUS_TS]		= &mbus_ts_clk.common.hw,
++		[CLK_MBUS_NAND]		= &mbus_nand_clk.common.hw,
++		[CLK_MBUS_G2D]		= &mbus_g2d_clk.common.hw,
++		[CLK_BUS_DRAM]		= &bus_dram_clk.common.hw,
++		[CLK_NAND0]		= &nand0_clk.common.hw,
++		[CLK_NAND1]		= &nand1_clk.common.hw,
++		[CLK_BUS_NAND]		= &bus_nand_clk.common.hw,
++		[CLK_MMC0]		= &mmc0_clk.common.hw,
++		[CLK_MMC1]		= &mmc1_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_BUS_MMC0]		= &bus_mmc0_clk.common.hw,
++		[CLK_BUS_MMC1]		= &bus_mmc1_clk.common.hw,
++		[CLK_BUS_MMC2]		= &bus_mmc2_clk.common.hw,
++		[CLK_BUS_UART0]		= &bus_uart0_clk.common.hw,
++		[CLK_BUS_UART1]		= &bus_uart1_clk.common.hw,
++		[CLK_BUS_UART2]		= &bus_uart2_clk.common.hw,
++		[CLK_BUS_UART3]		= &bus_uart3_clk.common.hw,
++		[CLK_BUS_UART4]		= &bus_uart4_clk.common.hw,
++		[CLK_BUS_UART5]		= &bus_uart5_clk.common.hw,
++		[CLK_BUS_I2C0]		= &bus_i2c0_clk.common.hw,
++		[CLK_BUS_I2C1]		= &bus_i2c1_clk.common.hw,
++		[CLK_BUS_I2C2]		= &bus_i2c2_clk.common.hw,
++		[CLK_BUS_I2C3]		= &bus_i2c3_clk.common.hw,
++		[CLK_BUS_I2C4]		= &bus_i2c4_clk.common.hw,
++		[CLK_SPI0]		= &spi0_clk.common.hw,
++		[CLK_SPI1]		= &spi1_clk.common.hw,
++		[CLK_BUS_SPI0]		= &bus_spi0_clk.common.hw,
++		[CLK_BUS_SPI1]		= &bus_spi1_clk.common.hw,
++		[CLK_EMAC_25M]		= &emac_25m_clk.common.hw,
++		[CLK_BUS_EMAC0]		= &bus_emac0_clk.common.hw,
++		[CLK_BUS_EMAC1]		= &bus_emac1_clk.common.hw,
++		[CLK_TS]		= &ts_clk.common.hw,
++		[CLK_BUS_TS]		= &bus_ts_clk.common.hw,
++		[CLK_BUS_THS]		= &bus_ths_clk.common.hw,
++		[CLK_SPDIF]		= &spdif_clk.common.hw,
++		[CLK_BUS_SPDIF]		= &bus_spdif_clk.common.hw,
++		[CLK_DMIC]		= &dmic_clk.common.hw,
++		[CLK_BUS_DMIC]		= &bus_dmic_clk.common.hw,
++		[CLK_AUDIO_CODEC_1X]	= &audio_codec_1x_clk.common.hw,
++		[CLK_AUDIO_CODEC_4X]	= &audio_codec_4x_clk.common.hw,
++		[CLK_BUS_AUDIO_CODEC]	= &bus_audio_codec_clk.common.hw,
++		[CLK_AUDIO_HUB]		= &audio_hub_clk.common.hw,
++		[CLK_BUS_AUDIO_HUB]	= &bus_audio_hub_clk.common.hw,
++		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
++		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
++		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
++		[CLK_USB_PHY1]		= &usb_phy1_clk.common.hw,
++		[CLK_USB_OHCI2]		= &usb_ohci2_clk.common.hw,
++		[CLK_USB_PHY2]		= &usb_phy2_clk.common.hw,
++		[CLK_USB_OHCI3]		= &usb_ohci3_clk.common.hw,
++		[CLK_USB_PHY3]		= &usb_phy3_clk.common.hw,
++		[CLK_BUS_OHCI0]		= &bus_ohci0_clk.common.hw,
++		[CLK_BUS_OHCI1]		= &bus_ohci1_clk.common.hw,
++		[CLK_BUS_OHCI2]		= &bus_ohci2_clk.common.hw,
++		[CLK_BUS_OHCI3]		= &bus_ohci3_clk.common.hw,
++		[CLK_BUS_EHCI0]		= &bus_ehci0_clk.common.hw,
++		[CLK_BUS_EHCI1]		= &bus_ehci1_clk.common.hw,
++		[CLK_BUS_EHCI2]		= &bus_ehci2_clk.common.hw,
++		[CLK_BUS_EHCI3]		= &bus_ehci3_clk.common.hw,
++		[CLK_BUS_OTG]		= &bus_otg_clk.common.hw,
++		[CLK_BUS_KEYADC]	= &bus_keyadc_clk.common.hw,
++		[CLK_HDMI]		= &hdmi_clk.common.hw,
++		[CLK_HDMI_SLOW]		= &hdmi_slow_clk.common.hw,
++		[CLK_HDMI_CEC]		= &hdmi_cec_clk.common.hw,
++		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
++		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
++		[CLK_TCON_TV0]		= &tcon_tv0_clk.common.hw,
++		[CLK_TCON_TV1]		= &tcon_tv1_clk.common.hw,
++		[CLK_BUS_TCON_TV0]	= &bus_tcon_tv0_clk.common.hw,
++		[CLK_BUS_TCON_TV1]	= &bus_tcon_tv1_clk.common.hw,
++		[CLK_TVE0]		= &tve0_clk.common.hw,
++		[CLK_BUS_TVE_TOP]	= &bus_tve_top_clk.common.hw,
++		[CLK_BUS_TVE0]		= &bus_tve0_clk.common.hw,
++		[CLK_HDCP]		= &hdcp_clk.common.hw,
++		[CLK_BUS_HDCP]		= &bus_hdcp_clk.common.hw,
++	},
++	.num = CLK_NUMBER,
++};
++
++static struct ccu_reset_map sun50i_h616_ccu_resets[] = {
++	[RST_MBUS]		= { 0x540, BIT(30) },
++
++	[RST_BUS_DE]		= { 0x60c, BIT(16) },
++	[RST_BUS_DEINTERLACE]	= { 0x62c, BIT(16) },
++	[RST_BUS_GPU]		= { 0x67c, BIT(16) },
++	[RST_BUS_CE]		= { 0x68c, BIT(16) },
++	[RST_BUS_VE]		= { 0x69c, BIT(16) },
++	[RST_BUS_DMA]		= { 0x70c, BIT(16) },
++	[RST_BUS_HSTIMER]	= { 0x73c, BIT(16) },
++	[RST_BUS_DBG]		= { 0x78c, BIT(16) },
++	[RST_BUS_PSI]		= { 0x79c, BIT(16) },
++	[RST_BUS_PWM]		= { 0x7ac, BIT(16) },
++	[RST_BUS_IOMMU]		= { 0x7bc, BIT(16) },
++	[RST_BUS_DRAM]		= { 0x80c, BIT(16) },
++	[RST_BUS_NAND]		= { 0x82c, BIT(16) },
++	[RST_BUS_MMC0]		= { 0x84c, BIT(16) },
++	[RST_BUS_MMC1]		= { 0x84c, BIT(17) },
++	[RST_BUS_MMC2]		= { 0x84c, BIT(18) },
++	[RST_BUS_UART0]		= { 0x90c, BIT(16) },
++	[RST_BUS_UART1]		= { 0x90c, BIT(17) },
++	[RST_BUS_UART2]		= { 0x90c, BIT(18) },
++	[RST_BUS_UART3]		= { 0x90c, BIT(19) },
++	[RST_BUS_UART4]		= { 0x90c, BIT(20) },
++	[RST_BUS_UART5]		= { 0x90c, BIT(21) },
++	[RST_BUS_I2C0]		= { 0x91c, BIT(16) },
++	[RST_BUS_I2C1]		= { 0x91c, BIT(17) },
++	[RST_BUS_I2C2]		= { 0x91c, BIT(18) },
++	[RST_BUS_I2C3]		= { 0x91c, BIT(19) },
++	[RST_BUS_I2C4]		= { 0x91c, BIT(20) },
++	[RST_BUS_SPI0]		= { 0x96c, BIT(16) },
++	[RST_BUS_SPI1]		= { 0x96c, BIT(17) },
++	[RST_BUS_EMAC0]		= { 0x97c, BIT(16) },
++	[RST_BUS_EMAC1]		= { 0x97c, BIT(17) },
++	[RST_BUS_TS]		= { 0x9bc, BIT(16) },
++	[RST_BUS_THS]		= { 0x9fc, BIT(16) },
++	[RST_BUS_SPDIF]		= { 0xa2c, BIT(16) },
++	[RST_BUS_DMIC]		= { 0xa4c, BIT(16) },
++	[RST_BUS_AUDIO_CODEC]	= { 0xa5c, BIT(16) },
++	[RST_BUS_AUDIO_HUB]	= { 0xa6c, BIT(16) },
++
++	[RST_USB_PHY0]		= { 0xa70, BIT(30) },
++	[RST_USB_PHY1]		= { 0xa74, BIT(30) },
++	[RST_USB_PHY2]		= { 0xa78, BIT(30) },
++	[RST_USB_PHY3]		= { 0xa7c, BIT(30) },
++	[RST_BUS_OHCI0]		= { 0xa8c, BIT(16) },
++	[RST_BUS_OHCI1]		= { 0xa8c, BIT(17) },
++	[RST_BUS_OHCI2]		= { 0xa8c, BIT(18) },
++	[RST_BUS_OHCI3]		= { 0xa8c, BIT(19) },
++	[RST_BUS_EHCI0]		= { 0xa8c, BIT(20) },
++	[RST_BUS_EHCI1]		= { 0xa8c, BIT(21) },
++	[RST_BUS_EHCI2]		= { 0xa8c, BIT(22) },
++	[RST_BUS_EHCI3]		= { 0xa8c, BIT(23) },
++	[RST_BUS_OTG]		= { 0xa8c, BIT(24) },
++	[RST_BUS_KEYADC]	= { 0xa9c, BIT(16) },
++
++	[RST_BUS_HDMI]		= { 0xb1c, BIT(16) },
++	[RST_BUS_HDMI_SUB]	= { 0xb1c, BIT(17) },
++	[RST_BUS_TCON_TOP]	= { 0xb5c, BIT(16) },
++	[RST_BUS_TCON_TV0]	= { 0xb9c, BIT(16) },
++	[RST_BUS_TCON_TV1]	= { 0xb9c, BIT(17) },
++	[RST_BUS_TVE_TOP]	= { 0xbbc, BIT(16) },
++	[RST_BUS_TVE0]		= { 0xbbc, BIT(17) },
++	[RST_BUS_HDCP]		= { 0xc4c, BIT(16) },
++};
++
++static const struct sunxi_ccu_desc sun50i_h616_ccu_desc = {
++	.ccu_clks	= sun50i_h616_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun50i_h616_ccu_clks),
++
++	.hw_clks	= &sun50i_h616_hw_clks,
++
++	.resets		= sun50i_h616_ccu_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_h616_ccu_resets),
++};
++
++static const u32 pll_regs[] = {
++	SUN50I_H616_PLL_CPUX_REG,
++	SUN50I_H616_PLL_DDR0_REG,
++	SUN50I_H616_PLL_DDR1_REG,
++	SUN50I_H616_PLL_PERIPH0_REG,
++	SUN50I_H616_PLL_PERIPH1_REG,
++	SUN50I_H616_PLL_GPU_REG,
++	SUN50I_H616_PLL_VIDEO0_REG,
++	SUN50I_H616_PLL_VIDEO1_REG,
++	SUN50I_H616_PLL_VIDEO2_REG,
++	SUN50I_H616_PLL_VE_REG,
++	SUN50I_H616_PLL_DE_REG,
++	SUN50I_H616_PLL_AUDIO_REG,
++};
++
++static const u32 pll_video_regs[] = {
++	SUN50I_H616_PLL_VIDEO0_REG,
++	SUN50I_H616_PLL_VIDEO1_REG,
++	SUN50I_H616_PLL_VIDEO2_REG,
++};
++
++static const u32 usb2_clk_regs[] = {
++	SUN50I_H616_USB0_CLK_REG,
++	SUN50I_H616_USB1_CLK_REG,
++	SUN50I_H616_USB2_CLK_REG,
++	SUN50I_H616_USB3_CLK_REG,
++};
++
++static void __init sun50i_h616_ccu_setup(struct device_node *node)
++{
 +	void __iomem *reg;
-+	void __iomem *lock;
-+	u8 lock_shift;
-+	u8 lock_width;
-+	struct clk_hw hw;
-+};
-+#define to_k210_pll(_hw)	container_of(_hw, struct k210_pll, hw)
++	u32 val;
++	int i;
 +
-+/*
-+ * PLLs configuration: by default PLL0 runs at 780 MHz and PLL1 at 299 MHz.
-+ * The first 2 SRAM banks depend on ACLK/CPU clock which is by default PLL0
-+ * rate divided by 2. Set PLL1 to 390 MHz so that the third SRAM bank has the
-+ * same clock as the first 2.
-+ */
-+struct k210_pll_cfg {
-+	u32 reg;
-+	u8 lock_shift;
-+	u8 lock_width;
-+	u32 r;
-+	u32 f;
-+	u32 od;
-+	u32 bwadj;
-+};
-+
-+static struct k210_pll_cfg k210_plls_cfg[] = {
-+	{ K210_SYSCTL_PLL0,  0, 2, 0, 59, 1, 59 }, /* 780 MHz */
-+	{ K210_SYSCTL_PLL1,  8, 1, 0, 59, 3, 59 }, /* 390 MHz */
-+	{ K210_SYSCTL_PLL2, 16, 1, 0, 22, 1, 22 }, /* 299 MHz */
-+};
-+
-+/**
-+ * struct k210_sysclk - sysclk driver data
-+ * @node: device node
-+ * @regs: system controller registers start address
-+ * @clk_lock: clock setting spinlock
-+ * @plls: SoC PLLs descriptors
-+ * @aclk: ACLK clock
-+ * @clks: All other clocks
-+ */
-+struct k210_sysclk {
-+	struct device_node		*node;
-+	void __iomem			*regs;
-+	spinlock_t			clk_lock;
-+	struct k210_pll			plls[K210_PLL_NUM];
-+	struct clk_hw			aclk;
-+	struct k210_clk			clks[K210_NUM_CLKS];
-+};
-+
-+#define to_k210_sysclk(_hw)	container_of(_hw, struct k210_sysclk, aclk)
-+
-+/*
-+ * Set ACLK parent selector: 0 for IN0, 1 for PLL0.
-+ */
-+static void k210_aclk_set_selector(void __iomem *regs, u8 sel)
-+{
-+	u32 reg = readl(regs + K210_SYSCTL_SEL0);
-+
-+	if (sel)
-+		reg |= K210_ACLK_SEL;
-+	else
-+		reg &= K210_ACLK_SEL;
-+	writel(reg, regs + K210_SYSCTL_SEL0);
-+}
-+
-+static void k210_init_pll(void __iomem *regs, enum k210_pll_id pllid,
-+			  struct k210_pll *pll)
-+{
-+	pll->id = pllid;
-+	pll->reg = regs + k210_plls_cfg[pllid].reg;
-+	pll->lock = regs + K210_SYSCTL_PLL_LOCK;
-+	pll->lock_shift = k210_plls_cfg[pllid].lock_shift;
-+	pll->lock_width = k210_plls_cfg[pllid].lock_width;
-+}
-+
-+static void k210_pll_wait_for_lock(struct k210_pll *pll)
-+{
-+	u32 reg, mask = GENMASK(pll->lock_shift + pll->lock_width - 1,
-+				pll->lock_shift);
-+
-+	while (true) {
-+		reg = readl(pll->lock);
-+		if ((reg & mask) == mask)
-+			break;
-+
-+		reg |= BIT(pll->lock_shift + K210_PLL_CLEAR_SLIP);
-+		writel(reg, pll->lock);
-+	}
-+}
-+
-+static bool k210_pll_hw_is_enabled(struct k210_pll *pll)
-+{
-+	u32 reg = readl(pll->reg);
-+	u32 mask = K210_PLL_PWRD | K210_PLL_EN;
-+
-+	if (reg & K210_PLL_RESET)
-+		return false;
-+
-+	return (reg & mask) == mask;
-+}
-+
-+static void k210_pll_enable_hw(void __iomem *regs, struct k210_pll *pll)
-+{
-+	struct k210_pll_cfg *pll_cfg = &k210_plls_cfg[pll->id];
-+	u32 reg;
-+
-+	if (k210_pll_hw_is_enabled(pll))
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%pOF: Could not map clock registers\n", node);
 +		return;
++	}
++
++	/* Enable the lock bits and the output enable bits on all PLLs */
++	for (i = 0; i < ARRAY_SIZE(pll_regs); i++) {
++		val = readl(reg + pll_regs[i]);
++		val |= BIT(29) | BIT(27);
++		writel(val, reg + pll_regs[i]);
++	}
 +
 +	/*
-+	 * For PLL0, we need to re-parent ACLK to IN0 to keep the CPU cores and
-+	 * SRAM running.
++	 * Force the output divider of video PLLs to 0.
++	 *
++	 * See the comment before pll-video0 definition for the reason.
 +	 */
-+	if (pll->id == K210_PLL0)
-+		k210_aclk_set_selector(regs, 0);
-+
-+	/* Set PLL factors */
-+	reg = readl(pll->reg);
-+	reg &= ~GENMASK(19, 0);
-+	reg |= FIELD_PREP(K210_PLL_CLKR, pll_cfg->r);
-+	reg |= FIELD_PREP(K210_PLL_CLKF, pll_cfg->f);
-+	reg |= FIELD_PREP(K210_PLL_CLKOD, pll_cfg->od);
-+	reg |= FIELD_PREP(K210_PLL_BWADJ, pll_cfg->bwadj);
-+	reg |= K210_PLL_PWRD;
-+	writel(reg, pll->reg);
++	for (i = 0; i < ARRAY_SIZE(pll_video_regs); i++) {
++		val = readl(reg + pll_video_regs[i]);
++		val &= ~BIT(0);
++		writel(val, reg + pll_video_regs[i]);
++	}
 +
 +	/*
-+	 * Reset the PLL: ensure reset is low before asserting it.
-+	 * The magic NOPs come from the Kendryte reference SDK.
++	 * Force OHCI 12M clock sources to 00 (12MHz divided from 48MHz)
++	 *
++	 * This clock mux is still mysterious, and the code just enforces
++	 * it to have a valid clock parent.
 +	 */
-+	reg &= ~K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+	reg |= K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+	nop();
-+	nop();
-+	reg &= ~K210_PLL_RESET;
-+	writel(reg, pll->reg);
-+
-+	k210_pll_wait_for_lock(pll);
-+
-+	reg &= ~K210_PLL_BYPASS;
-+	reg |= K210_PLL_EN;
-+	writel(reg, pll->reg);
-+
-+	if (pll->id == K210_PLL0)
-+		k210_aclk_set_selector(regs, 1);
-+}
-+
-+static int k210_pll_enable(struct clk_hw *hw)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	struct k210_sysclk *ksc = pll->ksc;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+
-+	k210_pll_enable_hw(ksc->regs, pll);
-+
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static void k210_pll_disable(struct clk_hw *hw)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	struct k210_sysclk *ksc = pll->ksc;
-+	unsigned long flags;
-+	u32 reg;
++	for (i = 0; i < ARRAY_SIZE(usb2_clk_regs); i++) {
++		val = readl(reg + usb2_clk_regs[i]);
++		val &= ~GENMASK(25, 24);
++		writel(val, reg + usb2_clk_regs[i]);
++	}
 +
 +	/*
-+	 * Bypassing before powering off is important so child clocks do not
-+	 * stop working. This is especially important for pll0, the indirect
-+	 * parent of the cpu clock.
++	 * Force the post-divider of pll-audio to 12 and the output divider
++	 * of it to 2, so 24576000 and 22579200 rates can be set exactly.
 +	 */
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+	reg = readl(pll->reg);
-+	reg |= K210_PLL_BYPASS;
-+	writel(reg, pll->reg);
-+
-+	reg &= ~K210_PLL_PWRD;
-+	reg &= ~K210_PLL_EN;
-+	writel(reg, pll->reg);
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+}
-+
-+static int k210_pll_is_enabled(struct clk_hw *hw)
-+{
-+	return k210_pll_hw_is_enabled(to_k210_pll(hw));
-+}
-+
-+static unsigned long k210_pll_get_rate(struct clk_hw *hw,
-+				       unsigned long parent_rate)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	u32 reg = readl(pll->reg);
-+	u32 r, f, od;
-+
-+	if (reg & K210_PLL_BYPASS)
-+		return parent_rate;
-+
-+	if (!(reg & K210_PLL_PWRD))
-+		return 0;
-+
-+	r = FIELD_GET(K210_PLL_CLKR, reg) + 1;
-+	f = FIELD_GET(K210_PLL_CLKF, reg) + 1;
-+	od = FIELD_GET(K210_PLL_CLKOD, reg) + 1;
-+
-+	return (u64)parent_rate * f / (r * od);
-+}
-+
-+static const struct clk_ops k210_pll_ops = {
-+	.enable		= k210_pll_enable,
-+	.disable	= k210_pll_disable,
-+	.is_enabled	= k210_pll_is_enabled,
-+	.recalc_rate	= k210_pll_get_rate,
-+};
-+
-+static int k210_pll2_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	struct k210_sysclk *ksc = pll->ksc;
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+
-+	reg = readl(pll->reg);
-+	reg &= ~K210_PLL_SEL;
-+	reg |= FIELD_PREP(K210_PLL_SEL, index);
-+	writel(reg, pll->reg);
-+
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 k210_pll2_get_parent(struct clk_hw *hw)
-+{
-+	struct k210_pll *pll = to_k210_pll(hw);
-+	u32 reg = readl(pll->reg);
-+
-+	return FIELD_GET(K210_PLL_SEL, reg);
-+}
-+
-+static const struct clk_ops k210_pll2_ops = {
-+	.enable		= k210_pll_enable,
-+	.disable	= k210_pll_disable,
-+	.is_enabled	= k210_pll_is_enabled,
-+	.recalc_rate	= k210_pll_get_rate,
-+	.set_parent	= k210_pll2_set_parent,
-+	.get_parent	= k210_pll2_get_parent,
-+};
-+
-+static int k210_register_pll(struct k210_sysclk *ksc, const char *in0,
-+			     enum k210_pll_id pllid, const char *name,
-+			     int num_parents, const struct clk_ops *ops)
-+{
-+	struct k210_pll *pll = &ksc->plls[pllid];
-+	struct clk_init_data init = {};
-+	const struct clk_parent_data parent_data[] = {
-+		{ .name = in0 },
-+		{ .hw = &ksc->plls[K210_PLL0].hw },
-+		{ .hw = &ksc->plls[K210_PLL1].hw },
-+	};
-+
-+	init.name = name;
-+	init.parent_data = parent_data;
-+	init.num_parents = num_parents;
-+	init.ops = ops;
-+
-+	pll->hw.init = &init;
-+	pll->ksc = ksc;
-+
-+	return clk_hw_register(NULL, &pll->hw);
-+}
-+
-+static int k210_register_plls(struct k210_sysclk *ksc, const char *in0)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < K210_PLL_NUM; i++)
-+		k210_init_pll(ksc->regs, i, &ksc->plls[i]);
-+
-+	/* PLL0 and PLL1 only have IN0 as parent */
-+	ret = k210_register_pll(ksc, in0, K210_PLL0, "pll0", 1, &k210_pll_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL0 failed\n", ksc->node);
-+		return ret;
-+	}
-+	ret = k210_register_pll(ksc, in0, K210_PLL1, "pll1", 1, &k210_pll_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL1 failed\n", ksc->node);
-+		return ret;
-+	}
-+
-+	/* PLL2 has IN0, PLL0 and PLL1 as parents */
-+	ret = k210_register_pll(ksc, in0, K210_PLL2, "pll2", 3, &k210_pll2_ops);
-+	if (ret) {
-+		pr_err("%pOFP: register PLL2 failed\n", ksc->node);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int k210_aclk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct k210_sysclk *ksc = to_k210_sysclk(hw);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+
-+	k210_aclk_set_selector(ksc->regs, index);
-+
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 k210_aclk_get_parent(struct clk_hw *hw)
-+{
-+	struct k210_sysclk *ksc = to_k210_sysclk(hw);
-+	u32 sel;
-+
-+	sel = readl(ksc->regs + K210_SYSCTL_SEL0) & K210_ACLK_SEL;
-+
-+	return sel ? 1 : 0;
-+}
-+
-+static unsigned long k210_aclk_get_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct k210_sysclk *ksc = to_k210_sysclk(hw);
-+	u32 reg = readl(ksc->regs + K210_SYSCTL_SEL0);
-+	unsigned int shift;
-+
-+	if (!(reg & 0x1))
-+		return parent_rate;
-+
-+	shift = FIELD_GET(K210_ACLK_DIV, reg);
-+
-+	return parent_rate / (2UL << shift);
-+}
-+
-+static const struct clk_ops k210_aclk_ops = {
-+	.set_parent	= k210_aclk_set_parent,
-+	.get_parent	= k210_aclk_get_parent,
-+	.recalc_rate	= k210_aclk_get_rate,
-+};
-+
-+/*
-+ * ACLK has IN0 and PLL0 as parents.
-+ */
-+static int k210_register_aclk(struct k210_sysclk *ksc, const char *in0)
-+{
-+	struct clk_init_data init = {};
-+	const struct clk_parent_data parent_data[] = {
-+		{ .name = in0 },
-+		{ .hw = &ksc->plls[K210_PLL0].hw },
-+	};
-+	int ret;
-+
-+	init.name = "aclk";
-+	init.parent_data = parent_data;
-+	init.num_parents = 2;
-+	init.ops = &k210_aclk_ops;
-+	ksc->aclk.init = &init;
-+
-+	ret = clk_hw_register(NULL, &ksc->aclk);
-+	if (ret) {
-+		pr_err("%pOFP: register aclk failed\n", ksc->node);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+#define to_k210_clk(_hw)	container_of(_hw, struct k210_clk, hw)
-+
-+static int k210_clk_enable(struct clk_hw *hw)
-+{
-+	struct k210_clk *kclk = to_k210_clk(hw);
-+	struct k210_sysclk *ksc = kclk->ksc;
-+	struct k210_clk_cfg *cfg = &k210_clk_cfgs[kclk->id];
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!cfg->gate_reg)
-+		return 0;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+	reg = readl(ksc->regs + cfg->gate_reg);
-+	reg |= BIT(cfg->gate_bit);
-+	writel(reg, ksc->regs + cfg->gate_reg);
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static void k210_clk_disable(struct clk_hw *hw)
-+{
-+	struct k210_clk *kclk = to_k210_clk(hw);
-+	struct k210_sysclk *ksc = kclk->ksc;
-+	struct k210_clk_cfg *cfg = &k210_clk_cfgs[kclk->id];
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (!cfg->gate_reg)
-+		return;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+	reg = readl(ksc->regs + cfg->gate_reg);
-+	reg &= ~BIT(cfg->gate_bit);
-+	writel(reg, ksc->regs + cfg->gate_reg);
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+}
-+
-+static int k210_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct k210_clk *kclk = to_k210_clk(hw);
-+	struct k210_sysclk *ksc = kclk->ksc;
-+	struct k210_clk_cfg *cfg = &k210_clk_cfgs[kclk->id];
-+	unsigned long flags;
-+	u32 reg;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+	reg = readl(ksc->regs + cfg->mux_reg);
-+	if (index)
-+		reg |= BIT(cfg->mux_bit);
-+	else
-+		reg &= ~BIT(cfg->mux_bit);
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 k210_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct k210_clk *kclk = to_k210_clk(hw);
-+	struct k210_sysclk *ksc = kclk->ksc;
-+	struct k210_clk_cfg *cfg = &k210_clk_cfgs[kclk->id];
-+	unsigned long flags;
-+	u32 reg, idx;
-+
-+	spin_lock_irqsave(&ksc->clk_lock, flags);
-+	reg = readl(ksc->regs + cfg->mux_reg);
-+	idx = (reg & BIT(cfg->mux_bit)) ? 1 : 0;
-+	spin_unlock_irqrestore(&ksc->clk_lock, flags);
-+
-+	return idx;
-+}
-+
-+static unsigned long k210_clk_get_rate(struct clk_hw *hw,
-+				       unsigned long parent_rate)
-+{
-+	struct k210_clk *kclk = to_k210_clk(hw);
-+	struct k210_sysclk *ksc = kclk->ksc;
-+	struct k210_clk_cfg *cfg = &k210_clk_cfgs[kclk->id];
-+	u32 reg, div_val;
-+
-+	if (!cfg->div_reg)
-+		return parent_rate;
-+
-+	reg = readl(ksc->regs + cfg->div_reg);
-+	div_val = (reg >> cfg->div_shift) & GENMASK(cfg->div_width - 1, 0);
-+
-+	switch (cfg->div_type) {
-+	case K210_DIV_ONE_BASED:
-+		return parent_rate / (div_val + 1);
-+	case K210_DIV_DOUBLE_ONE_BASED:
-+		return parent_rate / ((div_val + 1) * 2);
-+	case K210_DIV_POWER_OF_TWO:
-+		return parent_rate / (2UL << div_val);
-+	case K210_DIV_NONE:
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static const struct clk_ops k210_clk_mux_ops = {
-+	.enable		= k210_clk_enable,
-+	.disable	= k210_clk_disable,
-+	.set_parent	= k210_clk_set_parent,
-+	.get_parent	= k210_clk_get_parent,
-+	.recalc_rate	= k210_clk_get_rate,
-+};
-+
-+static const struct clk_ops k210_clk_ops = {
-+	.enable		= k210_clk_enable,
-+	.disable	= k210_clk_disable,
-+	.recalc_rate	= k210_clk_get_rate,
-+};
-+
-+static void k210_register_clk(struct k210_sysclk *ksc, int id,
-+			      const struct clk_parent_data *parent_data,
-+			      int num_parents, unsigned long flags)
-+{
-+	struct k210_clk *kclk = &ksc->clks[id];
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	init.name = k210_clk_cfgs[id].name;
-+	init.flags = flags;
-+	init.parent_data = parent_data;
-+	init.num_parents = num_parents;
-+	if (num_parents > 1)
-+		init.ops = &k210_clk_mux_ops;
-+	else
-+		init.ops = &k210_clk_ops;
-+
-+	kclk->id = id;
-+	kclk->ksc = ksc;
-+	kclk->hw.init = &init;
-+
-+	ret = clk_hw_register(NULL, &kclk->hw);
-+	if (ret) {
-+		pr_err("%pOFP: register clock %s failed\n",
-+		       ksc->node, k210_clk_cfgs[id].name);
-+		kclk->id = -1;
-+	}
-+}
-+
-+/*
-+ * All muxed clocks have IN0 and PLL0 as parents.
-+ */
-+static inline void k210_register_mux_clk(struct k210_sysclk *ksc,
-+					 const char *in0, int id)
-+{
-+	const struct clk_parent_data parent_data[2] = {
-+		{ .name = in0 },
-+		{ .hw = &ksc->plls[K210_PLL0].hw },
-+	};
-+
-+	k210_register_clk(ksc, id, parent_data, 2, 0);
-+}
-+
-+static inline void k210_register_in0_child(struct k210_sysclk *ksc,
-+					   const char *in0, int id)
-+{
-+	const struct clk_parent_data parent_data = {
-+		.name = in0,
-+	};
-+
-+	k210_register_clk(ksc, id, &parent_data, 1, 0);
-+}
-+
-+static inline void k210_register_pll_child(struct k210_sysclk *ksc, int id,
-+					   enum k210_pll_id pllid,
-+					   unsigned long flags)
-+{
-+	const struct clk_parent_data parent_data = {
-+		.hw = &ksc->plls[pllid].hw,
-+	};
-+
-+	k210_register_clk(ksc, id, &parent_data, 1, flags);
-+}
-+
-+static inline void k210_register_aclk_child(struct k210_sysclk *ksc, int id,
-+					    unsigned long flags)
-+{
-+	const struct clk_parent_data parent_data = {
-+		.hw = &ksc->aclk,
-+	};
-+
-+	k210_register_clk(ksc, id, &parent_data, 1, flags);
-+}
-+
-+static inline void k210_register_clk_child(struct k210_sysclk *ksc, int id,
-+					   int parent_id)
-+{
-+	const struct clk_parent_data parent_data = {
-+		.hw = &ksc->clks[parent_id].hw,
-+	};
-+
-+	k210_register_clk(ksc, id, &parent_data, 1, 0);
-+}
-+
-+static struct clk_hw *k210_clk_hw_onecell_get(struct of_phandle_args *clkspec,
-+					      void *data)
-+{
-+	struct k210_sysclk *ksc = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= K210_NUM_CLKS)
-+		return ERR_PTR(-EINVAL);
-+
-+	return &ksc->clks[idx].hw;
-+}
-+
-+static void __init k210_clk_init(struct device_node *np)
-+{
-+	struct device_node *sysctl_np;
-+	struct k210_sysclk *ksc;
-+	const char *in0;
-+	int i, ret;
-+
-+	ksc = kzalloc(sizeof(*ksc), GFP_KERNEL);
-+	if (!ksc)
-+		return;
-+
-+	ksc->node = np;
-+	spin_lock_init(&ksc->clk_lock);
-+	sysctl_np = of_get_parent(np);
-+	ksc->regs = of_iomap(sysctl_np, 0);
-+	of_node_put(sysctl_np);
-+	if (!ksc->regs) {
-+		pr_err("%pOFP: failed to map registers\n", np);
-+		return;
-+	}
-+
-+	in0 = of_clk_get_parent_name(np, 0);
-+	if (!in0) {
-+		pr_err("%pOFP: undefined fixed-rate oscillator clock\n", np);
-+		return;
-+	}
-+
-+	ret = k210_register_plls(ksc, in0);
-+	if (ret)
-+		return;
-+
-+	ret = k210_register_aclk(ksc, in0);
-+	if (ret)
-+		return;
++	val = readl(reg + SUN50I_H616_PLL_AUDIO_REG);
++	val &= ~(GENMASK(21, 16) | BIT(0));
++	writel(val | (11 << 16) | BIT(0), reg + SUN50I_H616_PLL_AUDIO_REG);
 +
 +	/*
-+	 * Critical clocks: there are no consumers of the SRAM clocks,
-+	 * including the AI clock for the third SRAM bank. The CPU clock
-+	 * is only referenced by the uarths serial device and so would be
-+	 * disabled if the serial console is disabled to switch to another
-+	 * console. Mark all these clocks as critical so that they are never
-+	 * disabled by the core clock management.
++	 * First clock parent (osc32K) is unusable for CEC. But since there
++	 * is no good way to force parent switch (both run with same frequency),
++	 * just set second clock parent here.
 +	 */
-+	k210_register_aclk_child(ksc, K210_CLK_CPU, CLK_IS_CRITICAL);
-+	k210_register_aclk_child(ksc, K210_CLK_SRAM0, CLK_IS_CRITICAL);
-+	k210_register_aclk_child(ksc, K210_CLK_SRAM1, CLK_IS_CRITICAL);
-+	k210_register_pll_child(ksc, K210_CLK_AI, K210_PLL1, CLK_IS_CRITICAL);
++	val = readl(reg + SUN50I_H616_HDMI_CEC_CLK_REG);
++	val |= BIT(24);
++	writel(val, reg + SUN50I_H616_HDMI_CEC_CLK_REG);
 +
-+	/* Clocks with aclk as source */
-+	k210_register_aclk_child(ksc, K210_CLK_DMA, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_FFT, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_ROM, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_DVP, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_APB0, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_APB1, 0);
-+	k210_register_aclk_child(ksc, K210_CLK_APB2, 0);
-+
-+	/* Clocks with PLL0 as source */
-+	k210_register_pll_child(ksc, K210_CLK_SPI0, K210_PLL0, 0);
-+	k210_register_pll_child(ksc, K210_CLK_SPI1, K210_PLL0, 0);
-+	k210_register_pll_child(ksc, K210_CLK_SPI2, K210_PLL0, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2C0, K210_PLL0, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2C1, K210_PLL0, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2C2, K210_PLL0, 0);
-+
-+	/* Clocks with PLL2 as source */
-+	k210_register_pll_child(ksc, K210_CLK_I2S0, K210_PLL2, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2S1, K210_PLL2, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2S2, K210_PLL2, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2S0_M, K210_PLL2, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2S1_M, K210_PLL2, 0);
-+	k210_register_pll_child(ksc, K210_CLK_I2S2_M, K210_PLL2, 0);
-+
-+	/* Clocks with IN0 as source */
-+	k210_register_in0_child(ksc, in0, K210_CLK_WDT0);
-+	k210_register_in0_child(ksc, in0, K210_CLK_WDT1);
-+	k210_register_in0_child(ksc, in0, K210_CLK_RTC);
-+
-+	/* Clocks with APB0 as source */
-+	k210_register_clk_child(ksc, K210_CLK_GPIO, K210_CLK_APB0);
-+	k210_register_clk_child(ksc, K210_CLK_UART1, K210_CLK_APB0);
-+	k210_register_clk_child(ksc, K210_CLK_UART2, K210_CLK_APB0);
-+	k210_register_clk_child(ksc, K210_CLK_UART3, K210_CLK_APB0);
-+	k210_register_clk_child(ksc, K210_CLK_FPIOA, K210_CLK_APB0);
-+	k210_register_clk_child(ksc, K210_CLK_SHA, K210_CLK_APB0);
-+
-+	/* Clocks with APB1 as source */
-+	k210_register_clk_child(ksc, K210_CLK_AES, K210_CLK_APB1);
-+	k210_register_clk_child(ksc, K210_CLK_OTP, K210_CLK_APB1);
-+
-+	/* Mux clocks with in0 or pll0 as source */
-+	k210_register_mux_clk(ksc, in0, K210_CLK_SPI3);
-+	k210_register_mux_clk(ksc, in0, K210_CLK_TIMER0);
-+	k210_register_mux_clk(ksc, in0, K210_CLK_TIMER1);
-+	k210_register_mux_clk(ksc, in0, K210_CLK_TIMER2);
-+
-+	/* Check for registration errors */
-+	for (i = 0; i < K210_NUM_CLKS; i++) {
-+		if (ksc->clks[i].id != i)
-+			return;
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, k210_clk_hw_onecell_get, ksc);
-+	if (ret) {
-+		pr_err("%pOFP: add clock provider failed %d\n", np, ret);
-+		return;
-+	}
-+
-+	pr_info("%pOFP: CPU running at %lu MHz\n",
-+		np, clk_hw_get_rate(&ksc->clks[K210_CLK_CPU].hw) / 1000000);
++	i = sunxi_ccu_probe(node, reg, &sun50i_h616_ccu_desc);
++	if (i)
++		pr_err("%pOF: probing clocks fails: %d\n", node, i);
 +}
 +
-+CLK_OF_DECLARE(k210_clk, "canaan,k210-clk", k210_clk_init);
-+
++CLK_OF_DECLARE(sun50i_h616_ccu, "allwinner,sun50i-h616-ccu",
++	       sun50i_h616_ccu_setup);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+new file mode 100644
+index 000000000000..dd671b413f22
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+@@ -0,0 +1,56 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Enable PLL1 to be able to use the AI SRAM.
++ * Copyright 2020 Arm Ltd.
 + */
-+void __init k210_clk_early_init(void __iomem *regs)
-+{
-+	struct k210_pll pll1;
 +
-+	/* Make sure ACLK selector is set to PLL0 */
-+	k210_aclk_set_selector(regs, 1);
++#ifndef _CCU_SUN50I_H616_H_
++#define _CCU_SUN50I_H616_H_
 +
-+	/* Startup PLL1 to enable the aisram bank for general memory use */
-+	k210_init_pll(regs, K210_PLL1, &pll1);
-+	k210_pll_enable_hw(regs, &pll1);
-+}
-diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
-index 5232d13f07e5..8179b69518b4 100644
---- a/drivers/soc/canaan/Kconfig
-+++ b/drivers/soc/canaan/Kconfig
-@@ -1,14 +1,12 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--if SOC_CANAAN
--
--config K210_SYSCTL
-+config SOC_K210_SYSCTL
- 	bool "Canaan Kendryte K210 SoC system controller"
--	default y
--	depends on RISCV
-+	depends on RISCV && SOC_CANAAN && OF
-+	default SOC_CANAAN
-+        select PM
-+        select SIMPLE_PM_BUS
-+        select SYSCON
-+        select MFD_SYSCON
- 	help
--	  Enables controlling the K210 various clocks and to enable
--	  general purpose use of the extra 2MB of SRAM normally
--	  reserved for the AI engine.
--
--endif
-+	  Canaan Kendryte K210 SoC system controller driver.
-diff --git a/drivers/soc/canaan/Makefile b/drivers/soc/canaan/Makefile
-index 002d9ce95c0d..570280ad7967 100644
---- a/drivers/soc/canaan/Makefile
-+++ b/drivers/soc/canaan/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_K210_SYSCTL)	+= k210-sysctl.o
-+obj-$(CONFIG_SOC_K210_SYSCTL)	+= k210-sysctl.o
-diff --git a/drivers/soc/canaan/k210-sysctl.c b/drivers/soc/canaan/k210-sysctl.c
-index 60b474c33d45..27a346c406bc 100644
---- a/drivers/soc/canaan/k210-sysctl.c
-+++ b/drivers/soc/canaan/k210-sysctl.c
-@@ -3,165 +3,45 @@
-  * Copyright (c) 2019 Christoph Hellwig.
-  * Copyright (c) 2019 Western Digital Corporation or its affiliates.
-  */
--#include <linux/types.h>
- #include <linux/io.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
--#include <linux/clk-provider.h>
--#include <linux/clkdev.h>
--#include <linux/bitfield.h>
-+#include <linux/of_platform.h>
-+#include <linux/clk.h>
- #include <asm/soc.h>
- 
- #include <soc/canaan/k210-sysctl.h>
- 
--#define K210_SYSCTL_CLK0_FREQ		26000000UL
--
--/* Registers base address */
--#define K210_SYSCTL_SYSCTL_BASE_ADDR	0x50440000ULL
--
--/* Register bits */
--/* K210_SYSCTL_PLL1: clkr: 4bits, clkf1: 6bits, clkod: 4bits, bwadj: 4bits */
--#define PLL_RESET		(1 << 20)
--#define PLL_PWR			(1 << 21)
--#define PLL_BYPASS		(1 << 23)
--#define PLL_OUT_EN		(1 << 25)
--/* K210_SYSCTL_PLL_LOCK */
--#define PLL1_LOCK1		(1 << 8)
--#define PLL1_LOCK2		(1 << 9)
--#define PLL1_SLIP_CLEAR		(1 << 10)
--/* K210_SYSCTL_SEL0 */
--#define CLKSEL_ACLK		(1 << 0)
--/* K210_SYSCTL_CLKEN_CENT */
--#define CLKEN_CPU		(1 << 0)
--#define CLKEN_SRAM0		(1 << 1)
--#define CLKEN_SRAM1		(1 << 2)
--/* K210_SYSCTL_EN_PERI */
--#define CLKEN_ROM		(1 << 0)
--#define CLKEN_TIMER0		(1 << 21)
--#define CLKEN_RTC		(1 << 29)
--
--struct k210_sysctl {
--	void __iomem		*regs;
--	struct clk_hw		hw;
--};
--
--static void k210_set_bits(u32 val, void __iomem *reg)
--{
--	writel(readl(reg) | val, reg);
--}
--
--static void k210_clear_bits(u32 val, void __iomem *reg)
--{
--	writel(readl(reg) & ~val, reg);
--}
--
--static void k210_pll1_enable(void __iomem *regs)
--{
--	u32 val;
--
--	val = readl(regs + K210_SYSCTL_PLL1);
--	val &= ~GENMASK(19, 0);				/* clkr1 = 0 */
--	val |= FIELD_PREP(GENMASK(9, 4), 0x3B);		/* clkf1 = 59 */
--	val |= FIELD_PREP(GENMASK(13, 10), 0x3);	/* clkod1 = 3 */
--	val |= FIELD_PREP(GENMASK(19, 14), 0x3B);	/* bwadj1 = 59 */
--	writel(val, regs + K210_SYSCTL_PLL1);
--
--	k210_clear_bits(PLL_BYPASS, regs + K210_SYSCTL_PLL1);
--	k210_set_bits(PLL_PWR, regs + K210_SYSCTL_PLL1);
--
--	/*
--	 * Reset the pll. The magic NOPs come from the Kendryte reference SDK.
--	 */
--	k210_clear_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--	k210_set_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--	nop();
--	nop();
--	k210_clear_bits(PLL_RESET, regs + K210_SYSCTL_PLL1);
--
--	for (;;) {
--		val = readl(regs + K210_SYSCTL_PLL_LOCK);
--		if (val & PLL1_LOCK2)
--			break;
--		writel(val | PLL1_SLIP_CLEAR, regs + K210_SYSCTL_PLL_LOCK);
--	}
--
--	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL1);
--}
--
--static unsigned long k210_sysctl_clk_recalc_rate(struct clk_hw *hw,
--		unsigned long parent_rate)
--{
--	struct k210_sysctl *s = container_of(hw, struct k210_sysctl, hw);
--	u32 clksel0, pll0;
--	u64 pll0_freq, clkr0, clkf0, clkod0;
--
--	/*
--	 * If the clock selector is not set, use the base frequency.
--	 * Otherwise, use PLL0 frequency with a frequency divisor.
--	 */
--	clksel0 = readl(s->regs + K210_SYSCTL_SEL0);
--	if (!(clksel0 & CLKSEL_ACLK))
--		return K210_SYSCTL_CLK0_FREQ;
--
--	/*
--	 * Get PLL0 frequency:
--	 * freq = base frequency * clkf0 / (clkr0 * clkod0)
--	 */
--	pll0 = readl(s->regs + K210_SYSCTL_PLL0);
--	clkr0 = 1 + FIELD_GET(GENMASK(3, 0), pll0);
--	clkf0 = 1 + FIELD_GET(GENMASK(9, 4), pll0);
--	clkod0 = 1 + FIELD_GET(GENMASK(13, 10), pll0);
--	pll0_freq = clkf0 * K210_SYSCTL_CLK0_FREQ / (clkr0 * clkod0);
--
--	/* Get the frequency divisor from the clock selector */
--	return pll0_freq / (2ULL << FIELD_GET(0x00000006, clksel0));
--}
--
--static const struct clk_ops k210_sysctl_clk_ops = {
--	.recalc_rate	= k210_sysctl_clk_recalc_rate,
--};
--
--static const struct clk_init_data k210_clk_init_data = {
--	.name		= "k210-sysctl-pll1",
--	.ops		= &k210_sysctl_clk_ops,
--};
--
- static int k210_sysctl_probe(struct platform_device *pdev)
- {
--	struct k210_sysctl *s;
--	int error;
--
--	pr_info("Kendryte K210 SoC sysctl\n");
--
--	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
--	if (!s)
--		return -ENOMEM;
--
--	s->regs = devm_ioremap_resource(&pdev->dev,
--			platform_get_resource(pdev, IORESOURCE_MEM, 0));
--	if (IS_ERR(s->regs))
--		return PTR_ERR(s->regs);
--
--	s->hw.init = &k210_clk_init_data;
--	error = devm_clk_hw_register(&pdev->dev, &s->hw);
--	if (error) {
--		dev_err(&pdev->dev, "failed to register clk");
--		return error;
-+	struct device *dev = &pdev->dev;
-+	struct clk *pclk;
-+	int ret;
++#include <dt-bindings/clock/sun50i-h616-ccu.h>
++#include <dt-bindings/reset/sun50i-h616-ccu.h>
 +
-+	dev_info(dev, "K210 system controller\n");
++#define CLK_OSC12M		0
++#define CLK_PLL_CPUX		1
++#define CLK_PLL_DDR0		2
++#define CLK_PLL_DDR1		3
 +
-+	/* Get power bus clock */
-+	pclk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(pclk))
-+		return dev_err_probe(dev, PTR_ERR(pclk),
-+				     "Get bus clock failed\n");
++/* PLL_PERIPH0 exported for PRCM */
 +
-+	ret = clk_prepare_enable(pclk);
-+	if (ret) {
-+		dev_err(dev, "Enable bus clock failed\n");
-+		return ret;
- 	}
- 
--	error = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get,
--					    &s->hw);
--	if (error) {
--		dev_err(&pdev->dev, "adding clk provider failed\n");
--		return error;
--	}
-+	/* Populate children */
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		dev_err(dev, "Populate platform failed %d\n", ret);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct of_device_id k210_sysctl_of_match[] = {
--	{ .compatible = "kendryte,k210-sysctl", },
--	{}
-+	{ .compatible = "canaan,k210-sysctl", },
-+	{ /* sentinel */ },
- };
- 
- static struct platform_driver k210_sysctl_driver = {
-@@ -171,12 +51,13 @@ static struct platform_driver k210_sysctl_driver = {
- 	},
- 	.probe			= k210_sysctl_probe,
- };
-+builtin_platform_driver(k210_sysctl_driver);
- 
--static int __init k210_sysctl_init(void)
--{
--	return platform_driver_register(&k210_sysctl_driver);
--}
--core_initcall(k210_sysctl_init);
++#define CLK_PLL_PERIPH0_2X	5
++#define CLK_PLL_PERIPH1		6
++#define CLK_PLL_PERIPH1_2X	7
++#define CLK_PLL_GPU		8
++#define CLK_PLL_VIDEO0		9
++#define CLK_PLL_VIDEO0_4X	10
++#define CLK_PLL_VIDEO1		11
++#define CLK_PLL_VIDEO1_4X	12
++#define CLK_PLL_VIDEO2		13
++#define CLK_PLL_VIDEO2_4X	14
++#define CLK_PLL_VE		15
++#define CLK_PLL_DE		16
++#define CLK_PLL_AUDIO_HS	17
++#define CLK_PLL_AUDIO_1X	18
++#define CLK_PLL_AUDIO_2X	19
++#define CLK_PLL_AUDIO_4X	20
++
++/* CPUX clock exported for DVFS */
++
++#define CLK_AXI			22
++#define CLK_CPUX_APB		23
++#define CLK_PSI_AHB1_AHB2	24
++#define CLK_AHB3		25
++
++/* APB1 clock exported for PIO */
++
++#define CLK_APB2		27
++#define CLK_MBUS		28
++
++/* All module clocks and bus gates are exported except DRAM */
++
++#define CLK_DRAM		49
++
++#define CLK_BUS_DRAM		56
++
++#define CLK_NUMBER		(CLK_BUS_HDCP + 1)
++
++#endif /* _CCU_SUN50I_H616_H_ */
+diff --git a/include/dt-bindings/clock/sun50i-h616-ccu.h b/include/dt-bindings/clock/sun50i-h616-ccu.h
+new file mode 100644
+index 000000000000..4fc08b0df2f3
+--- /dev/null
++++ b/include/dt-bindings/clock/sun50i-h616-ccu.h
+@@ -0,0 +1,115 @@
++/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
 +/*
-+ * System controller registers base address and size.
++ * Copyright (C) 2020 Arm Ltd.
 + */
-+#define K210_SYSCTL_BASE_ADDR	0x50440000ULL
-+#define K210_SYSCTL_BASE_SIZE	0x1000
- 
- /*
-  * This needs to be called very early during initialization, given that
-@@ -184,24 +65,14 @@ core_initcall(k210_sysctl_init);
-  */
- static void __init k210_soc_early_init(const void *fdt)
- {
--	void __iomem *regs;
--
--	regs = ioremap(K210_SYSCTL_SYSCTL_BASE_ADDR, 0x1000);
--	if (!regs)
--		panic("K210 sysctl ioremap");
--
--	/* Enable PLL1 to make the KPU SRAM useable */
--	k210_pll1_enable(regs);
--
--	k210_set_bits(PLL_OUT_EN, regs + K210_SYSCTL_PLL0);
-+	void __iomem *sysctl_base;
- 
--	k210_set_bits(CLKEN_CPU | CLKEN_SRAM0 | CLKEN_SRAM1,
--		      regs + K210_SYSCTL_EN_CENT);
--	k210_set_bits(CLKEN_ROM | CLKEN_TIMER0 | CLKEN_RTC,
--		      regs + K210_SYSCTL_EN_PERI);
-+	sysctl_base = ioremap(K210_SYSCTL_BASE_ADDR, K210_SYSCTL_BASE_SIZE);
-+	if (!sysctl_base)
-+		panic("k210-sysctl: ioremap failed");
- 
--	k210_set_bits(CLKSEL_ACLK, regs + K210_SYSCTL_SEL0);
-+	k210_clk_early_init(sysctl_base);
- 
--	iounmap(regs);
-+	iounmap(sysctl_base);
- }
--SOC_EARLY_INIT_DECLARE(generic_k210, "kendryte,k210", k210_soc_early_init);
-+SOC_EARLY_INIT_DECLARE(k210_soc, "canaan,kendryte-k210", k210_soc_early_init);
-diff --git a/include/soc/canaan/k210-sysctl.h b/include/soc/canaan/k210-sysctl.h
-index 2e037db68f35..0c2b2c2dabca 100644
---- a/include/soc/canaan/k210-sysctl.h
-+++ b/include/soc/canaan/k210-sysctl.h
-@@ -38,4 +38,6 @@
- #define K210_SYSCTL_DMA_SEL1	0x68 /* DMA handshake selector 1 */
- #define K210_SYSCTL_POWER_SEL	0x6C /* IO Power Mode Select controller */
- 
-+void k210_clk_early_init(void __iomem *regs);
 +
- #endif
++#ifndef _DT_BINDINGS_CLK_SUN50I_H616_H_
++#define _DT_BINDINGS_CLK_SUN50I_H616_H_
++
++#define CLK_PLL_PERIPH0		4
++
++#define CLK_CPUX		21
++
++#define CLK_APB1		26
++
++#define CLK_DE			29
++#define CLK_BUS_DE		30
++#define CLK_DEINTERLACE		31
++#define CLK_BUS_DEINTERLACE	32
++#define CLK_G2D			33
++#define CLK_BUS_G2D		34
++#define CLK_GPU0		35
++#define CLK_BUS_GPU		36
++#define CLK_GPU1		37
++#define CLK_CE			38
++#define CLK_BUS_CE		39
++#define CLK_VE			40
++#define CLK_BUS_VE		41
++#define CLK_BUS_DMA		42
++#define CLK_BUS_HSTIMER		43
++#define CLK_AVS			44
++#define CLK_BUS_DBG		45
++#define CLK_BUS_PSI		46
++#define CLK_BUS_PWM		47
++#define CLK_BUS_IOMMU		48
++
++#define CLK_MBUS_DMA		50
++#define CLK_MBUS_VE		51
++#define CLK_MBUS_CE		52
++#define CLK_MBUS_TS		53
++#define CLK_MBUS_NAND		54
++#define CLK_MBUS_G2D		55
++
++#define CLK_NAND0		57
++#define CLK_NAND1		58
++#define CLK_BUS_NAND		59
++#define CLK_MMC0		60
++#define CLK_MMC1		61
++#define CLK_MMC2		62
++#define CLK_BUS_MMC0		63
++#define CLK_BUS_MMC1		64
++#define CLK_BUS_MMC2		65
++#define CLK_BUS_UART0		66
++#define CLK_BUS_UART1		67
++#define CLK_BUS_UART2		68
++#define CLK_BUS_UART3		69
++#define CLK_BUS_UART4		70
++#define CLK_BUS_UART5		71
++#define CLK_BUS_I2C0		72
++#define CLK_BUS_I2C1		73
++#define CLK_BUS_I2C2		74
++#define CLK_BUS_I2C3		75
++#define CLK_BUS_I2C4		76
++#define CLK_SPI0		77
++#define CLK_SPI1		78
++#define CLK_BUS_SPI0		79
++#define CLK_BUS_SPI1		80
++#define CLK_EMAC_25M		81
++#define CLK_BUS_EMAC0		82
++#define CLK_BUS_EMAC1		83
++#define CLK_TS			84
++#define CLK_BUS_TS		85
++#define CLK_BUS_THS		86
++#define CLK_SPDIF		87
++#define CLK_BUS_SPDIF		88
++#define CLK_DMIC		89
++#define CLK_BUS_DMIC		90
++#define CLK_AUDIO_CODEC_1X	91
++#define CLK_AUDIO_CODEC_4X	92
++#define CLK_BUS_AUDIO_CODEC	93
++#define CLK_AUDIO_HUB		94
++#define CLK_BUS_AUDIO_HUB	95
++#define CLK_USB_OHCI0		96
++#define CLK_USB_PHY0		97
++#define CLK_USB_OHCI1		98
++#define CLK_USB_PHY1		99
++#define CLK_USB_OHCI2		100
++#define CLK_USB_PHY2		101
++#define CLK_USB_OHCI3		102
++#define CLK_USB_PHY3		103
++#define CLK_BUS_OHCI0		104
++#define CLK_BUS_OHCI1		105
++#define CLK_BUS_OHCI2		106
++#define CLK_BUS_OHCI3		107
++#define CLK_BUS_EHCI0		108
++#define CLK_BUS_EHCI1		109
++#define CLK_BUS_EHCI2		110
++#define CLK_BUS_EHCI3		111
++#define CLK_BUS_OTG		112
++#define CLK_BUS_KEYADC		113
++#define CLK_HDMI		114
++#define CLK_HDMI_SLOW		115
++#define CLK_HDMI_CEC		116
++#define CLK_BUS_HDMI		117
++#define CLK_BUS_TCON_TOP	118
++#define CLK_TCON_TV0		119
++#define CLK_TCON_TV1		120
++#define CLK_BUS_TCON_TV0	121
++#define CLK_BUS_TCON_TV1	122
++#define CLK_TVE0		123
++#define CLK_BUS_TVE_TOP		124
++#define CLK_BUS_TVE0		125
++#define CLK_HDCP		126
++#define CLK_BUS_HDCP		127
++
++#endif /* _DT_BINDINGS_CLK_SUN50I_H616_H_ */
+diff --git a/include/dt-bindings/reset/sun50i-h616-ccu.h b/include/dt-bindings/reset/sun50i-h616-ccu.h
+new file mode 100644
+index 000000000000..cb6285a8d128
+--- /dev/null
++++ b/include/dt-bindings/reset/sun50i-h616-ccu.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
++/*
++ * Copyright (C) 2020 Arm Ltd.
++ */
++
++#ifndef _DT_BINDINGS_RESET_SUN50I_H616_H_
++#define _DT_BINDINGS_RESET_SUN50I_H616_H_
++
++#define RST_MBUS		0
++#define RST_BUS_DE		1
++#define RST_BUS_DEINTERLACE	2
++#define RST_BUS_GPU		3
++#define RST_BUS_CE		4
++#define RST_BUS_VE		5
++#define RST_BUS_DMA		6
++#define RST_BUS_HSTIMER		7
++#define RST_BUS_DBG		8
++#define RST_BUS_PSI		9
++#define RST_BUS_PWM		10
++#define RST_BUS_IOMMU		11
++#define RST_BUS_DRAM		12
++#define RST_BUS_NAND		13
++#define RST_BUS_MMC0		14
++#define RST_BUS_MMC1		15
++#define RST_BUS_MMC2		16
++#define RST_BUS_UART0		17
++#define RST_BUS_UART1		18
++#define RST_BUS_UART2		19
++#define RST_BUS_UART3		20
++#define RST_BUS_UART4		21
++#define RST_BUS_UART5		22
++#define RST_BUS_I2C0		23
++#define RST_BUS_I2C1		24
++#define RST_BUS_I2C2		25
++#define RST_BUS_I2C3		26
++#define RST_BUS_I2C4		27
++#define RST_BUS_SPI0		28
++#define RST_BUS_SPI1		29
++#define RST_BUS_EMAC0		30
++#define RST_BUS_EMAC1		31
++#define RST_BUS_TS		32
++#define RST_BUS_THS		33
++#define RST_BUS_SPDIF		34
++#define RST_BUS_DMIC		35
++#define RST_BUS_AUDIO_CODEC	36
++#define RST_BUS_AUDIO_HUB	37
++#define RST_USB_PHY0		38
++#define RST_USB_PHY1		39
++#define RST_USB_PHY2		40
++#define RST_USB_PHY3		41
++#define RST_BUS_OHCI0		42
++#define RST_BUS_OHCI1		43
++#define RST_BUS_OHCI2		44
++#define RST_BUS_OHCI3		45
++#define RST_BUS_EHCI0		46
++#define RST_BUS_EHCI1		47
++#define RST_BUS_EHCI2		48
++#define RST_BUS_EHCI3		49
++#define RST_BUS_OTG		50
++#define RST_BUS_HDMI		51
++#define RST_BUS_HDMI_SUB	52
++#define RST_BUS_TCON_TOP	53
++#define RST_BUS_TCON_TV0	54
++#define RST_BUS_TCON_TV1	55
++#define RST_BUS_TVE_TOP		56
++#define RST_BUS_TVE0		57
++#define RST_BUS_HDCP		58
++#define RST_BUS_KEYADC		59
++
++#endif /* _DT_BINDINGS_RESET_SUN50I_H616_H_ */
 -- 
-2.29.2
+2.17.5
 
