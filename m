@@ -2,286 +2,439 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DBFC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 04:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF85C433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 04:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43AA3224B8
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 04:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5457224B0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 04:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbhARENz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Jan 2021 23:13:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732117AbhARENx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jan 2021 23:13:53 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3E0C0617A1
-        for <linux-clk@vger.kernel.org>; Sun, 17 Jan 2021 20:12:47 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id m6so9435842pfm.6
-        for <linux-clk@vger.kernel.org>; Sun, 17 Jan 2021 20:12:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RmLbr7qUzl1MTnqQWZhlIJBHXutyuDgrinxDo9CCubY=;
-        b=Lt0obleqpybMZAIrPC2n9Vajsw7PqlBVg+XhnXMAFYHLYcPjZTN5OFNb9SC8DCwvA5
-         goM5s8urSo83hZYu058rAFKWybuHpHX9plMpPUANQ+G+Fnyn7srjF5dsnQCgyIhRsS/R
-         7evN9ZWKzvWWfwyUTFj/Xlu+LRCU2bqEF4Q8TEdlkvAy83VdRmvrj5VLVToxDIIgAuEF
-         52NEbaHspwxTSGzTh6qdJ5Sugp2EVXPHCvFoIcsMzslHTfYuPGnO8vdylTZdvpSCF7tu
-         Rz64RuS0gXM9F+tXH8Nqhz3/4heS2me4spyzEt4D+HKYJirIqloh3T8vg9nfnNaB4H9u
-         I4MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RmLbr7qUzl1MTnqQWZhlIJBHXutyuDgrinxDo9CCubY=;
-        b=nR7isCeo3yd79yS4ENeA002n2Qz2jM99i/Xewc7Lzrjgy4a6ifSMGuziXG72vkDAuv
-         UaisJHTE/uZ/TXRxVD+nwOr5ccDaLvzBYqIVCmkBJzxbXdMqm/F6opDtUTMs2NlthEVT
-         z6imYmqebYTe1ljeyS5A69Iffyr+iqOiJd6cGeJjEH7Pj8SfvZP7IqX4db9oJJraGRev
-         GnH/ow3aFCyI5K0sA0cc3jPKzrp0Urb6Dux/G3Mv2Ta/6QSb4fVcuWGdV8X1AtM42KoO
-         SxCF9zXaJtJrsBvtDaVELd9WVFZ2hzd/DTAuRLXNYyWm1BNJU/iPRRQ6hKQ9/w0YMtTS
-         DeVA==
-X-Gm-Message-State: AOAM533GER3ef+/BktEdjhBTuewP6niLi17nFVf2u/auCtIyHHjRPmPH
-        nGmMNi/6VS9W2SNbzyfq/8rj
-X-Google-Smtp-Source: ABdhPJyzMz/9WCKbybYtoh/9zmy6Zh47DU0GQKf5yyd/8y2O7AHeo+HZ5GNW/YE0emM3XyD+McFBqw==
-X-Received: by 2002:a63:e246:: with SMTP id y6mr24036307pgj.412.1610943167148;
-        Sun, 17 Jan 2021 20:12:47 -0800 (PST)
-Received: from localhost.localdomain ([103.77.37.182])
-        by smtp.gmail.com with ESMTPSA id h15sm6727319pja.4.2021.01.17.20.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Jan 2021 20:12:46 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com
-Cc:     viresh.kumar@linaro.org, ulf.hansson@linaro.org,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1729456AbhAREo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Jan 2021 23:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731303AbhAREot (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 Jan 2021 23:44:49 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCF8A22517;
+        Mon, 18 Jan 2021 04:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610945047;
+        bh=Dj6UjTAwYqsElBxPB3WMiNnsl+dE+0niY2sVQBHBe70=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=c8bbhZyj9KY+/15+4KB1fjrtnLLfMA1eeFONOQrhifv4+fm8wx5wAXXoSJanibgV8
+         ghqqR657ptXALAgDrpDk3MBsSAWXf5y/Si05B400I3rG5Bq9ZXdNhKuovDmcW1t2Yr
+         Ay/Z2m5CtefyH/JkyVMOigSIKtOgpsi02gD3dax3JGbAhUIZnxXazcwD1IrHq8odLa
+         aEg9izbgCWIUfQL+ZqYD6eUdjUavxHU55QvPCN3S3KGOFFF4toBMeB+ccz+8kvM9h1
+         Io9yKpX9ITP+zAVWoBs+NoFAgm+mi4ysHne+UyIuRZ9gIuhacfeQ0bVV2+iFgQFdmT
+         dsZnvY3sc1raA==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 5/5] clk: qcom: Add SDX55 APCS clock controller support
-Date:   Mon, 18 Jan 2021 09:41:56 +0530
-Message-Id: <20210118041156.50016-6-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
-References: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 4/5] dt-bindings: clock: Add SM8350 GCC clock bindings
+Date:   Mon, 18 Jan 2021 10:13:20 +0530
+Message-Id: <20210118044321.2571775-5-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210118044321.2571775-1-vkoul@kernel.org>
+References: <20210118044321.2571775-1-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a driver for the SDX55 APCS clock controller. It is part of the APCS
-hardware block, which among other things implements also a combined mux
-and half integer divider functionality. The APCS clock controller has 3
-parent clocks:
+Add device tree bindings for global clock controller on SM8350 SoCs.
 
-1. Board XO
-2. Fixed rate GPLL0
-3. A7 PLL
-
-This is required for enabling CPU frequency scaling on SDX55-based
-platforms.
-
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/clk/qcom/Kconfig      |   9 ++
- drivers/clk/qcom/Makefile     |   1 +
- drivers/clk/qcom/apcs-sdx55.c | 149 ++++++++++++++++++++++++++++++++++
- 3 files changed, 159 insertions(+)
- create mode 100644 drivers/clk/qcom/apcs-sdx55.c
+ .../bindings/clock/qcom,gcc-sm8350.yaml       |  96 +++++++
+ include/dt-bindings/clock/qcom,gcc-sm8350.h   | 261 ++++++++++++++++++
+ 2 files changed, 357 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d6f4aee4427a..ac43b715bff6 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -54,6 +54,15 @@ config QCOM_CLK_APCC_MSM8996
- 	  Say Y if you want to support CPU clock scaling using CPUfreq
- 	  drivers for dynamic power management.
- 
-+config QCOM_CLK_APCS_SDX55
-+	tristate "SDX55 APCS Clock Controller"
-+	depends on QCOM_APCS_IPC || COMPILE_TEST
-+	help
-+	  Support for the APCS Clock Controller on SDX55 platform. The
-+	  APCS is managing the mux and divider which feeds the CPUs.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as SDX55.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index e7e0ac382176..4de926da4b15 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
-+obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
 new file mode 100644
-index 000000000000..e111e124cb7a
+index 000000000000..78f35832aa41
 --- /dev/null
-+++ b/drivers/clk/qcom/apcs-sdx55.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-sm8350.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for SM8350
++
++maintainers:
++  - Vinod Koul <vkoul@kernel.org>
++
++description: |
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SM8350.
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-sm8350.h
++
++properties:
++  compatible:
++    const: qcom,gcc-sm8350
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++      - description: PLL test clock source (Optional clock)
++      - description: PCIE 0 Pipe clock source (Optional clock)
++      - description: PCIE 1 Pipe clock source (Optional clock)
++      - description: UFS card Rx symbol 0 clock source (Optional clock)
++      - description: UFS card Rx symbol 1 clock source (Optional clock)
++      - description: UFS card Tx symbol 0 clock source (Optional clock)
++      - description: UFS phy Rx symbol 0 clock source (Optional clock)
++      - description: UFS phy Rx symbol 1 clock source (Optional clock)
++      - description: UFS phy Tx symbol 0 clock source (Optional clock)
++      - description: USB3 phy wrapper pipe clock source (Optional clock)
++      - description: USB3 phy sec pipe clock source (Optional clock)
++    minItems: 2
++    maxItems: 13
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: sleep_clk
++      - const: core_bi_pll_test_se # Optional clock
++      - const: pcie_0_pipe_clk # Optional clock
++      - const: pcie_1_pipe_clk # Optional clock
++      - const: ufs_card_rx_symbol_0_clk # Optional clock
++      - const: ufs_card_rx_symbol_1_clk # Optional clock
++      - const: ufs_card_tx_symbol_0_clk # Optional clock
++      - const: ufs_phy_rx_symbol_0_clk # Optional clock
++      - const: ufs_phy_rx_symbol_1_clk # Optional clock
++      - const: ufs_phy_tx_symbol_0_clk # Optional clock
++      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk # Optional clock
++      - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk # Optional clock
++    minItems: 2
++    maxItems: 13
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-sm8350";
++      reg = <0x00100000 0x1f0000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&sleep_clk>;
++      clock-names = "bi_tcxo", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++
++...
+diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
+new file mode 100644
+index 000000000000..2b289c5c109f
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
+@@ -0,0 +1,261 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
-+ * Qualcomm SDX55 APCS clock controller driver
-+ *
-+ * Copyright (c) 2020, Linaro Limited
-+ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2020-2021, Linaro Limited
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/cpu.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
++#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
++#define _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
 +
-+#include "clk-regmap.h"
-+#include "clk-regmap-mux-div.h"
++/* GCC HW clocks */
++#define CORE_BI_PLL_TEST_SE					0
++#define PCIE_0_PIPE_CLK						1
++#define PCIE_1_PIPE_CLK						2
++#define UFS_CARD_RX_SYMBOL_0_CLK				3
++#define UFS_CARD_RX_SYMBOL_1_CLK				4
++#define UFS_CARD_TX_SYMBOL_0_CLK				5
++#define UFS_PHY_RX_SYMBOL_0_CLK					6
++#define UFS_PHY_RX_SYMBOL_1_CLK					7
++#define UFS_PHY_TX_SYMBOL_0_CLK					8
++#define USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK			9
++#define USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK			10
 +
-+static const u32 apcs_mux_clk_parent_map[] = { 0, 1, 5 };
++/* GCC clocks */
++#define GCC_AGGRE_NOC_PCIE_0_AXI_CLK				11
++#define GCC_AGGRE_NOC_PCIE_1_AXI_CLK				12
++#define GCC_AGGRE_NOC_PCIE_TBU_CLK				13
++#define GCC_AGGRE_UFS_CARD_AXI_CLK				14
++#define GCC_AGGRE_UFS_CARD_AXI_HW_CTL_CLK			15
++#define GCC_AGGRE_UFS_PHY_AXI_CLK				16
++#define GCC_AGGRE_UFS_PHY_AXI_HW_CTL_CLK			17
++#define GCC_AGGRE_USB3_PRIM_AXI_CLK				18
++#define GCC_AGGRE_USB3_SEC_AXI_CLK				19
++#define GCC_BOOT_ROM_AHB_CLK					20
++#define GCC_CAMERA_AHB_CLK					21
++#define GCC_CAMERA_HF_AXI_CLK					22
++#define GCC_CAMERA_SF_AXI_CLK					23
++#define GCC_CAMERA_XO_CLK					24
++#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				25
++#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				26
++#define GCC_DDRSS_GPU_AXI_CLK					27
++#define GCC_DDRSS_PCIE_SF_TBU_CLK				28
++#define GCC_DISP_AHB_CLK					29
++#define GCC_DISP_HF_AXI_CLK					30
++#define GCC_DISP_SF_AXI_CLK					31
++#define GCC_DISP_XO_CLK						32
++#define GCC_GP1_CLK						33
++#define GCC_GP1_CLK_SRC						34
++#define GCC_GP2_CLK						35
++#define GCC_GP2_CLK_SRC						36
++#define GCC_GP3_CLK						37
++#define GCC_GP3_CLK_SRC						38
++#define GCC_GPLL0						39
++#define GCC_GPLL0_OUT_EVEN					40
++#define GCC_GPLL4						41
++#define GCC_GPLL9						42
++#define GCC_GPU_CFG_AHB_CLK					43
++#define GCC_GPU_GPLL0_CLK_SRC					44
++#define GCC_GPU_GPLL0_DIV_CLK_SRC				45
++#define GCC_GPU_IREF_EN						46
++#define GCC_GPU_MEMNOC_GFX_CLK					47
++#define GCC_GPU_SNOC_DVM_GFX_CLK				48
++#define GCC_PCIE0_PHY_RCHNG_CLK					49
++#define GCC_PCIE1_PHY_RCHNG_CLK					50
++#define GCC_PCIE_0_AUX_CLK					51
++#define GCC_PCIE_0_AUX_CLK_SRC					52
++#define GCC_PCIE_0_CFG_AHB_CLK					53
++#define GCC_PCIE_0_CLKREF_EN					54
++#define GCC_PCIE_0_MSTR_AXI_CLK					55
++#define GCC_PCIE_0_PHY_RCHNG_CLK_SRC				56
++#define GCC_PCIE_0_PIPE_CLK					57
++#define GCC_PCIE_0_PIPE_CLK_SRC					58
++#define GCC_PCIE_0_SLV_AXI_CLK					59
++#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				60
++#define GCC_PCIE_1_AUX_CLK					61
++#define GCC_PCIE_1_AUX_CLK_SRC					62
++#define GCC_PCIE_1_CFG_AHB_CLK					63
++#define GCC_PCIE_1_CLKREF_EN					64
++#define GCC_PCIE_1_MSTR_AXI_CLK					65
++#define GCC_PCIE_1_PHY_RCHNG_CLK_SRC				66
++#define GCC_PCIE_1_PIPE_CLK					67
++#define GCC_PCIE_1_PIPE_CLK_SRC					68
++#define GCC_PCIE_1_SLV_AXI_CLK					69
++#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				70
++#define GCC_PDM2_CLK						71
++#define GCC_PDM2_CLK_SRC					72
++#define GCC_PDM_AHB_CLK						73
++#define GCC_PDM_XO4_CLK						74
++#define GCC_QMIP_CAMERA_NRT_AHB_CLK				75
++#define GCC_QMIP_CAMERA_RT_AHB_CLK				76
++#define GCC_QMIP_DISP_AHB_CLK					77
++#define GCC_QMIP_VIDEO_CVP_AHB_CLK				78
++#define GCC_QMIP_VIDEO_VCODEC_AHB_CLK				79
++#define GCC_QUPV3_WRAP0_CORE_2X_CLK				80
++#define GCC_QUPV3_WRAP0_CORE_CLK				81
++#define GCC_QUPV3_WRAP0_S0_CLK					82
++#define GCC_QUPV3_WRAP0_S0_CLK_SRC				83
++#define GCC_QUPV3_WRAP0_S1_CLK					84
++#define GCC_QUPV3_WRAP0_S1_CLK_SRC				85
++#define GCC_QUPV3_WRAP0_S2_CLK					86
++#define GCC_QUPV3_WRAP0_S2_CLK_SRC				87
++#define GCC_QUPV3_WRAP0_S3_CLK					88
++#define GCC_QUPV3_WRAP0_S3_CLK_SRC				89
++#define GCC_QUPV3_WRAP0_S4_CLK					90
++#define GCC_QUPV3_WRAP0_S4_CLK_SRC				91
++#define GCC_QUPV3_WRAP0_S5_CLK					92
++#define GCC_QUPV3_WRAP0_S5_CLK_SRC				93
++#define GCC_QUPV3_WRAP0_S6_CLK					94
++#define GCC_QUPV3_WRAP0_S6_CLK_SRC				95
++#define GCC_QUPV3_WRAP0_S7_CLK					96
++#define GCC_QUPV3_WRAP0_S7_CLK_SRC				97
++#define GCC_QUPV3_WRAP1_CORE_2X_CLK				98
++#define GCC_QUPV3_WRAP1_CORE_CLK				99
++#define GCC_QUPV3_WRAP1_S0_CLK					100
++#define GCC_QUPV3_WRAP1_S0_CLK_SRC				101
++#define GCC_QUPV3_WRAP1_S1_CLK					102
++#define GCC_QUPV3_WRAP1_S1_CLK_SRC				103
++#define GCC_QUPV3_WRAP1_S2_CLK					104
++#define GCC_QUPV3_WRAP1_S2_CLK_SRC				105
++#define GCC_QUPV3_WRAP1_S3_CLK					106
++#define GCC_QUPV3_WRAP1_S3_CLK_SRC				107
++#define GCC_QUPV3_WRAP1_S4_CLK					108
++#define GCC_QUPV3_WRAP1_S4_CLK_SRC				109
++#define GCC_QUPV3_WRAP1_S5_CLK					110
++#define GCC_QUPV3_WRAP1_S5_CLK_SRC				111
++#define GCC_QUPV3_WRAP2_CORE_2X_CLK				112
++#define GCC_QUPV3_WRAP2_CORE_CLK				113
++#define GCC_QUPV3_WRAP2_S0_CLK					114
++#define GCC_QUPV3_WRAP2_S0_CLK_SRC				115
++#define GCC_QUPV3_WRAP2_S1_CLK					116
++#define GCC_QUPV3_WRAP2_S1_CLK_SRC				117
++#define GCC_QUPV3_WRAP2_S2_CLK					118
++#define GCC_QUPV3_WRAP2_S2_CLK_SRC				119
++#define GCC_QUPV3_WRAP2_S3_CLK					120
++#define GCC_QUPV3_WRAP2_S3_CLK_SRC				121
++#define GCC_QUPV3_WRAP2_S4_CLK					122
++#define GCC_QUPV3_WRAP2_S4_CLK_SRC				123
++#define GCC_QUPV3_WRAP2_S5_CLK					124
++#define GCC_QUPV3_WRAP2_S5_CLK_SRC				125
++#define GCC_QUPV3_WRAP_0_M_AHB_CLK				126
++#define GCC_QUPV3_WRAP_0_S_AHB_CLK				127
++#define GCC_QUPV3_WRAP_1_M_AHB_CLK				128
++#define GCC_QUPV3_WRAP_1_S_AHB_CLK				129
++#define GCC_QUPV3_WRAP_2_M_AHB_CLK				130
++#define GCC_QUPV3_WRAP_2_S_AHB_CLK				131
++#define GCC_SDCC2_AHB_CLK					132
++#define GCC_SDCC2_APPS_CLK					133
++#define GCC_SDCC2_APPS_CLK_SRC					134
++#define GCC_SDCC4_AHB_CLK					135
++#define GCC_SDCC4_APPS_CLK					136
++#define GCC_SDCC4_APPS_CLK_SRC					137
++#define GCC_THROTTLE_PCIE_AHB_CLK				138
++#define GCC_UFS_1_CLKREF_EN					139
++#define GCC_UFS_CARD_AHB_CLK					140
++#define GCC_UFS_CARD_AXI_CLK					141
++#define GCC_UFS_CARD_AXI_CLK_SRC				142
++#define GCC_UFS_CARD_AXI_HW_CTL_CLK				143
++#define GCC_UFS_CARD_ICE_CORE_CLK				144
++#define GCC_UFS_CARD_ICE_CORE_CLK_SRC				145
++#define GCC_UFS_CARD_ICE_CORE_HW_CTL_CLK			146
++#define GCC_UFS_CARD_PHY_AUX_CLK				147
++#define GCC_UFS_CARD_PHY_AUX_CLK_SRC				148
++#define GCC_UFS_CARD_PHY_AUX_HW_CTL_CLK				149
++#define GCC_UFS_CARD_RX_SYMBOL_0_CLK				150
++#define GCC_UFS_CARD_RX_SYMBOL_0_CLK_SRC			151
++#define GCC_UFS_CARD_RX_SYMBOL_1_CLK				152
++#define GCC_UFS_CARD_RX_SYMBOL_1_CLK_SRC			153
++#define GCC_UFS_CARD_TX_SYMBOL_0_CLK				154
++#define GCC_UFS_CARD_TX_SYMBOL_0_CLK_SRC			155
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK				156
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC			157
++#define GCC_UFS_CARD_UNIPRO_CORE_HW_CTL_CLK			158
++#define GCC_UFS_PHY_AHB_CLK					159
++#define GCC_UFS_PHY_AXI_CLK					160
++#define GCC_UFS_PHY_AXI_CLK_SRC					161
++#define GCC_UFS_PHY_AXI_HW_CTL_CLK				162
++#define GCC_UFS_PHY_ICE_CORE_CLK				163
++#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				164
++#define GCC_UFS_PHY_ICE_CORE_HW_CTL_CLK				165
++#define GCC_UFS_PHY_PHY_AUX_CLK					166
++#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				167
++#define GCC_UFS_PHY_PHY_AUX_HW_CTL_CLK				168
++#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				169
++#define GCC_UFS_PHY_RX_SYMBOL_0_CLK_SRC				170
++#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				171
++#define GCC_UFS_PHY_RX_SYMBOL_1_CLK_SRC				172
++#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				173
++#define GCC_UFS_PHY_TX_SYMBOL_0_CLK_SRC				174
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK				175
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				176
++#define GCC_UFS_PHY_UNIPRO_CORE_HW_CTL_CLK			177
++#define GCC_USB30_PRIM_MASTER_CLK				178
++#define GCC_USB30_PRIM_MASTER_CLK__FORCE_MEM_CORE_ON		179
++#define GCC_USB30_PRIM_MASTER_CLK_SRC				180
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK				181
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			182
++#define GCC_USB30_PRIM_MOCK_UTMI_POSTDIV_CLK_SRC		183
++#define GCC_USB30_PRIM_SLEEP_CLK				184
++#define GCC_USB30_SEC_MASTER_CLK				185
++#define GCC_USB30_SEC_MASTER_CLK__FORCE_MEM_CORE_ON		186
++#define GCC_USB30_SEC_MASTER_CLK_SRC				187
++#define GCC_USB30_SEC_MOCK_UTMI_CLK				188
++#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				189
++#define GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC			190
++#define GCC_USB30_SEC_SLEEP_CLK					191
++#define GCC_USB3_PRIM_PHY_AUX_CLK				192
++#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				193
++#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				194
++#define GCC_USB3_PRIM_PHY_PIPE_CLK				195
++#define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC				196
++#define GCC_USB3_SEC_CLKREF_EN					197
++#define GCC_USB3_SEC_PHY_AUX_CLK				198
++#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				199
++#define GCC_USB3_SEC_PHY_COM_AUX_CLK				200
++#define GCC_USB3_SEC_PHY_PIPE_CLK				201
++#define GCC_USB3_SEC_PHY_PIPE_CLK_SRC				202
++#define GCC_VIDEO_AHB_CLK					203
++#define GCC_VIDEO_AXI0_CLK					204
++#define GCC_VIDEO_AXI1_CLK					205
++#define GCC_VIDEO_XO_CLK					206
 +
-+static const struct clk_parent_data pdata[] = {
-+	{ .fw_name = "ref" },
-+	{ .fw_name = "aux" },
-+	{ .fw_name = "pll" },
-+};
++/* GCC resets */
++#define GCC_CAMERA_BCR						0
++#define GCC_DISPLAY_BCR						1
++#define GCC_GPU_BCR						2
++#define GCC_MMSS_BCR						3
++#define GCC_PCIE_0_BCR						4
++#define GCC_PCIE_0_LINK_DOWN_BCR				5
++#define GCC_PCIE_0_NOCSR_COM_PHY_BCR				6
++#define GCC_PCIE_0_PHY_BCR					7
++#define GCC_PCIE_0_PHY_NOCSR_COM_PHY_BCR			8
++#define GCC_PCIE_1_BCR						9
++#define GCC_PCIE_1_LINK_DOWN_BCR				10
++#define GCC_PCIE_1_NOCSR_COM_PHY_BCR				11
++#define GCC_PCIE_1_PHY_BCR					12
++#define GCC_PCIE_1_PHY_NOCSR_COM_PHY_BCR			13
++#define GCC_PCIE_PHY_CFG_AHB_BCR				14
++#define GCC_PCIE_PHY_COM_BCR					15
++#define GCC_PDM_BCR						16
++#define GCC_QUPV3_WRAPPER_0_BCR					17
++#define GCC_QUPV3_WRAPPER_1_BCR					18
++#define GCC_QUPV3_WRAPPER_2_BCR					19
++#define GCC_QUSB2PHY_PRIM_BCR					20
++#define GCC_QUSB2PHY_SEC_BCR					21
++#define GCC_SDCC2_BCR						22
++#define GCC_SDCC4_BCR						23
++#define GCC_UFS_CARD_BCR					24
++#define GCC_UFS_PHY_BCR						25
++#define GCC_USB30_PRIM_BCR					26
++#define GCC_USB30_SEC_BCR					27
++#define GCC_USB3_DP_PHY_PRIM_BCR				28
++#define GCC_USB3_DP_PHY_SEC_BCR					29
++#define GCC_USB3_PHY_PRIM_BCR					30
++#define GCC_USB3_PHY_SEC_BCR					31
++#define GCC_USB3PHY_PHY_PRIM_BCR				32
++#define GCC_USB3PHY_PHY_SEC_BCR					33
++#define GCC_USB_PHY_CFG_AHB2PHY_BCR				34
++#define GCC_VIDEO_AXI0_CLK_ARES					35
++#define GCC_VIDEO_AXI1_CLK_ARES					36
++#define GCC_VIDEO_BCR						37
 +
-+/*
-+ * We use the notifier function for switching to a temporary safe configuration
-+ * (mux and divider), while the A7 PLL is reconfigured.
-+ */
-+static int a7cc_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			    void *data)
-+{
-+	int ret = 0;
-+	struct clk_regmap_mux_div *md = container_of(nb,
-+						     struct clk_regmap_mux_div,
-+						     clk_nb);
-+	if (event == PRE_RATE_CHANGE)
-+		/* set the mux and divider to safe frequency (400mhz) */
-+		ret = mux_div_set_src_div(md, 1, 2);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device *parent = dev->parent;
-+	struct device *cpu_dev;
-+	struct clk_regmap_mux_div *a7cc;
-+	struct regmap *regmap;
-+	struct clk_init_data init = { };
-+	int ret;
-+
-+	regmap = dev_get_regmap(parent, NULL);
-+	if (!regmap) {
-+		dev_err_probe(dev, ret, "Failed to get parent regmap\n");
-+		return -ENODEV;
-+	}
-+
-+	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
-+	if (!a7cc)
-+		return -ENOMEM;
-+
-+	init.name = "a7mux";
-+	init.parent_data = pdata;
-+	init.num_parents = ARRAY_SIZE(pdata);
-+	init.ops = &clk_regmap_mux_div_ops;
-+
-+	a7cc->clkr.hw.init = &init;
-+	a7cc->clkr.regmap = regmap;
-+	a7cc->reg_offset = 0x8;
-+	a7cc->hid_width = 5;
-+	a7cc->hid_shift = 0;
-+	a7cc->src_width = 3;
-+	a7cc->src_shift = 8;
-+	a7cc->parent_map = apcs_mux_clk_parent_map;
-+
-+	a7cc->pclk = devm_clk_get(parent, "pll");
-+	if (IS_ERR(a7cc->pclk)) {
-+		ret = PTR_ERR(a7cc->pclk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err_probe(dev, ret, "Failed to get PLL clk\n");
-+		return ret;
-+	}
-+
-+	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
-+	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "Failed to register clock notifier\n");
-+		return ret;
-+	}
-+
-+	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "Failed to register regmap clock\n");
-+		goto err;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &a7cc->clkr.hw);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "Failed to add clock provider\n");
-+		goto err;
-+	}
-+
-+	platform_set_drvdata(pdev, a7cc);
-+
-+	/*
-+	 * Attach the power domain to cpudev. Since there is no dedicated driver
-+	 * for CPUs and the SDX55 platform lacks hardware specific CPUFreq
-+	 * driver, there seems to be no better place to do this. So do it here!
-+	 */
-+	cpu_dev = get_cpu_device(0);
-+	dev_pm_domain_attach(cpu_dev, true);
-+
-+	return 0;
-+
-+err:
-+	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
-+	return ret;
-+}
-+
-+static int qcom_apcs_sdx55_clk_remove(struct platform_device *pdev)
-+{
-+	struct device *cpu_dev = get_cpu_device(0);
-+	struct clk_regmap_mux_div *a7cc = platform_get_drvdata(pdev);
-+
-+	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
-+	dev_pm_domain_detach(cpu_dev, true);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qcom_apcs_sdx55_clk_driver = {
-+	.probe = qcom_apcs_sdx55_clk_probe,
-+	.remove = qcom_apcs_sdx55_clk_remove,
-+	.driver = {
-+		.name = "qcom-sdx55-acps-clk",
-+	},
-+};
-+module_platform_driver(qcom_apcs_sdx55_clk_driver);
-+
-+MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Qualcomm SDX55 APCS clock driver");
++#endif
 -- 
-2.25.1
+2.26.2
 
