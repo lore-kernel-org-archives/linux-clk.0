@@ -2,345 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305FEC4332B
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 12:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74C6C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 12:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12F48222B3
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 12:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B318222BB
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 12:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391646AbhARMfc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jan 2021 07:35:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38992 "EHLO mx2.suse.de"
+        id S2391873AbhARMxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jan 2021 07:53:20 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:41774 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404037AbhARMe0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Jan 2021 07:34:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 04F98B949;
-        Mon, 18 Jan 2021 12:33:05 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-Date:   Mon, 18 Jan 2021 13:32:44 +0100
-Message-Id: <20210118123244.13669-12-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210118123244.13669-1-nsaenzjulienne@suse.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
+        id S2391646AbhARMwy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Jan 2021 07:52:54 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D1BE200F03;
+        Mon, 18 Jan 2021 13:52:05 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F6F2200EEE;
+        Mon, 18 Jan 2021 13:52:05 +0100 (CET)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0AE372030E;
+        Mon, 18 Jan 2021 13:52:05 +0100 (CET)
+Date:   Mon, 18 Jan 2021 14:52:04 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated
+ with sdout
+Message-ID: <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
+References: <20210115182909.314756-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210115182909.314756-1-aford173@gmail.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adds support to control the PWM bus available in official Raspberry Pi
-PoE HAT. Only RPi's co-processor has access to it, so commands have to
-be sent through RPi's firmware mailbox interface.
+On 21-01-15 12:29:08, Adam Ford wrote:
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+...
 
----
-Changes since v6:
-- Use %pe
-- Round divisions properly
-- Use dev_err_probe()
-- Pass check_patch
+> diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+> index a66cabfbf94f..66192fe0a898 100644
+> --- a/drivers/clk/imx/clk-imx25.c
+> +++ b/drivers/clk/imx/clk-imx25.c
+> @@ -73,16 +73,6 @@ enum mx25_clks {
+>  
+>  static struct clk *clk[clk_max];
+>  
+> -static struct clk ** const uart_clks[] __initconst = {
+> -	&clk[uart_ipg_per],
+> -	&clk[uart1_ipg],
+> -	&clk[uart2_ipg],
+> -	&clk[uart3_ipg],
+> -	&clk[uart4_ipg],
+> -	&clk[uart5_ipg],
+> -	NULL
+> -};
+> -
 
-Changes since v3:
- - Rename compatible string to be more explicit WRT to bus's limitations
+I'm assuming there is another patch that updatesthe dts files. Right ?
 
-Changes since v2:
- - Use devm_rpi_firmware_get()
- - Rename driver
- - Small cleanups
+TBH, I'm against the idea of having to call consumer API from a clock provider driver.
+I'm still investigating a way of moving the uart clock control calls in drivers/serial/imx,
+where they belong.
 
-Changes since v1:
- - Use default pwm bindings and get rid of xlate() function
- - Correct spelling errors
- - Correct apply() function
- - Round values
- - Fix divisions in arm32 mode
- - Small cleanups
+>  static int __init __mx25_clocks_init(void __iomem *ccm_base)
+>  {
+>  	BUG_ON(!ccm_base);
+> @@ -228,7 +218,7 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
+>  	 */
+>  	clk_set_parent(clk[cko_sel], clk[ipg]);
+>  
+> -	imx_register_uart_clocks(uart_clks);
+> +	imx_register_uart_clocks(6);
 
- drivers/pwm/Kconfig               |   9 ++
- drivers/pwm/Makefile              |   1 +
- drivers/pwm/pwm-raspberrypi-poe.c | 220 ++++++++++++++++++++++++++++++
- 3 files changed, 230 insertions(+)
- create mode 100644 drivers/pwm/pwm-raspberrypi-poe.c
+Suggestion: Maybe the number of clocks can be determined by the existing clocks in that dts node.
+Hardcoding is not a good ideea here.
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 0937e1c047ac..75e2344703b3 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -423,6 +423,15 @@ config PWM_PXA
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-pxa.
- 
-+config PWM_RASPBERRYPI_POE
-+	tristate "Raspberry Pi Firwmware PoE Hat PWM support"
-+	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
-+	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
-+	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-+	help
-+	  Enable Raspberry Pi firmware controller PWM bus used to control the
-+	  official RPI PoE hat
-+
- config PWM_RCAR
- 	tristate "Renesas R-Car PWM support"
- 	depends on ARCH_RENESAS || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 18b89d7fd092..ed28d7bd4c64 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_MXS)		+= pwm-mxs.o
- obj-$(CONFIG_PWM_OMAP_DMTIMER)	+= pwm-omap-dmtimer.o
- obj-$(CONFIG_PWM_PCA9685)	+= pwm-pca9685.o
- obj-$(CONFIG_PWM_PXA)		+= pwm-pxa.o
-+obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+= pwm-raspberrypi-poe.o
- obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
- obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
- obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
-diff --git a/drivers/pwm/pwm-raspberrypi-poe.c b/drivers/pwm/pwm-raspberrypi-poe.c
-new file mode 100644
-index 000000000000..ca845e8fabe6
---- /dev/null
-+++ b/drivers/pwm/pwm-raspberrypi-poe.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-+ * For more information on Raspberry Pi's PoE hat see:
-+ * https://www.raspberrypi.org/products/poe-hat/
-+ *
-+ * Limitations:
-+ *  - No disable bit, so a disabled PWM is simulated by duty_cycle 0
-+ *  - Only normal polarity
-+ *  - Fixed 12.5 kHz period
-+ *
-+ * The current period is completed when HW is reconfigured.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pwm.h>
-+
-+#include <soc/bcm2835/raspberrypi-firmware.h>
-+#include <dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h>
-+
-+#define RPI_PWM_MAX_DUTY		255
-+#define RPI_PWM_PERIOD_NS		80000 /* 12.5 kHz */
-+
-+#define RPI_PWM_CUR_DUTY_REG		0x0
-+#define RPI_PWM_DEF_DUTY_REG		0x1
-+
-+struct raspberrypi_pwm {
-+	struct rpi_firmware *firmware;
-+	struct pwm_chip chip;
-+	unsigned int duty_cycle;
-+};
-+
-+struct raspberrypi_pwm_prop {
-+	__le32 reg;
-+	__le32 val;
-+	__le32 ret;
-+} __packed;
-+
-+static inline
-+struct raspberrypi_pwm *raspberrypi_pwm_from_chip(struct pwm_chip *chip)
-+{
-+	return container_of(chip, struct raspberrypi_pwm, chip);
-+}
-+
-+static int raspberrypi_pwm_set_property(struct rpi_firmware *firmware,
-+					u32 reg, u32 val)
-+{
-+	struct raspberrypi_pwm_prop msg = {
-+		.reg = cpu_to_le32(reg),
-+		.val = cpu_to_le32(val),
-+	};
-+	int ret;
-+
-+	ret = rpi_firmware_property(firmware, RPI_FIRMWARE_SET_POE_HAT_VAL,
-+				    &msg, sizeof(msg));
-+	if (ret)
-+		return ret;
-+	if (msg.ret)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static int raspberrypi_pwm_get_property(struct rpi_firmware *firmware,
-+					u32 reg, u32 *val)
-+{
-+	struct raspberrypi_pwm_prop msg = {
-+		.reg = reg
-+	};
-+	int ret;
-+
-+	ret = rpi_firmware_property(firmware, RPI_FIRMWARE_GET_POE_HAT_VAL,
-+				    &msg, sizeof(msg));
-+	if (ret)
-+		return ret;
-+	if (msg.ret)
-+		return -EIO;
-+
-+	*val = le32_to_cpu(msg.val);
-+
-+	return 0;
-+}
-+
-+static void raspberrypi_pwm_get_state(struct pwm_chip *chip,
-+				      struct pwm_device *pwm,
-+				      struct pwm_state *state)
-+{
-+	struct raspberrypi_pwm *rpipwm = raspberrypi_pwm_from_chip(chip);
-+
-+	state->period = RPI_PWM_PERIOD_NS;
-+	state->duty_cycle = DIV_ROUND_UP(rpipwm->duty_cycle * RPI_PWM_PERIOD_NS,
-+					 RPI_PWM_MAX_DUTY);
-+	state->enabled = !!(rpipwm->duty_cycle);
-+	state->polarity = PWM_POLARITY_NORMAL;
-+}
-+
-+static int raspberrypi_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+				 const struct pwm_state *state)
-+{
-+	struct raspberrypi_pwm *rpipwm = raspberrypi_pwm_from_chip(chip);
-+	unsigned int duty_cycle;
-+	int ret;
-+
-+	if (state->period < RPI_PWM_PERIOD_NS ||
-+	    state->polarity != PWM_POLARITY_NORMAL)
-+		return -EINVAL;
-+
-+	if (!state->enabled)
-+		duty_cycle = 0;
-+	else if (state->duty_cycle < RPI_PWM_PERIOD_NS)
-+		duty_cycle = DIV_ROUND_DOWN_ULL(state->duty_cycle * RPI_PWM_MAX_DUTY,
-+						RPI_PWM_PERIOD_NS);
-+	else
-+		duty_cycle = RPI_PWM_MAX_DUTY;
-+
-+	if (duty_cycle == rpipwm->duty_cycle)
-+		return 0;
-+
-+	ret = raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DUTY_REG,
-+					   duty_cycle);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to set duty cycle: %pe\n",
-+			ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	/*
-+	 * This sets the default duty cycle after resetting the board, we
-+	 * updated it every time to mimic Raspberry Pi's downstream's driver
-+	 * behaviour.
-+	 */
-+	ret = raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DUTY_REG,
-+					   duty_cycle);
-+	if (ret) {
-+		dev_err(chip->dev, "Failed to set default duty cycle: %pe\n",
-+			ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	rpipwm->duty_cycle = duty_cycle;
-+
-+	return 0;
-+}
-+
-+static const struct pwm_ops raspberrypi_pwm_ops = {
-+	.get_state = raspberrypi_pwm_get_state,
-+	.apply = raspberrypi_pwm_apply,
-+	.owner = THIS_MODULE,
-+};
-+
-+static int raspberrypi_pwm_probe(struct platform_device *pdev)
-+{
-+	struct device_node *firmware_node;
-+	struct device *dev = &pdev->dev;
-+	struct rpi_firmware *firmware;
-+	struct raspberrypi_pwm *rpipwm;
-+	int ret;
-+
-+	firmware_node = of_get_parent(dev->of_node);
-+	if (!firmware_node) {
-+		dev_err(dev, "Missing firmware node\n");
-+		return -ENOENT;
-+	}
-+
-+	firmware = devm_rpi_firmware_get(&pdev->dev, firmware_node);
-+	of_node_put(firmware_node);
-+	if (!firmware)
-+		return dev_err_probe(dev, -EPROBE_DEFER,
-+				     "Failed to get firmware handle\n");
-+
-+	rpipwm = devm_kzalloc(&pdev->dev, sizeof(*rpipwm), GFP_KERNEL);
-+	if (!rpipwm)
-+		return -ENOMEM;
-+
-+	rpipwm->firmware = firmware;
-+	rpipwm->chip.dev = dev;
-+	rpipwm->chip.ops = &raspberrypi_pwm_ops;
-+	rpipwm->chip.base = -1;
-+	rpipwm->chip.npwm = RASPBERRYPI_FIRMWARE_PWM_NUM;
-+
-+	platform_set_drvdata(pdev, rpipwm);
-+
-+	ret = raspberrypi_pwm_get_property(rpipwm->firmware, RPI_PWM_CUR_DUTY_REG,
-+					   &rpipwm->duty_cycle);
-+	if (ret) {
-+		dev_err(dev, "Failed to get duty cycle: %pe\n", ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	return pwmchip_add(&rpipwm->chip);
-+}
-+
-+static int raspberrypi_pwm_remove(struct platform_device *pdev)
-+{
-+	struct raspberrypi_pwm *rpipwm = platform_get_drvdata(pdev);
-+
-+	return pwmchip_remove(&rpipwm->chip);
-+}
-+
-+static const struct of_device_id raspberrypi_pwm_of_match[] = {
-+	{ .compatible = "raspberrypi,firmware-poe-pwm", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, raspberrypi_pwm_of_match);
-+
-+static struct platform_driver raspberrypi_pwm_driver = {
-+	.driver = {
-+		.name = "raspberrypi-poe-pwm",
-+		.of_match_table = raspberrypi_pwm_of_match,
-+	},
-+	.probe = raspberrypi_pwm_probe,
-+	.remove = raspberrypi_pwm_remove,
-+};
-+module_platform_driver(raspberrypi_pwm_driver);
-+
-+MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
-+MODULE_DESCRIPTION("Raspberry Pi Firmware Based PWM Bus Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.29.2
+...
 
+>  
+> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> index 47882c51cb85..158fe302a8b7 100644
+> --- a/drivers/clk/imx/clk.c
+> +++ b/drivers/clk/imx/clk.c
+> @@ -147,8 +147,10 @@ void imx_cscmr1_fixup(u32 *val)
+>  }
+>  
+>  #ifndef MODULE
+> -static int imx_keep_uart_clocks;
+> -static struct clk ** const *imx_uart_clocks;
+> +
+> +static bool imx_keep_uart_clocks;
+> +static int imx_enabled_uart_clocks;
+> +static struct clk **imx_uart_clocks;
+>  
+>  static int __init imx_keep_uart_clocks_param(char *str)
+>  {
+> @@ -161,24 +163,43 @@ __setup_param("earlycon", imx_keep_uart_earlycon,
+>  __setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+>  	      imx_keep_uart_clocks_param, 0);
+>  
+> -void imx_register_uart_clocks(struct clk ** const clks[])
+> +void imx_register_uart_clocks(unsigned int clk_count)
+>  {
+> +#ifdef CONFIG_OF
+>  	if (imx_keep_uart_clocks) {
+>  		int i;
+>  
+> -		imx_uart_clocks = clks;
+> -		for (i = 0; imx_uart_clocks[i]; i++)
+> -			clk_prepare_enable(*imx_uart_clocks[i]);
+> +		imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
+> +		imx_enabled_uart_clocks = 0;
+> +
+> +		for (i = 0; i < clk_count; i++) {
+> +			imx_uart_clocks[imx_enabled_uart_clocks] = of_clk_get(of_stdout, i);
+> +
+> +			/* Stop if there are no more of_stdout references */
+> +			if (IS_ERR(imx_uart_clocks[imx_enabled_uart_clocks]))
+> +				return;
+> +
+> +			/* Only enable the clock if it's not NULL */
+> +			if (imx_uart_clocks[imx_enabled_uart_clocks])
+> +				clk_prepare_enable(imx_uart_clocks[imx_enabled_uart_clocks++]);
+> +		}
+>  	}
+> +#else
+> +	/* i.MX boards use device trees now.  For build tests without CONFIG_OF, do nothing */
+> +	imx_enabled_uart_clocks = 0;
+> +#endif
+
+Don't really see the point of this #ifdef here. Just makes the code more messy.
+
+>  }
+>  
+>  static int __init imx_clk_disable_uart(void)
+>  {
+> -	if (imx_keep_uart_clocks && imx_uart_clocks) {
+> +	if (imx_keep_uart_clocks && imx_enabled_uart_clocks) {
+>  		int i;
+>  
+> -		for (i = 0; imx_uart_clocks[i]; i++)
+> -			clk_disable_unprepare(*imx_uart_clocks[i]);
+> +		for (i = 0; i < imx_enabled_uart_clocks; i++) {
+> +			clk_disable_unprepare(imx_uart_clocks[i]);
+> +			clk_put(imx_uart_clocks[i]);
+> +		};
+> +		kfree(imx_uart_clocks);
+>  	}
+>  
+>  	return 0;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 4f04c8287286..7571603bee23 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -11,9 +11,9 @@ extern spinlock_t imx_ccm_lock;
+>  void imx_check_clocks(struct clk *clks[], unsigned int count);
+>  void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+>  #ifndef MODULE
+> -void imx_register_uart_clocks(struct clk ** const clks[]);
+> +void imx_register_uart_clocks(unsigned int clk_count);
+>  #else
+> -static inline void imx_register_uart_clocks(struct clk ** const clks[])
+> +static inline void imx_register_uart_clocks(unsigned int clk_count)
+>  {
+>  }
+>  #endif
+> -- 
+> 2.25.1
+> 
