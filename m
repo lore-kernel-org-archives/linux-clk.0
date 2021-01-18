@@ -2,123 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6CAC4332E
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AACC433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 16:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14DBE22C9D
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D48222F9
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 16:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405762AbhARP4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jan 2021 10:56:35 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:45167 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405841AbhARPbs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 10:31:48 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A16EC58079C;
-        Mon, 18 Jan 2021 10:31:01 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 18 Jan 2021 10:31:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=NvUEhU6J4Ii+xfqC5c+MJMvRl3f
-        ZuGnBjGBkusrqzHM=; b=LffEcGhWz/vgQpEkk+1xT8K5OwteDK8Bu/awFb9jqeV
-        Z4/x0R/81LdjJNFyD/1HnBDInymthjNkAzixoZepENtnOhA+uauERldOZDNeQSgN
-        ZjYHA7JtF4Rpdaa9OtJMFlMNAMiYEwqFOKZ7nAdFzAHiG+HnmggziU/DKSOd2VNV
-        Ijw7Mrg23ZlnP4cw3IqrpVQB9kvyqfAmHxfcG9Ivg26uNBLN0YWjzxz6+bVwS5dT
-        8Lie+hzWzz8dLifSeRi+YCwjOtMhvBirk45kru9sHP7lC6ryOfoVZx9bAoNaWpre
-        xDtTHdbz64riPO6f7FSWU9OxIccYWdi/NNfLb+b1mbw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NvUEhU
-        6J4Ii+xfqC5c+MJMvRl3fZuGnBjGBkusrqzHM=; b=IxqPS8Q4n3U57pUQVF2oKF
-        ND0FX0ha1OnILuUsaMXs/7axa+HHVz17qQh0zXhTr5L/bSnTdtbdJpCIYDjHEN5u
-        WMZVD3ycSD9KnAUqVt4Q5d8S0LtHUCIVqKeLW40SrL9I0XK4uBXL+hgozbhy+AcY
-        Pnc6LU4VcpQMA+wMsRgBZ648zTGlM8aU/0JRsRO8LwFGZLNxJ5986gG6uVyAdLEc
-        7/HYuf0PUq3GMj+NqGUz9IZ6wYtx8HekKCE/tMm2J2GSUcPpHt4G4VMLXmOsMUn7
-        pmv+0Be2MUWbAkQ5a4m5nCd846L6H3ZnPoepBS+0ULMHfHkiW+ZYcHCn7g4nu8Ag
-        ==
-X-ME-Sender: <xms:tKkFYPz8kvvS5xqNyVjyA_5i18NYLbV2SFnhSoRSV8Y5kgZPLy53KA>
-    <xme:tKkFYNlnmYAQYasYbOpqQnmdiZoan4yBiOLpld0U5XhZj2r1KFf5Tsn5-s_RYH35M
-    _3QCLPHd02yyZ0apVI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdejkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:tKkFYPWiNnAqtAhrGPAQB7Up6LWPgNIJfalcrbL_sNoemPIX0tKA4A>
-    <xmx:tKkFYG0hhOwm5XSAq5QQkYbE6LHHui1LXfU-x30ne7elPTPkIDX_xg>
-    <xmx:tKkFYHm-Jv_i_VpQXbmnlVecIDwjOqg_8qe9EGk2aNSLjhUfbM2IBw>
-    <xmx:takFYD7XRgb1QK9kwydtMIyiICj2pyvRKoa462khbELkf4DqlLoSQg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EF11A240064;
-        Mon, 18 Jan 2021 10:30:59 -0500 (EST)
-Date:   Mon, 18 Jan 2021 16:30:58 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@kernel.org>,
+        id S2406334AbhARQQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jan 2021 11:16:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406539AbhARQPs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 11:15:48 -0500
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D5AC061573;
+        Mon, 18 Jan 2021 08:15:06 -0800 (PST)
+Received: from localhost.localdomain (abaf224.neoplus.adsl.tpnet.pl [83.6.169.224])
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id E1BC41F524;
+        Mon, 18 Jan 2021 17:15:02 +0100 (CET)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v3 08/21] clk: sunxi-ng: Add support for the Allwinner
- H616 CCU
-Message-ID: <20210118153058.26da4guhglb7s5sc@gilmour>
-References: <20210118020848.11721-1-andre.przywara@arm.com>
- <20210118020848.11721-9-andre.przywara@arm.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] clk: qcom: smd: Add missing RPM clocks for msm8992/4
+Date:   Mon, 18 Jan 2021 17:14:41 +0100
+Message-Id: <20210118161442.104660-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yru5s5mpaath3ljh"
-Content-Disposition: inline
-In-Reply-To: <20210118020848.11721-9-andre.przywara@arm.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This was omitted when first adding the clocks for these SoCs.
 
---yru5s5mpaath3ljh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: b4297844995 ("clk: qcom: smd: Add support for MSM8992/4 rpm clocks")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c         | 16 ++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h |  2 ++
+ include/linux/soc/qcom/smd-rpm.h       |  1 +
+ 3 files changed, 19 insertions(+)
 
-On Mon, Jan 18, 2021 at 02:08:35AM +0000, Andre Przywara wrote:
-> While the clocks are fairly similar to the H6, many differ in tiny
-> details, so a separate clock driver seems indicated.
->=20
-> Derived from the H6 clock driver, and adjusted according to the manual.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 0e1dfa89489e..91d610042a5d 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -624,6 +624,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
+ };
+ 
+ /* msm8992 */
++DEFINE_CLK_SMD_RPM_BRANCH(msm8992, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0,
++								19200000);
+ DEFINE_CLK_SMD_RPM(msm8992, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8992, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
+ DEFINE_CLK_SMD_RPM(msm8992, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
+@@ -642,6 +644,8 @@ DEFINE_CLK_SMD_RPM(msm8992, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, ln_bb_clk, ln_bb_a_clk, 8);
+ DEFINE_CLK_SMD_RPM(msm8992, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
+ 		   QCOM_SMD_RPM_BUS_CLK, 3);
++DEFINE_CLK_SMD_RPM_BRANCH(msm8992, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk,
++			QCOM_SMD_RPM_MFFG_CLK, 0, 19200000);
+ DEFINE_CLK_SMD_RPM_QDSS(msm8992, qdss_clk, qdss_a_clk,
+ 			QCOM_SMD_RPM_MISC_CLK, 1);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8992, rf_clk1, rf_clk1_a, 4);
+@@ -653,6 +657,8 @@ DEFINE_CLK_SMD_RPM(msm8992, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8992, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
+ 
+ static struct clk_smd_rpm *msm8992_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &msm8992_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &msm8992_bi_tcxo_a,
+ 	[RPM_SMD_PNOC_CLK] = &msm8992_pnoc_clk,
+ 	[RPM_SMD_PNOC_A_CLK] = &msm8992_pnoc_a_clk,
+ 	[RPM_SMD_OCMEMGX_CLK] = &msm8992_ocmemgx_clk,
+@@ -685,6 +691,8 @@ static struct clk_smd_rpm *msm8992_clks[] = {
+ 	[RPM_SMD_LN_BB_A_CLK] = &msm8992_ln_bb_a_clk,
+ 	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8992_mmssnoc_ahb_clk,
+ 	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8992_mmssnoc_ahb_a_clk,
++	[RPM_SMD_MSS_CFG_AHB_CLK] = &msm8992_mss_cfg_ahb_clk,
++	[RPM_SMD_MSS_CFG_AHB_A_CLK] = &msm8992_mss_cfg_ahb_a_clk,
+ 	[RPM_SMD_QDSS_CLK] = &msm8992_qdss_clk,
+ 	[RPM_SMD_QDSS_A_CLK] = &msm8992_qdss_a_clk,
+ 	[RPM_SMD_RF_CLK1] = &msm8992_rf_clk1,
+@@ -707,6 +715,8 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8992 = {
+ };
+ 
+ /* msm8994 */
++DEFINE_CLK_SMD_RPM_BRANCH(msm8994, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0,
++								19200000);
+ DEFINE_CLK_SMD_RPM(msm8994, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8994, ocmemgx_clk, ocmemgx_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
+ DEFINE_CLK_SMD_RPM(msm8994, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
+@@ -725,6 +735,8 @@ DEFINE_CLK_SMD_RPM(msm8994, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8994, ln_bb_clk, ln_bb_a_clk, 8);
+ DEFINE_CLK_SMD_RPM(msm8994, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
+ 		   QCOM_SMD_RPM_BUS_CLK, 3);
++DEFINE_CLK_SMD_RPM_BRANCH(msm8994, mss_cfg_ahb_clk, mss_cfg_ahb_a_clk,
++			QCOM_SMD_RPM_MFFG_CLK, 0, 19200000);
+ DEFINE_CLK_SMD_RPM_QDSS(msm8994, qdss_clk, qdss_a_clk,
+ 			QCOM_SMD_RPM_MISC_CLK, 1);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8994, rf_clk1, rf_clk1_a, 4);
+@@ -737,6 +749,8 @@ DEFINE_CLK_SMD_RPM(msm8994, ce2_clk, ce2_a_clk, QCOM_SMD_RPM_CE_CLK, 1);
+ DEFINE_CLK_SMD_RPM(msm8994, ce3_clk, ce3_a_clk, QCOM_SMD_RPM_CE_CLK, 2);
+ 
+ static struct clk_smd_rpm *msm8994_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &msm8994_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &msm8994_bi_tcxo_a,
+ 	[RPM_SMD_PNOC_CLK] = &msm8994_pnoc_clk,
+ 	[RPM_SMD_PNOC_A_CLK] = &msm8994_pnoc_a_clk,
+ 	[RPM_SMD_OCMEMGX_CLK] = &msm8994_ocmemgx_clk,
+@@ -769,6 +783,8 @@ static struct clk_smd_rpm *msm8994_clks[] = {
+ 	[RPM_SMD_LN_BB_A_CLK] = &msm8994_ln_bb_a_clk,
+ 	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8994_mmssnoc_ahb_clk,
+ 	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8994_mmssnoc_ahb_a_clk,
++	[RPM_SMD_MSS_CFG_AHB_CLK] = &msm8994_mss_cfg_ahb_clk,
++	[RPM_SMD_MSS_CFG_AHB_A_CLK] = &msm8994_mss_cfg_ahb_a_clk,
+ 	[RPM_SMD_QDSS_CLK] = &msm8994_qdss_clk,
+ 	[RPM_SMD_QDSS_A_CLK] = &msm8994_qdss_a_clk,
+ 	[RPM_SMD_RF_CLK1] = &msm8994_rf_clk1,
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index 8aaba7cd9589..e8e256dbcc8a 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -149,5 +149,7 @@
+ #define RPM_SMD_CE2_A_CLK			103
+ #define RPM_SMD_CE3_CLK				104
+ #define RPM_SMD_CE3_A_CLK			105
++#define RPM_SMD_MSS_CFG_AHB_CLK			106
++#define RPM_SMD_MSS_CFG_AHB_A_CLK		107
+ 
+ #endif
+diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
+index f2645ec52520..ce51b18f7128 100644
+--- a/include/linux/soc/qcom/smd-rpm.h
++++ b/include/linux/soc/qcom/smd-rpm.h
+@@ -37,6 +37,7 @@ struct qcom_smd_rpm;
+ #define QCOM_SMD_RPM_IPA_CLK	0x617069
+ #define QCOM_SMD_RPM_CE_CLK	0x6563
+ #define QCOM_SMD_RPM_AGGR_CLK	0x72676761
++#define QCOM_SMD_RPM_MFFG_CLK	0x6766636d
+ 
+ int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
+ 		       int state,
+-- 
+2.29.2
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---yru5s5mpaath3ljh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWpsgAKCRDj7w1vZxhR
-xYcHAPwO+F7YjxEwkb5SFICrOUsqTS4NibyNY07M8YBgtHcBXQEAlOZdhp/4T3yM
-ESRlpJTvxbKpE6aaMLmK4CzMkguHLAg=
-=QR7V
------END PGP SIGNATURE-----
-
---yru5s5mpaath3ljh--
