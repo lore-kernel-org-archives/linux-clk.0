@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C572BC43381
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC78AC433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9AA22D49
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AE622C9C
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 15:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405816AbhARP1h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jan 2021 10:27:37 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:58165 "EHLO
+        id S2405743AbhARPcB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jan 2021 10:32:01 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:34619 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405803AbhARP1e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 10:27:34 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6403158012C;
-        Mon, 18 Jan 2021 10:26:48 -0500 (EST)
+        by vger.kernel.org with ESMTP id S2405940AbhARPbU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 10:31:20 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4F979580794;
+        Mon, 18 Jan 2021 10:30:14 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 18 Jan 2021 10:26:48 -0500
+  by compute2.internal (MEProxy); Mon, 18 Jan 2021 10:30:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=HODlC4oTG9rxHBfdiZZiciw1z+S
-        a9kzG9dx85WTpST8=; b=QKwHZwQ8RclPtWnI7UTVHiYmheg/iKTyobfbMmYCQqT
-        l2XvK0H5RT4pKkfRx68yYI/YwkNx0To2SOcV7MlyrpUk/+Cgi8RFO1q94zNsXoY4
-        fFlLWaXxMBlYDA+SxHTvouW+gE+Ah/nyur1Qa6yofpS5PQRXuUKjxpP4YZGuDIdy
-        /9QqhROtpPCh2JiSenTHR/fSon5ZUsDRUDw1JJaVvLY2eD/LK7Zk3Td009nQa4Tp
-        OjrWw2xggmAllSf4mS2n425eEFFajgQc0VCWZmgXMtaFagHs3RUZnCsJPdQsZkGw
-        EOLxL44+K2l2LKrXZ+kAjB1pfbTfJcDju4ecyx0558g==
+        :content-type:in-reply-to; s=fm1; bh=PSXtrd2c/tf/6/t7uPfgHtgY6KB
+        UUffDbACWC+Qk0QQ=; b=dlzyie+Eed+c1ZQHiyVjcBZpfY+eL6ouXuKMjkHvx8s
+        H11CG+E7snNGGkxMMWmm0pEWUHrIQ8qt4izNzy+vhGu0BIaLNXnlzqWWixhMzOVS
+        M8PbrarMIbm8QJ+bOz8OR2455p2ujK2SLwGxudDiodu7IQpCEn8nw//AI/9GVmn0
+        u7T1xdCe6FcvZ1swfS2khLSL48EgZdiGcQsLzhJ6IW+WEO2SykB5mVgVAwgMd5E+
+        aLtTLfq3wuLYEmddAFiAEjkNZqvtkJQZvlbZ2/csHznkewq6CUPdGJd0nqiAQLF/
+        xDiPtK7PN2i4T29KJVfkwZLRipS/HCNCdwqxIEpPtCA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=HODlC4
-        oTG9rxHBfdiZZiciw1z+Sa9kzG9dx85WTpST8=; b=Ufp4fuduJH973pgc/PslyF
-        ACS552VCBIEBiHuqRFq0SpAtJIFe9ZGnSLW2djmx6enEI0CxLomViaUqgPgcrnWM
-        X9DJOfNa2zqDoUzUspYgCasxPQKqFAXFQSAmAccVT/r68AaEPqR9pRmgfntdSL+m
-        OyDKMKh2DhTyhcFps7genTzK4o/mYVFw1ErtBnd4NXzd+kaT0TBWXHGbcufa92A2
-        t3xlHwn/rmwfz/SXdz06HqYkiB+TAmAlOHcgWbzm3sFQ5ZjO/2ou/NqDd3wt1Dkw
-        E9Vsc5peajULaqphiaXFaG25CVsKYfbqrFRqXZoEP8IF809sHq9RjwcQnTY4GDGg
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=PSXtrd
+        2c/tf/6/t7uPfgHtgY6KBUUffDbACWC+Qk0QQ=; b=XgOkqoRugGDVePaN3jg+OR
+        dadDEZy5nkJt/Ls9UqPwstZHRyrdBq8ZAcC6RTLbfdcaCVWosJ07ruktIguUv+W3
+        O2S88yqjXFNWl/xOabiulm2TjtreAd5kAAHbCH8pz6TdPauH0o8je+AnFApeyYBX
+        6Y03JNcv7+pb3WBixm3g6+2eaa/q0CzvZLbOX5THfuSHqZ8hcCqwmbSwR3BVl2Yl
+        rZ/xNxtHbxrC0tJ4jm69/4VlSi0FVOL72L/tx0vuCRAiaMJKy0Pem8u4yvJoFbIe
+        Zwu6rGEVsLCEXaptPBF4VE1lH42gcHpT1F0vBlQl5AoB7OCYa6dkoox6iJelK2UA
         ==
-X-ME-Sender: <xms:uKgFYBEF8VUjcTGRz5dkeRDTM4t30rAXvR5Q7pnxH43xZi4N6GQliA>
-    <xme:uKgFYGWKztPn38mlut8j9_QRoYoPKFQDP29IfKrbSls_USWSPcn_7baOw1Q2tlwz4
-    lAL06xXZpJVC3u_xkg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdejjecutefuodetggdotefrodftvf
+X-ME-Sender: <xms:hKkFYDkuLT_AbS7QbgNX3gcUv8z1WFyBmFG_TzXhYenquWEWPOIzrg>
+    <xme:hKkFYLLP5yXEaj3iveipirN3ODJVJ_nmMpwUnRVhsfXAQHvsr29yopiUS1m9cj19y
+    aE0cLFJ6pXnjkes9ko>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdejkecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
@@ -55,14 +55,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrtdekgdejjecutefuodetggdote
     gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
     udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
     grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:uKgFYDIDxOGSItK_1DTT7VwusKoQiq-NP2_lQHzx_xvwsU5TdbKEPg>
-    <xmx:uKgFYHG0T86aW4oRXPt4sPx71w-Uahz75MWK5esjsUh7k4oNABLDXw>
-    <xmx:uKgFYHUefQahap17-eWKC-pq-6jBTE9cQAKsKAK247mFNRKVDwkS7Q>
-    <xmx:uKgFYIt4r7ymGuwkjN8TWwl7JExMPjJvb1MEZq4cO47XpnP3_gBldA>
+X-ME-Proxy: <xmx:hKkFYIwN-hd02IQO2m4JRazYjlZZ23l-bBApotHWjS74aVkFq8fbDA>
+    <xmx:hKkFYDuEhXTjVuB4qsrOxazaFEcTXCrBcNer6likToud0uURi9t10w>
+    <xmx:hKkFYHtXiNa-Y8JSrMttIzq6T33RozbZJjGh5SkDRpNurCk7kzj1QA>
+    <xmx:hqkFYMTYJMNCqSzenn5jDnuMyeaDV9nPPr7GkAr6XTwMbUhcLl70fw>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C3575108005C;
-        Mon, 18 Jan 2021 10:26:47 -0500 (EST)
-Date:   Mon, 18 Jan 2021 16:26:44 +0100
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9DD59108005F;
+        Mon, 18 Jan 2021 10:30:12 -0500 (EST)
+Date:   Mon, 18 Jan 2021 16:30:11 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Andre Przywara <andre.przywara@arm.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
@@ -77,43 +77,46 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 06/21] dt-bindings: clk: sunxi-ccu: Add compatible
- string for Allwinner H616
-Message-ID: <20210118152644.ayjspu5iigajzooy@gilmour>
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v3 07/21] clk: sunxi-ng: Add support for the Allwinner
+ H616 R-CCU
+Message-ID: <20210118153011.yozwrkqxfemdradu@gilmour>
 References: <20210118020848.11721-1-andre.przywara@arm.com>
- <20210118020848.11721-7-andre.przywara@arm.com>
+ <20210118020848.11721-8-andre.przywara@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4homvfvy5rvderye"
+        protocol="application/pgp-signature"; boundary="atpvsytfk2rxubn4"
 Content-Disposition: inline
-In-Reply-To: <20210118020848.11721-7-andre.przywara@arm.com>
+In-Reply-To: <20210118020848.11721-8-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---4homvfvy5rvderye
+--atpvsytfk2rxubn4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 18, 2021 at 02:08:33AM +0000, Andre Przywara wrote:
+On Mon, Jan 18, 2021 at 02:08:34AM +0000, Andre Przywara wrote:
+> The clocks itself are identical to the H6 R-CCU, it's just that the H616
+> has not all of them implemented (or connected).
+>=20
 > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Acked-by: Rob Herring <robh@kernel.org>
 
 Acked-by: Maxime Ripard <mripard@kernel.org>
 
 Maxime
 
---4homvfvy5rvderye
+--atpvsytfk2rxubn4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWotAAKCRDj7w1vZxhR
-xUj2AQDTEh7XFrvhCU51en3SF2S3LO5VfcBMAAZy4fORoIVkMQD/RQ2P3XzLXZDc
-WY2GYNmwgSWMX6Jpk5iqjrH/LkvjdQI=
-=ILbj
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAWpgwAKCRDj7w1vZxhR
+xY8tAQD4eXu9Cqi6L/5+62I5kbMW15Dhl7gxyon0tJDMLTYuXQEA0XHhrbT4Vcnh
+zZP/QXcWedWdad6lJerMH6FYjLVsIgk=
+=jCyV
 -----END PGP SIGNATURE-----
 
---4homvfvy5rvderye--
+--atpvsytfk2rxubn4--
