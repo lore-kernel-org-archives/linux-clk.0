@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C50DC4332B
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 07:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F359EC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 07:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE732312D
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 07:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1BE123132
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 07:19:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbhASHQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 02:16:25 -0500
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:35573 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbhASHPH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 02:15:07 -0500
-Received: by mail-lj1-f175.google.com with SMTP id p13so20794503ljg.2;
-        Mon, 18 Jan 2021 23:14:50 -0800 (PST)
+        id S1728280AbhASHTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 02:19:16 -0500
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:37596 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730654AbhASHSq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 02:18:46 -0500
+Received: by mail-lj1-f180.google.com with SMTP id 3so552915ljc.4;
+        Mon, 18 Jan 2021 23:15:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=HcEq01wGvES8F7d5s4ArfJgTmyrtGVfxLQPWHyjZtEY=;
-        b=Th1uNnpfOaiDv7vMu8ojKSjzzvfiWoGNueiWObO6hpxGxgaGIpcILTqUoRugh9hcf0
-         vaxndQMTaM3bBe72Sp6iZpCFldnipnw/5vMGcO1mY+bElJ3osV81h+kUcUlfO889XMuU
-         lPZdfVaJaqsmRuvlKUiDnwsZ0QveNdPbxeqIsLGl5cAW/SgLMhqG5jXLRNNNhun0gcA4
-         YfuU30T9UyhExqgSUJe4XfVEJx91UsR1S2qSb0lRd7YTD9oHR0yV1EDx/It6J5S0j0zS
-         399QayqqQ2tpOY1e9mDPLUR75U+eYKcYIwB7ZBr7t7Jb/LQnolgrt60qMS9aI0b+S9C3
-         R8RA==
-X-Gm-Message-State: AOAM531h6p9Jy1ym8jAbBrzvcHmBI8kws4sGDVbV/P/GO3JlBbgmBU4g
-        QDHvn90od5aGMV4Rb+HbYfg=
-X-Google-Smtp-Source: ABdhPJzhUbkMrUIhKnjfnBqJmD4OkwBeet6fZd7QQxvgDFhpJT1vw0rSg761pxbrtWfuyPStPmzyIg==
-X-Received: by 2002:a2e:6a11:: with SMTP id f17mr1352418ljc.202.1611040464754;
-        Mon, 18 Jan 2021 23:14:24 -0800 (PST)
+        bh=W4lO/s0iMGk19qMdPoDZMWO0rMg1GjXtK6eR1C/M5p4=;
+        b=KHwzAQuBv+t/I9tPHnlPbswlu/QYd3bElfHe2JeoL2rl5gldY8HuI8bkMq59Kqcsqw
+         Z37tElogP7QS6SC+Y8FqaISD0VoYVawjMGX4CSvWV1jDvX7NfZZeU8XTdZB7llTQRIwS
+         YTr0jFaAG+X1KKqunh5yZy5Sarb1wzNvCaBGHdqTqS0rEqhvrJYS76+8yFaVof31aZMu
+         AosQus3YOlRJFJdsKF0xgklnfrXjFtNQEKMCHs2owYmV2cjCOf4inNlph5eCd7mfPRzI
+         0Mib0pj9uEAEwiPQPcTkTG92qMpKbgImSQvg7qV7jV4WDuxDwIpr+Up6mWUgbC5UlW81
+         XJFQ==
+X-Gm-Message-State: AOAM530t22DFh8GTlJYc3g1AvWee03F2mGUen2y7lr+Qkn0kpmzfokS9
+        5nzrIvJ1+k1nEgR/Qhzk2p8=
+X-Google-Smtp-Source: ABdhPJyLpgE/ALX+EKI3BWiDJyqR7ao9BgTLuUUwiFd6rzyZ+m4LXd/ylEWcJpRwjYs52hGudIroHA==
+X-Received: by 2002:a2e:a58c:: with SMTP id m12mr1361909ljp.444.1611040527628;
+        Mon, 18 Jan 2021 23:15:27 -0800 (PST)
 Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id u15sm53637lfl.170.2021.01.18.23.14.23
+        by smtp.gmail.com with ESMTPSA id w13sm1644155lfu.299.2021.01.18.23.15.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jan 2021 23:14:24 -0800 (PST)
-Date:   Tue, 19 Jan 2021 09:14:16 +0200
+        Mon, 18 Jan 2021 23:15:27 -0800 (PST)
+Date:   Tue, 19 Jan 2021 09:15:17 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
 Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
@@ -57,8 +57,8 @@ Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH v2 01/17] regulator: bd718x7, bd71828, Fix dvs voltage levels
-Message-ID: <7b7a9111e02e06574849bacd5703e6c5cdcd2206.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v2 03/17] clk: BD718x7: Do not depend on parent driver data
+Message-ID: <bfe41e384fba1cc340ac0d9c8a033d3f91776ed8.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -68,80 +68,75 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The ROHM BD718x7 and BD71828 drivers support setting HW state
-specific voltages from device-tree. This is used also by various
-in-tree DTS files.
+The bd718x7 only needs a regmap from parent device. This can be
+obtained by call to dev_get_regmap. Do not require parent to
+populate the driver data for this.
 
-These drivers do incorrectly try to compose bit-map using enum
-values. By a chance this works for first two valid levels having
-values 1 and 2 - but setting values for the rest of the levels
-do indicate capbility of setting values for first levels as
-well. Luckily the regulators which support settin values for
-SUSPEND/LPSR do usually also support setting values for RUN
-and IDLE too - thus this has not been such a fatal issue.
-
-Fix this by defining the old enum values as bits and using
-new enum in parsing code. This allows keeping existing IC
-specific drivers intact and only adding the defines and
-slightly changing the rohm-regulator.c
-
-Fixes: 21b72156ede8b ("regulator: bd718x7: Split driver to common and bd718x7 specific parts")
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
 
 Please note that this same change has been sent individually:
-https://lore.kernel.org/lkml/20210118075851.GA1016281@localhost.localdomain/
+https://lore.kernel.org/lkml/20210105123028.GA3409663@localhost.localdomain/
 It is present in this series only because some patches depend on it.
 
- drivers/regulator/rohm-regulator.c |  9 ++++++---
- include/linux/mfd/rohm-generic.h   | 14 ++++++--------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ drivers/clk/clk-bd718x7.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/rohm-regulator.c b/drivers/regulator/rohm-regulator.c
-index 399002383b28..5c558b153d55 100644
---- a/drivers/regulator/rohm-regulator.c
-+++ b/drivers/regulator/rohm-regulator.c
-@@ -52,9 +52,12 @@ int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
- 	char *prop;
- 	unsigned int reg, mask, omask, oreg = desc->enable_reg;
- 
--	for (i = 0; i < ROHM_DVS_LEVEL_MAX && !ret; i++) {
--		if (dvs->level_map & (1 << i)) {
--			switch (i + 1) {
-+	for (i = 0; i < ROHM_DVS_LEVEL_VALID_AMOUNT && !ret; i++) {
-+		int bit;
-+
-+		bit = BIT(i);
-+		if (dvs->level_map & bit) {
-+			switch (bit) {
- 			case ROHM_DVS_LEVEL_RUN:
- 				prop = "rohm,dvs-run-voltage";
- 				reg = dvs->run_reg;
-diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
-index 4283b5b33e04..2b85b9deb03a 100644
---- a/include/linux/mfd/rohm-generic.h
-+++ b/include/linux/mfd/rohm-generic.h
-@@ -20,14 +20,12 @@ struct rohm_regmap_dev {
- 	struct regmap *regmap;
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index b52e8d6f660c..17d90e09f1c0 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -31,12 +31,12 @@ struct bd718xx_clk {
+ 	u8 reg;
+ 	u8 mask;
+ 	struct platform_device *pdev;
+-	struct rohm_regmap_dev *mfd;
++	struct regmap *regmap;
  };
  
--enum {
--	ROHM_DVS_LEVEL_UNKNOWN,
--	ROHM_DVS_LEVEL_RUN,
--	ROHM_DVS_LEVEL_IDLE,
--	ROHM_DVS_LEVEL_SUSPEND,
--	ROHM_DVS_LEVEL_LPSR,
--	ROHM_DVS_LEVEL_MAX = ROHM_DVS_LEVEL_LPSR,
--};
-+#define ROHM_DVS_LEVEL_RUN		BIT(0)
-+#define ROHM_DVS_LEVEL_IDLE		BIT(1)
-+#define ROHM_DVS_LEVEL_SUSPEND		BIT(2)
-+#define ROHM_DVS_LEVEL_LPSR		BIT(3)
-+#define ROHM_DVS_LEVEL_VALID_AMOUNT	4
-+#define ROHM_DVS_LEVEL_UNKNOWN		0
+ static int bd71837_clk_set(struct bd718xx_clk *c, unsigned int status)
+ {
+-	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
++	return regmap_update_bits(c->regmap, c->reg, c->mask, status);
+ }
  
- /**
-  * struct rohm_dvs_config - dynamic voltage scaling register descriptions
+ static void bd71837_clk_disable(struct clk_hw *hw)
+@@ -62,7 +62,7 @@ static int bd71837_clk_is_enabled(struct clk_hw *hw)
+ 	int rval;
+ 	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
+ 
+-	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
++	rval = regmap_read(c->regmap, c->reg, &enabled);
+ 
+ 	if (rval)
+ 		return rval;
+@@ -82,7 +82,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	int rval = -ENOMEM;
+ 	const char *parent_clk;
+ 	struct device *parent = pdev->dev.parent;
+-	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
+ 	struct clk_init_data init = {
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+@@ -93,6 +92,10 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	if (!c)
+ 		return -ENOMEM;
+ 
++	c->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!c->regmap)
++		return -ENODEV;
++
+ 	init.num_parents = 1;
+ 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+ 
+@@ -119,7 +122,6 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Unknown clk chip\n");
+ 		return -EINVAL;
+ 	}
+-	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+ 
 -- 
 2.25.4
 
