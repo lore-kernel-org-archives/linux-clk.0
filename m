@@ -2,105 +2,279 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E412C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9378AC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3EAC22D71
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B29720754
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbhASVYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 16:24:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728231AbhASVWL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 16:22:11 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B83C061573;
-        Tue, 19 Jan 2021 13:21:31 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id d81so27469568iof.3;
-        Tue, 19 Jan 2021 13:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vhsDZ9UOGRlQVPZEAGfDhpppuCtmEIDEub6NEX0zatQ=;
-        b=Zr5XHVmaw52Wc+WMo1h25ZUL5niz/WInKwAdPM7Z/5kNofoFb+V0Av64cKsL1WW4lH
-         IDw7UD9D0GW1CMnQT8xQjSXh4Z4T0zyp1RIZQ3lHC7fAtyC6P44nhNHtZlb8vPMhW2J8
-         oqNTHHfLCVTUVA0Dyv9S4YHluG10rNhcuAy7rj0GiWBavIQq4HuYggsYCBiLZFI4QIzW
-         vd4KiXUcMYvzmaIQBTvEEj9QT4i4/sHznHPIPFvWGld4zqUfmqTqUNrvE5HZ3UjA8hIC
-         E2gDIDoprYyJV0ybLTVx+PX1OhEewItciT0FmSql215i480xIZuG19RaFY2daPrq/Hx1
-         oaWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vhsDZ9UOGRlQVPZEAGfDhpppuCtmEIDEub6NEX0zatQ=;
-        b=VUiTHQGksy1BJVg8SY3xlqWwl3uIgNpRaI4nrK/qGBGUSz3SF40g6v+XLrROLszxHy
-         G7NSsmuRktxUQlnp34ww0AL1YUnLPQ7lwLKncEbzAPoWbDrHpd+7N8CFOIM9LuZyqEMu
-         g/QVTHVLv7FmP7xdv/+CFS4BMVtiLnn9dPEO+ahOq6xh+BgA4/TV0JFCSxC+PcmU073o
-         EDR52B0SVfm0VZjUjb6ZDFXrwir4sVT43BUq2mJ1ht0Zz2EHYySfkqTT5wWDIiT+lJ+Q
-         o17j+ov07Y1sXcUZvHwXfvd5t6YSiUMFJrnWjKvSLtTueacxpFXmjGJZDLNdQWFbdxO/
-         zpoA==
-X-Gm-Message-State: AOAM530ltVRq7pkKeZu2loDOwmBOJBA7cHPFTHOIEHPEvzL4dSi4dJ6r
-        xI5Nngxop36c61fb+InmHKHQko8CMi02byBw
-X-Google-Smtp-Source: ABdhPJxPkYv3XDnlrA4ZQLQEQYx6Ys8qNOMb3BoJf6Geppd4c4PWkfCL8uJtfcxU4hqtaLeFcVoYrg==
-X-Received: by 2002:a05:6e02:674:: with SMTP id l20mr5146553ilt.222.1611091290410;
-        Tue, 19 Jan 2021 13:21:30 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:2386:3a11:421c:65a9])
-        by smtp.gmail.com with ESMTPSA id z87sm61418ilk.40.2021.01.19.13.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 13:21:29 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
+        id S1728231AbhASVzN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 16:55:13 -0500
+Received: from m-r2.th.seeweb.it ([5.144.164.171]:54955 "EHLO
+        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727866AbhASVzB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 16:55:01 -0500
+Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id D7D363EF47;
+        Tue, 19 Jan 2021 22:54:14 +0100 (CET)
+Subject: Re: [PATCH v4 3/5] clk: qcom: clk-alpha-pll: Add support for Lucid
+ 5LPE PLL
+To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vivek Aknurwar <viveka@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 1/2] dt-bindings: clk: versaclock5: Add optional load capacitance property
-Date:   Tue, 19 Jan 2021 15:21:08 -0600
-Message-Id: <20210119212109.1064786-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeevan Shriram <jshriram@codeaurora.org>
+References: <20210118044321.2571775-1-vkoul@kernel.org>
+ <20210118044321.2571775-4-vkoul@kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Message-ID: <894afe9b-8534-3a57-efc8-d517aab617fe@somainline.org>
+Date:   Tue, 19 Jan 2021 22:54:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210118044321.2571775-4-vkoul@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are two registers which can set the load capacitance for
-XTAL1 and XTAL2. These are optional registers when using an
-external crystal.  Since XTAL1 and XTAL2 will set to the same value,
-update the binding to support a single property called
-xtal-load-femtofarads.
+Il 18/01/21 05:43, Vinod Koul ha scritto:
+> From: Vivek Aknurwar <viveka@codeaurora.org>
+> 
+> Lucid 5LPE is a slightly different Lucid PLL with different offsets and
+> porgramming sequence so add support for these
+> 
+> Signed-off-by: Vivek Aknurwar <viveka@codeaurora.org>
+> Signed-off-by: Jeevan Shriram <jshriram@codeaurora.org>
+> [vkoul: rebase and tidy up for upstream]
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>   drivers/clk/qcom/clk-alpha-pll.c | 173 +++++++++++++++++++++++++++++++
+>   drivers/clk/qcom/clk-alpha-pll.h |   4 +
+>   2 files changed, 177 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index a30ea7b09224..f9c48da21bd1 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -156,6 +156,12 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>   /* LUCID PLL specific settings and offsets */
+>   #define LUCID_PCAL_DONE		BIT(27)
+>   
+> +/* LUCID 5LPE PLL specific settings and offsets */
+> +#define LUCID_5LPE_PCAL_DONE		BIT(11)
+> +#define LUCID_5LPE_ALPHA_PLL_ACK_LATCH	BIT(13)
+> +#define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
+> +#define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
+> +
+>   #define pll_alpha_width(p)					\
+>   		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+>   				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+> @@ -1604,3 +1610,170 @@ const struct clk_ops clk_alpha_pll_agera_ops = {
+>   	.set_rate = clk_alpha_pll_agera_set_rate,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_alpha_pll_agera_ops);
+> +
+> +static int alpha_pll_lucid_5lpe_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* If in FSM mode, just vote for it */
+> +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> +		ret = clk_enable_regmap(hw);
+> +		if (ret)
+> +			return ret;
+> +		return wait_for_pll_enable_lock(pll);
+> +	}
+> +
+> +	/* Check if PLL is already enabled, return if enabled */
+> +	ret = trion_pll_is_enabled(pll, pll->clkr.regmap);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+> +	if (ret)
+> +		return ret;
+> +
+> +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_RUN);
+> +
+> +	ret = wait_for_pll_enable_lock(pll);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable the PLL outputs */
+> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, PLL_OUT_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable the global PLL outputs */
+> +	return regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
+> +}
+> +
+> +static void alpha_pll_lucid_5lpe_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> +	if (ret)
+> +		return;
+> +
+> +	/* If in FSM mode, just unvote it */
+> +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> +		clk_disable_regmap(hw);
+> +		return;
+> +	}
+> +
+> +	/* Disable the global PLL output */
+> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+> +	if (ret)
+> +		return;
+> +
+> +	/* Disable the PLL outputs */
+> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, 0);
+> +	if (ret)
+> +		return;
+> +
+> +	/* Place the PLL mode in STANDBY */
+> +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_STANDBY);
+> +}
+> +
+> +/*
+> + * The Lucid 5LPE PLL requires a power-on self-calibration which happens
+> + * when the PLL comes out of reset. Calibrate in case it is not completed.
+> + */
+> +static int alpha_pll_lucid_5lpe_prepare(struct clk_hw *hw)
+> +{
+> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> +	struct clk_hw *p;
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* Return early if calibration is not needed. */
+> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> +	if (val & LUCID_5LPE_PCAL_DONE)
+> +		return 0;
+> +
+> +	p = clk_hw_get_parent(hw);
+> +	if (!p)
+> +		return -EINVAL;
+> +
+> +	ret = alpha_pll_lucid_5lpe_enable(hw);
+> +	if (ret)
+> +		return ret;
+> +
+> +	alpha_pll_lucid_5lpe_disable(hw);
+> +
+> +	return 0;
+> +}
+> +
+> +static int alpha_pll_lucid_5lpe_set_rate(struct clk_hw *hw, unsigned long rate,
+> +					 unsigned long prate)
+> +{
+> +	return __alpha_pll_trion_set_rate(hw, rate, prate,
+> +					  LUCID_5LPE_PLL_LATCH_INPUT,
+> +					  LUCID_5LPE_ALPHA_PLL_ACK_LATCH);
+> +}
+> +
+> +static int clk_lucid_5lpe_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+> +					       unsigned long parent_rate)
+> +{
+> +	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
+> +	int i, val = 0, div, ret;
+> +	u32 mask;
+> +
+> +	/*
+> +	 * If the PLL is in FSM mode, then treat set_rate callback as a
+> +	 * no-operation.
+> +	 */
+> +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN)
+> +		return 0;
+> +
+> +	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +	for (i = 0; i < pll->num_post_div; i++) {
+> +		if (pll->post_div_table[i].div == div) {
+> +			val = pll->post_div_table[i].val;
+> +			break;
+> +		}
+> +	}
+> +
+> +	mask = GENMASK(pll->width + pll->post_div_shift - 1, pll->post_div_shift);
+> +	return regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
+> +				  mask, val << pll->post_div_shift);
+> +}
+> +
+> +const struct clk_ops clk_alpha_pll_lucid_5lpe_ops = {
+> +	.prepare = alpha_pll_lucid_5lpe_prepare,
+> +	.enable = alpha_pll_lucid_5lpe_enable,
+> +	.disable = alpha_pll_lucid_5lpe_disable,
+> +	.is_enabled = clk_trion_pll_is_enabled,
+> +	.recalc_rate = clk_trion_pll_recalc_rate,
+> +	.round_rate = clk_alpha_pll_round_rate,
+> +	.set_rate = alpha_pll_lucid_5lpe_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_lucid_5lpe_ops);
+> +
+> +const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
+> +	.enable = alpha_pll_lucid_5lpe_enable,
+> +	.disable = alpha_pll_lucid_5lpe_disable,
+> +	.is_enabled = clk_trion_pll_is_enabled,
+> +	.recalc_rate = clk_trion_pll_recalc_rate,
+> +	.round_rate = clk_alpha_pll_round_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_fixed_lucid_5lpe_ops);
+> +
+> +const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
+> +	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
+> +	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
+> +	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
+> +};
+> +EXPORT_SYMBOL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+> index 0ea30d2f3da1..6943e933be0f 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.h
+> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+> @@ -144,6 +144,10 @@ extern const struct clk_ops clk_alpha_pll_lucid_ops;
+>   extern const struct clk_ops clk_alpha_pll_postdiv_lucid_ops;
+>   extern const struct clk_ops clk_alpha_pll_agera_ops;
+>   
+> +extern const struct clk_ops clk_alpha_pll_lucid_5lpe_ops;
+> +extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
+> +extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
+> +
+>   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>   			     const struct alpha_pll_config *config);
+>   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> 
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  No Change
+Thanks for following my suggestion!
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index 2ac1131fd922..c268debe5b8d 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -59,6 +59,12 @@ properties:
-     minItems: 1
-     maxItems: 2
- 
-+  idt,xtal-load-femtofarads:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 9000
-+    maximum: 22760
-+    description: Optional load capacitor for XTAL1 and XTAL2
-+
- patternProperties:
-   "^OUT[1-4]$":
-     type: object
--- 
-2.25.1
-
+Reviewed-by: AngeloGioacchino Del Regno 
+<angelogioacchino.delregno@somainline.org>
