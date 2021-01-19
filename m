@@ -2,118 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1F5C433E6
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 21:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE4C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 02:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1D322D6E
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jan 2021 21:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E22C222B3
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 02:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394389AbhARV0v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jan 2021 16:26:51 -0500
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:58751 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388513AbhARKKX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 05:10:23 -0500
-Received: from mail.aspeedtech.com ([192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id 10IA30lm051718;
-        Mon, 18 Jan 2021 18:03:00 +0800 (GMT-8)
-        (envelope-from ryan_chen@aspeedtech.com)
-Received: from localhost.localdomain (192.168.10.9) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 18 Jan
- 2021 18:08:18 +0800
-From:   Ryan Chen <ryan_chen@aspeedtech.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <andrewrj@au1.ibm.com>,
-        <joel@linux.ibm.com>, <BMC-SW@aspeedtech.com>
-CC:     Ryan Chen <ryan_chen@aspeedtech.com>
-Subject: [PATCH 1/1] clk: aspeed: Fix APLL calculate formula for ast2600-A2
-Date:   Mon, 18 Jan 2021 18:08:13 +0800
-Message-ID: <20210118100813.30821-2-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210118100813.30821-1-ryan_chen@aspeedtech.com>
-References: <20210118100813.30821-1-ryan_chen@aspeedtech.com>
+        id S2404799AbhASCLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jan 2021 21:11:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404721AbhASCLe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jan 2021 21:11:34 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C694C061573;
+        Mon, 18 Jan 2021 18:10:54 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id h205so26830799lfd.5;
+        Mon, 18 Jan 2021 18:10:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YaUFV/j6fIPLf9E3GK/p3HaOmFJPo2jVJH2mypUsSUE=;
+        b=SkUalU8LqzJ7sWI8nhOtu6d/v1gEueKzrO959w3yFpydyKHfWAKGac03BSsjbqXAJw
+         ouUyWjJt6Rrf6LP5y7+x50o4uRlg4qDTBjfxLY0zKNeaLmW8PNe64xWWq5knYrTHSrLT
+         dY4Aqk0xpQLLxmMbtWwBDa2lfkuxFaYDyIlhoxhya2xpycjcaMRV/T4hCngXyDv4Y81f
+         mpMpE6pAQgoo1u53Kuj3hSvHEjfmtKgOoHxGKSnL1AVIxXEKrLJdwV9+ytOywktbeX2L
+         2/wTQbyPQUNvhdGzPsl+pstuFYpSuvPGm/bQ1wFVVm0gB5By6iRR266zXofOEIFSVcbk
+         PqfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YaUFV/j6fIPLf9E3GK/p3HaOmFJPo2jVJH2mypUsSUE=;
+        b=az8VlN7HfirU4BE4BQks2L6E48UsWj56LAVIib6rd1SEtDlmwIzk9ssvdPURwGtTpT
+         P0pr/Ke8hzZ1KFYwyLnX3sJf4Xl+Q9YMQU80sDymgDtqfuLp1zp4KsSGOY4qIURwOYHC
+         x4AWc/DJw7TQ40gK8hJ9ng7D6DUFxNEFHxM7h7jRzKyH4W17rj/RY2gxEsCbmI+p78Iv
+         fGzRE/RMaXKid+LthPgaMYHS4p7+v+XA0+B/3W5gh1olYAxc1wXMI+M3EGJt8EFVkUS5
+         +AeNeKv9whQK3V5CLOrWjlXrhjWRohGB1B1pAsujt2mNqXeAC4q44joeKdxGYOcOXn29
+         3q8A==
+X-Gm-Message-State: AOAM531WOZD/iLg4E1VyuLhndE+J2U1UNxhWTeotMtJ/UxV1LBVZ/rNf
+        t7534FQ8lLrmzoGikq8qHJ3hsMoGb8jDxkoHE34=
+X-Google-Smtp-Source: ABdhPJy38gaPPxNsk35aDKt3LFzwYfOMXm77W89E1Ys1clVyXVykmUd+OyKm85c4JcDJs1aO6uN3H7f01+VAQa0Whfk=
+X-Received: by 2002:a19:4856:: with SMTP id v83mr804739lfa.583.1611022251450;
+ Mon, 18 Jan 2021 18:10:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.10.9]
-X-ClientProxiedBy: TWMBX02.aspeed.com (192.168.0.24) To TWMBX02.aspeed.com
- (192.168.0.24)
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com 10IA30lm051718
+References: <20210118113032.21178-1-a.fatoum@pengutronix.de>
+In-Reply-To: <20210118113032.21178-1-a.fatoum@pengutronix.de>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 18 Jan 2021 23:10:39 -0300
+Message-ID: <CAOMZO5BdtfXoXMNr0Rsr5YTrahg6Pnz90eryksN4ctnSvOwU+A@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx6q: demote warning about pre-boot ldb_di_clk reparenting
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-AST2600A1/A2 have different pll calculate formula.
+Hi Ahmad,
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
----
- drivers/clk/clk-ast2600.c | 37 +++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+On Mon, Jan 18, 2021 at 8:30 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>
+> Since 5d283b083800 ("clk: imx6: Fix procedure to switch the parent
+> of LDB_DI_CLK"), the clock driver warns if ldb_di\d_sel is changed
+> from reset value on system boot. This warning is printed even if
+> the bootloader (or a previous kernel that did kexec) followed the
+> correct procedure for glitch-free reparenting.
+>
+> As such systems are doing everything correctly, a warning is too
+> harsh. Demote to a notice, so users are still alerted, but without
+> cluttering a loglevel=5 boot.
+>
+> While at it, add the words "possible glitch" into the log message, to
+> make it more user-friendly.
+>
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index bbacaccad554..8933bd1506b3 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -17,7 +17,8 @@
- 
- #define ASPEED_G6_NUM_CLKS		71
- 
--#define ASPEED_G6_SILICON_REV		0x004
-+#define ASPEED_G6_SILICON_REV		0x014
-+#define CHIP_REVISION_ID			GENMASK(23, 16)
- 
- #define ASPEED_G6_RESET_CTRL		0x040
- #define ASPEED_G6_RESET_CTRL2		0x050
-@@ -190,18 +191,34 @@ static struct clk_hw *ast2600_calc_pll(const char *name, u32 val)
- static struct clk_hw *ast2600_calc_apll(const char *name, u32 val)
- {
- 	unsigned int mult, div;
-+	u32 chip_id = readl(scu_g6_base + ASPEED_G6_SILICON_REV);
- 
--	if (val & BIT(20)) {
--		/* Pass through mode */
--		mult = div = 1;
-+	if (((chip_id & CHIP_REVISION_ID) >> 16) >= 2) {
-+		if (val & BIT(24)) {
-+			/* Pass through mode */
-+			mult = div = 1;
-+		} else {
-+			/* F = 25Mhz * [(m + 1) / (n + 1)] / (p + 1) */
-+			u32 m = val & 0x1fff;
-+			u32 n = (val >> 13) & 0x3f;
-+			u32 p = (val >> 19) & 0xf;
-+
-+			mult = (m + 1);
-+			div = (n + 1) * (p + 1);
-+		}
- 	} else {
--		/* F = 25Mhz * (2-od) * [(m + 2) / (n + 1)] */
--		u32 m = (val >> 5) & 0x3f;
--		u32 od = (val >> 4) & 0x1;
--		u32 n = val & 0xf;
-+		if (val & BIT(20)) {
-+			/* Pass through mode */
-+			mult = div = 1;
-+		} else {
-+			/* F = 25Mhz * (2-od) * [(m + 2) / (n + 1)] */
-+			u32 m = (val >> 5) & 0x3f;
-+			u32 od = (val >> 4) & 0x1;
-+			u32 n = val & 0xf;
- 
--		mult = (2 - od) * (m + 2);
--		div = n + 1;
-+			mult = (2 - od) * (m + 2);
-+			div = n + 1;
-+		}
- 	}
- 	return clk_hw_register_fixed_factor(NULL, name, "clkin", 0,
- 			mult, div);
--- 
-2.17.1
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
