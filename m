@@ -2,430 +2,530 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F867C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 15:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA11C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 20:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 496A1207B1
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 15:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57B923107
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 20:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbhASPIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 10:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389132AbhASPB0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Jan 2021 10:01:26 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B21D82312E;
-        Tue, 19 Jan 2021 15:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611068445;
-        bh=WsmEuGO3cSlOjeMFww6osCf8AgOAWnC7qWpR/NPhiYk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IyY451FlUqN/Vi/rDifFifMjL2WrG4ADwDWzIMzB8aZZgPGCSMq6l4tS0vc/L0doY
-         /LgQbD7B/EU6tpiRY87862MY12dwame9+KEh1e4c6/k7sxRiFvEuN3Fb1xEB7HinVN
-         7UtujWuQ2rUMcwiUFdHtsQkNQ6oZtmoytEPbvUKZmzDY/pcdAQogivkdPi1cbEFL7p
-         zswmk9fzJpZc8aavfoTI9D/XuAEu8cKXXlqwQh8LMyMj7o9yhJKCxEd7vTtQUxCQLt
-         27cR88l9ZFgoDByqqfHTG2RNVCZkK55TkhP+mFvudVVUriHzi/qfk8bkwqWBIDpXi2
-         56FpgcwQ2DkYw==
-Subject: Re: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X
- platform
-To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210105192956.2059505-1-dinguyen@kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <0d9a6222-4628-09b9-4ddb-01a065ce456e@kernel.org>
-Date:   Tue, 19 Jan 2021 09:00:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728779AbhASURY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 15:17:24 -0500
+Received: from mail-oo1-f46.google.com ([209.85.161.46]:34217 "EHLO
+        mail-oo1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728949AbhASUQl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 15:16:41 -0500
+Received: by mail-oo1-f46.google.com with SMTP id x23so5237265oop.1;
+        Tue, 19 Jan 2021 12:16:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ADy6JPToWLaKlK8OT2t2Ni42Mp7UoZX80LpKTwGwr6g=;
+        b=amB9a2Rah6vH6aT9JKEpsVQfR4HYdo0AropPPcWI7eRw8ppSxp2Kq8rw1srAkqSaAi
+         pojFhzNeMjWNIrFYcDsuuoLYHQwDpsiUs16gMV8Bm3lGaI/OYQiBfsy9d0Qpr22X0QCf
+         ruK5YMdBIct7z8mWkMCwEG920NHv4oj9u+LsJPTAWe0iK3VsVWVq4BPuoYzk+ArjcPp2
+         tnuolhSMHkLbqAGatJx694If2Y8eFtKpssGlvTcmB4ccdhNWVMTwcRA1lylPAm5TBYHf
+         wyWARrEjIR8KFU9XNweKegc4tOuhD3Pp3bdE2MQv8SrM2/s9c4shy6VuKjCEDqaKMNbG
+         sD3A==
+X-Gm-Message-State: AOAM530U4kR9Y7j5Ez3++IPRw85NCZNPUqs+P3o0eKYSHlwPqiTUGHx4
+        NR9Z1qIVMwB1EwydU02Iyff15s7m4TELIBq5B4R3mHKp
+X-Google-Smtp-Source: ABdhPJw8ocVEuJExeSaGIk8wgCl35/472S6I+2Arri8MRWBPCuNIUawo+T9prUUI9uKyhqa9dTCj2RKcjtv0pbEwplQ=
+X-Received: by 2002:a4a:bf14:: with SMTP id r20mr4017286oop.2.1611087358781;
+ Tue, 19 Jan 2021 12:15:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210105192956.2059505-1-dinguyen@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz> <3o6s1sr4-60o2-2o54-259o-oq7o635sqo4p@onlyvoer.pbz>
+In-Reply-To: <3o6s1sr4-60o2-2o54-259o-oq7o635sqo4p@onlyvoer.pbz>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 19 Jan 2021 21:15:47 +0100
+Message-ID: <CAJZ5v0jmMmj4tLwP9vLETnxh_Wkbc_XV-Z8yaWRL-jLJ0anetg@mail.gmail.com>
+Subject: Re: [PATCH] PM / clk: make PM clock layer compatible with clocks that
+ must sleep
+To:     Nicolas Pitre <npitre@baylibre.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen/Mike,
+On Mon, Jan 18, 2021 at 12:50 AM Nicolas Pitre <npitre@baylibre.com> wrote:
+>
+> Ping.
 
-Was wondering if you had a chance to review this patch?
+Applied as 5.12 material,  sorry for the delay.
 
-Thanks,
-Dinh
+Thanks!
 
-
-On 1/5/21 1:29 PM, Dinh Nguyen wrote:
-> Add support for Intel's eASIC N5X platform. The clock manager driver for
-> the N5X is very similar to the Agilex platform, we can re-use most of
-> the Agilex clock driver.
-> 
-> This patch makes the necessary changes for the driver to differentiate
-> between the Agilex and the N5X platforms.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
->   drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
->   drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
->   drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
->   drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
->   4 files changed, 238 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-> index bb3e80928ebe..f9394ed8a41d 100644
-> --- a/drivers/clk/socfpga/clk-agilex.c
-> +++ b/drivers/clk/socfpga/clk-agilex.c
-> @@ -196,6 +196,17 @@ static const struct stratix10_pll_clock agilex_pll_clks[] = {
->   	  0, 0x9c},
->   };
->   
-> +static const struct n5x_perip_c_clock n5x_main_perip_c_clks[] = {
-> +	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x54, 0},
-> +	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x54, 8},
-> +	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x54, 16},
-> +	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x54, 24},
-> +	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xA8, 0},
-> +	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xA8, 8},
-> +	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xA8, 16},
-> +	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xA8, 24},
-> +};
-> +
->   static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
->   	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
->   	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
-> @@ -289,6 +300,25 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
->   	  10, 0, 0, 0, 0, 0, 4},
->   };
->   
-> +static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
-> +				       int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk *clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		clk = n5x_register_periph(&clks[i], base);
-> +		if (IS_ERR(clk)) {
-> +			pr_err("%s: failed to register clock %s\n",
-> +			       __func__, clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.clks[clks[i].id] = clk;
-> +	}
-> +	return 0;
-> +}
-> +
->   static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
->   				       int nums, struct stratix10_clock_data *data)
->   {
-> @@ -367,6 +397,26 @@ static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
->   	return 0;
->   }
->   
-> +static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
-> +				 int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk *clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		clk = n5x_register_pll(&clks[i], base);
-> +		if (IS_ERR(clk)) {
-> +			pr_err("%s: failed to register clock %s\n",
-> +			       __func__, clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.clks[clks[i].id] = clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
->   						    int nr_clks)
->   {
-> @@ -401,7 +451,7 @@ static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_de
->   	return clk_data;
->   }
->   
-> -static int agilex_clkmgr_probe(struct platform_device *pdev)
-> +static int agilex_clkmgr_init(struct platform_device *pdev)
->   {
->   	struct stratix10_clock_data *clk_data;
->   
-> @@ -423,9 +473,43 @@ static int agilex_clkmgr_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> +static int n5x_clkmgr_init(struct platform_device *pdev)
-> +{
-> +	struct stratix10_clock_data *clk_data;
-> +
-> +	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
-> +	if (IS_ERR(clk_data))
-> +		return PTR_ERR(clk_data);
-> +
-> +	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
-> +
-> +	n5x_clk_register_c_perip(n5x_main_perip_c_clks,
-> +				 ARRAY_SIZE(n5x_main_perip_c_clks), clk_data);
-> +
-> +	agilex_clk_register_cnt_perip(agilex_main_perip_cnt_clks,
-> +				   ARRAY_SIZE(agilex_main_perip_cnt_clks),
-> +				   clk_data);
-> +
-> +	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
-> +			      clk_data);
-> +	return 0;
-> +}
-> +
-> +static int agilex_clkmgr_probe(struct platform_device *pdev)
-> +{
-> +	int (*probe_func)(struct platform_device *);
-> +
-> +	probe_func = of_device_get_match_data(&pdev->dev);
-> +	if (!probe_func)
-> +		return -ENODEV;
-> +	return	probe_func(pdev);;
-> +}
-> +
->   static const struct of_device_id agilex_clkmgr_match_table[] = {
->   	{ .compatible = "intel,agilex-clkmgr",
-> -	  .data = agilex_clkmgr_probe },
-> +	  .data = agilex_clkmgr_init },
-> +	{ .compatible = "intel,n5x-clkmgr",
-> +	  .data = n5x_clkmgr_init },
->   	{ }
->   };
->   
-> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-> index 397b77b89b16..135581c41c05 100644
-> --- a/drivers/clk/socfpga/clk-periph-s10.c
-> +++ b/drivers/clk/socfpga/clk-periph-s10.c
-> @@ -15,6 +15,21 @@
->   
->   #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.hw)
->   
-> +static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
-> +					     unsigned long parent_rate)
-> +{
-> +	struct socfpga_periph_clk *socfpgaclk = to_periph_clk(hwclk);
-> +	unsigned long div;
-> +	unsigned long shift = socfpgaclk->shift;
-> +	u32 val;
-> +
-> +	val = readl(socfpgaclk->hw.reg);
-> +	val &= (0x1F << shift);
-> +	div = (val >> shift) + 1;
-> +
-> +	return parent_rate / div;
-> +}
-> +
->   static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
->   					     unsigned long parent_rate)
->   {
-> @@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
->   	return parent;
->   }
->   
-> +static const struct clk_ops n5x_peri_c_clk_ops = {
-> +	.recalc_rate = n5x_clk_peri_c_clk_recalc_rate,
-> +	.get_parent = clk_periclk_get_parent,
-> +};
-> +
->   static const struct clk_ops peri_c_clk_ops = {
->   	.recalc_rate = clk_peri_c_clk_recalc_rate,
->   	.get_parent = clk_periclk_get_parent,
-> @@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
->   	return clk;
->   }
->   
-> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
-> +				void __iomem *regbase)
-> +{
-> +	struct clk *clk;
-> +	struct socfpga_periph_clk *periph_clk;
-> +	struct clk_init_data init;
-> +	const char *name = clks->name;
-> +	const char *parent_name = clks->parent_name;
-> +
-> +	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
-> +	if (WARN_ON(!periph_clk))
-> +		return NULL;
-> +
-> +	periph_clk->hw.reg = regbase + clks->offset;
-> +	periph_clk->shift = clks->shift;
-> +
-> +	init.name = name;
-> +	init.ops = &n5x_peri_c_clk_ops;
-> +	init.flags = clks->flags;
-> +
-> +	init.num_parents = clks->num_parents;
-> +	init.parent_names = parent_name ? &parent_name : NULL;
-> +
-> +	periph_clk->hw.hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &periph_clk->hw.hw);
-> +	if (WARN_ON(IS_ERR(clk))) {
-> +		kfree(periph_clk);
-> +		return NULL;
-> +	}
-> +	return clk;
-> +}
-> +
->   struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
->   				    void __iomem *regbase)
->   {
-> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-> index 4e268953b7da..4bdf64be3ed4 100644
-> --- a/drivers/clk/socfpga/clk-pll-s10.c
-> +++ b/drivers/clk/socfpga/clk-pll-s10.c
-> @@ -27,10 +27,37 @@
->   #define SWCTRLBTCLKSEL_MASK		0x200
->   #define SWCTRLBTCLKSEL_SHIFT		9
->   
-> +#define SOCFPGA_N5X_PLLDIV_FDIV_MASK	GENMASK(16, 8)
-> +#define SOCFPGA_N5X_PLLDIV_FDIV_SHIFT	8
-> +#define SOCFPGA_N5X_PLLDIV_RDIV_MASK	GENMASK(5, 0)
-> +#define SOCFPGA_N5X_PLLDIV_QDIV_MASK	GENMASK(26, 24)
-> +#define SOCFPGA_N5X_PLLDIV_QDIV_SHIFT	24
-> +
->   #define SOCFPGA_BOOT_CLK		"boot_clk"
->   
->   #define to_socfpga_clk(p) container_of(p, struct socfpga_pll, hw.hw)
->   
-> +static unsigned long n5x_clk_pll_recalc_rate(struct clk_hw *hwclk,
-> +						unsigned long parent_rate)
-> +{
-> +	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-> +	unsigned long fdiv, reg, rdiv, qdiv;
-> +	u32 power = 1;
-> +
-> +	/* read VCO1 reg for numerator and denominator */
-> +	reg = readl(socfpgaclk->hw.reg + 0x8);
-> +	fdiv = (reg & SOCFPGA_N5X_PLLDIV_FDIV_MASK) >> SOCFPGA_N5X_PLLDIV_FDIV_SHIFT;
-> +	rdiv = (reg & SOCFPGA_N5X_PLLDIV_RDIV_MASK);
-> +	qdiv = (reg & SOCFPGA_N5X_PLLDIV_QDIV_MASK) >> SOCFPGA_N5X_PLLDIV_QDIV_SHIFT;
-> +
-> +	while (qdiv) {
-> +		power *= 2;
-> +		qdiv--;
-> +	}
-> +
-> +	return ((parent_rate * 2 * (fdiv + 1)) / ((rdiv + 1) * power));
-> +}
-> +
->   static unsigned long agilex_clk_pll_recalc_rate(struct clk_hw *hwclk,
->   						unsigned long parent_rate)
->   {
-> @@ -123,7 +150,26 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
->   	return 0;
->   }
->   
-> -static const struct clk_ops agilex_clk_pll_ops = {
-> +static int n5x_clk_pll_prepare(struct clk_hw *hwclk)
-> +{
-> +	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
-> +	u32 reg;
-> +
-> +	/* Bring PLL out of reset */
-> +	reg = readl(socfpgaclk->hw.reg + 0x4);
-> +	reg &= ~SOCFPGA_PLL_RESET_MASK;
-> +	writel(reg, socfpgaclk->hw.reg + 0x4);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct clk_ops n5x_clk_pll_ops = {
-> +	.recalc_rate = n5x_clk_pll_recalc_rate,
-> +	.get_parent = clk_pll_get_parent,
-> +	.prepare = n5x_clk_pll_prepare,
-> +};
-> +
-> +static struct clk_ops agilex_clk_pll_ops = {
->   	.recalc_rate = agilex_clk_pll_recalc_rate,
->   	.get_parent = clk_pll_get_parent,
->   	.prepare = clk_pll_prepare,
-> @@ -214,3 +260,40 @@ struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
->   	}
->   	return clk;
->   }
-> +
-> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
-> +			     void __iomem *reg)
-> +{
-> +	struct clk *clk;
-> +	struct socfpga_pll *pll_clk;
-> +	struct clk_init_data init;
-> +	const char *name = clks->name;
-> +
-> +	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-> +	if (WARN_ON(!pll_clk))
-> +		return NULL;
-> +
-> +	pll_clk->hw.reg = reg + clks->offset;
-> +
-> +	if (streq(name, SOCFPGA_BOOT_CLK))
-> +		init.ops = &clk_boot_ops;
-> +	else
-> +		init.ops = &n5x_clk_pll_ops;
-> +
-> +	init.name = name;
-> +	init.flags = clks->flags;
-> +
-> +	init.num_parents = clks->num_parents;
-> +	init.parent_names = NULL;
-> +	init.parent_data = clks->parent_data;
-> +	pll_clk->hw.hw.init = &init;
-> +
-> +	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-> +
-> +	clk = clk_register(NULL, &pll_clk->hw.hw);
-> +	if (WARN_ON(IS_ERR(clk))) {
-> +		kfree(pll_clk);
-> +		return NULL;
-> +	}
-> +	return clk;
-> +}
-> diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-> index f9d5d724c694..90441c990855 100644
-> --- a/drivers/clk/socfpga/stratix10-clk.h
-> +++ b/drivers/clk/socfpga/stratix10-clk.h
-> @@ -30,6 +30,17 @@ struct stratix10_perip_c_clock {
->   	unsigned long		offset;
->   };
->   
-> +struct n5x_perip_c_clock {
-> +	unsigned int		id;
-> +	const char		*name;
-> +	const char		*parent_name;
-> +	const char		*const *parent_names;
-> +	u8			num_parents;
-> +	unsigned long		flags;
-> +	unsigned long		offset;
-> +	unsigned long		shift;
-> +};
-> +
->   struct stratix10_perip_cnt_clock {
->   	unsigned int		id;
->   	const char		*name;
-> @@ -64,8 +75,12 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *,
->   			     void __iomem *);
->   struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
->   				void __iomem *);
-> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-> +			     void __iomem *);
->   struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
->   				void __iomem *);
-> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-> +				void __iomem *);
->   struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
->   				    void __iomem *);
->   struct clk *s10_register_gate(const struct stratix10_gate_clock *,
-> 
+> On Mon, 4 Jan 2021, Nicolas Pitre wrote:
+>
+> > The clock API splits its interface into sleepable ant atomic contexts:
+> >
+> > - clk_prepare/clk_unprepare for stuff that might sleep
+> >
+> > - clk_enable_clk_disable for anything that may be done in atomic context
+> >
+> > The code handling runtime PM for clocks only calls clk_disable() on
+> > suspend requests, and clk_enable on resume requests. This means that
+> > runtime PM with clock providers that only have the prepare/unprepare
+> > methods implemented is basically useless.
+> >
+> > Many clock implementations can't accommodate atomic contexts. This is
+> > often the case when communication with the clock happens through another
+> > subsystem like I2C or SCMI.
+> >
+> > Let's make the clock PM code useful with such clocks by safely invoking
+> > clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
+> > such clocks are registered with the PM layer then pm_runtime_irq_safe()
+> > can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
+> > may be invoked in atomic context.
+> >
+> > For clocks that do implement the enable and disable methods then
+> > everything just works as before.
+> >
+> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> >
+> > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+> > index ced6863a16..a62fb0f9b1 100644
+> > --- a/drivers/base/power/clock_ops.c
+> > +++ b/drivers/base/power/clock_ops.c
+> > @@ -23,6 +23,7 @@
+> >  enum pce_status {
+> >       PCE_STATUS_NONE = 0,
+> >       PCE_STATUS_ACQUIRED,
+> > +     PCE_STATUS_PREPARED,
+> >       PCE_STATUS_ENABLED,
+> >       PCE_STATUS_ERROR,
+> >  };
+> > @@ -32,8 +33,102 @@ struct pm_clock_entry {
+> >       char *con_id;
+> >       struct clk *clk;
+> >       enum pce_status status;
+> > +     bool enabled_when_prepared;
+> >  };
+> >
+> > +/**
+> > + * pm_clk_list_lock - ensure exclusive access for modifying the PM clock
+> > + *                 entry list.
+> > + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
+> > + *    and clk_op_might_sleep count to be modified.
+> > + *
+> > + * Get exclusive access before modifying the PM clock entry list and the
+> > + * clock_op_might_sleep count to guard against concurrent modifications.
+> > + * This also protects against a concurrent clock_op_might_sleep and PM clock
+> > + * entry list usage in pm_clk_suspend()/pm_clk_resume() that may or may not
+> > + * happen in atomic context, hence both the mutex and the spinlock must be
+> > + * taken here.
+> > + */
+> > +static void pm_clk_list_lock(struct pm_subsys_data *psd)
+> > +{
+> > +     mutex_lock(&psd->clock_mutex);
+> > +     spin_lock_irq(&psd->lock);
+> > +}
+> > +
+> > +/**
+> > + * pm_clk_list_unlock - counterpart to pm_clk_list_lock().
+> > + * @psd: the same pm_subsys_data instance previously passed to
+> > + *    pm_clk_list_lock().
+> > + */
+> > +static void pm_clk_list_unlock(struct pm_subsys_data *psd)
+> > +{
+> > +     spin_unlock_irq(&psd->lock);
+> > +     mutex_unlock(&psd->clock_mutex);
+> > +}
+> > +
+> > +/**
+> > + * pm_clk_op_lock - ensure exclusive access for performing clock operations.
+> > + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
+> > + *    and clk_op_might_sleep count being used.
+> > + * @flags: stored irq flags.
+> > + * @fn: string for the caller function's name.
+> > + *
+> > + * This is used by pm_clk_suspend() and pm_clk_resume() to guard
+> > + * against concurrent modifications to the clock entry list and the
+> > + * clock_op_might_sleep count. If clock_op_might_sleep is != 0 then
+> > + * only the mutex can be locked and those functions can only be used in
+> > + * non atomic context. If clock_op_might_sleep == 0 then these functions
+> > + * may be used in any context and only the spinlock can be locked.
+> > + * Returns -EINVAL if called in atomic context when clock ops might sleep.
+> > + */
+> > +static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
+> > +                       const char *fn)
+> > +{
+> > +     bool atomic_context = in_atomic() || irqs_disabled();
+> > +
+> > +try_again:
+> > +     spin_lock_irqsave(&psd->lock, *flags);
+> > +     if (!psd->clock_op_might_sleep)
+> > +             return 0;
+> > +
+> > +     /* bail out if in atomic context */
+> > +     if (atomic_context) {
+> > +             pr_err("%s: atomic context with clock_ops_might_sleep = %d",
+> > +                    fn, psd->clock_op_might_sleep);
+> > +             spin_unlock_irqrestore(&psd->lock, *flags);
+> > +             might_sleep();
+> > +             return -EPERM;
+> > +     }
+> > +
+> > +     /* we must switch to the mutex */
+> > +     spin_unlock_irqrestore(&psd->lock, *flags);
+> > +     mutex_lock(&psd->clock_mutex);
+> > +
+> > +     /*
+> > +      * There was a possibility for psd->clock_op_might_sleep
+> > +      * to become 0 above. Keep the mutex only if not the case.
+> > +      */
+> > +     if (likely(psd->clock_op_might_sleep))
+> > +             return 0;
+> > +
+> > +     mutex_unlock(&psd->clock_mutex);
+> > +     goto try_again;
+> > +}
+> > +
+> > +/**
+> > + * pm_clk_op_unlock - counterpart to pm_clk_op_lock().
+> > + * @psd: the same pm_subsys_data instance previously passed to
+> > + *    pm_clk_op_lock().
+> > + * @flags: irq flags provided by pm_clk_op_lock().
+> > + */
+> > +static void pm_clk_op_unlock(struct pm_subsys_data *psd, unsigned long *flags)
+> > +{
+> > +     if (psd->clock_op_might_sleep)
+> > +             mutex_unlock(&psd->clock_mutex);
+> > +     else
+> > +             spin_unlock_irqrestore(&psd->lock, *flags);
+> > +}
+> > +
+> >  /**
+> >   * pm_clk_enable - Enable a clock, reporting any errors
+> >   * @dev: The device for the given clock
+> > @@ -43,14 +138,21 @@ static inline void __pm_clk_enable(struct device *dev, struct pm_clock_entry *ce
+> >  {
+> >       int ret;
+> >
+> > -     if (ce->status < PCE_STATUS_ERROR) {
+> > +     switch (ce->status) {
+> > +     case PCE_STATUS_ACQUIRED:
+> > +             ret = clk_prepare_enable(ce->clk);
+> > +             break;
+> > +     case PCE_STATUS_PREPARED:
+> >               ret = clk_enable(ce->clk);
+> > -             if (!ret)
+> > -                     ce->status = PCE_STATUS_ENABLED;
+> > -             else
+> > -                     dev_err(dev, "%s: failed to enable clk %p, error %d\n",
+> > -                             __func__, ce->clk, ret);
+> > +             break;
+> > +     default:
+> > +             return;
+> >       }
+> > +     if (!ret)
+> > +             ce->status = PCE_STATUS_ENABLED;
+> > +     else
+> > +             dev_err(dev, "%s: failed to enable clk %p, error %d\n",
+> > +                     __func__, ce->clk, ret);
+> >  }
+> >
+> >  /**
+> > @@ -64,17 +166,20 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
+> >               ce->clk = clk_get(dev, ce->con_id);
+> >       if (IS_ERR(ce->clk)) {
+> >               ce->status = PCE_STATUS_ERROR;
+> > +             return;
+> > +     } else if (clk_is_enabled_when_prepared(ce->clk)) {
+> > +             /* we defer preparing the clock in that case */
+> > +             ce->status = PCE_STATUS_ACQUIRED;
+> > +             ce->enabled_when_prepared = true;
+> > +     } else if (clk_prepare(ce->clk)) {
+> > +             ce->status = PCE_STATUS_ERROR;
+> > +             dev_err(dev, "clk_prepare() failed\n");
+> > +             return;
+> >       } else {
+> > -             if (clk_prepare(ce->clk)) {
+> > -                     ce->status = PCE_STATUS_ERROR;
+> > -                     dev_err(dev, "clk_prepare() failed\n");
+> > -             } else {
+> > -                     ce->status = PCE_STATUS_ACQUIRED;
+> > -                     dev_dbg(dev,
+> > -                             "Clock %pC con_id %s managed by runtime PM.\n",
+> > -                             ce->clk, ce->con_id);
+> > -             }
+> > +             ce->status = PCE_STATUS_PREPARED;
+> >       }
+> > +     dev_dbg(dev, "Clock %pC con_id %s managed by runtime PM.\n",
+> > +             ce->clk, ce->con_id);
+> >  }
+> >
+> >  static int __pm_clk_add(struct device *dev, const char *con_id,
+> > @@ -106,9 +211,11 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
+> >
+> >       pm_clk_acquire(dev, ce);
+> >
+> > -     spin_lock_irq(&psd->lock);
+> > +     pm_clk_list_lock(psd);
+> >       list_add_tail(&ce->node, &psd->clock_list);
+> > -     spin_unlock_irq(&psd->lock);
+> > +     if (ce->enabled_when_prepared)
+> > +             psd->clock_op_might_sleep++;
+> > +     pm_clk_list_unlock(psd);
+> >       return 0;
+> >  }
+> >
+> > @@ -239,14 +346,20 @@ static void __pm_clk_remove(struct pm_clock_entry *ce)
+> >       if (!ce)
+> >               return;
+> >
+> > -     if (ce->status < PCE_STATUS_ERROR) {
+> > -             if (ce->status == PCE_STATUS_ENABLED)
+> > -                     clk_disable(ce->clk);
+> > -
+> > -             if (ce->status >= PCE_STATUS_ACQUIRED) {
+> > -                     clk_unprepare(ce->clk);
+> > +     switch (ce->status) {
+> > +     case PCE_STATUS_ENABLED:
+> > +             clk_disable(ce->clk);
+> > +             fallthrough;
+> > +     case PCE_STATUS_PREPARED:
+> > +             clk_unprepare(ce->clk);
+> > +             fallthrough;
+> > +     case PCE_STATUS_ACQUIRED:
+> > +     case PCE_STATUS_ERROR:
+> > +             if (!IS_ERR(ce->clk))
+> >                       clk_put(ce->clk);
+> > -             }
+> > +             break;
+> > +     default:
+> > +             break;
+> >       }
+> >
+> >       kfree(ce->con_id);
+> > @@ -269,7 +382,7 @@ void pm_clk_remove(struct device *dev, const char *con_id)
+> >       if (!psd)
+> >               return;
+> >
+> > -     spin_lock_irq(&psd->lock);
+> > +     pm_clk_list_lock(psd);
+> >
+> >       list_for_each_entry(ce, &psd->clock_list, node) {
+> >               if (!con_id && !ce->con_id)
+> > @@ -280,12 +393,14 @@ void pm_clk_remove(struct device *dev, const char *con_id)
+> >                       goto remove;
+> >       }
+> >
+> > -     spin_unlock_irq(&psd->lock);
+> > +     pm_clk_list_unlock(psd);
+> >       return;
+> >
+> >   remove:
+> >       list_del(&ce->node);
+> > -     spin_unlock_irq(&psd->lock);
+> > +     if (ce->enabled_when_prepared)
+> > +             psd->clock_op_might_sleep--;
+> > +     pm_clk_list_unlock(psd);
+> >
+> >       __pm_clk_remove(ce);
+> >  }
+> > @@ -307,19 +422,21 @@ void pm_clk_remove_clk(struct device *dev, struct clk *clk)
+> >       if (!psd || !clk)
+> >               return;
+> >
+> > -     spin_lock_irq(&psd->lock);
+> > +     pm_clk_list_lock(psd);
+> >
+> >       list_for_each_entry(ce, &psd->clock_list, node) {
+> >               if (clk == ce->clk)
+> >                       goto remove;
+> >       }
+> >
+> > -     spin_unlock_irq(&psd->lock);
+> > +     pm_clk_list_unlock(psd);
+> >       return;
+> >
+> >   remove:
+> >       list_del(&ce->node);
+> > -     spin_unlock_irq(&psd->lock);
+> > +     if (ce->enabled_when_prepared)
+> > +             psd->clock_op_might_sleep--;
+> > +     pm_clk_list_unlock(psd);
+> >
+> >       __pm_clk_remove(ce);
+> >  }
+> > @@ -330,13 +447,16 @@ EXPORT_SYMBOL_GPL(pm_clk_remove_clk);
+> >   * @dev: Device to initialize the list of PM clocks for.
+> >   *
+> >   * Initialize the lock and clock_list members of the device's pm_subsys_data
+> > - * object.
+> > + * object, set the count of clocks that might sleep to 0.
+> >   */
+> >  void pm_clk_init(struct device *dev)
+> >  {
+> >       struct pm_subsys_data *psd = dev_to_psd(dev);
+> > -     if (psd)
+> > +     if (psd) {
+> >               INIT_LIST_HEAD(&psd->clock_list);
+> > +             mutex_init(&psd->clock_mutex);
+> > +             psd->clock_op_might_sleep = 0;
+> > +     }
+> >  }
+> >  EXPORT_SYMBOL_GPL(pm_clk_init);
+> >
+> > @@ -372,12 +492,13 @@ void pm_clk_destroy(struct device *dev)
+> >
+> >       INIT_LIST_HEAD(&list);
+> >
+> > -     spin_lock_irq(&psd->lock);
+> > +     pm_clk_list_lock(psd);
+> >
+> >       list_for_each_entry_safe_reverse(ce, c, &psd->clock_list, node)
+> >               list_move(&ce->node, &list);
+> > +     psd->clock_op_might_sleep = 0;
+> >
+> > -     spin_unlock_irq(&psd->lock);
+> > +     pm_clk_list_unlock(psd);
+> >
+> >       dev_pm_put_subsys_data(dev);
+> >
+> > @@ -397,23 +518,30 @@ int pm_clk_suspend(struct device *dev)
+> >       struct pm_subsys_data *psd = dev_to_psd(dev);
+> >       struct pm_clock_entry *ce;
+> >       unsigned long flags;
+> > +     int ret;
+> >
+> >       dev_dbg(dev, "%s()\n", __func__);
+> >
+> >       if (!psd)
+> >               return 0;
+> >
+> > -     spin_lock_irqsave(&psd->lock, flags);
+> > +     ret = pm_clk_op_lock(psd, &flags, __func__);
+> > +     if (ret)
+> > +             return ret;
+> >
+> >       list_for_each_entry_reverse(ce, &psd->clock_list, node) {
+> > -             if (ce->status < PCE_STATUS_ERROR) {
+> > -                     if (ce->status == PCE_STATUS_ENABLED)
+> > +             if (ce->status == PCE_STATUS_ENABLED) {
+> > +                     if (ce->enabled_when_prepared) {
+> > +                             clk_disable_unprepare(ce->clk);
+> > +                             ce->status = PCE_STATUS_ACQUIRED;
+> > +                     } else {
+> >                               clk_disable(ce->clk);
+> > -                     ce->status = PCE_STATUS_ACQUIRED;
+> > +                             ce->status = PCE_STATUS_PREPARED;
+> > +                     }
+> >               }
+> >       }
+> >
+> > -     spin_unlock_irqrestore(&psd->lock, flags);
+> > +     pm_clk_op_unlock(psd, &flags);
+> >
+> >       return 0;
+> >  }
+> > @@ -428,18 +556,21 @@ int pm_clk_resume(struct device *dev)
+> >       struct pm_subsys_data *psd = dev_to_psd(dev);
+> >       struct pm_clock_entry *ce;
+> >       unsigned long flags;
+> > +     int ret;
+> >
+> >       dev_dbg(dev, "%s()\n", __func__);
+> >
+> >       if (!psd)
+> >               return 0;
+> >
+> > -     spin_lock_irqsave(&psd->lock, flags);
+> > +     ret = pm_clk_op_lock(psd, &flags, __func__);
+> > +     if (ret)
+> > +             return ret;
+> >
+> >       list_for_each_entry(ce, &psd->clock_list, node)
+> >               __pm_clk_enable(dev, ce);
+> >
+> > -     spin_unlock_irqrestore(&psd->lock, flags);
+> > +     pm_clk_op_unlock(psd, &flags);
+> >
+> >       return 0;
+> >  }
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 8c1d04db99..3d751ae5bc 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1164,6 +1164,27 @@ int clk_enable(struct clk *clk)
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_enable);
+> >
+> > +/**
+> > + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
+> > + * @clk: clock source
+> > + *
+> > + * Returns true if clk_prepare() implicitly enables the clock, effectively
+> > + * making clk_enable()/clk_disable() no-ops, false otherwise.
+> > + *
+> > + * This is of interest mainly to power management code where actually
+> > + * disabling the clock also requires unpreparing it to have any material
+> > + * effect.
+> > + *
+> > + * Regardless of the value returned here, the caller must always invoke
+> > + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
+> > + * to be right.
+> > + */
+> > +bool clk_is_enabled_when_prepared(struct clk *clk)
+> > +{
+> > +     return clk && !(clk->core->ops->enable && clk->core->ops->disable);
+> > +}
+> > +EXPORT_SYMBOL_GPL(clk_is_enabled_when_prepared);
+> > +
+> >  static int clk_core_prepare_enable(struct clk_core *core)
+> >  {
+> >       int ret;
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h
+> > index 31ff1bf1b7..71295906a2 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > @@ -554,6 +554,23 @@ void clk_disable(struct clk *clk);
+> >   */
+> >  void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks);
+> >
+> > +/**
+> > + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
+> > + * @clk: clock source
+> > + *
+> > + * Returns true if clk_prepare() implicitly enables the clock, effectively
+> > + * making clk_enable()/clk_disable() no-ops, false otherwise.
+> > + *
+> > + * This is of interest mainly to the power management code where actually
+> > + * disabling the clock also requires unpreparing it to have any material
+> > + * effect.
+> > + *
+> > + * Regardless of the value returned here, the caller must always invoke
+> > + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
+> > + * to be right.
+> > + */
+> > +bool clk_is_enabled_when_prepared(struct clk *clk);
+> > +
+> >  /**
+> >   * clk_get_rate - obtain the current clock rate (in Hz) for a clock source.
+> >   *             This is only valid once the clock source has been enabled.
+> > diff --git a/include/linux/pm.h b/include/linux/pm.h
+> > index 47aca6bac1..482313a8cc 100644
+> > --- a/include/linux/pm.h
+> > +++ b/include/linux/pm.h
+> > @@ -537,6 +537,8 @@ struct pm_subsys_data {
+> >       spinlock_t lock;
+> >       unsigned int refcount;
+> >  #ifdef CONFIG_PM_CLK
+> > +     unsigned int clock_op_might_sleep;
+> > +     struct mutex clock_mutex;
+> >       struct list_head clock_list;
+> >  #endif
+> >  #ifdef CONFIG_PM_GENERIC_DOMAINS
+> >
