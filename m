@@ -2,158 +2,430 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A352BC433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 14:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F867C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 15:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A61A2312E
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 14:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 496A1207B1
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 15:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387587AbhASOx4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:53:56 -0500
-Received: from mail-eopbgr70088.outbound.protection.outlook.com ([40.107.7.88]:15332
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728716AbhASNC3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Jan 2021 08:02:29 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bgmgvos5xcSZ9sV+SaR0v4CsmmR4p8cvnz7vdPK8e3/8YeVMleXrqmT9f4Hx0NJRLaF/Mb1d+H1HsPnOk+ceCLG5KgXXxZ7GssPRFD36yHQ+pwZYZ9qkPAwJeUsk9Z9/XMTR4kuVLMbU6K3//FV9If8p9+fHhL6yFyz6Iwj7ujqLiC/kyZPxveMIk3nS8gJRn4rTDntEU5c35fQqLzN/2vIkQKQLzCMYkMaPt4uJwRwDDVLrvXWSKOchsBPyBLQwsDTaNDj1Nuvw55Csavdmor8xyCFiCO7aXHQcL9OPXjrluwSgK6WGgWDCSGAZZEH98akk2g3VGaUhBlkEZ5BsUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JKqVj/fp4WM3UMFkqjbW8Lbih9Ry8GprkE13tckiM8U=;
- b=VxZXifRawpD5yrRVKMAFim4ZwKnUN3ysQHDJwRIKIBSiWZXQVdmAcDJnWhmLVXuXE6EauGWjLcmADZY121C/ktNuPqZW4UVY+o5H6n722fP+IT0Ev6ottOiRIWmofbYwKTQVDbJLHQD0p3X1mM31q/C/brBiO1cBSuiKSSsUJhu9lITccB//F7QV1FW4L1LcIEsgV0eAy527FOduQseNuKwnkc1Xv+TmpaWuKUQ6m2Yd7Sv+lEtxQ4rP1/SL04E2iQLxQtSICpNQSyimHeh5YQFyVv5pvys6UxjEXt4sYEfDti/nPebqhwBEmrKMkE0Qmp95EqzwkhN04JTxwH3m8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fi.rohmeurope.com; dmarc=pass action=none
- header.from=fi.rohmeurope.com; dkim=pass header.d=fi.rohmeurope.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=rohmsemiconductoreurope.onmicrosoft.com;
- s=selector1-rohmsemiconductoreurope-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JKqVj/fp4WM3UMFkqjbW8Lbih9Ry8GprkE13tckiM8U=;
- b=A7uGSl6E7UHV16hmkoIdN2Lip/gvx3wPOPHEaYXWlxxNpJIPtD5tsvH7ctM6htBk0TNkFWVu0D3NGmUpg41G35rgRfamR2aDkNVFYEbqCQsGHUkuyImjExKgSAPUS5gN9YlwwKOk5ogay7uG8zDTWImC1WlAOBOfWQK7iQETt58=
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com (2603:10a6:7:55::20) by
- HE1PR0302MB2668.eurprd03.prod.outlook.com (2603:10a6:3:f1::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3763.13; Tue, 19 Jan 2021 13:01:38 +0000
-Received: from HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::cd6c:2eae:c885:c9d]) by HE1PR03MB3162.eurprd03.prod.outlook.com
- ([fe80::cd6c:2eae:c885:c9d%6]) with mapi id 15.20.3763.014; Tue, 19 Jan 2021
- 13:01:38 +0000
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>
-CC:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 10/17] gpio: support ROHM BD71815 GPOs
-Thread-Topic: [PATCH v2 10/17] gpio: support ROHM BD71815 GPOs
-Thread-Index: AQHW7jP1aCOdIjy6aUiaKgV7fuUEzqouyhYAgAAf8oA=
-Date:   Tue, 19 Jan 2021 13:01:37 +0000
-Message-ID: <8bd5d95df1daaee0d7b3fee33e5c5cad679759a6.camel@fi.rohmeurope.com>
-References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
-         <50f72f1f7f28e969a1e0353712fcc530bce9dd06.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
-         <CAMpxmJVjnAMig16qWkjpaHwQ+4Ld9yEc-gg-CGv28QQYBB6gNg@mail.gmail.com>
-In-Reply-To: <CAMpxmJVjnAMig16qWkjpaHwQ+4Ld9yEc-gg-CGv28QQYBB6gNg@mail.gmail.com>
-Reply-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-authentication-results: baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=none action=none
- header.from=fi.rohmeurope.com;
-x-originating-ip: [62.78.225.252]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 546ec45e-95e8-44f3-0a86-08d8bc7a5bb4
-x-ms-traffictypediagnostic: HE1PR0302MB2668:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <HE1PR0302MB2668BC326B779F97B9729536ADA30@HE1PR0302MB2668.eurprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nP9aklN01nCJ7c8JXVAFSY9n6JiJWslsVISTvxLCi8QFyHJ0jpWaqVttd7Mrcd1V157zcO29L7xHlXDZqcd46xKa0CXJdmAG2b6/TiqCtV4Im46gWucYcnVqRjsH2e23AULQhIGHHeyiBLJkf73u/vQL1RfGogMKnvKfRyWbqGynJ2/iHEVCfWaibkIDMu9Ds1hycT9fJWiVK9JbBDhf6iMOLU4IKbFMcrPE5a9kUQ1D5dgJxWXasLfbiwR3nprOP9B28pxGuO93uKU/Rwvttlk96QDuybteDoa+uk19o900L9A6wIJGRq8VDZerPUEx0Kw9T2MUCGLEtQ4rv05YRjQq94NTd1kPFeNQMl8WIlj+fTjpXFvNy9jNP9ljdHYCBo6G2znDRDfg8xpZpS3kuQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR03MB3162.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(366004)(346002)(396003)(39850400004)(83380400001)(86362001)(26005)(186003)(6486002)(316002)(4326008)(53546011)(2616005)(6506007)(71200400001)(7416002)(66556008)(3450700001)(64756008)(66476007)(8936002)(66446008)(6512007)(54906003)(66946007)(76116006)(6916009)(478600001)(2906002)(5660300002)(8676002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?eDFjWWJaSVI5NEdlUU1CbWtqRjBacEN5eVZDRjVYWEpsdUprTW1YVDM3SUls?=
- =?utf-8?B?U3RwbDNueVV2TGd5bHQzZGxKQXpiaUVYS2tZVU45R0lNbUZWMHRUdHdyZEZa?=
- =?utf-8?B?SUw0bG45THlwWVpBNUFUdzMzSTRvNmZDZWlDbTJaMndIY2JkSWgycUgzVU1H?=
- =?utf-8?B?ei9HQThLSlhNak42YjRpdWJ5NkhaNFhmZEthMG5pQ3dOVERySzljcEtROGFQ?=
- =?utf-8?B?UUl1YnQ5R3oydXZIRTFlYzZERE9keGQ3RGkzaldJUGxFRXV0aDNZdmtZckZP?=
- =?utf-8?B?M0xuUXdKSGFvb09hM0ZDTUwvbE5oeHgyVnRzcU15blc3bkJrVExuMWRMVzkv?=
- =?utf-8?B?a2tFVzBvNEUrQThiNU5kUjY4S1VHek1keW1jZUVmaGprOU9HYWFDSmNwdktk?=
- =?utf-8?B?cXV0eFV2TEZvV2hudDE4NzAvdUQrenA4V2p6ZmMycVBzbEhvcEVQSUxDQ0JC?=
- =?utf-8?B?RWhWL1psOVdQbkpSVVp3S1l2YjlYeXZyVnBBQ0R3dE8xeFllWUVJaDZhM2VT?=
- =?utf-8?B?UXB3emtDazFJQWpXUno3SHVGVW1iWWJLM3BGc3lYRVdHSWo5RHRmdTJUL2JW?=
- =?utf-8?B?SXpMZnpkaFVrZUNheUxabVBicERoZGpBbitrVVdBRHIvcmdqRVlzZUpxdGVl?=
- =?utf-8?B?V00rRGxXS29GR1NNbWJvblFLS1JqQUNzZzQ3UFBncjlDdDJTWXFON2hkL1lv?=
- =?utf-8?B?MVR4dXRKRWdvQzh5cFp5WmxnWnh1Z2RxdzVTRis4S3NLRU0zKy95L1VyaE9Q?=
- =?utf-8?B?dHNDZDNCTjI1dG1xUElMZER3cVlIU3FOMjkwMHJRaDhVaUdMMzBRSlp4RDZh?=
- =?utf-8?B?QkZWWG9VQkdrMzdMaEczcXY3NlBIN21hZ29ZUitkWUpvTDFKTlUrMUl0bHlm?=
- =?utf-8?B?THFiM1NXQ1FvcFowNTJkbjNVVzNuOG5mOUd1VklzTUxvU0ZqVldnd0ZCcDFW?=
- =?utf-8?B?d2UrazExZTZBcEE3akV1dXhrOUpESHhUOFdNRzFrRFI3cmJlNDR0MFRIaVF6?=
- =?utf-8?B?NUZEd29CTlFFNHUxSVRHRktpdExibEc4V1FnaTBmL3lVRFM1RGxoNWFabGlx?=
- =?utf-8?B?YWlReW9wM2I1SmUzN2hWOGE2ck9iVm5EUjUxc1hXTUwwSngzSlE1T3BoOUJ0?=
- =?utf-8?B?d3lNUXJOYW82Ymd4Z3BSYUdKOHpTM1JEeERCODdXS3hQcWVSbGpVcEZSQ3pp?=
- =?utf-8?B?SkpuR25xT0VyeWppWDI3cFduRW90YVZoV1E2emhFUnAyZmZGcnJIUE9WUlhT?=
- =?utf-8?B?S3JzQkJMdVNHTzUzN09zSXQ0UG9sVkFFS2poRmFISVdPZ2REaHp5WmFOc1Qz?=
- =?utf-8?B?YnJDRXBxRFdTZm5sTStVcUxkN0N6dkZXRld0bzJwRkdQc3IrbVZTem92MUp4?=
- =?utf-8?B?cGZDUHpIMjB1NFYvaFJ6Q3JFWlNFeW9QZE9NdFBQeDExUU45dlRmL3V2ZU1M?=
- =?utf-8?B?aERiYlRGN0VVcHloK1FKbHF5cC9aaDN1Nmp5Ym1RPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FEB28E79FDFD0648825D54FE989BAFE0@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728084AbhASPIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 10:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389132AbhASPB0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Jan 2021 10:01:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B21D82312E;
+        Tue, 19 Jan 2021 15:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611068445;
+        bh=WsmEuGO3cSlOjeMFww6osCf8AgOAWnC7qWpR/NPhiYk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IyY451FlUqN/Vi/rDifFifMjL2WrG4ADwDWzIMzB8aZZgPGCSMq6l4tS0vc/L0doY
+         /LgQbD7B/EU6tpiRY87862MY12dwame9+KEh1e4c6/k7sxRiFvEuN3Fb1xEB7HinVN
+         7UtujWuQ2rUMcwiUFdHtsQkNQ6oZtmoytEPbvUKZmzDY/pcdAQogivkdPi1cbEFL7p
+         zswmk9fzJpZc8aavfoTI9D/XuAEu8cKXXlqwQh8LMyMj7o9yhJKCxEd7vTtQUxCQLt
+         27cR88l9ZFgoDByqqfHTG2RNVCZkK55TkhP+mFvudVVUriHzi/qfk8bkwqWBIDpXi2
+         56FpgcwQ2DkYw==
+Subject: Re: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X
+ platform
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210105192956.2059505-1-dinguyen@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <0d9a6222-4628-09b9-4ddb-01a065ce456e@kernel.org>
+Date:   Tue, 19 Jan 2021 09:00:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-OriginatorOrg: fi.rohmeurope.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: HE1PR03MB3162.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 546ec45e-95e8-44f3-0a86-08d8bc7a5bb4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2021 13:01:38.2153
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 94f2c475-a538-4112-b5dd-63f17273d67a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: A3kbTi+TmNaU2SfEWPoLlKzqcnJrBqDBv7hk04kne4sexhj66/joxn7ahlthVPOOIIaPaKHjNCNd1VeEPKChKKoD2Ca89dtrLcTiuEO0T2UoUwVX9W9Sa3DX9pS5QQia
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0302MB2668
+In-Reply-To: <20210105192956.2059505-1-dinguyen@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgQmFydG9zeiwNCg0KT24gVHVlLCAyMDIxLTAxLTE5IGF0IDEyOjA3ICswMTAwLCBCYXJ0b3N6
-IEdvbGFzemV3c2tpIHdyb3RlOg0KPiBPbiBUdWUsIEphbiAxOSwgMjAyMSBhdCA4OjIzIEFNIE1h
-dHRpIFZhaXR0aW5lbg0KPiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPiB3cm90
-ZToNCj4gPiBTdXBwb3J0IEdQTyhzKSBmb3VuZCBmcm9tIFJPSE0gQkQ3MTgxNSBwb3dlciBtYW5h
-Z2VtZW50IElDLiBUaGUgSUMNCj4gPiBoYXMgdHdvDQo+ID4gR1BPIHBpbnMgYnV0IG9ubHkgb25l
-IGlzIHByb3Blcmx5IGRvY3VtZW50ZWQgaW4gZGF0YS1zaGVldC4gVGhlDQo+ID4gZHJpdmVyDQo+
-ID4gZXhwb3NlcyBieSBkZWZhdWx0IG9ubHkgdGhlIGRvY3VtZW50ZWQgR1BPLiBUaGUgc2Vjb25k
-IEdQTyBpcw0KPiA+IGNvbm5lY3RlZCB0bw0KPiA+IEU1IHBpbiBhbmQgaXMgbWFya2VkIGFzIEdO
-RCBpbiBkYXRhLXNoZWV0LiBDb250cm9sIGZvciB0aGlzDQo+ID4gdW5kb2N1bWVudGVkDQo+ID4g
-cGluIGNhbiBiZSBlbmFibGVkIHVzaW5nIGEgc3BlY2lhbCBEVCBwcm9wZXJ0eS4NCj4gPiANCj4g
-PiBUaGlzIGRyaXZlciBpcyBkZXJpdmVkIGZyb20gd29yayBieSBQZXRlciBZYW5nIDwNCj4gPiB5
-YW5nbHNoQGVtYmVzdC10ZWNoLmNvbT4NCj4gPiBhbHRob3VnaCBub3Qgc28gbXVjaCBvZiBvcmln
-aW5hbCBpcyBsZWZ0Lg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hdHRpIFZhaXR0aW5lbiA8
-bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiANCj4gSGkgTWF0dGksDQo+IA0K
-PiBsb29rcyBncmVhdCwganVzdCBhIGNvdXBsZSBuaXRzLg0KPiANCg0KVGhhbmtzIGZvciB0aGUg
-cmV2aWV3ISBJJ2xsIHN0b3JlIHlvdXIgZmluc2luZ3MgYW5kIGZpeCB0aGVtIHdoZW4gSQ0KcmVz
-cGluIHRoaXMuIEkgdGhpbmsgYWxsIG9mIHlvdXIgcG9pbnRzIHdlcmUgdmFsaWQuIEFzIEkga25v
-dyB0aGlzIGlzDQpsYXJnaXNoIHNlcmllcyAoYW5kIGFzIEkga25vdyBJIGFjY2lkZW50YWxseSBz
-ZW50IGZpcnN0IDEwIHYyIHBhdGNoZXMNCnRvIGFsbCByZWNpcGllbnRzIG5vIG1hdHRlciB3aGF0
-IHN1YnN5c3RlbSB3YXMgaW1wYWN0ZWQpIEknbGwgd2FpdCBmb3INCmEgd2hpbGUgYmVmb3JlIHJl
-c2VuZGluZyAoYXQgbGVhc3QgYSB3ZWVrKS4gQmVzaWRlcyBJIGRvbid0IGV4cGVjdCB0aGUNCmRl
-cGVuZGVuY2llcyB0byBiZSBtZXJnZWQgYmVmb3JlIG5leHQga2VybmVsIHJlbGVhc2Ugc28gdGhp
-cyBpcyBub3QNCnVyZ2VudCA6KQ0KDQotIGJ1dCB0aGFua3MhDQoNCkJyLA0KCU1hdHRpDQoNCg==
+Hi Stephen/Mike,
+
+Was wondering if you had a chance to review this patch?
+
+Thanks,
+Dinh
+
+
+On 1/5/21 1:29 PM, Dinh Nguyen wrote:
+> Add support for Intel's eASIC N5X platform. The clock manager driver for
+> the N5X is very similar to the Agilex platform, we can re-use most of
+> the Agilex clock driver.
+> 
+> This patch makes the necessary changes for the driver to differentiate
+> between the Agilex and the N5X platforms.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+>   drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
+>   drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
+>   drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
+>   drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
+>   4 files changed, 238 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+> index bb3e80928ebe..f9394ed8a41d 100644
+> --- a/drivers/clk/socfpga/clk-agilex.c
+> +++ b/drivers/clk/socfpga/clk-agilex.c
+> @@ -196,6 +196,17 @@ static const struct stratix10_pll_clock agilex_pll_clks[] = {
+>   	  0, 0x9c},
+>   };
+>   
+> +static const struct n5x_perip_c_clock n5x_main_perip_c_clks[] = {
+> +	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x54, 0},
+> +	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x54, 8},
+> +	{ AGILEX_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0, 0x54, 16},
+> +	{ AGILEX_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0, 0x54, 24},
+> +	{ AGILEX_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0, 0xA8, 0},
+> +	{ AGILEX_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0, 0xA8, 8},
+> +	{ AGILEX_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0, 0xA8, 16},
+> +	{ AGILEX_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0, 0xA8, 24},
+> +};
+> +
+>   static const struct stratix10_perip_c_clock agilex_main_perip_c_clks[] = {
+>   	{ AGILEX_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0, 0x58},
+>   	{ AGILEX_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0, 0x5C},
+> @@ -289,6 +300,25 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
+>   	  10, 0, 0, 0, 0, 0, 4},
+>   };
+>   
+> +static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
+> +				       int nums, struct stratix10_clock_data *data)
+> +{
+> +	struct clk *clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		clk = n5x_register_periph(&clks[i], base);
+> +		if (IS_ERR(clk)) {
+> +			pr_err("%s: failed to register clock %s\n",
+> +			       __func__, clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.clks[clks[i].id] = clk;
+> +	}
+> +	return 0;
+> +}
+> +
+>   static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
+>   				       int nums, struct stratix10_clock_data *data)
+>   {
+> @@ -367,6 +397,26 @@ static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
+>   	return 0;
+>   }
+>   
+> +static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
+> +				 int nums, struct stratix10_clock_data *data)
+> +{
+> +	struct clk *clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		clk = n5x_register_pll(&clks[i], base);
+> +		if (IS_ERR(clk)) {
+> +			pr_err("%s: failed to register clock %s\n",
+> +			       __func__, clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.clks[clks[i].id] = clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
+>   						    int nr_clks)
+>   {
+> @@ -401,7 +451,7 @@ static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_de
+>   	return clk_data;
+>   }
+>   
+> -static int agilex_clkmgr_probe(struct platform_device *pdev)
+> +static int agilex_clkmgr_init(struct platform_device *pdev)
+>   {
+>   	struct stratix10_clock_data *clk_data;
+>   
+> @@ -423,9 +473,43 @@ static int agilex_clkmgr_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> +static int n5x_clkmgr_init(struct platform_device *pdev)
+> +{
+> +	struct stratix10_clock_data *clk_data;
+> +
+> +	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
+> +	if (IS_ERR(clk_data))
+> +		return PTR_ERR(clk_data);
+> +
+> +	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
+> +
+> +	n5x_clk_register_c_perip(n5x_main_perip_c_clks,
+> +				 ARRAY_SIZE(n5x_main_perip_c_clks), clk_data);
+> +
+> +	agilex_clk_register_cnt_perip(agilex_main_perip_cnt_clks,
+> +				   ARRAY_SIZE(agilex_main_perip_cnt_clks),
+> +				   clk_data);
+> +
+> +	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+> +			      clk_data);
+> +	return 0;
+> +}
+> +
+> +static int agilex_clkmgr_probe(struct platform_device *pdev)
+> +{
+> +	int (*probe_func)(struct platform_device *);
+> +
+> +	probe_func = of_device_get_match_data(&pdev->dev);
+> +	if (!probe_func)
+> +		return -ENODEV;
+> +	return	probe_func(pdev);;
+> +}
+> +
+>   static const struct of_device_id agilex_clkmgr_match_table[] = {
+>   	{ .compatible = "intel,agilex-clkmgr",
+> -	  .data = agilex_clkmgr_probe },
+> +	  .data = agilex_clkmgr_init },
+> +	{ .compatible = "intel,n5x-clkmgr",
+> +	  .data = n5x_clkmgr_init },
+>   	{ }
+>   };
+>   
+> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+> index 397b77b89b16..135581c41c05 100644
+> --- a/drivers/clk/socfpga/clk-periph-s10.c
+> +++ b/drivers/clk/socfpga/clk-periph-s10.c
+> @@ -15,6 +15,21 @@
+>   
+>   #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.hw)
+>   
+> +static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
+> +					     unsigned long parent_rate)
+> +{
+> +	struct socfpga_periph_clk *socfpgaclk = to_periph_clk(hwclk);
+> +	unsigned long div;
+> +	unsigned long shift = socfpgaclk->shift;
+> +	u32 val;
+> +
+> +	val = readl(socfpgaclk->hw.reg);
+> +	val &= (0x1F << shift);
+> +	div = (val >> shift) + 1;
+> +
+> +	return parent_rate / div;
+> +}
+> +
+>   static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
+>   					     unsigned long parent_rate)
+>   {
+> @@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
+>   	return parent;
+>   }
+>   
+> +static const struct clk_ops n5x_peri_c_clk_ops = {
+> +	.recalc_rate = n5x_clk_peri_c_clk_recalc_rate,
+> +	.get_parent = clk_periclk_get_parent,
+> +};
+> +
+>   static const struct clk_ops peri_c_clk_ops = {
+>   	.recalc_rate = clk_peri_c_clk_recalc_rate,
+>   	.get_parent = clk_periclk_get_parent,
+> @@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+>   	return clk;
+>   }
+>   
+> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+> +				void __iomem *regbase)
+> +{
+> +	struct clk *clk;
+> +	struct socfpga_periph_clk *periph_clk;
+> +	struct clk_init_data init;
+> +	const char *name = clks->name;
+> +	const char *parent_name = clks->parent_name;
+> +
+> +	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+> +	if (WARN_ON(!periph_clk))
+> +		return NULL;
+> +
+> +	periph_clk->hw.reg = regbase + clks->offset;
+> +	periph_clk->shift = clks->shift;
+> +
+> +	init.name = name;
+> +	init.ops = &n5x_peri_c_clk_ops;
+> +	init.flags = clks->flags;
+> +
+> +	init.num_parents = clks->num_parents;
+> +	init.parent_names = parent_name ? &parent_name : NULL;
+> +
+> +	periph_clk->hw.hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &periph_clk->hw.hw);
+> +	if (WARN_ON(IS_ERR(clk))) {
+> +		kfree(periph_clk);
+> +		return NULL;
+> +	}
+> +	return clk;
+> +}
+> +
+>   struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
+>   				    void __iomem *regbase)
+>   {
+> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+> index 4e268953b7da..4bdf64be3ed4 100644
+> --- a/drivers/clk/socfpga/clk-pll-s10.c
+> +++ b/drivers/clk/socfpga/clk-pll-s10.c
+> @@ -27,10 +27,37 @@
+>   #define SWCTRLBTCLKSEL_MASK		0x200
+>   #define SWCTRLBTCLKSEL_SHIFT		9
+>   
+> +#define SOCFPGA_N5X_PLLDIV_FDIV_MASK	GENMASK(16, 8)
+> +#define SOCFPGA_N5X_PLLDIV_FDIV_SHIFT	8
+> +#define SOCFPGA_N5X_PLLDIV_RDIV_MASK	GENMASK(5, 0)
+> +#define SOCFPGA_N5X_PLLDIV_QDIV_MASK	GENMASK(26, 24)
+> +#define SOCFPGA_N5X_PLLDIV_QDIV_SHIFT	24
+> +
+>   #define SOCFPGA_BOOT_CLK		"boot_clk"
+>   
+>   #define to_socfpga_clk(p) container_of(p, struct socfpga_pll, hw.hw)
+>   
+> +static unsigned long n5x_clk_pll_recalc_rate(struct clk_hw *hwclk,
+> +						unsigned long parent_rate)
+> +{
+> +	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
+> +	unsigned long fdiv, reg, rdiv, qdiv;
+> +	u32 power = 1;
+> +
+> +	/* read VCO1 reg for numerator and denominator */
+> +	reg = readl(socfpgaclk->hw.reg + 0x8);
+> +	fdiv = (reg & SOCFPGA_N5X_PLLDIV_FDIV_MASK) >> SOCFPGA_N5X_PLLDIV_FDIV_SHIFT;
+> +	rdiv = (reg & SOCFPGA_N5X_PLLDIV_RDIV_MASK);
+> +	qdiv = (reg & SOCFPGA_N5X_PLLDIV_QDIV_MASK) >> SOCFPGA_N5X_PLLDIV_QDIV_SHIFT;
+> +
+> +	while (qdiv) {
+> +		power *= 2;
+> +		qdiv--;
+> +	}
+> +
+> +	return ((parent_rate * 2 * (fdiv + 1)) / ((rdiv + 1) * power));
+> +}
+> +
+>   static unsigned long agilex_clk_pll_recalc_rate(struct clk_hw *hwclk,
+>   						unsigned long parent_rate)
+>   {
+> @@ -123,7 +150,26 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
+>   	return 0;
+>   }
+>   
+> -static const struct clk_ops agilex_clk_pll_ops = {
+> +static int n5x_clk_pll_prepare(struct clk_hw *hwclk)
+> +{
+> +	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
+> +	u32 reg;
+> +
+> +	/* Bring PLL out of reset */
+> +	reg = readl(socfpgaclk->hw.reg + 0x4);
+> +	reg &= ~SOCFPGA_PLL_RESET_MASK;
+> +	writel(reg, socfpgaclk->hw.reg + 0x4);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct clk_ops n5x_clk_pll_ops = {
+> +	.recalc_rate = n5x_clk_pll_recalc_rate,
+> +	.get_parent = clk_pll_get_parent,
+> +	.prepare = n5x_clk_pll_prepare,
+> +};
+> +
+> +static struct clk_ops agilex_clk_pll_ops = {
+>   	.recalc_rate = agilex_clk_pll_recalc_rate,
+>   	.get_parent = clk_pll_get_parent,
+>   	.prepare = clk_pll_prepare,
+> @@ -214,3 +260,40 @@ struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
+>   	}
+>   	return clk;
+>   }
+> +
+> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
+> +			     void __iomem *reg)
+> +{
+> +	struct clk *clk;
+> +	struct socfpga_pll *pll_clk;
+> +	struct clk_init_data init;
+> +	const char *name = clks->name;
+> +
+> +	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+> +	if (WARN_ON(!pll_clk))
+> +		return NULL;
+> +
+> +	pll_clk->hw.reg = reg + clks->offset;
+> +
+> +	if (streq(name, SOCFPGA_BOOT_CLK))
+> +		init.ops = &clk_boot_ops;
+> +	else
+> +		init.ops = &n5x_clk_pll_ops;
+> +
+> +	init.name = name;
+> +	init.flags = clks->flags;
+> +
+> +	init.num_parents = clks->num_parents;
+> +	init.parent_names = NULL;
+> +	init.parent_data = clks->parent_data;
+> +	pll_clk->hw.hw.init = &init;
+> +
+> +	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
+> +
+> +	clk = clk_register(NULL, &pll_clk->hw.hw);
+> +	if (WARN_ON(IS_ERR(clk))) {
+> +		kfree(pll_clk);
+> +		return NULL;
+> +	}
+> +	return clk;
+> +}
+> diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
+> index f9d5d724c694..90441c990855 100644
+> --- a/drivers/clk/socfpga/stratix10-clk.h
+> +++ b/drivers/clk/socfpga/stratix10-clk.h
+> @@ -30,6 +30,17 @@ struct stratix10_perip_c_clock {
+>   	unsigned long		offset;
+>   };
+>   
+> +struct n5x_perip_c_clock {
+> +	unsigned int		id;
+> +	const char		*name;
+> +	const char		*parent_name;
+> +	const char		*const *parent_names;
+> +	u8			num_parents;
+> +	unsigned long		flags;
+> +	unsigned long		offset;
+> +	unsigned long		shift;
+> +};
+> +
+>   struct stratix10_perip_cnt_clock {
+>   	unsigned int		id;
+>   	const char		*name;
+> @@ -64,8 +75,12 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *,
+>   			     void __iomem *);
+>   struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
+>   				void __iomem *);
+> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
+> +			     void __iomem *);
+>   struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
+>   				void __iomem *);
+> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
+> +				void __iomem *);
+>   struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
+>   				    void __iomem *);
+>   struct clk *s10_register_gate(const struct stratix10_gate_clock *,
+> 
