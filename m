@@ -2,160 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A59C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E412C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC1C22D08
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3EAC22D71
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jan 2021 21:24:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbhASVXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 16:23:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
+        id S1727186AbhASVYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 16:24:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729391AbhASVXa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 16:23:30 -0500
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9094C061573
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jan 2021 13:22:47 -0800 (PST)
-Received: by mail-qv1-xf2d.google.com with SMTP id h1so9884231qvy.12
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jan 2021 13:22:47 -0800 (PST)
+        with ESMTP id S1728231AbhASVWL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jan 2021 16:22:11 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B83C061573;
+        Tue, 19 Jan 2021 13:21:31 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id d81so27469568iof.3;
+        Tue, 19 Jan 2021 13:21:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=QoR15X76Wa8utojDFzghU0XUanvjdtOD0JtOJepg2zQ=;
-        b=iPJY1moesz74BGlcRCZu6JplYli8oRPYxZQBKc+pWMMbglhVWCtRcav6p7QbWlmfum
-         y9W2MoQitiRxq4vuw0hSckO056h6CHdVtyShAQ+wz+tlHDIjKqUAffiYs3CsV0+376MY
-         i8hyuUkqVPwmKiEluATsxtURE48Sqj8WPxQSqwJZhULp4yCG1KlkbEwseTV8eWdQSal0
-         yPhyyGwa1jxr7yCWBYKuryrDiBQ3BMIyUfykY6LKVg2m6kQdX/mCUhgPfYAb/XNq/IH6
-         Xy529AmwgQW8E7Mrhw1tcFJgcBLgkfVWq+KicOk4/kvAkAggZFcFNAGg7mehzP4iYq/5
-         z5yA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vhsDZ9UOGRlQVPZEAGfDhpppuCtmEIDEub6NEX0zatQ=;
+        b=Zr5XHVmaw52Wc+WMo1h25ZUL5niz/WInKwAdPM7Z/5kNofoFb+V0Av64cKsL1WW4lH
+         IDw7UD9D0GW1CMnQT8xQjSXh4Z4T0zyp1RIZQ3lHC7fAtyC6P44nhNHtZlb8vPMhW2J8
+         oqNTHHfLCVTUVA0Dyv9S4YHluG10rNhcuAy7rj0GiWBavIQq4HuYggsYCBiLZFI4QIzW
+         vd4KiXUcMYvzmaIQBTvEEj9QT4i4/sHznHPIPFvWGld4zqUfmqTqUNrvE5HZ3UjA8hIC
+         E2gDIDoprYyJV0ybLTVx+PX1OhEewItciT0FmSql215i480xIZuG19RaFY2daPrq/Hx1
+         oaWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=QoR15X76Wa8utojDFzghU0XUanvjdtOD0JtOJepg2zQ=;
-        b=Lp06Qzf0PdN/TN2rzZzD8JgfTa2klV+JT1LzT2tNINCtfV5WesUqITwMv76niSYzMZ
-         LzEzjRbQClyErukmRNUn+DKaVABteeJS+ehaek4HE31kSsYrXEtwsxJmOKfFQuOW6abK
-         GAtgdlUr4iFHWO1dEsj3tta3AcaoIpzd2XQQVlVffcbwvQJNRYg7ahN9B5KcXW5rsr1L
-         968So3UNguYRL89gFnhen3jP7jw3xvTa05TKS6/4vOIG8XR20JparXzU++leAmL0A3MX
-         iRXeTcmMOTi7fLOBL8pwXyse1LdYAr+ZnX6tXOd/FNef7zo4+30vadGNWAbW2FuLuM6v
-         AEBA==
-X-Gm-Message-State: AOAM530dcQoxwm1/hH1HTBGcxLFqHUj94jEwd5OrFGPcs0Ss/I2Troyp
-        Vw7P7+Z0a4diXpcYuVp/ny48t1BWXUkRoszJ
-X-Google-Smtp-Source: ABdhPJy7oZ+C+6qSYY0OzIqs85mSSUlDrZJnwr/XBhiMfYxFs6zMdfwcY0MyqSmEu4dZm/GSpAD4lQ==
-X-Received: by 2002:ad4:4431:: with SMTP id e17mr6465871qvt.21.1611091367227;
-        Tue, 19 Jan 2021 13:22:47 -0800 (PST)
-Received: from xanadu.home (modemcable076.50-203-24.mc.videotron.ca. [24.203.50.76])
-        by smtp.gmail.com with ESMTPSA id l38sm3459069qte.88.2021.01.19.13.22.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vhsDZ9UOGRlQVPZEAGfDhpppuCtmEIDEub6NEX0zatQ=;
+        b=VUiTHQGksy1BJVg8SY3xlqWwl3uIgNpRaI4nrK/qGBGUSz3SF40g6v+XLrROLszxHy
+         G7NSsmuRktxUQlnp34ww0AL1YUnLPQ7lwLKncEbzAPoWbDrHpd+7N8CFOIM9LuZyqEMu
+         g/QVTHVLv7FmP7xdv/+CFS4BMVtiLnn9dPEO+ahOq6xh+BgA4/TV0JFCSxC+PcmU073o
+         EDR52B0SVfm0VZjUjb6ZDFXrwir4sVT43BUq2mJ1ht0Zz2EHYySfkqTT5wWDIiT+lJ+Q
+         o17j+ov07Y1sXcUZvHwXfvd5t6YSiUMFJrnWjKvSLtTueacxpFXmjGJZDLNdQWFbdxO/
+         zpoA==
+X-Gm-Message-State: AOAM530ltVRq7pkKeZu2loDOwmBOJBA7cHPFTHOIEHPEvzL4dSi4dJ6r
+        xI5Nngxop36c61fb+InmHKHQko8CMi02byBw
+X-Google-Smtp-Source: ABdhPJxPkYv3XDnlrA4ZQLQEQYx6Ys8qNOMb3BoJf6Geppd4c4PWkfCL8uJtfcxU4hqtaLeFcVoYrg==
+X-Received: by 2002:a05:6e02:674:: with SMTP id l20mr5146553ilt.222.1611091290410;
+        Tue, 19 Jan 2021 13:21:30 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:2386:3a11:421c:65a9])
+        by smtp.gmail.com with ESMTPSA id z87sm61418ilk.40.2021.01.19.13.21.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 13:22:46 -0800 (PST)
-Date:   Tue, 19 Jan 2021 16:22:45 -0500 (EST)
-From:   Nicolas Pitre <npitre@baylibre.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tue, 19 Jan 2021 13:21:29 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PM / clk: make PM clock layer compatible with clocks
- that must sleep
-In-Reply-To: <CAMuHMdX8T+tO-sT_tgrgEi-D0z2ac7k4Atg13arHN5bA84HqTA@mail.gmail.com>
-Message-ID: <s41o2qs1-49or-rnr4-s370-2444r1055@onlyvoer.pbz>
-References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz> <7him7sydd6.fsf@baylibre.com> <CAMuHMdX8T+tO-sT_tgrgEi-D0z2ac7k4Atg13arHN5bA84HqTA@mail.gmail.com>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 1/2] dt-bindings: clk: versaclock5: Add optional load capacitance property
+Date:   Tue, 19 Jan 2021 15:21:08 -0600
+Message-Id: <20210119212109.1064786-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 19 Jan 2021, Geert Uytterhoeven wrote:
+There are two registers which can set the load capacitance for
+XTAL1 and XTAL2. These are optional registers when using an
+external crystal.  Since XTAL1 and XTAL2 will set to the same value,
+update the binding to support a single property called
+xtal-load-femtofarads.
 
-> Hi Kevin, Nicolas,
-> 
-> On Tue, Jan 19, 2021 at 7:45 PM Kevin Hilman <khilman@baylibre.com> wrote:
-> > [ + Geert.. renesas SoCs are the primary user of PM clk ]
-> 
-> Thanks!
-> 
-> > Nicolas Pitre <npitre@baylibre.com> writes:
-> > > The clock API splits its interface into sleepable ant atomic contexts:
-> > >
-> > > - clk_prepare/clk_unprepare for stuff that might sleep
-> > >
-> > > - clk_enable_clk_disable for anything that may be done in atomic context
-> > >
-> > > The code handling runtime PM for clocks only calls clk_disable() on
-> > > suspend requests, and clk_enable on resume requests. This means that
-> > > runtime PM with clock providers that only have the prepare/unprepare
-> > > methods implemented is basically useless.
-> > >
-> > > Many clock implementations can't accommodate atomic contexts. This is
-> > > often the case when communication with the clock happens through another
-> > > subsystem like I2C or SCMI.
-> > >
-> > > Let's make the clock PM code useful with such clocks by safely invoking
-> > > clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
-> > > such clocks are registered with the PM layer then pm_runtime_irq_safe()
-> > > can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
-> > > may be invoked in atomic context.
-> > >
-> > > For clocks that do implement the enable and disable methods then
-> > > everything just works as before.
-> > >
-> > > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> 
-> Thanks for your patch!
-> 
-> > > --- a/drivers/base/power/clock_ops.c
-> > > +++ b/drivers/base/power/clock_ops.c
-> 
-> > > +/**
-> > > + * pm_clk_op_lock - ensure exclusive access for performing clock operations.
-> > > + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
-> > > + *    and clk_op_might_sleep count being used.
-> > > + * @flags: stored irq flags.
-> > > + * @fn: string for the caller function's name.
-> > > + *
-> > > + * This is used by pm_clk_suspend() and pm_clk_resume() to guard
-> > > + * against concurrent modifications to the clock entry list and the
-> > > + * clock_op_might_sleep count. If clock_op_might_sleep is != 0 then
-> > > + * only the mutex can be locked and those functions can only be used in
-> > > + * non atomic context. If clock_op_might_sleep == 0 then these functions
-> > > + * may be used in any context and only the spinlock can be locked.
-> > > + * Returns -EINVAL if called in atomic context when clock ops might sleep.
-> > > + */
-> > > +static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
-> > > +                       const char *fn)
-> > > +{
-> > > +     bool atomic_context = in_atomic() || irqs_disabled();
-> 
-> Is this safe? Cfr.
-> https://lore.kernel.org/dri-devel/20200914204209.256266093@linutronix.de/
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+V2:  No Change
 
-I noticed this topic is a mess. This is why I'm not relying on 
-in_atomic() alone as it turned out not to be sufficient in all cases 
-during testing.
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 2ac1131fd922..c268debe5b8d 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -59,6 +59,12 @@ properties:
+     minItems: 1
+     maxItems: 2
+ 
++  idt,xtal-load-femtofarads:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 9000
++    maximum: 22760
++    description: Optional load capacitor for XTAL1 and XTAL2
++
+ patternProperties:
+   "^OUT[1-4]$":
+     type: object
+-- 
+2.25.1
 
-What's there now is safe at least in the context from which it is called 
-i.e. the runtime pm core code. If not then hopefully the might_sleep() 
-that follows will catch misuses.
-
-It should be noted that we assume an atomic context by default. However, 
-if you rely on clocks that must sleep then you must not invoke runtime 
-pm facilities in atomic context from your driver in the first place. The 
-atomic_context variable above is there only used further down as a 
-validation check to catch programming mistakes and not an operational 
-parameter.
-
-
-Nicolas
