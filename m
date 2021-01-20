@@ -7,65 +7,63 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B37C4332E
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF14C43333
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD2023332
+	by mail.kernel.org (Postfix) with ESMTP id C247C2333D
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733199AbhATKh4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:37:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
+        id S1733285AbhATKjE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:39:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729711AbhATJdQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:16 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D62C0617A7
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:59 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id m4so22349623wrx.9
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:59 -0800 (PST)
+        with ESMTP id S1731434AbhATJdt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:49 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE5CC0617BC
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:04 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id c128so2191357wme.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Gy/ffcyv+jl5ONvP440UlkfrpqU6FIgU7urCShkm4OI=;
-        b=omrjd7cTKpQWFzEGTXkrvtiMN99fcr7fPH9QowfCoqdRDMi4DGMHuYbRe0o8Vpkcpz
-         AnGbBrW+y7BidiYzHJPHlN9brc2hxwAaPFMC+EXyUaR1H6kGVAbe/j+6yuO5HH1kACUD
-         kNC9+HZEdQNLMDCFU6QBoI9lspdy4T5P3heJdr8+Qx518iDZOzs0M3OTbcl85v5Zv/84
-         p6bpZgxdTNIQcaSC3IKiPUVoTusuls4s18jwTg4Ea5Lp2vkFt/DxbFaB78uRA+7G2J/u
-         +3kl2OS+4J5O/2MLYbvL9FRuasdVreN+1ZiFXB27tP4sq6Xdi16QB3501oFlV8wcVhn+
-         6qZQ==
+        bh=/Cp1gEYyuPZEPQHMnMAoPqNAjf4Uu2nrDn0l3qFFYNM=;
+        b=XRKGU3TuNzHBFC89BWDjqJ5hAyo+4Yh8pfCnFFMEk7w7e4CVLgSauiD1D6ChJQkPmO
+         XTsrqY1MYX+iiXxGZrIXRoFcXloPdKljvImfh+b7XxVUh7beWUSWZocuCwtvoHJxgn2K
+         BJbzeTi8alM1pwdtJc7LWh2w1RZIMNsOe77PsGs/DhKhTgC1/UIGkTrqmmKs8FMwkgUp
+         oD8mMqaEDLQSNnkKfEgR0Q6JH5EH1Q0Imywfe1H09s+XD8BzVkJfaToNDwHqcqicaVuI
+         e8RUQw9j6a7dJvRkC5espSYy6T14Tapa9gwdsfcgt194sRgXGrh0VDW20BfrjolTpAja
+         O9kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Gy/ffcyv+jl5ONvP440UlkfrpqU6FIgU7urCShkm4OI=;
-        b=IG+0pZWipm+jxPydSKuF5qZOGhtd05LC++3l43MhF2TBIXM3H207LHYqr6X2IaPdhf
-         IYZsvFnA6tz9qW16huST0VfxH5hltJs6wEuwmIH6wuf2Mbm5SH4iFq6EQsSpCqfZRqRc
-         GCM60gm2dEsglHrDgcoDSroPO72P2B8klTW1/FHLPIC0bNDCbCkQr6BaRXg76XR00Ecp
-         Plufd+Mgi9PVThRqDGZKyXHmueZrlH0cT3oG+0KH/P3owF6qbkmj2TSl2Q5mwQsRtSKq
-         51aWXBL1zNM/L5Q85ZzhhMzcZ64GkBCVcaUhpBIKO1TItd1ohNKtNB5mE5U5JoSNycnX
-         A/UA==
-X-Gm-Message-State: AOAM531GwFhz5zEXPouyzSBQACM+lefZ8rjUGyJ7IErU17gpKdflA/u7
-        4ylb6kIZvGgPlPupk1wyJzvfdg==
-X-Google-Smtp-Source: ABdhPJzsRP1NA0gWnWpOHahAdgA06LuJTvTyN73FXH9LjfMxfAdG8Yd/nWhryNZda9bpTi1lrPua7A==
-X-Received: by 2002:adf:a34d:: with SMTP id d13mr8480701wrb.194.1611135058083;
-        Wed, 20 Jan 2021 01:30:58 -0800 (PST)
+        bh=/Cp1gEYyuPZEPQHMnMAoPqNAjf4Uu2nrDn0l3qFFYNM=;
+        b=RGKqERsjcF/wPe1Fz9W89A9l6VvIF3+2obghgz1v4HHu0VdO0eRCB1tWjN2hB7ISIR
+         riBJwtbLPyGKzXfZ2BcFPJ5BQ3l8QXgtx2q0gJ4jgmg798M/94jvMcmI+VcqcmPyxBdV
+         wZHyxi/pFEQALD/fzG7pAw9xcZuTlWJh3xznlknFvwZ2i9zmQnzlBTafE86jWgXLPfNw
+         IulYE3qUNghjxR2X8HpkyKP+uQWT2Win7QIyo/+iDlMTYgj2hwTmkqcCv0qjFXL8eMQR
+         qAAgzJLCMFt+m9SKagBBPCZLWzWbts79YLwilGaBoTDqaSwxTI6Stxq21dHdDSFdydn5
+         yskw==
+X-Gm-Message-State: AOAM530uGjkm6x/2HNG6iyxEn+jbQIgkuB9gWK7i31npAK1C77k18S7h
+        xZ20FVwX7R99shJYWOSRfdyFnw==
+X-Google-Smtp-Source: ABdhPJxZxWzaToEk27ecZGkXhe+6U5z7Ot3JGsAIEg9K+DV3FjCF6F8iccxzNz/LgqouJZmYDGeo4g==
+X-Received: by 2002:a7b:ca4d:: with SMTP id m13mr3570290wml.28.1611135062782;
+        Wed, 20 Jan 2021 01:31:02 -0800 (PST)
 Received: from dell.default ([91.110.221.158])
-        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.57
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 01:30:57 -0800 (PST)
+        Wed, 20 Jan 2021 01:31:02 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Gallimore <stephen.gallimore@st.com>,
-        Pankaj Dev <pankaj.dev@st.com>, linux-clk@vger.kernel.org
-Subject: [PATCH 12/20] clk: st: clkgen-fsyn: Fix worthy struct documentation demote partially filled one
-Date:   Wed, 20 Jan 2021 09:30:32 +0000
-Message-Id: <20210120093040.1719407-13-lee.jones@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 16/20] clk: ti: gate: Fix possible doc-rot in 'omap36xx_gate_clk_enable_with_hsdiv_restore'
+Date:   Wed, 20 Jan 2021 09:30:36 +0000
+Message-Id: <20210120093040.1719407-17-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
@@ -77,52 +75,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/st/clkgen-fsyn.c:186: warning: Function parameter or member 'data' not described in 'st_clk_quadfs_pll'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'regs_base' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'lock' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'data' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'chan' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'md' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'pe' not described in 'st_clk_quadfs_fsynth'
- drivers/clk/st/clkgen-fsyn.c:466: warning: Function parameter or member 'sdiv' not described in 'st_clk_quadfs_fsynth'
+ drivers/clk/ti/gate.c:67: warning: Function parameter or member 'hw' not described in 'omap36xx_gate_clk_enable_with_hsdiv_restore'
+ drivers/clk/ti/gate.c:67: warning: Excess function parameter 'clk' description in 'omap36xx_gate_clk_enable_with_hsdiv_restore'
 
+Cc: Tero Kristo <kristo@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Stephen Gallimore <stephen.gallimore@st.com>
-Cc: Pankaj Dev <pankaj.dev@st.com>
+Cc: linux-omap@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/st/clkgen-fsyn.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/ti/gate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index f1adc858b5907..dd6062e043e02 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -172,10 +172,10 @@ static const struct clkgen_quadfs_data st_fs660c32_D = {
-  *                                  ST quad channel frequency synthesizer block
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index 42389558418c5..b1d0fdb40a75a 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -55,7 +55,7 @@ static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
+ /**
+  * omap36xx_gate_clk_enable_with_hsdiv_restore - enable clocks suffering
+  *         from HSDivider PWRDN problem Implements Errata ID: i556.
+- * @clk: DPLL output struct clk
++ * @hw: DPLL output struct clk_hw
   *
-  * @hw: handle between common and hardware-specific interfaces.
-- * @ndiv: regmap field for the ndiv control.
-  * @regs_base: base address of the configuration registers.
-  * @lock: spinlock.
-- *
-+ * @data: local driver data
-+ * @ndiv: regmap field for the ndiv control.
-  */
- struct st_clk_quadfs_pll {
- 	struct clk_hw	hw;
-@@ -426,7 +426,7 @@ static struct clk * __init st_clk_register_quadfs_pll(
-  * parent - fixed parent.  No clk_set_parent support
-  */
- 
--/**
-+/*
-  * struct st_clk_quadfs_fsynth - One clock output from a four channel digital
-  *                                  frequency synthesizer (fsynth) block.
-  *
+  * 3630 only: dpll3_m3_ck, dpll4_m2_ck, dpll4_m3_ck, dpll4_m4_ck,
+  * dpll4_m5_ck & dpll4_m6_ck dividers gets loaded with reset
 -- 
 2.25.1
 
