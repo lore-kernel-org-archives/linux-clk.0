@@ -2,104 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3F1C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C7CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00D32233F9
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC32233E2
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:32:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391409AbhATQWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 11:22:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403876AbhATQVO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 11:21:14 -0500
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABD8C0613CF
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 08:20:34 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id s15so12766330plr.9
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 08:20:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cRKedHZD4eQd4YutMVRkvvYFpo5E79xcV0d35RU4DKE=;
-        b=tMRsDwdM2AL2jqj+gv2iqJMEhTJRRzQEsTI6NwNp/PsKyl2dFfsVvGWLiak44FAsHR
-         rRtjrYE/+DvQ7MLsesV8llOWlxkItubFUXlRrSC9LLP4Wj3Ta5s9wWOydHLrestFCSvP
-         L/0N0111LisRF4JX2S7tQsndrJcfYAwDgHyid0/vh+Ux0M4HBi8x4NhnOInb2/lWDeOA
-         t9cQHFSRKzvkyvictDOaby54khjlTKHjmv8GhuhgRcDjb58CAnf45DMoRnc5diYij+Xn
-         D17ToApYnM/1OHDaGyxtOsgpZ6nyn8vZ6t4WNlQGPsIc+z7c4+BslU1PVnBMQm/03+vT
-         UM8Q==
+        id S2403964AbhATQbo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 11:31:44 -0500
+Received: from mail-ot1-f52.google.com ([209.85.210.52]:34886 "EHLO
+        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404081AbhATQas (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 11:30:48 -0500
+Received: by mail-ot1-f52.google.com with SMTP id 36so12391461otp.2;
+        Wed, 20 Jan 2021 08:30:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cRKedHZD4eQd4YutMVRkvvYFpo5E79xcV0d35RU4DKE=;
-        b=GOcAduXLRl91MdbTqC6TT7U8Vz5fNYWXZix0+4nCsSYDUaejVDL9pvCIxqXSK8Ew/w
-         94jUB/V1E8djWvmGQXD/PDNU44vdzcsl6VZ73wyHt9RQVM7SlokDln7nDTI4dSBJHlB+
-         KJ1spRc0Zf25FoRfeKCMkFxqCUL5V/cReFtNYLaQq8JWcbB00s2CPKZuvy8TQFKH+v3f
-         9T36aIDIQYoBGIs6Av/yPS4tWph+EP0E3i4i047YFAp0Z7HMVK6dKQONyY5F/KZ7ydFl
-         aKKlgN7IpedyvT6aagZ13rOY4jIkSYE+PJEdzE34FooPSSA1jqmsUJy/ahkkETC34V+F
-         B03g==
-X-Gm-Message-State: AOAM5314iGA1tM5O7ly0jVcnZ0W2dvAQ8TLrWB6OQ+yXNI6YfvEcALA6
-        yhu1BN2uii2odZ8XzNcbdfLb
-X-Google-Smtp-Source: ABdhPJzF+19oudVJqy1cqnehphkReFwLuVjvpXl1jxFMDn7okWClCz7xrwAHD3KkDPFCIK7RLkYrjg==
-X-Received: by 2002:a17:902:7596:b029:da:b7a3:cdd0 with SMTP id j22-20020a1709027596b02900dab7a3cdd0mr10336255pll.14.1611159633964;
-        Wed, 20 Jan 2021 08:20:33 -0800 (PST)
-Received: from thinkpad ([2409:4072:409:c713:3d52:1d51:c724:155d])
-        by smtp.gmail.com with ESMTPSA id n15sm2972057pgl.31.2021.01.20.08.20.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 08:20:32 -0800 (PST)
-Date:   Wed, 20 Jan 2021 21:50:21 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org,
-        jassisinghbrar@gmail.com, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, ulf.hansson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] dt-bindings: clock: Add Qualcomm A7 PLL binding
-Message-ID: <20210120162021.GA54606@thinkpad>
-References: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
- <20210118041156.50016-4-manivannan.sadhasivam@linaro.org>
- <20210120155018.GA213895@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8qbcj96nUBxwaOq/+VeJJ4TOWxu4T57LWPFj57lO5C0=;
+        b=Zixq75D+m44gJxZj7PZxRvWQeME0k3gpVTJWvHBvL1u7QDxyEoC/ds8S8ZoGQXGNZD
+         vdqeZrbdmr7qGK31juxvRnq8CeMOyIoECh8W6TFm0yR/Ph/At5823W4e7sgk9X7ZX/+k
+         HTCsUPFv1hL16ASv/7MpalMw+0ef2Z3N1m1Oq2FA2IRk7hXG/GlSHx/OSVUqAV2We2He
+         LCEm79wauKKM9jLDXQc4mjBQFxbUQipfUJDoio2DZxKDYq+n1O/26RqVu+yZnhu9vyvi
+         YCVuFrOOFhHRlK4G5kMvyXe1//8gKcG2ekg4DhmZw3P1Q09ax32B+Wfg2s5762H1+4Ct
+         kdkA==
+X-Gm-Message-State: AOAM532SMUuLCZosGu6BjiYkF+YwbNYqQhJHTgF5W0RSit0vN+BXSh+L
+        ALqmTXZZ1o4hdL9N2XhGKSlQwCyBKIBAi9ilU+vL+7xAffo=
+X-Google-Smtp-Source: ABdhPJzeqp/HHuaRc2XnkL25kpeIpG1eTyKiF4x4rD/IMvU3G3HkLGqRJwU8dkWjjsz1mJTdLGPMYx40St7gv5U7sGM=
+X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr7583208oth.250.1611160205924;
+ Wed, 20 Jan 2021 08:30:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210120155018.GA213895@robh.at.kernel.org>
+References: <20210114125650.2233045-1-geert+renesas@glider.be> <6d7a8180-b10d-481f-a3ca-05c37c17cb1a@lucaceresoli.net>
+In-Reply-To: <6d7a8180-b10d-481f-a3ca-05c37c17cb1a@lucaceresoli.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Jan 2021 17:29:54 +0100
+Message-ID: <CAMuHMdWO5Uv22q8TuO4MQ_gv4LLT6UDCm0TrDtWe6DL=bbFKWw@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 09:50:18AM -0600, Rob Herring wrote:
-> On Mon, 18 Jan 2021 09:41:54 +0530, Manivannan Sadhasivam wrote:
-> > Add devicetree YAML binding for Cortex A7 PLL clock in Qualcomm
-> > platforms like SDX55.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hi Luca,
+
+On Wed, Jan 20, 2021 at 5:08 PM Luca Ceresoli <luca@lucaceresoli.net> wrote:
+> On 14/01/21 13:56, Geert Uytterhoeven wrote:
+> >   - Add missing reference for "idt,voltage-microvolt",
+> >   - Add missing "additionalProperties: false" for subnodes, to catch
+> >     typos in properties,
+> >   - Fix property names in example.
+> >
+> > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > > ---
-> >  .../devicetree/bindings/clock/qcom,a7pll.yaml | 51 +++++++++++++++++++
-> >  1 file changed, 51 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
-> > 
-> 
-> 
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
+> > v2:
+> >   - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
+> >     ('clk: vc5: Use "idt,voltage-microvolt" instead of
+> >     "idt,voltage-microvolts"'),
+> >   - Drop reference to clock.yaml, which is already applied
+> >     unconditionally,
+> >   - Drop removal of allOf around if condition, as it is unnecessary
+> >     churn.
+> > ---
+> >  .../devicetree/bindings/clock/idt,versaclock5.yaml       | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > index 2ac1131fd9222a86..70239f992d714ae0 100644
+> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > @@ -75,12 +75,15 @@ patternProperties:
+> >          maximum: 6
+> >        idt,voltage-microvolt:
+> >          description: The output drive voltage.
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+>
+> "Vendor specific properties having a standard unit suffix don't need a
+> type." -- Documentation/devicetree/bindings/example-schema.yaml
 
-Oops! Sorry, I missed your review for this patch:
+Thanks, will fix in v3!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Rob: would this apply to idt,slew-percent, too?
+I.e. should -percent be added to dt-schema/schemas/property-units.yaml?
 
-Thanks,
-Mani
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
