@@ -2,120 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15CDC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A496C4332B
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6A2233ED
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1AFC233EF
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728981AbhATPw1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 10:52:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390967AbhATPuw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 10:50:52 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3CEC061757
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 07:50:12 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1l2FkA-0004PH-K3; Wed, 20 Jan 2021 16:50:02 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1l2Fk9-0005Fx-LJ; Wed, 20 Jan 2021 16:50:01 +0100
-Date:   Wed, 20 Jan 2021 16:50:01 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Adam Ford <aford173@gmail.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
+        id S1732767AbhATOIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 09:08:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732809AbhATNLV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Jan 2021 08:11:21 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8B74623139;
+        Wed, 20 Jan 2021 13:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611148238;
+        bh=/n5jpX+Dga0L4p7HwpIfjYOcjPdDWZ/CVpwJlDNpSAg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fsCHHXHNopSEqcUuWJtVqPqqbKUWcWdm4uLEhBdMfs7dWH/zXXsn9LOVtPCDFGup4
+         LqQqS1TCKnLWwZ1lsztvdxQMTDkoMx5/ZeOQlo/s+3iZ/Xqxwwt+vBnBDyc+aXfjqG
+         o1kTtHYggstYj425ZIeb27S6DcSNQoNHzTCzzoZQ6qvrzxmtT7yCOpa+GHV7/WM4lq
+         lt64Uz7a5o7yRN3h2I1yuwNB4Hst1cAafobzcwx/Z2ni42OaXMCx0hRjB4UEY7mvBX
+         d741IsKW/R+ej6rGwqJY3uPTaX9lJpzWmZtAKUk/N/6YiDR4IaYNiHOW7dKaf0AUSE
+         EVgD6BNPYm5Kg==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated
- with sdout
-Message-ID: <20210120155001.GD19063@pengutronix.de>
-References: <20210115182909.314756-1-aford173@gmail.com>
- <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
- <CAHCN7x+CXUuPN7upiv3D+REOU4d_=i30no+SkRzUjWY58o=uUQ@mail.gmail.com>
- <20210120144454.f6b72lnasw4q3bde@fsr-ub1664-175>
- <20210120151305.GC19063@pengutronix.de>
- <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>
+Subject: [PATCH 1/4] clk: remove tango4 driver
+Date:   Wed, 20 Jan 2021 14:10:23 +0100
+Message-Id: <20210120131026.1721788-2-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210120131026.1721788-1-arnd@kernel.org>
+References: <20210120131026.1721788-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 16:48:32 up 49 days,  4:15, 92 users,  load average: 0.30, 0.38,
- 0.23
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
-> On 21-01-20 16:13:05, Sascha Hauer wrote:
-> > Hi Abel,
-> > 
-> > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
-> > > On 21-01-18 08:00:43, Adam Ford wrote:
-> > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> 
-> ...
-> 
-> > > > 
-> > > > >
-> > > > > TBH, I'm against the idea of having to call consumer API from a clock provider driver.
-> > > > > I'm still investigating a way of moving the uart clock control calls in drivers/serial/imx,
-> > > > > where they belong.
-> > > > 
-> > > > That makes sense.
-> > > > 
-> > > 
-> > > Just a thought. The uart clock used for console remains on from u-boot,
-> > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag to all the
-> > > uart root clocks and remove the prepare/enable calls for uart clocks 
-> > > for good. I don't really have a way to test it right now, but maybe
-> > > you could give it a try.
-> > 
-> > That would mean that UART clocks will never be disabled, regardless of
-> > whether they are used for console or not. That doesn't sound very
-> > appealing.
-> 
-> AFAIK, the only uart clock that is enabled by u-boot is the one used for
-> the console. Later on, when the serial driver probes, it will enable it itself.
-> 
-> Unless I'm missing something, this is exactly what we need.
+From: Arnd Bergmann <arnd@arndb.de>
 
-It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
-disabled again when a port is closed after usage
+The tango platform is getting removed, so the driver is no
+longer needed.
 
-Sascha
+Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc: Mans Rullgard <mans@mansr.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ .../bindings/clock/tango4-clock.txt           | 23 -----
+ drivers/clk/Makefile                          |  1 -
+ drivers/clk/clk-tango4.c                      | 85 -------------------
+ 3 files changed, 109 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/tango4-clock.txt
+ delete mode 100644 drivers/clk/clk-tango4.c
 
+diff --git a/Documentation/devicetree/bindings/clock/tango4-clock.txt b/Documentation/devicetree/bindings/clock/tango4-clock.txt
+deleted file mode 100644
+index 19c580a7bda2..000000000000
+--- a/Documentation/devicetree/bindings/clock/tango4-clock.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-* Sigma Designs Tango4 Clock Generator
+-
+-The Tango4 clock generator outputs cpu_clk and sys_clk (the latter is used
+-for RAM and various peripheral devices). The clock binding described here
+-is applicable to all Tango4 SoCs.
+-
+-Required Properties:
+-
+-- compatible: should be "sigma,tango4-clkgen".
+-- reg: physical base address of the device and length of memory mapped region.
+-- clocks: phandle of the input clock (crystal oscillator).
+-- clock-output-names: should be "cpuclk" and "sysclk".
+-- #clock-cells: should be set to 1.
+-
+-Example:
+-
+-	clkgen: clkgen@10000 {
+-		compatible = "sigma,tango4-clkgen";
+-		reg = <0x10000 0x40>;
+-		clocks = <&xtal>;
+-		clock-output-names = "cpuclk", "sysclk";
+-		#clock-cells = <1>;
+-	};
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dbdc590e7de3..adf05704336e 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -63,7 +63,6 @@ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+ obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
+ obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
+ obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o
+-obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+ obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
+ obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
+diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
+deleted file mode 100644
+index fe12a43f7a40..000000000000
+--- a/drivers/clk/clk-tango4.c
++++ /dev/null
+@@ -1,85 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/kernel.h>
+-#include <linux/clk-provider.h>
+-#include <linux/of_address.h>
+-#include <linux/init.h>
+-#include <linux/io.h>
+-
+-#define CLK_COUNT 4 /* cpu_clk, sys_clk, usb_clk, sdio_clk */
+-static struct clk *clks[CLK_COUNT];
+-static struct clk_onecell_data clk_data = { clks, CLK_COUNT };
+-
+-#define SYSCLK_DIV	0x20
+-#define CPUCLK_DIV	0x24
+-#define DIV_BYPASS	BIT(23)
+-
+-/*** CLKGEN_PLL ***/
+-#define extract_pll_n(val)	((val >>  0) & ((1u << 7) - 1))
+-#define extract_pll_k(val)	((val >> 13) & ((1u << 3) - 1))
+-#define extract_pll_m(val)	((val >> 16) & ((1u << 3) - 1))
+-#define extract_pll_isel(val)	((val >> 24) & ((1u << 3) - 1))
+-
+-static void __init make_pll(int idx, const char *parent, void __iomem *base)
+-{
+-	char name[8];
+-	u32 val, mul, div;
+-
+-	sprintf(name, "pll%d", idx);
+-	val = readl(base + idx * 8);
+-	mul =  extract_pll_n(val) + 1;
+-	div = (extract_pll_m(val) + 1) << extract_pll_k(val);
+-	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
+-	if (extract_pll_isel(val) != 1)
+-		panic("%s: input not set to XTAL_IN\n", name);
+-}
+-
+-static void __init make_cd(int idx, void __iomem *base)
+-{
+-	char name[8];
+-	u32 val, mul, div;
+-
+-	sprintf(name, "cd%d", idx);
+-	val = readl(base + idx * 8);
+-	mul =  1 << 27;
+-	div = (2 << 27) + val;
+-	clk_register_fixed_factor(NULL, name, "pll2", 0, mul, div);
+-	if (val > 0xf0000000)
+-		panic("%s: unsupported divider %x\n", name, val);
+-}
+-
+-static void __init tango4_clkgen_setup(struct device_node *np)
+-{
+-	struct clk **pp = clk_data.clks;
+-	void __iomem *base = of_iomap(np, 0);
+-	const char *parent = of_clk_get_parent_name(np, 0);
+-
+-	if (!base)
+-		panic("%pOFn: invalid address\n", np);
+-
+-	if (readl(base + CPUCLK_DIV) & DIV_BYPASS)
+-		panic("%pOFn: unsupported cpuclk setup\n", np);
+-
+-	if (readl(base + SYSCLK_DIV) & DIV_BYPASS)
+-		panic("%pOFn: unsupported sysclk setup\n", np);
+-
+-	writel(0x100, base + CPUCLK_DIV); /* disable frequency ramping */
+-
+-	make_pll(0, parent, base);
+-	make_pll(1, parent, base);
+-	make_pll(2, parent, base);
+-	make_cd(2, base + 0x80);
+-	make_cd(6, base + 0x80);
+-
+-	pp[0] = clk_register_divider(NULL, "cpu_clk", "pll0", 0,
+-			base + CPUCLK_DIV, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
+-	pp[1] = clk_register_fixed_factor(NULL, "sys_clk", "pll1", 0, 1, 4);
+-	pp[2] = clk_register_fixed_factor(NULL,  "usb_clk", "cd2", 0, 1, 2);
+-	pp[3] = clk_register_fixed_factor(NULL, "sdio_clk", "cd6", 0, 1, 2);
+-
+-	if (IS_ERR(pp[0]) || IS_ERR(pp[1]) || IS_ERR(pp[2]) || IS_ERR(pp[3]))
+-		panic("%pOFn: clk registration failed\n", np);
+-
+-	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data))
+-		panic("%pOFn: clk provider registration failed\n", np);
+-}
+-CLK_OF_DECLARE(tango4_clkgen, "sigma,tango4-clkgen", tango4_clkgen_setup);
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.29.2
+
