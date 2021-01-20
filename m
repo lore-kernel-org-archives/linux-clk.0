@@ -7,119 +7,118 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E9EC4361A
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C27C433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 556E423332
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5439523332
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387460AbhATKkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:40:25 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34843 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730568AbhATKAP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 05:00:15 -0500
+        id S2387433AbhATKka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:40:30 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:42677 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730805AbhATKBB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 05:01:01 -0500
 Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id CF4705C019E;
-        Wed, 20 Jan 2021 04:59:06 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 20 Jan 2021 04:59:06 -0500
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4201C580645;
+        Wed, 20 Jan 2021 04:59:48 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 20 Jan 2021 04:59:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=KD++98fmxbqoHnG4tp/j4XYmChQ
-        7QOlWamvweXUDQ3Y=; b=WpPgrtKWICMsBBArlorjowKo2Byk6W+IVoFqktPctv0
-        eaelRqEQ3rweZpoqzl841gXisG+FygUcn9DlxGSvJ39jxMEMEv0mZqlWod3dbCjg
-        svOYOarKYQ9EHnOAgOJLNtOE63fEZxlcWX510d29B5htw05r2cnPqyqrUXzCf6+l
-        6GJhSJqwZAt3ScfPxVnEP5bcZ/szD8zfRr+so+c3AkvC/wP2ss9a+gMWCEB75Uef
-        NpfJpJ9hCQyNwD+TxuJEl78NaRNPnTaqCsFbMNkzAUfnUuR2tRbdtId9EIT83+qj
-        yglqyQV/dOYLZss8gnpdgsZpKSRtRJeZ2lgqIskDHXA==
+        :content-type:in-reply-to; s=fm1; bh=lp4bugowM8Cz89Jr9r+G1178edD
+        DlUIF6dAKNP0Nskk=; b=UCjfDb+Kw3dJzbDn7icuH7AyBUbz5gCD8G7LQ1cFmyc
+        OPsACPI7sq3DTrrSjp8m1XVScTf/p5zg/bLwFlhI529LQ5HVnm77vRtwZIuDaB5K
+        3mpw4mNjClCblfd9ftPHlyzGjIIkWmq+1T4mWI4YOysszigQxencG12g+jNgW3Wq
+        jxSJ9RF8TIZmT8d79IYoVN4AQ/x7T8ZLnILpr/TcrAevVVd1j6Pe+KI7wzgOszoh
+        oqP8V4hg0j0dfNAXmfAnt/8HEN3a5P4yIWeLs4xzA/eBCvETJC9g1anbrlejfzlB
+        SJ5SW2sz/6L4qyKtJXT57twUjt2IhyYnZmLniMuZ9rQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=KD++98
-        fmxbqoHnG4tp/j4XYmChQ7QOlWamvweXUDQ3Y=; b=kz6jQ9MAjXHG/qFfAQwH3d
-        cx2/BkEtzIHznRTPcVkvCM/KOvctt3E1MCctQbWfI/f3ZY5oPmUb7BMEZP48I1HP
-        UIW2vBd6IidoCotdU4fgsL00Oob+fWJpz9Fz8m9NckLdKsDFnLMZLUdjCzs5O/Ml
-        yzqMrxIuADX0eJzdw2cf+GNxuWHYiZDvu4OuQQURjppZKdjaJkXpEc8INhMDSY2j
-        yJuFC7Ht6YL9su6dLyXMOCvH7unMd2qYmZu1dz4k4Ud0/IpexLgL/TR0P8+aY0Q0
-        +mK7HFojdI6tnZo7a9e2CnQa6U1yapGOHuhkGuEZMAZXIVk3nb9rhGcVd7qQRF8g
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=lp4bug
+        owM8Cz89Jr9r+G1178edDDlUIF6dAKNP0Nskk=; b=HjIZWUTQ4H1dHSmZmPtC6J
+        7Bmyye2tV/cC84hcXoMeSMU0Xm/VMiHYkhYEFY+ulo2mtUEupGrPP5gKLRudGaql
+        FthHaCWiC4DTPbUrAz/+ZsXRgUywz6kg6Oo81Yw7vUSJrX7+Ka+55Ses0wpUYl5d
+        QmJxV9AfdBTtSu1MZ9bIGmzd7vhGIZZGM0mxMbVPoW2yT/FhNjzEx4ektDZwxKOR
+        SKzmgb7Uvl8DtBNBy5f6afOKOVMPddj7Z686V284Y+PquRaGaO3xyDc37y6wbyJj
+        R5Qt/UPr5qDO0y+OZ6x7j2xjLbP0oStFzE175ZTvIPU16jUcc7c0wRSoUTQQvYlQ
         ==
-X-ME-Sender: <xms:5v4HYHm4GBZF2tUKk6MciFuk0c5gRbhTnxllg0DBrWc_zLZLfmyOTg>
-    <xme:5v4HYK1dxePo9b1tm8D2uzFwlkKFg8rPaxrT0X0WE71lL7OdPkQfp-OUZm3hx9Bc7
-    L0MBv7MujtRaK28iJA>
+X-ME-Sender: <xms:E_8HYFk3rBTVap5TR89voWytIg-zep14ZoeGrNPlCA-CT3-SqpGgaw>
+    <xme:E_8HYA2jDwPfzNT3tv0OjZmXV4xeBL6-U_WUAIJ-d-PP3YO7n0lqLd7LJSuQBDsBy
+    OBhMNFEa8QvzQ5MpqY>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddvgdduudcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
     ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
-    veenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
     grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:5v4HYNqoDqbJzRJmcGPmT0OQZ8MpEXHqFyRsPIoYjqKf-RH--vRDDw>
-    <xmx:5v4HYPkszdnO3nHT_EVUIXXIkTGl5MkpNwyxcwzqH8hP2Ffje5imbw>
-    <xmx:5v4HYF2gk7LIlFjg0IxTx1XauOB3KT0qlAd7TokSO6DPmHJevAl2Dw>
-    <xmx:6v4HYPot-W8GxBfSkPArjR0HZUGQ0XKbMR0K52XeQSgIliwbwgTzPg>
+X-ME-Proxy: <xmx:E_8HYLpygufVehP4KQTi-ruk_T5BvjPDYctx471VNqgsAX_VoIwFzQ>
+    <xmx:E_8HYFlh-RlAp9YspVqJu7WASwEzm1j6_DnNco1VMDZZvJa3qXznaw>
+    <xmx:E_8HYD0t9ETO-LMxlzOp0W6J6GNJmGflhqydfVf2doZR9TD5Sehb8Q>
+    <xmx:FP8HYMJ9-8BmIzjGlZCXGEpVUgcYD5nQAeVNY8bRndIfo2Iuetw_og>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0765A24005B;
-        Wed, 20 Jan 2021 04:59:01 -0500 (EST)
-Date:   Wed, 20 Jan 2021 10:58:59 +0100
+        by mail.messagingengine.com (Postfix) with ESMTPA id 98279108005F;
+        Wed, 20 Jan 2021 04:59:47 -0500 (EST)
+Date:   Wed, 20 Jan 2021 10:59:46 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 18/20] clk: sunxi: clk-mod0: Demote non-conformant
- kernel-doc header
-Message-ID: <20210120095859.otg7npva5uzsleks@gilmour>
-References: <20210120093040.1719407-1-lee.jones@linaro.org>
- <20210120093040.1719407-19-lee.jones@linaro.org>
+        Icenowy Zheng <icenowy@aosc.io>,
+        Samuel Holland <samuel@sholland.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3] clk: sunxi-ng: h6: Fix clock divider range on some
+ clocks
+Message-ID: <20210120095946.nljah6r3e4qhxdup@gilmour>
+References: <20210118000912.28116-1-andre.przywara@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qufllwearrsrgr2d"
+        protocol="application/pgp-signature"; boundary="w3peknzrtioxirsb"
 Content-Disposition: inline
-In-Reply-To: <20210120093040.1719407-19-lee.jones@linaro.org>
+In-Reply-To: <20210118000912.28116-1-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---qufllwearrsrgr2d
-Content-Type: text/plain; charset=iso-8859-1
+--w3peknzrtioxirsb
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 20, 2021 at 09:30:38AM +0000, Lee Jones wrote:
-> Fixes the following W=3D1 kernel build warning(s):
+On Mon, Jan 18, 2021 at 12:09:12AM +0000, Andre Przywara wrote:
+> While comparing clocks between the H6 and H616, some of the M factor
+> ranges were found to be wrong: the manual says they are only covering
+> two bits [1:0], but our code had "5" in the number-of-bits field.
 >=20
->  drivers/clk/sunxi/clk-mod0.c:24: warning: Function parameter or member '=
-req' not described in 'sun4i_a10_get_mod0_factors'
+> By writing 0xff into that register in U-Boot and via FEL, it could be
+> confirmed that bits [4:2] are indeed masked off, so the manual is right.
 >=20
-> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Change to number of bits in the affected clock's description.
+>=20
+> Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU=
+")
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Applied all three sunxi patches
-
+Applied, thanks
 Maxime
 
---qufllwearrsrgr2d
+--w3peknzrtioxirsb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAf+4wAKCRDj7w1vZxhR
-xXwVAQCTjlsSXUfuGpihRn+a4m0GtibT9giWyg0LX1gqqV8/QwD7BaKMxWHuXNOZ
-nfhOS1R4EI0Vz40z2MJu9D2iNM4ikgk=
-=m46P
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYAf/EgAKCRDj7w1vZxhR
+xXVZAQC7nSoPxbIFRmwjS4V4gw80kynjKfhejrOltrK4u+3NBAD8DprfSNKwiWpZ
+UpnA7KjNyLZlKyBcuzrKBYgzwS0pbQg=
+=WYor
 -----END PGP SIGNATURE-----
 
---qufllwearrsrgr2d--
+--w3peknzrtioxirsb--
