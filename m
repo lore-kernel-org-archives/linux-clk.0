@@ -7,67 +7,72 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E466C10F04
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36400C10F05
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2DC223332
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 135B223339
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733278AbhATKi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:38:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45638 "EHLO
+        id S1733266AbhATKip (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:38:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730336AbhATJdm (ORCPT
+        with ESMTP id S1730320AbhATJdm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:42 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D836FC0617B9
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:02 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id c128so2191295wme.2
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:02 -0800 (PST)
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31A2C0617B0
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:01 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id m4so22349730wrx.9
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZlxWqB97396Z/1CTd7JjSdXD/AayRN7t/x5G26LknOw=;
-        b=YW8CLG2amwNwESLYt8j2slhiMdqoBHjc3t9MBSkQGbtJ9tiNc/C38kXcKSQxORb6XD
-         jq4X2o/AdyIonvu+iNGV0nPBkc1+GHus2lYFwxJM01UE5MObgcw009+epNk4rDV11iRl
-         LfSxGbrNKChJjsjW6RyPy6+dak4PfdI40njSOTW0+DCMFmws1ZpwY4PEivLAyq5MdwSU
-         XvUXuDZGKOFTUxsQL9WFRUNeXaDtt+cKWDMXoNJyZ0joRQm+BAhXi0m/lRoDv1u9wtnu
-         bb+QLTB6b6bvECBYjOMlFgXQNs4ccybT4j/WJFSCTgiEChqlFK4ZGkTLs6+nrqMYf77G
-         CiRQ==
+        bh=mu8xCztc0AgIARBS5szSrpdQPwfSUoIoG1rzTMM/Vwk=;
+        b=EsuZKp4rqkAfbLaJ6Zgg5MUQDUQ1/lPYc0Ira44cBcDWzwVjzSxYL48gc6q2rTNexX
+         Egeklkm7Eb73cstVN6foJSJ9PKGHytPoZRp4cGufOh28Yuv+4AEvAC06zXmebdyYAz9G
+         n6EMZx0foqpyjP0Rn53FRFj4XP5zSCiG1dQBMHU5DY0T6ZholCFVudiPK8Jlgif4nRpL
+         +x5CabDVTNH4NV2eOAFbwIe89W0ZIFo8GUMfTViy4nNJIXtv1pqj0f8tPu51cIr/jSmP
+         Gvxm7tAz3n01OiAvzYl/7a/HTMWebH7RGtVKZ8zGBOYFAE6fIXQR2zwDCMYtOwpLdAgI
+         4iFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZlxWqB97396Z/1CTd7JjSdXD/AayRN7t/x5G26LknOw=;
-        b=eYr62rCAzd/PBlwUSvhftfwhKwdVpvBENTL0pTnVAUozgZASpOwjGhet/ZQmUe2JBL
-         28SVUjjjeWMbN7R2HCntLkzcrlgET/LcTeWM9D6gBHXdQAUfjU3IFRRw7zodaP1xQegJ
-         pL0ecvE4jKuUoojwnK5MsDpKquOnPagIXMzaazQytd3kppEGhB38QvjKseJrHyf+En5V
-         9wvTO9QHsC8/9pHT2DFtO1wOrKJd46DnrWoX5JDO4DvKum0O4X+uANQZd6e5toAQaxbn
-         qKXzsa5a83Lw6zwLRS/4HooYlnwmVIoXbLC64EPbDTfo17klReqArpL5OM5GUu1peX1v
-         EWvQ==
-X-Gm-Message-State: AOAM531S/7a4o7rA3pyWP8i6e7UBbqzlNq5Iise7jVkilH8s9rBLzJPn
-        txDDGc9Vv9g/kQgh7eEAlvm6/w==
-X-Google-Smtp-Source: ABdhPJz3CMwq3lUrKSRc8gEuNGfqALvjLL4ApeskT3BX/9cQHX/dTMIgwY2+r417x7R6omOj+oJ3HQ==
-X-Received: by 2002:a7b:cb09:: with SMTP id u9mr3483431wmj.61.1611135061623;
-        Wed, 20 Jan 2021 01:31:01 -0800 (PST)
+        bh=mu8xCztc0AgIARBS5szSrpdQPwfSUoIoG1rzTMM/Vwk=;
+        b=U2SaKEL0wmqg3bKlr/s+6rsK1dbBMCqRnTPUJKNwZjZyatWV/TqCkgNA9fLr8h3mZU
+         58zQ2pUyt+O0r0zGf5URK1T0plQ+Vic6YRWPfeRCFojDPCXTy0oLH+x21QYA2/wraC+P
+         2WPFda2W+nW33n1LJuOVb64tfEYk3GLLtr7Ai1KgBNIQzbWbaWZB5RlIJ/FE/0tTa/+l
+         HMTBxKe9xVoNyl60IJcsICkRltzOWx9RZjVVQB4926rgacxcXJ1uMFdvEa6FsRSEg6gg
+         9et74W6tcxwFbyD++GMBp1djbzqFdXkSJsTC1wfKY74BV0hzzJrOeH2gmCGVTuurC4Kk
+         wZQA==
+X-Gm-Message-State: AOAM533nri9cJQRU7B2zAgER0Pkzz9IM3UKZ6+7MkDmDtDKtITQIHoYo
+        qG9cx/eID/TRIdhD3szeDgFNkg==
+X-Google-Smtp-Source: ABdhPJwqoP/VfLcHNwCpfnTCoMaX1/gJf0um8tj8jdmEDVhpdjgfnb6XiTOC2d6IV4znwXTumkOMhg==
+X-Received: by 2002:a05:6000:108b:: with SMTP id y11mr8137126wrw.379.1611135060418;
+        Wed, 20 Jan 2021 01:31:00 -0800 (PST)
 Received: from dell.default ([91.110.221.158])
-        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.31.00
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 01:31:01 -0800 (PST)
+        Wed, 20 Jan 2021 01:30:59 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 15/20] clk: ti: dpll: Fix misnaming of '_register_dpll()'s 'user' parameter
-Date:   Wed, 20 Jan 2021 09:30:35 +0000
-Message-Id: <20210120093040.1719407-16-lee.jones@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 14/20] clk: sunxi: clk-sunxi: Demote a bunch of non-conformant kernel-doc headers
+Date:   Wed, 20 Jan 2021 09:30:34 +0000
+Message-Id: <20210120093040.1719407-15-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -75,32 +80,182 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/ti/dpll.c:163: warning: Function parameter or member 'user' not described in '_register_dpll'
- drivers/clk/ti/dpll.c:163: warning: Excess function parameter 'hw' description in '_register_dpll'
+ drivers/clk/sunxi/clk-sunxi.c:34: warning: Function parameter or member 'req' not described in 'sun4i_get_pll1_factors'
+ drivers/clk/sunxi/clk-sunxi.c:81: warning: Function parameter or member 'req' not described in 'sun6i_a31_get_pll1_factors'
+ drivers/clk/sunxi/clk-sunxi.c:158: warning: Function parameter or member 'req' not described in 'sun8i_a23_get_pll1_factors'
+ drivers/clk/sunxi/clk-sunxi.c:202: warning: Function parameter or member 'req' not described in 'sun4i_get_pll5_factors'
+ drivers/clk/sunxi/clk-sunxi.c:229: warning: Function parameter or member 'req' not described in 'sun6i_a31_get_pll6_factors'
+ drivers/clk/sunxi/clk-sunxi.c:250: warning: Function parameter or member 'req' not described in 'sun5i_a13_get_ahb_factors'
+ drivers/clk/sunxi/clk-sunxi.c:289: warning: Function parameter or member 'req' not described in 'sun6i_get_ahb1_factors'
+ drivers/clk/sunxi/clk-sunxi.c:328: warning: Function parameter or member 'req' not described in 'sun6i_ahb1_recalc'
+ drivers/clk/sunxi/clk-sunxi.c:346: warning: Function parameter or member 'req' not described in 'sun4i_get_apb1_factors'
+ drivers/clk/sunxi/clk-sunxi.c:385: warning: Function parameter or member 'req' not described in 'sun7i_a20_get_out_factors'
+ drivers/clk/sunxi/clk-sunxi.c:415: warning: cannot understand function prototype: 'const struct clk_factors_config sun4i_pll1_config = '
+ drivers/clk/sunxi/clk-sunxi.c:724: warning: cannot understand function prototype: 'struct div_data '
+ drivers/clk/sunxi/clk-sunxi.c:945: warning: Function parameter or member 'node' not described in 'sunxi_divs_clk_setup'
+ drivers/clk/sunxi/clk-sunxi.c:945: warning: Function parameter or member 'data' not described in 'sunxi_divs_clk_setup'
 
-Cc: Tero Kristo <kristo@kernel.org>
+Cc: "Emilio López" <emilio@elopez.com.ar>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>
 Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/ti/dpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi/clk-sunxi.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 247510e306e2a..d6f1ac5b53e14 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -151,7 +151,7 @@ static const struct clk_ops dpll_x2_ck_ops = {
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index e1aa1fbac48a0..5fe7049ea693a 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -23,7 +23,7 @@ static DEFINE_SPINLOCK(clk_lock);
+ /* Maximum number of parents our clocks have */
+ #define SUNXI_MAX_PARENTS	5
  
- /**
-  * _register_dpll - low level registration of a DPLL clock
-- * @hw: hardware clock definition for the clock
-+ * @user: pointer to the hardware clock definition for the clock
-  * @node: device node for the clock
+-/**
++/*
+  * sun4i_get_pll1_factors() - calculates n, k, m, p factors for PLL1
+  * PLL1 rate is calculated as follows
+  * rate = (parent_rate * n * (k + 1) >> p) / (m + 1);
+@@ -71,7 +71,7 @@ static void sun4i_get_pll1_factors(struct factors_request *req)
+ 	req->n = div / 4;
+ }
+ 
+-/**
++/*
+  * sun6i_a31_get_pll1_factors() - calculates n, k and m factors for PLL1
+  * PLL1 rate is calculated as follows
+  * rate = parent_rate * (n + 1) * (k + 1) / (m + 1);
+@@ -147,7 +147,7 @@ static void sun6i_a31_get_pll1_factors(struct factors_request *req)
+ 	}
+ }
+ 
+-/**
++/*
+  * sun8i_a23_get_pll1_factors() - calculates n, k, m, p factors for PLL1
+  * PLL1 rate is calculated as follows
+  * rate = (parent_rate * (n + 1) * (k + 1) >> p) / (m + 1);
+@@ -191,7 +191,7 @@ static void sun8i_a23_get_pll1_factors(struct factors_request *req)
+ 	req->n = div / 4 - 1;
+ }
+ 
+-/**
++/*
+  * sun4i_get_pll5_factors() - calculates n, k factors for PLL5
+  * PLL5 rate is calculated as follows
+  * rate = parent_rate * n * (k + 1)
+@@ -218,7 +218,7 @@ static void sun4i_get_pll5_factors(struct factors_request *req)
+ 	req->n = DIV_ROUND_UP(div, (req->k + 1));
+ }
+ 
+-/**
++/*
+  * sun6i_a31_get_pll6_factors() - calculates n, k factors for A31 PLL6x2
+  * PLL6x2 rate is calculated as follows
+  * rate = parent_rate * (n + 1) * (k + 1)
+@@ -240,7 +240,7 @@ static void sun6i_a31_get_pll6_factors(struct factors_request *req)
+ 	req->n = DIV_ROUND_UP(div, (req->k + 1)) - 1;
+ }
+ 
+-/**
++/*
+  * sun5i_a13_get_ahb_factors() - calculates m, p factors for AHB
+  * AHB rate is calculated as follows
+  * rate = parent_rate >> p
+@@ -276,7 +276,7 @@ static void sun5i_a13_get_ahb_factors(struct factors_request *req)
+ 
+ #define SUN6I_AHB1_PARENT_PLL6	3
+ 
+-/**
++/*
+  * sun6i_a31_get_ahb_factors() - calculates m, p factors for AHB
+  * AHB rate is calculated as follows
+  * rate = parent_rate >> p
+@@ -320,7 +320,7 @@ static void sun6i_get_ahb1_factors(struct factors_request *req)
+ 	req->m = calcm - 1;
+ }
+ 
+-/**
++/*
+  * sun6i_ahb1_recalc() - calculates AHB clock rate from m, p factors and
+  *			 parent index
+  */
+@@ -336,7 +336,7 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
+ 	req->rate >>= req->p;
+ }
+ 
+-/**
++/*
+  * sun4i_get_apb1_factors() - calculates m, p factors for APB1
+  * APB1 rate is calculated as follows
+  * rate = (parent_rate >> p) / (m + 1);
+@@ -375,7 +375,7 @@ static void sun4i_get_apb1_factors(struct factors_request *req)
+ 
+ 
+ 
+-/**
++/*
+  * sun7i_a20_get_out_factors() - calculates m, p factors for CLK_OUT_A/B
+  * CLK_OUT rate is calculated as follows
+  * rate = (parent_rate >> p) / (m + 1);
+@@ -408,7 +408,7 @@ static void sun7i_a20_get_out_factors(struct factors_request *req)
+ 	req->p = calcp;
+ }
+ 
+-/**
++/*
+  * sunxi_factors_clk_setup() - Setup function for factor clocks
+  */
+ 
+@@ -625,7 +625,7 @@ CLK_OF_DECLARE(sun7i_out, "allwinner,sun7i-a20-out-clk",
+ 	       sun7i_out_clk_setup);
+ 
+ 
+-/**
++/*
+  * sunxi_mux_clk_setup() - Setup function for muxes
+  */
+ 
+@@ -717,7 +717,7 @@ CLK_OF_DECLARE(sun8i_ahb2, "allwinner,sun8i-h3-ahb2-clk",
+ 	       sun8i_ahb2_clk_setup);
+ 
+ 
+-/**
++/*
+  * sunxi_divider_clk_setup() - Setup function for simple divider clocks
+  */
+ 
+@@ -853,7 +853,7 @@ CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
+ 
+ 
+ 
+-/**
++/*
+  * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+  */
+ 
+@@ -863,7 +863,7 @@ struct gates_data {
+ 	DECLARE_BITMAP(mask, SUNXI_GATES_MAX_SIZE);
+ };
+ 
+-/**
++/*
+  * sunxi_divs_clk_setup() helper data
+  */
+ 
+@@ -929,7 +929,7 @@ static const struct divs_data sun6i_a31_pll6_divs_data __initconst = {
+ 	}
+ };
+ 
+-/**
++/*
+  * sunxi_divs_clk_setup() - Setup function for leaf divisors on clocks
   *
-  * Finalizes DPLL registration process. In case a failure (clk-ref or
+  * These clocks look something like this
 -- 
 2.25.1
 
