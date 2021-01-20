@@ -7,64 +7,66 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319F8C4321A
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5994BC4332D
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11B8723339
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23EF823332
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733306AbhATKjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:39:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45628 "EHLO
+        id S1733177AbhATKh0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:37:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731453AbhATJdw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:52 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6712EC061384
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:07 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id a1so1065272wrq.6
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:07 -0800 (PST)
+        with ESMTP id S1729101AbhATJdB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:01 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01CFC0617A1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:55 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id u14so2176219wmq.4
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a0eH26ZUBg4+GW3DVSJr3IUvZueqhdMA0PLfT85K6+E=;
-        b=MjDM98OLBbyugGi5z9i8y3gcFvSTFvaDlzZxfuqFRWUxgSzmGg2bkwE84t92uYf3f6
-         1YC5KMlqojalOqRujF0SHuZGdDwHrCiGwDMcBAg0Aj/mKmm/3KW0wRqSG/CC9X+EgW6V
-         wgBJQjilcc/l3PCDgB58vftVv7zWvgFr+YarUsf0Ylf28g3UaeElmEhXEv4l+r2sPzlH
-         xIhcd2qZxZ+ASJDUzSESYgjgs2SeT8Q/Y0JIbk9y2cI8JYvdm75jFkVj2RfMVFYjKxv7
-         yDdPDIKrgozZvxl92hv7PGPi/lDZ9Bot2HwlsvP2CgSD5yzzRUqe3so1F0IZOk55caqh
-         bJsQ==
+        bh=CsKGKKyp6+81exyBoVttQ3TpJ7bs90/HzFEMaKTSJxY=;
+        b=TNt0TrZJ3o4yf9t0fkrkMUJRKVjITng81FGmN1l8sq951Jd6wtuISqM6c56ItvCLqj
+         nm5arKvXWrfvK6OJ/RQBbFqCPaJ+hXHnaPp9p3iYVOzuxoxLnHAm/ydwQfgDrdqGq0ZO
+         h94O+qrzroPzH6h084pZTQv/oFiG6YJEZLcLHJ9D1z3Vdj/Xw0a8YmdNg+M/Dm5QvNZJ
+         yNEIK/EcjOQPPhbXI2ZK7EU4lioBvU8QokXSuDVnACQ8fmfzVs+j+R5cXmWU+uoyV5lG
+         XiV++42CE73yLZ2umiplORp6GgHdqthbKpUv91szf1Oy4CkPNqQWu/Ff19smErHvkieB
+         /Lzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a0eH26ZUBg4+GW3DVSJr3IUvZueqhdMA0PLfT85K6+E=;
-        b=QL4eZ4ZIupxgTOksyf5K09LfjfEdGz3d70F01hbhnmv4VTlJp0NYBBTUyuuBMA+A15
-         rygAf4BlCj8aP1xv21yczkNp6w2D1OTPf/hIfpBTI2XTUXHAUD/rVDf9aNuKTTs5y5M9
-         AE75NSqc8uwL0GVK3KvlWRhLNsFRVHAdtK5iVHjYqMOk9jPRXWQ7OWgg9Cn4FwqMlMVF
-         KuqYq4ym1U/LBkJ/T8Zr+lY57LknBMWrDxhs1Xq/RjeNLKL7gHLT563IktNtYE6WmWsL
-         xWXBYCkF1nD4sJ1SwnVgY9jcSK6k8vHvos8IcQugrMJ94jN9sHl+oNEDNWqiQzxvXet4
-         wvRQ==
-X-Gm-Message-State: AOAM530NagXeidFCGJfdjqPFUwShy9H9rhSf8DEPYWm0+cuM8W6J9sY9
-        D9bTebYI3sRedAshlw6sOaJsWw==
-X-Google-Smtp-Source: ABdhPJx3ZjCpUjZVjx48wSf2aRSX7D5zkaVbcdktQcNjUP6AbBni3d5m+dVFFlpKQcmNFhyVo9XKgA==
-X-Received: by 2002:a05:6000:1542:: with SMTP id 2mr8360962wry.356.1611135066213;
-        Wed, 20 Jan 2021 01:31:06 -0800 (PST)
+        bh=CsKGKKyp6+81exyBoVttQ3TpJ7bs90/HzFEMaKTSJxY=;
+        b=algVraVibYGPKIuV/XLuZ63IlIXZTPnAdW0L6WmSNEE6Ih7yiRzQfPZvMuDL92dZ9D
+         cA6P5BCFqWjKNpinGSTDNUZjCnNuW01LPW709sdy/N92IWvypbF9do2hOtnvJjPEQCCB
+         FWHdwZIFNzpTRD51IbZKM9ke3fCQaEDnMesyfqJQQhzeF8x4vUvs+OiZIu9wPQapC6kH
+         Lv+hGZl9JGASIgfQp/QAXpO/u8YQJNV+8eq1EocGJNXRL5mazwSlxcSkZYFVKTmCHLDC
+         B4kuR/hGoPBJBYX/TfEQOpUn3FOa81OzFHC9FgUqy9JuAgaQQLXvz39KRNUEu079fdnJ
+         aGPw==
+X-Gm-Message-State: AOAM531ICcErPkif91/F2LfSBmbbykvc+5EB/4Xn/eRoVijDR8iWBjYC
+        9vwxx1Vg+v1FdI06c1wsSkqizA==
+X-Google-Smtp-Source: ABdhPJy2o9OPMNkmeQsdP33xCZcrH+7ZyANpQydcxE25NXUfXBuWqms+VN0cn/t+b3khC3qt/qxOrw==
+X-Received: by 2002:a7b:c188:: with SMTP id y8mr3246197wmi.173.1611135054541;
+        Wed, 20 Jan 2021 01:30:54 -0800 (PST)
 Received: from dell.default ([91.110.221.158])
-        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.31.05
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 01:31:05 -0800 (PST)
+        Wed, 20 Jan 2021 01:30:53 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 19/20] clk: versatile: clk-icst: Fix worthy struct documentation block
-Date:   Wed, 20 Jan 2021 09:30:39 +0000
-Message-Id: <20210120093040.1719407-20-lee.jones@linaro.org>
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Omri Itach <omrii@marvell.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 09/20] clk: mvebu: ap-cpu-clk: Demote non-conformant kernel-doc header
+Date:   Wed, 20 Jan 2021 09:30:29 +0000
+Message-Id: <20210120093040.1719407-10-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
@@ -74,50 +76,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Also demote non-worthy header to standard comment block.
+Not much effort has been put into this one.
+
+Demote it for the time being at least.
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'map' not described in 'clk_icst'
- drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'vcoreg_off' not described in 'clk_icst'
- drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'lockreg_off' not described in 'clk_icst'
- drivers/clk/versatile/clk-icst.c:435: warning: cannot understand function prototype: 'const struct icst_params icst525_apcp_cm_params = '
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'ratio_state_reg' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'divider_mask' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'cluster_offset' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'force_mask' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'divider_offset' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'divider_ratio' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'ratio_offset' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'ratio_state_offset' not described in 'cpu_dfs_regs'
+ drivers/clk/mvebu/ap-cpu-clk.c:52: warning: Function parameter or member 'ratio_state_cluster_offset' not described in 'cpu_dfs_regs'
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Omri Itach <omrii@marvell.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
 Cc: linux-clk@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/versatile/clk-icst.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/mvebu/ap-cpu-clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-index 692be2fd9261a..fdd6aa3cb1fc8 100644
---- a/drivers/clk/versatile/clk-icst.c
-+++ b/drivers/clk/versatile/clk-icst.c
-@@ -36,8 +36,9 @@
- /**
-  * struct clk_icst - ICST VCO clock wrapper
-  * @hw: corresponding clock hardware entry
-- * @vcoreg: VCO register address
-- * @lockreg: VCO lock register address
-+ * @map: register map
-+ * @vcoreg_off: VCO register address
-+ * @lockreg_off: VCO lock register address
-  * @params: parameters for this ICST instance
-  * @rate: current rate
-  * @ctype: the type of control register for the ICST
-@@ -428,7 +429,7 @@ static const struct icst_params icst307_params = {
- 	.idx2s		= icst307_idx2s,
- };
+diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
+index b4259b60dcfd6..08ba59ec3fb17 100644
+--- a/drivers/clk/mvebu/ap-cpu-clk.c
++++ b/drivers/clk/mvebu/ap-cpu-clk.c
+@@ -30,7 +30,7 @@
+ 
+ #define APN806_MAX_DIVIDER		32
  
 -/**
 +/*
-  * The core modules on the Integrator/AP and Integrator/CP have
-  * especially crippled ICST525 control.
-  */
+  * struct cpu_dfs_regs: CPU DFS register mapping
+  * @divider_reg: full integer ratio from PLL frequency to CPU clock frequency
+  * @force_reg: request to force new ratio regardless of relation to other clocks
 -- 
 2.25.1
 
