@@ -2,74 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC75C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D73C433E9
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B71BD23339
+	by mail.kernel.org (Postfix) with ESMTP id 8EDD423332
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733300AbhATKjc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:39:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45464 "EHLO
+        id S2387423AbhATKj6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:39:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731437AbhATJdt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:49 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24EBDC061381
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:05 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id m2so2198801wmm.1
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:05 -0800 (PST)
+        with ESMTP id S1731463AbhATJeF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:34:05 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B53BC061386
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:08 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id l12so17143972wry.2
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=b1bl3qDXqs2QWsHtpCw1hYF8Czg/cncqDgLkvEY/iUQ=;
-        b=UluTl24PAc0woLh+QvL0QkYieyL8otdwZgyoUVCvs/WZzW56EfbtkrYY1dCNvDJp3w
-         FzBe6w4ufIzbE7dIKpZDo7lVaZq04Rc/mEi6Ct4dw1B6TE+BZ/Il1dYj6+m9zjHnNY6s
-         qPojgNZy5RlZL/rDlV3G0nrrPChfb3o1/RU/nzUwVdRbOtFuuJDMgT6LMubMqA+iu59+
-         0LaI13OVJu5D16VmdGHmWDpb2Oyge/w/gqde8+P2Xtm4IXN4FfwUGvWzBUCg3TJte2PG
-         Dtbe24gAgK8QrwZ91tRZfCd0FTMUnsKwqoHRyrpuEPK+iL3mxIfFCzXajyGBYapubtFI
-         M+Ww==
+        bh=30zhW0o3snNlsU80MAuQCHF/yyUQuJN98MT9hG2uNLE=;
+        b=GDnVmsL1Y/UF6IyBi1RZRwAiaruRNo916+Ywds3s+t3914DBSKdDUoK0fwtHd3ln7m
+         CpJSPAQhcBa6O65j3BdZypOX7xMhsifEBZLp9wybgh8+22mhg3iIrmXLNDU50QAcna4P
+         dwuf9Gf/NF5Kfw2zbo6yBO14UF1pNbu6rUDxBgAOcWnGBVj3uCtGhcN+1+MNf4SZmFYy
+         rZgoPlssFmR1AWjdJAfHeZIz3CfNAlfIO5repl6TCiE+RjwYntlYcMx2hVHvirqR4fKi
+         gqLgPHOZGjNaG76L1kumYAgPiBYTlDwVOS2aTfqDYzYMBQOs+R6bm1WOpktDBZxTBv3q
+         Fr3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=b1bl3qDXqs2QWsHtpCw1hYF8Czg/cncqDgLkvEY/iUQ=;
-        b=fg1cgmBmy226Q4fK070bFJPzkTlvaGppPZYhg2MGOeSSrgQWzTZffWkz3Gy7tT+dUB
-         1OaZFkTPJNeo1XBxBKMr5TSpB6W1nM7qzZ3KBf2NAFlandTEwI8xhbc1kJfimxbBkLYk
-         DMgZLzt8D3AtFzes2UUrY1Pgn87gebFcEIIm98S8uj+wQ0wfo+TtpZZN5omddOC4hxIQ
-         FMXOsdPEscUoug1jqERCPC/h+wqFNrSod/CnkxBDxfMX5BT6wTIXCP4ieuaiw8ibeEg8
-         hSw1nahThxx4Fstmq6UXJLc/PjtTv1IsTkhzmuqj+6tC0qpqJ8kIw0i02dFnk+fAPX6q
-         c0hQ==
-X-Gm-Message-State: AOAM530D0lDBo+KwwO/CtbZzqYRuRq/vSYvrvMPUXXCUCwL88E8++Dvb
-        8y+u0Z147KAVBl3OTRaVjsQFRw==
-X-Google-Smtp-Source: ABdhPJzhia3eL7yODrhkrLrPZukKCx6m5jAT0hXZEPPdZjxL5Q87B2VVnH1Y3E2ycOLMSqlFt8W/GQ==
-X-Received: by 2002:a1c:2802:: with SMTP id o2mr3494011wmo.68.1611135063932;
-        Wed, 20 Jan 2021 01:31:03 -0800 (PST)
+        bh=30zhW0o3snNlsU80MAuQCHF/yyUQuJN98MT9hG2uNLE=;
+        b=LFVbS8Ah1uPI1/jyO0KWii0rCwwIJ3epz6S3Dc1Jerm/xW/QElMtvnxcEVC8oVXlMv
+         kygbkaTPBua++lPktbrhnPavzbJgjHnA5oRJOP4HxyOCK8R0GCNP5zC3g1Sals65WB/2
+         ersyObaPuz+7vR4fOIv/4jgGpGO1HDpHvgY4C/ASPQWvddMJa6bBXAFW9IGHcoNosOc0
+         VciOl+gCXYXdl1EE4A9d4qlSAQx/YNGzICrzhZ7FGEfs73K71FZ/MHiUlUJAFDfmow7q
+         FU1fXa7lKzY62qwsuxVVA0NBuhQzfQh7qqGNtvN7KfLGTMBeNwW10KtJzElNAw/O6GoD
+         mGIw==
+X-Gm-Message-State: AOAM5315/V5trc/tyARlK2RBhYS44ONMIXMMcwqLMbDxvjJBVJ6NAMjl
+        dzHJEFcfJkxfXTKxCMWjNunVHg==
+X-Google-Smtp-Source: ABdhPJxEUayvz2eG5bIKF5fnpCWN+R+WuJ/i+WEMiP79FcBTYCv2kmHFklBGQ14t2rl3txn6CfCi7w==
+X-Received: by 2002:adf:a3c1:: with SMTP id m1mr8264522wrb.357.1611135067352;
+        Wed, 20 Jan 2021 01:31:07 -0800 (PST)
 Received: from dell.default ([91.110.221.158])
-        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.31.02
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.31.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 01:31:03 -0800 (PST)
+        Wed, 20 Jan 2021 01:31:06 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 17/20] clk: sunxi: clk-a10-ve: Demote obvious kernel-doc abuse
-Date:   Wed, 20 Jan 2021 09:30:37 +0000
-Message-Id: <20210120093040.1719407-18-lee.jones@linaro.org>
+Subject: [PATCH 20/20] clk: zynq: clkc: Remove various instances of an unused variable 'clk'
+Date:   Wed, 20 Jan 2021 09:30:40 +0000
+Message-Id: <20210120093040.1719407-21-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
@@ -82,35 +78,268 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/sunxi/clk-a10-ve.c:27: warning: cannot understand function prototype: 'struct ve_reset_data '
+ drivers/clk/zynq/clkc.c: In function ‘zynq_clk_register_fclk’:
+ drivers/clk/zynq/clkc.c:106:14: warning: variable ‘clk’ set but not used [-Wunused-but-set-variable]
+ drivers/clk/zynq/clkc.c: In function ‘zynq_clk_register_periph_clk’:
+ drivers/clk/zynq/clkc.c:179:14: warning: variable ‘clk’ set but not used [-Wunused-but-set-variable]
+ drivers/clk/zynq/clkc.c: In function ‘zynq_clk_setup’:
+ drivers/clk/zynq/clkc.c:220:14: warning: variable ‘clk’ set but not used [-Wunused-but-set-variable]
 
-Cc: "Emilio López" <emilio@elopez.com.ar>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
 Cc: linux-clk@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/sunxi/clk-a10-ve.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/zynq/clkc.c | 73 ++++++++++++++++++++---------------------
+ 1 file changed, 35 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-a10-ve.c b/drivers/clk/sunxi/clk-a10-ve.c
-index cb5daa4b37db7..65810937a13a1 100644
---- a/drivers/clk/sunxi/clk-a10-ve.c
-+++ b/drivers/clk/sunxi/clk-a10-ve.c
-@@ -20,7 +20,7 @@ static DEFINE_SPINLOCK(ve_lock);
- #define SUN4I_VE_DIVIDER_WIDTH	3
- #define SUN4I_VE_RESET		0
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index ffbb9008c1c99..204b83d911b90 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -103,7 +103,6 @@ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
+ 		const char *clk_name, void __iomem *fclk_ctrl_reg,
+ 		const char **parents, int enable)
+ {
+-	struct clk *clk;
+ 	u32 enable_reg;
+ 	char *mux_name;
+ 	char *div0_name;
+@@ -131,15 +130,15 @@ static void __init zynq_clk_register_fclk(enum zynq_clk fclk,
+ 	if (!div1_name)
+ 		goto err_div1_name;
  
--/**
-+/*
-  * sunxi_ve_reset... - reset bit in ve clk registers handling
-  */
+-	clk = clk_register_mux(NULL, mux_name, parents, 4,
++	clk_register_mux(NULL, mux_name, parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, fclk_ctrl_reg, 4, 2, 0,
+ 			fclk_lock);
  
+-	clk = clk_register_divider(NULL, div0_name, mux_name,
++	clk_register_divider(NULL, div0_name, mux_name,
+ 			0, fclk_ctrl_reg, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, fclk_lock);
+ 
+-	clk = clk_register_divider(NULL, div1_name, div0_name,
++	clk_register_divider(NULL, div1_name, div0_name,
+ 			CLK_SET_RATE_PARENT, fclk_ctrl_reg, 20, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+ 			fclk_lock);
+@@ -176,7 +175,6 @@ static void __init zynq_clk_register_periph_clk(enum zynq_clk clk0,
+ 		const char *clk_name1, void __iomem *clk_ctrl,
+ 		const char **parents, unsigned int two_gates)
+ {
+-	struct clk *clk;
+ 	char *mux_name;
+ 	char *div_name;
+ 	spinlock_t *lock;
+@@ -189,10 +187,10 @@ static void __init zynq_clk_register_periph_clk(enum zynq_clk clk0,
+ 	mux_name = kasprintf(GFP_KERNEL, "%s_mux", clk_name0);
+ 	div_name = kasprintf(GFP_KERNEL, "%s_div", clk_name0);
+ 
+-	clk = clk_register_mux(NULL, mux_name, parents, 4,
++	clk_register_mux(NULL, mux_name, parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, clk_ctrl, 4, 2, 0, lock);
+ 
+-	clk = clk_register_divider(NULL, div_name, mux_name, 0, clk_ctrl, 8, 6,
++	clk_register_divider(NULL, div_name, mux_name, 0, clk_ctrl, 8, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO, lock);
+ 
+ 	clks[clk0] = clk_register_gate(NULL, clk_name0, div_name,
+@@ -217,7 +215,6 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 	int i;
+ 	u32 tmp;
+ 	int ret;
+-	struct clk *clk;
+ 	char *clk_name;
+ 	unsigned int fclk_enable = 0;
+ 	const char *clk_output_name[clk_max];
+@@ -257,19 +254,19 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 	ps_clk = clk_register_fixed_rate(NULL, "ps_clk", NULL, 0, tmp);
+ 
+ 	/* PLLs */
+-	clk = clk_register_zynq_pll("armpll_int", "ps_clk", SLCR_ARMPLL_CTRL,
++	clk_register_zynq_pll("armpll_int", "ps_clk", SLCR_ARMPLL_CTRL,
+ 			SLCR_PLL_STATUS, 0, &armpll_lock);
+ 	clks[armpll] = clk_register_mux(NULL, clk_output_name[armpll],
+ 			armpll_parents, 2, CLK_SET_RATE_NO_REPARENT,
+ 			SLCR_ARMPLL_CTRL, 4, 1, 0, &armpll_lock);
+ 
+-	clk = clk_register_zynq_pll("ddrpll_int", "ps_clk", SLCR_DDRPLL_CTRL,
++	clk_register_zynq_pll("ddrpll_int", "ps_clk", SLCR_DDRPLL_CTRL,
+ 			SLCR_PLL_STATUS, 1, &ddrpll_lock);
+ 	clks[ddrpll] = clk_register_mux(NULL, clk_output_name[ddrpll],
+ 			ddrpll_parents, 2, CLK_SET_RATE_NO_REPARENT,
+ 			SLCR_DDRPLL_CTRL, 4, 1, 0, &ddrpll_lock);
+ 
+-	clk = clk_register_zynq_pll("iopll_int", "ps_clk", SLCR_IOPLL_CTRL,
++	clk_register_zynq_pll("iopll_int", "ps_clk", SLCR_IOPLL_CTRL,
+ 			SLCR_PLL_STATUS, 2, &iopll_lock);
+ 	clks[iopll] = clk_register_mux(NULL, clk_output_name[iopll],
+ 			iopll_parents, 2, CLK_SET_RATE_NO_REPARENT,
+@@ -277,10 +274,10 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 
+ 	/* CPU clocks */
+ 	tmp = readl(SLCR_621_TRUE) & 1;
+-	clk = clk_register_mux(NULL, "cpu_mux", cpu_parents, 4,
++	clk_register_mux(NULL, "cpu_mux", cpu_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_ARM_CLK_CTRL, 4, 2, 0,
+ 			&armclk_lock);
+-	clk = clk_register_divider(NULL, "cpu_div", "cpu_mux", 0,
++	clk_register_divider(NULL, "cpu_div", "cpu_mux", 0,
+ 			SLCR_ARM_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &armclk_lock);
+ 
+@@ -288,20 +285,20 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			"cpu_div", CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 			SLCR_ARM_CLK_CTRL, 24, 0, &armclk_lock);
+ 
+-	clk = clk_register_fixed_factor(NULL, "cpu_3or2x_div", "cpu_div", 0,
++	clk_register_fixed_factor(NULL, "cpu_3or2x_div", "cpu_div", 0,
+ 			1, 2);
+ 	clks[cpu_3or2x] = clk_register_gate(NULL, clk_output_name[cpu_3or2x],
+ 			"cpu_3or2x_div", CLK_IGNORE_UNUSED,
+ 			SLCR_ARM_CLK_CTRL, 25, 0, &armclk_lock);
+ 
+-	clk = clk_register_fixed_factor(NULL, "cpu_2x_div", "cpu_div", 0, 1,
++	clk_register_fixed_factor(NULL, "cpu_2x_div", "cpu_div", 0, 1,
+ 			2 + tmp);
+ 	clks[cpu_2x] = clk_register_gate(NULL, clk_output_name[cpu_2x],
+ 			"cpu_2x_div", CLK_IGNORE_UNUSED, SLCR_ARM_CLK_CTRL,
+ 			26, 0, &armclk_lock);
+ 	clk_prepare_enable(clks[cpu_2x]);
+ 
+-	clk = clk_register_fixed_factor(NULL, "cpu_1x_div", "cpu_div", 0, 1,
++	clk_register_fixed_factor(NULL, "cpu_1x_div", "cpu_div", 0, 1,
+ 			4 + 2 * tmp);
+ 	clks[cpu_1x] = clk_register_gate(NULL, clk_output_name[cpu_1x],
+ 			"cpu_1x_div", CLK_IGNORE_UNUSED, SLCR_ARM_CLK_CTRL, 27,
+@@ -324,23 +321,23 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			&swdtclk_lock);
+ 
+ 	/* DDR clocks */
+-	clk = clk_register_divider(NULL, "ddr2x_div", "ddrpll", 0,
++	clk_register_divider(NULL, "ddr2x_div", "ddrpll", 0,
+ 			SLCR_DDR_CLK_CTRL, 26, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &ddrclk_lock);
+ 	clks[ddr2x] = clk_register_gate(NULL, clk_output_name[ddr2x],
+ 			"ddr2x_div", 0, SLCR_DDR_CLK_CTRL, 1, 0, &ddrclk_lock);
+ 	clk_prepare_enable(clks[ddr2x]);
+-	clk = clk_register_divider(NULL, "ddr3x_div", "ddrpll", 0,
++	clk_register_divider(NULL, "ddr3x_div", "ddrpll", 0,
+ 			SLCR_DDR_CLK_CTRL, 20, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &ddrclk_lock);
+ 	clks[ddr3x] = clk_register_gate(NULL, clk_output_name[ddr3x],
+ 			"ddr3x_div", 0, SLCR_DDR_CLK_CTRL, 0, 0, &ddrclk_lock);
+ 	clk_prepare_enable(clks[ddr3x]);
+ 
+-	clk = clk_register_divider(NULL, "dci_div0", "ddrpll", 0,
++	clk_register_divider(NULL, "dci_div0", "ddrpll", 0,
+ 			SLCR_DCI_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &dciclk_lock);
+-	clk = clk_register_divider(NULL, "dci_div1", "dci_div0",
++	clk_register_divider(NULL, "dci_div1", "dci_div0",
+ 			CLK_SET_RATE_PARENT, SLCR_DCI_CLK_CTRL, 20, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+ 			&dciclk_lock);
+@@ -385,17 +382,17 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			gem0_mux_parents[i + 1] = of_clk_get_parent_name(np,
+ 					idx);
+ 	}
+-	clk = clk_register_mux(NULL, "gem0_mux", periph_parents, 4,
++	clk_register_mux(NULL, "gem0_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_GEM0_CLK_CTRL, 4, 2, 0,
+ 			&gem0clk_lock);
+-	clk = clk_register_divider(NULL, "gem0_div0", "gem0_mux", 0,
++	clk_register_divider(NULL, "gem0_div0", "gem0_mux", 0,
+ 			SLCR_GEM0_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &gem0clk_lock);
+-	clk = clk_register_divider(NULL, "gem0_div1", "gem0_div0",
++	clk_register_divider(NULL, "gem0_div1", "gem0_div0",
+ 			CLK_SET_RATE_PARENT, SLCR_GEM0_CLK_CTRL, 20, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+ 			&gem0clk_lock);
+-	clk = clk_register_mux(NULL, "gem0_emio_mux", gem0_mux_parents, 2,
++	clk_register_mux(NULL, "gem0_emio_mux", gem0_mux_parents, 2,
+ 			CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+ 			SLCR_GEM0_CLK_CTRL, 6, 1, 0,
+ 			&gem0clk_lock);
+@@ -410,17 +407,17 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			gem1_mux_parents[i + 1] = of_clk_get_parent_name(np,
+ 					idx);
+ 	}
+-	clk = clk_register_mux(NULL, "gem1_mux", periph_parents, 4,
++	clk_register_mux(NULL, "gem1_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_GEM1_CLK_CTRL, 4, 2, 0,
+ 			&gem1clk_lock);
+-	clk = clk_register_divider(NULL, "gem1_div0", "gem1_mux", 0,
++	clk_register_divider(NULL, "gem1_div0", "gem1_mux", 0,
+ 			SLCR_GEM1_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &gem1clk_lock);
+-	clk = clk_register_divider(NULL, "gem1_div1", "gem1_div0",
++	clk_register_divider(NULL, "gem1_div1", "gem1_div0",
+ 			CLK_SET_RATE_PARENT, SLCR_GEM1_CLK_CTRL, 20, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+ 			&gem1clk_lock);
+-	clk = clk_register_mux(NULL, "gem1_emio_mux", gem1_mux_parents, 2,
++	clk_register_mux(NULL, "gem1_emio_mux", gem1_mux_parents, 2,
+ 			CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+ 			SLCR_GEM1_CLK_CTRL, 6, 1, 0,
+ 			&gem1clk_lock);
+@@ -442,27 +439,27 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			can_mio_mux_parents[i] = dummy_nm;
+ 	}
+ 	kfree(clk_name);
+-	clk = clk_register_mux(NULL, "can_mux", periph_parents, 4,
++	clk_register_mux(NULL, "can_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_CAN_CLK_CTRL, 4, 2, 0,
+ 			&canclk_lock);
+-	clk = clk_register_divider(NULL, "can_div0", "can_mux", 0,
++	clk_register_divider(NULL, "can_div0", "can_mux", 0,
+ 			SLCR_CAN_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &canclk_lock);
+-	clk = clk_register_divider(NULL, "can_div1", "can_div0",
++	clk_register_divider(NULL, "can_div1", "can_div0",
+ 			CLK_SET_RATE_PARENT, SLCR_CAN_CLK_CTRL, 20, 6,
+ 			CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
+ 			&canclk_lock);
+-	clk = clk_register_gate(NULL, "can0_gate", "can_div1",
++	clk_register_gate(NULL, "can0_gate", "can_div1",
+ 			CLK_SET_RATE_PARENT, SLCR_CAN_CLK_CTRL, 0, 0,
+ 			&canclk_lock);
+-	clk = clk_register_gate(NULL, "can1_gate", "can_div1",
++	clk_register_gate(NULL, "can1_gate", "can_div1",
+ 			CLK_SET_RATE_PARENT, SLCR_CAN_CLK_CTRL, 1, 0,
+ 			&canclk_lock);
+-	clk = clk_register_mux(NULL, "can0_mio_mux",
++	clk_register_mux(NULL, "can0_mio_mux",
+ 			can_mio_mux_parents, 54, CLK_SET_RATE_PARENT |
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_CAN_MIOCLK_CTRL, 0, 6, 0,
+ 			&canmioclk_lock);
+-	clk = clk_register_mux(NULL, "can1_mio_mux",
++	clk_register_mux(NULL, "can1_mio_mux",
+ 			can_mio_mux_parents, 54, CLK_SET_RATE_PARENT |
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_CAN_MIOCLK_CTRL, 16, 6,
+ 			0, &canmioclk_lock);
+@@ -482,13 +479,13 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 			dbg_emio_mux_parents[i + 1] = of_clk_get_parent_name(np,
+ 					idx);
+ 	}
+-	clk = clk_register_mux(NULL, "dbg_mux", periph_parents, 4,
++	clk_register_mux(NULL, "dbg_mux", periph_parents, 4,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_DBG_CLK_CTRL, 4, 2, 0,
+ 			&dbgclk_lock);
+-	clk = clk_register_divider(NULL, "dbg_div", "dbg_mux", 0,
++	clk_register_divider(NULL, "dbg_div", "dbg_mux", 0,
+ 			SLCR_DBG_CLK_CTRL, 8, 6, CLK_DIVIDER_ONE_BASED |
+ 			CLK_DIVIDER_ALLOW_ZERO, &dbgclk_lock);
+-	clk = clk_register_mux(NULL, "dbg_emio_mux", dbg_emio_mux_parents, 2,
++	clk_register_mux(NULL, "dbg_emio_mux", dbg_emio_mux_parents, 2,
+ 			CLK_SET_RATE_NO_REPARENT, SLCR_DBG_CLK_CTRL, 6, 1, 0,
+ 			&dbgclk_lock);
+ 	clks[dbg_trc] = clk_register_gate(NULL, clk_output_name[dbg_trc],
 -- 
 2.25.1
 
