@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BADC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 03:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0DAC4321A
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 03:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D23482311C
+	by mail.kernel.org (Postfix) with ESMTP id AAA4723138
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 03:54:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbhATC2C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jan 2021 21:28:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46600 "EHLO mail.kernel.org"
+        id S1729103AbhATC2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jan 2021 21:28:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbhATB1r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Jan 2021 20:27:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A9912332B;
-        Wed, 20 Jan 2021 01:26:26 +0000 (UTC)
+        id S1730738AbhATB3Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Jan 2021 20:29:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 05556235FF;
+        Wed, 20 Jan 2021 01:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611105987;
-        bh=nNAHqXNlik6Lp82foU7Am+8xOHXb3VK7DiEQfGKesrc=;
+        s=k20201202; t=1611106071;
+        bh=d7ogqVVpOdGNkRMRKs7I5o4viurZ7VIllf8oL4WB7Gw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUvMxfwZAUvNUP5vM9uOP5vsjUqo4JDbhpSyYV92yp6c60eV/k9E4pHYbu+0VeXFc
-         O1Uvxl7ve+30nkE0EcMzkjzHfYf3wWvT1NtLk2Y1V5JyybE1PHZqOsWP5Mu9COtjRy
-         fg5GCdIF0/+p2yhiWEE7I5GnDkkOOCB1XOT/NdqqaTbDAMm1tBgExcIVE8Y4e9pXid
-         gYpr6RuWfn/JOyT3LJCobWimEiGU3mI+DZxEWQ+8oOtgZlDFkwr1K8oewLJplDFqvM
-         rLeDiUsb1RjsJuRT+eGoedxI4A27goYDIQvyQLMxT+uWLoj3X571tELf3X4gZRQ63M
-         t+xOy7dwyCK7w==
+        b=dT8lqOhntDh1o0JLMVl0KBVflVE5iFiZf8/XzjPk5Duhzw1c8WqiYF/tHB7EtyThh
+         zHz1RSmN+u1bToa60P+0gGV4AuzP1uJr+QmMU4F432vWLNVvXVBbjDL6P/gvtjf1Gu
+         dIzyct/Sjbd+chIxy4NIqTAEtABg6F934VhQmU0IwvGq8CO6Qj74XE3dxkhV1kpmRi
+         VgdOHluUO1fbWBw9z7ECrYICv494O5pRk+FHf6+Mkn87I6IbCbMicI4ktFe/UQSPeU
+         pZsSbaWMSLSnPgLoipPKC1v04GnPpsn+ypGJ22X2g8dkWFwzXRKVBZTU0R1DDFwvKp
+         aujhuLzi0ncag==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Peter Geis <pgwipeout@gmail.com>,
@@ -40,12 +40,12 @@ Cc:     Peter Geis <pgwipeout@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 19/45] clk: tegra30: Add hda clock default rates to clock driver
-Date:   Tue, 19 Jan 2021 20:25:36 -0500
-Message-Id: <20210120012602.769683-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 07/15] clk: tegra30: Add hda clock default rates to clock driver
+Date:   Tue, 19 Jan 2021 20:27:32 -0500
+Message-Id: <20210120012740.770354-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210120012602.769683-1-sashal@kernel.org>
-References: <20210120012602.769683-1-sashal@kernel.org>
+In-Reply-To: <20210120012740.770354-1-sashal@kernel.org>
+References: <20210120012740.770354-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 37244a7e68c22..9cf249c344d9e 100644
+index e0aaecd98fbff..678019f86bc7a 100644
 --- a/drivers/clk/tegra/clk-tegra30.c
 +++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1256,6 +1256,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+@@ -1274,6 +1274,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
  	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
  	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
  	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
