@@ -2,196 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE9C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9591BC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAC812333B
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C24B23332
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbhATKYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:24:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42354 "EHLO
+        id S1730406AbhATKbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:31:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731036AbhATJRD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:17:03 -0500
-Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [IPv6:2001:4b7a:2000:18::162])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27AAC0613C1
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:16:22 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 919761F63C;
-        Wed, 20 Jan 2021 10:16:17 +0100 (CET)
-Subject: Re: [PATCH V1] clk: qcom: gcc-sc7180: Mark the MM XO clocks to be
- always ON
-To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1611128871-5898-1-git-send-email-tdas@codeaurora.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Message-ID: <e6843147-514b-8901-a04c-b1d6e3ebf1c2@somainline.org>
-Date:   Wed, 20 Jan 2021 10:16:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        with ESMTP id S1731369AbhATJb1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:31:27 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47D8C061575
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:46 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id v184so2191679wma.1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bN1EA9Jtu/mSRFpfLqJ4hYJd1C2lXhS1XjJCl6CFg1g=;
+        b=zFYfx91XPKACjv/flqRWziV33Y4m/EmmyZgP+idh0JI5dCaeislX7SISmaLy2s4VR7
+         TIc1ogI7o6CjxnsWalSTE5E/3mDU/Dt9phL15/9AbLNEQW72xnXogiNhgutU8MmGoO93
+         Jv4du5hB7Px9HKxcCnEB1RVI476qeKJqLJo8S6/DiBQJ72je2SmV2umD81hzKuyPpm7k
+         LbS+mWh5mZyQUje328YOPnyARiClql6txorS+c+WVnuF4iSZJCSE7JIz3KQJRmL5wwsC
+         hmSNKVZDLydPhFLGljT+Jfv+sefoEExI+oL65ad3J1xNjCFPK4zzlSzB7xU349ywBE/U
+         7msQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bN1EA9Jtu/mSRFpfLqJ4hYJd1C2lXhS1XjJCl6CFg1g=;
+        b=RH2mI0jMBU4zFb4KeCrFsutqYR5j8A0A9LtEtkAGvmsQNXtOSbyLKsYJDmrBT9yV33
+         HtXsHwU0SN7OhpXT6fFFXQLNxSshcicRBJ8LL6yB1sVejGrPg2weaKdloPKk6bx0NdzM
+         WgwRD8P9HqiImMmwQ1k7WDmXKJYm9NSwaQjMKmdGT1nqvbJ1ruhmN11DMxzxO9Axr/du
+         lLPhuNmtzbD36iSXzSp5KhGnlcv3uafusY7se1js9rYH7kxXctZAnAGEzEN+0NCJqBPj
+         C+gZJr1c6fzc4/ZhSmh2PckCtHMaUA4VGoyKfCUvSytW2xHZSax42RmQ+7uCknrpAhF8
+         g4nQ==
+X-Gm-Message-State: AOAM530GNtXl93tYlV+oSWx1nothiyMafAk2Zn52G2Its7WLvSQyU5rS
+        kWs0YKHIf4Rm1f+kmkPMeeix9w==
+X-Google-Smtp-Source: ABdhPJy0QU7f/Vsm0leMTTjzvUhzClwhW+2h4hj2Ui406VthDvXgvODPTyr3pTl1F0dkQzpvKhwYUg==
+X-Received: by 2002:a1c:9d8b:: with SMTP id g133mr3413636wme.44.1611135045419;
+        Wed, 20 Jan 2021 01:30:45 -0800 (PST)
+Received: from dell.default ([91.110.221.158])
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 01:30:44 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Xing Zheng <zhengxing@rock-chips.com>,
+        Thomas Abraham <thomas.ab@samsung.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH 01/20] clk: rockchip: clk: Demote non-conformant kernel-doc headers
+Date:   Wed, 20 Jan 2021 09:30:21 +0000
+Message-Id: <20210120093040.1719407-2-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
+References: <20210120093040.1719407-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1611128871-5898-1-git-send-email-tdas@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/01/21 08:47, Taniya Das ha scritto:
-> There are intermittent GDSC power-up failures observed for titan top
-> gdsc, which requires the XO clock. Thus mark all the MM XO clocks always
-> enabled from probe.
-> 
+Fixes the following W=1 kernel build warning(s):
 
-Hello Tanya,
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'name' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'parent_names' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'num_parents' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'base' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'muxdiv_offset' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'mux_shift' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'mux_width' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'mux_flags' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'div_offset' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'div_shift' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'div_width' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'div_flags' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'div_table' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'gate_offset' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'gate_shift' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'gate_flags' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'flags' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:45: warning: Function parameter or member 'lock' not described in 'rockchip_clk_register_branch'
+ drivers/clk/rockchip/clk.c:180: warning: Function parameter or member 'hw' not described in 'rockchip_fractional_approximation'
+ drivers/clk/rockchip/clk.c:180: warning: Function parameter or member 'rate' not described in 'rockchip_fractional_approximation'
+ drivers/clk/rockchip/clk.c:180: warning: Function parameter or member 'parent_rate' not described in 'rockchip_fractional_approximation'
+ drivers/clk/rockchip/clk.c:180: warning: Function parameter or member 'm' not described in 'rockchip_fractional_approximation'
+ drivers/clk/rockchip/clk.c:180: warning: Function parameter or member 'n' not described in 'rockchip_fractional_approximation'
 
-> Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->   drivers/clk/qcom/gcc-sc7180.c | 47 ++++---------------------------------------
->   1 file changed, 4 insertions(+), 43 deletions(-)
-> 
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index b05901b..88e896a 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
-> - * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
->    */
-> 
->   #include <linux/clk-provider.h>
-> @@ -919,19 +919,6 @@ static struct clk_branch gcc_camera_throttle_hf_axi_clk = {
->   	},
->   };
-> 
-> -static struct clk_branch gcc_camera_xo_clk = {
-> -	.halt_reg = 0xb02c,
-> -	.halt_check = BRANCH_HALT,
-> -	.clkr = {
-> -		.enable_reg = 0xb02c,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "gcc_camera_xo_clk",
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Xing Zheng <zhengxing@rock-chips.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/clk/rockchip/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Why are you avoiding to register these clocks entirely?
-If this is needed by the Titan GDSC, this clock "does indeed exist".
-
-If these clocks shall never be turned off, then you should add the
-CLK_IS_CRITICAL flag and perhaps add a comment explaining why.
-
->   static struct clk_branch gcc_ce1_ahb_clk = {
->   	.halt_reg = 0x4100c,
->   	.halt_check = BRANCH_HALT_VOTED,
-> @@ -1096,19 +1083,6 @@ static struct clk_branch gcc_disp_throttle_hf_axi_clk = {
->   	},
->   };
-> 
-> -static struct clk_branch gcc_disp_xo_clk = {
-> -	.halt_reg = 0xb030,
-> -	.halt_check = BRANCH_HALT,
-> -	.clkr = {
-> -		.enable_reg = 0xb030,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "gcc_disp_xo_clk",
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
-
-Same here.
-
->   static struct clk_branch gcc_gp1_clk = {
->   	.halt_reg = 0x64000,
->   	.halt_check = BRANCH_HALT,
-> @@ -2159,19 +2133,6 @@ static struct clk_branch gcc_video_throttle_axi_clk = {
->   	},
->   };
-> 
-> -static struct clk_branch gcc_video_xo_clk = {
-> -	.halt_reg = 0xb028,
-> -	.halt_check = BRANCH_HALT,
-> -	.clkr = {
-> -		.enable_reg = 0xb028,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "gcc_video_xo_clk",
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
-
-...and here.
-
->   static struct clk_branch gcc_mss_cfg_ahb_clk = {
->   	.halt_reg = 0x8a000,
->   	.halt_check = BRANCH_HALT,
-> @@ -2304,7 +2265,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
->   	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
->   	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
->   	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
-> -	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
->   	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
->   	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
->   	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
-> @@ -2317,7 +2277,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
->   	[GCC_DISP_GPLL0_DIV_CLK_SRC] = &gcc_disp_gpll0_div_clk_src.clkr,
->   	[GCC_DISP_HF_AXI_CLK] = &gcc_disp_hf_axi_clk.clkr,
->   	[GCC_DISP_THROTTLE_HF_AXI_CLK] = &gcc_disp_throttle_hf_axi_clk.clkr,
-> -	[GCC_DISP_XO_CLK] = &gcc_disp_xo_clk.clkr,
->   	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
->   	[GCC_GP1_CLK_SRC] = &gcc_gp1_clk_src.clkr,
->   	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
-> @@ -2413,7 +2372,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
->   	[GCC_VIDEO_AXI_CLK] = &gcc_video_axi_clk.clkr,
->   	[GCC_VIDEO_GPLL0_DIV_CLK_SRC] = &gcc_video_gpll0_div_clk_src.clkr,
->   	[GCC_VIDEO_THROTTLE_AXI_CLK] = &gcc_video_throttle_axi_clk.clkr,
-> -	[GCC_VIDEO_XO_CLK] = &gcc_video_xo_clk.clkr,
->   	[GPLL0] = &gpll0.clkr,
->   	[GPLL0_OUT_EVEN] = &gpll0_out_even.clkr,
->   	[GPLL6] = &gpll6.clkr,
-> @@ -2510,6 +2468,9 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
->   	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
->   	regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
->   	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x0b02c, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x0b028, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x0b030, BIT(0), BIT(0));
-
-IMO, "Magic" regmap writes like these ones, even if documented, should
-be avoided in this specific case, since the clocks framework accounts
-for clocks that should be always-on, if provided with the right flags.
-
->   	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
-> 
->   	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
-> 
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 336481bc6cc72..049e5e0b64f62 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -24,7 +24,7 @@
+ #include <linux/rational.h>
+ #include "clk.h"
+ 
+-/**
++/*
+  * Register a clock branch.
+  * Most clock branches have a form like
+  *
+@@ -170,7 +170,7 @@ static int rockchip_clk_frac_notifier_cb(struct notifier_block *nb,
+ 	return notifier_from_errno(ret);
+ }
+ 
+-/**
++/*
+  * fractional divider must set that denominator is 20 times larger than
+  * numerator to generate precise clock frequency.
+  */
+-- 
+2.25.1
 
