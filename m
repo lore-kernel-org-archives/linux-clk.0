@@ -7,67 +7,74 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8C3C10F07
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0B3C4332B
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3177923332
+	by mail.kernel.org (Postfix) with ESMTP id B73FC23332
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733210AbhATKiE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 05:38:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
+        id S1733139AbhATKgg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:36:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730407AbhATJdm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:33:42 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B653C0617AA
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:00 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id m4so22349672wrx.9
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:31:00 -0800 (PST)
+        with ESMTP id S1729550AbhATJce (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:32:34 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14B5C0617A3
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:56 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id 190so2202769wmz.0
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:30:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LY5q2+0hG+fXtIws99tmFRHfiKbz2t7mHZqBtPU26u0=;
-        b=qp5ivHIwlPA+mxn7LHz6fR+aGvcqN60QpoPN+nH3YCn0g5OQy7c2P2LFzNZRy7FGge
-         hg2ivmGMDSU7cyhjyhZnZgwBQr0ZelkDjPGIRol04lKsfbMpcK/DF1iuHh4iiAvLHUrJ
-         4OS3eqZnZu9V5YFZzPzt2Y1+eAg/YlihiacFkH9T/8LZT6mBGQM1Vau2uhk5jCnJfDUE
-         Y9c2ZRdHI6t0xFmv10qomVdFhExs9yTbEU38LJK15kLAI8zs8PtF+sAu2VAdH+06Hi8J
-         XBpwD4SjiVm2Dp02z3/xHdesudpSzTi0sNwIy9ckSdZQK0LZF9kWrTrGUMx0pbW9vVLt
-         QMxg==
+        bh=1CyzRhBdQWuy7NbbbUGcka0gVixtKRd5z8W/5jUM6uQ=;
+        b=opSRLVAxhm/wlOnyPfNYTkIGkaz+7I8D0awfOj8/cW6MfioryWdd3b9OCHmD8IDARc
+         rYPHmSk1kA/ZVs8KqvXHWlxSeSdVGutfnATOGa0jNWvqDNZ8t30f6AttQB/3bmNyCEN7
+         LRNaIKi6cKwB2l0wsy5t6eICcFltJYoalBLpZdPd56sz8eivoyVOcTzdM7v+njz1cKCS
+         TSQvv75X6S4tRMWB05+B4+hfI86Nk+kr1bsodzsrFXnNO+65uLsFfBh3NrGNZGOYUG2J
+         eV15YaKJla80nYXEzkwI2Ho2UyCjIZ5tiniui4SXzo3qsIhGNwt4M2XbRRVeMMS+5gfx
+         C1SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LY5q2+0hG+fXtIws99tmFRHfiKbz2t7mHZqBtPU26u0=;
-        b=nl0STEmacpd5U5k3k7ok91Qq4QCohkic9vKmnKSdbihj7LwESrr2IA4RopuwSiGhUB
-         XzjwoYhGG/hbeXzbX/qRxzoJqLURNE1EzDtOH5he9a/UhRnrCVUmuHciHFbyf0U+ueVf
-         MVxjtsCCTlCcrsKVWD7hlM7jphQvJBNBM2jNHGd3nspLVJWX1NwPRG3wjyz9osDWdune
-         +dyMYloq/qeSBF7VSkLe2VzBDoU6vAxrEY54o7VKHoJgJBFODeBxCos7ldNMBH4QsTSB
-         7TizoygjYo6iq9vhvcYMqMob1NJLdzy2youZxiMfgeAL1hzTXw4Kdp84P2Z6Ajh/Xx5B
-         w2+w==
-X-Gm-Message-State: AOAM531G7EiqeRVLjB5pGeColUUGYpVCiZbZGrxTMzKkCdnxiJcFTnV6
-        kKdklO+zMp7ZiJ+OR0aaGdjnFg==
-X-Google-Smtp-Source: ABdhPJywOFFPw6GKnzaGJjvfN+49Y8p8EZJ0VaWdz576grsWMJnhyftNyIUQPnzaGNAr0bQz60j9+g==
-X-Received: by 2002:a5d:58d3:: with SMTP id o19mr8594118wrf.250.1611135059258;
-        Wed, 20 Jan 2021 01:30:59 -0800 (PST)
+        bh=1CyzRhBdQWuy7NbbbUGcka0gVixtKRd5z8W/5jUM6uQ=;
+        b=jJEhAxQfv1hgwu7669GdkyR5x7u45zUj+qAkF1i8S4IevfdcCj/5vyjjUTPcd7twTU
+         o5lbEF0eblOwPxq065n2kuKnPhVNkyaCVNQLz3GiaSMiYC/t95Iytr4iK3XAgMAKyHCR
+         7MbLuP+K7RKFO1zGhyDzTLrSPBBpp57RMMjNOrhdMMi54bpSGalcIe3+jpGfF4hENm9u
+         +QqHdfRtlH9Pw9DK3A5at+hjWpH8vlRW6V8TUy3ADN9+lL3ncqHEPZmE9haRoGdEqOod
+         2meVHHFywioXB7dClBPsNEMfUxvYjb1SJt/S5h+1KjelHW6DEuIBjQnTzqTVoFRUKUnb
+         lvxQ==
+X-Gm-Message-State: AOAM531NJcapWbDMV5x8KzSdAybvuub7kuQQNnm2IFrtue9eksXR3wMt
+        sYU0Nwg2SR2AqVW3hpkoBqs40qBUrYpxEL/P
+X-Google-Smtp-Source: ABdhPJzmWq3xuS8OdEo60LQmwNZROF/cZlYDhVqbDGwlETLLVTrl3eruNCzEnQ7eb8d+ti2f22fv+g==
+X-Received: by 2002:a1c:e2d7:: with SMTP id z206mr3484728wmg.168.1611135055706;
+        Wed, 20 Jan 2021 01:30:55 -0800 (PST)
 Received: from dell.default ([91.110.221.158])
-        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.58
+        by smtp.gmail.com with ESMTPSA id z130sm2889201wmb.33.2021.01.20.01.30.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 01:30:58 -0800 (PST)
+        Wed, 20 Jan 2021 01:30:55 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+Cc:     linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 13/20] clk: ti: clockdomain: Fix description for 'omap2_init_clk_clkdm's hw param
-Date:   Wed, 20 Jan 2021 09:30:33 +0000
-Message-Id: <20210120093040.1719407-14-lee.jones@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 10/20] clk: imx: clk-imx31: Remove unused static const table 'uart_clks'
+Date:   Wed, 20 Jan 2021 09:30:30 +0000
+Message-Id: <20210120093040.1719407-11-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -75,32 +82,44 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/ti/clockdomain.c:107: warning: Function parameter or member 'hw' not described in 'omap2_init_clk_clkdm'
- drivers/clk/ti/clockdomain.c:107: warning: Excess function parameter 'clk' description in 'omap2_init_clk_clkdm'
+ drivers/clk/imx/clk-imx31.c:54:28: warning: ‘uart_clks’ defined but not used [-Wunused-const-variable=]
 
-Cc: Tero Kristo <kristo@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/ti/clockdomain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx31.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index 700b7f44f6716..74831b2752b3b 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -97,7 +97,7 @@ void omap2_clkops_disable_clkdm(struct clk_hw *hw)
+diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
+index 7b13fb57d8428..c44e18c6f63f7 100644
+--- a/drivers/clk/imx/clk-imx31.c
++++ b/drivers/clk/imx/clk-imx31.c
+@@ -51,16 +51,6 @@ enum mx31_clks {
+ static struct clk *clk[clk_max];
+ static struct clk_onecell_data clk_data;
  
- /**
-  * omap2_init_clk_clkdm - look up a clockdomain name, store pointer in clk
-- * @clk: OMAP clock struct ptr to use
-+ * @hw: Pointer to clk_hw_omap used to obtain OMAP clock struct ptr to use
-  *
-  * Convert a clockdomain name stored in a struct clk 'clk' into a
-  * clockdomain pointer, and save it into the struct clk.  Intended to be
+-static struct clk ** const uart_clks[] __initconst = {
+-	&clk[ipg],
+-	&clk[uart1_gate],
+-	&clk[uart2_gate],
+-	&clk[uart3_gate],
+-	&clk[uart4_gate],
+-	&clk[uart5_gate],
+-	NULL
+-};
+-
+ static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
+ {
+ 	clk[dummy] = imx_clk_fixed("dummy", 0);
 -- 
 2.25.1
 
