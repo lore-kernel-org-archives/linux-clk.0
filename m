@@ -2,164 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E10FC433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90737C433E9
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C311233ED
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 16:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B4923405
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbhATQhb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 11:37:31 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:38310 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390715AbhATQee (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 11:34:34 -0500
-Received: from [77.244.183.192] (port=62290 helo=[192.168.178.24])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1l2GPl-0060Hg-To; Wed, 20 Jan 2021 17:33:01 +0100
-Subject: Re: [PATCH V2 2/2] clk: vc5: Add support for optional load
- capacitance
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210119212109.1064786-1-aford173@gmail.com>
- <20210119212109.1064786-2-aford173@gmail.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <82022223-883b-4c24-5975-651b17e5ea7e@lucaceresoli.net>
-Date:   Wed, 20 Jan 2021 17:33:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1731979AbhATPwo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 10:52:44 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:37970 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391084AbhATPvB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 10:51:01 -0500
+Received: by mail-ot1-f46.google.com with SMTP id 34so12946502otd.5;
+        Wed, 20 Jan 2021 07:50:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=d1RIdVWUE4TQGWQdWOMOdBMzSo28XMRtLOv3LQVvbYY=;
+        b=qwpc6KR2Mbs2hnNQymugjuOwxvGWW4BeTujV0I8qubQ7wVd9w2pqGzmHzXW0RXF5Ie
+         RXxuTKy5dhSX5rpwC67Jotl6fCHqRjwtNUrKwH2djsv1vq4IOUnHDkcF8vN3bgUPyGeF
+         Oz13yXgUzXRsUu1vCdxVhWz5xPnZEGQ/i8cLDXHZ9l9QUrqZPcfE6Lk2tPabyNr4AUOT
+         UFba8tBc0XRx8ns60CXYA7JnPnqF+p+1C6ru3/V30mDXq1B3QGk5upt7QNQ5ieavuODu
+         YR8DoloL3MKIE7DIK4NAItPbE5GkUOQw5gVglRsT5+yEVEpD2NQPixhJI33xnReTJ4Di
+         vf/g==
+X-Gm-Message-State: AOAM532d2yNKU0EOmJuJvGhCNMH6TW9J6LiuHynhUyDMnx3f2Yw4bSal
+        eEI8uh9mJ1uSsvDzVItS1w==
+X-Google-Smtp-Source: ABdhPJza+e1g6BqmYZCEdNrw4PdYHbZpUkkQnnQYFNep0IagbifZCgUs/DzozVcOsfQc40GCknXmSQ==
+X-Received: by 2002:a05:6830:1ad4:: with SMTP id r20mr7218321otc.354.1611157820437;
+        Wed, 20 Jan 2021 07:50:20 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x12sm423724oic.51.2021.01.20.07.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 07:50:19 -0800 (PST)
+Received: (nullmailer pid 214205 invoked by uid 1000);
+        Wed, 20 Jan 2021 15:50:18 -0000
+Date:   Wed, 20 Jan 2021 09:50:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org,
+        jassisinghbrar@gmail.com, viresh.kumar@linaro.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        agross@kernel.org, ulf.hansson@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] dt-bindings: clock: Add Qualcomm A7 PLL binding
+Message-ID: <20210120155018.GA213895@robh.at.kernel.org>
+References: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
+ <20210118041156.50016-4-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20210119212109.1064786-2-aford173@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210118041156.50016-4-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
-
-On 19/01/21 22:21, Adam Ford wrote:
-> There are two registers which can set the load capacitance for
-> XTAL1 and XTAL2. These are optional registers when using an
-> external crystal.  Parse the device tree and set the
-> corresponding registers accordingly.
+On Mon, 18 Jan 2021 09:41:54 +0530, Manivannan Sadhasivam wrote:
+> Add devicetree YAML binding for Cortex A7 PLL clock in Qualcomm
+> platforms like SDX55.
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
-> V2:  Make the math subtract 9000 since we have a DIV_ROUND_CLOSEST
->      This also allows us to remove the check for 9430 since values
->      between 9000 and 9430 will round up and down.
->      Make write VC5_XTAL_X1_LOAD_CAP and VC5_XTAL_X2_LOAD_CAP
->      a read-modify-write to not worry about the contents of
->      bits[1:0].
+>  .../devicetree/bindings/clock/qcom,a7pll.yaml | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
 > 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index 43db67337bc0..c6b04c077224 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -759,6 +759,74 @@ static int vc5_update_power(struct device_node *np_output,
->  	return 0;
->  }
->  
-> +static int vc5_map_cap_value(u32 femtofarads)
-> +{
-> +	int mapped_value;
-> +
-> +	/*
-> +	 * The datasheet explicitly states 9000 - 25000 with 0.5pF
-> +	 * steps, but the Programmer's guide shows the steps are 0.430pF.
-> +	 * After getting feedback from Renesas, the .5pF steps were the
-> +	 * goal, but 430nF was the actual values.
-> +	 * Because of this, the actual range goes to 22760 instead of 25000
-> +	 */
-> +	if (femtofarads < 9000 || femtofarads > 22760)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * The Programmer's guide shows XTAL[5:0] but in reality,
-> +	 * XTAL[0] and XTAL[1] are both LSB which makes the math
-> +	 * strange.  With clarfication from Renesas, setting the
-> +	 * values should be simpler by ignoring XTAL[0]
-> +	 */
-> +
-> +	mapped_value = DIV_ROUND_CLOSEST(femtofarads - 9000, 430);
-> +
-> +	/*
-> +	 * Since the calculation ignores XTAL[0], there is one
-> +	 * special case where mapped_value = 32.  In reality, this means
-> +	 * the real mapped value should be 111111b.  In other clases,
 
-s/clases/cases/
 
-> +	 * the mapped_value needs to be shifted 1 to the left.
-> +	 */
-> +
-> +	if (mapped_value > 31)
-> +		mapped_value = 0x3f;
-> +	else
-> +		mapped_value <<= 1;
-> +
-> +	return mapped_value;
-> +}
-> +static int vc5_update_cap_load(struct device_node *node, struct vc5_driver_data *vc5)
-> +{
-> +	u32 value;
-> +	int mapped_value, cache;
-> +
-> +	if (!of_property_read_u32(node, "idt,xtal-load-femtofarads", &value)) {
-> +		mapped_value = vc5_map_cap_value(value);
-> +		if (mapped_value < 0)
-> +			return mapped_value;
-> +
-> +		/*
-> +		 * The mapped_value is really the high 6 bits of
-> +		 * VC5_XTAL_X1_LOAD_CAP and VC5_XTAL_X2_LOAD_CAP, so
-> +		 * shift the value 2 places.  Read each register, wipe out
-> +		 * the top 6 bits and, write the combined data back.
-> +		 */
-> +
-> +		mapped_value = (mapped_value << 2);
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-Nit: the comment is about this specific line of code, remove the extra
-empty line. Also in other places above.
+If a tag was not added on purpose, please state why and what changed.
 
-It's incredible how we need more comments than lines of code, but it's
-deserved as the settings are weird and the docs are fuzzy and
-contradictory. Thanks for taking care of writing them.
-
-> +
-> +		cache = regmap_read(vc5->regmap, VC5_XTAL_X1_LOAD_CAP, &cache);
-> +		cache &= 0x03;
-> +		regmap_write(vc5->regmap, VC5_XTAL_X1_LOAD_CAP, mapped_value | cache);
-> +
-> +		cache = regmap_read(vc5->regmap, VC5_XTAL_X2_LOAD_CAP, &cache);
-> +		cache &= 0x03;
-> +		regmap_write(vc5->regmap, VC5_XTAL_X2_LOAD_CAP, mapped_value | cache);
-
-With regmap_update_bits() or some other regmap call you can write each
-of these in a single statement.
-
--- 
-Luca
