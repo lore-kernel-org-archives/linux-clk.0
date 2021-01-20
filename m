@@ -2,82 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90737C433E9
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15CDC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59B4923405
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E6A2233ED
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 17:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731979AbhATPwo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 10:52:44 -0500
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:37970 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391084AbhATPvB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 10:51:01 -0500
-Received: by mail-ot1-f46.google.com with SMTP id 34so12946502otd.5;
-        Wed, 20 Jan 2021 07:50:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d1RIdVWUE4TQGWQdWOMOdBMzSo28XMRtLOv3LQVvbYY=;
-        b=qwpc6KR2Mbs2hnNQymugjuOwxvGWW4BeTujV0I8qubQ7wVd9w2pqGzmHzXW0RXF5Ie
-         RXxuTKy5dhSX5rpwC67Jotl6fCHqRjwtNUrKwH2djsv1vq4IOUnHDkcF8vN3bgUPyGeF
-         Oz13yXgUzXRsUu1vCdxVhWz5xPnZEGQ/i8cLDXHZ9l9QUrqZPcfE6Lk2tPabyNr4AUOT
-         UFba8tBc0XRx8ns60CXYA7JnPnqF+p+1C6ru3/V30mDXq1B3QGk5upt7QNQ5ieavuODu
-         YR8DoloL3MKIE7DIK4NAItPbE5GkUOQw5gVglRsT5+yEVEpD2NQPixhJI33xnReTJ4Di
-         vf/g==
-X-Gm-Message-State: AOAM532d2yNKU0EOmJuJvGhCNMH6TW9J6LiuHynhUyDMnx3f2Yw4bSal
-        eEI8uh9mJ1uSsvDzVItS1w==
-X-Google-Smtp-Source: ABdhPJza+e1g6BqmYZCEdNrw4PdYHbZpUkkQnnQYFNep0IagbifZCgUs/DzozVcOsfQc40GCknXmSQ==
-X-Received: by 2002:a05:6830:1ad4:: with SMTP id r20mr7218321otc.354.1611157820437;
-        Wed, 20 Jan 2021 07:50:20 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x12sm423724oic.51.2021.01.20.07.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jan 2021 07:50:19 -0800 (PST)
-Received: (nullmailer pid 214205 invoked by uid 1000);
-        Wed, 20 Jan 2021 15:50:18 -0000
-Date:   Wed, 20 Jan 2021 09:50:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org,
-        jassisinghbrar@gmail.com, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, ulf.hansson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] dt-bindings: clock: Add Qualcomm A7 PLL binding
-Message-ID: <20210120155018.GA213895@robh.at.kernel.org>
-References: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
- <20210118041156.50016-4-manivannan.sadhasivam@linaro.org>
+        id S1728981AbhATPw1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 10:52:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390967AbhATPuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 10:50:52 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3CEC061757
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 07:50:12 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l2FkA-0004PH-K3; Wed, 20 Jan 2021 16:50:02 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l2Fk9-0005Fx-LJ; Wed, 20 Jan 2021 16:50:01 +0100
+Date:   Wed, 20 Jan 2021 16:50:01 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Adam Ford <aford173@gmail.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated
+ with sdout
+Message-ID: <20210120155001.GD19063@pengutronix.de>
+References: <20210115182909.314756-1-aford173@gmail.com>
+ <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
+ <CAHCN7x+CXUuPN7upiv3D+REOU4d_=i30no+SkRzUjWY58o=uUQ@mail.gmail.com>
+ <20210120144454.f6b72lnasw4q3bde@fsr-ub1664-175>
+ <20210120151305.GC19063@pengutronix.de>
+ <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118041156.50016-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 16:48:32 up 49 days,  4:15, 92 users,  load average: 0.30, 0.38,
+ 0.23
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 18 Jan 2021 09:41:54 +0530, Manivannan Sadhasivam wrote:
-> Add devicetree YAML binding for Cortex A7 PLL clock in Qualcomm
-> platforms like SDX55.
+On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
+> On 21-01-20 16:13:05, Sascha Hauer wrote:
+> > Hi Abel,
+> > 
+> > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
+> > > On 21-01-18 08:00:43, Adam Ford wrote:
+> > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.com> wrote:
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,a7pll.yaml | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a7pll.yaml
+> ...
 > 
+> > > > 
+> > > > >
+> > > > > TBH, I'm against the idea of having to call consumer API from a clock provider driver.
+> > > > > I'm still investigating a way of moving the uart clock control calls in drivers/serial/imx,
+> > > > > where they belong.
+> > > > 
+> > > > That makes sense.
+> > > > 
+> > > 
+> > > Just a thought. The uart clock used for console remains on from u-boot,
+> > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag to all the
+> > > uart root clocks and remove the prepare/enable calls for uart clocks 
+> > > for good. I don't really have a way to test it right now, but maybe
+> > > you could give it a try.
+> > 
+> > That would mean that UART clocks will never be disabled, regardless of
+> > whether they are used for console or not. That doesn't sound very
+> > appealing.
+> 
+> AFAIK, the only uart clock that is enabled by u-boot is the one used for
+> the console. Later on, when the serial driver probes, it will enable it itself.
+> 
+> Unless I'm missing something, this is exactly what we need.
 
+It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
+disabled again when a port is closed after usage
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Sascha
 
-If a tag was not added on purpose, please state why and what changed.
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
