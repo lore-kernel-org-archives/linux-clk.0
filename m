@@ -2,180 +2,196 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A6DC433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 07:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE9C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31F0323142
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 07:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAC812333B
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jan 2021 10:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbhATHuO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 02:50:14 -0500
-Received: from a1.mail.mailgun.net ([198.61.254.60]:55072 "EHLO
-        a1.mail.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729027AbhATHtP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 02:49:15 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1611128919; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=SSqwGyOJY1wQHK6A4lq08RkhhCOMF4yvBGA20FNk3m4=; b=XNMS5XUY9PlxW4Y4qfZVJjtOZJGHjy6g+0WTCTt8d6AnNzu+nPTR7ctRXcOY5LogXeWGyLJn
- Epy4BUvYj0Rblx7oplKfPtRbFbWGFpa1BEZuTlEE7PUCvp/loBFl2oZrM4lurcww1Rcfi1Q6
- cE04nSGoTZ8ptFEmrh0AX6i+DvE=
-X-Mailgun-Sending-Ip: 198.61.254.60
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 6007e0398a0374a501b18d3b (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 20 Jan 2021 07:48:09
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5F3BFC433ED; Wed, 20 Jan 2021 07:48:08 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726540AbhATKYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 05:24:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731036AbhATJRD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jan 2021 04:17:03 -0500
+Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [IPv6:2001:4b7a:2000:18::162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27AAC0613C1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 01:16:22 -0800 (PST)
+Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6D37C43461;
-        Wed, 20 Jan 2021 07:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6D37C43461
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 919761F63C;
+        Wed, 20 Jan 2021 10:16:17 +0100 (CET)
+Subject: Re: [PATCH V1] clk: qcom: gcc-sc7180: Mark the MM XO clocks to be
+ always ON
+To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
 Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH V1] clk: qcom: gcc-sc7180: Mark the MM XO clocks to be always ON
-Date:   Wed, 20 Jan 2021 13:17:51 +0530
-Message-Id: <1611128871-5898-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1611128871-5898-1-git-send-email-tdas@codeaurora.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Message-ID: <e6843147-514b-8901-a04c-b1d6e3ebf1c2@somainline.org>
+Date:   Wed, 20 Jan 2021 10:16:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
+MIME-Version: 1.0
+In-Reply-To: <1611128871-5898-1-git-send-email-tdas@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are intermittent GDSC power-up failures observed for titan top
-gdsc, which requires the XO clock. Thus mark all the MM XO clocks always
-enabled from probe.
+Il 20/01/21 08:47, Taniya Das ha scritto:
+> There are intermittent GDSC power-up failures observed for titan top
+> gdsc, which requires the XO clock. Thus mark all the MM XO clocks always
+> enabled from probe.
+> 
 
-Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gcc-sc7180.c | 47 ++++---------------------------------------
- 1 file changed, 4 insertions(+), 43 deletions(-)
+Hello Tanya,
 
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index b05901b..88e896a 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
-  */
+> Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>   drivers/clk/qcom/gcc-sc7180.c | 47 ++++---------------------------------------
+>   1 file changed, 4 insertions(+), 43 deletions(-)
+> 
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+> index b05901b..88e896a 100644
+> --- a/drivers/clk/qcom/gcc-sc7180.c
+> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only
+>   /*
+> - * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
+>    */
+> 
+>   #include <linux/clk-provider.h>
+> @@ -919,19 +919,6 @@ static struct clk_branch gcc_camera_throttle_hf_axi_clk = {
+>   	},
+>   };
+> 
+> -static struct clk_branch gcc_camera_xo_clk = {
+> -	.halt_reg = 0xb02c,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0xb02c,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(struct clk_init_data){
+> -			.name = "gcc_camera_xo_clk",
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
 
- #include <linux/clk-provider.h>
-@@ -919,19 +919,6 @@ static struct clk_branch gcc_camera_throttle_hf_axi_clk = {
- 	},
- };
+Why are you avoiding to register these clocks entirely?
+If this is needed by the Titan GDSC, this clock "does indeed exist".
 
--static struct clk_branch gcc_camera_xo_clk = {
--	.halt_reg = 0xb02c,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0xb02c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_camera_xo_clk",
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_ce1_ahb_clk = {
- 	.halt_reg = 0x4100c,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -1096,19 +1083,6 @@ static struct clk_branch gcc_disp_throttle_hf_axi_clk = {
- 	},
- };
+If these clocks shall never be turned off, then you should add the
+CLK_IS_CRITICAL flag and perhaps add a comment explaining why.
 
--static struct clk_branch gcc_disp_xo_clk = {
--	.halt_reg = 0xb030,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0xb030,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_disp_xo_clk",
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_gp1_clk = {
- 	.halt_reg = 0x64000,
- 	.halt_check = BRANCH_HALT,
-@@ -2159,19 +2133,6 @@ static struct clk_branch gcc_video_throttle_axi_clk = {
- 	},
- };
+>   static struct clk_branch gcc_ce1_ahb_clk = {
+>   	.halt_reg = 0x4100c,
+>   	.halt_check = BRANCH_HALT_VOTED,
+> @@ -1096,19 +1083,6 @@ static struct clk_branch gcc_disp_throttle_hf_axi_clk = {
+>   	},
+>   };
+> 
+> -static struct clk_branch gcc_disp_xo_clk = {
+> -	.halt_reg = 0xb030,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0xb030,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(struct clk_init_data){
+> -			.name = "gcc_disp_xo_clk",
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
 
--static struct clk_branch gcc_video_xo_clk = {
--	.halt_reg = 0xb028,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0xb028,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_video_xo_clk",
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_mss_cfg_ahb_clk = {
- 	.halt_reg = 0x8a000,
- 	.halt_check = BRANCH_HALT,
-@@ -2304,7 +2265,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
- 	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
- 	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
--	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
- 	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
- 	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
- 	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
-@@ -2317,7 +2277,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GCC_DISP_GPLL0_DIV_CLK_SRC] = &gcc_disp_gpll0_div_clk_src.clkr,
- 	[GCC_DISP_HF_AXI_CLK] = &gcc_disp_hf_axi_clk.clkr,
- 	[GCC_DISP_THROTTLE_HF_AXI_CLK] = &gcc_disp_throttle_hf_axi_clk.clkr,
--	[GCC_DISP_XO_CLK] = &gcc_disp_xo_clk.clkr,
- 	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
- 	[GCC_GP1_CLK_SRC] = &gcc_gp1_clk_src.clkr,
- 	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
-@@ -2413,7 +2372,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GCC_VIDEO_AXI_CLK] = &gcc_video_axi_clk.clkr,
- 	[GCC_VIDEO_GPLL0_DIV_CLK_SRC] = &gcc_video_gpll0_div_clk_src.clkr,
- 	[GCC_VIDEO_THROTTLE_AXI_CLK] = &gcc_video_throttle_axi_clk.clkr,
--	[GCC_VIDEO_XO_CLK] = &gcc_video_xo_clk.clkr,
- 	[GPLL0] = &gpll0.clkr,
- 	[GPLL0_OUT_EVEN] = &gpll0_out_even.clkr,
- 	[GPLL6] = &gpll6.clkr,
-@@ -2510,6 +2468,9 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x0b02c, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x0b028, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x0b030, BIT(0), BIT(0));
- 	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+Same here.
 
- 	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+>   static struct clk_branch gcc_gp1_clk = {
+>   	.halt_reg = 0x64000,
+>   	.halt_check = BRANCH_HALT,
+> @@ -2159,19 +2133,6 @@ static struct clk_branch gcc_video_throttle_axi_clk = {
+>   	},
+>   };
+> 
+> -static struct clk_branch gcc_video_xo_clk = {
+> -	.halt_reg = 0xb028,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0xb028,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(struct clk_init_data){
+> -			.name = "gcc_video_xo_clk",
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+
+...and here.
+
+>   static struct clk_branch gcc_mss_cfg_ahb_clk = {
+>   	.halt_reg = 0x8a000,
+>   	.halt_check = BRANCH_HALT,
+> @@ -2304,7 +2265,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+>   	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
+>   	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
+>   	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
+> -	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
+>   	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
+>   	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
+>   	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
+> @@ -2317,7 +2277,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+>   	[GCC_DISP_GPLL0_DIV_CLK_SRC] = &gcc_disp_gpll0_div_clk_src.clkr,
+>   	[GCC_DISP_HF_AXI_CLK] = &gcc_disp_hf_axi_clk.clkr,
+>   	[GCC_DISP_THROTTLE_HF_AXI_CLK] = &gcc_disp_throttle_hf_axi_clk.clkr,
+> -	[GCC_DISP_XO_CLK] = &gcc_disp_xo_clk.clkr,
+>   	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
+>   	[GCC_GP1_CLK_SRC] = &gcc_gp1_clk_src.clkr,
+>   	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
+> @@ -2413,7 +2372,6 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+>   	[GCC_VIDEO_AXI_CLK] = &gcc_video_axi_clk.clkr,
+>   	[GCC_VIDEO_GPLL0_DIV_CLK_SRC] = &gcc_video_gpll0_div_clk_src.clkr,
+>   	[GCC_VIDEO_THROTTLE_AXI_CLK] = &gcc_video_throttle_axi_clk.clkr,
+> -	[GCC_VIDEO_XO_CLK] = &gcc_video_xo_clk.clkr,
+>   	[GPLL0] = &gpll0.clkr,
+>   	[GPLL0_OUT_EVEN] = &gpll0_out_even.clkr,
+>   	[GPLL6] = &gpll6.clkr,
+> @@ -2510,6 +2468,9 @@ static int gcc_sc7180_probe(struct platform_device *pdev)
+>   	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+>   	regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+>   	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x0b02c, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x0b028, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x0b030, BIT(0), BIT(0));
+
+IMO, "Magic" regmap writes like these ones, even if documented, should
+be avoided in this specific case, since the clocks framework accounts
+for clocks that should be always-on, if provided with the right flags.
+
+>   	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+> 
+>   	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> 
 
