@@ -2,153 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E966AC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE7FC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 08:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC9F92396D
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640A123976
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 08:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbhAUHmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 02:42:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
+        id S1727755AbhAUIcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 03:32:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbhAUHSv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 02:18:51 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 443A2C06179F
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 23:17:03 -0800 (PST)
-Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDE-0006UI-GX; Thu, 21 Jan 2021 08:17:00 +0100
-Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDD-00598A-8X; Thu, 21 Jan 2021 08:16:59 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc:     m.mtretter@pengutronix.de, michals@xilinx.com,
-        kernel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v3 07/15] soc: xilinx: vcu: register PLL as fixed rate clock
-Date:   Thu, 21 Jan 2021 08:16:51 +0100
-Message-Id: <20210121071659.1226489-8-m.tretter@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210121071659.1226489-1-m.tretter@pengutronix.de>
-References: <20210121071659.1226489-1-m.tretter@pengutronix.de>
+        with ESMTP id S1726434AbhAUIcV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 03:32:21 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7339C061757
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2021 00:31:36 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id x23so1517058lji.7
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2021 00:31:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wkUzS22l3yT4wvob1mqKHkY+gLej+PQS8WtEPboZD/g=;
+        b=Uq0P5RZInuXnRMF1iS9apD3S7TtaJGz8oezi/WVpjyYghj5/6LGpc4q+b/a5i08bAe
+         HOQyg19CRzKSpqItjZhM2lu+2/8d2y4QAyO8Ua9gqZIBeAerTXNmO89cHM7KHB9bQ3vy
+         V5oa8w8zyxM+czY/gT8zef1IP0sV1bY82tUi/sYU1if+dtshG46fuFW0evdQDno74LSz
+         AWZ4sPuzrZEl56+eIJzA+YWN9R1XudeSRr9r+L7G2zMZq2dc1DEiYqb6IEjwn7Vh/stw
+         KTNiV0gMMTtsqZ5PqHkI1Rahz8lICSizTh+b7yexnUkfwQ4Vyse+Dg9Xnqium3VEE5C5
+         3w0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wkUzS22l3yT4wvob1mqKHkY+gLej+PQS8WtEPboZD/g=;
+        b=BQC4V1SjWQuSbkHiFdmgFUV6zREcxyRDxnzQz1dFM6Tu8KtjKh0riDPvlCbk/+lKYE
+         GtcsZ8BjFRrD7A7q/uBz71CdHkObLrrSsV3UaABUO4U7ubc0HXbkBMvW5+JAEZee9anH
+         PDcTFvPoFWou5nmOcK0kXPbmBehKLqgfVrbL8g1K64g/8kgeIG1VHsko662IEWJFIdZ9
+         +rTOW4SlNl/qYeFl7dR9Lasc5XVp89AJU+st3YqhITdupfi9lzRixqHfgUbu4b5a1oDu
+         xSXGyt5RTo628/eXtQpiRrVSUNZqXe10r8wydBmNeQPqnYAea8xVqMetimOvCwwfdl22
+         StQQ==
+X-Gm-Message-State: AOAM5311ZE40Wp2Zib4rARs3zvLYFLUbavEuJhUHVcwDm13FVoWzlCTG
+        9sXdcW/TvJ4jPzguDtXvP92R+Vc4/I8IzjQA1grMKw==
+X-Google-Smtp-Source: ABdhPJyfv+B8zbe3ES1yKRt6eO2ubbuNq2b3jKpVOgLF7fkljnuiReGloInJLZ7v+86/vskCjlMHQvE9I9e/x4JPg0Y=
+X-Received: by 2002:a2e:b047:: with SMTP id d7mr6079256ljl.467.1611217895269;
+ Thu, 21 Jan 2021 00:31:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20210120093040.1719407-1-lee.jones@linaro.org> <20210120093040.1719407-20-lee.jones@linaro.org>
+In-Reply-To: <20210120093040.1719407-20-lee.jones@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 21 Jan 2021 09:31:24 +0100
+Message-ID: <CACRpkda-wp1Ja9QCJv-k=zxKd471ac_tp1GGepmO0jdPa9do_Q@mail.gmail.com>
+Subject: Re: [PATCH 19/20] clk: versatile: clk-icst: Fix worthy struct
+ documentation block
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently, xvcu_pll_set_rate configures the PLL to a clock rate that is
-pre-calculated when probing the driver. To still make the clock
-framework aware of the PLL and to allow to configure other clocks based
-on the PLL rate, register the PLL as a fixed rate clock.
+On Wed, Jan 20, 2021 at 10:31 AM Lee Jones <lee.jones@linaro.org> wrote:
 
-Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
----
-Changelog:
+> Also demote non-worthy header to standard comment block.
+>
+> Fixes the following W=1 kernel build warning(s):
+>
+>  drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'map' not described in 'clk_icst'
+>  drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'vcoreg_off' not described in 'clk_icst'
+>  drivers/clk/versatile/clk-icst.c:53: warning: Function parameter or member 'lockreg_off' not described in 'clk_icst'
+>  drivers/clk/versatile/clk-icst.c:435: warning: cannot understand function prototype: 'const struct icst_params icst525_apcp_cm_params = '
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-v3: none
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-v2:
-- Fix kernel-doc of struct xvcu_device
-- Add missing clk_hw_unregister_fixed_rate
----
- drivers/soc/xilinx/Kconfig    |  2 +-
- drivers/soc/xilinx/xlnx_vcu.c | 19 ++++++++++++++++++-
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/xilinx/Kconfig b/drivers/soc/xilinx/Kconfig
-index 0b1708dae361..9fe703772e5a 100644
---- a/drivers/soc/xilinx/Kconfig
-+++ b/drivers/soc/xilinx/Kconfig
-@@ -3,7 +3,7 @@ menu "Xilinx SoC drivers"
- 
- config XILINX_VCU
- 	tristate "Xilinx VCU logicoreIP Init"
--	depends on HAS_IOMEM
-+	depends on HAS_IOMEM && COMMON_CLK
- 	select REGMAP_MMIO
- 	help
- 	  Provides the driver to enable and disable the isolation between the
-diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index 34f3299afc0d..6a733a181982 100644
---- a/drivers/soc/xilinx/xlnx_vcu.c
-+++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -7,6 +7,7 @@
-  * Contacts   Dhaval Shah <dshah@xilinx.com>
-  */
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/errno.h>
- #include <linux/io.h>
-@@ -73,6 +74,7 @@
-  * @aclk: axi clock source
-  * @logicore_reg_ba: logicore reg base address
-  * @vcu_slcr_ba: vcu_slcr Register base address
-+ * @pll: handle for the VCU PLL
-  */
- struct xvcu_device {
- 	struct device *dev;
-@@ -80,6 +82,7 @@ struct xvcu_device {
- 	struct clk *aclk;
- 	struct regmap *logicore_reg_ba;
- 	void __iomem *vcu_slcr_ba;
-+	struct clk_hw *pll;
- };
- 
- static struct regmap_config vcu_settings_regmap_config = {
-@@ -403,7 +406,9 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	u32 clkoutdiv, vcu_pll_ctrl, pll_clk;
- 	u32 mod, ctrl;
- 	int i;
-+	int ret;
- 	const struct xvcu_pll_cfg *found = NULL;
-+	struct clk_hw *hw;
- 
- 	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK, &inte);
- 	regmap_read(xvcu->logicore_reg_ba, VCU_PLL_CLK_DEC, &deci);
-@@ -505,7 +510,18 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 	ctrl |= (VCU_SRCSEL_PLL & VCU_SRCSEL_MASK) << VCU_SRCSEL_SHIFT;
- 	xvcu_write(xvcu->vcu_slcr_ba, VCU_DEC_MCU_CTRL, ctrl);
- 
--	return xvcu_pll_set_rate(xvcu, fvco, refclk);
-+	ret = xvcu_pll_set_rate(xvcu, fvco, refclk);
-+	if (ret)
-+		return ret;
-+
-+	hw = clk_hw_register_fixed_rate(xvcu->dev, "vcu_pll",
-+					__clk_get_name(xvcu->pll_ref),
-+					0, pll_clk);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	xvcu->pll = hw;
-+
-+	return 0;
- }
- 
- /**
-@@ -652,6 +668,7 @@ static int xvcu_remove(struct platform_device *pdev)
- 	/* Add the the Gasket isolation and put the VCU in reset. */
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
- 
-+	clk_hw_unregister_fixed_rate(xvcu->pll);
- 	xvcu_pll_disable(xvcu);
- 	clk_disable_unprepare(xvcu->aclk);
- 
--- 
-2.20.1
-
+Yours,
+Linus Walleij
