@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790D1C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5022AC433E9
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E2E1239EE
+	by mail.kernel.org (Postfix) with ESMTP id F3B60239EE
 	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbhAUHSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 02:18:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
+        id S1726445AbhAUHSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 02:18:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbhAUHST (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 02:18:19 -0500
+        with ESMTP id S1727206AbhAUHSZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 02:18:25 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0B01C061786
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 23:17:02 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31567C06179C
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 23:17:03 -0800 (PST)
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDE-0006UE-C5; Thu, 21 Jan 2021 08:17:00 +0100
+        id 1l2UDE-0006UQ-HN; Thu, 21 Jan 2021 08:17:00 +0100
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDD-00597X-6j; Thu, 21 Jan 2021 08:16:59 +0100
+        id 1l2UDD-00599U-CT; Thu, 21 Jan 2021 08:16:59 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Cc:     m.mtretter@pengutronix.de, michals@xilinx.com,
         kernel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v3 03/15] soc: xilinx: vcu: drop coreclk from struct xlnx_vcu
-Date:   Thu, 21 Jan 2021 08:16:47 +0100
-Message-Id: <20210121071659.1226489-4-m.tretter@pengutronix.de>
+Subject: [PATCH v3 15/15] clk: xilinx: move xlnx_vcu clock driver from soc
+Date:   Thu, 21 Jan 2021 08:16:59 +0100
+Message-Id: <20210121071659.1226489-16-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210121071659.1226489-1-m.tretter@pengutronix.de>
 References: <20210121071659.1226489-1-m.tretter@pengutronix.de>
@@ -50,9 +50,12 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The coreclk field is newer read after being written to xlnx_vcu. Remove
-the coreclk field from the xlnx_vcu and use a function local variable
-instead.
+The xlnx_vcu driver is actually a clock controller driver which provides
+clocks that can be used by a driver for the encoder/decoder units. There
+is no reason to keep this driver in soc. Move the driver to clk.
+
+NOTE: The register mapping actually contains registers for AXI
+performance monitoring, but these are not used by the driver.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 Acked-by: Michal Simek <michal.simek@xilinx.com>
@@ -60,44 +63,120 @@ Acked-by: Michal Simek <michal.simek@xilinx.com>
 Changelog:
 
 v3: none
-v2: none
----
- drivers/soc/xilinx/xlnx_vcu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index 14daad4efc58..7da9643820a8 100644
---- a/drivers/soc/xilinx/xlnx_vcu.c
-+++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -73,7 +73,6 @@
-  * @aclk: axi clock source
-  * @logicore_reg_ba: logicore reg base address
-  * @vcu_slcr_ba: vcu_slcr Register base address
-- * @coreclk: core clock frequency
-  */
- struct xvcu_device {
- 	struct device *dev;
-@@ -81,7 +80,6 @@ struct xvcu_device {
- 	struct clk *aclk;
- 	struct regmap *logicore_reg_ba;
- 	void __iomem *vcu_slcr_ba;
--	u32 coreclk;
- };
+v2:
+- New patch
+---
+ drivers/clk/Kconfig                    |  1 +
+ drivers/clk/Makefile                   |  1 +
+ drivers/clk/xilinx/Kconfig             | 19 +++++++++++++++++++
+ drivers/clk/xilinx/Makefile            |  2 ++
+ drivers/{soc => clk}/xilinx/xlnx_vcu.c |  0
+ drivers/soc/xilinx/Kconfig             | 17 -----------------
+ drivers/soc/xilinx/Makefile            |  1 -
+ 7 files changed, 23 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/clk/xilinx/Kconfig
+ create mode 100644 drivers/clk/xilinx/Makefile
+ rename drivers/{soc => clk}/xilinx/xlnx_vcu.c (100%)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 85856cff506c..7e066c25c698 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -392,6 +392,7 @@ source "drivers/clk/tegra/Kconfig"
+ source "drivers/clk/ti/Kconfig"
+ source "drivers/clk/uniphier/Kconfig"
+ source "drivers/clk/x86/Kconfig"
++source "drivers/clk/xilinx/Kconfig"
+ source "drivers/clk/zynqmp/Kconfig"
  
- static struct regmap_config vcu_settings_regmap_config = {
-@@ -358,10 +356,10 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
- 		return -EINVAL;
- 	}
+ endif
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index dbdc590e7de3..074e2233f445 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -122,6 +122,7 @@ obj-y					+= versatile/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_X86)			+= x86/
+ endif
++obj-y					+= xilinx/
+ obj-$(CONFIG_ARCH_ZX)			+= zte/
+ obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
+ obj-$(CONFIG_COMMON_CLK_ZYNQMP)         += zynqmp/
+diff --git a/drivers/clk/xilinx/Kconfig b/drivers/clk/xilinx/Kconfig
+new file mode 100644
+index 000000000000..5224114176ed
+--- /dev/null
++++ b/drivers/clk/xilinx/Kconfig
+@@ -0,0 +1,19 @@
++# SPDX-License-Identifier: GPL-2.0
++
++config XILINX_VCU
++	tristate "Xilinx VCU logicoreIP Init"
++	depends on HAS_IOMEM && COMMON_CLK
++	select REGMAP_MMIO
++	help
++	  Provides the driver to enable and disable the isolation between the
++	  processing system and programmable logic part by using the logicoreIP
++	  register set. This driver also configures the frequency based on the
++	  clock information from the logicoreIP register set.
++
++	  If you say yes here you get support for the logicoreIP.
++
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called xlnx_vcu.
++
+diff --git a/drivers/clk/xilinx/Makefile b/drivers/clk/xilinx/Makefile
+new file mode 100644
+index 000000000000..dee8fd51e303
+--- /dev/null
++++ b/drivers/clk/xilinx/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_XILINX_VCU)	+= xlnx_vcu.o
+diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+similarity index 100%
+rename from drivers/soc/xilinx/xlnx_vcu.c
+rename to drivers/clk/xilinx/xlnx_vcu.c
+diff --git a/drivers/soc/xilinx/Kconfig b/drivers/soc/xilinx/Kconfig
+index 9fe703772e5a..53af9115dc31 100644
+--- a/drivers/soc/xilinx/Kconfig
++++ b/drivers/soc/xilinx/Kconfig
+@@ -1,23 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ menu "Xilinx SoC drivers"
  
--	xvcu->coreclk = pll_clk / divisor_core;
-+	coreclk = pll_clk / divisor_core;
- 	mcuclk = pll_clk / divisor_mcu;
- 	dev_dbg(xvcu->dev, "Actual Ref clock freq is %uHz\n", refclk);
--	dev_dbg(xvcu->dev, "Actual Core clock freq is %uHz\n", xvcu->coreclk);
-+	dev_dbg(xvcu->dev, "Actual Core clock freq is %uHz\n", coreclk);
- 	dev_dbg(xvcu->dev, "Actual Mcu clock freq is %uHz\n", mcuclk);
- 
- 	vcu_pll_ctrl &= ~(VCU_PLL_CTRL_FBDIV_MASK << VCU_PLL_CTRL_FBDIV_SHIFT);
+-config XILINX_VCU
+-	tristate "Xilinx VCU logicoreIP Init"
+-	depends on HAS_IOMEM && COMMON_CLK
+-	select REGMAP_MMIO
+-	help
+-	  Provides the driver to enable and disable the isolation between the
+-	  processing system and programmable logic part by using the logicoreIP
+-	  register set. This driver also configures the frequency based on the
+-	  clock information from the logicoreIP register set.
+-
+-	  If you say yes here you get support for the logicoreIP.
+-
+-	  If unsure, say N.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called xlnx_vcu.
+-
+ config ZYNQMP_POWER
+ 	bool "Enable Xilinx Zynq MPSoC Power Management driver"
+ 	depends on PM && ZYNQMP_FIRMWARE
+diff --git a/drivers/soc/xilinx/Makefile b/drivers/soc/xilinx/Makefile
+index f66bfea5de17..9854e6f6086b 100644
+--- a/drivers/soc/xilinx/Makefile
++++ b/drivers/soc/xilinx/Makefile
+@@ -1,4 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_XILINX_VCU)	+= xlnx_vcu.o
+ obj-$(CONFIG_ZYNQMP_POWER)	+= zynqmp_power.o
+ obj-$(CONFIG_ZYNQMP_PM_DOMAINS) += zynqmp_pm_domains.o
 -- 
 2.20.1
 
