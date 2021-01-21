@@ -2,133 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAFEC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EEDC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CEFC2395A
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37272395A
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:11:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbhAUL7d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:59:33 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:29463 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728739AbhAULUm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 06:20:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1611228041; x=1642764041;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=q4ZsdJTJ4dixLEzGTbbVdW+QogbIEeXzO/QvdmgiWYc=;
-  b=O3uwtf4v/pFYS5oxU1RpLd/SR0rT5PrEpxbb0+AB4YVh/uoFwNeCbmGX
-   lWVFxeGAsFBkpWiaAzQDu8zEu1xLTzmx+vBZO6svDKWHst7F6Ik3td8x2
-   FILUePUZUI4cOf1yIoB5Z/QrABpK+LToUdoS1N3JNJG8KrD0lAy7VQLWC
-   4ebCyUT5iC7JjXjtcWhSK9WikWuvBeD+JLQ6aPgBSq7/3pRpgsQjGVNEf
-   li03p79SR3kQyPjcawPd3OTC/1+m3UO+p+l7YUF1EwOKQ6XormGR2FO0z
-   cOQw/xkYVFp10FI9UjUt0tHRAjA4gGAJLWAqsHWw3cnRDwJb1JldUntwn
-   g==;
-IronPort-SDR: +t0APLGnIHjfYPowpTVdQRdw3kaWi8iOv/SRjwjUXXhIOGn/siHsxsyddTuGTLSDrZtrOMWFO7
- Y1cQVtL4JMNxC/dszoqbz4jWkNGG+Q2Rmz3sTF9EaHkp4YzvcwmdcsBoRVWbMpG+B3z7YGyE2u
- nmkXUodlJbpW/rXEXp6hBj2UqAK3M+GtuoyFZk+q52enpj8+ut28SZ+PuHSiyOgUK3ffAZhj5F
- DMYEQTOEhuc8l9cG8D5J3SbRey9GjSi6RbJzcJFQxgPC36iJLjJf6UJNzy54iGmCtWGmqcM2SI
- OYs=
-X-IronPort-AV: E=Sophos;i="5.79,363,1602572400"; 
-   d="scan'208";a="106762264"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 21 Jan 2021 04:19:26 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Thu, 21 Jan 2021 04:19:25 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Thu, 21 Jan 2021 04:19:22 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <viresh.kumar@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 0/5] clk: at91: updates for power management and dvfs
-Date:   Thu, 21 Jan 2021 13:19:06 +0200
-Message-ID: <1611227951-4590-1-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730048AbhAUMLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 07:11:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729802AbhAUMKf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 07:10:35 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 836A5C061575
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2021 04:09:52 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id gx5so2254248ejb.7
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jan 2021 04:09:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PN3btH2euqDWyhj/RgcRNFuB9aKArS6y5Lw17W2vYDw=;
+        b=IgbtXQTlXCqlMx1bhQT61oVPyORIlcntQML0JND/eFe+uUvSN5sY1aXbkodkKJCWaL
+         K8kIf0LbHE0ZkQzfc5e4CNqDfn2Qbn5xdlHcU0XS4CGLp8hSJZjmF5fAsHA1BRG172K4
+         Z+YDVEXIqaYY+cFgY//pVpftKSH/OYHJiwCSgA8Jj9fyufeNDQQ7JhhQqfxQA7FrPC7U
+         4D2//SjPqoK5PRE3E7WVgDSSreA8+JTGPYbyeHJJmr9vxGI5IM0ud9Hncuotj9gMI9We
+         zu+lsj/iJBcgzUo4DljRo9Jc0Tat5+a3sFh/hXFfREWFhUfkwNOYkDZ8Ze7aoklspji3
+         xLow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PN3btH2euqDWyhj/RgcRNFuB9aKArS6y5Lw17W2vYDw=;
+        b=rsVk8y25U4IZwJBAX+EiMQjWU/Mt05DPhdbxkEr7URMmwv5/zCV77cKha1kXOUfwXV
+         O+j+58i6QvuNOaDC3B/VJi5n7pt6Uv8ro1Xns7Gly4WWGUc1YO6UQlDKWiZ7wnsn/SWv
+         0cg4QO/ZCSgAA3ekVXaugq+t+XzaWMHLH5Zumrt8DTNAkBCVydFSPJzdfy8NfRR6g3d7
+         bkBB/B6RXuiWMssLAJpuYMXrVLmwpFJXmZveyIt/t+BtG/tb7EeFuA2EYK2Kz6aGNT/P
+         QuGSR2SG3Lj80QllCNN5AdQmF1MN/ANpIphb2Lvtgz42PU/xnZ1gxw0pXvoIfmRD8Eqd
+         OnIw==
+X-Gm-Message-State: AOAM531V3TBe3U+1Ycz1UHeN4jkwryMsI+rp5lrdqobWYKqyHole3pn3
+        WXd6IjkS4PjY+B/jsIASHW2VwTcw070VDKdVkpybfLKF1GcLJjY5
+X-Google-Smtp-Source: ABdhPJzTY9DkBjOJ9FCRi7TMtReV9fqcjGv4rohvAiFeHBoODFkHjE9QiHmMHZBcFgBuQcn6aCZ0pbxKF4S16PGwwDg=
+X-Received: by 2002:a17:906:4c85:: with SMTP id q5mr8849525eju.375.1611230991153;
+ Thu, 21 Jan 2021 04:09:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
+ <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com> <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
+In-Reply-To: <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 21 Jan 2021 17:39:39 +0530
+Message-ID: <CA+G9fYvh0iSyEDQs7+0CX82FLPDCg5UmAt+1JuPsndmfmYF3kw@mail.gmail.com>
+Subject: Re: [PATCH] PM / clk: make PM clock layer compatible with clocks that
+ must sleep
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Nicolas Pitre <npitre@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, 21 Jan 2021 at 16:28, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> On Thu, Jan 21, 2021 at 10:13 AM Naresh Kamboju
+> <naresh.kamboju@linaro.org> wrote:
+> > On Tue, 5 Jan 2021 at 08:48, Nicolas Pitre <npitre@baylibre.com> wrote:
+> > >
+> > > The clock API splits its interface into sleepable ant atomic contexts:
+> > >
+> > > - clk_prepare/clk_unprepare for stuff that might sleep
+> > >
+> > > - clk_enable_clk_disable for anything that may be done in atomic context
+> > >
+> >
+> > <trim>
+> >
+> > >
+> > > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> > >
+> > > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+> > > index ced6863a16..a62fb0f9b1 100644
+> > > --- a/drivers/base/power/clock_ops.c
+> > > +++ b/drivers/base/power/clock_ops.c
+> >
+> > <trim>
+> >
+> > > @@ -64,17 +166,20 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
+> > >                 ce->clk = clk_get(dev, ce->con_id);
+> > >         if (IS_ERR(ce->clk)) {
+> > >                 ce->status = PCE_STATUS_ERROR;
+> > > +               return;
+> > > +       } else if (clk_is_enabled_when_prepared(ce->clk)) {
+> >
+> > arm-linux-gnueabihf-ld: drivers/base/power/clock_ops.o: in function
+> > `pm_clk_acquire':
+> > drivers/base/power/clock_ops.c:170: undefined reference to
+> > `clk_is_enabled_when_prepared'
+> >
+> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> >
+> > This build error was noticed on arm architecture on linux next 20210121 tag.
+> > Following builds failed.
+> >  - arm (omap1_defconfig) with clang-10 - FAILED
+> >  - arm (omap1_defconfig) with clang-11 - FAILED
+> >
+> >  - arm (omap1_defconfig) with gcc-8 - FAILED
+> >  - arm (omap1_defconfig) with gcc-9 - FAILED
+> >  - arm (omap1_defconfig) with gcc-10 - FAILED
+>
+> Missing dummy clk_is_enabled_when_prepared() for the
+> !CONFIG_HAVE_CLK case?
 
-This series addresses the power management for SAMA7G5 and also updates
-the master clock prescaller and master clock divider drivers to accomodate
-the requests at [1].
+I see these configs enabled in failed builds config file,
 
-The power management part is implemented by adding
-save_context()/restore_context() on each clock driver (patch 1/5). Since
-the PM part is necessary only for backup mode (supported on SAMA5D2 and
-SAMA7G5) the pmc.c has been adapted to call the
-save_context()/restore_context() only on switches to/from backup mode
-(patch 2/5).
+CONFIG_HAVE_CLK=y
+CONFIG_CLKDEV_LOOKUP=y
+CONFIG_HAVE_LEGACY_CLK=y
 
-Patch 3/5 adds the securam clock on SAMA7G5. This is necessary for
-backup mode of SAMA7G5.
+ref:
+https://builds.tuxbuild.com/1nN0vkpNP4qhvIuIJN12j7tTpQs/
 
-Patch 4/5 adds registers definitions for the new master clocks (MCK1..4) of
-SAMA7G5 and adapt the clk-master.c. The defines exported in
-include/linux/clk/at91_pmc.h will be also used by platform specific PM
-code.
-
-Patch 5/5 adpat the master clock divider and master clock prescaller
-to address the requests at [1].
-
-Thank you,
-Claudiu Beznea
-
-[1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
-
-Claudiu Beznea (5):
-  clk: at91: re-factor clocks suspend/resume
-  clk: at91: pmc: execute suspend/resume only for backup mode
-  clk: at91: sama7g5: add securam's peripheral clock
-  clk: at91: clk-master: add register definition for sama7g5's master
-    clock
-  clk: at91: clk-master: update for dvfs
-
- drivers/clk/at91/at91rm9200.c       |   2 +-
- drivers/clk/at91/at91sam9260.c      |   2 +-
- drivers/clk/at91/at91sam9g45.c      |   2 +-
- drivers/clk/at91/at91sam9n12.c      |   2 +-
- drivers/clk/at91/at91sam9rl.c       |   2 +-
- drivers/clk/at91/at91sam9x5.c       |   2 +-
- drivers/clk/at91/clk-generated.c    |  45 +++-
- drivers/clk/at91/clk-main.c         |  66 ++++++
- drivers/clk/at91/clk-master.c       | 395 +++++++++++++++++++++++++++---------
- drivers/clk/at91/clk-peripheral.c   |  38 +++-
- drivers/clk/at91/clk-pll.c          |  37 ++++
- drivers/clk/at91/clk-programmable.c |  29 ++-
- drivers/clk/at91/clk-sam9x60-pll.c  |  68 ++++++-
- drivers/clk/at91/clk-system.c       |  20 ++
- drivers/clk/at91/clk-usb.c          |  27 +++
- drivers/clk/at91/clk-utmi.c         |  47 ++++-
- drivers/clk/at91/dt-compat.c        |   2 +-
- drivers/clk/at91/pmc.c              | 175 ++++------------
- drivers/clk/at91/pmc.h              |  27 ++-
- drivers/clk/at91/sam9x60.c          |   2 +-
- drivers/clk/at91/sama5d2.c          |   2 +-
- drivers/clk/at91/sama5d3.c          |   2 +-
- drivers/clk/at91/sama5d4.c          |   2 +-
- drivers/clk/at91/sama7g5.c          |   3 +-
- include/linux/clk/at91_pmc.h        |  26 +++
- 25 files changed, 750 insertions(+), 275 deletions(-)
-
--- 
-2.7.4
-
+- Naresh
