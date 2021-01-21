@@ -2,64 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A370C433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 10:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957BDC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 10:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D339C239A1
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 10:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33BD823A01
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 10:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbhAUKCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:02:04 -0500
-Received: from www.zeus03.de ([194.117.254.33]:44322 "EHLO mail.zeus03.de"
+        id S1728538AbhAUKJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 05:09:02 -0500
+Received: from www.zeus03.de ([194.117.254.33]:48410 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728469AbhAUJzj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Jan 2021 04:55:39 -0500
+        id S1728996AbhAUKH2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Jan 2021 05:07:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=thEaPpC9Kj4xlIGFYb2CG4ZdOCG
-        UTUy30fqxGeilBVI=; b=i/DeyLWKsprujXI3Vejp0KwbYzrpFKpkcUQM1t/6WgC
-        f+v2a1U0+2L6/cl5h3GiaTZK64yjSncuAlk6HsIFhPTOcXWp4McmBza8B+63VFRb
-        aQcCtL94lotLWJBBUGj1Bpnn2eiNT21SEI2uTdpLLMrCM2de/WlzbzhOB8pRfQ3U
-        =
-Received: (qmail 1784013 invoked from network); 21 Jan 2021 10:54:27 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 10:54:27 +0100
-X-UD-Smtp-Session: l3s3148p1@3XatDma5mr4gAwDPXyX1ACWcscxtZ2TX
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=ZikhHhx/+77hpm
+        9dWRye8k/r5po7bFIMz3jw9cGrF70=; b=JZvy0Gmqi9tXbKzWHWlfUV3YcPmWkw
+        v6fv5+u0V4bIQLIw+3GREvOMHU5K0caW/BdRAfPI5r/7a4NVNTpR0AY4JuKibiNM
+        nb9Aid1AhMDu1WjMc/cuup9aKhTTTHO9oy/FGx5D6GeVjfg6l2SCjt2rs7+XWNSm
+        S7wPSddLAzZeI=
+Received: (qmail 1790479 invoked from network); 21 Jan 2021 11:06:27 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:27 +0100
+X-UD-Smtp-Session: l3s3148p1@dGqUOWa5tL4gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH V2 0/4] v3u: add support for I2C
-Date:   Thu, 21 Jan 2021 10:54:16 +0100
-Message-Id: <20210121095420.5023-1-wsa+renesas@sang-engineering.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/5] clk: renesas: r8a779a0: add clocks for RAVB
+Date:   Thu, 21 Jan 2021 11:06:16 +0100
+Message-Id: <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
+References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Here is the updated series to enable I2C on V3U. Please check the
-individual patches for updates. Please note that the last patch is not
-for upstream, but just for testing.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Koji Matsuoka (1):
-  arm64: dts: renesas: Add I2C to R8A779A0
+Change since v1:
+* use S3D2 as parent clock
 
-Wolfram Sang (3):
-  clk: renesas: r8a779a0: add clocks for I2C
-  arm64: dts: renesas: Add I2C0,1,6 support for falcon board
-  v3u: enable other I2C busses for testing
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi |  93 +++++++++++++
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 122 ++++++++++++++++++
- drivers/clk/renesas/r8a779a0-cpg-mssr.c       |   7 +
- 3 files changed, 222 insertions(+)
-
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index f7391ea5c2e2..79e6c6571144 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -156,6 +156,12 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ };
+ 
+ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
++	DEF_MOD("avb0",		211,	R8A779A0_CLK_S3D2),
++	DEF_MOD("avb1",		212,	R8A779A0_CLK_S3D2),
++	DEF_MOD("avb2",		213,	R8A779A0_CLK_S3D2),
++	DEF_MOD("avb3",		214,	R8A779A0_CLK_S3D2),
++	DEF_MOD("avb4",		215,	R8A779A0_CLK_S3D2),
++	DEF_MOD("avb5",		216,	R8A779A0_CLK_S3D2),
+ 	DEF_MOD("csi40",	331,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
 -- 
 2.29.2
 
