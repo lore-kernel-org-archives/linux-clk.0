@@ -7,116 +7,205 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E43C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC55C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 13:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0369221E2
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 12:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6593239D4
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 13:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbhAUMMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 07:12:48 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:33257 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbhAUK7i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 05:59:38 -0500
-Received: by mail-ot1-f44.google.com with SMTP id 63so1217274oty.0;
-        Thu, 21 Jan 2021 02:59:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KN7X5cb1xBM2Aiwbk2CER1u8lNv5H/NY07cvyV8TZWI=;
-        b=aUEMwCfRD1Fiu1xjKKAi6xSGyT/v/Hjs0qFBPtc6jpbKF/qRcf8CDuvZxJM3S+3otT
-         jEt1P0pqk74EMqFHo331i7Psex92e20ELR2upLRcaVCtgbFuB6Q7XW58KqMCNdTH/iUa
-         6pJ8QqmkxDF8m/iM97m9F6YmGNFSzlqWudDo04TbATnq3qIhpqTvXPX5JLZHo7jbH2cZ
-         IHZosrKdYaiMjAz4X6uqgFf+0YC1uncTM4nYMd1NstsPER3gmTvhNgB9M1YYJFtXcuBf
-         56kr/llKSwKVt0ervyBg+AZZd7Fazmz0yVHdo8VvoEP0mhDBQv8sIlgF7ndA4eddWQIQ
-         prLQ==
-X-Gm-Message-State: AOAM530BbmFqbGx2GFd8fXe7idhC0Il4o55jAFYoogLB7/4r9k1KxpOs
-        3T/2TVXzNEFLZx1cpDhoHAy0fPAUHk0z2YOQpxQ=
-X-Google-Smtp-Source: ABdhPJzRIkve3Ta7vTVnatwwfNZxYw6W8kCRob+9RseLWJuz5yDjZx2O5MqU7+pPm63VZ5kW0iNdebVs0gZAk8je2gE=
-X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr10022158oth.250.1611226733787;
- Thu, 21 Jan 2021 02:58:53 -0800 (PST)
-MIME-Version: 1.0
-References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz> <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com>
-In-Reply-To: <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Jan 2021 11:58:42 +0100
-Message-ID: <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
-Subject: Re: [PATCH] PM / clk: make PM clock layer compatible with clocks that
- must sleep
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Nicolas Pitre <npitre@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1728739AbhAUNzj convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 08:55:39 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:60248 "EHLO unicorn.mansr.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728051AbhAUNzg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Jan 2021 08:55:36 -0500
+X-Greylist: delayed 411 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Jan 2021 08:55:35 EST
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:8d8e::3])
+        by unicorn.mansr.com (Postfix) with ESMTPS id E17E915361;
+        Thu, 21 Jan 2021 13:47:51 +0000 (GMT)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+        id DBA5A21A3D9; Thu, 21 Jan 2021 13:47:51 +0000 (GMT)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: Re: [PATCH 1/4] clk: remove tango4 driver
+References: <20210120131026.1721788-1-arnd@kernel.org>
+        <20210120131026.1721788-2-arnd@kernel.org>
+Date:   Thu, 21 Jan 2021 13:47:51 +0000
+In-Reply-To: <20210120131026.1721788-2-arnd@kernel.org> (Arnd Bergmann's
+        message of "Wed, 20 Jan 2021 14:10:23 +0100")
+Message-ID: <yw1xsg6uz9iw.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 10:13 AM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
-> On Tue, 5 Jan 2021 at 08:48, Nicolas Pitre <npitre@baylibre.com> wrote:
-> >
-> > The clock API splits its interface into sleepable ant atomic contexts:
-> >
-> > - clk_prepare/clk_unprepare for stuff that might sleep
-> >
-> > - clk_enable_clk_disable for anything that may be done in atomic context
-> >
->
-> <trim>
->
-> >
-> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> >
-> > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> > index ced6863a16..a62fb0f9b1 100644
-> > --- a/drivers/base/power/clock_ops.c
-> > +++ b/drivers/base/power/clock_ops.c
->
-> <trim>
->
-> > @@ -64,17 +166,20 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
-> >                 ce->clk = clk_get(dev, ce->con_id);
-> >         if (IS_ERR(ce->clk)) {
-> >                 ce->status = PCE_STATUS_ERROR;
-> > +               return;
-> > +       } else if (clk_is_enabled_when_prepared(ce->clk)) {
->
-> arm-linux-gnueabihf-ld: drivers/base/power/clock_ops.o: in function
-> `pm_clk_acquire':
-> drivers/base/power/clock_ops.c:170: undefined reference to
-> `clk_is_enabled_when_prepared'
->
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
->
-> This build error was noticed on arm architecture on linux next 20210121 tag.
-> Following builds failed.
->  - arm (omap1_defconfig) with clang-10 - FAILED
->  - arm (omap1_defconfig) with clang-11 - FAILED
->
->  - arm (omap1_defconfig) with gcc-8 - FAILED
->  - arm (omap1_defconfig) with gcc-9 - FAILED
->  - arm (omap1_defconfig) with gcc-10 - FAILED
+Arnd Bergmann <arnd@kernel.org> writes:
 
-Missing dummy clk_is_enabled_when_prepared() for the
-!CONFIG_HAVE_CLK case?
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The tango platform is getting removed, so the driver is no
+> longer needed.
+>
+> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Cc: Mans Rullgard <mans@mansr.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Gr{oetje,eeting}s,
+Acked-by: Mans Rullgard <mans@mansr.com>
 
-                        Geert
+> ---
+>  .../bindings/clock/tango4-clock.txt           | 23 -----
+>  drivers/clk/Makefile                          |  1 -
+>  drivers/clk/clk-tango4.c                      | 85 -------------------
+>  3 files changed, 109 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/tango4-clock.txt
+>  delete mode 100644 drivers/clk/clk-tango4.c
+>
+> diff --git a/Documentation/devicetree/bindings/clock/tango4-clock.txt b/Documentation/devicetree/bindings/clock/tango4-clock.txt
+> deleted file mode 100644
+> index 19c580a7bda2..000000000000
+> --- a/Documentation/devicetree/bindings/clock/tango4-clock.txt
+> +++ /dev/null
+> @@ -1,23 +0,0 @@
+> -* Sigma Designs Tango4 Clock Generator
+> -
+> -The Tango4 clock generator outputs cpu_clk and sys_clk (the latter is used
+> -for RAM and various peripheral devices). The clock binding described here
+> -is applicable to all Tango4 SoCs.
+> -
+> -Required Properties:
+> -
+> -- compatible: should be "sigma,tango4-clkgen".
+>
+> -- reg: physical base address of the device and length of memory mapped region.
+> -- clocks: phandle of the input clock (crystal oscillator).
+> -- clock-output-names: should be "cpuclk" and "sysclk".
+> -- #clock-cells: should be set to 1.
+> -
+> -Example:
+> -
+> -	clkgen: clkgen@10000 {
+> -		compatible = "sigma,tango4-clkgen";
+> -		reg = <0x10000 0x40>;
+> -		clocks = <&xtal>;
+> -		clock-output-names = "cpuclk", "sysclk";
+> -		#clock-cells = <1>;
+> -	};
+>
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index dbdc590e7de3..adf05704336e 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -63,7 +63,6 @@ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+>  obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
+>  obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
+>  obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o
+> -obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
+>  obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+>  obj-$(CONFIG_ARCH_U300)			+= clk-u300.o
+>  obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
+> diff --git a/drivers/clk/clk-tango4.c b/drivers/clk/clk-tango4.c
+> deleted file mode 100644
+> index fe12a43f7a40..000000000000
+> --- a/drivers/clk/clk-tango4.c
+> +++ /dev/null
+> @@ -1,85 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -#include <linux/kernel.h>
+> -#include <linux/clk-provider.h>
+> -#include <linux/of_address.h>
+> -#include <linux/init.h>
+> -#include <linux/io.h>
+> -
+> -#define CLK_COUNT 4 /* cpu_clk, sys_clk, usb_clk, sdio_clk */
+> -static struct clk *clks[CLK_COUNT];
+> -static struct clk_onecell_data clk_data = { clks, CLK_COUNT };
+> -
+> -#define SYSCLK_DIV	0x20
+> -#define CPUCLK_DIV	0x24
+> -#define DIV_BYPASS	BIT(23)
+> -
+> -/*** CLKGEN_PLL ***/
+> -#define extract_pll_n(val)	((val >>  0) & ((1u << 7) - 1))
+> -#define extract_pll_k(val)	((val >> 13) & ((1u << 3) - 1))
+> -#define extract_pll_m(val)	((val >> 16) & ((1u << 3) - 1))
+> -#define extract_pll_isel(val)	((val >> 24) & ((1u << 3) - 1))
+> -
+> -static void __init make_pll(int idx, const char *parent, void __iomem *base)
+> -{
+> -	char name[8];
+> -	u32 val, mul, div;
+> -
+> -	sprintf(name, "pll%d", idx);
+> -	val = readl(base + idx * 8);
+> -	mul =  extract_pll_n(val) + 1;
+> -	div = (extract_pll_m(val) + 1) << extract_pll_k(val);
+> -	clk_register_fixed_factor(NULL, name, parent, 0, mul, div);
+> -	if (extract_pll_isel(val) != 1)
+> -		panic("%s: input not set to XTAL_IN\n", name);
+> -}
+> -
+> -static void __init make_cd(int idx, void __iomem *base)
+> -{
+> -	char name[8];
+> -	u32 val, mul, div;
+> -
+> -	sprintf(name, "cd%d", idx);
+> -	val = readl(base + idx * 8);
+> -	mul =  1 << 27;
+> -	div = (2 << 27) + val;
+> -	clk_register_fixed_factor(NULL, name, "pll2", 0, mul, div);
+> -	if (val > 0xf0000000)
+> -		panic("%s: unsupported divider %x\n", name, val);
+> -}
+> -
+> -static void __init tango4_clkgen_setup(struct device_node *np)
+> -{
+> -	struct clk **pp = clk_data.clks;
+> -	void __iomem *base = of_iomap(np, 0);
+> -	const char *parent = of_clk_get_parent_name(np, 0);
+> -
+> -	if (!base)
+> -		panic("%pOFn: invalid address\n", np);
+> -
+> -	if (readl(base + CPUCLK_DIV) & DIV_BYPASS)
+> -		panic("%pOFn: unsupported cpuclk setup\n", np);
+> -
+> -	if (readl(base + SYSCLK_DIV) & DIV_BYPASS)
+> -		panic("%pOFn: unsupported sysclk setup\n", np);
+> -
+> -	writel(0x100, base + CPUCLK_DIV); /* disable frequency ramping */
+> -
+> -	make_pll(0, parent, base);
+> -	make_pll(1, parent, base);
+> -	make_pll(2, parent, base);
+> -	make_cd(2, base + 0x80);
+> -	make_cd(6, base + 0x80);
+> -
+> -	pp[0] = clk_register_divider(NULL, "cpu_clk", "pll0", 0,
+> -			base + CPUCLK_DIV, 8, 8, CLK_DIVIDER_ONE_BASED, NULL);
+> -	pp[1] = clk_register_fixed_factor(NULL, "sys_clk", "pll1", 0, 1, 4);
+> -	pp[2] = clk_register_fixed_factor(NULL,  "usb_clk", "cd2", 0, 1, 2);
+> -	pp[3] = clk_register_fixed_factor(NULL, "sdio_clk", "cd6", 0, 1, 2);
+> -
+> -	if (IS_ERR(pp[0]) || IS_ERR(pp[1]) || IS_ERR(pp[2]) || IS_ERR(pp[3]))
+> -		panic("%pOFn: clk registration failed\n", np);
+> -
+> -	if (of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data))
+> -		panic("%pOFn: clk provider registration failed\n", np);
+> -}
+> -CLK_OF_DECLARE(tango4_clkgen, "sigma,tango4-clkgen", tango4_clkgen_setup);
+> -- 
+>
+> 2.29.2
+>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Måns Rullgård
