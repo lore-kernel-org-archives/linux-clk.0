@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C878DC433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 04:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A81CC433E9
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 04:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1B2238E8
+	by mail.kernel.org (Postfix) with ESMTP id BA225238E5
 	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 04:15:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbhAUEPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 23:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39710 "EHLO mail.kernel.org"
+        id S1728049AbhAUEPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 23:15:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728833AbhAUENE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726205AbhAUENE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 20 Jan 2021 23:13:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E073238E4;
-        Thu, 21 Jan 2021 04:11:50 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DF77C238E5;
+        Thu, 21 Jan 2021 04:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611202311;
-        bh=i0o5BOTuobkVm+Oy4OCU51ghTjJgBql7EKiATSN3E0M=;
+        s=k20201202; t=1611202321;
+        bh=TSPPsdg02ahP/Wtn4EqkELMNHDhwHsYCq1iue1RYofc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OYXMbM0RVabxirrEwy/tHCTU4KlXXGViQbMh+li0zjDuWUoEh1mr23enbikIAIpxW
-         DIPOHVnHtkwVwyeLDcl8g8RP2YgX6wUXsjH68bBTwmKvAWBHBFLgtCGeYGvb8WxPTv
-         rHGB4qOEGDmwh0jCTe4haw46lFy90ijoA4M6ow4zlOfIIHcTJA14wH1zEnAqazL7n1
-         X1Nn1az4G3DLtJwB8zK70EoUmra0D7anMbiw8Q6RvZ9zuqkacIhM2uWYt0ywYJ/hVo
-         J0ESg+jdZus5BcG5wbCqKlQ3ECm7egmYRrwbEN97QihniwCVD7KhSnmvuAHUiW+Sid
-         TrI+6b5ozKbSw==
-Subject: Re: [PATCH 07/20] clk: socfpga: clk-pll: Remove unused variable 'rc'
+        b=Gs/TbRtRKAizKIOeMepg8NUszzXxjKsShpDdXtbfCjFemJzVddAqynV/Bn6JkVUv9
+         Zsf2L1p24EumUnmeLdo1OfvrKng6ujElFAc4pEnaDq54Zd/dKBIjxWXDYQFWwWN3e4
+         IXbNciBFULSNcl5VhziDrfNK1oVJvYHK9GSDCW7inaMxrP8aZYeW9rXaRi31W1MhIj
+         OE3GWw3E8yMYMmtk/wG6KeRoq2Vc9JaB1PzAbkUfz7liW2kR3WSPgzPqS0EkGZB0Ui
+         ld/DFFyogkDNvRK7N/7soxMZtuMtWF6hn2uPUu2Osk95VCCHkujoWEh42pYeYDuRKo
+         +LXwIZFYdC9CA==
+Subject: Re: [PATCH 08/20] clk: socfpga: clk-pll-a10: Remove set but unused
+ variable 'rc'
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
 References: <20210120093040.1719407-1-lee.jones@linaro.org>
- <20210120093040.1719407-8-lee.jones@linaro.org>
+ <20210120093040.1719407-9-lee.jones@linaro.org>
 From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <3d6c8a56-0fdb-f116-95ff-29526400fc14@kernel.org>
-Date:   Wed, 20 Jan 2021 22:11:49 -0600
+Message-ID: <77dcbc1a-d0c6-aa35-57f4-a3bc66d81a87@kernel.org>
+Date:   Wed, 20 Jan 2021 22:11:59 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210120093040.1719407-8-lee.jones@linaro.org>
+In-Reply-To: <20210120093040.1719407-9-lee.jones@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -57,8 +58,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On 1/20/21 3:30 AM, Lee Jones wrote:
 > Fixes the following W=1 kernel build warning(s):
 > 
->   drivers/clk/socfpga/clk-pll.c: In function ‘__socfpga_pll_init’:
->   drivers/clk/socfpga/clk-pll.c:83:6: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
+>   drivers/clk/socfpga/clk-pll-a10.c: In function ‘__socfpga_pll_init’:
+>   drivers/clk/socfpga/clk-pll-a10.c:76:6: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
 > 
 > Cc: Dinh Nguyen <dinguyen@kernel.org>
 > Cc: Michael Turquette <mturquette@baylibre.com>
@@ -66,22 +67,22 @@ On 1/20/21 3:30 AM, Lee Jones wrote:
 > Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
->   drivers/clk/socfpga/clk-pll.c | 3 +--
+>   drivers/clk/socfpga/clk-pll-a10.c | 3 +--
 >   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-> index e5fb786843f39..3cf99df7d0056 100644
-> --- a/drivers/clk/socfpga/clk-pll.c
-> +++ b/drivers/clk/socfpga/clk-pll.c
-> @@ -80,7 +80,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
->   	const char *parent_name[SOCFPGA_MAX_PARENTS];
+> diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
+> index db54f7d806a09..3338f054fe98c 100644
+> --- a/drivers/clk/socfpga/clk-pll-a10.c
+> +++ b/drivers/clk/socfpga/clk-pll-a10.c
+> @@ -73,7 +73,6 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
+>   	const char *parent_name[SOCFGPA_MAX_PARENTS];
 >   	struct clk_init_data init;
 >   	struct device_node *clkmgr_np;
 > -	int rc;
+>   	int i = 0;
 >   
 >   	of_property_read_u32(node, "reg", &reg);
->   
-> @@ -111,7 +110,7 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+> @@ -108,7 +107,7 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
 >   		kfree(pll_clk);
 >   		return NULL;
 >   	}
@@ -93,5 +94,3 @@ On 1/20/21 3:30 AM, Lee Jones wrote:
 > 
 
 Acked-by: Dinh Nguyen <dinguyen@kernel.org>
-
-
