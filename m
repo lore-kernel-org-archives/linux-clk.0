@@ -2,95 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A81CC433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 04:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766EAC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 05:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA225238E5
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 04:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BEA2395A
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 05:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbhAUEPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jan 2021 23:15:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39730 "EHLO mail.kernel.org"
+        id S1726304AbhAUDvg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jan 2021 22:51:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbhAUENE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Jan 2021 23:13:04 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DF77C238E5;
-        Thu, 21 Jan 2021 04:12:00 +0000 (UTC)
+        id S1726456AbhAUC5S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Jan 2021 21:57:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2111523884;
+        Thu, 21 Jan 2021 02:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611202321;
-        bh=TSPPsdg02ahP/Wtn4EqkELMNHDhwHsYCq1iue1RYofc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Gs/TbRtRKAizKIOeMepg8NUszzXxjKsShpDdXtbfCjFemJzVddAqynV/Bn6JkVUv9
-         Zsf2L1p24EumUnmeLdo1OfvrKng6ujElFAc4pEnaDq54Zd/dKBIjxWXDYQFWwWN3e4
-         IXbNciBFULSNcl5VhziDrfNK1oVJvYHK9GSDCW7inaMxrP8aZYeW9rXaRi31W1MhIj
-         OE3GWw3E8yMYMmtk/wG6KeRoq2Vc9JaB1PzAbkUfz7liW2kR3WSPgzPqS0EkGZB0Ui
-         ld/DFFyogkDNvRK7N/7soxMZtuMtWF6hn2uPUu2Osk95VCCHkujoWEh42pYeYDuRKo
-         +LXwIZFYdC9CA==
-Subject: Re: [PATCH 08/20] clk: socfpga: clk-pll-a10: Remove set but unused
- variable 'rc'
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20210120093040.1719407-1-lee.jones@linaro.org>
- <20210120093040.1719407-9-lee.jones@linaro.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <77dcbc1a-d0c6-aa35-57f4-a3bc66d81a87@kernel.org>
-Date:   Wed, 20 Jan 2021 22:11:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        s=k20201202; t=1611197165;
+        bh=c1XsJT/SXPWs5fqOseN8Eebhs8J1o75FxNXKgsJnSIc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NYWE9SMnDc3ZX8r69M2IAJPIMqU03VJt5VgjP/Au5NlA1q40qVo8cxLf4vGe9pGPJ
+         5UVAgaO+PRHYaK0gGinYEC+Y58Pgta3ULKtzBEXJagCVsbb9aqmQX7aMe3IC+hXERI
+         HHa/LTu5zc0LxrBBGOvGVNVkfx6WjLShbSz4CAV7AQJjQ5FDt1+DMMUAIzWZ7oEri6
+         d0RPCBfeejOuujlPfOUMmhB1Ffs1dJ+Lwnqq48OKJ4SMEcw5HVFJKQUrKHvT13gE0b
+         PUv8tBWKTh1dIicht0jaVd5h2EMsGtF/Lbqup+kzhvm4/5XE0QJUZuuEXMP/17YQJy
+         PFgnW6WkLzGbA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210120093040.1719407-9-lee.jones@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e6843147-514b-8901-a04c-b1d6e3ebf1c2@somainline.org>
+References: <1611128871-5898-1-git-send-email-tdas@codeaurora.org> <e6843147-514b-8901-a04c-b1d6e3ebf1c2@somainline.org>
+Subject: Re: [PATCH V1] clk: qcom: gcc-sc7180: Mark the MM XO clocks to be always ON
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Wed, 20 Jan 2021 18:46:03 -0800
+Message-ID: <161119716362.3661239.18168143877101107424@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting AngeloGioacchino Del Regno (2021-01-20 01:16:17)
+> Il 20/01/21 08:47, Taniya Das ha scritto:
+> > There are intermittent GDSC power-up failures observed for titan top
+> > gdsc, which requires the XO clock. Thus mark all the MM XO clocks always
+> > enabled from probe.
+> >=20
+>=20
+> Hello Tanya,
+>=20
+> > Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops inste=
+ad of clk ones")
+> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > ---
+> >   drivers/clk/qcom/gcc-sc7180.c | 47 ++++------------------------------=
+---------
+> >   1 file changed, 4 insertions(+), 43 deletions(-)
+> >=20
+> > --
+> > Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> > of the Code Aurora Forum, hosted by the  Linux Foundation.
+> >=20
+> > diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc718=
+0.c
+> > index b05901b..88e896a 100644
+> > --- a/drivers/clk/qcom/gcc-sc7180.c
+> > +++ b/drivers/clk/qcom/gcc-sc7180.c
+> > @@ -1,6 +1,6 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >   /*
+> > - * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
+> > + * Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
+> >    */
+> >=20
+> >   #include <linux/clk-provider.h>
+> > @@ -919,19 +919,6 @@ static struct clk_branch gcc_camera_throttle_hf_ax=
+i_clk =3D {
+> >       },
+> >   };
+> >=20
+> > -static struct clk_branch gcc_camera_xo_clk =3D {
+> > -     .halt_reg =3D 0xb02c,
+> > -     .halt_check =3D BRANCH_HALT,
+> > -     .clkr =3D {
+> > -             .enable_reg =3D 0xb02c,
+> > -             .enable_mask =3D BIT(0),
+> > -             .hw.init =3D &(struct clk_init_data){
+> > -                     .name =3D "gcc_camera_xo_clk",
+> > -                     .ops =3D &clk_branch2_ops,
+> > -             },
+> > -     },
+> > -};
+> > -
+>=20
+> Why are you avoiding to register these clocks entirely?
+> If this is needed by the Titan GDSC, this clock "does indeed exist".
+>=20
+> If these clocks shall never be turned off, then you should add the
+> CLK_IS_CRITICAL flag and perhaps add a comment explaining why.
 
-
-On 1/20/21 3:30 AM, Lee Jones wrote:
-> Fixes the following W=1 kernel build warning(s):
-> 
->   drivers/clk/socfpga/clk-pll-a10.c: In function ‘__socfpga_pll_init’:
->   drivers/clk/socfpga/clk-pll-a10.c:76:6: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
-> 
-> Cc: Dinh Nguyen <dinguyen@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->   drivers/clk/socfpga/clk-pll-a10.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-> index db54f7d806a09..3338f054fe98c 100644
-> --- a/drivers/clk/socfpga/clk-pll-a10.c
-> +++ b/drivers/clk/socfpga/clk-pll-a10.c
-> @@ -73,7 +73,6 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
->   	const char *parent_name[SOCFGPA_MAX_PARENTS];
->   	struct clk_init_data init;
->   	struct device_node *clkmgr_np;
-> -	int rc;
->   	int i = 0;
->   
->   	of_property_read_u32(node, "reg", &reg);
-> @@ -108,7 +107,7 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
->   		kfree(pll_clk);
->   		return NULL;
->   	}
-> -	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-> +	of_clk_add_provider(node, of_clk_src_simple_get, clk);
->   	return clk;
->   }
->   
-> 
-
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+I'd rather not have critical clks wasting kernel memory and registration
+time if they're never going to be turned off and we're basically just
+writing a bit so that they're always on. This patch looks OK to me from
+that perspective. There aren't any parents for these clks either so
+really it's a glorified bit toggle and poll to make sure that it is
+enabled. Maybe we should be checking that they're actually enabled at
+the end of probe, but otherwise we don't need all this complexity.
