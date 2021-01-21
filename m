@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F935C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C458CC433E6
 	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2934923788
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:19:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74681239A4
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 07:19:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbhAUHT3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 02:19:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44028 "EHLO
+        id S1726320AbhAUHTT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jan 2021 02:19:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727275AbhAUHSe (ORCPT
+        with ESMTP id S1727291AbhAUHSe (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 02:18:34 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C119C061799
-        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 23:17:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3883C061795
+        for <linux-clk@vger.kernel.org>; Wed, 20 Jan 2021 23:17:02 -0800 (PST)
 Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDE-0006UO-EA; Thu, 21 Jan 2021 08:17:00 +0100
+        id 1l2UDE-0006UF-Fm; Thu, 21 Jan 2021 08:17:00 +0100
 Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.92)
         (envelope-from <mtr@pengutronix.de>)
-        id 1l2UDD-00599C-Bf; Thu, 21 Jan 2021 08:16:59 +0100
+        id 1l2UDD-00597i-7E; Thu, 21 Jan 2021 08:16:59 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Cc:     m.mtretter@pengutronix.de, michals@xilinx.com,
         kernel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org
-Subject: [PATCH v3 13/15] soc: xilinx: vcu: fix repeated word the in comment
-Date:   Thu, 21 Jan 2021 08:16:57 +0100
-Message-Id: <20210121071659.1226489-14-m.tretter@pengutronix.de>
+Subject: [PATCH v3 04/15] soc: xilinx: vcu: add helper to wait for PLL locked
+Date:   Thu, 21 Jan 2021 08:16:48 +0100
+Message-Id: <20210121071659.1226489-5-m.tretter@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210121071659.1226489-1-m.tretter@pengutronix.de>
 References: <20210121071659.1226489-1-m.tretter@pengutronix.de>
@@ -50,11 +50,10 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fixes the following checkpatch warning:
-
-	WARNING: Possible repeated word: 'the'
-	#703: FILE: drivers/soc/xilinx/xlnx_vcu.c:703:
-	+       /* Add the the Gasket isolation and put the VCU in reset. */
+Extract a helper function to wait until the PLL is locked. Also,
+disabling the bypass was buried in the exit path on the wait loop.
+Separate the different steps and add a helper function to make the code
+more readable.
 
 Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
 Acked-by: Michal Simek <michal.simek@xilinx.com>
@@ -62,26 +61,83 @@ Acked-by: Michal Simek <michal.simek@xilinx.com>
 Changelog:
 
 v3: none
-
-v2:
-- New patch
+v2: none
 ---
- drivers/soc/xilinx/xlnx_vcu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/xilinx/xlnx_vcu.c | 46 ++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/soc/xilinx/xlnx_vcu.c b/drivers/soc/xilinx/xlnx_vcu.c
-index f27a5111b9d0..74ab305cb403 100644
+index 7da9643820a8..0fd8356a3776 100644
 --- a/drivers/soc/xilinx/xlnx_vcu.c
 +++ b/drivers/soc/xilinx/xlnx_vcu.c
-@@ -712,7 +712,7 @@ static int xvcu_remove(struct platform_device *pdev)
+@@ -256,6 +256,22 @@ static void xvcu_write_field_reg(void __iomem *iomem, int offset,
+ 	xvcu_write(iomem, offset, val);
+ }
  
- 	xvcu_unregister_clock_provider(xvcu);
++static int xvcu_pll_wait_for_lock(struct xvcu_device *xvcu)
++{
++	void __iomem *base = xvcu->vcu_slcr_ba;
++	unsigned long timeout;
++	u32 lock_status;
++
++	timeout = jiffies + msecs_to_jiffies(2000);
++	do {
++		lock_status = xvcu_read(base, VCU_PLL_STATUS);
++		if (lock_status & VCU_PLL_STATUS_LOCK_STATUS_MASK)
++			return 0;
++	} while (!time_after(jiffies, timeout));
++
++	return -ETIMEDOUT;
++}
++
+ /**
+  * xvcu_set_vcu_pll_info - Set the VCU PLL info
+  * @xvcu:	Pointer to the xvcu_device structure
+@@ -428,8 +444,6 @@ static int xvcu_set_vcu_pll_info(struct xvcu_device *xvcu)
+  */
+ static int xvcu_set_pll(struct xvcu_device *xvcu)
+ {
+-	u32 lock_status;
+-	unsigned long timeout;
+ 	int ret;
  
--	/* Add the the Gasket isolation and put the VCU in reset. */
-+	/* Add the Gasket isolation and put the VCU in reset. */
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
+ 	ret = xvcu_set_vcu_pll_info(xvcu);
+@@ -447,24 +461,18 @@ static int xvcu_set_pll(struct xvcu_device *xvcu)
+ 	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
+ 			     0, VCU_PLL_CTRL_RESET_MASK,
+ 			     VCU_PLL_CTRL_RESET_SHIFT);
+-	/*
+-	 * Defined the timeout for the max time to wait the
+-	 * PLL_STATUS to be locked.
+-	 */
+-	timeout = jiffies + msecs_to_jiffies(2000);
+-	do {
+-		lock_status = xvcu_read(xvcu->vcu_slcr_ba, VCU_PLL_STATUS);
+-		if (lock_status & VCU_PLL_STATUS_LOCK_STATUS_MASK) {
+-			xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
+-					     0, VCU_PLL_CTRL_BYPASS_MASK,
+-					     VCU_PLL_CTRL_BYPASS_SHIFT);
+-			return 0;
+-		}
+-	} while (!time_after(jiffies, timeout));
  
- 	clk_disable_unprepare(xvcu->aclk);
+-	/* PLL is not locked even after the timeout of the 2sec */
+-	dev_err(xvcu->dev, "PLL is not locked\n");
+-	return -ETIMEDOUT;
++	ret = xvcu_pll_wait_for_lock(xvcu);
++	if (ret) {
++		dev_err(xvcu->dev, "PLL is not locked\n");
++		return ret;
++	}
++
++	xvcu_write_field_reg(xvcu->vcu_slcr_ba, VCU_PLL_CTRL,
++			     0, VCU_PLL_CTRL_BYPASS_MASK,
++			     VCU_PLL_CTRL_BYPASS_SHIFT);
++
++	return ret;
+ }
+ 
+ /**
 -- 
 2.20.1
 
