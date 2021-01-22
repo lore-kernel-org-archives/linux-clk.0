@@ -4,100 +4,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961B7C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 14:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8691EC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 15:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6330D239D4
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 14:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 539EB23AAC
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 15:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbhAVOCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 09:02:17 -0500
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:35799 "EHLO
+        id S1728787AbhAVPKT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 10:10:19 -0500
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:46888 "EHLO
         mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728099AbhAVOBk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 09:01:40 -0500
-Received: by mail-oi1-f180.google.com with SMTP id w8so6074034oie.2;
-        Fri, 22 Jan 2021 06:01:24 -0800 (PST)
+        with ESMTP id S1729246AbhAVPKK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 10:10:10 -0500
+Received: by mail-oi1-f180.google.com with SMTP id q205so6224070oig.13;
+        Fri, 22 Jan 2021 07:09:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=EUaxXtMWBR0BSS8k6na/vc+HlfNaGeb+7ZCL4OicyZo=;
-        b=tcNcQFTa9eTkeefyMNo0nbaKZoEjRJl04HKsP9c03B8EaIIhh7+o0lSd3fh+rp4AN4
-         Jtz23oimntuw3KWgeWKWoBCPL6Cuap7wqy2H8d4CLaCzrH7SAY0ANJP62VfeR5yxVFZr
-         G5yGlyhAtWMU0ZdF8oGBAs7vZBd17llLUDi3GesY7HKu4oqXxOSaPvyvEa305vM5vmjm
-         C6yL5/6Wk4LZZvg0Ggdpx2S1AT7fmDZBWdtVPov5R9tsg1q02iQ9+ekxEFFak/glbmYV
-         v8g01Yd9oSabaRaDyvgEwWnMsX3RgWd38z8eliAXl3LGkFl7m5bW2eoaIc47uUHDSp1t
-         hwHQ==
-X-Gm-Message-State: AOAM531ZvPVExek1+izjzKzDoT6ox6ahcrY3kDVkczqw7KBJw3PBjVxT
-        PGncIKO4VrdCRAWqX0zSFA==
-X-Google-Smtp-Source: ABdhPJzuup2G8I4By0nwY5GjTeCgXxvfBNcb5i/dqcjgAbP+KwX1KNzEuKUqEobX9LeiIvN8oDTXpw==
-X-Received: by 2002:aca:3cc5:: with SMTP id j188mr3361372oia.54.1611324054240;
-        Fri, 22 Jan 2021 06:00:54 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p4sm1719630oib.24.2021.01.22.06.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 06:00:53 -0800 (PST)
-Received: (nullmailer pid 674375 invoked by uid 1000);
-        Fri, 22 Jan 2021 14:00:45 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     gabriel.fernandez@foss.st.com
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Etienne Carriere <etienne.carriere@st.com>,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dNQSppSfSvMROzk8r+0lEH5X+aKm+/SWh2+D0nHCMMQ=;
+        b=ph96d9IyP4epiwjkryjXR4kq6qKa/BRBG0B2jatDiufxIe8z9OsbyLSdJcurOItNrb
+         nLcE9LV3lcDn22mNomRADqdxSTDbEDMyfcSJfhmtFwXx6L3Dr3zky29VxabZ+I7Gv+Ie
+         axv/TAEX70Y7SqSspHBCOM6B6N+DhCpH0j99auQVCrowShiJAPVDQ9586r9XAa+Dijql
+         wfEtRGTyTjGCdlRlFgtWTd+3JMNSi+aB0cRHEXXtjWpyXDUlak6lUcTv3UwlCJrOUs6n
+         TNPCoSEwWbqTtelPbwrYIqTZ0zyXkoXg8/VzOhaA5HubPVL4jxrT7tJgVQehLtWM7bYs
+         DJvg==
+X-Gm-Message-State: AOAM5322hY9kAMtnQseoclQ8mV4DLW0iFeWugjot1NCKegH7ujBgOR9O
+        Pr56cuVoKIbY9mmjxGc4eGr5sRBwHOdAoZXOquA=
+X-Google-Smtp-Source: ABdhPJxQ+6ZtpUYYuPp/QZRC1FJcmNKDTQ3vozJ+xFy+5ekP+/0fwNNpaRCbqCWuRk7khSbytGCEogB5Ut4rKBc7zxk=
+X-Received: by 2002:aca:fc84:: with SMTP id a126mr3571826oii.71.1611328168714;
+ Fri, 22 Jan 2021 07:09:28 -0800 (PST)
+MIME-Version: 1.0
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
+ <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com>
+ <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
+ <CA+G9fYvh0iSyEDQs7+0CX82FLPDCg5UmAt+1JuPsndmfmYF3kw@mail.gmail.com>
+ <CAJZ5v0hFjpGp2GbV1Evi+BbUF7Am4ETY4Cm8VzTrvTJ=7=oyPQ@mail.gmail.com>
+ <84r6s34s-opq7-9358-o45n-27s17084012@onlyvoer.pbz> <CAJZ5v0jUxonxp0q80Kdcbax+WMmh-NZ_h=KQG-HcfFdE1hr4VA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jUxonxp0q80Kdcbax+WMmh-NZ_h=KQG-HcfFdE1hr4VA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 22 Jan 2021 16:09:17 +0100
+Message-ID: <CAJZ5v0hj4VC_kjB5e_b_ho=ET_quG5zUh0Dbbdwofp-6azopsw@mail.gmail.com>
+Subject: Re: [PATCH v2] PM / clk: make PM clock layer compatible with clocks
+ that must sleep
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Nicolas Pitre <npitre@baylibre.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20210122105101.27374-14-gabriel.fernandez@foss.st.com>
-References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com> <20210122105101.27374-14-gabriel.fernandez@foss.st.com>
-Subject: Re: [PATCH 13/14] dt-bindings: clock: stm32mp1 new compatible for secure rcc
-Date:   Fri, 22 Jan 2021 08:00:45 -0600
-Message-Id: <1611324045.701742.674374.nullmailer@robh.at.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 22 Jan 2021 11:51:00 +0100, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> 
-> Introduce new compatible string "st,stm32mp1-rcc-secure" for
-> stm32mp1 clock driver when the device is configured with RCC
-> security support hardened.
-> 
-> Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+On Thu, Jan 21, 2021 at 8:01 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Jan 21, 2021 at 6:23 PM Nicolas Pitre <npitre@baylibre.com> wrote:
+> >
+> > The clock API splits its interface into sleepable ant atomic contexts:
+> >
+> > - clk_prepare/clk_unprepare for stuff that might sleep
+> >
+> > - clk_enable_clk_disable for anything that may be done in atomic context
+> >
+> > The code handling runtime PM for clocks only calls clk_disable() on
+> > suspend requests, and clk_enable on resume requests. This means that
+> > runtime PM with clock providers that only have the prepare/unprepare
+> > methods implemented is basically useless.
+> >
+> > Many clock implementations can't accommodate atomic contexts. This is
+> > often the case when communication with the clock happens through another
+> > subsystem like I2C or SCMI.
+> >
+> > Let's make the clock PM code useful with such clocks by safely invoking
+> > clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
+> > such clocks are registered with the PM layer then pm_runtime_irq_safe()
+> > can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
+> > may be invoked in atomic context.
+> >
+> > For clocks that do implement the enable and disable methods then
+> > everything just works as before.
+> >
+> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> >
+> > ---
+> >
+> > On Thu, 21 Jan 2021, Rafael J. Wysocki wrote:
+> >
+> > > So I'm going to drop this patch from linux-next until the issue is
+> > > resolved, thanks!
+> >
+> > Here's the fixed version.
+>
+> Applied instead of the v1, thanks!
+>
+> > Changes from v1:
+> >
+> > - Moved clk_is_enabled_when_prepared() declaration under
+> >   CONFIG_HAVE_CLK_PREPARE and provided a dummy definition when that
+> >   config option is unset.
+> >
+> > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+> > index ced6863a16..a62fb0f9b1 100644
+> > --- a/drivers/base/power/clock_ops.c
+> > +++ b/drivers/base/power/clock_ops.c
+> > @@ -23,6 +23,7 @@
+> >  enum pce_status {
+> >         PCE_STATUS_NONE = 0,
+> >         PCE_STATUS_ACQUIRED,
+> > +       PCE_STATUS_PREPARED,
+> >         PCE_STATUS_ENABLED,
+> >         PCE_STATUS_ERROR,
+> >  };
+> > @@ -32,8 +33,102 @@ struct pm_clock_entry {
+> >         char *con_id;
+> >         struct clk *clk;
+> >         enum pce_status status;
+> > +       bool enabled_when_prepared;
+> >  };
+> >
+> > +/**
+> > + * pm_clk_list_lock - ensure exclusive access for modifying the PM clock
+> > + *                   entry list.
+> > + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
+> > + *      and clk_op_might_sleep count to be modified.
+> > + *
+> > + * Get exclusive access before modifying the PM clock entry list and the
+> > + * clock_op_might_sleep count to guard against concurrent modifications.
+> > + * This also protects against a concurrent clock_op_might_sleep and PM clock
+> > + * entry list usage in pm_clk_suspend()/pm_clk_resume() that may or may not
+> > + * happen in atomic context, hence both the mutex and the spinlock must be
+> > + * taken here.
+> > + */
+> > +static void pm_clk_list_lock(struct pm_subsys_data *psd)
+> > +{
+> > +       mutex_lock(&psd->clock_mutex);
+> > +       spin_lock_irq(&psd->lock);
+> > +}
+> > +
+> > +/**
+> > + * pm_clk_list_unlock - counterpart to pm_clk_list_lock().
+> > + * @psd: the same pm_subsys_data instance previously passed to
+> > + *      pm_clk_list_lock().
+> > + */
+> > +static void pm_clk_list_unlock(struct pm_subsys_data *psd)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Locking annotations for sparse were missing here and above, so I've
+added them by hand.
 
-yamllint warnings/errors:
+Please double check the result in my linux-next branch (just pushed).
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.example.dt.yaml: rcc@50000000: compatible:1: 'st,stm32mp1-rcc' was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.example.dt.yaml: rcc@50000000: compatible: ['st,stm32mp1-rcc-secure', 'syscon'] is too short
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+Thanks!
 
-See https://patchwork.ozlabs.org/patch/1430316
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+> > +{
+> > +       spin_unlock_irq(&psd->lock);
+> > +       mutex_unlock(&psd->clock_mutex);
+> > +}
