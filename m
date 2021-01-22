@@ -2,173 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B88C8C433E9
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961B7C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 14:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9352522CA1
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6330D239D4
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 14:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbhAVK5G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:57:06 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12418 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727628AbhAVKwU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:20 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAmG84002482;
-        Fri, 22 Jan 2021 11:51:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=selector1;
- bh=vD3EHGbLxSS3YdjyiN4P/XEtIcwWhHbeghamkCuYDFE=;
- b=GEUvKPU/1XwRjiQmBsLk9FFhceuz4DNLsxYnguryd0REfL4ibyzsjY45KM2anEpCme39
- 2M36ZnvtwVnlnU4UbsI3j7U+5NqNmbOuBGclgy7sxtYl92fyXtEV2AKCV61F+z93VIDX
- uVnIr+WiCHabf44TKwVUH8e/xVXsQlCdGLNTv9WlKvmwcTqx7vzwIay7TtKSyMS1VVlG
- FgGN0NCqCfEYx5TDb6I/VPV5z4F8s2jNNxESxuh1Ik+DR2p/l9444SBJ8g0NMRpgjCeI
- NwYBHW5egYcID9b3tF7CnlQ3boGXY09TwTrJjV+J5s5Kel4broDvINp2vC3G/PKZwkR4 jQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3668pqhdue-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Jan 2021 11:51:21 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8884F100034;
-        Fri, 22 Jan 2021 11:51:20 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79E0822DBCA;
-        Fri, 22 Jan 2021 11:51:20 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:20
- +0100
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1728132AbhAVOCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 09:02:17 -0500
+Received: from mail-oi1-f180.google.com ([209.85.167.180]:35799 "EHLO
+        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728099AbhAVOBk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 09:01:40 -0500
+Received: by mail-oi1-f180.google.com with SMTP id w8so6074034oie.2;
+        Fri, 22 Jan 2021 06:01:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=EUaxXtMWBR0BSS8k6na/vc+HlfNaGeb+7ZCL4OicyZo=;
+        b=tcNcQFTa9eTkeefyMNo0nbaKZoEjRJl04HKsP9c03B8EaIIhh7+o0lSd3fh+rp4AN4
+         Jtz23oimntuw3KWgeWKWoBCPL6Cuap7wqy2H8d4CLaCzrH7SAY0ANJP62VfeR5yxVFZr
+         G5yGlyhAtWMU0ZdF8oGBAs7vZBd17llLUDi3GesY7HKu4oqXxOSaPvyvEa305vM5vmjm
+         C6yL5/6Wk4LZZvg0Ggdpx2S1AT7fmDZBWdtVPov5R9tsg1q02iQ9+ekxEFFak/glbmYV
+         v8g01Yd9oSabaRaDyvgEwWnMsX3RgWd38z8eliAXl3LGkFl7m5bW2eoaIc47uUHDSp1t
+         hwHQ==
+X-Gm-Message-State: AOAM531ZvPVExek1+izjzKzDoT6ox6ahcrY3kDVkczqw7KBJw3PBjVxT
+        PGncIKO4VrdCRAWqX0zSFA==
+X-Google-Smtp-Source: ABdhPJzuup2G8I4By0nwY5GjTeCgXxvfBNcb5i/dqcjgAbP+KwX1KNzEuKUqEobX9LeiIvN8oDTXpw==
+X-Received: by 2002:aca:3cc5:: with SMTP id j188mr3361372oia.54.1611324054240;
+        Fri, 22 Jan 2021 06:00:54 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p4sm1719630oib.24.2021.01.22.06.00.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jan 2021 06:00:53 -0800 (PST)
+Received: (nullmailer pid 674375 invoked by uid 1000);
+        Fri, 22 Jan 2021 14:00:45 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     gabriel.fernandez@foss.st.com
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Rob Herring <robh+dt@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
         Etienne Carriere <etienne.carriere@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 02/14] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
-Date:   Fri, 22 Jan 2021 11:50:49 +0100
-Message-ID: <20210122105101.27374-3-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
-References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-22_06:2021-01-21,2021-01-22 signatures=0
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20210122105101.27374-14-gabriel.fernandez@foss.st.com>
+References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com> <20210122105101.27374-14-gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH 13/14] dt-bindings: clock: stm32mp1 new compatible for secure rcc
+Date:   Fri, 22 Jan 2021 08:00:45 -0600
+Message-Id: <1611324045.701742.674374.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+On Fri, 22 Jan 2021 11:51:00 +0100, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> Introduce new compatible string "st,stm32mp1-rcc-secure" for
+> stm32mp1 clock driver when the device is configured with RCC
+> security support hardened.
+> 
+> Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
-A divider is available only on the specific rtc input for ck_hse.
-This Merge will facilitate to have a more coherent clock tree
-in no trusted / trusted world.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- drivers/clk/clk-stm32mp1.c | 49 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 6 deletions(-)
+yamllint warnings/errors:
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 35d5aee8f9b0..0e1d4427a8df 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -245,7 +245,7 @@ static const char * const dsi_src[] = {
- };
- 
- static const char * const rtc_src[] = {
--	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
-+	"off", "ck_lse", "ck_lsi", "ck_hse"
- };
- 
- static const char * const mco1_src[] = {
-@@ -1031,6 +1031,42 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
- 	return hw;
- }
- 
-+/* The divider of RTC clock concerns only ck_hse clock */
-+#define HSE_RTC 3
-+
-+static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
-+		return clk_divider_ops.recalc_rate(hw, parent_rate);
-+
-+	return parent_rate;
-+}
-+
-+static long clk_divider_rtc_round_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long *prate)
-+{
-+	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
-+		return clk_divider_ops.round_rate(hw, rate, prate);
-+
-+	return *prate;
-+}
-+
-+static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
-+		return clk_divider_ops.set_rate(hw, rate, parent_rate);
-+
-+	return parent_rate;
-+}
-+
-+static const struct clk_ops rtc_div_clk_ops = {
-+	.recalc_rate	= clk_divider_rtc_recalc_rate,
-+	.round_rate	= clk_divider_rtc_round_rate,
-+	.set_rate	= clk_divider_rtc_set_rate,
-+};
-+
- struct stm32_pll_cfg {
- 	u32 offset;
- };
-@@ -1243,6 +1279,10 @@ _clk_stm32_register_composite(struct device *dev,
- 	_STM32_DIV(_div_offset, _div_shift, _div_width,\
- 		   _div_flags, _div_table, NULL)\
- 
-+#define _DIV_RTC(_div_offset, _div_shift, _div_width, _div_flags, _div_table)\
-+	_STM32_DIV(_div_offset, _div_shift, _div_width,\
-+		   _div_flags, _div_table, &rtc_div_clk_ops)
-+
- #define _STM32_MUX(_offset, _shift, _width, _mux_flags, _mmux, _ops)\
- 	.mux = &(struct stm32_mux_cfg) {\
- 		&(struct mux_cfg) {\
-@@ -1965,13 +2005,10 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  _DIV(RCC_ETHCKSELR, 4, 4, 0, NULL)),
- 
- 	/* RTC clock */
--	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 6, 0),
--
--	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
--		   CLK_SET_RATE_PARENT,
-+	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE,
- 		  _GATE(RCC_BDCR, 20, 0),
- 		  _MUX(RCC_BDCR, 16, 2, 0),
--		  _NO_DIV),
-+		  _DIV_RTC(RCC_RTCDIVR, 0, 6, 0, NULL)),
- 
- 	/* MCO clocks */
- 	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
--- 
-2.17.1
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.example.dt.yaml: rcc@50000000: compatible:1: 'st,stm32mp1-rcc' was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.example.dt.yaml: rcc@50000000: compatible: ['st,stm32mp1-rcc-secure', 'syscon'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+
+See https://patchwork.ozlabs.org/patch/1430316
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
