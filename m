@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0978C43603
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC2AC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63A84239EE
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B03C238EE
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbhAVKOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:14:01 -0500
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:37804 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbhAVKJB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:09:01 -0500
-Received: by mail-oi1-f179.google.com with SMTP id r189so5431587oih.4;
-        Fri, 22 Jan 2021 02:08:37 -0800 (PST)
+        id S1726859AbhAVKZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:25:11 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:39087 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbhAVKOt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:14:49 -0500
+Received: by mail-ot1-f44.google.com with SMTP id i30so4577680ota.6;
+        Fri, 22 Jan 2021 02:13:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xY5GiH5IAFy+C6+svonjBQxaaIilTn+htyqsnOOxaVQ=;
-        b=TJ+86Xi9W2UhqoSAkYaEvwBMgPe69597R4gV1TgNoS2enmFtSGDgus1K7ZzDwSVgQ1
-         x4oAD+6n7HAxbtipkh2xz3/H44BaqENS7Tsm+yNhMeH09QG23oFvOoDXEPq0CjPw948m
-         YcC6ZYqR/84DVn0CYqGTuo80CU7BPRAh3h6O6WvxqLaQ0jQJPJjI5MfrXoz3fVhr9hek
-         dr6Yx5CspzEgo3XqwDPTp2gFYH38LVbneMopP3MEwKHPVJJqdNFJuDt2qjBJNKMGjNXS
-         SPy/UTNi9BQ79fM5uSk1JzqD5ARX9zUAo2tlgJol7X/uNVXfwHrgLRWNkjNc+fhgm2I3
-         7aVw==
-X-Gm-Message-State: AOAM531D+HzbBeqRIdUv01SqhX8AgqA1PC9zBaNXQS/CRuxkwczGy/7I
-        Y4jN07NXnGHKgOO9cX6+JL19yNySyzr+xzB9a5g=
-X-Google-Smtp-Source: ABdhPJwMhQgZWV8G3hOf/8rIUQ+PBjApl+jabWA6Wrq7oWMS3tMVVxGvPVaPw69jgWpQQvAjw197VlsnkJSqzKWb4pc=
-X-Received: by 2002:aca:31d5:: with SMTP id x204mr2679744oix.153.1611310091886;
- Fri, 22 Jan 2021 02:08:11 -0800 (PST)
+        bh=A8EssF6du+uw1E1rDa+AbYuMfnmhdTUj5y8sfaOSS9o=;
+        b=GasYpGTwY/Qs0aWAcpOMqwCL82o7G3wZkfoU2Looi/kHY4GAzKKJQfZgDkW0aFJfFT
+         IdQWTqH6M1s4g960iiYxQTkwcJLKQlZFGqYAHrpd/z5wB718h/sQ2uv38cP6b0+zAbu2
+         gtb0LNXrYiFwWxJBNehzQmYK0RZji3O6dEXDjREH3gsY4Rv5Y0FZ9XDlcYmmTcdVLCYn
+         5luCCPJFC7HdbURUheOnLSB8b4XdHHH/fyocBXWUjeZyOZykrvu2SVYlidKLz5XJh+Fw
+         H2la/H5sAdRYTwsX+HFDDAPmuexFda5pMThkqy23X0mPnISLQrMKBcqLfeVImnhJNfz/
+         oYpA==
+X-Gm-Message-State: AOAM531Pv//4Ocd0IR4j0jncAvIFi76r4LQtlvhB0RzQ81fDHwMIebje
+        QzFCp54g6wcxZQZGJeQ87J+gy+6xRBdeLCipk9UZyA7AY2k=
+X-Google-Smtp-Source: ABdhPJxFbxT0GCXDH/SzRhqEqk7YhC8mhJUGAhyLxPXK0nbdqurWbRqAnsrHr4e3U+i+1lwpsALX4G6ZzYjBXAw+t8k=
+X-Received: by 2002:a05:6830:15cc:: with SMTP id j12mr2772152otr.145.1611310414558;
+ Fri, 22 Jan 2021 02:13:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121095420.5023-1-wsa+renesas@sang-engineering.com> <20210121095420.5023-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121095420.5023-2-wsa+renesas@sang-engineering.com>
+References: <20210121095420.5023-1-wsa+renesas@sang-engineering.com> <20210121095420.5023-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210121095420.5023-4-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:08:00 +0100
-Message-ID: <CAMuHMdVwR3kYSOmJsTuVYLgyxRhFByevHhmY5xi62RGjVr+zUA@mail.gmail.com>
-Subject: Re: [PATCH V2 1/4] clk: renesas: r8a779a0: add clocks for I2C
+Date:   Fri, 22 Jan 2021 11:13:23 +0100
+Message-ID: <CAMuHMdUKHq7t2VNCzqnM18jecq9baPhKEzOKStnrmwnti33i5w@mail.gmail.com>
+Subject: Re: [PATCH V2 3/4] arm64: dts: renesas: Add I2C0,1,6 support for
+ falcon board
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
@@ -58,10 +59,12 @@ On Thu, Jan 21, 2021 at 10:56 AM Wolfram Sang
 > ---
 >
 > Changes since v1:
-> * use S1D4 as parent clock as described in the datasheet
+> * enabled busses 0,1,6 (the ones with devices attached)
+> * moved to falcon-cpu.dtsi
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.12.
+i.e. will queue in renesas-devel for v5.12 as
+"arm64: dts: renesas: falcon: Add I2C0,1,6 support".
 
 Gr{oetje,eeting}s,
 
