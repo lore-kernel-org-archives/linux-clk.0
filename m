@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22441C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0990BC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDDEA2246B
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9A302246B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:58:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbhAVK5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:57:41 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35698 "EHLO
+        id S1727842AbhAVK5x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:57:53 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35768 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727635AbhAVKwV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:21 -0500
+        by vger.kernel.org with ESMTP id S1727657AbhAVKwW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:22 -0500
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlUls011302;
-        Fri, 22 Jan 2021 11:51:21 +0100
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlUm0011302;
+        Fri, 22 Jan 2021 11:51:27 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=VolS5deDcvTnZ8ENVJ/LfA/YXPUaY5XcnNz2nP415Go=;
- b=7EDlauTgctsKDWyJktmjlmYyfnUFTwOOjjQnhS8mod9oT/rRi14zKbtFJ+amnUgxL/f5
- /RVxKbw/Iv9QSCb9ZTcRl2doRSVivTEdmqJxFgh4Y+6uRth5FtzPj/3iTopFDRI0jVDy
- +cg4XYwyshCE9wFBtfLZzg/A1ZdMz67Y2VoZk5kauZkvY7KF1XDlOcB1iBC2pMptbe3+
- NEkFmex81hPy3ZKQV0WjiuEkRwvFESZNIBnvnWyJH1BLbwA2d1McIcLGuf49aswEGLwy
- GbZ3deoF7DiasceWGEHUMcD31r/qdyTmJJ2nUalZCCSv7Ta4iGLu0LoVVyfOT14CfyxW dg== 
+ bh=L3oXnzqCxtzEKvD3E5tAAz6k/cVU4Ajj3BKSHi4lRxU=;
+ b=2vNwxHxAgSsCbWhMurw2dA7euc4LzRKOo2k5bcQx102/oKyRaayrkb338JlhlhgRhj7r
+ 6wAYmQ1+N2h/0GTRVuA1nGeKDIt7DJXNehdJjJsDVTzO1rERmtVOgJ+NEuv1M/kqZ9yw
+ KSPGutOYNOgrjicyU+HKkp69BJztQ859UU2tMAsHn5l+uzO+vcVwGsGoIA773XTLqp4A
+ AHpaOQ7Zm+n9opseiPRBRTTvJXRbXOaAjtkrxyHH634UIOZHf/cuXuXcuufI5/aSG5yF
+ dw9xx4ZiNi/+B+lw5t381UJ6a5sqtgW+gXUwgtd+R2c91Gwu6vtWiTsS3yQDqp/PvC0b 9g== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e1p-1
+        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e28-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Jan 2021 11:51:21 +0100
+        Fri, 22 Jan 2021 11:51:27 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4842110002A;
-        Fri, 22 Jan 2021 11:51:21 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D212D10002A;
+        Fri, 22 Jan 2021 11:51:26 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34E7122DBCA;
-        Fri, 22 Jan 2021 11:51:21 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C40CB22DBCA;
+        Fri, 22 Jan 2021 11:51:26 +0100 (CET)
 Received: from localhost (10.75.127.48) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:20
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:26
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -57,9 +57,9 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 03/14] clk: stm32mp1: remove intermediate pll clocks
-Date:   Fri, 22 Jan 2021 11:50:50 +0100
-Message-ID: <20210122105101.27374-4-gabriel.fernandez@foss.st.com>
+Subject: [PATCH 11/14] ARM: dts: stm32: define SCMI resources on stm32mp15
+Date:   Fri, 22 Jan 2021 11:50:58 +0100
+Message-ID: <20210122105101.27374-12-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
@@ -76,154 +76,85 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-This patch is to prepare STM32MP1 clocks in trusted mode.
-Integrate the mux clock into pll clock will facilitate to have a more
-coherent clock tree in no trusted / trusted mode.
+Platform stm32mp15 relies on SCMI resources (clocks and reset domains).
+This change adds SCMI resources description in the platform device
+tree. SCMI resources uses a mailbox based on some shared memory and
+a SMC mailbox notification.
 
+SCMI0 exposes clocks and reset controllers for resources under RCC[TZEN]
+configuration control. It is default enabled as SoC default
+configuration is RCC[TZEN]=1.
+
+SCMI1 exposes clocks for resources under RCC[MCKPROT] control. The node
+is disabled by default as default configuration is RCC[MCKPROT]=0.
+
+Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 65 ++++++++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 23 deletions(-)
+ arch/arm/boot/dts/stm32mp151.dtsi | 50 +++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 0e1d4427a8df..ee6968a2ad57 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -731,6 +731,7 @@ struct stm32_pll_obj {
- 	spinlock_t *lock;
- 	void __iomem *reg;
- 	struct clk_hw hw;
-+	struct clk_mux mux;
- };
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index 3c75abacb374..da3647373365 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -30,6 +30,56 @@
+ 		interrupt-parent = <&intc>;
+ 	};
  
- #define to_pll(_hw) container_of(_hw, struct stm32_pll_obj, hw)
-@@ -745,6 +746,8 @@ struct stm32_pll_obj {
- #define FRAC_MASK	0x1FFF
- #define FRAC_SHIFT	3
- #define FRACLE		BIT(16)
-+#define PLL_MUX_SHIFT	0
-+#define PLL_MUX_MASK	3
- 
- static int __pll_is_enabled(struct clk_hw *hw)
- {
-@@ -856,16 +859,29 @@ static int pll_is_enabled(struct clk_hw *hw)
- 	return ret;
- }
- 
-+static u8 pll_get_parent(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	struct clk_hw *mux_hw = &clk_elem->mux.hw;
++	scmi_sram: sram@2ffff000 {
++		compatible = "mmio-sram";
++		reg = <0x2ffff000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x2ffff000 0x1000>;
 +
-+	__clk_hw_set_clk(mux_hw, hw);
++		scmi0_shm: scmi_shm@0 {
++			reg = <0 0x80>;
++		};
 +
-+	return clk_mux_ops.get_parent(mux_hw);
-+}
++		scmi1_shm: scmi_shm@200 {
++			reg = <0x200 0x80>;
++		};
++	};
 +
- static const struct clk_ops pll_ops = {
- 	.enable		= pll_enable,
- 	.disable	= pll_disable,
- 	.recalc_rate	= pll_recalc_rate,
- 	.is_enabled	= pll_is_enabled,
-+	.get_parent	= pll_get_parent,
- };
- 
- static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
--				       const char *parent_name,
-+				       const char * const *parent_names,
-+				       int num_parents,
- 				       void __iomem *reg,
-+				       void __iomem *mux_reg,
- 				       unsigned long flags,
- 				       spinlock_t *lock)
- {
-@@ -881,8 +897,15 @@ static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
- 	init.name = name;
- 	init.ops = &pll_ops;
- 	init.flags = flags;
--	init.parent_names = &parent_name;
--	init.num_parents = 1;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
++	firmware {
++		scmi0: scmi0 {
++			compatible = "arm,scmi-smc";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			arm,smc-id = <0x82002000>;
++			shmem = <&scmi0_shm>;
 +
-+	element->mux.lock = lock;
-+	element->mux.reg =  mux_reg;
-+	element->mux.shift = PLL_MUX_SHIFT;
-+	element->mux.mask =  PLL_MUX_MASK;
-+	element->mux.flags =  CLK_MUX_READ_ONLY;
-+	element->mux.reg =  mux_reg;
- 
- 	element->hw.init = &init;
- 	element->reg = reg;
-@@ -1069,6 +1092,7 @@ static const struct clk_ops rtc_div_clk_ops = {
- 
- struct stm32_pll_cfg {
- 	u32 offset;
-+	u32 muxoff;
- };
- 
- static struct clk_hw *_clk_register_pll(struct device *dev,
-@@ -1078,8 +1102,11 @@ static struct clk_hw *_clk_register_pll(struct device *dev,
- {
- 	struct stm32_pll_cfg *stm_pll_cfg = cfg->cfg;
- 
--	return clk_register_pll(dev, cfg->name, cfg->parent_name,
--				base + stm_pll_cfg->offset, cfg->flags, lock);
-+	return clk_register_pll(dev, cfg->name, cfg->parent_names,
-+				cfg->num_parents,
-+				base + stm_pll_cfg->offset,
-+				base + stm_pll_cfg->muxoff,
-+				cfg->flags, lock);
- }
- 
- struct stm32_cktim_cfg {
-@@ -1189,14 +1216,16 @@ _clk_stm32_register_composite(struct device *dev,
- 	.func		= _clk_hw_register_mux,\
- }
- 
--#define PLL(_id, _name, _parent, _flags, _offset)\
-+#define PLL(_id, _name, _parents, _flags, _offset_p, _offset_mux)\
- {\
- 	.id		= _id,\
- 	.name		= _name,\
--	.parent_name	= _parent,\
--	.flags		= _flags,\
-+	.parent_names	= _parents,\
-+	.num_parents	= ARRAY_SIZE(_parents),\
-+	.flags		= CLK_IGNORE_UNUSED | (_flags),\
- 	.cfg		=  &(struct stm32_pll_cfg) {\
--		.offset = _offset,\
-+		.offset = _offset_p,\
-+		.muxoff = _offset_mux,\
- 	},\
- 	.func		= _clk_register_pll,\
- }
-@@ -1712,21 +1741,11 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 
- 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
- 
--	/* ref clock pll */
--	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
--	    0, 2, CLK_MUX_READ_ONLY),
--
--	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
--	    0, 2, CLK_MUX_READ_ONLY),
--
--	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
--	    0, 2, CLK_MUX_READ_ONLY),
--
- 	/* PLLs */
--	PLL(PLL1, "pll1", "ref1", CLK_IGNORE_UNUSED, RCC_PLL1CR),
--	PLL(PLL2, "pll2", "ref1", CLK_IGNORE_UNUSED, RCC_PLL2CR),
--	PLL(PLL3, "pll3", "ref3", CLK_IGNORE_UNUSED, RCC_PLL3CR),
--	PLL(PLL4, "pll4", "ref4", CLK_IGNORE_UNUSED, RCC_PLL4CR),
-+	PLL(PLL1, "pll1", ref12_parents, 0, RCC_PLL1CR, RCC_RCK12SELR),
-+	PLL(PLL2, "pll2", ref12_parents, 0, RCC_PLL2CR, RCC_RCK12SELR),
-+	PLL(PLL3, "pll3", ref3_parents, 0, RCC_PLL3CR, RCC_RCK3SELR),
-+	PLL(PLL4, "pll4", ref4_parents, 0, RCC_PLL4CR, RCC_RCK4SELR),
- 
- 	/* ODF */
- 	COMPOSITE(PLL1_P, "pll1_p", PARENT("pll1"), 0,
++			scmi0_clk: protocol@14 {
++				reg = <0x14>;
++				#clock-cells = <1>;
++			};
++
++			scmi0_reset: protocol@16 {
++				reg = <0x16>;
++				#reset-cells = <1>;
++			};
++		};
++
++		scmi1: scmi1 {
++			compatible = "arm,scmi-smc";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			arm,smc-id = <0x82002001>;
++			shmem = <&scmi1_shm>;
++			status = "disabled";
++
++			scmi1_clk: protocol@14 {
++				reg = <0x14>;
++				#clock-cells = <1>;
++			};
++		};
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
 -- 
 2.17.1
 
