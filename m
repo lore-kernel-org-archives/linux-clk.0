@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0865C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56EBC433E9
 	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4DDA23A79
+	by mail.kernel.org (Postfix) with ESMTP id 8326C2376F
 	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbhAVK6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:58:05 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12636 "EHLO
+        id S1727885AbhAVK6J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:58:09 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35782 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726951AbhAVKwY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:24 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAmG88002482;
-        Fri, 22 Jan 2021 11:51:30 +0100
+        by vger.kernel.org with ESMTP id S1727662AbhAVKwZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:25 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlTTJ011229;
+        Fri, 22 Jan 2021 11:51:28 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=KBEHlzZfeXt0Wny9pLnYEhapcASdkiKxPZRpUa+smeo=;
- b=eZu+HmaZtIOk24w1Qay5MT808V/QD2Pdys1gK5AfSBD08loniUXLF+wc64l78X7M2H1I
- Vv1o+4RK/R192ZAEgR9/cWfR0Q15Bn1DLDNw22cJcz5n7hC2LhSxVLmKsm5szl2bJi68
- Du6EauAbFby/2Nxx5U7YlSrjbFCIJfDYJkcazKuD9Qc2EUWcUkQLYIULUVN0uSBrAdAp
- dRqtkp3DoL0qSqz0WWZbb9epafIcbG2ThGy31k62Skl8x0YenCQPUq3CZ0wA4PZiwKU8
- erxWU5pqpDAN9tINn96KdQ3w3iZwxhIxR86+cYO6LoCmBmC83y8cUXLP0LPREu6G8WlN yw== 
+ bh=xBg98SbBGLF4n9asLs6McJi2R+rOyJSMagp1wCQF4WE=;
+ b=3Sr56C/8StI7XBhS+MFeaqhRIkUdTY4+Vr1oVSrD7WTF1RX06Fi0lHWS8IQFilOMvBxV
+ RQGuQtBy8Q6o/4ScKUE8F8uHvLZaxe6lyDYyA2ze3KDV/IIZjY9xCIjzddqUX9aAxdLd
+ KbBV3QGHbPMXWVkd4FJYlm+yzhdurMYB80FP0n4n+QbzvwH7cbw5qg1lkUWr9/hwkT7j
+ No4rPJFJ/UKiuUTSRXNa/X3bQLkcT/7UZknWmsrzqTZssoFVt6y9K1CDF5DD//JsRlq1
+ 9a3BEKkBsCK26lt/COX4a4Hz1DkpRslxX2eHK7y6ZOQM8axP+sFD84rOMiNx+IdSFfwV NQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3668pqhdvh-1
+        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e2d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Jan 2021 11:51:30 +0100
+        Fri, 22 Jan 2021 11:51:28 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0FC8100034;
-        Fri, 22 Jan 2021 11:51:28 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 832B8100034;
+        Fri, 22 Jan 2021 11:51:27 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D2C4D22DBCA;
-        Fri, 22 Jan 2021 11:51:28 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7464E22DBCA;
+        Fri, 22 Jan 2021 11:51:27 +0100 (CET)
 Received: from localhost (10.75.127.51) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:28
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:27
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -57,9 +57,9 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 14/14] ARM: dts: stm32: introduce basic boot include on stm32mp15x board
-Date:   Fri, 22 Jan 2021 11:51:01 +0100
-Message-ID: <20210122105101.27374-15-gabriel.fernandez@foss.st.com>
+Subject: [PATCH 12/14] ARM: dts: stm32: move clocks/resets to SCMI resources for stm32mp15
+Date:   Fri, 22 Jan 2021 11:50:59 +0100
+Message-ID: <20210122105101.27374-13-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
@@ -76,181 +76,262 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Include this .dtsi file to be backward compatible with old basic bootchain.
+This change reflects board hardware configuration where RCC security
+features are configured for RCC[TZEN]=1 and RCC[MCKPROT]=0, that is
+RCC TrustZone is hardened and RCC MCKPROT is disabled.
 
-For example add:
-#include "stm32mp15-no-scmi.dtsi" in a stm32mp157c*.dts file.
+Clock and reset controllers that relate to SoC secure resources are
+moved from a RCC clock/reset handle to a SCMI clock/reset_domain handle.
 
+These clocks are all the platform oscillators (HSI/LSI/CSI/HSE/LSE),
+clocks for few subsystem and peripheral interfaces.
+
+This change add a SCMI clock dependency on RCC clock device since it
+registers clocks which parent clocks are provided by the SCMI clock
+driver. This change allows the RCC clock device probe to be deferred
+until SCMI clocks are fully registered in the system.
+
+Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- arch/arm/boot/dts/stm32mp15-no-scmi.dtsi | 158 +++++++++++++++++++++++
- 1 file changed, 158 insertions(+)
- create mode 100644 arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
+ arch/arm/boot/dts/stm32mp151.dtsi  | 77 +++++++++++-------------------
+ arch/arm/boot/dts/stm32mp153.dtsi  |  4 +-
+ arch/arm/boot/dts/stm32mp157.dtsi  |  2 +-
+ arch/arm/boot/dts/stm32mp15xc.dtsi |  4 +-
+ 4 files changed, 32 insertions(+), 55 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi b/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
-new file mode 100644
-index 000000000000..4939f96da739
---- /dev/null
-+++ b/arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/*
-+ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
-+ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
-+ */
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index da3647373365..e06882e0611d 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -102,38 +102,6 @@
+ 		interrupt-parent = <&intc>;
+ 	};
+ 
+-	clocks {
+-		clk_hse: clk-hse {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <24000000>;
+-		};
+-
+-		clk_hsi: clk-hsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <64000000>;
+-		};
+-
+-		clk_lse: clk-lse {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
+-		};
+-
+-		clk_lsi: clk-lsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32000>;
+-		};
+-
+-		clk_csi: clk-csi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <4000000>;
+-		};
+-	};
+-
+ 	thermal-zones {
+ 		cpu_thermal: cpu-thermal {
+ 			polling-delay-passive = <0>;
+@@ -595,7 +563,7 @@
+ 			compatible = "st,stm32-cec";
+ 			reg = <0x40016000 0x400>;
+ 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc CEC_K>, <&clk_lse>;
++			clocks = <&rcc CEC_K>, <&scmi0_clk CK_SCMI0_LSE>;
+ 			clock-names = "cec", "hdmi-cec";
+ 			status = "disabled";
+ 		};
+@@ -1156,10 +1124,17 @@
+ 		};
+ 
+ 		rcc: rcc@50000000 {
+-			compatible = "st,stm32mp1-rcc", "syscon";
++			compatible = "st,stm32mp1-rcc-secure", "st,stm32mp1-rcc", "syscon";
+ 			reg = <0x50000000 0x1000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
 +
-+/ {
-+
-+	clocks {
-+		clk_hse: clk-hse {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+		};
-+
-+		clk_hsi: clk-hsi {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <64000000>;
-+		};
-+
-+		clk_lse: clk-lse {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+		};
-+
-+		clk_lsi: clk-lsi {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+		};
-+
-+		clk_csi: clk-csi {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <4000000>;
-+		};
-+	};
-+
-+	cpus {
-+		cpu0: cpu@0 {
-+			clocks = <&rcc CK_MPU>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			clocks = <&rcc CK_MPU>;
-+		};
-+	};
-+
-+	reboot {
-+		compatible = "syscon-reboot";
-+		regmap = <&rcc>;
-+		offset = <0x404>;
-+		mask = <0x1>;
-+	};
-+
-+	soc {
-+		m_can1: can@4400e000 {
-+			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
-+		};
-+
-+		m_can2: can@4400f000 {
-+			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
-+		};
-+
-+		cryp1: cryp@54001000 {
-+			clocks = <&rcc CRYP1>;
-+			resets = <&rcc CRYP1_R>;
-+		};
-+
-+		dsi: dsi@5a000000 {
-+			clocks = <&rcc DSI_K>, <&clk_hse>, <&rcc DSI_PX>;
-+		};
-+	};
-+
-+	ahb {
-+		m4_rproc: m4@10000000 {
-+			resets = <&rcc MCU_R>, <&rcc MCU_HOLD_BOOT_R>;
-+
-+			m4_system_resources {
-+				m4_cec: cec@40016000 {
-+					clocks = <&rcc CEC_K>, <&rcc CK_LSE>;
-+				};
-+
-+				m4_m_can1: can@4400e000 {
-+					clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
-+				};
-+
-+				m4_m_can2: can@4400f000 {
-+					clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
-+				};
-+			};
-+		};
-+	};
-+
-+	firmware {
-+		/delete-node/ scmi0;
-+		/delete-node/ scmi1;
-+	};
-+	/delete-node/ sram@2ffff000;
-+};
-+
-+&cec {
-+	clocks = <&rcc CEC_K>, <&clk_lse>;
-+};
-+
-+&gpioz {
-+	clocks = <&rcc GPIOZ>;
-+};
-+
-+&hash1 {
-+	clocks = <&rcc HASH1>;
-+	resets = <&rcc HASH1_R>;
-+};
-+
-+&i2c4 {
-+	clocks = <&rcc I2C4_K>;
-+	resets = <&rcc I2C4_R>;
-+};
-+
-+&i2c6 {
-+	clocks = <&rcc I2C6_K>;
-+	resets = <&rcc I2C6_R>;
-+};
-+
-+&iwdg2 {
-+	clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
-+};
-+
-+&mdma1 {
-+	clocks = <&rcc MDMA>;
-+	resets = <&rcc MDMA_R>;
-+};
-+
-+&rcc {
-+	compatible = "st,stm32mp1-rcc", "syscon";
-+	clocks = <&clk_hse>, <&clk_hsi>, <&clk_csi>, <&clk_lse>, <&clk_lsi>;
-+};
-+
-+&rng1 {
-+	clocks = <&rcc RNG1_K>;
-+	resets = <&rcc RNG1_R>;
-+};
-+
-+&rtc {
-+	clocks = <&rcc RTCAPB>, <&rcc RTC>;
-+};
-+
-+&spi6 {
-+	clocks = <&rcc SPI6_K>;
-+	resets = <&rcc SPI6_R>;
-+};
-+
-+&usart1 {
-+	clocks = <&rcc USART1_K>;
-+	resets = <&rcc USART1_R>;
-+};
++			clock-names = "hse", "hsi", "csi", "lse", "lsi";
++			clocks = <&scmi0_clk CK_SCMI0_HSE>,
++				 <&scmi0_clk CK_SCMI0_HSI>,
++				 <&scmi0_clk CK_SCMI0_CSI>,
++				 <&scmi0_clk CK_SCMI0_LSE>,
++				 <&scmi0_clk CK_SCMI0_LSI>;
+ 		};
+ 
+ 		pwr_regulators: pwr@50001000 {
+@@ -1342,8 +1317,8 @@
+ 			compatible = "st,stm32f756-hash";
+ 			reg = <0x54002000 0x400>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc HASH1>;
+-			resets = <&rcc HASH1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_HASH1>;
++			resets = <&scmi0_reset RST_SCMI0_HASH1>;
+ 			dmas = <&mdma1 31 0x2 0x1000A02 0x0 0x0>;
+ 			dma-names = "in";
+ 			dma-maxburst = <2>;
+@@ -1353,8 +1328,8 @@
+ 		rng1: rng@54003000 {
+ 			compatible = "st,stm32-rng";
+ 			reg = <0x54003000 0x400>;
+-			clocks = <&rcc RNG1_K>;
+-			resets = <&rcc RNG1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_RNG1>;
++			resets = <&scmi0_reset RST_SCMI0_RNG1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1363,7 +1338,7 @@
+ 			reg = <0x58000000 0x1000>;
+ 			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&rcc MDMA>;
+-			resets = <&rcc MDMA_R>;
++			resets = <&scmi0_reset RST_SCMI0_MDMA>;
+ 			#dma-cells = <5>;
+ 			dma-channels = <32>;
+ 			dma-requests = <48>;
+@@ -1524,7 +1499,7 @@
+ 		iwdg2: watchdog@5a002000 {
+ 			compatible = "st,stm32mp1-iwdg";
+ 			reg = <0x5a002000 0x400>;
+-			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++			clocks = <&rcc IWDG2>, <&scmi0_clk CK_SCMI0_LSI>;
+ 			clock-names = "pclk", "lsi";
+ 			status = "disabled";
+ 		};
+@@ -1553,7 +1528,8 @@
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x5c000000 0x400>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc USART1_K>;
++			clocks = <&scmi0_clk CK_SCMI0_USART1>;
++			resets = <&scmi0_reset RST_SCMI0_USART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1563,8 +1539,8 @@
+ 			compatible = "st,stm32h7-spi";
+ 			reg = <0x5c001000 0x400>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc SPI6_K>;
+-			resets = <&rcc SPI6_R>;
++			clocks = <&scmi0_clk CK_SCMI0_SPI6>;
++			resets = <&scmi0_reset RST_SCMI0_SPI6>;
+ 			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0>,
+ 			       <&mdma1 35 0x0 0x40002 0x0 0x0>;
+ 			dma-names = "rx", "tx";
+@@ -1577,8 +1553,8 @@
+ 			interrupt-names = "event", "error";
+ 			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc I2C4_K>;
+-			resets = <&rcc I2C4_R>;
++			clocks = <&scmi0_clk CK_SCMI0_I2C4>;
++			resets = <&scmi0_reset RST_SCMI0_I2C4>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			st,syscfg-fmp = <&syscfg 0x4 0x8>;
+@@ -1589,7 +1565,8 @@
+ 		rtc: rtc@5c004000 {
+ 			compatible = "st,stm32mp1-rtc";
+ 			reg = <0x5c004000 0x400>;
+-			clocks = <&rcc RTCAPB>, <&rcc RTC>;
++			clocks = <&scmi0_clk CK_SCMI0_RTCAPB>,
++				 <&scmi0_clk CK_SCMI0_RTC>;
+ 			clock-names = "pclk", "rtc_ck";
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+@@ -1614,8 +1591,8 @@
+ 			interrupt-names = "event", "error";
+ 			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc I2C6_K>;
+-			resets = <&rcc I2C6_R>;
++			clocks = <&scmi0_clk CK_SCMI0_I2C6>;
++			resets = <&scmi0_reset RST_SCMI0_I2C6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			st,syscfg-fmp = <&syscfg 0x4 0x20>;
+@@ -1778,7 +1755,7 @@
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0 0x400>;
+-				clocks = <&rcc GPIOZ>;
++				clocks = <&scmi0_clk CK_SCMI0_GPIOZ>;
+ 				st,bank-name = "GPIOZ";
+ 				st,bank-ioport = <11>;
+ 				status = "disabled";
+@@ -1800,7 +1777,7 @@
+ 			reg = <0x10000000 0x40000>,
+ 			      <0x30000000 0x40000>,
+ 			      <0x38000000 0x10000>;
+-			resets = <&rcc MCU_R>;
++			resets = <&scmi0_reset RST_SCMI0_MCU>;
+ 			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+ 			st,syscfg-tz = <&rcc 0x000 0x1>;
+ 			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+diff --git a/arch/arm/boot/dts/stm32mp153.dtsi b/arch/arm/boot/dts/stm32mp153.dtsi
+index 1c1889b194cf..db1273854675 100644
+--- a/arch/arm/boot/dts/stm32mp153.dtsi
++++ b/arch/arm/boot/dts/stm32mp153.dtsi
+@@ -30,7 +30,7 @@
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
++			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+@@ -43,7 +43,7 @@
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
++			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+diff --git a/arch/arm/boot/dts/stm32mp157.dtsi b/arch/arm/boot/dts/stm32mp157.dtsi
+index 54e73ccea446..7b06c08e3a23 100644
+--- a/arch/arm/boot/dts/stm32mp157.dtsi
++++ b/arch/arm/boot/dts/stm32mp157.dtsi
+@@ -20,7 +20,7 @@
+ 		dsi: dsi@5a000000 {
+ 			compatible = "st,stm32-dsi";
+ 			reg = <0x5a000000 0x800>;
+-			clocks = <&rcc DSI_K>, <&clk_hse>, <&rcc DSI_PX>;
++			clocks = <&rcc DSI_K>, <&scmi0_clk CK_SCMI0_HSE>, <&rcc DSI_PX>;
+ 			clock-names = "pclk", "ref", "px_clk";
+ 			resets = <&rcc DSI_R>;
+ 			reset-names = "apb";
+diff --git a/arch/arm/boot/dts/stm32mp15xc.dtsi b/arch/arm/boot/dts/stm32mp15xc.dtsi
+index b06a55a2fa18..435846883f25 100644
+--- a/arch/arm/boot/dts/stm32mp15xc.dtsi
++++ b/arch/arm/boot/dts/stm32mp15xc.dtsi
+@@ -10,8 +10,8 @@
+ 			compatible = "st,stm32mp1-cryp";
+ 			reg = <0x54001000 0x400>;
+ 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc CRYP1>;
+-			resets = <&rcc CRYP1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_CRYP1>;
++			resets = <&scmi0_reset RST_SCMI0_CRYP1>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.17.1
 
