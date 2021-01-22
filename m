@@ -2,570 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B67B3C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 19:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE783C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 08:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94595221E7
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jan 2021 19:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B627C23381
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 08:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbhAUTMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jan 2021 14:12:51 -0500
-Received: from mail-yb1-f173.google.com ([209.85.219.173]:39816 "EHLO
-        mail-yb1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbhAUTKu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jan 2021 14:10:50 -0500
-Received: by mail-yb1-f173.google.com with SMTP id k4so3106097ybp.6;
-        Thu, 21 Jan 2021 11:10:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Eu2dY+ZL1V19G5zorUe7onEzPK6C0c0G/YgQE8VYEo=;
-        b=ki/cMg+nyCBi6THWHXYCPtoCdGmNCxJqKxAoPpD7cjrprAVOvQMyrXyqyuHdtM/JXa
-         uIyxJIxhbJiX0UtOZmRQSOiuIed0t8L76NxPiMRG7vge6osUPM342iyR+kCZiccxB22i
-         aN47cWD8KZgtp25FD0Tar7soD1wvLkggpO7u1W2wcvVQ5QjFvXNnQNsPiOV9FU/l82aT
-         4pNz+TcBKXfwXzFFIEfe5r70OtHaIzbboOsINYEhXZoZ7nikO9P280810dz2jrFf3FUK
-         chcVP4y0XTA82CI7SzUe7OJ5NNRBEK+gTMPEQCnduUFZM/xGRCHMU96MRwKoeRQsouNI
-         rFjw==
-X-Gm-Message-State: AOAM531t4U6bKm6/IQ9oMfKuxy+Ie15/eGAt3pGrjOp0DbNGAEh7crOi
-        u8yDnOcmWkkE8QBWrXVO3zfIxXJSACAkAMuB4IQVUWHB
-X-Google-Smtp-Source: ABdhPJwIu+ysKfPGiCKDHDWORF2rh0dZogFLNRT5WNoZxEVTvN8B2x2YtMZaWBD5SHbRzoHm5rx8OBCmC22okE7xJkI=
-X-Received: by 2002:a4a:bf14:: with SMTP id r20mr882427oop.2.1611255680297;
- Thu, 21 Jan 2021 11:01:20 -0800 (PST)
-MIME-Version: 1.0
-References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
- <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com>
- <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
- <CA+G9fYvh0iSyEDQs7+0CX82FLPDCg5UmAt+1JuPsndmfmYF3kw@mail.gmail.com>
- <CAJZ5v0hFjpGp2GbV1Evi+BbUF7Am4ETY4Cm8VzTrvTJ=7=oyPQ@mail.gmail.com> <84r6s34s-opq7-9358-o45n-27s17084012@onlyvoer.pbz>
-In-Reply-To: <84r6s34s-opq7-9358-o45n-27s17084012@onlyvoer.pbz>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 21 Jan 2021 20:01:08 +0100
-Message-ID: <CAJZ5v0jUxonxp0q80Kdcbax+WMmh-NZ_h=KQG-HcfFdE1hr4VA@mail.gmail.com>
-Subject: Re: [PATCH v2] PM / clk: make PM clock layer compatible with clocks
- that must sleep
-To:     Nicolas Pitre <npitre@baylibre.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726960AbhAVIRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 03:17:40 -0500
+Received: from mail-eopbgr1300104.outbound.protection.outlook.com ([40.107.130.104]:56026
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726555AbhAVIRN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Jan 2021 03:17:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GCzfdTTTi6/f8z9KBg27VGMrXb23eRotUhbfSEvJF9x5yluWjgNIOGbEYiHb7tm3rwu4HnAnK2dFhP6m2Eq7LsL9+uyUy5AyzShefV8+jAEbtDGmr3t1wqeG8o4vli2rpmPgME9dyTJWDK8q5S7+X6cnDLDX1xNbcrdr1lye13DwWkAqQqHc+hpyijejcV2D/6aDOhxj2e65k9EU7SoxR9HNDzp6hNRiChWmbj85I37L5oisyNtk6fRU0YR0e55YRwufS6XDT1mnNPrGE4UwRiQCMyOJXwznqtQZuIixcH6dS9kBTeshHcdHMx4VMIzb2iRldZs06KDmKT9Jum2+Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/0HGXR3pNEZEPvrKBfjjakUo8r5mZ9bmbN9FSdQ28hk=;
+ b=RKdhmlTI9QT0dGt6ZvCYo3wV4h94jM/vopKOZ6yjCZv5WBm0nr9vj4/Z/xOJpwEP9EDkgGHo5RUKqbSjiJGqz+HKbYKdZYBOZpx2+6yIZl4m3LNGUD2oHFMDhqe6+mCcR2deT/dqlN9GzuokaAC97pDT2QcMLYf7cSj/Wh497Ujc4bkQ5xxAh5z/RsZP5yckObBpNnxidhBn6+oL8j5TjB4kElJ8gAkl6UZCmxjby9T3arOs/b0iw0DmEMYeat1Zv31mp8hxF1mG8rqN8xrxyIt+7A2PJsbdjyj36terjuKs0IFX1wIps8h5gc8cWUKNXS/dsWWvwVGoSVOUqS8XVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+Received: from HK0PR06MB3380.apcprd06.prod.outlook.com (2603:1096:203:82::18)
+ by HK0PR06MB3684.apcprd06.prod.outlook.com (2603:1096:203:b2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11; Fri, 22 Jan
+ 2021 08:15:34 +0000
+Received: from HK0PR06MB3380.apcprd06.prod.outlook.com
+ ([fe80::116:1437:5d9a:16e9]) by HK0PR06MB3380.apcprd06.prod.outlook.com
+ ([fe80::116:1437:5d9a:16e9%6]) with mapi id 15.20.3763.016; Fri, 22 Jan 2021
+ 08:15:34 +0000
+From:   Ryan Chen <ryan_chen@aspeedtech.com>
+To:     Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>
+CC:     Andrew Jeffery <andrew@aj.id.au>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        BMC-SW <BMC-SW@aspeedtech.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: Re: [PATCH 1/1] clk: aspeed: modify some default clks are
+ critical
+Thread-Topic: Re: [PATCH 1/1] clk: aspeed: modify some default clks are
+ critical
+Thread-Index: AQHWlWUpDwyjj9Eb9EeIGPpnHXDUp6mWfroAgAAsCwCAAMXfgIAWmgkAgIX3RlA=
+Date:   Fri, 22 Jan 2021 08:15:34 +0000
+Message-ID: <HK0PR06MB338049BAE1D1DAE7567F620DF2A00@HK0PR06MB3380.apcprd06.prod.outlook.com>
+References: <20200928070108.14040-1-ryan_chen@aspeedtech.com>
+ <20200928070108.14040-2-ryan_chen@aspeedtech.com>
+ <160264382296.310579.9835482254268204873@swboyd.mtv.corp.google.com>
+ <CACPK8Xe-_hTey7hTJjG2-EcDsTN0qOw3bWBcrZZohEK3QOJuvg@mail.gmail.com>
+ <160269577311.884498.8429245140509326318@swboyd.mtv.corp.google.com>
+ <adadc9ef-32ab-0a79-327c-c499c1c04093@sholland.org>
+In-Reply-To: <adadc9ef-32ab-0a79-327c-c499c1c04093@sholland.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: sholland.org; dkim=none (message not signed)
+ header.d=none;sholland.org; dmarc=none action=none
+ header.from=aspeedtech.com;
+x-originating-ip: [211.20.114.70]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e38af6f0-7996-45b9-b8b1-08d8beade4bb
+x-ms-traffictypediagnostic: HK0PR06MB3684:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <HK0PR06MB368450580D257B708FE70153F2A00@HK0PR06MB3684.apcprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: T3TQ4tYYO5+MYJOd+7CRsHdZFkonRhaw/cSgBSZGMab5skwuwRT/VNqEz4T7QaCBpRqo9MierKyr+I8OYr5BJbugr/kg54wDgeEdaO/F0WahRoDFCh/YcMCfb76YAHQ32i5VaeGeTpGah4CMj7HJ3F0jhb3szQEQlgfau1pBwTw/4qMVUoHjDEC03pDCdqu6i1OlZ2hHK8ecnwBEszDHrrmr4M5OZAk2QRQ8CchcGB14zXZ+YeDZZljH6VCPLJnFTB8E32tIZePOndErPpOAn6gyKKyYaKWFpxTFTb5fmlN4iNZ5qM3u+dKdtxVhzAF9wq/vwYQBy8+PY0YJb49j5M4KUJU4v1dtI+tsCkScDkFMOU8dyRjbRMDDDO/UQPO4Z0Pkwlo5OKENLo0aDclpLy01Hd1H/PHUEcR/wnr4xZxvI7sqtsrbpa4TEcfB3BWBR+OCXXW+Cd7nux9ClHZZgg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR06MB3380.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(376002)(366004)(396003)(39840400004)(7696005)(55016002)(26005)(33656002)(9686003)(316002)(52536014)(5660300002)(478600001)(186003)(966005)(4326008)(86362001)(66946007)(66556008)(8676002)(4001150100001)(6506007)(66446008)(110136005)(53546011)(2906002)(8936002)(83380400001)(55236004)(76116006)(71200400001)(64756008)(54906003)(66476007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?utf-8?B?YS9iUGQ2T05VeGd1d0RFNzBpWlY1akRGaHJSWUNIRTBCdTMyYi9UQnZPdTEy?=
+ =?utf-8?B?dzNWbGN4NG1ZcjVaK1hmR1lSNjYvbEZwRUR3UnpER2prSFl6cjd6anRsemx3?=
+ =?utf-8?B?Q1p3UHRLZHNCbG82Vlp2bDlWOUJSY2tNa2lwYXYrZjV5ek44VUdCYzNzMjQ1?=
+ =?utf-8?B?S0E1ZGpvUUFRdDJ3NG1qZGExbG9wWE5YMjBrQ3NDVE1tc0YzWWQ3SFNGL2tL?=
+ =?utf-8?B?V0QrZDN2VmVhU3ViY2N3ZWFRMGdTMFRXK3J0SC80Tzg4cTZaVDJNbzE2Q1lL?=
+ =?utf-8?B?ZFd2anA1NG9sRXpxN0Z1Z3hwZmEzZnVmMTVjV043NDIvOGc1VmNkRmNySG00?=
+ =?utf-8?B?cGtuVmhpOG12V1pTWVVjMXF2VFlINVdRWmVheTRsZDhSeEtIV1FzcDk1b05M?=
+ =?utf-8?B?RUtNeGVaNEJBMERFeVQ5WHZkOTh0ZGtBODVycG5Kd0dIbWEvWEFlc2tuZXov?=
+ =?utf-8?B?eGI2amdWNmtkN2E1Y2h3c25aY1Bna2lyV3FIOUxFR281Nzl4bUxRQVZ6b2F6?=
+ =?utf-8?B?WDNOczlkdW5XcWNtQ3Zub0hDNHVFMXY0emhZY0VldDd5S0tZTnlDeDhZQjJ1?=
+ =?utf-8?B?SnZPZjhKY0RaeGpxWFlyTGtOSUFZa3NJb1NKcmFFRTBzdlkvZWFiKzhqQVMx?=
+ =?utf-8?B?cjRqR0UvaVdIaUwxUVJsK0g2RDQwZ0p6UkpVTEN5MndsbE5BOUtKb2FlMzVr?=
+ =?utf-8?B?NW5wMkhsZnRZdjVxVy9NM3VYSWE1SjVwTWlCT0c3cS9DeFdyZEhJTnVsNmRC?=
+ =?utf-8?B?V01rWk5FcWdVelhwQkxtRWN0a2hlVjAxRTFaUmViYVZFNkg0NGtZL1Urd3V4?=
+ =?utf-8?B?bzhJK3ZGdENhQlNPVXdpVEpWQzF0Y09BWGoxeUpPckhnaklFMVVxdGFuUWpy?=
+ =?utf-8?B?TVExZXJYZDdBZjFYemZZWXN2SWk4QTFjMVg4eTJaTGNNSXZjeGpPYVBnLzdR?=
+ =?utf-8?B?YU1BQ1FISFI5YmdOaE9CbFZQZFNKU2Q4QWRBZUpZc09VMlJMK3dpQ1I2SmJs?=
+ =?utf-8?B?LzlzM2VjTFpvMkxiMlJIYkZyRVhuTzc1UkV0U1JqTGxjSE1HQTlXbEdNNVpw?=
+ =?utf-8?B?ZDRXNEoxdWRtT1N6QVRBSGJ2MnBOZWNzWXc3Sk1ZNXloTG5ZUmpKWUZsWDlT?=
+ =?utf-8?B?aC95a1pKdDB1OTlZc1RCM0QzbWVLRzBwN0xOc01SMDlnU0tOeFdlMTBITXhN?=
+ =?utf-8?B?OVJRd2JqSTNQcXZjNkpBTlFkditPZW9ENWZWWlVXc2xyQ3VscnVUVm1SazFo?=
+ =?utf-8?B?VnZSelpvejJ2MWRHZ3JCc0V4N0dBYzZHYy9zcExWcW9lTzNCK2JyNUZhVFA4?=
+ =?utf-8?Q?Q+qXFzHlZ0lJo=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: HK0PR06MB3380.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e38af6f0-7996-45b9-b8b1-08d8beade4bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2021 08:15:34.8598
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 99wiz7vvSU/3PZqYeXIIbll8sCdtUiW113V9jomQEhZKISpC3B1Nf4DQ62bxT4CyP6uWAr1YPZnvSAjX1FV0E5nGpIPGSxpMWxbm1YM6Hmg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR06MB3684
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 6:23 PM Nicolas Pitre <npitre@baylibre.com> wrote:
->
-> The clock API splits its interface into sleepable ant atomic contexts:
->
-> - clk_prepare/clk_unprepare for stuff that might sleep
->
-> - clk_enable_clk_disable for anything that may be done in atomic context
->
-> The code handling runtime PM for clocks only calls clk_disable() on
-> suspend requests, and clk_enable on resume requests. This means that
-> runtime PM with clock providers that only have the prepare/unprepare
-> methods implemented is basically useless.
->
-> Many clock implementations can't accommodate atomic contexts. This is
-> often the case when communication with the clock happens through another
-> subsystem like I2C or SCMI.
->
-> Let's make the clock PM code useful with such clocks by safely invoking
-> clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
-> such clocks are registered with the PM layer then pm_runtime_irq_safe()
-> can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
-> may be invoked in atomic context.
->
-> For clocks that do implement the enable and disable methods then
-> everything just works as before.
->
-> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
->
-> ---
->
-> On Thu, 21 Jan 2021, Rafael J. Wysocki wrote:
->
-> > So I'm going to drop this patch from linux-next until the issue is
-> > resolved, thanks!
->
-> Here's the fixed version.
-
-Applied instead of the v1, thanks!
-
-> Changes from v1:
->
-> - Moved clk_is_enabled_when_prepared() declaration under
->   CONFIG_HAVE_CLK_PREPARE and provided a dummy definition when that
->   config option is unset.
->
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> index ced6863a16..a62fb0f9b1 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -23,6 +23,7 @@
->  enum pce_status {
->         PCE_STATUS_NONE = 0,
->         PCE_STATUS_ACQUIRED,
-> +       PCE_STATUS_PREPARED,
->         PCE_STATUS_ENABLED,
->         PCE_STATUS_ERROR,
->  };
-> @@ -32,8 +33,102 @@ struct pm_clock_entry {
->         char *con_id;
->         struct clk *clk;
->         enum pce_status status;
-> +       bool enabled_when_prepared;
->  };
->
-> +/**
-> + * pm_clk_list_lock - ensure exclusive access for modifying the PM clock
-> + *                   entry list.
-> + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
-> + *      and clk_op_might_sleep count to be modified.
-> + *
-> + * Get exclusive access before modifying the PM clock entry list and the
-> + * clock_op_might_sleep count to guard against concurrent modifications.
-> + * This also protects against a concurrent clock_op_might_sleep and PM clock
-> + * entry list usage in pm_clk_suspend()/pm_clk_resume() that may or may not
-> + * happen in atomic context, hence both the mutex and the spinlock must be
-> + * taken here.
-> + */
-> +static void pm_clk_list_lock(struct pm_subsys_data *psd)
-> +{
-> +       mutex_lock(&psd->clock_mutex);
-> +       spin_lock_irq(&psd->lock);
-> +}
-> +
-> +/**
-> + * pm_clk_list_unlock - counterpart to pm_clk_list_lock().
-> + * @psd: the same pm_subsys_data instance previously passed to
-> + *      pm_clk_list_lock().
-> + */
-> +static void pm_clk_list_unlock(struct pm_subsys_data *psd)
-> +{
-> +       spin_unlock_irq(&psd->lock);
-> +       mutex_unlock(&psd->clock_mutex);
-> +}
-> +
-> +/**
-> + * pm_clk_op_lock - ensure exclusive access for performing clock operations.
-> + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
-> + *      and clk_op_might_sleep count being used.
-> + * @flags: stored irq flags.
-> + * @fn: string for the caller function's name.
-> + *
-> + * This is used by pm_clk_suspend() and pm_clk_resume() to guard
-> + * against concurrent modifications to the clock entry list and the
-> + * clock_op_might_sleep count. If clock_op_might_sleep is != 0 then
-> + * only the mutex can be locked and those functions can only be used in
-> + * non atomic context. If clock_op_might_sleep == 0 then these functions
-> + * may be used in any context and only the spinlock can be locked.
-> + * Returns -EINVAL if called in atomic context when clock ops might sleep.
-> + */
-> +static int pm_clk_op_lock(struct pm_subsys_data *psd, unsigned long *flags,
-> +                         const char *fn)
-> +{
-> +       bool atomic_context = in_atomic() || irqs_disabled();
-> +
-> +try_again:
-> +       spin_lock_irqsave(&psd->lock, *flags);
-> +       if (!psd->clock_op_might_sleep)
-> +               return 0;
-> +
-> +       /* bail out if in atomic context */
-> +       if (atomic_context) {
-> +               pr_err("%s: atomic context with clock_ops_might_sleep = %d",
-> +                      fn, psd->clock_op_might_sleep);
-> +               spin_unlock_irqrestore(&psd->lock, *flags);
-> +               might_sleep();
-> +               return -EPERM;
-> +       }
-> +
-> +       /* we must switch to the mutex */
-> +       spin_unlock_irqrestore(&psd->lock, *flags);
-> +       mutex_lock(&psd->clock_mutex);
-> +
-> +       /*
-> +        * There was a possibility for psd->clock_op_might_sleep
-> +        * to become 0 above. Keep the mutex only if not the case.
-> +        */
-> +       if (likely(psd->clock_op_might_sleep))
-> +               return 0;
-> +
-> +       mutex_unlock(&psd->clock_mutex);
-> +       goto try_again;
-> +}
-> +
-> +/**
-> + * pm_clk_op_unlock - counterpart to pm_clk_op_lock().
-> + * @psd: the same pm_subsys_data instance previously passed to
-> + *      pm_clk_op_lock().
-> + * @flags: irq flags provided by pm_clk_op_lock().
-> + */
-> +static void pm_clk_op_unlock(struct pm_subsys_data *psd, unsigned long *flags)
-> +{
-> +       if (psd->clock_op_might_sleep)
-> +               mutex_unlock(&psd->clock_mutex);
-> +       else
-> +               spin_unlock_irqrestore(&psd->lock, *flags);
-> +}
-> +
->  /**
->   * pm_clk_enable - Enable a clock, reporting any errors
->   * @dev: The device for the given clock
-> @@ -43,14 +138,21 @@ static inline void __pm_clk_enable(struct device *dev, struct pm_clock_entry *ce
->  {
->         int ret;
->
-> -       if (ce->status < PCE_STATUS_ERROR) {
-> +       switch (ce->status) {
-> +       case PCE_STATUS_ACQUIRED:
-> +               ret = clk_prepare_enable(ce->clk);
-> +               break;
-> +       case PCE_STATUS_PREPARED:
->                 ret = clk_enable(ce->clk);
-> -               if (!ret)
-> -                       ce->status = PCE_STATUS_ENABLED;
-> -               else
-> -                       dev_err(dev, "%s: failed to enable clk %p, error %d\n",
-> -                               __func__, ce->clk, ret);
-> +               break;
-> +       default:
-> +               return;
->         }
-> +       if (!ret)
-> +               ce->status = PCE_STATUS_ENABLED;
-> +       else
-> +               dev_err(dev, "%s: failed to enable clk %p, error %d\n",
-> +                       __func__, ce->clk, ret);
->  }
->
->  /**
-> @@ -64,17 +166,20 @@ static void pm_clk_acquire(struct device *dev, struct pm_clock_entry *ce)
->                 ce->clk = clk_get(dev, ce->con_id);
->         if (IS_ERR(ce->clk)) {
->                 ce->status = PCE_STATUS_ERROR;
-> +               return;
-> +       } else if (clk_is_enabled_when_prepared(ce->clk)) {
-> +               /* we defer preparing the clock in that case */
-> +               ce->status = PCE_STATUS_ACQUIRED;
-> +               ce->enabled_when_prepared = true;
-> +       } else if (clk_prepare(ce->clk)) {
-> +               ce->status = PCE_STATUS_ERROR;
-> +               dev_err(dev, "clk_prepare() failed\n");
-> +               return;
->         } else {
-> -               if (clk_prepare(ce->clk)) {
-> -                       ce->status = PCE_STATUS_ERROR;
-> -                       dev_err(dev, "clk_prepare() failed\n");
-> -               } else {
-> -                       ce->status = PCE_STATUS_ACQUIRED;
-> -                       dev_dbg(dev,
-> -                               "Clock %pC con_id %s managed by runtime PM.\n",
-> -                               ce->clk, ce->con_id);
-> -               }
-> +               ce->status = PCE_STATUS_PREPARED;
->         }
-> +       dev_dbg(dev, "Clock %pC con_id %s managed by runtime PM.\n",
-> +               ce->clk, ce->con_id);
->  }
->
->  static int __pm_clk_add(struct device *dev, const char *con_id,
-> @@ -106,9 +211,11 @@ static int __pm_clk_add(struct device *dev, const char *con_id,
->
->         pm_clk_acquire(dev, ce);
->
-> -       spin_lock_irq(&psd->lock);
-> +       pm_clk_list_lock(psd);
->         list_add_tail(&ce->node, &psd->clock_list);
-> -       spin_unlock_irq(&psd->lock);
-> +       if (ce->enabled_when_prepared)
-> +               psd->clock_op_might_sleep++;
-> +       pm_clk_list_unlock(psd);
->         return 0;
->  }
->
-> @@ -239,14 +346,20 @@ static void __pm_clk_remove(struct pm_clock_entry *ce)
->         if (!ce)
->                 return;
->
-> -       if (ce->status < PCE_STATUS_ERROR) {
-> -               if (ce->status == PCE_STATUS_ENABLED)
-> -                       clk_disable(ce->clk);
-> -
-> -               if (ce->status >= PCE_STATUS_ACQUIRED) {
-> -                       clk_unprepare(ce->clk);
-> +       switch (ce->status) {
-> +       case PCE_STATUS_ENABLED:
-> +               clk_disable(ce->clk);
-> +               fallthrough;
-> +       case PCE_STATUS_PREPARED:
-> +               clk_unprepare(ce->clk);
-> +               fallthrough;
-> +       case PCE_STATUS_ACQUIRED:
-> +       case PCE_STATUS_ERROR:
-> +               if (!IS_ERR(ce->clk))
->                         clk_put(ce->clk);
-> -               }
-> +               break;
-> +       default:
-> +               break;
->         }
->
->         kfree(ce->con_id);
-> @@ -269,7 +382,7 @@ void pm_clk_remove(struct device *dev, const char *con_id)
->         if (!psd)
->                 return;
->
-> -       spin_lock_irq(&psd->lock);
-> +       pm_clk_list_lock(psd);
->
->         list_for_each_entry(ce, &psd->clock_list, node) {
->                 if (!con_id && !ce->con_id)
-> @@ -280,12 +393,14 @@ void pm_clk_remove(struct device *dev, const char *con_id)
->                         goto remove;
->         }
->
-> -       spin_unlock_irq(&psd->lock);
-> +       pm_clk_list_unlock(psd);
->         return;
->
->   remove:
->         list_del(&ce->node);
-> -       spin_unlock_irq(&psd->lock);
-> +       if (ce->enabled_when_prepared)
-> +               psd->clock_op_might_sleep--;
-> +       pm_clk_list_unlock(psd);
->
->         __pm_clk_remove(ce);
->  }
-> @@ -307,19 +422,21 @@ void pm_clk_remove_clk(struct device *dev, struct clk *clk)
->         if (!psd || !clk)
->                 return;
->
-> -       spin_lock_irq(&psd->lock);
-> +       pm_clk_list_lock(psd);
->
->         list_for_each_entry(ce, &psd->clock_list, node) {
->                 if (clk == ce->clk)
->                         goto remove;
->         }
->
-> -       spin_unlock_irq(&psd->lock);
-> +       pm_clk_list_unlock(psd);
->         return;
->
->   remove:
->         list_del(&ce->node);
-> -       spin_unlock_irq(&psd->lock);
-> +       if (ce->enabled_when_prepared)
-> +               psd->clock_op_might_sleep--;
-> +       pm_clk_list_unlock(psd);
->
->         __pm_clk_remove(ce);
->  }
-> @@ -330,13 +447,16 @@ EXPORT_SYMBOL_GPL(pm_clk_remove_clk);
->   * @dev: Device to initialize the list of PM clocks for.
->   *
->   * Initialize the lock and clock_list members of the device's pm_subsys_data
-> - * object.
-> + * object, set the count of clocks that might sleep to 0.
->   */
->  void pm_clk_init(struct device *dev)
->  {
->         struct pm_subsys_data *psd = dev_to_psd(dev);
-> -       if (psd)
-> +       if (psd) {
->                 INIT_LIST_HEAD(&psd->clock_list);
-> +               mutex_init(&psd->clock_mutex);
-> +               psd->clock_op_might_sleep = 0;
-> +       }
->  }
->  EXPORT_SYMBOL_GPL(pm_clk_init);
->
-> @@ -372,12 +492,13 @@ void pm_clk_destroy(struct device *dev)
->
->         INIT_LIST_HEAD(&list);
->
-> -       spin_lock_irq(&psd->lock);
-> +       pm_clk_list_lock(psd);
->
->         list_for_each_entry_safe_reverse(ce, c, &psd->clock_list, node)
->                 list_move(&ce->node, &list);
-> +       psd->clock_op_might_sleep = 0;
->
-> -       spin_unlock_irq(&psd->lock);
-> +       pm_clk_list_unlock(psd);
->
->         dev_pm_put_subsys_data(dev);
->
-> @@ -397,23 +518,30 @@ int pm_clk_suspend(struct device *dev)
->         struct pm_subsys_data *psd = dev_to_psd(dev);
->         struct pm_clock_entry *ce;
->         unsigned long flags;
-> +       int ret;
->
->         dev_dbg(dev, "%s()\n", __func__);
->
->         if (!psd)
->                 return 0;
->
-> -       spin_lock_irqsave(&psd->lock, flags);
-> +       ret = pm_clk_op_lock(psd, &flags, __func__);
-> +       if (ret)
-> +               return ret;
->
->         list_for_each_entry_reverse(ce, &psd->clock_list, node) {
-> -               if (ce->status < PCE_STATUS_ERROR) {
-> -                       if (ce->status == PCE_STATUS_ENABLED)
-> +               if (ce->status == PCE_STATUS_ENABLED) {
-> +                       if (ce->enabled_when_prepared) {
-> +                               clk_disable_unprepare(ce->clk);
-> +                               ce->status = PCE_STATUS_ACQUIRED;
-> +                       } else {
->                                 clk_disable(ce->clk);
-> -                       ce->status = PCE_STATUS_ACQUIRED;
-> +                               ce->status = PCE_STATUS_PREPARED;
-> +                       }
->                 }
->         }
->
-> -       spin_unlock_irqrestore(&psd->lock, flags);
-> +       pm_clk_op_unlock(psd, &flags);
->
->         return 0;
->  }
-> @@ -428,18 +556,21 @@ int pm_clk_resume(struct device *dev)
->         struct pm_subsys_data *psd = dev_to_psd(dev);
->         struct pm_clock_entry *ce;
->         unsigned long flags;
-> +       int ret;
->
->         dev_dbg(dev, "%s()\n", __func__);
->
->         if (!psd)
->                 return 0;
->
-> -       spin_lock_irqsave(&psd->lock, flags);
-> +       ret = pm_clk_op_lock(psd, &flags, __func__);
-> +       if (ret)
-> +               return ret;
->
->         list_for_each_entry(ce, &psd->clock_list, node)
->                 __pm_clk_enable(dev, ce);
->
-> -       spin_unlock_irqrestore(&psd->lock, flags);
-> +       pm_clk_op_unlock(psd, &flags);
->
->         return 0;
->  }
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 8c1d04db99..3d751ae5bc 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1164,6 +1164,27 @@ int clk_enable(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_enable);
->
-> +/**
-> + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
-> + * @clk: clock source
-> + *
-> + * Returns true if clk_prepare() implicitly enables the clock, effectively
-> + * making clk_enable()/clk_disable() no-ops, false otherwise.
-> + *
-> + * This is of interest mainly to power management code where actually
-> + * disabling the clock also requires unpreparing it to have any material
-> + * effect.
-> + *
-> + * Regardless of the value returned here, the caller must always invoke
-> + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
-> + * to be right.
-> + */
-> +bool clk_is_enabled_when_prepared(struct clk *clk)
-> +{
-> +       return clk && !(clk->core->ops->enable && clk->core->ops->disable);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_is_enabled_when_prepared);
-> +
->  static int clk_core_prepare_enable(struct clk_core *core)
->  {
->         int ret;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 31ff1bf1b7..a4a86aa8b1 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -238,6 +238,7 @@ static inline bool clk_is_match(const struct clk *p, const struct clk *q)
->
->  #endif
->
-> +#ifdef CONFIG_HAVE_CLK_PREPARE
->  /**
->   * clk_prepare - prepare a clock source
->   * @clk: clock source
-> @@ -246,10 +247,26 @@ static inline bool clk_is_match(const struct clk *p, const struct clk *q)
->   *
->   * Must not be called from within atomic context.
->   */
-> -#ifdef CONFIG_HAVE_CLK_PREPARE
->  int clk_prepare(struct clk *clk);
->  int __must_check clk_bulk_prepare(int num_clks,
->                                   const struct clk_bulk_data *clks);
-> +
-> +/**
-> + * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
-> + * @clk: clock source
-> + *
-> + * Returns true if clk_prepare() implicitly enables the clock, effectively
-> + * making clk_enable()/clk_disable() no-ops, false otherwise.
-> + *
-> + * This is of interest mainly to the power management code where actually
-> + * disabling the clock also requires unpreparing it to have any material
-> + * effect.
-> + *
-> + * Regardless of the value returned here, the caller must always invoke
-> + * clk_enable() or clk_prepare_enable()  and counterparts for usage counts
-> + * to be right.
-> + */
-> +bool clk_is_enabled_when_prepared(struct clk *clk);
->  #else
->  static inline int clk_prepare(struct clk *clk)
->  {
-> @@ -263,6 +280,11 @@ clk_bulk_prepare(int num_clks, const struct clk_bulk_data *clks)
->         might_sleep();
->         return 0;
->  }
-> +
-> +static inline bool clk_is_enabled_when_prepared(struct clk *clk)
-> +{
-> +       return false;
-> +}
->  #endif
->
->  /**
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index 47aca6bac1..482313a8cc 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -537,6 +537,8 @@ struct pm_subsys_data {
->         spinlock_t lock;
->         unsigned int refcount;
->  #ifdef CONFIG_PM_CLK
-> +       unsigned int clock_op_might_sleep;
-> +       struct mutex clock_mutex;
->         struct list_head clock_list;
->  #endif
->  #ifdef CONFIG_PM_GENERIC_DOMAINS
+SGVsbG8sDQoJSG93IGFib3V0IHRoaXMgcGF0Y2ggcHJvZ3Jlc3M/DQoJSXQgZG9lcyBpbXBhY3Qg
+YSBsb3Qgb2YgbWFjaGluZSB0aGF0IHdoZW4gQk1DIGJvb3QgYXQgdS1ib290LiANCglTVUFSVCBp
+cyB3b3JrIGZvciBIb3N0LiBCdXQgYWZ0ZXIgYm9vdCBpbnRvIGtlcm5lbCwgZHVlIHRvIHRoZSBj
+bGsgZGlzYWJsZWQuIA0KCVRoZSBTVUFSVCBpcyBub3Qgd29yayBmb3IgSG9zdCBhbnltb3JlLiAN
+Cg0KUmVnYXJkcywNClJ5YW4NCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTog
+U2FtdWVsIEhvbGxhbmQgPHNhbXVlbEBzaG9sbGFuZC5vcmc+DQo+IFNlbnQ6IFRodXJzZGF5LCBP
+Y3RvYmVyIDI5LCAyMDIwIDEwOjI1IEFNDQo+IFRvOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5l
+bC5vcmc+OyBKb2VsIFN0YW5sZXkgPGpvZWxAam1zLmlkLmF1Pg0KPiBDYzogQW5kcmV3IEplZmZl
+cnkgPGFuZHJld0Bhai5pZC5hdT47IE1pY2hhZWwgVHVycXVldHRlDQo+IDxtdHVycXVldHRlQGJh
+eWxpYnJlLmNvbT47IFJ5YW4gQ2hlbiA8cnlhbl9jaGVuQGFzcGVlZHRlY2guY29tPjsNCj4gQk1D
+LVNXIDxCTUMtU1dAYXNwZWVkdGVjaC5jb20+OyBMaW51eCBBUk0NCj4gPGxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IGxpbnV4LWFzcGVlZA0KPiA8bGludXgtYXNwZWVkQGxp
+c3RzLm96bGFicy5vcmc+OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBMaW51eCBLZXJuZWwN
+Cj4gTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0
+OiBSZTogUmU6IFtQQVRDSCAxLzFdIGNsazogYXNwZWVkOiBtb2RpZnkgc29tZSBkZWZhdWx0IGNs
+a3MgYXJlIGNyaXRpY2FsDQo+IA0KPiBTdGVwaGVuLA0KPiANCj4gT24gMTAvMTQvMjAgMTI6MTYg
+UE0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gPiBRdW90aW5nIEpvZWwgU3RhbmxleSAoMjAyMC0x
+MC0xMyAyMjoyODowMCkNCj4gPj4gT24gV2VkLCAxNCBPY3QgMjAyMCBhdCAwMjo1MCwgU3RlcGhl
+biBCb3lkIDxzYm95ZEBrZXJuZWwub3JnPiB3cm90ZToNCj4gPj4+DQo+ID4+PiBRdW90aW5nIFJ5
+YW4gQ2hlbiAoMjAyMC0wOS0yOCAwMDowMTowOCkNCj4gPj4+PiBJbiBBU1BFRUQgU29DIExDTEsg
+aXMgTFBDIGNsb2NrIGZvciBhbGwgU3VwZXJJTyBkZXZpY2UsIFVBUlQxL1VBUlQyDQo+ID4+Pj4g
+YXJlIGRlZmF1bHQgZm9yIEhvc3QgU3VwZXJJTyBVQVJUIGRldmljZSwgZVNQSSBjbGsgZm9yIEhv
+c3QgZVNQSQ0KPiA+Pj4+IGJ1cyBhY2Nlc3MgZVNQSSBzbGF2ZSBjaGFubmVsLCB0aG9zZSBjbGtz
+IGNhbid0IGJlIGRpc2FibGUgc2hvdWxkDQo+ID4+Pj4ga2VlcCBkZWZhdWx0LCBvdGhlcndpc2Ug
+d2lsbCBhZmZlY3QgSG9zdCBzaWRlIGFjY2VzcyBTdXBlcklPIGFuZCBTUEkgc2xhdmUNCj4gZGV2
+aWNlLg0KPiA+Pj4+DQo+ID4+Pj4gU2lnbmVkLW9mZi1ieTogUnlhbiBDaGVuIDxyeWFuX2NoZW5A
+YXNwZWVkdGVjaC5jb20+DQo+ID4+Pj4gLS0tDQo+ID4+Pg0KPiA+Pj4gSXMgdGhlcmUgcmVzb2x1
+dGlvbiBvbiB0aGlzIHRocmVhZD8NCj4gPj4NCj4gPj4gTm90IHlldC4NCj4gPj4NCj4gPj4gV2Ug
+aGF2ZSBhIHN5c3RlbSB3aGVyZSB0aGUgQk1DIChtYW5hZ2VtZW50IGNvbnRyb2xsZXIpIGNvbnRy
+b2xzIHNvbWUNCj4gPj4gY2xvY2tzLCBidXQgdGhlIHBlcmlwaGVyYWxzIHRoYXQgaXQncyBjbG9j
+a2luZyBhcmUgb3V0c2lkZSB0aGUgQk1DJ3MNCj4gPj4gY29udHJvbC4gSW4gdGhpcyBjYXNlLCB0
+aGUgaG9zdCBwcm9jZXNzb3IgdXMgdXNpbmcgc29tZSBVQVJUcyBhbmQNCj4gPj4gd2hhdCBub3Qg
+aW5kZXBlbmRlbnQgb2YgYW55IGNvZGUgcnVubmluZyBvbiB0aGUgQk1DLg0KPiA+Pg0KPiA+PiBS
+eWFuIHdhbnRzIHRvIGhhdmUgdGhlbSBtYXJrZWQgYXMgY3JpdGljYWwgc28gdGhlIEJNQyBuZXZl
+ciBwb3dlcnMgdGhlbQ0KPiBkb3duLg0KPiA+Pg0KPiA+PiBIb3dldmVyLCB0aGVyZSBhcmUgc3lz
+dGVtcyB0aGF0IGRvbid0IHVzZSB0aGlzIHBhcnQgb2YgdGhlIHNvYywgc28NCj4gPj4gZm9yIHRo
+b3NlIGltcGxlbWVudGF0aW9ucyB0aGV5IGFyZSBub3QgY3JpdGljYWwgYW5kIExpbnV4IG9uIHRo
+ZSBCTUMNCj4gPj4gY2FuIHR1cm4gdGhlbSBvZmYuDQo+ID4+DQo+ID4+IERvIHlvdSBoYXZlIGFu
+eSB0aG91Z2h0cz8gSGFzIGFueW9uZSBzb2x2ZWQgYSBzaW1pbGFyIHByb2JsZW0gYWxyZWFkeT8N
+Cj4gPj4NCj4gPg0KPiA+IElzIHRoaXMgY3JpdGljYWwgY2xvY2tzIGluIERUPyBXaGVyZSB3ZSB3
+YW50IHRvIGhhdmUgZGlmZmVyZW50IERUIGZvcg0KPiA+IGRpZmZlcmVudCBkZXZpY2UgY29uZmln
+dXJhdGlvbnMgdG8gaW5kaWNhdGUgdGhhdCBzb21lIGNsa3Mgc2hvdWxkIGJlDQo+ID4gbWFya2Vk
+IGNyaXRpY2FsIHNvIHRoZXkncmUgbmV2ZXIgdHVybmVkIG9mZiBhbmQgb3RoZXIgdGltZXMgdGhl
+eQ0KPiA+IGFyZW4ndCBzbyB0aGV5J3JlIHR1cm5lZCBvZmY/DQo+ID4NCj4gPiBJdCBhbHNvIHNv
+dW5kcyBzb3J0IG9mIGxpa2UgdGhlIHByb3RlY3RlZC1jbG9ja3MgYmluZGluZy4gV2hlcmUgeW91
+DQo+ID4gZG9uJ3Qgd2FudCB0byB0b3VjaCBjZXJ0YWluIGNsa3MgZGVwZW5kaW5nIG9uIHRoZSB1
+c2FnZSBjb25maWd1cmF0aW9uDQo+ID4gb2YgdGhlIFNvQy4gVGhlcmUgaXMgYSBwYXRjaCB0byBt
+YWtlIHRoYXQgZ2VuZXJpYyB0aGF0IEkgaGF2ZW4ndA0KPiA+IGFwcGxpZWQgYmVjYXVzZSBpdCBs
+b29rcyB3cm9uZyBhdCBmaXJzdCBnbGFuY2VbMV0uIE1heWJlIG5vdA0KPiA+IHJlZ2lzdGVyaW5n
+IHRob3NlIGNsa3MgdG8gdGhlIGZyYW1ld29yayBvbiB0aGUgY29uZmlndXJhdGlvbiB0aGF0IFJ5
+YW4gaGFzIGlzDQo+IGdvb2QgZW5vdWdoPw0KPiANCj4gQ291bGQgeW91IHBsZWFzZSBiZSBtb3Jl
+IHNwZWNpZmljIHRoYW4gdGhlIHBhdGNoICJsb29rcyB3cm9uZyI/IEknbSBtb3JlDQo+IHRoYW4g
+aGFwcHkgdG8gdXBkYXRlIHRoZSBwYXRjaCB0byBhZGRyZXNzIHlvdXIgY29uY2VybnMsIGJ1dCBJ
+IGNhbm5vdCBkbyB0aGF0DQo+IHVubGVzcyBJIGtub3cgd2hhdCB5b3VyIGNvbmNlcm5zIGFyZS4N
+Cj4gDQo+IFJlZ2FyZHMsDQo+IFNhbXVlbA0KPiANCj4gPiBbMV0NCj4gPiBodHRwczovL2xvcmUu
+a2VybmVsLm9yZy9yLzIwMjAwOTAzMDQwMDE1LjU2MjctMi1zYW11ZWxAc2hvbGxhbmQub3JnDQo=
