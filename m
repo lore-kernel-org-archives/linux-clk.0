@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F649C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999A0C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA77E205CB
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EBE52246B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbhAVK4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:56:49 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35686 "EHLO
+        id S1727727AbhAVK44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:56:56 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35708 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727632AbhAVKwU (ORCPT
+        by vger.kernel.org with ESMTP id S1727639AbhAVKwU (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:20 -0500
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlTlr011271;
-        Fri, 22 Jan 2021 11:51:20 +0100
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlUJD011314;
+        Fri, 22 Jan 2021 11:51:24 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=mt7WvfN2Btmo/ZaNnjB5VDrsbrquImJLFtGfvSfZYp0=;
- b=H/bifTmAItFYp9w96qyj9P8rCqvH4mP79nMzfkdqumpz2MlfDBpCOwYvucQBDe/+5Hug
- va1YBhP2iRZV7RaexPTA/bXECdfMT13xFi5hbuIIdxku2hzZyHobcg0TWWWcz7BrJJgN
- dCdVNVz1nERqwxGp15zd37C1FyXlq7yqit0YLQt4/fRM7DTvNuiGO+l6QbR8wGkTY3g0
- 7GKr6gIjMtjsLNm6WhHs3fzPeaEEq60yIe3+ix0vmBejTLGLNl4nQW8oClrtkZYZgc+t
- Ucxe9tF5+eTap5Tb+QUWuoaQQTFYCynP0w+bivRhRNTjbNsES2GJfOrJimN1xzjNiMv5 qQ== 
+ bh=k6uscXkXABTNJTneIu2qnrDFpyKKioS22qyjfIif7ss=;
+ b=xgBuX4ST49VvM/b82RPsHWQzA5hlI5csvu92xswO2IUPwoD0SgrEZXJ8p6p3Ni/2wgjo
+ bNDe+Th9uu5S7JF7jOPVH8XIGGqh0Elqr2QK+TMOYP8RVDrga+u6tAojJXq/4Uw+218p
+ JjBaQv28oybKxg/jmIXQfi1Yolm4yrkVMzMsTE5PD+oCmRjUHZoCteneWqRAJTnrWDmg
+ /yVfsuPS6pnjBvaNxQL5/M37rEcUFJYg+6fAKuK+16+FqqQ/L0D+9bDkI/SmR2kmrm35
+ 84oou2LjN1fgHdjpxO9Br6dYWuXZG9a+rop+rE/1V3p09tGcXteqb/ELfZGGYhMebZiC Sw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e1h-1
+        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e1x-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Jan 2021 11:51:20 +0100
+        Fri, 22 Jan 2021 11:51:24 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0FB110002A;
-        Fri, 22 Jan 2021 11:51:19 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 21A8610002A;
+        Fri, 22 Jan 2021 11:51:24 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CC6DE22DBCA;
-        Fri, 22 Jan 2021 11:51:19 +0100 (CET)
-Received: from localhost (10.75.127.49) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:19
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1359622DBCA;
+        Fri, 22 Jan 2021 11:51:24 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:23
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -57,15 +57,15 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 01/14] clk: stm32mp1: merge 'clk-hsi-div' and 'ck_hsi' into one clock
-Date:   Fri, 22 Jan 2021 11:50:48 +0100
-Message-ID: <20210122105101.27374-2-gabriel.fernandez@foss.st.com>
+Subject: [PATCH 07/14] dt-bindings: clock: add IDs for SCMI clocks on stm32mp15
+Date:   Fri, 22 Jan 2021 11:50:54 +0100
+Message-ID: <20210122105101.27374-8-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
+X-Originating-IP: [10.75.127.51]
 X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
@@ -76,41 +76,56 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-This patch is to prepare STM32MP1 clocks in trusted mode.
-This Merge will facilitate to have a more coherent clock tree
-in no trusted / trusted world.
+stm32mp15 TZ secure firmware provides SCMI clocks for oscillators, some
+PLL output and few secure aware interfaces.
+This change defines the SCMI clock identifiers used by SCMI agents
+and servers.
+Server SCMI0 exposes clocks and reset controllers for resources under
+RCC[TZEN] configuration control.
+Server SCMI1 exposes clocks for resources under RCC[MCKPROT] control.
 
+Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/clk-stm32mp1.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ include/dt-bindings/clock/stm32mp1-clks.h | 27 +++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index a875649df8b8..35d5aee8f9b0 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -1657,16 +1657,16 @@ static const struct stm32_mux_cfg ker_mux_cfg[M_LAST] = {
- };
+diff --git a/include/dt-bindings/clock/stm32mp1-clks.h b/include/dt-bindings/clock/stm32mp1-clks.h
+index 4cdaf135829c..e02770b98e6c 100644
+--- a/include/dt-bindings/clock/stm32mp1-clks.h
++++ b/include/dt-bindings/clock/stm32mp1-clks.h
+@@ -248,4 +248,31 @@
  
- static const struct clock_config stm32mp1_clock_cfg[] = {
--	/* Oscillator divider */
--	DIV(NO_ID, "clk-hsi-div", "clk-hsi", CLK_DIVIDER_POWER_OF_TWO,
--	    RCC_HSICFGR, 0, 2, CLK_DIVIDER_READ_ONLY),
--
- 	/*  External / Internal Oscillators */
- 	GATE_MP1(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
- 	/* ck_csi is used by IO compensation and should be critical */
- 	GATE_MP1(CK_CSI, "ck_csi", "clk-csi", CLK_IS_CRITICAL,
- 		 RCC_OCENSETR, 4, 0),
--	GATE_MP1(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
-+	COMPOSITE(CK_HSI, "ck_hsi", PARENT("clk-hsi"), 0,
-+		  _GATE_MP1(RCC_OCENSETR, 0, 0),
-+		  _NO_MUX,
-+		  _DIV(RCC_HSICFGR, 0, 2, CLK_DIVIDER_POWER_OF_TWO |
-+		       CLK_DIVIDER_READ_ONLY, NULL)),
- 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
- 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
+ #define STM32MP1_LAST_CLK 232
  
++/* SCMI clock identifiers */
++#define CK_SCMI0_HSE		0
++#define CK_SCMI0_HSI		1
++#define CK_SCMI0_CSI		2
++#define CK_SCMI0_LSE		3
++#define CK_SCMI0_LSI		4
++#define CK_SCMI0_PLL2_Q		5
++#define CK_SCMI0_PLL2_R		6
++#define CK_SCMI0_MPU		7
++#define CK_SCMI0_AXI		8
++#define CK_SCMI0_BSEC		9
++#define CK_SCMI0_CRYP1		10
++#define CK_SCMI0_GPIOZ		11
++#define CK_SCMI0_HASH1		12
++#define CK_SCMI0_I2C4		13
++#define CK_SCMI0_I2C6		14
++#define CK_SCMI0_IWDG1		15
++#define CK_SCMI0_RNG1		16
++#define CK_SCMI0_RTC		17
++#define CK_SCMI0_RTCAPB		18
++#define CK_SCMI0_SPI6		19
++#define CK_SCMI0_USART1		20
++
++#define CK_SCMI1_PLL3_Q		0
++#define CK_SCMI1_PLL3_R		1
++#define CK_SCMI1_MCU		2
++
+ #endif /* _DT_BINDINGS_STM32MP1_CLKS_H_ */
 -- 
 2.17.1
 
