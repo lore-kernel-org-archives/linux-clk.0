@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9518C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED2EC433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70D8922CA1
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56703239D4
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 11:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbhAVK5r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:57:47 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35754 "EHLO
+        id S1727512AbhAVK5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:57:43 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12424 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727650AbhAVKwV (ORCPT
+        by vger.kernel.org with ESMTP id S1726880AbhAVKwV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:52:21 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAlUJF011314;
-        Fri, 22 Jan 2021 11:51:26 +0100
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10MAmG87002482;
+        Fri, 22 Jan 2021 11:51:24 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=selector1;
- bh=4Zh5np6CHme4gd5912lvOO0H+L8KmQTO6S+pwNcZYwU=;
- b=mOCDQYEG4HbCSkJ8jAvsZLlB8JN6S4sIG8ZKOJxzXCiJHadX0hALsBHVmv9bRIJ2GE3j
- PoBnI1o7SKKh28xbnExFjRmQj0pw4C8bgQbgwgtyfxH9WCwImJN6Q8JQzuNml+ojURQZ
- fv2Z2SvbU7t/ykaoFfiXgYkvLblSWy5bCMUOoo9D7IdhPFmjAip1Y6P2nq9ryQIvQpOl
- C8TMNe5jUSoi5BVdb74fdDcVQ0ORoY3cZ7Nr1muPpK0ocgnUOcku6RNSP4EVyj5N/gAo
- uurjH2tyREA0XFx+WFW4l3nsme3OdJpUhZAdrpFAvlKc+l9MR2HrTJ5FNzkUfpV+cBru 3A== 
+ bh=Ss6Pwd3LBnUuLlPGR+/BUSEo5DJkrygwz9JdwiLD4c0=;
+ b=W2PwNMhnNEoyRhIqrCnV0VdcIza0PFFMGcKmTlPmcEeiLjq7Ivr11YpOyiSl67eyIKC8
+ qvrQ8za+cZRwG880E9ptPq4bzfNZuJvnDqCmzy5wIxaoh+Zbj/ZgFyWhnwwf+QIhLH06
+ q+9JGjFNw8GdbYXJ327OAL+oOcZRXgC2ls+4/FFFxtNQmqHAq/xxIdr8mZ/PDjXQd3Nb
+ 6M8M23zQa9vXyFb+yimQ1ZxIuP7ebSv2jVw0P3l5vTMUaD3Ux4EdDoE2ZmhUTUIIebRd
+ CrebzY46S6l86Q1zB/08Yk421Ny35MaSVN+kVFSXYwNNBm6NCTsM/0wyIYEWTlrHxjoA iA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3668pe1e23-1
+        by mx07-00178001.pphosted.com with ESMTP id 3668pqhdur-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Jan 2021 11:51:26 +0100
+        Fri, 22 Jan 2021 11:51:24 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3972D100034;
-        Fri, 22 Jan 2021 11:51:26 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4FF82100034;
+        Fri, 22 Jan 2021 11:51:23 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2A09822DBCA;
-        Fri, 22 Jan 2021 11:51:26 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4258622DBCA;
+        Fri, 22 Jan 2021 11:51:23 +0100 (CET)
 Received: from localhost (10.75.127.50) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:25
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 22 Jan 2021 11:51:22
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -57,16 +57,16 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 10/14] clk: stm32mp1: new compatible for secure RCC support
-Date:   Fri, 22 Jan 2021 11:50:57 +0100
-Message-ID: <20210122105101.27374-11-gabriel.fernandez@foss.st.com>
+Subject: [PATCH 06/14] reset: stm32mp1: remove stm32mp1 reset
+Date:   Fri, 22 Jan 2021 11:50:53 +0100
+Message-ID: <20210122105101.27374-7-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 References: <20210122105101.27374-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE3.st.com
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE3.st.com
  (10.75.127.6)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
  definitions=2021-01-22_06:2021-01-21,2021-01-22 signatures=0
@@ -76,191 +76,166 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Platform STM32MP1 can be used in configuration where some clock
-resources cannot be accessed by Linux kernel when executing in non-secure
-state of the CPU(s).
-In such configuration, the RCC clock driver must not register clocks
-it cannot access.
-They are expected to be registered from another clock driver such
-as the SCMI clock driver.
-This change uses specific compatible string "st,stm32mp1-rcc-secure"
-to specify RCC clock driver configuration where RCC is secure.
+st32mp1 RCC reset driver was moved into stm32mp1 RCC clock driver.
 
-Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/Kconfig        |  10 ++++
- drivers/clk/clk-stm32mp1.c | 101 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 110 insertions(+), 1 deletion(-)
+ drivers/reset/Kconfig          |   6 --
+ drivers/reset/Makefile         |   1 -
+ drivers/reset/reset-stm32mp1.c | 115 ---------------------------------
+ 3 files changed, 122 deletions(-)
+ delete mode 100644 drivers/reset/reset-stm32mp1.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 85856cff506c..ee61aec3b490 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -334,6 +334,16 @@ config COMMON_CLK_STM32MP157
- 	help
- 	  Support for stm32mp157 SoC family clocks
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index df2725e1798e..97c9acc2064e 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -198,12 +198,6 @@ config RESET_SIMPLE
+ 	   - Allwinner SoCs
+ 	   - ZTE's zx2967 family
  
-+config COMMON_CLK_STM32MP157_SCMI
-+	bool "stm32mp157 Clock diver with Trusted Firmware"
-+	depends on COMMON_CLK_STM32MP157
-+	select COMMON_CLK_SCMI
-+	select ARM_SCMI_PROTOCOL
-+	default y
-+	help
-+	  Support for stm32mp157 SoC family clocks with Trusted Firmware using
-+	  SCMI protocol.
-+
- config COMMON_CLK_STM32F
- 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
- 	help
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 25e3f272344c..132e1dd42dbd 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -2051,11 +2051,61 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
- 		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
- };
- 
-+static const u32 stm32mp1_clock_secured[] = {
-+	CK_HSE,
-+	CK_HSI,
-+	CK_CSI,
-+	CK_LSI,
-+	CK_LSE,
-+	PLL1,
-+	PLL2,
-+	PLL1_P,
-+	PLL2_P,
-+	PLL2_Q,
-+	PLL2_R,
-+	CK_MPU,
-+	CK_AXI,
-+	SPI6,
-+	I2C4,
-+	I2C6,
-+	USART1,
-+	RTCAPB,
-+	TZC1,
-+	TZC2,
-+	TZPC,
-+	IWDG1,
-+	BSEC,
-+	STGEN,
-+	GPIOZ,
-+	CRYP1,
-+	HASH1,
-+	RNG1,
-+	BKPSRAM,
-+	RNG1_K,
-+	STGEN_K,
-+	SPI6_K,
-+	I2C4_K,
-+	I2C6_K,
-+	USART1_K,
-+	RTC,
-+};
-+
-+static bool stm32_check_security(const struct clock_config *cfg)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(stm32mp1_clock_secured); i++)
-+		if (cfg->id == stm32mp1_clock_secured[i])
-+			return true;
-+	return false;
-+}
-+
- struct stm32_rcc_match_data {
- 	const struct clock_config *cfg;
- 	unsigned int num;
- 	unsigned int maxbinding;
- 	u32 clear_offset;
-+	bool (*check_security)(const struct clock_config *cfg);
- };
- 
- static struct stm32_rcc_match_data stm32mp1_data = {
-@@ -2065,11 +2115,23 @@ static struct stm32_rcc_match_data stm32mp1_data = {
- 	.clear_offset	= RCC_CLR,
- };
- 
-+static struct stm32_rcc_match_data stm32mp1_data_secure = {
-+	.cfg		= stm32mp1_clock_cfg,
-+	.num		= ARRAY_SIZE(stm32mp1_clock_cfg),
-+	.maxbinding	= STM32MP1_LAST_CLK,
-+	.clear_offset	= RCC_CLR,
-+	.check_security = &stm32_check_security
-+};
-+
- static const struct of_device_id stm32mp1_match_data[] = {
- 	{
- 		.compatible = "st,stm32mp1-rcc",
- 		.data = &stm32mp1_data,
- 	},
-+	{
-+		.compatible = "st,stm32mp1-rcc-secure",
-+		.data = &stm32mp1_data_secure,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, stm32mp1_match_data);
-@@ -2229,6 +2291,9 @@ static int stm32_rcc_clock_init(struct device *dev, void __iomem *base,
- 		hws[n] = ERR_PTR(-ENOENT);
- 
- 	for (n = 0; n < data->num; n++) {
-+		if (data->check_security && data->check_security(&data->cfg[n]))
-+			continue;
-+
- 		err = stm32_register_hw_clk(dev, clk_data, base, &rlock,
- 					    &data->cfg[n]);
- 		if (err) {
-@@ -2296,11 +2361,45 @@ static int stm32mp1_rcc_init(struct device *dev)
- 	return ret;
- }
- 
-+static int get_clock_deps(struct device *dev)
-+{
-+	static const char * const clock_deps_name[] = {
-+		"hsi", "hse", "csi", "lsi", "lse",
-+	};
-+	size_t deps_size = sizeof(struct clk *) * ARRAY_SIZE(clock_deps_name);
-+	struct clk **clk_deps;
-+	int i;
-+
-+	clk_deps = devm_kzalloc(dev, deps_size, GFP_KERNEL);
-+	if (!clk_deps)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(clock_deps_name); i++) {
-+		struct clk *clk = of_clk_get_by_name(dev_of_node(dev),
-+						     clock_deps_name[i]);
-+
-+		if (IS_ERR(clk)) {
-+			if (PTR_ERR(clk) != -EINVAL && PTR_ERR(clk) != -ENOENT)
-+				return PTR_ERR(clk);
-+		} else {
-+			/* Device gets a reference count on the clock */
-+			clk_deps[i] = devm_clk_get(dev, __clk_get_name(clk));
-+			clk_put(clk);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int stm32mp1_rcc_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	int ret = get_clock_deps(dev);
-+
-+	if (!ret)
-+		ret = stm32mp1_rcc_init(dev);
- 
--	return stm32mp1_rcc_init(dev);
-+	return ret;
- }
- 
- static int stm32mp1_rcc_clocks_remove(struct platform_device *pdev)
+-config RESET_STM32MP157
+-	bool "STM32MP157 Reset Driver" if COMPILE_TEST
+-	default MACH_STM32MP157
+-	help
+-	  This enables the RCC reset controller driver for STM32 MPUs.
+-
+ config RESET_SOCFPGA
+ 	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+ 	default ARCH_SOCFPGA
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index 65a118a91b27..ac3e612ad953 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -26,7 +26,6 @@ obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+ obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
+ obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+-obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+diff --git a/drivers/reset/reset-stm32mp1.c b/drivers/reset/reset-stm32mp1.c
+deleted file mode 100644
+index b221a28041fa..000000000000
+--- a/drivers/reset/reset-stm32mp1.c
++++ /dev/null
+@@ -1,115 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
+- */
+-
+-#include <linux/device.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-#include <linux/reset-controller.h>
+-
+-#define CLR_OFFSET 0x4
+-
+-struct stm32_reset_data {
+-	struct reset_controller_dev	rcdev;
+-	void __iomem			*membase;
+-};
+-
+-static inline struct stm32_reset_data *
+-to_stm32_reset_data(struct reset_controller_dev *rcdev)
+-{
+-	return container_of(rcdev, struct stm32_reset_data, rcdev);
+-}
+-
+-static int stm32_reset_update(struct reset_controller_dev *rcdev,
+-			      unsigned long id, bool assert)
+-{
+-	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
+-	int reg_width = sizeof(u32);
+-	int bank = id / (reg_width * BITS_PER_BYTE);
+-	int offset = id % (reg_width * BITS_PER_BYTE);
+-	void __iomem *addr;
+-
+-	addr = data->membase + (bank * reg_width);
+-	if (!assert)
+-		addr += CLR_OFFSET;
+-
+-	writel(BIT(offset), addr);
+-
+-	return 0;
+-}
+-
+-static int stm32_reset_assert(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
+-{
+-	return stm32_reset_update(rcdev, id, true);
+-}
+-
+-static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
+-				unsigned long id)
+-{
+-	return stm32_reset_update(rcdev, id, false);
+-}
+-
+-static int stm32_reset_status(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
+-{
+-	struct stm32_reset_data *data = to_stm32_reset_data(rcdev);
+-	int reg_width = sizeof(u32);
+-	int bank = id / (reg_width * BITS_PER_BYTE);
+-	int offset = id % (reg_width * BITS_PER_BYTE);
+-	u32 reg;
+-
+-	reg = readl(data->membase + (bank * reg_width));
+-
+-	return !!(reg & BIT(offset));
+-}
+-
+-static const struct reset_control_ops stm32_reset_ops = {
+-	.assert		= stm32_reset_assert,
+-	.deassert	= stm32_reset_deassert,
+-	.status		= stm32_reset_status,
+-};
+-
+-static const struct of_device_id stm32_reset_dt_ids[] = {
+-	{ .compatible = "st,stm32mp1-rcc"},
+-	{ /* sentinel */ },
+-};
+-
+-static int stm32_reset_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct stm32_reset_data *data;
+-	void __iomem *membase;
+-	struct resource *res;
+-
+-	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	membase = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(membase))
+-		return PTR_ERR(membase);
+-
+-	data->membase = membase;
+-	data->rcdev.owner = THIS_MODULE;
+-	data->rcdev.nr_resets = resource_size(res) * BITS_PER_BYTE;
+-	data->rcdev.ops = &stm32_reset_ops;
+-	data->rcdev.of_node = dev->of_node;
+-
+-	return devm_reset_controller_register(dev, &data->rcdev);
+-}
+-
+-static struct platform_driver stm32_reset_driver = {
+-	.probe	= stm32_reset_probe,
+-	.driver = {
+-		.name		= "stm32mp1-reset",
+-		.of_match_table	= stm32_reset_dt_ids,
+-	},
+-};
+-
+-builtin_platform_driver(stm32_reset_driver);
 -- 
 2.17.1
 
