@@ -2,77 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2578C433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F82BC4332B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92A8023A03
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2FE123A56
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 10:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbhAVKZW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:25:22 -0500
-Received: from mail-qk1-f171.google.com ([209.85.222.171]:38995 "EHLO
-        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbhAVKRt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 05:17:49 -0500
-Received: by mail-qk1-f171.google.com with SMTP id k193so4566306qke.6;
-        Fri, 22 Jan 2021 02:17:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7zsc6xzux0GCBLlL4UKSB6x9FSfXUZHxkP/Pv0eueKY=;
-        b=TKJjxvAyHCRiIepZ9/Fm33mMUpRAon8BdsdBwhO3XS4BytBNJPhSpNBKSfIBhmsAZx
-         5GyVEAJ3ydur7qW6X2NwWXA+7dvz9mv+81FVUC3qU2fb1c3WEwAhXE9Vm0o7t9O5PWSN
-         Sxhr2KUImS72dox09Puzmr24yKhmyPpnts6Px+373aFNW2lrwDx/8sZL7eprhD5JONH4
-         xfcOArBvloE349G5anQLCZbux6LsZLBcxeJ56RTy7nopZWSCqP5lqIcyeDaq3MLX4QIK
-         DyZrXpHTmo5WcmM9DduvmKsddlkmsfrNXz4lhVSGi+Shf+Zt9LannuGFuQ1il199PbA8
-         80Lw==
-X-Gm-Message-State: AOAM530Ib84Vlh4cUv3CFSgdxUomdXRY9DRXQaiMXL261+aHIULrRWoJ
-        oPvWTOtmTgvggMEzyt7PjFUvKdAuf8Z78K9v5OM=
-X-Google-Smtp-Source: ABdhPJyEtoIqIYr9dpcGXfp0DGUeqfGn7izIr0qNDH8dstFOi1qUddx7S8ySQ4XEN/zPxFI0wMe6UiaxAZnLHgMl2w0=
-X-Received: by 2002:a05:620a:11ad:: with SMTP id c13mr4011390qkk.134.1611310627579;
- Fri, 22 Jan 2021 02:17:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com> <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:16:55 +0100
-Message-ID: <CAMuHMdXbnMENy3czKL-+Dgp4M24D3A_HvaiUAasdENvKupRQfg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: renesas: r8a779a0: add clocks for RAVB
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+        id S1727353AbhAVKuu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 05:50:50 -0500
+Received: from www.zeus03.de ([194.117.254.33]:47670 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726917AbhAVKrL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Jan 2021 05:47:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=f5EJglY+5c9ireIWj0dXRNwfIKam
+        wdzk/aYyubiDpE0=; b=Sbh6DYNb+n+EJHu5NTkqLHhUuNYxEy/OSoGcihWvUZx3
+        QwW4vzuw+GUb29QuJ3itMh/aqePEVYBboStwamvotLNMaktPL32QtbLe0SIHmgsg
+        +l/IyU3O4qzPtBqZtAgM4eYYmOGqMxUbfdTBIkoqj1pyr4akmEh9307Yhh4qssg=
+Received: (qmail 2306109 invoked from network); 22 Jan 2021 11:46:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jan 2021 11:46:19 +0100
+X-UD-Smtp-Session: l3s3148p1@HnsB5nq5juogAwDPXwqqAP3nWBA3ETDu
+Date:   Fri, 22 Jan 2021 11:46:18 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH V2 2/4] arm64: dts: renesas: Add I2C to R8A779A0
+Message-ID: <20210122104618.GA29150@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20210121095420.5023-1-wsa+renesas@sang-engineering.com>
+ <20210121095420.5023-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdU-QK2xLrOy-OsS=H7tN5da2wrc3TuVKiwZFy0N6ueDtg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU-QK2xLrOy-OsS=H7tN5da2wrc3TuVKiwZFy0N6ueDtg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 11:06 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Change since v1:
-> * use S3D2 as parent clock
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.12.
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> "arm64: dts: renesas: r8a779a0: Add I2c nodes".
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+"I2C" please. Sorry for not prefxing it correctly!
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAKrPYACgkQFA3kzBSg
+KbbOqQ/3Yt6/Lf6mCTAHc3vy13bjaywtdXkwnhbs7xqTM4lppPOs8VHKyvj1vY86
+kDQxUN2/qRThm4KC8uEqeY4Mfh5bCIeGDm7/dsh8rlJ66uxVRYKpAm85DgSFnAmh
+pZK5Tu0QFpmmF7iIcf7vs/FxllT252pSK0sq4dMdqRWKKyfaRMrhmORZikSYIqBq
+hMS2TCL5efpGjyevAlLhx/DxsBtBYzPoPNlqICOCCDjeZsIDI/JXRHPZtgLAN68j
+Hup4vlCKBtd0+EzqBloW0fxz+bB8xQZ5XF3QON765/kNTzpO/xFjsRtwANGhexea
+EnbzN8FPxcigEYVhU3wDLfHANSMGSh7QkBRq704yvBJzUaxkaeC/ceV2P4+DYL1B
+Uw9pKnOSOc/NZK44wEaGFj5bF/LC8RS3RT3G4BHtwvUkhqDF+Z8S0OGnPhbNTlfF
+87sr5/b/WBb2dyGRg3X220SsfHGM3+89XT2Vr14hWcVg/St6N3tGsi3GM8XQjHhp
+225DNRcMYGfAJp3oYMqdGuKvRbBIQyhnHrLj4ONyTVgV4DpZGOAlcTsAGPMWi8KN
+L2RaPfvZSv2/r7+lcZ3c21CJLF6EolahEVtZCPipWdqEZJsWjb8yEht7jvjOlaeT
+bBzak0TcG2SfMdoaYl/lu/rIVlXorqWX9alJ0BmpZ7LB4D7/Aw==
+=RG62
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
