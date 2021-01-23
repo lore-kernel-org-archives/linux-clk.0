@@ -2,185 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5B2C4332E
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 17:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E3FC433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Jan 2021 04:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B56023A6A
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jan 2021 17:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A86233EA
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Jan 2021 04:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbhAVRbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jan 2021 12:31:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41102 "EHLO
+        id S1726602AbhAWEII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jan 2021 23:08:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729290AbhAVPt2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 10:49:28 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 453A5C061794
-        for <linux-clk@vger.kernel.org>; Fri, 22 Jan 2021 07:48:37 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id g1so7088449edu.4
-        for <linux-clk@vger.kernel.org>; Fri, 22 Jan 2021 07:48:37 -0800 (PST)
+        with ESMTP id S1726578AbhAWEIF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jan 2021 23:08:05 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50709C06174A
+        for <linux-clk@vger.kernel.org>; Fri, 22 Jan 2021 20:07:25 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id p15so5035068pjv.3
+        for <linux-clk@vger.kernel.org>; Fri, 22 Jan 2021 20:07:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3eAbnY6xA/gRZJxfscCuC7XOiulmOFHNvPNXAXuxGa8=;
-        b=goHCeJXW4a9N8IFJcoZ3YyUmIOymCqSCz//9nfnjcAad8iVVpKl8L+p1eHdtH3/4Be
-         WE5acK0za0ULdzyvCDmSrgwR8uL9N/1MC5ihXsQuvhE94HnPA/kilQeKD1nR8qVt0Syz
-         XBIShATeB/BwyBzl59hjU62kpr5oDMX0bLk6OP26jYvz+oJHEu5LAX9PHSHOzKEIi5ir
-         lBhsN+clgveRvAzPaH0GDddOcUnLeMar3q0FiwK2Acso5SjfLbzwpbNBIVRg1mczQJ5D
-         e0UNRZa5vNxbUkCQXFZ+ffqlvy1+1nIKlcfCrYST/hQ8YTA19B+TkCfcSUqhPIeFkgXo
-         sCrQ==
+        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dON7QD8aFGzRpIqb+Tlf1r6Mkw2jNplPmioEKOGnv+w=;
+        b=Rw1ZI0eE5M9j6Wu2p+jalzplqBljeDlYPfVBwOahxpaBB5wYkXEttwVWD9vhrBv99/
+         yIwC3T35XncJDrunRwdl2HwHrw2WjRKcqo7SsDrCXKZBPYSAaxaCzzWS91f/ActX0NtT
+         skJecV3FGXmtOxXncyqeuKExn3/EfZpDU7GC6pHh159DhbPwp+5InkgmPAE89rjALTpk
+         lftXpde6VUuwUoL19aHw7iiS2LBXCPn9XQ6jluQo6IxUI8YFNySfMjoKxszZnZe/3/JV
+         7X77NyslJ/STxNQQMPGox6P3jTUtBePV+38/id0UMd95BhNZeE10omUt2qzogdS6WIHd
+         7VSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3eAbnY6xA/gRZJxfscCuC7XOiulmOFHNvPNXAXuxGa8=;
-        b=XvTx2I1J7UtXaSggQOQiRdmo+gNQmY9fwgYSQYbNdM6f+2i7slweOdVk7KFxFcwTxS
-         6FZptLQi9iynv0aadsTmfMJx+1z8Er1Q+Q94mxvebcQnDebo32e1BeYHYCwzZ8SiukfJ
-         Ilkw8ewdPj0Y3w5LLy1DvzLtMZsRcMVqIGDzUFYlqkQt1yYFqx6Gb+MPCtauQOUliHTc
-         K5eeXzPGTLWgQ2p+KUvLJXQBS9PSHgWe9DFMIhgVTl6H5COEKZp/aiuC+d/jJT+PKkwt
-         8EfSfvEKyhk3iR773JBBo9mNMgdk0v1dY+xIWypGFVtOesQIta0iDcM2Dn45LRK69pLD
-         fgEw==
-X-Gm-Message-State: AOAM532fjDCZGnWGd9ivds3jF6ZrT8aSc+XJRk4tkXqy+lkoco7n8rmX
-        F5wnMxOtU7Gc0RJp+KJc1omQssSbhwrfhzWxTdQhrQ==
-X-Google-Smtp-Source: ABdhPJykC69CR2e+nr62M52Lok+oDvN8mv4SexJ6FQnttTJp8cflAQ6JhBcpXQnK9m/0xOawZJBKRZ6CQ10FIqrURB4=
-X-Received: by 2002:a05:6402:60a:: with SMTP id n10mr3607422edv.230.1611330515907;
- Fri, 22 Jan 2021 07:48:35 -0800 (PST)
-MIME-Version: 1.0
-References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
- <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com>
- <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com>
- <CA+G9fYvh0iSyEDQs7+0CX82FLPDCg5UmAt+1JuPsndmfmYF3kw@mail.gmail.com>
- <CAJZ5v0hFjpGp2GbV1Evi+BbUF7Am4ETY4Cm8VzTrvTJ=7=oyPQ@mail.gmail.com>
- <84r6s34s-opq7-9358-o45n-27s17084012@onlyvoer.pbz> <CAJZ5v0jUxonxp0q80Kdcbax+WMmh-NZ_h=KQG-HcfFdE1hr4VA@mail.gmail.com>
- <CAJZ5v0hj4VC_kjB5e_b_ho=ET_quG5zUh0Dbbdwofp-6azopsw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hj4VC_kjB5e_b_ho=ET_quG5zUh0Dbbdwofp-6azopsw@mail.gmail.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 22 Jan 2021 21:18:23 +0530
-Message-ID: <CA+G9fYsRVxWPW1nvSXMTLWfEadrdBDSH5hRPtoUYpfpqq8zRSw@mail.gmail.com>
-Subject: Re: [PATCH v2] PM / clk: make PM clock layer compatible with clocks
- that must sleep
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Nicolas Pitre <npitre@baylibre.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=dON7QD8aFGzRpIqb+Tlf1r6Mkw2jNplPmioEKOGnv+w=;
+        b=pQgcfNOjOP7xozfn6pqE6ZY5PWbHvTYOw2hFLeGqrOn7SXvFr3XHCz7kKdv6ixNFsN
+         F++KVZXZs0MwBK3BNtvUSmsPmO+bIR5n9xnirDckAivPyYI6kTPGCmnyTQ8gxO9m2rlv
+         28pYzmD7zK2Oyo3xZ5WON+DuD8Bhu8pAgr+sn3drY8J7TNa4YySZ/B1JQJ9xf9w9Kabj
+         +/0ISzMK+SD0uvMpg921PZw+X4mYx1XGArexlRJJWm2JwHuS8TzMJlbq+GYNQC97fuOy
+         MGWfMvdL3FQMHt36cERavY8jGSy1DLyE3C3G9T2PiRzKUDiSQ30AyZp/S1hCVO+ECwHl
+         x4JA==
+X-Gm-Message-State: AOAM532UcWR1UB4X0SQKEc+vM96d/PEgITBQQreqJ+vLjU9rmeE0PGm1
+        wDu8DeqPgA4ID1Wh1hPl1htBqQ==
+X-Google-Smtp-Source: ABdhPJzoaq2GQ8/QrNb0hZ0MH2zHECgO2n9hmVITWznWNeyg/UbEI/YhJ4oBApmjOOBA0QcOzAk6LA==
+X-Received: by 2002:a17:902:e84e:b029:de:45bf:1296 with SMTP id t14-20020a170902e84eb02900de45bf1296mr2260599plg.49.1611374844612;
+        Fri, 22 Jan 2021 20:07:24 -0800 (PST)
+Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
+        by smtp.gmail.com with ESMTPSA id 101sm10640260pjo.38.2021.01.22.20.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jan 2021 20:07:23 -0800 (PST)
+Date:   Fri, 22 Jan 2021 20:07:23 -0800 (PST)
+X-Google-Original-Date: Fri, 22 Jan 2021 19:58:36 PST (-0800)
+Subject:     Re: [PATCH 06/20] clk: sifive: fu540-prci: Declare static const variable 'prci_clk_fu540' where it's used
+In-Reply-To: <20210120093040.1719407-7-lee.jones@linaro.org>
+CC:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Pragnesh.patel@sifive.com, zong.li@sifive.com,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     lee.jones@linaro.org
+Message-ID: <mhng-d13d3ca6-2ec1-4c56-a4a8-56faafe5569c@palmerdabbelt-glaptop>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 22 Jan 2021 at 20:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Wed, 20 Jan 2021 01:30:26 PST (-0800), lee.jones@linaro.org wrote:
+> Fixes the following W=1 kernel build warning(s):
 >
-> On Thu, Jan 21, 2021 at 8:01 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Thu, Jan 21, 2021 at 6:23 PM Nicolas Pitre <npitre@baylibre.com> wrote:
-> > >
-> > > The clock API splits its interface into sleepable ant atomic contexts:
-> > >
-> > > - clk_prepare/clk_unprepare for stuff that might sleep
-> > >
-> > > - clk_enable_clk_disable for anything that may be done in atomic context
-> > >
-> > > The code handling runtime PM for clocks only calls clk_disable() on
-> > > suspend requests, and clk_enable on resume requests. This means that
-> > > runtime PM with clock providers that only have the prepare/unprepare
-> > > methods implemented is basically useless.
-> > >
-> > > Many clock implementations can't accommodate atomic contexts. This is
-> > > often the case when communication with the clock happens through another
-> > > subsystem like I2C or SCMI.
-> > >
-> > > Let's make the clock PM code useful with such clocks by safely invoking
-> > > clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
-> > > such clocks are registered with the PM layer then pm_runtime_irq_safe()
-> > > can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
-> > > may be invoked in atomic context.
-> > >
-> > > For clocks that do implement the enable and disable methods then
-> > > everything just works as before.
-> > >
-> > > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-> > >
-> > > ---
-> > >
-> > > On Thu, 21 Jan 2021, Rafael J. Wysocki wrote:
-> > >
-> > > > So I'm going to drop this patch from linux-next until the issue is
-> > > > resolved, thanks!
-> > >
-> > > Here's the fixed version.
-> >
-> > Applied instead of the v1, thanks!
-> >
-> > > Changes from v1:
-> > >
-> > > - Moved clk_is_enabled_when_prepared() declaration under
-> > >   CONFIG_HAVE_CLK_PREPARE and provided a dummy definition when that
-> > >   config option is unset.
-> > >
-> > > diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> > > index ced6863a16..a62fb0f9b1 100644
-> > > --- a/drivers/base/power/clock_ops.c
-> > > +++ b/drivers/base/power/clock_ops.c
-> > > @@ -23,6 +23,7 @@
-> > >  enum pce_status {
-> > >         PCE_STATUS_NONE = 0,
-> > >         PCE_STATUS_ACQUIRED,
-> > > +       PCE_STATUS_PREPARED,
-> > >         PCE_STATUS_ENABLED,
-> > >         PCE_STATUS_ERROR,
-> > >  };
-> > > @@ -32,8 +33,102 @@ struct pm_clock_entry {
-> > >         char *con_id;
-> > >         struct clk *clk;
-> > >         enum pce_status status;
-> > > +       bool enabled_when_prepared;
-> > >  };
-> > >
-> > > +/**
-> > > + * pm_clk_list_lock - ensure exclusive access for modifying the PM clock
-> > > + *                   entry list.
-> > > + * @psd: pm_subsys_data instance corresponding to the PM clock entry list
-> > > + *      and clk_op_might_sleep count to be modified.
-> > > + *
-> > > + * Get exclusive access before modifying the PM clock entry list and the
-> > > + * clock_op_might_sleep count to guard against concurrent modifications.
-> > > + * This also protects against a concurrent clock_op_might_sleep and PM clock
-> > > + * entry list usage in pm_clk_suspend()/pm_clk_resume() that may or may not
-> > > + * happen in atomic context, hence both the mutex and the spinlock must be
-> > > + * taken here.
-> > > + */
-> > > +static void pm_clk_list_lock(struct pm_subsys_data *psd)
-> > > +{
-> > > +       mutex_lock(&psd->clock_mutex);
-> > > +       spin_lock_irq(&psd->lock);
-> > > +}
-> > > +
-> > > +/**
-> > > + * pm_clk_list_unlock - counterpart to pm_clk_list_lock().
-> > > + * @psd: the same pm_subsys_data instance previously passed to
-> > > + *      pm_clk_list_lock().
-> > > + */
-> > > +static void pm_clk_list_unlock(struct pm_subsys_data *psd)
+>  drivers/clk/sifive/fu540-prci.h:16:35: warning: ‘prci_clk_fu540’ defined but not used [-Wunused-const-variable=]
+>  drivers/clk/sifive/fu540-prci.h:16:35: warning: ‘prci_clk_fu540’ defined but not used [-Wunused-const-variable=]
 >
-> Locking annotations for sparse were missing here and above, so I've
-> added them by hand.
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Pragnesh Patel <Pragnesh.patel@sifive.com>
+> Cc: Zong Li <zong.li@sifive.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/clk/sifive/fu540-prci.h  | 5 -----
+>  drivers/clk/sifive/sifive-prci.c | 5 +++++
+>  2 files changed, 5 insertions(+), 5 deletions(-)
 >
-> Please double check the result in my linux-next branch (just pushed).
+> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+> index c8271efa7bdc7..c220677dc0108 100644
+> --- a/drivers/clk/sifive/fu540-prci.h
+> +++ b/drivers/clk/sifive/fu540-prci.h
+> @@ -13,9 +13,4 @@
+>
+>  extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
+>
+> -static const struct prci_clk_desc prci_clk_fu540 = {
+> -	.clks = __prci_init_clocks_fu540,
+> -	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
+> -};
+> -
+>  #endif /* __SIFIVE_CLK_FU540_PRCI_H */
+> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+> index c78b042750e21..1490b01ce6290 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -12,6 +12,11 @@
+>  #include "fu540-prci.h"
+>  #include "fu740-prci.h"
+>
+> +static const struct prci_clk_desc prci_clk_fu540 = {
+> +	.clks = __prci_init_clocks_fu540,
+> +	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
+> +};
+> +
+>  /*
+>   * Private functions
+>   */
 
-May i request to add Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+This doesn't look like my sifive-prci.c, so I'm assuming it's against one of
+the clock trees and therefor should go in over there.
 
-- Naresh
+Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+
+Thanks!
