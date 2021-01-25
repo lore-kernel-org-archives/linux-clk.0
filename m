@@ -2,127 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447C1C433E6
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 23:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 701FFC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 02:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 047B9225AB
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 23:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33DDD22AAA
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 02:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732442AbhAYX5q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jan 2021 18:57:46 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:34260 "EHLO gloria.sntech.de"
+        id S1729155AbhAYP4c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jan 2021 10:56:32 -0500
+Received: from foss.arm.com ([217.140.110.172]:49886 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732068AbhAYX5l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Jan 2021 18:57:41 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1l4Bih-00066j-UM; Tue, 26 Jan 2021 00:56:31 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Tero Kristo <kristo@kernel.org>,
-        Xing Zheng <zhengxing@rock-chips.com>,
-        linux-clk@vger.kernel.org,
-        Pragnesh Patel <Pragnesh.patel@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Stephen Gallimore <stephen.gallimore@st.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Dinh Nguyen <dinguyen@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-rockchip@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Zong Li <zong.li@sifive.com>,
-        Kees Cook <keescook@chromium.org>,
-        Pankaj Dev <pankaj.dev@st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Omri Itach <omrii@marvell.com>,
+        id S1730605AbhAYPxm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Jan 2021 10:53:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B489116F3;
+        Mon, 25 Jan 2021 07:18:58 -0800 (PST)
+Received: from localhost.localdomain (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26FF63F68F;
+        Mon, 25 Jan 2021 07:18:56 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Samuel Holland <samuel@sholland.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        Shuosheng Huang <huangshuosheng@allwinnertech.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-riscv@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Thomas Abraham <thomas.ab@samsung.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-omap@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-Subject: Re: (subset) [PATCH 00/20] Rid W=1 warnings from Clock
-Date:   Tue, 26 Jan 2021 00:56:22 +0100
-Message-Id: <161161878917.2050283.12124477211963150680.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210120093040.1719407-1-lee.jones@linaro.org>
-References: <20210120093040.1719407-1-lee.jones@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v4 02/21] clk: sunxi-ng: Add support for the Allwinner H616 R-CCU
+Date:   Mon, 25 Jan 2021 15:17:52 +0000
+Message-Id: <20210125151811.11871-3-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20210125151811.11871-1-andre.przywara@arm.com>
+References: <20210125151811.11871-1-andre.przywara@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 20 Jan 2021 09:30:20 +0000, Lee Jones wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
-> 
-> We should have these nailed in ~2 patchsets.
-> 
-> Lee Jones (20):
->   clk: rockchip: clk: Demote non-conformant kernel-doc headers
->   clk: rockchip: clk-cpu: Remove unused/undocumented struct members
->   clk: rockchip: clk-pll: Demote kernel-doc abuses to standard comment
->     blocks
->   clk: rockchip: clk-half-divider: Demote non-conformant kernel-doc
->     header
->   clk: bcm: clk-iproc-pll: Demote kernel-doc abuse
->   clk: sifive: fu540-prci: Declare static const variable
->     'prci_clk_fu540' where it's used
->   clk: socfpga: clk-pll: Remove unused variable 'rc'
->   clk: socfpga: clk-pll-a10: Remove set but unused variable 'rc'
->   clk: mvebu: ap-cpu-clk: Demote non-conformant kernel-doc header
->   clk: imx: clk-imx31: Remove unused static const table 'uart_clks'
->   clk: st: clkgen-pll: Demote unpopulated kernel-doc header
->   clk: st: clkgen-fsyn: Fix worthy struct documentation demote partially
->     filled one
->   clk: ti: clockdomain: Fix description for 'omap2_init_clk_clkdm's hw
->     param
->   clk: sunxi: clk-sunxi: Demote a bunch of non-conformant kernel-doc
->     headers
->   clk: ti: dpll: Fix misnaming of '_register_dpll()'s 'user' parameter
->   clk: ti: gate: Fix possible doc-rot in
->     'omap36xx_gate_clk_enable_with_hsdiv_restore'
->   clk: sunxi: clk-a10-ve: Demote obvious kernel-doc abuse
->   clk: sunxi: clk-mod0: Demote non-conformant kernel-doc header
->   clk: versatile: clk-icst: Fix worthy struct documentation block
->   clk: zynq: clkc: Remove various instances of an unused variable 'clk'
-> 
-> [...]
+The clocks itself are identical to the H6 R-CCU, it's just that the H616
+has not all of them implemented (or connected).
 
-Applied, thanks!
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+---
+ drivers/clk/sunxi-ng/Kconfig           |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 48 ++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
 
-[01/20] clk: rockchip: clk: Demote non-conformant kernel-doc headers
-        commit: 415173712003ad7e54de7198979d68a428440ed6
-[02/20] clk: rockchip: clk-cpu: Remove unused/undocumented struct members
-        commit: 274ae6da4b3275fea32f0807e6e20715695dd210
-[03/20] clk: rockchip: clk-pll: Demote kernel-doc abuses to standard comment blocks
-        commit: eee7b95589e61bd7250cada52ddd8039c63535ef
-[04/20] clk: rockchip: clk-half-divider: Demote non-conformant kernel-doc header
-        commit: d48fbef962b095f7cc22017642fb9055d57fdb53
-
-Best regards,
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index ce5f5847d5d3..feeb8d2074ee 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -33,7 +33,7 @@ config SUN50I_H6_CCU
+ 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 
+ config SUN50I_H6_R_CCU
+-	bool "Support for the Allwinner H6 PRCM CCU"
++	bool "Support for the Allwinner H6 and H616 PRCM CCU"
+ 	default ARM64 && ARCH_SUNXI
+ 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index 56e351b513f3..f8909a7ed553 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -139,6 +139,16 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
+ 	&w1_clk.common,
+ };
+ 
++static struct ccu_common *sun50i_h616_r_ccu_clks[] = {
++	&r_apb1_clk.common,
++	&r_apb2_clk.common,
++	&r_apb1_twd_clk.common,
++	&r_apb2_i2c_clk.common,
++	&r_apb2_rsb_clk.common,
++	&r_apb1_ir_clk.common,
++	&ir_clk.common,
++};
++
+ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
+ 	.hws	= {
+ 		[CLK_AR100]		= &ar100_clk.common.hw,
+@@ -159,6 +169,20 @@ static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
++static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
++	.hws	= {
++		[CLK_R_AHB]		= &r_ahb_clk.hw,
++		[CLK_R_APB1]		= &r_apb1_clk.common.hw,
++		[CLK_R_APB2]		= &r_apb2_clk.common.hw,
++		[CLK_R_APB1_TWD]	= &r_apb1_twd_clk.common.hw,
++		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
++		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
++		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
++		[CLK_IR]		= &ir_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
++
+ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+ 	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
+ 	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
+@@ -170,6 +194,13 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+ 	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
+ };
+ 
++static struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
++	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
++	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
++	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
++	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
++};
++
+ static const struct sunxi_ccu_desc sun50i_h6_r_ccu_desc = {
+ 	.ccu_clks	= sun50i_h6_r_ccu_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_r_ccu_clks),
+@@ -180,6 +211,16 @@ static const struct sunxi_ccu_desc sun50i_h6_r_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_h6_r_ccu_resets),
+ };
+ 
++static const struct sunxi_ccu_desc sun50i_h616_r_ccu_desc = {
++	.ccu_clks	= sun50i_h616_r_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun50i_h616_r_ccu_clks),
++
++	.hw_clks	= &sun50i_h616_r_hw_clks,
++
++	.resets		= sun50i_h616_r_ccu_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_h616_r_ccu_resets),
++};
++
+ static void __init sunxi_r_ccu_init(struct device_node *node,
+ 				    const struct sunxi_ccu_desc *desc)
+ {
+@@ -200,3 +241,10 @@ static void __init sun50i_h6_r_ccu_setup(struct device_node *node)
+ }
+ CLK_OF_DECLARE(sun50i_h6_r_ccu, "allwinner,sun50i-h6-r-ccu",
+ 	       sun50i_h6_r_ccu_setup);
++
++static void __init sun50i_h616_r_ccu_setup(struct device_node *node)
++{
++	sunxi_r_ccu_init(node, &sun50i_h616_r_ccu_desc);
++}
++CLK_OF_DECLARE(sun50i_h616_r_ccu, "allwinner,sun50i-h616-r-ccu",
++	       sun50i_h616_r_ccu_setup);
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.17.5
+
