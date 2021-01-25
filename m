@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B147C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 17:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24C7C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 17:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 035BF22B3F
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 17:31:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE38522B3F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 17:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbhAYRaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jan 2021 12:30:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52578 "EHLO
+        id S1731130AbhAYRqI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jan 2021 12:46:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730862AbhAYRPZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 12:15:25 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C4CC06178B
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 09:14:44 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id w124so15532186oia.6
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 09:14:44 -0800 (PST)
+        with ESMTP id S1730492AbhAYROT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 12:14:19 -0500
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B4DC06174A
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 09:13:37 -0800 (PST)
+Received: by mail-oi1-x22c.google.com with SMTP id h192so15560965oib.1
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 09:13:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=rkROO57uKmnnVbP7K6y85+srohQ8Aw0WBhKWTRvOvuk=;
-        b=qgTYaOuVerpQyuW7/OT7xgdxL/eIy9BR0U7tKWpiGaesQ856FT/YQXBEd0OLn2MwuX
-         Yb8HW0gE+QCWRBjAYIoePlDKPITP3O8q/WWPiEYK6ecNWLCovrMyXFV5yRHE9MdVQPl3
-         CFiDxFx2kWfJzQgmkn7G+HjnGfQUgSzzAuLM9eqAiBFM+BgnM3osOyKnHiiRMa1loP9d
-         yge8S5E3okSsZUh+SXCNPDDutt+uvAitg86zRzNyT66g6SIeGMWfPzQ7sjhVkXyfeXCE
-         D4EU1frNjuc+CrTpUckeZgwvaVWUnq8OJoY/3UyRS3zv/hsyz0tfMg6h4T4NQMS7vhgR
-         L86A==
+        bh=/I3oxK4amWeY6JM4WB4hq97bbAQje0bKtzkLMEKFCM0=;
+        b=dIaqdQaule2cx9LNlLLl50ARGJBLDuPdOExdVL4U1RE3BZA1xYHUP6R7lYMsLonzWF
+         afyExQRqwODpYNJRYUv/xWEnI+Bt4M2sBJplPIO74Rv0UZQFY/sq4PRRXUsxwnyb5VoU
+         tl7DENuM3t8UR0b0MfUuhLo9cUCNEQ7cfeZo8wwYK+Ifc2fX9O1vFpuIDgzyM/i6KvRm
+         Av/TydVeMMVbMwBQjP8GBf7UHHzRphyjlT3SyPiwofLtB08x7ys+L17BiOJdCjPb7oET
+         KzzT0KLKDMW//KUbcM799OKEepqFF6Do+99oavPYOFbLQQ4dN3DWhuZSTUQ99+4WzqqW
+         wm6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=rkROO57uKmnnVbP7K6y85+srohQ8Aw0WBhKWTRvOvuk=;
-        b=Fyb7as5i2k+l0Qzybg0FPg2VeevbcLhz+YGBbIekTAbLkpjNq2BScfF1CPJwu7W57j
-         97OxV/ED+QHif0h58cxIE7wnWNWSRvA5tQVDd2vTFp7g8VJ1eiEzeU54mcrn1Xw5J6sn
-         92Ph1/3PWJSPpc6C+8co9Bs7AVunh6fDtg4fDAxebgwFGNv+CplFo/UZ/vf5TqASs/q9
-         wGSfkhKIXZHINaXAgwOd+IVtpkftyRYUp2GencRpXdfhXeqIioh62O4f644rM5t/jOkJ
-         FXle3eAf01a2SWaYySV7Cnjv7IjZXlwhsp/msiqeZMH8AUFj3UCElIPRHF0OYA+IqtdS
-         +1yQ==
-X-Gm-Message-State: AOAM531ea38KhDPlw28RCFb7dsz6qZ1xmwrZiqmjL3EJfyYz0Zsp7do/
-        WquVHSXPUkCY+QEHTi+YptY9kA==
-X-Google-Smtp-Source: ABdhPJw13+EEDGOa7bk2nm+Fm+WInSkBPXZIdTqkY0j7a39sHq56ZNWSCPmD3OUyb1YIo3KdyHVRhw==
-X-Received: by 2002:aca:4c85:: with SMTP id z127mr755076oia.124.1611594884125;
-        Mon, 25 Jan 2021 09:14:44 -0800 (PST)
+        bh=/I3oxK4amWeY6JM4WB4hq97bbAQje0bKtzkLMEKFCM0=;
+        b=XuulzbQQhY1OjoT9IPuWUamsgLlpSh0mwpG2xxbuaFYaTCX2551Y/Ge/Q/Pt8dE5M7
+         ii8VteuJLgrEnhqhWqXJOQXGyAjGngGt1wsm9uuTI3Vz119rMtkqEqCeQx0bu/ZfFnIg
+         hl7xYKgelYeq8Vw2wLMITjQU4vTTdPK24lSGB9lkN9tVlhpPzqcP1JGDT5SvODrD56RH
+         cYpe8ws2rXjH/x/AZqe9KFBFPZcawO6MMomnYp4Aq0QEnlb4iPfQfiWrqNu5D6p/y74q
+         iUyscBK0Y59eIG5z0HlA8XhZuRWUcm8K6JIZNoKQGus7VAgx+VvX6E3w51eWyiELzgnw
+         RfEQ==
+X-Gm-Message-State: AOAM530W7uJURt0IzToxH5KXw+zrvRwSd4kvR6/qbX0HXkA3U/rwK8Gu
+        OtqQssT9DP6R5CmLXtPGagT1mg==
+X-Google-Smtp-Source: ABdhPJwWHHl92I1orCm3swRqt//ofsW/9z3B+zRrv1KNBe58xYdZqc01bzkh7ZocorwUb6+00aFgsg==
+X-Received: by 2002:aca:afd7:: with SMTP id y206mr744441oie.51.1611594816845;
+        Mon, 25 Jan 2021 09:13:36 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id g13sm3540748otl.60.2021.01.25.09.14.43
+        by smtp.gmail.com with ESMTPSA id 66sm2687017otw.75.2021.01.25.09.13.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 09:14:43 -0800 (PST)
-Date:   Mon, 25 Jan 2021 11:14:40 -0600
+        Mon, 25 Jan 2021 09:13:36 -0800 (PST)
+Date:   Mon, 25 Jan 2021 11:13:34 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
@@ -67,24 +67,22 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         <angelogioacchino.delregno@somainline.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] clk: qcom: clk-alpha-pll: modularize
- alpha_pll_trion_set_rate()
-Message-ID: <YA78gO7xEoZSb+Wy@builder.lan>
+Subject: Re: [PATCH v4 1/5] clk: qcom: clk-alpha-pll: replace regval with val
+Message-ID: <YA78PvE4hDLc2Lo9@builder.lan>
 References: <20210118044321.2571775-1-vkoul@kernel.org>
- <20210118044321.2571775-3-vkoul@kernel.org>
+ <20210118044321.2571775-2-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210118044321.2571775-3-vkoul@kernel.org>
+In-Reply-To: <20210118044321.2571775-2-vkoul@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sun 17 Jan 22:43 CST 2021, Vinod Koul wrote:
 
-> Trion 5LPE set rate uses code similar to alpha_pll_trion_set_rate() but
-> with different registers. Modularize these by moving out latch and latch
-> ack bits so that we can reuse the function.
+> Driver uses regval variable for holding register values, replace with a
+> shorter one val
 > 
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -92,66 +90,72 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Regards,
 Bjorn
 
-> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
->  drivers/clk/qcom/clk-alpha-pll.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+>  drivers/clk/qcom/clk-alpha-pll.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index f7721088494c..a30ea7b09224 100644
+> index 21c357c26ec4..f7721088494c 100644
 > --- a/drivers/clk/qcom/clk-alpha-pll.c
 > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -1471,8 +1471,8 @@ static int alpha_pll_lucid_prepare(struct clk_hw *hw)
->  	return __alpha_pll_trion_prepare(hw, LUCID_PCAL_DONE);
+> @@ -777,15 +777,15 @@ static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
+>  static int trion_pll_is_enabled(struct clk_alpha_pll *pll,
+>  				struct regmap *regmap)
+>  {
+> -	u32 mode_regval, opmode_regval;
+> +	u32 mode_val, opmode_val;
+>  	int ret;
+>  
+> -	ret = regmap_read(regmap, PLL_MODE(pll), &mode_regval);
+> -	ret |= regmap_read(regmap, PLL_OPMODE(pll), &opmode_regval);
+> +	ret = regmap_read(regmap, PLL_MODE(pll), &mode_val);
+> +	ret |= regmap_read(regmap, PLL_OPMODE(pll), &opmode_val);
+>  	if (ret)
+>  		return 0;
+>  
+> -	return ((opmode_regval & PLL_RUN) && (mode_regval & PLL_OUTCTRL));
+> +	return ((opmode_val & PLL_RUN) && (mode_val & PLL_OUTCTRL));
 >  }
 >  
-> -static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
-> -				    unsigned long prate)
-> +static int __alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long prate, u32 latch_bit, u32 latch_ack)
+>  static int clk_trion_pll_is_enabled(struct clk_hw *hw)
+> @@ -1445,12 +1445,12 @@ EXPORT_SYMBOL_GPL(clk_trion_pll_configure);
+>  static int __alpha_pll_trion_prepare(struct clk_hw *hw, u32 pcal_done)
+>  {
+>  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> -	u32 regval;
+> +	u32 val;
+>  	int ret;
+>  
+>  	/* Return early if calibration is not needed. */
+> -	regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &regval);
+> -	if (regval & pcal_done)
+> +	regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &val);
+> +	if (val & pcal_done)
+>  		return 0;
+>  
+>  	/* On/off to calibrate */
+> @@ -1476,7 +1476,7 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
 >  {
 >  	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
 >  	unsigned long rrate;
-> @@ -1490,22 +1490,20 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
->  	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> -	u32 regval, l, alpha_width = pll_alpha_width(pll);
+> +	u32 val, l, alpha_width = pll_alpha_width(pll);
+>  	u64 a;
+>  	int ret;
 >  
->  	/* Latch the PLL input */
-> -	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-> -				 PLL_UPDATE, PLL_UPDATE);
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), latch_bit, latch_bit);
->  	if (ret)
->  		return ret;
+> @@ -1497,8 +1497,8 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
 >  
 >  	/* Wait for 2 reference cycles before checking the ACK bit. */
 >  	udelay(1);
->  	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
-> -	if (!(val & ALPHA_PLL_ACK_LATCH)) {
-> +	if (!(val & latch_ack)) {
+> -	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &regval);
+> -	if (!(regval & ALPHA_PLL_ACK_LATCH)) {
+> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> +	if (!(val & ALPHA_PLL_ACK_LATCH)) {
 >  		pr_err("Lucid PLL latch failed. Output may be unstable!\n");
 >  		return -EINVAL;
 >  	}
->  
->  	/* Return the latch input to 0 */
-> -	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-> -				 PLL_UPDATE, 0);
-> +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), latch_bit, 0);
->  	if (ret)
->  		return ret;
->  
-> @@ -1520,6 +1518,12 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
->  	return 0;
->  }
->  
-> +static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				    unsigned long prate)
-> +{
-> +	return __alpha_pll_trion_set_rate(hw, rate, prate, PLL_UPDATE, ALPHA_PLL_ACK_LATCH);
-> +}
-> +
->  const struct clk_ops clk_alpha_pll_trion_ops = {
->  	.prepare = alpha_pll_trion_prepare,
->  	.enable = clk_trion_pll_enable,
 > -- 
 > 2.26.2
 > 
