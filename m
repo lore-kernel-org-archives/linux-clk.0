@@ -2,465 +2,390 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 563B3C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E15C433DB
 	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 271F02220B
+	by mail.kernel.org (Postfix) with ESMTP id 445D8221FC
 	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730927AbhAZFgV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:36:21 -0500
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:40255 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729933AbhAYPg1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 10:36:27 -0500
-Received: by mail-oi1-f177.google.com with SMTP id p5so15130008oif.7;
-        Mon, 25 Jan 2021 07:34:31 -0800 (PST)
+        id S1729220AbhAZFgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:36:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729289AbhAYOLq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 09:11:46 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21644C06174A
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 06:10:49 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id o10so10502714wmc.1
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 06:10:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=zH0NEkG3AkFr4jGffOltirP3sm6e4qzdbWMUDm6pzLE=;
+        b=SRebwxQ7TFksC5IwMikzJ5HEz185i6km8QLqy2tzc21KOY3W+dnsTINsjvyumQSmG0
+         1QoGHJp+x3n3QwXEWYFCqsvWd0DqduPME/tlSPj20Z4++oqUQczekiSN7TKBZI5cuYjY
+         IX1ziQ4Ock3gmA2IOv8sS2v/0V/nz8w+f0qVH9mZlTROxDpWGCwfnRgQPslEKVD3Rbiw
+         f8jZFun5gdlTwzzuoW4ewllgKY6skqeU71ZUekohbSCxEa3f+LqLWCjjwSgB/IdR1gS3
+         MR2dVPZrRXaUVPLWXp/fesDG41ubLtiMBHtvEzTapz9FVU5L4KohQ1/xPocjQwQkPeEz
+         3k6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qBbmNURV0SzSgAA2gXwlstv90vMPi1N+gnPtfxuvFaA=;
-        b=g8q0SlslsWxheOzYHHSTpJN0xMXf0pK9Wua1wWChMJiMHkddETFWOJ8gj7CkVjHzN7
-         /SoazFMnZBw//QxeInMbpsIjAzK311+s7xW4BW3LerN2z8maHJh8pEf9+9zi5Zyrb+Wp
-         LoH3iUKUGSy/Iib7emY2NVxLsEXw46hYxUDtj7+wrMHmL6X2TJ5YrvtjweU5bjiqTgG5
-         dGgCIlxAgT659UU/ckurvLEFwznoASqh1tymn4OYFwQxTlNcdVg2WTvqIQOcfXc008R/
-         a2v+C4RaGoKdugrBhCxK/SmulENn7ZsTSMpbUTDW7IDQCNNAvo7gbrRBHpeiBVxBwh3z
-         /DyA==
-X-Gm-Message-State: AOAM5318Wkbkxelmbtvq2H04kfmqE8Mw4+3EJUMrhkF2Rt30/UQuHNhM
-        wHgXZkHLpV+MZWtrOuStnAxigaZpZQ==
-X-Google-Smtp-Source: ABdhPJyTZvSQswq59TsmpY1YeHCkm2gJXLeQpFRuR0Kc9e8Qt7reUkrjY1w0RBKCXX0TFC2tgkGRhA==
-X-Received: by 2002:aca:d504:: with SMTP id m4mr460011oig.158.1611588085320;
-        Mon, 25 Jan 2021 07:21:25 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m7sm3525492otq.33.2021.01.25.07.21.23
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zH0NEkG3AkFr4jGffOltirP3sm6e4qzdbWMUDm6pzLE=;
+        b=kDHSFF5xKEJRXuRW4yKcT3uf4/52IfU5mnirWs+48PU/qsNS3/KNeIJf4Z+p3+ZUzf
+         B0rzL25EP8zfL38O4/PKAMwaO1cnWhm2DaU/XnLgspNquxgDrx4xqoPm1JDJy/54ef6O
+         J+qNz1tNl+hhuoJy3gDSE3BGSQpezm5BVFOrEP9YuUrevSL8a4+PdYlIRhxSK1YzwjtD
+         lbqZXdSiLyMbiUR/zKeNPFFTPZwhdhatnku9bIzTXMdK5J6gzCbZtL24mK+HyxEGoV/k
+         8Js6uVn2GMDap65/wFPb5G8R4rXforigCMkNxKiDXYL0uscIQT1lRm8rfCSWvg24GKXh
+         Q6ZQ==
+X-Gm-Message-State: AOAM531ydrQxA3y+0Z2s+jsft/iDePhnIidwcVV7VPaZCmBtcWugV7hx
+        0OPX89Mr6sbWQWGFQESbQGiFsA==
+X-Google-Smtp-Source: ABdhPJwDKlHKaDAHOAQGGiwPTDUBPbAjrqMLjsiY/cakhRnPFVmktcVug0+lIuO6y9u8Wgnv9logFQ==
+X-Received: by 2002:a1c:e255:: with SMTP id z82mr340638wmg.60.1611583847665;
+        Mon, 25 Jan 2021 06:10:47 -0800 (PST)
+Received: from dell ([91.110.221.194])
+        by smtp.gmail.com with ESMTPSA id c18sm41394036wmk.0.2021.01.25.06.10.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 07:21:23 -0800 (PST)
-Received: (nullmailer pid 381099 invoked by uid 1000);
-        Mon, 25 Jan 2021 15:21:22 -0000
-Date:   Mon, 25 Jan 2021 09:21:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     alexandru.tachici@analog.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, petre.minciunescu@analog.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: ad9545: Add documentation
-Message-ID: <20210125152122.GA348771@robh.at.kernel.org>
-References: <20210124221304.51007-1-alexandru.tachici@analog.com>
- <20210124221304.51007-3-alexandru.tachici@analog.com>
+        Mon, 25 Jan 2021 06:10:46 -0800 (PST)
+Date:   Mon, 25 Jan 2021 14:10:44 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 09/17] mfd: Support for ROHM BD71815 PMIC core
+Message-ID: <20210125141044.GZ4903@dell>
+References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+ <14480ca837005aecd7053202c2347e36ad29faee.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210124221304.51007-3-alexandru.tachici@analog.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14480ca837005aecd7053202c2347e36ad29faee.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 12:13:04AM +0200, alexandru.tachici@analog.com wrote:
-> From: Alexandru Tachici <alexandru.tachici@analog.com>
+On Tue, 19 Jan 2021, Matti Vaittinen wrote:
+
+> Add core support for ROHM BD71815 Power Management IC.
 > 
-> Add dt bindings for ad9545.
-
-This is kind of verbose just for a clock chip...
-
-Maybe some of the configuration should be encoded into the clock cells 
-at least where the config is determined by the consumer of a clock.
-
-> Signed-off-by: Alexandru Tachici <alexandru.tachici@analog.com>
+> The IC integrates regulators, a battery charger with a coulomb counter,
+> a real-time clock (RTC), clock gate and general-purpose outputs (GPO).
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > ---
->  .../devicetree/bindings/clock/clk-ad9545.yaml | 352 ++++++++++++++++++
->  1 file changed, 352 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/clk-ad9545.yaml
+> Changes since v1:
+>   - Used BIT() for better readability
+>   - removed some unused definitions
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/clk-ad9545.yaml b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
+>  drivers/mfd/Kconfig              |  15 +-
+>  drivers/mfd/rohm-bd71828.c       | 416 +++++++++++++++++++++--
+>  include/linux/mfd/rohm-bd71815.h | 561 +++++++++++++++++++++++++++++++
+>  include/linux/mfd/rohm-bd71828.h |   3 +
+>  4 files changed, 952 insertions(+), 43 deletions(-)
+>  create mode 100644 include/linux/mfd/rohm-bd71815.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index bdfce7b15621..59bfacb91898 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1984,19 +1984,20 @@ config MFD_ROHM_BD70528
+>  	  charger.
+>  
+>  config MFD_ROHM_BD71828
+> -	tristate "ROHM BD71828 Power Management IC"
+> +	tristate "ROHM BD71828 and BD71815 Power Management IC"
+>  	depends on I2C=y
+>  	depends on OF
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
+>  	select MFD_CORE
+>  	help
+> -	  Select this option to get support for the ROHM BD71828 Power
+> -	  Management IC. BD71828GW is a single-chip power management IC for
+> -	  battery-powered portable devices. The IC integrates 7 buck
+> -	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
+> -	  Also included is a Coulomb counter, a real-time clock (RTC), and
+> -	  a 32.768 kHz clock gate.
+> +	  Select this option to get support for the ROHM BD71828 and BD71815
+> +	  Power Management ICs. BD71828GW and BD71815AGW are single-chip power
+> +	  management ICs mainly for battery-powered portable devices.
+> +	  The BD71828 integrates 7 buck converters and 7 LDOs. The BD71815
+> +	  has 5 bucks, 7 LDOs, and a boost for driving LEDs. Both ICs provide
+> +	  also a single-cell linear charger, a Coulomb counter, a real-time
+> +	  clock (RTC), GPIOs and a 32.768 kHz clock gate.
+>  
+>  config MFD_STM32_LPTIMER
+>  	tristate "Support for STM32 Low-Power Timer"
+> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
+> index 210261d026f2..28b82477ce4c 100644
+> --- a/drivers/mfd/rohm-bd71828.c
+> +++ b/drivers/mfd/rohm-bd71828.c
+> @@ -2,7 +2,7 @@
+>  //
+>  // Copyright (C) 2019 ROHM Semiconductors
+>  //
+> -// ROHM BD71828 PMIC driver
+> +// ROHM BD71828/BD71815 PMIC driver
+>  
+>  #include <linux/gpio_keys.h>
+>  #include <linux/i2c.h>
+> @@ -11,7 +11,9 @@
+>  #include <linux/ioport.h>
+>  #include <linux/irq.h>
+>  #include <linux/mfd/core.h>
+> +#include <linux/mfd/rohm-bd71815.h>
+>  #include <linux/mfd/rohm-bd71828.h>
+> +#include <linux/mfd/rohm-generic.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/regmap.h>
+> @@ -29,12 +31,102 @@ static struct gpio_keys_platform_data bd71828_powerkey_data = {
+>  	.name = "bd71828-pwrkey",
+>  };
+>  
+> -static const struct resource rtc_irqs[] = {
+> +static const struct resource bd71815_rtc_irqs[] = {
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd71815-rtc-alm-0"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd71815-rtc-alm-1"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd71815-rtc-alm-2"),
+> +};
+> +
+> +static const struct resource bd71828_rtc_irqs[] = {
+>  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd71828-rtc-alm-0"),
+>  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd71828-rtc-alm-1"),
+>  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd71828-rtc-alm-2"),
+>  };
+>  
+> +static struct resource bd71815_power_irqs[] = {
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_RES, "bd71815-dcin-ovp-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_DET, "bd71815-dcin-ovp-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_RES, "bd71815-dcin-mon-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_DET, "bd71815-dcin-mon-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_RES, "bd71815-vsys-uv-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_DET, "bd71815-vsys-uv-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_RES, "bd71815-vsys-low-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_DET, "bd71815-vsys-low-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TEMP, "bd71815-chg-wdg-temp"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TIME, "bd71815-chg-wdg"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_RES, "bd71815-rechg-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_DET, "bd71815-rechg-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RANGED_TEMP_TRANSITION,
+> +			     "bd71815-ranged-temp-transit"),
+
+The new line limit is 100.  Feel free to run these out.
+
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_STATE_TRANSITION,
+> +			     "bd71815-chg-state-change"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_TEMP_NORMAL,
+> +			     "bd71815-bat-temp-normal"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_TEMP_ERANGE,
+> +			     "bd71815-bat-temp-erange"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_REMOVED, "bd71815-bat-rmv"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_DETECTED, "bd71815-bat-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_THERM_REMOVED, "bd71815-therm-rmv"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_THERM_DETECTED, "bd71815-therm-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_DEAD, "bd71815-bat-dead"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_SHORTC_RES,
+> +			     "bd71815-bat-short-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_SHORTC_DET,
+> +			     "bd71815-bat-short-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_LOW_VOLT_RES,
+> +			     "bd71815-bat-low-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_LOW_VOLT_DET,
+> +			     "bd71815-bat-low-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_VOLT_RES,
+> +			     "bd71815-bat-over-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_VOLT_DET,
+> +			     "bd71815-bat-over-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_MON_RES, "bd71815-bat-mon-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_MON_DET, "bd71815-bat-mon-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_CC_MON1, "bd71815-bat-cc-mon1"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_CC_MON2, "bd71815-bat-cc-mon2"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_CC_MON3, "bd71815-bat-cc-mon3"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_1_RES,
+> +			     "bd71815-bat-oc1-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_1_DET,
+> +			     "bd71815-bat-oc1-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_2_RES,
+> +			     "bd71815-bat-oc2-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_2_DET,
+> +			     "bd71815-bat-oc2-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_RES,
+> +			     "bd71815-bat-oc3-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_DET,
+> +			     "bd71815-bat-oc3-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_RES,
+> +			     "bd71815-bat-low-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_DET,
+> +			     "bd71815-bat-low-det"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_RES, "bd71815-bat-hi-res"),
+> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-bat-hi-det"),
+> +};
+
+[...]
+
+> +static const struct regmap_irq bd71815_irqs[] = {
+
+[...]
+
+> +	REGMAP_IRQ_REG(BD71815_INT_TEMP_CHIP_OVER_VF_DET, 10,
+> +		       BD71815_INT_TEMP_CHIP_OVER_VF_DET_MASK),
+
+As above.
+
+> +	/* RTC Alarm */
+> +	REGMAP_IRQ_REG(BD71815_INT_RTC0, 11, BD71815_INT_RTC0_MASK),
+> +	REGMAP_IRQ_REG(BD71815_INT_RTC1, 11, BD71815_INT_RTC1_MASK),
+> +	REGMAP_IRQ_REG(BD71815_INT_RTC2, 11, BD71815_INT_RTC2_MASK),
+> +};
+
+[...]
+
+> +static int set_clk_mode(struct device *dev, struct regmap *regmap,
+> +			int clkmode_reg)
+> +{
+> +	int ret;
+> +	const char *mode;
+> +
+> +	ret = of_property_read_string_index(dev->of_node, "rohm,clkout-mode", 0,
+> +					    &mode);
+> +	if (ret) {
+> +		if (ret == -EINVAL)
+> +			return 0;
+> +		return ret;
+> +	}
+> +	if (!strncmp(mode, "open-drain", 10)) {
+> +		dev_dbg(dev, "configuring clk32kout as open-drain");
+
+Do you *really* need these?
+
+> +		ret = regmap_update_bits(regmap, clkmode_reg, OUT32K_MODE,
+> +					 OUT32K_MODE_OPEN_DRAIN);
+> +	} else if (!strncmp(mode, "cmos", 4)) {
+> +		dev_dbg(dev, "configuring clk32kout as cmos");
+> +		ret = regmap_update_bits(regmap, clkmode_reg, OUT32K_MODE,
+> +					 OUT32K_MODE_CMOS);
+> +	} else {
+> +		dev_err(dev, "bad clk32kout mode configuration");
+> +		return -EINVAL;
+> +	}
+> +	return ret;
+> +}
+> +
+>  static int bd71828_i2c_probe(struct i2c_client *i2c)
+>  {
+> -	struct rohm_regmap_dev *chip;
+>  	struct regmap_irq_chip_data *irq_data;
+>  	int ret;
+> +	struct regmap *regmap;
+> +	const struct regmap_config *regmap_config;
+> +	struct regmap_irq_chip *irqchip;
+> +	unsigned int chip_type;
+> +	struct mfd_cell *mfd;
+> +	int cells;
+> +	int button_irq;
+> +	int clkmode_reg;
+>  
+>  	if (!i2c->irq) {
+>  		dev_err(&i2c->dev, "No IRQ configured\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -	chip = devm_kzalloc(&i2c->dev, sizeof(*chip), GFP_KERNEL);
+> -	if (!chip)
+> -		return -ENOMEM;
+> -
+> -	dev_set_drvdata(&i2c->dev, chip);
+> +	chip_type = (unsigned int)(uintptr_t)
+> +		    of_device_get_match_data(&i2c->dev);
+> +	switch (chip_type) {
+> +	case ROHM_CHIP_TYPE_BD71828:
+> +		mfd = bd71828_mfd_cells;
+> +		cells = ARRAY_SIZE(bd71828_mfd_cells);
+> +		regmap_config = &bd71828_regmap;
+> +		irqchip = &bd71828_irq_chip;
+> +		clkmode_reg = BD71815_REG_OUT32K;
+> +		button_irq = BD71828_INT_SHORTPUSH;
+> +		dev_info(&i2c->dev, "BD71828 found\n");
+> +		break;
+> +	case ROHM_CHIP_TYPE_BD71815:
+> +		mfd = bd71815_mfd_cells;
+> +		cells = ARRAY_SIZE(bd71815_mfd_cells);
+> +		regmap_config = &bd71815_regmap;
+> +		irqchip = &bd71815_irq_chip;
+> +		clkmode_reg = BD71828_REG_OUT32K;
+> +		/*
+> +		 * If BD71817 support is needed we should be able to handle it
+> +		 * with proper DT configs + BD71815 drivers + power-button.
+> +		 * BD71815 data-sheet does not list the power-button IRQ so we
+> +		 * don't use it.
+> +		 */
+> +		button_irq = 0;
+> +		dev_info(&i2c->dev, "BD71815 found\n");
+
+Again, are these *really* useful to you and/or your users?
+
+Besides, this device not *found* i.e. scanned/read and instantiated,
+it has simply been matched from the local DTB.  It can still be
+wrong.  You can probably omit them.
+
+[...]
+
+> diff --git a/include/linux/mfd/rohm-bd71815.h b/include/linux/mfd/rohm-bd71815.h
 > new file mode 100644
-> index 000000000000..3611eaaa145c
+> index 000000000000..8ee5874a5b73
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/clk-ad9545.yaml
-> @@ -0,0 +1,352 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/clk-ad9545.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588
-> +
-> +maintainers:
-> +  - Alexandru Tachici <alexandru.tachici@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD9545 Quad Input, 10-Output, Dual DPLL/IEEE 1588,
-> +  1 pps Synchronizer and Jitter Cleaner
-> +
-> +  Relevant documents:
-> +    [1] ad9545 datasheet:
-> +      https://www.analog.com/media/en/technical-documentation/data-sheets/ad9545.pdf
-> +
-> +    [2] Defines used: include/dt-bindings/clock/ad9545.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad9545
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  "#clock-cells":
-> +    description: |
-> +      The first cell indicates the clock type and the second number is the clock address (see [2]).
-> +    const: 2
-> +
-> +  reg:
-> +    description: |
-> +      I2C address of the secondary device.
-> +    minimum: 0
-> +    maximum: 0xFF
+> +++ b/include/linux/mfd/rohm-bd71815.h
+> @@ -0,0 +1,561 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright 2014 Embest Technology Co. Ltd. Inc.
 
-Isn't 0x7f the max? In any case, that's something for the I2C bus schema 
-to define. If you don't have specific addresses (I doubt all addresses 
-are possible), then just:
+Jeeze!  Is this for the Amiga?
 
-reg:
-  maxItems: 1
+> + * Author: yanglsh@embest-tech.com
+> + *
+> + * 2020, 2021 Heavily modified by:
 
-> +
-> +  avcc-supply:
-> +    description: |
-> +      Phandle to the Avcc power supply.
-> +
-> +  adi,freq-doubler:
-> +    description: |
-> +      The system clock PLL provides the user with the option of doubling the reference frequency.
-> +    type: boolean
-> +
-> +  adi,ref-crystal:
-> +    description: |
-> +      At XOA,XOB there is a crystal connected that needs maintaining.
-> +      Otherwise it is assumed that there is a TCXO or OCXO connected.
-> +    type: boolean
-> +
-> +  adi,ref-frequency-hz:
-> +    description: |
-> +      Reference input frequency at XOA,XOB. This is used for the system clock.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
+You should probably add a proper copyright.
 
-Don't need a type for standard units.
+> + *	 Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> + */
+> +
+> +#ifndef _MFD_BD71815_H
+> +#define _MFD_BD71815_H
+> +
+> +#include <linux/regmap.h>
 
-> +
-> +  clocks:
-> +    items:
-> +      - description: Ref A clock input
-> +      - description: Ref AA clock input
-> +      - description: Ref B clock input
-> +      - description: Ref BB clock input
-> +    maxItems: 4
-> +
-> +  clock-output-names:
-> +    minItems: 1
-> +    maxItems: 10
-> +
-> +  assigned-clocks:
-> +     minItems: 1
-> +     maxItems: 14
-> +
-> +  assigned-clock-rates:
-> +    description: |
-> +      Can initialize frequency of the 2 auxiliary NCOs, 2 PLLs and 10 clock outputs.
-> +      Output clock rates must be one of the divisors of PLL assigned frequency.
-> +    minItems: 1
-> +    maxItems: 14
-> +
-> +patternProperties:
-> +  "^ref-input-clk@[0-3]$":
-> +    description: |
-> +      Represents a reference clock input.
-> +    type: object
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The reference input number. It can have up to 4 input clocks numbered from 0 to 3.
-> +          (mapped: [refa, refaa, refb, refbb] -> [0, 1, 2, 3])
-> +        maxItems: 1
-> +
-> +      adi,single-ended-mode:
-> +        description: |
-> +          Single-ended configuration mode.
-> +        allOf:
+[...]
 
-Don't need allOf.
-
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [0, 1, 2, 3]
-> +        maxItems: 1
-
-'maxItems' is for an array. This is a scalar.
-
-> +
-> +      adi,differential-mode:
-> +        description: |
-> +          Differential configuration mode.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [0, 1, 2]
-> +        maxItems: 1
-> +
-> +      adi,r-divider-ratio:
-> +        description: |
-> +          Each reference input has a dedicated divider.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 1073741824
-> +        maxItems: 1
-> +
-> +      adi,ref-dtol-pbb:
-> +        description: |
-> +          REFx offset limit. Constitutes a fractional portion of the corresponding nominal period.
-> +          The 24-bit number represents fractional units of parts per billion (ppb) up to a
-> +          maximum of approximately 17 million ppb (1.7%).
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 0
-> +          - maximum: 16777215
-> +          - default: 100000
-> +
-> +      adi,ref-monitor-hysteresis-pbb:
-> +        description: |
-> +          Basis points of the offset limit representing per ten thousand of REFx offset limit.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [0, 3125, 6250, 12500, 25000, 50000, 75000, 87500]
-> +          - default: 12500
-> +
-> +      adi,ref-validation-timer-ms:
-> +        description: |
-> +          Time required for a reference to remain in tolerance condition before being
-> +          available to be used.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 1048574
-> +          - default: 10
-> +
-> +      adi,freq-lock-threshold-ps:
-> +        description: |
-> +          Phase lock detector threshold (in picoseconds).
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 16777215
-> +        maxItems: 1
-> +
-> +      adi,phase-lock-threshold-ps:
-> +        description: |
-> +          Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 16777215
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +      - adi,r-divider-ratio
-> +      - adi,ref-dtol-pbb
-> +      - adi,ref-monitor-hysteresis-pbb
-> +      - adi,ref-validation-timer-ms
-> +      - adi,freq-lock-threshold-ps
-> +      - adi,phase-lock-threshold-ps
-> +
-> +  "^pll-clk@[0-1]$":
-
-You already used addresses 0-1 above. There should only be 1 address 
-space at a given level.
-
-> +    description: |
-> +      Represents a PLL.
-> +    type: object
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          PLL number. AD9545 has two PLLs.
-> +        maxItems: 1
-> +
-> +      adi,pll-source:
-> +        description: |
-> +          Each PLL can have 1 signal source. Choose from Ref-A to Ref-BB [0-3] or aux NCOs [4-5].
-
-Sounds like what the assigned-clocks binding is for...
-
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [0, 1, 2, 3, 4, 5]
-> +        maxItems: 1
-> +
-> +      adi,pll-loop-bandwidth-hz:
-> +        description: |
-> +          PLL loop bandwidth.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 1850
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +      - adi,pll-source
-> +      - adi,pll-loop-bandwidth-hz
-> +
-> +  "^aux-nco-clk@[0-1]$":
-> +    description: |
-> +      Represents an auxiliary Numerical Controlled Oscilator. Generates timestamps that
-> +      can be sent to the DPLL0 or DPLL1.
-> +    type: object
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          Auxiliary NCO address (see [2]).
-> +        maxItems: 1
-> +
-> +      adi,freq-lock-threshold-ps:
-> +        description: |
-> +          Phase lock detector threshold (in picoseconds).
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 16777215
-> +        maxItems: 1
-> +
-> +      adi,phase-lock-threshold-ps:
-> +        description: |
-> +          Profile 0 frequency lock threshold. Frequency lock detector threshold (in picoseconds).
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 1
-> +          - maximum: 16777215
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +      - adi,freq-lock-threshold-ps
-> +      - adi,phase-lock-threshold-ps
-> +
-> +  "^output-clk@([0-9])$":
-> +    description: |
-> +      Represents a clock output.
-> +    type: object
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The reference input number. It can have up to 10 output clocks mapped:
-> +          (OUT0AP OUT0AN OUT0BP OUT0BN OUT0CP OUT0CN OUT1AP OUT1AN OUT1BP OUT1BN) ->
-> +          (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-> +        maxItems: 1
-> +
-> +      adi,current-source:
-> +        description: |
-> +          If specified output is set as current source.
-> +        type: boolean
-> +
-> +      adi,current-source-microamp:
-> +        description: |
-> +          The magnitude of the driver current.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [7500, 12500, 15000]
-> +        minItems: 1
-> +
-> +      adi,output-mode:
-> +        description: |
-> +          Output driver mode.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - enum: [0, 1, 2]
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +      - adi,current-source-microamp
-> +      - adi,output-mode
-> +
-> +  clocks: true
-> +  assigned-clocks: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - adi,ref-frequency-hz
-> +
-> +"additionalProperties": false
-
-Don't need quotes.
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/ad9545.h>
-> +
-> +    i2c1 {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            ad9545_clock: ad9545@4A {
-> +                compatible = "adi,ad9545";
-> +                reg = <0x4A>;
-> +
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                adi,ref-crystal;
-> +                adi,ref-frequency-hz = <49152000>;
-> +
-> +                #clock-cells = <2>;
-> +                clocks = <&ad9545_clock AD9545_CLK_NCO AD9545_NCO0>,
-> +                         <&ad9545_clock AD9545_CLK_PLL AD9545_PLL1>,
-> +                         <&ad9545_clock AD9545_CLK_OUT AD9545_Q1A>,
-> +                         <&ad9545_clock AD9545_CLK_OUT AD9545_Q1B>;
-> +                assigned-clocks = <&ad9545_clock AD9545_CLK_NCO AD9545_NCO0>,
-> +                                  <&ad9545_clock AD9545_CLK_PLL AD9545_PLL1>,
-> +                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1A>,
-> +                                  <&ad9545_clock AD9545_CLK_OUT AD9545_Q1B>;
-> +                assigned-clock-rates = <10000>, <1875000000>, <156250000>, <156250000>;
-> +
-> +                aux-nco-clk@AD9545_NCO0 {
-> +                        reg = <AD9545_NCO0>;
-> +                        adi,freq-lock-threshold-ps = <16000000>;
-> +                        adi,phase-lock-threshold-ps = <16000000>;
-> +                };
-> +
-> +                ad9545_apll1: pll-clk@AD9545_PLL1 {
-> +                        reg = <AD9545_PLL1>;
-> +                        adi,pll-source = <4>;
-> +                        adi,pll-loop-bandwidth-hz = <200>;
-> +                };
-> +
-> +                output-clk@AD9545_Q1A {
-> +                        reg = <AD9545_Q1A>;
-> +                        adi,output-mode = <DRIVER_MODE_SINGLE_DIV_DIF>;
-> +                        adi,current-source-microamp = <15000>;
-> +                };
-> +
-> +                output-clk@AD9545_Q1B {
-> +                        reg = <AD9545_Q1B>;
-> +                        adi,output-mode = <DRIVER_MODE_SINGLE_DIV_DIF>;
-> +                        adi,current-source-microamp = <15000>;
-> +                };
-> +            };
-> +    };
-> +...
-> -- 
-> 2.20.1
-> 
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
