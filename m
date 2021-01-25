@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D7AC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F6AC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2658A221FC
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA16E221FC
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 19:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730305AbhAZFgC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:36:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
+        id S1729962AbhAZFf6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 00:35:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729220AbhAYOAl (ORCPT
+        with ESMTP id S1729217AbhAYOAl (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 09:00:41 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3894FC06178A
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 05:57:03 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id a1so12634977wrq.6
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 05:57:03 -0800 (PST)
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 557DCC06178B
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 05:57:30 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id q7so12613645wre.13
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 05:57:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=gp+PA16ZKrofmtCmx5UhAkgHt0xYogsEGnsOJd6xTQE=;
-        b=NjF0v5DM0oqi8sw3YmeQQIJUkZfUfqK64M3Yi82RuNzJls6JgVdgIjkxiXnZzo1qq0
-         J73iuRwsB90hlBOt6ILA7lZO3U5d7AapAQma5JRNgDM8EMSIjVP9rWbNn1tb3nUOEdxn
-         dOPMPvOvwB21iTmclhTVfRRuZ3KYA/35xII87arNPAgi6hbrLv497OF/u8J3D00h7l6O
-         XqsRq5GS9r2gc55GcpiZmh6y0YlK61v4fUlHIMek2mus/+iIZKMSFZJmbeE55HFXASgn
-         WSzP8e7ahIXJpxohMkbLFi5NXVd/CucpXHP0tpaDaRuTOTEAO9BALNx7wmkQTqy567+n
-         Jp0w==
+        bh=q2EuLggpk9Unx5U8zIux4+e58o6cdVDWEpWfZQyk+cU=;
+        b=tAMuTqLJ+95+XHZSZNNAs3tqEpBxE08VBSO9Iy7DEuslp07YxsmH+VK2kw0wDq1E6o
+         IzhOQAOg7ysdD+uMEhSGQYKWTZ1E6C+mUWlLDCNx1yAW9/pdBwL4HG5YAGzp434/CWHP
+         j3qvZ8z41b9F2F8arlWs0ikPqzFwMrcuplvXXjI0l4Z74dCMecRRNNOrM1B4R2x2pPX4
+         agFzYQI4AJ6GnV9iBEj+ShFnmDXLjYo14oDNW3wFw/L2gL1+EYxQxbpvH+9Gh4p4LTfP
+         IzHS7sBlCShTBNpnHOus5NpJIndkKI1I4OI7SdMH/IQAQPXgB1QtJkhGsfpfCvACdSeN
+         WApA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=gp+PA16ZKrofmtCmx5UhAkgHt0xYogsEGnsOJd6xTQE=;
-        b=Pp1iSMgVKQMyY2B88fN+4LWOO/Ggbe8yhoTeyUKcfGO237tanUjFxsbWcOnJxEhI30
-         ytuTzHwTTf6s4rlQucEvL6YLYpWLG76Vq5Ef26BTS7COY63BJzGEV2NPohqc6HEEaYtX
-         UmKEvrkhP4+PGeJ2BMz6mapBLHLt/s6MxGoJPM0aJfRHFokWSzZ9ZdfmK8P9uEH1KFlg
-         PF2uNGjc4IVC6aNTl8mZNroydvnOd0E7bFwvO7SH7D2wU+BoOWk67nMCJcFMrcw1Gkdp
-         QDSWuVCjm5iaiu1bR828U7F6We0vwIHNPcuHAiYHWsAbR9TuyzdOrYAWXlEhPX1cJ/CK
-         tnFQ==
-X-Gm-Message-State: AOAM530tvTWpG4mrrQcbKaBhZRvqS6+yzk8n3TeiPPwZfq6LnMpnTf3u
-        H+nt/5DULmqD6h9WZRCS8rkyow==
-X-Google-Smtp-Source: ABdhPJyi2GzmE6f+sfhyMtpP1PlJIpmf78IeJrAWHg2Oa08dZ6qBFoHoZBQqh2g2gbVG82raB5QfKA==
-X-Received: by 2002:adf:eed0:: with SMTP id a16mr1085622wrp.107.1611583021391;
-        Mon, 25 Jan 2021 05:57:01 -0800 (PST)
+        bh=q2EuLggpk9Unx5U8zIux4+e58o6cdVDWEpWfZQyk+cU=;
+        b=aT+F7mJc9L/XcEyFx6uyFue7/L0kSR2LNTVWlDZLNKHkiaPmVe8ByDrFLRvKivDO+a
+         zeLbpTIgWlU+PKIIUrf8tYVxeebN7gj74FrQuqM0kWJglidOXyhesq6zur0J0W0SH2X3
+         z+M1J3wlyLbg5qz2bnj0W6qkRspZA/hH4fmaAnCAlrMdD6JQpQjV2FKO64RqTbhOxvkC
+         prNWcB5e9ziSq7QLOKhEbeKlwFyklwiFXMaBtRpCI7FVUX4o7sFpPS2P5RK0oWduk5jW
+         xx8zY3Frq36SJ6dN58N+xOTXbkfFlQE+1MuHaX0baGTGkCXe0VpjdqbPz0OSHFzRC65s
+         857Q==
+X-Gm-Message-State: AOAM531pnF5WsXcHNHL+Sx33ZB3xZF/mnyZaZq8llvJqXdS75w75ULKM
+        et+yahFnFWPJ5OjfCSIsOyW9Wg==
+X-Google-Smtp-Source: ABdhPJz9GQRNLQm6uMRfQ/m9HgSJ+ruVCBBpzryC2+JmyRk/X0AyMpK3eE6QLs7zauQV44Q43tBXvQ==
+X-Received: by 2002:adf:f1c3:: with SMTP id z3mr1129849wro.96.1611583048991;
+        Mon, 25 Jan 2021 05:57:28 -0800 (PST)
 Received: from dell ([91.110.221.194])
-        by smtp.gmail.com with ESMTPSA id g1sm22627542wrq.30.2021.01.25.05.57.00
+        by smtp.gmail.com with ESMTPSA id n11sm25921264wra.9.2021.01.25.05.57.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jan 2021 05:57:00 -0800 (PST)
-Date:   Mon, 25 Jan 2021 13:56:58 +0000
+        Mon, 25 Jan 2021 05:57:28 -0800 (PST)
+Date:   Mon, 25 Jan 2021 13:57:26 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
@@ -71,38 +71,30 @@ Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 04/17] mfd: bd718x7: simplify by cleaning unnecessary
- device data
-Message-ID: <20210125135658.GX4903@dell>
+Subject: Re: [PATCH v2 08/17] mfd: Add ROHM BD71815 ID
+Message-ID: <20210125135726.GY4903@dell>
 References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
- <b722c33ef2e499da3860b442f263e1c7bfe13e51.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+ <001e0b5da0d68366b6d61b810468646fc8e07153.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b722c33ef2e499da3860b442f263e1c7bfe13e51.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <001e0b5da0d68366b6d61b810468646fc8e07153.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, 19 Jan 2021, Matti Vaittinen wrote:
 
-> Most ROHM PMIC sub-devices only use the regmap pointer from
-> parent device. They can obtain this by dev_get_regamap so in
-> most cases the MFD device does not need to allocate and populate
-> the driver data. Simplify drivers by removing this.
-> 
-> The BD70528 still needs the access to watchdog mutex so keep
-> rohm_regmap_dev in use on BD70528 RTC and WDG drivers for now.
+> Add chip ID for ROHM BD71815 and PMIC so that drivers can identify
+> this IC.
 > 
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > ---
+> No changes since v1.
 > 
-> No changes since v1
-> 
->  drivers/mfd/rohm-bd718x7.c       | 43 ++++++++++++--------------------
->  include/linux/mfd/rohm-bd718x7.h | 13 ----------
->  2 files changed, 16 insertions(+), 40 deletions(-)
+>  include/linux/mfd/rohm-generic.h | 1 +
+>  1 file changed, 1 insertion(+)
 
 For my own reference (apply this as-is to your sign-off block):
 
