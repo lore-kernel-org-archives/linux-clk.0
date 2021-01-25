@@ -2,148 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3695EC433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 18:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8553C433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 18:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF80C22D58
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 18:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8F2822DD6
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jan 2021 18:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbhAYSZu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jan 2021 13:25:50 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42532 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726882AbhAYSZd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Jan 2021 13:25:33 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 48FF1200980;
-        Mon, 25 Jan 2021 19:24:42 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B6C420095E;
-        Mon, 25 Jan 2021 19:24:42 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 26DAF2032A;
-        Mon, 25 Jan 2021 19:24:42 +0100 (CET)
-Date:   Mon, 25 Jan 2021 20:24:41 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        id S1726683AbhAYS0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jan 2021 13:26:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39732 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbhAYSZc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jan 2021 13:25:32 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9122BC061756
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 10:24:52 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id v126so13399671qkd.11
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jan 2021 10:24:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=HnSvtHvi0XPNHM/mWiGJMhC+HTvDL2NKMxV7WptHfR4=;
+        b=cXX3n5P62RS1OIbP0vOV8vm1mKp+DqGnf20BppLCxsEQe/SYzhopl9mI9sXGZ3RpNb
+         9IE4juvewKXdZxUV6SlFbcPZa9Bdt8XtcTo8VzvugAALA54L0VPBXeJvKf7SxkfsLd/p
+         uqR/4mxUc+RixF5vtmQjpM1Yq+A0tX81+QWtMm/eXFUfPgtyzPLtZohHPjZ6f9gVStGU
+         OJqRjLDUNxSkznpxxW8i+N3h8O9aBbDkjl145iCfOrhwou5eSmQvvgNpdcikIFcgsT5L
+         FasAp2DnvVnoDGE/7ZuxQn0hpSkxyVMxfdQJ766voKaE1dH6soi/JeH6+rikFoMNwnJj
+         TvEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=HnSvtHvi0XPNHM/mWiGJMhC+HTvDL2NKMxV7WptHfR4=;
+        b=V7FfFNzB8syQrF418SgDeiv5HJYmiIiYXSpWjOizZwkhYVc/owwIPEZarsiH2nMHfJ
+         6X16UGLe+tUzXLMOSE9DpihnZgt7xtSeeQtd1Al9MXoURl/gsnyVtnwS6uipvHFdpuhr
+         0tAd3gxkAXjaN1XgGNKVFTfdBPRxvX2aosYrPuLjw4fQzkuOlnUWcCRBJmboPnnG0RfN
+         /ZUvJrbuOFLzbNMalcd6TdfXD/NdIBBAfa8BTcJl1+ObjPYSgrpFlXdD1QrA+tNkm/LV
+         THzhD4FzzOe0JbGZaKmszPEFM/im6THpY9+T7CdGoauaz45H425iXKEncjH6R9RZP/1m
+         me8Q==
+X-Gm-Message-State: AOAM530zi+fWl4NZWAPLD5vcObG4OK6P7eZ7oUNpYCuIY9Rv8+T8CBCN
+        qtKx+WT94p4InTvbiGVfSDMXWw==
+X-Google-Smtp-Source: ABdhPJxJ8+We+9/uI1REscQW0vVnt3GvKzHfyM0Hy/lkgOEkOXaxGEVEHJok9twXTDAEAlsCtGc7QA==
+X-Received: by 2002:a05:620a:1127:: with SMTP id p7mr2076301qkk.447.1611599091863;
+        Mon, 25 Jan 2021 10:24:51 -0800 (PST)
+Received: from xanadu.home (modemcable076.50-203-24.mc.videotron.ca. [24.203.50.76])
+        by smtp.gmail.com with ESMTPSA id x15sm7400377qtr.72.2021.01.25.10.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 10:24:51 -0800 (PST)
+Date:   Mon, 25 Jan 2021 13:24:50 -0500 (EST)
+From:   Nicolas Pitre <npitre@baylibre.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 1/3] clk: imx8mq: add PLL monitor output
-Message-ID: <20210125182441.h7lkcyjzbpwlyogu@fsr-ub1664-175>
-References: <20210125174135.1223680-1-l.stach@pengutronix.de>
- <20210125181907.wimfh26tvmoy3kl7@fsr-ub1664-175>
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3] PM / clk: make PM clock layer compatible with clocks
+ that must sleep
+In-Reply-To: <CAJZ5v0hn=aUXS-cBG333YXiG2_SUhfkvzsJPYqmWRyDu1zc+VA@mail.gmail.com>
+Message-ID: <82qo9ooo-32q0-2r4r-26q-o8482651qr91@onlyvoer.pbz>
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz> <CA+G9fYsyXsNSXGy6BWZ6mgpAP=+7r6Xy9jQ2xxb9mXyHdRoBCg@mail.gmail.com> <CAMuHMdULW4bnb0Jc0+ZaF9P2VNgnYsvEks7y8WYCk045BHqh7A@mail.gmail.com> <CA+G9fYvh0iSyEDQs7+0CX82FLPDCg5UmAt+1JuPsndmfmYF3kw@mail.gmail.com>
+ <CAJZ5v0hFjpGp2GbV1Evi+BbUF7Am4ETY4Cm8VzTrvTJ=7=oyPQ@mail.gmail.com> <84r6s34s-opq7-9358-o45n-27s17084012@onlyvoer.pbz> <CAJZ5v0jUxonxp0q80Kdcbax+WMmh-NZ_h=KQG-HcfFdE1hr4VA@mail.gmail.com> <CAJZ5v0hj4VC_kjB5e_b_ho=ET_quG5zUh0Dbbdwofp-6azopsw@mail.gmail.com>
+ <CA+G9fYsRVxWPW1nvSXMTLWfEadrdBDSH5hRPtoUYpfpqq8zRSw@mail.gmail.com> <CAJZ5v0gsYb1uxDUTHUe539w8uXhk=m337Xn6wtPhF1oPKzaYrQ@mail.gmail.com> <30np982n-r2q8-8532-q6os-9p9729ppos45@syhkavp.arg> <CAJZ5v0iNtmXWr3uXzit5Er_j7G=LkGVyhdNAsjwpVWsDy8F7KQ@mail.gmail.com>
+ <61p41n8-r88q-9npq-879o-s4r5856os9s1@onlyvoer.pbz> <CAJZ5v0hn=aUXS-cBG333YXiG2_SUhfkvzsJPYqmWRyDu1zc+VA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210125181907.wimfh26tvmoy3kl7@fsr-ub1664-175>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-01-25 20:19:07, Abel Vesa wrote:
-> On 21-01-25 18:41:33, Lucas Stach wrote:
-> > The PLL monitor is mentioned as a debug feature in the reference manual,
-> > but there are some boards that use this clock output as a reference clock
-> > for board level components. Add support for those clocks in the clock
-> > driver, so this clock output can be used properly.
-> > 
-> > Note that the VIDEO1, GPU and VPU mux inputs are rotated compared to the
-> > description in the reference manual. The order in this patch has been
-> > empirically validated.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > ---
-> >  drivers/clk/imx/clk-imx8mq.c             | 22 ++++++++++++++++++++++
-> >  include/dt-bindings/clock/imx8mq-clock.h | 16 +++++++++++++++-
-> >  2 files changed, 37 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> > index 779ea69e639c..4dd4ae9d022b 100644
-> > --- a/drivers/clk/imx/clk-imx8mq.c
-> > +++ b/drivers/clk/imx/clk-imx8mq.c
-> > @@ -270,6 +270,14 @@ static const char * const imx8mq_clko1_sels[] = {"osc_25m", "sys1_pll_800m", "os
-> >  static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m",
-> >  					  "sys3_pll_out", "audio_pll1_out", "video_pll1_out", "ckil", };
-> >  
-> > +static const char * const pllout_monitor_sels[] = {"osc_25m", "osc_27m", "dummy", "dummy", "ckil",
-> > +						   "audio_pll1_out_monitor", "audio_pll2_out_monitor",
-> > +						   "video_pll1_out_monitor", "gpu_pll_out_monitor",
-> > +						   "vpu_pll_out_monitor", "arm_pll_out_monitor",
-> > +						   "sys_pll1_out_monitor", "sys_pll2_out_monitor",
-> > +						   "sys_pll3_out_monitor", "dram_pll_out_monitor",
-> > +						   "video_pll2_out_monitor", };
-> > +
-> >  static struct clk_hw_onecell_data *clk_hw_data;
-> >  static struct clk_hw **hws;
-> >  
-> > @@ -399,6 +407,20 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
-> >  	hws[IMX8MQ_SYS2_PLL_500M] = imx_clk_hw_fixed_factor("sys2_pll_500m", "sys2_pll_500m_cg", 1, 2);
-> >  	hws[IMX8MQ_SYS2_PLL_1000M] = imx_clk_hw_fixed_factor("sys2_pll_1000m", "sys2_pll_1000m_cg", 1, 1);
-> >  
-> > +	hws[IMX8MQ_CLK_MON_AUDIO_PLL1_DIV] = imx_clk_hw_divider("audio_pll1_out_monitor", "audio_pll1_bypass", base + 0x78, 0, 3);
-> > +	hws[IMX8MQ_CLK_MON_AUDIO_PLL2_DIV] = imx_clk_hw_divider("audio_pll2_out_monitor", "audio_pll2_bypass", base + 0x78, 4, 3);
-> > +	hws[IMX8MQ_CLK_MON_VIDEO_PLL1_DIV] = imx_clk_hw_divider("video_pll1_out_monitor", "video_pll1_bypass", base + 0x78, 8, 3);
-> > +	hws[IMX8MQ_CLK_MON_GPU_PLL_DIV] = imx_clk_hw_divider("gpu_pll_out_monitor", "gpu_pll_bypass", base + 0x78, 12, 3);
-> > +	hws[IMX8MQ_CLK_MON_VPU_PLL_DIV] = imx_clk_hw_divider("vpu_pll_out_monitor", "vpu_pll_bypass", base + 0x78, 16, 3);
-> > +	hws[IMX8MQ_CLK_MON_ARM_PLL_DIV] = imx_clk_hw_divider("arm_pll_out_monitor", "arm_pll_bypass", base + 0x78, 20, 3);
-> > +	hws[IMX8MQ_CLK_MON_SYS_PLL1_DIV] = imx_clk_hw_divider("sys_pll1_out_monitor", "sys1_pll_out", base + 0x7c, 0, 3);
-> > +	hws[IMX8MQ_CLK_MON_SYS_PLL2_DIV] = imx_clk_hw_divider("sys_pll2_out_monitor", "sys2_pll_out", base + 0x7c, 4, 3);
-> > +	hws[IMX8MQ_CLK_MON_SYS_PLL3_DIV] = imx_clk_hw_divider("sys_pll3_out_monitor", "sys3_pll_out", base + 0x7c, 8, 3);
-> > +	hws[IMX8MQ_CLK_MON_DRAM_PLL_DIV] = imx_clk_hw_divider("dram_pll_out_monitor", "dram_pll_out", base + 0x7c, 12, 3);
-> > +	hws[IMX8MQ_CLK_MON_VIDEO_PLL2_DIV] = imx_clk_hw_divider("video_pll2_out_monitor", "video2_pll_out", base + 0x7c, 16, 3);
-> > +	hws[IMX8MQ_CLK_MON_SEL] = imx_clk_hw_mux("pllout_monitor_sel", base + 0x74, 0, 4, pllout_monitor_sels, ARRAY_SIZE(pllout_monitor_sels));
-> > +	hws[IMX8MQ_CLK_MON_CLK2_OUT] = imx_clk_hw_gate("pllout_monitor_clk2", "pllout_monitor_sel", base + 0x74, 4);
-> > +
-> >  	np = dev->of_node;
-> >  	base = devm_platform_ioremap_resource(pdev, 0);
-> >  	if (WARN_ON(IS_ERR(base)))
-> > diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-> > index 9b8045d75b8b..82e907ce7bdd 100644
-> > --- a/include/dt-bindings/clock/imx8mq-clock.h
-> > +++ b/include/dt-bindings/clock/imx8mq-clock.h
-> > @@ -431,6 +431,20 @@
-> >  
-> >  #define IMX8MQ_CLK_A53_CORE			289
-> 
-> This goes through a different tree.
-> 
+On Mon, 25 Jan 2021, Rafael J. Wysocki wrote:
 
-Scratch that.
+> On Sun, Jan 24, 2021 at 12:07 AM Nicolas Pitre <npitre@baylibre.com> wrote:
+> > A note on sparse:
+> > According to https://lwn.net/Articles/109066/ there are things
+> > that sparse can't cope with. In particular, pm_clk_op_lock() and
+> > pm_clk_op_unlock() may or may not lock/unlock psd->lock depending on
+> > some runtime condition. To work around that we tell sparse the lock
+> > is always untaken for the purpose of static analisys.
+> 
+> It looks like sparse is still complaining:
+> 
+> https://lore.kernel.org/linux-acpi/600dc681.3mAl9WQXnragfNZk%25lkp@intel.com/
 
-> > -#define IMX8MQ_CLK_END				290
-> > +#define IMX8MQ_CLK_MON_AUDIO_PLL1_DIV		290
-> > +#define IMX8MQ_CLK_MON_AUDIO_PLL2_DIV		291
-> > +#define IMX8MQ_CLK_MON_VIDEO_PLL1_DIV		292
-> > +#define IMX8MQ_CLK_MON_GPU_PLL_DIV		293
-> > +#define IMX8MQ_CLK_MON_VPU_PLL_DIV		294
-> > +#define IMX8MQ_CLK_MON_ARM_PLL_DIV		295
-> > +#define IMX8MQ_CLK_MON_SYS_PLL1_DIV		296
-> > +#define IMX8MQ_CLK_MON_SYS_PLL2_DIV		297
-> > +#define IMX8MQ_CLK_MON_SYS_PLL3_DIV		298
-> > +#define IMX8MQ_CLK_MON_DRAM_PLL_DIV		299
-> > +#define IMX8MQ_CLK_MON_VIDEO_PLL2_DIV		300
-> > +#define IMX8MQ_CLK_MON_SEL			301
-> > +#define IMX8MQ_CLK_MON_CLK2_OUT			302
-> > +
-> > +#define IMX8MQ_CLK_END				303
-> >  
-> >  #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
-> > -- 
-> > 2.20.1
-> > 
-> 
-> Everything else looks good to me.
-> 
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Would you happen to still have one of those randconfig configuration?
+
+I'd like to know why sparse complains about 3 out of 93 configs.
+
+
+Nicolas
