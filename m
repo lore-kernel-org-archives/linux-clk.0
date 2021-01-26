@@ -2,95 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E234C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 11:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C01C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 11:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4377F23108
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 11:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC33C22795
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 11:23:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405000AbhAZLHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 06:07:22 -0500
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:61968 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404978AbhAZLG3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 06:06:29 -0500
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10QB1JIl001769;
-        Tue, 26 Jan 2021 06:05:33 -0500
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 368hk9hnpr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Jan 2021 06:05:33 -0500
-Received: from SCSQMBX11.ad.analog.com (SCSQMBX11.ad.analog.com [10.77.17.10])
-        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 10QB5V4F032142
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
-        Tue, 26 Jan 2021 06:05:32 -0500
-Received: from SCSQCASHYB6.ad.analog.com (10.77.17.132) by
- SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 26 Jan 2021 03:05:30 -0800
-Received: from SCSQMBX10.ad.analog.com (10.77.17.5) by
- SCSQCASHYB6.ad.analog.com (10.77.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2;
- Tue, 26 Jan 2021 03:05:30 -0800
-Received: from zeus.spd.analog.com (10.66.68.11) by scsqmbx10.ad.analog.com
- (10.77.17.5) with Microsoft SMTP Server id 15.2.721.2 via Frontend Transport;
- Tue, 26 Jan 2021 03:05:30 -0800
-Received: from localhost.localdomain ([10.48.65.12])
-        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 10QB5PQc007159;
-        Tue, 26 Jan 2021 06:05:26 -0500
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <lars@metafoo.de>,
-        <linux-fpga@vger.kernel.org>, <mdf@kernel.org>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>
-Subject: [PATCH v2 0/3] clk: clk-axiclgen: add support for ZynqMP
-Date:   Tue, 26 Jan 2021 13:08:23 +0200
-Message-ID: <20210126110826.24221-1-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=717 suspectscore=0 spamscore=0 bulkscore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101260058
+        id S2392275AbhAZLXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 06:23:17 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:35842 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392211AbhAZLWj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Jan 2021 06:22:39 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 73AD11A0CDE;
+        Tue, 26 Jan 2021 12:21:52 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 675601A0CD2;
+        Tue, 26 Jan 2021 12:21:52 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1BC612034A;
+        Tue, 26 Jan 2021 12:21:52 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
+Subject: [RFC] clk: Mark HW enabled clocks as enabled in core
+Date:   Tue, 26 Jan 2021 13:21:36 +0200
+Message-Id: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Previous set:
- https://lore.kernel.org/linux-clk/20201221144224.50814-1-alexandru.ardelean@analog.com/
+Some clocks are already enabled in HW even before the kernel
+starts to boot. So, in order to make sure that these clocks do not
+get disabled when clk_disable_unused call is done or when
+reparenting clocks, we enable them in core on clock registration.
+Such a clock will have to be registered with CLK_IGNORE_UNUSED flag
+and also needs to have the is_enabled ops implemented.
 
-Changelog v1 -> v2:
-* split patch 'clk: axi-clkgen: add support for ZynqMP (UltraScale)'
-  into:
-   - clk: axi-clkgen: remove ARCH dependency in Kconfig
-   - clk: clk-axiclkgen: add ZynqMP PFD and VCO limits
-* essentially removed the 'adi,zynq-axi-clkgen-2.00.a' compat string
-* removed architecture dependency on build for driver; the driver should
-  be usable also on PCIe setups
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/clk.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Alexandru Ardelean (3):
-  clk: axi-clkgen: remove ARCH dependency in Kconfig
-  clk: clk-axiclkgen: add ZynqMP PFD and VCO limits
-  dt-bindings: clock: adi,axi-clkgen: add compatible string for ZynqMP
-    support
-
- .../devicetree/bindings/clock/adi,axi-clkgen.yaml     |  1 +
- drivers/clk/Kconfig                                   |  1 -
- drivers/clk/clk-axi-clkgen.c                          | 11 +++++++++++
- 3 files changed, 12 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3d751ae5bc70..26d55851cfa5 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3416,6 +3416,7 @@ static int __clk_core_init(struct clk_core *core)
+ 	int ret;
+ 	struct clk_core *parent;
+ 	unsigned long rate;
++	bool is_hw_enabled = false;
+ 	int phase;
+ 
+ 	if (!core)
+@@ -3558,12 +3559,20 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
+ 
++	/*
++	 * If the clock has the CLK_IGNORE_UNUSED flag set and it is already
++	 * enabled in HW, enable it in core too so it won't get accidentally
++	 * disabled when walking the orphan tree and reparenting clocks
++	 */
++	if (core->flags & CLK_IGNORE_UNUSED && core->ops->is_enabled)
++		is_hw_enabled = clk_core_is_enabled(core);
++
+ 	/*
+ 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+ 	 * don't get accidentally disabled when walking the orphan tree and
+ 	 * reparenting clocks
+ 	 */
+-	if (core->flags & CLK_IS_CRITICAL) {
++	if (core->flags & CLK_IS_CRITICAL || is_hw_enabled) {
+ 		unsigned long flags;
+ 
+ 		ret = clk_core_prepare(core);
 -- 
-2.17.1
+2.29.2
 
