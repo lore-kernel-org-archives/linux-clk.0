@@ -2,226 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 955D0C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 08:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF0CC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 09:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 505D8206D7
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 08:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCB88230FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 09:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389649AbhAZICk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 03:02:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389643AbhAZIBp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Jan 2021 03:01:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DF5B206FB;
-        Tue, 26 Jan 2021 08:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611648063;
-        bh=aa2bH7Ml2N6u9IL2Q2DMHdUm/C/GjwCOvIhYPhIyEmw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IokureFN2AQ9Q6/LL/jf9dZV3w3bY7I9BlmyWOu/ETswXoW708lBNYhV5pPgOlQ72
-         vjP5hgdn2TCFiKmMPAbJJ/zF+ZqvyDW58B56xPywLB3wq8Wp2MD/1G69Z1UpRHHIl8
-         hJXNC3aYd9TO4uwIjI5g63OnC8csnGD9moh6fbWhQ7+gu4SpsU6LYBlhhjZ64yQUOZ
-         S5VzOEfpyCnuox0Ii3UgDKbgdv4aTduNuDV5rjpn9wJtiQS+w/qThg/CkGcvbnscga
-         0FIJs14wl0sSbKU8J84uxKQzV4eE/THzAnKNgr1PorAM+TuNNk4bHr1j4LmzvfH+kW
-         urSjolNvFNk3A==
-Date:   Tue, 26 Jan 2021 13:30:58 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S2390876AbhAZJG2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 04:06:28 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:41644 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390874AbhAZJFa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 04:05:30 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10Q8tfZk000604;
+        Tue, 26 Jan 2021 10:04:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=JulSSnbmn/ODg792hatyNg+R8GdjukARkpZyZAZHMmA=;
+ b=Wykc02L3WaxELF5pkUp8Q7eHeNGJdCEIJt5Mc/cUEbEAU/jYOodPuiV37IQRdV2I8QwY
+ GI/e3GvufmEksKL6mtjh2HyezTqB6pe1a5m5JA1SGnlT++Q/EiMuQ5AEzr+iQJ7zW3F/
+ C5KxfZ308C5ctYVgIkAJScVIaL8/il3AWB87jZi2JgLlOb8hfN3r3ggPHRP3GMNAmDcv
+ 3Z3abQjrJLpnZ72cGGnZHHGwYN3QgIPnw1P3inbLOgCZMkCiiMsllJLwGyg5ttiDh2RJ
+ BVjKgUOB17Q/YmgqkQ4gKoj4IynpvAUhzOkafzjdPPNAFlncXdbPB6k4hKPpyJAYQtAK Zw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 368c15qgjd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Jan 2021 10:04:39 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BF61B10002A;
+        Tue, 26 Jan 2021 10:04:38 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B100B2288C8;
+        Tue, 26 Jan 2021 10:04:38 +0100 (CET)
+Received: from localhost (10.75.127.44) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 26 Jan 2021 10:04:38
+ +0100
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: clock: Add SM8350 GCC clock bindings
-Message-ID: <20210126080058.GN2771@vkoul-mobl>
-References: <20210118044321.2571775-1-vkoul@kernel.org>
- <20210118044321.2571775-5-vkoul@kernel.org>
- <YA7+9xaAY0JT5csh@builder.lan>
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 08/14] dt-bindings: reset: add IDs for SCMI reset domains on stm32mp15
+Date:   Tue, 26 Jan 2021 10:01:14 +0100
+Message-ID: <20210126090120.19900-9-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YA7+9xaAY0JT5csh@builder.lan>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25-01-21, 11:25, Bjorn Andersson wrote:
-> On Sun 17 Jan 22:43 CST 2021, Vinod Koul wrote:
-> 
-> > Add device tree bindings for global clock controller on SM8350 SoCs.
-> > 
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> >  .../bindings/clock/qcom,gcc-sm8350.yaml       |  96 +++++++
-> >  include/dt-bindings/clock/qcom,gcc-sm8350.h   | 261 ++++++++++++++++++
-> >  2 files changed, 357 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> >  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> > new file mode 100644
-> > index 000000000000..78f35832aa41
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> > @@ -0,0 +1,96 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm8350.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Global Clock & Reset Controller Binding for SM8350
-> > +
-> > +maintainers:
-> > +  - Vinod Koul <vkoul@kernel.org>
-> > +
-> > +description: |
-> > +  Qualcomm global clock control module which supports the clocks, resets and
-> > +  power domains on SM8350.
-> > +
-> > +  See also:
-> > +  - dt-bindings/clock/qcom,gcc-sm8350.h
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qcom,gcc-sm8350
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Board XO source
-> > +      - description: Sleep clock source
-> > +      - description: PLL test clock source (Optional clock)
-> > +      - description: PCIE 0 Pipe clock source (Optional clock)
-> > +      - description: PCIE 1 Pipe clock source (Optional clock)
-> > +      - description: UFS card Rx symbol 0 clock source (Optional clock)
-> > +      - description: UFS card Rx symbol 1 clock source (Optional clock)
-> > +      - description: UFS card Tx symbol 0 clock source (Optional clock)
-> > +      - description: UFS phy Rx symbol 0 clock source (Optional clock)
-> > +      - description: UFS phy Rx symbol 1 clock source (Optional clock)
-> > +      - description: UFS phy Tx symbol 0 clock source (Optional clock)
-> > +      - description: USB3 phy wrapper pipe clock source (Optional clock)
-> > +      - description: USB3 phy sec pipe clock source (Optional clock)
-> > +    minItems: 2
-> > +    maxItems: 13
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: bi_tcxo
-> > +      - const: sleep_clk
-> > +      - const: core_bi_pll_test_se # Optional clock
-> > +      - const: pcie_0_pipe_clk # Optional clock
-> > +      - const: pcie_1_pipe_clk # Optional clock
-> > +      - const: ufs_card_rx_symbol_0_clk # Optional clock
-> > +      - const: ufs_card_rx_symbol_1_clk # Optional clock
-> > +      - const: ufs_card_tx_symbol_0_clk # Optional clock
-> > +      - const: ufs_phy_rx_symbol_0_clk # Optional clock
-> > +      - const: ufs_phy_rx_symbol_1_clk # Optional clock
-> > +      - const: ufs_phy_tx_symbol_0_clk # Optional clock
-> > +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk # Optional clock
-> > +      - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk # Optional clock
-> > +    minItems: 2
-> > +    maxItems: 13
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +  '#power-domain-cells':
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - clocks
-> > +  - clock-names
-> > +  - reg
-> > +  - '#clock-cells'
-> > +  - '#reset-cells'
-> > +  - '#power-domain-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/qcom,rpmh.h>
-> > +    clock-controller@100000 {
-> > +      compatible = "qcom,gcc-sm8350";
-> > +      reg = <0x00100000 0x1f0000>;
-> > +      clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > +               <&sleep_clk>;
-> > +      clock-names = "bi_tcxo", "sleep_clk";
-> > +      #clock-cells = <1>;
-> > +      #reset-cells = <1>;
-> > +      #power-domain-cells = <1>;
-> > +    };
-> > +
-> > +...
-> > diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-> > new file mode 100644
-> > index 000000000000..2b289c5c109f
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-> > @@ -0,0 +1,261 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +/*
-> > + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> > + * Copyright (c) 2020-2021, Linaro Limited
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-> > +#define _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-> > +
-> > +/* GCC HW clocks */
-> > +#define CORE_BI_PLL_TEST_SE					0
-> > +#define PCIE_0_PIPE_CLK						1
-> > +#define PCIE_1_PIPE_CLK						2
-> > +#define UFS_CARD_RX_SYMBOL_0_CLK				3
-> > +#define UFS_CARD_RX_SYMBOL_1_CLK				4
-> > +#define UFS_CARD_TX_SYMBOL_0_CLK				5
-> > +#define UFS_PHY_RX_SYMBOL_0_CLK					6
-> > +#define UFS_PHY_RX_SYMBOL_1_CLK					7
-> > +#define UFS_PHY_TX_SYMBOL_0_CLK					8
-> > +#define USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK			9
-> > +#define USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK			10
-> > +
-> > +/* GCC clocks */
-> > +#define GCC_AGGRE_NOC_PCIE_0_AXI_CLK				11
-> > +#define GCC_AGGRE_NOC_PCIE_1_AXI_CLK				12
-> > +#define GCC_AGGRE_NOC_PCIE_TBU_CLK				13
-> > +#define GCC_AGGRE_UFS_CARD_AXI_CLK				14
-> > +#define GCC_AGGRE_UFS_CARD_AXI_HW_CTL_CLK			15
-> > +#define GCC_AGGRE_UFS_PHY_AXI_CLK				16
-> > +#define GCC_AGGRE_UFS_PHY_AXI_HW_CTL_CLK			17
-> > +#define GCC_AGGRE_USB3_PRIM_AXI_CLK				18
-> > +#define GCC_AGGRE_USB3_SEC_AXI_CLK				19
-> > +#define GCC_BOOT_ROM_AHB_CLK					20
-> > +#define GCC_CAMERA_AHB_CLK					21
-> 
-> You removed these from the driver, so no need to expose them in the
-> dt-binding either.
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-I did think about that and thought maybe it is better to leave the
-defines. We can always update the driver to use if we ever felt the
-need.
+stm32mp15 TZ secure firmware provides SCMI reset domains for
+secure resources. This change defines the SCMI reset domain
+identifiers used by SCMI agents and servers.
 
-But then I dont think we will ever do that so makes sense, will update
-this and send with acks collected
+Stm32mp15 TZ secure firmware provides SCMI clocks for oscillators, some
+PLL output and few secure aware interfaces. This change defines the
+SCMI clock identifiers used by SCMI agents and servers.
 
+Server SCMI0 exposes reset controllers for resources under RCC[TZEN]
+configuration control.
+
+Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ include/dt-bindings/reset/stm32mp1-resets.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/include/dt-bindings/reset/stm32mp1-resets.h b/include/dt-bindings/reset/stm32mp1-resets.h
+index f0c3aaef67a0..bc71924faa54 100644
+--- a/include/dt-bindings/reset/stm32mp1-resets.h
++++ b/include/dt-bindings/reset/stm32mp1-resets.h
+@@ -105,4 +105,17 @@
+ #define GPIOJ_R		19785
+ #define GPIOK_R		19786
+ 
++/* SCMI reset domain identifiers */
++#define RST_SCMI0_SPI6		0
++#define RST_SCMI0_I2C4		1
++#define RST_SCMI0_I2C6		2
++#define RST_SCMI0_USART1	3
++#define RST_SCMI0_STGEN		4
++#define RST_SCMI0_GPIOZ		5
++#define RST_SCMI0_CRYP1		6
++#define RST_SCMI0_HASH1		7
++#define RST_SCMI0_RNG1		8
++#define RST_SCMI0_MDMA		9
++#define RST_SCMI0_MCU		10
++
+ #endif /* _DT_BINDINGS_STM32MP1_RESET_H_ */
 -- 
-~Vinod
+2.17.1
+
