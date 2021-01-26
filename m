@@ -5,69 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13C6C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5612C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF3E2310E
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CF822310E
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391976AbhAZNHo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:07:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
+        id S2392339AbhAZNIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:08:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391971AbhAZMs7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:48:59 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33AFC0698D9
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:57 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id d16so15643367wro.11
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:57 -0800 (PST)
+        with ESMTP id S2391964AbhAZMsz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:48:55 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457CAC03542F
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:07 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id i9so2664420wmq.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iORMEqJhCnrh6wIXXy7N9zvOdfWOGFh+mnFrMk+Wc4I=;
-        b=Ut1+hsKMp53ICFgNhpIw0ZooAhqTLBGxRB1GLTU+ou42L9Dcz2FMt2o95jvhCa5CJf
-         ZdlD9DBP1nU2IMrEQ9ly3HLM8tv74yCFWf3FpjdMVG0AGTNgKqPii/2dhd0ZSTMWHSke
-         SfKwvE+l7fcjMACW9iCx/76oeGNAriPw3VvxzsJlySd9/zOTfQUIsd5T5jPfqnf+CfEn
-         PEdLuEobbG2jPX0Gf/vBfIPoyJk2F6FLkDxVjXkK5SOztcfDLiR2N+b/QRpWjYsMV3c2
-         o3wVGKiDJsO/jHItbpGtc7Eet8TetxgNijbinf81a/1UNccJcvd1b63IVx6aw38fnnvk
-         54kg==
+        bh=ACuhHqUyAOgeit1pJS1MxY6/38vCSWpT3UKaTx8+/JY=;
+        b=fM8B1mFx2eVpjNGE3vhWFZC0WnRAysxKHxe+DAlNp0M68o88FbxPu79MK7N6KiE2w6
+         9Xz6u4qdahy0LI9WhaFK/lyoXeoeyTIRv3jDEuQ+1axa99t2wwYOv3R4ZYP7Nf33NHcF
+         h/ifupziL/bRk8bMH6nIbZRqrxAaPuu8HhFAWxW4P1w0jDAp4QjTtN/sMy8BVDVsBKeJ
+         5XqZMH2ZHCMbswWDflwfuj2IwwEkK5sK41ABrUURUYOQM0CqIeNKuZ/QR+TlG/5OyQY4
+         UAK2fLKyhInTzveMOSTFN0HX58oaY6FSzzY0nRCsLMpkwG8QaNeop7L+F9Ub+d7NkC/G
+         +g1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iORMEqJhCnrh6wIXXy7N9zvOdfWOGFh+mnFrMk+Wc4I=;
-        b=bkhmlft4gcIsnGTmIzCdwKQteY6KjRmbkdkfzUdHgM7FLhpApjm2rn4q71Ui0lywCf
-         EArzroMB1CX+8Ya3c6qCvY1jbyKGmGxfzdN86LysumC+OkAcyAorFKOyP/v8a6OjJ5Ke
-         MIOs7sA0O4rkybKucNLZZQoAoF12aFUCqulAVNcoypCIJ/8S7PG2w/ZY6mxYML4ln9N0
-         bdepNVxHQ1KAiV6SeJwx1In23UGRzjUM05+ZXIRDoYkear/Jw3I5l/SR8T1Up476+R68
-         PrJ7aaTt0GsENY2d6wKKbkLNLK7UrkYTFR71gDYNtRsB1DwxzDb8qo6aI9/xpYms6+sW
-         G7gQ==
-X-Gm-Message-State: AOAM531IgpJrXVA5D14YQr4uYqYA5PfgNOHzTnRMmreguGjZZ58I+Ftf
-        c5PfoaWyShm0aAUbNg3ypFsZsQ==
-X-Google-Smtp-Source: ABdhPJw2nx2B0oh6rm7aHoz4WYg84KTipml2Niimp8U30RwYdhTXFbsI0bCANZV1kpnLUvqsibBRAw==
-X-Received: by 2002:a5d:6c6b:: with SMTP id r11mr5998536wrz.38.1611665156576;
-        Tue, 26 Jan 2021 04:45:56 -0800 (PST)
+        bh=ACuhHqUyAOgeit1pJS1MxY6/38vCSWpT3UKaTx8+/JY=;
+        b=ublD+m8Lb0h/lQy72hzIV2a2CdZzKbIzOfvSrlYIxtV2EK/nzUarEH8eGkDXCtQyZs
+         fkcXFdob0nB5s5V6H71fHLSLnBPNw1k5T3EHHSznVYJ40DRyWPlozCKMil3ksvk2THcs
+         KVkCzM4T0EKa1GhuLIWXDGzJWL1tB8cfPmVCV78yzvitJ3yogNlflshwffsSiy/5AfjE
+         MlE1H3unSrLNAGg+/+bwVrgR5OtTL9jz5ArsMAknwKQsUg49b665+s72sn6RzFct6mRr
+         LJqqautGEz/oI/UiFa/BaazfLe338spAKOOoFkdMRH8k0hDBTEyoTOrdGDvsGel5uDJw
+         999A==
+X-Gm-Message-State: AOAM532ioqiEMEqoY77IZYJulT+vuCFTJB3a5sxBcVcfsKYmf1qKsW8q
+        td4DCMYLD/vuEiAIglCtAWC18g==
+X-Google-Smtp-Source: ABdhPJwZRlj953gT/ow/PoTz03HbJCu8kx7ksSmJH59sdocGmJhel18R3yS87cxTtuQ5kIlJ9yN83w==
+X-Received: by 2002:a1c:f706:: with SMTP id v6mr4569286wmh.85.1611665166044;
+        Tue, 26 Jan 2021 04:46:06 -0800 (PST)
 Received: from dell.default ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.55
+        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.46.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 04:45:55 -0800 (PST)
+        Tue, 26 Jan 2021 04:46:05 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 10/21] clk: ti: dpll44xx: Fix some potential doc-rot
-Date:   Tue, 26 Jan 2021 12:45:29 +0000
-Message-Id: <20210126124540.3320214-11-lee.jones@linaro.org>
+Subject: [PATCH 18/21] clk: qcom: clk-rpm: Remove a bunch of superfluous code
+Date:   Tue, 26 Jan 2021 12:45:37 +0000
+Message-Id: <20210126124540.3320214-19-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
 References: <20210126124540.3320214-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -75,48 +77,100 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/ti/dpll44xx.c:114: warning: Function parameter or member 'hw' not described in 'omap4_dpll_regm4xen_recalc'
- drivers/clk/ti/dpll44xx.c:114: warning: Function parameter or member 'parent_rate' not described in 'omap4_dpll_regm4xen_recalc'
- drivers/clk/ti/dpll44xx.c:114: warning: Excess function parameter 'clk' description in 'omap4_dpll_regm4xen_recalc'
- drivers/clk/ti/dpll44xx.c:150: warning: Function parameter or member 'hw' not described in 'omap4_dpll_regm4xen_round_rate'
- drivers/clk/ti/dpll44xx.c:150: warning: Function parameter or member 'parent_rate' not described in 'omap4_dpll_regm4xen_round_rate'
- drivers/clk/ti/dpll44xx.c:150: warning: Excess function parameter 'clk' description in 'omap4_dpll_regm4xen_round_rate'
+ drivers/clk/qcom/clk-rpm.c:453:29: warning: ‘clk_rpm_branch_ops’ defined but not used [-Wunused-const-variable=]
 
-Cc: Tero Kristo <kristo@kernel.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/ti/dpll44xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-rpm.c | 63 --------------------------------------
+ 1 file changed, 63 deletions(-)
 
-diff --git a/drivers/clk/ti/dpll44xx.c b/drivers/clk/ti/dpll44xx.c
-index 89c3ed1a24b82..3fc2cab69a3fe 100644
---- a/drivers/clk/ti/dpll44xx.c
-+++ b/drivers/clk/ti/dpll44xx.c
-@@ -102,7 +102,8 @@ static void omap4_dpll_lpmode_recalc(struct dpll_data *dd)
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index f71d228fd6bd5..a18811c380187 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -73,62 +73,6 @@
+ 		},							      \
+ 	}
  
- /**
-  * omap4_dpll_regm4xen_recalc - compute DPLL rate, considering REGM4XEN bit
-- * @clk: struct clk * of the DPLL to compute the rate for
-+ * @hw: pointer to the clock to compute the rate for
-+ * @parent_rate: clock rate of the DPLL parent
-  *
-  * Compute the output rate for the OMAP4 DPLL represented by @clk.
-  * Takes the REGM4XEN bit into consideration, which is needed for the
-@@ -134,8 +135,9 @@ unsigned long omap4_dpll_regm4xen_recalc(struct clk_hw *hw,
+-#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+-	static struct clk_rpm _platform##_##_active;			      \
+-	static struct clk_rpm _platform##_##_name = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.active_only = true,					      \
+-		.peer = &_platform##_##_active,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_name,					      \
+-			.parent_names = (const char *[]){ "pxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	};								      \
+-	static struct clk_rpm _platform##_##_active = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.peer = &_platform##_##_name,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_active,				      \
+-			.parent_names = (const char *[]){ "pxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	}
+-
+-#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+-	static struct clk_rpm _platform##_##_active;			      \
+-	static struct clk_rpm _platform##_##_name = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.peer = &_platform##_##_active,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_name,					      \
+-			.parent_names = (const char *[]){ "cxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	};								      \
+-	static struct clk_rpm _platform##_##_active = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.active_only = true,					      \
+-		.peer = &_platform##_##_name,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_active,				      \
+-			.parent_names = (const char *[]){ "cxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	}
+-
+ #define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
  
- /**
-  * omap4_dpll_regm4xen_round_rate - round DPLL rate, considering REGM4XEN bit
-- * @clk: struct clk * of the DPLL to round a rate for
-+ * @hw: struct hw_clk containing the struct clk * of the DPLL to round a rate for
-  * @target_rate: the desired rate of the DPLL
-+ * @parent_rate: clock rate of the DPLL parent
-  *
-  * Compute the rate that would be programmed into the DPLL hardware
-  * for @clk if set_rate() were to be provided with the rate
+ struct rpm_cc;
+@@ -450,13 +394,6 @@ static const struct clk_ops clk_rpm_ops = {
+ 	.recalc_rate	= clk_rpm_recalc_rate,
+ };
+ 
+-static const struct clk_ops clk_rpm_branch_ops = {
+-	.prepare	= clk_rpm_prepare,
+-	.unprepare	= clk_rpm_unprepare,
+-	.round_rate	= clk_rpm_round_rate,
+-	.recalc_rate	= clk_rpm_recalc_rate,
+-};
+-
+ /* MSM8660/APQ8060 */
+ DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
+ DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
 -- 
 2.25.1
 
