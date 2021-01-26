@@ -2,123 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C59BC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 887E6C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3034122228
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61E1A22286
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731065AbhAZRU4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:20:56 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52936 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390854AbhAZJF2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 04:05:28 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10Q8vtTK029076;
-        Tue, 26 Jan 2021 10:04:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=selector1;
- bh=K5tpOZ2cHNz58gyUgyMnu5PnB/MyKYaWCm9NlO5fwiA=;
- b=3cp7sfo0vqWNVQBH4aGCFuk9xBfXVe6CwhcxZmhrpy4FziizbI/JRsEXvtLNx9JtEJwv
- BOcichCHATGPOrU/c6eslmHuNUdwdgvjDVIuKnpC/z7coCOFZizgysWECwxjo8+UFPUT
- AbGi+9BJdmvz153DB+FYmVYcZ8P6Cs/WCQykUIwWlwzpPOA9kh27wzNNXeraSTsou1Yd
- M6d7GUH/UNTtQLdEfg0YyTnwuVo4JpIfMkCCsXhLrt4B4M/bd1dri/ZsMk2Qh8QOd0nU
- lgadDGPMBr9+r+wgQxx3rRWY15V5Btdj8yhxzP/3XdqlGmTnMpMclH+E+sD/oV6t33JW IQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 368bjn7rm6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Jan 2021 10:04:28 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0198110002A;
-        Tue, 26 Jan 2021 10:04:28 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D9D7522A4A4;
-        Tue, 26 Jan 2021 10:04:27 +0100 (CET)
-Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 26 Jan 2021 10:04:27
- +0100
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1728846AbhAZRUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:20:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729094AbhAZIAO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Jan 2021 03:00:14 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 419AC206D7;
+        Tue, 26 Jan 2021 07:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611647974;
+        bh=ndO0PMKXJOqvpOvK3ZfF6AN3TVTIqf62iPD8PKPIV64=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nfa38lZYBYPy3CRuYp5nri0FGpaDkLPA0mMhc2zNJAAR/oTwAlu388u7agEK2/ZQj
+         iOaPKSv4RKXM+f62m//GrWChQtRXA2qNV1KvxE1M6h752qq0G7l3KzzKx5ar3pSgJg
+         zrw/QTXEfAjfn7eocwlP34P9iPkxN+infrtdfJOh6Dvhgm3/gxEYc6GRozPcnSOtUc
+         e6RJcKV9WQvkjz99JKbFxq/11a5f8QgWiP7J6wdECOHg7UAE0V+EKbW/n/UYFyiK/g
+         kitr/0ux0fe3koWJxE271FwtJO8clhldffSDWc+Bk9/kqKVuRB74LorFDplsyixq+b
+         Jkyg74UKbUp7Q==
+Date:   Tue, 26 Jan 2021 13:29:29 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Vivek Aknurwar <viveka@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Etienne Carriere <etienne.carriere@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        <marex@denx.de>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
-Date:   Tue, 26 Jan 2021 10:01:06 +0100
-Message-ID: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.17.1
+        Taniya Das <tdas@codeaurora.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeevan Shriram <jshriram@codeaurora.org>
+Subject: Re: [PATCH v4 3/5] clk: qcom: clk-alpha-pll: Add support for Lucid
+ 5LPE PLL
+Message-ID: <20210126075929.GM2771@vkoul-mobl>
+References: <20210118044321.2571775-1-vkoul@kernel.org>
+ <20210118044321.2571775-4-vkoul@kernel.org>
+ <YA79UPODso3cmMFU@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG2NODE3.st.com
- (10.75.127.6)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YA79UPODso3cmMFU@builder.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+On 25-01-21, 11:18, Bjorn Andersson wrote:
+> On Sun 17 Jan 22:43 CST 2021, Vinod Koul wrote:
+> 
+> > From: Vivek Aknurwar <viveka@codeaurora.org>
+> > 
+> > Lucid 5LPE is a slightly different Lucid PLL with different offsets and
+> > porgramming sequence so add support for these
+> > 
+> > Signed-off-by: Vivek Aknurwar <viveka@codeaurora.org>
+> > Signed-off-by: Jeevan Shriram <jshriram@codeaurora.org>
+> > [vkoul: rebase and tidy up for upstream]
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> >  drivers/clk/qcom/clk-alpha-pll.c | 173 +++++++++++++++++++++++++++++++
+> >  drivers/clk/qcom/clk-alpha-pll.h |   4 +
+> >  2 files changed, 177 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > index a30ea7b09224..f9c48da21bd1 100644
+> > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > @@ -156,6 +156,12 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+> >  /* LUCID PLL specific settings and offsets */
+> >  #define LUCID_PCAL_DONE		BIT(27)
+> >  
+> > +/* LUCID 5LPE PLL specific settings and offsets */
+> > +#define LUCID_5LPE_PCAL_DONE		BIT(11)
+> > +#define LUCID_5LPE_ALPHA_PLL_ACK_LATCH	BIT(13)
+> > +#define LUCID_5LPE_PLL_LATCH_INPUT	BIT(14)
+> > +#define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
+> > +
+> >  #define pll_alpha_width(p)					\
+> >  		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+> >  				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+> > @@ -1604,3 +1610,170 @@ const struct clk_ops clk_alpha_pll_agera_ops = {
+> >  	.set_rate = clk_alpha_pll_agera_set_rate,
+> >  };
+> >  EXPORT_SYMBOL_GPL(clk_alpha_pll_agera_ops);
+> > +
+> > +static int alpha_pll_lucid_5lpe_enable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* If in FSM mode, just vote for it */
+> > +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> > +		ret = clk_enable_regmap(hw);
+> > +		if (ret)
+> > +			return ret;
+> > +		return wait_for_pll_enable_lock(pll);
+> > +	}
+> > +
+> > +	/* Check if PLL is already enabled, return if enabled */
+> > +	ret = trion_pll_is_enabled(pll, pll->clkr.regmap);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_RUN);
+> > +
+> > +	ret = wait_for_pll_enable_lock(pll);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable the PLL outputs */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, PLL_OUT_MASK);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Enable the global PLL outputs */
+> > +	return regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
+> > +}
+> > +
+> > +static void alpha_pll_lucid_5lpe_disable(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	ret = regmap_read(pll->clkr.regmap, PLL_USER_CTL(pll), &val);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* If in FSM mode, just unvote it */
+> > +	if (val & LUCID_5LPE_ENABLE_VOTE_RUN) {
+> > +		clk_disable_regmap(hw);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Disable the global PLL output */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* Disable the PLL outputs */
+> > +	ret = regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_OUT_MASK, 0);
+> > +	if (ret)
+> > +		return;
+> > +
+> > +	/* Place the PLL mode in STANDBY */
+> > +	regmap_write(pll->clkr.regmap, PLL_OPMODE(pll), PLL_STANDBY);
+> > +}
+> > +
+> > +/*
+> > + * The Lucid 5LPE PLL requires a power-on self-calibration which happens
+> > + * when the PLL comes out of reset. Calibrate in case it is not completed.
+> > + */
+> > +static int alpha_pll_lucid_5lpe_prepare(struct clk_hw *hw)
+> > +{
+> > +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +	struct clk_hw *p;
+> > +	u32 val;
+> > +	int ret;
+> > +
+> > +	/* Return early if calibration is not needed. */
+> > +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+> 
+> I doubt this will ever fail, but static analysis tools would complain
+> about val possibly being uninitialized after this.
+> 
+> And the return value is checked in the other functions.
 
-Platform STM32MP1 can be used in configuration where some clocks and
-IP resets can relate as secure resources.
-These resources are moved from a RCC clock/reset handle to a SCMI
-clock/reset_domain handle.
-
-The RCC clock driver is now dependent of the SCMI driver, then we have
-to manage now the probe defering.
-
-v1 -> v2:
-  - fix yamllint warnings.
-
-Gabriel Fernandez (14):
-  clk: stm32mp1: merge 'clk-hsi-div' and 'ck_hsi' into one clock
-  clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
-  clk: stm32mp1: remove intermediate pll clocks
-  clk: stm32mp1: convert to module driver
-  clk: stm32mp1: move RCC reset controller into RCC clock driver
-  reset: stm32mp1: remove stm32mp1 reset
-  dt-bindings: clock: add IDs for SCMI clocks on stm32mp15
-  dt-bindings: reset: add IDs for SCMI reset domains on stm32mp15
-  dt-bindings: reset: add MCU HOLD BOOT ID for SCMI reset domains on
-    stm32mp15
-  clk: stm32mp1: new compatible for secure RCC support
-  ARM: dts: stm32: define SCMI resources on stm32mp15
-  ARM: dts: stm32: move clocks/resets to SCMI resources for stm32mp15
-  dt-bindings: clock: stm32mp1 new compatible for secure rcc
-  ARM: dts: stm32: introduce basic boot include on stm32mp15x board
-
- .../bindings/clock/st,stm32mp1-rcc.yaml       |   6 +-
- arch/arm/boot/dts/stm32mp15-no-scmi.dtsi      | 158 ++++++
- arch/arm/boot/dts/stm32mp151.dtsi             | 127 +++--
- arch/arm/boot/dts/stm32mp153.dtsi             |   4 +-
- arch/arm/boot/dts/stm32mp157.dtsi             |   2 +-
- arch/arm/boot/dts/stm32mp15xc.dtsi            |   4 +-
- drivers/clk/Kconfig                           |  10 +
- drivers/clk/clk-stm32mp1.c                    | 495 +++++++++++++++---
- drivers/reset/Kconfig                         |   6 -
- drivers/reset/Makefile                        |   1 -
- drivers/reset/reset-stm32mp1.c                | 115 ----
- include/dt-bindings/clock/stm32mp1-clks.h     |  27 +
- include/dt-bindings/reset/stm32mp1-resets.h   |  15 +
- 13 files changed, 704 insertions(+), 266 deletions(-)
- create mode 100644 arch/arm/boot/dts/stm32mp15-no-scmi.dtsi
- delete mode 100644 drivers/reset/reset-stm32mp1.c
+Yes agreed, will update this. Somehow I dont this my checked W=1
+complained about this, maybe some others would..
 
 -- 
-2.17.1
-
+~Vinod
