@@ -7,72 +7,72 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2EFC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A241C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA7722B2C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 581E122B2C
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405685AbhAZOFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 09:05:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
+        id S2392696AbhAZOC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 09:02:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405572AbhAZOEs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:04:48 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8B2C061A31
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:04:08 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id v1so16227517ott.10
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:04:08 -0800 (PST)
+        with ESMTP id S2392685AbhAZOCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:02:13 -0500
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111C0C061A29
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:01:33 -0800 (PST)
+Received: by mail-ot1-x331.google.com with SMTP id f6so16224824ots.9
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:01:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=MsK4CaeZUuQbxzldo8dFAj7Ip1Nra/4PEZy0IWNDwKA=;
-        b=oJDgbuOkCoz6zAvL2MLojuABQE1LnOHQsv8Sr8dJJkZmRIJW4fT+lBOiWCHwFxgyXl
-         f5SppIvh70EKm2GeJyfWlQ5OA7825I/pCJhXVsP0EmZKDWarGYzCLE4YFS4n44X63N27
-         CuzTTDKuisrWcbigIqWkS1qeGfiDC76d2VkFbKyVzkzUgTqKWz8lqCKQ0drBWS9ehbTi
-         ixyXptqL0Wa8G7XtYbpibYb3mZr2LJbpj5/Uxwy2/qnrdXTXSg77XIk7N1xvgWp6euQ4
-         jEXzA2BR8T82RcTsXX0Gr8l2vemy9hL5H7+O+sZKFrEyDvKrYauu0QHcsbcqMQXMc7Qd
-         vaYg==
+        bh=NHa1jl4XStlNfdm47A2wF7pRtMVv0tqg694ijeAKGgo=;
+        b=g48UNgtY8ZF9l+UqD4BTLmVeRhst8Pa1/qJsYTnCprsve24Bn1PuxRDF408fhTOAbc
+         RDSGqwKhkI0m1sWgZpdMYR6G5g9COhZWbrxvhynGVEkweBtuS61qb3dshLM7n5vLNFEl
+         fZ1z/YV7IUR6SItFyy7ksH/+qhQrj25o0ximz3dvVuIPI/SMDHFRMMU6h1aj+vPqkkOD
+         JfJrNIoGO3a2bkNf/RH/rke1zU+HKGnW9yR8ycGO7PicvIQMNM1yl9JFLdHL8Kn1nh4B
+         55bCIPhPhTBpY5aZPfU3eJNmbZoF2df8+bRnUnw9M3OuMtmZCcTf1lvedvRh6J7lxehw
+         zy0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=MsK4CaeZUuQbxzldo8dFAj7Ip1Nra/4PEZy0IWNDwKA=;
-        b=BzeJzo9q4z48+LSmvzpRwrkzBUKD+YbaWjUN4AVDe7tihGM3+90A8w0/MKByKtL1tJ
-         RrXyLr0XKz2desMmr3syLnIpGKWeYW5SCj5Xl1Mes0zrCjlYV3b7p2qiuemhSM9hbykQ
-         tiBSOLYGX2nO75ztWID0Cx5i/h/OzEt9yutoh0AyUbKsZhkvNSHiGX4i8huLjeyJPit7
-         W7iSntGrMItBgL9eED7eW4WwLl4CAuFXowskzmYErk8HdyTch78z79G1q0LQpY8eIDFZ
-         bGhrjqZ0UgZ4/bFTUV4oq25amtLRrF30V7zhhq+UGNSc72vJsx13YK1z1NH1WJz9JqJ1
-         ZnSQ==
-X-Gm-Message-State: AOAM532C6E35WDQ0UD9/9DnDcXwAdiwZpR3VwJCSDRAiwnGKB7n3e64n
-        Y8YgFiTnrCfvSo48UxDjkiPkdA==
-X-Google-Smtp-Source: ABdhPJxX8nY7QjrZBeaPXb5VbSrI1X+GKXGhNuDRRN1eLhvoaMkZFItzLc7hvWzb53yTMa8LtnmSMQ==
-X-Received: by 2002:a9d:6c90:: with SMTP id c16mr4106448otr.177.1611669846924;
-        Tue, 26 Jan 2021 06:04:06 -0800 (PST)
+        bh=NHa1jl4XStlNfdm47A2wF7pRtMVv0tqg694ijeAKGgo=;
+        b=e6NEfM+P7z+sf58MLWAt2ajtt0yr9kFcL8gwIahlyuvU8w814cnWHSdGdXSQJ/0RaV
+         6+jVnbE4rbyFP47/KeVt5crXUCY790GE+vJ1huNO4zuh1nzSYTkYUGuhpUqbGh/BGSec
+         Nynz3hvGWFgsLev3OxOwkzbmuVx1CAt+Gh1QEpfntvwrNWTOCLnsoi45PSJBaMkqO9PE
+         72N0ogECtCTLetVkugGjg8rG/mzBdSbR6VsCrcMQbyhFES2B7rXkXPeM3J+bDuIJRd7i
+         ianvvLR09/AVLeyj9aV7ooMoNtEvvTbf8DnQ7z1WdqyMwF4duaT89GVVJJOQw8pynFKQ
+         HFxg==
+X-Gm-Message-State: AOAM5318yA+xBTTN4f03knWHDENnPPvTCYXWEq0uO4hnp+2mZBFsueF4
+        AQxZ/aFCPI7p3bku2Im0p8iy8w==
+X-Google-Smtp-Source: ABdhPJx8qKP3uJzg1vWvJWHFk8p3ugyjVEg/omR7n0I6N2mia7sWVH4kq6wxy0T3NTsKCzKM1uieYw==
+X-Received: by 2002:a05:6830:1041:: with SMTP id b1mr3997810otp.335.1611669692143;
+        Tue, 26 Jan 2021 06:01:32 -0800 (PST)
 Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 186sm3853267ood.6.2021.01.26.06.04.05
+        by smtp.gmail.com with ESMTPSA id z8sm3858515oon.10.2021.01.26.06.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 06:04:06 -0800 (PST)
-Date:   Tue, 26 Jan 2021 08:04:04 -0600
+        Tue, 26 Jan 2021 06:01:31 -0800 (PST)
+Date:   Tue, 26 Jan 2021 08:01:29 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH 18/21] clk: qcom: clk-rpm: Remove a bunch of superfluous
- code
-Message-ID: <20210126140404.GF1241218@yoga>
+Subject: Re: [PATCH 13/21] clk: qcom: gcc-ipq4019: Remove unused variable
+ 'ret'
+Message-ID: <20210126140129.GD1241218@yoga>
 References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210126124540.3320214-19-lee.jones@linaro.org>
+ <20210126124540.3320214-14-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210126124540.3320214-19-lee.jones@linaro.org>
+In-Reply-To: <20210126124540.3320214-14-lee.jones@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -81,7 +81,8 @@ On Tue 26 Jan 06:45 CST 2021, Lee Jones wrote:
 
 > Fixes the following W=1 kernel build warning(s):
 > 
->  drivers/clk/qcom/clk-rpm.c:453:29: warning: ‘clk_rpm_branch_ops’ defined but not used [-Wunused-const-variable=]
+>  drivers/clk/qcom/gcc-ipq4019.c: In function ‘clk_cpu_div_set_rate’:
+>  drivers/clk/qcom/gcc-ipq4019.c:1279:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
 > 
 > Cc: Andy Gross <agross@kernel.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -94,90 +95,33 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 > Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
->  drivers/clk/qcom/clk-rpm.c | 63 --------------------------------------
->  1 file changed, 63 deletions(-)
+>  drivers/clk/qcom/gcc-ipq4019.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> index f71d228fd6bd5..a18811c380187 100644
-> --- a/drivers/clk/qcom/clk-rpm.c
-> +++ b/drivers/clk/qcom/clk-rpm.c
-> @@ -73,62 +73,6 @@
->  		},							      \
->  	}
+> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+> index ef5137fd50f3f..8abad4032de71 100644
+> --- a/drivers/clk/qcom/gcc-ipq4019.c
+> +++ b/drivers/clk/qcom/gcc-ipq4019.c
+> @@ -1276,16 +1276,15 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	struct clk_fepll *pll = to_clk_fepll(hw);
+>  	const struct freq_tbl *f;
+>  	u32 mask;
+> -	int ret;
 >  
-> -#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
-> -	static struct clk_rpm _platform##_##_active;			      \
-> -	static struct clk_rpm _platform##_##_name = {			      \
-> -		.rpm_clk_id = (r_id),					      \
-> -		.active_only = true,					      \
-> -		.peer = &_platform##_##_active,				      \
-> -		.rate = (r),						      \
-> -		.branch = true,						      \
-> -		.hw.init = &(struct clk_init_data){			      \
-> -			.ops = &clk_rpm_branch_ops,			      \
-> -			.name = #_name,					      \
-> -			.parent_names = (const char *[]){ "pxo_board" },      \
-> -			.num_parents = 1,				      \
-> -		},							      \
-> -	};								      \
-> -	static struct clk_rpm _platform##_##_active = {			      \
-> -		.rpm_clk_id = (r_id),					      \
-> -		.peer = &_platform##_##_name,				      \
-> -		.rate = (r),						      \
-> -		.branch = true,						      \
-> -		.hw.init = &(struct clk_init_data){			      \
-> -			.ops = &clk_rpm_branch_ops,			      \
-> -			.name = #_active,				      \
-> -			.parent_names = (const char *[]){ "pxo_board" },      \
-> -			.num_parents = 1,				      \
-> -		},							      \
-> -	}
-> -
-> -#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, _active, r_id, r)	      \
-> -	static struct clk_rpm _platform##_##_active;			      \
-> -	static struct clk_rpm _platform##_##_name = {			      \
-> -		.rpm_clk_id = (r_id),					      \
-> -		.peer = &_platform##_##_active,				      \
-> -		.rate = (r),						      \
-> -		.branch = true,						      \
-> -		.hw.init = &(struct clk_init_data){			      \
-> -			.ops = &clk_rpm_branch_ops,			      \
-> -			.name = #_name,					      \
-> -			.parent_names = (const char *[]){ "cxo_board" },      \
-> -			.num_parents = 1,				      \
-> -		},							      \
-> -	};								      \
-> -	static struct clk_rpm _platform##_##_active = {			      \
-> -		.rpm_clk_id = (r_id),					      \
-> -		.active_only = true,					      \
-> -		.peer = &_platform##_##_name,				      \
-> -		.rate = (r),						      \
-> -		.branch = true,						      \
-> -		.hw.init = &(struct clk_init_data){			      \
-> -			.ops = &clk_rpm_branch_ops,			      \
-> -			.name = #_active,				      \
-> -			.parent_names = (const char *[]){ "cxo_board" },      \
-> -			.num_parents = 1,				      \
-> -		},							      \
-> -	}
-> -
->  #define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
+>  	f = qcom_find_freq(pll->freq_tbl, rate);
+>  	if (!f)
+>  		return -EINVAL;
 >  
->  struct rpm_cc;
-> @@ -450,13 +394,6 @@ static const struct clk_ops clk_rpm_ops = {
->  	.recalc_rate	= clk_rpm_recalc_rate,
->  };
->  
-> -static const struct clk_ops clk_rpm_branch_ops = {
-> -	.prepare	= clk_rpm_prepare,
-> -	.unprepare	= clk_rpm_unprepare,
-> -	.round_rate	= clk_rpm_round_rate,
-> -	.recalc_rate	= clk_rpm_recalc_rate,
-> -};
-> -
->  /* MSM8660/APQ8060 */
->  DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
->  DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
+>  	mask = (BIT(pll->cdiv.width) - 1) << pll->cdiv.shift;
+> -	ret = regmap_update_bits(pll->cdiv.clkr.regmap,
+> -				 pll->cdiv.reg, mask,
+> -				 f->pre_div << pll->cdiv.shift);
+> +	regmap_update_bits(pll->cdiv.clkr.regmap,
+> +			   pll->cdiv.reg, mask,
+> +			   f->pre_div << pll->cdiv.shift);
+>  	/*
+>  	 * There is no status bit which can be checked for successful CPU
+>  	 * divider update operation so using delay for the same.
 > -- 
 > 2.25.1
 > 
