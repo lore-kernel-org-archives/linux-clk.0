@@ -2,129 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF55AC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3A0C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90B392311C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E05042311C
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:15:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404137AbhAZNN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:13:57 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:58738 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404098AbhAZNNh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Jan 2021 08:13:37 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE95C1A0D28;
-        Tue, 26 Jan 2021 14:12:39 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1DDB1A021C;
-        Tue, 26 Jan 2021 14:12:39 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CE06E2034A;
-        Tue, 26 Jan 2021 14:12:39 +0100 (CET)
-Date:   Tue, 26 Jan 2021 15:12:39 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <sha@pengutronix.de>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
+        id S2391568AbhAZNPX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:15:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391884AbhAZMrW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:47:22 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458A1C0698C2
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:47 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id c127so2614839wmf.5
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=PGeifpJKwjmOW+Ep9Ua2GRyOjoW8Ji8HLmvStTZxjac=;
+        b=v/GZXImGJGb/kVvhK0npWRAIjwWvAMSPszbanie2gyQyaHIgNwv+GU3OY5PEDCFNvb
+         Pdc4HM2L/mZ726eJc04eNfiTzO4Z89LCNDfVMeHPSFU3MY1VHTFI6+/myba3re2O/8Zi
+         c6h/JKld/C95nLyWd2MAKMotO9aJeyjdcfO5QrDqoAchQcQg5NFB0on4wIzTMMqcT2GU
+         CFT5LRCbrpOnA4+gIOhhegepdFDJMwbIYFrbkwXajcdkASOpNhqkyYtwiJ1gM8Zb7ecv
+         rBjrxYe5yH1RmYRdRFxfUp/TSCEX4bn8VDsyg4XFIOKnnsI2fQ98NaAipX4yDM/ozDbO
+         lpJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PGeifpJKwjmOW+Ep9Ua2GRyOjoW8Ji8HLmvStTZxjac=;
+        b=HMZ0LJkztoMwK0ito0uwvoTdm3QQk0v7hk5ENzRWc1Wh54viXwTZ/oSyHk58saJu0U
+         ed1VXdl5U762JdPuE06VPK8sW50JgjjIoy9mt+KwQzIUafCoDwRNzNa6ZSgq8AN7mf4V
+         30/J1xNCKvAXxPpS7xMHRE3E+xTn99EqycQoWu3MQUImHKKpwUsOUIdHGBquPO3hF4v7
+         GTXm3HpRPVMp6S0VooiryFkTHs1IE93zVDelT6N/OkLLZ71QxOInITqUXrkCLqt0cnI7
+         h9BlEQ2XKkTr6G39YnXJAOvXq0NqRWMyl8n2FPNyEFFzKEmtew4lIaidCuBsHXMcIXmL
+         0Vfw==
+X-Gm-Message-State: AOAM530Slil8WEA+yGAm2N/3aw/IuK9/1EAU2hIWJv1igN7hY21dmrSD
+        n2dVEyUyfsztC7CRJgZjiagJMg==
+X-Google-Smtp-Source: ABdhPJxXTxLgbK5EkVRfr+MJjeLWFuHWBUr/C2CyGD6BUSoJivoD9uH6eJohEpOALz25PXoDpvXWJw==
+X-Received: by 2002:a1c:f706:: with SMTP id v6mr4568060wmh.85.1611665145981;
+        Tue, 26 Jan 2021 04:45:45 -0800 (PST)
+Received: from dell.default ([91.110.221.188])
+        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 04:45:45 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC] clk: Mark HW enabled clocks as enabled in core
-Message-ID: <20210126131239.uyolpawk2jfat7z4@fsr-ub1664-175>
-References: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
- <20210126115105.GD28722@pengutronix.de>
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 01/21] clk: zynq: pll: Fix kernel-doc formatting in 'clk_register_zynq_pll's header
+Date:   Tue, 26 Jan 2021 12:45:20 +0000
+Message-Id: <20210126124540.3320214-2-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210126115105.GD28722@pengutronix.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-01-26 12:51:05, Sascha Hauer wrote:
-> On Tue, Jan 26, 2021 at 01:21:36PM +0200, Abel Vesa wrote:
-> > Some clocks are already enabled in HW even before the kernel
-> > starts to boot. So, in order to make sure that these clocks do not
-> > get disabled when clk_disable_unused call is done or when
-> > reparenting clocks, we enable them in core on clock registration.
-> > Such a clock will have to be registered with CLK_IGNORE_UNUSED flag
-> > and also needs to have the is_enabled ops implemented.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > ---
-> >  drivers/clk/clk.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 3d751ae5bc70..26d55851cfa5 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3416,6 +3416,7 @@ static int __clk_core_init(struct clk_core *core)
-> >  	int ret;
-> >  	struct clk_core *parent;
-> >  	unsigned long rate;
-> > +	bool is_hw_enabled = false;
-> >  	int phase;
-> >  
-> >  	if (!core)
-> > @@ -3558,12 +3559,20 @@ static int __clk_core_init(struct clk_core *core)
-> >  		rate = 0;
-> >  	core->rate = core->req_rate = rate;
-> >  
-> > +	/*
-> > +	 * If the clock has the CLK_IGNORE_UNUSED flag set and it is already
-> > +	 * enabled in HW, enable it in core too so it won't get accidentally
-> > +	 * disabled when walking the orphan tree and reparenting clocks
-> > +	 */
-> > +	if (core->flags & CLK_IGNORE_UNUSED && core->ops->is_enabled)
-> > +		is_hw_enabled = clk_core_is_enabled(core);
-> > +
-> >  	/*
-> >  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-> >  	 * don't get accidentally disabled when walking the orphan tree and
-> >  	 * reparenting clocks
-> >  	 */
-> > -	if (core->flags & CLK_IS_CRITICAL) {
-> > +	if (core->flags & CLK_IS_CRITICAL || is_hw_enabled) {
-> >  		unsigned long flags;
-> >  
-> >  		ret = clk_core_prepare(core);
-> 
-> This means that a bootloader enabled clock with CLK_IGNORE_UNUSED flag
-> can effectively never be disabled because the prepare/enable count is 1
-> without any user. This is the behaviour we want to have with critical
-> clocks, but I don't think this is desired for clocks with the
-> CLK_IGNORE_UNUSED flag.
-> 
+Fixes the following W=1 kernel build warning(s):
 
-Here is the way I see it. Critical clocks means the system can't work
-without, so do not ever disable/unprepare. The "ignore unused" flag
-tells the core to not do anything to this clock, even if it is unused.
-For now, it just leaves the clock alone, but the flag could be used for
-some other stuff in the future.
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'name' not described in 'clk_register_zynq_pll'
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'parent' not described in 'clk_register_zynq_pll'
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'pll_ctrl' not described in 'clk_register_zynq_pll'
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'pll_status' not described in 'clk_register_zynq_pll'
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'lock_index' not described in 'clk_register_zynq_pll'
+ drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'lock' not described in 'clk_register_zynq_pll'
 
-Now, the behavior is entirely different.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/clk/zynq/pll.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-For the "critical" clock disable/unprepare, the core does nothing
-(returns without calling the disable/unprepare ops).
+diff --git a/drivers/clk/zynq/pll.c b/drivers/clk/zynq/pll.c
+index dcb2037a95964..54f4184de89af 100644
+--- a/drivers/clk/zynq/pll.c
++++ b/drivers/clk/zynq/pll.c
+@@ -173,12 +173,12 @@ static const struct clk_ops zynq_pll_ops = {
+ 
+ /**
+  * clk_register_zynq_pll() - Register PLL with the clock framework
+- * @name	PLL name
+- * @parent	Parent clock name
+- * @pll_ctrl	Pointer to PLL control register
+- * @pll_status	Pointer to PLL status register
+- * @lock_index	Bit index to this PLL's lock status bit in @pll_status
+- * @lock	Register lock
++ * @name:	PLL name
++ * @parent:	Parent clock name
++ * @pll_ctrl:	Pointer to PLL control register
++ * @pll_status:	Pointer to PLL status register
++ * @lock_index:	Bit index to this PLL's lock status bit in @pll_status
++ * @lock:	Register lock
+  * Returns handle to the registered clock.
+  */
+ struct clk *clk_register_zynq_pll(const char *name, const char *parent,
+-- 
+2.25.1
 
-As for the "ignore unused", the clock can be disabled later on,
-which would decrement the prepare/enable counter.
-The imx earlycon serial driver could implement a late initcall,
-that takes the clocks from the devicetree uart node and disables
-them. The user doesn't even count in this situation.
-
-Plus, there is no other reason someone would use the CLK_IGNORE_UNUSED,
-other than leaving a clock that is already enabled stay as is (at least,
-not with the current implementation). So why not mark it as enabled in 
-the core, if the HW says it is enabled ?
