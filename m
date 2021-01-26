@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DCDC433E9
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCA5C433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FACD2311B
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:11:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2AC23109
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:12:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390185AbhAZNLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:11:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51112 "EHLO
+        id S2391931AbhAZNME (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:12:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391943AbhAZMsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:48:37 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB5AC0698E0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:01 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id u14so2627550wmq.4
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:01 -0800 (PST)
+        with ESMTP id S2391909AbhAZMrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:47:52 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19E1C0698CB
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:50 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id g10so16338538wrx.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4mll2lpwENE608kX1kOhep+FnuspDxHBBTIWjYWHVv4=;
-        b=pN4lfLmmVBgLX1q2BKk4RyuM8nfGi0iSK2p5oFzqbwR48oc2/k0GoyukN3ekRynO06
-         FKaAaAsWyotTSplcMwQPMAZVfJizyGQiOJBMk0yYcAymhgu9N2ZSbUSh6qjy288ou0pc
-         HqtayVh1cyMBIbzfiBYPHmvVjr9IdO/PtWWdjNpPkVFE2CynLfawGQEBle+vluHgUEPi
-         XIkSyDlNFtRmGLri4EMRNLpm0jF2EqbuLb6EDwAkGFdlQ5TAMlRTr4lVHYp6w+0UpvW3
-         IMv+nTm9wowh7LVp4WikScVxnNSItGlVg6V+ACms+OKjBP2oRnEDQeXLGZ596/KJomrY
-         KMoQ==
+        bh=tBcmISQSY7al+YXFrknNe1bUw1SwG09WB9C2kPAzCl4=;
+        b=cyrjzWy83Rq8JRlGTOPUrMmxadvUnL9vvSIwiT3lS5yx2UIM7HYTjxC2kb6/frhSfw
+         eL79RzsZqjIO7fQm26/px8IhbQJ7T+PJVEDBkJXNY/MZoyd6Mz0LHerlebTI9qf3jQ4+
+         nm3cPAfc9dPOwRZwVpThmEGq8rECXtzO/NPlqtGgQfuoJpy4BXhMszQL9K5/wjYVDplW
+         WfMVfWJJUIJ7uR2/o10H2ZM3P6Dr/NmWnTHX5OMwo8ySPtZ7Hkr7F1SQwNanh7MGEmBB
+         BehkkQe5ulO3rIzCzKhjVCKxeNNFd8mv17kNzT8DjG8zSygdmP4csM/A7Jj8DMN/YNVr
+         HPgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4mll2lpwENE608kX1kOhep+FnuspDxHBBTIWjYWHVv4=;
-        b=uXtjdF4myhZ2G15fKwAHRd9izH4ZrLEo6FNOdZ2bRO3rJNMeTais6qRRMNff9L9U2/
-         oyBz3RoDC2GRSx2KSwAPQs1NwaL5nemOxQDe7/Cl9AEPuz9ZZQv/tbjdsTlEM80RjJST
-         k3RM0PApBCmVFkvNWMQIAyF19taZkHnbFHFW2J5DokgunI27ixbuAhygFpriW0mqsuwn
-         I6qcble70RgbesMHoGKHsZLFlaLaY/WdsIiXgJIvRBPtai8GpotJovMJs+eltWrIUDjL
-         6uNvkCub2PbNKC6aDj8HNNIIT9RPdyMNGXY3vm2He7IA/pnIHPhL0WkA1aiYMtqYFTzI
-         Simw==
-X-Gm-Message-State: AOAM533uG0IGS6crIS/2wE9r6ia7jnmApQOzwuRx3Bn3T5If/RdFyByc
-        Gptl6eEOvxyZZc/AS2sJ+4ooTQ==
-X-Google-Smtp-Source: ABdhPJwsLKoq02G2opNkx2KyZBjwCJrT1QWUMlzjgyZlIH/qv0W5suRHKqypiyBgXWhP7zNqj62Grg==
-X-Received: by 2002:a05:600c:1911:: with SMTP id j17mr4552481wmq.63.1611665159968;
-        Tue, 26 Jan 2021 04:45:59 -0800 (PST)
+        bh=tBcmISQSY7al+YXFrknNe1bUw1SwG09WB9C2kPAzCl4=;
+        b=oaHN4FU1kiyNxFlwNpmAZ2rAxk1+QMBhzH76Ncu3Hh3r2WgOZ/5GcsB7rxij6ETqE2
+         OgQeWvFroRIMeCMa/62DEb6+bdmMprEkFZ3iDmle7OvXY9YWK++y8PMfVXPdZxi/rTDG
+         EwaOLxsUXcjZXafVYH8xAhpXKG8+DtRze6JCpJJz1mkbvJrC0tNxrFPGzCP2OskfDY2E
+         4S+wuIuPJnsJLpiejDouE2FQMiiZ1lVpRRKHvzvNOsYouBT0H+CSJJb/Rn9V5/OHbj9H
+         RncPW97aCqGVJNJXb5w6MXmeivvGg6pMTDX/BaY3kFDjcvrhIE3O7wp8Qf922GVQUc7t
+         pSJg==
+X-Gm-Message-State: AOAM533qKxrV1gxs6rOEGN4Yn6MuiXp78/xnkg4H8JYHsejT7N3tZ6tE
+        VsdQpb0nm3HOzkujhNoZ+Jye+Q==
+X-Google-Smtp-Source: ABdhPJxF21KMVb8+euVFIN2MtWkgjYTAzbXApT5h5t62yJx2bd7huKJoccmycG7F/+QFypE8Db85CQ==
+X-Received: by 2002:adf:ecd2:: with SMTP id s18mr3962490wro.311.1611665149702;
+        Tue, 26 Jan 2021 04:45:49 -0800 (PST)
 Received: from dell.default ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.58
+        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 04:45:59 -0800 (PST)
+        Tue, 26 Jan 2021 04:45:49 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
@@ -62,14 +62,13 @@ Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 13/21] clk: qcom: gcc-ipq4019: Remove unused variable 'ret'
-Date:   Tue, 26 Jan 2021 12:45:32 +0000
-Message-Id: <20210126124540.3320214-14-lee.jones@linaro.org>
+Subject: [PATCH 04/21] clk: qcom: clk-regmap: Provide missing description for 'devm_clk_register_regmap()'s dev param
+Date:   Tue, 26 Jan 2021 12:45:23 +0000
+Message-Id: <20210126124540.3320214-5-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
 References: <20210126124540.3320214-1-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -77,8 +76,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/qcom/gcc-ipq4019.c: In function ‘clk_cpu_div_set_rate’:
- drivers/clk/qcom/gcc-ipq4019.c:1279:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+ drivers/clk/qcom/clk-regmap.c:97: warning: Function parameter or member 'dev' not described in 'devm_clk_register_regmap'
 
 Cc: Andy Gross <agross@kernel.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -88,33 +86,21 @@ Cc: linux-arm-msm@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/qcom/gcc-ipq4019.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/clk/qcom/clk-regmap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index ef5137fd50f3f..8abad4032de71 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1276,16 +1276,15 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_fepll *pll = to_clk_fepll(hw);
- 	const struct freq_tbl *f;
- 	u32 mask;
--	int ret;
- 
- 	f = qcom_find_freq(pll->freq_tbl, rate);
- 	if (!f)
- 		return -EINVAL;
- 
- 	mask = (BIT(pll->cdiv.width) - 1) << pll->cdiv.shift;
--	ret = regmap_update_bits(pll->cdiv.clkr.regmap,
--				 pll->cdiv.reg, mask,
--				 f->pre_div << pll->cdiv.shift);
-+	regmap_update_bits(pll->cdiv.clkr.regmap,
-+			   pll->cdiv.reg, mask,
-+			   f->pre_div << pll->cdiv.shift);
- 	/*
- 	 * There is no status bit which can be checked for successful CPU
- 	 * divider update operation so using delay for the same.
+diff --git a/drivers/clk/qcom/clk-regmap.c b/drivers/clk/qcom/clk-regmap.c
+index ce80db27ccf2a..92ac4e0d7dbe2 100644
+--- a/drivers/clk/qcom/clk-regmap.c
++++ b/drivers/clk/qcom/clk-regmap.c
+@@ -87,6 +87,7 @@ EXPORT_SYMBOL_GPL(clk_disable_regmap);
+ /**
+  * devm_clk_register_regmap - register a clk_regmap clock
+  *
++ * @dev: reference to the caller's device
+  * @rclk: clk to operate on
+  *
+  * Clocks that use regmap for their register I/O should register their
 -- 
 2.25.1
 
