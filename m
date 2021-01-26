@@ -2,249 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7EEC433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41C2C43381
 	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A29F22795
+	by mail.kernel.org (Postfix) with ESMTP id 9681720829
 	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730898AbhAZRUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:20:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389957AbhAZIam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 03:30:42 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D16EC06174A
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 00:29:58 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id m13so1054149wro.12
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 00:29:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=YoJL14Xv0wOFOwwfdYEM7FDsz0s8zH6rRaAdm+Z0noo=;
-        b=N9q340mh/XXjb5TgWj8TYxDHhMvw0SQDVqzJT7gTk1jWzzU6rnuLTWfxlwMLE4fgjO
-         oSxBMJvMSV5+PAnGV9dLO2FvlyIhf9kUAF5SArfY/qhY6791nqI5K8eBW98EYHSQ4hng
-         2IjhIjiLTMIo73OrwBKjKhQA/XimrXP4aOOvHk4fYWsuiHJRlwj9c5QJm7u8UiTyDt1s
-         dsO8yKXFqfAV562YWVQpYdSMYkFszkUmyk+lk59dEPNR4Q76jw3PyI0s/+nxktbW4OLd
-         r08RutR+HVJ+L+R65x+9xO6FgBofh5Cwc24HUw+UMBr4m5c+QSjpgRKBEdSOW6GULuzq
-         UNDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=YoJL14Xv0wOFOwwfdYEM7FDsz0s8zH6rRaAdm+Z0noo=;
-        b=XN1Ijdd9fc3cniV35/ejCVGzeBALXL9T3JZf+PPvPT5Dm/8aqbgIuDRwI7t/JWJ0VE
-         AmVj7NSQkyG5A7/I6s3g+99urG0Cs4LDa4t6vYRPuEnuTry4fOEsU9yyPv0W5em487/6
-         lYefaDOofpyyNWak7n+f6QgOS8wMGZ6OWDVy+Vg42GFrXs8I2UhlD0wKa4mpXZ5699m4
-         FNGQ/hdwqZEyIUUk+mEoMMByDM9AMdh4kvMCPg4XbvUAM82su+JlntooPFxZ39wPErK5
-         NLNsSKL7N2aTHbODA/zZfXX04C3nbj/5x9MSla0XOt/4J8LTmNgQ9cD8Apd59E2MxN1P
-         gEzA==
-X-Gm-Message-State: AOAM531eWzICEP/GHoZ34GMzlG1Vi8UX290+FgOJIOwtpA8S0oxED1kO
-        hFKMp8czC7vXiwsddw1jyXeQdw==
-X-Google-Smtp-Source: ABdhPJxYE9Gyzn2ngzlcXkb2Xzeys3TeVUOi9ycUWgcWATBm1ZwQkahSXfclXSohvAZRxDPm00lwSg==
-X-Received: by 2002:a5d:6912:: with SMTP id t18mr4848964wru.268.1611649797348;
-        Tue, 26 Jan 2021 00:29:57 -0800 (PST)
-Received: from dell ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i59sm28235856wri.3.2021.01.26.00.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 00:29:56 -0800 (PST)
-Date:   Tue, 26 Jan 2021 08:29:54 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1732462AbhAZRU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:20:58 -0500
+Received: from mx07-00178001.pphosted.com ([185.132.182.106]:41578 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390852AbhAZJF2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 04:05:28 -0500
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10Q8tfZg000604;
+        Tue, 26 Jan 2021 10:04:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=mt7WvfN2Btmo/ZaNnjB5VDrsbrquImJLFtGfvSfZYp0=;
+ b=w7estKJ84tvMffs1BGmzvFXiDxoxrVzNGDoma1pKQbnF/rzJzgje+GhTtTqO4U7NdXeK
+ R7tRKv+qj4d3G0JafNSDyMO+lkTXuOC7trbcZxxoC5C3CQUORcL6/RE39S2JsxIG5yko
+ gvPN1/w0tCy0/X6mC7sVxWwcDvwu5ZKrelD75F0FT/YJ5H2LYK3CMXCNSvIYWUPHW1HF
+ 90piR2bmGSI/YZWovzALM14g20ejaCuMlNAEq1jHvN1O85sGKwDM3iqN+06BlA9SzTAi
+ fCG6czAABuBEwwdMDr7+fXFCwOmbvgAmpg0Ic6mM5LCEgCGE39ZVvTZvIfOjcQJzWMVT +w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 368c15qgh8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Jan 2021 10:04:29 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BB2D2100038;
+        Tue, 26 Jan 2021 10:04:28 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A477222A4A5;
+        Tue, 26 Jan 2021 10:04:28 +0100 (CET)
+Received: from localhost (10.75.127.45) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 26 Jan 2021 10:04:28
+ +0100
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 09/17] mfd: Support for ROHM BD71815 PMIC core
-Message-ID: <20210126082954.GF4903@dell>
-References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
- <14480ca837005aecd7053202c2347e36ad29faee.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
- <20210125141044.GZ4903@dell>
- <7a3d897d6af9f4310e5cc98ca74123192da49e27.camel@fi.rohmeurope.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 01/14] clk: stm32mp1: merge 'clk-hsi-div' and 'ck_hsi' into one clock
+Date:   Tue, 26 Jan 2021 10:01:07 +0100
+Message-ID: <20210126090120.19900-2-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a3d897d6af9f4310e5cc98ca74123192da49e27.camel@fi.rohmeurope.com>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 25 Jan 2021, Matti Vaittinen wrote:
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-> Hello Lee,
-> 
-> Thanks again for the review!
-> 
-> On Mon, 2021-01-25 at 14:10 +0000, Lee Jones wrote:
-> > On Tue, 19 Jan 2021, Matti Vaittinen wrote:
-> > 
-> > > Add core support for ROHM BD71815 Power Management IC.
-> > > 
-> > > The IC integrates regulators, a battery charger with a coulomb
-> > > counter,
-> > > a real-time clock (RTC), clock gate and general-purpose outputs
-> > > (GPO).
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > ---
-> > > Changes since v1:
-> > >   - Used BIT() for better readability
-> > >   - removed some unused definitions
-> > > 
-> > >  drivers/mfd/Kconfig              |  15 +-
-> > >  drivers/mfd/rohm-bd71828.c       | 416 +++++++++++++++++++++--
-> > >  include/linux/mfd/rohm-bd71815.h | 561
-> > > +++++++++++++++++++++++++++++++
-> > >  include/linux/mfd/rohm-bd71828.h |   3 +
-> > >  4 files changed, 952 insertions(+), 43 deletions(-)
-> > >  create mode 100644 include/linux/mfd/rohm-bd71815.h
-> > > 
-> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > index bdfce7b15621..59bfacb91898 100644
-> > > --- a/drivers/mfd/Kconfig
-> > > +++ b/drivers/mfd/Kconfig
-> > > @@ -1984,19 +1984,20 @@ config MFD_ROHM_BD70528
-> > >  	  charger.
-> > >  
-> > >  config MFD_ROHM_BD71828
-> > > -	tristate "ROHM BD71828 Power Management IC"
-> > > +	tristate "ROHM BD71828 and BD71815 Power Management IC"
-> > >  	depends on I2C=y
-> > >  	depends on OF
-> > >  	select REGMAP_I2C
-> > >  	select REGMAP_IRQ
-> > >  	select MFD_CORE
-> > >  	help
-> > > -	  Select this option to get support for the ROHM BD71828 Power
-> > > -	  Management IC. BD71828GW is a single-chip power management IC
-> > > for
-> > > -	  battery-powered portable devices. The IC integrates 7 buck
-> > > -	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
-> > > -	  Also included is a Coulomb counter, a real-time clock (RTC),
-> > > and
-> > > -	  a 32.768 kHz clock gate.
-> > > +	  Select this option to get support for the ROHM BD71828 and
-> > > BD71815
-> > > +	  Power Management ICs. BD71828GW and BD71815AGW are single-
-> > > chip power
-> > > +	  management ICs mainly for battery-powered portable devices.
-> > > +	  The BD71828 integrates 7 buck converters and 7 LDOs. The
-> > > BD71815
-> > > +	  has 5 bucks, 7 LDOs, and a boost for driving LEDs. Both ICs
-> > > provide
-> > > +	  also a single-cell linear charger, a Coulomb counter, a real-
-> > > time
-> > > +	  clock (RTC), GPIOs and a 32.768 kHz clock gate.
-> > >  
-> > >  config MFD_STM32_LPTIMER
-> > >  	tristate "Support for STM32 Low-Power Timer"
-> > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-
-> > > bd71828.c
-> > > index 210261d026f2..28b82477ce4c 100644
-> > > --- a/drivers/mfd/rohm-bd71828.c
-> > > +++ b/drivers/mfd/rohm-bd71828.c
-> > > @@ -2,7 +2,7 @@
-> > >  //
-> > >  // Copyright (C) 2019 ROHM Semiconductors
-> > >  //
-> > > -// ROHM BD71828 PMIC driver
-> > > +// ROHM BD71828/BD71815 PMIC driver
-> > >  
-> > >  #include <linux/gpio_keys.h>
-> > >  #include <linux/i2c.h>
-> > > @@ -11,7 +11,9 @@
-> > >  #include <linux/ioport.h>
-> > >  #include <linux/irq.h>
-> > >  #include <linux/mfd/core.h>
-> > > +#include <linux/mfd/rohm-bd71815.h>
-> > >  #include <linux/mfd/rohm-bd71828.h>
-> > > +#include <linux/mfd/rohm-generic.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/of_device.h>
-> > >  #include <linux/regmap.h>
-> > > @@ -29,12 +31,102 @@ static struct gpio_keys_platform_data
-> > > bd71828_powerkey_data = {
-> > >  	.name = "bd71828-pwrkey",
-> > >  };
-> > >  
-> > > -static const struct resource rtc_irqs[] = {
-> > > +static const struct resource bd71815_rtc_irqs[] = {
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd71815-rtc-alm-0"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd71815-rtc-alm-1"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd71815-rtc-alm-2"),
-> > > +};
-> > > +
-> > > +static const struct resource bd71828_rtc_irqs[] = {
-> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd71828-rtc-alm-0"),
-> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd71828-rtc-alm-1"),
-> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd71828-rtc-alm-2"),
-> > >  };
-> > >  
-> > > +static struct resource bd71815_power_irqs[] = {
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_RES, "bd71815-dcin-
-> > > ovp-res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_DET, "bd71815-dcin-
-> > > ovp-det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_RES, "bd71815-dcin-
-> > > mon-res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_DET, "bd71815-dcin-
-> > > mon-det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_RES, "bd71815-vsys-uv-
-> > > res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_DET, "bd71815-vsys-uv-
-> > > det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_RES, "bd71815-vsys-
-> > > low-res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_DET, "bd71815-vsys-
-> > > low-det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-
-> > > mon-res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-
-> > > mon-det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TEMP, "bd71815-chg-
-> > > wdg-temp"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TIME, "bd71815-chg-
-> > > wdg"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_RES, "bd71815-
-> > > rechg-res"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_DET, "bd71815-
-> > > rechg-det"),
-> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RANGED_TEMP_TRANSITION,
-> > > +			     "bd71815-ranged-temp-transit"),
-> > 
-> > The new line limit is 100.  Feel free to run these out.
-> 
-> I learn new things every day it seems. This change is more than
-> welcome!
+This patch is to prepare STM32MP1 clocks in trusted mode.
+This Merge will facilitate to have a more coherent clock tree
+in no trusted / trusted world.
 
-Please see:
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- bdc48fa11e46 ("checkpatch/coding-style: deprecate 80-column warning")
-
-... for a more complete description.
-
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index a875649df8b8..35d5aee8f9b0 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -1657,16 +1657,16 @@ static const struct stm32_mux_cfg ker_mux_cfg[M_LAST] = {
+ };
+ 
+ static const struct clock_config stm32mp1_clock_cfg[] = {
+-	/* Oscillator divider */
+-	DIV(NO_ID, "clk-hsi-div", "clk-hsi", CLK_DIVIDER_POWER_OF_TWO,
+-	    RCC_HSICFGR, 0, 2, CLK_DIVIDER_READ_ONLY),
+-
+ 	/*  External / Internal Oscillators */
+ 	GATE_MP1(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
+ 	/* ck_csi is used by IO compensation and should be critical */
+ 	GATE_MP1(CK_CSI, "ck_csi", "clk-csi", CLK_IS_CRITICAL,
+ 		 RCC_OCENSETR, 4, 0),
+-	GATE_MP1(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
++	COMPOSITE(CK_HSI, "ck_hsi", PARENT("clk-hsi"), 0,
++		  _GATE_MP1(RCC_OCENSETR, 0, 0),
++		  _NO_MUX,
++		  _DIV(RCC_HSICFGR, 0, 2, CLK_DIVIDER_POWER_OF_TWO |
++		       CLK_DIVIDER_READ_ONLY, NULL)),
+ 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
+ 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
+ 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
