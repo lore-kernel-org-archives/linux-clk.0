@@ -2,258 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0F5C433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F78CC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31E2522D58
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 375C6230FC
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404105AbhAZOTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 09:19:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405790AbhAZOSW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:18:22 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFE87C061A29
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:17:41 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id k25so4475258oik.13
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:17:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=snAymklEUhwSnE6aOil+eGqTT5ec5tFwcRj260sAvks=;
-        b=AMFZuV9yP/xMgYabEyMv/EUu/qJ/qpAPDwpK8EMDiOG6J7DiOGO2GDX2qxUne9vKEP
-         u1OnjabAO8O9DMwyNPu2gvLtW0363Hqu9SRiuOU7Kt+z2L9hYJgtau8tbQ/3WqjaW7fU
-         y1KToE8sVncgKcwdejK80E+YSzDtUGNMGSCjgrr1EY0UQm/J/Rt4v8/w0PurijO+E+YY
-         KjA2quD1t4ux6L0T1q4lt652Y1D+Nbu/1LSpwWOCqiriN+L3uLKeLIseKFsGGF/2iCh2
-         HTSwbt9lDbkJ65B4yUQan7lg6YhdawnuMk1cIRG2p0AGvuYr21M0X7dUmb0+LPpM13jo
-         ZvLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=snAymklEUhwSnE6aOil+eGqTT5ec5tFwcRj260sAvks=;
-        b=HI99x/qpgjuXqUkj59eM/QJuU0muQL8wwV0k49bCUFXew2zkCv63ipodGBKtHDhwbL
-         aeN8O3MRU3WxGrlGo+RhASSpriw2FrHsB8OPB8fKsVgZsvQDs+x3xwDTWRKXXUv9HQDn
-         jFsXsriJJwbgtR5DlxesNvfuIFHwXaYrCAKGCgFgDza3smILvlKHABHkiEJnZQe2J/7N
-         c5O7wOwMKAxgyMDR6LBrQNis40jM2S0xQod2nF8V9Yo5b2/9ikY343snt/N7As+N8N1d
-         S2HlgpaJRQmmpyIrd6rcfPbj5jkmX7iuJpf4Z2gyy0yklb55Wnt9oSEUhZZ7VaaoRTAx
-         mLTA==
-X-Gm-Message-State: AOAM533yIaP2Y2vyODqYVYTRj6af+X06YlkMmq04koHZHcSH0IlxcpWV
-        C4tlVudhRcwKlQE377rXKvouhA==
-X-Google-Smtp-Source: ABdhPJxNTGPmEEttjHeUpsyXi818x5CmAZskBGX+az9F3WmnzzxmjbDFdzfNlsG1QuNSweOXoCQn/g==
-X-Received: by 2002:a05:6808:115:: with SMTP id b21mr9995oie.16.1611670661326;
-        Tue, 26 Jan 2021 06:17:41 -0800 (PST)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id e14sm1851753oou.19.2021.01.26.06.17.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 06:17:40 -0800 (PST)
-Date:   Tue, 26 Jan 2021 08:17:38 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: clock: Add SM8350 GCC clock bindings
-Message-ID: <20210126141738.GH1241218@yoga>
-References: <20210118044321.2571775-1-vkoul@kernel.org>
- <20210118044321.2571775-5-vkoul@kernel.org>
- <YA7+9xaAY0JT5csh@builder.lan>
- <20210126080058.GN2771@vkoul-mobl>
+        id S2391724AbhAZOdu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 09:33:50 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50457 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405831AbhAZOdq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:33:46 -0500
+X-Greylist: delayed 9570 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Jan 2021 09:33:45 EST
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l4PMI-0003n4-Qi; Tue, 26 Jan 2021 15:30:18 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1l4PMH-0003DS-Ns; Tue, 26 Jan 2021 15:30:17 +0100
+Date:   Tue, 26 Jan 2021 15:30:17 +0100
+From:   Sascha Hauer <sha@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC] clk: Mark HW enabled clocks as enabled in core
+Message-ID: <20210126143017.GF28722@pengutronix.de>
+References: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
+ <20210126115105.GD28722@pengutronix.de>
+ <20210126131239.uyolpawk2jfat7z4@fsr-ub1664-175>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210126080058.GN2771@vkoul-mobl>
+In-Reply-To: <20210126131239.uyolpawk2jfat7z4@fsr-ub1664-175>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 14:54:26 up 55 days,  2:21, 98 users,  load average: 0.04, 0.07,
+ 0.09
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 26 Jan 02:00 CST 2021, Vinod Koul wrote:
-
-> On 25-01-21, 11:25, Bjorn Andersson wrote:
-> > On Sun 17 Jan 22:43 CST 2021, Vinod Koul wrote:
-> > 
-> > > Add device tree bindings for global clock controller on SM8350 SoCs.
+On Tue, Jan 26, 2021 at 03:12:39PM +0200, Abel Vesa wrote:
+> On 21-01-26 12:51:05, Sascha Hauer wrote:
+> > On Tue, Jan 26, 2021 at 01:21:36PM +0200, Abel Vesa wrote:
+> > > Some clocks are already enabled in HW even before the kernel
+> > > starts to boot. So, in order to make sure that these clocks do not
+> > > get disabled when clk_disable_unused call is done or when
+> > > reparenting clocks, we enable them in core on clock registration.
+> > > Such a clock will have to be registered with CLK_IGNORE_UNUSED flag
+> > > and also needs to have the is_enabled ops implemented.
 > > > 
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > > > ---
-> > >  .../bindings/clock/qcom,gcc-sm8350.yaml       |  96 +++++++
-> > >  include/dt-bindings/clock/qcom,gcc-sm8350.h   | 261 ++++++++++++++++++
-> > >  2 files changed, 357 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> > >  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
+> > >  drivers/clk/clk.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
 > > > 
-> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> > > new file mode 100644
-> > > index 000000000000..78f35832aa41
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
-> > > @@ -0,0 +1,96 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm8350.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 3d751ae5bc70..26d55851cfa5 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -3416,6 +3416,7 @@ static int __clk_core_init(struct clk_core *core)
+> > >  	int ret;
+> > >  	struct clk_core *parent;
+> > >  	unsigned long rate;
+> > > +	bool is_hw_enabled = false;
+> > >  	int phase;
+> > >  
+> > >  	if (!core)
+> > > @@ -3558,12 +3559,20 @@ static int __clk_core_init(struct clk_core *core)
+> > >  		rate = 0;
+> > >  	core->rate = core->req_rate = rate;
+> > >  
+> > > +	/*
+> > > +	 * If the clock has the CLK_IGNORE_UNUSED flag set and it is already
+> > > +	 * enabled in HW, enable it in core too so it won't get accidentally
+> > > +	 * disabled when walking the orphan tree and reparenting clocks
+> > > +	 */
+> > > +	if (core->flags & CLK_IGNORE_UNUSED && core->ops->is_enabled)
+> > > +		is_hw_enabled = clk_core_is_enabled(core);
 > > > +
-> > > +title: Qualcomm Global Clock & Reset Controller Binding for SM8350
-> > > +
-> > > +maintainers:
-> > > +  - Vinod Koul <vkoul@kernel.org>
-> > > +
-> > > +description: |
-> > > +  Qualcomm global clock control module which supports the clocks, resets and
-> > > +  power domains on SM8350.
-> > > +
-> > > +  See also:
-> > > +  - dt-bindings/clock/qcom,gcc-sm8350.h
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: qcom,gcc-sm8350
-> > > +
-> > > +  clocks:
-> > > +    items:
-> > > +      - description: Board XO source
-> > > +      - description: Sleep clock source
-> > > +      - description: PLL test clock source (Optional clock)
-> > > +      - description: PCIE 0 Pipe clock source (Optional clock)
-> > > +      - description: PCIE 1 Pipe clock source (Optional clock)
-> > > +      - description: UFS card Rx symbol 0 clock source (Optional clock)
-> > > +      - description: UFS card Rx symbol 1 clock source (Optional clock)
-> > > +      - description: UFS card Tx symbol 0 clock source (Optional clock)
-> > > +      - description: UFS phy Rx symbol 0 clock source (Optional clock)
-> > > +      - description: UFS phy Rx symbol 1 clock source (Optional clock)
-> > > +      - description: UFS phy Tx symbol 0 clock source (Optional clock)
-> > > +      - description: USB3 phy wrapper pipe clock source (Optional clock)
-> > > +      - description: USB3 phy sec pipe clock source (Optional clock)
-> > > +    minItems: 2
-> > > +    maxItems: 13
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: bi_tcxo
-> > > +      - const: sleep_clk
-> > > +      - const: core_bi_pll_test_se # Optional clock
-> > > +      - const: pcie_0_pipe_clk # Optional clock
-> > > +      - const: pcie_1_pipe_clk # Optional clock
-> > > +      - const: ufs_card_rx_symbol_0_clk # Optional clock
-> > > +      - const: ufs_card_rx_symbol_1_clk # Optional clock
-> > > +      - const: ufs_card_tx_symbol_0_clk # Optional clock
-> > > +      - const: ufs_phy_rx_symbol_0_clk # Optional clock
-> > > +      - const: ufs_phy_rx_symbol_1_clk # Optional clock
-> > > +      - const: ufs_phy_tx_symbol_0_clk # Optional clock
-> > > +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk # Optional clock
-> > > +      - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk # Optional clock
-> > > +    minItems: 2
-> > > +    maxItems: 13
-> > > +
-> > > +  '#clock-cells':
-> > > +    const: 1
-> > > +
-> > > +  '#reset-cells':
-> > > +    const: 1
-> > > +
-> > > +  '#power-domain-cells':
-> > > +    const: 1
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - reg
-> > > +  - '#clock-cells'
-> > > +  - '#reset-cells'
-> > > +  - '#power-domain-cells'
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/clock/qcom,rpmh.h>
-> > > +    clock-controller@100000 {
-> > > +      compatible = "qcom,gcc-sm8350";
-> > > +      reg = <0x00100000 0x1f0000>;
-> > > +      clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > > +               <&sleep_clk>;
-> > > +      clock-names = "bi_tcxo", "sleep_clk";
-> > > +      #clock-cells = <1>;
-> > > +      #reset-cells = <1>;
-> > > +      #power-domain-cells = <1>;
-> > > +    };
-> > > +
-> > > +...
-> > > diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-> > > new file mode 100644
-> > > index 000000000000..2b289c5c109f
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-> > > @@ -0,0 +1,261 @@
-> > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > > +/*
-> > > + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> > > + * Copyright (c) 2020-2021, Linaro Limited
-> > > + */
-> > > +
-> > > +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-> > > +#define _DT_BINDINGS_CLK_QCOM_GCC_SM8350_H
-> > > +
-> > > +/* GCC HW clocks */
-> > > +#define CORE_BI_PLL_TEST_SE					0
-> > > +#define PCIE_0_PIPE_CLK						1
-> > > +#define PCIE_1_PIPE_CLK						2
-> > > +#define UFS_CARD_RX_SYMBOL_0_CLK				3
-> > > +#define UFS_CARD_RX_SYMBOL_1_CLK				4
-> > > +#define UFS_CARD_TX_SYMBOL_0_CLK				5
-> > > +#define UFS_PHY_RX_SYMBOL_0_CLK					6
-> > > +#define UFS_PHY_RX_SYMBOL_1_CLK					7
-> > > +#define UFS_PHY_TX_SYMBOL_0_CLK					8
-> > > +#define USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK			9
-> > > +#define USB3_UNI_PHY_SEC_GCC_USB30_PIPE_CLK			10
-> > > +
-> > > +/* GCC clocks */
-> > > +#define GCC_AGGRE_NOC_PCIE_0_AXI_CLK				11
-> > > +#define GCC_AGGRE_NOC_PCIE_1_AXI_CLK				12
-> > > +#define GCC_AGGRE_NOC_PCIE_TBU_CLK				13
-> > > +#define GCC_AGGRE_UFS_CARD_AXI_CLK				14
-> > > +#define GCC_AGGRE_UFS_CARD_AXI_HW_CTL_CLK			15
-> > > +#define GCC_AGGRE_UFS_PHY_AXI_CLK				16
-> > > +#define GCC_AGGRE_UFS_PHY_AXI_HW_CTL_CLK			17
-> > > +#define GCC_AGGRE_USB3_PRIM_AXI_CLK				18
-> > > +#define GCC_AGGRE_USB3_SEC_AXI_CLK				19
-> > > +#define GCC_BOOT_ROM_AHB_CLK					20
-> > > +#define GCC_CAMERA_AHB_CLK					21
+> > >  	/*
+> > >  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+> > >  	 * don't get accidentally disabled when walking the orphan tree and
+> > >  	 * reparenting clocks
+> > >  	 */
+> > > -	if (core->flags & CLK_IS_CRITICAL) {
+> > > +	if (core->flags & CLK_IS_CRITICAL || is_hw_enabled) {
+> > >  		unsigned long flags;
+> > >  
+> > >  		ret = clk_core_prepare(core);
 > > 
-> > You removed these from the driver, so no need to expose them in the
-> > dt-binding either.
+> > This means that a bootloader enabled clock with CLK_IGNORE_UNUSED flag
+> > can effectively never be disabled because the prepare/enable count is 1
+> > without any user. This is the behaviour we want to have with critical
+> > clocks, but I don't think this is desired for clocks with the
+> > CLK_IGNORE_UNUSED flag.
+> > 
 > 
-> I did think about that and thought maybe it is better to leave the
-> defines. We can always update the driver to use if we ever felt the
-> need.
+> Here is the way I see it. Critical clocks means the system can't work
+> without, so do not ever disable/unprepare. The "ignore unused" flag
+> tells the core to not do anything to this clock, even if it is unused.
+> For now, it just leaves the clock alone, but the flag could be used for
+> some other stuff in the future.
 > 
-> But then I dont think we will ever do that so makes sense, will update
-> this and send with acks collected
+> Now, the behavior is entirely different.
 > 
+> For the "critical" clock disable/unprepare, the core does nothing
+> (returns without calling the disable/unprepare ops).
+> 
+> As for the "ignore unused", the clock can be disabled later on,
+> which would decrement the prepare/enable counter.
+> The imx earlycon serial driver could implement a late initcall,
+> that takes the clocks from the devicetree uart node and disables
+> them. The user doesn't even count in this situation.
+> 
+> Plus, there is no other reason someone would use the CLK_IGNORE_UNUSED,
+> other than leaving a clock that is already enabled stay as is (at least,
+> not with the current implementation). So why not mark it as enabled in 
+> the core, if the HW says it is enabled ?
 
-Given that the actual value isn't significant (just need to be stable),
-we can easily add those as new defines at the end of the list when that
-day comes.
+The CLK_IGNORE_UNUSED is there from the start of the clock framework, so
+there is no commit message that tells what it shall be used for. AFAIR
+the flag was thought for being used with clocks which should not be
+disabled, but had no driver initially that used them.
+Implementation of this flag was likely broken from the start as well,
+because in this situation:
 
-Regards,
-Bjorn
+      a
+     / \
+    b   c (CLK_IGNORE_UNUSED)
+
+When clk b is enabled/disabled then the parent of clock c is disabled as
+well, so CLK_IGNORE_UNUSED doesn't help at all. In that sense your patch
+really improves things, because the above example would be fixed.
+
+Anyway, CLK_IGNORE_UNUSED is excessively used in the kernel, we have
+over 1000 clocks that have this flag set. With your patch all of a
+sudden all these clocks won't be disabled anymore and all these clocks
+will require some fixup to finally disable them when desired. I don't
+think this is a good idea.
+
+Sascha
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
