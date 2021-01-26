@@ -2,84 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F937C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD60C433E6
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 152BA2083E
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 008EA20829
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391879AbhAZPuh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:50:37 -0500
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:36422 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391843AbhAZPuZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 10:50:25 -0500
-Received: by mail-oi1-f170.google.com with SMTP id d18so9594357oic.3;
-        Tue, 26 Jan 2021 07:50:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jgEi7FwFsaNNCaOhqNYWzzMOntaDZT+FwTY7v2XrGtg=;
-        b=CS95uyIm+RNLa0fkNXLAliUEtdffsjv5FJyYwdpl1U8DXV/6vsTVTymSl3ZZs6gCLH
-         PPOdSf3oPZ8Ro/SLeY+oMzLCAlMlLDXTh2VRCEzC3VGqIlnyfOrlqLefpZAPZiknQFAu
-         kuTQCwq9cvgC+XCUhzl3u6y7syrxKBgoQOuGt+gyNeKFVHliEqp1c2vT8jUYomobILCi
-         mZm7EshF8R69ZigfS2Li5Zd5LWOEpMT4ZQmNUg0O+GM/l1C4bw6y5LZEyNUNLxiSPT7J
-         9JGBbzOYm60e0OIC68Drfp7QwHvg2TNfLTNjMg/OAz7RA8633xSSQ58Qzzwr1Ppsyo8F
-         RgxA==
-X-Gm-Message-State: AOAM532bwsAPKQbW2DGkhdm9TFo6W8Ckx/7qXsTN4P+6eEYqcYJ0GOkw
-        nYw6TldQHst8U8FfXoym2Hqnpn5HvrXoRq4BQaU=
-X-Google-Smtp-Source: ABdhPJz6rZTc7tvHGT/n4NsRQLTEmdA+GC28JTm7C8iYFCkmNVDu+6kFnvCZhxc/8jOHNatyH/Gli4T/tzJFeUfpsA4=
-X-Received: by 2002:aca:4d8d:: with SMTP id a135mr161425oib.153.1611676184114;
- Tue, 26 Jan 2021 07:49:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20210126124540.3320214-1-lee.jones@linaro.org> <20210126124540.3320214-12-lee.jones@linaro.org>
-In-Reply-To: <20210126124540.3320214-12-lee.jones@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Jan 2021 16:49:33 +0100
-Message-ID: <CAMuHMdWtN+TbjVqch0nmKxfAVuqD0UV8Eq3a2sVBiYjFJqiT0g@mail.gmail.com>
-Subject: Re: [PATCH 11/21] clk: renesas: renesas-cpg-mssr: Fix formatting
- issues for 'smstpcr_saved's documentation
+        id S2404150AbhAZP5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 10:57:31 -0500
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:37579 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731383AbhAZPzk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 10:55:40 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 387118A2;
+        Tue, 26 Jan 2021 10:54:34 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 26 Jan 2021 10:54:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=WEhBWcXfYR0hSsHK9E0r3hiNKHR
+        ePLjjhBxL3as/9sE=; b=JOEresn8MPDAspRi6prGDc+No1q7PVUbhDpq7HTLhQK
+        JNhH5RHWDaPRXw9u7EHSqQ8P08wangpwIORfTPz+hSfWsh6mAiJRShPI4k19v3la
+        0UzvqrKN3Z5JLnOW54DQV0oByrp7xPnAcwBNGnRjokO7ZeKhTcdVlOsNaYMeyJQj
+        5ksTh96KeT9RVKs7YMI6XiYc980Urf7ThMHG1HV1F1vMS5t9h7U/nLSScvz8OUiX
+        WrfZjyaDYu/C7YIKCbmGuvBqxjDS79KnsUETXoPhWPT+pufNvD95vgwWyeP0PChY
+        jBYSh3EcVne0BgMhn7d8WVGFwSbyb1w34V1al2p04Kg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=WEhBWc
+        XfYR0hSsHK9E0r3hiNKHRePLjjhBxL3as/9sE=; b=XwanmoC3uY6llMW455zQRg
+        UY9hFOH/7Dn6KoIe0Rmoy8az2yCtYiif70lB1aVY6DM+t1VtEUKBGZw/qMW0WFBl
+        EtK2lH3JEbZY2N/ULCfFc2Cv8VITJC+qoOsIzI3o+FWGuHtoov+vkGS5IUJzr5KX
+        Y2ZptQMyShDRUWGiu+rCENWU03qzSkLPRzzG53tJmOGR6xtOReP00W/owhEUe2Pl
+        JHnuLZ6sWCJxCX1eTe8KwZNzwKm2Gxq7zOxt5nEvc1qS2Z7vv0ASTv7PkJUBJGWW
+        UtQpB6FeihVv4CfDe6hYyQtpO6fuq6KjT/fQaaOK2BiRr0chVHrn2bpohq1y6I8Q
+        ==
+X-ME-Sender: <xms:ODsQYDyl7rcfWDo1hcxU_FA6YLDKLhYxrbc12-qCyuCtUz7xBP1nOQ>
+    <xme:ODsQYLReVlzHXLNoV2aIih0J3Yb2K7IrAKJ2RLuYYEv0e45ttHQxnru2Wdo_OtDgE
+    Ed8zrYACB-o5yOINbE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdeigddvtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
+    veenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:ODsQYNViLEcViZFqy3zuhvIt0bSulyiPnXXaNGjKqtdXlGsu6CBfEg>
+    <xmx:ODsQYNje8EXOJWtn7gj0DNeqt3glrKu6FS8Xns6WZPjuxDdqttLSFg>
+    <xmx:ODsQYFC2KCtpoGkrwyq0NP62kwYFWT_VOIC2U-VlRvVLQuo0khlLOw>
+    <xmx:OTsQYPD9pHqGOerf-T4a20UT96gDPLtcFfmcYRxGnZ-dSPScJzjB3A>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 077C524005A;
+        Tue, 26 Jan 2021 10:54:31 -0500 (EST)
+Date:   Tue, 26 Jan 2021 16:54:30 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
 To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc:     linux-kernel@vger.kernel.org,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 12/21] clk: sunxi: clk-sun6i-ar100: Demote non-conformant
+ kernel-doc header
+Message-ID: <20210126155430.llxijnwf5i4z3end@gilmour>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+ <20210126124540.3320214-13-lee.jones@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qnn2dox7m5n4tnba"
+Content-Disposition: inline
+In-Reply-To: <20210126124540.3320214-13-lee.jones@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 1:45 PM Lee Jones <lee.jones@linaro.org> wrote:
-> Fixes the following W=1 kernel build warning(s):
->
->  drivers/clk/renesas/renesas-cpg-mssr.c:168: warning: Function parameter or member 'smstpcr_saved' not described in 'cpg_mssr_priv'
->
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+
+--qnn2dox7m5n4tnba
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jan 26, 2021 at 12:45:31PM +0000, Lee Jones wrote:
+> Fixes the following W=3D1 kernel build warning(s):
+>=20
+>  drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or m=
+ember 'req' not described in 'sun6i_get_ar100_factors'
+>=20
+> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
 > Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
 > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/clk/sunxi/clk-sun6i-ar100.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-=
+sun6i-ar100.c
+> index e1b7d0929cf7f..54babc2b4b9ee 100644
+> --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
+> +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+> @@ -16,7 +16,7 @@
+> =20
+>  #include "clk-factors.h"
+> =20
+> -/**
+> +/*
+>   * sun6i_get_ar100_factors - Calculates factors p, m for AR100
+>   *
+>   * AR100 rate is calculated as follows
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.12.
+This is the sixth patch doing the exact same thing over the files in
+that folder you sent. Please fix all the occurences at once
 
-Gr{oetje,eeting}s,
+Maxime
 
-                        Geert
+--qnn2dox7m5n4tnba
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYBA7NgAKCRDj7w1vZxhR
+xYO7APwOiVCyUAzi+H1ya3JfgPFkWNp8lSe27PibLsdTLuL4FAD8Cba36b3FZnYw
+MHel4mag1MjL961Dlv0HLQVQRetMewM=
+=L8vk
+-----END PGP SIGNATURE-----
+
+--qnn2dox7m5n4tnba--
