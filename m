@@ -2,157 +2,337 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12855C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3E4C433E9
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD105230FC
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC9122A84
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 18:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391173AbhAZRV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 12:21:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48778 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730071AbhAZQzp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 11:55:45 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA40CC061D7C
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 08:55:03 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id m13so2781494wro.12
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 08:55:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Pz9VQ30QT10sFw3p7SZr4MIFLqcoCuT1kYq7h28FsoI=;
-        b=PF0FfcRGHglmCRgXuhLv5V1KBb8LlfSc3KAIlPQ/rh0Pq029vtQUANKknIBlFKkoQK
-         uW4frSXDkMIALok8IKL0uGGBplX2TRvQcsK0P8HWaVgYKCGiuUiZ5GzI0UOubmXUPeuP
-         XoYoGZYrNic0DwuI/PpwwPIO1ATfShqgB0Q4bb736c1j1gDDawNQRZjUy2y9AQhUXg4W
-         KIeNqRUaFa10mOyCe6/DlckWBwYeMTUVVCGXMuoQai+kuqu+xDifUcnAyoxP3tJwAp1T
-         mnFcCHVXCw2qZN7IeSZeLwAHBb2rJQOUasJgY5zSKhhzyDpFL13Tcoq6o7FTPvCnoAuR
-         F3hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Pz9VQ30QT10sFw3p7SZr4MIFLqcoCuT1kYq7h28FsoI=;
-        b=jKkpEg/YapSm/+YmDZOWnOnNnA8zsJw28Vs4/NxDKf86dSmBERu6ZINQCJxQ+Dwj4M
-         bEzs+Lth9yQkPRJbtKiQTri1iTX8CW2/FauHOHwkH9E6bqe/WHg4/293Nt5/E+NCvv+E
-         Lnf9xQQE9jQ+eMG67i8LJ5x8bFM1KFTqn0olrYpwcJbcw1bohav/5/jaP+0kN5Rz4LT0
-         oc+zUG8RIZTA6EXgf77E92APLq/F/VViEq0b8PwIrYy72kUBURTscOoMta/PYvXlqaTQ
-         Nt7uC0PE1PS3o8dN5OwVxs3vCvR+YItkCdhPKLkdxfYblWLrnlmaQ6e0AHkGHUkPNJN5
-         XdrA==
-X-Gm-Message-State: AOAM530RLPMfikFixG38dOP8RCBWcM6QtaESe+AO77TW1EcKE76Du5iL
-        fkqOe7cA22CoEHmWmCvys7ZNzA==
-X-Google-Smtp-Source: ABdhPJyvxvmA12WazvbTYMP2H4ciS5tTRJgRMbY8wWi/qHjALlszPnI8tbrCaHHbiMBaczjXXJr/mA==
-X-Received: by 2002:adf:f18a:: with SMTP id h10mr6951758wro.299.1611680102365;
-        Tue, 26 Jan 2021 08:55:02 -0800 (PST)
-Received: from dell ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id x128sm4428288wmb.29.2021.01.26.08.55.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 08:55:01 -0800 (PST)
-Date:   Tue, 26 Jan 2021 16:54:59 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-kernel@vger.kernel.org,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/21] clk: sunxi: clk-sun6i-ar100: Demote non-conformant
- kernel-doc header
-Message-ID: <20210126165459.GG4903@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210126124540.3320214-13-lee.jones@linaro.org>
- <20210126155430.llxijnwf5i4z3end@gilmour>
+        id S2391164AbhAZRVx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:21:53 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53186 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730541AbhAZJFi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 04:05:38 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10Q8w0Yg029231;
+        Tue, 26 Jan 2021 10:04:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=selector1;
+ bh=xBg98SbBGLF4n9asLs6McJi2R+rOyJSMagp1wCQF4WE=;
+ b=J/Az/peIavaDplZmOa8hyb70chMkmfKPCwtGaTQUFZb6gUdUTwohf1d1JOyP7JJ9XHLO
+ TTSUmxEetjVPT/YbP7XumQfPkQ7UOei7C4QLv3uvJLadmUsoQIHhgX7ZYM1d9OHhc1DP
+ yWSqNXPbQXz3gnGrTfQw0Zx04MDvmU/DNv1mAChDGJkPm62Hbysqfja+2FapV3VPh3hX
+ vjBhAQtbXA4F/WvjB4Uz9C6N7mmy9BwWeScOdpV9d+kZKHPYnUGRp9G0+SYQPZH66ScK
+ mMeIBLlfAr2yYWtWYPYERQ8T3E7Nqi99uSrYsw0jlqsHh0mtb0jVw/We8LZbw9WR0eeN Gw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 368bjn7rpb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Jan 2021 10:04:42 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D0F2710002A;
+        Tue, 26 Jan 2021 10:04:41 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AB0982288C8;
+        Tue, 26 Jan 2021 10:04:41 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG2NODE3.st.com (10.75.127.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 26 Jan 2021 10:04:41
+ +0100
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 12/14] ARM: dts: stm32: move clocks/resets to SCMI resources for stm32mp15
+Date:   Tue, 26 Jan 2021 10:01:18 +0100
+Message-ID: <20210126090120.19900-13-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210126155430.llxijnwf5i4z3end@gilmour>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Jan 2021, Maxime Ripard wrote:
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-> On Tue, Jan 26, 2021 at 12:45:31PM +0000, Lee Jones wrote:
-> > Fixes the following W=1 kernel build warning(s):
-> > 
-> >  drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or member 'req' not described in 'sun6i_get_ar100_factors'
-> > 
-> > Cc: "Emilio López" <emilio@elopez.com.ar>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: Chen-Yu Tsai <wens@csie.org>
-> > Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  drivers/clk/sunxi/clk-sun6i-ar100.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
-> > index e1b7d0929cf7f..54babc2b4b9ee 100644
-> > --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
-> > +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
-> > @@ -16,7 +16,7 @@
-> >  
-> >  #include "clk-factors.h"
-> >  
-> > -/**
-> > +/*
-> >   * sun6i_get_ar100_factors - Calculates factors p, m for AR100
-> >   *
-> >   * AR100 rate is calculated as follows
-> 
-> This is the sixth patch doing the exact same thing over the files in
-> that folder you sent. Please fix all the occurences at once
+This change reflects board hardware configuration where RCC security
+features are configured for RCC[TZEN]=1 and RCC[MCKPROT]=0, that is
+RCC TrustZone is hardened and RCC MCKPROT is disabled.
 
-No.  That would make the whole clean-up process 10x harder than it
-already is
+Clock and reset controllers that relate to SoC secure resources are
+moved from a RCC clock/reset handle to a SCMI clock/reset_domain handle.
 
-Before starting this endeavour there were 18,000+ warnings spread over
-100's of files and 10's of subsystems that needed addressing (only a
-couple thousand left now thankfully).  Some issues vastly different,
-some duplicated (much too much copy/pasting going which made things
-very frustrating at times).
+These clocks are all the platform oscillators (HSI/LSI/CSI/HSE/LSE),
+clocks for few subsystem and peripheral interfaces.
 
-Anyway, in order to work though them all gracefully and in a sensible
-time-frame I had to come up with a workable plan.  Each subsystem is
-compiled separately and a script attempts to take out duplicate
-warnings and takes me through the build-log one file at a time.  Once
-all of the warnings are fixed in a source-file, it moves on to the
-next file.  The method is clean and allows me to handle this
-gargantuan task in bite-sized chunks.
+This change add a SCMI clock dependency on RCC clock device since it
+registers clocks which parent clocks are provided by the SCMI clock
+driver. This change allows the RCC clock device probe to be deferred
+until SCMI clocks are fully registered in the system.
 
-Going though and pairing up similar changes is unsustainable for a
-task like this.  It would add a lot of additional overhead and would
-slow down the rate of acceptance since source files tend to have
-different reviewers/maintainers - some working faster to review
-patches than others, leading to excessive lag times waiting for that
-one reviewer who takes weeks to review.  Having each file addressed
-in a separate patch also helps revertability and bisectability.  Not
-such a big problem with the documentation patches, but still.
+Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ arch/arm/boot/dts/stm32mp151.dtsi  | 77 +++++++++++-------------------
+ arch/arm/boot/dts/stm32mp153.dtsi  |  4 +-
+ arch/arm/boot/dts/stm32mp157.dtsi  |  2 +-
+ arch/arm/boot/dts/stm32mp15xc.dtsi |  4 +-
+ 4 files changed, 32 insertions(+), 55 deletions(-)
 
-Admittedly doing it this way *can* look a bit odd in *some* patch-sets
-when they hit the MLs - particularly clock it seems, where there
-hasn't even been a vague attempt to document any of the parameters in
-the kernel-doc headers - however the alternative would mean nothing
-would get done!
-
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index da3647373365..e06882e0611d 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -102,38 +102,6 @@
+ 		interrupt-parent = <&intc>;
+ 	};
+ 
+-	clocks {
+-		clk_hse: clk-hse {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <24000000>;
+-		};
+-
+-		clk_hsi: clk-hsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <64000000>;
+-		};
+-
+-		clk_lse: clk-lse {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
+-		};
+-
+-		clk_lsi: clk-lsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32000>;
+-		};
+-
+-		clk_csi: clk-csi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <4000000>;
+-		};
+-	};
+-
+ 	thermal-zones {
+ 		cpu_thermal: cpu-thermal {
+ 			polling-delay-passive = <0>;
+@@ -595,7 +563,7 @@
+ 			compatible = "st,stm32-cec";
+ 			reg = <0x40016000 0x400>;
+ 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc CEC_K>, <&clk_lse>;
++			clocks = <&rcc CEC_K>, <&scmi0_clk CK_SCMI0_LSE>;
+ 			clock-names = "cec", "hdmi-cec";
+ 			status = "disabled";
+ 		};
+@@ -1156,10 +1124,17 @@
+ 		};
+ 
+ 		rcc: rcc@50000000 {
+-			compatible = "st,stm32mp1-rcc", "syscon";
++			compatible = "st,stm32mp1-rcc-secure", "st,stm32mp1-rcc", "syscon";
+ 			reg = <0x50000000 0x1000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
++
++			clock-names = "hse", "hsi", "csi", "lse", "lsi";
++			clocks = <&scmi0_clk CK_SCMI0_HSE>,
++				 <&scmi0_clk CK_SCMI0_HSI>,
++				 <&scmi0_clk CK_SCMI0_CSI>,
++				 <&scmi0_clk CK_SCMI0_LSE>,
++				 <&scmi0_clk CK_SCMI0_LSI>;
+ 		};
+ 
+ 		pwr_regulators: pwr@50001000 {
+@@ -1342,8 +1317,8 @@
+ 			compatible = "st,stm32f756-hash";
+ 			reg = <0x54002000 0x400>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc HASH1>;
+-			resets = <&rcc HASH1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_HASH1>;
++			resets = <&scmi0_reset RST_SCMI0_HASH1>;
+ 			dmas = <&mdma1 31 0x2 0x1000A02 0x0 0x0>;
+ 			dma-names = "in";
+ 			dma-maxburst = <2>;
+@@ -1353,8 +1328,8 @@
+ 		rng1: rng@54003000 {
+ 			compatible = "st,stm32-rng";
+ 			reg = <0x54003000 0x400>;
+-			clocks = <&rcc RNG1_K>;
+-			resets = <&rcc RNG1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_RNG1>;
++			resets = <&scmi0_reset RST_SCMI0_RNG1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1363,7 +1338,7 @@
+ 			reg = <0x58000000 0x1000>;
+ 			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&rcc MDMA>;
+-			resets = <&rcc MDMA_R>;
++			resets = <&scmi0_reset RST_SCMI0_MDMA>;
+ 			#dma-cells = <5>;
+ 			dma-channels = <32>;
+ 			dma-requests = <48>;
+@@ -1524,7 +1499,7 @@
+ 		iwdg2: watchdog@5a002000 {
+ 			compatible = "st,stm32mp1-iwdg";
+ 			reg = <0x5a002000 0x400>;
+-			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++			clocks = <&rcc IWDG2>, <&scmi0_clk CK_SCMI0_LSI>;
+ 			clock-names = "pclk", "lsi";
+ 			status = "disabled";
+ 		};
+@@ -1553,7 +1528,8 @@
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x5c000000 0x400>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc USART1_K>;
++			clocks = <&scmi0_clk CK_SCMI0_USART1>;
++			resets = <&scmi0_reset RST_SCMI0_USART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1563,8 +1539,8 @@
+ 			compatible = "st,stm32h7-spi";
+ 			reg = <0x5c001000 0x400>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc SPI6_K>;
+-			resets = <&rcc SPI6_R>;
++			clocks = <&scmi0_clk CK_SCMI0_SPI6>;
++			resets = <&scmi0_reset RST_SCMI0_SPI6>;
+ 			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0>,
+ 			       <&mdma1 35 0x0 0x40002 0x0 0x0>;
+ 			dma-names = "rx", "tx";
+@@ -1577,8 +1553,8 @@
+ 			interrupt-names = "event", "error";
+ 			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc I2C4_K>;
+-			resets = <&rcc I2C4_R>;
++			clocks = <&scmi0_clk CK_SCMI0_I2C4>;
++			resets = <&scmi0_reset RST_SCMI0_I2C4>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			st,syscfg-fmp = <&syscfg 0x4 0x8>;
+@@ -1589,7 +1565,8 @@
+ 		rtc: rtc@5c004000 {
+ 			compatible = "st,stm32mp1-rtc";
+ 			reg = <0x5c004000 0x400>;
+-			clocks = <&rcc RTCAPB>, <&rcc RTC>;
++			clocks = <&scmi0_clk CK_SCMI0_RTCAPB>,
++				 <&scmi0_clk CK_SCMI0_RTC>;
+ 			clock-names = "pclk", "rtc_ck";
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+@@ -1614,8 +1591,8 @@
+ 			interrupt-names = "event", "error";
+ 			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc I2C6_K>;
+-			resets = <&rcc I2C6_R>;
++			clocks = <&scmi0_clk CK_SCMI0_I2C6>;
++			resets = <&scmi0_reset RST_SCMI0_I2C6>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			st,syscfg-fmp = <&syscfg 0x4 0x20>;
+@@ -1778,7 +1755,7 @@
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0 0x400>;
+-				clocks = <&rcc GPIOZ>;
++				clocks = <&scmi0_clk CK_SCMI0_GPIOZ>;
+ 				st,bank-name = "GPIOZ";
+ 				st,bank-ioport = <11>;
+ 				status = "disabled";
+@@ -1800,7 +1777,7 @@
+ 			reg = <0x10000000 0x40000>,
+ 			      <0x30000000 0x40000>,
+ 			      <0x38000000 0x10000>;
+-			resets = <&rcc MCU_R>;
++			resets = <&scmi0_reset RST_SCMI0_MCU>;
+ 			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+ 			st,syscfg-tz = <&rcc 0x000 0x1>;
+ 			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+diff --git a/arch/arm/boot/dts/stm32mp153.dtsi b/arch/arm/boot/dts/stm32mp153.dtsi
+index 1c1889b194cf..db1273854675 100644
+--- a/arch/arm/boot/dts/stm32mp153.dtsi
++++ b/arch/arm/boot/dts/stm32mp153.dtsi
+@@ -30,7 +30,7 @@
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
++			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+@@ -43,7 +43,7 @@
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
++			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+diff --git a/arch/arm/boot/dts/stm32mp157.dtsi b/arch/arm/boot/dts/stm32mp157.dtsi
+index 54e73ccea446..7b06c08e3a23 100644
+--- a/arch/arm/boot/dts/stm32mp157.dtsi
++++ b/arch/arm/boot/dts/stm32mp157.dtsi
+@@ -20,7 +20,7 @@
+ 		dsi: dsi@5a000000 {
+ 			compatible = "st,stm32-dsi";
+ 			reg = <0x5a000000 0x800>;
+-			clocks = <&rcc DSI_K>, <&clk_hse>, <&rcc DSI_PX>;
++			clocks = <&rcc DSI_K>, <&scmi0_clk CK_SCMI0_HSE>, <&rcc DSI_PX>;
+ 			clock-names = "pclk", "ref", "px_clk";
+ 			resets = <&rcc DSI_R>;
+ 			reset-names = "apb";
+diff --git a/arch/arm/boot/dts/stm32mp15xc.dtsi b/arch/arm/boot/dts/stm32mp15xc.dtsi
+index b06a55a2fa18..435846883f25 100644
+--- a/arch/arm/boot/dts/stm32mp15xc.dtsi
++++ b/arch/arm/boot/dts/stm32mp15xc.dtsi
+@@ -10,8 +10,8 @@
+ 			compatible = "st,stm32mp1-cryp";
+ 			reg = <0x54001000 0x400>;
+ 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&rcc CRYP1>;
+-			resets = <&rcc CRYP1_R>;
++			clocks = <&scmi0_clk CK_SCMI0_CRYP1>;
++			resets = <&scmi0_reset RST_SCMI0_CRYP1>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
