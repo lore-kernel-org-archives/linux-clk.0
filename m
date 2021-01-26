@@ -5,142 +5,246 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD60C433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7EEC433E6
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 008EA20829
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 15:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A29F22795
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 17:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404150AbhAZP5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 10:57:31 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:37579 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731383AbhAZPzk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 10:55:40 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 387118A2;
-        Tue, 26 Jan 2021 10:54:34 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 26 Jan 2021 10:54:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=WEhBWcXfYR0hSsHK9E0r3hiNKHR
-        ePLjjhBxL3as/9sE=; b=JOEresn8MPDAspRi6prGDc+No1q7PVUbhDpq7HTLhQK
-        JNhH5RHWDaPRXw9u7EHSqQ8P08wangpwIORfTPz+hSfWsh6mAiJRShPI4k19v3la
-        0UzvqrKN3Z5JLnOW54DQV0oByrp7xPnAcwBNGnRjokO7ZeKhTcdVlOsNaYMeyJQj
-        5ksTh96KeT9RVKs7YMI6XiYc980Urf7ThMHG1HV1F1vMS5t9h7U/nLSScvz8OUiX
-        WrfZjyaDYu/C7YIKCbmGuvBqxjDS79KnsUETXoPhWPT+pufNvD95vgwWyeP0PChY
-        jBYSh3EcVne0BgMhn7d8WVGFwSbyb1w34V1al2p04Kg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=WEhBWc
-        XfYR0hSsHK9E0r3hiNKHRePLjjhBxL3as/9sE=; b=XwanmoC3uY6llMW455zQRg
-        UY9hFOH/7Dn6KoIe0Rmoy8az2yCtYiif70lB1aVY6DM+t1VtEUKBGZw/qMW0WFBl
-        EtK2lH3JEbZY2N/ULCfFc2Cv8VITJC+qoOsIzI3o+FWGuHtoov+vkGS5IUJzr5KX
-        Y2ZptQMyShDRUWGiu+rCENWU03qzSkLPRzzG53tJmOGR6xtOReP00W/owhEUe2Pl
-        JHnuLZ6sWCJxCX1eTe8KwZNzwKm2Gxq7zOxt5nEvc1qS2Z7vv0ASTv7PkJUBJGWW
-        UtQpB6FeihVv4CfDe6hYyQtpO6fuq6KjT/fQaaOK2BiRr0chVHrn2bpohq1y6I8Q
-        ==
-X-ME-Sender: <xms:ODsQYDyl7rcfWDo1hcxU_FA6YLDKLhYxrbc12-qCyuCtUz7xBP1nOQ>
-    <xme:ODsQYLReVlzHXLNoV2aIih0J3Yb2K7IrAKJ2RLuYYEv0e45ttHQxnru2Wdo_OtDgE
-    Ed8zrYACB-o5yOINbE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdeigddvtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeduvdduhfekkeehgffftefflefgffdtheffudffgeevteffheeuiedvvdejvdfg
-    veenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:ODsQYNViLEcViZFqy3zuhvIt0bSulyiPnXXaNGjKqtdXlGsu6CBfEg>
-    <xmx:ODsQYNje8EXOJWtn7gj0DNeqt3glrKu6FS8Xns6WZPjuxDdqttLSFg>
-    <xmx:ODsQYFC2KCtpoGkrwyq0NP62kwYFWT_VOIC2U-VlRvVLQuo0khlLOw>
-    <xmx:OTsQYPD9pHqGOerf-T4a20UT96gDPLtcFfmcYRxGnZ-dSPScJzjB3A>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 077C524005A;
-        Tue, 26 Jan 2021 10:54:31 -0500 (EST)
-Date:   Tue, 26 Jan 2021 16:54:30 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        id S1730898AbhAZRUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 12:20:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389957AbhAZIam (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 03:30:42 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D16EC06174A
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 00:29:58 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id m13so1054149wro.12
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 00:29:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=YoJL14Xv0wOFOwwfdYEM7FDsz0s8zH6rRaAdm+Z0noo=;
+        b=N9q340mh/XXjb5TgWj8TYxDHhMvw0SQDVqzJT7gTk1jWzzU6rnuLTWfxlwMLE4fgjO
+         oSxBMJvMSV5+PAnGV9dLO2FvlyIhf9kUAF5SArfY/qhY6791nqI5K8eBW98EYHSQ4hng
+         2IjhIjiLTMIo73OrwBKjKhQA/XimrXP4aOOvHk4fYWsuiHJRlwj9c5QJm7u8UiTyDt1s
+         dsO8yKXFqfAV562YWVQpYdSMYkFszkUmyk+lk59dEPNR4Q76jw3PyI0s/+nxktbW4OLd
+         r08RutR+HVJ+L+R65x+9xO6FgBofh5Cwc24HUw+UMBr4m5c+QSjpgRKBEdSOW6GULuzq
+         UNDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=YoJL14Xv0wOFOwwfdYEM7FDsz0s8zH6rRaAdm+Z0noo=;
+        b=XN1Ijdd9fc3cniV35/ejCVGzeBALXL9T3JZf+PPvPT5Dm/8aqbgIuDRwI7t/JWJ0VE
+         AmVj7NSQkyG5A7/I6s3g+99urG0Cs4LDa4t6vYRPuEnuTry4fOEsU9yyPv0W5em487/6
+         lYefaDOofpyyNWak7n+f6QgOS8wMGZ6OWDVy+Vg42GFrXs8I2UhlD0wKa4mpXZ5699m4
+         FNGQ/hdwqZEyIUUk+mEoMMByDM9AMdh4kvMCPg4XbvUAM82su+JlntooPFxZ39wPErK5
+         NLNsSKL7N2aTHbODA/zZfXX04C3nbj/5x9MSla0XOt/4J8LTmNgQ9cD8Apd59E2MxN1P
+         gEzA==
+X-Gm-Message-State: AOAM531eWzICEP/GHoZ34GMzlG1Vi8UX290+FgOJIOwtpA8S0oxED1kO
+        hFKMp8czC7vXiwsddw1jyXeQdw==
+X-Google-Smtp-Source: ABdhPJxYE9Gyzn2ngzlcXkb2Xzeys3TeVUOi9ycUWgcWATBm1ZwQkahSXfclXSohvAZRxDPm00lwSg==
+X-Received: by 2002:a5d:6912:: with SMTP id t18mr4848964wru.268.1611649797348;
+        Tue, 26 Jan 2021 00:29:57 -0800 (PST)
+Received: from dell ([91.110.221.188])
+        by smtp.gmail.com with ESMTPSA id i59sm28235856wri.3.2021.01.26.00.29.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jan 2021 00:29:56 -0800 (PST)
+Date:   Tue, 26 Jan 2021 08:29:54 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/21] clk: sunxi: clk-sun6i-ar100: Demote non-conformant
- kernel-doc header
-Message-ID: <20210126155430.llxijnwf5i4z3end@gilmour>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210126124540.3320214-13-lee.jones@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 09/17] mfd: Support for ROHM BD71815 PMIC core
+Message-ID: <20210126082954.GF4903@dell>
+References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+ <14480ca837005aecd7053202c2347e36ad29faee.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+ <20210125141044.GZ4903@dell>
+ <7a3d897d6af9f4310e5cc98ca74123192da49e27.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qnn2dox7m5n4tnba"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210126124540.3320214-13-lee.jones@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a3d897d6af9f4310e5cc98ca74123192da49e27.camel@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 25 Jan 2021, Matti Vaittinen wrote:
 
---qnn2dox7m5n4tnba
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hello Lee,
+> 
+> Thanks again for the review!
+> 
+> On Mon, 2021-01-25 at 14:10 +0000, Lee Jones wrote:
+> > On Tue, 19 Jan 2021, Matti Vaittinen wrote:
+> > 
+> > > Add core support for ROHM BD71815 Power Management IC.
+> > > 
+> > > The IC integrates regulators, a battery charger with a coulomb
+> > > counter,
+> > > a real-time clock (RTC), clock gate and general-purpose outputs
+> > > (GPO).
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > > Changes since v1:
+> > >   - Used BIT() for better readability
+> > >   - removed some unused definitions
+> > > 
+> > >  drivers/mfd/Kconfig              |  15 +-
+> > >  drivers/mfd/rohm-bd71828.c       | 416 +++++++++++++++++++++--
+> > >  include/linux/mfd/rohm-bd71815.h | 561
+> > > +++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/rohm-bd71828.h |   3 +
+> > >  4 files changed, 952 insertions(+), 43 deletions(-)
+> > >  create mode 100644 include/linux/mfd/rohm-bd71815.h
+> > > 
+> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > index bdfce7b15621..59bfacb91898 100644
+> > > --- a/drivers/mfd/Kconfig
+> > > +++ b/drivers/mfd/Kconfig
+> > > @@ -1984,19 +1984,20 @@ config MFD_ROHM_BD70528
+> > >  	  charger.
+> > >  
+> > >  config MFD_ROHM_BD71828
+> > > -	tristate "ROHM BD71828 Power Management IC"
+> > > +	tristate "ROHM BD71828 and BD71815 Power Management IC"
+> > >  	depends on I2C=y
+> > >  	depends on OF
+> > >  	select REGMAP_I2C
+> > >  	select REGMAP_IRQ
+> > >  	select MFD_CORE
+> > >  	help
+> > > -	  Select this option to get support for the ROHM BD71828 Power
+> > > -	  Management IC. BD71828GW is a single-chip power management IC
+> > > for
+> > > -	  battery-powered portable devices. The IC integrates 7 buck
+> > > -	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
+> > > -	  Also included is a Coulomb counter, a real-time clock (RTC),
+> > > and
+> > > -	  a 32.768 kHz clock gate.
+> > > +	  Select this option to get support for the ROHM BD71828 and
+> > > BD71815
+> > > +	  Power Management ICs. BD71828GW and BD71815AGW are single-
+> > > chip power
+> > > +	  management ICs mainly for battery-powered portable devices.
+> > > +	  The BD71828 integrates 7 buck converters and 7 LDOs. The
+> > > BD71815
+> > > +	  has 5 bucks, 7 LDOs, and a boost for driving LEDs. Both ICs
+> > > provide
+> > > +	  also a single-cell linear charger, a Coulomb counter, a real-
+> > > time
+> > > +	  clock (RTC), GPIOs and a 32.768 kHz clock gate.
+> > >  
+> > >  config MFD_STM32_LPTIMER
+> > >  	tristate "Support for STM32 Low-Power Timer"
+> > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-
+> > > bd71828.c
+> > > index 210261d026f2..28b82477ce4c 100644
+> > > --- a/drivers/mfd/rohm-bd71828.c
+> > > +++ b/drivers/mfd/rohm-bd71828.c
+> > > @@ -2,7 +2,7 @@
+> > >  //
+> > >  // Copyright (C) 2019 ROHM Semiconductors
+> > >  //
+> > > -// ROHM BD71828 PMIC driver
+> > > +// ROHM BD71828/BD71815 PMIC driver
+> > >  
+> > >  #include <linux/gpio_keys.h>
+> > >  #include <linux/i2c.h>
+> > > @@ -11,7 +11,9 @@
+> > >  #include <linux/ioport.h>
+> > >  #include <linux/irq.h>
+> > >  #include <linux/mfd/core.h>
+> > > +#include <linux/mfd/rohm-bd71815.h>
+> > >  #include <linux/mfd/rohm-bd71828.h>
+> > > +#include <linux/mfd/rohm-generic.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/of_device.h>
+> > >  #include <linux/regmap.h>
+> > > @@ -29,12 +31,102 @@ static struct gpio_keys_platform_data
+> > > bd71828_powerkey_data = {
+> > >  	.name = "bd71828-pwrkey",
+> > >  };
+> > >  
+> > > -static const struct resource rtc_irqs[] = {
+> > > +static const struct resource bd71815_rtc_irqs[] = {
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC0, "bd71815-rtc-alm-0"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC1, "bd71815-rtc-alm-1"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_RTC2, "bd71815-rtc-alm-2"),
+> > > +};
+> > > +
+> > > +static const struct resource bd71828_rtc_irqs[] = {
+> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC0, "bd71828-rtc-alm-0"),
+> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC1, "bd71828-rtc-alm-1"),
+> > >  	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd71828-rtc-alm-2"),
+> > >  };
+> > >  
+> > > +static struct resource bd71815_power_irqs[] = {
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_RES, "bd71815-dcin-
+> > > ovp-res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_DET, "bd71815-dcin-
+> > > ovp-det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_RES, "bd71815-dcin-
+> > > mon-res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_DET, "bd71815-dcin-
+> > > mon-det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_RES, "bd71815-vsys-uv-
+> > > res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_UV_DET, "bd71815-vsys-uv-
+> > > det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_RES, "bd71815-vsys-
+> > > low-res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_DET, "bd71815-vsys-
+> > > low-det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-
+> > > mon-res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-
+> > > mon-det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TEMP, "bd71815-chg-
+> > > wdg-temp"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TIME, "bd71815-chg-
+> > > wdg"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_RES, "bd71815-
+> > > rechg-res"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_DET, "bd71815-
+> > > rechg-det"),
+> > > +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RANGED_TEMP_TRANSITION,
+> > > +			     "bd71815-ranged-temp-transit"),
+> > 
+> > The new line limit is 100.  Feel free to run these out.
+> 
+> I learn new things every day it seems. This change is more than
+> welcome!
 
-On Tue, Jan 26, 2021 at 12:45:31PM +0000, Lee Jones wrote:
-> Fixes the following W=3D1 kernel build warning(s):
->=20
->  drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or m=
-ember 'req' not described in 'sun6i_get_ar100_factors'
->=20
-> Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/clk/sunxi/clk-sun6i-ar100.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-=
-sun6i-ar100.c
-> index e1b7d0929cf7f..54babc2b4b9ee 100644
-> --- a/drivers/clk/sunxi/clk-sun6i-ar100.c
-> +++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
-> @@ -16,7 +16,7 @@
-> =20
->  #include "clk-factors.h"
-> =20
-> -/**
-> +/*
->   * sun6i_get_ar100_factors - Calculates factors p, m for AR100
->   *
->   * AR100 rate is calculated as follows
+Please see:
 
-This is the sixth patch doing the exact same thing over the files in
-that folder you sent. Please fix all the occurences at once
+ bdc48fa11e46 ("checkpatch/coding-style: deprecate 80-column warning")
 
-Maxime
+... for a more complete description.
 
---qnn2dox7m5n4tnba
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYBA7NgAKCRDj7w1vZxhR
-xYO7APwOiVCyUAzi+H1ya3JfgPFkWNp8lSe27PibLsdTLuL4FAD8Cba36b3FZnYw
-MHel4mag1MjL961Dlv0HLQVQRetMewM=
-=L8vk
------END PGP SIGNATURE-----
-
---qnn2dox7m5n4tnba--
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
