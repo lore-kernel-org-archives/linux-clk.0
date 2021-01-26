@@ -7,67 +7,74 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE0FC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED57CC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DBA923109
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDFF23110
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:10:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392005AbhAZNJZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:09:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51108 "EHLO
+        id S2392649AbhAZNKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:10:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391954AbhAZMsj (ORCPT
+        with ESMTP id S2391949AbhAZMsj (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:48:39 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E387C0698E4
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:02 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id 190so2361623wmz.0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:02 -0800 (PST)
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A95CC0698E5
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:03 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id e15so2665313wme.0
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:46:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xV2037MpTqxIYdYf/qlhhyKpbo5/pnSBSbkbi3/w7zA=;
-        b=XK+B8cmZJgvGTEGTRyLc3SO5a5c8b6otv/2xECAiu13SXrH30DrwqdXR6kt+X7RnC9
-         mogCYkgvzIYiEwqc4jUJkT3zYOG8jFC+BBQrV+7WfPifcQ2CrWIQ3YvZNqTniAufzvoK
-         sTT5bXKzKJYLFMD10sEpqkTtp2823oAWVPKnTntVI5Xs7P44i4lckxe5khhY0Gn9Znwx
-         gxjA8TLk/p9L0pzr9bO9mcwBB89TliY8bzv5nsArobkn0D8yzUm50cEIfN0BBU+qvoyj
-         VXj+oywUaId30W8IvPoE0BycccyrJ/JJlcvP/6bq+xihpWzCHJbmwEtwsIZrlAFMqLV9
-         9gtw==
+        bh=h0Ike944NkRAuPgkxrxuW8S6aKRu/hdxaXcbNq0mdiY=;
+        b=oMuqC7H6vpZMq0xrtf4h9+YqRZYqNaIxxNUO+YL9xq2Uyj3Wxxv1OKhVBxslEfWw6+
+         Onaln1RQf3T2JxLxmRGSb+irSkYcE4aw65l8UvO5p6c8ek0dVT94HHyEguvOepYY37lP
+         6Wt2ORbsweCvaV+IDoukfJC9CPN/3RBo/Z/m3bswOB2ETZyINXZ+/QBIYdDyeMVATuRK
+         4mx5KkhOzidfYJxllyaJd0z36EEaMUdtU+E4Kgm6ERMGE+4iJxNmCA/90sVsbnJfDBEx
+         2L9fSfCOmhz0rr8k3WBrUVR+cw9YfYHXAp3uJtChnK7yQJAAJEsjFGSkojX2XGZItDcG
+         MEvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xV2037MpTqxIYdYf/qlhhyKpbo5/pnSBSbkbi3/w7zA=;
-        b=TpjcBBnRiFHeDOa59GESu5PcQipe+frDxGuAuQU/sY1Fe5JA92R106dREOdZXEhGg/
-         faiOCovD++/3SXgANOhqT989k6LXMzIPzQUnnPUlj3q4NkQYDZnSbNQaVznmlZeLMjTR
-         TIqeQJL7/UmUhqs2XjQCkODUleUR33gN7t4bcZAm81hMDBf1zZll9Uy3B56gpCWsO1SO
-         eLs95MOZT2sixWfMTzcP/vg+yLGQAtSInoF0dvKUIZZw22XgZtd8UKe+g1BzdQs510aD
-         E7XtSJ05d15nJRLa8qOatsrVDew0cCqAmVRgGlWw7jtoEvDlHtqeNku2LO/APA9AAJ+d
-         k/TA==
-X-Gm-Message-State: AOAM532itvreNIJWpRkMl30T9QwU1H4mdE7QvCIN/oUYhO1C3gCWQUpa
-        PAFJqse2If84O28/2f5pARUsOQ==
-X-Google-Smtp-Source: ABdhPJwX07IygCoQj1H2udFoApgRu91g3BVErGPZlgNSmDRMkZC8ho3Prm3d11PVxLh1npT9oweq3g==
-X-Received: by 2002:a05:600c:24f:: with SMTP id 15mr4559872wmj.78.1611665161131;
-        Tue, 26 Jan 2021 04:46:01 -0800 (PST)
+        bh=h0Ike944NkRAuPgkxrxuW8S6aKRu/hdxaXcbNq0mdiY=;
+        b=g8r9p47X6RNdaWIQHCaen0GjLaprtP7GDhzRfNCwn5ZaKXeUza6INBHIxYCt2rT4JK
+         0eH4R9qkZTJIpUtw9RaxsSfmKRGtCq3Pe/mbn5qV/F5j+xj57bGODaXO8SieNIfXjRFK
+         xASt2LUWZsxD2goC4p+U5+KjzXm9AaZBWCvSFjNndaj1pkhWn+yOy6LLrwegV+JXrKb3
+         2lkNQouOV7RBA6fc6oCscDNSMa54CwNg+AMxH0Bks1wyT1W1t68m3bPP7DEo1qSlX959
+         EssYnTr9A9rSj+WdXp8q9zFAuY3Nc8tB1lNNAUah1yLnaJwAXMFEkqmALZPeJ+6gtPE8
+         FqOA==
+X-Gm-Message-State: AOAM533l7B/gfhgAbMGVtKH19X4yFgsokK5+IzwPjcfZqIV6rCNdZL7b
+        6RxH03bJsuglBB3bsw+QiwIDPA==
+X-Google-Smtp-Source: ABdhPJxuJVv0MwQsAM6z/D0PIPLHRlfjT3l5zRNHHf84f5J/noC/V3qyelGNBnG29wT4mCKpAyKMGw==
+X-Received: by 2002:a7b:c055:: with SMTP id u21mr4668212wmc.68.1611665162317;
+        Tue, 26 Jan 2021 04:46:02 -0800 (PST)
 Received: from dell.default ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.46.00
+        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.46.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 04:46:00 -0800 (PST)
+        Tue, 26 Jan 2021 04:46:01 -0800 (PST)
 From:   Lee Jones <lee.jones@linaro.org>
 To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jan Kotas <jank@cadence.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 14/21] clk: clk-fixed-mmio: Demote obvious kernel-doc abuse
-Date:   Tue, 26 Jan 2021 12:45:33 +0000
-Message-Id: <20210126124540.3320214-15-lee.jones@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org
+Subject: [PATCH 15/21] clk: clk-npcm7xx: Remove unused static const tables 'npcm7xx_gates' and 'npcm7xx_divs_fx'
+Date:   Tue, 26 Jan 2021 12:45:34 +0000
+Message-Id: <20210126124540.3320214-16-lee.jones@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
 References: <20210126124540.3320214-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -75,30 +82,151 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Fixes the following W=1 kernel build warning(s):
 
- drivers/clk/clk-fixed-mmio.c:62: warning: Function parameter or member 'pdev' not described in 'of_fixed_mmio_clk_probe'
+ drivers/clk/clk-npcm7xx.c:438:43: warning: ‘npcm7xx_gates’ defined but not used [-Wunused-const-variable=]
+ drivers/clk/clk-npcm7xx.c:365:48: warning: ‘npcm7xx_divs_fx’ defined but not used [-Wunused-const-variable=]
 
+Cc: Avi Fishman <avifishman70@gmail.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Tali Perry <tali.perry1@gmail.com>
+Cc: Patrick Venture <venture@google.com>
+Cc: Nancy Yuen <yuenn@google.com>
+Cc: Benjamin Fair <benjaminfair@google.com>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Jan Kotas <jank@cadence.com>
+Cc: Nuvoton Technologies <tali.perry@nuvoton.com>
+Cc: openbmc@lists.ozlabs.org
 Cc: linux-clk@vger.kernel.org
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/clk-fixed-mmio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-npcm7xx.c | 108 --------------------------------------
+ 1 file changed, 108 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
-index 51f26619b6a23..5225d17d6b3f3 100644
---- a/drivers/clk/clk-fixed-mmio.c
-+++ b/drivers/clk/clk-fixed-mmio.c
-@@ -55,7 +55,7 @@ static void __init of_fixed_mmio_clk_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(fixed_mmio_clk, "fixed-mmio-clock", of_fixed_mmio_clk_setup);
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index 27a86b7a34dbf..e677bb5a784b9 100644
+--- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -361,13 +361,6 @@ static const struct npcm7xx_clk_mux_data npcm7xx_muxes[] __initconst = {
+ 	dvcssel_mux_parents, ARRAY_SIZE(dvcssel_mux_parents), 0, -1},
+ };
  
--/**
-+/*
-  * This is not executed when of_fixed_mmio_clk_setup succeeded.
-  */
- static int of_fixed_mmio_clk_probe(struct platform_device *pdev)
+-/* fixed ratio dividers (no register): */
+-static const struct npcm7xx_clk_div_fixed_data npcm7xx_divs_fx[] __initconst = {
+-	{ 1, 2, NPCM7XX_CLK_S_MC, NPCM7XX_CLK_S_MC_MUX, 0, NPCM7XX_CLK_MC},
+-	{ 1, 2, NPCM7XX_CLK_S_PLL1_DIV2, NPCM7XX_CLK_S_PLL1, 0, -1},
+-	{ 1, 2, NPCM7XX_CLK_S_PLL2_DIV2, NPCM7XX_CLK_S_PLL2, 0, -1},
+-};
+-
+ /* configurable dividers: */
+ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
+ 	{NPCM7XX_CLKDIV1, 28, 3, NPCM7XX_CLK_S_ADC,
+@@ -435,107 +428,6 @@ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
+ 
+ };
+ 
+-static const struct npcm7xx_clk_gate_data npcm7xx_gates[] __initconst = {
+-	{NPCM7XX_CLKEN1, 31, "smb1-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 30, "smb0-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 29, "smb7-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 28, "smb6-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 27, "adc-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 26, "wdt-gate", NPCM7XX_CLK_S_TIMER, 0},
+-	{NPCM7XX_CLKEN1, 25, "usbdev3-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 24, "usbdev6-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 23, "usbdev5-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 22, "usbdev4-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 21, "emc2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 20, "timer5_9-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 19, "timer0_4-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 18, "pwmm0-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN1, 17, "huart-gate", NPCM7XX_CLK_S_UART, 0},
+-	{NPCM7XX_CLKEN1, 16, "smb5-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 15, "smb4-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 14, "smb3-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 13, "smb2-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 12, "mc-gate", NPCM7XX_CLK_S_MC, 0},
+-	{NPCM7XX_CLKEN1, 11, "uart01-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 10, "aes-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 9, "peci-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN1, 8, "usbdev2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 7, "uart23-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 6, "emc1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 5, "usbdev1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 4, "shm-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 3 is reserved */
+-	{NPCM7XX_CLKEN1, 2, "kcs-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 1, "spi3-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 0, "spi0-gate", NPCM7XX_CLK_S_AHB, 0},
+-
+-	{NPCM7XX_CLKEN2, 31, "cp-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 30, "tock-gate", NPCM7XX_CLK_S_TOCK, 0},
+-	/* bit 29 is reserved */
+-	{NPCM7XX_CLKEN2, 28, "gmac1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 27, "usbif-gate", NPCM7XX_CLK_S_USBIF, 0},
+-	{NPCM7XX_CLKEN2, 26, "usbhost-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 25, "gmac2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 24 is reserved */
+-	{NPCM7XX_CLKEN2, 23, "pspi2-gate", NPCM7XX_CLK_S_APB5, 0},
+-	{NPCM7XX_CLKEN2, 22, "pspi1-gate", NPCM7XX_CLK_S_APB5, 0},
+-	{NPCM7XX_CLKEN2, 21, "3des-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 20 is reserved */
+-	{NPCM7XX_CLKEN2, 19, "siox2-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN2, 18, "siox1-gate", NPCM7XX_CLK_S_APB3, 0},
+-	/* bit 17 is reserved */
+-	{NPCM7XX_CLKEN2, 16, "fuse-gate", NPCM7XX_CLK_S_APB4, 0},
+-	/*  bit 15 is reserved */
+-	{NPCM7XX_CLKEN2, 14, "vcd-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 13, "ece-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 12, "vdma-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 11, "ahbpcibrg-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 10, "gfxsys-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN2, 9, "sdhc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 8, "mmc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 7, "mft7-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 6, "mft6-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 5, "mft5-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 4, "mft4-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 3, "mft3-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 2, "mft2-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 1, "mft1-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 0, "mft0-gate", NPCM7XX_CLK_S_APB4, 0},
+-
+-	{NPCM7XX_CLKEN3, 31, "gpiom7-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 30, "gpiom6-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 29, "gpiom5-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 28, "gpiom4-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 27, "gpiom3-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 26, "gpiom2-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 25, "gpiom1-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 24, "gpiom0-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 23, "espi-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 22, "smb11-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 21, "smb10-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 20, "smb9-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 19, "smb8-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 18, "smb15-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 17, "rng-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 16, "timer10_14-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 15, "pcirc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 14, "sececc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 13, "sha-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 12, "smb14-gate", NPCM7XX_CLK_S_APB2, 0},
+-	/* bit 11 is reserved */
+-	/* bit 10 is reserved */
+-	{NPCM7XX_CLKEN3, 9, "pcimbx-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 8 is reserved */
+-	{NPCM7XX_CLKEN3, 7, "usbdev9-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 6, "usbdev8-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 5, "usbdev7-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 4, "usbdev0-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 3, "smb13-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 2, "spix-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 1, "smb12-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 0, "pwmm1-gate", NPCM7XX_CLK_S_APB3, 0},
+-};
+-
+ static DEFINE_SPINLOCK(npcm7xx_clk_lock);
+ 
+ static void __init npcm7xx_clk_init(struct device_node *clk_np)
 -- 
 2.25.1
 
