@@ -2,233 +2,206 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC015C4332B
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD60FC43381
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC573206A1
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8671B22DFB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 13:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403845AbhAZNPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 08:15:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
+        id S2391174AbhAZNlh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 08:41:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391826AbhAZMrE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:47:04 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D00C0698C0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:46 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id c127so2614797wmf.5
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:45:46 -0800 (PST)
+        with ESMTP id S2391883AbhAZNkf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 08:40:35 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4A1C061A31
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 05:39:55 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id c2so19487273edr.11
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 05:39:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HgDoxTkqCtX7qRFLVzIhqucftM+usnXCOOEJb4UlRps=;
-        b=HKlil30JX5XDC2QgJygSa3PW1ij81XFJmGM9hvEgd+MqWPBopjh8B4oKb5p6/RTl/h
-         YaGgR5dCEbp9kTHydbkyFjb9taaxXD4hQuvNkEZyQd/3V8QHbJVES2Xv/l9Q5W1MLlZ1
-         o+5ldum3NNByprXng2exIICoLcvAOXxilOuG+GHw3raMicPEoV3QrdN0yfNBo+YaINvH
-         8HW3ThaNd08HbLqjlaREB1k7zDeEt9pK1xx1Rxx1oRQqR6bahgrEmXEy0hlSW3RtU/at
-         Ge0jATWRVhoSL7UT+EGH0cF0itZkbmoSLDC0gsIOe/xdljbJ/Xk8x7RBWBUCsNGtTAI+
-         inBQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lk4JPRwUYALCNG2igi4afiTcBYEM/7rNUk9OAWBcEKk=;
+        b=UdoDKTi1sbPTjTJ0MhX4Kqhq+E/25MT5yDvXGL4Lw/8bOvznJXP0tqAV6gvt012HI+
+         Ev2hEmfTso5JGXBtKJzZbcauz+6G/Vvob9aAIfSyQNzR3UP9aahETacfBhUH4NMTqJfG
+         28ukc1xDY2V1dNFw8EENwGvTAvF4JJm+odDaZLsWpTT+zftemxavbyks/bP4UmIwGc93
+         385PhrWn3eVRLJ3fIQnswzQTh+fCRfMHcTyBLtbwzr8FDksAL/nOSFGlZVaegBrGmeG3
+         OUUASyq5mxgl8H68jPCJmXHuT4pZgDs9KVTjHiZQ2L9LRUYwbKzH/atU7ZJ1n3Ht+28F
+         lKVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=HgDoxTkqCtX7qRFLVzIhqucftM+usnXCOOEJb4UlRps=;
-        b=Qd2px0OUf+lOtmdn43u3cMJMWHj+jP3fiyinMdLNZXJZkD+QOXeAH/n+6xcMMPHptk
-         EExQhBteY9vqMtQsSAPcAGL9ltkbbPmObkG8LYHFtyl0O/bzJAKdxSRRmKXAIA+RAtJX
-         PFu7WqvjnSSUT/YPFZmQJ28hJJLhX5lu/VowT32kMdIu7Z/3vDkYomI99KfHHjQBQCMO
-         OeyHoC/VJdcVa+M6rHy1VE3yjkeKVwktd3Se/wqZuOGcJSulYm1KXL9c6x5j3q/DnBFV
-         Qb6FarDYHlBsybj38x7FxB+4da9kiRffaNJP/6MoglsjcKiOqidGA/2W+FJuaQSBum8d
-         S8FQ==
-X-Gm-Message-State: AOAM533VW+yZ9JZ9CbcNuLxhen1gLeXQjgyS6rFXm8BJWJ9Ozc2icQFH
-        6H44rI+LGSmm5dH6jn6wJ9NK1g==
-X-Google-Smtp-Source: ABdhPJw3EEAAvcpTE1X6uWF7W1nwVVyQMNjGyt1XrFtc8unQRk9L1XWmIU+HRd62tLEG3E2YvY6hIA==
-X-Received: by 2002:a1c:398b:: with SMTP id g133mr4437355wma.35.1611665144908;
-        Tue, 26 Jan 2021 04:45:44 -0800 (PST)
-Received: from dell.default ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id i131sm3263073wmi.25.2021.01.26.04.45.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 04:45:43 -0800 (PST)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
-Subject: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Date:   Tue, 26 Jan 2021 12:45:19 +0000
-Message-Id: <20210126124540.3320214-1-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        bh=lk4JPRwUYALCNG2igi4afiTcBYEM/7rNUk9OAWBcEKk=;
+        b=ZZ7F0b41wncdf0mQYJaJGlMpF8CWafwMv+IJIb717hwSjATPPfEKOOOsc6mf0dqs8W
+         b3ul57u/F9agJbaiytcEWSkM//ftR7wykm/z1WKT4Nk9LlyGVC/JksQAVEuHwD3wwJZ6
+         72+y6xnz/ismMBxWDBaOf6x6c0EyIjB8NEnQu1+K/qUGTsafjvs8jLV/HITDZBv+6wsc
+         BoPWwJjULJQPcYAQBXQA4llgRVLKCrBfyaK28HOtfyH9a5f7fTXxTrlY21AoTvuug377
+         OzLK0noqfabTYLc61MNQZXtKf9h9Ak+Ott0w7qHg6LESJ/N/6Tf+8MQ6W+1XyR5wvyIm
+         z3Xg==
+X-Gm-Message-State: AOAM533JJSihNc8WwF0TWFY2QZ/D+zV8WLQMPKm20KysJt03+M/bSRMd
+        wJveXZSYNHnciod4HTfBxypZ4g==
+X-Google-Smtp-Source: ABdhPJzfsUKl3nbwig8RQGGsmtTC3iiYEKOK8dCvoMmrGeiWyq+JIptIf9wgNf3sl7zWKgCI0XMpiQ==
+X-Received: by 2002:a50:fc97:: with SMTP id f23mr4882928edq.307.1611668393900;
+        Tue, 26 Jan 2021 05:39:53 -0800 (PST)
+Received: from [192.168.0.4] (hst-221-115.medicom.bg. [84.238.221.115])
+        by smtp.googlemail.com with ESMTPSA id w2sm9932644ejn.73.2021.01.26.05.39.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Jan 2021 05:39:53 -0800 (PST)
+Subject: Re: [PATCH v2 3/9] clk: qcom: Add SDM660 Multimedia Clock Controller
+ (MMCC) driver
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>, agross@kernel.org
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org
+References: <20210113183817.447866-1-angelogioacchino.delregno@somainline.org>
+ <20210113183817.447866-4-angelogioacchino.delregno@somainline.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <2453cbae-bd30-416c-4432-9b27754670e1@linaro.org>
+Date:   Tue, 26 Jan 2021 15:39:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210113183817.447866-4-angelogioacchino.delregno@somainline.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This set is part of a larger effort attempting to clean-up W=1
-kernel builds, which are currently overwhelmingly riddled with
-niggly little warnings.
 
-This is the last set.  Clock is clean after this.
 
-Lee Jones (21):
-  clk: zynq: pll: Fix kernel-doc formatting in 'clk_register_zynq_pll's
-    header
-  clk: ti: clkt_dpll: Fix some kernel-doc misdemeanours
-  clk: ti: dpll3xxx: Fix some kernel-doc headers and promote other
-    worthy ones
-  clk: qcom: clk-regmap: Provide missing description for
-    'devm_clk_register_regmap()'s dev param
-  clk: sunxi: clk-sun9i-core: Demote non-conformant kernel-doc headers
-  clk: sunxi: clk-usb: Demote obvious kernel-doc abuse
-  clk: tegra: clk-tegra30: Remove unused variable 'reg'
-  clk: clkdev: Ignore suggestion to use gnu_printf() as it's not
-    appropriate here
-  clk: tegra: cvb: Provide missing description for
-    'tegra_cvb_add_opp_table()'s align param
-  clk: ti: dpll44xx: Fix some potential doc-rot
-  clk: renesas: renesas-cpg-mssr: Fix formatting issues for
-    'smstpcr_saved's documentation
-  clk: sunxi: clk-sun6i-ar100: Demote non-conformant kernel-doc header
-  clk: qcom: gcc-ipq4019: Remove unused variable 'ret'
-  clk: clk-fixed-mmio: Demote obvious kernel-doc abuse
-  clk: clk-npcm7xx: Remove unused static const tables 'npcm7xx_gates'
-    and 'npcm7xx_divs_fx'
-  clk: qcom: mmcc-msm8974: Remove unused static const tables
-    'mmcc_xo_mmpll0_1_2_gpll0{map}'
-  clk: clk-xgene: Add description for 'mask' and fix formatting for
-    'flags'
-  clk: qcom: clk-rpm: Remove a bunch of superfluous code
-  clk: spear: Move prototype to accessible header
-  clk: imx: Move 'imx6sl_set_wait_clk()'s prototype out to accessible
-    header
-  clk: zynqmp: divider: Add missing description for 'max_div'
+On 1/13/21 8:38 PM, AngeloGioacchino Del Regno wrote:
+> From: Martin Botka <martin.botka@somainline.org>
+> 
+> Add a driver for the multimedia clock controller found on SDM660
+> based devices. This should allow most multimedia device drivers
+> to probe and control their clocks.
+> 
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+> Co-developed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> [angelogioacchino.delregno@somainline.org: Cleaned up SDM630 clock fixups]
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> ---
+>  drivers/clk/qcom/Kconfig                     |    9 +
+>  drivers/clk/qcom/Makefile                    |    1 +
+>  drivers/clk/qcom/mmcc-sdm660.c               | 2864 ++++++++++++++++++
+>  include/dt-bindings/clock/qcom,mmcc-sdm660.h |  162 +
+>  4 files changed, 3036 insertions(+)
+>  create mode 100644 drivers/clk/qcom/mmcc-sdm660.c
+>  create mode 100644 include/dt-bindings/clock/qcom,mmcc-sdm660.h
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index d32bb12cd8d0..eb9746e84556 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -366,6 +366,15 @@ config SDM_GCC_660
+>  	  Say Y if you want to use peripheral devices such as UART, SPI,
+>  	  i2C, USB, UFS, SDDC, PCIe, etc.
+>  
+> +config SDM_MMCC_660
+> +	tristate "SDM660 Multimedia Clock Controller"
+> +	select SDM_GCC_660
+> +	select QCOM_GDSC
+> +	help
+> +	  Support for the multimedia clock controller on SDM660 devices.
+> +	  Say Y if you want to support multimedia devices such as display,
+> +	  graphics, video encode/decode, camera, etc.
+> +
+>  config QCS_TURING_404
+>  	tristate "QCS404 Turing Clock Controller"
+>  	help
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 9e5e0e3cb7b4..bfa8350f088d 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
+>  obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+>  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+>  obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+> +obj-$(CONFIG_SDM_MMCC_660) += mmcc-sdm660.o
+>  obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+>  obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
+>  obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+> diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+> new file mode 100644
+> index 000000000000..d268e1c89f57
+> --- /dev/null
+> +++ b/drivers/clk/qcom/mmcc-sdm660.c
+> @@ -0,0 +1,2864 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2020, Martin Botka <martin.botka@somainline.org>
+> + * Copyright (c) 2020, Konrad Dybcio <konrad.dybcio@somainline.org>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/clk.h>
+> +
+> +
+> +#include <dt-bindings/clock/qcom,mmcc-sdm660.h>
+> +
+> +#include "common.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-branch.h"
+> +#include "reset.h"
+> +#include "gdsc.h"
+> +
 
- arch/arm/mach-imx/common.h             |   1 -
- arch/arm/mach-imx/cpuidle-imx6sl.c     |   1 +
- arch/arm/mach-imx/pm-imx6.c            |   1 +
- arch/arm/mach-spear/generic.h          |  12 ---
- arch/arm/mach-spear/spear13xx.c        |   1 +
- drivers/clk/clk-fixed-mmio.c           |   2 +-
- drivers/clk/clk-npcm7xx.c              | 108 -------------------------
- drivers/clk/clk-xgene.c                |   5 +-
- drivers/clk/clkdev.c                   |   7 ++
- drivers/clk/imx/clk-imx6sl.c           |   1 +
- drivers/clk/qcom/clk-regmap.c          |   1 +
- drivers/clk/qcom/clk-rpm.c             |  63 ---------------
- drivers/clk/qcom/gcc-ipq4019.c         |   7 +-
- drivers/clk/qcom/mmcc-msm8974.c        |  16 ----
- drivers/clk/renesas/renesas-cpg-mssr.c |   4 +-
- drivers/clk/spear/spear1310_clock.c    |   1 +
- drivers/clk/spear/spear1340_clock.c    |   1 +
- drivers/clk/sunxi/clk-sun6i-ar100.c    |   2 +-
- drivers/clk/sunxi/clk-sun9i-core.c     |   8 +-
- drivers/clk/sunxi/clk-usb.c            |   2 +-
- drivers/clk/tegra/clk-tegra30.c        |   5 +-
- drivers/clk/tegra/cvb.c                |   1 +
- drivers/clk/ti/clkt_dpll.c             |   3 +-
- drivers/clk/ti/dpll3xxx.c              |  20 ++---
- drivers/clk/ti/dpll44xx.c              |   6 +-
- drivers/clk/zynq/pll.c                 |  12 +--
- drivers/clk/zynqmp/divider.c           |   1 +
- include/linux/clk/imx.h                |  15 ++++
- include/linux/clk/spear.h              |  23 ++++++
- 29 files changed, 92 insertions(+), 238 deletions(-)
- create mode 100644 include/linux/clk/imx.h
- create mode 100644 include/linux/clk/spear.h
+<cut>
 
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Avi Fishman <avifishman70@gmail.com>
-Cc: Benjamin Fair <benjaminfair@google.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: "Emilio López" <emilio@elopez.com.ar>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jan Kotas <jank@cadence.com>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: Loc Ho <lho@apm.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: Nancy Yuen <yuenn@google.com>
-Cc: Nuvoton Technologies <tali.perry@nuvoton.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: openbmc@lists.ozlabs.org
-Cc: Patrick Venture <venture@google.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Rajan Vaja <rajan.vaja@xilinx.com>
-Cc: Rajeev Kumar <rajeev-dlh.kumar@st.com>
-Cc: Richard Woodruff <r-woodruff2@ti.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Tali Perry <tali.perry1@gmail.com>
-Cc: Tero Kristo <kristo@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomer Maimon <tmaimon77@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>
+> +
+> +static struct gdsc venus_gdsc = {
+> +	.gdscr = 0x1024,
+> +	.pd = {
+> +		.name = "venus",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +};
+> +
+> +static struct gdsc venus_core0_gdsc = {
+> +	.gdscr = 0x1040,
+> +	.pd = {
+> +		.name = "venus_core0",
+> +	},
+> +	.parent = &venus_gdsc.pd,
+> +	.pwrsts = PWRSTS_OFF_ON,
+
+I think this gdsc should be under hw control?
+
++	.flags = HW_CTRL,
+
+> +};
+> +
 -- 
-2.25.1
-
+-- 
+regards,
+Stan
