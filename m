@@ -2,126 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A241C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C74BC433DB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 581E122B2C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BDED22B3B
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 14:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392696AbhAZOC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 09:02:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392685AbhAZOCN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:02:13 -0500
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111C0C061A29
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:01:33 -0800 (PST)
-Received: by mail-ot1-x331.google.com with SMTP id f6so16224824ots.9
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 06:01:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=NHa1jl4XStlNfdm47A2wF7pRtMVv0tqg694ijeAKGgo=;
-        b=g48UNgtY8ZF9l+UqD4BTLmVeRhst8Pa1/qJsYTnCprsve24Bn1PuxRDF408fhTOAbc
-         RDSGqwKhkI0m1sWgZpdMYR6G5g9COhZWbrxvhynGVEkweBtuS61qb3dshLM7n5vLNFEl
-         fZ1z/YV7IUR6SItFyy7ksH/+qhQrj25o0ximz3dvVuIPI/SMDHFRMMU6h1aj+vPqkkOD
-         JfJrNIoGO3a2bkNf/RH/rke1zU+HKGnW9yR8ycGO7PicvIQMNM1yl9JFLdHL8Kn1nh4B
-         55bCIPhPhTBpY5aZPfU3eJNmbZoF2df8+bRnUnw9M3OuMtmZCcTf1lvedvRh6J7lxehw
-         zy0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=NHa1jl4XStlNfdm47A2wF7pRtMVv0tqg694ijeAKGgo=;
-        b=e6NEfM+P7z+sf58MLWAt2ajtt0yr9kFcL8gwIahlyuvU8w814cnWHSdGdXSQJ/0RaV
-         6+jVnbE4rbyFP47/KeVt5crXUCY790GE+vJ1huNO4zuh1nzSYTkYUGuhpUqbGh/BGSec
-         Nynz3hvGWFgsLev3OxOwkzbmuVx1CAt+Gh1QEpfntvwrNWTOCLnsoi45PSJBaMkqO9PE
-         72N0ogECtCTLetVkugGjg8rG/mzBdSbR6VsCrcMQbyhFES2B7rXkXPeM3J+bDuIJRd7i
-         ianvvLR09/AVLeyj9aV7ooMoNtEvvTbf8DnQ7z1WdqyMwF4duaT89GVVJJOQw8pynFKQ
-         HFxg==
-X-Gm-Message-State: AOAM5318yA+xBTTN4f03knWHDENnPPvTCYXWEq0uO4hnp+2mZBFsueF4
-        AQxZ/aFCPI7p3bku2Im0p8iy8w==
-X-Google-Smtp-Source: ABdhPJx8qKP3uJzg1vWvJWHFk8p3ugyjVEg/omR7n0I6N2mia7sWVH4kq6wxy0T3NTsKCzKM1uieYw==
-X-Received: by 2002:a05:6830:1041:: with SMTP id b1mr3997810otp.335.1611669692143;
-        Tue, 26 Jan 2021 06:01:32 -0800 (PST)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id z8sm3858515oon.10.2021.01.26.06.01.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 06:01:31 -0800 (PST)
-Date:   Tue, 26 Jan 2021 08:01:29 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 13/21] clk: qcom: gcc-ipq4019: Remove unused variable
- 'ret'
-Message-ID: <20210126140129.GD1241218@yoga>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210126124540.3320214-14-lee.jones@linaro.org>
+        id S2405731AbhAZOM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 09:12:56 -0500
+Received: from relay05.th.seeweb.it ([5.144.164.166]:44613 "EHLO
+        relay05.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405603AbhAZOMz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 09:12:55 -0500
+Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 8105C3F277;
+        Tue, 26 Jan 2021 15:11:53 +0100 (CET)
+Subject: Re: [PATCH v2 3/9] clk: qcom: Add SDM660 Multimedia Clock Controller
+ (MMCC) driver
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>, agross@kernel.org
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org
+References: <20210113183817.447866-1-angelogioacchino.delregno@somainline.org>
+ <20210113183817.447866-4-angelogioacchino.delregno@somainline.org>
+ <2453cbae-bd30-416c-4432-9b27754670e1@linaro.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>
+Message-ID: <6ba8ac3c-d33b-3ab2-5855-f99d431b397a@somainline.org>
+Date:   Tue, 26 Jan 2021 15:11:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210126124540.3320214-14-lee.jones@linaro.org>
+In-Reply-To: <2453cbae-bd30-416c-4432-9b27754670e1@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 26 Jan 06:45 CST 2021, Lee Jones wrote:
+Il 26/01/21 14:39, Stanimir Varbanov ha scritto:
+> 
+> 
+> On 1/13/21 8:38 PM, AngeloGioacchino Del Regno wrote:
+>> From: Martin Botka <martin.botka@somainline.org>
+>>
+>> Add a driver for the multimedia clock controller found on SDM660
+>> based devices. This should allow most multimedia device drivers
+>> to probe and control their clocks.
+>>
+>> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+>> Co-developed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>> [angelogioacchino.delregno@somainline.org: Cleaned up SDM630 clock fixups]
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig                     |    9 +
+>>   drivers/clk/qcom/Makefile                    |    1 +
+>>   drivers/clk/qcom/mmcc-sdm660.c               | 2864 ++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,mmcc-sdm660.h |  162 +
+>>   4 files changed, 3036 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/mmcc-sdm660.c
+>>   create mode 100644 include/dt-bindings/clock/qcom,mmcc-sdm660.h
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index d32bb12cd8d0..eb9746e84556 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -366,6 +366,15 @@ config SDM_GCC_660
+>>   	  Say Y if you want to use peripheral devices such as UART, SPI,
+>>   	  i2C, USB, UFS, SDDC, PCIe, etc.
+>>   
+>> +config SDM_MMCC_660
+>> +	tristate "SDM660 Multimedia Clock Controller"
+>> +	select SDM_GCC_660
+>> +	select QCOM_GDSC
+>> +	help
+>> +	  Support for the multimedia clock controller on SDM660 devices.
+>> +	  Say Y if you want to support multimedia devices such as display,
+>> +	  graphics, video encode/decode, camera, etc.
+>> +
+>>   config QCS_TURING_404
+>>   	tristate "QCS404 Turing Clock Controller"
+>>   	help
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index 9e5e0e3cb7b4..bfa8350f088d 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -62,6 +62,7 @@ obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
+>>   obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+>>   obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+>>   obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+>> +obj-$(CONFIG_SDM_MMCC_660) += mmcc-sdm660.o
+>>   obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+>>   obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
+>>   obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+>> diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+>> new file mode 100644
+>> index 000000000000..d268e1c89f57
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/mmcc-sdm660.c
+>> @@ -0,0 +1,2864 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2020, Martin Botka <martin.botka@somainline.org>
+>> + * Copyright (c) 2020, Konrad Dybcio <konrad.dybcio@somainline.org>
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/clk.h>
+>> +
+>> +
+>> +#include <dt-bindings/clock/qcom,mmcc-sdm660.h>
+>> +
+>> +#include "common.h"
+>> +#include "clk-regmap.h"
+>> +#include "clk-regmap-divider.h"
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-branch.h"
+>> +#include "reset.h"
+>> +#include "gdsc.h"
+>> +
+> 
+> <cut>
+> 
+>> +
+>> +static struct gdsc venus_gdsc = {
+>> +	.gdscr = 0x1024,
+>> +	.pd = {
+>> +		.name = "venus",
+>> +	},
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>> +};
+>> +
+>> +static struct gdsc venus_core0_gdsc = {
+>> +	.gdscr = 0x1040,
+>> +	.pd = {
+>> +		.name = "venus_core0",
+>> +	},
+>> +	.parent = &venus_gdsc.pd,
+>> +	.pwrsts = PWRSTS_OFF_ON,
+> 
+> I think this gdsc should be under hw control?
+> 
+> +	.flags = HW_CTRL,
+> 
 
-> Fixes the following W=1 kernel build warning(s):
-> 
->  drivers/clk/qcom/gcc-ipq4019.c: In function ‘clk_cpu_div_set_rate’:
->  drivers/clk/qcom/gcc-ipq4019.c:1279:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
-> 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
+Feels strange, eh? Was the same for me, but then noupe, there is no
+hw control for this GDSC downstream, nor a hw_ctrl address for it, so
+on this SoC it shouldn't be under hw control.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Besides that, testing also agrees with this (enc/dec works)...
 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-ipq4019.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-> index ef5137fd50f3f..8abad4032de71 100644
-> --- a/drivers/clk/qcom/gcc-ipq4019.c
-> +++ b/drivers/clk/qcom/gcc-ipq4019.c
-> @@ -1276,16 +1276,15 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
->  	struct clk_fepll *pll = to_clk_fepll(hw);
->  	const struct freq_tbl *f;
->  	u32 mask;
-> -	int ret;
->  
->  	f = qcom_find_freq(pll->freq_tbl, rate);
->  	if (!f)
->  		return -EINVAL;
->  
->  	mask = (BIT(pll->cdiv.width) - 1) << pll->cdiv.shift;
-> -	ret = regmap_update_bits(pll->cdiv.clkr.regmap,
-> -				 pll->cdiv.reg, mask,
-> -				 f->pre_div << pll->cdiv.shift);
-> +	regmap_update_bits(pll->cdiv.clkr.regmap,
-> +			   pll->cdiv.reg, mask,
-> +			   f->pre_div << pll->cdiv.shift);
->  	/*
->  	 * There is no status bit which can be checked for successful CPU
->  	 * divider update operation so using delay for the same.
-> -- 
-> 2.25.1
-> 
+P.S.: Thanks for the review!
+-- Angelo
+
+>> +};
+>> +
+
