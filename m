@@ -2,124 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B8FC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 12:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42345C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 12:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10DBB20691
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 12:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8B02223D
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jan 2021 12:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392513AbhAZMKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jan 2021 07:10:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42900 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392517AbhAZMKU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 07:10:20 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74BDC061573
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jan 2021 04:09:29 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1l4MsD-00089m-PB; Tue, 26 Jan 2021 12:51:05 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1l4MsD-0000iA-B6; Tue, 26 Jan 2021 12:51:05 +0100
-Date:   Tue, 26 Jan 2021 12:51:05 +0100
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC] clk: Mark HW enabled clocks as enabled in core
-Message-ID: <20210126115105.GD28722@pengutronix.de>
-References: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
+        id S1729110AbhAZMTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jan 2021 07:19:34 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:62982 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404979AbhAZLG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 06:06:29 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10QB0Jgm002104;
+        Tue, 26 Jan 2021 06:05:33 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com with ESMTP id 368ehahqmn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Jan 2021 06:05:33 -0500
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 10QB5Wp3028966
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Tue, 26 Jan 2021 06:05:32 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1779.2; Tue, 26 Jan
+ 2021 06:05:31 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Tue, 26 Jan 2021 06:05:31 -0500
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 10QB5PQd007159;
+        Tue, 26 Jan 2021 06:05:28 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <lars@metafoo.de>,
+        <linux-fpga@vger.kernel.org>, <mdf@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v2 1/3] clk: axi-clkgen: remove ARCH dependency in Kconfig
+Date:   Tue, 26 Jan 2021 13:08:24 +0200
+Message-ID: <20210126110826.24221-2-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210126110826.24221-1-alexandru.ardelean@analog.com>
+References: <20210126110826.24221-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 12:46:48 up 55 days, 13 min, 98 users,  load average: 0.21, 0.10,
- 0.10
-User-Agent: Mutt/1.10.1 (2018-07-13)
-From:   Sascha Hauer <sha@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-26_06:2021-01-25,2021-01-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ mlxlogscore=821 mlxscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101260058
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 26, 2021 at 01:21:36PM +0200, Abel Vesa wrote:
-> Some clocks are already enabled in HW even before the kernel
-> starts to boot. So, in order to make sure that these clocks do not
-> get disabled when clk_disable_unused call is done or when
-> reparenting clocks, we enable them in core on clock registration.
-> Such a clock will have to be registered with CLK_IGNORE_UNUSED flag
-> and also needs to have the is_enabled ops implemented.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  drivers/clk/clk.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 3d751ae5bc70..26d55851cfa5 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3416,6 +3416,7 @@ static int __clk_core_init(struct clk_core *core)
->  	int ret;
->  	struct clk_core *parent;
->  	unsigned long rate;
-> +	bool is_hw_enabled = false;
->  	int phase;
->  
->  	if (!core)
-> @@ -3558,12 +3559,20 @@ static int __clk_core_init(struct clk_core *core)
->  		rate = 0;
->  	core->rate = core->req_rate = rate;
->  
-> +	/*
-> +	 * If the clock has the CLK_IGNORE_UNUSED flag set and it is already
-> +	 * enabled in HW, enable it in core too so it won't get accidentally
-> +	 * disabled when walking the orphan tree and reparenting clocks
-> +	 */
-> +	if (core->flags & CLK_IGNORE_UNUSED && core->ops->is_enabled)
-> +		is_hw_enabled = clk_core_is_enabled(core);
-> +
->  	/*
->  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->  	 * don't get accidentally disabled when walking the orphan tree and
->  	 * reparenting clocks
->  	 */
-> -	if (core->flags & CLK_IS_CRITICAL) {
-> +	if (core->flags & CLK_IS_CRITICAL || is_hw_enabled) {
->  		unsigned long flags;
->  
->  		ret = clk_core_prepare(core);
+The intent is to be able to run this driver to access the IP core in setups
+where FPGA board is also connected via a PCIe bus. In such cases the number
+of combinations explodes, where the host system can be an x86 with Xilinx
+Zynq/ZynqMP/Microblaze board connected via PCIe.
+Or even a ZynqMP board with a ZynqMP/Zynq/Microblaze connected via PCIe.
 
-This means that a bootloader enabled clock with CLK_IGNORE_UNUSED flag
-can effectively never be disabled because the prepare/enable count is 1
-without any user. This is the behaviour we want to have with critical
-clocks, but I don't think this is desired for clocks with the
-CLK_IGNORE_UNUSED flag.
+To accommodate for these cases, this change removes the limitation for this
+driver to be compilable only on Zynq/Microblaze architectures.
 
-Sascha
+Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ drivers/clk/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 85856cff506c..d8c2d4593926 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -247,7 +247,6 @@ config CLK_TWL6040
+ 
+ config COMMON_CLK_AXI_CLKGEN
+ 	tristate "AXI clkgen driver"
+-	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
+ 	help
+ 	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
+ 	  FPGAs. It is commonly used in Analog Devices' reference designs.
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.17.1
+
