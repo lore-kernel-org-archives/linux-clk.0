@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7069BC433E9
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE741C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 359BD2072C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A28220724
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233208AbhA0HMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jan 2021 02:12:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
+        id S233234AbhA0HM6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jan 2021 02:12:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232372AbhA0HJB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Jan 2021 02:09:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EACC20724;
-        Wed, 27 Jan 2021 07:08:16 +0000 (UTC)
+        id S232374AbhA0HJL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Jan 2021 02:09:11 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D6A62072C;
+        Wed, 27 Jan 2021 07:08:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611731300;
-        bh=h6gEAcgIWOUdRrfszLr2SUwM5JmAGj8Uwzmk+TImk/k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=J/VLsnQv2NxTJ/b7PYohkQlIkhAqXg+NGTBKP0FG/wwPjicHsHmSemC7vVBwqxBaG
-         gdoacmVpQeDtFBLdv8nPQo2ap51vLUYrjw3mISwtbxHP4iVwbyVnLa3RNYc9QivaIw
-         iKc0TixKK8BzLZs0qwSNAMUYc+jxYOn13Bd8tUljr1RQAFGyIgVhhtpZtfcTfMyXva
-         51Y+TPTa+ItLarti5utcVWAnQvVsfESDNsYJ87SdDthm/B7UuhTIVVLPFa0bIH/7uq
-         9mF8UYA7j6iCIXGmmC4zayO7R6Sof91h9WI1ppJSteB6Yl81Kmi1Rs06SX0qFG0f6L
-         xwMwBlWsa9kzg==
+        s=k20201202; t=1611731310;
+        bh=Y4lin5XW4XbmWUCOFnuEYMKBivSBkDGA8LTHpmbqjt4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gOsLXmfN/8aQA5vyCACsv1TumBxIHBZqBiCWPlzaAH31r128LArLvoBcc8sl+hBqJ
+         MYOatMtMP0wRX83FLfxpXLBvGoYB8MIz1Mnsym0ERXABJbB8X+AzrcXiiaHT7/ZMad
+         8QkloYe4iYiYnjwJICLCd7hogpxnVgULKGkt/XzdRiRtJJ8qdXonL4bdpbyMvuHZRC
+         IlSRqaCx0ArFaVyHMN7W0M5tWfpb74vgvAyri20/Yc33L+7JgA0j0lxsmxNuyg8fFr
+         ozh1jjNW4tzQxQLkNw60z3HVoN4TWmBiWKMnm42nwGOpfbExikQW14aV1whXikdwdW
+         n7LbCEj/MYQ+g==
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -43,65 +43,83 @@ Cc:     linux-arm-msm@vger.kernel.org,
         <angelogioacchino.delregno@somainline.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/5] Add clock drivers for SM8350
-Date:   Wed, 27 Jan 2021 12:38:06 +0530
-Message-Id: <20210127070811.152690-1-vkoul@kernel.org>
+Subject: [PATCH v5 2/5] clk: qcom: clk-alpha-pll: modularize alpha_pll_trion_set_rate()
+Date:   Wed, 27 Jan 2021 12:38:08 +0530
+Message-Id: <20210127070811.152690-3-vkoul@kernel.org>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210127070811.152690-1-vkoul@kernel.org>
+References: <20210127070811.152690-1-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds gcc clock controller drivers for the controller found
-in SM8350 SoC
+Trion 5LPE set rate uses code similar to alpha_pll_trion_set_rate() but
+with different registers. Modularize these by moving out latch and latch
+ack bits so that we can reuse the function.
 
-Changes in v5:
- - Add r-b from AngeloGioacchino and Bjorn
- - Removed unused clock indices
- - Initialize variable before use in regmap read
+Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-Changes in v4:
- - Add Ack from Rob on binding
- - modularize alpha_pll_trion_set_rate()
-
-Changes in v3:
- - Drop rpmh clk patches applied
- - Add a new patch to replace regval with val as suggested by Stephen
- - Fix comments for new Lucid 5LPE PLL: sort new defines by BIT numbers, fix
-   comments, use alpha_pll_check_rate_margin(), rework
-   clk_lucid_5lpe_pll_postdiv_set_rate() logic
- - Add power domains and optional clocks in bindings
- - Fix comments for gcc sm8350 driver: clean includes used, use only
-   .fw_name for clocks defined in DT, use floor ops for sdcc clocks, remove
-   critical clocks and enable them in probe, add comments for clks using
-   BRANCH_HALT_SKIP and BRANCH_HALT_DELAY
-
-Changes in v2:
- - Add r-b from Bjorn
- - Add the gcc_qupv3_wrap_1_{m|s}_ahb_clk and gcc_qupv3_wrap1_s5_clk
-
-Vinod Koul (3):
-  clk: qcom: clk-alpha-pll: replace regval with val
-  clk: qcom: clk-alpha-pll: modularize alpha_pll_trion_set_rate()
-  dt-bindings: clock: Add SM8350 GCC clock bindings
-
-Vivek Aknurwar (2):
-  clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE PLL
-  clk: qcom: gcc: Add clock driver for SM8350
-
- .../bindings/clock/qcom,gcc-sm8350.yaml       |   96 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-alpha-pll.c              |  209 +-
- drivers/clk/qcom/clk-alpha-pll.h              |    4 +
- drivers/clk/qcom/gcc-sm8350.c                 | 3790 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sm8350.h   |  254 ++
- 7 files changed, 4346 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
- create mode 100644 drivers/clk/qcom/gcc-sm8350.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f7721088494c..a30ea7b09224 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -1471,8 +1471,8 @@ static int alpha_pll_lucid_prepare(struct clk_hw *hw)
+ 	return __alpha_pll_trion_prepare(hw, LUCID_PCAL_DONE);
+ }
+ 
+-static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long prate)
++static int __alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long prate, u32 latch_bit, u32 latch_ack)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	unsigned long rrate;
+@@ -1490,22 +1490,20 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+ 
+ 	/* Latch the PLL input */
+-	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
+-				 PLL_UPDATE, PLL_UPDATE);
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), latch_bit, latch_bit);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* Wait for 2 reference cycles before checking the ACK bit. */
+ 	udelay(1);
+ 	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+-	if (!(val & ALPHA_PLL_ACK_LATCH)) {
++	if (!(val & latch_ack)) {
+ 		pr_err("Lucid PLL latch failed. Output may be unstable!\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* Return the latch input to 0 */
+-	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
+-				 PLL_UPDATE, 0);
++	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), latch_bit, 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1520,6 +1518,12 @@ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long prate)
++{
++	return __alpha_pll_trion_set_rate(hw, rate, prate, PLL_UPDATE, ALPHA_PLL_ACK_LATCH);
++}
++
+ const struct clk_ops clk_alpha_pll_trion_ops = {
+ 	.prepare = alpha_pll_trion_prepare,
+ 	.enable = clk_trion_pll_enable,
 -- 
 2.26.2
 
