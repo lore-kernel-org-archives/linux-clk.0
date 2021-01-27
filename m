@@ -2,106 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C541C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 05:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7069BC433E9
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74B6C2070A
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 05:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 359BD2072C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jan 2021 07:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbhA0FFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jan 2021 00:05:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231732AbhA0C4H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jan 2021 21:56:07 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74161C061356;
-        Tue, 26 Jan 2021 18:38:57 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id u4so410363pjn.4;
-        Tue, 26 Jan 2021 18:38:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vklqd1CpSD6MzJLSP3R3zsuOOkfooEPp/iNgXN0T0fo=;
-        b=c5RO3dEx0VxceY8JbhIgRQ/xXMdDVCmThzK2kX8xMsQV2hQzkAuCDGStm3l3mKKZqp
-         NQRfgfBI0Ny71HDkFwn7AMLYPJASdfB7lAkcTq2pRgyaEMBHFIDFvaSJF22mNaX8hasY
-         4pXonnSJRudWfOALOB1C1QLx9ZU6+aJhqBw6olQFZpFWrz8kN6jVwD2tssa16C9jNLps
-         pBRcfFFfOowBMW4pt4hwokzFUiNNoA6sJxokCCxTqQ7EJkDei61PFXKiC/2nF2MJsaD8
-         XRLr4pkITvoejI4Duhg8YFOaFR9lt+vhIKgLti6IuBHgDP4kD0lawhjaAEubTiZSb4ch
-         XAPw==
-X-Gm-Message-State: AOAM5321DbBE6z7BAMYa9k8fh3YdbS2jMr5RMzqu3yWvGhf52f4NfXS4
-        bwOBdIgDsJWUBvotdK/DY5o=
-X-Google-Smtp-Source: ABdhPJzDMFPavXxrd/pehJ8vKuy9+lAOm2D9rjspN+qou+kgmoZiHv+UcypGCMJcjC2bMLbacmaIHA==
-X-Received: by 2002:a17:90a:17c6:: with SMTP id q64mr2992388pja.65.1611715135226;
-        Tue, 26 Jan 2021 18:38:55 -0800 (PST)
-Received: from localhost ([2601:647:5b00:1161:a4cc:eef9:fbc0:2781])
-        by smtp.gmail.com with ESMTPSA id n15sm218388pjk.57.2021.01.26.18.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 18:38:54 -0800 (PST)
-Date:   Tue, 26 Jan 2021 18:38:53 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, lars@metafoo.de,
-        linux-fpga@vger.kernel.org, mdf@kernel.org,
-        Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v2 1/3] clk: axi-clkgen: remove ARCH dependency in Kconfig
-Message-ID: <YBDSPVgmqD2JvPbk@epycbox.lan>
-References: <20210126110826.24221-1-alexandru.ardelean@analog.com>
- <20210126110826.24221-2-alexandru.ardelean@analog.com>
+        id S233208AbhA0HMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jan 2021 02:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232372AbhA0HJB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 Jan 2021 02:09:01 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9EACC20724;
+        Wed, 27 Jan 2021 07:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611731300;
+        bh=h6gEAcgIWOUdRrfszLr2SUwM5JmAGj8Uwzmk+TImk/k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=J/VLsnQv2NxTJ/b7PYohkQlIkhAqXg+NGTBKP0FG/wwPjicHsHmSemC7vVBwqxBaG
+         gdoacmVpQeDtFBLdv8nPQo2ap51vLUYrjw3mISwtbxHP4iVwbyVnLa3RNYc9QivaIw
+         iKc0TixKK8BzLZs0qwSNAMUYc+jxYOn13Bd8tUljr1RQAFGyIgVhhtpZtfcTfMyXva
+         51Y+TPTa+ItLarti5utcVWAnQvVsfESDNsYJ87SdDthm/B7UuhTIVVLPFa0bIH/7uq
+         9mF8UYA7j6iCIXGmmC4zayO7R6Sof91h9WI1ppJSteB6Yl81Kmi1Rs06SX0qFG0f6L
+         xwMwBlWsa9kzg==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] Add clock drivers for SM8350
+Date:   Wed, 27 Jan 2021 12:38:06 +0530
+Message-Id: <20210127070811.152690-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210126110826.24221-2-alexandru.ardelean@analog.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Alexandru,
+This adds gcc clock controller drivers for the controller found
+in SM8350 SoC
 
-On Tue, Jan 26, 2021 at 01:08:24PM +0200, Alexandru Ardelean wrote:
-> The intent is to be able to run this driver to access the IP core in setups
-> where FPGA board is also connected via a PCIe bus. In such cases the number
-> of combinations explodes, where the host system can be an x86 with Xilinx
-> Zynq/ZynqMP/Microblaze board connected via PCIe.
-> Or even a ZynqMP board with a ZynqMP/Zynq/Microblaze connected via PCIe.
-> 
-> To accommodate for these cases, this change removes the limitation for this
-> driver to be compilable only on Zynq/Microblaze architectures.
-> 
-> Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  drivers/clk/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 85856cff506c..d8c2d4593926 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -247,7 +247,6 @@ config CLK_TWL6040
->  
->  config COMMON_CLK_AXI_CLKGEN
->  	tristate "AXI clkgen driver"
-> -	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
-Umhhh ... no dependencies? How are you accessing your registers? You
-seem to be using device tree, probably:
+Changes in v5:
+ - Add r-b from AngeloGioacchino and Bjorn
+ - Removed unused clock indices
+ - Initialize variable before use in regmap read
 
-	depends on HAS_IOMEM || COMPILE_TEST
-	depends on OF
+Changes in v4:
+ - Add Ack from Rob on binding
+ - modularize alpha_pll_trion_set_rate()
 
-at least? Please double check your dependencies.
->  	help
->  	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
->  	  FPGAs. It is commonly used in Analog Devices' reference designs.
-> -- 
-> 2.17.1
-> 
+Changes in v3:
+ - Drop rpmh clk patches applied
+ - Add a new patch to replace regval with val as suggested by Stephen
+ - Fix comments for new Lucid 5LPE PLL: sort new defines by BIT numbers, fix
+   comments, use alpha_pll_check_rate_margin(), rework
+   clk_lucid_5lpe_pll_postdiv_set_rate() logic
+ - Add power domains and optional clocks in bindings
+ - Fix comments for gcc sm8350 driver: clean includes used, use only
+   .fw_name for clocks defined in DT, use floor ops for sdcc clocks, remove
+   critical clocks and enable them in probe, add comments for clks using
+   BRANCH_HALT_SKIP and BRANCH_HALT_DELAY
 
-- Moritz
+Changes in v2:
+ - Add r-b from Bjorn
+ - Add the gcc_qupv3_wrap_1_{m|s}_ahb_clk and gcc_qupv3_wrap1_s5_clk
+
+Vinod Koul (3):
+  clk: qcom: clk-alpha-pll: replace regval with val
+  clk: qcom: clk-alpha-pll: modularize alpha_pll_trion_set_rate()
+  dt-bindings: clock: Add SM8350 GCC clock bindings
+
+Vivek Aknurwar (2):
+  clk: qcom: clk-alpha-pll: Add support for Lucid 5LPE PLL
+  clk: qcom: gcc: Add clock driver for SM8350
+
+ .../bindings/clock/qcom,gcc-sm8350.yaml       |   96 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  209 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |    4 +
+ drivers/clk/qcom/gcc-sm8350.c                 | 3790 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8350.h   |  254 ++
+ 7 files changed, 4346 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm8350.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8350.h
+
+-- 
+2.26.2
+
