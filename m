@@ -2,86 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5432FC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 08:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3311C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 10:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF28964DA1
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 08:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53B0C64DD8
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 10:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhA1IYC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jan 2021 03:24:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43880 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231480AbhA1IX7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Jan 2021 03:23:59 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 02CA66146D;
-        Thu, 28 Jan 2021 08:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611822199;
-        bh=CQBovfnWJxAhmRsLyg6LrP1ewiw9l3fdA2O+HOSM2H0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cB/LaC7D5FQgeHr1GJYANYDCrtLovjooLl6RiED3calsUTRsiukH5feXnlgc0XW/I
-         PrOy7U3UZrG0ORlQyBq8hE3J0r0BFZ5emohqGFe4aetAlozQIkCrNiy4+uBFWkjPKn
-         fuIQWo6BYC+OPRvgo6i8b90oApLjdX80xyle72aIAIoxQqNu1qBXhHMmC3QxQ+/eyq
-         9KqA0/IohP6CaES6AHlv01xT/RpOqyLzp5EAgTHK+kSTOgL1U5eUZVLzPZBQWXg9X2
-         17LYxIfS3dvllexAw+qM1TqY99B4QKH3KkK0aAMEk6IIzlthpb6KIvmD2RfdbDvj3w
-         xLLSSmuzDe3TQ==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.11-rc5
-Date:   Thu, 28 Jan 2021 00:23:18 -0800
-Message-Id: <20210128082318.3265480-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
+        id S231140AbhA1Kqr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jan 2021 05:46:47 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:60695 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229531AbhA1Kql (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 05:46:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1611830800; x=1643366800;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=D6qNV/vjZeiLfEcTt/3jdRVcFKcoTBJFa2PCRv2vvKM=;
+  b=PZnbuS+6Tn/l3+Z4QVzvfvl4D/qrCMyIK/iPtBwUoS0sLUmdGos4J6ht
+   U1xT90xG5962yMp6xhTUVlEbsrhajyUtDxS5xwGVWUlB4v60FpW7BcM0c
+   PQbgyHMRpIoPhyqhcA+vGEED2MlwGxo9zl4mVvyugUsYD94qSdI/ukh+i
+   h6wLT2aXS546RRYLrPY9U9guckLNRxrHoA59vL5tWAJMypTc3zOn7l6Gy
+   6fa7IzWCkrWrr8G0+9VSai/fB4L0KTdQmAXEuZrr45fE0s2W/Iya1PZh2
+   6nkILAGMHAuRJVYJ8sSWjNpkYZdTbuyd3+NzKNLrrhTwoA9BedynTJyG6
+   g==;
+IronPort-SDR: zBEaE9xo6X1i4YoEqKr+Gu/A4ObzZMwCBJrEaFOqnnWxJCvvGfnXSCZKbNbNGakN1eRVG+ex5p
+ EY5qoedEjlJolArCoYzU7CTBwPe2MgiXTGk6k75kKK26pSNgnZGdqwVrCo+PV0wPKZGswPFyXI
+ L4h8PZnDPo2x79PixPPNjOcccOzcnwek4Qc/bINMq9SBMzAY7d1cBt5gdjJewrhzvI5L9zSSBC
+ Jo9jZ32Y5m6gTgGimj46QFl+by6jVLs8l2JKQ1iSbe4iNf1n6WFx3FetpUS2ZDgJVzakeEdWYE
+ EBQ=
+X-IronPort-AV: E=Sophos;i="5.79,382,1602572400"; 
+   d="scan'208";a="101743811"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jan 2021 03:45:23 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 28 Jan 2021 03:45:23 -0700
+Received: from atudor-ThinkPad-T470p.amer.actel.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Thu, 28 Jan 2021 03:45:20 -0700
+From:   Tudor Ambarus <tudor.ambarus@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <claudiu.beznea@microchip.com>,
+        <mirq-linux@rere.qmqm.pl>, <saravanak@google.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Tudor Ambarus" <tudor.ambarus@microchip.com>
+Subject: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
+Date:   Thu, 28 Jan 2021 12:44:46 +0200
+Message-ID: <20210128104446.164269-1-tudor.ambarus@microchip.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+The sama5d2 requires the clock provider initialized before timers.
+We can't use a platform driver for the sama5d2-pmc driver, as the
+platform_bus_init() is called later on, after time_init().
 
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+As fw_devlink considers only devices, it does not know that the
+pmc is ready. Hence probing of devices that depend on it fail:
+probe deferral - supplier f0014000.pmc not ready
 
-are available in the Git repository at:
+Fix this by setting the OF_POPULATED flag for the sama5d2_pmc
+device node after successful setup. This will make
+of_link_to_phandle() ignore the sama5d2_pmc device node as a
+dependency, and consumer devices will be probed again.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Fixes: e590474768f1cc04 ("driver core: Set fw_devlink=on by default")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+I'll be out of office, will check the rest of the at91 SoCs
+at the begining of next week.
 
-for you to fetch changes up to c361c5a6c559d1e0a2717abe9162a71aa602954f:
+ drivers/clk/at91/sama5d2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  clk: mmp2: fix build without CONFIG_PM (2021-01-12 12:10:55 -0800)
-
-----------------------------------------------------------------
-A handful of clk driver fixes
-
- - Build fix for CONFIG_PM=n in the mmp2 driver
- - Kconfig warning for unmet dependencies in the i.MX driver
- - Make the camera AHB clk always be enabled on qcom sc7180
- - Use rate round down semantics for qcom sm8250 SD clks
-
-----------------------------------------------------------------
-Arnd Bergmann (2):
-      clk: imx: fix Kconfig warning for i.MX SCU clk
-      clk: mmp2: fix build without CONFIG_PM
-
-Dmitry Baryshkov (1):
-      clk: qcom: gcc-sm250: Use floor ops for sdcc clks
-
-Taniya Das (1):
-      clk: qcom: gcc-sc7180: Mark the camera abh clock always ON
-
- drivers/clk/imx/Kconfig       |  2 --
- drivers/clk/mmp/clk-audio.c   |  6 ++++--
- drivers/clk/qcom/gcc-sc7180.c | 21 +++------------------
- drivers/clk/qcom/gcc-sm8250.c |  4 ++--
- 4 files changed, 9 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 9a5cbc7cd55a..5eea2b4a63dd 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -367,6 +367,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 
+ 	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
+ 
++	of_node_set_flag(np, OF_POPULATED);
++
+ 	return;
+ 
+ err_free:
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+2.25.1
+
