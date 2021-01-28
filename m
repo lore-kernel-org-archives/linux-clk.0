@@ -2,108 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703B7C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 03:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F69C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 04:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B23F64DD0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 03:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E323E64DD1
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 04:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbhA1DNq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jan 2021 22:13:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39318 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231180AbhA1DNo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2021 22:13:44 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 507B9C061573
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jan 2021 19:13:04 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id a12so4032810qkh.10
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jan 2021 19:13:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GvfmY9+J8BI8q8lqjcjJ20lNCU5Fi9/O4DGa/DjnZh4=;
-        b=JTvjWJIc+6uWx0gOKhrii63qL78UAYA3Z6oZ21lY37kZNrLEQPU5xe8cTsmlssR3sH
-         U8vSX7dREDrUP+C8AoLKlZxq39QHLj9nWXd02LMXLQ4dqbezyVlMPpODKW1WAu+rneQa
-         NNbvt3e2MIFhXXFyoTLD1fKwBPGdHtDCw2rE7Ef9PRhEds46u1dnVFwwsKtZuBjEEJSX
-         qsqdF0Qohgg2E+pBOTPDdWyu7coDcujuvtlo+A10lVXv2iqezJjEYCEOAgqVSCBfRy9O
-         ufyBRVvTDOz8VyP0/uH+b3ll8c0alk/WOkOjv4ruhOeTuMKmtgbinFXAy4tHvCoQlmhd
-         XQ6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GvfmY9+J8BI8q8lqjcjJ20lNCU5Fi9/O4DGa/DjnZh4=;
-        b=al/a+5Zbqwk5tBenJr4KZHtKj4KNB0UgfcnJ4wp2LNRrDpI8M64nr36jAcV4VSvIaV
-         +7+loRC1drGkK7daZb4WEVNww9m2RquwqBoEoA0U4M6OOpNzTUxt8LbPkYqwc+sKhR9w
-         pvRafget9P3ZS/cwmKuTJtEqqvDH5J4ddjNm71OUhBaXOnw5C92dzjcCYiCzvjD7gAKz
-         AF9EYiyXM6VMQQ98UjDz625Gavl+hxoD3wBEBu0HHCkA/9bOgFsmSHmjq3hB4614ZVDU
-         9k/SlETOJRdUYdwHD9QFjxnaqFLReIUAsvudGUD6+2BPfIEGHxX3wVxj3jDtYBdKVfT8
-         nwUg==
-X-Gm-Message-State: AOAM53375s+XmabaWntKj50jKZNn5VJuuQllP19cotFcmQo9Eb4dr2hL
-        AFxaYRhGJRGyh9EB/ExlIq8=
-X-Google-Smtp-Source: ABdhPJzn9FNPNfuAyKhIxTkxc210RDW/bJctCi2A5jKIyFSeAGaSCIDkogwAY41/pnia/swR6DKNkA==
-X-Received: by 2002:a37:2c42:: with SMTP id s63mr13982951qkh.87.1611803583521;
-        Wed, 27 Jan 2021 19:13:03 -0800 (PST)
-Received: from localhost.localdomain ([2804:14c:482:919:c52:e75f:e3d0:6528])
-        by smtp.gmail.com with ESMTPSA id x49sm2697624qth.95.2021.01.27.19.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jan 2021 19:13:02 -0800 (PST)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     shawnguo@kernel.org
-Cc:     sboyd@kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: imx: imx31: Remove the unused uart_clks[]
-Date:   Thu, 28 Jan 2021 00:12:48 -0300
-Message-Id: <20210128031248.27244-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S231283AbhA1EG0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jan 2021 23:06:26 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:37379 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229545AbhA1EFW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2021 23:05:22 -0500
+X-UUID: 95a272e237da400daa76b54aec9b1207-20210128
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=fg+euiyblGbtxNVAjLLyu7Sv510gpFwpVrdrd1jugf4=;
+        b=qkNEl1DZETvkkT7lcPJmBNgX1/+SIMjdqBJ3/6Z0i8ULmlNVKgYvJGKdWmtyo+4/MjktiEbzxwcAHuq8cjqagBPknJFUejTZslMe51rx7b/YHwGaD/vLCmbMYofEDARKLud77781v38bETZ3BY5B+dIfk394eRDPdldwLkRfIvU=;
+X-UUID: 95a272e237da400daa76b54aec9b1207-20210128
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 348542046; Thu, 28 Jan 2021 12:04:35 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 28 Jan 2021 12:04:33 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 28 Jan 2021 12:04:33 +0800
+Message-ID: <1611806673.11015.5.camel@mtksdaap41>
+Subject: Re: [PATCH 2/2] clk: mediatek: mux: Update parent at enable time
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Phi-Bang Nguyen <pnguyen@baylibre.com>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 28 Jan 2021 12:04:33 +0800
+In-Reply-To: <20210125170819.26130-3-laurent.pinchart@ideasonboard.com>
+References: <20210125170819.26130-1-laurent.pinchart@ideasonboard.com>
+         <20210125170819.26130-3-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since commit 30c1951790df ("clk: imx: imx31: Remove mx31_clocks_init()")
-uart_clks[] is no longer used, so remove it to avoid the following
-build warning:
-
-drivers/clk/imx/clk-imx31.c:54:28: warning: unused variable 'uart_clks' [-Wunused-const-variable]
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- drivers/clk/imx/clk-imx31.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-index 7b13fb57d842..c44e18c6f63f 100644
---- a/drivers/clk/imx/clk-imx31.c
-+++ b/drivers/clk/imx/clk-imx31.c
-@@ -51,16 +51,6 @@ enum mx31_clks {
- static struct clk *clk[clk_max];
- static struct clk_onecell_data clk_data;
- 
--static struct clk ** const uart_clks[] __initconst = {
--	&clk[ipg],
--	&clk[uart1_gate],
--	&clk[uart2_gate],
--	&clk[uart3_gate],
--	&clk[uart4_gate],
--	&clk[uart5_gate],
--	NULL
--};
--
- static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
- {
- 	clk[dummy] = imx_clk_fixed("dummy", 0);
--- 
-2.25.1
+T24gTW9uLCAyMDIxLTAxLTI1IGF0IDE5OjA4ICswMjAwLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3Rl
+Og0KPiBUaGUgbXV4IGNsb2NrcyBkb24ndCBhbHdheXMgY29ycmVjdGx5IHRha2UgdGhlIG5ldyBw
+YXJlbnQgaW50byBhY2NvdW50DQo+IHdoZW4gdGhlIHBhcmVudCBpcyB1cGRhdGVkIHdoaWxlIHRo
+ZSBjbG9jayBpcyBkaXNhYmxlZC4gU2V0IHRoZSB1cGRhdGUNCj4gYml0IHdoZW4gZW5hYmxpbmcg
+dGhlIGNsb2NrIHRvIGZvcmNlIGFuIHVwZGF0ZSBvZiB0aGUgbXV4Lg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29t
+Pg0KDQpIaSBMYXVyZW50LA0KDQpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4gTG9va3MgZ29vZCB0
+byBtZS4NClJldmlld2VkLWJ5OiBXZWl5aSBMdSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPg0KDQo+
+IC0tLQ0KPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jIHwgMzIgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKystLS0NCj4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaCB8
+ICAxICsNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
+LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMgYi9k
+cml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCj4gaW5kZXggOTM3MGJlYmNhN2Y4Li5iMGM2
+MTcwOWJhY2MgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguYw0K
+PiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCj4gQEAgLTIwLDkgKzIwLDMz
+IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IG10a19jbGtfbXV4ICp0b19tdGtfY2xrX211eChzdHJ1
+Y3QgY2xrX2h3ICpodykNCj4gIHN0YXRpYyBpbnQgbXRrX2Nsa19tdXhfZW5hYmxlX3NldGNscihz
+dHJ1Y3QgY2xrX2h3ICpodykNCj4gIHsNCj4gIAlzdHJ1Y3QgbXRrX2Nsa19tdXggKm11eCA9IHRv
+X210a19jbGtfbXV4KGh3KTsNCj4gKwl1bnNpZ25lZCBsb25nIGZsYWdzID0gMDsNCj4gIA0KPiAt
+CXJldHVybiByZWdtYXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+Y2xyX29mcywNCj4g
+LQkJCUJJVChtdXgtPmRhdGEtPmdhdGVfc2hpZnQpKTsNCj4gKwlpZiAobXV4LT5sb2NrKQ0KPiAr
+CQlzcGluX2xvY2tfaXJxc2F2ZShtdXgtPmxvY2ssIGZsYWdzKTsNCj4gKwllbHNlDQo+ICsJCV9f
+YWNxdWlyZShtdXgtPmxvY2spOw0KPiArDQo+ICsJcmVnbWFwX3dyaXRlKG11eC0+cmVnbWFwLCBt
+dXgtPmRhdGEtPmNscl9vZnMsDQo+ICsJCSAgICAgQklUKG11eC0+ZGF0YS0+Z2F0ZV9zaGlmdCkp
+Ow0KPiArDQo+ICsJLyoNCj4gKwkgKiBJZiB0aGUgcGFyZW50IGhhcyBiZWVuIGNoYW5nZWQgd2hl
+biB0aGUgY2xvY2sgd2FzIGRpc2FibGVkLCBpdCB3aWxsDQo+ICsJICogbm90IGJlIGVmZmVjdGl2
+ZSB5ZXQuIFNldCB0aGUgdXBkYXRlIGJpdCB0byBlbnN1cmUgdGhlIG11eCBnZXRzDQo+ICsJICog
+dXBkYXRlZC4NCj4gKwkgKi8NCj4gKwlpZiAobXV4LT5yZXBhcmVudCAmJiBtdXgtPmRhdGEtPnVw
+ZF9zaGlmdCA+PSAwKSB7DQo+ICsJCXJlZ21hcF93cml0ZShtdXgtPnJlZ21hcCwgbXV4LT5kYXRh
+LT51cGRfb2ZzLA0KPiArCQkJICAgICBCSVQobXV4LT5kYXRhLT51cGRfc2hpZnQpKTsNCj4gKwkJ
+bXV4LT5yZXBhcmVudCA9IGZhbHNlOw0KPiArCX0NCj4gKw0KPiArCWlmIChtdXgtPmxvY2spDQo+
+ICsJCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUobXV4LT5sb2NrLCBmbGFncyk7DQo+ICsJZWxzZQ0K
+PiArCQlfX3JlbGVhc2UobXV4LT5sb2NrKTsNCj4gKw0KPiArCXJldHVybiAwOw0KPiAgfQ0KPiAg
+DQo+ICBzdGF0aWMgdm9pZCBtdGtfY2xrX211eF9kaXNhYmxlX3NldGNscihzdHJ1Y3QgY2xrX2h3
+ICpodykNCj4gQEAgLTc3LDkgKzEwMSwxMSBAQCBzdGF0aWMgaW50IG10a19jbGtfbXV4X3NldF9w
+YXJlbnRfc2V0Y2xyX2xvY2soc3RydWN0IGNsa19odyAqaHcsIHU4IGluZGV4KQ0KPiAgCQlyZWdt
+YXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+c2V0X29mcywNCj4gIAkJCQlpbmRleCA8
+PCBtdXgtPmRhdGEtPm11eF9zaGlmdCk7DQo+ICANCj4gLQkJaWYgKG11eC0+ZGF0YS0+dXBkX3No
+aWZ0ID49IDApDQo+ICsJCWlmIChtdXgtPmRhdGEtPnVwZF9zaGlmdCA+PSAwKSB7DQo+ICAJCQly
+ZWdtYXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+dXBkX29mcywNCj4gIAkJCQkJQklU
+KG11eC0+ZGF0YS0+dXBkX3NoaWZ0KSk7DQo+ICsJCQltdXgtPnJlcGFyZW50ID0gdHJ1ZTsNCj4g
+KwkJfQ0KPiAgCX0NCj4gIA0KPiAgCWlmIChtdXgtPmxvY2spDQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmggYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4
+LmgNCj4gaW5kZXggMTVjNjIzNjZiYTlhLi5mMTk0NjE2MWFkZTEgMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaA0KPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRl
+ay9jbGstbXV4LmgNCj4gQEAgLTE0LDYgKzE0LDcgQEAgc3RydWN0IG10a19jbGtfbXV4IHsNCj4g
+IAlzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7DQo+ICAJY29uc3Qgc3RydWN0IG10a19tdXggKmRhdGE7
+DQo+ICAJc3BpbmxvY2tfdCAqbG9jazsNCj4gKwlib29sIHJlcGFyZW50Ow0KPiAgfTsNCj4gIA0K
+PiAgc3RydWN0IG10a19tdXggew0KDQo=
 
