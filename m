@@ -2,99 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FAAC433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 11:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5E2C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 17:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D13C64DDB
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 11:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A580964E15
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 17:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbhA1L0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jan 2021 06:26:30 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14232 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231202AbhA1LZc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 06:25:32 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B60129f030001>; Thu, 28 Jan 2021 03:24:51 -0800
-Received: from [10.26.73.116] (172.20.145.6) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 28 Jan
- 2021 11:24:49 +0000
-Subject: Re: [PATCH] clk: tegra: clk-dfll: Verify regulator vsel values are
- valid
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20210127171121.322765-1-jonathanh@nvidia.com>
- <YBGwMBxNeSlaPjuB@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <9534983d-7f1e-5bdd-6ab8-7f33ec77524d@nvidia.com>
-Date:   Thu, 28 Jan 2021 11:24:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232334AbhA1RFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jan 2021 12:05:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232723AbhA1RDA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 12:03:00 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A90AC061788
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jan 2021 09:02:19 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id b11so6083036ybj.9
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jan 2021 09:02:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TxfC0LSb+w4Mx5k+ngQX+YNZxCiSH66WcjjhmDzqjHw=;
+        b=dprUGeiX80gn4mEgVWVAQCiaSyP+m5HgsKhjQSonal4Ez9hNsuFcoPwDKC4hVeL5ZX
+         Ak4k2WMrsKmRlW3eUbu7YtVYAj29ghMGpnYo5ld4mFOhciRN5lhlra2YEW4wrS7vattw
+         ZpZoqV4YHJX2ARch0m/+VkekczL00sadSBn9n9lh8x4bzaV7jSX3f1txIq2uigtUo9ku
+         C9fkPMxBgZUohNKp05EwcV2L1ZAwdxEWadwy7LVp3rxibUATf6SlL+XPdiF3cDNsSOqM
+         mp2Il9FeM9Q+6z3Nu0iY3DpmgilW4kduekuAsEPOteB4q3NH8n0eRgNKSoLb3rt6dQmu
+         dtlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TxfC0LSb+w4Mx5k+ngQX+YNZxCiSH66WcjjhmDzqjHw=;
+        b=kkqTmfmEqQwrIC6TLPh2bBSs1qWSpRxX9NYV53hurlJFsQVWSHEEhR4qOOF73tyjQ+
+         Cyq5QID8XI4TcPAVY0ZYi0gnD70Y81n6GhpoDWZjYGkbkWpQfMxT3XNOs+AQX9jp5Nig
+         UwUME27Dei1acNxfj3PakEirHfflxrlmJAVj9jLSIGMGiyonik6zefbgz6sKkt+PnsmZ
+         ZVA5U+HHXKRw5tOu+T/9ublCXCRD+syJoZbe9nT1rZks6MWny1q2VZH6mjNAaVvmsew+
+         bf2gKUPMC8mywflY6rlMSHcuFFjoAFz6UpKjDzkXRPF9cjQxM6W6A0V62SCqwvY/01kU
+         qrzg==
+X-Gm-Message-State: AOAM532hKQx0kstyBkTDcouDNhgLI9ujQUF9cYW9S+iIZha3EIO8gDaP
+        bw2GFVUGViHIRZdpXFokLPJhMUa5LlAwG8+J41G6DQ==
+X-Google-Smtp-Source: ABdhPJyJ64ff4ZX4+kB76nIxgR7kFcJYguXJs6b9+CHVRVxs4BiVUGNPcgoSUAlcDDiF4Ql+4jx6gRCwLt5HuRMnAtc=
+X-Received: by 2002:a25:718b:: with SMTP id m133mr170374ybc.412.1611853338032;
+ Thu, 28 Jan 2021 09:02:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <YBGwMBxNeSlaPjuB@ulmo>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.145.6]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1611833091; bh=ovuRBE83nN682Ash0cP7zUYV97yklv0+eI3xEmE1a9w=;
-        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=WWrbnYgBD0YpuxM2/9Ac51zzEyuhW53Q3oq6PQC2RXWv8od0ekOuju+/oGkrpkNP1
-         6vJHS750PEztQKgYGbsbkH4HOC0ONr/AbU8VXYmSieHSxpqzs1eYOXkBn6+AH+wcbu
-         zmPAehWY6rmYoL8uIDXDR+sQtNE2D14uNB7RFJrv+xiQK18/zxBRBzvH60S4T8XfVu
-         9JIvgLaEbPvQVUeVnVZD5peCjelFveQDJwQPOUA2972whGZjw3kHS4QKJ+8AWSGjWE
-         BpLWratLFxor6yc7v4uIZ3f2MmcdQC6iIEcZzxEONTIGgJcMmiPp4CYiN9LL6O+v00
-         IciSyHlHGt0Yw==
+References: <20210128104446.164269-1-tudor.ambarus@microchip.com>
+In-Reply-To: <20210128104446.164269-1-tudor.ambarus@microchip.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 28 Jan 2021 09:01:41 -0800
+Message-ID: <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
+Subject: Re: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        claudiu.beznea@microchip.com, mirq-linux@rere.qmqm.pl,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jan 28, 2021 at 2:45 AM Tudor Ambarus
+<tudor.ambarus@microchip.com> wrote:
+>
+> The sama5d2 requires the clock provider initialized before timers.
+> We can't use a platform driver for the sama5d2-pmc driver, as the
+> platform_bus_init() is called later on, after time_init().
+>
+> As fw_devlink considers only devices, it does not know that the
+> pmc is ready. Hence probing of devices that depend on it fail:
+> probe deferral - supplier f0014000.pmc not ready
+>
+> Fix this by setting the OF_POPULATED flag for the sama5d2_pmc
+> device node after successful setup. This will make
+> of_link_to_phandle() ignore the sama5d2_pmc device node as a
+> dependency, and consumer devices will be probed again.
+>
+> Fixes: e590474768f1cc04 ("driver core: Set fw_devlink=on by default")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> ---
+> I'll be out of office, will check the rest of the at91 SoCs
+> at the begining of next week.
+>
+>  drivers/clk/at91/sama5d2.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+> index 9a5cbc7cd55a..5eea2b4a63dd 100644
+> --- a/drivers/clk/at91/sama5d2.c
+> +++ b/drivers/clk/at91/sama5d2.c
+> @@ -367,6 +367,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>
+>         of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
+>
+> +       of_node_set_flag(np, OF_POPULATED);
+> +
+>         return;
 
-On 27/01/2021 18:25, Thierry Reding wrote:
-> On Wed, Jan 27, 2021 at 05:11:21PM +0000, Jon Hunter wrote:
->> The regulator function, regulator_list_hardware_vsel(), may return an
->> negative error code on failure. The Tegra DFLL driver does not check to
->> see if the value returned by this function is an error. Fix this by
->> updating the DFLL driver to check if the value returned by
->> regulator_list_hardware_vsel() is an error and if an error does occur
->> propagate the error.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/clk/tegra/clk-dfll.c | 32 ++++++++++++++++++++++++--------
->>  1 file changed, 24 insertions(+), 8 deletions(-)
-> 
-> Does this fix any particular issue? Do we want a Fixes: line for this?
-> 
-> In either case, this looks like a correct fix, so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Hi Tudor,
 
+Thanks for looking into this.
 
-I have not seen any issue so far, but noticed that we were not checking
-the return value as we should. I happened to notice this while looking
-into this issue [0] and so thought we should make the code more robust.
+I already accounted for early clocks like this when I designed
+fw_devlink. Each driver shouldn't need to set OF_POPULATED.
+drivers/clk/clk.c already does this for you.
 
-We could add ...
+I think the problem is that your driver is using
+CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE(). The comments for
+CLK_OF_DECLARE_DRIVER() says:
+/*
+ * Use this macro when you have a driver that requires two initialization
+ * routines, one at of_clk_init(), and one at platform device probe
+ */
 
-Fixes: c4fe70ada40f ("clk: tegra: Add closed loop support for the DFLL")
+In your case, you are explicitly NOT having a driver bind to this
+clock later. So you shouldn't be using CLK_OF_DECLARE() instead.
 
-Jon
-
-[0] https://lkml.org/lkml/2020/11/24/278
-
--- 
-nvpublic
+Thanks,
+Saravana
