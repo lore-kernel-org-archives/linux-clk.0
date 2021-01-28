@@ -2,107 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3311C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 10:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FAAC433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 11:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53B0C64DD8
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 10:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D13C64DDB
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 11:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbhA1Kqr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jan 2021 05:46:47 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:60695 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbhA1Kql (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 05:46:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1611830800; x=1643366800;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=D6qNV/vjZeiLfEcTt/3jdRVcFKcoTBJFa2PCRv2vvKM=;
-  b=PZnbuS+6Tn/l3+Z4QVzvfvl4D/qrCMyIK/iPtBwUoS0sLUmdGos4J6ht
-   U1xT90xG5962yMp6xhTUVlEbsrhajyUtDxS5xwGVWUlB4v60FpW7BcM0c
-   PQbgyHMRpIoPhyqhcA+vGEED2MlwGxo9zl4mVvyugUsYD94qSdI/ukh+i
-   h6wLT2aXS546RRYLrPY9U9guckLNRxrHoA59vL5tWAJMypTc3zOn7l6Gy
-   6fa7IzWCkrWrr8G0+9VSai/fB4L0KTdQmAXEuZrr45fE0s2W/Iya1PZh2
-   6nkILAGMHAuRJVYJ8sSWjNpkYZdTbuyd3+NzKNLrrhTwoA9BedynTJyG6
-   g==;
-IronPort-SDR: zBEaE9xo6X1i4YoEqKr+Gu/A4ObzZMwCBJrEaFOqnnWxJCvvGfnXSCZKbNbNGakN1eRVG+ex5p
- EY5qoedEjlJolArCoYzU7CTBwPe2MgiXTGk6k75kKK26pSNgnZGdqwVrCo+PV0wPKZGswPFyXI
- L4h8PZnDPo2x79PixPPNjOcccOzcnwek4Qc/bINMq9SBMzAY7d1cBt5gdjJewrhzvI5L9zSSBC
- Jo9jZ32Y5m6gTgGimj46QFl+by6jVLs8l2JKQ1iSbe4iNf1n6WFx3FetpUS2ZDgJVzakeEdWYE
- EBQ=
-X-IronPort-AV: E=Sophos;i="5.79,382,1602572400"; 
-   d="scan'208";a="101743811"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Jan 2021 03:45:23 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Thu, 28 Jan 2021 03:45:23 -0700
-Received: from atudor-ThinkPad-T470p.amer.actel.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Thu, 28 Jan 2021 03:45:20 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <claudiu.beznea@microchip.com>,
-        <mirq-linux@rere.qmqm.pl>, <saravanak@google.com>
-CC:     <gregkh@linuxfoundation.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Tudor Ambarus" <tudor.ambarus@microchip.com>
-Subject: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
-Date:   Thu, 28 Jan 2021 12:44:46 +0200
-Message-ID: <20210128104446.164269-1-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.25.1
+        id S231374AbhA1L0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jan 2021 06:26:30 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14232 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231202AbhA1LZc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 06:25:32 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B60129f030001>; Thu, 28 Jan 2021 03:24:51 -0800
+Received: from [10.26.73.116] (172.20.145.6) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 28 Jan
+ 2021 11:24:49 +0000
+Subject: Re: [PATCH] clk: tegra: clk-dfll: Verify regulator vsel values are
+ valid
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20210127171121.322765-1-jonathanh@nvidia.com>
+ <YBGwMBxNeSlaPjuB@ulmo>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <9534983d-7f1e-5bdd-6ab8-7f33ec77524d@nvidia.com>
+Date:   Thu, 28 Jan 2021 11:24:46 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <YBGwMBxNeSlaPjuB@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.20.145.6]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1611833091; bh=ovuRBE83nN682Ash0cP7zUYV97yklv0+eI3xEmE1a9w=;
+        h=Subject:To:CC:References:From:Message-ID:Date:User-Agent:
+         MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
+        b=WWrbnYgBD0YpuxM2/9Ac51zzEyuhW53Q3oq6PQC2RXWv8od0ekOuju+/oGkrpkNP1
+         6vJHS750PEztQKgYGbsbkH4HOC0ONr/AbU8VXYmSieHSxpqzs1eYOXkBn6+AH+wcbu
+         zmPAehWY6rmYoL8uIDXDR+sQtNE2D14uNB7RFJrv+xiQK18/zxBRBzvH60S4T8XfVu
+         9JIvgLaEbPvQVUeVnVZD5peCjelFveQDJwQPOUA2972whGZjw3kHS4QKJ+8AWSGjWE
+         BpLWratLFxor6yc7v4uIZ3f2MmcdQC6iIEcZzxEONTIGgJcMmiPp4CYiN9LL6O+v00
+         IciSyHlHGt0Yw==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The sama5d2 requires the clock provider initialized before timers.
-We can't use a platform driver for the sama5d2-pmc driver, as the
-platform_bus_init() is called later on, after time_init().
 
-As fw_devlink considers only devices, it does not know that the
-pmc is ready. Hence probing of devices that depend on it fail:
-probe deferral - supplier f0014000.pmc not ready
+On 27/01/2021 18:25, Thierry Reding wrote:
+> On Wed, Jan 27, 2021 at 05:11:21PM +0000, Jon Hunter wrote:
+>> The regulator function, regulator_list_hardware_vsel(), may return an
+>> negative error code on failure. The Tegra DFLL driver does not check to
+>> see if the value returned by this function is an error. Fix this by
+>> updating the DFLL driver to check if the value returned by
+>> regulator_list_hardware_vsel() is an error and if an error does occur
+>> propagate the error.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/clk/tegra/clk-dfll.c | 32 ++++++++++++++++++++++++--------
+>>  1 file changed, 24 insertions(+), 8 deletions(-)
+> 
+> Does this fix any particular issue? Do we want a Fixes: line for this?
+> 
+> In either case, this looks like a correct fix, so:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Fix this by setting the OF_POPULATED flag for the sama5d2_pmc
-device node after successful setup. This will make
-of_link_to_phandle() ignore the sama5d2_pmc device node as a
-dependency, and consumer devices will be probed again.
 
-Fixes: e590474768f1cc04 ("driver core: Set fw_devlink=on by default")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
-I'll be out of office, will check the rest of the at91 SoCs
-at the begining of next week.
+I have not seen any issue so far, but noticed that we were not checking
+the return value as we should. I happened to notice this while looking
+into this issue [0] and so thought we should make the code more robust.
 
- drivers/clk/at91/sama5d2.c | 2 ++
- 1 file changed, 2 insertions(+)
+We could add ...
 
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index 9a5cbc7cd55a..5eea2b4a63dd 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -367,6 +367,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
- 
-+	of_node_set_flag(np, OF_POPULATED);
-+
- 	return;
- 
- err_free:
+Fixes: c4fe70ada40f ("clk: tegra: Add closed loop support for the DFLL")
+
+Jon
+
+[0] https://lkml.org/lkml/2020/11/24/278
+
 -- 
-2.25.1
-
+nvpublic
