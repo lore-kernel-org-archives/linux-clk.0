@@ -2,108 +2,234 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F69C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 04:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA35C433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 05:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E323E64DD1
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 04:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62C9F64DDD
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jan 2021 05:17:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbhA1EG0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jan 2021 23:06:26 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37379 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229545AbhA1EFW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jan 2021 23:05:22 -0500
-X-UUID: 95a272e237da400daa76b54aec9b1207-20210128
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=fg+euiyblGbtxNVAjLLyu7Sv510gpFwpVrdrd1jugf4=;
-        b=qkNEl1DZETvkkT7lcPJmBNgX1/+SIMjdqBJ3/6Z0i8ULmlNVKgYvJGKdWmtyo+4/MjktiEbzxwcAHuq8cjqagBPknJFUejTZslMe51rx7b/YHwGaD/vLCmbMYofEDARKLud77781v38bETZ3BY5B+dIfk394eRDPdldwLkRfIvU=;
-X-UUID: 95a272e237da400daa76b54aec9b1207-20210128
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 348542046; Thu, 28 Jan 2021 12:04:35 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 28 Jan 2021 12:04:33 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 28 Jan 2021 12:04:33 +0800
-Message-ID: <1611806673.11015.5.camel@mtksdaap41>
-Subject: Re: [PATCH 2/2] clk: mediatek: mux: Update parent at enable time
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Phi-Bang Nguyen <pnguyen@baylibre.com>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Thu, 28 Jan 2021 12:04:33 +0800
-In-Reply-To: <20210125170819.26130-3-laurent.pinchart@ideasonboard.com>
-References: <20210125170819.26130-1-laurent.pinchart@ideasonboard.com>
-         <20210125170819.26130-3-laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S229488AbhA1FRj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jan 2021 00:17:39 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:10696 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229448AbhA1FRj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jan 2021 00:17:39 -0500
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 10S5BJGL002988;
+        Thu, 28 Jan 2021 00:16:43 -0500
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2054.outbound.protection.outlook.com [104.47.36.54])
+        by mx0b-00128a01.pphosted.com with ESMTP id 368nsddh58-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 28 Jan 2021 00:16:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lqQyWmoJo7XHF18Qv68CS/uYlD0ePaaPTtMr1NU7qTwVsJtvi54WaJr8NURiIHERzXmVUz8rgyojJh+7C+vs4LI60fcAdgCmbc63RW8/bZxFzjHqMp/n9cAHIoyR2mS6pxDljPb0EYMeEJ3aI18xlAUGUg3dMpJGaJv6W/Z+o/PGugCJeTf8OTFrto85bTKEUQGTTMWyuWwLfJINl3lr75kTShu5yoEC8ZAXdzyKg99MDNHWx0sueFtJxBb7Sjj4QcTKjMp/nhIBHN/fQuUei4oesv2Y56zT/vhA7JBGAOGS/kwIoqxXWSIEADqve9io64rFRGr6ZgAHaZLoONIj2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i7lSgOo8SQRBeJoXoZEEveXTMMOEqVrmwsBg549k9YE=;
+ b=Gjm6twzIYtQn3sk1v7KIKfvU8VbteDZ8wTTbQcHDg3YhrmOlFXSTiziYeVYb7BOhDZ4eZg9ya/SsdUJCUIVaBDBgm5I6bgh+OgCPhfUL+7l39kGeG4aZeU993Q8/HDH7ZAnSzssMznptQ9bhmWK4XAcPsrGe+PogYVrPO5ivqsi4cJHT1/pybe6sCkoLj5XoEu2pENjCPDGCLMAyqDf5wyThP9L0Yo9//gazBGpHHzrIrK+SfZpWBJAF66y4JLCBhmv+vp2bik/hD0rPZPGO+c2J3N5W7N2Zl+vo3qSElFaoABYaEWTdQewgebr6ohfBAClS8sdFTlcsVDtAIaBAiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i7lSgOo8SQRBeJoXoZEEveXTMMOEqVrmwsBg549k9YE=;
+ b=mI5rPYLFFvWNJJ5daKrYwCv0U+tyo1DiHfNWEowY69n1TfifXyyd9ns7KT/7aJmUzGTqzSBHRgfOMXOmQCKG1MvgTYxQ4lO7ro4ZM/byG4se6W87J5GENGIgLAuraWBOEtp+uWI6Z1oO9JU/JoT/D3WucutUJp2bbx26wrAkRCM=
+Received: from DM6PR03MB5196.namprd03.prod.outlook.com (2603:10b6:5:24a::19)
+ by DM5PR03MB3083.namprd03.prod.outlook.com (2603:10b6:4:3d::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16; Thu, 28 Jan
+ 2021 05:16:36 +0000
+Received: from DM6PR03MB5196.namprd03.prod.outlook.com
+ ([fe80::e4d2:490d:16b2:25aa]) by DM6PR03MB5196.namprd03.prod.outlook.com
+ ([fe80::e4d2:490d:16b2:25aa%5]) with mapi id 15.20.3805.017; Thu, 28 Jan 2021
+ 05:16:36 +0000
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     Moritz Fischer <mdf@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "Bogdan, Dragos" <Dragos.Bogdan@analog.com>
+Subject: RE: [PATCH v2 1/3] clk: axi-clkgen: remove ARCH dependency in Kconfig
+Thread-Topic: [PATCH v2 1/3] clk: axi-clkgen: remove ARCH dependency in
+ Kconfig
+Thread-Index: AQHW89M2fvkHlXIPW0GheGUW3qYMMao6w3OAgAG+QQA=
+Date:   Thu, 28 Jan 2021 05:16:36 +0000
+Message-ID: <DM6PR03MB51969FF855E3216A2173D7EBF9BA9@DM6PR03MB5196.namprd03.prod.outlook.com>
+References: <20210126110826.24221-1-alexandru.ardelean@analog.com>
+ <20210126110826.24221-2-alexandru.ardelean@analog.com>
+ <YBDSPVgmqD2JvPbk@epycbox.lan>
+In-Reply-To: <YBDSPVgmqD2JvPbk@epycbox.lan>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWFyZGVsZWFc?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy0wMjM0MjE0Yy02MTI4LTExZWItYTYwMi00MTU2?=
+ =?us-ascii?Q?NDUwMDAwMzBcYW1lLXRlc3RcMDIzNDIxNGUtNjEyOC0xMWViLWE2MDItNDE1?=
+ =?us-ascii?Q?NjQ1MDAwMDMwYm9keS50eHQiIHN6PSIyMzMzIiB0PSIxMzI1NjI4NDYwMzg2?=
+ =?us-ascii?Q?NDUzMzciIGg9Iml1S2dBcjV5RFBvV1NaN1pBWGM3N0VKdnRQND0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUlZREFB?=
+ =?us-ascii?Q?QlpXb3pFTlBYV0FRK3BEbW9sYlhyVUQ2a09haVZ0ZXRRRkFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQUFXQXdBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBcWNicENnQUFBQUFBQUFBQUFBQUFBSjRBQUFCaEFHUUFh?=
+ =?us-ascii?Q?UUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QUc4QWFnQmxBR01BZEFCekFG?=
+ =?us-ascii?Q?OEFaZ0JoQUd3QWN3QmxBRjhBWmdCdkFITUFhUUIwQUdrQWRnQmxBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRR?=
+ =?us-ascii?Q?QnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURF?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVlRQmtBR2tBWHdCekFHVUFZd0IxQUhJQVpRQmZBSEFBY2dC?=
+ =?us-ascii?Q?dkFHb0FaUUJqQUhRQWN3QmZBSFFBYVFCbEFISUFNZ0FBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJoQUhJ?=
+ =?us-ascii?Q?QWFRQmhBRjhBWkFCcEFHTUFkQUJwQUc4QWJnQmhBSElBZVFCZkFIUUFhUUJs?=
+ =?us-ascii?Q?QUhJQU1RQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHRUFjZ0JwQUdFQVh3QmtBR2tB?=
+ =?us-ascii?Q?WXdCMEFHa0Fid0J1QUdFQWNnQjVBRjhBZEFCcEFHVUFjZ0F5QUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFD?=
+ =?us-ascii?Q?QUFBQUFBQT0iLz48L21ldGE+?=
+x-dg-rorf: true
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=analog.com;
+x-originating-ip: [188.27.130.90]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 51dbbef3-c3ce-4486-271a-08d8c34be276
+x-ms-traffictypediagnostic: DM5PR03MB3083:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR03MB3083E81B3E1679E0C851D355F9BA9@DM5PR03MB3083.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dHdlIjC71p5gQBrdxsyZ8CTX86ZJXrY7ejRefNGB0c/tCx/+REvPAD42PxK2KHYjlldE8OjQye6CFUHWVhdppTllC1oOa5SUoUDSufGyVUZZygeFhyEls+Fv6BRH+Y5dWgZf4ynm9Xh0hsE2bOu5Ff9m5X9y4Js+NR84Rrg3wGcdDTCJJrmC/p9JWW5Rp5E5n/j+XpNpyKuIhVGMkGQ4tdGHXeTBGVK0mquwZabP/elAFRY2Fei3cnEgLYzHCw03UZ2EoipdVAAz10GQlnez5W1YhoUMHqydUrIafHW8n8ciSnZY4NYa2vXQU1D6pV4tTfPD7jP5cw5egTSyVnp6E4xxe1/qF3JCLMT+gYeVgz3ODJH7b4Mx+huQCrnLkPwPxaSvGuKMQr2vnd9trVei4fvCtobWYNQWBrV70rslycO9ddobXWQBfhXCNtFOmVx1GOKZaCysPhn+tBHigdFCIhKOJGvEDliShvdalVu/ZmTdplwPS7eJ36wp8bCysHQg6GPtcxMsQYJxdurz8NeVVw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB5196.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(53546011)(6506007)(6916009)(8936002)(71200400001)(186003)(26005)(5660300002)(316002)(83380400001)(54906003)(7696005)(8676002)(66476007)(76116006)(478600001)(55016002)(33656002)(4326008)(9686003)(86362001)(107886003)(64756008)(52536014)(2906002)(66446008)(66946007)(66556008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?XUg+GwBZEARMeTsFW4EEId5zxqKFbtoT/gF5jNh0nZuQ+XcWyL9fNW+ZUb5/?=
+ =?us-ascii?Q?QmKH17oBgMOtE4DjnGNRz7pps7xOBlQhePFQF4Il2XaGYQCKMAF+hl3RWulN?=
+ =?us-ascii?Q?UbaKez7hr8zf+4jZgH9vMdU3HWIHjTCG2xL9YVPDqi86Cn2MlZzH0ipH9b1D?=
+ =?us-ascii?Q?wXxywm31CTlnpLvfpadVmrczza8yhztyArff3Yq37mpfBSyqjXoMo4mPwcv7?=
+ =?us-ascii?Q?Ve1Lt5bmtz/ZMZVnYD24u1xYmQZgO/UNjdMwxEHxmq7qDxFVrZxbSJIFPM1A?=
+ =?us-ascii?Q?1sFl/IP5GbEw8iwi3ljOChVeT2gdeW8wOIjvEtzlYZK0z8cicQGgd2ghDh2d?=
+ =?us-ascii?Q?VnoMp9qABJTEKbn52xtScIBIUYN6rmdqpQcEG9jqa7khJaHiyU4OJH2Ys/Uu?=
+ =?us-ascii?Q?dueI7rc8PGCY74gM/ZwacaYV2z4U0kyqlhxUK+nzRC1sblVQadX1/qo2MLrb?=
+ =?us-ascii?Q?BwxzqNsoNGG+DuGEmI1eRt0oT8lRy/I38apqKQf4vOsUW6mqhuxtfcSaLjNM?=
+ =?us-ascii?Q?qX2Ke/kmPM/ZYspAYThBT2AUxieu8EwNTTtm9JaQqjq/QhIEGd3bur9i2uic?=
+ =?us-ascii?Q?e20ZLUHVWrFoUiXWiNG28BIuVQjZ5yvfo2wT1AYotb6UQNiXQCwxQaHcxIrm?=
+ =?us-ascii?Q?jsJ3TqWb81F/42IQ8SvyTgZt/pBRb1FPloil52rGZerktv2MPxQbDQQg+LBS?=
+ =?us-ascii?Q?6ZnDGpHRuH89Cpbw2SX2hAwMWxRAZUiUX3iyuh2V2B6ImSiyXq/rjlucJh8d?=
+ =?us-ascii?Q?Vk+hm/ZsZ2xrDNJPP/syJvhQq6VMxQzzEG9IIMji9y3GYet48UVT4p+LbQc9?=
+ =?us-ascii?Q?J1i02MErohpjoalzUncxQC2HPSwHYrPP6+Ga8c0kOiNM1jj50xO3uySc2kY6?=
+ =?us-ascii?Q?VN41DfPEgroKR97wLwxWSDYYmXWhGn0E4iE9CT6oqlSkcH/krSmM6/va8L1Y?=
+ =?us-ascii?Q?jvYlfOLZ50sZ+bl3srepvf6v1b0GpYyM3x1yelM4ibt5TI9bKtnwoum5Zuph?=
+ =?us-ascii?Q?fROpqtZTh7NoiY7vl3MX75BZSBhEIAdBykp1LfSyujzA+9R+vC8Eu/rli9nQ?=
+ =?us-ascii?Q?unxuKY9W?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB5196.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51dbbef3-c3ce-4486-271a-08d8c34be276
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2021 05:16:36.1725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SeFqxcAPTnPHSJRkkYhjzOuSjooZGAyi4gVMx0qk4alwKpcTOVwOaItnDikhZQitO2UqKtdXPaIKMRjloo0jFDw+j7/1/S9kzjbgKGo1jdA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3083
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-28_01:2021-01-27,2021-01-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
+ adultscore=0 spamscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101280025
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gTW9uLCAyMDIxLTAxLTI1IGF0IDE5OjA4ICswMjAwLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3Rl
-Og0KPiBUaGUgbXV4IGNsb2NrcyBkb24ndCBhbHdheXMgY29ycmVjdGx5IHRha2UgdGhlIG5ldyBw
-YXJlbnQgaW50byBhY2NvdW50DQo+IHdoZW4gdGhlIHBhcmVudCBpcyB1cGRhdGVkIHdoaWxlIHRo
-ZSBjbG9jayBpcyBkaXNhYmxlZC4gU2V0IHRoZSB1cGRhdGUNCj4gYml0IHdoZW4gZW5hYmxpbmcg
-dGhlIGNsb2NrIHRvIGZvcmNlIGFuIHVwZGF0ZSBvZiB0aGUgbXV4Lg0KPiANCj4gU2lnbmVkLW9m
-Zi1ieTogTGF1cmVudCBQaW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29t
-Pg0KDQpIaSBMYXVyZW50LA0KDQpUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4gTG9va3MgZ29vZCB0
-byBtZS4NClJldmlld2VkLWJ5OiBXZWl5aSBMdSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPg0KDQo+
-IC0tLQ0KPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jIHwgMzIgKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKystLS0NCj4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaCB8
-ICAxICsNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
-LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMgYi9k
-cml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCj4gaW5kZXggOTM3MGJlYmNhN2Y4Li5iMGM2
-MTcwOWJhY2MgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguYw0K
-PiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCj4gQEAgLTIwLDkgKzIwLDMz
-IEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IG10a19jbGtfbXV4ICp0b19tdGtfY2xrX211eChzdHJ1
-Y3QgY2xrX2h3ICpodykNCj4gIHN0YXRpYyBpbnQgbXRrX2Nsa19tdXhfZW5hYmxlX3NldGNscihz
-dHJ1Y3QgY2xrX2h3ICpodykNCj4gIHsNCj4gIAlzdHJ1Y3QgbXRrX2Nsa19tdXggKm11eCA9IHRv
-X210a19jbGtfbXV4KGh3KTsNCj4gKwl1bnNpZ25lZCBsb25nIGZsYWdzID0gMDsNCj4gIA0KPiAt
-CXJldHVybiByZWdtYXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+Y2xyX29mcywNCj4g
-LQkJCUJJVChtdXgtPmRhdGEtPmdhdGVfc2hpZnQpKTsNCj4gKwlpZiAobXV4LT5sb2NrKQ0KPiAr
-CQlzcGluX2xvY2tfaXJxc2F2ZShtdXgtPmxvY2ssIGZsYWdzKTsNCj4gKwllbHNlDQo+ICsJCV9f
-YWNxdWlyZShtdXgtPmxvY2spOw0KPiArDQo+ICsJcmVnbWFwX3dyaXRlKG11eC0+cmVnbWFwLCBt
-dXgtPmRhdGEtPmNscl9vZnMsDQo+ICsJCSAgICAgQklUKG11eC0+ZGF0YS0+Z2F0ZV9zaGlmdCkp
-Ow0KPiArDQo+ICsJLyoNCj4gKwkgKiBJZiB0aGUgcGFyZW50IGhhcyBiZWVuIGNoYW5nZWQgd2hl
-biB0aGUgY2xvY2sgd2FzIGRpc2FibGVkLCBpdCB3aWxsDQo+ICsJICogbm90IGJlIGVmZmVjdGl2
-ZSB5ZXQuIFNldCB0aGUgdXBkYXRlIGJpdCB0byBlbnN1cmUgdGhlIG11eCBnZXRzDQo+ICsJICog
-dXBkYXRlZC4NCj4gKwkgKi8NCj4gKwlpZiAobXV4LT5yZXBhcmVudCAmJiBtdXgtPmRhdGEtPnVw
-ZF9zaGlmdCA+PSAwKSB7DQo+ICsJCXJlZ21hcF93cml0ZShtdXgtPnJlZ21hcCwgbXV4LT5kYXRh
-LT51cGRfb2ZzLA0KPiArCQkJICAgICBCSVQobXV4LT5kYXRhLT51cGRfc2hpZnQpKTsNCj4gKwkJ
-bXV4LT5yZXBhcmVudCA9IGZhbHNlOw0KPiArCX0NCj4gKw0KPiArCWlmIChtdXgtPmxvY2spDQo+
-ICsJCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUobXV4LT5sb2NrLCBmbGFncyk7DQo+ICsJZWxzZQ0K
-PiArCQlfX3JlbGVhc2UobXV4LT5sb2NrKTsNCj4gKw0KPiArCXJldHVybiAwOw0KPiAgfQ0KPiAg
-DQo+ICBzdGF0aWMgdm9pZCBtdGtfY2xrX211eF9kaXNhYmxlX3NldGNscihzdHJ1Y3QgY2xrX2h3
-ICpodykNCj4gQEAgLTc3LDkgKzEwMSwxMSBAQCBzdGF0aWMgaW50IG10a19jbGtfbXV4X3NldF9w
-YXJlbnRfc2V0Y2xyX2xvY2soc3RydWN0IGNsa19odyAqaHcsIHU4IGluZGV4KQ0KPiAgCQlyZWdt
-YXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+c2V0X29mcywNCj4gIAkJCQlpbmRleCA8
-PCBtdXgtPmRhdGEtPm11eF9zaGlmdCk7DQo+ICANCj4gLQkJaWYgKG11eC0+ZGF0YS0+dXBkX3No
-aWZ0ID49IDApDQo+ICsJCWlmIChtdXgtPmRhdGEtPnVwZF9zaGlmdCA+PSAwKSB7DQo+ICAJCQly
-ZWdtYXBfd3JpdGUobXV4LT5yZWdtYXAsIG11eC0+ZGF0YS0+dXBkX29mcywNCj4gIAkJCQkJQklU
-KG11eC0+ZGF0YS0+dXBkX3NoaWZ0KSk7DQo+ICsJCQltdXgtPnJlcGFyZW50ID0gdHJ1ZTsNCj4g
-KwkJfQ0KPiAgCX0NCj4gIA0KPiAgCWlmIChtdXgtPmxvY2spDQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmggYi9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4
-LmgNCj4gaW5kZXggMTVjNjIzNjZiYTlhLi5mMTk0NjE2MWFkZTEgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguaA0KPiArKysgYi9kcml2ZXJzL2Nsay9tZWRpYXRl
-ay9jbGstbXV4LmgNCj4gQEAgLTE0LDYgKzE0LDcgQEAgc3RydWN0IG10a19jbGtfbXV4IHsNCj4g
-IAlzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7DQo+ICAJY29uc3Qgc3RydWN0IG10a19tdXggKmRhdGE7
-DQo+ICAJc3BpbmxvY2tfdCAqbG9jazsNCj4gKwlib29sIHJlcGFyZW50Ow0KPiAgfTsNCj4gIA0K
-PiAgc3RydWN0IG10a19tdXggew0KDQo=
 
+
+> -----Original Message-----
+> From: Moritz Fischer <mdf@kernel.org>
+> Sent: Wednesday, January 27, 2021 4:39 AM
+> To: Ardelean, Alexandru <alexandru.Ardelean@analog.com>
+> Cc: linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
+> robh+dt@kernel.org; lars@metafoo.de; linux-fpga@vger.kernel.org;
+> mdf@kernel.org; Bogdan, Dragos <Dragos.Bogdan@analog.com>
+> Subject: Re: [PATCH v2 1/3] clk: axi-clkgen: remove ARCH dependency in Kc=
+onfig
+>=20
+> Alexandru,
+>=20
+> On Tue, Jan 26, 2021 at 01:08:24PM +0200, Alexandru Ardelean wrote:
+> > The intent is to be able to run this driver to access the IP core in
+> > setups where FPGA board is also connected via a PCIe bus. In such
+> > cases the number of combinations explodes, where the host system can
+> > be an x86 with Xilinx Zynq/ZynqMP/Microblaze board connected via PCIe.
+> > Or even a ZynqMP board with a ZynqMP/Zynq/Microblaze connected via PCIe=
+.
+> >
+> > To accommodate for these cases, this change removes the limitation for
+> > this driver to be compilable only on Zynq/Microblaze architectures.
+> >
+> > Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+> > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> > ---
+> >  drivers/clk/Kconfig | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
+> > 85856cff506c..d8c2d4593926 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -247,7 +247,6 @@ config CLK_TWL6040
+> >
+> >  config COMMON_CLK_AXI_CLKGEN
+> >  	tristate "AXI clkgen driver"
+> > -	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
+> Umhhh ... no dependencies? How are you accessing your registers? You seem=
+ to
+> be using device tree, probably:
+>=20
+> 	depends on HAS_IOMEM || COMPILE_TEST
+> 	depends on OF
+>=20
+> at least? Please double check your dependencies.
+
+Agreed.
+Will re-spin.
+This is a n00b mistake on my part
+
+Thanks
+
+> >  	help
+> >  	  Support for the Analog Devices axi-clkgen pcore clock generator for
+> Xilinx
+> >  	  FPGAs. It is commonly used in Analog Devices' reference designs.
+> > --
+> > 2.17.1
+> >
+>=20
+> - Moritz
