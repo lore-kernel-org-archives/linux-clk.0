@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EB3C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE68C433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6112664DBD
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E1A64E1E
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbhA3FaO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Jan 2021 00:30:14 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:16935 "EHLO
+        id S233244AbhA3Ivg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Jan 2021 03:51:36 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:20533 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233833AbhA3F1m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jan 2021 00:27:42 -0500
-Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 21:20:29 -0800
+        with ESMTP id S230358AbhA3Fag (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jan 2021 00:30:36 -0500
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 21:20:32 -0800
 X-QCInternal: smtphost
 Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 21:20:27 -0800
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 21:20:30 -0800
 X-QCInternal: smtphost
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jan 2021 10:49:49 +0530
+  by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jan 2021 10:50:14 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id AC19320F4B; Sat, 30 Jan 2021 10:49:49 +0530 (IST)
+        id 4BBE621A09; Sat, 30 Jan 2021 10:50:14 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         david.brown@linaro.org, devicetree@vger.kernel.org,
@@ -36,76 +36,39 @@ To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
         mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        govinds@codeaurora.org, sricharan@codeaurora.org,
-        gokulsri@codeaurora.org
-Subject: [PATCH v9 2/4] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for QCS404
-Date:   Sat, 30 Jan 2021 10:49:47 +0530
-Message-Id: <1611983989-10125-3-git-send-email-gokulsri@codeaurora.org>
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: [PATCH v8 6/9] dt-bindings: clock: qcom: Add reset for WCSSAON
+Date:   Sat, 30 Jan 2021 10:50:10 +0530
+Message-Id: <1611984013-10201-7-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1611983989-10125-1-git-send-email-gokulsri@codeaurora.org>
-References: <1611983989-10125-1-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
+References: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Govind Singh <govinds@codeaurora.org>
+Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
 
-Add a new modem compatible string for Qualcomm QCS404 SoCs
-
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
 Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt          | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 7ccd553..69c49c7 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -9,6 +9,7 @@ on the Qualcomm Hexagon core.
- 	Definition: must be one of:
- 		    "qcom,q6v5-pil",
- 		    "qcom,ipq8074-wcss-pil"
-+		    "qcom,qcs404-wcss-pil"
- 		    "qcom,msm8916-mss-pil",
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
-@@ -39,6 +40,7 @@ on the Qualcomm Hexagon core.
- 		    string:
- 	qcom,q6v5-pil:
- 	qcom,ipq8074-wcss-pil:
-+	qcom,qcs404-wcss-pil:
- 	qcom,msm8916-mss-pil:
- 	qcom,msm8974-mss-pil:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
-@@ -67,6 +69,11 @@ on the Qualcomm Hexagon core.
- 	Definition: The clocks needed depend on the compatible string:
- 	qcom,ipq8074-wcss-pil:
- 		    no clock names required
-+	qcom,qcs404-wcss-pil:
-+		    must be "xo", "gcc_abhs_cbcr", "gcc_abhs_cbcr",
-+		    "gcc_axim_cbcr", "lcc_ahbfabric_cbc", "tcsr_lcc_cbc",
-+		    "lcc_abhs_cbc", "lcc_tcm_slave_cbc", "lcc_abhm_cbc",
-+		    "lcc_axim_cbc", "lcc_bcr_sleep"
- 	qcom,q6v5-pil:
- 	qcom,msm8916-mss-pil:
- 	qcom,msm8974-mss-pil:
-@@ -133,6 +140,14 @@ For the compatible string below the following supplies are required:
- 		    booting of the Hexagon core
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+index 8e2bec1..9b1c42b 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+@@ -366,5 +366,6 @@
+ #define GCC_PCIE1_AHB_ARES			129
+ #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
+ #define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
++#define GCC_WCSSAON_RESET			132
  
- For the compatible string below the following supplies are required:
-+  "qcom,qcs404-wcss-pil"
-+- cx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulators to be held on behalf of the
-+		    booting of the Hexagon core
-+
-+For the compatible string below the following supplies are required:
-   "qcom,msm8996-mss-pil"
- - pll-supply:
- 	Usage: required
+ #endif
 -- 
 2.7.4
 
