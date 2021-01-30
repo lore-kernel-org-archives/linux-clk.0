@@ -2,62 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4D0C433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 14:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA992C433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 16:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30A7364E05
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 14:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A7564E0C
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 16:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbhA3OJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Jan 2021 09:09:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230358AbhA3OJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Jan 2021 09:09:33 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 51EE564DDF;
-        Sat, 30 Jan 2021 14:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612015733;
-        bh=VQC3NgDeu1DxvtfWht3DJ/VAV15s5Dzsedrug9WwBoo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JdxHzAZz+g9PIHg2oavwbpEpA1RcA/Tc0XOIJ2PQQjCrB+eZXfyaRsuDsbkxuiJJh
-         VRzOFnz4fA73gqHTM50/vxiNaocOJQro5h0bwTHHGRGdpizEm3sI+PfnNFosKljuO6
-         AAlg50CYm7gQzQnP2XF3uKKfzAt4DjTvhlCVjYvzkISlmiCd3p3vnIeNkL7FsR3iH+
-         BC20owiqvBcR/Vf1Ydy13i79MccyXhPViVAunCzSsYgDkVvz6m5FdcK9FdWINfWwLJ
-         0uVEydUn7xYM4ulwe268WN7ahbUfMqrTn//lyMsf1EB/M8YylAK5ebU3/DV9jOSd3B
-         vihvHOmmOWWTQ==
-Date:   Sat, 30 Jan 2021 22:08:48 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     sboyd@kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] clk: imx: imx31: Remove the unused uart_clks[]
-Message-ID: <20210130140847.GM907@dragon>
-References: <20210128031248.27244-1-festevam@gmail.com>
+        id S231968AbhA3QYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Jan 2021 11:24:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232002AbhA3OrZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jan 2021 09:47:25 -0500
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B4CAC061574
+        for <linux-clk@vger.kernel.org>; Sat, 30 Jan 2021 06:46:35 -0800 (PST)
+Received: by mail-qk1-x72e.google.com with SMTP id a19so11768270qka.2
+        for <linux-clk@vger.kernel.org>; Sat, 30 Jan 2021 06:46:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C3pfpynUB+ghu2LoZqqyAhNW2zyksaYmyZ1AVdni/rQ=;
+        b=KB9heY6R341kDq8rIj9IDGMqmTCbYz+TXMov44wK69i1LnSON6dvqDeosIFbnLDeOL
+         mPZ0KbwTIWuK8Ia0O+PN7xnZaBgDpBmBubRTQek7CsLjTS3McfLnnjYay6W5fKIwISpj
+         escxF6ufl7bb3IwGvR37ZEAvY+Ob90UkGjrvgRoFzCz5tPM4rvlzhUxeNXRAk+UT7VYN
+         73+B86vrjvyllXGd2czcsDGfBWWqNBfo8+nT4JIpKpO+RboSiKd1BqxPWLyY5F9rhUQa
+         aAVmvUCT+xKGkjcTTu6miRW4Q84t54YJ3NGWy1vPKRGNmDTAmff37Yee1PpCAGRUJNjx
+         Dp5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C3pfpynUB+ghu2LoZqqyAhNW2zyksaYmyZ1AVdni/rQ=;
+        b=SoePyxiZ2AMMa17xxy/hwmiOBjTHJPcQkYSrt5kB8onLijg2JPVv1eodVKqQFAn5e6
+         HmxB4oy2+W/ajqtQHIbU1JSH0kBy+4TiAzt6EPb/F8EWoVtioiUqvxHstwu5eQBwgd6f
+         mQrvHoZEs9WbEVp6FphuZDg1JHNSf7xWkTf425mmXFs5YbZd14Zizf1DD+sY8VIY/hIq
+         /DvgSJlB4pRSjxWXrOcITEpLDKQs3JxhQohgYkNENArsL6JnNyrSw/4x99R9sFrsNRZo
+         K+3vg1W0peB693qPBOJMrKRqmF0vaD8hZIfNlfQiH3zyrpp1HT+LOn/irHJ+uzz8X3ac
+         qzZQ==
+X-Gm-Message-State: AOAM533EXvUdJYzjEZcRw7O9bs0tM3vR6XmhHOrkF6q0icCOW710nyYW
+        mXO0v26Ht7YYmbXa/B95TLk=
+X-Google-Smtp-Source: ABdhPJxbduF2KLZtnSPC3sgSOEIgUwJwL/I1MjFV7cRjwCwQJc4+JBxBfEnAAAQnex+jiMNERmRvUA==
+X-Received: by 2002:a37:418d:: with SMTP id o135mr8809823qka.426.1612017994624;
+        Sat, 30 Jan 2021 06:46:34 -0800 (PST)
+Received: from localhost.localdomain ([2804:431:d77e:d35b:c52:e75f:e3d0:6528])
+        by smtp.gmail.com with ESMTPSA id 193sm8941652qki.28.2021.01.30.06.46.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Jan 2021 06:46:33 -0800 (PST)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     robh+dt@kernel.org
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] dt-bindings: clock: imx: Switch to my personal address
+Date:   Sat, 30 Jan 2021 11:45:58 -0300
+Message-Id: <20210130144558.133534-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210128031248.27244-1-festevam@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 28, 2021 at 12:12:48AM -0300, Fabio Estevam wrote:
-> Since commit 30c1951790df ("clk: imx: imx31: Remove mx31_clocks_init()")
-> uart_clks[] is no longer used, so remove it to avoid the following
-> build warning:
-> 
-> drivers/clk/imx/clk-imx31.c:54:28: warning: unused variable 'uart_clks' [-Wunused-const-variable]
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+My nxp account will expire soon, so switch to my personal e-mail
+address.
 
-Already picked up one patch from Lee Jones.
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/imx27-clock.yaml | 2 +-
+ Documentation/devicetree/bindings/clock/imx31-clock.yaml | 2 +-
+ Documentation/devicetree/bindings/clock/imx5-clock.yaml  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Shawn
+diff --git a/Documentation/devicetree/bindings/clock/imx27-clock.yaml b/Documentation/devicetree/bindings/clock/imx27-clock.yaml
+index a75365453dbc..160268f24487 100644
+--- a/Documentation/devicetree/bindings/clock/imx27-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx27-clock.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Clock bindings for Freescale i.MX27
+ 
+ maintainers:
+-  - Fabio Estevam <fabio.estevam@nxp.com>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   The clock consumer should specify the desired clock by having the clock
+diff --git a/Documentation/devicetree/bindings/clock/imx31-clock.yaml b/Documentation/devicetree/bindings/clock/imx31-clock.yaml
+index a25a374b3b2a..d2336261c922 100644
+--- a/Documentation/devicetree/bindings/clock/imx31-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx31-clock.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Clock bindings for Freescale i.MX31
+ 
+ maintainers:
+-  - Fabio Estevam <fabio.estevam@nxp.com>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   The clock consumer should specify the desired clock by having the clock
+diff --git a/Documentation/devicetree/bindings/clock/imx5-clock.yaml b/Documentation/devicetree/bindings/clock/imx5-clock.yaml
+index 90775c2669b8..b1740d7abe68 100644
+--- a/Documentation/devicetree/bindings/clock/imx5-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx5-clock.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Clock bindings for Freescale i.MX5
+ 
+ maintainers:
+-  - Fabio Estevam <fabio.estevam@nxp.com>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   The clock consumer should specify the desired clock by having the clock
+-- 
+2.25.1
+
