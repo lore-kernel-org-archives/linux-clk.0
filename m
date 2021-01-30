@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43863C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCADC433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1023164E27
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732A664E26
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 08:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233325AbhA3Iuz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Jan 2021 03:50:55 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:18831 "EHLO
+        id S234387AbhA3I45 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Jan 2021 03:56:57 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:20533 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233762AbhA3Fap (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jan 2021 00:30:45 -0500
-Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 21:20:34 -0800
+        with ESMTP id S230168AbhA3F3n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jan 2021 00:29:43 -0500
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 29 Jan 2021 21:20:30 -0800
 X-QCInternal: smtphost
 Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 21:20:31 -0800
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 29 Jan 2021 21:20:28 -0800
 X-QCInternal: smtphost
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jan 2021 10:49:49 +0530
+  by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jan 2021 10:50:13 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id 5A61F21A02; Sat, 30 Jan 2021 10:49:49 +0530 (IST)
+        id 5D1EB219E7; Sat, 30 Jan 2021 10:50:13 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         david.brown@linaro.org, devicetree@vger.kernel.org,
@@ -35,59 +35,67 @@ To:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
         mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        govinds@codeaurora.org, sricharan@codeaurora.org,
-        gokulsri@codeaurora.org
-Subject: [PATCH v9 0/4] Add non PAS wcss Q6 support for QCS404
-Date:   Sat, 30 Jan 2021 10:49:45 +0530
-Message-Id: <1611983989-10125-1-git-send-email-gokulsri@codeaurora.org>
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: [PATCH v8 0/9] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date:   Sat, 30 Jan 2021 10:50:04 +0530
+Message-Id: <1611984013-10201-1-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Changes since v8:
- Updated patch 3 for the new prototype of qcom_q6v5_request_stop.
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-Changes since v7:
- Addressed review comments from	Stephen Boyd
- 
-Changes since v6:
- Removed duplicate structure entry added during rebase in v5
+This series is based on Govind's
+"[v9] Add non PAS wcss Q6 support for QCS404"
 
-Changes since v5:
- Rebased all the unmerged patches on top of linux-5.8-rc3
- Added dt-binding for qcom,qcs404-wcss-pil
- Removed typo
+changes since v8:
+ - Rebased on top of linux-5.11-rc5
 
-Changes since v4:
- removed QDSP6SS clock controls and moved to wcss rproc.
- renamed wcsccc to q6sstopcc.
- cleanup/refactoring.
+changes since v7:
+ - Rebased on top of linux-5.9-rc2
 
-Changes since v3:
- dt binding cleanup.
- Fixed remoteproc recovery.
- Added remoteproc dump support.
- wcsscc cleanup/refactoring.
+changes since v6:
+ - Rebased on top of the above mentioned dependant patch series
 
-Changes since v2:
- Removed unused properties.
- Refactored code to have common logic b/w ipq8074 and QCS404, wherever possible.
- Added compatible example.
- Removed wcss-protected bool.
+changes since v5:
+ - Rebased on top of linux-5.8-rc3
 
-Changes since v1:
-  Corrected clock names as per comments in v1 patch.
+changes since v4:
+ - Rebased patch 8
 
-Govind Singh (4):
-  remoteproc: qcom: wcss: populate hardcoded param using driver data
-  dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for QCS404
-  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
-  remoteproc: qcom: wcss: explicitly request exclusive reset control
+changes since v3:
+ - In patch 10, Added release_firmware to free up
+   memory requested for m3 firmware.
 
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  15 +
- drivers/remoteproc/qcom_q6v5_wcss.c                | 593 +++++++++++++++++++--
- 2 files changed, 566 insertions(+), 42 deletions(-)
+changes since v2:
+ - In patch 5, Added a driver data 'bcr_reset_required'
+   to select if bcr reset is required
+ - In patch 10, Removed syscon implementation and moved
+   to mailbox framework to access APCS IPC
+
+changes since v1:
+ - In patch 10, Addressed minor review comments.
+
+Gokul Sriram Palanisamy (9):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  arm64: dts: Add support for scm on IPQ8074 SoCs
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi        | 127 +++++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq8074.c               |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c          | 162 +++++++++++++++++++++------
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h |   1 +
+ 4 files changed, 259 insertions(+), 32 deletions(-)
 
 -- 
 2.7.4
