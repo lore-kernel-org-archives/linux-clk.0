@@ -7,62 +7,57 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAE4C433E6
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 13:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4D0C433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 14:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E38A464DCC
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 13:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A7364E05
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jan 2021 14:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbhA3NhU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Jan 2021 08:37:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37698 "EHLO mail.kernel.org"
+        id S231383AbhA3OJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Jan 2021 09:09:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229468AbhA3NhT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Jan 2021 08:37:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C204964E15;
-        Sat, 30 Jan 2021 13:36:36 +0000 (UTC)
+        id S230358AbhA3OJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Jan 2021 09:09:33 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 51EE564DDF;
+        Sat, 30 Jan 2021 14:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612013798;
-        bh=KRVssE/W/HbOkd0x6lLMizjG7zTX+tpYZLrB4tgCwhE=;
+        s=k20201202; t=1612015733;
+        bh=VQC3NgDeu1DxvtfWht3DJ/VAV15s5Dzsedrug9WwBoo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KnMqCefnHOcg0JRYWzjwRN8XGrfgbOG3Y2UMMZunjTcFeZrLIQqo0lBh/EGwxtBbF
-         18wQtWyRmg7L+rlOqpHn3zTC/6wbYU1uXxnLzKi1K9tj+UKtpWGNXEwtqglr0TRMA7
-         Bnwp0J4qzPAsnw/IP29c9Rx3uzK93RW71pOOVgFertz6suPrUQ/yMRbU/QMP4HnKl8
-         vG9o9rQoVAPW+gLPkD2tyMfYUh+9lbgTABIDeMMPbPtq+UH5DEjz6Z79n69XSfYU6P
-         zJtxKRrwPsvwUFWJO/BtRqpzeTcZMJMKAafQTC8lZFQHlGWJ9acV+cI0h+z9FuB/L0
-         /znNNqyZtz3NA==
-Date:   Sat, 30 Jan 2021 21:36:32 +0800
+        b=JdxHzAZz+g9PIHg2oavwbpEpA1RcA/Tc0XOIJ2PQQjCrB+eZXfyaRsuDsbkxuiJJh
+         VRzOFnz4fA73gqHTM50/vxiNaocOJQro5h0bwTHHGRGdpizEm3sI+PfnNFosKljuO6
+         AAlg50CYm7gQzQnP2XF3uKKfzAt4DjTvhlCVjYvzkISlmiCd3p3vnIeNkL7FsR3iH+
+         BC20owiqvBcR/Vf1Ydy13i79MccyXhPViVAunCzSsYgDkVvz6m5FdcK9FdWINfWwLJ
+         0uVEydUn7xYM4ulwe268WN7ahbUfMqrTn//lyMsf1EB/M8YylAK5ebU3/DV9jOSd3B
+         vihvHOmmOWWTQ==
+Date:   Sat, 30 Jan 2021 22:08:48 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 1/3] clk: imx8mq: add PLL monitor output
-Message-ID: <20210130133632.GJ907@dragon>
-References: <20210125174135.1223680-1-l.stach@pengutronix.de>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     sboyd@kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] clk: imx: imx31: Remove the unused uart_clks[]
+Message-ID: <20210130140847.GM907@dragon>
+References: <20210128031248.27244-1-festevam@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210125174135.1223680-1-l.stach@pengutronix.de>
+In-Reply-To: <20210128031248.27244-1-festevam@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 06:41:33PM +0100, Lucas Stach wrote:
-> The PLL monitor is mentioned as a debug feature in the reference manual,
-> but there are some boards that use this clock output as a reference clock
-> for board level components. Add support for those clocks in the clock
-> driver, so this clock output can be used properly.
+On Thu, Jan 28, 2021 at 12:12:48AM -0300, Fabio Estevam wrote:
+> Since commit 30c1951790df ("clk: imx: imx31: Remove mx31_clocks_init()")
+> uart_clks[] is no longer used, so remove it to avoid the following
+> build warning:
 > 
-> Note that the VIDEO1, GPU and VPU mux inputs are rotated compared to the
-> description in the reference manual. The order in this patch has been
-> empirically validated.
+> drivers/clk/imx/clk-imx31.c:54:28: warning: unused variable 'uart_clks' [-Wunused-const-variable]
 > 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
 
-Applied all 3, thanks.
+Already picked up one patch from Lee Jones.
+
+Shawn
