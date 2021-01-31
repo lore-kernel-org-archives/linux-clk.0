@@ -2,138 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDE1C433E6
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Jan 2021 15:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 182DCC433E6
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Jan 2021 20:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F59164E42
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Jan 2021 15:24:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF27264E0E
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Jan 2021 20:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbhAaOPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 Jan 2021 09:15:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48464 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231874AbhAaN2r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jan 2021 08:28:47 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E88DCC06178A
-        for <linux-clk@vger.kernel.org>; Sun, 31 Jan 2021 05:25:23 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id y187so10894765wmd.3
-        for <linux-clk@vger.kernel.org>; Sun, 31 Jan 2021 05:25:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uQW6zI3kIl4btIs4IkhNoP62juO8z7Dh2Bp1bXM6dNo=;
-        b=c1GaODdxNmpvlW856t5VMf73wiUd+a2QSX8K2Wwb72uMjJK5fzkE668Hp0Pdtbzm9D
-         QZPlSSMj7toEaFsIe6q4tIdqmKDpfK+p1HTB5KiDaczout4TOnA0c6ScSjY+X8zURnhZ
-         u42okppAvnXYXQx2ZqJhcFt/MupRWmTA2gsMWGacqiWiu3pNYB/UK5xl4OgfDPaeTrbd
-         WZa4G1EoiF4CDcmsDH/007oVEGtzgGoVKlB/0tvESzKYdrCVwcUGWiK6SgdGyrqktrgP
-         OWZzOM68YkpJTOCdhNh5H8giAvxImTOMhXtqvi+eQS+Z8K34Uo7/F2YBQsShDPA8JX1L
-         cb5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uQW6zI3kIl4btIs4IkhNoP62juO8z7Dh2Bp1bXM6dNo=;
-        b=dra6oSR+QYdn5qpqk6SCdUwo5mZqxuH+/JJTlm5xv+34Y0rYirWDAuJj47IyoWkXep
-         DyCNl0ZD+KcX4U9jzkvy3LcrR6yxtKmiL75H/gbu/J8/3P1oxIBVINHU/ceYYx+Jknya
-         QkkI7ayowt+hGC98fT+ZLRuy9Jex4QqUsIMASZzOh2gmGeJq8hlQXduXhXeachkxE++G
-         IxofNiS/uE8znoqVA2yt1OmqwIpzbugr4gsPsHHJq3WRQU78RGcEE8OQHfYxD+y2BDae
-         Ru13dHhSXe5KpMCayXWAXofWfvfYnGuAN7o1/Jl5MYjyP9xZKTE3z6B4WYce4EFuEZtY
-         rVuA==
-X-Gm-Message-State: AOAM5314jbCgqXcdXECQO21m4VoBlHPbLvYFklj19JK4AR1Xv5y0LkwF
-        WEewuazDsGsT80rQF/5QeZ4CzSCNmXBnRw==
-X-Google-Smtp-Source: ABdhPJxnLsv4VhLXKNJh1hR/+ox28D7tGWVevho3V4V2qY31AjlWOXpLahbvuRiqtRF/268pj72XXQ==
-X-Received: by 2002:a7b:ca4c:: with SMTP id m12mr11332151wml.115.1612099522713;
-        Sun, 31 Jan 2021 05:25:22 -0800 (PST)
-Received: from ziggy.stardust ([213.195.126.134])
-        by smtp.gmail.com with ESMTPSA id d3sm25982908wrp.79.2021.01.31.05.25.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Jan 2021 05:25:22 -0800 (PST)
-Subject: Re: [PATCH] clk: mediatek: Remove unused MT8192 mcupm clock
-To:     Tinghan Shen <tinghan.shen@mediatek.com>, drinkcat@chromium.org,
-        sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, srv_heupstream@mediatek.com,
-        weiyi.lu@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20201222053502.27872-1-tinghan.shen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <09a1ff48-5341-52ff-715d-3a0d6a914e4c@gmail.com>
-Date:   Sun, 31 Jan 2021 14:25:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S230194AbhAaUYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Jan 2021 15:24:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232091AbhAaUWN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 31 Jan 2021 15:22:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A72D64E40;
+        Sun, 31 Jan 2021 17:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612115524;
+        bh=/HotTFvdnUz+Z0S/FOZkcqFfLR2JcRPVZVctWcGfzLY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PwH+yucifp+3Sugy2gojGpm4INMiBMGrIini3aGoWea5B0pHFNdPTpLrWfpAv05Z8
+         hwmhYucxGbcwiTVJJiiP9Z2hQi2dUh+0RZrQNi8ff0g4532H5fCA8sR4sDvMXj8a77
+         wd0SXzkFzRY/fuV3BmChx6qfEBEfmo0Z66Bv8DEvmG7rPx5t2bNoNWynvMIkQJKA8P
+         hu5hVUvf1idjuuOmteDqI8bj9TC1G0nVOPuZu4JiAM7KRBi7wMfnIV3/WljPIsDbuV
+         EV5ie7UEvPf+wWA1vCGA6cRh4A7PMZJJP72X+k6t34h0jyFVjxcupDoRmlwEJqqeso
+         8ZlryFHqQoFmg==
+Date:   Sun, 31 Jan 2021 18:52:02 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: [GIT PULL] Allwinner Clock Changes for 5.12
+Message-ID: <83279f56-18ac-4abb-82e0-30f1fb8ffda7.lettre@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20201222053502.27872-1-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 22/12/2020 06:35, Tinghan Shen wrote:
-> From: "TingHan Shen" <tinghan.shen@mediatek.com>
-> 
-> Remove unused MT8192 mcupm clock
-> 
-> Signed-off-by: TingHan Shen <tinghan.shen@mediatek.com>
-> ---
-> This patch depends on series "Mediatek MT8192 clock support"[1].
-> 
-> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=379955
+Hi Mike, Stephen,
 
-This series is not upstream, so it should be fixed in the very same series and
-not as a follow up patch. From what I see, this is alread done in v6.
+Please pull the following changes for the next release.
 
 Thanks!
-Matthias
+Maxime
 
-> ---
->  drivers/clk/mediatek/clk-mt8192.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-> index 673dc60182f5..80df1903bd58 100644
-> --- a/drivers/clk/mediatek/clk-mt8192.c
-> +++ b/drivers/clk/mediatek/clk-mt8192.c
-> @@ -649,12 +649,6 @@ static const char * const aes_msdcfde_parents[] = {
->  	"univpll_d6"
->  };
->  
-> -static const char * const mcupm_parents[] = {
-> -	"clk26m",
-> -	"mainpll_d6_d4",
-> -	"mainpll_d6_d2"
-> -};
-> -
->  static const char * const sflash_parents[] = {
->  	"clk26m",
->  	"mainpll_d7_d8",
-> @@ -856,8 +850,6 @@ static const struct mtk_mux top_mtk_muxes[] = {
->  	MUX_GATE_CLR_SET_UPD(CLK_TOP_AES_MSDCFDE_SEL, "aes_msdcfde_sel",
->  		aes_msdcfde_parents, 0x100, 0x104, 0x108, 24, 3, 31, 0x00c, 1),
->  	/* CLK_CFG_16 */
-> -	MUX_GATE_CLR_SET_UPD(CLK_TOP_MCUPM_SEL, "mcupm_sel",
-> -		mcupm_parents, 0x110, 0x114, 0x118, 0, 2, 7, 0x00c, 2),
->  	MUX_GATE_CLR_SET_UPD(CLK_TOP_SFLASH_SEL, "sflash_sel",
->  		sflash_parents, 0x110, 0x114, 0x118, 8, 2, 15, 0x00c, 3),
->  };
-> @@ -983,7 +975,6 @@ static const struct mtk_gate infra_clks[] = {
->  	GATE_INFRA0(CLK_INFRA_SCPSYS, "infra_scpsys", "scp_sel", 4),
->  	GATE_INFRA0(CLK_INFRA_SEJ, "infra_sej", "axi_sel", 5),
->  	GATE_INFRA0(CLK_INFRA_APXGPT, "infra_apxgpt", "axi_sel", 6),
-> -	GATE_INFRA0(CLK_INFRA_MCUPM, "infra_mcupm", "mcupm_sel", 7),
->  	GATE_INFRA0(CLK_INFRA_GCE, "infra_gce", "axi_sel", 8),
->  	GATE_INFRA0(CLK_INFRA_GCE2, "infra_gce2", "axi_sel", 9),
->  	GATE_INFRA0(CLK_INFRA_THERM, "infra_therm", "axi_sel", 10),
-> 
+The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
+
+  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-for-5.12
+
+for you to fetch changes up to 88dde5e23da1a16fe9a417171e6c941736b8d3a6:
+
+  clk: sunxi-ng: Add support for the Allwinner H616 CCU (2021-01-28 11:14:35 +0100)
+
+----------------------------------------------------------------
+Our usual PR for the Allwinner SoCs, this time adding support for the
+Allwinner H616 SoC, and a few H6 fixes.
+
+----------------------------------------------------------------
+Andre Przywara (5):
+      clk: sunxi-ng: h6: Fix CEC clock
+      clk: sunxi-ng: h6: Fix clock divider range on some clocks
+      dt-bindings: clk: sunxi-ccu: Add compatible string for Allwinner H616
+      clk: sunxi-ng: Add support for the Allwinner H616 R-CCU
+      clk: sunxi-ng: Add support for the Allwinner H616 CCU
+
+Lee Jones (3):
+      clk: sunxi: clk-sunxi: Demote a bunch of non-conformant kernel-doc headers
+      clk: sunxi: clk-a10-ve: Demote obvious kernel-doc abuse
+      clk: sunxi: clk-mod0: Demote non-conformant kernel-doc header
+
+Samuel Holland (1):
+      clk: sunxi-ng: h6-r: Add R_APB2_RSB clock and reset
+
+
+ Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml |    4 +-
+ drivers/clk/sunxi-ng/Kconfig                                         |    7 +-
+ drivers/clk/sunxi-ng/Makefile                                        |    1 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c                               |   53 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h                               |    2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c                                 |   10 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c                               | 1150 +++++++-
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.h                               |   56 +-
+ drivers/clk/sunxi/clk-a10-ve.c                                       |    2 +-
+ drivers/clk/sunxi/clk-mod0.c                                         |    2 +-
+ drivers/clk/sunxi/clk-sunxi.c                                        |   32 +-
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h                          |    2 +-
+ include/dt-bindings/clock/sun50i-h616-ccu.h                          |  115 +-
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h                          |    1 +-
+ include/dt-bindings/reset/sun50i-h616-ccu.h                          |   70 +-
+ 15 files changed, 1482 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+ create mode 100644 include/dt-bindings/clock/sun50i-h616-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h616-ccu.h
+
+
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYBbuQgAKCRDj7w1vZxhR
+xSqSAPwKcSyjWfE8TNvvsfdETpgqlv+wJHKpDsLCeaGCbc8WAwEA0Y01NUsqDrAv
+O9r43nEj1NaIK44VrfcqPztbfSGw4gU=
+=98rV
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
