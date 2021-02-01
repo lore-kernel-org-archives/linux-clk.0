@@ -2,81 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2ECC433E6
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 09:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34651C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9890964DE7
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 09:32:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF13164E22
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232714AbhBAJca (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Feb 2021 04:32:30 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:55919 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232681AbhBAJca (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 04:32:30 -0500
-X-UUID: a51b790571e247b398cbd7511727f889-20210201
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=ZnxN1pLV+rvX9LVEaJLLgeSX4bC8JWZBZLANyFfuHzk=;
-        b=SKsiD2//CU/rGytsU5i0AcICFbv1DBp1mzm42/qoE8Ll4QJVXn/3NkzJKq9vYNDKITfV9HZIMhyhNvsId0m4hyqtM6myxDsjvUD0IrkJxd1T+03QQB1IcCRlaA29ufa5RCp5kt6beFrD378IcAMA/qiL9l+YghA08uQeqEeIpoc=;
-X-UUID: a51b790571e247b398cbd7511727f889-20210201
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1460415211; Mon, 01 Feb 2021 17:31:45 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 1 Feb 2021 17:31:43 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 1 Feb 2021 17:31:43 +0800
-Message-ID: <1612171903.18201.6.camel@mtksdaap41>
+        id S232966AbhBAKPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Feb 2021 05:15:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232994AbhBAKPn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 05:15:43 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECBBC061574;
+        Mon,  1 Feb 2021 02:15:02 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id d16so15878391wro.11;
+        Mon, 01 Feb 2021 02:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ANsARq6fL07NGibn8cbk7oUpbzEAXo/i2Ol65lcGXGk=;
+        b=auV2FdGYh4MkV590dDE95x07nWp+vQjkQhprR0m03LfdKoR6gqTNf/rdCs03rgO3P3
+         5dRPyI0yeutlaDLKS+KOUEIvTHP3j/fAC3lGmwbM4DXDC6wk7B/36RhA6PJNgy0WpdcC
+         DS1DQWajtK4tl5W1oCYLX1sV/N6YtnKgXeiVyczFQuRyYs0l7PD7UEeVb/BHZ53i5xfi
+         YRSCkQcuvj6/rPuA1cK4h+n0/TUgW8HNG/7w6Rw3tX0Iq1cqs/VcmZAuXEnrl5kQgtVZ
+         rtmfkTYNN0qq3BjqP81vzpTeu56W1Wdsd/84ThscRZulmNU6swRBslleHxnSOKRzdLi1
+         HLkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ANsARq6fL07NGibn8cbk7oUpbzEAXo/i2Ol65lcGXGk=;
+        b=md9KixQTPUuoOZgESFRZloPY7Fv9QBPMRnWp/b1rHxloYZelD0PXse1Bw0dPxLMm/q
+         wEsqaYVYeIWJaXHnOVM6kQi5zn6XXMX0Nmk9LC1dw6arxXG8LiyOTLwMexUBrQtQzdjq
+         Js4OWRAONtJme3rr3SWnvcSsU4V6vxxzUkr4ma1nbuS/XA6MRuzI1JQ9h61F2877kJGi
+         j/uwTkZMALlpF7jCtwbRVCOb5mqQ3QFphkPKzB6xDkUavdcQNMD76gk7x5m8ChHA+8Dz
+         DXA9Gl93VXamei3vTYjooPNVnKNDZFEOuEr+BBYSxaNUfdWwne8o/JRwL7zWsrHiabG2
+         UJRw==
+X-Gm-Message-State: AOAM532iTp4LEE/LJbkjIEEvxhKZKg7RgDNVoTXVP10xI+4KfTJpYLYn
+        EPSs/wrMfOsiVfhCUZHrhn0=
+X-Google-Smtp-Source: ABdhPJw2bUOgz+nMZFzakj6FRbaxaWpLQcIPs4OFTUfWc/C3daSngW+6ZM4wCuPndF5BEXIGMZjVag==
+X-Received: by 2002:a05:6000:192:: with SMTP id p18mr17067580wrx.69.1612174501673;
+        Mon, 01 Feb 2021 02:15:01 -0800 (PST)
+Received: from ziggy.stardust ([213.195.126.134])
+        by smtp.gmail.com with ESMTPSA id e12sm25284137wrs.67.2021.02.01.02.15.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Feb 2021 02:15:01 -0800 (PST)
 Subject: Re: [PATCH 0/2] Add MediaTek MT8192 clock provider device nodes
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Rob Herring <robh@kernel.org>,
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Rob Herring <robh@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Mon, 1 Feb 2021 17:31:43 +0800
-In-Reply-To: <4536e0a3-8e64-d2b0-df83-33705d10359a@gmail.com>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <1608644414-17793-1-git-send-email-weiyi.lu@mediatek.com>
-         <4536e0a3-8e64-d2b0-df83-33705d10359a@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+ <4536e0a3-8e64-d2b0-df83-33705d10359a@gmail.com>
+ <1612171903.18201.6.camel@mtksdaap41>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <61667c50-edee-d9ef-0731-ce59e6c19995@gmail.com>
+Date:   Mon, 1 Feb 2021 11:15:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <1612171903.18201.6.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gU3VuLCAyMDIxLTAxLTMxIGF0IDE0OjI3ICswMTAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
-Og0KPiANCj4gT24gMjIvMTIvMjAyMCAxNDo0MCwgV2VpeWkgTHUgd3JvdGU6DQo+ID4gVGhpcyBz
-ZXJpZXMgaXMgYmFzZWQgb24gdjUuMTAtcmMxLCBNVDgxOTIgZHRzIHY2WzFdIGFuZA0KPiA+IE1U
-ODE5MiBjbG9jayB2NiBzZXJpZXNbMl0uDQo+ID4gDQo+ID4gWzFdIGh0dHBzOi8vcGF0Y2h3b3Jr
-Lmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1tZWRpYXRlay9saXN0Lz9zZXJpZXM9MzczODk5DQo+
-ID4gWzJdIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1tZWRpYXRl
-ay9saXN0Lz9zZXJpZXM9NDA1Mjk1DQo+ID4gDQo+IA0KPiBbMV0gaXMgYWxyZWFkeSBtYWlubGlu
-ZS4gWW91IGNvdWxkIGFkZCB0aGlzIHBhdGNoIGFzIGEgbmV3IG9uZSB0byBbMl0uIEJ1dA0KPiBw
-bGVhc2UgdHJ5IHRvIGltcHJvdmUgdGhlIHNlcmllcywgYmVmb3JlIHNlbmRpbmcganVzdCBhIG5l
-dyB2ZXJzaW9uIHdpdGggdGhpcw0KPiBwYXRjaCBhZGRlZC4NCj4gDQo+IFJlZ2FyZHMsDQo+IE1h
-dHRoaWFzDQo+IA0KSGkgTWF0dGhpYXMsDQoNCkFjdHVhbGx5IEknbSBhIGxpdHRsZSBjb25mdXNl
-ZCBub3cuIFN0ZXBoZW4gc3VnZ2VzdGVkIG1lIHRvIHNlbmQgY2xvY2sNCmR0cyBzZXBhcmF0ZWx5
-IGJlY2F1c2UgZHRzIG1heSBub3QgZ28gdGhyb3VnaCBoaXMgdHJlZS4NClNvIEkgc2VwYXJhdGVk
-IGl0IGZyb20gdGhlIE1UODE5MiBjbG9jayBzZXJpZXMgc2luY2UgY2xvY2sgdjYuDQpXaGF0IGRv
-IHlvdSBzdWdnZXN0IG1lIHRvIGRvIG5leHQgdGltZT8NCg0KPiA+IFdlaXlpIEx1ICgyKToNCj4g
-PiAgIGFybTY0OiBkdHM6IG1lZGlhdGVrOiBBZGQgbXQ4MTkyIGNsb2NrIGNvbnRyb2xsZXJzDQo+
-ID4gICBhcm02NDogZHRzOiBtZWRpYXRlazogQ29ycmVjdCBVQVJUMCBidXMgY2xvY2sgb2YgTVQ4
-MTkyDQo+ID4gDQo+ID4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTkyLmR0c2kg
-fCAxNjUgKysrKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE2NCBp
-bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gDQoNCg==
+Hi Weiyi,
 
+On 01/02/2021 10:31, Weiyi Lu wrote:
+> On Sun, 2021-01-31 at 14:27 +0100, Matthias Brugger wrote:
+>>
+>> On 22/12/2020 14:40, Weiyi Lu wrote:
+>>> This series is based on v5.10-rc1, MT8192 dts v6[1] and
+>>> MT8192 clock v6 series[2].
+>>>
+>>> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=373899
+>>> [2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=405295
+>>>
+>>
+>> [1] is already mainline. You could add this patch as a new one to [2]. But
+>> please try to improve the series, before sending just a new version with this
+>> patch added.
+>>
+>> Regards,
+>> Matthias
+>>
+> Hi Matthias,
+> 
+> Actually I'm a little confused now. Stephen suggested me to send clock
+> dts separately because dts may not go through his tree.
+> So I separated it from the MT8192 clock series since clock v6.
+> What do you suggest me to do next time?
+> 
+
+Yes, now that you mention that, I remember...
+OK, then I'd propose to resend the DTS patches once the clock patches are accepted.
+
+Regards,
+Matthias
+
+>>> Weiyi Lu (2):
+>>>   arm64: dts: mediatek: Add mt8192 clock controllers
+>>>   arm64: dts: mediatek: Correct UART0 bus clock of MT8192
+>>>
+>>>  arch/arm64/boot/dts/mediatek/mt8192.dtsi | 165 ++++++++++++++++++++++-
+>>>  1 file changed, 164 insertions(+), 1 deletion(-)
+>>>
+> 
