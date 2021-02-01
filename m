@@ -2,99 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD9DC433E6
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E772EC433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 14:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3607664E2A
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C58BA64DFA
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 14:36:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233268AbhBAKzq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Feb 2021 05:55:46 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:45308 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233410AbhBAKzb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 05:55:31 -0500
-Received: by mail-oi1-f171.google.com with SMTP id g69so18291577oib.12;
-        Mon, 01 Feb 2021 02:55:15 -0800 (PST)
+        id S229567AbhBAOgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Feb 2021 09:36:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229530AbhBAOgD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 09:36:03 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D291FC061786;
+        Mon,  1 Feb 2021 06:35:22 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id hs11so24719935ejc.1;
+        Mon, 01 Feb 2021 06:35:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=p0y1B4xpVR87SDn57GPRXm1SVNsp6DiLP4/759/Wuh8=;
+        b=K+gFxd8za+oG8OKw/uRdYOGMCOw2HY9GwIFkNWZ7xcPkEIZRMtze+PEmUIzexvr+6m
+         /lKxD9Mo8DvphlsBGkZfh0oGgg0Q5Cg/60ueM/shhQk4DYMhzwgxNvNFfUUlQReqjHf+
+         2xja190TvVsxgSJzxjyHZ7t8/HKxr48ucWiTO0PZw77E/l8lbirulVTLItKVcDy9RrXW
+         lf5MNpMo6cR04iBo+AlqwP14StlmS8dW3k5lMY1o+X8VC4TU86YZ2AZc1MwffEY9LsUQ
+         30jCI9H4J9TsUBfpO1zZZLOIeitQ7xEvFEKDUKM+NjzBhqVYa1uqPgDlbTQKNq9ldYAS
+         fLBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TsZddNdEu5n1CGxavoWBCizkLcHFPyez/OBFVu2/Ol4=;
-        b=uZZpSLxlc9IrMJpLJ3ZPp/etwR6FkMSHS45sM5GphC+qvUzPJnL9cLz6icY5RcfpTI
-         pQdfKo0RTE6nZbS/wslaPxsUCNH+VXSTe7MZ3u0L4BKGNM9GPTT6I95+Ih4fdvg3xsMP
-         3sCIPBTu8LMeMxL7fOPDj7Kew3z1ebVb2Aad0EL44c2Dt1qPHLbvR+jTwzk0FJsjyMqn
-         286lQgNhpdWD9NAw0RJldh/z9eOvXaOE3eYtyCSGOda5VoxzI+p26DsqkWqznsllGE8I
-         i8McmBxqQw8/n99lYkBXIYpRPIWg7D8pIormuDm9C62Ap0CLhBKyl9d49J7lwYOgyYsl
-         TMRg==
-X-Gm-Message-State: AOAM532wHNjigD30ZL3O34rQ0i1YTI5OUG4tWgXj9AJPWOdOtZyTReq5
-        aSzHjBcwbDDggIs0ccXcz4rZkuUmakp+G9ehYto=
-X-Google-Smtp-Source: ABdhPJyN2ZpzXcNCMXgUY3hrigvtGooBg8Ikn1SHhUS4Nh5ldPH91gGT2AWWgTkluWm7nrP3FGpgBWJnKTnSMsXIHs0=
-X-Received: by 2002:aca:4d8d:: with SMTP id a135mr10215866oib.153.1612176890041;
- Mon, 01 Feb 2021 02:54:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20210128104446.164269-1-tudor.ambarus@microchip.com> <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
-In-Reply-To: <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 1 Feb 2021 11:54:38 +0100
-Message-ID: <CAMuHMdXqQL3PQvgC-zACkMyF8S3kg9-RPxvJMK8WXqu45EhwEg@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=p0y1B4xpVR87SDn57GPRXm1SVNsp6DiLP4/759/Wuh8=;
+        b=KFDo76rwd13kQ8ZHnQ5SrppE445s1CU947hlWd7QBMmZ0T86s073+ewTpLYtQYCTTc
+         lejJVd/QRpXQic4GXsSyaE6nchWJ8LnFFAvVwnlpWRvVLM4/QZWHKh0oAE49gELhztRm
+         PvTI9B54zjBaczTpWaEikdQINdBuNEVJM270GzkCtGWfqazzA9UBmJ7AUS/JPRmfeED4
+         rwK2YXXOuq3i+TQ358ptwiCPwVAfeNAYeLVpSgXp/xFNzJ99fp44Gv7aprLwPzJbJWll
+         /fomcckvF3uHfDgqytl5AEpugTDH1Z9fITVfD7HUh9xsNw+rQnCpOAmCRhM++2MOienI
+         JBmg==
+X-Gm-Message-State: AOAM532D9VV678Xy59u6xPZr3ibr3W9HHFV1knjm/hSF+D0xB86aXhKc
+        ZMIHBLL6f8bswsQfs7uap0YDuIJ0AJju4EHWXfc=
+X-Google-Smtp-Source: ABdhPJz0GTo2K7lAckez4yf/9SVspRZvlzqmrFBGfIp8PVdkBK8K6gn43IXHJGLCsvCKCe6raQcylQ==
+X-Received: by 2002:a17:906:2e85:: with SMTP id o5mr6995806eji.238.1612190121269;
+        Mon, 01 Feb 2021 06:35:21 -0800 (PST)
+Received: from [10.8.0.2] (terefe.re. [5.255.96.200])
+        by smtp.gmail.com with ESMTPSA id du6sm6377449ejc.78.2021.02.01.06.35.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Feb 2021 06:35:20 -0800 (PST)
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base CPU
+ speed to 800 MHz from 1000 MHz
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>, mirq-linux@rere.qmqm.pl,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andre Heider <a.heider@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?Q?G=c3=a9rald_Kerma?= <gerald@gk2.net>,
+        Konstantin Porotchkin <kostap@marvell.com>
+References: <20210114124032.12765-1-pali@kernel.org>
+From:   Tomasz Maciej Nowak <tmn505@gmail.com>
+Message-ID: <0d5518be-9b22-a714-f5f0-72aadc2eebf5@gmail.com>
+Date:   Mon, 1 Feb 2021 15:35:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <20210114124032.12765-1-pali@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Saravana,
+W dniu 14.01.2021 o 13:40, Pali Rohár pisze:
+> Hello!
+> 
+> The armada-37xx-cpufreq driver changes base CPU speed from 1000 MHz to
+> 800 MHz on EspressoBIN and Turris MOX. The commit message in patch 2/10
+> explains why and how can this be discovered.
+> 
+> That patch 2/10 led us to discover another bug, in the SOC itself,
+> that causes the CPU to behave weirdly when frequency changes to 1 GHz.
+> A similar erratum is documented by Marvell but only for systems where
+> base frequency is 1.2 GHz.
+> 
+> We've discovered that to make cpufreq scaling stable on Armada 3720
+> systems with base frequency 1 GHz, we also have to set voltage levels
+> for L0 and L1 loads to at least 1108 mV. We were led to this by patch we
+> found in Marvell kernel fork. Fix is in the patch 4/10.
+> 
+> https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/dc33b62c90696afb6adc7dbcc4ebbd48bedec269
+> 
+> During fixing this voltage issue for 1 GHz we discovered another bug in
+> armada-37xx-cpufreq driver that causes CPU instability. Erratum for VDD
+> stabilization was improperly implemented, details are in patch 6/10.
+> 
+> This patch series is also available in my git tree in branch a3720-cpufreq-issues:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pali/linux.git/log/?h=a3720-cpufreq-issues
+> 
+> We have tested this patch series on Espressobin v5 and Turris MOX
+> boards. If you have other Armada 3720 boards (Espressobin v5/v7, uDPU,
+> Devel Board, ...) then it will be nice to do an additional tests and
+> check if instability issues are finally fixed.
+> 
+> There is a discussion on armbian forum that Espressobin v7 is unstable
+> when running at 1 GHz and in this thread was also mentioned above
+> voltage patch from Marvell kernel fork:
+> 
+> https://forum.armbian.com/topic/10429-how-to-make-espressobin-v7-stable/
+> 
+> Marek & Pali
+> 
+> 
+> Marek Behún (3):
+>   arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
+>   cpufreq: armada-37xx: Fix setting TBG parent for load levels
+>   clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM
+>     clock
+> 
+> Pali Rohár (7):
+>   cpufreq: armada-37xx: Fix the AVS value for loads L0 and L1
+>   clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to
+>     1 GHz
+>   clk: mvebu: armada-37xx-periph: Fix workaround for switching from L1
+>     to L0
+>   cpufreq: armada-37xx: Fix driver cleanup when registration failed
+>   cpufreq: armada-37xx: Fix determining base CPU frequency
+>   cpufreq: armada-37xx: Remove cur_frequency variable
+>   cpufreq: armada-37xx: Fix module unloading
 
-On Thu, Jan 28, 2021 at 6:08 PM Saravana Kannan <saravanak@google.com> wrote:
-> I already accounted for early clocks like this when I designed
-> fw_devlink. Each driver shouldn't need to set OF_POPULATED.
-> drivers/clk/clk.c already does this for you.
->
-> I think the problem is that your driver is using
-> CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE(). The comments for
-> CLK_OF_DECLARE_DRIVER() says:
-> /*
->  * Use this macro when you have a driver that requires two initialization
->  * routines, one at of_clk_init(), and one at platform device probe
->  */
->
-> In your case, you are explicitly NOT having a driver bind to this
-> clock later. So you shouldn't be using CLK_OF_DECLARE() instead.
+Hi.
+After running this series for three days, the system is stable and the 
+issue with switching frequency doesn't seem to be there anymore. So:
 
-Unless I'm missing something, name##_of_clk_init_driver() clearing
-OF_POPULATED again causes consumer driver probing to be postponed by
-fw_devlink until the second initialization phase of the provider has been
-completed?
+Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-This is wrong if the consumer only needs a clock instantiated during the
-first phase, and may cause issues if the consumer is a critical device.
-E.g. a timer, on ARM SoCs lacking an architecture timer (pre-Cortex
-A7/A15) or global timer (pre-Cortex A9, or single-core Cortex A9).
-Probably there are more examples.
+Thanks.
 
-Gr{oetje,eeting}s,
+> 
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi |   3 +-
+>  drivers/clk/mvebu/armada-37xx-periph.c       |  83 ++++++++-------
+>  drivers/cpufreq/armada-37xx-cpufreq.c        | 100 ++++++++++++++-----
+>  3 files changed, 124 insertions(+), 62 deletions(-)
+> 
 
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+TMN
