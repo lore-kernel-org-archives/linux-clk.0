@@ -2,166 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E772EC433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 14:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C350C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 15:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C58BA64DFA
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 14:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A3864DD6
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 15:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbhBAOgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Feb 2021 09:36:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhBAOgD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 09:36:03 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D291FC061786;
-        Mon,  1 Feb 2021 06:35:22 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id hs11so24719935ejc.1;
-        Mon, 01 Feb 2021 06:35:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p0y1B4xpVR87SDn57GPRXm1SVNsp6DiLP4/759/Wuh8=;
-        b=K+gFxd8za+oG8OKw/uRdYOGMCOw2HY9GwIFkNWZ7xcPkEIZRMtze+PEmUIzexvr+6m
-         /lKxD9Mo8DvphlsBGkZfh0oGgg0Q5Cg/60ueM/shhQk4DYMhzwgxNvNFfUUlQReqjHf+
-         2xja190TvVsxgSJzxjyHZ7t8/HKxr48ucWiTO0PZw77E/l8lbirulVTLItKVcDy9RrXW
-         lf5MNpMo6cR04iBo+AlqwP14StlmS8dW3k5lMY1o+X8VC4TU86YZ2AZc1MwffEY9LsUQ
-         30jCI9H4J9TsUBfpO1zZZLOIeitQ7xEvFEKDUKM+NjzBhqVYa1uqPgDlbTQKNq9ldYAS
-         fLBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p0y1B4xpVR87SDn57GPRXm1SVNsp6DiLP4/759/Wuh8=;
-        b=KFDo76rwd13kQ8ZHnQ5SrppE445s1CU947hlWd7QBMmZ0T86s073+ewTpLYtQYCTTc
-         lejJVd/QRpXQic4GXsSyaE6nchWJ8LnFFAvVwnlpWRvVLM4/QZWHKh0oAE49gELhztRm
-         PvTI9B54zjBaczTpWaEikdQINdBuNEVJM270GzkCtGWfqazzA9UBmJ7AUS/JPRmfeED4
-         rwK2YXXOuq3i+TQ358ptwiCPwVAfeNAYeLVpSgXp/xFNzJ99fp44Gv7aprLwPzJbJWll
-         /fomcckvF3uHfDgqytl5AEpugTDH1Z9fITVfD7HUh9xsNw+rQnCpOAmCRhM++2MOienI
-         JBmg==
-X-Gm-Message-State: AOAM532D9VV678Xy59u6xPZr3ibr3W9HHFV1knjm/hSF+D0xB86aXhKc
-        ZMIHBLL6f8bswsQfs7uap0YDuIJ0AJju4EHWXfc=
-X-Google-Smtp-Source: ABdhPJz0GTo2K7lAckez4yf/9SVspRZvlzqmrFBGfIp8PVdkBK8K6gn43IXHJGLCsvCKCe6raQcylQ==
-X-Received: by 2002:a17:906:2e85:: with SMTP id o5mr6995806eji.238.1612190121269;
-        Mon, 01 Feb 2021 06:35:21 -0800 (PST)
-Received: from [10.8.0.2] (terefe.re. [5.255.96.200])
-        by smtp.gmail.com with ESMTPSA id du6sm6377449ejc.78.2021.02.01.06.35.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 06:35:20 -0800 (PST)
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base CPU
- speed to 800 MHz from 1000 MHz
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Andre Heider <a.heider@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        =?UTF-8?Q?G=c3=a9rald_Kerma?= <gerald@gk2.net>,
-        Konstantin Porotchkin <kostap@marvell.com>
-References: <20210114124032.12765-1-pali@kernel.org>
-From:   Tomasz Maciej Nowak <tmn505@gmail.com>
-Message-ID: <0d5518be-9b22-a714-f5f0-72aadc2eebf5@gmail.com>
-Date:   Mon, 1 Feb 2021 15:35:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        id S231359AbhBAPLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Feb 2021 10:11:05 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:43862 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229864AbhBAPK5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 10:10:57 -0500
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 111F994T000757;
+        Mon, 1 Feb 2021 10:10:01 -0500
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 36dbucusdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 01 Feb 2021 10:10:01 -0500
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 111FA0ZN061902
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 1 Feb 2021 10:10:00 -0500
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2;
+ Mon, 1 Feb 2021 10:09:59 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2;
+ Mon, 1 Feb 2021 10:09:59 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.721.2 via Frontend Transport;
+ Mon, 1 Feb 2021 10:09:59 -0500
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 111F9uRY028808;
+        Mon, 1 Feb 2021 10:09:57 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <lars@metafoo.de>,
+        <linux-fpga@vger.kernel.org>, <mdf@kernel.org>,
+        <ardeleanalex@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v3 0/4] clk: clk-axiclgen: add support for ZynqMP
+Date:   Mon, 1 Feb 2021 17:12:41 +0200
+Message-ID: <20210201151245.21845-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20210114124032.12765-1-pali@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-01_06:2021-01-29,2021-02-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1011 suspectscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=987 spamscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102010082
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-W dniu 14.01.2021 o 13:40, Pali Rohár pisze:
-> Hello!
-> 
-> The armada-37xx-cpufreq driver changes base CPU speed from 1000 MHz to
-> 800 MHz on EspressoBIN and Turris MOX. The commit message in patch 2/10
-> explains why and how can this be discovered.
-> 
-> That patch 2/10 led us to discover another bug, in the SOC itself,
-> that causes the CPU to behave weirdly when frequency changes to 1 GHz.
-> A similar erratum is documented by Marvell but only for systems where
-> base frequency is 1.2 GHz.
-> 
-> We've discovered that to make cpufreq scaling stable on Armada 3720
-> systems with base frequency 1 GHz, we also have to set voltage levels
-> for L0 and L1 loads to at least 1108 mV. We were led to this by patch we
-> found in Marvell kernel fork. Fix is in the patch 4/10.
-> 
-> https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/dc33b62c90696afb6adc7dbcc4ebbd48bedec269
-> 
-> During fixing this voltage issue for 1 GHz we discovered another bug in
-> armada-37xx-cpufreq driver that causes CPU instability. Erratum for VDD
-> stabilization was improperly implemented, details are in patch 6/10.
-> 
-> This patch series is also available in my git tree in branch a3720-cpufreq-issues:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pali/linux.git/log/?h=a3720-cpufreq-issues
-> 
-> We have tested this patch series on Espressobin v5 and Turris MOX
-> boards. If you have other Armada 3720 boards (Espressobin v5/v7, uDPU,
-> Devel Board, ...) then it will be nice to do an additional tests and
-> check if instability issues are finally fixed.
-> 
-> There is a discussion on armbian forum that Espressobin v7 is unstable
-> when running at 1 GHz and in this thread was also mentioned above
-> voltage patch from Marvell kernel fork:
-> 
-> https://forum.armbian.com/topic/10429-how-to-make-espressobin-v7-stable/
-> 
-> Marek & Pali
-> 
-> 
-> Marek Behún (3):
->   arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
->   cpufreq: armada-37xx: Fix setting TBG parent for load levels
->   clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM
->     clock
-> 
-> Pali Rohár (7):
->   cpufreq: armada-37xx: Fix the AVS value for loads L0 and L1
->   clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to
->     1 GHz
->   clk: mvebu: armada-37xx-periph: Fix workaround for switching from L1
->     to L0
->   cpufreq: armada-37xx: Fix driver cleanup when registration failed
->   cpufreq: armada-37xx: Fix determining base CPU frequency
->   cpufreq: armada-37xx: Remove cur_frequency variable
->   cpufreq: armada-37xx: Fix module unloading
+https://lore.kernel.org/linux-clk/20210126110826.24221-1-alexandru.ardelean@analog.com/
 
-Hi.
-After running this series for three days, the system is stable and the 
-issue with switching frequency doesn't seem to be there anymore. So:
+Changelog v2 -> v3:
+* added HAS_IOMEM || COMPILE_TEST and OF dependencies to driver in
+  Kconfig
+* added patch 'clk: axi-clkgen: use devm_platform_ioremap_resource() short-hand'
 
-Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+Alexandru Ardelean (4):
+  clk: axi-clkgen: replace ARCH dependencies with driver deps
+  clk: clk-axiclkgen: add ZynqMP PFD and VCO limits
+  dt-bindings: clock: adi,axi-clkgen: add compatible string for ZynqMP
+    support
+  clk: axi-clkgen: use devm_platform_ioremap_resource() short-hand
 
-Thanks.
-
-> 
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi |   3 +-
->  drivers/clk/mvebu/armada-37xx-periph.c       |  83 ++++++++-------
->  drivers/cpufreq/armada-37xx-cpufreq.c        | 100 ++++++++++++++-----
->  3 files changed, 124 insertions(+), 62 deletions(-)
-> 
-
+ .../devicetree/bindings/clock/adi,axi-clkgen.yaml |  1 +
+ drivers/clk/Kconfig                               |  3 ++-
+ drivers/clk/clk-axi-clkgen.c                      | 15 ++++++++++++---
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
 -- 
-TMN
+2.17.1
+
