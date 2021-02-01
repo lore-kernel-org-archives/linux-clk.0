@@ -2,125 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34651C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD9DC433E6
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF13164E22
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3607664E2A
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 10:55:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232966AbhBAKPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Feb 2021 05:15:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbhBAKPn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 05:15:43 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECBBC061574;
-        Mon,  1 Feb 2021 02:15:02 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id d16so15878391wro.11;
-        Mon, 01 Feb 2021 02:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ANsARq6fL07NGibn8cbk7oUpbzEAXo/i2Ol65lcGXGk=;
-        b=auV2FdGYh4MkV590dDE95x07nWp+vQjkQhprR0m03LfdKoR6gqTNf/rdCs03rgO3P3
-         5dRPyI0yeutlaDLKS+KOUEIvTHP3j/fAC3lGmwbM4DXDC6wk7B/36RhA6PJNgy0WpdcC
-         DS1DQWajtK4tl5W1oCYLX1sV/N6YtnKgXeiVyczFQuRyYs0l7PD7UEeVb/BHZ53i5xfi
-         YRSCkQcuvj6/rPuA1cK4h+n0/TUgW8HNG/7w6Rw3tX0Iq1cqs/VcmZAuXEnrl5kQgtVZ
-         rtmfkTYNN0qq3BjqP81vzpTeu56W1Wdsd/84ThscRZulmNU6swRBslleHxnSOKRzdLi1
-         HLkA==
+        id S233268AbhBAKzq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Feb 2021 05:55:46 -0500
+Received: from mail-oi1-f171.google.com ([209.85.167.171]:45308 "EHLO
+        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233410AbhBAKzb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 05:55:31 -0500
+Received: by mail-oi1-f171.google.com with SMTP id g69so18291577oib.12;
+        Mon, 01 Feb 2021 02:55:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ANsARq6fL07NGibn8cbk7oUpbzEAXo/i2Ol65lcGXGk=;
-        b=md9KixQTPUuoOZgESFRZloPY7Fv9QBPMRnWp/b1rHxloYZelD0PXse1Bw0dPxLMm/q
-         wEsqaYVYeIWJaXHnOVM6kQi5zn6XXMX0Nmk9LC1dw6arxXG8LiyOTLwMexUBrQtQzdjq
-         Js4OWRAONtJme3rr3SWnvcSsU4V6vxxzUkr4ma1nbuS/XA6MRuzI1JQ9h61F2877kJGi
-         j/uwTkZMALlpF7jCtwbRVCOb5mqQ3QFphkPKzB6xDkUavdcQNMD76gk7x5m8ChHA+8Dz
-         DXA9Gl93VXamei3vTYjooPNVnKNDZFEOuEr+BBYSxaNUfdWwne8o/JRwL7zWsrHiabG2
-         UJRw==
-X-Gm-Message-State: AOAM532iTp4LEE/LJbkjIEEvxhKZKg7RgDNVoTXVP10xI+4KfTJpYLYn
-        EPSs/wrMfOsiVfhCUZHrhn0=
-X-Google-Smtp-Source: ABdhPJw2bUOgz+nMZFzakj6FRbaxaWpLQcIPs4OFTUfWc/C3daSngW+6ZM4wCuPndF5BEXIGMZjVag==
-X-Received: by 2002:a05:6000:192:: with SMTP id p18mr17067580wrx.69.1612174501673;
-        Mon, 01 Feb 2021 02:15:01 -0800 (PST)
-Received: from ziggy.stardust ([213.195.126.134])
-        by smtp.gmail.com with ESMTPSA id e12sm25284137wrs.67.2021.02.01.02.15.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Feb 2021 02:15:01 -0800 (PST)
-Subject: Re: [PATCH 0/2] Add MediaTek MT8192 clock provider device nodes
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <1608644414-17793-1-git-send-email-weiyi.lu@mediatek.com>
- <4536e0a3-8e64-d2b0-df83-33705d10359a@gmail.com>
- <1612171903.18201.6.camel@mtksdaap41>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <61667c50-edee-d9ef-0731-ce59e6c19995@gmail.com>
-Date:   Mon, 1 Feb 2021 11:15:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TsZddNdEu5n1CGxavoWBCizkLcHFPyez/OBFVu2/Ol4=;
+        b=uZZpSLxlc9IrMJpLJ3ZPp/etwR6FkMSHS45sM5GphC+qvUzPJnL9cLz6icY5RcfpTI
+         pQdfKo0RTE6nZbS/wslaPxsUCNH+VXSTe7MZ3u0L4BKGNM9GPTT6I95+Ih4fdvg3xsMP
+         3sCIPBTu8LMeMxL7fOPDj7Kew3z1ebVb2Aad0EL44c2Dt1qPHLbvR+jTwzk0FJsjyMqn
+         286lQgNhpdWD9NAw0RJldh/z9eOvXaOE3eYtyCSGOda5VoxzI+p26DsqkWqznsllGE8I
+         i8McmBxqQw8/n99lYkBXIYpRPIWg7D8pIormuDm9C62Ap0CLhBKyl9d49J7lwYOgyYsl
+         TMRg==
+X-Gm-Message-State: AOAM532wHNjigD30ZL3O34rQ0i1YTI5OUG4tWgXj9AJPWOdOtZyTReq5
+        aSzHjBcwbDDggIs0ccXcz4rZkuUmakp+G9ehYto=
+X-Google-Smtp-Source: ABdhPJyN2ZpzXcNCMXgUY3hrigvtGooBg8Ikn1SHhUS4Nh5ldPH91gGT2AWWgTkluWm7nrP3FGpgBWJnKTnSMsXIHs0=
+X-Received: by 2002:aca:4d8d:: with SMTP id a135mr10215866oib.153.1612176890041;
+ Mon, 01 Feb 2021 02:54:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1612171903.18201.6.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210128104446.164269-1-tudor.ambarus@microchip.com> <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
+In-Reply-To: <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 1 Feb 2021 11:54:38 +0100
+Message-ID: <CAMuHMdXqQL3PQvgC-zACkMyF8S3kg9-RPxvJMK8WXqu45EhwEg@mail.gmail.com>
+Subject: Re: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>, mirq-linux@rere.qmqm.pl,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Weiyi,
+Hi Saravana,
 
-On 01/02/2021 10:31, Weiyi Lu wrote:
-> On Sun, 2021-01-31 at 14:27 +0100, Matthias Brugger wrote:
->>
->> On 22/12/2020 14:40, Weiyi Lu wrote:
->>> This series is based on v5.10-rc1, MT8192 dts v6[1] and
->>> MT8192 clock v6 series[2].
->>>
->>> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=373899
->>> [2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=405295
->>>
->>
->> [1] is already mainline. You could add this patch as a new one to [2]. But
->> please try to improve the series, before sending just a new version with this
->> patch added.
->>
->> Regards,
->> Matthias
->>
-> Hi Matthias,
-> 
-> Actually I'm a little confused now. Stephen suggested me to send clock
-> dts separately because dts may not go through his tree.
-> So I separated it from the MT8192 clock series since clock v6.
-> What do you suggest me to do next time?
-> 
+On Thu, Jan 28, 2021 at 6:08 PM Saravana Kannan <saravanak@google.com> wrote:
+> I already accounted for early clocks like this when I designed
+> fw_devlink. Each driver shouldn't need to set OF_POPULATED.
+> drivers/clk/clk.c already does this for you.
+>
+> I think the problem is that your driver is using
+> CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE(). The comments for
+> CLK_OF_DECLARE_DRIVER() says:
+> /*
+>  * Use this macro when you have a driver that requires two initialization
+>  * routines, one at of_clk_init(), and one at platform device probe
+>  */
+>
+> In your case, you are explicitly NOT having a driver bind to this
+> clock later. So you shouldn't be using CLK_OF_DECLARE() instead.
 
-Yes, now that you mention that, I remember...
-OK, then I'd propose to resend the DTS patches once the clock patches are accepted.
+Unless I'm missing something, name##_of_clk_init_driver() clearing
+OF_POPULATED again causes consumer driver probing to be postponed by
+fw_devlink until the second initialization phase of the provider has been
+completed?
 
-Regards,
-Matthias
+This is wrong if the consumer only needs a clock instantiated during the
+first phase, and may cause issues if the consumer is a critical device.
+E.g. a timer, on ARM SoCs lacking an architecture timer (pre-Cortex
+A7/A15) or global timer (pre-Cortex A9, or single-core Cortex A9).
+Probably there are more examples.
 
->>> Weiyi Lu (2):
->>>   arm64: dts: mediatek: Add mt8192 clock controllers
->>>   arm64: dts: mediatek: Correct UART0 bus clock of MT8192
->>>
->>>  arch/arm64/boot/dts/mediatek/mt8192.dtsi | 165 ++++++++++++++++++++++-
->>>  1 file changed, 164 insertions(+), 1 deletion(-)
->>>
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
