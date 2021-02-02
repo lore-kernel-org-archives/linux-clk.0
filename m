@@ -2,120 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA2CC433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 17:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAACC433E9
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 04:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CACB264E56
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Feb 2021 17:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AAF664ED4
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 04:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbhBARRu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Feb 2021 12:17:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230110AbhBARRt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 12:17:49 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D47C061573
-        for <linux-clk@vger.kernel.org>; Mon,  1 Feb 2021 09:17:09 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id i71so4073920ybg.7
-        for <linux-clk@vger.kernel.org>; Mon, 01 Feb 2021 09:17:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1qkxIjHyZ+mZgHgLlc7E3w26cTfMFkJdXD5l+CQq2Vs=;
-        b=bjR18GHDHdIGJaZQoNodXMX+SfcsUDq4U0WVFDyxu75y4NuZh7CAv8Vj1mbadkC2lV
-         heOQiNNJyB13Bc4oFpGAKtQEwDn7QJvQ6SmRVTTZuRLiuVjFDILaCl9YN9bxi3v2vjNK
-         vGIyuyz2wYkrAuI4/nhEB4pH4w9mEB7WgY9g9n80k9xGBKx70vg3rYoRpmGjijWBNEz2
-         jyv4lTO1QUsH1r+ZppGs+s0M2UJdrkFLfSVeoGacCjRgCcpgmyFrFRAL5XKMBZ4f6cMD
-         p/cnKVySXA9+2wcyA7MfXGhbGC4DTpKAYjM2TcPxiidktCveAoNle26PXweBLhDXmF1y
-         cF4A==
+        id S231671AbhBBEWT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Feb 2021 23:22:19 -0500
+Received: from mail-pl1-f172.google.com ([209.85.214.172]:44708 "EHLO
+        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231488AbhBBEWS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Feb 2021 23:22:18 -0500
+Received: by mail-pl1-f172.google.com with SMTP id j11so9126470plt.11;
+        Mon, 01 Feb 2021 20:22:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1qkxIjHyZ+mZgHgLlc7E3w26cTfMFkJdXD5l+CQq2Vs=;
-        b=hDudAVi5eooPdLTnedtAfG2gOEb52KBzAQFTHc1L46jIVA+wPfVO5WgADY4hu3ZbX4
-         TVBDy2167kjDvJpfk6SObvZeEh9ub4T6qa1KMpegVLv/89KUMCn4gTjic1YiuwUoKqRz
-         DR6mgRi9UdPgwAVjznChbYV5/OvIb88FIMmUV0N/BA0e09qvFM1xyQcusJ9rfRGrjF2L
-         EPAnCX8OJG2zstXftPYcQm+L/NGo7LxMs+HLjry9q37/rVjSyzsQuxR+aM/JJAxTRwp4
-         7UXNrD693JqGHI3ksZd96XrXOuE1xhDL87aX7lqzAn2jLwc5HaPS/aeo1u5Wm4ihtwZq
-         2ZFA==
-X-Gm-Message-State: AOAM533rQXKhX+h5c7Vxmr8hDqguf0MuySikORa0obEOb5qHuMya7/x3
-        4gROtRD3vO0ptOG0BPPN8GEGvDDRGJ1hN/Dqjnn1ww==
-X-Google-Smtp-Source: ABdhPJwHbBdpEpbJml1HqFqx+V4fHSyTjy1ZBh3LG1HD9Y734KThlFsCP+fJMfL/iymJ0fjp3/jt283CL6rD9p4CT7E=
-X-Received: by 2002:a25:cc89:: with SMTP id l131mr24523969ybf.346.1612199828847;
- Mon, 01 Feb 2021 09:17:08 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SIwjUPSErfATOEPFPNdwWAOmlNousZElCyKYrK3KGNk=;
+        b=qFzZWN184E4OEg0gv/InX0dwzX7cdDBHe7XBVq2WkmXiTKR2Fl+lpK3XIjrS1C6cqH
+         IzLHl7FH2ON0JCk6hfWHdK+B3FJiIKent8fF3Qz4DVbKtVheeJEcQRd78HNMZyw0LXY5
+         uiWe1E5pYIS4XQvwe2mTE0PGNvIIrWxsR5g8q7l6mabv7RiUQ6uxppe82Ga859u41YJP
+         Wk7EbHj3mfqgSUG0WsRiV2HyQMf/dE3+/ACkCoewVjnUVD8XUkNDNbWFIS0InBV9Kzu4
+         FFE/EbDLUARk/zQZzJ22tBVWSaIzMcmAPTlbPHuT0IoSj4lf/XXZaSPyCJ9w8TeINswZ
+         6BHQ==
+X-Gm-Message-State: AOAM533o1zi1FToFhLPeB/WYjTkmus9o2kb0AypQNQ4a6573zNMBV9x5
+        oOFn539GI4JZi11HQyiGeCM=
+X-Google-Smtp-Source: ABdhPJw30pd+73XF9MrM9PnfYr5STVqRuH8wgVy84YQ4KZE1lBmvdRSlOWvy4U+KgeAPvX6L4w23xg==
+X-Received: by 2002:a17:90b:33ca:: with SMTP id lk10mr2227093pjb.186.1612239697173;
+        Mon, 01 Feb 2021 20:21:37 -0800 (PST)
+Received: from localhost ([2601:647:5b00:1161:a4cc:eef9:fbc0:2781])
+        by smtp.gmail.com with ESMTPSA id bk18sm1036440pjb.41.2021.02.01.20.21.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Feb 2021 20:21:36 -0800 (PST)
+Date:   Mon, 1 Feb 2021 20:21:35 -0800
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, lars@metafoo.de,
+        linux-fpga@vger.kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
+        Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v3 1/4] clk: axi-clkgen: replace ARCH dependencies with
+ driver deps
+Message-ID: <YBjTT7pRUMxnuM9s@epycbox.lan>
+References: <20210201151245.21845-1-alexandru.ardelean@analog.com>
+ <20210201151245.21845-2-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-References: <20210128104446.164269-1-tudor.ambarus@microchip.com>
- <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com> <CAMuHMdXqQL3PQvgC-zACkMyF8S3kg9-RPxvJMK8WXqu45EhwEg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXqQL3PQvgC-zACkMyF8S3kg9-RPxvJMK8WXqu45EhwEg@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 1 Feb 2021 09:16:32 -0800
-Message-ID: <CAGETcx-aK53QCKu1h-jXxZN85bH-2uQo1MGFXGgpiLJyTfFG8Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>, mirq-linux@rere.qmqm.pl,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210201151245.21845-2-alexandru.ardelean@analog.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 1, 2021 at 2:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Thu, Jan 28, 2021 at 6:08 PM Saravana Kannan <saravanak@google.com> wrote:
-> > I already accounted for early clocks like this when I designed
-> > fw_devlink. Each driver shouldn't need to set OF_POPULATED.
-> > drivers/clk/clk.c already does this for you.
-> >
-> > I think the problem is that your driver is using
-> > CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE(). The comments for
-> > CLK_OF_DECLARE_DRIVER() says:
-> > /*
-> >  * Use this macro when you have a driver that requires two initialization
-> >  * routines, one at of_clk_init(), and one at platform device probe
-> >  */
-> >
-> > In your case, you are explicitly NOT having a driver bind to this
-> > clock later. So you shouldn't be using CLK_OF_DECLARE() instead.
->
+On Mon, Feb 01, 2021 at 05:12:42PM +0200, Alexandru Ardelean wrote:
+> The intent is to be able to run this driver to access the IP core in setups
+> where FPGA board is also connected via a PCIe bus. In such cases the number
+> of combinations explodes, where the host system can be an x86 with Xilinx
+> Zynq/ZynqMP/Microblaze board connected via PCIe.
+> Or even a ZynqMP board with a ZynqMP/Zynq/Microblaze connected via PCIe.
+> 
+> To accommodate for these cases, this change removes the limitation for this
+> driver to be compilable only on Zynq/Microblaze architectures.
+> And adds dependencies on the mechanisms required by the driver to work (OF
+> and HAS_IOMEM).
+> 
+> Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>  drivers/clk/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 85856cff506c..cee1d4e657bc 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -247,7 +247,8 @@ config CLK_TWL6040
+>  
+>  config COMMON_CLK_AXI_CLKGEN
+>  	tristate "AXI clkgen driver"
+> -	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
+> +	depends on HAS_IOMEM || COMPILE_TEST
+> +	depends on OF
+>  	help
+>  	  Support for the Analog Devices axi-clkgen pcore clock generator for Xilinx
+>  	  FPGAs. It is commonly used in Analog Devices' reference designs.
+> -- 
+> 2.17.1
+> 
 
-Typo. I meant to say this driver SHOULD be using CLK_OF_DECLARE()
-instead. I wonder if this is what caused you to send the email --
-because we are saying the same thing.
-
-> Unless I'm missing something, name##_of_clk_init_driver() clearing
-> OF_POPULATED again causes consumer driver probing to be postponed by
-> fw_devlink until the second initialization phase of the provider has been
-> completed?
-
-Right, if they use CLK_OF_DECLARE_DRIVER() what you said above will
-happen and that's the issue they are trying to fix.
-
-> This is wrong if the consumer only needs a clock instantiated during the
-> first phase, and may cause issues if the consumer is a critical device.
-> E.g. a timer, on ARM SoCs lacking an architecture timer (pre-Cortex
-> A7/A15) or global timer (pre-Cortex A9, or single-core Cortex A9).
-> Probably there are more examples.
-
-So, needing devices like IRQ, timer and clocks early is fine.
-fw_devlink can handle that correctly if the proper macros are used
-(since most frameworks set the OF_POPULATED flag for these devices).
-
--Saravana
+Thanks,
+Moritz
