@@ -2,250 +2,270 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DE7C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 11:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4929C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 20:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33D3864EC1
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 11:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BD1164E60
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Feb 2021 20:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbhBBLiw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Feb 2021 06:38:52 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:60276 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229466AbhBBLiu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Feb 2021 06:38:50 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B01C81A0475;
-        Tue,  2 Feb 2021 12:37:59 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A1EB51A03D4;
-        Tue,  2 Feb 2021 12:37:59 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8C142203A1;
-        Tue,  2 Feb 2021 12:37:59 +0100 (CET)
-Date:   Tue, 2 Feb 2021 13:37:59 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <sha@pengutronix.de>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC] clk: Mark HW enabled clocks as enabled in core
-Message-ID: <20210202113759.hylcsujya6ztuier@fsr-ub1664-175>
-References: <1611660096-12381-1-git-send-email-abel.vesa@nxp.com>
- <20210126115105.GD28722@pengutronix.de>
- <20210126131239.uyolpawk2jfat7z4@fsr-ub1664-175>
- <20210126143017.GF28722@pengutronix.de>
- <20210127101220.wuzlodquo7ix4pga@fsr-ub1664-175>
- <20210127104720.GH28722@pengutronix.de>
- <20210127111631.htiwaxvhqtm66ntn@fsr-ub1664-175>
- <20210129081948.GF19583@pengutronix.de>
+        id S233167AbhBBU4c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Feb 2021 15:56:32 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:43278 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230002AbhBBU4a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Feb 2021 15:56:30 -0500
+Received: by mail-ot1-f46.google.com with SMTP id v1so21244231ott.10;
+        Tue, 02 Feb 2021 12:56:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YcDLZh3Cqrzft9rIs/Kq27AfKEBZ9vkw9dbEJP0DrjM=;
+        b=Y7rMbq9cJm7XnPC0pZuVKewonHDiuxEz/xL/aouk8lRqfkX2SdJJQ6viO7MQnE8l8S
+         HfeiwAZQtKDQmdDWj4PFsEKIvR/hg8w+Ayly1z+r1TEhOaWTGE3aWzogxG8nUf+QMUJh
+         MLv7v5hxjf+33ZS3YEDu4l25BimQ/Vw8u3Zk/tgzxOWXRe66kMSa7rIyxVvfUeqt0o3K
+         QaNBoWOeDoYdHdIiAdqBheULxZfOLpONCKkXcfaSFT3qARhoict0s8dVz6soWYtgqZwv
+         km8VwhlZs84TYGZ2sytM4/IiodccmBJzKRzE7Q7+ibGNUOCHAAdzmBptsAl7Ieyoi1y0
+         5hlA==
+X-Gm-Message-State: AOAM530VLVPgyzAudXUZ7/n06w8cEpnk7NkMj4ihz/E762XVDpG8jT9z
+        3xdZ34q2fNC7q6IrVjvZyadZkciSPQ==
+X-Google-Smtp-Source: ABdhPJz+bxVqZHcA6WQ+rYUVLbRdjFrxDoLmtrg5Q88bRT0/dSLxHv+dlmm7nH5rNIdmYX/wLxVRrA==
+X-Received: by 2002:a05:6830:1041:: with SMTP id b1mr16514781otp.335.1612299347994;
+        Tue, 02 Feb 2021 12:55:47 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id k15sm4206otp.10.2021.02.02.12.55.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Feb 2021 12:55:46 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vincent Cheng <vincent.cheng.xh@renesas.com>,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: Fix undocumented compatible strings in examples
+Date:   Tue,  2 Feb 2021 14:55:42 -0600
+Message-Id: <20210202205544.24812-1-robh@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210129081948.GF19583@pengutronix.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-01-29 09:19:48, Sascha Hauer wrote:
-> On Wed, Jan 27, 2021 at 01:16:31PM +0200, Abel Vesa wrote:
-> > On 21-01-27 11:47:20, Sascha Hauer wrote:
-> > > On Wed, Jan 27, 2021 at 12:12:20PM +0200, Abel Vesa wrote:
-> > > > On 21-01-26 15:30:17, Sascha Hauer wrote:
-> > > > > On Tue, Jan 26, 2021 at 03:12:39PM +0200, Abel Vesa wrote:
-> > > > > > On 21-01-26 12:51:05, Sascha Hauer wrote:
-> > > > > > > On Tue, Jan 26, 2021 at 01:21:36PM +0200, Abel Vesa wrote:
-> > > > > > > > Some clocks are already enabled in HW even before the kernel
-> > > > > > > > starts to boot. So, in order to make sure that these clocks do not
-> > > > > > > > get disabled when clk_disable_unused call is done or when
-> > > > > > > > reparenting clocks, we enable them in core on clock registration.
-> > > > > > > > Such a clock will have to be registered with CLK_IGNORE_UNUSED flag
-> > > > > > > > and also needs to have the is_enabled ops implemented.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > > > > > > ---
-> > > > > > > >  drivers/clk/clk.c | 11 ++++++++++-
-> > > > > > > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > > > > > index 3d751ae5bc70..26d55851cfa5 100644
-> > > > > > > > --- a/drivers/clk/clk.c
-> > > > > > > > +++ b/drivers/clk/clk.c
-> > > > > > > > @@ -3416,6 +3416,7 @@ static int __clk_core_init(struct clk_core *core)
-> > > > > > > >  	int ret;
-> > > > > > > >  	struct clk_core *parent;
-> > > > > > > >  	unsigned long rate;
-> > > > > > > > +	bool is_hw_enabled = false;
-> > > > > > > >  	int phase;
-> > > > > > > >  
-> > > > > > > >  	if (!core)
-> > > > > > > > @@ -3558,12 +3559,20 @@ static int __clk_core_init(struct clk_core *core)
-> > > > > > > >  		rate = 0;
-> > > > > > > >  	core->rate = core->req_rate = rate;
-> > > > > > > >  
-> > > > > > > > +	/*
-> > > > > > > > +	 * If the clock has the CLK_IGNORE_UNUSED flag set and it is already
-> > > > > > > > +	 * enabled in HW, enable it in core too so it won't get accidentally
-> > > > > > > > +	 * disabled when walking the orphan tree and reparenting clocks
-> > > > > > > > +	 */
-> > > > > > > > +	if (core->flags & CLK_IGNORE_UNUSED && core->ops->is_enabled)
-> > > > > > > > +		is_hw_enabled = clk_core_is_enabled(core);
-> > > > > > > > +
-> > > > > > > >  	/*
-> > > > > > > >  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-> > > > > > > >  	 * don't get accidentally disabled when walking the orphan tree and
-> > > > > > > >  	 * reparenting clocks
-> > > > > > > >  	 */
-> > > > > > > > -	if (core->flags & CLK_IS_CRITICAL) {
-> > > > > > > > +	if (core->flags & CLK_IS_CRITICAL || is_hw_enabled) {
-> > > > > > > >  		unsigned long flags;
-> > > > > > > >  
-> > > > > > > >  		ret = clk_core_prepare(core);
-> > > > > > > 
-> > > > > > > This means that a bootloader enabled clock with CLK_IGNORE_UNUSED flag
-> > > > > > > can effectively never be disabled because the prepare/enable count is 1
-> > > > > > > without any user. This is the behaviour we want to have with critical
-> > > > > > > clocks, but I don't think this is desired for clocks with the
-> > > > > > > CLK_IGNORE_UNUSED flag.
-> > > > > > > 
-> > > > > > 
-> > > > > > Here is the way I see it. Critical clocks means the system can't work
-> > > > > > without, so do not ever disable/unprepare. The "ignore unused" flag
-> > > > > > tells the core to not do anything to this clock, even if it is unused.
-> > > > > > For now, it just leaves the clock alone, but the flag could be used for
-> > > > > > some other stuff in the future.
-> > > > > > 
-> > > > > > Now, the behavior is entirely different.
-> > > > > > 
-> > > > > > For the "critical" clock disable/unprepare, the core does nothing
-> > > > > > (returns without calling the disable/unprepare ops).
-> > > > > > 
-> > > > > > As for the "ignore unused", the clock can be disabled later on,
-> > > > > > which would decrement the prepare/enable counter.
-> > > > > > The imx earlycon serial driver could implement a late initcall,
-> > > > > > that takes the clocks from the devicetree uart node and disables
-> > > > > > them. The user doesn't even count in this situation.
-> > > > > > 
-> > > > > > Plus, there is no other reason someone would use the CLK_IGNORE_UNUSED,
-> > > > > > other than leaving a clock that is already enabled stay as is (at least,
-> > > > > > not with the current implementation). So why not mark it as enabled in 
-> > > > > > the core, if the HW says it is enabled ?
-> > > > > 
-> > > > > The CLK_IGNORE_UNUSED is there from the start of the clock framework, so
-> > > > > there is no commit message that tells what it shall be used for. AFAIR
-> > > > > the flag was thought for being used with clocks which should not be
-> > > > > disabled, but had no driver initially that used them.
-> > > > > Implementation of this flag was likely broken from the start as well,
-> > > > > because in this situation:
-> > > > > 
-> > > > >       a
-> > > > >      / \
-> > > > >     b   c (CLK_IGNORE_UNUSED)
-> > > > > 
-> > > > > When clk b is enabled/disabled then the parent of clock c is disabled as
-> > > > > well, so CLK_IGNORE_UNUSED doesn't help at all. In that sense your patch
-> > > > > really improves things, because the above example would be fixed.
-> > > > > 
-> > > > > Anyway, CLK_IGNORE_UNUSED is excessively used in the kernel, we have
-> > > > > over 1000 clocks that have this flag set. With your patch all of a
-> > > > > sudden all these clocks won't be disabled anymore and all these clocks
-> > > > > will require some fixup to finally disable them when desired. I don't
-> > > > > think this is a good idea.
-> > > > > 
-> > > > 
-> > > > OK, then, how about this ?
-> > > > 
-> > > > I can add a flag to the each imx gate clock type used for each of the
-> > > > uart clocks in every platform driver, flag that would say something like this:
-> > > > "Mark the clock as enabled in the core if the HW says it is already enabled."
-> > > > This would happen right after registration of the clock and the flag will be
-> > > > imx specific (not in the core).
-> > > 
-> > > How do you want to implement the "Mark the clock as enabled in the core"
-> > > part without using the clk consumer API, which is the thing you want to
-> > > avoid?
-> > > 
-> > 
-> > Hmm, this is actually a problem, there are no clk_hw enable/prepare API.
-> > You are right about this one.
-> > 
-> > > > 
-> > > > There would be the following advantages:
-> > > > - only the uart clock that was left enabled by the bootloader will be left
-> > > > on after the clk_disable_unused call
-> > > 
-> > > Actually this would be a regression compared to current upstream. Right
-> > > now the UART clock is kept on until the clk_disable_unused call and
-> > > disabled in that call. This is what we want, because at that time the
-> > > UART driver has taken over and takes care of the clocks itself.
-> > > When after clk_disable_unused() there is still a reference on the UART
-> > > clock we could never turn it off.
-> > 
-> > They could be turned off from the late initcall from imx serial.
-> > 
-> > > 
-> > > > - fixing the situation where a common parent of the uart clocks is reparenting
-> > > > or disabled by some other child clock.
-> > > 
-> > > That's not an issue currently.
-> > 
-> > Yes, as of now, it's not an issue because we're treating the uart clocks as a
-> > special case by controlling them straight from the platform driver. But I would
-> > like to get rid of this special case. Why ? Because, in the future, the clock
-> > drivers would only use the API from clk-provider header. The clk.h should move
-> > away for good from the clock drivers.
-> > 
-> > > 
-> > > > - the platform drivers will not use the clk consumer API anymore
-> > > 
-> > > I'm not sure how you want to archieve this.
-> > > 
-> > 
-> > Basically, all the clock drivers should move towards clk_hw APIi only.
-> > 
-> > > > - any future imx platform could be using that flag for uart clocks
-> > > 
-> > > No flags are necessary currently.
-> > > 
-> > > What's so wrong with the way it's currently implemented? Currently with
-> > > the array of possible UART clocks it's really not nice, but with Adams
-> > > patch which parses the clocks directly from the device node providing
-> > > the stdout UART the arrays are gone and it looks ok to me.
-> > 
-> > Again, the ultimate goal here is to remove every clock consumer API from
-> > all the imx clock drivers. The uart clocks are, at this point, that ugly
-> > special case we can't seem to get rid of. The future platforms will use
-> > the same approach if we don't deal with it. At this point, the imx6/7/8
-> > platforms are not entirely clk_hw based API due to this uart clocks thing.
-> > I intend to move the older imx to clk_hw API and that will leave us with
-> > the uart clocks being the only exception from the rule, using clock consumer
-> > API, in all the imx clock platform drivers.
-> 
-> Technically we could move the retrieving and enabling of the early UART
-> clocks away from the clock driver to the UART driver. The only reason
-> that the clock setup is called from the clock driver is that we can be
-> sure that the just registered clocks are not yet manipulated from other
-> code before the the UART clocks can be enabled.
-> 
+Running 'dt-validate -m' will flag any compatible strings missing a schema.
+Fix all the errors found in DT binding examples. Most of these are just
+typos.
 
-The exact same reason I suggested we have those clocks enabled right after
-registration. But since this seems to be not such an easy task, lets just
-go with Adam's patches for now.
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Daniel Palmer <daniel@thingy.jp>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Avi Fishman <avifishman70@gmail.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Tali Perry <tali.perry1@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Vincent Cheng <vincent.cheng.xh@renesas.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org
+Cc: iommu@lists.linux-foundation.org
+Cc: linux-watchdog@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/allwinner,sun9i-a80-usb-clocks.yaml        | 2 +-
+ Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml  | 4 ++--
+ Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml        | 2 +-
+ Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml | 2 +-
+ .../devicetree/bindings/i2c/nuvoton,npcm7xx-i2c.yaml          | 2 +-
+ .../devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml         | 2 +-
+ .../devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml   | 2 +-
+ .../devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml   | 2 +-
+ .../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml   | 2 +-
+ Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml          | 4 +---
+ Documentation/devicetree/bindings/watchdog/ti,rti-wdt.yaml    | 4 ++--
+ 11 files changed, 13 insertions(+), 15 deletions(-)
 
-> Sascha
-> 
-> -- 
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.pengutronix.de%2F&amp;data=04%7C01%7Cabel.vesa%40nxp.com%7Cbeff83cd6c7043e9ca1a08d8c42ea5bb%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637475051920342165%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=ROtcybkweyLYIRA%2BREexDawemtSeDUPFO6zDw8ZnqLQ%3D&amp;reserved=0  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun9i-a80-usb-clocks.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun9i-a80-usb-clocks.yaml
+index fa0ee03a527f..53cc6df0df96 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun9i-a80-usb-clocks.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun9i-a80-usb-clocks.yaml
+@@ -18,7 +18,7 @@ properties:
+     const: 1
+ 
+   compatible:
+-    const: allwinner,sun9i-a80-usb-clocks
++    const: allwinner,sun9i-a80-usb-clks
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+index eb241587efd1..118c5543e037 100644
+--- a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
++++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+@@ -66,8 +66,8 @@ properties:
+       - arm,syscon-icst525-integratorcp-cm-mem
+       - arm,integrator-cm-auxosc
+       - arm,versatile-cm-auxosc
+-      - arm,impd-vco1
+-      - arm,impd-vco2
++      - arm,impd1-vco1
++      - arm,impd1-vco2
+ 
+   clocks:
+     description: Parent clock for the ICST VCO
+diff --git a/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml b/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
+index 1465c9ebaf93..1d48ac712b23 100644
+--- a/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
++++ b/Documentation/devicetree/bindings/crypto/ti,sa2ul.yaml
+@@ -66,7 +66,7 @@ examples:
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+     main_crypto: crypto@4e00000 {
+-        compatible = "ti,j721-sa2ul";
++        compatible = "ti,j721e-sa2ul";
+         reg = <0x4e00000 0x1200>;
+         power-domains = <&k3_pds 264 TI_SCI_PD_EXCLUSIVE>;
+         dmas = <&main_udmap 0xc000>, <&main_udmap 0x4000>,
+diff --git a/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml b/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+index 1f2ef408bb43..fe1e1c63ffe3 100644
+--- a/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/mstar,msc313-gpio.yaml
+@@ -46,7 +46,7 @@ examples:
+     #include <dt-bindings/gpio/msc313-gpio.h>
+ 
+     gpio: gpio@207800 {
+-      compatible = "mstar,msc313e-gpio";
++      compatible = "mstar,msc313-gpio";
+       #gpio-cells = <2>;
+       reg = <0x207800 0x200>;
+       gpio-controller;
+diff --git a/Documentation/devicetree/bindings/i2c/nuvoton,npcm7xx-i2c.yaml b/Documentation/devicetree/bindings/i2c/nuvoton,npcm7xx-i2c.yaml
+index e3ef2d36f372..128444942aec 100644
+--- a/Documentation/devicetree/bindings/i2c/nuvoton,npcm7xx-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/nuvoton,npcm7xx-i2c.yaml
+@@ -17,7 +17,7 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: nuvoton,npcm7xx-i2c
++    const: nuvoton,npcm750-i2c
+ 
+   reg:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
+index cde1afa8dfd6..349633108bbd 100644
+--- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
++++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
+@@ -93,7 +93,7 @@ examples:
+     #include <dt-bindings/power/r8a7791-sysc.h>
+ 
+     ipmmu_mx: iommu@fe951000 {
+-        compatible = "renasas,ipmmu-r8a7791", "renasas,ipmmu-vmsa";
++        compatible = "renesas,ipmmu-r8a7791", "renesas,ipmmu-vmsa";
+         reg = <0xfe951000 0x1000>;
+         interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
+                      <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
+index 54631dc1adb0..5dbb84049ff6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml
+@@ -63,7 +63,7 @@ examples:
+         reg = <0x1e6e2000 0x1a8>;
+ 
+         pinctrl: pinctrl {
+-            compatible = "aspeed,g4-pinctrl";
++            compatible = "aspeed,ast2400-pinctrl";
+ 
+             pinctrl_i2c3_default: i2c3_default {
+                 function = "I2C3";
+diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
+index a90c0fe0495f..ad1c33364b38 100644
+--- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml
+@@ -81,7 +81,7 @@ examples:
+             reg = <0x1e6e2000 0x1a8>;
+ 
+             pinctrl: pinctrl {
+-                compatible = "aspeed,g5-pinctrl";
++                compatible = "aspeed,ast2500-pinctrl";
+                 aspeed,external-nodes = <&gfx>, <&lhc>;
+ 
+                 pinctrl_i2c3_default: i2c3_default {
+diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
+index c78ab7e2eee7..ad91c0bc54da 100644
+--- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml
+@@ -95,7 +95,7 @@ examples:
+         reg = <0x1e6e2000 0xf6c>;
+ 
+         pinctrl: pinctrl {
+-            compatible = "aspeed,g6-pinctrl";
++            compatible = "aspeed,ast2600-pinctrl";
+ 
+             pinctrl_pwm10g1_default: pwm10g1_default {
+                 function = "PWM10";
+diff --git a/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml b/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
+index 239b49fad805..658cec67743e 100644
+--- a/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
++++ b/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
+@@ -59,9 +59,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-    i2c@1 {
+-        compatible = "abc,acme-1234";
+-        reg = <0x01 0x400>;
++    i2c {
+         #address-cells = <1>;
+         #size-cells = <0>;
+         phc@5b {
+diff --git a/Documentation/devicetree/bindings/watchdog/ti,rti-wdt.yaml b/Documentation/devicetree/bindings/watchdog/ti,rti-wdt.yaml
+index c1348db59374..054584d7543a 100644
+--- a/Documentation/devicetree/bindings/watchdog/ti,rti-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/ti,rti-wdt.yaml
+@@ -57,8 +57,8 @@ examples:
+      */
+     #include <dt-bindings/soc/ti,sci_pm_domain.h>
+ 
+-    watchdog0: rti@2200000 {
+-        compatible = "ti,rti-wdt";
++    watchdog@2200000 {
++        compatible = "ti,j7-rti-wdt";
+         reg = <0x2200000 0x100>;
+         clocks = <&k3_clks 252 1>;
+         power-domains = <&k3_pds 252 TI_SCI_PD_EXCLUSIVE>;
+-- 
+2.27.0
+
