@@ -2,82 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2907C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 10:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F00C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 10:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5023964E36
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 10:17:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D8A64F5C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 10:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhBCKQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 05:16:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232865AbhBCKQu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 05:16:50 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56311C06174A;
-        Wed,  3 Feb 2021 02:16:10 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id y187so4619832wmd.3;
-        Wed, 03 Feb 2021 02:16:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:message-id:mime-version;
-        bh=yl2GMo/ZRyYTJF+nXp5dEsJ4EzRz6Kgdjk3GzIkM2DE=;
-        b=n0SqmLaWgMRqLX6zlac8j3+FNiXueFvuA1DG7treIv2WRC9oo/Px7TdZYgYoBtFaur
-         +igdH1tZPQVPOaeyrsugBcLmEG5v1gzS793GqHtTiNBfn8dAq/2CoxQT+SYtO8FcrJRm
-         HCbIyl9jKrjop+vk2QtpWjRfMwJm+Q5aH/pIoZLTUNZdANyzvpmxmfJSZuAi9Au7IvHq
-         ScMUR0ZzGyqODtEg+bPbVPhcsww0mTbM0d25NpRqc1O4M1i5UghD4jVjE11j36Y8bial
-         srMvLSEYG6RR5CuGrSriDriwmsg2ETk5oenBAFBnw/0eLpKk50ZXRaybx5ohoxNouf56
-         bLlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:mime-version;
-        bh=yl2GMo/ZRyYTJF+nXp5dEsJ4EzRz6Kgdjk3GzIkM2DE=;
-        b=kU2zf3YDyhgSHQ56YMy0HKQeEJ6Mm+MUcod3IqF4f1wj8uBh6a/SC50hA6NrNxcYT6
-         qhZOChHG3u0F1SaCV+4i3KVs/8SwWcmpZtliZBhLti2S9O9c3F3OxZ/8OiYt/tayqnhS
-         5/MdV0FUiZZi6W8OLibSIBGWf9gXdS01rB/2H2QiUiHvDPY2/9FKiEO9xi6KS9Pg3ABG
-         rHbxRT6UygSonzVDZtti3WxXcSsgMY6xBaZRT7cyWdE1A9GBY8fnGgo2sDTvKbRv9fmw
-         VQwZPQ1fJiBwFNnFsUP7nt3/SVbiFefuS89Nme0w4JJjHuVkzShtUisJOvvarDw5gHJ4
-         lx2g==
-X-Gm-Message-State: AOAM530Pv0FORgN7KZfeZEbmq/+LF/0Q2JOycv3CTiwqjdZFswkBOsFP
-        +JG5Y2KVhxks5g7Mq/pMngrEjKTdeTQ=
-X-Google-Smtp-Source: ABdhPJwUdLzfSYpQmEYMXxLnBXpDYUNGxDilIJxXfL+T8oTA22l8fTLoL8WsjxZjsNxDaceM7ZdeZQ==
-X-Received: by 2002:a1c:6308:: with SMTP id x8mr2134937wmb.78.1612347369057;
-        Wed, 03 Feb 2021 02:16:09 -0800 (PST)
-Received: from [10.19.0.22] (89-38-97-125.hosted-by-worldstream.net. [89.38.97.125])
-        by smtp.gmail.com with ESMTPSA id b3sm2315369wme.32.2021.02.03.02.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Feb 2021 02:16:08 -0800 (PST)
-Date:   Wed, 03 Feb 2021 14:15:58 +0400
-From:   Yassine Oudjana <yassine.oudjana@gmail.com>
-Subject: Re: [PATCH v5 0/5] msm8996 CPU scaling support
-To:     loic.poulain@linaro.org
-Cc:     amit.kucheria@linaro.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org
-Message-Id: <M67YNQ.F8F0P7L0UKV81@gmail.com>
-X-Mailer: geary/3.38.1
+        id S233508AbhBCKzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 05:55:14 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57944 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233575AbhBCKzO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 05:55:14 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id D6EDE1F45484
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     matthias.bgg@gmail.com, drinkcat@chromium.org, hsinyi@chromium.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: Select all the MT8183 clocks by default
+Date:   Wed,  3 Feb 2021 11:54:23 +0100
+Message-Id: <20210203105423.682960-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+If MT8183 SoC support is enabled, almost all machines will use topckgen,
+apmixedsys, infracfg, mcucfg and subsystem clocks, so it feels wrong to
+require each one to select that symbols manually.
 
-Any recent progress on this?
+Instead, enable it whenever COMMON_CLK_MT8183_* is disabled as
+a simplification. This would add few KB in the kernel image size but
+will make the life a bit easier to the users, anyway you'll need to probably
+enable all of them if you want to have proper support for that SoC.
 
-Testing it on Xiaomi MI Note 2 (msm8996pro), It freezes during boot 
-and/or crashes and reboots most of the time. When it doesn't do that it 
-works well, until I stress all 4 CPUs, which makes it crash. Maybe 
-msm8996pro needs some extra work?
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Setting s11 to 470000-1140000uV, 980000-980000uV, or 1140000,1140000uV 
-doesn't change anything.
+ drivers/clk/mediatek/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index ce8475098b31..886e2d9fced5 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -426,66 +426,77 @@ config COMMON_CLK_MT8183
+ config COMMON_CLK_MT8183_AUDIOSYS
+ 	bool "Clock driver for MediaTek MT8183 audiosys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 audiosys clocks.
+ 
+ config COMMON_CLK_MT8183_CAMSYS
+ 	bool "Clock driver for MediaTek MT8183 camsys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 camsys clocks.
+ 
+ config COMMON_CLK_MT8183_IMGSYS
+ 	bool "Clock driver for MediaTek MT8183 imgsys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 imgsys clocks.
+ 
+ config COMMON_CLK_MT8183_IPU_CORE0
+ 	bool "Clock driver for MediaTek MT8183 ipu_core0"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 ipu_core0 clocks.
+ 
+ config COMMON_CLK_MT8183_IPU_CORE1
+ 	bool "Clock driver for MediaTek MT8183 ipu_core1"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 ipu_core1 clocks.
+ 
+ config COMMON_CLK_MT8183_IPU_ADL
+ 	bool "Clock driver for MediaTek MT8183 ipu_adl"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 ipu_adl clocks.
+ 
+ config COMMON_CLK_MT8183_IPU_CONN
+ 	bool "Clock driver for MediaTek MT8183 ipu_conn"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 ipu_conn clocks.
+ 
+ config COMMON_CLK_MT8183_MFGCFG
+ 	bool "Clock driver for MediaTek MT8183 mfgcfg"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 mfgcfg clocks.
+ 
+ config COMMON_CLK_MT8183_MMSYS
+ 	bool "Clock driver for MediaTek MT8183 mmsys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 mmsys clocks.
+ 
+ config COMMON_CLK_MT8183_VDECSYS
+ 	bool "Clock driver for MediaTek MT8183 vdecsys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 vdecsys clocks.
+ 
+ config COMMON_CLK_MT8183_VENCSYS
+ 	bool "Clock driver for MediaTek MT8183 vencsys"
+ 	depends on COMMON_CLK_MT8183
++	default COMMON_CLK_MT8183
+ 	help
+ 	  This driver supports MediaTek MT8183 vencsys clocks.
+ 
+-- 
+2.30.0
 
