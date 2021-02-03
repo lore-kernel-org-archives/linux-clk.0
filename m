@@ -2,279 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8B5C433E6
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 18:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE83C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 19:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 266F164DF4
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 18:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9288764F84
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 19:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232313AbhBCSQX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 13:16:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47878 "EHLO
+        id S229977AbhBCTaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 14:30:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232969AbhBCSQS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 13:16:18 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C4CC061788
-        for <linux-clk@vger.kernel.org>; Wed,  3 Feb 2021 10:15:37 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id j84so532119ybg.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 Feb 2021 10:15:37 -0800 (PST)
+        with ESMTP id S229519AbhBCTaH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 14:30:07 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 261DCC0613ED;
+        Wed,  3 Feb 2021 11:29:26 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id s3so1019588edi.7;
+        Wed, 03 Feb 2021 11:29:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6sqZaAUfYP8DNj5oKyeEZdFXBpvCgFM5Th4Vqh4Q634=;
-        b=lOCi5F89Jo6/RQia3F3QjW5H8JRtVAggDniGtWTFvyV29+w/Me9pVYU6kUFe+j8AdD
-         qR/LTy8y0uCprC78deNpv0fM4YqNxpwAlhTkmPymYshYb58sHNW6VxQ3VeQDwfP9pwUD
-         SRIH+3sg5aSF0mreMNA4LIqsyTSfytG9hVCw8diN2pZRiQV0maZkxpsMncxXL1t79+pc
-         ITxSmChZwdKprpJ2cfy2SJfVLcA8AfrkZOdEgJoVOQIwnIQefxdOUKPFZhG1UMKB5LDk
-         xjzJ/dDwZFpWlZ7HTeQgdbIXpAtf4jv8Top90svdbXLULybjAQJK1nvChss4hc8iKTb8
-         mldw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kganplicPJBtwsmEI4JfIkH23qpfQn4/Bhh9N1J6RWQ=;
+        b=EqmWumb9cTIW9KJ2CVDuCnJaWM2zg+pHCTuTha9gAHKaBxe0BkB5pm5AJQBxOBwl1+
+         zGTpq98Fd/5P/sAjjPnQKKZEm68D4d0ztJTITQfF6woINj/19E1T3RfePPdGCILg7jYs
+         UncM5PNCRC9MpvI+Cz/2fi8kJV8zPaTTk42H1huobWoiM2/R/6ClQ9wDH8ucEtxt82bt
+         ferhpwG66ZFHpv3gd30U/7M6Ol4ohTJlaaaMglTu2nNNq+6bVzZozzusQXcejz50feWg
+         rHRMGQkZOYOtzklaQe+mj8wQcFs7lwrFWueXZwaezS8/aPm4oST9oSVt9gPisOO0mW1T
+         Ielg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6sqZaAUfYP8DNj5oKyeEZdFXBpvCgFM5Th4Vqh4Q634=;
-        b=HckasK2k3/w8Gl3DoGA3w6oWZV8gZVlI+sQT+g5z1f6p+lZmBg6ZxI0s8mO5FHsRws
-         VLTLhyrL66uyAWK5rBPAy34x7y/Mlqthj64AOA1uxdt9sTxnkQGmvRuH3igL/FSzzebc
-         8Znzz/BddHS7dN9jadH+ZQOf9vFTdTfVAOD/8ch0ia6bnXzNGUHknlbNPshe4P1HoEN2
-         GyVSUDOpKjwl6+ZhkAc47w12Dubn4DJ6k/pKI5KbNScVfeJab5Z/46QbFmBBr3WQrbJh
-         BYd1aj3g+DcGo0l9RxD2aN3YbOk9dd3uyc/0Ad/Iv1B2iITBksGjuvW5VPrQ0JpTOgTt
-         Cy2g==
-X-Gm-Message-State: AOAM531m2zbyrm/vJLQ1XDLLScsqT2OzAhO1illr7Azn2B6yUdZxbGkl
-        21DQdaIINLppkZqF+H9afgckG9WFpmg/sYYSFzUAwg==
-X-Google-Smtp-Source: ABdhPJz6aZVy82ZsC3b1j0AJTJk7Kz1cmCa03LfsrOrXyhMqcF+421DMroQW7sZo7ORWxNkWA8sj6OoRS32EqQl5p9o=
-X-Received: by 2002:a25:718b:: with SMTP id m133mr6743785ybc.412.1612376136653;
- Wed, 03 Feb 2021 10:15:36 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kganplicPJBtwsmEI4JfIkH23qpfQn4/Bhh9N1J6RWQ=;
+        b=VFzHfgJNXl2XeIHQjUqGBzperHi/dyIaQEu4TxJymEPpM9K3LNsEJLwOO7LFhJeSKy
+         L6QUa0aYqAgacUQGvn229TxWMgw/ZSDYVnaLPFxrWoZP6w1ZxuYWEOX10THUFfOPK8Pn
+         eG4VRxnoDBA/ikYjYWdbHsZQlrDFOwfNLZMrHkeJNjqqlz9fbAed4/eK26v98rLLZhAE
+         tP4gsbkKb5Aa9l1tVl+Qqnr4euLINjRZ6zckuzeZ/qz84Y9avoHMkpw8aCt4rTGhpOfI
+         zmm6O/prbbTpYP4Fvvk2+IES82JNTKZFesTNIAupT4tsmb/3ka/AKRqSq4a8p/t+nSxx
+         8d9Q==
+X-Gm-Message-State: AOAM531aZD+PnNx1uvTWpzw3iqBbfCJWrTn+nmAVtt90EWsPDvCKAu5t
+        yF5IslYXKmHKqPLzueuFLHU=
+X-Google-Smtp-Source: ABdhPJx6nqFq5SK0benwWJ8qvmP4f/eNKzmsfV2KZjJ7c4flbUDcLi90U5agyYDzv1FmC08eaFqurA==
+X-Received: by 2002:aa7:d6d4:: with SMTP id x20mr4838119edr.8.1612380564813;
+        Wed, 03 Feb 2021 11:29:24 -0800 (PST)
+Received: from [192.168.10.61] (74-13-107-185.static.kviknet.dk. [185.107.13.74])
+        by smtp.gmail.com with ESMTPSA id f6sm1377348edk.13.2021.02.03.11.29.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Feb 2021 11:29:24 -0800 (PST)
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base CPU
+ speed to 800 MHz from 1000 MHz
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
+        Tomasz Maciej Nowak <tmn505@gmail.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andre Heider <a.heider@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?Q?G=c3=a9rald_Kerma?= <gerald@gk2.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Konstantin Porotchkin <kostap@marvell.com>
+References: <20210114124032.12765-1-pali@kernel.org>
+From:   Anders Trier Olesen <anders.trier.olesen@gmail.com>
+Message-ID: <cf766197-666f-3d7d-3b9e-ba512619004e@gmail.com>
+Date:   Wed, 3 Feb 2021 20:29:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20210203154332.470587-1-tudor.ambarus@microchip.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 3 Feb 2021 10:15:00 -0800
-Message-ID: <CAGETcx9ki6tM7Z8B8ghm9cZVNbwUo9rQPY1H0-s2rRifC=_m8A@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
-To:     Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, nicolas.ferre@microchip.com,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        mirq-linux@rere.qmqm.pl,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        a.fatoum@pengutronix.de, Krzysztof Kozlowski <krzk@kernel.org>,
-        codrin.ciubotariu@microchip.com,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210114124032.12765-1-pali@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 3, 2021 at 7:43 AM Tudor Ambarus
-<tudor.ambarus@microchip.com> wrote:
->
-> These are all "early clocks" that require initialization just at
-> of_clk_init() time. Use CLK_OF_DECLARE() to declare them.
->
-> This also fixes a problem that was spotted when fw_devlink was
-> set to 'on' by default: the boards failed to boot. The reason is
-> that CLK_OF_DECLARE_DRIVER() clears the OF_POPULATED and causes
-> the consumers of the clock to be postponed by fw_devlink until
-> the second initialization routine of the clock has been completed.
-> One of the consumers of the clock is the timer, which is used as a
-> clocksource, and needs the clock initialized early. Postponing the
-> timers caused the fail at boot.
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Hi Marek & Pali
 
-Thanks Tudor!
-Acked-by: Saravana Kannan <saravanak@google.com>
+On 1/14/21 1:40 PM, Pali Rohár wrote:
+> Hello!
+> 
+> The armada-37xx-cpufreq driver changes base CPU speed from 1000 MHz to
+> 800 MHz on EspressoBIN and Turris MOX. The commit message in patch 2/10
+> explains why and how can this be discovered.
+> 
+> That patch 2/10 led us to discover another bug, in the SOC itself,
+> that causes the CPU to behave weirdly when frequency changes to 1 GHz.
+> A similar erratum is documented by Marvell but only for systems where
+> base frequency is 1.2 GHz.
+> 
+> We've discovered that to make cpufreq scaling stable on Armada 3720
+> systems with base frequency 1 GHz, we also have to set voltage levels
+> for L0 and L1 loads to at least 1108 mV. We were led to this by patch we
+> found in Marvell kernel fork. Fix is in the patch 4/10.
+> 
+> https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/dc33b62c90696afb6adc7dbcc4ebbd48bedec269
+> 
+> During fixing this voltage issue for 1 GHz we discovered another bug in
+> armada-37xx-cpufreq driver that causes CPU instability. Erratum for VDD
+> stabilization was improperly implemented, details are in patch 6/10.
+> 
+> This patch series is also available in my git tree in branch a3720-cpufreq-issues:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pali/linux.git/log/?h=a3720-cpufreq-issues
+> 
+> We have tested this patch series on Espressobin v5 and Turris MOX
+> boards. If you have other Armada 3720 boards (Espressobin v5/v7, uDPU,
+> Devel Board, ...) then it will be nice to do an additional tests and
+> check if instability issues are finally fixed.
+> 
+> There is a discussion on armbian forum that Espressobin v7 is unstable
+> when running at 1 GHz and in this thread was also mentioned above
+> voltage patch from Marvell kernel fork:
+> 
+> https://forum.armbian.com/topic/10429-how-to-make-espressobin-v7-stable/
+> 
+> Marek & Pali
+> 
+> 
+> Marek Behún (3):
+>    arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
+>    cpufreq: armada-37xx: Fix setting TBG parent for load levels
+>    clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM
+>      clock
+> 
+> Pali Rohár (7):
+>    cpufreq: armada-37xx: Fix the AVS value for loads L0 and L1
+>    clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to
+>      1 GHz
+>    clk: mvebu: armada-37xx-periph: Fix workaround for switching from L1
+>      to L0
+>    cpufreq: armada-37xx: Fix driver cleanup when registration failed
+>    cpufreq: armada-37xx: Fix determining base CPU frequency
+>    cpufreq: armada-37xx: Remove cur_frequency variable
+>    cpufreq: armada-37xx: Fix module unloading
+> 
+>   arch/arm64/boot/dts/marvell/armada-37xx.dtsi |   3 +-
+>   drivers/clk/mvebu/armada-37xx-periph.c       |  83 ++++++++-------
+>   drivers/cpufreq/armada-37xx-cpufreq.c        | 100 ++++++++++++++-----
+>   3 files changed, 124 insertions(+), 62 deletions(-)
+> 
 
--Saravana
+Thank you for looking at this problem!
 
-> ---
-> Tested on sama5d2_xplained.
->
->  drivers/clk/at91/at91rm9200.c  |  3 +--
->  drivers/clk/at91/at91sam9260.c | 16 ++++++++--------
->  drivers/clk/at91/at91sam9g45.c |  3 +--
->  drivers/clk/at91/at91sam9n12.c |  3 +--
->  drivers/clk/at91/at91sam9rl.c  |  3 ++-
->  drivers/clk/at91/at91sam9x5.c  | 20 ++++++++++----------
->  drivers/clk/at91/sama5d2.c     |  3 ++-
->  drivers/clk/at91/sama5d3.c     |  2 +-
->  drivers/clk/at91/sama5d4.c     |  3 ++-
->  9 files changed, 28 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-> index 0fad1009f315..428a6f4b9ebc 100644
-> --- a/drivers/clk/at91/at91rm9200.c
-> +++ b/drivers/clk/at91/at91rm9200.c
-> @@ -215,5 +215,4 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
->   * deferring properly. Once this is fixed, this can be switched to a platform
->   * driver.
->   */
-> -CLK_OF_DECLARE_DRIVER(at91rm9200_pmc, "atmel,at91rm9200-pmc",
-> -                     at91rm9200_pmc_setup);
-> +CLK_OF_DECLARE(at91rm9200_pmc, "atmel,at91rm9200-pmc", at91rm9200_pmc_setup);
-> diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-> index ceb5495f723a..b29843bea278 100644
-> --- a/drivers/clk/at91/at91sam9260.c
-> +++ b/drivers/clk/at91/at91sam9260.c
-> @@ -491,26 +491,26 @@ static void __init at91sam9260_pmc_setup(struct device_node *np)
->  {
->         at91sam926x_pmc_setup(np, &at91sam9260_data);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9260_pmc, "atmel,at91sam9260-pmc",
-> -                     at91sam9260_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9260_pmc, "atmel,at91sam9260-pmc", at91sam9260_pmc_setup);
->
->  static void __init at91sam9261_pmc_setup(struct device_node *np)
->  {
->         at91sam926x_pmc_setup(np, &at91sam9261_data);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9261_pmc, "atmel,at91sam9261-pmc",
-> -                     at91sam9261_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9261_pmc, "atmel,at91sam9261-pmc", at91sam9261_pmc_setup);
->
->  static void __init at91sam9263_pmc_setup(struct device_node *np)
->  {
->         at91sam926x_pmc_setup(np, &at91sam9263_data);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9263_pmc, "atmel,at91sam9263-pmc",
-> -                     at91sam9263_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9263_pmc, "atmel,at91sam9263-pmc", at91sam9263_pmc_setup);
->
->  static void __init at91sam9g20_pmc_setup(struct device_node *np)
->  {
->         at91sam926x_pmc_setup(np, &at91sam9g20_data);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9g20_pmc, "atmel,at91sam9g20-pmc",
-> -                     at91sam9g20_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9g20_pmc, "atmel,at91sam9g20-pmc", at91sam9g20_pmc_setup);
-> diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-> index 0214333dedd3..15da0dfe3ef2 100644
-> --- a/drivers/clk/at91/at91sam9g45.c
-> +++ b/drivers/clk/at91/at91sam9g45.c
-> @@ -228,5 +228,4 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
->   * The TCB is used as the clocksource so its clock is needed early. This means
->   * this can't be a platform driver.
->   */
-> -CLK_OF_DECLARE_DRIVER(at91sam9g45_pmc, "atmel,at91sam9g45-pmc",
-> -                     at91sam9g45_pmc_setup);
-> +CLK_OF_DECLARE(at91sam9g45_pmc, "atmel,at91sam9g45-pmc", at91sam9g45_pmc_setup);
-> diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
-> index f9db5316a7f1..7fe435f4b46b 100644
-> --- a/drivers/clk/at91/at91sam9n12.c
-> +++ b/drivers/clk/at91/at91sam9n12.c
-> @@ -255,5 +255,4 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
->   * The TCB is used as the clocksource so its clock is needed early. This means
->   * this can't be a platform driver.
->   */
-> -CLK_OF_DECLARE_DRIVER(at91sam9n12_pmc, "atmel,at91sam9n12-pmc",
-> -                     at91sam9n12_pmc_setup);
-> +CLK_OF_DECLARE(at91sam9n12_pmc, "atmel,at91sam9n12-pmc", at91sam9n12_pmc_setup);
-> diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-> index 66736e03cfef..ecbabf5162bd 100644
-> --- a/drivers/clk/at91/at91sam9rl.c
-> +++ b/drivers/clk/at91/at91sam9rl.c
-> @@ -186,4 +186,5 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
->  err_free:
->         kfree(at91sam9rl_pmc);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
-> diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-> index 79b9d3667228..5cce48c64ea2 100644
-> --- a/drivers/clk/at91/at91sam9x5.c
-> +++ b/drivers/clk/at91/at91sam9x5.c
-> @@ -302,33 +302,33 @@ static void __init at91sam9g15_pmc_setup(struct device_node *np)
->  {
->         at91sam9x5_pmc_setup(np, at91sam9g15_periphck, true);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9g15_pmc, "atmel,at91sam9g15-pmc",
-> -                     at91sam9g15_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9g15_pmc, "atmel,at91sam9g15-pmc", at91sam9g15_pmc_setup);
->
->  static void __init at91sam9g25_pmc_setup(struct device_node *np)
->  {
->         at91sam9x5_pmc_setup(np, at91sam9g25_periphck, false);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9g25_pmc, "atmel,at91sam9g25-pmc",
-> -                     at91sam9g25_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9g25_pmc, "atmel,at91sam9g25-pmc", at91sam9g25_pmc_setup);
->
->  static void __init at91sam9g35_pmc_setup(struct device_node *np)
->  {
->         at91sam9x5_pmc_setup(np, at91sam9g35_periphck, true);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9g35_pmc, "atmel,at91sam9g35-pmc",
-> -                     at91sam9g35_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9g35_pmc, "atmel,at91sam9g35-pmc", at91sam9g35_pmc_setup);
->
->  static void __init at91sam9x25_pmc_setup(struct device_node *np)
->  {
->         at91sam9x5_pmc_setup(np, at91sam9x25_periphck, false);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9x25_pmc, "atmel,at91sam9x25-pmc",
-> -                     at91sam9x25_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9x25_pmc, "atmel,at91sam9x25-pmc", at91sam9x25_pmc_setup);
->
->  static void __init at91sam9x35_pmc_setup(struct device_node *np)
->  {
->         at91sam9x5_pmc_setup(np, at91sam9x35_periphck, true);
->  }
-> -CLK_OF_DECLARE_DRIVER(at91sam9x35_pmc, "atmel,at91sam9x35-pmc",
-> -                     at91sam9x35_pmc_setup);
-> +
-> +CLK_OF_DECLARE(at91sam9x35_pmc, "atmel,at91sam9x35-pmc", at91sam9x35_pmc_setup);
-> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> index 9a5cbc7cd55a..3d1f78176c3e 100644
-> --- a/drivers/clk/at91/sama5d2.c
-> +++ b/drivers/clk/at91/sama5d2.c
-> @@ -372,4 +372,5 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  err_free:
->         kfree(sama5d2_pmc);
->  }
-> -CLK_OF_DECLARE_DRIVER(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
-> +
-> +CLK_OF_DECLARE(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
-> diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-> index 87009ee8effc..d376257807d2 100644
-> --- a/drivers/clk/at91/sama5d3.c
-> +++ b/drivers/clk/at91/sama5d3.c
-> @@ -255,4 +255,4 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
->   * The TCB is used as the clocksource so its clock is needed early. This means
->   * this can't be a platform driver.
->   */
-> -CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
-> +CLK_OF_DECLARE(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
-> diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-> index 57fff790188b..5cbaac68da44 100644
-> --- a/drivers/clk/at91/sama5d4.c
-> +++ b/drivers/clk/at91/sama5d4.c
-> @@ -286,4 +286,5 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
->  err_free:
->         kfree(sama5d4_pmc);
->  }
-> -CLK_OF_DECLARE_DRIVER(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
-> +
-> +CLK_OF_DECLARE(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
-> --
+I have tested your a3720-cpufreq-issues branch on my Espressobin v7 (1GB 
+variant) with the ondemand governor. No issues so far.
+
+root@espressobin:~# uname -a
+Linux espressobin 5.11.0-rc1+ #1 SMP PREEMPT Sun Jan 31 23:35:17 CET
+2021 aarch64 aarch64 aarch64 GNU/Linux
+root@espressobin:~# cpufreq-info
+cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
+Report errors and bugs to cpufreq@vger.kernel.org, please.
+analyzing CPU 0:
+    driver: cpufreq-dt
+    CPUs which run at the same hardware frequency: 0 1
+    CPUs which need to have their frequency coordinated by software: 0 1
+    maximum transition latency: 0.97 ms.
+    hardware limits: 200 MHz - 1000 MHz
+    available frequency steps: 200 MHz, 250 MHz, 500 MHz, 1000 MHz
+    available cpufreq governors: conservative, ondemand, userspace,
+powersave, performance, schedutil
+    current policy: frequency should be within 200 MHz and 1000 MHz.
+                    The governor "ondemand" may decide which speed to use
+                    within this range.
+    current CPU frequency is 1000 MHz (asserted by call to hardware).
+    cpufreq stats: 200 MHz:34.71%, 250 MHz:13.20%, 500 MHz:6.26%, 1000
+MHz:45.83%  (2015)
+analyzing CPU 1:
+    driver: cpufreq-dt
+    CPUs which run at the same hardware frequency: 0 1
+    CPUs which need to have their frequency coordinated by software: 0 1
+    maximum transition latency: 0.97 ms.
+    hardware limits: 200 MHz - 1000 MHz
+    available frequency steps: 200 MHz, 250 MHz, 500 MHz, 1000 MHz
+    available cpufreq governors: conservative, ondemand, userspace,
+powersave, performance, schedutil
+    current policy: frequency should be within 200 MHz and 1000 MHz.
+                    The governor "ondemand" may decide which speed to use
+                    within this range.
+    current CPU frequency is 500 MHz (asserted by call to hardware).
+    cpufreq stats: 200 MHz:34.71%, 250 MHz:13.20%, 500 MHz:6.26%, 1000
+MHz:45.83%  (2015)
+
+root@espressobin:~# 7za b
+
+7-Zip (a) [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,2
+CPUs LE)
+
+LE
+CPU Freq:   974   997   993   996   997   997   996   997
+
+RAM size:     983 MB,  # CPU hardware threads:   2
+RAM usage:    441 MB,  # Benchmark threads:      2
+
+                         Compressing  |                  Decompressing
+Dict     Speed Usage    R/U Rating  |      Speed Usage    R/U Rating
+           KiB/s     %   MIPS   MIPS  |      KiB/s     %   MIPS   MIPS
+
+22:        879   153    560    856  |      21904   199    941   1870
+23:        871   154    576    888  |      21518   199    938   1863
+24:        863   154    603    928  |      21147   199    935   1857
+25:        857   154    634    979  |      20885   199    934   1859
+----------------------------------  | ------------------------------
+Avr:             154    593    913  |              199    937   1862
+Tot:             176    765   1387
+
+
+Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
+
+Thanks,
+Anders Trier Olesen
