@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A18FC433DB
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 14:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588A9C433DB
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 14:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BAB664F2C
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 14:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C6DD64F6C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 14:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232207AbhBCORm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 09:17:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52560 "EHLO
+        id S232417AbhBCO0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 09:26:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbhBCORi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 09:17:38 -0500
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0532C0613D6
-        for <linux-clk@vger.kernel.org>; Wed,  3 Feb 2021 06:16:57 -0800 (PST)
-Received: by mail-qv1-xf2b.google.com with SMTP id w11so11657722qvz.12
-        for <linux-clk@vger.kernel.org>; Wed, 03 Feb 2021 06:16:57 -0800 (PST)
+        with ESMTP id S231905AbhBCO0i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 09:26:38 -0500
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A38C061573
+        for <linux-clk@vger.kernel.org>; Wed,  3 Feb 2021 06:25:58 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id z32so215428qtd.8
+        for <linux-clk@vger.kernel.org>; Wed, 03 Feb 2021 06:25:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IKx3uJPZmePnlL93mK/U5koaWC3gTC8OGj972WJi/uk=;
-        b=u4z21jPbV4qoGn8f7xGMTWbQYMk2F4eU4WQja9xLGyq/qDnEAUdbSOModaoVZlwSu5
-         ZvNutHhs0g4YI5Br4K3Na4SuDWxIXAtU0UlPYDg4yAsd3Z6B7uyHcKjbM/NlMXyAcORY
-         gk7kKI5RPXYWDxNJp1vLhRxvXBnrATJAokc84xRfkuvdQU1MJnlc+mHrI4LGdDQdwcMa
-         ks48k0VHXnqbw3P2JMN4wgUrdSbr4CDqkLygxLToWpGSuAiaIKAsBi8Dr1G/tMU+csXa
-         pzybaf6OMGoVaUfXzIsIeJYqjtsVmLB/jR1kstTYT4oatFf8NMnt6Bs0rXHhBgR1AF8Q
-         zr7Q==
+        bh=Mj7d/khLmSJGOWdA9KEA2tHAZXerllRPwSPFlYrXYDE=;
+        b=CLouXu9kdbw5ue3bej+GffpgCOInIG53qraBZ+gFloJTP+x8CeoUdC3+1rQA+AoJsu
+         cB79f2y7yBSuvQ9IbVOIQMg8eirhJc98lEOtTsFaQ91cJqJvZ2ZNuULuUFCFPu8x6Laq
+         IIgidbwWOO6G+51pZAiY0rHgqpPFjIG/Fl+jcnPYN7lRM0Pg20wO40Xhdvly3z9Nm940
+         ySoBqsuVf/AMaqHM8KK8ykDXSTB3KMo0yK8bsoVt7MnIjG75mERJdvglALEysyCxHwIG
+         briqhtlIueM7b7hslj+Bm+p8Gt+fUOppSY4XqyO20+gM17WB+ic4tpHxj3xIVvXqRvUd
+         lTHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IKx3uJPZmePnlL93mK/U5koaWC3gTC8OGj972WJi/uk=;
-        b=LFGqQvGpW3OhlJ/Emil36/xk6AzEUG1ZtQaw+2xw3zYad4OPGo2dWazgVS/lHpaEaq
-         aoXkwdYPkqrfvOhjznyF75ClkukRIoAF8/ehQFIsUx2fLfgX2Qqj2UVz8VFXW/QACEDX
-         C1SreTpLLOMl6185exPBVKohScyANKEC6q2Bg0akWILSVKE/Iep7LhFT9DsX+BvydBVe
-         f+NIPq4jm7WzUyoLzpsYBBOwaF++uSQ/kyuFbv0J1UpPHB4Uux12mW0zWrFMp1gUkz4Q
-         Pq81SW3mhlrwzNKs+/w+MrlN3YiDv4n8FwF0FaacFgfkDm6JnQtWGNxTjB4RWsppaGdU
-         seqQ==
-X-Gm-Message-State: AOAM532lYCsYbGgjbwhLJhivoi+zTgBeGZGIhqQghfxyIByEaUWtWtez
-        /xUl9ST/BtrhxN8uwiV75oth6zdv/41kIYwofno20Q==
-X-Google-Smtp-Source: ABdhPJz3pfdeXW8rEpq6+RJaBTEnbpC6wBz3cIDKfG6hqkQVujxl43VS7Prq3JKhJ5fuLPTnRc+cPNCxxahRPxI5qgA=
-X-Received: by 2002:a05:6214:18cb:: with SMTP id cy11mr2645941qvb.61.1612361817238;
- Wed, 03 Feb 2021 06:16:57 -0800 (PST)
+        bh=Mj7d/khLmSJGOWdA9KEA2tHAZXerllRPwSPFlYrXYDE=;
+        b=DeIuLzzvwJksHj2rsGcDN1lVQLPjEota6W09DUZqYBn4MK+gkgq4IG2Z0jijVtkhYJ
+         vdeKGZ8G0is8olxsbWxXW9YwI+VHa7BkLqWmOoyukPT21mqftvxthNL93FXWcCFv3q+u
+         ppHt24qUv6mvJV/Ci6ZcRfY4e64V/Wirl5/RQqaZeeZE/tPILh66dDj+PZhI3lGdhnch
+         zVvqGRLqGzig/15XL/9taVSziBbmE0X5yc3uiget2x2Zq2kWXEZd3h4YFHeH/Fl0V0Nz
+         xPfwcZhcz4g04kbRVADuOfrZCqdSrawfGbivKf+gaTZsREGbA4qzuFW4LO3v0T0+7z1C
+         eiCQ==
+X-Gm-Message-State: AOAM531HtxOCjg2AZLlON4tcYWRL/4cAgYjomZO0JJeiRev8DWxyOGsu
+        cPRbsm05fxIOXPs/t9cKtcVNiETjnTUkMLX4QUPukw==
+X-Google-Smtp-Source: ABdhPJw9rrFCh/eyG9dq2SfkoyV/boCPNgtEDs6i8pzhdhcbg2lz/bQuyt4Npxl5AkxoJ8YYXhazn0GNXLe70AXob/E=
+X-Received: by 2002:aed:2821:: with SMTP id r30mr2573930qtd.364.1612362357405;
+ Wed, 03 Feb 2021 06:25:57 -0800 (PST)
 MIME-Version: 1.0
 References: <20210203115456.1072975-1-bryan.odonoghue@linaro.org>
 In-Reply-To: <20210203115456.1072975-1-bryan.odonoghue@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 3 Feb 2021 17:16:33 +0300
-Message-ID: <CAA8EJpppSpzknWnnL1MiZbmTUhu8_K9cD4Vqv-wA+QdRiWnpfA@mail.gmail.com>
+Date:   Wed, 3 Feb 2021 17:25:46 +0300
+Message-ID: <CAA8EJpquw_HBT+x=go_378_ZVqLiHmq7y9FvBEgoqESaTosy4Q@mail.gmail.com>
 Subject: Re: [RESEND PATCH 0/4] Fixup clocks for venus on sm8250
 To:     "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
 Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
@@ -75,13 +75,6 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Patch 3 should reference 'video_cc_mvs0_clk' rather than
-'video_cc_mvs0_div_clk'  in the commit message.
-
-With that fixed all patches are:
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
 On Wed, 3 Feb 2021 at 14:53, Bryan O'Donoghue
 <bryan.odonoghue@linaro.org> wrote:
 >
@@ -97,14 +90,12 @@ On Wed, 3 Feb 2021 at 14:53, Bryan O'Donoghue
 >   clk: qcom: videocc: Add sm8250 VIDEO_CC_MVS0_DIV_CLK_SRC
 >   clk: qcom: videocc: Add sm8250 VIDEO_CC_MVS0_CLK
 >   clk: qcom: videocc: Add gdsc mmcx-reg supply hook
->
->  drivers/clk/qcom/videocc-sm8250.c             | 39 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,videocc-sm8250.h   |  2 +
->  2 files changed, 41 insertions(+)
->
-> --
-> 2.29.2
->
+
+I remember now the old discussion about these two clocks
+(https://lore.kernel.org/linux-arm-msm/160092826778.310579.12225989905897101118@swboyd.mtv.corp.google.com/).
+
+Is the message. reported by Jonathan, solved by the mmcx-reg supply?
+Also are these clocks necessary at all?
 
 
 -- 
