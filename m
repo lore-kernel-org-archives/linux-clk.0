@@ -2,264 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5FEC433E9
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 15:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51B9C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 15:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 518A164F58
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 15:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D3E64F8C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 15:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234412AbhBCPpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 10:45:53 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:26031 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234607AbhBCPpN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 10:45:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1612367112; x=1643903112;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BggVzdetEJ8PujMHR4kT94uw5ns9MUk9jGRk2uk6ckk=;
-  b=aytHASCFRIcrPgEilwR50wLtfqr2LSGy9fp+VJub0j++2o8g+CwNI18D
-   acDIwyf/vbaYhmbGKbtJ+FdWgQSGRf4DoNwWcgbME56+ZBS4PWdf/A5ZM
-   DBZECwt4gNxEuageq7G5UO1mfG/B3w3cldBey5zKPEJO8XG/YBWumwvU+
-   71LHS4mdsfe3iv3KJxA34+6seNZgd0CzYP/ovOoc6I70mazh98ZhaCihB
-   VylOk0PWPrHrsdGt2pgIiTtWaAt7EiDGl8XctPHREK5VbhPAXIrqdtrM4
-   cT9pAT1417EUeY7IIcE1UshzLLL55Q34dL6H7x0TRzjaokQtigSf2iPCm
-   w==;
-IronPort-SDR: 71HU2wN46HWjZNaUIJr64xolfKCQJlLuqKIxz1cst8DPqSgvI4Ix5az1VXfVqIc2AmGZyk4rSk
- efEkVPwqr6LhnCxyPHnL3LyjH0bkUzAfX0cnYItVKCkltN14H6R+HP+Liiz8jrGZJaJaOhn0zi
- D69Bu0qtvRgps2655pFMnVkQHKOluTjs6s+qahaH4YH1lwO/ogy0xNPCJtpzjHcCJ5HfGB0swE
- 9y8ot+3Q8ET3xOMBl6YfWswWsSOt+N+k5i0zZFaKpdh1Ool3KPZvzJ1qS3NIB+WmAMQEEOpgO+
- Ies=
-X-IronPort-AV: E=Sophos;i="5.79,398,1602572400"; 
-   d="scan'208";a="42773895"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Feb 2021 08:43:46 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 3 Feb 2021 08:43:46 -0700
-Received: from atudor-ThinkPad-T470p.amer.actel.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 3 Feb 2021 08:43:42 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <gregkh@linuxfoundation.org>,
-        <saravanak@google.com>, <geert@linux-m68k.org>
-CC:     <mirq-linux@rere.qmqm.pl>, <claudiu.beznea@microchip.com>,
-        <a.fatoum@pengutronix.de>, <krzk@kernel.org>,
-        <codrin.ciubotariu@microchip.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Tudor Ambarus" <tudor.ambarus@microchip.com>
-Subject: [PATCH] clk: at91: Fix the declaration of the clocks
-Date:   Wed, 3 Feb 2021 17:43:32 +0200
-Message-ID: <20210203154332.470587-1-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.25.1
+        id S234657AbhBCP5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 10:57:19 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:44424 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234575AbhBCP4F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 10:56:05 -0500
+Received: by mail-oi1-f173.google.com with SMTP id n7so296941oic.11;
+        Wed, 03 Feb 2021 07:55:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qT9vhKEcJnv2UxHfk3LsH4oahpbnsqDoYZLdzv8tkwQ=;
+        b=YCZJ1yp85PvCKJN7RAdn+4VEigPGpegOt2q/tut50IqCuAFWiO1topmTGZQ7Y8e14N
+         RmJF6Bblo/B7D48QIiAG9sEfVgOB4qYTwNObAKUd9XMDrwP4Z0CfOolEkL+WD1okGXpU
+         sz+biOuKuoB/1jTAqeG0HlwZp1714Ud90/Sg22EVD/TLOhRau3YrvQFGJUfjH6QY1qUQ
+         EBDLPt+eweof8NpOr/gRsDK1DyjjWy/kq0NWUiehPcn/6HZPw+F7nnv4cvpvedBPGc+p
+         Memp5xX+UcC/LJY/Aam5aNJgJTLKr+lmqSjjiV9WWpgT02zDk8vrjVusJ6PDI62Oct48
+         iQQw==
+X-Gm-Message-State: AOAM533b2I7bGEo3hw3v6/mIth82iIPKKHFI1b62M5w+kvVcFITRjxuC
+        rvuRRCB0nb4iPVEFxKbbeg==
+X-Google-Smtp-Source: ABdhPJxmOBQcH5R+lFiUlGBqVbuj5kwZxcJFcUI25C3II5lOgKlwz+nfG7ePzMnfdKQ5jcv5RyiyOg==
+X-Received: by 2002:aca:4e13:: with SMTP id c19mr2424431oib.66.1612367721055;
+        Wed, 03 Feb 2021 07:55:21 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o14sm481868oof.38.2021.02.03.07.55.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Feb 2021 07:55:19 -0800 (PST)
+Received: (nullmailer pid 1895243 invoked by uid 1000);
+        Wed, 03 Feb 2021 15:55:17 -0000
+Date:   Wed, 3 Feb 2021 09:55:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vincent Cheng <vincent.cheng.xh@renesas.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Eric Anholt <eric@anholt.net>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        linux-leds <linux-leds@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: Fix errors in 'if' schemas
+Message-ID: <20210203155517.GC3706951@robh.at.kernel.org>
+References: <20210202205544.24812-1-robh@kernel.org>
+ <20210202205544.24812-3-robh@kernel.org>
+ <CAMuHMdVvtUvrQh3-3kxaqqWvHnF_UOQmt-6jq_GkX8g=cszUug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVvtUvrQh3-3kxaqqWvHnF_UOQmt-6jq_GkX8g=cszUug@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These are all "early clocks" that require initialization just at
-of_clk_init() time. Use CLK_OF_DECLARE() to declare them.
+On Wed, Feb 03, 2021 at 09:01:23AM +0100, Geert Uytterhoeven wrote:
+> Hi Rob,
+> 
+> On Tue, Feb 2, 2021 at 9:55 PM Rob Herring <robh@kernel.org> wrote:
+> > Properties in if/then schemas weren't getting checked by the meta-schemas.
+> > Enabling meta-schema checks finds several errors.
+> >
+> > The use of an 'items' schema (as opposed to the list form) is wrong in
+> > some cases as it applies to all entries. 'contains' is the correct schema
+> > to use in the case of multiple entries.
+> 
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> 
+> Thanks for your patch!
+> 
+> > --- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+> > @@ -81,9 +81,8 @@ properties:
+> >  if:
+> >    properties:
+> >      compatible:
+> > -      items:
+> > -        enum:
+> > -          - renesas,usb2-phy-r7s9210
+> > +      contains:
+> > +        const: renesas,usb2-phy-r7s9210
+> 
+> Single entry, so "contains" not needed?
 
-This also fixes a problem that was spotted when fw_devlink was
-set to 'on' by default: the boards failed to boot. The reason is
-that CLK_OF_DECLARE_DRIVER() clears the OF_POPULATED and causes
-the consumers of the clock to be postponed by fw_devlink until
-the second initialization routine of the clock has been completed.
-One of the consumers of the clock is the timer, which is used as a
-clocksource, and needs the clock initialized early. Postponing the
-timers caused the fail at boot.
+No, you are misunderstanding how these work. 'contains' means at least 
+one entry in an array passes with the subschema. In this case, 
+'renesas,usb2-phy-r7s9210' must appear somewhere in the 'compatible' 
+values. (Before, it said *every* entry must be 
+'renesas,usb2-phy-r7s9210'.) As there is a fallback compatible, we need 
+'contains'.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
-Tested on sama5d2_xplained.
+> > --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+> > @@ -76,11 +76,10 @@ required:
+> >  if:
+> >    properties:
+> >      compatible:
+> > -      items:
+> > -        enum:
+> > -          - renesas,pfc-r8a73a4
+> > -          - renesas,pfc-r8a7740
+> > -          - renesas,pfc-sh73a0
+> > +      enum:
+> > +        - renesas,pfc-r8a73a4
+> > +        - renesas,pfc-r8a7740
+> > +        - renesas,pfc-sh73a0
+> 
+> Missing "contains"?
 
- drivers/clk/at91/at91rm9200.c  |  3 +--
- drivers/clk/at91/at91sam9260.c | 16 ++++++++--------
- drivers/clk/at91/at91sam9g45.c |  3 +--
- drivers/clk/at91/at91sam9n12.c |  3 +--
- drivers/clk/at91/at91sam9rl.c  |  3 ++-
- drivers/clk/at91/at91sam9x5.c  | 20 ++++++++++----------
- drivers/clk/at91/sama5d2.c     |  3 ++-
- drivers/clk/at91/sama5d3.c     |  2 +-
- drivers/clk/at91/sama5d4.c     |  3 ++-
- 9 files changed, 28 insertions(+), 28 deletions(-)
+No. In this case, 'compatible' is always a single entry, so no 
+'contains' needed (but would work). If compatible is one of these 3 
+strings, then the 'if' is true.
 
-diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-index 0fad1009f315..428a6f4b9ebc 100644
---- a/drivers/clk/at91/at91rm9200.c
-+++ b/drivers/clk/at91/at91rm9200.c
-@@ -215,5 +215,4 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
-  * deferring properly. Once this is fixed, this can be switched to a platform
-  * driver.
-  */
--CLK_OF_DECLARE_DRIVER(at91rm9200_pmc, "atmel,at91rm9200-pmc",
--		      at91rm9200_pmc_setup);
-+CLK_OF_DECLARE(at91rm9200_pmc, "atmel,at91rm9200-pmc", at91rm9200_pmc_setup);
-diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-index ceb5495f723a..b29843bea278 100644
---- a/drivers/clk/at91/at91sam9260.c
-+++ b/drivers/clk/at91/at91sam9260.c
-@@ -491,26 +491,26 @@ static void __init at91sam9260_pmc_setup(struct device_node *np)
- {
- 	at91sam926x_pmc_setup(np, &at91sam9260_data);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9260_pmc, "atmel,at91sam9260-pmc",
--		      at91sam9260_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9260_pmc, "atmel,at91sam9260-pmc", at91sam9260_pmc_setup);
- 
- static void __init at91sam9261_pmc_setup(struct device_node *np)
- {
- 	at91sam926x_pmc_setup(np, &at91sam9261_data);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9261_pmc, "atmel,at91sam9261-pmc",
--		      at91sam9261_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9261_pmc, "atmel,at91sam9261-pmc", at91sam9261_pmc_setup);
- 
- static void __init at91sam9263_pmc_setup(struct device_node *np)
- {
- 	at91sam926x_pmc_setup(np, &at91sam9263_data);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9263_pmc, "atmel,at91sam9263-pmc",
--		      at91sam9263_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9263_pmc, "atmel,at91sam9263-pmc", at91sam9263_pmc_setup);
- 
- static void __init at91sam9g20_pmc_setup(struct device_node *np)
- {
- 	at91sam926x_pmc_setup(np, &at91sam9g20_data);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9g20_pmc, "atmel,at91sam9g20-pmc",
--		      at91sam9g20_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9g20_pmc, "atmel,at91sam9g20-pmc", at91sam9g20_pmc_setup);
-diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-index 0214333dedd3..15da0dfe3ef2 100644
---- a/drivers/clk/at91/at91sam9g45.c
-+++ b/drivers/clk/at91/at91sam9g45.c
-@@ -228,5 +228,4 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
-  * The TCB is used as the clocksource so its clock is needed early. This means
-  * this can't be a platform driver.
-  */
--CLK_OF_DECLARE_DRIVER(at91sam9g45_pmc, "atmel,at91sam9g45-pmc",
--		      at91sam9g45_pmc_setup);
-+CLK_OF_DECLARE(at91sam9g45_pmc, "atmel,at91sam9g45-pmc", at91sam9g45_pmc_setup);
-diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
-index f9db5316a7f1..7fe435f4b46b 100644
---- a/drivers/clk/at91/at91sam9n12.c
-+++ b/drivers/clk/at91/at91sam9n12.c
-@@ -255,5 +255,4 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
-  * The TCB is used as the clocksource so its clock is needed early. This means
-  * this can't be a platform driver.
-  */
--CLK_OF_DECLARE_DRIVER(at91sam9n12_pmc, "atmel,at91sam9n12-pmc",
--		      at91sam9n12_pmc_setup);
-+CLK_OF_DECLARE(at91sam9n12_pmc, "atmel,at91sam9n12-pmc", at91sam9n12_pmc_setup);
-diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-index 66736e03cfef..ecbabf5162bd 100644
---- a/drivers/clk/at91/at91sam9rl.c
-+++ b/drivers/clk/at91/at91sam9rl.c
-@@ -186,4 +186,5 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- err_free:
- 	kfree(at91sam9rl_pmc);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
-diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index 79b9d3667228..5cce48c64ea2 100644
---- a/drivers/clk/at91/at91sam9x5.c
-+++ b/drivers/clk/at91/at91sam9x5.c
-@@ -302,33 +302,33 @@ static void __init at91sam9g15_pmc_setup(struct device_node *np)
- {
- 	at91sam9x5_pmc_setup(np, at91sam9g15_periphck, true);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9g15_pmc, "atmel,at91sam9g15-pmc",
--		      at91sam9g15_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9g15_pmc, "atmel,at91sam9g15-pmc", at91sam9g15_pmc_setup);
- 
- static void __init at91sam9g25_pmc_setup(struct device_node *np)
- {
- 	at91sam9x5_pmc_setup(np, at91sam9g25_periphck, false);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9g25_pmc, "atmel,at91sam9g25-pmc",
--		      at91sam9g25_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9g25_pmc, "atmel,at91sam9g25-pmc", at91sam9g25_pmc_setup);
- 
- static void __init at91sam9g35_pmc_setup(struct device_node *np)
- {
- 	at91sam9x5_pmc_setup(np, at91sam9g35_periphck, true);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9g35_pmc, "atmel,at91sam9g35-pmc",
--		      at91sam9g35_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9g35_pmc, "atmel,at91sam9g35-pmc", at91sam9g35_pmc_setup);
- 
- static void __init at91sam9x25_pmc_setup(struct device_node *np)
- {
- 	at91sam9x5_pmc_setup(np, at91sam9x25_periphck, false);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9x25_pmc, "atmel,at91sam9x25-pmc",
--		      at91sam9x25_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9x25_pmc, "atmel,at91sam9x25-pmc", at91sam9x25_pmc_setup);
- 
- static void __init at91sam9x35_pmc_setup(struct device_node *np)
- {
- 	at91sam9x5_pmc_setup(np, at91sam9x35_periphck, true);
- }
--CLK_OF_DECLARE_DRIVER(at91sam9x35_pmc, "atmel,at91sam9x35-pmc",
--		      at91sam9x35_pmc_setup);
-+
-+CLK_OF_DECLARE(at91sam9x35_pmc, "atmel,at91sam9x35-pmc", at91sam9x35_pmc_setup);
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index 9a5cbc7cd55a..3d1f78176c3e 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -372,4 +372,5 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- err_free:
- 	kfree(sama5d2_pmc);
- }
--CLK_OF_DECLARE_DRIVER(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
-+
-+CLK_OF_DECLARE(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-index 87009ee8effc..d376257807d2 100644
---- a/drivers/clk/at91/sama5d3.c
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -255,4 +255,4 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
-  * The TCB is used as the clocksource so its clock is needed early. This means
-  * this can't be a platform driver.
-  */
--CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
-+CLK_OF_DECLARE(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
-diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index 57fff790188b..5cbaac68da44 100644
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -286,4 +286,5 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
- err_free:
- 	kfree(sama5d4_pmc);
- }
--CLK_OF_DECLARE_DRIVER(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
-+
-+CLK_OF_DECLARE(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
--- 
-2.25.1
+The original way would actually work in this case (i.e. is valid 
+json-schema), but we require 'items' to have a size (maxItems/minItems) 
+in our meta-schema.
 
+Rob
