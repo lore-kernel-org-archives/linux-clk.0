@@ -2,125 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0035CC43332
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 11:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16BEC433E6
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 11:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C855C64DE8
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 11:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 642F264F6A
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 11:54:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbhBCLXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 06:23:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234198AbhBCLXI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Feb 2021 06:23:08 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B73E164DE8;
-        Wed,  3 Feb 2021 11:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612351346;
-        bh=wGQw7gT3qnKCIXEO+rxqRvVbPbNtV92xRV2Pv+Ej3+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MrJAtf5mnK1C4Q4ZyKjla2kAdXf633/lnbrk7VmF4rTw8ELv9cY7AI3lYFHz5IvTs
-         gW1JO8UMu0KWxpiE11pDElcoFi2aScKR/6EtEhTveStAUFXYmhZ/2VkMZcgd1/0YfE
-         ni15CbrfkH0uB9TmCzEv5FfL+g5ymnw5CEbyZXJD4ppEFij+lOdgpYmtLPj5YnxQt2
-         S89UXBGzveoZJe7weH0eyO7487Q9x29lPyzQEfs7eq9AcnO8mCcpuFXjNyVKHYr8yx
-         p+BAk8A9gP2L8aa7Eyu5laiQUOjkYC5JRKTNmmv8FsKcsF1NgygkcixHo6F7gFSZQG
-         dH3CVM+A3lgnQ==
-Date:   Wed, 3 Feb 2021 16:52:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vincent Cheng <vincent.cheng.xh@renesas.com>,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-watchdog@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: Fix errors in 'if' schemas
-Message-ID: <20210203112222.GO2771@vkoul-mobl>
-References: <20210202205544.24812-1-robh@kernel.org>
- <20210202205544.24812-3-robh@kernel.org>
+        id S233972AbhBCLyn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 06:54:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234245AbhBCLyn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 06:54:43 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00A6C061788
+        for <linux-clk@vger.kernel.org>; Wed,  3 Feb 2021 03:54:02 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id l12so4139821wmq.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Feb 2021 03:54:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SIR8kxlA4Jty9/otffAphB5/jPhHJK1wsDSo+IREMHg=;
+        b=EnNbMPrtPs5H2UUx49Sg0I/uRydYGDdAHwFonstivpkERfuMVMx6bSclLV2BaYMeLW
+         AXfvBdzZ8KvvBIuA742bgQAPQxv8RwVDfkGHGcMbnnKMDERHqo1VNmsyPcq+uSN3k3dw
+         HQgDVo4QwDm6t2horfC8FUrxYc6olh7DiO7iQIuNMPba7UVpZpv8I89NCtmUifJfIEsE
+         Z2onMLVtsQBg1JKJpPj6zCJjDK7l6SHYk298mkb5bHu4balMF5DeeKrpHYrJ1yaAEucV
+         PkaAJ5gyEqft4I9ZsyOTk+SHJk/scn9QT7muA0vRNeAQf34sWB/1hId0gyRki21hH6XT
+         BiGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SIR8kxlA4Jty9/otffAphB5/jPhHJK1wsDSo+IREMHg=;
+        b=bUpS9/Csustal6etXjccA4I9sLW/8DHpd5V/0Qb13BpOltKd4MiPGBdAfzFple9ap1
+         20ur876B+RMRSPAYQRpHPYTR9iYtzBIgwGQbEy8qQsyAIvXNA81YFDesXM0nl++rlLMm
+         pIqOvjmjhgSpIHaX1J5gYm0emw+JXbmrAG8PKSUBaRdmjYNi0XANP+88Qc4uPc9QJvMb
+         CbB2x5/faoXfN8mGNk0ny0LJj3Cg7ra46qaAKrmQyWAaRrc3v/gikB5afcWIl4FEzyGe
+         DUL4CXyEfHugQQ7PHPQa1QFAT0A0y/l29n2Nr4fdw1UMQ7mijoKMcdPyYlO+5DhbX9UK
+         fCNA==
+X-Gm-Message-State: AOAM533uoMNfReNBbqGlgJmKie6su6tfK3+JmToW2c+xyUUvRvNf2+zN
+        aVn9bRApT8I/Na18+CkoI+oPy/mNlLFylQ==
+X-Google-Smtp-Source: ABdhPJzbdHUE/lkH5CariWVk3SbLNS+6oY4OoCIeUhTdL8TIk0I7aM9knVC2EmRo1KV8VM7cBJqKTA==
+X-Received: by 2002:a1c:ab57:: with SMTP id u84mr2545153wme.115.1612353241240;
+        Wed, 03 Feb 2021 03:54:01 -0800 (PST)
+Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id 35sm3687362wrn.42.2021.02.03.03.54.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Feb 2021 03:54:00 -0800 (PST)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org
+Cc:     bryan.odonoghue@linaro.org, jonathan@marek.ca,
+        dikshita@codeaurora.org, dmitry.baryshkov@linaro.org,
+        stanimir.varbanov@linaro.org
+Subject: [PATCH 1/4] dt-bindings: clock: Add missing SM8250 videoc clock indices
+Date:   Wed,  3 Feb 2021 11:54:53 +0000
+Message-Id: <20210203115456.1072975-2-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210203115456.1072975-1-bryan.odonoghue@linaro.org>
+References: <20210203115456.1072975-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210202205544.24812-3-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02-02-21, 14:55, Rob Herring wrote:
-> Properties in if/then schemas weren't getting checked by the meta-schemas.
-> Enabling meta-schema checks finds several errors.
-> 
-> The use of an 'items' schema (as opposed to the list form) is wrong in
-> some cases as it applies to all entries. 'contains' is the correct schema
-> to use in the case of multiple entries.
-> 
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: linux-crypto@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-leds@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/crypto/allwinner,sun8i-ce.yaml   | 3 +--
->  .../devicetree/bindings/display/brcm,bcm2835-hvs.yaml    | 2 +-
->  Documentation/devicetree/bindings/leds/ti,tca6507.yaml   | 1 +
->  Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml  | 2 +-
->  Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml | 3 +--
->  .../devicetree/bindings/phy/renesas,usb2-phy.yaml        | 5 ++---
+Two indexes need to be added to videocc-sm8250.h for venus to function
+properly. Rather than adding the missing indexes when used we add them
+separately here to keep checkpatch.pl happy.
 
-For phy:
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ include/dt-bindings/clock/qcom,videocc-sm8250.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-By: Vinod Koul <vkoul@kernel.org>
-
+diff --git a/include/dt-bindings/clock/qcom,videocc-sm8250.h b/include/dt-bindings/clock/qcom,videocc-sm8250.h
+index 2b2b3867af25..8d321ac3b1fa 100644
+--- a/include/dt-bindings/clock/qcom,videocc-sm8250.h
++++ b/include/dt-bindings/clock/qcom,videocc-sm8250.h
+@@ -16,6 +16,8 @@
+ #define VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC	6
+ #define VIDEO_CC_PLL0			7
+ #define VIDEO_CC_PLL1			8
++#define VIDEO_CC_MVS0_DIV_CLK_SRC	9
++#define VIDEO_CC_MVS0_CLK		10
+ 
+ /* VIDEO_CC resets */
+ #define VIDEO_CC_CVP_INTERFACE_BCR	0
 -- 
-~Vinod
+2.29.2
+
