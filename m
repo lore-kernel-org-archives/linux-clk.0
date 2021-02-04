@@ -6,93 +6,91 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CC8C433E6
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C866AC433DB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 15:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC1C64F4D
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 15:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C38464F4D
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 15:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237522AbhBDPly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 10:41:54 -0500
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:44850 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237519AbhBDPlv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 10:41:51 -0500
-Received: by mail-ot1-f51.google.com with SMTP id e70so3760036ote.11;
-        Thu, 04 Feb 2021 07:41:35 -0800 (PST)
+        id S237670AbhBDP6s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 10:58:48 -0500
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:40629 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237661AbhBDP6l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 10:58:41 -0500
+Received: by mail-oi1-f176.google.com with SMTP id k142so4173563oib.7;
+        Thu, 04 Feb 2021 07:58:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=T/w3UsXs5CpLGbmrcFDWBtdDM8zstN972mWNd93eBiA=;
-        b=SqB6AxxGslYa4lM+s8+/OJ2bPWXAmwrgMjTc2wg5/3E3xnOxsIZgLj9Nn2wUwRIn+w
-         IxHe+LftmFPOoz3Om+xLLF6X/zp2ucJdt1b5G/T9BmaB0SduRNHY6omc1CsBrKmWT7dZ
-         9XHe/PBRuek2TxklG0hgcEMDwRjMwpblLZ/R51wtiFy8xctLGAGZQ/CtpdPSGrHAOcqZ
-         6SJ7poZv9usjisYbqvrcK0H+BlxmBM1PQsC1j/kXlBKKZ8Gs3U0Mfjzs8s7lwbEUcAp9
-         aFqRY3HooPH4WL/v8ifa8BzWpHDolF6Y1UXt3DvuvrMj3tKpthSF3BEbfY1J2OHvnQKO
-         ZYhw==
-X-Gm-Message-State: AOAM5329BYxIwHQ2LnBh9zUBnAUAlPXyo6zr17Kug+noRIABnTnrRhQ5
-        m+BNqMa/toSVzUTm7Xgxk/fq7yQ3Fw==
-X-Google-Smtp-Source: ABdhPJz4BR3qX/jeBDQvEtIUDmfz1nIT1DEUIWsG2rluhKtoac9X2XNuMRYb0+rMeeEuMxQeN6KuQA==
-X-Received: by 2002:a4a:9e55:: with SMTP id w21mr6010393ook.67.1612452067897;
-        Thu, 04 Feb 2021 07:21:07 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1JoS7ZOVE9Ml5mvNzoRFgSFxVIiKASQvqvy7j1NPt3U=;
+        b=nhJIsssXK15CqsjxpbwmXr1f3u85DTfzZvbQk1YqZuuI1tD8nhHdWeMprjH4nZvf08
+         VqYxFD7m/2ZF3ehF5mVIlCsNJklxf4ezsmSx0PN3VHmNRsIyWR2Ifut+N1h7EU176w3o
+         xqKSHmmryoJNY6g1MWZUWkv9rs2oZF5PtlCtiOHMT5lEyazz/nD0JomiAL/wIuf1JknR
+         Ef0fdhz33cKyDVK+GaL/VUxYeRaDRbRRfY90UJ2B4CtbEpl8J8KxBW1UScY3r3xeAfQH
+         jA+TjeFotmwTWJgCXxZUSuJun1DD2sp9iSc3K89G4laINUNT/A5t9Gtw0D2cJpDoySdY
+         LAww==
+X-Gm-Message-State: AOAM533PBrQISRPBe3A3CFO/ZREB2LhIea2M37KQW/eG7frrmhrMigAH
+        6HEUOSIlpw7yz7OP4kNMhA==
+X-Google-Smtp-Source: ABdhPJwsBZ5X+etCKN8Abu4ufC5JowP7grlS3OIUacD2jRxRHv/O619GgCksaoDNro8ZLT90PYGmBA==
+X-Received: by 2002:aca:c310:: with SMTP id t16mr29076oif.151.1612454280855;
+        Thu, 04 Feb 2021 07:58:00 -0800 (PST)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g13sm869623otj.67.2021.02.04.07.21.06
+        by smtp.gmail.com with ESMTPSA id w140sm319379oia.32.2021.02.04.07.57.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Feb 2021 07:21:07 -0800 (PST)
-Received: (nullmailer pid 452044 invoked by uid 1000);
-        Thu, 04 Feb 2021 15:20:57 -0000
+        Thu, 04 Feb 2021 07:58:00 -0800 (PST)
+Received: (nullmailer pid 519407 invoked by uid 1000);
+        Thu, 04 Feb 2021 15:57:59 -0000
+Date:   Thu, 4 Feb 2021 09:57:59 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     shubhrajyoti.datta@gmail.com, gregkh@linuxfoundation.org,
-        robh+dt@kernel.org, devicetree@vger.kernel.org, git-dev@xilinx.com,
-        linux-clk@vger.kernel.org, sboyd@kernel.org
-In-Reply-To: <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH v8 1/7] dt-bindings: add documentation of xilinx clocking wizard
-Date:   Thu, 04 Feb 2021 09:20:57 -0600
-Message-Id: <1612452057.740171.452043.nullmailer@robh.at.kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Adam Ford <aford173@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: clk: versaclock5: Miscellaneous fixes
+ and improvements:
+Message-ID: <20210204155759.GA519221@robh.at.kernel.org>
+References: <20210126163955.1933893-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210126163955.1933893-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 04 Feb 2021 19:23:24 +0530, Shubhrajyoti Datta wrote:
-> Add the devicetree binding for the xilinx clocking wizard.
+On Tue, 26 Jan 2021 17:39:55 +0100, Geert Uytterhoeven wrote:
+>   - Remove unneeded reference for "idt,slew-percent", as vendor specific
+>     properties having a standard unit suffix don't need a type,
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v6:
-> Fix a yaml warning
-> v7:
-> Add vendor prefix speed-grade
-> v8:
-> Fix the warnings
+> This depends on "[PATCH dt-schema 0/2] dt-schema: Add percentage"
+> https://lore.kernel.org/r/20210126162756.1932692-1-geert+renesas@glider.be
 > 
->  .../bindings/clock/xlnx,clocking-wizard.yaml       | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> v3:
+>   - Drop references for "idt,voltage-microvolt" and "idt,slew-percent",
+> 
+> v2:
+>   - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
+>     ('clk: vc5: Use "idt,voltage-microvolt" instead of
+>     "idt,voltage-microvolts"'),
+>   - Drop reference to clock.yaml, which is already applied
+>     unconditionally,
+>   - Drop removal of allOf around if condition, as it is unnecessary
+>     churn.
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.yaml       | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.example.dt.yaml: clock-generator@40040000: 'speed-grade' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.example.dt.yaml: clock-generator@40040000: 'clock-output-names', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-
-See https://patchwork.ozlabs.org/patch/1436021
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
