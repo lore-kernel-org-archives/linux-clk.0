@@ -2,207 +2,192 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F932C433DB
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 21:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6934AC43381
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 00:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E261564F68
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Feb 2021 21:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CA4464F4C
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 00:48:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbhBCVXJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Feb 2021 16:23:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbhBCVXE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Feb 2021 16:23:04 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC97C061573;
-        Wed,  3 Feb 2021 13:22:24 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id c132so634941pga.3;
-        Wed, 03 Feb 2021 13:22:24 -0800 (PST)
+        id S234396AbhBDArV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Feb 2021 19:47:21 -0500
+Received: from mail-eopbgr1400118.outbound.protection.outlook.com ([40.107.140.118]:53639
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234550AbhBDArF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Feb 2021 19:47:05 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z1KtVjKtkeoOU0FjnUYkG9cArG9iV7ohqPKGsZoo7d0git9Gm6fNkBy+f+5eOW1gPOV6NniyavG5OLSc5Yex2lPfNKoR4+ps5Zg5qhtQG51qfddaVvpdPscq8FdiVaCZXvc4Q79Z2uuMMOjoz/KpU7Bl9nf9v+xx8TUKS6hlpnA6vIIyCMcVcw3RwnCL6cceTPKa6tegFwlPOvWhqvPYvxK4JgPoUXiGxb28is5WV5IrePtW/qLakqrO9pRIrGgrO73bZ6eQKohNNxTc1kaaCFc3TBgaL/ISunMbqoOBcWZKONh6lVtoNhDeuZE9cqcA8yOj68JO9EefNd4oxUJvqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UbmISciCAVQilwtr3iSwn22zbD+d/BX4/zFvzaS5/3g=;
+ b=cyN7xKCcUX2G9tQ5Nq/p4AWSLNLskrmFbcOLLSw24DVt03uEV5/xCKOYyr6PMhssjsOvLUE3fagFzZigth+rsK6zRLDLatdN+YqnxQgfux/em6bE13zmoyCbpXLL2LHA2uWt6xzxBkkJCe2WrKSbZVCTzRVXB5One7cF7SMTFkVWa30LrFD10z4Esfe3F2XHMvO5PON3BkzSpy0Qk3/hRxHaNGezwgu2nYnTQhjnU6aSRwm9+mjkY/aYeL1nt6PfE1QY/7cVoOiPee7a0xr0DRr0uhOxg+88B/LU/TyR3LOtFlhiqjvMtM3il3CpCmhGpEpYjMgfw0G/5ck4qVPpMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TFiTJoFvlaFYID17H7RoHT6hcb6k7KOcxSeH2rq/fng=;
-        b=S1+9liQomwOL0dXTpJHZjK/3oCEze3UJv+GhpjQfT53/WCm+1QLAiYD6gNA9QvXLGH
-         ez4lex81vs1tLNWL9qmUSHSJm0H3tU2JaAHyLyJK+N9PRQkX1qh7rEPaYys7dOmRIkFX
-         p7zfiVsdxELZNyra/FGwYVWcDHmp1iMuEDlKlDmvBF36RrMN5mi66FJyDa6V85wjA56l
-         P2weCJ1tTmdLehCZE2s1HG2KdhneoXqQvg6kGqHc5BEJYi7Ot1fvQtKaNTIwzriKG4bn
-         7qPqyZNzhEjZQ1V146lWvx9H6Ur5fmU+w3Ow/tX7ct74iug0ArEzKOm5YxUWlL5nuBdS
-         kopQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TFiTJoFvlaFYID17H7RoHT6hcb6k7KOcxSeH2rq/fng=;
-        b=d7PGzy/blhDQ+slZXCN/nTLP7FqOX1mVygrJiF+Vr2/A3PysK0ixN6+uGd0jpfJJjs
-         NDs6SWlyU+EIf+Btu4d4RTk0aSKyrdc7Blu0zZ0fXU9/x/vKv5AdzPDEEt4Tk/4VyOQc
-         tllDtmawT+6t+i7e3DfpHikwF93SOvk+AQ2WKXX2sAkLj1N4kQ6uyeTQ2WcbWPu9uGHT
-         6fTCu3awxwcUFT9GjLOfWInk/Ce+1XGfigNp7N7DikqKNnhdx3irWRJBo29R7yHgQ3P0
-         5rFGSFt5Xbup3FsI4ygRq5ujCCwRigc9YflWbouN6ItkSmEOBBbmGzzzyrMewrl/YQSC
-         UiwA==
-X-Gm-Message-State: AOAM53306wUP5JcKifSLqnINGdnSIAmCg1Q3NlL0uhsYLQtY+jwC8GBf
-        eiPEYM6Px1zjNT9GrtZuk+BycFLq8u/gKtVbCQI=
-X-Google-Smtp-Source: ABdhPJyjgKLsLDMiQKZhm/3dUiduA5WUTzetwtwlYpTEeR8ore5ECpNZtOPlRKLdoPELwntqIfz2g0Bok48UDCWCVGA=
-X-Received: by 2002:a62:2ac3:0:b029:1bc:4287:c0b3 with SMTP id
- q186-20020a622ac30000b02901bc4287c0b3mr4790030pfq.26.1612387343663; Wed, 03
- Feb 2021 13:22:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20210115182909.314756-1-aford173@gmail.com> <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
- <CAHCN7x+CXUuPN7upiv3D+REOU4d_=i30no+SkRzUjWY58o=uUQ@mail.gmail.com>
- <20210120144454.f6b72lnasw4q3bde@fsr-ub1664-175> <20210120151305.GC19063@pengutronix.de>
- <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175> <20210120155001.GD19063@pengutronix.de>
- <20210120161421.h3yng57m3fetwwih@fsr-ub1664-175> <20210121095617.GI19063@pengutronix.de>
- <20210121102450.lisl3mzqczdsmzda@fsr-ub1664-175>
-In-Reply-To: <20210121102450.lisl3mzqczdsmzda@fsr-ub1664-175>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 3 Feb 2021 15:22:12 -0600
-Message-ID: <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
-Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated with sdout
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UbmISciCAVQilwtr3iSwn22zbD+d/BX4/zFvzaS5/3g=;
+ b=OkckjyXeJ9xl6C10bvoR9ju2yd49VtAaYCQ3EHSnmGkX1CvfgH8CigfEQLelz7O03Ywc+vFE34d+FylZ+8pF9oukikCpH/42MWl04Av26QXFrpHeSoTWrfeCqvjtKBxv2mtbcsxWe4aFq42ysJGGPi66LmKjBbGE8et9Agz8Blo=
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
+ by TY1PR01MB1738.jpnprd01.prod.outlook.com (2603:1096:403:4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16; Thu, 4 Feb
+ 2021 00:46:16 +0000
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::cb4:9680:bb26:8f3f]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::cb4:9680:bb26:8f3f%4]) with mapi id 15.20.3805.026; Thu, 4 Feb 2021
+ 00:46:16 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Rob Herring <robh@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Vincent Cheng <vincent.cheng.xh@renesas.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+Subject: RE: [PATCH 1/3] dt-bindings: Fix undocumented compatible strings in
+ examples
+Thread-Topic: [PATCH 1/3] dt-bindings: Fix undocumented compatible strings in
+ examples
+Thread-Index: AQHW+aXLnk1q1RZsG0C3bQLH8doykqpHKl9Q
+Date:   Thu, 4 Feb 2021 00:46:15 +0000
+Message-ID: <TY2PR01MB3692C2B0EA72A7A681CE0EDBD8B39@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+References: <20210202205544.24812-1-robh@kernel.org>
+In-Reply-To: <20210202205544.24812-1-robh@kernel.org>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=renesas.com;
+x-originating-ip: [240f:60:5f3e:1:8026:caa1:e178:9d3a]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 5e282fd8-55ea-40ef-ab64-08d8c8a6476e
+x-ms-traffictypediagnostic: TY1PR01MB1738:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB1738D28DBC42C3F2295EC7AED8B39@TY1PR01MB1738.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1227;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: T31aKGTPNrpjik7AeVy0zegvGdlnV7djLbM26nXZ7Lruawh4y6ICQtDaAQUVi3fpv0Ena5mP+ejd1v/6gfCUeI/I35wPPOlt+p/+iioq1+q9haIY/26EU/XwijwqepLUQGq48QtpgCob1T0VWTZw0xP8ECYrRPwE0liMoC+84KfsiEA9jn4ZexUxgFb4mJ3e/GzUXyP+i4S0ObLA+cBm/vK03wjprliaWFRsWo3h0pKrYR7EbjoA7PuNsP7oouXMLmfMeDqFTu/YReNfB6YOrjHElJh9RtIm0A/yIiJ2mxKaa3agS1BGqwV2Qo3zRWFA0aRCquu37nBkDd5eHdOnzZiZeRYVmb8JwkhkYDdb4uY7W7URLRWETAKoi1SIOHVVw7FbOtcdc+I28MIbJHp0/rns/80KvYDFPymXC8DyUpmtwyhQu1Pr1OetbPVQUV1LdTBhS8C6D+TmUd5ljadwdsvP5x47Buey3V/pTuS/xkxOFStGvsxadiKeLt4zLipWoEqSoscfqShd6dFLxCd2iw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(39860400002)(136003)(366004)(346002)(376002)(66476007)(64756008)(76116006)(66556008)(110136005)(66946007)(7416002)(316002)(7696005)(8936002)(66446008)(4326008)(86362001)(54906003)(2906002)(478600001)(83380400001)(71200400001)(6506007)(5660300002)(8676002)(186003)(9686003)(55016002)(33656002)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?a1gjVaMHSS4tF0M+KNOJ57yrWmzTG2v/7GwmwnKCv+wcgurCnMJqrh0Lcn3E?=
+ =?us-ascii?Q?46UeV/TAzJuP7bRuRpUkZeZovwL3f3JOkSjXLgfIPSwOkTtpUv76jhMQjgoc?=
+ =?us-ascii?Q?A2MGHvKE3YjQxYULbPGW1sRcNtJqysHMGg5hNKNOpuv4D5XXrgDSSt5Sj3ro?=
+ =?us-ascii?Q?zynhmE5DF99BZ3QZkoG/0oFpHy6kKNzvvWR4+nC4v7VmFqJA5+kgnV/lwTcp?=
+ =?us-ascii?Q?3xm7L6JgmoMm0EluAmdYz3vzsEZCGuEEUWS3YqSUuZA4i8gc7/BFCFHTGDGF?=
+ =?us-ascii?Q?nq27i6Cvq4ZCAeVlNoazTZiSepxLwbz9UyWHXDw/wtw6QhCPQ/O/VtQYnoRF?=
+ =?us-ascii?Q?e0xZuCzvnS3Kpv8dOayKYNvu7L0zAiQ35axSo/F8I89ewnapIYkJr7Bcq5Ht?=
+ =?us-ascii?Q?BRQ3vSUs/9UyKhoKosZ/0MQ9OMUBdwoDiQ3Upk3Bm7jZAVSLTw7hZLcRWwt2?=
+ =?us-ascii?Q?nfDAiO4ImTX43yUSpvMRTY9yTxnSe3ZW28ucq9pGks3IXXt5FKO13JRTABG3?=
+ =?us-ascii?Q?37xhDFs4X++F+eLtvrfbgzBjf8cLILPbsw94ZSdJyrebQbw9Q5nQKR+BQ0ru?=
+ =?us-ascii?Q?iQmEAstTc9d1Ps3NPjhAchaEUpcYauSISk9orgTqPmLOwT0unbmxUQHLST8i?=
+ =?us-ascii?Q?tMKPu+HgTEjcmDnUHmXLmAsLxIDztJse/n3K20Bz8CY5OmghgaJI70gaRqVh?=
+ =?us-ascii?Q?gxwCk1YyUseEZLaBM/0Pv6iVXMq8bhr+Ru86yFi+J1V6IrbNXTwkgE2EF7bn?=
+ =?us-ascii?Q?KGKk4wiTtiCPBw6mW5yGj0eGu178p2mMlbF4onRQsVmgAdc9mdjnqRJM8fv+?=
+ =?us-ascii?Q?TGxe/t+KC7ou7QFFcwzhxW8nsU5g0+AtQxoV4L/sOQA3qgVHIAPpGNiQQi9v?=
+ =?us-ascii?Q?Fmx6s6z9IajzTVTFuv7Y+rtai5p5TUubx+4MmssMUFqIqX8cogrJfLe/ndON?=
+ =?us-ascii?Q?s1Dvo/m2WFlyVuQEh5XI6YRpFKKDqcLS64nzvqA9fFwDxgoVCUCK1sLHkELM?=
+ =?us-ascii?Q?yYZqlMS4EkCCk660MApM7oaNM2theh7rtd2erOWp3y3xjGcG60h2mTpOoM9V?=
+ =?us-ascii?Q?a1O3Ciqo3Tbb9rV2kYxLXH90Vo+kag262zc5FH2uQBB3lEJNhXQ=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e282fd8-55ea-40ef-ab64-08d8c8a6476e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2021 00:46:16.0327
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xtW41ue/BpMZ1I0e2PfUwxs7ZvfulLSw6dFCqefvGpdMayP2woaSNtRc/sPB1VEMnsylz2VDrzfAclI7yHa3DskEdBnLJ5jJnl2gPLAv8ZxeMW2sX/vzMLPgj/IzEbMV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1738
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 4:24 AM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> On 21-01-21 10:56:17, Sascha Hauer wrote:
-> > On Wed, Jan 20, 2021 at 06:14:21PM +0200, Abel Vesa wrote:
-> > > On 21-01-20 16:50:01, Sascha Hauer wrote:
-> > > > On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
-> > > > > On 21-01-20 16:13:05, Sascha Hauer wrote:
-> > > > > > Hi Abel,
-> > > > > >
-> > > > > > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
-> > > > > > > On 21-01-18 08:00:43, Adam Ford wrote:
-> > > > > > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.co=
-m> wrote:
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > TBH, I'm against the idea of having to call consumer API =
-from a clock provider driver.
-> > > > > > > > > I'm still investigating a way of moving the uart clock co=
-ntrol calls in drivers/serial/imx,
-> > > > > > > > > where they belong.
-> > > > > > > >
-> > > > > > > > That makes sense.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Just a thought. The uart clock used for console remains on fr=
-om u-boot,
-> > > > > > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag t=
-o all the
-> > > > > > > uart root clocks and remove the prepare/enable calls for uart=
- clocks
-> > > > > > > for good. I don't really have a way to test it right now, but=
- maybe
-> > > > > > > you could give it a try.
-> > > > > >
-> > > > > > That would mean that UART clocks will never be disabled, regard=
-less of
-> > > > > > whether they are used for console or not. That doesn't sound ve=
-ry
-> > > > > > appealing.
-> > > > >
-> > > > > AFAIK, the only uart clock that is enabled by u-boot is the one u=
-sed for
-> > > > > the console. Later on, when the serial driver probes, it will ena=
-ble it itself.
-> > > > >
-> > > > > Unless I'm missing something, this is exactly what we need.
-> > > >
-> > > > It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
-> > > > disabled again when a port is closed after usage
-> > >
-> > > OK, tell me what I'm getting wrong in the following scenario:
-> > >
-> > > U-boot leaves the console uart clock enabled. All the other ones are =
-disabled.
-> > >
-> > > Kernel i.MX clk driver registers the uart clocks with flag CLK_IGNORE=
-_UNUSED.
-> >
-> > I was wrong at that point. I originally thought the kernel will never
-> > disable these clocks, but in fact it only leaves them enabled during th=
-e
-> > clk_disable_unused call.
-> >
-> > However, when CLK_IGNORE_UNUSED becomes relevant it's too late already.
-> > I just chatted with Lucas and he told me what the original problem was
-> > that his patch solved.
-> >
-> > The problem comes when an unrelated device and the earlycon UART have
-> > the same parent clocks. The parent clock is enabled, but it's reference
-> > count is zero. Now when the unrelated device probes and toggles its
-> > clocks then the shared parent clock will be disabled due to the
-> > reference count being zero. Next time earlycon prints a character the
-> > system hangs because the UART gates are still enabled, but their parent
-> > clocks no longer are.
-> >
->
-> Hmm, that is indeed a problem. That's why I think there should be some
-> kind of NOCACHE flag for almost all the types of clocks. For example,
-> in this case, it makes sense for the core to check the bit in the registe=
-r
-> and then disable the parent based on that instead of relying on the refco=
-unt.
-> Anyway, that's something that needs to be added in the CCF.
->
-> > Overall I think Lucas' patches are still valid and relevant and with
-> > Adams patches we even no longer have to enable all UART clocks, but
-> > only the ones which are actually needed.
->
-> Yeah, for now, I think we can go with Adam's patches. But longterm, I wou=
-ld
-> like to remove the special case of the uart clocks we have right now in a=
-ll
-> the i.MX clock drivers.
->
+Hi Rob,
 
-Is the patch I submitted good enough for someone's acked-by or
-reviewed-by, or are there changes I need to implement?
+> From: Rob Herring, Sent: Wednesday, February 3, 2021 5:56 AM
+>=20
+> Running 'dt-validate -m' will flag any compatible strings missing a schem=
+a.
+> Fix all the errors found in DT binding examples. Most of these are just
+> typos.
+>=20
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Daniel Palmer <daniel@thingy.jp>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Avi Fishman <avifishman70@gmail.com>
+> Cc: Tomer Maimon <tmaimon77@gmail.com>
+> Cc: Tali Perry <tali.perry1@gmail.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Andrew Jeffery <andrew@aj.id.au>
+> Cc: Joel Stanley <joel@jms.id.au>
+> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Vincent Cheng <vincent.cheng.xh@renesas.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-i2c@vger.kernel.org
+> Cc: iommu@lists.linux-foundation.org
+> Cc: linux-watchdog@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+<snip>
+> diff --git a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.y=
+aml
+> b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
+> index cde1afa8dfd6..349633108bbd 100644
+> --- a/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.yaml
+> @@ -93,7 +93,7 @@ examples:
+>      #include <dt-bindings/power/r8a7791-sysc.h>
+>=20
+>      ipmmu_mx: iommu@fe951000 {
+> -        compatible =3D "renasas,ipmmu-r8a7791", "renasas,ipmmu-vmsa";
+> +        compatible =3D "renesas,ipmmu-r8a7791", "renesas,ipmmu-vmsa";
 
-adam
+Oops. Thank you for fixing this.
 
-> >
-> > Sascha
-> >
-> >
-> > --
-> > Pengutronix e.K.                           |                           =
-  |
-> > Steuerwalder Str. 21                       | https://eur01.safelinks.pr=
-otection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=3D0=
-4%7C01%7Cabel.vesa%40nxp.com%7Ceed68987c68f4aeaa63408d8bdf2d051%7C686ea1d3b=
-c2b4c6fa92cd99c5c301635%7C0%7C0%7C637468197861821302%7CUnknown%7CTWFpbGZsb3=
-d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000=
-&amp;sdata=3DX1J8KgxFquNin80zKVz0Ao22vv1MuTMWf91BUTczh9Y%3D&amp;reserved=3D=
-0  |
-> > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0  =
-  |
-> > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
+
