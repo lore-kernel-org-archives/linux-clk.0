@@ -7,32 +7,33 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66225C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFE6C433E6
 	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0674C64F64
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3192664F10
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239545AbhBDS5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 13:57:25 -0500
-Received: from mailoutvs45.siol.net ([185.57.226.236]:35695 "EHLO
+        id S238482AbhBDS5c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 13:57:32 -0500
+Received: from mailoutvs39.siol.net ([185.57.226.230]:35686 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S239399AbhBDSzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 13:55:42 -0500
+        with ESMTP id S239313AbhBDSzf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 13:55:35 -0500
+X-Greylist: delayed 395 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Feb 2021 13:55:34 EST
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 81385523FC4;
-        Thu,  4 Feb 2021 19:48:19 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 2DF32523FBF;
+        Thu,  4 Feb 2021 19:48:17 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9YUWL1tonfcD; Thu,  4 Feb 2021 19:48:19 +0100 (CET)
+        with ESMTP id 7kZew-YskHbH; Thu,  4 Feb 2021 19:48:16 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 33FB1523FC6;
-        Thu,  4 Feb 2021 19:48:19 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id D1DDC523FB1;
+        Thu,  4 Feb 2021 19:48:16 +0100 (CET)
 Received: from kista.localdomain (cpe-86-58-58-53.static.triera.net [86.58.58.53])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id D76B8523FC4;
-        Thu,  4 Feb 2021 19:48:16 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id 72F66523FC5;
+        Thu,  4 Feb 2021 19:48:14 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     mripard@kernel.org, wens@csie.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
@@ -40,9 +41,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
         Andre Heider <a.heider@gmail.com>
-Subject: [PATCH 3/5] drm/sun4i: dw-hdmi: always set clock rate
-Date:   Thu,  4 Feb 2021 19:47:08 +0100
-Message-Id: <20210204184710.1880895-4-jernej.skrabec@siol.net>
+Subject: [PATCH 2/5] drm/sun4i: tcon: set sync polarity for tcon1 channel
+Date:   Thu,  4 Feb 2021 19:47:07 +0100
+Message-Id: <20210204184710.1880895-3-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210204184710.1880895-1-jernej.skrabec@siol.net>
 References: <20210204184710.1880895-1-jernej.skrabec@siol.net>
@@ -52,59 +53,95 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As expected, HDMI controller clock should always match pixel clock. In
-the past, changing HDMI controller rate would seemingly worsen
-situation. However, that was the result of other bugs which are now
-fixed.
+Channel 1 has polarity bits for vsync and hsync signals but driver never
+sets them. It turns out that with pre-HDMI2 controllers seemingly there
+is no issue if polarity is not set. However, with HDMI2 controllers
+(H6) there often comes to de-synchronization due to phase shift. This
+causes flickering screen. It's safe to assume that similar issues might
+happen also with pre-HDMI2 controllers.
 
-Fix that by removing set_rate quirk and always set clock rate.
+Solve issue with setting vsync and hsync polarity. Note that display
+stacks with tcon top have polarity bits actually in tcon0 polarity
+register.
 
-Fixes: 40bb9d3147b2 ("drm/sun4i: Add support for H6 DW HDMI controller")
+Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
 Tested-by: Andre Heider <a.heider@gmail.com>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 4 +---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 -
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 24 ++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  5 +++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4=
-i/sun8i_dw_hdmi.c
-index 92add2cef2e7..23773a5e0650 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -21,8 +21,7 @@ static void sun8i_dw_hdmi_encoder_mode_set(struct drm_e=
-ncoder *encoder,
- {
- 	struct sun8i_dw_hdmi *hdmi =3D encoder_to_sun8i_dw_hdmi(encoder);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+index 6b9af4c08cd6..0d132dae58c0 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -672,6 +672,29 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon *=
+tcon,
+ 		     SUN4I_TCON1_BASIC5_V_SYNC(vsync) |
+ 		     SUN4I_TCON1_BASIC5_H_SYNC(hsync));
 =20
--	if (hdmi->quirks->set_rate)
--		clk_set_rate(hdmi->clk_tmds, mode->crtc_clock * 1000);
-+	clk_set_rate(hdmi->clk_tmds, mode->crtc_clock * 1000);
- }
++	/* Setup the polarity of sync signals */
++	if (tcon->quirks->polarity_in_ch0) {
++		val =3D 0;
++
++		if (mode->flags & DRM_MODE_FLAG_PHSYNC)
++			val |=3D SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
++
++		if (mode->flags & DRM_MODE_FLAG_PVSYNC)
++			val |=3D SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
++
++		regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, val);
++	} else {
++		val =3D SUN4I_TCON1_IO_POL_UNKNOWN;
++
++		if (mode->flags & DRM_MODE_FLAG_PHSYNC)
++			val |=3D SUN4I_TCON1_IO_POL_HSYNC_POSITIVE;
++
++		if (mode->flags & DRM_MODE_FLAG_PVSYNC)
++			val |=3D SUN4I_TCON1_IO_POL_VSYNC_POSITIVE;
++
++		regmap_write(tcon->regs, SUN4I_TCON1_IO_POL_REG, val);
++	}
++
+ 	/* Map output pins to channel 1 */
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
+ 			   SUN4I_TCON_GCTL_IOMAP_MASK,
+@@ -1500,6 +1523,7 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv=
+_quirks =3D {
 =20
- static const struct drm_encoder_helper_funcs
-@@ -295,7 +294,6 @@ static int sun8i_dw_hdmi_remove(struct platform_devic=
-e *pdev)
-=20
- static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks =3D {
- 	.mode_valid =3D sun8i_dw_hdmi_mode_valid_a83t,
--	.set_rate =3D true,
+ static const struct sun4i_tcon_quirks sun8i_r40_tv_quirks =3D {
+ 	.has_channel_1		=3D true,
++	.polarity_in_ch0	=3D true,
+ 	.set_mux		=3D sun8i_r40_tcon_tv_set_mux,
  };
 =20
- static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks =3D {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4=
-i/sun8i_dw_hdmi.h
-index d983746fa194..d4b55af0592f 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -179,7 +179,6 @@ struct sun8i_dw_hdmi_quirks {
- 	enum drm_mode_status (*mode_valid)(struct dw_hdmi *hdmi, void *data,
- 					   const struct drm_display_info *info,
- 					   const struct drm_display_mode *mode);
--	unsigned int set_rate : 1;
- 	unsigned int use_drm_infoframe : 1;
- };
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.h
+index c5ac1b02482c..b504fb2d3de5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -154,6 +154,10 @@
+ #define SUN4I_TCON1_BASIC5_V_SYNC(height)		(((height) - 1) & 0x3ff)
 =20
+ #define SUN4I_TCON1_IO_POL_REG			0xf0
++#define SUN4I_TCON1_IO_POL_UNKNOWN			BIT(26)
++#define SUN4I_TCON1_IO_POL_HSYNC_POSITIVE		BIT(25)
++#define SUN4I_TCON1_IO_POL_VSYNC_POSITIVE		BIT(24)
++
+ #define SUN4I_TCON1_IO_TRI_REG			0xf4
+=20
+ #define SUN4I_TCON_ECC_FIFO_REG			0xf8
+@@ -236,6 +240,7 @@ struct sun4i_tcon_quirks {
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ 	bool    needs_edp_reset; /* a80 edp reset needed for tcon0 access */
+ 	bool	supports_lvds;   /* Does the TCON support an LVDS output? */
++	bool	polarity_in_ch0; /* some tcon1 channels have polarity bits in tcon=
+0 pol register */
+ 	u8	dclk_min_div;	/* minimum divider for TCON0 DCLK */
+=20
+ 	/* callback to handle tcon muxing options */
 --=20
 2.30.0
 
