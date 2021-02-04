@@ -2,172 +2,279 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFD5C433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E40C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95DC664F5E
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A20764E3F
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:56:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233305AbhBDNzv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 08:55:51 -0500
-Received: from mail-bn7nam10on2045.outbound.protection.outlook.com ([40.107.92.45]:8281
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236466AbhBDNzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Feb 2021 08:55:16 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FFFglIU3ME2zZQSBGu4AdQtlwH6s+fDF8ONgGrZ4gi9wJxxtQmVC2c0p1jsT1gcd41HnaW1ETfPDuiZNs7QQsqR2Jj3B7eVgc1681BgYV0I5Z/gsnjzuc+z3P2sOgE+Fql7q8dsTTBLKZMjdaWf+87bGrjnjZk5jhGWprcHlQKGyyxQxLnIyiosZhqkPKxn564dOlB5qcptz6fk4Etb0SrmsuiEFkpxPtr0aZ+YAbz+A7WTkXJXLn38v9OXIcKpc9TC0yv85j9B028nRiiQP1U/2Zx8t/CqGXZcdFF/2jdDfWIUR8hyFYJ6jKiMIRaZPHxShpecNfxzt1BRgdNyePg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=roEj9Agv1RYOmPCtk4VocZviSZy/fkIAobJzO2mZ+s4=;
- b=UlLAtuW8+4ZsBmEZzN9G5ofbJscUeVBdMFAGCTIaksa8si4/QvbV9h0cyKpxgodtTlmrnJKXHyQU7HrV0ZAZeD+bFejv5tZoiPDxsQP/UlcdEgU1yEDhyYN+YIHqAIa3VtnGr2dsSUemtrPLOZrqfAMeAH22JNzdtrGD7rZVOtZ+ulNPlWwzZzy53CCMmFaZDby5NT5hGXNaSrcZ5m2nC4JaMzYlyrxITu5wN5cWFLBBmsx5YGa7+KTdEHrcb5Fdi91R3vZqm9quK/vv6NCGqYekf8xuMjUNSCWdHNtm+WGBnV1F2E3EoqzIB3zD7YjqmZEWTZQetVCGzk1+WawQ9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=roEj9Agv1RYOmPCtk4VocZviSZy/fkIAobJzO2mZ+s4=;
- b=OC442GnMot0RprLN1Kt72APKa7pCZfdhCqOaTelVTeRtUctxlfoQFaBDJX31NIHMMAgQH4jp3zApFfrYkT58drN/tPsKVWWJxbUaNJf3b6ox5ztmi040A+vt4w1Bd0p8vFNW5BX2NQS5dMaewYA9x6wH2GNr259zHeCyATfNKLo=
-Received: from MN2PR16CA0053.namprd16.prod.outlook.com (2603:10b6:208:234::22)
- by MW4PR02MB7202.namprd02.prod.outlook.com (2603:10b6:303:7b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.19; Thu, 4 Feb
- 2021 13:54:21 +0000
-Received: from BL2NAM02FT055.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:234:cafe::e2) by MN2PR16CA0053.outlook.office365.com
- (2603:10b6:208:234::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.20 via Frontend
- Transport; Thu, 4 Feb 2021 13:54:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- BL2NAM02FT055.mail.protection.outlook.com (10.152.77.126) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3784.12 via Frontend Transport; Thu, 4 Feb 2021 13:54:21 +0000
-Received: from xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+        id S236480AbhBDN4F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 08:56:05 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:42636 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236459AbhBDNzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 08:55:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1612446933; x=1643982933;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=lvKfoNbpb5meeE09ZP+tlSH1L7Ziidd6SFvdYvQvwjw=;
+  b=c/jRaSfM9uDfflPCN1pSaYGX6nR+czv8kTwTKWv2ayLa7gDIX0GjQdox
+   Z8ChsY4PpdP8AritVGJ6T7Nba3Nr1wH/1oz4QNpKH21jT7PMnMAL8awbW
+   xAmi1liCFyErcRtDBb+jsRbhPxeEH3bOQ3E2BjX1vNdja6MQe2QT9/2r7
+   u0GHRcebKh3HJ1uo7gH1OxZbYNGiosS4ueRm3YAQEujOvUMm+9w7wr/r5
+   nMimTnxsKL8dZJfs+lGbkgB2/aj0b7m1LgutwKF6MZzQgbNopnHWJGawu
+   SRn4LLS0gOYL3hYToYJCNWuBKRqVW+cB3p5EVuyX1GcY2wWOKUrMkzpQg
+   w==;
+IronPort-SDR: +9XZrmL8iSDlKUmqXIkMsW8sH409sHeG36WWppfIt7nehxdM4gPO7u1HkB6JMHvRbaHLqniZpd
+ qirJrJhj1qJW27pqP4n5hrsyNsESI9tFJCiUGyP4/uuOex/xInPpfJ0xhAJXM9waFSB53v/3fy
+ BAaYlimsa1hVcuNqyRFjgYbq18BmGTUzNdLRsvLOjkGocVX0I/nxfcwgm1PhlDqYtNMzgsy8Y2
+ mJzcmMT9W0cwUy6x5kUc6cVW8Q/LN/P/XGjROiwNZT+HYR3ppt6f0WHFrDFv5uoYGrZIBMvJy+
+ 8CU=
+X-IronPort-AV: E=Sophos;i="5.79,401,1602572400"; 
+   d="scan'208";a="108512934"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Feb 2021 06:54:11 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 4 Feb 2021 05:53:55 -0800
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Thu, 4 Feb 2021 05:53:55 -0800
-Envelope-to: git-dev@xilinx.com,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- shubhrajyoti.datta@gmail.com,
- sboyd@kernel.org,
- robh+dt@kernel.org,
- gregkh@linuxfoundation.org
-Received: from [10.140.6.59] (port=57876 helo=xhdshubhraj40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1l7f4z-0000Tm-TK; Thu, 04 Feb 2021 05:53:54 -0800
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-clk@vger.kernel.org>, <git-dev@xilinx.com>
-CC:     <devicetree@vger.kernel.org>, <shubhrajyoti.datta@gmail.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v8 7/7] clk: clock-wizard: Update the fixed factor divisors
-Date:   Thu, 4 Feb 2021 19:23:30 +0530
-Message-ID: <1612446810-6113-8-git-send-email-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ 15.1.1979.3; Thu, 4 Feb 2021 06:54:11 -0700
+Received: from [10.171.246.84] (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.1979.3 via Frontend
+ Transport; Thu, 4 Feb 2021 06:54:05 -0700
+Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <gregkh@linuxfoundation.org>, <saravanak@google.com>,
+        <geert@linux-m68k.org>
+CC:     <mirq-linux@rere.qmqm.pl>, <claudiu.beznea@microchip.com>,
+        <a.fatoum@pengutronix.de>, <krzk@kernel.org>,
+        <codrin.ciubotariu@microchip.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <a220097d-c3eb-4496-488b-0142baef2be7@microchip.com>
+Date:   Thu, 4 Feb 2021 14:54:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1a63476d-0e31-4e6c-3491-08d8c9145f8c
-X-MS-TrafficTypeDiagnostic: MW4PR02MB7202:
-X-Microsoft-Antispam-PRVS: <MW4PR02MB7202150A7DA53E19F380E66EAAB39@MW4PR02MB7202.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:989;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ziuZJZ46NGBsz0ItYXtyX6RcCCD/aLTo2nMf/uZ/t5i2k9LJSH+qRaIiWYONVTgWyzAAuEZ/GN0k4AqxhBbqphZkhIatUeAlZgv2T9+m+lmkfOIk2MaXVv5A8mAyhQFywfPXj6ecdTNXc9Zt+SuDCMoe4v0/NuVczAH+Ab+fcHd3wZnHvSq4228sVpEek88WK34lz0xKeVT60AVhwcFHQ8lu079gtpwbMZJW2Y2IMWfRSETbzmpZUImGeKX9gan6cI7pUxAWZXeUXpJEpLu/riRbVBlob+t6/LvUptvTUU3RaGR8kX1M8d5AJknxN2yDk+WEEL7NbxQeJ3+en0aJ0AdQWD+N7JtvJFNub5w+82wJCZENWDKLVetfLOv7cP9iJ8jcSjJ2SOSxhCz5qIkxZ3uFeCww0BHLnYbMxQekcJycXzOCzdgyTGjMVf9ACa1dHaeiRzAxQttIXn1BUr9dreRpfg78GxyMb192EccpDARfC0ZV+6wO7pT8UX2pgA8a9I7vqPKqZSDxQvvxyvH5nVG/iPKo/XBOw1KGZHsDg2mLLgKsMH+c9gGmnhLz92ZLFsl7pb4djhFIc7iszI05OfqHbjrm/+naCzwxZPFT4oS3NAul3r6cYVVrczqlPwoP7E322oGPDLVP2plO9kM1lyb9uZ9GEBXP1xkgKT9+gb1eMUz/DXYyaU3r3JIJKoaw
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(376002)(136003)(39850400004)(396003)(36840700001)(46966006)(110136005)(36860700001)(54906003)(8936002)(36756003)(316002)(36906005)(6636002)(4326008)(7636003)(356005)(47076005)(83380400001)(2906002)(6666004)(26005)(8676002)(336012)(82310400003)(426003)(15650500001)(82740400003)(70586007)(70206006)(7696005)(44832011)(478600001)(9786002)(107886003)(5660300002)(186003)(2616005)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 13:54:21.1058
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a63476d-0e31-4e6c-3491-08d8c9145f8c
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT055.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7202
+In-Reply-To: <20210203154332.470587-1-tudor.ambarus@microchip.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the fixed factor clock registration to register the divisors.
+On 03/02/2021 at 16:43, Tudor Ambarus wrote:
+> These are all "early clocks" that require initialization just at
+> of_clk_init() time. Use CLK_OF_DECLARE() to declare them.
+> 
+> This also fixes a problem that was spotted when fw_devlink was
+> set to 'on' by default: the boards failed to boot. The reason is
+> that CLK_OF_DECLARE_DRIVER() clears the OF_POPULATED and causes
+> the consumers of the clock to be postponed by fw_devlink until
+> the second initialization routine of the clock has been completed.
+> One of the consumers of the clock is the timer, which is used as a
+> clocksource, and needs the clock initialized early. Postponing the
+> timers caused the fail at boot.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
- drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Looks good to me:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-index d403a74..7f09522 100644
---- a/drivers/clk/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/clk-xlnx-clock-wizard.c
-@@ -472,8 +472,10 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 	u32 reg, reg_f, mult;
- 	unsigned long rate;
- 	const char *clk_name;
-+	void __iomem *ctrl_reg;
- 	struct clk_wzrd *clk_wzrd;
- 	int outputs;
-+	unsigned long flags = 0;
- 	struct device_node *np = pdev->dev.of_node;
- 
- 	clk_wzrd = devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERNEL);
-@@ -543,16 +545,17 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 	}
- 
- 	outputs = of_property_count_strings(np, "clock-output-names");
--	/* register div */
--	reg = (readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
--			WZRD_DIVCLK_DIVIDE_MASK) >> WZRD_DIVCLK_DIVIDE_SHIFT;
-+	if (outputs == 1)
-+		flags = CLK_SET_RATE_PARENT;
- 	clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
- 	if (!clk_name) {
- 		ret = -ENOMEM;
- 		goto err_rm_int_clk;
- 	}
- 
--	clk_wzrd->clks_internal[wzrd_clk_mul_div] = clk_register_fixed_factor
-+	ctrl_reg = clk_wzrd->base + WZRD_CLK_CFG_REG(0);
-+	/* register div */
-+	clk_wzrd->clks_internal[wzrd_clk_mul_div] = clk_register_divider
- 			(&pdev->dev, clk_name,
- 			 __clk_get_name(clk_wzrd->clks_internal[wzrd_clk_mul]),
- 			flags, ctrl_reg, 0, 8, CLK_DIVIDER_ONE_BASED |
-@@ -577,7 +580,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 		if (!i)
- 			clk_wzrd->clkout[i] = clk_wzrd_register_divf
- 				(&pdev->dev, clkout_name,
--				clk_name, 0,
-+				clk_name, flags,
- 				clk_wzrd->base, (WZRD_CLK_CFG_REG(2) + i * 12),
- 				WZRD_CLKOUT_DIVIDE_SHIFT,
- 				WZRD_CLKOUT_DIVIDE_WIDTH,
+Thanks for the fix Tudor! Best regards,
+   Nicolas
+
+> ---
+> Tested on sama5d2_xplained.
+> 
+>   drivers/clk/at91/at91rm9200.c  |  3 +--
+>   drivers/clk/at91/at91sam9260.c | 16 ++++++++--------
+>   drivers/clk/at91/at91sam9g45.c |  3 +--
+>   drivers/clk/at91/at91sam9n12.c |  3 +--
+>   drivers/clk/at91/at91sam9rl.c  |  3 ++-
+>   drivers/clk/at91/at91sam9x5.c  | 20 ++++++++++----------
+>   drivers/clk/at91/sama5d2.c     |  3 ++-
+>   drivers/clk/at91/sama5d3.c     |  2 +-
+>   drivers/clk/at91/sama5d4.c     |  3 ++-
+>   9 files changed, 28 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
+> index 0fad1009f315..428a6f4b9ebc 100644
+> --- a/drivers/clk/at91/at91rm9200.c
+> +++ b/drivers/clk/at91/at91rm9200.c
+> @@ -215,5 +215,4 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
+>    * deferring properly. Once this is fixed, this can be switched to a platform
+>    * driver.
+>    */
+> -CLK_OF_DECLARE_DRIVER(at91rm9200_pmc, "atmel,at91rm9200-pmc",
+> -		      at91rm9200_pmc_setup);
+> +CLK_OF_DECLARE(at91rm9200_pmc, "atmel,at91rm9200-pmc", at91rm9200_pmc_setup);
+> diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
+> index ceb5495f723a..b29843bea278 100644
+> --- a/drivers/clk/at91/at91sam9260.c
+> +++ b/drivers/clk/at91/at91sam9260.c
+> @@ -491,26 +491,26 @@ static void __init at91sam9260_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam926x_pmc_setup(np, &at91sam9260_data);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9260_pmc, "atmel,at91sam9260-pmc",
+> -		      at91sam9260_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9260_pmc, "atmel,at91sam9260-pmc", at91sam9260_pmc_setup);
+>   
+>   static void __init at91sam9261_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam926x_pmc_setup(np, &at91sam9261_data);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9261_pmc, "atmel,at91sam9261-pmc",
+> -		      at91sam9261_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9261_pmc, "atmel,at91sam9261-pmc", at91sam9261_pmc_setup);
+>   
+>   static void __init at91sam9263_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam926x_pmc_setup(np, &at91sam9263_data);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9263_pmc, "atmel,at91sam9263-pmc",
+> -		      at91sam9263_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9263_pmc, "atmel,at91sam9263-pmc", at91sam9263_pmc_setup);
+>   
+>   static void __init at91sam9g20_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam926x_pmc_setup(np, &at91sam9g20_data);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9g20_pmc, "atmel,at91sam9g20-pmc",
+> -		      at91sam9g20_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9g20_pmc, "atmel,at91sam9g20-pmc", at91sam9g20_pmc_setup);
+> diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
+> index 0214333dedd3..15da0dfe3ef2 100644
+> --- a/drivers/clk/at91/at91sam9g45.c
+> +++ b/drivers/clk/at91/at91sam9g45.c
+> @@ -228,5 +228,4 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
+>    * The TCB is used as the clocksource so its clock is needed early. This means
+>    * this can't be a platform driver.
+>    */
+> -CLK_OF_DECLARE_DRIVER(at91sam9g45_pmc, "atmel,at91sam9g45-pmc",
+> -		      at91sam9g45_pmc_setup);
+> +CLK_OF_DECLARE(at91sam9g45_pmc, "atmel,at91sam9g45-pmc", at91sam9g45_pmc_setup);
+> diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
+> index f9db5316a7f1..7fe435f4b46b 100644
+> --- a/drivers/clk/at91/at91sam9n12.c
+> +++ b/drivers/clk/at91/at91sam9n12.c
+> @@ -255,5 +255,4 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
+>    * The TCB is used as the clocksource so its clock is needed early. This means
+>    * this can't be a platform driver.
+>    */
+> -CLK_OF_DECLARE_DRIVER(at91sam9n12_pmc, "atmel,at91sam9n12-pmc",
+> -		      at91sam9n12_pmc_setup);
+> +CLK_OF_DECLARE(at91sam9n12_pmc, "atmel,at91sam9n12-pmc", at91sam9n12_pmc_setup);
+> diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
+> index 66736e03cfef..ecbabf5162bd 100644
+> --- a/drivers/clk/at91/at91sam9rl.c
+> +++ b/drivers/clk/at91/at91sam9rl.c
+> @@ -186,4 +186,5 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
+>   err_free:
+>   	kfree(at91sam9rl_pmc);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9rl_pmc, "atmel,at91sam9rl-pmc", at91sam9rl_pmc_setup);
+> diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+> index 79b9d3667228..5cce48c64ea2 100644
+> --- a/drivers/clk/at91/at91sam9x5.c
+> +++ b/drivers/clk/at91/at91sam9x5.c
+> @@ -302,33 +302,33 @@ static void __init at91sam9g15_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam9x5_pmc_setup(np, at91sam9g15_periphck, true);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9g15_pmc, "atmel,at91sam9g15-pmc",
+> -		      at91sam9g15_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9g15_pmc, "atmel,at91sam9g15-pmc", at91sam9g15_pmc_setup);
+>   
+>   static void __init at91sam9g25_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam9x5_pmc_setup(np, at91sam9g25_periphck, false);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9g25_pmc, "atmel,at91sam9g25-pmc",
+> -		      at91sam9g25_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9g25_pmc, "atmel,at91sam9g25-pmc", at91sam9g25_pmc_setup);
+>   
+>   static void __init at91sam9g35_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam9x5_pmc_setup(np, at91sam9g35_periphck, true);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9g35_pmc, "atmel,at91sam9g35-pmc",
+> -		      at91sam9g35_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9g35_pmc, "atmel,at91sam9g35-pmc", at91sam9g35_pmc_setup);
+>   
+>   static void __init at91sam9x25_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam9x5_pmc_setup(np, at91sam9x25_periphck, false);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9x25_pmc, "atmel,at91sam9x25-pmc",
+> -		      at91sam9x25_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9x25_pmc, "atmel,at91sam9x25-pmc", at91sam9x25_pmc_setup);
+>   
+>   static void __init at91sam9x35_pmc_setup(struct device_node *np)
+>   {
+>   	at91sam9x5_pmc_setup(np, at91sam9x35_periphck, true);
+>   }
+> -CLK_OF_DECLARE_DRIVER(at91sam9x35_pmc, "atmel,at91sam9x35-pmc",
+> -		      at91sam9x35_pmc_setup);
+> +
+> +CLK_OF_DECLARE(at91sam9x35_pmc, "atmel,at91sam9x35-pmc", at91sam9x35_pmc_setup);
+> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+> index 9a5cbc7cd55a..3d1f78176c3e 100644
+> --- a/drivers/clk/at91/sama5d2.c
+> +++ b/drivers/clk/at91/sama5d2.c
+> @@ -372,4 +372,5 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+>   err_free:
+>   	kfree(sama5d2_pmc);
+>   }
+> -CLK_OF_DECLARE_DRIVER(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
+> +
+> +CLK_OF_DECLARE(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
+> diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+> index 87009ee8effc..d376257807d2 100644
+> --- a/drivers/clk/at91/sama5d3.c
+> +++ b/drivers/clk/at91/sama5d3.c
+> @@ -255,4 +255,4 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+>    * The TCB is used as the clocksource so its clock is needed early. This means
+>    * this can't be a platform driver.
+>    */
+> -CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
+> +CLK_OF_DECLARE(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
+> diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+> index 57fff790188b..5cbaac68da44 100644
+> --- a/drivers/clk/at91/sama5d4.c
+> +++ b/drivers/clk/at91/sama5d4.c
+> @@ -286,4 +286,5 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+>   err_free:
+>   	kfree(sama5d4_pmc);
+>   }
+> -CLK_OF_DECLARE_DRIVER(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
+> +
+> +CLK_OF_DECLARE(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
+> 
+
+
 -- 
-2.1.1
-
+Nicolas Ferre
