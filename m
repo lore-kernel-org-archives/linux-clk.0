@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D732BC433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66225C433DB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE8C64F59
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0674C64F64
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 18:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239360AbhBDS4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 13:56:47 -0500
-Received: from mailoutvs14.siol.net ([185.57.226.205]:35691 "EHLO
+        id S239545AbhBDS5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 13:57:25 -0500
+Received: from mailoutvs45.siol.net ([185.57.226.236]:35695 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S239388AbhBDSzm (ORCPT
+        with ESMTP id S239399AbhBDSzm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 13:55:42 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id BEBBC523FC1;
-        Thu,  4 Feb 2021 19:48:14 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 81385523FC4;
+        Thu,  4 Feb 2021 19:48:19 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id idPup2N7xS9N; Thu,  4 Feb 2021 19:48:14 +0100 (CET)
+        with ESMTP id 9YUWL1tonfcD; Thu,  4 Feb 2021 19:48:19 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 6D758523FC4;
-        Thu,  4 Feb 2021 19:48:14 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 33FB1523FC6;
+        Thu,  4 Feb 2021 19:48:19 +0100 (CET)
 Received: from kista.localdomain (cpe-86-58-58-53.static.triera.net [86.58.58.53])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 9BE10523FC1;
-        Thu,  4 Feb 2021 19:48:11 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id D76B8523FC4;
+        Thu,  4 Feb 2021 19:48:16 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     mripard@kernel.org, wens@csie.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
@@ -40,9 +40,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
         Andre Heider <a.heider@gmail.com>
-Subject: [PATCH 1/5] clk: sunxi-ng: mp: fix parent rate change flag check
-Date:   Thu,  4 Feb 2021 19:47:06 +0100
-Message-Id: <20210204184710.1880895-2-jernej.skrabec@siol.net>
+Subject: [PATCH 3/5] drm/sun4i: dw-hdmi: always set clock rate
+Date:   Thu,  4 Feb 2021 19:47:08 +0100
+Message-Id: <20210204184710.1880895-4-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210204184710.1880895-1-jernej.skrabec@siol.net>
 References: <20210204184710.1880895-1-jernej.skrabec@siol.net>
@@ -52,32 +52,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CLK_SET_RATE_PARENT flag is checked on parent clock instead of current
-one. Fix that.
+As expected, HDMI controller clock should always match pixel clock. In
+the past, changing HDMI controller rate would seemingly worsen
+situation. However, that was the result of other bugs which are now
+fixed.
 
-Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when all=
-owed")
+Fix that by removing set_rate quirk and always set clock rate.
+
+Fixes: 40bb9d3147b2 ("drm/sun4i: Add support for H6 DW HDMI controller")
 Tested-by: Andre Heider <a.heider@gmail.com>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu_mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 4 +---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 -
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.=
-c
-index fa4ecb915590..5f40be6d2dfd 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.c
-+++ b/drivers/clk/sunxi-ng/ccu_mp.c
-@@ -108,7 +108,7 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux=
-_internal *mux,
- 	max_m =3D cmp->m.max ?: 1 << cmp->m.width;
- 	max_p =3D cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4=
+i/sun8i_dw_hdmi.c
+index 92add2cef2e7..23773a5e0650 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -21,8 +21,7 @@ static void sun8i_dw_hdmi_encoder_mode_set(struct drm_e=
+ncoder *encoder,
+ {
+ 	struct sun8i_dw_hdmi *hdmi =3D encoder_to_sun8i_dw_hdmi(encoder);
 =20
--	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+	if (!(clk_hw_get_flags(&cmp->common.hw) & CLK_SET_RATE_PARENT)) {
- 		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
- 		rate =3D *parent_rate / p / m;
- 	} else {
+-	if (hdmi->quirks->set_rate)
+-		clk_set_rate(hdmi->clk_tmds, mode->crtc_clock * 1000);
++	clk_set_rate(hdmi->clk_tmds, mode->crtc_clock * 1000);
+ }
+=20
+ static const struct drm_encoder_helper_funcs
+@@ -295,7 +294,6 @@ static int sun8i_dw_hdmi_remove(struct platform_devic=
+e *pdev)
+=20
+ static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks =3D {
+ 	.mode_valid =3D sun8i_dw_hdmi_mode_valid_a83t,
+-	.set_rate =3D true,
+ };
+=20
+ static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks =3D {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4=
+i/sun8i_dw_hdmi.h
+index d983746fa194..d4b55af0592f 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -179,7 +179,6 @@ struct sun8i_dw_hdmi_quirks {
+ 	enum drm_mode_status (*mode_valid)(struct dw_hdmi *hdmi, void *data,
+ 					   const struct drm_display_info *info,
+ 					   const struct drm_display_mode *mode);
+-	unsigned int set_rate : 1;
+ 	unsigned int use_drm_infoframe : 1;
+ };
+=20
 --=20
 2.30.0
 
