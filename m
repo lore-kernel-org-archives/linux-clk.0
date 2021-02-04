@@ -7,59 +7,56 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9CCC433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 19:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA01C433E9
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 19:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E402B64F6C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 19:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EA6F64F45
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 19:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238367AbhBDTgZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 14:36:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57014 "EHLO mail.kernel.org"
+        id S237699AbhBDTtV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 14:49:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236844AbhBDTgQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Feb 2021 14:36:16 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 902F164D9D;
-        Thu,  4 Feb 2021 19:35:35 +0000 (UTC)
+        id S238884AbhBDTtQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Feb 2021 14:49:16 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D3FA464F38;
+        Thu,  4 Feb 2021 19:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612467335;
-        bh=rpTGlNPN4SaEsNLDUz8Nh/DcPMib+Bvl0GPBdRiE9SE=;
+        s=k20201202; t=1612468116;
+        bh=5DNTH4Gc5ClduRVetfzJVkd0O81NnCc0tziytm+ok7o=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=MMrL+ZkLwz86W7B/zenctQKUHXcyVf6v1Ln35yCIwtZUloN4plBBGqtU+kslLT1O3
-         63d2KqBRtJdqWkcgoOVd6FxWAnWWfMvOPJwWizhTsl8tKh/NSFsNM6kk5wXkcALni8
-         tPHtIymtNjcOMGW+ztFQM0yb20482JoFfsZbIbwuvWj+mu+N+u4DX2rp7qSZQGHpCG
-         6qaWA5ELO8+bm03POZeqlJbywTsdBaaGaud/THy94Mokp3RodM4JM2uA4csP78ggDi
-         rOybXNEUQTAy4JZ3juVnO+y+aDebBAkOV5jwckvw/LWb+6IYV3JqW6YkT7uAIw6FrU
-         XiCIwtRcxdIIg==
+        b=FziFKT96tiAG1w4fD4qWdj16iToflIdTqhNcdqMhax3dxrVE3DHXkYYDDU+g0dcd+
+         J+Jgt+FDrCiPN+Ok/XswSNfYWyJRkD0P89H0sCpkHjZIvQn65U3Lw6FlLkmGZSPRYq
+         s8eW+bKqtMJIgrkBlUrXEw83fXtOqwh+RaKLEYLTxi6AO/Lk1BQlFojyQj9W197NBQ
+         VPXu7lAeEAKuAVjbms5jjORkxrjln79Iq/QUU0dgHzsbspb1zYrxyNSYp1fBCeNnTz
+         GeyC30eS0bDfRtNVvCMx8qGs/PwsU6PNuxSSzLr5/s9jyBqt45HHEfq83ZaR0f+vgl
+         q4nrxy2aEsOeg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jy2gh17f7.fsf@starbuckisacylon.baylibre.com>
-References: <1jy2gh17f7.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: amlogic updates for v5.12
+In-Reply-To: <83279f56-18ac-4abb-82e0-30f1fb8ffda7.lettre@localhost>
+References: <83279f56-18ac-4abb-82e0-30f1fb8ffda7.lettre@localhost>
+Subject: Re: [GIT PULL] Allwinner Clock Changes for 5.12
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Date:   Thu, 04 Feb 2021 11:35:34 -0800
-Message-ID: <161246733428.76967.1992229901867655564@swboyd.mtv.corp.google.com>
+Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Date:   Thu, 04 Feb 2021 11:48:34 -0800
+Message-ID: <161246811439.76967.5020842695036206779@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2021-01-25 05:18:36)
+Quoting Maxime Ripard (2021-01-31 09:52:02)
+> Hi Mike, Stephen,
 >=20
-> Hi Stephen,
+> Please pull the following changes for the next release.
 >=20
-> Here are the updates of the amlogic clocks for v5.12. Nothing out the
-> ordinary. Please pull.
->=20
-> Thx.
-> Cheers
->=20
-> Jerome
+> Thanks!
+> Maxime
 >=20
 > The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e=
 5e:
@@ -68,13 +65,21 @@ Quoting Jerome Brunet (2021-01-25 05:18:36)
 >=20
 > are available in the Git repository at:
 >=20
->   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.12-1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/ta=
+gs/sunxi-clk-for-5.12
 >=20
-> for you to fetch changes up to af57824425389adab637a2ae872ac488f50b5832:
+> for you to fetch changes up to 88dde5e23da1a16fe9a417171e6c941736b8d3a6:
 >=20
->   clk: meson: axg: Remove MIPI enable clock gate (2021-01-04 12:03:02 +01=
-00)
+>   clk: sunxi-ng: Add support for the Allwinner H616 CCU (2021-01-28 11:14=
+:35 +0100)
 >=20
 > ----------------------------------------------------------------
 
 Thanks. Pulled into clk-next
+
+BTW, I see this warning with smatch
+
+  drivers/clk/sunxi/clk-sunxi.c:1093 sunxi_divs_clk_setup() error: uninitia=
+lized symbol 'clk_name'.
+
+which looks possible?
