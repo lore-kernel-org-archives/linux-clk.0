@@ -5,28 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CB3C433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFD5C433DB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D63A64F67
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95DC664F5E
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Feb 2021 13:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236461AbhBDNzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 08:55:41 -0500
-Received: from mail-dm6nam12on2045.outbound.protection.outlook.com ([40.107.243.45]:50017
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
+        id S233305AbhBDNzv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 08:55:51 -0500
+Received: from mail-bn7nam10on2045.outbound.protection.outlook.com ([40.107.92.45]:8281
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236464AbhBDNzP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Feb 2021 08:55:15 -0500
+        id S236466AbhBDNzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Feb 2021 08:55:16 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HL3EL34O8kLXpt28c6l5559jHYO3uqzwhMBjr43w72Vzb4iry0oZIvepbJGe2sAhJJWZTCq2y46/heJhxrNPKEueA+TRyYwA+NWzhb9+Gbt3QuXpsWFe0p7ElTZadKuQADV+Nr45L31l68gYxwPCH5ANagmykcadqT6ITNLTXFoa2jml2V70nSVkalT1k1LqgvU/HSdHL2wzzQ81lO4TBwuJK5q1GO9Wp2q/Oxp8KVcfLz9JSE6UqQBc3QxGH8p+Ld+094hg+/cRcN8rDc73/YaAAZ0k4aOg7mKzOjUwncOYiuF72GJMHskZdLgSHAUqBbT/GTU4jVy/EJqf0wqLxg==
+ b=FFFglIU3ME2zZQSBGu4AdQtlwH6s+fDF8ONgGrZ4gi9wJxxtQmVC2c0p1jsT1gcd41HnaW1ETfPDuiZNs7QQsqR2Jj3B7eVgc1681BgYV0I5Z/gsnjzuc+z3P2sOgE+Fql7q8dsTTBLKZMjdaWf+87bGrjnjZk5jhGWprcHlQKGyyxQxLnIyiosZhqkPKxn564dOlB5qcptz6fk4Etb0SrmsuiEFkpxPtr0aZ+YAbz+A7WTkXJXLn38v9OXIcKpc9TC0yv85j9B028nRiiQP1U/2Zx8t/CqGXZcdFF/2jdDfWIUR8hyFYJ6jKiMIRaZPHxShpecNfxzt1BRgdNyePg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mPPH057RPQDtOERkZ9ejyiEgSRGlW6mFd0WO963lWKw=;
- b=bJOEu52t6/v8HCma5J2OKKhiTMl6RkBK3z0wl0jcASSJp3X74JoH6vAoR8nNjrOB1xP8Cxn/P/h012IB4p2RTU0UzzczGiSTaaqUsb7UGAoWazKDrF0WSb2lTYKMFuWvsZ79MDBak8WVQyTVLI9GpPilaHR3xETIhDAmH+RvGSJQnmBMj9nclCk5G1bK8oDNiKcGOkDqqM7GopQPkJEVakVC34dDjodnwKCSWpKZHTpRraU16qmX2tSPLfFbRfsY/i2Fu8StwaJT9p0CbcJ4CvyeeY2ein/Ul8tCqz9sRSyquP+PVFkktKGYzrjYzGt+iUTx9zNeDaU6h9ObMpxv/g==
+ bh=roEj9Agv1RYOmPCtk4VocZviSZy/fkIAobJzO2mZ+s4=;
+ b=UlLAtuW8+4ZsBmEZzN9G5ofbJscUeVBdMFAGCTIaksa8si4/QvbV9h0cyKpxgodtTlmrnJKXHyQU7HrV0ZAZeD+bFejv5tZoiPDxsQP/UlcdEgU1yEDhyYN+YIHqAIa3VtnGr2dsSUemtrPLOZrqfAMeAH22JNzdtrGD7rZVOtZ+ulNPlWwzZzy53CCMmFaZDby5NT5hGXNaSrcZ5m2nC4JaMzYlyrxITu5wN5cWFLBBmsx5YGa7+KTdEHrcb5Fdi91R3vZqm9quK/vv6NCGqYekf8xuMjUNSCWdHNtm+WGBnV1F2E3EoqzIB3zD7YjqmZEWTZQetVCGzk1+WawQ9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
  dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
@@ -34,18 +34,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mPPH057RPQDtOERkZ9ejyiEgSRGlW6mFd0WO963lWKw=;
- b=IEDH0WVux1eW8G0x3BhzQZWMWPvGBpL9p5QLBWzp6CPpHXSLceG5xhrL95XcASjWHtprZ2vt8a51/KIfy67hIXTWrGydfazzcaDxE0MOLaNjaY0qZv1ohMZg6iCSAeLb879blJkdSF+q2GjC5NQEMSPWZPj/Q2ihm4I3BtmCJEw=
-Received: from MN2PR18CA0027.namprd18.prod.outlook.com (2603:10b6:208:23c::32)
- by CY4PR02MB2806.namprd02.prod.outlook.com (2603:10b6:903:128::8) with
+ bh=roEj9Agv1RYOmPCtk4VocZviSZy/fkIAobJzO2mZ+s4=;
+ b=OC442GnMot0RprLN1Kt72APKa7pCZfdhCqOaTelVTeRtUctxlfoQFaBDJX31NIHMMAgQH4jp3zApFfrYkT58drN/tPsKVWWJxbUaNJf3b6ox5ztmi040A+vt4w1Bd0p8vFNW5BX2NQS5dMaewYA9x6wH2GNr259zHeCyATfNKLo=
+Received: from MN2PR16CA0053.namprd16.prod.outlook.com (2603:10b6:208:234::22)
+ by MW4PR02MB7202.namprd02.prod.outlook.com (2603:10b6:303:7b::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.16; Thu, 4 Feb
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.19; Thu, 4 Feb
  2021 13:54:21 +0000
-Received: from BL2NAM02FT034.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:23c:cafe::d9) by MN2PR18CA0027.outlook.office365.com
- (2603:10b6:208:23c::32) with Microsoft SMTP Server (version=TLS1_2,
+Received: from BL2NAM02FT055.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:208:234:cafe::e2) by MN2PR16CA0053.outlook.office365.com
+ (2603:10b6:208:234::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.20 via Frontend
- Transport; Thu, 4 Feb 2021 13:54:20 +0000
+ Transport; Thu, 4 Feb 2021 13:54:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
@@ -54,16 +54,16 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
 Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- BL2NAM02FT034.mail.protection.outlook.com (10.152.77.161) with Microsoft SMTP
+ BL2NAM02FT055.mail.protection.outlook.com (10.152.77.126) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3784.12 via Frontend Transport; Thu, 4 Feb 2021 13:54:20 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ 15.20.3784.12 via Frontend Transport; Thu, 4 Feb 2021 13:54:21 +0000
+Received: from xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) by
  xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 4 Feb 2021 05:53:52 -0800
+ 15.1.1913.5; Thu, 4 Feb 2021 05:53:55 -0800
 Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.1913.5 via Frontend Transport; Thu, 4 Feb 2021 05:53:52 -0800
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server id
+ 15.1.1913.5 via Frontend Transport; Thu, 4 Feb 2021 05:53:55 -0800
 Envelope-to: git-dev@xilinx.com,
  linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org,
@@ -74,16 +74,16 @@ Envelope-to: git-dev@xilinx.com,
 Received: from [10.140.6.59] (port=57876 helo=xhdshubhraj40.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1l7f4x-0000Tm-0R; Thu, 04 Feb 2021 05:53:51 -0800
+        id 1l7f4z-0000Tm-TK; Thu, 04 Feb 2021 05:53:54 -0800
 From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 To:     <linux-clk@vger.kernel.org>, <git-dev@xilinx.com>
 CC:     <devicetree@vger.kernel.org>, <shubhrajyoti.datta@gmail.com>,
         <sboyd@kernel.org>, <robh+dt@kernel.org>,
         <gregkh@linuxfoundation.org>,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v8 6/7] clk: clock-wizard: Remove the hardcoding of the clock outputs
-Date:   Thu, 4 Feb 2021 19:23:29 +0530
-Message-ID: <1612446810-6113-7-git-send-email-shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH v8 7/7] clk: clock-wizard: Update the fixed factor divisors
+Date:   Thu, 4 Feb 2021 19:23:30 +0530
+Message-ID: <1612446810-6113-8-git-send-email-shubhrajyoti.datta@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com>
 References: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com>
@@ -92,79 +92,82 @@ Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fa24f7f1-1558-4699-2dd7-08d8c9145f5b
-X-MS-TrafficTypeDiagnostic: CY4PR02MB2806:
-X-Microsoft-Antispam-PRVS: <CY4PR02MB2806F805512DB96D37AD8DCEAAB39@CY4PR02MB2806.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 1a63476d-0e31-4e6c-3491-08d8c9145f8c
+X-MS-TrafficTypeDiagnostic: MW4PR02MB7202:
+X-Microsoft-Antispam-PRVS: <MW4PR02MB7202150A7DA53E19F380E66EAAB39@MW4PR02MB7202.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
+X-MS-Oob-TLC-OOBClassifiers: OLM:989;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QWkNPaRlz+SnwPGusRyMFiKniL1uPu92kQoRkH8UpgaJhniGR63VsJaoVCqUIMPBiCd7jnS+TbORHOQ6+N3fw7Ne0UGUg3ptSVchLvpCkUpemm1kv/1lTx+dF42ZyOwlXmyeb7LNxiPf+stMWrpaSHDxE1sSapuo6l/rRPtbmQ06PS39YTO2VGw3mhbDauTEAv9xsRFcpcVsSqscOU2y7v3Vo3PAE9UX4obaZuZeuLBzUXj2F73Y9UrTvC1rVX3WfBnQqfvwc31566lKJcgFCavFiozec3vL0p4tRHKgo7v7XVkhLgNoMW/X7cnj+xzL+sZ0IP/vKKzLPM9LTldRpA0WkrP+3DGZUVuPy3a2ONcHQNPE4Tu3MNHQJmJrSyMZJZyywkVSvqyMZyQ7GOISkH471FJ0lgNU5f91tPS6ruhv6j2biP8BaGz/vV66LAHHsV4o8au8ywEBjYx3hmwUt52F2fDootdlt9DsH/0LSdeb6/oex+63KR6JE5GNdlRB7DaPaIqt2oe+LOw46TEaIu+8iJ126G94M5izstXN7mpp939TW9M9lUBmtFqRYjOfulAWnBDxBk5nyrlZBshD/e0elZhzXMMgBCCrpTEYCITags9b8AOJ1K6Yw734CORIaklmluuVJc1vrbtQjFKDXF/khGr7FYIJpfQxtDer4aoLKP/U/RqH4yB5nmplPSQe
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(396003)(39850400004)(346002)(376002)(136003)(46966006)(36840700001)(6666004)(336012)(82740400003)(47076005)(426003)(5660300002)(82310400003)(70206006)(70586007)(44832011)(7636003)(478600001)(7696005)(186003)(107886003)(6636002)(36906005)(8676002)(54906003)(110136005)(4326008)(26005)(316002)(36860700001)(2616005)(83380400001)(2906002)(36756003)(9786002)(356005)(8936002)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: ziuZJZ46NGBsz0ItYXtyX6RcCCD/aLTo2nMf/uZ/t5i2k9LJSH+qRaIiWYONVTgWyzAAuEZ/GN0k4AqxhBbqphZkhIatUeAlZgv2T9+m+lmkfOIk2MaXVv5A8mAyhQFywfPXj6ecdTNXc9Zt+SuDCMoe4v0/NuVczAH+Ab+fcHd3wZnHvSq4228sVpEek88WK34lz0xKeVT60AVhwcFHQ8lu079gtpwbMZJW2Y2IMWfRSETbzmpZUImGeKX9gan6cI7pUxAWZXeUXpJEpLu/riRbVBlob+t6/LvUptvTUU3RaGR8kX1M8d5AJknxN2yDk+WEEL7NbxQeJ3+en0aJ0AdQWD+N7JtvJFNub5w+82wJCZENWDKLVetfLOv7cP9iJ8jcSjJ2SOSxhCz5qIkxZ3uFeCww0BHLnYbMxQekcJycXzOCzdgyTGjMVf9ACa1dHaeiRzAxQttIXn1BUr9dreRpfg78GxyMb192EccpDARfC0ZV+6wO7pT8UX2pgA8a9I7vqPKqZSDxQvvxyvH5nVG/iPKo/XBOw1KGZHsDg2mLLgKsMH+c9gGmnhLz92ZLFsl7pb4djhFIc7iszI05OfqHbjrm/+naCzwxZPFT4oS3NAul3r6cYVVrczqlPwoP7E322oGPDLVP2plO9kM1lyb9uZ9GEBXP1xkgKT9+gb1eMUz/DXYyaU3r3JIJKoaw
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(4636009)(346002)(376002)(136003)(39850400004)(396003)(36840700001)(46966006)(110136005)(36860700001)(54906003)(8936002)(36756003)(316002)(36906005)(6636002)(4326008)(7636003)(356005)(47076005)(83380400001)(2906002)(6666004)(26005)(8676002)(336012)(82310400003)(426003)(15650500001)(82740400003)(70586007)(70206006)(7696005)(44832011)(478600001)(9786002)(107886003)(5660300002)(186003)(2616005)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 13:54:20.7845
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 13:54:21.1058
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa24f7f1-1558-4699-2dd7-08d8c9145f5b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a63476d-0e31-4e6c-3491-08d8c9145f8c
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT034.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BL2NAM02FT055.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2806
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7202
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The number of output clocks are configurable in the hardware.
-Currently the driver registers the maximum number of outputs.
-Fix the same by registering only the outputs that are there.
+Update the fixed factor clock registration to register the divisors.
 
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
-v4:
-Assign output in this patch
-
- drivers/clk/clk-xlnx-clock-wizard.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-index ed3b0ef..d403a74 100644
+index d403a74..7f09522 100644
 --- a/drivers/clk/clk-xlnx-clock-wizard.c
 +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-@@ -473,6 +473,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+@@ -472,8 +472,10 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	u32 reg, reg_f, mult;
  	unsigned long rate;
  	const char *clk_name;
++	void __iomem *ctrl_reg;
  	struct clk_wzrd *clk_wzrd;
-+	int outputs;
+ 	int outputs;
++	unsigned long flags = 0;
  	struct device_node *np = pdev->dev.of_node;
  
  	clk_wzrd = devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERNEL);
-@@ -541,6 +542,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 		goto err_disable_clk;
+@@ -543,16 +545,17 @@ static int clk_wzrd_probe(struct platform_device *pdev)
  	}
  
-+	outputs = of_property_count_strings(np, "clock-output-names");
- 	/* register div */
- 	reg = (readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
- 			WZRD_DIVCLK_DIVIDE_MASK) >> WZRD_DIVCLK_DIVIDE_SHIFT;
-@@ -562,7 +564,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	outputs = of_property_count_strings(np, "clock-output-names");
+-	/* register div */
+-	reg = (readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
+-			WZRD_DIVCLK_DIVIDE_MASK) >> WZRD_DIVCLK_DIVIDE_SHIFT;
++	if (outputs == 1)
++		flags = CLK_SET_RATE_PARENT;
+ 	clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
+ 	if (!clk_name) {
+ 		ret = -ENOMEM;
+ 		goto err_rm_int_clk;
  	}
  
- 	/* register div per output */
--	for (i = WZRD_NUM_OUTPUTS - 1; i >= 0 ; i--) {
-+	for (i = outputs - 1; i >= 0 ; i--) {
- 		const char *clkout_name;
- 
- 		if (of_property_read_string_index(np, "clock-output-names", i,
-@@ -593,7 +595,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 		if (IS_ERR(clk_wzrd->clkout[i])) {
- 			int j;
- 
--			for (j = i + 1; j < WZRD_NUM_OUTPUTS; j++)
-+			for (j = i + 1; j < outputs; j++)
- 				clk_unregister(clk_wzrd->clkout[j]);
- 			dev_err(&pdev->dev,
- 				"unable to register divider clock\n");
+-	clk_wzrd->clks_internal[wzrd_clk_mul_div] = clk_register_fixed_factor
++	ctrl_reg = clk_wzrd->base + WZRD_CLK_CFG_REG(0);
++	/* register div */
++	clk_wzrd->clks_internal[wzrd_clk_mul_div] = clk_register_divider
+ 			(&pdev->dev, clk_name,
+ 			 __clk_get_name(clk_wzrd->clks_internal[wzrd_clk_mul]),
+ 			flags, ctrl_reg, 0, 8, CLK_DIVIDER_ONE_BASED |
+@@ -577,7 +580,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		if (!i)
+ 			clk_wzrd->clkout[i] = clk_wzrd_register_divf
+ 				(&pdev->dev, clkout_name,
+-				clk_name, 0,
++				clk_name, flags,
+ 				clk_wzrd->base, (WZRD_CLK_CFG_REG(2) + i * 12),
+ 				WZRD_CLKOUT_DIVIDE_SHIFT,
+ 				WZRD_CLKOUT_DIVIDE_WIDTH,
 -- 
 2.1.1
 
