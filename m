@@ -2,151 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B877C433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD33FC433E9
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE39B64EE8
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6191264F09
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbhBEQ40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 11:56:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233510AbhBEQyp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Feb 2021 11:54:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 872B964E51;
-        Fri,  5 Feb 2021 18:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612550186;
-        bh=zu4EkbIsCr5MTTU2ofXyRKe7qoxT3wFjKeei8Yx1as8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G5H/U+fMcu/j4CI5uQL9h7JReZuu6xBLT0bFOdVPv3HHEshrGCVoGtxUBK4+siEQ6
-         M+6qWAcf5GoEU7N47TyFxEvJZVMtD/YCxUWdesJ6nYEkdcZwL0E+Rbdv7z4mCqokj9
-         EtvhPfEQg8bF6oBFWebjUrQ6ZNvEa3LK8bUvxHXXa5RVeR1YqNf0C3XtGl8QcIQTl3
-         q5xjDHZhLAm1zMiFLXHq5Ti7vWkTfWRw793OAM7BxppYHC3X+8R0ycLvsYTuyURBRJ
-         rW0jms5mcHEQFcpYQEQbvEdTiOIJhy/v/U1rJSF4fhJ/loShz3CNBCMCQuI01X0J7f
-         nqHutE9q+w+nw==
-Content-Type: text/plain; charset="utf-8"
+        id S229690AbhBERHz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 12:07:55 -0500
+Received: from mailoutvs11.siol.net ([185.57.226.202]:36644 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233770AbhBERFr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 12:05:47 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 9463F52406E;
+        Fri,  5 Feb 2021 19:47:18 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id uFpchGQ_I5wi; Fri,  5 Feb 2021 19:47:18 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 390065241AB;
+        Fri,  5 Feb 2021 19:47:18 +0100 (CET)
+Received: from kista.localnet (cpe-86-58-58-53.static.triera.net [86.58.58.53])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id 9385D52406E;
+        Fri,  5 Feb 2021 19:47:17 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Andre Heider <a.heider@gmail.com>
+Subject: Re: Re: Re: [PATCH 2/5] drm/sun4i: tcon: set sync polarity for tcon1 channel
+Date:   Fri, 05 Feb 2021 19:47:17 +0100
+Message-ID: <3972834.uPFdDeCNB3@kista>
+In-Reply-To: <CAGb2v65cZ7DXzcPzt8ER1ucwhbhTOc0-mCCye3eK-ZgP3a6ivA@mail.gmail.com>
+References: <20210204184710.1880895-1-jernej.skrabec@siol.net> <2156838.FvJGUiYDvf@kista> <CAGb2v65cZ7DXzcPzt8ER1ucwhbhTOc0-mCCye3eK-ZgP3a6ivA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH v8 1/7] dt-bindings: add documentation of xilinx clocking wizard
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, shubhrajyoti.datta@gmail.com,
-        robh+dt@kernel.org, gregkh@linuxfoundation.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        git-dev@xilinx.com, linux-clk@vger.kernel.org
-Date:   Fri, 05 Feb 2021 10:36:25 -0800
-Message-ID: <161255018501.76967.17834510006330406420@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2021-02-04 05:53:24)
-> Add the devicetree binding for the xilinx clocking wizard.
->=20
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-> v6:
-> Fix a yaml warning
-> v7:
-> Add vendor prefix speed-grade
-> v8:
-> Fix the warnings
+Dne petek, 05. februar 2021 ob 17:28:23 CET je Chen-Yu Tsai napisal(a):
+> On Sat, Feb 6, 2021 at 12:21 AM Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> >
+> > Dne petek, 05. februar 2021 ob 17:01:30 CET je Maxime Ripard napisal(a):
+> > > On Fri, Feb 05, 2021 at 11:21:22AM +0800, Chen-Yu Tsai wrote:
+> > > > On Fri, Feb 5, 2021 at 2:48 AM Jernej Skrabec 
+<jernej.skrabec@siol.net>
+> > wrote:
+> > > > >
+> > > > > Channel 1 has polarity bits for vsync and hsync signals but driver 
+never
+> > > > > sets them. It turns out that with pre-HDMI2 controllers seemingly 
+there
+> > > > > is no issue if polarity is not set. However, with HDMI2 controllers
+> > > > > (H6) there often comes to de-synchronization due to phase shift. 
+This
+> > > > > causes flickering screen. It's safe to assume that similar issues 
+might
+> > > > > happen also with pre-HDMI2 controllers.
+> > > > >
+> > > > > Solve issue with setting vsync and hsync polarity. Note that display
+> > > > > stacks with tcon top have polarity bits actually in tcon0 polarity
+> > > > > register.
+> > > > >
+> > > > > Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine 
+support")
+> > > > > Tested-by: Andre Heider <a.heider@gmail.com>
+> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > > ---
+> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 24 ++++++++++++++++++++++++
+> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  5 +++++
+> > > > >  2 files changed, 29 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/
+sun4i/
+> > sun4i_tcon.c
+> > > > > index 6b9af4c08cd6..0d132dae58c0 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > @@ -672,6 +672,29 @@ static void sun4i_tcon1_mode_set(struct 
+sun4i_tcon
+> > *tcon,
+> > > > >                      SUN4I_TCON1_BASIC5_V_SYNC(vsync) |
+> > > > >                      SUN4I_TCON1_BASIC5_H_SYNC(hsync));
+> > > > >
+> > > > > +       /* Setup the polarity of sync signals */
+> > > > > +       if (tcon->quirks->polarity_in_ch0) {
+> > > > > +               val = 0;
+> > > > > +
+> > > > > +               if (mode->flags & DRM_MODE_FLAG_PHSYNC)
+> > > > > +                       val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
+> > > > > +
+> > > > > +               if (mode->flags & DRM_MODE_FLAG_PVSYNC)
+> > > > > +                       val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
+> > > > > +
+> > > > > +               regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, 
+val);
+> > > > > +       } else {
+> > > > > +               val = SUN4I_TCON1_IO_POL_UNKNOWN;
+> > > >
+> > > > I think a comment for the origin of this is warranted.
+> > >
+> > > If it's anything like TCON0, it's the pixel clock polarity
+> >
+> > Hard to say, DW HDMI controller has "data enable" polarity along hsync and
+> > vsync. It could be either or none of those.
+> >
+> > What should I write in comment? BSP drivers and documentation use only 
+generic
+> > names like io2_inv.
+> 
+> Just say that we don't know exactly what it is, but it is required for 
+things
+> to work properly? Would be interesting to know what happens if you don't set
+> this bit, but do set VSYNC/HSYNC polarity properly.
 
-Please run the dt binding checks.
+Nothing seems to happen - tested on H3 with HDMI (4k@30) and CVBS. At least I 
+didn't notice anything.
 
->=20
->  .../bindings/clock/xlnx,clocking-wizard.yaml       | 62 ++++++++++++++++=
-++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking=
--wizard.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard=
-.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> new file mode 100644
-> index 0000000..579bcc1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx clocking wizard
-> +
-> +maintainers:
-> +  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> +
-> +description:
-> +  The clocking wizard is a soft ip clocking block of Xilinx versal. It
-> +  reads required input clock frequencies from the devicetree and acts as=
- clock
-> +  clock output.
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,clocking-wizard
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: clock input
-> +      - description: axi clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: clk_in1
-> +      - const: s_axi_aclk
-> +
-> +  xlnx,speed-grade:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 3]
-> +    description:
-> +      Speed grade of the device.
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - speed-grade
+Best regards,
+Jernej
 
-Should be xlnx,speed-grade.
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-generator@40040000 {
-
-Just clock-controller please.
-
-> +        #clock-cells =3D <1>;
-> +        reg =3D <0x40040000 0x1000>;
-> +        compatible =3D "xlnx,clocking-wizard";
-> +        xlnx,speed-grade =3D <1>;
-> +        clock-names =3D "clk_in1", "s_axi_aclk";
-> +        clocks =3D <&clkc 15>, <&clkc 15>;
-> +        clock-output-names =3D "clk_out1", "clk_out2",
-
-Please remove this property and auto-generate clk names if necessary.
-
-> +        "clk_out3", "clk_out4", "clk_out5",
-> +        "clk_out6", "clk_out7";
-> +    };
->
