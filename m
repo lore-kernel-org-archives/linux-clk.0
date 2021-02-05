@@ -2,144 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD33FC433E9
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C43C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6191264F09
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A89B464E30
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:58:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbhBERHz convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 12:07:55 -0500
-Received: from mailoutvs11.siol.net ([185.57.226.202]:36644 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233770AbhBERFr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 12:05:47 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 9463F52406E;
-        Fri,  5 Feb 2021 19:47:18 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uFpchGQ_I5wi; Fri,  5 Feb 2021 19:47:18 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 390065241AB;
-        Fri,  5 Feb 2021 19:47:18 +0100 (CET)
-Received: from kista.localnet (cpe-86-58-58-53.static.triera.net [86.58.58.53])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 9385D52406E;
-        Fri,  5 Feb 2021 19:47:17 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Andre Heider <a.heider@gmail.com>
-Subject: Re: Re: Re: [PATCH 2/5] drm/sun4i: tcon: set sync polarity for tcon1 channel
-Date:   Fri, 05 Feb 2021 19:47:17 +0100
-Message-ID: <3972834.uPFdDeCNB3@kista>
-In-Reply-To: <CAGb2v65cZ7DXzcPzt8ER1ucwhbhTOc0-mCCye3eK-ZgP3a6ivA@mail.gmail.com>
-References: <20210204184710.1880895-1-jernej.skrabec@siol.net> <2156838.FvJGUiYDvf@kista> <CAGb2v65cZ7DXzcPzt8ER1ucwhbhTOc0-mCCye3eK-ZgP3a6ivA@mail.gmail.com>
+        id S233258AbhBERPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 12:15:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233121AbhBERN2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Feb 2021 12:13:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8D95764EFE;
+        Fri,  5 Feb 2021 18:55:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612551306;
+        bh=l2A8CAgF/G7BGZq7431N93An0up6jDTvpRHYH8cBfG8=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=RPOj45dXJLj+vuNI8ahjCDXbfaAmoG+k7jRNp9Mp4pxf/xI3v4qYPHjTR0eZjUonW
+         SIkvXTlfrM4M5V1csQXDB3KtpyaetGu3A6NSZYiVjly/E1FtXUuVDnKKj90+hT7kga
+         72GNn9IGjtdxL9hhA7OKuQ0JoS0oaz+FFxGgl8kX1jZmqqDFq/kLas956fzVQg3+Tp
+         cgoCrwd84QWZpwzQ6Ju8Ml1ADw81R8AIzyyJMcL7KtTYIWcDxWum6dtU8ejQXc+zPm
+         cCC61w8Y3422l2yvWjt7AzjbIe5Cj51B0BEhUV+uecnjDzzoWzG0vHppylMCNsvTKj
+         IHO260731sTEw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210203083155.GA2329016@dell>
+References: <20210126124540.3320214-1-lee.jones@linaro.org> <20210203083155.GA2329016@dell>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        P rashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+Date:   Fri, 05 Feb 2021 10:55:05 -0800
+Message-ID: <161255130506.76967.8682382463883809207@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne petek, 05. februar 2021 ob 17:28:23 CET je Chen-Yu Tsai napisal(a):
-> On Sat, Feb 6, 2021 at 12:21 AM Jernej Škrabec <jernej.skrabec@siol.net> 
-wrote:
-> >
-> > Dne petek, 05. februar 2021 ob 17:01:30 CET je Maxime Ripard napisal(a):
-> > > On Fri, Feb 05, 2021 at 11:21:22AM +0800, Chen-Yu Tsai wrote:
-> > > > On Fri, Feb 5, 2021 at 2:48 AM Jernej Skrabec 
-<jernej.skrabec@siol.net>
-> > wrote:
-> > > > >
-> > > > > Channel 1 has polarity bits for vsync and hsync signals but driver 
-never
-> > > > > sets them. It turns out that with pre-HDMI2 controllers seemingly 
-there
-> > > > > is no issue if polarity is not set. However, with HDMI2 controllers
-> > > > > (H6) there often comes to de-synchronization due to phase shift. 
-This
-> > > > > causes flickering screen. It's safe to assume that similar issues 
-might
-> > > > > happen also with pre-HDMI2 controllers.
-> > > > >
-> > > > > Solve issue with setting vsync and hsync polarity. Note that display
-> > > > > stacks with tcon top have polarity bits actually in tcon0 polarity
-> > > > > register.
-> > > > >
-> > > > > Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine 
-support")
-> > > > > Tested-by: Andre Heider <a.heider@gmail.com>
-> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > > ---
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 24 ++++++++++++++++++++++++
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  5 +++++
-> > > > >  2 files changed, 29 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/
-sun4i/
-> > sun4i_tcon.c
-> > > > > index 6b9af4c08cd6..0d132dae58c0 100644
-> > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > @@ -672,6 +672,29 @@ static void sun4i_tcon1_mode_set(struct 
-sun4i_tcon
-> > *tcon,
-> > > > >                      SUN4I_TCON1_BASIC5_V_SYNC(vsync) |
-> > > > >                      SUN4I_TCON1_BASIC5_H_SYNC(hsync));
-> > > > >
-> > > > > +       /* Setup the polarity of sync signals */
-> > > > > +       if (tcon->quirks->polarity_in_ch0) {
-> > > > > +               val = 0;
-> > > > > +
-> > > > > +               if (mode->flags & DRM_MODE_FLAG_PHSYNC)
-> > > > > +                       val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
-> > > > > +
-> > > > > +               if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> > > > > +                       val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-> > > > > +
-> > > > > +               regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, 
-val);
-> > > > > +       } else {
-> > > > > +               val = SUN4I_TCON1_IO_POL_UNKNOWN;
-> > > >
-> > > > I think a comment for the origin of this is warranted.
-> > >
-> > > If it's anything like TCON0, it's the pixel clock polarity
-> >
-> > Hard to say, DW HDMI controller has "data enable" polarity along hsync and
-> > vsync. It could be either or none of those.
-> >
-> > What should I write in comment? BSP drivers and documentation use only 
-generic
-> > names like io2_inv.
-> 
-> Just say that we don't know exactly what it is, but it is required for 
-things
-> to work properly? Would be interesting to know what happens if you don't set
-> this bit, but do set VSYNC/HSYNC polarity properly.
+Quoting Lee Jones (2021-02-03 00:31:55)
+> On Tue, 26 Jan 2021, Lee Jones wrote:
+>=20
+> > This set is part of a larger effort attempting to clean-up W=3D1
+> > kernel builds, which are currently overwhelmingly riddled with
+> > niggly little warnings.
+> >=20
+> > This is the last set.  Clock is clean after this.
+>=20
+> Out of interest, what normally happens to the patches which aren't
+> picked up by individual driver Maintainers?
+>=20
 
-Nothing seems to happen - tested on H3 with HDMI (4k@30) and CVBS. At least I 
-didn't notice anything.
-
-Best regards,
-Jernej
-
-
+I have to go in and figure it out! :)
