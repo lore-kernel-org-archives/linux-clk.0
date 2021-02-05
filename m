@@ -2,57 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE101C433DB
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 03:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BB6C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 03:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8519C64FBC
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 03:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC00764FBD
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 03:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbhBEDWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Feb 2021 22:22:18 -0500
-Received: from mail-lj1-f177.google.com ([209.85.208.177]:34445 "EHLO
-        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbhBEDWR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 22:22:17 -0500
-Received: by mail-lj1-f177.google.com with SMTP id r23so4162421ljh.1;
-        Thu, 04 Feb 2021 19:22:00 -0800 (PST)
+        id S230153AbhBEDX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Feb 2021 22:23:26 -0500
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:39405 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229567AbhBEDXZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Feb 2021 22:23:25 -0500
+Received: by mail-lj1-f181.google.com with SMTP id u4so6062763ljh.6;
+        Thu, 04 Feb 2021 19:23:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3pb9e/xdQGDLFkoDNDeMMQMJFh8zeB5fbZnoZcPjiLU=;
-        b=HNF4U/3jJpJEvbUXSkwVO2nVEDCVX/xjyfXt52EKcMpDrJwpr/OJ0Z6QwyrntuRf5f
-         Hu8Az71hL9wKH1/rCX4Gf7xfDgjP+EkX6dmr3JxMGMXZF8c0Es5owKPd1UU28YnkNT66
-         JAjXkJB/jffSh9/mxxM7g3b9t0xAEB8Aoci1u5Eewop5sX/a6cszRbNMvLLeU3zaMGOb
-         m75b0g0t2ypg9wyxlDhsGaAicuUs/ZrhvC7O29pemXgTLPPAFZWb9CmOtdG7N8PpfgAb
-         nkksGGZpAAtrCUs2RwU9EuprGdvqgC8Pckb7aEY7YHfbJ0SDVZB5bv/nfZujLL41vAFa
-         90CQ==
-X-Gm-Message-State: AOAM532vN2Ky/U0S2/liHhYaWWUZxDedIjcW6sBCrG1MixaddnnmzqoH
-        JwNwlOSwA7wOAvLLOOjBh/aVRBZw4W12oQ==
-X-Google-Smtp-Source: ABdhPJxIUiSXSPPUGK+SL9OT+ggBm3BU/XF3cJkBvDmI6NNBgUGx3AZDH6JB/7r3SOHEnl4yJMV/og==
-X-Received: by 2002:a2e:980a:: with SMTP id a10mr1461010ljj.280.1612495294185;
-        Thu, 04 Feb 2021 19:21:34 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id l9sm828446lfk.76.2021.02.04.19.21.33
+        bh=Rja3IW88jr9tIZdmCSJYYXsY9wEVmDBMuxnwOuDy0Lw=;
+        b=SiGA965sSZRWkxqZikup+6gkTxyrjHOTO0Kl+p/PQ9RJpPRkUSGqfIhV2cAZgcWGWA
+         m5a+AWT/+BExM4EV/CXtAd//YICV+ZFnGCTQKVXj+tmVpE7beQBPy6+NGAII2LF3Droj
+         aM7EJ+DBkIntIskNR29Gk1wVzCl/Ml8PMFn5jsVQ0flhGE1rlQHMaYXboN3viJ8e//In
+         V4FVhJOHEb1JJPFKcxcYfBITRa0iJHPvJlHkHqmcinnSZTRDvDFT2j0QMSvgicjbeSkT
+         hfjZ7OKM5ffG+ZhVi/cAIrzhAEWIKmRaGPDm+cLus0ypqXtCSyToV5RPTlojpBbnYC+u
+         8YJw==
+X-Gm-Message-State: AOAM533oVrASwGS8OxxmTZtRUhDR3pSSUv0RAQKZ8jeWfGnZLjFw2OrG
+        Xxgr7ufo/KZb+sEoa9JgE6mjKE2r8JjFNQ==
+X-Google-Smtp-Source: ABdhPJy9CvY6pY4zNGadUz9e1rpBfweTCGZ+Uvv22kcvRrVuPDqox8BXsrEa9b6FsLNwex9uqMS0Gg==
+X-Received: by 2002:a2e:95ce:: with SMTP id y14mr1439233ljh.287.1612495362688;
+        Thu, 04 Feb 2021 19:22:42 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id z5sm828236lft.51.2021.02.04.19.22.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Feb 2021 19:21:33 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id e18so6006805lja.12;
-        Thu, 04 Feb 2021 19:21:33 -0800 (PST)
-X-Received: by 2002:a2e:9d04:: with SMTP id t4mr1458674lji.56.1612495293179;
- Thu, 04 Feb 2021 19:21:33 -0800 (PST)
+        Thu, 04 Feb 2021 19:22:42 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id h7so7841952lfc.6;
+        Thu, 04 Feb 2021 19:22:41 -0800 (PST)
+X-Received: by 2002:ac2:561b:: with SMTP id v27mr1399561lfd.233.1612495361845;
+ Thu, 04 Feb 2021 19:22:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20210204184710.1880895-1-jernej.skrabec@siol.net> <20210204184710.1880895-3-jernej.skrabec@siol.net>
-In-Reply-To: <20210204184710.1880895-3-jernej.skrabec@siol.net>
+References: <20210204184710.1880895-1-jernej.skrabec@siol.net> <20210204184710.1880895-2-jernej.skrabec@siol.net>
+In-Reply-To: <20210204184710.1880895-2-jernej.skrabec@siol.net>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 5 Feb 2021 11:21:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64qww4pFwMVrY5UpHOQtM43Q0VPx=3PwJGbB5Oh0qnx=w@mail.gmail.com>
-Message-ID: <CAGb2v64qww4pFwMVrY5UpHOQtM43Q0VPx=3PwJGbB5Oh0qnx=w@mail.gmail.com>
-Subject: Re: [PATCH 2/5] drm/sun4i: tcon: set sync polarity for tcon1 channel
+Date:   Fri, 5 Feb 2021 11:22:31 +0800
+X-Gmail-Original-Message-ID: <CAGb2v652cCbwvdvb8RA4zH41cnOKcqbVNosiU1eCGPjGpWUGcg@mail.gmail.com>
+Message-ID: <CAGb2v652cCbwvdvb8RA4zH41cnOKcqbVNosiU1eCGPjGpWUGcg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 1/5] clk: sunxi-ng: mp: fix parent rate
+ change flag check
 To:     Jernej Skrabec <jernej.skrabec@siol.net>
 Cc:     Maxime Ripard <mripard@kernel.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -72,97 +73,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Fri, Feb 5, 2021 at 2:48 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 >
-> Channel 1 has polarity bits for vsync and hsync signals but driver never
-> sets them. It turns out that with pre-HDMI2 controllers seemingly there
-> is no issue if polarity is not set. However, with HDMI2 controllers
-> (H6) there often comes to de-synchronization due to phase shift. This
-> causes flickering screen. It's safe to assume that similar issues might
-> happen also with pre-HDMI2 controllers.
+> CLK_SET_RATE_PARENT flag is checked on parent clock instead of current
+> one. Fix that.
 >
-> Solve issue with setting vsync and hsync polarity. Note that display
-> stacks with tcon top have polarity bits actually in tcon0 polarity
-> register.
->
-> Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
+> Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
 > Tested-by: Andre Heider <a.heider@gmail.com>
 > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 24 ++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun4i_tcon.h |  5 +++++
->  2 files changed, 29 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 6b9af4c08cd6..0d132dae58c0 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -672,6 +672,29 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
->                      SUN4I_TCON1_BASIC5_V_SYNC(vsync) |
->                      SUN4I_TCON1_BASIC5_H_SYNC(hsync));
->
-> +       /* Setup the polarity of sync signals */
-> +       if (tcon->quirks->polarity_in_ch0) {
-> +               val = 0;
-> +
-> +               if (mode->flags & DRM_MODE_FLAG_PHSYNC)
-> +                       val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
-> +
-> +               if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> +                       val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-> +
-> +               regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, val);
-> +       } else {
-> +               val = SUN4I_TCON1_IO_POL_UNKNOWN;
-
-I think a comment for the origin of this is warranted.
-
-Otherwise,
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-
-> +
-> +               if (mode->flags & DRM_MODE_FLAG_PHSYNC)
-> +                       val |= SUN4I_TCON1_IO_POL_HSYNC_POSITIVE;
-> +
-> +               if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> +                       val |= SUN4I_TCON1_IO_POL_VSYNC_POSITIVE;
-> +
-> +               regmap_write(tcon->regs, SUN4I_TCON1_IO_POL_REG, val);
-> +       }
-> +
->         /* Map output pins to channel 1 */
->         regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
->                            SUN4I_TCON_GCTL_IOMAP_MASK,
-> @@ -1500,6 +1523,7 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
->
->  static const struct sun4i_tcon_quirks sun8i_r40_tv_quirks = {
->         .has_channel_1          = true,
-> +       .polarity_in_ch0        = true,
->         .set_mux                = sun8i_r40_tcon_tv_set_mux,
->  };
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> index c5ac1b02482c..b504fb2d3de5 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> @@ -154,6 +154,10 @@
->  #define SUN4I_TCON1_BASIC5_V_SYNC(height)              (((height) - 1) & 0x3ff)
->
->  #define SUN4I_TCON1_IO_POL_REG                 0xf0
-> +#define SUN4I_TCON1_IO_POL_UNKNOWN                     BIT(26)
-> +#define SUN4I_TCON1_IO_POL_HSYNC_POSITIVE              BIT(25)
-> +#define SUN4I_TCON1_IO_POL_VSYNC_POSITIVE              BIT(24)
-> +
->  #define SUN4I_TCON1_IO_TRI_REG                 0xf4
->
->  #define SUN4I_TCON_ECC_FIFO_REG                        0xf8
-> @@ -236,6 +240,7 @@ struct sun4i_tcon_quirks {
->         bool    needs_de_be_mux; /* sun6i needs mux to select backend */
->         bool    needs_edp_reset; /* a80 edp reset needed for tcon0 access */
->         bool    supports_lvds;   /* Does the TCON support an LVDS output? */
-> +       bool    polarity_in_ch0; /* some tcon1 channels have polarity bits in tcon0 pol register */
->         u8      dclk_min_div;   /* minimum divider for TCON0 DCLK */
->
->         /* callback to handle tcon muxing options */
-> --
-> 2.30.0
->
