@@ -2,70 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C680C43381
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 11:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B877C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D9364F9F
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 11:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE39B64EE8
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Feb 2021 18:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231934AbhBELIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 06:08:20 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:42278 "EHLO gloria.sntech.de"
+        id S230383AbhBEQ40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 11:56:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231941AbhBELFv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Feb 2021 06:05:51 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1l7yvC-0001Ja-BO; Fri, 05 Feb 2021 12:05:06 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH 5/5] clk: rockchip: fix DPHY gate locations on rk3368
-Date:   Fri,  5 Feb 2021 12:05:02 +0100
-Message-Id: <20210205110502.1850669-5-heiko@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210205110502.1850669-1-heiko@sntech.de>
-References: <20210205110502.1850669-1-heiko@sntech.de>
+        id S233510AbhBEQyp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Feb 2021 11:54:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 872B964E51;
+        Fri,  5 Feb 2021 18:36:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612550186;
+        bh=zu4EkbIsCr5MTTU2ofXyRKe7qoxT3wFjKeei8Yx1as8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=G5H/U+fMcu/j4CI5uQL9h7JReZuu6xBLT0bFOdVPv3HHEshrGCVoGtxUBK4+siEQ6
+         M+6qWAcf5GoEU7N47TyFxEvJZVMtD/YCxUWdesJ6nYEkdcZwL0E+Rbdv7z4mCqokj9
+         EtvhPfEQg8bF6oBFWebjUrQ6ZNvEa3LK8bUvxHXXa5RVeR1YqNf0C3XtGl8QcIQTl3
+         q5xjDHZhLAm1zMiFLXHq5Ti7vWkTfWRw793OAM7BxppYHC3X+8R0ycLvsYTuyURBRJ
+         rW0jms5mcHEQFcpYQEQbvEdTiOIJhy/v/U1rJSF4fhJ/loShz3CNBCMCQuI01X0J7f
+         nqHutE9q+w+nw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
+References: <1612446810-6113-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1612446810-6113-2-git-send-email-shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH v8 1/7] dt-bindings: add documentation of xilinx clocking wizard
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, shubhrajyoti.datta@gmail.com,
+        robh+dt@kernel.org, gregkh@linuxfoundation.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        git-dev@xilinx.com, linux-clk@vger.kernel.org
+Date:   Fri, 05 Feb 2021 10:36:25 -0800
+Message-ID: <161255018501.76967.17834510006330406420@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Quoting Shubhrajyoti Datta (2021-02-04 05:53:24)
+> Add the devicetree binding for the xilinx clocking wizard.
+>=20
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+> v6:
+> Fix a yaml warning
+> v7:
+> Add vendor prefix speed-grade
+> v8:
+> Fix the warnings
 
-Fix the register and bits of the DPHY gate locations.
+Please run the dt binding checks.
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
----
- drivers/clk/rockchip/clk-rk3368.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       | 62 ++++++++++++++++=
+++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking=
+-wizard.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard=
+.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> new file mode 100644
+> index 0000000..579bcc1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx clocking wizard
+> +
+> +maintainers:
+> +  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> +
+> +description:
+> +  The clocking wizard is a soft ip clocking block of Xilinx versal. It
+> +  reads required input clock frequencies from the devicetree and acts as=
+ clock
+> +  clock output.
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,clocking-wizard
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: clock input
+> +      - description: axi clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: clk_in1
+> +      - const: s_axi_aclk
+> +
+> +  xlnx,speed-grade:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 3]
+> +    description:
+> +      Speed grade of the device.
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - speed-grade
 
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 61413be48d1a..9a0dab9448db 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -818,8 +818,8 @@ static struct rockchip_clk_branch rk3368_clk_branches[] __initdata = {
- 	 * pclk_vio gates
- 	 * pclk_vio comes from the exactly same source as hclk_vio
- 	 */
--	GATE(PCLK_DPHYRX, "pclk_dphyrx", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 8, GFLAGS),
--	GATE(PCLK_DPHYTX0, "pclk_dphytx0", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(14), 8, GFLAGS),
-+	GATE(PCLK_DPHYRX, "pclk_dphyrx", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 11, GFLAGS),
-+	GATE(PCLK_DPHYTX0, "pclk_dphytx0", "hclk_vio", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(22), 10, GFLAGS),
- 
- 	/* pclk_pd_pmu gates */
- 	GATE(PCLK_PMUGRF, "pclk_pmugrf", "pclk_pd_pmu", CLK_IGNORE_UNUSED, RK3368_CLKGATE_CON(23), 5, GFLAGS),
--- 
-2.29.2
+Should be xlnx,speed-grade.
 
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-generator@40040000 {
+
+Just clock-controller please.
+
+> +        #clock-cells =3D <1>;
+> +        reg =3D <0x40040000 0x1000>;
+> +        compatible =3D "xlnx,clocking-wizard";
+> +        xlnx,speed-grade =3D <1>;
+> +        clock-names =3D "clk_in1", "s_axi_aclk";
+> +        clocks =3D <&clkc 15>, <&clkc 15>;
+> +        clock-output-names =3D "clk_out1", "clk_out2",
+
+Please remove this property and auto-generate clk names if necessary.
+
+> +        "clk_out3", "clk_out4", "clk_out5",
+> +        "clk_out6", "clk_out7";
+> +    };
+>
