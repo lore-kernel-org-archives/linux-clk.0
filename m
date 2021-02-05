@@ -2,65 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D76AC433E9
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F15AC4332D
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD8C364F91
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A5764FBC
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230377AbhBFCoj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 21:44:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37206 "EHLO
+        id S231939AbhBFCt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 21:49:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbhBFCcV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 21:32:21 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C663C03C063
-        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 14:27:00 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id n81so8657508ybg.20
-        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 14:27:00 -0800 (PST)
+        with ESMTP id S229808AbhBFCbw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 21:31:52 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94346C0698D6
+        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 14:26:48 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id 11so8753259ybl.21
+        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 14:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=Bw5DCGRTYuHhV6CaEDXr7VykkGUog594vA90XJtHO1Y=;
-        b=OJ24USk8NaXzKxxqD9cIc2fuOOLVmyyzmeeBnuhX2haf4opjBLOqqJRPp0oJB2TcJy
-         QU5VBOCElNExNGxqLUxqgYZItGUiFhRtQzb3LQdbw3Y0LZcW3LuI88Njj48rtjKPsSZ2
-         4F0icSi17k6dTngdFP+PaTB0cFBlMjBumwi1fy39MHFAPu/w9n8my2gcennaSg5vjErP
-         sQRLYkA7SGqEGGXM0TBNdHDG5nonXhw92Rf6mDDQik8AxtIwTOsa++xp6SeuTGFyIXpz
-         MAv6/0kL+jIazKDHFcWr73Ze5NFqgWo6QJFSaG2D5SJFVSY04331pMLEzlZOwVgZ2YBU
-         uyXA==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=KekFTcOSO4wGAzjYFoTwyn8B3aXY0kSnpBZiIzqgZEQ=;
+        b=KrQzTpS6DEL/LCcOb464QcY63wZdOZyXEce3rYox0e/nGOQdvy7laJJKstqsB2NyjQ
+         jZtp7noJv+D3j5LbRhVy96dSNljsXiOTyrCUGWuv/JSD+bIejeLKNXrqbCgwGBilJi/2
+         oEE561HncfQrVH5rGAj5pGzI1tXoAZtO4SAMKijao3R8oTf7rdFdA9z7kIg92gEcYLot
+         ttNIT/yBpvW8eS4kR4/f06jsFYlGYoifws72E7669fzKMKYIaENiMi5Hb5K5PIq+F9G8
+         IrKDlnWLqO6ClP2GHCwNFAX6wO37RQwoYo0d7cl1yi7luH1HtnqO+4m85WADDz8irR7V
+         biTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Bw5DCGRTYuHhV6CaEDXr7VykkGUog594vA90XJtHO1Y=;
-        b=HKh1HGmfvYrLkUHlFyQv2Ct8RSyLKnvgeIRvD/B7Yc69uAVxaehv7WjjQiaKz1/AB/
-         ehAkBg/ibGz0rZ4xii7wgHjLfw0q2ezdpBpZC/9E+kR7G0N0dj/6ghrgygIqeGhUDqTX
-         Ew1OWrNZo0+HfQTwEjw2lCd8G5g0pUX33F6uL+oj4CxMXZ4bxdz2F9iRRF8xGBnYRuVU
-         SsbRojnn3K+a7nvJBTKYNIt3ybs8IRvVUG9EJSuz4ZVg/buaoesPOXBT9JZtLG23rqfO
-         PkPF4KHmfYJ7qmhwjn2JCbKpnbhSqqAawm67KWzauRBfInvhsyBmF1JLT1Y8rZ12vHqd
-         P2Rg==
-X-Gm-Message-State: AOAM5325CWNWNxaU1mk1Mg/f/pPy7g5sJryKdZYyoWBacloMg3HMVD03
-        NWpHbZjvsqa9HDVUnRBba6tXhJD7VLYkw6Y=
-X-Google-Smtp-Source: ABdhPJy8zXEis/xhZQjdQJH/U4yg9J4P3415kxIuICG74Qvlo/PkTtrQfpR8JQK+yrBlCNXAjS7e2k4VjoRZpiE=
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=KekFTcOSO4wGAzjYFoTwyn8B3aXY0kSnpBZiIzqgZEQ=;
+        b=YFaDLFnIrcazBQalfkINoQGchUylpRf28JsykhU9KgVZNtFS9+eiKrcJnQ7hfaOy4a
+         wU6gaFB0nnsrIPdU4miiC6eyDu2qHO4ahZkekucVdTZsACPPkB8vyElOTU0NXN6NGfH+
+         X02dywJmvmpBk1OVJ/agukyC46GCv4swUHYdDNDWgdA3sB8+1HOY+E4L8nMGXM/eCrox
+         wwsovKwvszoSdc5B7e0UXOcsKK9YvikSqOelNNNchlgtK0sR2OZCeH73GFvw3SvUdov7
+         VQSTPLAChFIf2X1nrTOfcolaOvfa5Ey4D+RwkhLHhvLAnOYE6hqoeFM0euOfMRvSO/Mp
+         zmnQ==
+X-Gm-Message-State: AOAM5313ZstgwSk8W1ZMGpISwdZzKOYPGCu2gDxlvzsu8d6snLY1+k7e
+        MP6vb6Lo2Tc1LDizJMpmiX85N/q8jtfBiVo=
+X-Google-Smtp-Source: ABdhPJxm8PTm8GV67URDpWm+ruVimL263DiRMvQSkPWTdfF+6ykLYu749Qsb3g8GDsFUzpQF0GFx6o5daJQkNyM=
 Sender: "saravanak via sendgmr" <saravanak@saravanak.san.corp.google.com>
 X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:6d36:b798:55d7:f5c5])
- (user=saravanak job=sendgmr) by 2002:a25:e54:: with SMTP id
- 81mr9240781ybo.404.1612564019429; Fri, 05 Feb 2021 14:26:59 -0800 (PST)
-Date:   Fri,  5 Feb 2021 14:26:40 -0800
-In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
-Message-Id: <20210205222644.2357303-5-saravanak@google.com>
+ (user=saravanak job=sendgmr) by 2002:a25:5f02:: with SMTP id
+ t2mr9740666ybb.161.1612564007719; Fri, 05 Feb 2021 14:26:47 -0800 (PST)
+Date:   Fri,  5 Feb 2021 14:26:36 -0800
+Message-Id: <20210205222644.2357303-1-saravanak@google.com>
 Mime-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
 X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v4 4/8] of: property: Add fw_devlink support for optional properties
+Subject: [PATCH v4 0/8] Make fw_devlink=on more forgiving
 From:   Saravana Kannan <saravanak@google.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -87,54 +83,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Not all DT bindings are mandatory bindings. Add support for optional DT
-bindings and mark iommus, iommu-map, dmas as optional DT bindings.
+There are a lot of devices/drivers where they never have a struct device
+created for them or the driver initializes the hardware without ever
+binding to the struct device.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/of/property.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+This series is intended to avoid any boot regressions due to such
+devices/drivers when fw_devlink=on and also address the handling of
+optional suppliers.
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 53d163c8d39b..962109082df1 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1235,6 +1235,7 @@ static struct device_node *parse_##fname(struct device_node *np,	     \
- struct supplier_bindings {
- 	struct device_node *(*parse_prop)(struct device_node *np,
- 					  const char *prop_name, int index);
-+	bool optional;
- };
- 
- DEFINE_SIMPLE_PROP(clocks, "clocks", "#clock-cells")
-@@ -1308,12 +1309,12 @@ static struct device_node *parse_interrupts(struct device_node *np,
- static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_clocks, },
- 	{ .parse_prop = parse_interconnects, },
--	{ .parse_prop = parse_iommus, },
--	{ .parse_prop = parse_iommu_maps, },
-+	{ .parse_prop = parse_iommus, .optional = true, },
-+	{ .parse_prop = parse_iommu_maps, .optional = true, },
- 	{ .parse_prop = parse_mboxes, },
- 	{ .parse_prop = parse_io_channels, },
- 	{ .parse_prop = parse_interrupt_parent, },
--	{ .parse_prop = parse_dmas, },
-+	{ .parse_prop = parse_dmas, .optional = true, },
- 	{ .parse_prop = parse_power_domains, },
- 	{ .parse_prop = parse_hwlocks, },
- 	{ .parse_prop = parse_extcon, },
-@@ -1368,6 +1369,11 @@ static int of_link_property(struct device_node *con_np, const char *prop_name)
- 
- 	/* Do not stop at first failed link, link all available suppliers. */
- 	while (!matched && s->parse_prop) {
-+		if (s->optional && !fw_devlink_is_strict()) {
-+			s++;
-+			continue;
-+		}
-+
- 		while ((phandle = s->parse_prop(con_np, prop_name, i))) {
- 			matched = true;
- 			i++;
+Patch 1 and 2 addresses the issue of firmware nodes that look like
+they'll have struct devices created for them, but will never actually
+have struct devices added for them. For example, DT nodes with a
+compatible property that don't have devices added for them.
+
+Patch 3 and 4 allow for handling optional DT bindings.
+
+Patch 5 sets up a generic API to handle drivers that never bind with
+their devices.
+
+Patch 6 through 8 update different frameworks to use the new API.
+
+Thanks,
+Saravana
+
+Saravana Kannan (8):
+  driver core: fw_devlink: Detect supplier devices that will never be
+    added
+  of: property: Don't add links to absent suppliers
+  driver core: Add fw_devlink.strict kernel param
+  of: property: Add fw_devlink support for optional properties
+  driver core: fw_devlink: Handle suppliers that don't use driver core
+  irqdomain: Mark fwnodes when their irqdomain is added/removed
+  PM: domains: Mark fwnodes when their powerdomain is added/removed
+  clk: Mark fwnodes when their clock provider is added/removed
+
+ .../admin-guide/kernel-parameters.txt         |  5 ++
+ drivers/base/core.c                           | 58 ++++++++++++++++++-
+ drivers/base/power/domain.c                   |  2 +
+ drivers/clk/clk.c                             |  3 +
+ drivers/of/property.c                         | 16 +++--
+ include/linux/fwnode.h                        | 20 ++++++-
+ kernel/irq/irqdomain.c                        |  2 +
+ 7 files changed, 98 insertions(+), 8 deletions(-)
+
 -- 
 2.30.0.478.g8a0d178c01-goog
 
