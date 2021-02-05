@@ -5,62 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B76C4332D
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5A3C433E6
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D81864FEF
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A527465010
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbhBFCgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 21:36:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37198 "EHLO
+        id S230448AbhBFCjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 21:39:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbhBFCd3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 21:33:29 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03125C08EB2B
-        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 14:27:08 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id i2so8773445ybl.16
-        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 14:27:07 -0800 (PST)
+        with ESMTP id S230497AbhBFCey (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 21:34:54 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0E5CC0698E5
+        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 14:26:54 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id w4so8772753ybc.7
+        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 14:26:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=hqgmXDFwubR/4OnYp87mHqkgPgat9JpTuiz1JNw02ec=;
-        b=HlWJductGnrWtiPlz4VOZAKZtOtHqGtLYG+/m1uG/3j65UbnLXs2ZbOsEsXyQxmcET
-         g5WBXP+ZNdGYsnDNt1AesV/YgtyYbWi8DAfFoP0DUlB0H5AivhCjx7cacjqpzdvJGJkd
-         KJC2axaJVKWb1aZIsjpltmtFIvFilsr/MFeX+VgPTcT+ctffNfukCK16/1DH2bNHZiHq
-         Hs7/PR9SRig14irkeZyDibp5UYV06N4v4E99Aa8HWCyCWoP6sXyRZruGYn7FnGjIrZAc
-         i9RLCHWExeGNkOCk36mOaRKleCDV2qf/Or99/FRsSW4kmlVWj7q6WRTD/+sE9+7tZQaK
-         FlQQ==
+        bh=j8xLJ/gRsabqXmVqApH6UU1AJY7QICocc5XvPOoh2CA=;
+        b=E5sFvJO7MoqTQ5HU1iZRDkvKf3YEJnMxgLBzB4Bdzzu+OwTihKotepF9+vecFbKNIx
+         RMScWAE2zE8rfvaCnxQasMRx1b2r+VjvXf9v4q+HNHmXZS+zJmKBYlJ1jOnNKPkYLUUx
+         +9C9RV4z0aszLyrKr2OQQUAT3XhAqGUElzBIGIsskZIGV69KYaqaW83ucTaO/doqcRq5
+         aA1hFJJYjJVvodQlIzs4Yf6qBGi+RWhj71EWMUCnJT+YB8Jg9U54RCqfkCTP8s/4Q2lH
+         nfjbItiLvc4Ce0s3du8UwLa5Sd+7cG0N/EYOX2N9Kz9ci0pHOQ3JMNDAeaGfizIIj8Tt
+         OyuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=hqgmXDFwubR/4OnYp87mHqkgPgat9JpTuiz1JNw02ec=;
-        b=U6a6JZkOybfxnkuLE/fUFNIyO5tFq0FDETB2CoVSywcyaCb5ZGNCQ2wg0HgsaTCnJq
-         bVesjBQQWpDdxxX3MNGKHSKs19o1Yal7f+lwcKF0fN+de26c0sWpiMSmINWXypIQYGDM
-         Fh1Y5yLd+a9H5ST2SDW75NgGaR/i3XOgyo52vhlyinKXzRrPUiIWStFiG4y/BaYncgjW
-         3Kj+IhOxQT9FGz/SGOhxgckpNcNHuOPns5ZmCBoCzZ6qb/Ej2iYKuxvYurZZomFtvQFp
-         pNo66rAK8Sma6Jjj2q63jCDNQfI3TkflX0rQdz7Jhk4XvH3tDNY+IpvUumyHdra6P2mY
-         KySQ==
-X-Gm-Message-State: AOAM530Sbp2PdKVMbhFtNT5qhpd1phxrjV67ORsDn+eER7zLDwAP3CD2
-        CCVT6krVDIYJti2kyT0fEFXnN31dIA0r8uI=
-X-Google-Smtp-Source: ABdhPJypj8OxFVj8NpBAu+RA/WW+/KzA+etEoUDFgMecuxAKnsbx9dKd514JBTdlGgxWwGx8SVTerVvqi1AS370=
+        bh=j8xLJ/gRsabqXmVqApH6UU1AJY7QICocc5XvPOoh2CA=;
+        b=mRmr1uaPwzNmg5ZGDSh1TxMNTxYEof1vOf/DiljmQURHCl1KLfZo6aqxAkd5tdGhWI
+         0IIb74LszDK5466gKas9kZoQowai9iLiw8uQ0XkVfI4g8VvO9cS5OutmkivAW9UZ6gb2
+         iI3Tr8pGaWLnevBPpa3F7/jv7N+Mvwyk9MpmrC4vsEGSgNlnih4YU1z5iuNNEiGCnIDq
+         S6AlazePaEvkND+6hUBbcIR942Lgap/RESK78JpxE2J+Y6Mzo23Q14dXS+Y/qqxLfyes
+         o8Y8ZguHXTwsvCMVSTOxsHhsZdAuPZoJjqPHOS6YZmUCgPz14gTTcZ96BuXjqxAPjLSD
+         ylxw==
+X-Gm-Message-State: AOAM5318gAFM6Yh9egpMcndM+/FCu/StMJ7cQBn6CyDr7z5q3NEWCBJP
+        1Af+hl+FNa4m8HCyFzcBDUTWTDBlSimyCeo=
+X-Google-Smtp-Source: ABdhPJwaxJzPZ4XSeGkT3P5EprKNXkjzOOR8qEj+Bd02rhMYgGuOOcL7rRwb/dvXftOqDNpM24CwbGcGHu5s6VY=
 Sender: "saravanak via sendgmr" <saravanak@saravanak.san.corp.google.com>
 X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:6d36:b798:55d7:f5c5])
- (user=saravanak job=sendgmr) by 2002:a25:5b8a:: with SMTP id
- p132mr10020763ybb.67.1612564027217; Fri, 05 Feb 2021 14:27:07 -0800 (PST)
-Date:   Fri,  5 Feb 2021 14:26:43 -0800
+ (user=saravanak job=sendgmr) by 2002:a25:d648:: with SMTP id
+ n69mr8876885ybg.462.1612564014028; Fri, 05 Feb 2021 14:26:54 -0800 (PST)
+Date:   Fri,  5 Feb 2021 14:26:38 -0800
 In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
-Message-Id: <20210205222644.2357303-8-saravanak@google.com>
+Message-Id: <20210205222644.2357303-3-saravanak@google.com>
 Mime-Version: 1.0
 References: <20210205222644.2357303-1-saravanak@google.com>
 X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v4 7/8] PM: domains: Mark fwnodes when their powerdomain is added/removed
+Subject: [PATCH v4 2/8] of: property: Don't add links to absent suppliers
 From:   Saravana Kannan <saravanak@google.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -75,11 +75,10 @@ To:     Jonathan Corbet <corbet@lwn.net>,
         Frank Rowand <frowand.list@gmail.com>,
         Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Saravana Kannan <saravanak@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
+        Saravana Kannan <saravanak@google.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         kernel-team@android.com
@@ -88,37 +87,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This allows fw_devlink to recognize power domain drivers that don't use
-the device-driver model to initialize the device. fw_devlink will use
-this information to make sure consumers of such power domain aren't
-indefinitely blocked from probing, waiting for the power domain device
-to appear and bind to a driver.
+If driver core marks a firmware node as not a device, don't add fwnode
+links where it's a supplier.
 
+Fixes: e590474768f1 ("driver core: Set fw_devlink=on by default")
 Signed-off-by: Saravana Kannan <saravanak@google.com>
 ---
- drivers/base/power/domain.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/of/property.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 9a14eedacb92..6ac52a038bb9 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2164,6 +2164,7 @@ static int genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
- 	cp->node = of_node_get(np);
- 	cp->data = data;
- 	cp->xlate = xlate;
-+	fwnode_dev_initialized(&np->fwnode, true);
- 
- 	mutex_lock(&of_genpd_mutex);
- 	list_add(&cp->link, &of_genpd_providers);
-@@ -2353,6 +2354,7 @@ void of_genpd_del_provider(struct device_node *np)
- 				}
- 			}
- 
-+			fwnode_dev_initialized(&cp->node->fwnode, false);
- 			list_del(&cp->link);
- 			of_node_put(cp->node);
- 			kfree(cp);
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 6287c6d60bb7..53d163c8d39b 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -1103,7 +1103,9 @@ static int of_link_to_phandle(struct device_node *con_np,
+ 	 * created for them.
+ 	 */
+ 	sup_dev = get_dev_from_fwnode(&sup_np->fwnode);
+-	if (!sup_dev && of_node_check_flag(sup_np, OF_POPULATED)) {
++	if (!sup_dev &&
++	    (of_node_check_flag(sup_np, OF_POPULATED) ||
++	     sup_np->fwnode.flags & FWNODE_FLAG_NOT_DEVICE)) {
+ 		pr_debug("Not linking %pOFP to %pOFP - No struct device\n",
+ 			 con_np, sup_np);
+ 		of_node_put(sup_np);
 -- 
 2.30.0.478.g8a0d178c01-goog
 
