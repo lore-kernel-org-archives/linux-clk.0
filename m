@@ -2,66 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B99AC433E6
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4DBC43381
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 03:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F51E64F91
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 02:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D2264FD6
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 03:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231268AbhBFCug (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 21:50:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        id S231633AbhBFDIe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Feb 2021 22:08:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbhBFCn0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 21:43:26 -0500
-Received: from mail-qv1-xf49.google.com (mail-qv1-xf49.google.com [IPv6:2607:f8b0:4864:20::f49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF34C08EB27
-        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 14:27:05 -0800 (PST)
-Received: by mail-qv1-xf49.google.com with SMTP id e17so6120288qvo.9
-        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 14:27:05 -0800 (PST)
+        with ESMTP id S231166AbhBFDAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Feb 2021 22:00:03 -0500
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 445E6C061BC3
+        for <linux-clk@vger.kernel.org>; Fri,  5 Feb 2021 18:45:58 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id m76so8737778ybf.0
+        for <linux-clk@vger.kernel.org>; Fri, 05 Feb 2021 18:45:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=TYrtpVLRn3by/Vo/kcPBrt+TPgx+fv0qz/2DUsVYehs=;
-        b=U3Djp3k+GP8+qJmYpXluNSRzD2CCSzeiwHY7gG5D/DqWI0d0WLtnjKmxmVZwbiIl0a
-         DFuApaMx2zqSpPNTf2PGF1oJpYthPmhJ2nm7rd2FmpuV1zS4CjVC38Mf9NqZTb6tJ5Rs
-         93wkaMcPIgBSX8jCDP5L9RSQLRvhi2UMzrLfRacvFGFL/pq/TEt1Cdp+4z3JxfX6hUPY
-         3SaWd0T0LeIsrDoy5GbOj+zSX+2Le6Rc6XHW6dAFGuVc9CI83wb9jLeqsHTQhT8g0xqk
-         FYbC9sFBEawc8DYagceFE3B8UJcbArkFf7OvdDS8fCXYYPCcSAz2G0+SwR2UiM/F+Tui
-         URvQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oeZT1Ar4/x7iejk6TCKZJw9nmldyPb7Q9CQuMN8dXaw=;
+        b=AFhS6ATY/Y9NYutPrE19KVJ8QEJaF2PGTuOgrz9Gy3OYD8T3nfEM6tCPc4DQDe+cmT
+         gGbLVifQsQtzUiF3X4dGA4SNwVI3LH7qwxl1vZhz3YR9Cp0qiGY/3jeh+rr5qm3r6IY7
+         7hxHxK00mdEOHcIzgnBPiTqPV6L0vljvrfDvcDix7+8XPR81Lvup9F+WfsCimBB6dz24
+         J+btxbs8E6J54C44KCAuZnUKGV86hdX+MuPzB7x2eyZrfnvisXKRD/0QNEtfhqDIpVGA
+         Umt5XZHpqcC8bLOtBUQYJkjuYUyDhcO+rJXg9bilCjQKjRIdxzmsD4JoNfGKr5VvY1w/
+         v/NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=TYrtpVLRn3by/Vo/kcPBrt+TPgx+fv0qz/2DUsVYehs=;
-        b=WUsemLkw57cdwOqgZR7NO98c0xVJAobvpMnMn6VAY8AnbFgVu4a0jBxPwKxA9krJUK
-         aVWH4eyL4GRFAU8P2z6ayYiBt2DFa/dhpG51fsbc8nrnRZ2ziIL+G4a9fF6WEWuqMZSL
-         3+hpz4VHRmGQEWhB3Ny+I/hGexxgs4+VNswmMHxrWYwPQvqNmcrCGWhQs1HmkzH+vGAt
-         x97E6cybdBujyzf0gktozpO2EYBGrlE0jmIz6CNOcV95of1ySQwqyN1jtIcF5v52XeKv
-         JXJMRKdHglFJgeaHuxTvww57V6ktCjzgydJdCNRvhCOP+Ep/jPJNJ5ZCFdQV+R6HCSrD
-         UBWA==
-X-Gm-Message-State: AOAM5336+L1c3SeqzY2wccwXdkCgY6cqSgOwMzAButQS9zqJO6SAAYQo
-        wdgKkzlDHrE6IF7f4B3KgAzxIczCu713Rz4=
-X-Google-Smtp-Source: ABdhPJwdjYLytH5Kf+IR/URLqg4oBMorIriHqSmnCdh9rbCozFjv7tkF2iAFZexBUHOTPiNpU3ZtLytbJBYvjy8=
-Sender: "saravanak via sendgmr" <saravanak@saravanak.san.corp.google.com>
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:6d36:b798:55d7:f5c5])
- (user=saravanak job=sendgmr) by 2002:ad4:4e8a:: with SMTP id
- dy10mr6613039qvb.36.1612564024540; Fri, 05 Feb 2021 14:27:04 -0800 (PST)
-Date:   Fri,  5 Feb 2021 14:26:42 -0800
-In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
-Message-Id: <20210205222644.2357303-7-saravanak@google.com>
-Mime-Version: 1.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oeZT1Ar4/x7iejk6TCKZJw9nmldyPb7Q9CQuMN8dXaw=;
+        b=qR7yR7tyfUjoC+5pxhaKX9W7TP9d2RtFiymD/dI7sG0iAMJu0yUR+F2FhHjlcfzs9c
+         yDZFsmGiDA60650ef2enEPY+xtV+TexinpA9enpVjnHIo1YTiyhIKbpIrWJJwE+OH0jp
+         F+jTXDkKhDchBaOcMMuEeh6AfCSwYMWSbsEG7ES5At8oftAkLWsMTQLsOAZixCF2yHOv
+         xctwpJoWPpjRKMdHOR2OkXuYJeVDkX+VDKFbohfzEVimJFvm47815myHxbbpWBnWpLsv
+         YBz5to95crRZmL84VcAXh5Tvny+ADhmyQA4Wn3ggJpvomDnoMLHK6uG67p/kmL/Hntkn
+         kTgA==
+X-Gm-Message-State: AOAM5335syL9H1IwBIUoyb3lSWt5N1kFeXcraFqDGHR/qCbPWplUlJ/N
+        U6NaLEoq9coWEHO/SfMUATL/tWaMOdpvqQJyVaK+IA==
+X-Google-Smtp-Source: ABdhPJy11Z5i7gStQAF/aV2cWsIZWC4t0l/3YBj3YIJdn7KvpZm4nPNRQyA7a/+WGcaogoso5SndN/JmnOvk57r9ybc=
+X-Received: by 2002:a25:af0b:: with SMTP id a11mr4263580ybh.228.1612579557241;
+ Fri, 05 Feb 2021 18:45:57 -0800 (PST)
+MIME-Version: 1.0
 References: <20210205222644.2357303-1-saravanak@google.com>
-X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v4 6/8] irqdomain: Mark fwnodes when their irqdomain is added/removed
+In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
 From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 5 Feb 2021 18:45:21 -0800
+Message-ID: <CAGETcx_f7BEbkOFtw_6_4fMcgGOWkujbqXhDbDcNstOxgvcPfA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
 To:     Jonathan Corbet <corbet@lwn.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -75,49 +71,83 @@ To:     Jonathan Corbet <corbet@lwn.net>,
         Frank Rowand <frowand.list@gmail.com>,
         Marc Zyngier <maz@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     Saravana Kannan <saravanak@google.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        kernel-team@android.com
+        Android Kernel Team <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This allows fw_devlink to recognize irqdomain drivers that don't use the
-device-driver model to initialize the device. fw_devlink will use this
-information to make sure consumers of such irqdomain aren't indefinitely
-blocked from probing, waiting for the irqdomain device to appear and
-bind to a driver.
+On Fri, Feb 5, 2021 at 2:26 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> There are a lot of devices/drivers where they never have a struct device
+> created for them or the driver initializes the hardware without ever
+> binding to the struct device.
+>
+> This series is intended to avoid any boot regressions due to such
+> devices/drivers when fw_devlink=on and also address the handling of
+> optional suppliers.
+>
+> Patch 1 and 2 addresses the issue of firmware nodes that look like
+> they'll have struct devices created for them, but will never actually
+> have struct devices added for them. For example, DT nodes with a
+> compatible property that don't have devices added for them.
+>
+> Patch 3 and 4 allow for handling optional DT bindings.
+>
+> Patch 5 sets up a generic API to handle drivers that never bind with
+> their devices.
+>
+> Patch 6 through 8 update different frameworks to use the new API.
+>
+> Thanks,
+> Saravana
+>
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- kernel/irq/irqdomain.c | 2 ++
- 1 file changed, 2 insertions(+)
+Forgot to add version history:
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 6aacd342cd14..288151393a06 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -205,6 +205,7 @@ struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, int size,
- 	}
- 
- 	fwnode_handle_get(fwnode);
-+	fwnode_dev_initialized(fwnode, true);
- 
- 	/* Fill structure */
- 	INIT_RADIX_TREE(&domain->revmap_tree, GFP_KERNEL);
-@@ -253,6 +254,7 @@ void irq_domain_remove(struct irq_domain *domain)
- 
- 	pr_debug("Removed domain %s\n", domain->name);
- 
-+	fwnode_dev_initialized(domain->fwnode, false);
- 	fwnode_handle_put(domain->fwnode);
- 	if (domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
- 		kfree(domain->name);
--- 
-2.30.0.478.g8a0d178c01-goog
+v1 -> v2:
+Patch 1: Added a flag to fwnodes that aren't devices.
+Patch 3: New patch to ise the flag set in patch 1 to not create bad links.
 
+v2 -> v3:
+- Patch 1: Added Rafael's Ack
+- New patches 3 and 4
+
+v3 -> v4:
+- No changes to patches 1-4.
+- New patches 5-8.
+
+-Saravana
+
+> Saravana Kannan (8):
+>   driver core: fw_devlink: Detect supplier devices that will never be
+>     added
+>   of: property: Don't add links to absent suppliers
+>   driver core: Add fw_devlink.strict kernel param
+>   of: property: Add fw_devlink support for optional properties
+>   driver core: fw_devlink: Handle suppliers that don't use driver core
+>   irqdomain: Mark fwnodes when their irqdomain is added/removed
+>   PM: domains: Mark fwnodes when their powerdomain is added/removed
+>   clk: Mark fwnodes when their clock provider is added/removed
+>
+>  .../admin-guide/kernel-parameters.txt         |  5 ++
+>  drivers/base/core.c                           | 58 ++++++++++++++++++-
+>  drivers/base/power/domain.c                   |  2 +
+>  drivers/clk/clk.c                             |  3 +
+>  drivers/of/property.c                         | 16 +++--
+>  include/linux/fwnode.h                        | 20 ++++++-
+>  kernel/irq/irqdomain.c                        |  2 +
+>  7 files changed, 98 insertions(+), 8 deletions(-)
+>
+> --
+> 2.30.0.478.g8a0d178c01-goog
+>
