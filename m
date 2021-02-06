@@ -2,63 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34EAC433E0
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 04:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253DBC433E9
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 19:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9897B64FB3
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 04:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7EAD64DF6
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 19:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230495AbhBFD75 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Feb 2021 22:59:57 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:47342 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231876AbhBFD61 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Feb 2021 22:58:27 -0500
-Received: from p508fdf7d.dip0.t-ipconnect.de ([80.143.223.125] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1l8B78-00052x-Dn; Sat, 06 Feb 2021 01:06:14 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 1/5] clk: rockchip: add clock ids for PCLK_DPHYRX and PCLK_DPHYTX0 on rk3368
-Date:   Sat,  6 Feb 2021 01:06:12 +0100
-Message-Id: <161256995504.1897877.6561871784286411999.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210205110502.1850669-1-heiko@sntech.de>
-References: <20210205110502.1850669-1-heiko@sntech.de>
+        id S229545AbhBFTmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Feb 2021 14:42:15 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:38893 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229522AbhBFTmO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Feb 2021 14:42:14 -0500
+Received: by mail-oi1-f175.google.com with SMTP id h6so11399159oie.5;
+        Sat, 06 Feb 2021 11:41:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FKD3uWoM232ZDb97jtcXu4bvy3RO8KL/znUc8UnnK5o=;
+        b=ea5eTQmg3xpJKvaacNCZPSSh5QpyGfvc4Uckt8zldkOyDDobHf31qiKO7BDrz7sxUv
+         FCM0GCUkg42l854aPPO744cttRSmzV8g5Y615mSAMo/3G8wwKDkq1SmsrBEt2sKfu5Mx
+         Sv79pfMwh4sgD19AXAmy47GM8fdeSTsMYXRcGhgl8Xu74XYQiNweDyFXUinWuFOlcidK
+         b7YcDMPQekm2LEI+SAJh37+LV0pwFiPdgS0O+8jP2HIAPtYvRt5V7vFWMZMuNHf1eyEJ
+         gZfdE3IqteHlZPUcc1+TP/Nj6OAVpRFvRv4xlvT0Suqwr3B7ZbWIwF1J+meFrl5Qzkyw
+         6Uvg==
+X-Gm-Message-State: AOAM530ykiqlEeaFn+Z9XB+MKcf4RcKHwX6R2RwB97RKV51rTp5kEdyC
+        sTCZd7uN76d/2wLxXjGS/A8EHyBqG/Ff8jInMeJtAvqV
+X-Google-Smtp-Source: ABdhPJxQVTTEsgj9ERT0OqxlrVS5WhFx+iXJMf6D3lnCqIAwjU2C9L4GlRHxxmCD4IjzA1ObH/hGYJBKA2PuEeFOkHQ=
+X-Received: by 2002:aca:744:: with SMTP id 65mr6621996oih.153.1612640492897;
+ Sat, 06 Feb 2021 11:41:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210205222644.2357303-1-saravanak@google.com>
+In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 6 Feb 2021 20:41:22 +0100
+Message-ID: <CAMuHMdXo+ShM3Ct2OSCscJwaLJ4rbytpA14=dR5q+3F9kJjNfw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 5 Feb 2021 12:04:58 +0100, Heiko Stuebner wrote:
-> Needed by the mipi dphys.
-> The naming follows the clock names in the manual.
+Hi Saravana,
 
-Applied, thanks!
+On Fri, Feb 5, 2021 at 11:26 PM Saravana Kannan <saravanak@google.com> wrote:
+> There are a lot of devices/drivers where they never have a struct device
+> created for them or the driver initializes the hardware without ever
+> binding to the struct device.
+>
+> This series is intended to avoid any boot regressions due to such
+> devices/drivers when fw_devlink=on and also address the handling of
+> optional suppliers.
 
-[1/5] clk: rockchip: add clock ids for PCLK_DPHYRX and PCLK_DPHYTX0 on rk3368
-      commit: 0be10b6f68b217876665031f643e571a5661fc9c
-[2/5] clk: rockchip: use clock ids for PCLK_DPHYRX and PCLK_DPHYTX0 on rk3368
-      commit: fabb841c5b16721298cfe649b569a4fa40af28a6
-[3/5] clk: rockchip: add clock id for SCLK_VIP_OUT on rk3368
-      commit: 686458aa752362f86d881d7fa4576c9f175b2d9b
-[4/5] clk: rockchip: use clock id for SCLK_VIP_OUT on rk3368
-      commit: ed2243e0038b8afdd7726d117da34ee4577e11ad
-[5/5] clk: rockchip: fix DPHY gate locations on rk3368
-      commit: 4bc23b3c83c9a3fc0a7dd8f2f11f451aa92c85cd
+Thanks for your series!
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+> Patch 5 sets up a generic API to handle drivers that never bind with
+> their devices.
+>
+> Patch 6 through 8 update different frameworks to use the new API.
+
+>   driver core: fw_devlink: Handle suppliers that don't use driver core
+>   irqdomain: Mark fwnodes when their irqdomain is added/removed
+>   PM: domains: Mark fwnodes when their powerdomain is added/removed
+>   clk: Mark fwnodes when their clock provider is added/removed
+
+I take it this is an automatic alternative for letting drivers set the
+OF_POPULATED flag manually?
+
+Is this actually safe?  It's not uncommon for a driver to register
+multiple providers, sometimes even of different types (clock, genpd,
+irq, reset[1], ...).
+Can you be sure consumer drivers do not start probing while their
+dependency is still busy registering providers?
+
+[1] Which brings my attention to the fact that devlink does not consider
+    "resets" properties yet.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
