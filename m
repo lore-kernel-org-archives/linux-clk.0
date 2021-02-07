@@ -2,155 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7132C433E6
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 20:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D191FC433E0
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Feb 2021 18:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC26F64E5C
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Feb 2021 20:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BB7264DEB
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Feb 2021 18:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229506AbhBFUs2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Feb 2021 15:48:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
+        id S229562AbhBGSwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Feb 2021 13:52:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhBFUsZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Feb 2021 15:48:25 -0500
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E76C061786
-        for <linux-clk@vger.kernel.org>; Sat,  6 Feb 2021 12:47:45 -0800 (PST)
-Received: by mail-yb1-xb35.google.com with SMTP id v5so1768746ybi.3
-        for <linux-clk@vger.kernel.org>; Sat, 06 Feb 2021 12:47:45 -0800 (PST)
+        with ESMTP id S229491AbhBGSwf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Feb 2021 13:52:35 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 725D6C061756;
+        Sun,  7 Feb 2021 10:51:55 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id j5so12734485iog.11;
+        Sun, 07 Feb 2021 10:51:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+hjAXsPVbgElgRdj+BZ+6MVnNMTVzcYGHrvtwU1AcCs=;
-        b=PivZDf7vbfBH6bSgHRaWMYMP8xN20P+lGSInQZfjmRrebl4zG19XOD81h4xHPsxfvN
-         rrEa3VG5KM++VddLx0G0hTtcKmO3HR5nuYYQszPGx7j17MOYIXpprrMbnqMjHCQ16gnh
-         vAAp8M7sh5ngMRXLEvCnpR0SE2eLb/b831luTAfpCMUIl/+mJcASqjF/vSQElaBpCa5G
-         ILxRh/y64IoVeO+zKE/zafs6iW5iGJpNWNeiVO4o5xdYwVvhVcqNHRaL4XC6XStW1r/E
-         jU8CFfUhqfItkbmKMgW8wP9A8yilwS0e3PFFDVjJn3PIqvllgunktYiSTLq9+arpDImJ
-         yCYw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C1b2/ijDZ9H0sKDfYhenHE6daVwDApyvYHnzhcgt0pg=;
+        b=MFQXikcjPXIAShI40vHiklo9q+lVC0Iwi/7VO/SRnnaj+2RgNifeW95GGqO9S/masX
+         7nzjkGK0+i2IxWpTimWX40wehq8pZygPGf/YslAQprZLjcRnUDsR4CmYS+xvG3AJA27R
+         KfNqGIreA9oSHup0+GVNc86I5fbHZZfnWMJFEmPVInYl/5Mijtwf+fBMdxa1IW+yNTQ5
+         wleXjsGXdDp6STCIlab1VTKOXA6fRoGjEvkWcD+GObgatttllLX1d9gv/Oe30WIvxNcq
+         NXJlSyHpxPiPoDKn7zTE5oYJOqFa6dVSRrUE82E8M4iMuxTiA6Us+A1vXQSrZU5cimw2
+         zkPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+hjAXsPVbgElgRdj+BZ+6MVnNMTVzcYGHrvtwU1AcCs=;
-        b=nSmNEHUdQpLVMsvGZs2D6XOBjHA8AO+MKAQ1hvjSfTAAyD7FJ1HjktxF9nbCSu34Dl
-         Sxnl/J7dgCgFaJyasUMCQ6EfP9XTzKA5S2rMbS3SfrhWSrRfne3J4XaAwsUIj+Ughk7z
-         5dAOjSDvay2JpQE9nEXofAxRnPhPm38a/au92Ed3gQ3KHxnT8Rl7KYwNTJK8MT1UF3iN
-         WBA/8GXa+tAZHIsM37FfF8cE0APkbGTk1ze1l5IcdVqNyzXhE6igqWXzXsCFqW0xYiHN
-         9MRqbb5+3jvVN+If0woJRKqIuVGEdNo9lCzosKm4Do74bYZx/XhSIyyZsF2DFVkV0CM9
-         ZZdg==
-X-Gm-Message-State: AOAM530ef9dR/gcfj1ADVmg4rPXLCYON8g8pXFlq7mKVJbL+MPsxDU0x
-        72WHSN8cMnbjwFZsKBmutiXdo25ehf1eKGbQtKgfCw==
-X-Google-Smtp-Source: ABdhPJyL0NcBX/RigrI99Osm8m1ZvOqxCkoIvfHxGEI93KNtJj0ymk4vExKY8KweKVKWPIOdql7mDcRKQHJIMzVuTpU=
-X-Received: by 2002:a25:b74c:: with SMTP id e12mr16000102ybm.20.1612644464464;
- Sat, 06 Feb 2021 12:47:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com> <CAMuHMdXo+ShM3Ct2OSCscJwaLJ4rbytpA14=dR5q+3F9kJjNfw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXo+ShM3Ct2OSCscJwaLJ4rbytpA14=dR5q+3F9kJjNfw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Sat, 6 Feb 2021 12:47:08 -0800
-Message-ID: <CAGETcx9j8YzcJa6-s4cuyTpwFsUAAaBD6H9mf1wfzafb_x+5tg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C1b2/ijDZ9H0sKDfYhenHE6daVwDApyvYHnzhcgt0pg=;
+        b=rpb2tz3b4N6jYz3kyFMysy6DCGfmVxyHLD+xeD/id2ABHI8dTk1koRiS9RHdmcZXh1
+         uq7iA6cvgnjJ6ahtYaIeGA5QuYJfQpjGfoji3OZsLFyrbeiIaB5QrcuhfWohuwyzucay
+         cCl0q5A2zGJPwn26ePuyBP6sdRqYCtXRrhGkWD5t5fn7HbsJ9GOu4xm4ZwT2ajPhSAwY
+         MB3Bub3ZVgxVKNHU/Xt0OQ0CJAsJy1fhT27W1CRcMQqYRtWKiIlaT1hlLn9WFgd4vmMP
+         sHyYxSYSbuun2nM5YpKc5zn0OVQjs3GCe7lIhPhU/eQeBRA25thbJUQYFLe0Qy1I2t0N
+         LXOA==
+X-Gm-Message-State: AOAM5329dIKi5Xdgg5a+DkrdWiH8BtjtU0irVRLbVuIl3WsUp+OLGBAK
+        UJv5vHP2eZx9JJOdFH9KhPSrJi9z+9CseA==
+X-Google-Smtp-Source: ABdhPJzUaVyGsmNps3Ljb3GSgCk1I0HkgSOXlRivc5lvf5P3IDbfkpVcqVRKrUVS7MMNk7rY0QePMg==
+X-Received: by 2002:a02:cd25:: with SMTP id h5mr14124991jaq.31.1612723914694;
+        Sun, 07 Feb 2021 10:51:54 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:a6b4:a5d5:60b9:fff0])
+        by smtp.gmail.com with ESMTPSA id e1sm7942738iol.31.2021.02.07.10.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Feb 2021 10:51:54 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V3 1/2] dt-bindings: clk: versaclock5: Add optional load capacitance property
+Date:   Sun,  7 Feb 2021 12:51:38 -0600
+Message-Id: <20210207185140.3653350-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 6, 2021 at 11:41 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Fri, Feb 5, 2021 at 11:26 PM Saravana Kannan <saravanak@google.com> wrote:
-> > There are a lot of devices/drivers where they never have a struct device
-> > created for them or the driver initializes the hardware without ever
-> > binding to the struct device.
-> >
-> > This series is intended to avoid any boot regressions due to such
-> > devices/drivers when fw_devlink=on and also address the handling of
-> > optional suppliers.
->
-> Thanks for your series!
->
-> > Patch 5 sets up a generic API to handle drivers that never bind with
-> > their devices.
-> >
-> > Patch 6 through 8 update different frameworks to use the new API.
->
-> >   driver core: fw_devlink: Handle suppliers that don't use driver core
-> >   irqdomain: Mark fwnodes when their irqdomain is added/removed
-> >   PM: domains: Mark fwnodes when their powerdomain is added/removed
-> >   clk: Mark fwnodes when their clock provider is added/removed
->
-> I take it this is an automatic alternative for letting drivers set the
-> OF_POPULATED flag manually?
+There are two registers which can set the load capacitance for
+XTAL1 and XTAL2. These are optional registers when using an
+external crystal.  Since XTAL1 and XTAL2 will set to the same value,
+update the binding to support a single property called
+xtal-load-femtofarads.
 
-The frameworks can still continue setting it to avoid creating dead
-"struct devices" that'll never be used. This new flag handles cases
-where the device is already created, but will never bind to a driver.
-So, they are meant to do slightly different things, but the end result
-is removing the need for individual drivers to set OF_POPULATED (and
-Rob hates that too).
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+V3:  No Change
+V2:  No Change
 
-> Is this actually safe?  It's not uncommon for a driver to register
-> multiple providers, sometimes even of different types (clock, genpd,
-> irq, reset[1], ...).
+A couple people suggested that I not use the $ref, but without it,
+the bindings check failed with errors.
 
-This flag is just an indication that the fwnode has been initialized
-by a driver. It's okay if the flag gets set multiple times when a
-driver is registering with multiple frameworks. It's also okay if the
-flag is cleared multiple times as the driver is uninitializing the
-hardware (although, this is very unlikely for drivers that don't use
-device-driver model). When we actually try to create device links, we
-just check if this happened without a driver actually binding to this
-device. There's no "probing" race because the "status" I check goes
-through NO_DRIVER -> PROBING -(registering happens)-> BOUND ->
-UNBINDING -(deregistering happens) -> NO_DRIVER. So if the fwnode flag
-is getting set as part of the driver's probe function, the "status"
-value will never be NO_DRIVER.
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index 2ac1131fd922..c268debe5b8d 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -59,6 +59,12 @@ properties:
+     minItems: 1
+     maxItems: 2
+ 
++  idt,xtal-load-femtofarads:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 9000
++    maximum: 22760
++    description: Optional load capacitor for XTAL1 and XTAL2
++
+ patternProperties:
+   "^OUT[1-4]$":
+     type: object
+-- 
+2.25.1
 
-> Can you be sure consumer drivers do not start probing while their
-> dependency is still busy registering providers?
-
-The code only acts on that flag when trying to create device links
-from the consumer to the supplier. This is just a way to tell "hey,
-don't bother creating a device link, this supplier will never bind".
-So it just avoids blocking the consumer. Doesn't really make the
-consumers probe earlier than they would have.
-
-> [1] Which brings my attention to the fact that devlink does not consider
->     "resets" properties yet.
->
-
-Yeah, we can add that and other bindings as we go.
-
--Saravana
