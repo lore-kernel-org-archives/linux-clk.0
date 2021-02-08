@@ -2,217 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E17C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 06:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370ABC433DB
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 08:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDD1E64DD8
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 06:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D604664E99
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 08:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhBHGqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Feb 2021 01:46:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229908AbhBHGqn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Feb 2021 01:46:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E47364E59;
-        Mon,  8 Feb 2021 06:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612766761;
-        bh=laV8svMkkIZgkEjMImPDqav9pFAGfCHDdtEUcbdDnvY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TGskujnEd6wHa7WkmlrA/txwqRTcJGBrt+G8G29pmkA5kZJTpP9p0uA0OBvZIqSvD
-         JxUKjVIlJL7BN44ZogKx96Zw8qus91VU68qdycGrSWnEl44/V2NTQUC1OLOTCdF4Gu
-         FGXrZfB1UlGCm0us6h06+bTEmrWyNdKdO1cQE50Xn9aYIA9cVXbE7c/MBRqdiuZ1jz
-         yRAPPdGXm7pgspO8bff3EiWF+togadvuTOEFB2flyG4QXvLieVjLI1n9IWbF4cIrlT
-         j4bPAIhCO/OgcnQj5qsi4LQSz7dkKfKSzdR46yYTRQHb0tQHuVB44086JDEOFAZDLc
-         NgM8lbk2wAojg==
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
+        id S230146AbhBHIoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 03:44:02 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37742 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230357AbhBHIlB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 03:41:01 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210208084015euoutp021aa6ac7fe18f4b0b7d2e28c2bb653fcc~huQ76cau01970219702euoutp02A
+        for <linux-clk@vger.kernel.org>; Mon,  8 Feb 2021 08:40:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210208084015euoutp021aa6ac7fe18f4b0b7d2e28c2bb653fcc~huQ76cau01970219702euoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1612773615;
+        bh=KNOrNrL+72nponq8j81Mwa76MDVPefX2wsyg2rqCJ3k=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=OzPfFMgeKTqGebk3pGIZDzUyPBmOD5j9Md0WMrpEIJS6aKALJ+3XDOdho+g0So/+H
+         hzxDA6ObV49y6yWSCqhqKj5PEnSTkXzaXyhopL4qTM8iQi4cqDX6dIqMyEmtAz0iPr
+         jenzLxlqE1RROIhRdQlDINIpLD+u6SVLcfzR5+HI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210208084015eucas1p2a79133d1a5611ec48bf32385b99c0d4c~huQ7fykwT2617926179eucas1p2m;
+        Mon,  8 Feb 2021 08:40:15 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 53.0B.45488.EE8F0206; Mon,  8
+        Feb 2021 08:40:15 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210208084014eucas1p2f462f219c6e46c6eaec2ae88c03c9507~huQ65A-6w2626126261eucas1p2M;
+        Mon,  8 Feb 2021 08:40:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210208084014eusmtrp29991457435cf7013f14c44f4b49aab41~huQ63_fnl0368203682eusmtrp2Q;
+        Mon,  8 Feb 2021 08:40:14 +0000 (GMT)
+X-AuditID: cbfec7f5-c77ff7000000b1b0-eb-6020f8eef31b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 15.36.21957.EE8F0206; Mon,  8
+        Feb 2021 08:40:14 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210208084013eusmtip2d038ff27818d7ead02c16b59f934df21~huQ5xo5Ko3214432144eusmtip20;
+        Mon,  8 Feb 2021 08:40:13 +0000 (GMT)
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
         Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
-From:   Tero Kristo <kristo@kernel.org>
-Message-ID: <b801364c-951a-af9f-d7ad-2440afe1ed88@kernel.org>
-Date:   Mon, 8 Feb 2021 08:45:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        kernel-team@android.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <7b486072-453d-a344-bdfc-dec58a35c8f5@samsung.com>
+Date:   Mon, 8 Feb 2021 09:40:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7djP87rvfygkGCxtYLR4cqCd0WL+kXOs
+        FjPf/GezeHZrL5NF8+L1bBY7totYPN38mMli1hSg0M6Hb9kslu/rZ7T42HOP1WJh2xIWi8u7
+        5rBZfO49wmixc85JVouLp1wt7p46ymYx98tUZovWvUfYLboO/WWz+HdtI4vF5k1AseNrwx3E
+        Pbbt3sbq8f5GK7vHzll32T0WbCr1WLznJZPHplWdbB53ru1h83h37hy7x6HDHYwe++euYfdY
+        3DeZ1WPF6u/sHp83yQXwRnHZpKTmZJalFunbJXBlLG7+xFJwk7Pi8rqjjA2MT9i7GDk5JARM
+        JBad28rUxcjFISSwglHiycFF7BDOF0aJ7tULmCGcz4wSD37+ZINpOdH1lREisZxRYs7Jq1At
+        Hxkl+k83MoNUCQvYSjSdXgLWLiKwhUVi4641YFuYBT4Bzer+xgpSxSZgKNH1tgtoLgcHr4Cd
+        xLYVUSBhFgEVibW/pzGC2KICSRLLb/5hArF5BQQlTs58wgJicwrYSBx+8g5sGbOAvMT2t3Og
+        bHGJW0/mg+2SEOjikrhypo8F4m4Xie+7DkLZwhKvjm+BBoGMxP+dMA3NjBIPz61lh3B6GCUu
+        N81ghKiylrhz7hfYpcwCmhLrd+lDhB0lvvZOYQYJSwjwSdx4KwhxBJ/EpG3TocK8Eh1tQhDV
+        ahKzjq+DW3vwwiXmCYxKs5C8NgvJO7OQvDMLYe8CRpZVjOKppcW56anFxnmp5XrFibnFpXnp
+        esn5uZsYgQn39L/jX3cwrnj1Ue8QIxMH4yFGCQ5mJRHewE65BCHelMTKqtSi/Pii0pzU4kOM
+        0hwsSuK8u7auiRcSSE8sSc1OTS1ILYLJMnFwSjUwxb3meeT1KbQ3aGPey+lt6168m+SQtHL7
+        DF2+RO3vJgtDFy7u6Zy+SGUXf0Msm0lmwpZ7jyaycn7yOp5kIvl9O4vjTNUY1dvcc2I07q+V
+        7vSwXdrG/VqtQNQsTStifcfdubeEMgv6Z+35Vt+afdWi1nPZU+Hbmt5LNkd+tZ/X/HXiKo7g
+        98/enOM6otK4q/zgboMzx/c3mbCkSew8/onX5fy6L1fqjvyR/Ht0jf/iT5LPHC3mXw9eb3JB
+        tMxjrkOuxwGVzVtL3nBHLM16O//rJSe7kny5K9Z5gWkR33KK1xYWqM1lYgp1feqceiPC9SGX
+        o+B+qR+t3ukGuqurfT70micfPLtI/3DJV4l3cx4GK7EUZyQaajEXFScCABW41o0nBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsVy+t/xe7rvfigkGMxaL2zx5EA7o8X8I+dY
+        LWa++c9m8ezWXiaL5sXr2Sx2bBexeLr5MZPFrClAoZ0P37JZLN/Xz2jxseceq8XCtiUsFpd3
+        zWGz+Nx7hNFi55yTrBYXT7la3D11lM1i7pepzBate4+wW3Qd+stm8e/aRhaLzZuAYsfXhjuI
+        e2zbvY3V4/2NVnaPnbPusnss2FTqsXjPSyaPTas62TzuXNvD5vHu3Dl2j0OHOxg99s9dw+6x
+        uG8yq8eK1d/ZPT5vkgvgjdKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rez
+        SUnNySxLLdK3S9DLWNz8iaXgJmfF5XVHGRsYn7B3MXJySAiYSJzo+srYxcjFISSwlFFi+/om
+        FoiEjMTJaQ2sELawxJ9rXWwQRe8ZJRbens4GkhAWsJVoOr2EGSQhIrCNRWLylW0sIA6zwCdG
+        iWW7ITJCAv2MEneOzQObxSZgKNH1FmQWBwevgJ3EthVRIGEWARWJtb+nMYLYogJJEo9v3WcC
+        sXkFBCVOznwCdhKngI3E4SfvmEFsZgEziXmbH0LZ8hLb386BssUlbj2ZzzSBUWgWkvZZSFpm
+        IWmZhaRlASPLKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMAEs+3Yz807GOe9+qh3iJGJg/EQ
+        owQHs5IIb2CnXIIQb0piZVVqUX58UWlOavEhRlOgfyYyS4km5wNTXF5JvKGZgamhiZmlgaml
+        mbGSOO/WuWvihQTSE0tSs1NTC1KLYPqYODilGpg4aq5ncM+YvSbIvNmA+W7ROnfPD1tkfmhe
+        FZVbXN7r+aG1vE/Walt21EWRvNdbH0w70S30UFhq/7OAK4vnPy3ravO2POSq+b7LPObRkg/y
+        acd//9zj/3ySyKkrNTdTw+SXuUifm7pqkZ6BlN/qtqCbx51dUqzdPiz86zvdwlSBqazLWv3V
+        9uOmRx8ybErReHX2jgOPTvmlXXsyTm1S+mx+6/yGSxONP1ssDlx57PCv58WZFlsuJ1quezrl
+        6e7j13c1eE/c5LH8RZuRZrxC6Zp38Uk3IkP3LF+xLZk7z7mab04Iq1vWC9WyfcYdNmc02B+p
+        PsrVavdSZ0vZsPbV4v1+B+ff3xDxz7jrderN91dWK7EUZyQaajEXFScCANPuL3K5AwAA
+X-CMS-MailID: 20210208084014eucas1p2f462f219c6e46c6eaec2ae88c03c9507
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210205222651eucas1p28ef87073dea33c1c5224c14aa203bec5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210205222651eucas1p28ef87073dea33c1c5224c14aa203bec5
+References: <CGME20210205222651eucas1p28ef87073dea33c1c5224c14aa203bec5@eucas1p2.samsung.com>
+        <20210205222644.2357303-1-saravanak@google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/01/2021 14:45, Lee Jones wrote:
-> This set is part of a larger effort attempting to clean-up W=1
-> kernel builds, which are currently overwhelmingly riddled with
-> niggly little warnings.
-> 
-> This is the last set.  Clock is clean after this.
-> 
-> Lee Jones (21):
->    clk: zynq: pll: Fix kernel-doc formatting in 'clk_register_zynq_pll's
->      header
->    clk: ti: clkt_dpll: Fix some kernel-doc misdemeanours
->    clk: ti: dpll3xxx: Fix some kernel-doc headers and promote other
->      worthy ones
->    clk: qcom: clk-regmap: Provide missing description for
->      'devm_clk_register_regmap()'s dev param
->    clk: sunxi: clk-sun9i-core: Demote non-conformant kernel-doc headers
->    clk: sunxi: clk-usb: Demote obvious kernel-doc abuse
->    clk: tegra: clk-tegra30: Remove unused variable 'reg'
->    clk: clkdev: Ignore suggestion to use gnu_printf() as it's not
->      appropriate here
->    clk: tegra: cvb: Provide missing description for
->      'tegra_cvb_add_opp_table()'s align param
->    clk: ti: dpll44xx: Fix some potential doc-rot
->    clk: renesas: renesas-cpg-mssr: Fix formatting issues for
->      'smstpcr_saved's documentation
->    clk: sunxi: clk-sun6i-ar100: Demote non-conformant kernel-doc header
->    clk: qcom: gcc-ipq4019: Remove unused variable 'ret'
->    clk: clk-fixed-mmio: Demote obvious kernel-doc abuse
->    clk: clk-npcm7xx: Remove unused static const tables 'npcm7xx_gates'
->      and 'npcm7xx_divs_fx'
->    clk: qcom: mmcc-msm8974: Remove unused static const tables
->      'mmcc_xo_mmpll0_1_2_gpll0{map}'
->    clk: clk-xgene: Add description for 'mask' and fix formatting for
->      'flags'
->    clk: qcom: clk-rpm: Remove a bunch of superfluous code
->    clk: spear: Move prototype to accessible header
->    clk: imx: Move 'imx6sl_set_wait_clk()'s prototype out to accessible
->      header
->    clk: zynqmp: divider: Add missing description for 'max_div'
-> 
->   arch/arm/mach-imx/common.h             |   1 -
->   arch/arm/mach-imx/cpuidle-imx6sl.c     |   1 +
->   arch/arm/mach-imx/pm-imx6.c            |   1 +
->   arch/arm/mach-spear/generic.h          |  12 ---
->   arch/arm/mach-spear/spear13xx.c        |   1 +
->   drivers/clk/clk-fixed-mmio.c           |   2 +-
->   drivers/clk/clk-npcm7xx.c              | 108 -------------------------
->   drivers/clk/clk-xgene.c                |   5 +-
->   drivers/clk/clkdev.c                   |   7 ++
->   drivers/clk/imx/clk-imx6sl.c           |   1 +
->   drivers/clk/qcom/clk-regmap.c          |   1 +
->   drivers/clk/qcom/clk-rpm.c             |  63 ---------------
->   drivers/clk/qcom/gcc-ipq4019.c         |   7 +-
->   drivers/clk/qcom/mmcc-msm8974.c        |  16 ----
->   drivers/clk/renesas/renesas-cpg-mssr.c |   4 +-
->   drivers/clk/spear/spear1310_clock.c    |   1 +
->   drivers/clk/spear/spear1340_clock.c    |   1 +
->   drivers/clk/sunxi/clk-sun6i-ar100.c    |   2 +-
->   drivers/clk/sunxi/clk-sun9i-core.c     |   8 +-
->   drivers/clk/sunxi/clk-usb.c            |   2 +-
->   drivers/clk/tegra/clk-tegra30.c        |   5 +-
->   drivers/clk/tegra/cvb.c                |   1 +
->   drivers/clk/ti/clkt_dpll.c             |   3 +-
->   drivers/clk/ti/dpll3xxx.c              |  20 ++---
->   drivers/clk/ti/dpll44xx.c              |   6 +-
+Hi Saravana,
 
-For the TI portions:
+On 05.02.2021 23:26, Saravana Kannan wrote:
+> There are a lot of devices/drivers where they never have a struct device
+> created for them or the driver initializes the hardware without ever
+> binding to the struct device.
+>
+> This series is intended to avoid any boot regressions due to such
+> devices/drivers when fw_devlink=on and also address the handling of
+> optional suppliers.
+>
+> Patch 1 and 2 addresses the issue of firmware nodes that look like
+> they'll have struct devices created for them, but will never actually
+> have struct devices added for them. For example, DT nodes with a
+> compatible property that don't have devices added for them.
+>
+> Patch 3 and 4 allow for handling optional DT bindings.
+>
+> Patch 5 sets up a generic API to handle drivers that never bind with
+> their devices.
+>
+> Patch 6 through 8 update different frameworks to use the new API.
 
-Reviewed-by: Tero Kristo <kristo@kernel.org>
+This patchset fixes probing issue observed on various Exynos based 
+boards even with commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert 
+to regular platform driver") reverted. Thanks!
 
->   drivers/clk/zynq/pll.c                 |  12 +--
->   drivers/clk/zynqmp/divider.c           |   1 +
->   include/linux/clk/imx.h                |  15 ++++
->   include/linux/clk/spear.h              |  23 ++++++
->   29 files changed, 92 insertions(+), 238 deletions(-)
->   create mode 100644 include/linux/clk/imx.h
->   create mode 100644 include/linux/clk/spear.h
-> 
-> Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Avi Fishman <avifishman70@gmail.com>
-> Cc: Benjamin Fair <benjaminfair@google.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: "Emilio López" <emilio@elopez.com.ar>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Jan Kotas <jank@cadence.com>
-> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: Loc Ho <lho@apm.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: Nancy Yuen <yuenn@google.com>
-> Cc: Nuvoton Technologies <tali.perry@nuvoton.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: openbmc@lists.ozlabs.org
-> Cc: Patrick Venture <venture@google.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Rajan Vaja <rajan.vaja@xilinx.com>
-> Cc: Rajeev Kumar <rajeev-dlh.kumar@st.com>
-> Cc: Richard Woodruff <r-woodruff2@ti.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-> Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tali Perry <tali.perry1@gmail.com>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Tomer Maimon <tmaimon77@gmail.com>
-> Cc: Viresh Kumar <vireshk@kernel.org>
-> 
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Best regards
+
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
