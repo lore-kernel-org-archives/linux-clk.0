@@ -2,89 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98013C433DB
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 20:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA332C433E6
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 21:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42A5064E05
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 20:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 704DA64E45
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 21:21:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234089AbhBHU4a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Feb 2021 15:56:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40120 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230305AbhBHUyp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Feb 2021 15:54:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id BAD3EAE57;
-        Mon,  8 Feb 2021 20:53:54 +0000 (UTC)
-Message-ID: <5c69d62a7b4479d184b0ee8b8e5168e43cd494a0.camel@suse.de>
-Subject: Re: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     u.kleine-koenig@pengutronix.de
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Date:   Mon, 08 Feb 2021 21:53:52 +0100
-In-Reply-To: <20210118123244.13669-12-nsaenzjulienne@suse.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
-         <20210118123244.13669-12-nsaenzjulienne@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-oVNnO66HmWqHkepYu506"
-User-Agent: Evolution 3.38.3 
+        id S236153AbhBHVVW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 16:21:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236176AbhBHVVS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 16:21:18 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E67C061786;
+        Mon,  8 Feb 2021 13:20:38 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id g3so8542498plp.2;
+        Mon, 08 Feb 2021 13:20:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R+r2jOyAlqjRMKHtvLPADXW3voMgq9h98r709KcrCLA=;
+        b=on8PcE7z2qaHBS1NRAIcQDoBXSzdz3AfDUoAyrGwgMKmBymB8+KwNn/wQ8bxs/nE8W
+         F4+jm/1ZrtEw2O3+RjFPADSLKNZtUYPAFmJqs8iB9H2lppiw+EQp7dBDi2JyI1AqPoPP
+         H6pWUG78CBYYcLwAQvNvv7Q6OelL3XodzgyVOaPFcp12WC+VTD/ea+aaeULbzkwVCsAX
+         NGtjR2iaRo/kU901b5AjsBBCjdSb6vFLAwL0t6Uzl48C9fxcV6ygj9O4biTxV/qn6lY3
+         oxt3BS01ghGL4UxY+wQpHaoyqqmD+gTxUanw5JXjP53YIBdZlvf7LSJd/TC1eicyLSL9
+         jOKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R+r2jOyAlqjRMKHtvLPADXW3voMgq9h98r709KcrCLA=;
+        b=hHZh5F3PZrAEl2D+aOHkiDnZ/8JCJSLoKjKJGAUgoHEjf0SXNUpGT+5/733Z0vSccl
+         4SjwjJGbBzNhWkjcTWMmozeG2PML0/Ea0TcHqnRW3PFSQnaDvp8uGZ1QyWlOyANF3A4O
+         RON9HSVhEgh7z3dBsm1WxM2UDaGls62DkIZpSc9bkrBotj8U4gb5JbhNb3PArWmdXjL3
+         UOCDEUM+JdCb9fhE1mXVV1mDCKpH1PtWj3ZMD/etRgKsI9JzcPJnPTHrmurE9a/GHppc
+         +nqZRb+SNkykgn+4NFsrgtPXUNyJwfTMOXkeKz5vZm8h0q9DVQNl1TGu2njm1skhVNF9
+         zE0g==
+X-Gm-Message-State: AOAM532slb+ge+EJKQgiJ1dhdIduDdjngHtEWfKisb+urpca8D246XNT
+        gq7rlPnHvnFMFxeuYwTwRBuM2Rg6cZQ444AjRQzivU0d
+X-Google-Smtp-Source: ABdhPJwlLrUw1rV3Nhhbhev6KiudY8wFgGQ6XXUwlUEyRbugwdSU+pRmpSd2OCN8pUcKOXmjuWx45WHicCFxjzqqWkU=
+X-Received: by 2002:a17:90b:14cf:: with SMTP id jz15mr716661pjb.180.1612819238195;
+ Mon, 08 Feb 2021 13:20:38 -0800 (PST)
 MIME-Version: 1.0
+References: <20210118041156.50016-1-manivannan.sadhasivam@linaro.org>
+ <161280637168.76967.9168707371952675235@swboyd.mtv.corp.google.com> <20210208181954.GA276254@thinkpad>
+In-Reply-To: <20210208181954.GA276254@thinkpad>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Mon, 8 Feb 2021 15:20:27 -0600
+Message-ID: <CABb+yY2pCdQnvmkBMBuYXsMYCNKheqmroQxF5YvjDQ5xqJP-NA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Add APCS support for SDX55
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Feb 8, 2021 at 12:20 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Feb 08, 2021 at 09:46:11AM -0800, Stephen Boyd wrote:
+> > Quoting Manivannan Sadhasivam (2021-01-17 20:11:51)
+> > > Changes in v2:
+> > >
+> > > * Modified the max_register value as per the SDX55 IPC offset in mailbox
+> > >   driver.
+> > >
+> > > Manivannan Sadhasivam (5):
+> > >   dt-bindings: mailbox: Add binding for SDX55 APCS
+> > >   mailbox: qcom: Add support for SDX55 APCS IPC
+> >
+> > I think I can apply the clk patches to clk tree without the mailbox
+> > patches, right?
+> >
+>
+> Yes, you can. Thanks for applying!
+>
+> Jassi: Can you please look into the mailbox patches?
+>
+They are compatible strings mostly... so assume it ok.
 
---=-oVNnO66HmWqHkepYu506
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2021-01-18 at 13:32 +0100, Nicolas Saenz Julienne wrote:
-> Adds support to control the PWM bus available in official Raspberry Pi
-> PoE HAT. Only RPi's co-processor has access to it, so commands have to
-> be sent through RPi's firmware mailbox interface.
->=20
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->=20
-> ---
-
-ping :)
-
-Regards,
-Nicolas
-
-
---=-oVNnO66HmWqHkepYu506
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmAhpOEACgkQlfZmHno8
-x/5Kegf+M/oVJydAlzbsZjeRxmVcRPlY/aU1YOdpfuIQyx991ny1JYSYaGMZ8b9g
-lJ4nBwIeNjAbsPMc0Th89250D6UkOhRb5L7C6grd0B++Ue01IMyQ2mA8UzxxhzYI
-aP/E3P1iwlnTpd/UbvgBr2xd2XBBEYEZ+CEeQohVX51Z/En4bEofLxQloVCwrAQ9
-z+4AWH9ZQDX3ItJ1zmdJGzmNuZjuNQV2igYjp0UuWY01wIkeau20FxDqFMweN9ul
-xMKBZ8zaX3T85TLQcYtj29KNQQGvUwV5xs8P36KJ5OfVUw4Ay4M5mSpb6nHb0GiU
-9YqIJIOQ+gzZH+tFpYr93phGwLoI7Q==
-=bPaD
------END PGP SIGNATURE-----
-
---=-oVNnO66HmWqHkepYu506--
-
+cheers!
