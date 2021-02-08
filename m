@@ -2,72 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EEBC433DB
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 12:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52627C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 12:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E296E64E87
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 12:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027FC64DE9
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 12:21:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233225AbhBHMDv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Feb 2021 07:03:51 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:40111 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233465AbhBHMBp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 07:01:45 -0500
-Received: from [185.56.157.72] (port=42748 helo=[192.168.101.73])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1l95Di-00AE2N-P5; Mon, 08 Feb 2021 13:00:46 +0100
-Subject: Re: [PATCH V3 2/2] clk: vc5: Add support for optional load
- capacitance
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210207185140.3653350-1-aford173@gmail.com>
- <20210207185140.3653350-2-aford173@gmail.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <9fabc42a-cd04-7971-d6c2-b0ea0b70f655@lucaceresoli.net>
-Date:   Mon, 8 Feb 2021 13:00:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S231514AbhBHMVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 07:21:48 -0500
+Received: from mailoutvs14.siol.net ([185.57.226.205]:52875 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231184AbhBHMTl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 07:19:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id AA79552249D;
+        Mon,  8 Feb 2021 13:18:00 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id qXiWpf59z7ur; Mon,  8 Feb 2021 13:18:00 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 541CA522360;
+        Mon,  8 Feb 2021 13:18:00 +0100 (CET)
+Received: from kista.localdomain (cpe-86-58-58-53.static.triera.net [86.58.58.53])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPSA id 95FAF52234E;
+        Mon,  8 Feb 2021 13:17:59 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mripard@kernel.org, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+        daniel@ffwll.ch, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: [PATCH v2 0/5] sunxi: fix H6 HDMI related issues
+Date:   Mon,  8 Feb 2021 13:17:47 +0100
+Message-Id: <20210208121752.2255465-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <20210207185140.3653350-2-aford173@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
-On 07/02/21 19:51, Adam Ford wrote:
-> There are two registers which can set the load capacitance for
-> XTAL1 and XTAL2. These are optional registers when using an
-> external crystal.  Parse the device tree and set the
-> corresponding registers accordingly.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+Over the year I got plenty of reports of troubles with H6 HDMI signal.
+Sometimes monitor flickers, sometimes there was no image at all and
+sometimes it didn't play well with AVR.
 
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+It turns out there are multiple issues. Patch 1 fixes clock issue,
+which didn't adjust parent rate, even if it is allowed to do so. Patch 2
+adds polarity config in tcon1. This is seemingly not needed for pre-HDMI2
+controllers, although BSP drivers set it accordingly every time. It
+turns out that HDMI2 controllers often don't work with monitors if
+polarity is not set correctly. Patch 3 always set clock rate for HDMI
+controller. Patch 4 fixes H6 HDMI PHY setting. Patch 5 fixes comment and
+clock rate limit (wrong reasoning).
 
--- 
-Luca
+Please take a look.
+
+Best regards,
+Jernej
+
+Changes from v1:
+- collected Chen-Yu tags (except on replaced patch 4)
+- Added some comments in patch 2
+- Replaced patch 4 (see commit log for explanation)
+
+Jernej Skrabec (5):
+  clk: sunxi-ng: mp: fix parent rate change flag check
+  drm/sun4i: tcon: set sync polarity for tcon1 channel
+  drm/sun4i: dw-hdmi: always set clock rate
+  drm/sun4i: Fix H6 HDMI PHY configuration
+  drm/sun4i: dw-hdmi: Fix max. frequency for H6
+
+ drivers/clk/sunxi-ng/ccu_mp.c          |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c     | 25 +++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h     |  6 ++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c  | 10 +++-------
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  1 -
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 26 +++++++++-----------------
+ 6 files changed, 44 insertions(+), 26 deletions(-)
+
+--
+2.30.0
+
