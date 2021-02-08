@@ -2,85 +2,217 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E523C433DB
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 00:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E17C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 06:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0423264DE9
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 00:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD1E64DD8
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 06:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229565AbhBHAvf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Feb 2021 19:51:35 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:55572 "EHLO gloria.sntech.de"
+        id S229934AbhBHGqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 01:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229564AbhBHAve (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 7 Feb 2021 19:51:34 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1l8ulN-0006cH-UM; Mon, 08 Feb 2021 01:50:50 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 5.12
-Date:   Mon, 08 Feb 2021 01:50:45 +0100
-Message-ID: <3091603.aeNJFYEL58@phil>
+        id S229908AbhBHGqn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Feb 2021 01:46:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E47364E59;
+        Mon,  8 Feb 2021 06:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612766761;
+        bh=laV8svMkkIZgkEjMImPDqav9pFAGfCHDdtEUcbdDnvY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TGskujnEd6wHa7WkmlrA/txwqRTcJGBrt+G8G29pmkA5kZJTpP9p0uA0OBvZIqSvD
+         JxUKjVIlJL7BN44ZogKx96Zw8qus91VU68qdycGrSWnEl44/V2NTQUC1OLOTCdF4Gu
+         FGXrZfB1UlGCm0us6h06+bTEmrWyNdKdO1cQE50Xn9aYIA9cVXbE7c/MBRqdiuZ1jz
+         yRAPPdGXm7pgspO8bff3EiWF+togadvuTOEFB2flyG4QXvLieVjLI1n9IWbF4cIrlT
+         j4bPAIhCO/OgcnQj5qsi4LQSz7dkKfKSzdR46yYTRQHb0tQHuVB44086JDEOFAZDLc
+         NgM8lbk2wAojg==
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+From:   Tero Kristo <kristo@kernel.org>
+Message-ID: <b801364c-951a-af9f-d7ad-2440afe1ed88@kernel.org>
+Date:   Mon, 8 Feb 2021 08:45:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+On 26/01/2021 14:45, Lee Jones wrote:
+> This set is part of a larger effort attempting to clean-up W=1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
+> 
+> This is the last set.  Clock is clean after this.
+> 
+> Lee Jones (21):
+>    clk: zynq: pll: Fix kernel-doc formatting in 'clk_register_zynq_pll's
+>      header
+>    clk: ti: clkt_dpll: Fix some kernel-doc misdemeanours
+>    clk: ti: dpll3xxx: Fix some kernel-doc headers and promote other
+>      worthy ones
+>    clk: qcom: clk-regmap: Provide missing description for
+>      'devm_clk_register_regmap()'s dev param
+>    clk: sunxi: clk-sun9i-core: Demote non-conformant kernel-doc headers
+>    clk: sunxi: clk-usb: Demote obvious kernel-doc abuse
+>    clk: tegra: clk-tegra30: Remove unused variable 'reg'
+>    clk: clkdev: Ignore suggestion to use gnu_printf() as it's not
+>      appropriate here
+>    clk: tegra: cvb: Provide missing description for
+>      'tegra_cvb_add_opp_table()'s align param
+>    clk: ti: dpll44xx: Fix some potential doc-rot
+>    clk: renesas: renesas-cpg-mssr: Fix formatting issues for
+>      'smstpcr_saved's documentation
+>    clk: sunxi: clk-sun6i-ar100: Demote non-conformant kernel-doc header
+>    clk: qcom: gcc-ipq4019: Remove unused variable 'ret'
+>    clk: clk-fixed-mmio: Demote obvious kernel-doc abuse
+>    clk: clk-npcm7xx: Remove unused static const tables 'npcm7xx_gates'
+>      and 'npcm7xx_divs_fx'
+>    clk: qcom: mmcc-msm8974: Remove unused static const tables
+>      'mmcc_xo_mmpll0_1_2_gpll0{map}'
+>    clk: clk-xgene: Add description for 'mask' and fix formatting for
+>      'flags'
+>    clk: qcom: clk-rpm: Remove a bunch of superfluous code
+>    clk: spear: Move prototype to accessible header
+>    clk: imx: Move 'imx6sl_set_wait_clk()'s prototype out to accessible
+>      header
+>    clk: zynqmp: divider: Add missing description for 'max_div'
+> 
+>   arch/arm/mach-imx/common.h             |   1 -
+>   arch/arm/mach-imx/cpuidle-imx6sl.c     |   1 +
+>   arch/arm/mach-imx/pm-imx6.c            |   1 +
+>   arch/arm/mach-spear/generic.h          |  12 ---
+>   arch/arm/mach-spear/spear13xx.c        |   1 +
+>   drivers/clk/clk-fixed-mmio.c           |   2 +-
+>   drivers/clk/clk-npcm7xx.c              | 108 -------------------------
+>   drivers/clk/clk-xgene.c                |   5 +-
+>   drivers/clk/clkdev.c                   |   7 ++
+>   drivers/clk/imx/clk-imx6sl.c           |   1 +
+>   drivers/clk/qcom/clk-regmap.c          |   1 +
+>   drivers/clk/qcom/clk-rpm.c             |  63 ---------------
+>   drivers/clk/qcom/gcc-ipq4019.c         |   7 +-
+>   drivers/clk/qcom/mmcc-msm8974.c        |  16 ----
+>   drivers/clk/renesas/renesas-cpg-mssr.c |   4 +-
+>   drivers/clk/spear/spear1310_clock.c    |   1 +
+>   drivers/clk/spear/spear1340_clock.c    |   1 +
+>   drivers/clk/sunxi/clk-sun6i-ar100.c    |   2 +-
+>   drivers/clk/sunxi/clk-sun9i-core.c     |   8 +-
+>   drivers/clk/sunxi/clk-usb.c            |   2 +-
+>   drivers/clk/tegra/clk-tegra30.c        |   5 +-
+>   drivers/clk/tegra/cvb.c                |   1 +
+>   drivers/clk/ti/clkt_dpll.c             |   3 +-
+>   drivers/clk/ti/dpll3xxx.c              |  20 ++---
+>   drivers/clk/ti/dpll44xx.c              |   6 +-
 
-please find below Rockchip clock changes for 5.12
+For the TI portions:
 
-Please pull, thanks
-Heiko
+Reviewed-by: Tero Kristo <kristo@kernel.org>
 
-The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
-
-  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.12-rockchip-clk1
-
-for you to fetch changes up to 4bc23b3c83c9a3fc0a7dd8f2f11f451aa92c85cd:
-
-  clk: rockchip: fix DPHY gate locations on rk3368 (2021-02-06 01:05:04 +0100)
-
-----------------------------------------------------------------
-Kerneldoc fixes and some new rk3368 clock ids related to
-camera input.
-
-----------------------------------------------------------------
-Heiko Stuebner (5):
-      clk: rockchip: add clock ids for PCLK_DPHYRX and PCLK_DPHYTX0 on rk3368
-      clk: rockchip: use clock ids for PCLK_DPHYRX and PCLK_DPHYTX0 on rk3368
-      clk: rockchip: add clock id for SCLK_VIP_OUT on rk3368
-      clk: rockchip: use clock id for SCLK_VIP_OUT on rk3368
-      clk: rockchip: fix DPHY gate locations on rk3368
-
-Lee Jones (4):
-      clk: rockchip: Demote non-conformant kernel-doc headers in main clock code
-      clk: rockchip: Remove unused/undocumented struct members from clk-cpu
-      clk: rockchip: Demote kernel-doc abuses to standard comment blocks in plls
-      clk: rockchip: Demote non-conformant kernel-doc header in half-divider
-
- drivers/clk/rockchip/clk-cpu.c          | 4 ----
- drivers/clk/rockchip/clk-half-divider.c | 2 +-
- drivers/clk/rockchip/clk-pll.c          | 6 +++---
- drivers/clk/rockchip/clk-rk3368.c       | 6 +++---
- drivers/clk/rockchip/clk.c              | 4 ++--
- include/dt-bindings/clock/rk3368-cru.h  | 3 +++
- 6 files changed, 12 insertions(+), 13 deletions(-)
-
-
+>   drivers/clk/zynq/pll.c                 |  12 +--
+>   drivers/clk/zynqmp/divider.c           |   1 +
+>   include/linux/clk/imx.h                |  15 ++++
+>   include/linux/clk/spear.h              |  23 ++++++
+>   29 files changed, 92 insertions(+), 238 deletions(-)
+>   create mode 100644 include/linux/clk/imx.h
+>   create mode 100644 include/linux/clk/spear.h
+> 
+> Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Avi Fishman <avifishman70@gmail.com>
+> Cc: Benjamin Fair <benjaminfair@google.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: "Emilio López" <emilio@elopez.com.ar>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Jan Kotas <jank@cadence.com>
+> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Loc Ho <lho@apm.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: Nancy Yuen <yuenn@google.com>
+> Cc: Nuvoton Technologies <tali.perry@nuvoton.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: openbmc@lists.ozlabs.org
+> Cc: Patrick Venture <venture@google.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Rajan Vaja <rajan.vaja@xilinx.com>
+> Cc: Rajeev Kumar <rajeev-dlh.kumar@st.com>
+> Cc: Richard Woodruff <r-woodruff2@ti.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+> Cc: "Sören Brinkmann" <soren.brinkmann@xilinx.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tali Perry <tali.perry1@gmail.com>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Tomer Maimon <tmaimon77@gmail.com>
+> Cc: Viresh Kumar <vireshk@kernel.org>
+> 
 
