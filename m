@@ -7,118 +7,127 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA99C433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 07:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F796C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 08:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 947F164E6F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 07:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B09E64E25
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 08:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbhBIHzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 02:55:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
+        id S229521AbhBIIBZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 03:01:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229564AbhBIHzy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Feb 2021 02:55:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4BBFE64E6F;
-        Tue,  9 Feb 2021 07:55:13 +0000 (UTC)
+        id S229517AbhBIIBX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Feb 2021 03:01:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 27CCC64E6F;
+        Tue,  9 Feb 2021 08:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612857313;
-        bh=H95e5VIxFGRYJjLg6UbSArCbHJ9oIF5vqaL9Q5bAX8Y=;
+        s=k20201202; t=1612857642;
+        bh=PrZKwTBAEkhO9oVwFzz9vR4RpjecGA222H6u+Smz3/g=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NFgHngv8ebO5+5WphQUJHSGcLMS+MhhJk+zP0WmdOPzHL9e7ClTidmEUnYBkm9c4M
-         0TQjn1RgtDxUPTgL23Xqmac7j3Qa2EIuhqWKRLcd56+zy9uafozNaCzFCqgEyE/Jhm
-         S6q4Y0soN9jBxyyeb4etK+L0+CDQ8cuvbC2pUdAO+fy06vqQH/UW6T3rxaxWTQa9V3
-         FNnpfGTuNNg5ydoWS81iOICL0seauXBLCmYhOrzZf2ZpH38P2HM6vOepZkrvp2WxbL
-         c+TJrHwVp0ic2nM1lT0IhbMuaT7aY49msaJrpJzAuC2AeuK/tRXIJz8boDEuIR/2zK
-         x8InH4C6/+2wQ==
+        b=RZfSdW4MONU6xyHZcAlXF3UuyrNKwqpNx49sUuIUYtO86OB+31RzMa1O7dF6M8YBN
+         S9MNPiFRGvoUA8A7uoT3UZCXdmXkFdNWGQbJ+sjvPOwuF+KFSBJW6x2gxRNadUf4bP
+         TGupFGxUhX0KPEaei1olRQFWoplvhuVhF2qYSql41c20wThIpVrLDHHKFENyYOEJl2
+         h6MSfwndGoBOY8w349HyrpUO+EjDiPP8L/NShDsheNvOfjRpZ9QV9QdZU2yJWTiPRZ
+         i9t4psH+djtVZrQpkwSgDJim/iW8woBnt+ZvJELngCF1WqDRt/z1M9KYOY8Du/SNoX
+         y0os1dyaKr6Yg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
-References: <20210128104446.164269-1-tudor.ambarus@microchip.com> <CAGETcx9CodHDeqSYM1zQXRi-p_rFUJQgwMtnuWeKvCt_B3dCOw@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: sama5d2: Mark device OF_POPULATED after setup
+In-Reply-To: <20210126090120.19900-3-gabriel.fernandez@foss.st.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com> <20210126090120.19900-3-gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH v2 02/14] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc' into one clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        ludovic.desroches@microchip.com, claudiu.beznea@microchip.com,
-        mirq-linux@rere.qmqm.pl,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-To:     Saravana Kannan <saravanak@google.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Date:   Mon, 08 Feb 2021 23:55:11 -0800
-Message-ID: <161285731192.418021.10555916396092570051@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, marex@denx.de
+Date:   Tue, 09 Feb 2021 00:00:40 -0800
+Message-ID: <161285764074.418021.15522379930579131077@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Saravana Kannan (2021-01-28 09:01:41)
-> On Thu, Jan 28, 2021 at 2:45 AM Tudor Ambarus
-> <tudor.ambarus@microchip.com> wrote:
-> >
-> > The sama5d2 requires the clock provider initialized before timers.
-> > We can't use a platform driver for the sama5d2-pmc driver, as the
-> > platform_bus_init() is called later on, after time_init().
-> >
-> > As fw_devlink considers only devices, it does not know that the
-> > pmc is ready. Hence probing of devices that depend on it fail:
-> > probe deferral - supplier f0014000.pmc not ready
-> >
-> > Fix this by setting the OF_POPULATED flag for the sama5d2_pmc
-> > device node after successful setup. This will make
-> > of_link_to_phandle() ignore the sama5d2_pmc device node as a
-> > dependency, and consumer devices will be probed again.
-> >
-> > Fixes: e590474768f1cc04 ("driver core: Set fw_devlink=3Don by default")
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> > ---
-> > I'll be out of office, will check the rest of the at91 SoCs
-> > at the begining of next week.
-> >
-> >  drivers/clk/at91/sama5d2.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> > index 9a5cbc7cd55a..5eea2b4a63dd 100644
-> > --- a/drivers/clk/at91/sama5d2.c
-> > +++ b/drivers/clk/at91/sama5d2.c
-> > @@ -367,6 +367,8 @@ static void __init sama5d2_pmc_setup(struct device_=
-node *np)
-> >
-> >         of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
-> >
-> > +       of_node_set_flag(np, OF_POPULATED);
-> > +
-> >         return;
+Quoting gabriel.fernandez@foss.st.com (2021-01-26 01:01:08)
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 >=20
-> Hi Tudor,
+> 'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
+> A divider is available only on the specific rtc input for ck_hse.
+> This Merge will facilitate to have a more coherent clock tree
+> in no trusted / trusted world.
 >=20
-> Thanks for looking into this.
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  drivers/clk/clk-stm32mp1.c | 49 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 43 insertions(+), 6 deletions(-)
 >=20
-> I already accounted for early clocks like this when I designed
-> fw_devlink. Each driver shouldn't need to set OF_POPULATED.
-> drivers/clk/clk.c already does this for you.
->=20
-> I think the problem is that your driver is using
-> CLK_OF_DECLARE_DRIVER() instead of CLK_OF_DECLARE(). The comments for
-> CLK_OF_DECLARE_DRIVER() says:
-> /*
->  * Use this macro when you have a driver that requires two initialization
->  * routines, one at of_clk_init(), and one at platform device probe
->  */
->=20
-> In your case, you are explicitly NOT having a driver bind to this
-> clock later. So you shouldn't be using CLK_OF_DECLARE() instead.
->=20
+> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+> index 35d5aee8f9b0..0e1d4427a8df 100644
+> --- a/drivers/clk/clk-stm32mp1.c
+> +++ b/drivers/clk/clk-stm32mp1.c
+> @@ -245,7 +245,7 @@ static const char * const dsi_src[] =3D {
+>  };
+> =20
+>  static const char * const rtc_src[] =3D {
+> -       "off", "ck_lse", "ck_lsi", "ck_hse_rtc"
+> +       "off", "ck_lse", "ck_lsi", "ck_hse"
+>  };
+> =20
+>  static const char * const mco1_src[] =3D {
+> @@ -1031,6 +1031,42 @@ static struct clk_hw *clk_register_cktim(struct de=
+vice *dev, const char *name,
+>         return hw;
+>  }
+> =20
+> +/* The divider of RTC clock concerns only ck_hse clock */
+> +#define HSE_RTC 3
+> +
+> +static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
+> +                                                unsigned long parent_rat=
+e)
+> +{
+> +       if (clk_hw_get_parent(hw) =3D=3D clk_hw_get_parent_by_index(hw, H=
+SE_RTC))
+> +               return clk_divider_ops.recalc_rate(hw, parent_rate);
+> +
+> +       return parent_rate;
+> +}
+> +
+> +static long clk_divider_rtc_round_rate(struct clk_hw *hw, unsigned long =
+rate,
+> +                                      unsigned long *prate)
+> +{
+> +       if (clk_hw_get_parent(hw) =3D=3D clk_hw_get_parent_by_index(hw, H=
+SE_RTC))
 
-I see=20
+This clk op can be called at basically any time. Maybe this should use
+the determine rate op and then look to see what the parent is that comes
+in via the rate request structure? Or is the intention to keep this
+pinned to one particular parent? Looking at this right now it doesn't
+really make much sense why the current parent state should play into
+what rate the clk can round to, unless there is some more clk flags
+going on that constrain the ability to change this clk's parent.
 
-drivers/power/reset/at91-sama5d2_shdwc.c:       { .compatible =3D "atmel,sa=
-ma5d2-pmc" },
-
-so isn't that the driver that wants to bind to the same device node
-again? First at of_clk_init() time here and then second for the reset
-driver?
+> +               return clk_divider_ops.round_rate(hw, rate, prate);
+> +
+> +       return *prate;
+> +}
+> +
+> +static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long parent_rate)
+> +{
+> +       if (clk_hw_get_parent(hw) =3D=3D clk_hw_get_parent_by_index(hw, H=
+SE_RTC))
+> +               return clk_divider_ops.set_rate(hw, rate, parent_rate);
+> +
+> +       return parent_rate;
+> +}
+> +
