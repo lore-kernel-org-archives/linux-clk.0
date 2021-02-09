@@ -7,29 +7,26 @@ X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143C7C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 13:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D908C433E9
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 13:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4BF064EE7
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 13:20:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE5A264EF3
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 13:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhBINUh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 08:20:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbhBINUf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 08:20:35 -0500
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4515C061788;
-        Tue,  9 Feb 2021 05:19:39 -0800 (PST)
+        id S231384AbhBINUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 08:20:49 -0500
+Received: from relay08.th.seeweb.it ([5.144.164.169]:56273 "EHLO
+        relay08.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231294AbhBINUr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 08:20:47 -0500
 Received: from IcarusMOD.eternityproject.eu (unknown [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 708C03EEB8;
-        Tue,  9 Feb 2021 14:19:37 +0100 (CET)
-Subject: Re: [PATCH v2 07/11] clk: qcom: mmcc-msm8998: Set
- CLK_GET_RATE_NOCACHE to pixel/byte clks
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id A9CFA3EBCE;
+        Tue,  9 Feb 2021 14:20:00 +0100 (CET)
+Subject: Re: [PATCH v2 05/11] clk: qcom: gcc-msm8998: Mark gpu_cfg_ahb_clk as
+ critical
 To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
 Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         martin.botka@somainline.org, phone-devel@vger.kernel.org,
@@ -38,16 +35,16 @@ Cc:     konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         robh+dt@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
 References: <20210114221059.483390-1-angelogioacchino.delregno@somainline.org>
- <20210114221059.483390-8-angelogioacchino.delregno@somainline.org>
- <161280847912.76967.9613917615673032246@swboyd.mtv.corp.google.com>
+ <20210114221059.483390-6-angelogioacchino.delregno@somainline.org>
+ <161280832085.76967.5394456316048533384@swboyd.mtv.corp.google.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>
-Message-ID: <eae79cc3-f857-d39e-5257-c6aa263eaf07@somainline.org>
-Date:   Tue, 9 Feb 2021 14:19:37 +0100
+Message-ID: <bb7b79c8-7dc7-10ff-eabf-1e9f3ed8660a@somainline.org>
+Date:   Tue, 9 Feb 2021 14:20:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <161280847912.76967.9613917615673032246@swboyd.mtv.corp.google.com>
+In-Reply-To: <161280832085.76967.5394456316048533384@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -55,22 +52,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 08/02/21 19:21, Stephen Boyd ha scritto:
-> Quoting AngeloGioacchino Del Regno (2021-01-14 14:10:55)
->> The pixel and byte clocks rate should not be cached, as a VCO shutdown
->> may clear the frequency setup and this may not be set again due to the
->> cached rate being present.
->> This will also be useful when shadow clocks will be implemented in
->> the DSI PLL for seamless timing/resolution switch.
+Il 08/02/21 19:18, Stephen Boyd ha scritto:
+> Quoting AngeloGioacchino Del Regno (2021-01-14 14:10:53)
+>> The GPU IOMMU depends on this clock and the hypervisor will crash
+>> the SoC if this clock gets disabled because the secure contexts
+>> that have been set on this IOMMU by the bootloader will become
+>> unaccessible (or they get reset).
+>> Mark this clock as critical to avoid this issue when the Adreno
+>> GPU is enabled.
 >>
 >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 >> ---
->>   drivers/clk/qcom/mmcc-msm8998.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>   drivers/clk/qcom/gcc-msm8998.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+>> index c8d4c0348952..afea60a3ef43 100644
+>> --- a/drivers/clk/qcom/gcc-msm8998.c
+>> +++ b/drivers/clk/qcom/gcc-msm8998.c
+>> @@ -2081,6 +2081,12 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
+>>                  .hw.init = &(struct clk_init_data){
+>>                          .name = "gcc_gpu_cfg_ahb_clk",
+>>                          .ops = &clk_branch2_ops,
+>> +                       /*
+>> +                        * The GPU IOMMU depends on this clock and hypervisor
+>> +                        * will crash the SoC if this clock goes down, due to
+>> +                        * secure contexts protection.
+>> +                        */
+>> +                       .flags = CLK_IS_CRITICAL,
+>>                  },
+>>          },
 > 
-> We didn't do this on sdm845, so I'm not going to apply this patch. The
-> rate caching thing is a problem with the display driver that should be
-> fixed some other way vs. setting nocache here.
+> Please send a followup patch that hits the branch on at probe time and
+> removes this clk from the kernel. That will save some memory and
+> overhead of worrying about this clk.
 > 
 
-Ok, I agree.
+Will do!
