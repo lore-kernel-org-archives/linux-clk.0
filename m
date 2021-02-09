@@ -2,124 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476F9C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 23:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FD9C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 01:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A61964E9D
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Feb 2021 23:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7363964E99
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 01:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbhBHX6e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Feb 2021 18:58:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbhBHX6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 18:58:30 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF40BC061786
-        for <linux-clk@vger.kernel.org>; Mon,  8 Feb 2021 15:57:49 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id 133so3711407ybd.5
-        for <linux-clk@vger.kernel.org>; Mon, 08 Feb 2021 15:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3BKcbNNOjiBO2ETX8rA0e94Kcv/0Lli4UWrEe/qIvRE=;
-        b=KNC+VPHlDueVrMXq1S5/C3olGud4OPz1qXgkjrqCAGN6Esj3rrVX1vx7ruKisOPefR
-         MkzSFhRx1oSEp7RaPuVS9x1eluitBSwsVEiIuof3ZJn2MAx4+N5a2I+vf7ZzeM7v3ji0
-         7c4SiozsLlDdy1uva4nIDpkMHKl7COC/++5GRQNKxT7AX0nKR9iVrlP99HXE65FFKGZE
-         zGA3xLaox1T4twIexyMsH2qJpW3Q4q/G8EK7CC7TApJDRDLNTjnGaG+x1yDl49jv5hYt
-         oXm0cSYXegRY7Ht9qCunkDZ7RMYK771pzpJjr46Ne4DCKEp6LuD11FpTkVcqpvKHLHiS
-         RupQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3BKcbNNOjiBO2ETX8rA0e94Kcv/0Lli4UWrEe/qIvRE=;
-        b=F8Io7GWud2ANZa9BINB0+mWwJve8+1yepONBjTZQP0HfaYTcFgoDGcEKD8HTsHLKY9
-         U9TsAZMKfiNrYB5C8dUdRCpIOzr2eZavLepaDBC2yXixRLuseBxOrNjAcWji8B+ux4K2
-         fS0eir79CmuXU9SrPJUfWe2dHZ/BbJvF0tXElT1m5r+7uV3by/7aC+hAVD789iYggZkQ
-         vtQjKiXujDSXu8GkyYX54MS0W2qxd6Xb55sWVGv5dvc29E5l4EdjoX45xI+ZK7z8t67a
-         3DAECtsDvtuATBY66uqaybIpFwoOcc3tShnHmSFRmoq7Oz9yR4lu0TfmE7kzp/ADqgWE
-         QQmg==
-X-Gm-Message-State: AOAM5314XCH5VcIWHmP17AVSY3pXxM6hs21N9xVUE91+AFcX1z/rUoW8
-        oUxZXMNqOW/KdQi9Th38EmfvFWNLV3R2flJFVARScg==
-X-Google-Smtp-Source: ABdhPJyWSN7D3Y6ZE8yWgCF8LiMpKCeSFyCoZ713kZRoDVbY3Hxuk2zkhBte1avCHvyEJ0NFmPIP3IBl22VvJgpOlqU=
-X-Received: by 2002:a25:3345:: with SMTP id z66mr29775941ybz.466.1612828669020;
- Mon, 08 Feb 2021 15:57:49 -0800 (PST)
+        id S229636AbhBIBBG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 20:01:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229564AbhBIBBF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Feb 2021 20:01:05 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DD97D64E82;
+        Tue,  9 Feb 2021 01:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612832424;
+        bh=UDSESf14eWwyek98rHiUGI62NeiqsgkXvT/7JO82Zh4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gfmCBSDFURnGxtwgPqYhwY0MArgo4OEAiUu7c3UtPSPXw1SbENqV+aYlMJ37jcS20
+         8q1Db3B4Fvwf72Hp55CYsNCegqSNRSoKUbtLJjP7+ViGhw3S3KmpTNeyAGsJxPbAm1
+         b6RR07C6CNO7JJVD9O1v8CKkpZDAxdcJf7zEWoaluyUj72agSlVmPChz3WwXYZ5moV
+         2/lcwLI1WP5ZwTpX0/bFY0xdCzpsiGkDM28xU8KAKiBl2Smumo1NBUQ6R+PcGsGlbi
+         opopEIrY52RaFCwDYscci6Plv8FMllJ4vYM0xqmykSTClQDGG/CoP2/9rTasLFKa0f
+         4heHLks0C47Xg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CGME20210205222651eucas1p28ef87073dea33c1c5224c14aa203bec5@eucas1p2.samsung.com>
- <20210205222644.2357303-1-saravanak@google.com> <7b486072-453d-a344-bdfc-dec58a35c8f5@samsung.com>
-In-Reply-To: <7b486072-453d-a344-bdfc-dec58a35c8f5@samsung.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 8 Feb 2021 15:57:13 -0800
-Message-ID: <CAGETcx9fpiy02+2_kRvtWos1usqA3gtCXqULsN906o70VKVGYA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v6 00/22] Mediatek MT8192 clock support
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+Date:   Mon, 08 Feb 2021 17:00:22 -0800
+Message-ID: <161283242250.76967.15026468818750276885@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 8, 2021 at 12:40 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Saravana,
->
-> On 05.02.2021 23:26, Saravana Kannan wrote:
-> > There are a lot of devices/drivers where they never have a struct device
-> > created for them or the driver initializes the hardware without ever
-> > binding to the struct device.
-> >
-> > This series is intended to avoid any boot regressions due to such
-> > devices/drivers when fw_devlink=on and also address the handling of
-> > optional suppliers.
-> >
-> > Patch 1 and 2 addresses the issue of firmware nodes that look like
-> > they'll have struct devices created for them, but will never actually
-> > have struct devices added for them. For example, DT nodes with a
-> > compatible property that don't have devices added for them.
-> >
-> > Patch 3 and 4 allow for handling optional DT bindings.
-> >
-> > Patch 5 sets up a generic API to handle drivers that never bind with
-> > their devices.
-> >
-> > Patch 6 through 8 update different frameworks to use the new API.
->
-> This patchset fixes probing issue observed on various Exynos based
-> boards even with commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert
-> to regular platform driver") reverted. Thanks!
->
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
+Quoting Weiyi Lu (2020-12-22 05:09:25)
+> This series is based on v5.10-rc1.
+>=20
 
-Thanks for testing!
+The DT bindings fail, can you fix and resend?
 
--Saravana
+Documentation/devicetree/bindings/arm/mediatek/mediatek,msdc.yaml: 'additio=
+nalProperties' is a required property
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml: =
+'additionalProperties' is a required property
+Documentation/devicetree/bindings/arm/mediatek/mediatek,mdpsys.yaml: 'addit=
+ionalProperties' is a required property
+Documentation/devicetree/bindings/arm/mediatek/mediatek,scp-adsp.yaml: 'add=
+itionalProperties' is a required property
+Documentation/devicetree/bindings/arm/mediatek/mediatek,msdc.yaml: ignoring=
+, error in schema:
+warning: no schema found in file: Documentation/devicetree/bindings/arm/med=
+iatek/mediatek,msdc.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml: =
+ignoring, error in schema:
+warning: no schema found in file: Documentation/devicetree/bindings/arm/med=
+iatek/mediatek,imp_iic_wrap.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,mdpsys.yaml: ignori=
+ng, error in schema:
+warning: no schema found in file: Documentation/devicetree/bindings/arm/med=
+iatek/mediatek,mdpsys.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,scp-adsp.yaml: igno=
+ring, error in schema:
+warning: no schema found in file: Documentation/devicetree/bindings/arm/med=
+iatek/mediatek,scp-adsp.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,msdc.example.dt.yam=
+l: example-0: syscon@11f60000:reg:0: [0, 301334528, 0, 4096] is too long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,msdc.example.dt.yam=
+l: example-1: syscon@11f10000:reg:0: [0, 301006848, 0, 4096] is too long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,mdpsys.example.dt.y=
+aml: example-0: syscon@1f000000:reg:0: [0, 520093696, 0, 4096] is too long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-0: syscon@11007000:reg:0: [0, 285241344, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-1: syscon@11cb1000:reg:0: [0, 298520576, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-2: syscon@11d03000:reg:0: [0, 298856448, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-3: syscon@11d23000:reg:0: [0, 298987520, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-4: syscon@11e01000:reg:0: [0, 299896832, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
+Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.exampl=
+e.dt.yaml: example-5: syscon@11f02000:reg:0: [0, 300949504, 0, 4096] is too=
+ long
+        From schema: ~/.local/lib/python3.8/site-packages/dtschema/schemas/=
+reg.yaml
