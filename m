@@ -2,39 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71838C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 23:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDE6C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 23:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D00764E0D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 23:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1423F64E42
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 23:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234288AbhBIXkH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 18:40:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234483AbhBIW50 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Feb 2021 17:57:26 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0F5F164E3C;
-        Tue,  9 Feb 2021 22:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612911393;
-        bh=PfEDKvuwh0gfWlzyckF5/9G3rDhdLAKB/9Bd79EjxRk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BNrxVIA/ihj/SZyR+qr0RBsxTNLKmDqITO/hQIrF8kmkOmSmGzg4BIxwzBpBLW310
-         y982bZnwvHlKva+CtWiRuOcEh2c+Kp6iXVPVtRhmg+eujEZWp3nu7xFPKrPtLTnFQE
-         aP82+DOEoUzwc9zvI+ObrEXqp9j70e5u5c6EbXWl9AlJOFm50paIRBcp0tH0uNoYGF
-         9zwEUFIifhzIH+1Rm/oKRXVK9nvEoHn7kK+ZuPPyPLBGEkEe2SeEczOl02KA6eUYuc
-         SDuiVtVnY8U9TUyrRyPQbdpgu9/TBhTwPPKM1KwYIg02McJa0sw5ZbxDlFLp4awJQS
-         ecQ9CP2jnIBEA==
-Received: by pali.im (Postfix)
-        id 9EED4F9A; Tue,  9 Feb 2021 23:56:30 +0100 (CET)
-Date:   Tue, 9 Feb 2021 23:56:30 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
+        id S234292AbhBIXkT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 18:40:19 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:39817 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234902AbhBIXSU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 18:18:20 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id BE783580130;
+        Tue,  9 Feb 2021 18:17:07 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 09 Feb 2021 18:17:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type:content-transfer-encoding; s=fm2; bh=fEt3Y
+        FQaxlrC3rwxsPeLLSKcyIdClrKAIsBNLkfSJ4k=; b=vQofj1HlniyCr+rhiMDAm
+        JE3kkqRLxRAGF3imJR9moJY1vRZlGcKqeQThiabzoVRYh3Buk4dFf5YsvM00+9A6
+        CiqUYiRaEtwdd9DoTwRjju8XwB9xOpv0yI5dflDcS/gDHbl2u9dmdXWDgVcT3sI4
+        XjRnXFDsCmIYkGAM8RLiFuInoB8XlC841n9NaLz30Qv0thnjCwGVFGdfexlbgl/F
+        Hl2mcGmDYQqpKhibA4azmxFn5zQN1OMazQrvwQDFyyyXKMDVm4EZQdZH7OgcnTGv
+        SVgtdk9PmaFH1BqxboH7oK5gZQAOC2jXjv5FAEb0nVSzDLT/w6CKuOWPXvhs4Yy3
+        w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=fEt3YFQaxlrC3rwxsPeLLSKcyIdClrKAIsBNLkfSJ
+        4k=; b=lH/IVY3BGRwXZpmuWwxFpUoWLERLp972NnathZRHMtUX91cXimnHjlDRp
+        nIePd027guv6dP3xbxqHbvQFWXwGQBaz2wGzxK/SLa87t9LxhLPX5lb6llkC/EdD
+        HRFhUFCwqPYLsT7XFRHifzDwnDhFeYq7hEvcvKUt85xxAouyDx870Gozs02BfRYy
+        WbtzzS5Tddmnn0aSZ4JmkDrILhltSyh/DzPF1d8mUcLntLHdqg2rFeFg7ig3XyfB
+        fy5+MjrBw63njBt18J3S19VQGmUUzEsRxancfi6I5XeVR8PEQ1XAXfU3IIeZbj9A
+        XUgl4Ty8CbHD8MlOJ3Uv2x7C9JnJg==
+X-ME-Sender: <xms:8hcjYGDOKX_QG-oLdNG0PWNXMy8n01GrS6N94bhb09SDnOhs4NkWJw>
+    <xme:8hcjYAg7rXyfjTfUtzG7APTLeqqlzrG-WOoI2lxW1m1Eoc_mnRUSk2uorJ4oTw9qK
+    xBSEJE0jw31tw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrheeigddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtgfesthhqredtreerjeenucfhrhhomhepnhhnvght
+    uceonhhnvghtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeeugeekvd
+    ehheevheetieetudeljedvvddtieevvdeukeejgfeuheffueelueegueenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnnhgvthesfhgrshhtmh
+    grihhlrdhfmh
+X-ME-Proxy: <xmx:8hcjYJmqiwvHmnO1GxPiQ_6QOkRjyvygDxwxuSozpsr0hncRqn6qDw>
+    <xmx:8hcjYEyFrJ0PK9XWid405MclH1Q3cdn1U848nsTg2dtjRRhuLkjawg>
+    <xmx:8hcjYLTNiijAktpZEIuzeyv_Hb119W7fF-Pwadrcl1AnZuL4y_Zelw>
+    <xmx:8xcjYHrmCTw6zo3fOOaSw5QYhwha6jupimTJSBtpEsoCZgAxVYClQA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 014C0A0005E; Tue,  9 Feb 2021 18:17:05 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-93-gef6c4048e6-fm-20210128.002-gef6c4048
+Mime-Version: 1.0
+Message-Id: <a86c5069-d423-44db-92dd-b3e406b7ec91@www.fastmail.com>
+In-Reply-To: <20210209225630.mdwnzkvnaz3r4blt@pali>
+References: <d59ba191-43db-4b7b-b201-62a60ca752c0@www.fastmail.com>
+ <20210209213330.hnc7op72zoj24mgz@pali>
+ <7b0988cc-eeb8-4ea7-92f6-e8234ca910d3@www.fastmail.com>
+ <20210209224223.p22yhjdy7ibzepss@pali>
+ <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
+ <20210209225630.mdwnzkvnaz3r4blt@pali>
+Date:   Tue, 09 Feb 2021 15:16:45 -0800
+From:   nnet <nnet@fastmail.fm>
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
 Cc:     a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
         gregory.clement@bootlin.com, kabel@kernel.org, kostap@marvell.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -42,51 +83,63 @@ Cc:     a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
         miquel.raynal@bootlin.com, mturquette@baylibre.com,
         rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
         vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210209225630.mdwnzkvnaz3r4blt@pali>
-References: <d59ba191-43db-4b7b-b201-62a60ca752c0@www.fastmail.com>
- <20210209213330.hnc7op72zoj24mgz@pali>
- <7b0988cc-eeb8-4ea7-92f6-e8234ca910d3@www.fastmail.com>
- <20210209224223.p22yhjdy7ibzepss@pali>
- <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+Subject: =?UTF-8?Q?Re:_[PATCH_mvebu_v2_00/10]_Armada_37xx:_Fix_cpufreq_changing_b?=
+ =?UTF-8?Q?ase_CPU_speed_to_800_MHz_from_1000_MHz?=
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tuesday 09 February 2021 14:52:56 nnet wrote:
-> On Tue, Feb 9, 2021, at 2:42 PM, Pali Rohár wrote:
-> > On Tuesday 09 February 2021 13:45:08 nnet wrote:
-> > > On Tue, Feb 9, 2021, at 1:33 PM, Pali Rohár wrote:
-> > > > On Tuesday 09 February 2021 13:00:26 nnet wrote:
-> > > > > > If you have other Armada 3720 boards (Espressobin v5/v7, uDPU, Devel Board, ...) then it will be nice to do an additional tests and check if instability issues are finally fixed.
-> > > > > 
-> > > > > These patches applied to the 5.4.96 in OpenWrt (98d61b5) work fine so far on an Espressobin v7 AFAICT per changing values in /sys/devices/system/cpu/cpufreq/policy0.
-> > > > > 
-> > > > > Are these changes intended to work @1.2 GHz on the v7?
-> > > > 
-> > > > Hello! Do you have 1.2 GHz A3720 SoC?
-> > > 
-> > > Maybe (not)? ESPRESSObin_V7_1-0 on the underside.
-> > 
-> > Look at the package of SoC chip. On top of the package is printed
-> > identifier 88F3720. On the last line should be one of the string:
-> > C080, C100, C120, I080, I100 which identifies frequency
-> > (080 = 800 MHz, 100 = 1 GHz, 120 = 1.2 GHz)
-> > 
-> > Can you check what is printed on A3720 SoC package?
-> 
-> Both of mine are 88F3720-A0-C120.
+I've two of these and I've just swapped them (and re-pasted the heat sin=
+ks).
 
-Interesting... it is really 1.2 GHz. I have not seen it yet. And few
-weeks ago I thought that it was never available on market.
+The second one ran under load for awhile and now has frozen as well.
 
-Well, if 1.2 GHz variant has same issues as 1 GHz variants then this
-patch series should fix it. But you said that with this patch series is
-board crashing when running at 1.2 GHz?
+Under a moderate load `wget -O /dev/null <large.bin>` @X00Mbits they are=
+ fine.
+
+Under a 1 min speed test of load ~200Mbits routed WireGuard they freeze.=
+
+
+They fine with both those workloads @1000_800.
+
+Perhaps it's heat? Unfortunately I don't have any numbers on that ATM.
+
+On Tue, Feb 9, 2021, at 2:56 PM, Pali Roh=C3=A1r wrote:
+> On Tuesday 09 February 2021 14:52:56 nnet wrote:
+> > On Tue, Feb 9, 2021, at 2:42 PM, Pali Roh=C3=A1r wrote:
+> > > On Tuesday 09 February 2021 13:45:08 nnet wrote:
+> > > > On Tue, Feb 9, 2021, at 1:33 PM, Pali Roh=C3=A1r wrote:
+> > > > > On Tuesday 09 February 2021 13:00:26 nnet wrote:
+> > > > > > > If you have other Armada 3720 boards (Espressobin v5/v7, u=
+DPU, Devel Board, ...) then it will be nice to do an additional tests an=
+d check if instability issues are finally fixed.
+> > > > > >=20
+> > > > > > These patches applied to the 5.4.96 in OpenWrt (98d61b5) wor=
+k fine so far on an Espressobin v7 AFAICT per changing values in /sys/de=
+vices/system/cpu/cpufreq/policy0.
+> > > > > >=20
+> > > > > > Are these changes intended to work @1.2 GHz on the v7?
+> > > > >=20
+> > > > > Hello! Do you have 1.2 GHz A3720 SoC?
+> > > >=20
+> > > > Maybe (not)? ESPRESSObin_V7_1-0 on the underside.
+> > >=20
+> > > Look at the package of SoC chip. On top of the package is printed
+> > > identifier 88F3720. On the last line should be one of the string:
+> > > C080, C100, C120, I080, I100 which identifies frequency
+> > > (080 =3D 800 MHz, 100 =3D 1 GHz, 120 =3D 1.2 GHz)
+> > >=20
+> > > Can you check what is printed on A3720 SoC package?
+> >=20
+> > Both of mine are 88F3720-A0-C120.
+>=20
+> Interesting... it is really 1.2 GHz. I have not seen it yet. And few
+> weeks ago I thought that it was never available on market.
+>=20
+> Well, if 1.2 GHz variant has same issues as 1 GHz variants then this
+> patch series should fix it. But you said that with this patch series i=
+s
+> board crashing when running at 1.2 GHz?
+>
