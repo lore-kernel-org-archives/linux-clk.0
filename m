@@ -2,65 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
-	PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2708FC433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0205FC433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F041364DEE
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE94764E25
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234204AbhBIWbP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 17:31:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234150AbhBIWO6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Feb 2021 17:14:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A8E0064E8C;
-        Tue,  9 Feb 2021 21:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612906412;
-        bh=m8k7mmXys1RUFq6qujjO66b+EdVXFLMSPJNPdVyXlNs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lVrhhBDak5uhy5UZ8ZvxFiYSdBpuNImA3x0LnWQvRp1gshgIEHXkgzdnQTXfkpp/i
-         zUmiDyno2aUwVW4itQ8jwaqqlieT7UKM3MJpOVL2yzsn+FCC50YxTZa89qLmwRyFxz
-         rqfKT4MrLgjO/+JUo8d15ZY6s/QADeIA6WbT+m3ktxSMOdq2WCCXT/FXAcgqpXjvnZ
-         ZNITkjSwKjU/DWql4cHSkWp6a+GM6OrXPzAkKJ+ZWh6Xws4brRVvjKhLqbVlNSuGik
-         Jh3iHMlxfs7vTFiR0Nqo+IJktlwzb9VdgevjTwh7w156z/arw+N8CtOuazV3B0uwJx
-         v6p2QrMF/fe5A==
-Received: by pali.im (Postfix)
-        id 61346F9A; Tue,  9 Feb 2021 22:33:30 +0100 (CET)
-Date:   Tue, 9 Feb 2021 22:33:30 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
-        gregory.clement@bootlin.com, kabel@kernel.org, kostap@marvell.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
-        miquel.raynal@bootlin.com, mturquette@baylibre.com,
-        rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
-        vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210209213330.hnc7op72zoj24mgz@pali>
-References: <d59ba191-43db-4b7b-b201-62a60ca752c0@www.fastmail.com>
+        id S233990AbhBIWbt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 17:31:49 -0500
+Received: from mail-ua1-f42.google.com ([209.85.222.42]:38331 "EHLO
+        mail-ua1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233956AbhBIWU1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 17:20:27 -0500
+Received: by mail-ua1-f42.google.com with SMTP id y35so987336uad.5;
+        Tue, 09 Feb 2021 14:18:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=chF4AGWod1NaZkKppPWEQ1Io26jYw+8zMgU0N2aN71E=;
+        b=Rd/iXNwp/bRwoAvDkfjCUAvVcziQWVONRtksXMfYCcBp/fbMKt03L2b2d6EqxKNgph
+         g78S3ST5+36vPwRxpukhyEud/98HB7xiQvXl3Zy81wdYwhuvipLCwIxkxZTyNj+ceanG
+         saImCa+6fsFDKt6wq/7NwJOualvXq3No7nD0LbYkgVDuMRkfQpC9iV5o+wMhF3Ur+ct1
+         GAtAEYFpN7RKpa45karFIbZbmrDYWICbpgTvNXUfm7wZULl93Zfn0yUndcjol8VCAg58
+         +xHisVzJW/JWP9epmdrVkbDXwDWpQIyPbrbp0tYGeIhRvrpUT1d8KEazrniTrFcRJ16+
+         XPpw==
+X-Gm-Message-State: AOAM5305dyPaOUzMIBhVvEM3TUozW2j41Q5jqGh6ImxfO01wr5nlw0dH
+        R/M5LYL0lixXwO7cJHLpH1u5fkkdYw==
+X-Google-Smtp-Source: ABdhPJyGu3u5I/yz8BcR5c4Z5Un368IPwJTe9EIJ9SQLRz14qAclf658hUeQwMCs2kjkfjj8BHycEw==
+X-Received: by 2002:a9d:21ca:: with SMTP id s68mr17271906otb.164.1612906403390;
+        Tue, 09 Feb 2021 13:33:23 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o83sm418383ooo.37.2021.02.09.13.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Feb 2021 13:33:22 -0800 (PST)
+Received: (nullmailer pid 232145 invoked by uid 1000);
+        Tue, 09 Feb 2021 21:33:20 -0000
+Date:   Tue, 9 Feb 2021 15:33:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH v4 4/8] of: property: Add fw_devlink support for optional
+ properties
+Message-ID: <20210209213320.GA219007@robh.at.kernel.org>
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <20210205222644.2357303-5-saravanak@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d59ba191-43db-4b7b-b201-62a60ca752c0@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20210205222644.2357303-5-saravanak@google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tuesday 09 February 2021 13:00:26 nnet wrote:
-> > If you have other Armada 3720 boards (Espressobin v5/v7, uDPU, Devel Board, ...) then it will be nice to do an additional tests and check if instability issues are finally fixed.
-> 
-> These patches applied to the 5.4.96 in OpenWrt (98d61b5) work fine so far on an Espressobin v7 AFAICT per changing values in /sys/devices/system/cpu/cpufreq/policy0.
-> 
-> Are these changes intended to work @1.2 GHz on the v7?
+On Fri, Feb 05, 2021 at 02:26:40PM -0800, Saravana Kannan wrote:
+> Not all DT bindings are mandatory bindings. Add support for optional DT
+> bindings and mark iommus, iommu-map, dmas as optional DT bindings.
 
-Hello! Do you have 1.2 GHz A3720 SoC?
+I don't think we can say these are optional or not. It's got to be a 
+driver decision somehow.
+
+For example, if IOMMU is optional, what happens with this sequence:
+
+driver probes without IOMMU
+driver calls dma_map_?()
+IOMMU driver probes
+h/w accesses DMA buffer --> BOOM!
