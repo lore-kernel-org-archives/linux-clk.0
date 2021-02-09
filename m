@@ -2,122 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC982C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 19:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB2FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7902164ECC
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 19:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2706D64E7A
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233294AbhBITTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 14:19:39 -0500
-Received: from mailoutvs5.siol.net ([185.57.226.196]:37281 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233502AbhBITMQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Feb 2021 14:12:16 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 1B725522FAE;
-        Tue,  9 Feb 2021 18:59:16 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pwugU7GkgDO3; Tue,  9 Feb 2021 18:59:15 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id CC3515233C8;
-        Tue,  9 Feb 2021 18:59:15 +0100 (CET)
-Received: from kista.localdomain (cpe-86-58-58-53.static.triera.net [86.58.58.53])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id 81842522FAE;
-        Tue,  9 Feb 2021 18:59:13 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        daniel@ffwll.ch, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
-        Andre Heider <a.heider@gmail.com>
-Subject: [PATCH v3 4/5] drm/sun4i: Fix H6 HDMI PHY configuration
-Date:   Tue,  9 Feb 2021 18:58:59 +0100
-Message-Id: <20210209175900.7092-5-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210209175900.7092-1-jernej.skrabec@siol.net>
-References: <20210209175900.7092-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S234398AbhBIVPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 16:15:05 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:60417 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233679AbhBIVMp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 16:12:45 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 17DB65802F3;
+        Tue,  9 Feb 2021 16:00:50 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 09 Feb 2021 16:00:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        mime-version:message-id:date:from:to:cc:subject:content-type; s=
+        fm2; bh=iFjNgbuGaC/X5QDUBosgkvaVocivJZjnnGRVwwGOhC0=; b=WUhkjtUJ
+        tKwSH2mlC/LoLfEO16hfMs4VDHoAqvSrZQHYC1fvwzREgKaOkATjYcCzjq64IOmd
+        6EJ4/AlO1wBtdsUAZajeq+L7sSmOvGJsVZcAzrKmhFHYWbxxK8jhvKp0htSyQcFS
+        xIepa+Y9Tjq+MN1fiNEbE5hSgGRmfs4CgK++PKJ6jgCtpHC0IlWerpTZOezwLbg/
+        jlW25wv30nZuFoFOAOuleOtvHrJikX14lwVcTX3rDiUO5LGhTj4wKkIhSMaFCaGF
+        8hOEOpp7XV+rbK73I/tE/8ks9/4sMh0e6ug72LOZEGEbYJ5YQV80e+IXf/9K65ZZ
+        4DdmyZKjUISuFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:message-id
+        :mime-version:subject:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; bh=iFjNgbuGaC/X5QDUBosgkvaVocivJ
+        ZjnnGRVwwGOhC0=; b=tQ6KeXV99Wg8Vbojd99RVXxFPskUbYPNMpcG3apLP/q6H
+        JI+Z6S8PNnalmTqkOvz4c0jtOOI0+pSW10QFQkwtVxaZqEQJ7ZJDKrZgcfEpVprw
+        mB86NvXglMGIioC7xuiguFLIh4X1DBNrN4cdQRIorlGoSriLHFZHq/B2GLN4y76v
+        AIGW6NEA45mfiTWi9gYeHNsLG1rK6ow2dyYGLYgmwN8RlPJBb46IZP41+QqMjsNz
+        VFRuMQXPA93f6zmJaytqqnq1BRJ+BvhcNzr63ujmnRml6s93TaPyQ3RrFYuTKwjP
+        VmKPDA1QqwciNEfOiYhMVWE7EvzHUuGuNt0JMPEYQ==
+X-ME-Sender: <xms:_vciYJ07wvkgUg4y6vr32vho-LlJNTGsSCgqybk40dgfT70joZ0p4A>
+    <xme:_vciYAGM9DurupXrIzt2gJZcjz_5cE9tdWLQ9BdhUptTWz1ldcd6I425n7ZyoL_LQ
+    yBm0a0xs8iY_Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrheehgddugeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefofgggkfffhffvufgtsehttdertd
+    erreejnecuhfhrohhmpehnnhgvthcuoehnnhgvthesfhgrshhtmhgrihhlrdhfmheqnecu
+    ggftrfgrthhtvghrnhepteduudejhfdttdevheevvdeiudfhleeuieeugfeuudfhgeffue
+    euhfdtueeigeeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnnhgvthesfhgrshhtmhgrih
+    hlrdhfmh
+X-ME-Proxy: <xmx:_vciYJ7aNCOk9Wnrn4EeYs3te3H7h6QyatL4bxHiL_3BPiEkL8F9PA>
+    <xmx:_vciYG11dkzGGceffhvrsamyQeYHGU87yQWdTtK04PYqmHdSonzI4g>
+    <xmx:_vciYMGxr_6mo2oo4R19M96LrnCfXAaX2BhLiKy7frzcjDkTvFN4Xg>
+    <xmx:AvgiYJePa8aC9iwEpNFnLjWR9mdS1J3GvCwcdpDZhPPIJxzICccVdQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id BA7F9A00060; Tue,  9 Feb 2021 16:00:46 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-93-gef6c4048e6-fm-20210128.002-gef6c4048
+Mime-Version: 1.0
+Message-Id: <d59ba191-43db-4b7b-b201-62a60ca752c0@www.fastmail.com>
+Date:   Tue, 09 Feb 2021 13:00:26 -0800
+From:   nnet <nnet@fastmail.fm>
+To:     pali@kernel.org
+Cc:     a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
+        gregory.clement@bootlin.com, kabel@kernel.org, kostap@marvell.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
+        miquel.raynal@bootlin.com, mturquette@baylibre.com,
+        rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
+        vladimir.vid@sartura.hr
+Subject: =?UTF-8?Q?Re:_[PATCH_mvebu_v2_00/10]_Armada_37xx:_Fix_cpufreq_changing_b?=
+ =?UTF-8?Q?ase_CPU_speed_to_800_MHz_from_1000_MHz?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As it turns out, vendor HDMI PHY driver for H6 has a pretty big table
-of predefined values for various pixel clocks. However, most of them are
-not useful/tested because they come from reference driver code. Vendor
-PHY driver is concerned with only few of those, namely 27 MHz, 74.25
-MHz, 148.5 MHz, 297 MHz and 594 MHz. These are all frequencies for
-standard CEA modes.
+> If you have other Armada 3720 boards (Espressobin v5/v7, uDPU, Devel Board, ...) then it will be nice to do an additional tests and check if instability issues are finally fixed.
 
-Fix sun50i_h6_cur_ctr and sun50i_h6_phy_config with the values only for
-aforementioned frequencies.
+These patches applied to the 5.4.96 in OpenWrt (98d61b5) work fine so far on an Espressobin v7 AFAICT per changing values in /sys/devices/system/cpu/cpufreq/policy0.
 
-Table sun50i_h6_mpll_cfg doesn't need to be changed because values are
-actually frequency dependant and not so much SoC dependant. See i.MX6
-documentation for explanation of those values for similar PHY.
+Are these changes intended to work @1.2 GHz on the v7?
 
-Fixes: c71c9b2fee17 ("drm/sun4i: Add support for Synopsys HDMI PHY")
-Tested-by: Andre Heider <a.heider@gmail.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+I have the beige case and heat-sinks with paste on the board, and the power adapter is the Fairway for 2.0A. 
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
-4i/sun8i_hdmi_phy.c
-index 35c2133724e2..9994edf67509 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -104,29 +104,21 @@ static const struct dw_hdmi_mpll_config sun50i_h6_m=
-pll_cfg[] =3D {
-=20
- static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] =3D {
- 	/* pixelclk    bpp8    bpp10   bpp12 */
--	{ 25175000,  { 0x0000, 0x0000, 0x0000 }, },
- 	{ 27000000,  { 0x0012, 0x0000, 0x0000 }, },
--	{ 59400000,  { 0x0008, 0x0008, 0x0008 }, },
--	{ 72000000,  { 0x0008, 0x0008, 0x001b }, },
--	{ 74250000,  { 0x0013, 0x0013, 0x0013 }, },
--	{ 90000000,  { 0x0008, 0x001a, 0x001b }, },
--	{ 118800000, { 0x001b, 0x001a, 0x001b }, },
--	{ 144000000, { 0x001b, 0x001a, 0x0034 }, },
--	{ 180000000, { 0x001b, 0x0033, 0x0034 }, },
--	{ 216000000, { 0x0036, 0x0033, 0x0034 }, },
--	{ 237600000, { 0x0036, 0x0033, 0x001b }, },
--	{ 288000000, { 0x0036, 0x001b, 0x001b }, },
--	{ 297000000, { 0x0019, 0x001b, 0x0019 }, },
--	{ 330000000, { 0x0036, 0x001b, 0x001b }, },
--	{ 594000000, { 0x003f, 0x001b, 0x001b }, },
-+	{ 74250000,  { 0x0013, 0x001a, 0x001b }, },
-+	{ 148500000, { 0x0019, 0x0033, 0x0034 }, },
-+	{ 297000000, { 0x0019, 0x001b, 0x001b }, },
-+	{ 594000000, { 0x0010, 0x001b, 0x001b }, },
- 	{ ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
- };
-=20
- static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] =3D {
- 	/*pixelclk   symbol   term   vlev*/
--	{ 74250000,  0x8009, 0x0004, 0x0232},
--	{ 148500000, 0x8029, 0x0004, 0x0273},
--	{ 594000000, 0x8039, 0x0004, 0x014a},
-+	{ 27000000,  0x8009, 0x0007, 0x02b0 },
-+	{ 74250000,  0x8009, 0x0006, 0x022d },
-+	{ 148500000, 0x8029, 0x0006, 0x0270 },
-+	{ 297000000, 0x8039, 0x0005, 0x01ab },
-+	{ 594000000, 0x8029, 0x0000, 0x008a },
- 	{ ~0UL,	     0x0000, 0x0000, 0x0000}
- };
-=20
---=20
-2.30.0
+However, the device hangs fairly quickly under load with firmware flashed of the built as below:
 
+diff --git a/package/boot/arm-trusted-firmware-mvebu/Makefile b/package/boot/arm-trusted-firmware-mvebu/Makefile
+index c4669edb52..20899c29e7 100644
+--- a/package/boot/arm-trusted-firmware-mvebu/Makefile
++++ b/package/boot/arm-trusted-firmware-mvebu/Makefile
+@@ -72,7 +72,7 @@ define Trusted-Firmware-A/espressobin-v7-1gb
+   BUILD_DEVICES:=globalscale_espressobin-v7
+   UBOOT:=espressobin
+   DDR_TOPOLOGY:=5
+-  CLOCKSPRESET:=CPU_1000_DDR_800
++  CLOCKSPRESET:=CPU_1200_DDR_750
+   PLAT:=a3700
+ endef
+
+See: https://github.com/openwrt/openwrt/commit/5fae94d987f2261b148c035130a00350c905a13e
