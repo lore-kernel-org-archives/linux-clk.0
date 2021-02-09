@@ -2,97 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC19C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 02:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B0C433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 02:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3438364E82
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 02:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072FA64EBD
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 02:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbhBIC1W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Feb 2021 21:27:22 -0500
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:37580 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbhBIC1V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Feb 2021 21:27:21 -0500
-Received: by mail-oi1-f172.google.com with SMTP id y199so15881871oia.4;
-        Mon, 08 Feb 2021 18:27:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/zVsordftVZTWAI3YzzzkRIve/FqPFfsNUmOZe9rJqc=;
-        b=ExbqB9nsQnuXr5CMJdGjqR/BRsTbZ085teETmctFBoFiOgtqmDlszAb8+S+ogTnkd9
-         gzQpLUlFxBbqWoM4D8SugvhsbzJeGhpG2QPAbgAwvG3aVXsibhmtgACG51obZjtvHsln
-         mfIfXX7oJm1/mlJc6bWr/yb2OYg3IIflMCRgCbXFpCKKwQhON+Bwmhr+HW7BI0yBKyXs
-         6ru9UWI6emn/Tsd7csQO5uJ4XIhvSv9dc64eH9oJCqQ48JtxqnYFBgQalHwWci9kdoyn
-         JXccCKvWLLC8JEkLkNDyViprkG2S0ysR+IsIEx+3qrtWFXbqpgTds83VJKAsHA3ko5Sn
-         18dg==
-X-Gm-Message-State: AOAM5302BVddw4F7wYxWb33jQhA0Fri4KGj+wb1kem5fVVtPAoMx3N/6
-        JJVNsch9QmjWiTmhaipxksZq3iTuJg==
-X-Google-Smtp-Source: ABdhPJzQPON4jmKjw6SUDOl/dMLwFvPz18jUZKBs6P0IlGds5vnE9gviWS2mNEH81anW+KM2W1io6g==
-X-Received: by 2002:aca:f1d4:: with SMTP id p203mr1121288oih.46.1612837598414;
-        Mon, 08 Feb 2021 18:26:38 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w7sm3946443oor.27.2021.02.08.18.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Feb 2021 18:26:37 -0800 (PST)
-Received: (nullmailer pid 2551957 invoked by uid 1000);
-        Tue, 09 Feb 2021 02:26:36 -0000
-Date:   Mon, 8 Feb 2021 20:26:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-power@fi.rohmeurope.com, mazziesaccount@gmail.com,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 07/17] dt_bindings: mfd: Add ROHM BD71815 PMIC
-Message-ID: <20210209022636.GA2551904@robh.at.kernel.org>
-References: <cover.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
- <5e58cc041572d8540b4f1fbeea7bde955d6b2ea6.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+        id S229733AbhBIC3e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Feb 2021 21:29:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229587AbhBIC3c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Feb 2021 21:29:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F247E64E82;
+        Tue,  9 Feb 2021 02:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612837731;
+        bh=ltRKezZA+bzg59reTb4OPH9B4ojvzcmnt7bDRcRVAwQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=H8VPTz1UW3XMN94ITOcOekOLmX61o+vShlC2odIm7xFvQMF0Wwsb4a7pUxXKBJHlW
+         4kYXnYAVjofuhP+MpFtTf6KvfkpAWmffs5ea3unYaryxkll93ijRTsXdIZORvROmOZ
+         eA4E5K+KX9vdvJufDFeSNoew6J/UUGImq07FK17dV2vE/8rs/xYKiIZLX2cAvTcJ76
+         BGxG2sTJBvS2xBO8YbTbWUW4LUlT1iJMWaZbWeZMvrgQXjOnTwQnRldRa1Utd4NKCB
+         9AzYDqNaCSFiJmVVsqMyD34ClmaRw4Ke+VbDHl8VQuMbK+B3Zh7PKmv4xef+ryu7Jc
+         IlCDuJ2JGPadQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e58cc041572d8540b4f1fbeea7bde955d6b2ea6.1611037866.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210201151245.21845-2-alexandru.ardelean@analog.com>
+References: <20210201151245.21845-1-alexandru.ardelean@analog.com> <20210201151245.21845-2-alexandru.ardelean@analog.com>
+Subject: Re: [PATCH v3 1/4] clk: axi-clkgen: replace ARCH dependencies with driver deps
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, lars@metafoo.de,
+        linux-fpga@vger.kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Dragos Bogdan <dragos.bogdan@analog.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 08 Feb 2021 18:28:49 -0800
+Message-ID: <161283772966.76967.9816955224774608075@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 19 Jan 2021 09:21:23 +0200, Matti Vaittinen wrote:
-> Document DT bindings for ROHM BD71815.
-> 
-> BD71815 is a single-chip power management IC mainly for battery-powered
-> portable devices. The IC integrates 5 bucks, 7 LDOs, a boost driver for
-> LED, a battery charger with a Coulomb counter, a real-time clock, a 32kHz
-> clock and two general-purpose outputs although only one is documented by
-> the data-sheet.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Quoting Alexandru Ardelean (2021-02-01 07:12:42)
+> The intent is to be able to run this driver to access the IP core in setu=
+ps
+> where FPGA board is also connected via a PCIe bus. In such cases the numb=
+er
+> of combinations explodes, where the host system can be an x86 with Xilinx
+> Zynq/ZynqMP/Microblaze board connected via PCIe.
+> Or even a ZynqMP board with a ZynqMP/Zynq/Microblaze connected via PCIe.
+>=20
+> To accommodate for these cases, this change removes the limitation for th=
+is
+> driver to be compilable only on Zynq/Microblaze architectures.
+> And adds dependencies on the mechanisms required by the driver to work (OF
+> and HAS_IOMEM).
+>=20
+> Signed-off-by: Dragos Bogdan <dragos.bogdan@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > ---
-> 
-> Changes since v1:
->   - fixed patch ordering to meet ref dependencies
->   - added missing blank lines
->   - clkout-mode changed from string to tristated (uint)
->   - added default for rsense resistor
-> 
->  .../bindings/mfd/rohm,bd71815-pmic.yaml       | 202 ++++++++++++++++++
->  1 file changed, 202 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
