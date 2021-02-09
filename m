@@ -2,76 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0939C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C532C433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA4C64E7A
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 21:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FDCF64E7E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Feb 2021 22:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233828AbhBIVOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 16:14:53 -0500
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:34894 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbhBIUnm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 15:43:42 -0500
-Received: by mail-oi1-f181.google.com with SMTP id l3so10949996oii.2;
-        Tue, 09 Feb 2021 12:43:26 -0800 (PST)
+        id S233440AbhBIWKN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 17:10:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233637AbhBIWHM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 17:07:12 -0500
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CD6C08EB2F
+        for <linux-clk@vger.kernel.org>; Tue,  9 Feb 2021 13:55:30 -0800 (PST)
+Received: by mail-yb1-xb30.google.com with SMTP id d184so8381189ybf.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 Feb 2021 13:55:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/PGZ6373hwX21uII2yTNlUq0BGVrzE4VOh9IUqL/yOY=;
+        b=QMbKQ/jadoFRzkunArX38Q12u3yrUElD5NaALMt6Gr5sASFNErzU750CisBVhEKxbZ
+         BKsBL/FAnK6bP4RsSApVhEr6Anv9KwZcAzCeS1G5UxYly2GzVAHU4nj+zBK7fQzg9KWS
+         hkfl7KFyNbN8Fd9hOTVkK+MlD2a++rRtv0rbzXsbf6CmGOD5Z55NCopVLSQg80Mu4oam
+         hJAOgavYCPe0Z0AGKoON1zf9X5fDwPt+LVwlbW0+8R9wFlkxS77ze0Dn3fWBZ9FdZdEz
+         0aa6qtJavWGV6X8bmsNRzFp7OLc33PfIGmHAIOrdFBs0JOWb5NOoqY193QJVgrCECaYu
+         /f3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Di0YvPKm/59BJaf3ZJnWx4wP6aCe6n3LSpohUxDF3jU=;
-        b=fp++cp4dv1Yjl1N68/nJCKKp2+S+Gs2S1TAdhrSXVFdjXCwijDYtTOZY9WEs0mlcMh
-         i6xX1MytZvl6yWZyR+8P08efrGCXypgCREQh5aqjBRaFh9wb6NjJWX/l4FaxcQ+KTGUE
-         F8jEjLgBu3gFXBlB27lgPbe71Lr19vUTOxeBWQQah81ZM5QKSMBtG33tMba0W5FG7p7/
-         hTJyPi1sB/wkKoxLOHEDdp49C2Yld9a0jvdNTDVYNLK2qQR9vVK6dJIZFicm+qWOSCSB
-         nPD0KCumBCpCckpv4IeuDxZ/MdEH3NL4t+BZ6/oFx4WIrECYa7H3ynlsUFQDSMLJNFW2
-         kM/A==
-X-Gm-Message-State: AOAM532ZaUWp90iq2zss4zey+UIaJHoxJzWnCUr9ntUPy3hma8rszVqf
-        aZrrdR1IrUJzbeAuc4uidANqJnjn1g==
-X-Google-Smtp-Source: ABdhPJwpkXK7E8OdkjL/79Yw6UN1he5ZXXuBaD4uI9rnhQjjLTvCFqbBLcSYEPn1Z5es3HvXPL4f/Q==
-X-Received: by 2002:aca:3807:: with SMTP id f7mr3734125oia.140.1612901123615;
-        Tue, 09 Feb 2021 12:05:23 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q7sm4484930oif.1.2021.02.09.12.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Feb 2021 12:05:22 -0800 (PST)
-Received: (nullmailer pid 75330 invoked by uid 1000);
-        Tue, 09 Feb 2021 20:05:20 -0000
-Date:   Tue, 9 Feb 2021 14:05:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
-        sboyd@kernel.org, agross@kernel.org, jassisinghbrar@gmail.com,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        mark.rutland@arm.com, sricharan@codeaurora.org,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        linux-clk@vger.kernel.org, ohad@wizery.com
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL
- binding for IPQ6018
-Message-ID: <20210209200520.GA75242@robh.at.kernel.org>
-References: <1611940320-24830-1-git-send-email-gokulsri@codeaurora.org>
- <1611940320-24830-2-git-send-email-gokulsri@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/PGZ6373hwX21uII2yTNlUq0BGVrzE4VOh9IUqL/yOY=;
+        b=T2wZYwPxgMsPz2BPJJLR9ClxNY/t81t+JK64cZCZVGfG2X2KE5ShPwIEo0j8p+Rurz
+         sT6CeHTvB2gStK9GfRqY5cETUZ4w+EgchBDvje6/flDJN8up5mH8KDAmfdsB2Pgf01al
+         4z/1vBHKiC26uiCYA5eKUZpgWpz8gpmWkyPfJQ9ZR8QSWHen0VUX2VUHN2/6lyW6csbA
+         WVSjhm5ImCKtlVfpQrz9MAB/bhzOpiLg4fHNwF25BHeKtZWPH3FdQy7F+nJj683lg+OT
+         5SDP7YUsSI95xjiNdqCka588+QxM7ow+DSuevLJ5WkOCUzgqSWcmJYoQ3xLvh2PVJnVT
+         4TBg==
+X-Gm-Message-State: AOAM532wBj8DEvkQwBHhPG0KW8oCQf14jmRsjxZhPSMGje4uknMvFDia
+        NzHP2jmNixVVWf46UvoYllTCwkb3iY4jxx1MU1i5tg==
+X-Google-Smtp-Source: ABdhPJyj1xOOpj4onlG2/WW3umTyJvCVg8fQGOPytjYVlJXvUchM6BAlnaXUWge9bvj0zPdNDJIpSnxTV2zaYfiH3IQ=
+X-Received: by 2002:a25:b74c:: with SMTP id e12mr37996841ybm.20.1612907728418;
+ Tue, 09 Feb 2021 13:55:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1611940320-24830-2-git-send-email-gokulsri@codeaurora.org>
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <20210205222644.2357303-5-saravanak@google.com> <20210209213320.GA219007@robh.at.kernel.org>
+In-Reply-To: <20210209213320.GA219007@robh.at.kernel.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 9 Feb 2021 13:54:52 -0800
+Message-ID: <CAGETcx_gHRd9UYHvSsHX_=NFF+HEJkamJp3JcpojuJob_a8_DA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/8] of: property: Add fw_devlink support for optional properties
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Jan 2021 22:41:58 +0530, Gokul Sriram Palanisamy wrote:
-> Add a new modem compatible string for IPQ6018 SoCs
-> 
-> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+On Tue, Feb 9, 2021 at 1:33 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Feb 05, 2021 at 02:26:40PM -0800, Saravana Kannan wrote:
+> > Not all DT bindings are mandatory bindings. Add support for optional DT
+> > bindings and mark iommus, iommu-map, dmas as optional DT bindings.
+>
+> I don't think we can say these are optional or not. It's got to be a
+> driver decision somehow.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Right, so maybe the word "optional" isn't a good name for it. I can
+change that if you want.
+
+The point being, fw_devlink can't block the probe of this driver based
+on iommu property. We let the driver decide if it wants to
+-EPROBE_DEFER or not or however it wants to handle this.
+
+> For example, if IOMMU is optional, what happens with this sequence:
+>
+> driver probes without IOMMU
+> driver calls dma_map_?()
+> IOMMU driver probes
+> h/w accesses DMA buffer --> BOOM!
+
+Right. But how is this really related to fw_devlink? AFAICT, this is
+an issue even today. If the driver needs the IOMMU, then it needs to
+make sure the IOMMU has probed? What am I missing?
+
+-Saravana
