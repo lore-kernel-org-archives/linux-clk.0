@@ -2,94 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDD6C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 01:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D08C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 01:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50FFA64E54
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 01:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9918564E3F
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 01:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234090AbhBJBAM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 20:00:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234162AbhBJA6F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Feb 2021 19:58:05 -0500
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367CCC061756
-        for <linux-clk@vger.kernel.org>; Tue,  9 Feb 2021 16:57:25 -0800 (PST)
-Received: by mail-yb1-xb2d.google.com with SMTP id l8so306122ybe.12
-        for <linux-clk@vger.kernel.org>; Tue, 09 Feb 2021 16:57:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rCCDjzP34Ivl3lsXM9x/SwTdAdkeCOcYrLzlWFPV+tM=;
-        b=ex5ZWphpx1C8Ig4A82Vb5/qVMtJPVzW90lX+ay6ZhdHBl2wb+K4qpQ3MtpMqK130vn
-         zt47/aS7FgI7S4x/0mPyiezsLnNR+PCEmPoeYHmR67tHKS12czECs4z5pS3IV7pv4TTb
-         faVT5sVd1O5JvWkFjO15nZ+hB/RIldjZ3LhY/47D+/1rutICuNtmbCsF+/WYh15C7pcb
-         McTsc7OVSREU3bsydDFPdoE/ZM75JKiAIWeANdH6bl95PQQ5GymWxyva7nzCug8e6EjU
-         mZoAKG3BBOlRdUnm5p5675cMFoD5W0AoILySGAsRBZVFEtqv8hc3xTuGSikVvOkkfVgr
-         eKHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rCCDjzP34Ivl3lsXM9x/SwTdAdkeCOcYrLzlWFPV+tM=;
-        b=LGsxJ8IanaF9c1jfiEaoMs4jvLHUdlOJ+AbKfa5au4KXoWOOYA9STrYRhNBOQXa+K2
-         yncNOmlNqPst6WnwYaZhft9OFjVRcSun4lywqslyK2QZ9kog32CH61bjsAGw6k93GU6C
-         vDbodjZuAZIZAVkUcwdH/7TGA4bOs3mOOGmYba/vxKVUyuRTD/l2YVMclvpfx8CY0m5C
-         ge14OVDM7838m5xJMhv766xWtSNjRfjBqiblt/YwZu73Y2yGMBGC2WXqEt/On1xb+S8z
-         CmwyB4c/xXKstNdPg5B3ucLcWN6119J+oMuKFdweYW3XVoVLtnoE71k0zW7gR1Rtt0di
-         ZwKA==
-X-Gm-Message-State: AOAM5323U9BvbhvSBnB4spskxhCg2plRsvJ09o10EIimdXDSx74lDShX
-        ZBhK8a1kTyByGZBPJgVFAwfuqk/kOFOgd0AD3RB8wg==
-X-Google-Smtp-Source: ABdhPJxehbw/5RJ+QRtKe+9zFRw3hl9x6b5uKwu1xvC+jjUVpzOAGXZopUVCCD0/vkx9XTYnqC+B2cLCn09LrqKdKmI=
-X-Received: by 2002:a25:cc89:: with SMTP id l131mr759286ybf.346.1612918643917;
- Tue, 09 Feb 2021 16:57:23 -0800 (PST)
+        id S234845AbhBJBQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 20:16:53 -0500
+Received: from mailoutvs9.siol.net ([185.57.226.200]:49683 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234263AbhBJBPb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Feb 2021 20:15:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 7E74A5231C9;
+        Tue,  9 Feb 2021 18:59:11 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 23598l2DK9XD; Tue,  9 Feb 2021 18:59:11 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 2DA245233C8;
+        Tue,  9 Feb 2021 18:59:11 +0100 (CET)
+Received: from kista.localdomain (cpe-86-58-58-53.static.triera.net [86.58.58.53])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPSA id DD15D5231C9;
+        Tue,  9 Feb 2021 18:59:08 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     mripard@kernel.org, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+        daniel@ffwll.ch, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com,
+        Andre Heider <a.heider@gmail.com>
+Subject: [PATCH v3 2/5] drm/sun4i: tcon: set sync polarity for tcon1 channel
+Date:   Tue,  9 Feb 2021 18:58:57 +0100
+Message-Id: <20210209175900.7092-3-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210209175900.7092-1-jernej.skrabec@siol.net>
+References: <20210209175900.7092-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
- <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com> <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
-In-Reply-To: <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 9 Feb 2021 16:56:47 -0800
-Message-ID: <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Nicolas.Ferre@microchip.com,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        mirq-linux@rere.qmqm.pl,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        a.fatoum@pengutronix.de, Krzysztof Kozlowski <krzk@kernel.org>,
-        Codrin.Ciubotariu@microchip.com,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
-> > Hi, Michael, Stephen,
-> >
-> > Do you plan to take this patch for v5.12?
-> > If fw_devlink will remain set to ON for v5.12, some of our boards will
-> > no longer boot without this patch.
->
-> Is fw_devlink defaulted to on for v5.12?
+Channel 1 has polarity bits for vsync and hsync signals but driver never
+sets them. It turns out that with pre-HDMI2 controllers seemingly there
+is no issue if polarity is not set. However, with HDMI2 controllers
+(H6) there often comes to de-synchronization due to phase shift. This
+causes flickering screen. It's safe to assume that similar issues might
+happen also with pre-HDMI2 controllers.
 
-Yes.
+Solve issue with setting vsync and hsync polarity. Note that display
+stacks with tcon top have polarity bits actually in tcon0 polarity
+register.
 
--Saravana
+Fixes: 9026e0d122ac ("drm: Add Allwinner A10 Display Engine support")
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Tested-by: Andre Heider <a.heider@gmail.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 25 +++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  6 ++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+index 6b9af4c08cd6..9f06dec0fc61 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -672,6 +672,30 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon *=
+tcon,
+ 		     SUN4I_TCON1_BASIC5_V_SYNC(vsync) |
+ 		     SUN4I_TCON1_BASIC5_H_SYNC(hsync));
+=20
++	/* Setup the polarity of multiple signals */
++	if (tcon->quirks->polarity_in_ch0) {
++		val =3D 0;
++
++		if (mode->flags & DRM_MODE_FLAG_PHSYNC)
++			val |=3D SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
++
++		if (mode->flags & DRM_MODE_FLAG_PVSYNC)
++			val |=3D SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
++
++		regmap_write(tcon->regs, SUN4I_TCON0_IO_POL_REG, val);
++	} else {
++		/* according to vendor driver, this bit must be always set */
++		val =3D SUN4I_TCON1_IO_POL_UNKNOWN;
++
++		if (mode->flags & DRM_MODE_FLAG_PHSYNC)
++			val |=3D SUN4I_TCON1_IO_POL_HSYNC_POSITIVE;
++
++		if (mode->flags & DRM_MODE_FLAG_PVSYNC)
++			val |=3D SUN4I_TCON1_IO_POL_VSYNC_POSITIVE;
++
++		regmap_write(tcon->regs, SUN4I_TCON1_IO_POL_REG, val);
++	}
++
+ 	/* Map output pins to channel 1 */
+ 	regmap_update_bits(tcon->regs, SUN4I_TCON_GCTL_REG,
+ 			   SUN4I_TCON_GCTL_IOMAP_MASK,
+@@ -1500,6 +1524,7 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv=
+_quirks =3D {
+=20
+ static const struct sun4i_tcon_quirks sun8i_r40_tv_quirks =3D {
+ 	.has_channel_1		=3D true,
++	.polarity_in_ch0	=3D true,
+ 	.set_mux		=3D sun8i_r40_tcon_tv_set_mux,
+ };
+=20
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.h
+index c5ac1b02482c..e624f6977eb8 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -154,6 +154,11 @@
+ #define SUN4I_TCON1_BASIC5_V_SYNC(height)		(((height) - 1) & 0x3ff)
+=20
+ #define SUN4I_TCON1_IO_POL_REG			0xf0
++/* there is no documentation about this bit */
++#define SUN4I_TCON1_IO_POL_UNKNOWN			BIT(26)
++#define SUN4I_TCON1_IO_POL_HSYNC_POSITIVE		BIT(25)
++#define SUN4I_TCON1_IO_POL_VSYNC_POSITIVE		BIT(24)
++
+ #define SUN4I_TCON1_IO_TRI_REG			0xf4
+=20
+ #define SUN4I_TCON_ECC_FIFO_REG			0xf8
+@@ -236,6 +241,7 @@ struct sun4i_tcon_quirks {
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ 	bool    needs_edp_reset; /* a80 edp reset needed for tcon0 access */
+ 	bool	supports_lvds;   /* Does the TCON support an LVDS output? */
++	bool	polarity_in_ch0; /* some tcon1 channels have polarity bits in tcon=
+0 pol register */
+ 	u8	dclk_min_div;	/* minimum divider for TCON0 DCLK */
+=20
+ 	/* callback to handle tcon muxing options */
+--=20
+2.30.0
+
