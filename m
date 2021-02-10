@@ -2,208 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3736FC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4712EC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA6A6023B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1585D64EE4
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233628AbhBJSHY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 13:07:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55046 "EHLO mail.kernel.org"
+        id S233940AbhBJSYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 13:24:55 -0500
+Received: from so15.mailgun.net ([198.61.254.15]:46380 "EHLO so15.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232563AbhBJSE3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 13:04:29 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3D85064EDF;
-        Wed, 10 Feb 2021 18:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612980205;
-        bh=maRX1T+Ro0oy2r659rdvDYRCax4wwk9nvVhKfUDtrm0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pmFfJfsjS+TQ/xy3noDUA/mlEgw9RKuWiE+8HDnsEuN4A+Pxp5jKk3MAzBGbxb+Oh
-         YzLqSM63x/t1chIrfMCm4TKvazUQouStJEwmeHYS4+oH5uB3ksh9UopWZOTo9xdVqv
-         jaqMiTjMMqfOSdjnnyBYLw+O3cZqYRKWTI2qPcYKW+1fkbGPRQfxuUt+byqn1LZUJV
-         fS8wgQ9bPYz0126OW34PVQ3Z9BxjWzFAJqAi2Ab0jTcJEk5B1hcnIsCdUL7fHUDWTm
-         SOfwl7VOqXN0faOtwlgILZPlZDmfUaYZvO1bzLXD39jeOP0YzrhU/IZeZ905mJD4IZ
-         D/rH+iozij0Yg==
-Received: by pali.im (Postfix)
-        id E5342A56; Wed, 10 Feb 2021 19:03:22 +0100 (CET)
-Date:   Wed, 10 Feb 2021 19:03:22 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
-        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
-        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
+        id S233993AbhBJSWx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 13:22:53 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1612981305; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=Xgep1GQsNHDLMCt3NLrLgJj9OuM/EEgROVw7Ki9LSR8=; b=AI1CQYrzm69GmxXWjNj+Hmt4Xlo6+OSKP9CBhl4sktQKmapJd1MrFKTavEM/CxUj7mkaR4tb
+ kcFyJrVH0IIthJnlRe1AZk1RXHI0MaHo/yJsJUW6DT7qviUc9WWkJ9/UX/qDG7Y5jcDFLNJG
+ +2zftS052enEU87ws/b269hajUw=
+X-Mailgun-Sending-Ip: 198.61.254.15
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 6024241af112b7872cd73095 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 18:21:14
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7AB9DC433C6; Wed, 10 Feb 2021 18:21:14 +0000 (UTC)
+Received: from [192.168.0.106] (unknown [49.204.180.139])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C7BA8C433ED;
+        Wed, 10 Feb 2021 18:21:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7BA8C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add SC7280 GCC clock binding
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
-        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210210180322.rlfxdussqhejqpo6@pali>
-References: <20210209224223.p22yhjdy7ibzepss@pali>
- <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
- <20210209225630.mdwnzkvnaz3r4blt@pali>
- <a86c5069-d423-44db-92dd-b3e406b7ec91@www.fastmail.com>
- <20210210002619.43104a9b@kernel.org>
- <ac03801e-87e2-4e57-b131-bff52f03579d@www.fastmail.com>
- <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
- <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
- <20210210092339.qy6wwuq6qr5m2ozr@pali>
- <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
+        devicetree@vger.kernel.org
+References: <1608058114-29025-1-git-send-email-tdas@codeaurora.org>
+ <1608058114-29025-2-git-send-email-tdas@codeaurora.org>
+ <20201221190005.GA362734@robh.at.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <d6d45024-36c5-4f98-774d-2355ab4fceaa@codeaurora.org>
+Date:   Wed, 10 Feb 2021 23:51:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20201221190005.GA362734@robh.at.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wednesday 10 February 2021 09:34:07 nnet wrote:
-> On Wed, Feb 10, 2021, at 1:23 AM, Pali Rohár wrote:
-> > On Tuesday 09 February 2021 18:07:41 nnet wrote:
-> > > On Tue, Feb 9, 2021, at 5:51 PM, nnet wrote:
-> > > > On Tue, Feb 9, 2021, at 5:31 PM, nnet wrote:
-> > > > > On Tue, Feb 9, 2021, at 3:26 PM, Marek Behún wrote:
-> > > > > > On Tue, 09 Feb 2021 15:16:45 -0800
-> > > > > > nnet <nnet@fastmail.fm> wrote:
-> > > > > > 
-> > > > > > > I've two of these and I've just swapped them (and re-pasted the heat sinks).
-> > > > > > > 
-> > > > > > > The second one ran under load for awhile and now has frozen as well.
-> > > > > > > 
-> > > > > > > Under a moderate load `wget -O /dev/null <large.bin>` @X00Mbits they are fine.
-> > > > > > > 
-> > > > > > > Under a 1 min speed test of load ~200Mbits routed WireGuard they freeze.
-> > > > > > > 
-> > > > > > > They fine with both those workloads @1000_800.
-> > > > > > > 
-> > > > > > > Perhaps it's heat? Unfortunately I don't have any numbers on that ATM.
-> > > > > > 
-> > > > > > Try disabling cpufreq in kernel completely, compile boot image at
-> > > > > > 1200 MHz. If it continues freezing, then I fear we can't help you with
-> > > > > > 1200 MHz :(
-> > > > > 
-> > > > > cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies 
-> > > > > 200000 300000 600000 1200000 
-> > > > > 
-> > > > > I'm not getting any freezes with 1.2GHz fixed after 20 minutes of load:
-> > > > > 
-> > > > > echo 1200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-> > > > > 
-> > > > > Setting it back to min 200MHz I get a freeze within a minute:
-> > > > > 
-> > > > > echo 200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-> > 
-> > Hello! Could you please enable userspace governor during kernel
-> > compilation?
-> > 
-> >     CONFIG_CPU_FREQ_GOV_USERSPACE=y
-> > 
-> > It can be activated via command:
-> > 
-> >     echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> > 
-> > After that you can "force" CPU frequency to specific value, e.g.:
-> > 
-> >     echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
-> > 
-> > I need to know which switch (from --> to freq) cause this system hang.
-> > 
-> > This patch series (via MIN_VOLT_MV_FOR_L0_L1_1GHZ) is fixing only
-> > switching from 500 MHz to 1000 MHz on 1 GHz variant. As only this switch
-> > is causing issue.
-> > 
-> > I have used following simple bash script to check that switching between
-> > 500 MHz and 1 GHz is stable:
-> > 
-> >     while true; do
-> >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> >     done
+Thanks Rob for your review comments.
+
+
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7280.h b/include/dt-bindings/clock/qcom,gcc-sc7280.h
+>> new file mode 100644
+>> index 0000000..3295bd4
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sc7280.h
+>> @@ -0,0 +1,215 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
 > 
-> echo userspace | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> while true; do
->   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
->   echo 600000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> done
+> Don't care about non-GPL OS? Better ask your legal dept.
 > 
-> >> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
-> 
-> With 1108 I get a freeze within a minute. The last output to stdout is 600000.
-> 
-> With 1120 it takes a few minutes.
-> 
-> With any of 1225, 1155, 1132 the device doesn't freeze over the full 5 minute load test.
-> 
-> I'm using ondemand now with the above at 1132 without issue so far.
 
-Great, thank you for testing!
+Currently this is the recommendation from the legal dept.
 
-Can you check if switching between any two lower frequencies 200000
-300000 600000 is stable?
+>> +/*
+>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7280_H
+>> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7280_H
+>> +
+>> +/* GCC clocks */
 
-> >> Update the CPU voltage value for loads L0 and L1 accordingly when base
-> >> frequency is 1000 or 1200 MHz. The minimal value is updated from the
-> >> original 1.05V to 1.108V.
-> 
-> Perhaps similiar to how a minimum of 1108 mV is useful when shifting to 1GHz, using a minimum of 1132 is useful when shifting to 1.2GHz.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-Maybe... We can only wait if Marvell provide some details about this
-issue.
-
-> > (of course on 1.2 GHz variant you need to adjust values as only
-> > following frequencies 200000 300000 600000 1200000 are supported)
-> > 
-> > > > > > Marek
-> > > > > >
-> > > > 
-> > > > > +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
-> > > > 
-> > > > Based on the below at boot time might an equivalent of the above need 
-> > > > to be 1225 for 1.2GHz?
-> > > > 
-> > > > 1200_750
-> > > > SVC REV: 5, CPU VDD voltage: 1.225V
-> > > > 
-> > > > 1000_800
-> > > > SVC REV: 5, CPU VDD voltage: 1.108V
-> > 
-> > This value is printed in WTMI avs.c by following code:
-> > 
-> >     shift = OTP_SVC_SPEED_1000_OFF;
-> >     (OR)
-> >     shift = OTP_SVC_SPEED_1200_OFF;
-> > 
-> >     vdd_otp = ((otp_data[OTP_DATA_SVC_SPEED_ID] >> shift) +
-> >                 AVS_VDD_BASE) & AVS_VDD_MASK;
-> >     regval |= (vdd_otp << HIGH_VDD_LIMIT_OFF);
-> >     regval |= (vdd_otp << LOW_VDD_LIMIT_OFF);
-> >     printf("SVC REV: %d, CPU VDD voltage: %s\n", svc_rev,
-> >             avis_dump[vdd_otp].desc);
-> > 
-> > So voltage value is read from the OTP memory.
-> > 
-> > But I do not know what this value means.
-
-Link to code: https://github.com/MarvellEmbeddedProcessors/A3700-utils-marvell/blob/master/wtmi/sys_init/avs.c
-
-You can read this OTP memory (otp_data[] array) in U-Boot by command:
-
-    md d0012604 1; md d0012604 1; md d0012604 1
-
-> > > I did this for a quick test for 1.2GHz:
-> > > 
-> > > +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1225
-> > > 
-> > > This is working well so far. Frequency is shifting up/down with load applied/stopped.
-> >
+--
