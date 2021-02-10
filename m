@@ -2,222 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E239BC433E9
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D3FC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F34464E65
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FD7964E57
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229789AbhBJI6x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 03:58:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54536 "EHLO
+        id S230130AbhBJJAG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 04:00:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbhBJI4M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 03:56:12 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF7A1C061786
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 00:55:31 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id i71so1249340ybg.7
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 00:55:31 -0800 (PST)
+        with ESMTP id S229654AbhBJI6X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 03:58:23 -0500
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FFCC061797
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 00:57:42 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id v5so1272678ybi.3
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 00:57:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EIYUBkGMy3qE6aqOle/QpEgFxQFoJfY+aVajMelV3xs=;
-        b=qqKG0XSv+akp+PhEDy+mWsosrzGxxmJtkSfE/RiAHtParBQ1+/HeO672kBHv8o8i3G
-         eesnT9wcGJbvHbEc1b+g2cn0zA0r/mdAvB5O6SsxerFnvgsLpiD28pUxjoC2ILa9euYV
-         xYnXmOzzgBvMfFgJOHoRR+nS/1qfbPS4DJMg3ElQZbbZMS9S72aPCJBFR1jKl5o7SEK9
-         gRY86ph1NI9lK898i7M4Bbmis02HInlo2BaYGfBFxcGzfZwvNSrCXXoPaZIT3IgxwxES
-         KbI+yTrvPRW7RVetJNStLFzDlDblpefA1Q7CbbkLfvL9z8TfDasFOAyUL0v8uoBv3qq/
-         JRYA==
+        bh=scQxYmOayJCxqkipRzwelnP3rgLpOPfi6yQE0CFXGt4=;
+        b=utTRInOHf3wQQ00lEAy1Z2+9ZobAOBBGx521gTAelNYmRux98OKP3mYkpB2VIv4rhu
+         eaNKY1BPoFuCI5p4yvT9++SJD96CaemRtREOq+kRoYJzJTvc7kWmCuAtcR6XYs0SMqfu
+         4pkGc0J2OOD3fya+hvQuyFPz75AcAtZyfxhg/PbM+f2+0xneQIy8zkycVkb8HXqdNbwp
+         /uyUnQGTkHhvPrUWmMJBGDcodx2I5KnDaLJNQGevtjrhx8Ul/Ko/K6KvS840pgmW3OBu
+         En9qmpmldZRsTFwfYsNuikYr4dbPeWUPSnMKRd5CyvZKMB6eLwO6YiIffPKHBRlvmEGc
+         z2XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EIYUBkGMy3qE6aqOle/QpEgFxQFoJfY+aVajMelV3xs=;
-        b=sTmKMI9WMpRv3W+gmr+S/sVY7GMB8Q4J8ijbEh/8AP57hmpCULXs4WXXp8I1AGf23s
-         R78Of2J83uDafmP8LEPEWZxtaBprR4nkMhyjP5iGBM4S7ZBs6g2UoF0dkyq6kjQPXprc
-         4ZIERgCdmiVmZwi2lG7EpQy/HQd17HeoUEkxa+gZuDlM/qQ3ga8YezVDKpfr4g34il1c
-         416FClLLPmeKyistiBC3vEQ1PUtXFIviPRC16l76v2Z9hZbS9HWjvhQeIElmbB/WJHiB
-         ZZ6Y/FSzbJYvE8LMWzZZBmqaXA23Fh1sVq7QI8cfLw6zGzyphz2dmfwNnsP68dUmn0dT
-         WX7w==
-X-Gm-Message-State: AOAM533v26xOz5ZY7OaSzMTIYNPj3mjBqw9ZEmvMYWF827Szl2A95G4k
-        N7eAWLaNjZ+MK6dJ+WYGKyL0lvLip4XFXoooFByycQ==
-X-Google-Smtp-Source: ABdhPJwwgYm9gSe18/JyjErLTRz5FCOkyXxd4stR4ZaLz//fROhqjDQGN2y2rtdVkMLB3bpoDtl1Y3uYT/scb2Xt5zw=
-X-Received: by 2002:a05:6902:1025:: with SMTP id x5mr2865453ybt.96.1612947330653;
- Wed, 10 Feb 2021 00:55:30 -0800 (PST)
+        bh=scQxYmOayJCxqkipRzwelnP3rgLpOPfi6yQE0CFXGt4=;
+        b=unThV4Lvej0wIhLGl90272tCsVZoaoS9vVl0FLiLrmuBO9FgX4qtmZ8DTa4YMn5/v3
+         zZMawE1w4YbPvVt9KYTUErOyLBE9EhzdmAB7QUSNjhfNYGNe+W33fcH/LPhGTBgL7gH6
+         Gvc91IXsZ5Vw0/xxvAwPpQte+xYfbXK6iOZlysHMG7cK95i2I7x6k7b2rA9v5sSICAeN
+         5cUgt8YOC/U3l4xO83rCn96ckFCHXNGcVMHqHGSX65onfUYxK4ua0IzEcGnZWzIlo4o8
+         sPdYdGVLpd1hzkQjpmd9Ujk54jczJKkybSF6e9vDrBhF5XFpFr8XEMrAN4bOLstUjOPu
+         66GA==
+X-Gm-Message-State: AOAM532nIQN7qbVrzP1562Hs5urxbAsmhbiBHh8eoNTM6QtRudEUVP2b
+        eXZqec6rN1ilJ+9XXvYHIAhD7lfm2PTpUhRom9UByA==
+X-Google-Smtp-Source: ABdhPJxmdcX25D9QXynwwn3GLgSJQ5DB2UMZPW8Naso2HcGTGdXytGeNWdkXJrkvGO56BGI3Ar59udSOpqSh1jr83po=
+X-Received: by 2002:a25:af0b:: with SMTP id a11mr2711250ybh.228.1612947461913;
+ Wed, 10 Feb 2021 00:57:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com> <47ca46aa-99f3-5203-8aa7-65c6443bd965@microchip.com>
-In-Reply-To: <47ca46aa-99f3-5203-8aa7-65c6443bd965@microchip.com>
+References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
+ <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com> <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
+ <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com> <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com>
 From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 10 Feb 2021 00:54:54 -0800
-Message-ID: <CAGETcx862JPn8759tk-69WySBvokxMXJaaOVY7L6V8FLwfpV8g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
+Date:   Wed, 10 Feb 2021 00:57:06 -0800
+Message-ID: <CAGETcx--6Pm=KfgFi50Dzin0+760nd-t9w9VxZxcn2Che-G1nQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Brown, Len" <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        mirq-linux@rere.qmqm.pl,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        a.fatoum@pengutronix.de, Krzysztof Kozlowski <krzk@kernel.org>,
+        Codrin.Ciubotariu@microchip.com,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Android Kernel Team <kernel-team@android.com>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 12:19 AM <Tudor.Ambarus@microchip.com> wrote:
+On Wed, Feb 10, 2021 at 12:51 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 >
-> Hi, Saravana,
+> Hi Saravana,
 >
-> On 2/6/21 12:26 AM, Saravana Kannan wrote:
-> > There are a lot of devices/drivers where they never have a struct device
-> > created for them or the driver initializes the hardware without ever
-> > binding to the struct device.
+> On Wed, Feb 10, 2021 at 1:57 AM Saravana Kannan <saravanak@google.com> wrote:
+> > On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
+> > > > Do you plan to take this patch for v5.12?
+> > > > If fw_devlink will remain set to ON for v5.12, some of our boards will
+> > > > no longer boot without this patch.
+> > >
+> > > Is fw_devlink defaulted to on for v5.12?
 > >
-> > This series is intended to avoid any boot regressions due to such
-> > devices/drivers when fw_devlink=on and also address the handling of
-> > optional suppliers.
-> >
-> > Patch 1 and 2 addresses the issue of firmware nodes that look like
-> > they'll have struct devices created for them, but will never actually
-> > have struct devices added for them. For example, DT nodes with a
-> > compatible property that don't have devices added for them.
-> >
-> > Patch 3 and 4 allow for handling optional DT bindings.
-> >
-> > Patch 5 sets up a generic API to handle drivers that never bind with
-> > their devices.
-> >
-> > Patch 6 through 8 update different frameworks to use the new API.
-> >
-> > Thanks,
-> > Saravana
-> >
-> > Saravana Kannan (8):
-> >   driver core: fw_devlink: Detect supplier devices that will never be
-> >     added
-> >   of: property: Don't add links to absent suppliers
-> >   driver core: Add fw_devlink.strict kernel param
-> >   of: property: Add fw_devlink support for optional properties
-> >   driver core: fw_devlink: Handle suppliers that don't use driver core
-> >   irqdomain: Mark fwnodes when their irqdomain is added/removed
-> >   PM: domains: Mark fwnodes when their powerdomain is added/removed
-> >   clk: Mark fwnodes when their clock provider is added/removed
-> >
-> >  .../admin-guide/kernel-parameters.txt         |  5 ++
-> >  drivers/base/core.c                           | 58 ++++++++++++++++++-
-> >  drivers/base/power/domain.c                   |  2 +
-> >  drivers/clk/clk.c                             |  3 +
-> >  drivers/of/property.c                         | 16 +++--
-> >  include/linux/fwnode.h                        | 20 ++++++-
-> >  kernel/irq/irqdomain.c                        |  2 +
-> >  7 files changed, 98 insertions(+), 8 deletions(-)
-> >
+> > Yes.
 >
-> Even with this patch set applied, sama5d2_xplained can not boot.
-> Patch at [1] makes sama5d2_xplained boot again. Stephen applied it
-> to clk-next.
+> Have all issues been identified and understood?
+> Have all issues been fixed, reviewed, and committed?
+> Have all fixes entered linux-next?
+> Have all fixes been migrated from submaintainers to maintainers?
 
-I'm glad you won't actually have any boot issues in 5.12, but the fact
-you need [1] with this series doesn't make a lot of sense to me
-because:
+I'm hoping Tudor has reported and the fixes that have gone in so far
+addressed all his issues. Otherwise, they need to be reported so we
+can fix them.
 
-1. The FWNODE_FLAG_INITIALIZED flag will be set for the clock fwnode
-in question way before any consumer devices are added.
-2. Any consumer device added after (1) will stop trying to link to the
-clock device.
-
-Are you somehow adding a consumer to the clock fwnode before (1)?
-
-Can you try this patch without your clk fix? I was trying to avoid
-looping through a list, but looks like your case might somehow need
-it?
+As of now, there's no pending fix that hasn't landed in maintainer
+trees. So that's good.
 
 -Saravana
 
-+++ b/drivers/base/core.c
-@@ -943,6 +943,31 @@ static void device_links_missing_supplier(struct
-device *dev)
-        }
- }
-
-+static int fw_devlink_check_suppliers(struct device *dev)
-+{
-+       struct fwnode_link *link;
-+       int ret = 0;
-+
-+       if (!dev->fwnode ||fw_devlink_is_permissive())
-+               return 0;
-+
-+       /*
-+        * Device waiting for supplier to become available is not allowed to
-+        * probe.
-+        */
-+       mutex_lock(&fwnode_link_lock);
-+       list_for_each_entry(link, &dev->fwnode->suppliers, c_hook) {
-+               if (link->supplier->flags & FWNODE_FLAG_INITIALIZED)
-+                       continue;
-+
-+               ret = -EPROBE_DEFER;
-+               break;
-+       }
-+       mutex_unlock(&fwnode_link_lock);
-+
-+       return ret;
-+}
-+
- /**
-  * device_links_check_suppliers - Check presence of supplier drivers.
-  * @dev: Consumer device.
-@@ -964,21 +989,13 @@ int device_links_check_suppliers(struct device *dev)
-        struct device_link *link;
-        int ret = 0;
-
--       /*
--        * Device waiting for supplier to become available is not allowed to
--        * probe.
--        */
--       mutex_lock(&fwnode_link_lock);
--       if (dev->fwnode && !list_empty(&dev->fwnode->suppliers) &&
--           !fw_devlink_is_permissive()) {
-+       if (fw_devlink_check_suppliers(dev)) {
-                dev_dbg(dev, "probe deferral - wait for supplier %pfwP\n",
-                        list_first_entry(&dev->fwnode->suppliers,
-                        struct fwnode_link,
-                        c_hook)->supplier);
--               mutex_unlock(&fwnode_link_lock);
-                return -EPROBE_DEFER;
-        }
--       mutex_unlock(&fwnode_link_lock);
-
-        device_links_write_lock();
-
-
-
 >
-> Cheers,
-> ta
+> We're already at v5.11-rc7.
+> Yes, we can get fixes into v5.12-rc7. Or v5.12-rc9...
 >
-> [1] https://lore.kernel.org/lkml/20210203154332.470587-1-tudor.ambarus@microchip.com/
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
