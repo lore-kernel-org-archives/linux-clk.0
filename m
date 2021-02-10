@@ -4,39 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409FEC433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F10C433E6
 	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 02:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E669364E45
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 02:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E80964D87
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 02:00:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235082AbhBJCAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Feb 2021 21:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53578 "EHLO mail.kernel.org"
+        id S235211AbhBJCAl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Feb 2021 21:00:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235184AbhBJB66 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Feb 2021 20:58:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8DA3A64E56;
-        Wed, 10 Feb 2021 01:58:17 +0000 (UTC)
+        id S234792AbhBJB7N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Feb 2021 20:59:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F140764E54;
+        Wed, 10 Feb 2021 01:58:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612922297;
-        bh=zn3FmLbVCB5XRXGLwh2fxizts24GOMcfbHQsOIScuCY=;
+        s=k20201202; t=1612922313;
+        bh=H8gmXCdcOK2KGSYjzwAznMmDC7V/NTqVn7CK1R0CcTI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TekWbgH+GXdz3GxuFaHo4EdcUoQfTOTKzbpuOvaMMAehaeeyU52ff9lwWTv7rd/F2
-         8r/K+ez5adInmwH8uj4J3yZUSIvGK7IQiNaeqDMQJoSGlZjrLYJ6SP8rRti0AKGboo
-         LOq/MuHIkqcIMA+k5OkArb734hO2R62amJVoAwmmz+h1/4gjoyamLLcFNqnKti+zxE
-         8mB9Mi3FuAKcuYen0omJuDcHu/VesVcvujzFYtBY5SvCO+DfaGgnjoGJBNmV/keB42
-         Oh3zCgN4/TsL+jiLuKihpt53BD8lfc84E6ZuGW1C84j4Ge6qOeIZvtI7tNQ4FtfRyW
-         Fc1+3ddI2Ar4A==
+        b=cvV8b0ekScUhfccdLHFum5M2Lub9dqFayg7xt/OJD+2JMR1IY1Fbzj4CQbuLBdykG
+         S8teH72X3uREcuZeuF2mQWFrA6qaX0hk9NdgBX4WzTBIxtL0Frqjk+llT4qj1sTIeP
+         dMDAClLoJzIiq0yaHZuTR70Y9EosPpGUOga7WNUSjbtdiACTp5ENCm/JnyKfRGFjvm
+         xwsuN3qK6qAzicRuIrWMHZCzlOkM+0KyqYp+SXmiTqd5dHzKuCDvTZMlno/Gc3Fva9
+         UAgSBGtSdRoESJ605NgwDL/hDX/DT9kJ/syp+ZOXNYfQkO1yvXVIKbGHn0IPMszxbg
+         mIUcBGrO25OkA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210114124032.12765-4-pali@kernel.org>
-References: <20210114124032.12765-1-pali@kernel.org> <20210114124032.12765-4-pali@kernel.org>
-Subject: Re: [PATCH mvebu v2 03/10] clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM clock
+In-Reply-To: <20210114124032.12765-7-pali@kernel.org>
+References: <20210114124032.12765-1-pali@kernel.org> <20210114124032.12765-7-pali@kernel.org>
+Subject: Re: [PATCH mvebu v2 06/10] clk: mvebu: armada-37xx-periph: Fix workaround for switching from L1 to L0
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -53,28 +52,32 @@ To:     Andrew Lunn <andrew@lunn.ch>,
         Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Tue, 09 Feb 2021 17:58:16 -0800
-Message-ID: <161292229602.418021.3135925555617646144@swboyd.mtv.corp.google.com>
+Date:   Tue, 09 Feb 2021 17:58:31 -0800
+Message-ID: <161292231125.418021.8310551532294838376@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Pali Roh=C3=A1r (2021-01-14 04:40:25)
-> From: Marek Beh=C3=BAn <kabel@kernel.org>
+Quoting Pali Roh=C3=A1r (2021-01-14 04:40:28)
+> When CPU frequency is at 250 MHz and set_rate() is called with 500 MHz (L=
+1)
+> quickly followed by a call with 1 GHz (L0), the CPU does not necessarily
+> stay in L1 for at least 20ms as is required by Marvell errata.
 >=20
-> Remove the .set_parent method in clk_pm_cpu_ops.
+> This situation happens frequently with the ondemand cpufreq governor and
+> can be also reproduced with userspace governor. In most cases it causes C=
+PU
+> to crash.
 >=20
-> This method was supposed to be needed by the armada-37xx-cpufreq driver,
-> but was never actually called due to wrong assumptions in the cpufreq
-> driver. After this was fixed in the cpufreq driver, this method is not
-> needed anymore.
+> This change fixes the above issue and ensures that the CPU always stays in
+> L1 for at least 20ms when switching from any state to L0.
 >=20
 > Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
-> Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support fo=
-r cpu clocks")
-> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> Fixes: 61c40f35f5cd ("clk: mvebu: armada-37xx-periph: Fix switching CPU r=
+ate from 300Mhz to 1.2GHz")
+> Cc: stable@vger.kernel.org
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
