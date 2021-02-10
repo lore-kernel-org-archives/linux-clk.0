@@ -2,213 +2,214 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9B5C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9711FC433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 923F064E32
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 568AF64E7E
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbhBJMr0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 07:47:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbhBJMqn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 07:46:43 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB87C061786;
-        Wed, 10 Feb 2021 04:46:02 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id 7so2407757wrz.0;
-        Wed, 10 Feb 2021 04:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rjLWgX3Eg/gC3RV2khv5c8f9NWNyEch31NnXlurt3Ss=;
-        b=GSU8nJJHRxGKxEYvAVHgEZ99IaPo0P82K2x/ng7rcD0jt+NV3L03A27i1H57yxSIxh
-         /ix5ODPDpCQiJftDGoj9wOWsLSy5xcMrn+tClntvA+wmxdJmfrzx/MUqJJiXEwHDeC0I
-         dtbDh2tJORkIrYHkE0g9fUS4N7old4ebGv+D75QpkkmjRxu5mBL4hkboAi4chmFY1GCe
-         Y2dfPmWdzLtFxoNTJ9JD7aJkXPQY2iwoVdYi1dtnv87ZxOfDg2VxkIe6rfQj0mrAKf3Z
-         HpJwhtERMHvMhNT7nvtQiVT7CsRyqedvV18w1GxtWP3xZNK7/ghrnLa+gxewO8yaMSeU
-         lzjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rjLWgX3Eg/gC3RV2khv5c8f9NWNyEch31NnXlurt3Ss=;
-        b=XQD+J3CWZkOCaoKxZgvq4F6rPAyPbAt1gkxXewuLbk/2P7pqeW0U92c3MgOo0Ge+hj
-         YQgWfZIzumaGAiWQzmO0DWm5JReqXhCThSEC7J7rkYxewodEV7lXLvcNlSHn/joPs0vG
-         KCAfLh8KxmIk+YTRURPiSi8gJlDthBNS0WTi8f4f0szslQtOrzBK3pdy4lHz9hSbN0hY
-         D7lcpfDbx41Em9pUhrId68FTqpQcz5jsRNMjWFJ54wnsjZafnpubq8Vjaqq99wyhZRhu
-         2COX2YSj+8zd5LLWF/JzaVQodjGQwf3sbwHV+z5EH4JSdf8kzXKDmnlR8sWxiL17RjDw
-         caMA==
-X-Gm-Message-State: AOAM531oS+GPgJFnTtSqS+51NVeAAAFNuFCevmHVt/bxd4+izJL5zFbV
-        O/aqkdZR4x360co/iadf558=
-X-Google-Smtp-Source: ABdhPJyGB+U3gO1kAGzHQsdpRDV8svemT3zKAyNPWMoEzioiHLuUbNy6AOhrhPwCNeE3NNBWZeMhYA==
-X-Received: by 2002:a5d:4d8d:: with SMTP id b13mr3334138wru.178.1612961161574;
-        Wed, 10 Feb 2021 04:46:01 -0800 (PST)
-Received: from ziggy.stardust (static-188-169-27-46.ipcom.comunitel.net. [46.27.169.188])
-        by smtp.gmail.com with ESMTPSA id f17sm2826671wrx.57.2021.02.10.04.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 04:46:01 -0800 (PST)
-To:     Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
- <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v6 10/22] clk: mediatek: Add MT8192 basic clocks support
-Message-ID: <b16e4693-1dc6-e13c-3cc9-feb5005179dd@gmail.com>
-Date:   Wed, 10 Feb 2021 13:46:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        id S232208AbhBJQRo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 11:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232184AbhBJQRl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 11:17:41 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A627C64E05;
+        Wed, 10 Feb 2021 16:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612973820;
+        bh=hh4UIkJdtViE9hIUqy2HP352No8PkABh6qI6Cce0cZI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y0XyTvfrhIwcX/ppb49PkzQCYxWXkGOEC5KujWcwQziC033w4IUoJ7IP5Gje3b8RK
+         1qWyy5fi6A4/l5c38FstWJSoQjQvLXvsjtGH3wZWQmjtGPKkMyIye2OW52T3+M5nx9
+         qg6yFU4d3E/XKy0rxPesbQCl4kQc3pdITqXzfJuhiXeWza+qjX9cg6eQab/Uo9oUwX
+         sm5Q9rRLiMwvdfx/YipLKMIkLRQ71tvkwaqWihjTweMtJgiXgARPLmT/5eAKwanOZa
+         wojusx2hbVfr3HIe6nXGWrVS5rxBOADCFwNsnb6SWI5CPH/s1gS/kIUA5KWoFD+bt4
+         P2kZoh+e8tjMA==
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc-sm8350: add gdsc
+Date:   Wed, 10 Feb 2021 21:46:49 +0530
+Message-Id: <20210210161649.431741-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the GDSC found in GCC for SM8350 SoC
 
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/gcc-sm8350.c               | 100 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8350.h |  12 +++
+ 2 files changed, 112 insertions(+)
 
-On 22/12/2020 14:09, Weiyi Lu wrote:
-> Add MT8192 basic clock providers, include topckgen, apmixedsys,
-> infracfg and pericfg.
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  drivers/clk/mediatek/Kconfig      |    8 +
->  drivers/clk/mediatek/Makefile     |    1 +
->  drivers/clk/mediatek/clk-mt8192.c | 1326 +++++++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-mux.h    |   15 +
->  4 files changed, 1350 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt8192.c
-> 
+diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
+index a16c08651206..1c23b9f84900 100644
+--- a/drivers/clk/qcom/gcc-sm8350.c
++++ b/drivers/clk/qcom/gcc-sm8350.c
+@@ -16,6 +16,7 @@
+ #include "clk-regmap.h"
+ #include "clk-regmap-divider.h"
+ #include "clk-regmap-mux.h"
++#include "gdsc.h"
+ #include "reset.h"
+ 
+ enum {
+@@ -3452,6 +3453,90 @@ static struct clk_branch gcc_video_axi1_clk = {
+ 	},
+ };
+ 
++static struct gdsc pcie_0_gdsc = {
++	.gdscr = 0x6b004,
++	.pd = {
++		.name = "pcie_0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc pcie_1_gdsc = {
++	.gdscr = 0x8d004,
++	.pd = {
++		.name = "pcie_1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ufs_card_gdsc = {
++	.gdscr = 0x75004,
++	.pd = {
++		.name = "ufs_card_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ufs_phy_gdsc = {
++	.gdscr = 0x77004,
++	.pd = {
++		.name = "ufs_phy_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc usb30_prim_gdsc = {
++	.gdscr = 0xf004,
++	.pd = {
++		.name = "usb30_prim_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc usb30_sec_gdsc = {
++	.gdscr = 0x10004,
++	.pd = {
++		.name = "usb30_sec_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
++	.gdscr = 0x7d050,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
++	.gdscr = 0x7d058,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc = {
++	.gdscr = 0x7d054,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc = {
++	.gdscr = 0x7d06c,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
+ static struct clk_regmap *gcc_sm8350_clocks[] = {
+ 	[GCC_AGGRE_NOC_PCIE_0_AXI_CLK] = &gcc_aggre_noc_pcie_0_axi_clk.clkr,
+ 	[GCC_AGGRE_NOC_PCIE_1_AXI_CLK] = &gcc_aggre_noc_pcie_1_axi_clk.clkr,
+@@ -3646,6 +3731,19 @@ static struct clk_regmap *gcc_sm8350_clocks[] = {
+ 	[GCC_VIDEO_AXI1_CLK] = &gcc_video_axi1_clk.clkr,
+ };
+ 
++static struct gdsc *gcc_sm8350_gdscs[] = {
++	[PCIE_0_GDSC] = &pcie_0_gdsc,
++	[PCIE_1_GDSC] = &pcie_1_gdsc,
++	[UFS_CARD_GDSC] = &ufs_card_gdsc,
++	[UFS_PHY_GDSC] = &ufs_phy_gdsc,
++	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
++	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc,
++};
++
+ static const struct qcom_reset_map gcc_sm8350_resets[] = {
+ 	[GCC_CAMERA_BCR] = { 0x26000 },
+ 	[GCC_DISPLAY_BCR] = { 0x27000 },
+@@ -3724,6 +3822,8 @@ static const struct qcom_cc_desc gcc_sm8350_desc = {
+ 	.num_clks = ARRAY_SIZE(gcc_sm8350_clocks),
+ 	.resets = gcc_sm8350_resets,
+ 	.num_resets = ARRAY_SIZE(gcc_sm8350_resets),
++	.gdscs = gcc_sm8350_gdscs,
++	.num_gdscs = ARRAY_SIZE(gcc_sm8350_gdscs),
+ };
+ 
+ static const struct of_device_id gcc_sm8350_match_table[] = {
+diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
+index 1331da65f669..f6be3da5f781 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sm8350.h
++++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
+@@ -251,4 +251,16 @@
+ #define GCC_VIDEO_AXI1_CLK_ARES					36
+ #define GCC_VIDEO_BCR						37
+ 
++/* GCC power domains */
++#define PCIE_0_GDSC						0
++#define PCIE_1_GDSC						1
++#define UFS_CARD_GDSC						2
++#define UFS_PHY_GDSC						3
++#define USB30_PRIM_GDSC						4
++#define USB30_SEC_GDSC						5
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			6
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC			7
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC			8
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC			9
++
+ #endif
+-- 
+2.26.2
 
-[...]
-
-> +static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_onecell_data *clk_data;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	int r;
-> +
-> +	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
-> +	r = mtk_clk_register_gates(node, apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
-> +	if (r)
-> +		return r;
-> +
-> +	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> +}
-> +
-> +static const struct of_device_id of_match_clk_mt8192[] = {
-> +	{
-> +		.compatible = "mediatek,mt8192-apmixedsys",
-> +		.data = clk_mt8192_apmixed_probe,
-> +	}, {
-> +		.compatible = "mediatek,mt8192-topckgen",
-> +		.data = clk_mt8192_top_probe,
-> +	}, {
-> +		.compatible = "mediatek,mt8192-infracfg",
-> +		.data = clk_mt8192_infra_probe,
-> +	}, {
-> +		.compatible = "mediatek,mt8192-pericfg",
-> +		.data = clk_mt8192_peri_probe,
-> +	}, {
-> +		/* sentinel */
-> +	}
-> +};
-> +
-> +static int clk_mt8192_probe(struct platform_device *pdev)
-> +{
-> +	int (*clk_probe)(struct platform_device *pdev);
-> +	int r;
-> +
-> +	clk_probe = of_device_get_match_data(&pdev->dev);
-> +	if (!clk_probe)
-> +		return -EINVAL;
-> +
-> +	r = clk_probe(pdev);
-> +	if (r)
-> +		dev_err(&pdev->dev, "could not register clock provider: %s: %d\n", pdev->name, r);
-> +
-> +	return r;
-> +}
-> +
-> +static struct platform_driver clk_mt8192_drv = {
-> +	.probe = clk_mt8192_probe,
-> +	.driver = {
-> +		.name = "clk-mt8192",
-> +		.of_match_table = of_match_clk_mt8192,
-> +	},
-> +};
-> +
-> +static int __init clk_mt8192_init(void)
-> +{
-> +	return platform_driver_register(&clk_mt8192_drv);
-> +}
-> +
-> +arch_initcall(clk_mt8192_init);
-
-Do we really need all these clocks that early?
-Why don't we use CLK_OF_DECLARE_DRIVER() then and why do we initialize some
-clocks CLK_OF_DECLARE_DRIVER and other with arch_initcall?
-
-I know that this is in other drivers for MediaTek SoCs, but that does not mean
-it's the right approach.
-
-
-> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
-> index f5625f4..afbc7df 100644
-> --- a/drivers/clk/mediatek/clk-mux.h
-> +++ b/drivers/clk/mediatek/clk-mux.h
-> @@ -77,6 +77,21 @@ struct mtk_mux {
->  			_width, _gate, _upd_ofs, _upd,			\
->  			CLK_SET_RATE_PARENT)
->  
-> +#define MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,		\
-> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-> +			_upd_ofs, _upd, _flags)				\
-> +		GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
-> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-> +			0, _upd_ofs, _upd, _flags,			\
-> +			mtk_mux_clr_set_upd_ops)
-> +
-> +#define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,			\
-> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-> +			_upd_ofs, _upd)					\
-> +		MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents,		\
-> +			_mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,	\
-> +			_width, _upd_ofs, _upd,	CLK_SET_RATE_PARENT)
-> +
-
-Why can't we do something like:
-
-#define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,			\
-			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-			_upd_ofs, _upd)					\
-		GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
-			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-			0, _upd_ofs, _upd, CLK_SET_RATE_PARENT,			\
-			mtk_mux_clr_set_upd_ops)
-
->  struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
->  				 struct regmap *regmap,
->  				 spinlock_t *lock);
-> 
