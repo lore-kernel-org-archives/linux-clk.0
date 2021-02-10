@@ -2,72 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B34C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E8CC433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 999F564E37
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12F064E57
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbhBJLFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 06:05:21 -0500
-Received: from mga01.intel.com ([192.55.52.88]:30311 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231623AbhBJLDn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 06:03:43 -0500
-IronPort-SDR: J/2EFd0g0awFT6kXgS8vBjYDO2qdu6246sbI8LQCLl8+uC9y6eSYPnruGivcjwt3BRvdiGK9n4
- z5Dpr9+4/8aw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="201155370"
-X-IronPort-AV: E=Sophos;i="5.81,168,1610438400"; 
-   d="scan'208";a="201155370"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 03:01:57 -0800
-IronPort-SDR: y6/Hdxu3XPrS1ERjSFXoM4N0XUC68dRxaMmtPO//bASgEj3G0axMA0MkrIJhrnQ4npG2UX/Igb
- gsjWa4mb0yvg==
-X-IronPort-AV: E=Sophos;i="5.81,168,1610438400"; 
-   d="scan'208";a="436635931"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2021 03:01:56 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1l9nFp-003R37-Jn; Wed, 10 Feb 2021 13:01:53 +0200
-Date:   Wed, 10 Feb 2021 13:01:53 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1] clk: Move struct clk_core to use struct fwnode_handle
-Message-ID: <YCO9IZ4IHI2gruds@smile.fi.intel.com>
-References: <20210209170952.49794-1-andriy.shevchenko@linux.intel.com>
- <161291514590.418021.17536537656317500613@swboyd.mtv.corp.google.com>
+        id S230450AbhBJLsP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 06:48:15 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:53048 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231260AbhBJLqN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 06:46:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1612957572; x=1644493572;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HiRooR0JRPW34th/7QSHeDW6g1Xmz/WY9IkNdXFN45o=;
+  b=XfUqdweFbC/6vzRVj/mX53tPvRbWTx2asMr2LtKB+S27ggN2Iz5USJ6H
+   toWzlY0NF28TrX/n6NELdiNqu0kr7+OiY+sVItJ30Sgh7Z6A6OpkZ+2uh
+   CX9+nNBO5mhAUPKmNxPjYYL10QSELyBIIfLa2keByWbNhKh6u1eDf38Xq
+   RprVo2Ql/dRESLvgsmiHzgYdDf2zE7fOgz79t2vSSg8sRRv6i6ikymtwa
+   gALslvPkMakBlP5ubrJIOOcstZbvvxuJU2m2W08BX3XoXGYgTHmbhm88q
+   tpcTFR30ONpkd7Awy0i1t3ipp09cWKv1i37HIcSEvTX16Gx6WD58NIsmE
+   g==;
+IronPort-SDR: OJzOT1L7uR9EmsWc/byKWwNOkbxZX5ra5Qezzd8kgRQ5TkFJOnClQLYVRAhlaYG4DOUZBeg/Du
+ tc8jDnu5zgYjn1ZPne5vnQclQ/SYOg7EDOT27/vbn4zYVlcGyyBzd7dsK8QHtlPv3W9LLuWXs5
+ fA0+sXRCAF8SDN7JnFwc5KXcjkH2HaRAjecHslK0blQ16mHCN17TgsS3p4WSbpWKZS89oiviWC
+ In5HEVkM+jLk/NmesobzktSTduQGvBR6xxpa4cZzRegMmsvSlTBAHcBublgXQlWf3a5D+JaVrx
+ yBY=
+X-IronPort-AV: E=Sophos;i="5.81,168,1610434800"; 
+   d="scan'208";a="114541425"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Feb 2021 04:44:54 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Wed, 10 Feb 2021 04:44:53 -0700
+Received: from atudor-ThinkPad-T470p.amer.actel.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Wed, 10 Feb 2021 04:44:47 -0700
+From:   Tudor Ambarus <tudor.ambarus@microchip.com>
+To:     <corbet@lwn.net>, <gregkh@linuxfoundation.org>,
+        <rafael@kernel.org>, <khilman@kernel.org>,
+        <ulf.hansson@linaro.org>, <len.brown@intel.com>, <lenb@kernel.org>,
+        <pavel@ucw.cz>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <frowand.list@gmail.com>, <maz@kernel.org>,
+        <tglx@linutronix.de>, <saravanak@google.com>
+CC:     <nicolas.ferre@microchip.com>, <claudiu.beznea@microchip.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <m.szyprowski@samsung.com>, <geert@linux-m68k.org>,
+        <kernel-team@android.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: [PATCH] clk: Mark fwnodes when their clock provider is added
+Date:   Wed, 10 Feb 2021 13:44:34 +0200
+Message-ID: <20210210114435.122242-1-tudor.ambarus@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210205222644.2357303-9-saravanak@google.com>
+References: <20210205222644.2357303-9-saravanak@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161291514590.418021.17536537656317500613@swboyd.mtv.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 09, 2021 at 03:59:05PM -0800, Stephen Boyd wrote:
-> Quoting Andy Shevchenko (2021-02-09 09:09:52)
-> > fwnode is an abstraction on the different types of firmware nodes.
-> > In order to allow clocks to be linked with any type of such node,
-> > start a conversion to the struct fwnode_handle instead of being
-> > stuck with struct device_node.
-> 
-> Is ACPI going to support clk hardware? We're "stuck" with device nodes
-> mostly because there isn't a clk framework for ACPI.
+This is a follow-up for:
+commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
 
-Here I'm not talking about ACPI vs. DT vs. anything, the pure motivation is to
-make less divergence of standalone OF vs. fwnode (see IRQ domain APIs, for
-example, which allows to use them in regmap IRQ APIs).
+The above commit updated the deprecated of_clk_add_provider(),
+but missed to update the preferred of_clk_add_hw_provider().
+Update it now.
 
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+ drivers/clk/clk.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 27ff90eacb1f..9370e4dfecae 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 	if (ret < 0)
+ 		of_clk_del_provider(np);
+ 
++	fwnode_dev_initialized(&np->fwnode, true);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
