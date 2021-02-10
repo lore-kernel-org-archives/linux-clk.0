@@ -2,109 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E821C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FDFC433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D154264DD9
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0764664DB1
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 09:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229638AbhBJJQw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 04:16:52 -0500
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:42408 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231148AbhBJJLw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 04:11:52 -0500
-Received: by mail-ot1-f42.google.com with SMTP id q4so1151150otm.9;
-        Wed, 10 Feb 2021 01:11:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mmzIbd1mxdek5jVaaYsRmGPyjt4W0UF1QUXfwQ+z8rM=;
-        b=Ic6W0aIBS6hoHXDytn1NF7imN8WkLLgjHpKsVZsZNxfQdVLkuRHjj01azaLEtv728G
-         ZSVV22avOD3rYNLsf+EOw1NmcXvzRzfdxbqepS5lnaPJITCfqRYUrHRKCPwtIAu/HDAH
-         XjA9QdXxlPLalJZi2xsUZk4lHsXCeLYO6oE7YUPYhepV3Q8RwPPJFqIC02O6fCDXrK1M
-         fsbqrvrXw4ygN7PThBpTWQDpqZ9piaZT4TXqfHNwPDkS4/bYuhgWHWLy54WJXOWNxIf3
-         /Z44ps2RIJlWG26IbxQLZhl9KsobFqqj9ECTcLn14zbHkl+LX3eZRAxRaO8SY9R+1cOP
-         H9kA==
-X-Gm-Message-State: AOAM532WnVvd/eNZ3P8Qgm/NZIt3vU1p5BRmU+/OCj32iH0wcjGdLWCX
-        Me+jhMN2H5+yKLuyVUafb9zSjE92ZrlaZ8JCSe4=
-X-Google-Smtp-Source: ABdhPJy+Gdm1B8ik7usQwOUT9ldpWoSu/0BM3S8qm6zAUg1uG7eXzJf1x2sEHt/B8LntFzM7S1B/h/I7LpA/Ns42/Aw=
-X-Received: by 2002:a9d:77d6:: with SMTP id w22mr1426563otl.145.1612948252567;
- Wed, 10 Feb 2021 01:10:52 -0800 (PST)
+        id S230487AbhBJJ0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 04:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229717AbhBJJYY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 04:24:24 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6694E64DB1;
+        Wed, 10 Feb 2021 09:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612949022;
+        bh=oO2ra4rCsA8isDsXvlKjVgpSfxzLG4pt6aZLIilyCLk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jtvMtokUh5uRH2xaeT2qOIz8UIBGWpnsyrOZ7rNHI6N3Pb7jvej8V5N9DrMfq7Hsw
+         M6KgY1VIoop+am42kzmFiucfBE/RDkj6bG5M+z3jYyO8O7TQFDZm0N9NY6pVE2XCg5
+         p79niI0jXeHcaZAnVZ3pZux+l9I0HoOydjb0tsJoKkoCGXjIsTr6CDKTKrXrWGSaCp
+         ovopCtFfyAnCRmGQjcQvDAUGCOv2M/sp8tXi/J1R3OdZF/vzGZBzBcOcHg5nNBqZmx
+         H7bBsepov3895UtKk6K6V5+s05x8JHToI/ckeRSl3Rjp1HCgiJ1P/q0K6xAGwyZTzM
+         UnRj86AIx4s1g==
+Received: by pali.im (Postfix)
+        id E7CB0A56; Wed, 10 Feb 2021 10:23:39 +0100 (CET)
+Date:   Wed, 10 Feb 2021 10:23:39 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     nnet <nnet@fastmail.fm>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
+        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
+        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
+        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
+ CPU speed to 800 MHz from 1000 MHz
+Message-ID: <20210210092339.qy6wwuq6qr5m2ozr@pali>
+References: <20210209213330.hnc7op72zoj24mgz@pali>
+ <7b0988cc-eeb8-4ea7-92f6-e8234ca910d3@www.fastmail.com>
+ <20210209224223.p22yhjdy7ibzepss@pali>
+ <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
+ <20210209225630.mdwnzkvnaz3r4blt@pali>
+ <a86c5069-d423-44db-92dd-b3e406b7ec91@www.fastmail.com>
+ <20210210002619.43104a9b@kernel.org>
+ <ac03801e-87e2-4e57-b131-bff52f03579d@www.fastmail.com>
+ <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
+ <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
 MIME-Version: 1.0
-References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
- <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com> <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
- <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
- <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com> <CAGETcx--6Pm=KfgFi50Dzin0+760nd-t9w9VxZxcn2Che-G1nQ@mail.gmail.com>
-In-Reply-To: <CAGETcx--6Pm=KfgFi50Dzin0+760nd-t9w9VxZxcn2Che-G1nQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 10 Feb 2021 10:10:41 +0100
-Message-ID: <CAMuHMdWs-GqN-7tEPFfOeTQbvOH58T6WbBtVLsMNLT5qOHxsHA@mail.gmail.com>
-Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        mirq-linux@rere.qmqm.pl,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        a.fatoum@pengutronix.de, Krzysztof Kozlowski <krzk@kernel.org>,
-        Codrin.Ciubotariu@microchip.com,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Saravana,
+On Tuesday 09 February 2021 18:07:41 nnet wrote:
+> On Tue, Feb 9, 2021, at 5:51 PM, nnet wrote:
+> > On Tue, Feb 9, 2021, at 5:31 PM, nnet wrote:
+> > > On Tue, Feb 9, 2021, at 3:26 PM, Marek Behún wrote:
+> > > > On Tue, 09 Feb 2021 15:16:45 -0800
+> > > > nnet <nnet@fastmail.fm> wrote:
+> > > > 
+> > > > > I've two of these and I've just swapped them (and re-pasted the heat sinks).
+> > > > > 
+> > > > > The second one ran under load for awhile and now has frozen as well.
+> > > > > 
+> > > > > Under a moderate load `wget -O /dev/null <large.bin>` @X00Mbits they are fine.
+> > > > > 
+> > > > > Under a 1 min speed test of load ~200Mbits routed WireGuard they freeze.
+> > > > > 
+> > > > > They fine with both those workloads @1000_800.
+> > > > > 
+> > > > > Perhaps it's heat? Unfortunately I don't have any numbers on that ATM.
+> > > > 
+> > > > Try disabling cpufreq in kernel completely, compile boot image at
+> > > > 1200 MHz. If it continues freezing, then I fear we can't help you with
+> > > > 1200 MHz :(
+> > > 
+> > > cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies 
+> > > 200000 300000 600000 1200000 
+> > > 
+> > > I'm not getting any freezes with 1.2GHz fixed after 20 minutes of load:
+> > > 
+> > > echo 1200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
+> > > 
+> > > Setting it back to min 200MHz I get a freeze within a minute:
+> > > 
+> > > echo 200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
 
-On Wed, Feb 10, 2021 at 9:57 AM Saravana Kannan <saravanak@google.com> wrote:
-> On Wed, Feb 10, 2021 at 12:51 AM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Wed, Feb 10, 2021 at 1:57 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
-> > > > > Do you plan to take this patch for v5.12?
-> > > > > If fw_devlink will remain set to ON for v5.12, some of our boards will
-> > > > > no longer boot without this patch.
+Hello! Could you please enable userspace governor during kernel
+compilation?
+
+    CONFIG_CPU_FREQ_GOV_USERSPACE=y
+
+It can be activated via command:
+
+    echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+
+After that you can "force" CPU frequency to specific value, e.g.:
+
+    echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
+
+I need to know which switch (from --> to freq) cause this system hang.
+
+This patch series (via MIN_VOLT_MV_FOR_L0_L1_1GHZ) is fixing only
+switching from 500 MHz to 1000 MHz on 1 GHz variant. As only this switch
+is causing issue.
+
+I have used following simple bash script to check that switching between
+500 MHz and 1 GHz is stable:
+
+    while true; do
+        echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+        echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+        echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+        echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+    done
+
+(of course on 1.2 GHz variant you need to adjust values as only
+following frequencies 200000 300000 600000 1200000 are supported)
+
+> > > > Marek
 > > > >
-> > > > Is fw_devlink defaulted to on for v5.12?
-> > >
-> > > Yes.
-> >
-> > Have all issues been identified and understood?
-> > Have all issues been fixed, reviewed, and committed?
-> > Have all fixes entered linux-next?
-> > Have all fixes been migrated from submaintainers to maintainers?
->
-> I'm hoping Tudor has reported and the fixes that have gone in so far
-> addressed all his issues. Otherwise, they need to be reported so we
-> can fix them.
->
-> As of now, there's no pending fix that hasn't landed in maintainer
-> trees. So that's good.
+> > 
+> > > +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
+> > 
+> > Based on the below at boot time might an equivalent of the above need 
+> > to be 1225 for 1.2GHz?
+> > 
+> > 1200_750
+> > SVC REV: 5, CPU VDD voltage: 1.225V
+> > 
+> > 1000_800
+> > SVC REV: 5, CPU VDD voltage: 1.108V
 
-You're talking about driver core fixes.
-What about driver fixes? E.g. pull request for (arm-)soc should be
-srnt before -rc6.
+This value is printed in WTMI avs.c by following code:
 
-Gr{oetje,eeting}s,
+    shift = OTP_SVC_SPEED_1000_OFF;
+    (OR)
+    shift = OTP_SVC_SPEED_1200_OFF;
 
-                        Geert
+    vdd_otp = ((otp_data[OTP_DATA_SVC_SPEED_ID] >> shift) +
+                AVS_VDD_BASE) & AVS_VDD_MASK;
+    regval |= (vdd_otp << HIGH_VDD_LIMIT_OFF);
+    regval |= (vdd_otp << LOW_VDD_LIMIT_OFF);
+    printf("SVC REV: %d, CPU VDD voltage: %s\n", svc_rev,
+            avis_dump[vdd_otp].desc);
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+So voltage value is read from the OTP memory.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+But I do not know what this value means.
+
+> I did this for a quick test for 1.2GHz:
+> 
+> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1225
+> 
+> This is working well so far. Frequency is shifting up/down with load applied/stopped.
