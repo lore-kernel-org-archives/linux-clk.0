@@ -2,67 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4712EC433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6935AC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1585D64EE4
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AFC664EE4
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbhBJSYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 13:24:55 -0500
-Received: from so15.mailgun.net ([198.61.254.15]:46380 "EHLO so15.mailgun.net"
+        id S233894AbhBJSZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 13:25:44 -0500
+Received: from so15.mailgun.net ([198.61.254.15]:10801 "EHLO so15.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233993AbhBJSWx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 13:22:53 -0500
+        id S232767AbhBJSXe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 13:23:34 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1612981305; h=Content-Transfer-Encoding: Content-Type:
+ s=smtp; t=1612981391; h=Content-Transfer-Encoding: Content-Type:
  In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=Xgep1GQsNHDLMCt3NLrLgJj9OuM/EEgROVw7Ki9LSR8=; b=AI1CQYrzm69GmxXWjNj+Hmt4Xlo6+OSKP9CBhl4sktQKmapJd1MrFKTavEM/CxUj7mkaR4tb
- kcFyJrVH0IIthJnlRe1AZk1RXHI0MaHo/yJsJUW6DT7qviUc9WWkJ9/UX/qDG7Y5jcDFLNJG
- +2zftS052enEU87ws/b269hajUw=
+ Subject: Sender; bh=KfKCXxFIC+tK9m9tzuQMc3z9VZ1bjrydp4kE9hsnCBQ=; b=vECCbrpeCr5yvqJO28KZZqVfgl0ZdXXRngiXnezbPRw63d03DnLVCuSb6MS1nY7Km+SjN7ix
+ uZDwIKD5v70sp/p8hNxkMGxr29k4GPfx5lHC7FLYqFQolP4e7ogRGpflMmTHHzOn2I4TipTn
+ bUAK0tSXCk0WSBnhvOSYx03G2MU=
 X-Mailgun-Sending-Ip: 198.61.254.15
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 6024241af112b7872cd73095 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 18:21:14
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 60242473e3df861f4ba9f820 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 18:22:43
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7AB9DC433C6; Wed, 10 Feb 2021 18:21:14 +0000 (UTC)
+        id 682BCC43463; Wed, 10 Feb 2021 18:22:42 +0000 (UTC)
 Received: from [192.168.0.106] (unknown [49.204.180.139])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C7BA8C433ED;
-        Wed, 10 Feb 2021 18:21:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7BA8C433ED
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B514C433C6;
+        Wed, 10 Feb 2021 18:22:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B514C433C6
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
 Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add SC7280 GCC clock binding
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
 References: <1608058114-29025-1-git-send-email-tdas@codeaurora.org>
  <1608058114-29025-2-git-send-email-tdas@codeaurora.org>
- <20201221190005.GA362734@robh.at.kernel.org>
+ <161048197433.3661239.10431667618674179787@swboyd.mtv.corp.google.com>
 From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <d6d45024-36c5-4f98-774d-2355ab4fceaa@codeaurora.org>
-Date:   Wed, 10 Feb 2021 23:51:07 +0530
+Message-ID: <ccc9edc3-1200-356e-7bb3-863c3d284490@codeaurora.org>
+Date:   Wed, 10 Feb 2021 23:52:35 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <20201221190005.GA362734@robh.at.kernel.org>
+In-Reply-To: <161048197433.3661239.10431667618674179787@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -70,30 +69,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks Rob for your review comments.
+Thanks Stephen for your review comments.
 
+On 1/13/2021 1:36 AM, Stephen Boyd wrote:
 
->> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7280.h b/include/dt-bindings/clock/qcom,gcc-sc7280.h
->> new file mode 100644
->> index 0000000..3295bd4
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,gcc-sc7280.h
->> @@ -0,0 +1,215 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +  clock-names:
+>> +    items:
+>> +      - const: bi_tcxo
+>> +      - const: bi_tcxo_ao
+>> +      - const: sleep_clk
+>> +      - const: pcie_0_pipe_clk
+>> +      - const: pcie_1_pipe_clk
+>> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
 > 
-> Don't care about non-GPL OS? Better ask your legal dept.
+> Don't ufs phy clks also go into gcc?
 > 
 
-Currently this is the recommendation from the legal dept.
+The latest patch has this updated.
 
->> +/*
->> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
->> + */
 >> +
->> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7280_H
->> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7280_H
+>> +  '#clock-cells':
+>> +    const: 1
 >> +
->> +/* GCC clocks */
+>> +  '#reset-cells':
+>> +    const: 1
+>> +
+>> +  '#power-domain-cells':
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  protected-clocks:
+>> +    description:
+>> +      Protected clock specifier list as per common clock binding.
+> 
+> I suppose this is fine.
+> 
+
+Removed the above in the latest patch.
+
 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
