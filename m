@@ -2,110 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE82C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C898C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 17:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69F8964E6F
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2467464DE9
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 17:15:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232191AbhBJQXU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 11:23:20 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:38930 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232009AbhBJQXJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 11:23:09 -0500
-Received: by mail-oi1-f169.google.com with SMTP id l19so2617880oih.6;
-        Wed, 10 Feb 2021 08:22:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vth8XAW3OyURtmhNnatsP5/LHcdSP/3zZ/uHnRpXRKc=;
-        b=N1ih5ssccjZOrnw1UX0F8wx3gDGtho+L/26PE+dcF0ItVf7ihxR9VkrXcZegkhnWiW
-         4PIWStQ6HLZP9a84pbtFhgbBQMljBQZd4eVRQeY10kQ7YAoPvQXhYdywBhLVklq4AP3h
-         E6zYexHHFFpZAxtCnJPnyOGe5fbdpJsw+wg9NQ0uzjchJ9E5kxQ+98Rxpu9nvPRvhOh9
-         +RnC4XogLT5F+fp1Apn4PANeE7IQb0IUvFwLVaIc8mK9ygAtITpeMG3HKqGrYhyPSHxn
-         PezeG9ctofwhOgPZ+dOLvetK5BF8PcaIKBMK1phzubDtAx8wJDUfYhBeKvvKaFGbMWUY
-         04dQ==
-X-Gm-Message-State: AOAM533b0TF2kldped3rj3ZubMv5WqFve2Bt+33zgGsFYval0mk9llbl
-        XeyVSCup9EcvBaCLbW/ITA==
-X-Google-Smtp-Source: ABdhPJzfxK7JznCTG1mpjgRDFFLjV0SKpKj+NHymT0VWGOpHsKTkHtAJz+FjiiuPdSHMH+x9xBnSjg==
-X-Received: by 2002:aca:3746:: with SMTP id e67mr2563353oia.68.1612974148441;
-        Wed, 10 Feb 2021 08:22:28 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w2sm469998otq.9.2021.02.10.08.22.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Feb 2021 08:22:27 -0800 (PST)
-Received: (nullmailer pid 2263747 invoked by uid 1000);
-        Wed, 10 Feb 2021 16:22:26 -0000
-Date:   Wed, 10 Feb 2021 10:22:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        a.fatoum@pengutronix.de, Saravana Kannan <saravanak@google.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, mirq-linux@rere.qmqm.pl,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Codrin.Ciubotariu@microchip.com,
-        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
-Message-ID: <20210210162226.GA2246688@robh.at.kernel.org>
-References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
- <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com>
- <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
- <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
- <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com>
- <YCOgnm2VkSinTYIk@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YCOgnm2VkSinTYIk@kroah.com>
+        id S232462AbhBJRPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 12:15:22 -0500
+Received: from so15.mailgun.net ([198.61.254.15]:32952 "EHLO so15.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232331AbhBJROz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 12:14:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1612977277; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=28pOe6YfG2engrBhubISUUR0nXmBQ2Y18ezVEkDZQvY=; b=dPCUlkbkjVvk0wZZLVKD9fteQsCoo7fFgWJNzoLgPawy1DhsxGZLm8WSsRtul4CIjd8TrExH
+ 7wWqgqP309Y4Ne7dg3UlcuatdR5/LXnlgWvYhCs9Hn4O2HhXhKnS22O1vy96h65fNV2QJu6T
+ NN25MFZ8x02VsfqVbxWBTgaYtpo=
+X-Mailgun-Sending-Ip: 198.61.254.15
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 6024145fe4842e9128d4655e (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 17:14:07
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B4868C43461; Wed, 10 Feb 2021 17:14:06 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF3B0C433ED;
+        Wed, 10 Feb 2021 17:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF3B0C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/2] Add support for RPMH clock for SC7280
+Date:   Wed, 10 Feb 2021 22:43:48 +0530
+Message-Id: <1612977230-11566-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 10:00:14AM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Feb 10, 2021 at 09:51:14AM +0100, Geert Uytterhoeven wrote:
-> > Hi Saravana,
-> > 
-> > On Wed, Feb 10, 2021 at 1:57 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
-> > > > > Do you plan to take this patch for v5.12?
-> > > > > If fw_devlink will remain set to ON for v5.12, some of our boards will
-> > > > > no longer boot without this patch.
-> > > >
-> > > > Is fw_devlink defaulted to on for v5.12?
-> > >
-> > > Yes.
-> > 
-> > Have all issues been identified and understood?
-> > Have all issues been fixed, reviewed, and committed?
-> > Have all fixes entered linux-next?
-> > Have all fixes been migrated from submaintainers to maintainers?
+Add the bindings for sc7280 and support the rpmh clock which
+are required to be supported on SC7280.
 
-This can never be true for these types of per platform issues. There are 
-folks that test linux-next Then there are ones that test rc1. And 
-(unfortunately) so-on ending at testing only LTS releases.
+Taniya Das (2):
+  dt-bindings: clock: Add RPMHCC bindings for SC7280
+  clk: qcom: rpmh: Add support for RPMH clocks on SC7280
 
-> > We're already at v5.11-rc7.
-> > Yes, we can get fixes into v5.12-rc7. Or v5.12-rc9...
-> 
-> Yeah, I'm leaning toward not making it the default for 5.12-rc1 because
-> not everything seems to be working, let's see how the rest of the week
-> goes...
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |  1 +
+ drivers/clk/qcom/clk-rpmh.c                        | 24 +++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-I think there's some value waiting until after rc1 to turn off if just 
-to find a few more issues.
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
-Rob
