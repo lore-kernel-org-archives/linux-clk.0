@@ -2,214 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9711FC433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE82C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 568AF64E7E
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F8964E6F
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 16:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbhBJQRo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 11:17:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232184AbhBJQRl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 11:17:41 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A627C64E05;
-        Wed, 10 Feb 2021 16:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612973820;
-        bh=hh4UIkJdtViE9hIUqy2HP352No8PkABh6qI6Cce0cZI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Y0XyTvfrhIwcX/ppb49PkzQCYxWXkGOEC5KujWcwQziC033w4IUoJ7IP5Gje3b8RK
-         1qWyy5fi6A4/l5c38FstWJSoQjQvLXvsjtGH3wZWQmjtGPKkMyIye2OW52T3+M5nx9
-         qg6yFU4d3E/XKy0rxPesbQCl4kQc3pdITqXzfJuhiXeWza+qjX9cg6eQab/Uo9oUwX
-         sm5Q9rRLiMwvdfx/YipLKMIkLRQ71tvkwaqWihjTweMtJgiXgARPLmT/5eAKwanOZa
-         wojusx2hbVfr3HIe6nXGWrVS5rxBOADCFwNsnb6SWI5CPH/s1gS/kIUA5KWoFD+bt4
-         P2kZoh+e8tjMA==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        id S232191AbhBJQXU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 11:23:20 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:38930 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232009AbhBJQXJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 11:23:09 -0500
+Received: by mail-oi1-f169.google.com with SMTP id l19so2617880oih.6;
+        Wed, 10 Feb 2021 08:22:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vth8XAW3OyURtmhNnatsP5/LHcdSP/3zZ/uHnRpXRKc=;
+        b=N1ih5ssccjZOrnw1UX0F8wx3gDGtho+L/26PE+dcF0ItVf7ihxR9VkrXcZegkhnWiW
+         4PIWStQ6HLZP9a84pbtFhgbBQMljBQZd4eVRQeY10kQ7YAoPvQXhYdywBhLVklq4AP3h
+         E6zYexHHFFpZAxtCnJPnyOGe5fbdpJsw+wg9NQ0uzjchJ9E5kxQ+98Rxpu9nvPRvhOh9
+         +RnC4XogLT5F+fp1Apn4PANeE7IQb0IUvFwLVaIc8mK9ygAtITpeMG3HKqGrYhyPSHxn
+         PezeG9ctofwhOgPZ+dOLvetK5BF8PcaIKBMK1phzubDtAx8wJDUfYhBeKvvKaFGbMWUY
+         04dQ==
+X-Gm-Message-State: AOAM533b0TF2kldped3rj3ZubMv5WqFve2Bt+33zgGsFYval0mk9llbl
+        XeyVSCup9EcvBaCLbW/ITA==
+X-Google-Smtp-Source: ABdhPJzfxK7JznCTG1mpjgRDFFLjV0SKpKj+NHymT0VWGOpHsKTkHtAJz+FjiiuPdSHMH+x9xBnSjg==
+X-Received: by 2002:aca:3746:: with SMTP id e67mr2563353oia.68.1612974148441;
+        Wed, 10 Feb 2021 08:22:28 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w2sm469998otq.9.2021.02.10.08.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 08:22:27 -0800 (PST)
+Received: (nullmailer pid 2263747 invoked by uid 1000);
+        Wed, 10 Feb 2021 16:22:26 -0000
+Date:   Wed, 10 Feb 2021 10:22:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        a.fatoum@pengutronix.de, Saravana Kannan <saravanak@google.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sm8350: add gdsc
-Date:   Wed, 10 Feb 2021 21:46:49 +0530
-Message-Id: <20210210161649.431741-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.26.2
+        linux-clk <linux-clk@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>, mirq-linux@rere.qmqm.pl,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        Codrin.Ciubotariu@microchip.com,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
+Message-ID: <20210210162226.GA2246688@robh.at.kernel.org>
+References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
+ <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com>
+ <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
+ <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
+ <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com>
+ <YCOgnm2VkSinTYIk@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YCOgnm2VkSinTYIk@kroah.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the GDSC found in GCC for SM8350 SoC
+On Wed, Feb 10, 2021 at 10:00:14AM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Feb 10, 2021 at 09:51:14AM +0100, Geert Uytterhoeven wrote:
+> > Hi Saravana,
+> > 
+> > On Wed, Feb 10, 2021 at 1:57 AM Saravana Kannan <saravanak@google.com> wrote:
+> > > On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
+> > > > > Do you plan to take this patch for v5.12?
+> > > > > If fw_devlink will remain set to ON for v5.12, some of our boards will
+> > > > > no longer boot without this patch.
+> > > >
+> > > > Is fw_devlink defaulted to on for v5.12?
+> > >
+> > > Yes.
+> > 
+> > Have all issues been identified and understood?
+> > Have all issues been fixed, reviewed, and committed?
+> > Have all fixes entered linux-next?
+> > Have all fixes been migrated from submaintainers to maintainers?
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/gcc-sm8350.c               | 100 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sm8350.h |  12 +++
- 2 files changed, 112 insertions(+)
+This can never be true for these types of per platform issues. There are 
+folks that test linux-next Then there are ones that test rc1. And 
+(unfortunately) so-on ending at testing only LTS releases.
 
-diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-index a16c08651206..1c23b9f84900 100644
---- a/drivers/clk/qcom/gcc-sm8350.c
-+++ b/drivers/clk/qcom/gcc-sm8350.c
-@@ -16,6 +16,7 @@
- #include "clk-regmap.h"
- #include "clk-regmap-divider.h"
- #include "clk-regmap-mux.h"
-+#include "gdsc.h"
- #include "reset.h"
- 
- enum {
-@@ -3452,6 +3453,90 @@ static struct clk_branch gcc_video_axi1_clk = {
- 	},
- };
- 
-+static struct gdsc pcie_0_gdsc = {
-+	.gdscr = 0x6b004,
-+	.pd = {
-+		.name = "pcie_0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc pcie_1_gdsc = {
-+	.gdscr = 0x8d004,
-+	.pd = {
-+		.name = "pcie_1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc ufs_card_gdsc = {
-+	.gdscr = 0x75004,
-+	.pd = {
-+		.name = "ufs_card_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc ufs_phy_gdsc = {
-+	.gdscr = 0x77004,
-+	.pd = {
-+		.name = "ufs_phy_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc usb30_prim_gdsc = {
-+	.gdscr = 0xf004,
-+	.pd = {
-+		.name = "usb30_prim_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc usb30_sec_gdsc = {
-+	.gdscr = 0x10004,
-+	.pd = {
-+		.name = "usb30_sec_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
-+	.gdscr = 0x7d050,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-+	.gdscr = 0x7d058,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc = {
-+	.gdscr = 0x7d054,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc = {
-+	.gdscr = 0x7d06c,
-+	.pd = {
-+		.name = "hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
- static struct clk_regmap *gcc_sm8350_clocks[] = {
- 	[GCC_AGGRE_NOC_PCIE_0_AXI_CLK] = &gcc_aggre_noc_pcie_0_axi_clk.clkr,
- 	[GCC_AGGRE_NOC_PCIE_1_AXI_CLK] = &gcc_aggre_noc_pcie_1_axi_clk.clkr,
-@@ -3646,6 +3731,19 @@ static struct clk_regmap *gcc_sm8350_clocks[] = {
- 	[GCC_VIDEO_AXI1_CLK] = &gcc_video_axi1_clk.clkr,
- };
- 
-+static struct gdsc *gcc_sm8350_gdscs[] = {
-+	[PCIE_0_GDSC] = &pcie_0_gdsc,
-+	[PCIE_1_GDSC] = &pcie_1_gdsc,
-+	[UFS_CARD_GDSC] = &ufs_card_gdsc,
-+	[UFS_PHY_GDSC] = &ufs_phy_gdsc,
-+	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
-+	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc,
-+	[HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc,
-+};
-+
- static const struct qcom_reset_map gcc_sm8350_resets[] = {
- 	[GCC_CAMERA_BCR] = { 0x26000 },
- 	[GCC_DISPLAY_BCR] = { 0x27000 },
-@@ -3724,6 +3822,8 @@ static const struct qcom_cc_desc gcc_sm8350_desc = {
- 	.num_clks = ARRAY_SIZE(gcc_sm8350_clocks),
- 	.resets = gcc_sm8350_resets,
- 	.num_resets = ARRAY_SIZE(gcc_sm8350_resets),
-+	.gdscs = gcc_sm8350_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_sm8350_gdscs),
- };
- 
- static const struct of_device_id gcc_sm8350_match_table[] = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-sm8350.h b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-index 1331da65f669..f6be3da5f781 100644
---- a/include/dt-bindings/clock/qcom,gcc-sm8350.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sm8350.h
-@@ -251,4 +251,16 @@
- #define GCC_VIDEO_AXI1_CLK_ARES					36
- #define GCC_VIDEO_BCR						37
- 
-+/* GCC power domains */
-+#define PCIE_0_GDSC						0
-+#define PCIE_1_GDSC						1
-+#define UFS_CARD_GDSC						2
-+#define UFS_PHY_GDSC						3
-+#define USB30_PRIM_GDSC						4
-+#define USB30_SEC_GDSC						5
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			6
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC			7
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC			8
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC			9
-+
- #endif
--- 
-2.26.2
+> > We're already at v5.11-rc7.
+> > Yes, we can get fixes into v5.12-rc7. Or v5.12-rc9...
+> 
+> Yeah, I'm leaning toward not making it the default for 5.12-rc1 because
+> not everything seems to be working, let's see how the rest of the week
+> goes...
 
+I think there's some value waiting until after rc1 to turn off if just 
+to find a few more issues.
+
+Rob
