@@ -2,79 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
-	PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D14C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578D5C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 20:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB30464E74
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25F4064F31
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 20:20:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234554AbhBJTSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 14:18:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233224AbhBJTSq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 14:18:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DA95B64E6F;
-        Wed, 10 Feb 2021 19:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612984686;
-        bh=bI1+l4RjA4lmiWBw0Fmh1n7HvJNbX+aLWt47sQQTcN0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hsd38Yq9nOlGc+cSPrmltZL8/oRvFmb6HiPYWz0gltqGL5jujif0rhMxBBS8kKn2Q
-         /hGtnFIIZW9rSNFutJYJwNp4D4NxebhT+/61RvzXnCnMWLgNiAzjY4VW0mnlODlH7I
-         psAM9WQETTW2ZmO7vsw+fIcvbxR9nmR9cDij81tpenuzpgeBqxCoX+Bf7JgwCgPfKX
-         yYRvfR7LlmT36vbB5yOLIK9FeQBPMLDKSyz2LV79Mi+f5bxwv2R03eJEhyaTj2h+p5
-         bC3/d175vCOSZeTDwoV6/94/5HcTvLt+BycKchJvD48TxoUQpXq5GX+b2hAyhso/hK
-         Uq/CALOOoS3Mg==
-Date:   Wed, 10 Feb 2021 20:18:01 +0100
-From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>, a.heider@gmail.com,
-        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
-        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
-        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210210201801.6d329b76@kernel.org>
-In-Reply-To: <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
-References: <20210209224223.p22yhjdy7ibzepss@pali>
-        <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
-        <20210209225630.mdwnzkvnaz3r4blt@pali>
-        <a86c5069-d423-44db-92dd-b3e406b7ec91@www.fastmail.com>
-        <20210210002619.43104a9b@kernel.org>
-        <ac03801e-87e2-4e57-b131-bff52f03579d@www.fastmail.com>
-        <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
-        <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
-        <20210210092339.qy6wwuq6qr5m2ozr@pali>
-        <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
-        <20210210180322.rlfxdussqhejqpo6@pali>
-        <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S233224AbhBJUTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 15:19:34 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:39880 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233201AbhBJUTY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 15:19:24 -0500
+Received: by mail-ot1-f53.google.com with SMTP id d7so3051145otq.6;
+        Wed, 10 Feb 2021 12:19:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=h41qDLzBBrR16Efq3/F/iDABghaBilvwRHFXLq+Yn9s=;
+        b=JBMf/CAF+jB+FbeZV/dHBI7FG18mo3CpAbifK2g79FMj14IQjpRubkvfd3D6Ck6pX1
+         PXFwjpPVX8vdUcyV3QEpJdap1B2F9Nw7H+qJP2p1KGTsX5Rn7jMagBaf56R+LovMWZ9s
+         0FW+BgIpPlwaUKDbuBCfXV8XsCz5ohqhcYK+d0pVnsp9saWm9zhyDyWqJeKWDn8jV0mB
+         zjd2hebQa8mKqZQOPCeVU9QxN2F4aeAWJulbcip0HQYFHMNyAWnLXZB40xSGdugryMQm
+         VGAQJE1nZRBOcOTZqODD9VMr+ByF8e8fI9Clmra34/qmMRWyglvHo16znM/jAAS9AxNd
+         ykpw==
+X-Gm-Message-State: AOAM532p1+n3biv264tYtl9LNeZDuBOxTMNBjqm4VtWRqhKvK2UQfau5
+        0Vf5FSAZnA0OGO3emev58w==
+X-Google-Smtp-Source: ABdhPJyz5kpX+mNnEdlZwoQGZYpWUggvB3mg6nhCt6reKhCwU9w/y3ionZv0xhHlbmBIxN4oG7++Zg==
+X-Received: by 2002:a05:6830:1653:: with SMTP id h19mr3532802otr.78.1612988322998;
+        Wed, 10 Feb 2021 12:18:42 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q7sm682448oif.1.2021.02.10.12.18.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 12:18:42 -0800 (PST)
+Received: (nullmailer pid 2689654 invoked by uid 1000);
+        Wed, 10 Feb 2021 20:18:41 -0000
+Date:   Wed, 10 Feb 2021 14:18:41 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] dt-bindings: clk: versaclock5: Add optional load
+ capacitance property
+Message-ID: <20210210201841.GA2688439@robh.at.kernel.org>
+References: <20210207185140.3653350-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210207185140.3653350-1-aford173@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 10 Feb 2021 11:08:59 -0800
-nnet <nnet@fastmail.fm> wrote:
+On Sun, Feb 07, 2021 at 12:51:38PM -0600, Adam Ford wrote:
+> There are two registers which can set the load capacitance for
+> XTAL1 and XTAL2. These are optional registers when using an
+> external crystal.  Since XTAL1 and XTAL2 will set to the same value,
+> update the binding to support a single property called
+> xtal-load-femtofarads.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> V3:  No Change
+> V2:  No Change
+> 
+> A couple people suggested that I not use the $ref, but without it,
+> the bindings check failed with errors.
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> index 2ac1131fd922..c268debe5b8d 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> @@ -59,6 +59,12 @@ properties:
+>      minItems: 1
+>      maxItems: 2
+>  
+> +  idt,xtal-load-femtofarads:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
 
-> => md d0012604 1; md d0012604 1; md d0012604 1  
-> d0012604: 2b417501                               .uA+
-> d0012604: 0000945b                               [...
-> d0012604: 00000000                               ....
+Don't need a type with standard unit suffix.
 
-So this means that in OTP you have this values:
-1200 MHz - 1213 mV
-1000 MHz - 1213 mV
- 800 MHz - 1097 mV
- 600 MHz -  898 mV
+> +    minimum: 9000
+> +    maximum: 22760
+> +    description: Optional load capacitor for XTAL1 and XTAL2
+> +
+>  patternProperties:
+>    "^OUT[1-4]$":
+>      type: object
+> -- 
+> 2.25.1
+> 
