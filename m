@@ -6,69 +6,60 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4FCC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1941EC433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A439764E3E
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE1D664E57
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 08:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbhBJI1K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 03:27:10 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:42596 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233534AbhBJI0W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 03:26:22 -0500
-Received: by mail-oi1-f169.google.com with SMTP id u66so1137800oig.9;
-        Wed, 10 Feb 2021 00:26:02 -0800 (PST)
+        id S229517AbhBJIx0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 03:53:26 -0500
+Received: from mail-oo1-f54.google.com ([209.85.161.54]:44483 "EHLO
+        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229451AbhBJIwG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 03:52:06 -0500
+Received: by mail-oo1-f54.google.com with SMTP id n19so329579ooj.11;
+        Wed, 10 Feb 2021 00:51:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aGjLISWJ+fszvKmcvo2/oB8kqSJgVo4mq+414YKd0ak=;
-        b=tTM6x9WvBKj6CCIlz5RGq1bETqJFXJYJAyrAXjmBzr16syAZxbUCQOGezwW2g727mV
-         w614B9nQnvXZ8OYELXXA+2fURs4cGDkRsj/f66PXoqNUY5tY8ZpgyahSXVf8kBX0L/sE
-         WDjWyDtsCnZofUMxrngqtSJ2clsWhMoo+KtFahwp8HtKKFJiaA/MhFZb+gkY7qLNnHzs
-         oLjEvT1FJW58acYBABkf7kLGPUpra3CoZtS+Ul8ViCMgUNv/4hzy3yRVOXff/MuTvPPd
-         wVBu46NiyjJc3trNDdKRUYqvPe3wVCdyXiay6CbPlbN/K/EHZ2Bi9E8+uurDFardRwmZ
-         /j4g==
-X-Gm-Message-State: AOAM530czFG4/8pl89E0IAj34w1s5I0BFI7K9LTibSdoee0QrQpUkjP1
-        JT9cbPZ8rztGkspJ0aSdxBnTfklbLzCSp3+DHaE=
-X-Google-Smtp-Source: ABdhPJw76RbbTdIjOWOYdNuMSRd5sBeR2j0014yZb4MdeOrBQA1HjGlwkbMtEPnZoE9rsvsL6sEmWZSBR33/719FBhk=
-X-Received: by 2002:a54:4e88:: with SMTP id c8mr1277055oiy.148.1612945537621;
- Wed, 10 Feb 2021 00:25:37 -0800 (PST)
+        bh=7V7OH9fV9+gOCkOnQeMts3uy27IP2+Nw+0gEV97rl1Q=;
+        b=fwn++Om8AFmWUfd3tHqSLXTfUQScwxwmNzmKR2HBBdV4J28ETvd0gdqVlbmAVZo3rl
+         OBLTeqAVaSyArYZeBOL/JnIAWXTFSKs62b2sVxJ7zzP9YlANVtSx8VfCc7tqrtOqD1U6
+         jq9PCrsvu5mFxMoxFg/LY4Gh5STtYvKUODOQXP8Y+2wlktVdEinKNWUrOXXgWB8I7Gjw
+         oCc5FfDNL/qLqE9VP39AvpmLo8O//RTR9LF78vTnXVeLDTSP3cpVWcnoUSGqUmiPamii
+         zcN9PCbTFVx1Kj6tjCpAmjqrZKHptQ8rRFN03e3xbYkTK1lk7L5IX8YkBwPik+MWqWBU
+         zIzQ==
+X-Gm-Message-State: AOAM531C00BUlo96VnvciNlTfXeNL6mWg5ll+bGwQ16RX8SOZTbrAW2T
+        dkQ58S3t+8CCzZws7iqNTA+FLVktZoL2YhsrB5k=
+X-Google-Smtp-Source: ABdhPJwciwPWg5/eWej5/f9CZIlP6FGwhM+MPhM01e7XDw2vR3qAWS5D0ouKp/I5Z4vgwHZvG2MG+4QBgi/PLRk4AfI=
+X-Received: by 2002:a4a:ab08:: with SMTP id i8mr1446407oon.40.1612947085221;
+ Wed, 10 Feb 2021 00:51:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
- <20210205222644.2357303-5-saravanak@google.com> <20210209213320.GA219007@robh.at.kernel.org>
- <CAGETcx_gHRd9UYHvSsHX_=NFF+HEJkamJp3JcpojuJob_a8_DA@mail.gmail.com>
-In-Reply-To: <CAGETcx_gHRd9UYHvSsHX_=NFF+HEJkamJp3JcpojuJob_a8_DA@mail.gmail.com>
+References: <20210203154332.470587-1-tudor.ambarus@microchip.com>
+ <5bc4f5b7-5370-bdd5-143e-429c83447ce1@microchip.com> <161291845517.418021.17378265940034341908@swboyd.mtv.corp.google.com>
+ <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
+In-Reply-To: <CAGETcx9fjRhNmEMF2QoerrzGctC6MMTy+_znVTgPEm1w-+ehqA@mail.gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 10 Feb 2021 09:25:26 +0100
-Message-ID: <CAMuHMdXi9s_b0xjaQ3n_-qFfdwfBtxnrhYfVuRENJM5UJ9TUwg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/8] of: property: Add fw_devlink support for optional properties
+Date:   Wed, 10 Feb 2021 09:51:14 +0100
+Message-ID: <CAMuHMdWBZq8n6-8e-GYEEs0V9ZW--CSDCs=+u_bkr=aRW4y=ZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: at91: Fix the declaration of the clocks
 To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
+        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        mirq-linux@rere.qmqm.pl,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        a.fatoum@pengutronix.de, Krzysztof Kozlowski <krzk@kernel.org>,
+        Codrin.Ciubotariu@microchip.com,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -76,54 +67,31 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Saravana,
 
-CC iommu
-
-On Tue, Feb 9, 2021 at 10:55 PM Saravana Kannan <saravanak@google.com> wrote:
-> On Tue, Feb 9, 2021 at 1:33 PM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Feb 05, 2021 at 02:26:40PM -0800, Saravana Kannan wrote:
-> > > Not all DT bindings are mandatory bindings. Add support for optional DT
-> > > bindings and mark iommus, iommu-map, dmas as optional DT bindings.
+On Wed, Feb 10, 2021 at 1:57 AM Saravana Kannan <saravanak@google.com> wrote:
+> On Tue, Feb 9, 2021 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Tudor.Ambarus@microchip.com (2021-02-08 01:49:45)
+> > > Do you plan to take this patch for v5.12?
+> > > If fw_devlink will remain set to ON for v5.12, some of our boards will
+> > > no longer boot without this patch.
 > >
-> > I don't think we can say these are optional or not. It's got to be a
-> > driver decision somehow.
+> > Is fw_devlink defaulted to on for v5.12?
 >
-> Right, so maybe the word "optional" isn't a good name for it. I can
-> change that if you want.
->
-> The point being, fw_devlink can't block the probe of this driver based
-> on iommu property. We let the driver decide if it wants to
-> -EPROBE_DEFER or not or however it wants to handle this.
+> Yes.
 
-The driver cannot make that decision, cfr. below.
+Have all issues been identified and understood?
+Have all issues been fixed, reviewed, and committed?
+Have all fixes entered linux-next?
+Have all fixes been migrated from submaintainers to maintainers?
 
-> > For example, if IOMMU is optional, what happens with this sequence:
-> >
-> > driver probes without IOMMU
-> > driver calls dma_map_?()
-> > IOMMU driver probes
-> > h/w accesses DMA buffer --> BOOM!
-
-Does it really behave that way? Or does it continue without IOMMU?
-
-> Right. But how is this really related to fw_devlink? AFAICT, this is
-> an issue even today. If the driver needs the IOMMU, then it needs to
-> make sure the IOMMU has probed? What am I missing?
-
-Individual I/O (IOMMU slave) drivers are completely unaware of the
-presence or absence of an IOMMU; they just use the DMA API, which is the
-same regardless of an IOMMU being used or not.
-While for GPIO/IRQ/CLK/DMA/... have request/get_{gpio,irq,clk,dma,...}
-APIs for a driver to get a reference, which can return -EPROBE_DEFER, no
-such thing exists for IOMMUs.  This is handled by the IOMMU core
-instead.
-
-Using the IOMMU or not is more like a system policy decision.
+We're already at v5.11-rc7.
+Yes, we can get fixes into v5.12-rc7. Or v5.12-rc9...
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
