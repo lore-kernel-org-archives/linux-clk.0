@@ -2,105 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B84C4332E
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA50C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A64A64E53
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 11:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34C5164E31
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231438AbhBJLs1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 06:48:27 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:53072 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbhBJLqR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 06:46:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1612957576; x=1644493576;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HiRooR0JRPW34th/7QSHeDW6g1Xmz/WY9IkNdXFN45o=;
-  b=EUoy18tJpFtBwDKPjQZW2bKumgPneRtSZOrWKJTwZvf+518vchPLcjeV
-   NmoGoLo7m2ruplzpCZGbX9eFqJ5SFiJ36DIw3tZVtyDpyWORnYdzL/NUo
-   O97KFtpKO+ADBX5cb7YzokppL7L4cbMUfwFl/3WLxq9lofW8hPeAjL6sP
-   7wAyNsb68O6j73iO4+v1ADWJR2PXVN83t7d1NW9h6bHCjzekxwtEFSHvy
-   PT7Y15nXvXowJoNVodlZUG9qHFuR2IRHotuAJMPICJukItAoUPl5pX9mW
-   dLcN4C9CfFqd7ChFzkEeabaIiX1+Jnsu2JEEDHx//tIKHo5bMpWI+xOs5
-   g==;
-IronPort-SDR: VRlDMKK2cHa3TxUR1JcmsJssA6kfjrVR7Z5f3Ls10/pKx5MNfbGzJXh0KqrAy6OgoxHnvFnykg
- xUIkDzlfEUgsWVTMJI6exxnVy6E2cZyksQSIZ9X7Qg+J1oajssVGB+YxTkbGImT7cAYeG/aF4s
- xhPVW6KZqdiT/345FloQXjz2v8LKSC/bROy7v1NYu9SxtBAD4SuVSYwtAM3otWs0cOpS264QX7
- 0GXcd8BB/xVxPezvoMlkvU++SuivhTUGOJt2Ns8Exffejay8FjVRuDMDkhMO21YWorfBxuGz2r
- pAI=
-X-IronPort-AV: E=Sophos;i="5.81,168,1610434800"; 
-   d="scan'208";a="114541474"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 10 Feb 2021 04:44:59 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 10 Feb 2021 04:44:59 -0700
-Received: from atudor-ThinkPad-T470p.amer.actel.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 10 Feb 2021 04:44:53 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <corbet@lwn.net>, <gregkh@linuxfoundation.org>,
-        <rafael@kernel.org>, <khilman@kernel.org>,
-        <ulf.hansson@linaro.org>, <len.brown@intel.com>, <lenb@kernel.org>,
-        <pavel@ucw.cz>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <frowand.list@gmail.com>, <maz@kernel.org>,
-        <tglx@linutronix.de>, <saravanak@google.com>
-CC:     <nicolas.ferre@microchip.com>, <claudiu.beznea@microchip.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <m.szyprowski@samsung.com>, <geert@linux-m68k.org>,
-        <kernel-team@android.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH] clk: Mark fwnodes when their clock provider is added
-Date:   Wed, 10 Feb 2021 13:44:35 +0200
-Message-ID: <20210210114435.122242-2-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210210114435.122242-1-tudor.ambarus@microchip.com>
-References: <20210205222644.2357303-9-saravanak@google.com>
- <20210210114435.122242-1-tudor.ambarus@microchip.com>
+        id S229839AbhBJMWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 07:22:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229731AbhBJMUC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 07:20:02 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD77C06174A;
+        Wed, 10 Feb 2021 04:19:22 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id r21so2234048wrr.9;
+        Wed, 10 Feb 2021 04:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ssW9O/eIVkXR6kVLbH1uKgyKlATY5TEX9NDvAFBdzbU=;
+        b=IDkESL79YgL6x6coqRDxvQiawlwVxIIJSkN/pWkDyFQ6rCgvQBzz1rNjapBgEr8r/b
+         qwwR2dYQtbSvZJdpWtLYMPKBAkCVuWeeoL8rEKP6XFyLLDPZPh7/T5Gv6WQubDLPO45N
+         BaJKfEJqbVlPONqfx+TTAN4uhIlbcWy2zYMeylp6b4/nPhLV3vMwQ/vKe1VMDZycNBQN
+         IofAdahVA++bpV9GrzBSO3R8iP5rmeuL4duwJ+38E4eJOt15ZXK5LEb2ACg7k6dLWbrL
+         Qtz7zl4p9J/FDbIl39/aWJvYy0+zksaYAQMK173lDu6FL38ZXfLjwU+AB3sD31KUnH5l
+         gGkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ssW9O/eIVkXR6kVLbH1uKgyKlATY5TEX9NDvAFBdzbU=;
+        b=iYVgdWyfFKNgvlAmwTPYdaW2b9q5uzAJRIbQ8A0MoU73PRmu6g1TNbEid+/QIk3Flg
+         n4nNNECc5t0fN4y7/fkil9Z4M6V5C/i+HtXGspjd22adxr0XjyOAbSi/6hK1gcVH4FJC
+         3xIiBXLZWp6mrw3OOGH3yeNdTjnJHVZ6KLiOjXV2x+6nWO9qUkEh3GH2UONwbvca54H5
+         QCPnlOWN8VvmUsKpfYgvbQ6O4k2Mo+3dv8msx1I9xfEM21OfP6072qfurOiPOAMS9Fc5
+         UMAWBk8HBtSRLI+AuQ5pjsJxEyxJggFWjvjuwcFV6u+AaAlYWWLiIixW6iFyAI1AXc3G
+         0Hzg==
+X-Gm-Message-State: AOAM532MqT/4/RH3zqlBcEj3P4Tahw5FVeyKeF1Uln/++/GK+R+rXB2/
+        VfnHysYIdYfFV++7VzhT+sY=
+X-Google-Smtp-Source: ABdhPJzuBlWj2KkjFfITOd5oA3b+7UPXGC+dYSAbizJbvSvcTU7UhE5sy9dOB6iNL20qS/uuzHmUHQ==
+X-Received: by 2002:adf:ab18:: with SMTP id q24mr3376501wrc.80.1612959561029;
+        Wed, 10 Feb 2021 04:19:21 -0800 (PST)
+Received: from ziggy.stardust (static-188-169-27-46.ipcom.comunitel.net. [46.27.169.188])
+        by smtp.gmail.com with ESMTPSA id g15sm2831049wrx.1.2021.02.10.04.19.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Feb 2021 04:19:20 -0800 (PST)
+Subject: Re: [PATCH v6 01/22] dt-bindings: ARM: Mediatek: Add new document
+ bindings of imp i2c wrapper controller
+To:     Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+ <1608642587-15634-2-git-send-email-weiyi.lu@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <010e346c-961b-88bb-aa48-398b23a7fb7a@gmail.com>
+Date:   Wed, 10 Feb 2021 13:19:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <1608642587-15634-2-git-send-email-weiyi.lu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a follow-up for:
-commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
 
-The above commit updated the deprecated of_clk_add_provider(),
-but missed to update the preferred of_clk_add_hw_provider().
-Update it now.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- drivers/clk/clk.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 22/12/2020 14:09, Weiyi Lu wrote:
+> This patch adds the new binding documentation of imp i2c wrapper controller
+> for Mediatek MT8192.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 27ff90eacb1f..9370e4dfecae 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	if (ret < 0)
- 		of_clk_del_provider(np);
- 
-+	fwnode_dev_initialized(&np->fwnode, true);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
--- 
-2.25.1
+The wrapper controller has only clock parts, or are the clock register mapped
+into the i2c wrapper block. In that case we might want to probe the clock driver
+through the i2c wrapper driver.
 
+Regards,
+Matthias
+
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  .../arm/mediatek/mediatek,imp_iic_wrap.yaml        | 78 ++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
+> new file mode 100644
+> index 0000000..5d0cf37
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,imp_iic_wrap.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek IMP I2C Wrapper Controller
+> +
+> +maintainers:
+> +  - Weiyi Lu <weiyi.lu@mediatek.com>
+> +
+> +description:
+> +  The Mediatek imp i2c wrapper controller provides functional configurations and clocks to the system.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8192-imp_iic_wrap_c
+> +          - mediatek,mt8192-imp_iic_wrap_e
+> +          - mediatek,mt8192-imp_iic_wrap_s
+> +          - mediatek,mt8192-imp_iic_wrap_ws
+> +          - mediatek,mt8192-imp_iic_wrap_w
+> +          - mediatek,mt8192-imp_iic_wrap_n
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    imp_iic_wrap_c: syscon@11007000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_c", "syscon";
+> +        reg = <0 0x11007000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_e: syscon@11cb1000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_e", "syscon";
+> +        reg = <0 0x11cb1000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_s: syscon@11d03000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_s", "syscon";
+> +        reg = <0 0x11d03000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_ws: syscon@11d23000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_ws", "syscon";
+> +        reg = <0 0x11d23000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_w: syscon@11e01000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_w", "syscon";
+> +        reg = <0 0x11e01000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    imp_iic_wrap_n: syscon@11f02000 {
+> +        compatible = "mediatek,mt8192-imp_iic_wrap_n", "syscon";
+> +        reg = <0 0x11f02000 0 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> 
