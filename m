@@ -8,57 +8,55 @@ X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA50C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9B5C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34C5164E31
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923F064E32
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 12:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbhBJMWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 07:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41868 "EHLO
+        id S229870AbhBJMr0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 07:47:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbhBJMUC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 07:20:02 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD77C06174A;
-        Wed, 10 Feb 2021 04:19:22 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id r21so2234048wrr.9;
-        Wed, 10 Feb 2021 04:19:22 -0800 (PST)
+        with ESMTP id S230419AbhBJMqn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 07:46:43 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB87C061786;
+        Wed, 10 Feb 2021 04:46:02 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id 7so2407757wrz.0;
+        Wed, 10 Feb 2021 04:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=to:cc:references:from:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ssW9O/eIVkXR6kVLbH1uKgyKlATY5TEX9NDvAFBdzbU=;
-        b=IDkESL79YgL6x6coqRDxvQiawlwVxIIJSkN/pWkDyFQ6rCgvQBzz1rNjapBgEr8r/b
-         qwwR2dYQtbSvZJdpWtLYMPKBAkCVuWeeoL8rEKP6XFyLLDPZPh7/T5Gv6WQubDLPO45N
-         BaJKfEJqbVlPONqfx+TTAN4uhIlbcWy2zYMeylp6b4/nPhLV3vMwQ/vKe1VMDZycNBQN
-         IofAdahVA++bpV9GrzBSO3R8iP5rmeuL4duwJ+38E4eJOt15ZXK5LEb2ACg7k6dLWbrL
-         Qtz7zl4p9J/FDbIl39/aWJvYy0+zksaYAQMK173lDu6FL38ZXfLjwU+AB3sD31KUnH5l
-         gGkg==
+        bh=rjLWgX3Eg/gC3RV2khv5c8f9NWNyEch31NnXlurt3Ss=;
+        b=GSU8nJJHRxGKxEYvAVHgEZ99IaPo0P82K2x/ng7rcD0jt+NV3L03A27i1H57yxSIxh
+         /ix5ODPDpCQiJftDGoj9wOWsLSy5xcMrn+tClntvA+wmxdJmfrzx/MUqJJiXEwHDeC0I
+         dtbDh2tJORkIrYHkE0g9fUS4N7old4ebGv+D75QpkkmjRxu5mBL4hkboAi4chmFY1GCe
+         Y2dfPmWdzLtFxoNTJ9JD7aJkXPQY2iwoVdYi1dtnv87ZxOfDg2VxkIe6rfQj0mrAKf3Z
+         HpJwhtERMHvMhNT7nvtQiVT7CsRyqedvV18w1GxtWP3xZNK7/ghrnLa+gxewO8yaMSeU
+         lzjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ssW9O/eIVkXR6kVLbH1uKgyKlATY5TEX9NDvAFBdzbU=;
-        b=iYVgdWyfFKNgvlAmwTPYdaW2b9q5uzAJRIbQ8A0MoU73PRmu6g1TNbEid+/QIk3Flg
-         n4nNNECc5t0fN4y7/fkil9Z4M6V5C/i+HtXGspjd22adxr0XjyOAbSi/6hK1gcVH4FJC
-         3xIiBXLZWp6mrw3OOGH3yeNdTjnJHVZ6KLiOjXV2x+6nWO9qUkEh3GH2UONwbvca54H5
-         QCPnlOWN8VvmUsKpfYgvbQ6O4k2Mo+3dv8msx1I9xfEM21OfP6072qfurOiPOAMS9Fc5
-         UMAWBk8HBtSRLI+AuQ5pjsJxEyxJggFWjvjuwcFV6u+AaAlYWWLiIixW6iFyAI1AXc3G
-         0Hzg==
-X-Gm-Message-State: AOAM532MqT/4/RH3zqlBcEj3P4Tahw5FVeyKeF1Uln/++/GK+R+rXB2/
-        VfnHysYIdYfFV++7VzhT+sY=
-X-Google-Smtp-Source: ABdhPJzuBlWj2KkjFfITOd5oA3b+7UPXGC+dYSAbizJbvSvcTU7UhE5sy9dOB6iNL20qS/uuzHmUHQ==
-X-Received: by 2002:adf:ab18:: with SMTP id q24mr3376501wrc.80.1612959561029;
-        Wed, 10 Feb 2021 04:19:21 -0800 (PST)
+        bh=rjLWgX3Eg/gC3RV2khv5c8f9NWNyEch31NnXlurt3Ss=;
+        b=XQD+J3CWZkOCaoKxZgvq4F6rPAyPbAt1gkxXewuLbk/2P7pqeW0U92c3MgOo0Ge+hj
+         YQgWfZIzumaGAiWQzmO0DWm5JReqXhCThSEC7J7rkYxewodEV7lXLvcNlSHn/joPs0vG
+         KCAfLh8KxmIk+YTRURPiSi8gJlDthBNS0WTi8f4f0szslQtOrzBK3pdy4lHz9hSbN0hY
+         D7lcpfDbx41Em9pUhrId68FTqpQcz5jsRNMjWFJ54wnsjZafnpubq8Vjaqq99wyhZRhu
+         2COX2YSj+8zd5LLWF/JzaVQodjGQwf3sbwHV+z5EH4JSdf8kzXKDmnlR8sWxiL17RjDw
+         caMA==
+X-Gm-Message-State: AOAM531oS+GPgJFnTtSqS+51NVeAAAFNuFCevmHVt/bxd4+izJL5zFbV
+        O/aqkdZR4x360co/iadf558=
+X-Google-Smtp-Source: ABdhPJyGB+U3gO1kAGzHQsdpRDV8svemT3zKAyNPWMoEzioiHLuUbNy6AOhrhPwCNeE3NNBWZeMhYA==
+X-Received: by 2002:a5d:4d8d:: with SMTP id b13mr3334138wru.178.1612961161574;
+        Wed, 10 Feb 2021 04:46:01 -0800 (PST)
 Received: from ziggy.stardust (static-188-169-27-46.ipcom.comunitel.net. [46.27.169.188])
-        by smtp.gmail.com with ESMTPSA id g15sm2831049wrx.1.2021.02.10.04.19.20
+        by smtp.gmail.com with ESMTPSA id f17sm2826671wrx.57.2021.02.10.04.46.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Feb 2021 04:19:20 -0800 (PST)
-Subject: Re: [PATCH v6 01/22] dt-bindings: ARM: Mediatek: Add new document
- bindings of imp i2c wrapper controller
+        Wed, 10 Feb 2021 04:46:01 -0800 (PST)
 To:     Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Boichat <drinkcat@chromium.org>
@@ -67,17 +65,18 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         srv_heupstream@mediatek.com,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
- <1608642587-15634-2-git-send-email-weiyi.lu@mediatek.com>
+ <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <010e346c-961b-88bb-aa48-398b23a7fb7a@gmail.com>
-Date:   Wed, 10 Feb 2021 13:19:19 +0100
+Subject: Re: [PATCH v6 10/22] clk: mediatek: Add MT8192 basic clocks support
+Message-ID: <b16e4693-1dc6-e13c-3cc9-feb5005179dd@gmail.com>
+Date:   Wed, 10 Feb 2021 13:46:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <1608642587-15634-2-git-send-email-weiyi.lu@mediatek.com>
+In-Reply-To: <1608642587-15634-11-git-send-email-weiyi.lu@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -85,105 +84,131 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 22/12/2020 14:09, Weiyi Lu wrote:
-> This patch adds the new binding documentation of imp i2c wrapper controller
-> for Mediatek MT8192.
-
-The wrapper controller has only clock parts, or are the clock register mapped
-into the i2c wrapper block. In that case we might want to probe the clock driver
-through the i2c wrapper driver.
-
-Regards,
-Matthias
-
+> Add MT8192 basic clock providers, include topckgen, apmixedsys,
+> infracfg and pericfg.
 > 
 > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 > ---
->  .../arm/mediatek/mediatek,imp_iic_wrap.yaml        | 78 ++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
+>  drivers/clk/mediatek/Kconfig      |    8 +
+>  drivers/clk/mediatek/Makefile     |    1 +
+>  drivers/clk/mediatek/clk-mt8192.c | 1326 +++++++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mux.h    |   15 +
+>  4 files changed, 1350 insertions(+)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8192.c
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
-> new file mode 100644
-> index 0000000..5d0cf37
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imp_iic_wrap.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/mediatek/mediatek,imp_iic_wrap.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+[...]
+
+> +static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_onecell_data *clk_data;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	int r;
 > +
-> +title: MediaTek IMP I2C Wrapper Controller
+> +	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+> +	if (!clk_data)
+> +		return -ENOMEM;
 > +
-> +maintainers:
-> +  - Weiyi Lu <weiyi.lu@mediatek.com>
+> +	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+> +	r = mtk_clk_register_gates(node, apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
+> +	if (r)
+> +		return r;
 > +
-> +description:
-> +  The Mediatek imp i2c wrapper controller provides functional configurations and clocks to the system.
+> +	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +}
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - mediatek,mt8192-imp_iic_wrap_c
-> +          - mediatek,mt8192-imp_iic_wrap_e
-> +          - mediatek,mt8192-imp_iic_wrap_s
-> +          - mediatek,mt8192-imp_iic_wrap_ws
-> +          - mediatek,mt8192-imp_iic_wrap_w
-> +          - mediatek,mt8192-imp_iic_wrap_n
-> +      - const: syscon
+> +static const struct of_device_id of_match_clk_mt8192[] = {
+> +	{
+> +		.compatible = "mediatek,mt8192-apmixedsys",
+> +		.data = clk_mt8192_apmixed_probe,
+> +	}, {
+> +		.compatible = "mediatek,mt8192-topckgen",
+> +		.data = clk_mt8192_top_probe,
+> +	}, {
+> +		.compatible = "mediatek,mt8192-infracfg",
+> +		.data = clk_mt8192_infra_probe,
+> +	}, {
+> +		.compatible = "mediatek,mt8192-pericfg",
+> +		.data = clk_mt8192_peri_probe,
+> +	}, {
+> +		/* sentinel */
+> +	}
+> +};
 > +
-> +  reg:
-> +    maxItems: 1
+> +static int clk_mt8192_probe(struct platform_device *pdev)
+> +{
+> +	int (*clk_probe)(struct platform_device *pdev);
+> +	int r;
 > +
-> +  '#clock-cells':
-> +    const: 1
+> +	clk_probe = of_device_get_match_data(&pdev->dev);
+> +	if (!clk_probe)
+> +		return -EINVAL;
 > +
-> +required:
-> +  - compatible
-> +  - reg
+> +	r = clk_probe(pdev);
+> +	if (r)
+> +		dev_err(&pdev->dev, "could not register clock provider: %s: %d\n", pdev->name, r);
 > +
-> +examples:
-> +  - |
-> +    imp_iic_wrap_c: syscon@11007000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_c", "syscon";
-> +        reg = <0 0x11007000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+> +	return r;
+> +}
 > +
-> +  - |
-> +    imp_iic_wrap_e: syscon@11cb1000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_e", "syscon";
-> +        reg = <0 0x11cb1000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+> +static struct platform_driver clk_mt8192_drv = {
+> +	.probe = clk_mt8192_probe,
+> +	.driver = {
+> +		.name = "clk-mt8192",
+> +		.of_match_table = of_match_clk_mt8192,
+> +	},
+> +};
 > +
-> +  - |
-> +    imp_iic_wrap_s: syscon@11d03000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_s", "syscon";
-> +        reg = <0 0x11d03000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+> +static int __init clk_mt8192_init(void)
+> +{
+> +	return platform_driver_register(&clk_mt8192_drv);
+> +}
 > +
-> +  - |
-> +    imp_iic_wrap_ws: syscon@11d23000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_ws", "syscon";
-> +        reg = <0 0x11d23000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+> +arch_initcall(clk_mt8192_init);
+
+Do we really need all these clocks that early?
+Why don't we use CLK_OF_DECLARE_DRIVER() then and why do we initialize some
+clocks CLK_OF_DECLARE_DRIVER and other with arch_initcall?
+
+I know that this is in other drivers for MediaTek SoCs, but that does not mean
+it's the right approach.
+
+
+> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> index f5625f4..afbc7df 100644
+> --- a/drivers/clk/mediatek/clk-mux.h
+> +++ b/drivers/clk/mediatek/clk-mux.h
+> @@ -77,6 +77,21 @@ struct mtk_mux {
+>  			_width, _gate, _upd_ofs, _upd,			\
+>  			CLK_SET_RATE_PARENT)
+>  
+> +#define MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,		\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			_upd_ofs, _upd, _flags)				\
+> +		GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			0, _upd_ofs, _upd, _flags,			\
+> +			mtk_mux_clr_set_upd_ops)
 > +
-> +  - |
-> +    imp_iic_wrap_w: syscon@11e01000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_w", "syscon";
-> +        reg = <0 0x11e01000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+> +#define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,			\
+> +			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+> +			_upd_ofs, _upd)					\
+> +		MUX_CLR_SET_UPD_FLAGS(_id, _name, _parents,		\
+> +			_mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,	\
+> +			_width, _upd_ofs, _upd,	CLK_SET_RATE_PARENT)
 > +
-> +  - |
-> +    imp_iic_wrap_n: syscon@11f02000 {
-> +        compatible = "mediatek,mt8192-imp_iic_wrap_n", "syscon";
-> +        reg = <0 0x11f02000 0 0x1000>;
-> +        #clock-cells = <1>;
-> +    };
+
+Why can't we do something like:
+
+#define MUX_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,			\
+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+			_upd_ofs, _upd)					\
+		GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
+			0, _upd_ofs, _upd, CLK_SET_RATE_PARENT,			\
+			mtk_mux_clr_set_upd_ops)
+
+>  struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+>  				 struct regmap *regmap,
+>  				 spinlock_t *lock);
 > 
