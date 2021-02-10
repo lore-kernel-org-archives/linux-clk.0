@@ -2,180 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
+	PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6C2C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D14C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6F4D64E70
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB30464E74
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 19:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234586AbhBJTQU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 14:16:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234599AbhBJTQM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 14:16:12 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3A2C061786
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 11:15:32 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id k4so3126492ybp.6
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 11:15:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bMm7LhCNfiXatte+J72259TBwE3qgGrJaSabgZ25gjg=;
-        b=HRIiwWTs47Szc6oxYxnhSOiBHfT4UHEE38Ch+iU28KkeDshpiC1SepDhdslHI23tt3
-         OS6PP06URj7B5CC3eUzROAwtGPBWwYlZObWB0SekS4wI484RrQtNhKydUqynhO0Q8Pyk
-         qguBlQPU+LMbanRwX+gBvVJF+BhQCcYxMSwMCzRFIEXITAKkGL/LKRyfcgN2HYRlGkG0
-         9Em0m0j6lShbUakz/6okuTXwmW2fb5MPmmWsxUn71aH5g/bQoczVbCIQxEdxfw7rHKoN
-         TLKZpTEXoYkJo9BrpaUYxzaQJytCtOK/yU8wbQvE6Yx/wkzfdo1t+bWo+N2VU47k8h1/
-         XX5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bMm7LhCNfiXatte+J72259TBwE3qgGrJaSabgZ25gjg=;
-        b=tUKhKTLORtgLm26WhTgSA3DqiVY6o/KUpo2LyseZcosHKB7c9kepuHEw9MrmrlQJ6t
-         lZI6e6vKCV83IOdjFHjjenb4+Wa6dOe9kqY27qFdUtJXZwoRt/rVSZYOtTejj2cGNs5F
-         ntns0ylO5+J60qwqQNuERdDbd03dTw0GXVZq0BMtzMi72a85sOC1NND5K/H7xb0QYHhs
-         XIYu/zdNuDCjvV6cH26AcBOAZZrodl+e4TjLc6b1vSL7LKAvVmMRc1DNvwVDRbQk/l2Y
-         TQUeSBDnZZPlcaKNRM9ec+2NtuQ4R50sI7aarD0g9BlKqpnhSkgTpOWLvLUGjQGVtTzm
-         8mEQ==
-X-Gm-Message-State: AOAM5304pIw+gTVTxq+Ch/gm454cuex6zKXVTqeS3sJiVW5caRC+5aSe
-        nHRXzki3odwNx86K/meE2nZLpop+rDKEMllDEWuAVQ==
-X-Google-Smtp-Source: ABdhPJxPLs/+QIJMt+wtIBzBZGrhURUX+xSgCx7EymGDDvrfSfAubD/1PiDbpILIMYyk25/SJ0qOy+BTaFfHFwoVjsg=
-X-Received: by 2002:a05:6902:1025:: with SMTP id x5mr6476503ybt.96.1612984531616;
- Wed, 10 Feb 2021 11:15:31 -0800 (PST)
+        id S234554AbhBJTSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 14:18:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233224AbhBJTSq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 14:18:46 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DA95B64E6F;
+        Wed, 10 Feb 2021 19:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612984686;
+        bh=bI1+l4RjA4lmiWBw0Fmh1n7HvJNbX+aLWt47sQQTcN0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hsd38Yq9nOlGc+cSPrmltZL8/oRvFmb6HiPYWz0gltqGL5jujif0rhMxBBS8kKn2Q
+         /hGtnFIIZW9rSNFutJYJwNp4D4NxebhT+/61RvzXnCnMWLgNiAzjY4VW0mnlODlH7I
+         psAM9WQETTW2ZmO7vsw+fIcvbxR9nmR9cDij81tpenuzpgeBqxCoX+Bf7JgwCgPfKX
+         yYRvfR7LlmT36vbB5yOLIK9FeQBPMLDKSyz2LV79Mi+f5bxwv2R03eJEhyaTj2h+p5
+         bC3/d175vCOSZeTDwoV6/94/5HcTvLt+BycKchJvD48TxoUQpXq5GX+b2hAyhso/hK
+         Uq/CALOOoS3Mg==
+Date:   Wed, 10 Feb 2021 20:18:01 +0100
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     nnet <nnet@fastmail.fm>
+Cc:     Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>, a.heider@gmail.com,
+        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
+        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
+        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
+ CPU speed to 800 MHz from 1000 MHz
+Message-ID: <20210210201801.6d329b76@kernel.org>
+In-Reply-To: <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
+References: <20210209224223.p22yhjdy7ibzepss@pali>
+        <93745280-dbe9-491c-a79d-c9c364b83880@www.fastmail.com>
+        <20210209225630.mdwnzkvnaz3r4blt@pali>
+        <a86c5069-d423-44db-92dd-b3e406b7ec91@www.fastmail.com>
+        <20210210002619.43104a9b@kernel.org>
+        <ac03801e-87e2-4e57-b131-bff52f03579d@www.fastmail.com>
+        <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
+        <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
+        <20210210092339.qy6wwuq6qr5m2ozr@pali>
+        <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
+        <20210210180322.rlfxdussqhejqpo6@pali>
+        <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
- <47ca46aa-99f3-5203-8aa7-65c6443bd965@microchip.com> <CAGETcx862JPn8759tk-69WySBvokxMXJaaOVY7L6V8FLwfpV8g@mail.gmail.com>
- <3ec7ba3a-bbf6-aa5f-7800-4fc91ab199ec@microchip.com>
-In-Reply-To: <3ec7ba3a-bbf6-aa5f-7800-4fc91ab199ec@microchip.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 10 Feb 2021 11:14:55 -0800
-Message-ID: <CAGETcx87RmBAhC2Kg0xP9oYGhGWXFWoTtshzuqT2=4_svm5s5A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Brown, Len" <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 2:02 AM <Tudor.Ambarus@microchip.com> wrote:
->
-> On 2/10/21 10:54 AM, Saravana Kannan wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> >
-> > On Wed, Feb 10, 2021 at 12:19 AM <Tudor.Ambarus@microchip.com> wrote:
-> >>
-> >> Hi, Saravana,
-> >>
-> >> On 2/6/21 12:26 AM, Saravana Kannan wrote:
-> >>> There are a lot of devices/drivers where they never have a struct device
-> >>> created for them or the driver initializes the hardware without ever
-> >>> binding to the struct device.
-> >>>
-> >>> This series is intended to avoid any boot regressions due to such
-> >>> devices/drivers when fw_devlink=on and also address the handling of
-> >>> optional suppliers.
-> >>>
-> >>> Patch 1 and 2 addresses the issue of firmware nodes that look like
-> >>> they'll have struct devices created for them, but will never actually
-> >>> have struct devices added for them. For example, DT nodes with a
-> >>> compatible property that don't have devices added for them.
-> >>>
-> >>> Patch 3 and 4 allow for handling optional DT bindings.
-> >>>
-> >>> Patch 5 sets up a generic API to handle drivers that never bind with
-> >>> their devices.
-> >>>
-> >>> Patch 6 through 8 update different frameworks to use the new API.
-> >>>
-> >>> Thanks,
-> >>> Saravana
-> >>>
-> >>> Saravana Kannan (8):
-> >>>   driver core: fw_devlink: Detect supplier devices that will never be
-> >>>     added
-> >>>   of: property: Don't add links to absent suppliers
-> >>>   driver core: Add fw_devlink.strict kernel param
-> >>>   of: property: Add fw_devlink support for optional properties
-> >>>   driver core: fw_devlink: Handle suppliers that don't use driver core
-> >>>   irqdomain: Mark fwnodes when their irqdomain is added/removed
-> >>>   PM: domains: Mark fwnodes when their powerdomain is added/removed
-> >>>   clk: Mark fwnodes when their clock provider is added/removed
-> >>>
-> >>>  .../admin-guide/kernel-parameters.txt         |  5 ++
-> >>>  drivers/base/core.c                           | 58 ++++++++++++++++++-
-> >>>  drivers/base/power/domain.c                   |  2 +
-> >>>  drivers/clk/clk.c                             |  3 +
-> >>>  drivers/of/property.c                         | 16 +++--
-> >>>  include/linux/fwnode.h                        | 20 ++++++-
-> >>>  kernel/irq/irqdomain.c                        |  2 +
-> >>>  7 files changed, 98 insertions(+), 8 deletions(-)
-> >>>
-> >>
-> >> Even with this patch set applied, sama5d2_xplained can not boot.
-> >> Patch at [1] makes sama5d2_xplained boot again. Stephen applied it
-> >> to clk-next.
-> >
-> > I'm glad you won't actually have any boot issues in 5.12, but the fact
-> > you need [1] with this series doesn't make a lot of sense to me
-> > because:
-> >
-> > 1. The FWNODE_FLAG_INITIALIZED flag will be set for the clock fwnode
-> > in question way before any consumer devices are added.
->
-> Looks like in my case FWNODE_FLAG_INITIALIZED is not set, because
-> drivers/clk/at91/sama5d2.c uses of_clk_add_hw_provider().
+On Wed, 10 Feb 2021 11:08:59 -0800
+nnet <nnet@fastmail.fm> wrote:
 
-Ah, that explains it.
+> => md d0012604 1; md d0012604 1; md d0012604 1  
+> d0012604: 2b417501                               .uA+
+> d0012604: 0000945b                               [...
+> d0012604: 00000000                               ....
 
-> > 2. Any consumer device added after (1) will stop trying to link to the
-> > clock device.
-> >
-> > Are you somehow adding a consumer to the clock fwnode before (1)?
-> >
-> > Can you try this patch without your clk fix? I was trying to avoid
-> > looping through a list, but looks like your case might somehow need
-> > it?
-> >
->
-> I tried it, didn't solve my boot problem.
-
-Thanks! I should stop coding past midnight!
-
-> The following patch makes the
-> sama5d2_xplained boot again, even without the patch from [1]:
-
-Great! I gave a reviewed-by.
-
--Saravana
+So this means that in OTP you have this values:
+1200 MHz - 1213 mV
+1000 MHz - 1213 mV
+ 800 MHz - 1097 mV
+ 600 MHz -  898 mV
