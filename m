@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6935AC433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83EAC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AFC664EE4
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D23164E02
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 18:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233894AbhBJSZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 13:25:44 -0500
-Received: from so15.mailgun.net ([198.61.254.15]:10801 "EHLO so15.mailgun.net"
+        id S231939AbhBJS2x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 13:28:53 -0500
+Received: from so15.mailgun.net ([198.61.254.15]:34764 "EHLO so15.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232767AbhBJSXe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 13:23:34 -0500
+        id S234094AbhBJSZE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 13:25:04 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1612981391; h=Content-Transfer-Encoding: Content-Type:
+ s=smtp; t=1612981479; h=Content-Transfer-Encoding: Content-Type:
  In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=KfKCXxFIC+tK9m9tzuQMc3z9VZ1bjrydp4kE9hsnCBQ=; b=vECCbrpeCr5yvqJO28KZZqVfgl0ZdXXRngiXnezbPRw63d03DnLVCuSb6MS1nY7Km+SjN7ix
- uZDwIKD5v70sp/p8hNxkMGxr29k4GPfx5lHC7FLYqFQolP4e7ogRGpflMmTHHzOn2I4TipTn
- bUAK0tSXCk0WSBnhvOSYx03G2MU=
+ Subject: Sender; bh=t+MNOVooXHEI9VyWLeT0xKygr+MDEJjCL/sCRvsYnhM=; b=aNnjeGZOBh0kKnkpdJSC6YOrCKSUD3nQf79Sdbc9PqTSFadnOnwjUclhuFXTCwR16eJUy+Hr
+ lrdzHEloVCrU4CP6WIHJK1Lu0lKTNGZccTxVy9gSv0K50tv3QETgLIrVoQ449NJApQ89eIay
+ 0Xfh+2tdpPpMv2Db3BPqWnn9Epw=
 X-Mailgun-Sending-Ip: 198.61.254.15
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 60242473e3df861f4ba9f820 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 18:22:43
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 602424c94bd23a05ae030bcb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Feb 2021 18:24:09
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 682BCC43463; Wed, 10 Feb 2021 18:22:42 +0000 (UTC)
+        id 90478C433C6; Wed, 10 Feb 2021 18:24:09 +0000 (UTC)
 Received: from [192.168.0.106] (unknown [49.204.180.139])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B514C433C6;
-        Wed, 10 Feb 2021 18:22:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B514C433C6
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9913CC433CA;
+        Wed, 10 Feb 2021 18:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9913CC433CA
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add SC7280 GCC clock binding
+Subject: Re: [PATCH v1 2/2] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7280
 To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
 Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
@@ -53,15 +54,15 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
 References: <1608058114-29025-1-git-send-email-tdas@codeaurora.org>
- <1608058114-29025-2-git-send-email-tdas@codeaurora.org>
- <161048197433.3661239.10431667618674179787@swboyd.mtv.corp.google.com>
+ <1608058114-29025-3-git-send-email-tdas@codeaurora.org>
+ <161048188125.3661239.13161942092910464158@swboyd.mtv.corp.google.com>
 From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <ccc9edc3-1200-356e-7bb3-863c3d284490@codeaurora.org>
-Date:   Wed, 10 Feb 2021 23:52:35 +0530
+Message-ID: <a70505c8-9d29-463f-99bb-b5c046ee8da3@codeaurora.org>
+Date:   Wed, 10 Feb 2021 23:54:02 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.0
 MIME-Version: 1.0
-In-Reply-To: <161048197433.3661239.10431667618674179787@swboyd.mtv.corp.google.com>
+In-Reply-To: <161048188125.3661239.13161942092910464158@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,44 +72,137 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Thanks Stephen for your review comments.
 
-On 1/13/2021 1:36 AM, Stephen Boyd wrote:
-
->> +  clock-names:
->> +    items:
->> +      - const: bi_tcxo
->> +      - const: bi_tcxo_ao
->> +      - const: sleep_clk
->> +      - const: pcie_0_pipe_clk
->> +      - const: pcie_1_pipe_clk
->> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
-> 
-> Don't ufs phy clks also go into gcc?
-> 
-
-The latest patch has this updated.
+On 1/13/2021 1:34 AM, Stephen Boyd wrote:
 
 >> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +  '#power-domain-cells':
->> +    const: 1
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  protected-clocks:
->> +    description:
->> +      Protected clock specifier list as per common clock binding.
+>> +static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
+>> +       .cmd_rcgr = 0x7500c,
+>> +       .mnd_width = 8,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_8,
+>> +       .freq_tbl = ftbl_gcc_sdcc1_apps_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_sdcc1_apps_clk_src",
+>> +               .parent_data = gcc_parent_data_8,
+>> +               .num_parents = ARRAY_SIZE(gcc_parent_data_8),
+>> +               .flags = CLK_SET_RATE_PARENT,
+>> +               .ops = &clk_rcg2_ops,
 > 
-> I suppose this is fine.
+> This needs to use floor clk ops?
 > 
 
-Removed the above in the latest patch.
+My bad I missed them in my patch, latest patch has this fixed.
 
+>> +       },
+>> +};
+>> +
+>> +static const struct freq_tbl ftbl_gcc_sdcc1_ice_core_clk_src[] = {
+>> +       F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+>> +       F(150000000, P_GCC_GPLL0_OUT_EVEN, 2, 0, 0),
+>> +       F(300000000, P_GCC_GPLL0_OUT_EVEN, 1, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+>> +       .cmd_rcgr = 0x7502c,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_1,
+>> +       .freq_tbl = ftbl_gcc_sdcc1_ice_core_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_sdcc1_ice_core_clk_src",
+>> +               .parent_data = gcc_parent_data_1,
+>> +               .num_parents = ARRAY_SIZE(gcc_parent_data_1),
+>> +               .flags = CLK_SET_RATE_PARENT,
+>> +               .ops = &clk_rcg2_ops,
+> 
+> Same.
+> 
+>> +       },
+>> +};
+>> +
+>> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+>> +       F(400000, P_BI_TCXO, 12, 1, 4),
+>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>> +       F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
+>> +       F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+>> +       F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+>> +       F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+>> +       .cmd_rcgr = 0x1400c,
+>> +       .mnd_width = 8,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_9,
+>> +       .freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_sdcc2_apps_clk_src",
+>> +               .parent_data = gcc_parent_data_9,
+>> +               .num_parents = ARRAY_SIZE(gcc_parent_data_9),
+>> +               .flags = CLK_SET_RATE_PARENT,
+>> +               .ops = &clk_rcg2_ops,
+> 
+> Same.
+> 
+>> +       },
+>> +};
+>> +
+>> +static const struct freq_tbl ftbl_gcc_sdcc4_apps_clk_src[] = {
+>> +       F(400000, P_BI_TCXO, 12, 1, 4),
+>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>> +       F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
+>> +       F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+>> +       F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+>> +       .cmd_rcgr = 0x1600c,
+>> +       .mnd_width = 8,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_1,
+>> +       .freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_sdcc4_apps_clk_src",
+>> +               .parent_data = gcc_parent_data_1,
+>> +               .num_parents = ARRAY_SIZE(gcc_parent_data_1),
+>> +               .flags = CLK_SET_RATE_PARENT,
+>> +               .ops = &clk_rcg2_ops,
+> 
+> Same.
+> 
+>> +       },
+>> +};
+>> +
+> [...]
+>> +static struct clk_branch gcc_cpuss_ahb_clk = {
+>> +       .halt_reg = 0x48000,
+>> +       .halt_check = BRANCH_HALT_VOTED,
+>> +       .hwcg_reg = 0x48000,
+>> +       .hwcg_bit = 1,
+>> +       .clkr = {
+>> +               .enable_reg = 0x52000,
+>> +               .enable_mask = BIT(21),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_cpuss_ahb_clk",
+>> +                       .parent_data = &(const struct clk_parent_data){
+>> +                               .hw = &gcc_cpuss_ahb_postdiv_clk_src.clkr.hw,
+>> +                       },
+>> +                       .num_parents = 1,
+>> +                       .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+> 
+> Why is it critical? Please add a comment like sc7180.
+> 
+
+Updated the comment in the latest patch.
+
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
