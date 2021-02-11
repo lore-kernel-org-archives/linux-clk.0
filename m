@@ -2,118 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB96C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 20:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9318DC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 00:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6352364D8F
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Feb 2021 20:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6461164E2A
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 00:02:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232432AbhBJUlg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 15:41:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231642AbhBJUlb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 15:41:31 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329F4C06174A;
-        Wed, 10 Feb 2021 12:40:50 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id j12so2047779pfj.12;
-        Wed, 10 Feb 2021 12:40:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2yhiCvUyqwB+Gy0G+54/j5J/bjxh290iesA/97iqEAo=;
-        b=OdRNp4c7kpkYf5N4fUld+qsh3IV2vC1G+QZuGpVTAIxPMLrAd8Hsj+s6MUe1ZYVZzk
-         R4oR6A6qNRygdg3bZpb2kc2OBo3vsC2esX4uI3AN8GEAw4o35hw9v+NtI8fLZ8xGEs5F
-         FC2XcervKdOtyOpAF2qmgrPJHUWUzX3zSao0sArifhlRa8BsBXtiPbFGJgv6S+ztsgwy
-         iJXU2aRC4wy0pRIAU0KCIK7TXKyBDx2FhkzT0Z8pbEgfpad8zEtGOOwHtjxFKydQ9i/p
-         2BM+IGJjNy/MssZ5XZXciuIWIWzRVHzl4S15mW/ZCPtlij1ifmIeEKo2ynDB2hEQd3jn
-         4xGw==
+        id S233070AbhBKACj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 19:02:39 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:44334 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234038AbhBKACi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 19:02:38 -0500
+Received: by mail-oi1-f172.google.com with SMTP id r75so4144382oie.11;
+        Wed, 10 Feb 2021 16:02:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2yhiCvUyqwB+Gy0G+54/j5J/bjxh290iesA/97iqEAo=;
-        b=XOZRcc2rPTO1bGr2YHdHaKa8bnj9wMK2PnKqDEYD3s93eBzOQosb3PizoZ5gTmR88b
-         GtZ3CHU40ywSQgAMKPIxcGcbUs0N9nQspovZNS0HSrkqk8YLxgR/duHU5cpUepZJBKup
-         lEIhVBgMW8bhg4c22B32zBGvG/TCvfpGuxOjhvxm3Pc4bb6GiuUf6tEj+rA+evAFCluC
-         eonz4IuzBhe47+SHTmjTo7ANhhhsg1KnullfjmjbhYWvYcmaqgv662wuThW89EeArdi4
-         vH1zCgieO7jR8kuZLPi5XVCIb/dNvOOc9kR30wwAl6+11BY5CQI2JzqBiElNw67++aPf
-         zWSQ==
-X-Gm-Message-State: AOAM530UE/y+K0YQMu04T89c8FpfJj67ldPkjM5UggHSSqnW34e0x2dZ
-        KrWazsid97a+ND6XSVw7Fa6lz6NApDt0ZI4pVjLL92vq
-X-Google-Smtp-Source: ABdhPJy2FblGuzAVVcOqh4QvALojrRqVJhHUlOaYQIOWyV8p8OzDVYkmAoxVIekTRr9cQaq9lTOvm4vbldoZhAWmIQk=
-X-Received: by 2002:a63:2d3:: with SMTP id 202mr4670857pgc.438.1612989649405;
- Wed, 10 Feb 2021 12:40:49 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kvatFB0Q/jr1PiFB301MPBK04OhOQf953p+PeRkyKoA=;
+        b=K/dpqn8pR2oz5GYqSJYougxCa0M7YNlpVqiGB+8rAx0irUqb9vEGYi9SZUV4XrNnUq
+         0fCadCSQMCVZWjbAiznRIdKg8q/z0FfX0Lm0ixb9Jbo9Pdyz1zNWnIoAjSbsjJAMVu/y
+         pfbcv6k7HMs8pAYFYIXi5VUjESgKiYmcZc3b1ppceGOGU2mXzOF/NCkz31Z8pc9cXGH5
+         6crOxeiFQQsdJp1NT/+LtSypauBZwJUdpb55EJzbjrEMXxF4cP6FBqVUKPcM9a+UKKIy
+         ZPYGbHoDGhDtxutkgsaRWMLBUWS41rAzjru5fZQ9TzoecI2IIKfWk9Ky/sCiTcEdxq+K
+         0dYw==
+X-Gm-Message-State: AOAM531EEiEwtrnbMFmALdGUpoP/cLITsSDAqKGYAjuisApnt7io3mCt
+        9Kqj/cwCQ9DCJQqkSQIpCw==
+X-Google-Smtp-Source: ABdhPJwpSA4lnsqjKtHEt463nu5bmS2soWKAQMwlo1HXdvr0lig5/HWrq3DE7uI5cCxI47QIQU4SYg==
+X-Received: by 2002:a05:6808:f09:: with SMTP id m9mr1102641oiw.92.1613001717507;
+        Wed, 10 Feb 2021 16:01:57 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e25sm701131otj.23.2021.02.10.16.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Feb 2021 16:01:56 -0800 (PST)
+Received: (nullmailer pid 3091448 invoked by uid 1000);
+        Thu, 11 Feb 2021 00:01:55 -0000
+Date:   Wed, 10 Feb 2021 18:01:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Saeed Nowshadi <saeed.nowshadi@xilinx.com>
+Cc:     devicetree@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        git-dev@xilinx.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: si570: Add 'silabs,skip-recall'
+ property
+Message-ID: <20210211000155.GA3091392@robh.at.kernel.org>
+References: <1612496104-3437-1-git-send-email-saeed.nowshadi@xilinx.com>
+ <1612496104-3437-2-git-send-email-saeed.nowshadi@xilinx.com>
 MIME-Version: 1.0
-References: <20210207185140.3653350-1-aford173@gmail.com> <20210210201841.GA2688439@robh.at.kernel.org>
-In-Reply-To: <20210210201841.GA2688439@robh.at.kernel.org>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 10 Feb 2021 14:40:38 -0600
-Message-ID: <CAHCN7xJwd=u8O33j0Gkaw7=5-k5F=pEuSxqoe+hV=LxAPMk_vQ@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] dt-bindings: clk: versaclock5: Add optional load
- capacitance property
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1612496104-3437-2-git-send-email-saeed.nowshadi@xilinx.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 2:18 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Sun, Feb 07, 2021 at 12:51:38PM -0600, Adam Ford wrote:
-> > There are two registers which can set the load capacitance for
-> > XTAL1 and XTAL2. These are optional registers when using an
-> > external crystal.  Since XTAL1 and XTAL2 will set to the same value,
-> > update the binding to support a single property called
-> > xtal-load-femtofarads.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > ---
-> > V3:  No Change
-> > V2:  No Change
-> >
-> > A couple people suggested that I not use the $ref, but without it,
-> > the bindings check failed with errors.
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > index 2ac1131fd922..c268debe5b8d 100644
-> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > @@ -59,6 +59,12 @@ properties:
-> >      minItems: 1
-> >      maxItems: 2
-> >
-> > +  idt,xtal-load-femtofarads:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
->
-> Don't need a type with standard unit suffix.
+On Thu, 04 Feb 2021 19:35:03 -0800, Saeed Nowshadi wrote:
+> Add an optional property so the driver can skip calling the NVM->RAM
+> recall operation during probe().
+> 
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Signed-off-by: Saeed Nowshadi <saeed.nowshadi@xilinx.com>
+> ---
+>  Documentation/devicetree/bindings/clock/silabs,si570.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-If I remove that line, the binding check fails.
-
-adam
->
-> > +    minimum: 9000
-> > +    maximum: 22760
-> > +    description: Optional load capacitor for XTAL1 and XTAL2
-> > +
-> >  patternProperties:
-> >    "^OUT[1-4]$":
-> >      type: object
-> > --
-> > 2.25.1
-> >
+Acked-by: Rob Herring <robh@kernel.org>
