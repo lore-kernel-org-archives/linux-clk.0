@@ -2,107 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53ED0C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 11:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3982EC433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F58864E2F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 11:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0425264E8A
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbhBKLec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 06:34:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231635AbhBKLbM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 06:31:12 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5347BC061574
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 03:30:27 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lAAAw-0004Aj-Dd; Thu, 11 Feb 2021 12:30:22 +0100
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lAAAv-00040K-2o; Thu, 11 Feb 2021 12:30:21 +0100
-Date:   Thu, 11 Feb 2021 12:30:21 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] soc: xilinx: vcu: fix error check on
- clk_hw_get_parent call
-Message-ID: <20210211113021.GE30300@pengutronix.de>
-References: <20210211095700.158960-1-colin.king@canonical.com>
+        id S231519AbhBKNDw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 08:03:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230445AbhBKNBe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 08:01:34 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C44664E2F;
+        Thu, 11 Feb 2021 13:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1613048453;
+        bh=R1wXfHp/mtHayjhLTRFV8J+RaQB8xzJF+ECpMM3qItM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T87s8o56OYCjh7+2IySoSf6EQzX/8ghjZ9UEoEO8tL3PT5O/iMYBB6llgADANOEcv
+         veO7DEsSwUQ+cciKl7+wJvOIp7q/FXfpIOgVYudhHYxDo8UX+BV0KUoN1JWCKSmoiY
+         w5GN1sGoLrMTXKprbTvrp9IuvP4D6QUg646ZKY8w=
+Date:   Thu, 11 Feb 2021 14:00:51 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Tudor Ambarus <tudor.ambarus@microchip.com>
+Cc:     corbet@lwn.net, rafael@kernel.org, khilman@kernel.org,
+        ulf.hansson@linaro.org, len.brown@intel.com, lenb@kernel.org,
+        pavel@ucw.cz, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, frowand.list@gmail.com, maz@kernel.org,
+        tglx@linutronix.de, saravanak@google.com,
+        nicolas.ferre@microchip.com, claudiu.beznea@microchip.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        m.szyprowski@samsung.com, geert@linux-m68k.org,
+        kernel-team@android.com
+Subject: Re: [PATCH] clk: Mark fwnodes when their clock provider is added
+Message-ID: <YCUqgwrCREvPqEz+@kroah.com>
+References: <20210205222644.2357303-9-saravanak@google.com>
+ <20210210114435.122242-1-tudor.ambarus@microchip.com>
+ <20210210114435.122242-2-tudor.ambarus@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210211095700.158960-1-colin.king@canonical.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 12:28:10 up 70 days, 23:55, 108 users,  load average: 0.44, 0.23,
- 0.26
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20210210114435.122242-2-tudor.ambarus@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 11 Feb 2021 09:57:00 +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Feb 10, 2021 at 01:44:35PM +0200, Tudor Ambarus wrote:
+> This is a follow-up for:
+> commit 3c9ea42802a1 ("clk: Mark fwnodes when their clock provider is added/removed")
 > 
-> Currently the check for failur on the call to clk_hw_get_parent
-> is checking for a null return in the divider pointer instead of
-> checking the mux pointer. Fix this.
+> The above commit updated the deprecated of_clk_add_provider(),
+> but missed to update the preferred of_clk_add_hw_provider().
+> Update it now.
 > 
-> Thanks to Michael Tretter for suggesting the correct fix.
-
-Thanks!
-
-> 
-> Addresses-Coverity: ("Logically Dead Code")
-> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 > ---
+>  drivers/clk/clk.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> V2: Check on mux pointer rather than removing deadcode that wasn't
->     actually really dead code.
-> 
-> ---
->  drivers/clk/xilinx/xlnx_vcu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> index d66b1315114e..256b8c4b9ee4 100644
-> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> @@ -512,7 +512,7 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 27ff90eacb1f..9370e4dfecae 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4594,6 +4594,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+>  	if (ret < 0)
+>  		of_clk_del_provider(np);
 >  
->  	mux = clk_hw_get_parent(divider);
->  	clk_hw_unregister_mux(mux);
+> +	fwnode_dev_initialized(&np->fwnode, true);
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
+> -- 
+> 2.25.1
+> 
 
-The mux should be unregistered after the check
+Any objection for me taking this in my tree as well?
 
-> -	if (!divider)
-> +	if (!mux)
->  		return;
->  
->  	clk_hw_unregister_divider(divider);
+thanks,
 
-and the divider before the check.
-
-Michael
+greg k-h
