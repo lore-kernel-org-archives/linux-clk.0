@@ -2,248 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3AFC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FE6C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2534664E31
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C14F864E32
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229799AbhBKDGS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 22:06:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57902 "EHLO mail.kernel.org"
+        id S229693AbhBKDOw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 22:14:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229763AbhBKDGS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 22:06:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D26164EBB;
-        Thu, 11 Feb 2021 03:05:37 +0000 (UTC)
+        id S229672AbhBKDOw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 22:14:52 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2614864E31;
+        Thu, 11 Feb 2021 03:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613012737;
-        bh=4ecn8gSYd2ADWPrcofKdtHOgmHlpK9CW62M5mx9kvEM=;
+        s=k20201202; t=1613013251;
+        bh=gUAM9NEyk9JRkYbrgN4x6EeU5RnVoD1G/TDMZ8AdraY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=V695XtNOqM6levao0KD4RikBk8G3B6h18TRcdFGZqOrwxOQqEc/C2jHdFrKKFNfB0
-         XCHGt1ZKPkAp20gid5/h3YX6XcsoSNMSBIcQ0alVYil1B49+Yj4PsqtPg6tHeunCfu
-         H0eEI844tP9t5Dfc/xyvvXS7Btia66ciMyNx5thPnbk+kToKKWbIge/ME6JTrHubMB
-         gFQihkoAcBDGWBvvgUUATv2VemDY/yEhfCGEzV2PA81gmD3Gd79FGP2GqZw3Pzuacr
-         WR53l8KViWv4ajW6yv5dcJtsG2h+bhIEbWO4CSIxan/d5PP/3PQtOwR+RSgGjVOCQj
-         U2U/kfC4OnivQ==
+        b=H4mOeDPRVT7oO0wc65gnbksUOSB2eDwN3urO7P8Qr/rk0RdhcAJ67z/rNuuRxCYGW
+         u0IsMS+jyBnfA/KiIkworSNN+4s+5IzLZxFt6cl7yJSq2nTyPINmUoNuCzIBAXGamO
+         yA2luZppCZu6VIASJl34We34ZpKl3nyVoUqax0bXBps76GcsVV/Gjv4yuDL7tB9JAC
+         KuQd8cx0oxHL+cWLATGDCI0p6c6oXxLoC/xUOUU9B2CJ9HEPJjZ4tcSfvBTFMGl6JS
+         HG18JlGkKnGuJgfFMYRRdfnOnwRVGAnDXpSqwHnWA/31pqfGODOoEAnE4rDH636I1a
+         z1e9z/U4TpPQw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210105192956.2059505-1-dinguyen@kernel.org>
-References: <20210105192956.2059505-1-dinguyen@kernel.org>
-Subject: Re: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X platform
+In-Reply-To: <20210113083042.tezxr5sim2oevtvm@pengutronix.de>
+References: <20201221092713.vq6cfo2jyxl5l2rm@pengutronix.de> <20210113083042.tezxr5sim2oevtvm@pengutronix.de>
+Subject: Re: [PATCH] clk: Warn when clk_get_rate is called for a disabled clk
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Date:   Wed, 10 Feb 2021 19:05:35 -0800
-Message-ID: <161301273585.1254594.15922396130376508467@swboyd.mtv.corp.google.com>
+Cc:     Simon South <simon@simonsouth.net>, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de
+To:     Michael Turquette <mturquette@baylibre.com>,
+        <u.kleine-koenig@pengutronix.de>
+Date:   Wed, 10 Feb 2021 19:14:09 -0800
+Message-ID: <161301324986.1254594.14610246660375821616@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2021-01-05 11:29:56)
-> Add support for Intel's eASIC N5X platform. The clock manager driver for
-> the N5X is very similar to the Agilex platform, we can re-use most of
-> the Agilex clock driver.
+Quoting Uwe (2021-01-13 00:30:42)
+> <linux/clk.h> claims that clk_get_rate() must only be called for enabled
+> clocks. So emit a warning if a consumer calls this function without
+> ensuring the clock being on.
 >=20
-> This patch makes the necessary changes for the driver to differentiate
-> between the Agilex and the N5X platforms.
->=20
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
-
-Sorry this patch fell off my radar.
-
-I ran checkpatch
-
-WARNING: function definition argument 'struct platform_device *' should als=
-o have an identifier name
-#135: FILE: drivers/clk/socfpga/clk-agilex.c:500:
-+       int (*probe_func)(struct platform_device *);
-
-WARNING: Statements terminations use 1 semicolon
-#140: FILE: drivers/clk/socfpga/clk-agilex.c:505:
-+       return  probe_func(pdev);;
-
-WARNING: DT compatible string "intel,n5x-clkmgr" appears un-documented -- c=
-heck ./Documentation/devicetree/bindings/
-#147: FILE: drivers/clk/socfpga/clk-agilex.c:511:
-+       { .compatible =3D "intel,n5x-clkmgr",
-
-WARNING: struct clk_ops should normally be const
-#290: FILE: drivers/clk/socfpga/clk-pll-s10.c:166:
-+static struct clk_ops n5x_clk_pll_ops =3D {
-
-WARNING: struct clk_ops should normally be const
-#296: FILE: drivers/clk/socfpga/clk-pll-s10.c:172:
-+static struct clk_ops agilex_clk_pll_ops =3D {
-
-WARNING: function definition argument 'const struct stratix10_pll_clock *' =
-should also have an identifier name
-#367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
-+struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-
-WARNING: function definition argument 'void __iomem *' should also have an =
-identifier name
-#367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
-+struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-
-WARNING: function definition argument 'const struct n5x_perip_c_clock *' sh=
-ould also have an identifier name
-#371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
-+struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-
-WARNING: function definition argument 'void __iomem *' should also have an =
-identifier name
-#371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
-+struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-
-Can you fix these up and resend?
-
->  drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
->  drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
->  drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
->  drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
->  4 files changed, 238 insertions(+), 3 deletions(-)
+> Hello,
 >=20
-> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/c=
-lk-periph-s10.c
-> index 397b77b89b16..135581c41c05 100644
-> --- a/drivers/clk/socfpga/clk-periph-s10.c
-> +++ b/drivers/clk/socfpga/clk-periph-s10.c
-> @@ -15,6 +15,21 @@
-> =20
->  #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.h=
-w)
-> =20
-> +static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
-> +                                            unsigned long parent_rate)
-> +{
-> +       struct socfpga_periph_clk *socfpgaclk =3D to_periph_clk(hwclk);
-> +       unsigned long div;
-> +       unsigned long shift =3D socfpgaclk->shift;
-> +       u32 val;
-> +
-> +       val =3D readl(socfpgaclk->hw.reg);
-> +       val &=3D (0x1F << shift);
+> I didn't hear back, so went on to create a proper patch now.
+>=20
+> On Mon, Dec 21, 2020 at 10:27:13AM +0100, Uwe wrote:
+> > the documentation about clk_get_rate in include/linux/clk.h reads:
+> >=20
+> >       [...] obtain the current clock rate (in Hz) for a clock source.
+> >       This is only valid once the clock source has been enabled.
+> >=20
+> > The second part isn't enforced and (I think) there are many consumers
+> > who don't ensure the clock being enabled. (I just stumbled over
+> > rockchip_pwm_get_state().)
+> >=20
+> > I wonder if it would be sensible to add a development check to
+> > clk_get_rate, something like:
+> >=20
+> >       if (WARN(!clk->usecount, "Trying to get rate of a disabled clk"))
+> >               return 0;
+> >=20
+> > (or something less consequent like not returning 0 but the value it also
+> > returns today).
+>=20
+> This conservative approach is what I implemented now, and I only emit 1
+> warning to not overflow systems that trigger that problem several times.
+>=20
+> I'm unsure if I really must take the enable_lock, but it is not
+> completely wrong.
 
-Prefer lowercase hex.
+I'm not totally opposed to this but I'm curious if you have a plan to
+fix various drivers that are violating the documentation? I'm more
+inclined to leave the documentation as is, which indicates that it isn't
+promised to work but sometimes does work. Given that we've supported it
+for quite some time I don't see the downside to keeping supporting it
+vs. the many downsides of implementing a check like this and having to
+fix various places that now WARN_ON() (and if you have many on some
+particular device then you'll have to work through them one by one?)
 
-> +       div =3D (val >> shift) + 1;
-> +
-> +       return parent_rate / div;
-> +}
-> +
->  static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
->                                              unsigned long parent_rate)
+What problem are you trying to address? Is there some issue you've
+encountered in the kernel that would have been fixed by having this
+warning? If so, please point to it in the commit text! Then we can all
+see the value of this patch. Right now I don't see much value.
+
+>=20
+>  drivers/clk/clk.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 8c1d04db990d..7558753883dc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1614,6 +1614,16 @@ static void __clk_recalc_rates(struct clk_core *co=
+re, unsigned long msg)
+> =20
+>  static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
 >  {
-> @@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
->         return parent;
->  }
-> =20
-> +static const struct clk_ops n5x_peri_c_clk_ops =3D {
-> +       .recalc_rate =3D n5x_clk_peri_c_clk_recalc_rate,
-> +       .get_parent =3D clk_periclk_get_parent,
-> +};
+> +       unsigned long flags;
+> +       unsigned int enable_count;
 > +
->  static const struct clk_ops peri_c_clk_ops =3D {
->         .recalc_rate =3D clk_peri_c_clk_recalc_rate,
->         .get_parent =3D clk_periclk_get_parent,
-> @@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix=
-10_perip_c_clock *clks,
->         return clk;
->  }
-> =20
-> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
-> +                               void __iomem *regbase)
-> +{
-> +       struct clk *clk;
-> +       struct socfpga_periph_clk *periph_clk;
-> +       struct clk_init_data init;
-> +       const char *name =3D clks->name;
-> +       const char *parent_name =3D clks->parent_name;
+> +       flags =3D clk_enable_lock();
+> +       enable_count =3D core->enable_count;
+> +       clk_enable_unlock(flags);
 > +
-> +       periph_clk =3D kzalloc(sizeof(*periph_clk), GFP_KERNEL);
-> +       if (WARN_ON(!periph_clk))
-> +               return NULL;
+> +       WARN_ONCE(enable_count =3D=3D 0,
+> +                 "A clock must be enabled to determine its rate\n");
 > +
-> +       periph_clk->hw.reg =3D regbase + clks->offset;
-> +       periph_clk->shift =3D clks->shift;
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &n5x_peri_c_clk_ops;
-> +       init.flags =3D clks->flags;
-> +
-> +       init.num_parents =3D clks->num_parents;
-> +       init.parent_names =3D parent_name ? &parent_name : NULL;
-> +
-> +       periph_clk->hw.hw.init =3D &init;
-> +
-> +       clk =3D clk_register(NULL, &periph_clk->hw.hw);
-
-Can you use clk_hw_register?
-
-> +       if (WARN_ON(IS_ERR(clk))) {
-> +               kfree(periph_clk);
-> +               return NULL;
-> +       }
-> +       return clk;
-> +}
-> +
->  struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clo=
-ck *clks,
->                                     void __iomem *regbase)
->  {
-[...]
-> @@ -214,3 +260,40 @@ struct clk *agilex_register_pll(const struct stratix=
-10_pll_clock *clks,
->         }
->         return clk;
->  }
-> +
-> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
-> +                            void __iomem *reg)
-> +{
-> +       struct clk *clk;
-> +       struct socfpga_pll *pll_clk;
-> +       struct clk_init_data init;
-> +       const char *name =3D clks->name;
-> +
-> +       pll_clk =3D kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-> +       if (WARN_ON(!pll_clk))
-> +               return NULL;
-> +
-> +       pll_clk->hw.reg =3D reg + clks->offset;
-> +
-> +       if (streq(name, SOCFPGA_BOOT_CLK))
-> +               init.ops =3D &clk_boot_ops;
-> +       else
-> +               init.ops =3D &n5x_clk_pll_ops;
-> +
-> +       init.name =3D name;
-> +       init.flags =3D clks->flags;
-> +
-> +       init.num_parents =3D clks->num_parents;
-> +       init.parent_names =3D NULL;
-> +       init.parent_data =3D clks->parent_data;
-> +       pll_clk->hw.hw.init =3D &init;
-> +
-> +       pll_clk->hw.bit_idx =3D SOCFPGA_PLL_POWER;
-> +
-> +       clk =3D clk_register(NULL, &pll_clk->hw.hw);
-
-Can you use clk_hw_register?
-
-> +       if (WARN_ON(IS_ERR(clk))) {
-> +               kfree(pll_clk);
-> +               return NULL;
-> +       }
-> +       return clk;
-> +}
+>         if (core && (core->flags & CLK_GET_RATE_NOCACHE))
+>                 __clk_recalc_rates(core, 0);
+>
