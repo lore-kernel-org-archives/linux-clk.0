@@ -2,178 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B48EC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 04:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAA7C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 05:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1877764E4D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 04:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D6164E8A
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 05:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbhBKEGk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 23:06:40 -0500
-Received: from mail-pg1-f171.google.com ([209.85.215.171]:37681 "EHLO
-        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbhBKEGi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Feb 2021 23:06:38 -0500
-Received: by mail-pg1-f171.google.com with SMTP id z21so2916393pgj.4;
-        Wed, 10 Feb 2021 20:06:23 -0800 (PST)
+        id S229598AbhBKFXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 00:23:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229469AbhBKFXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 00:23:13 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB3BC061756
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 21:22:32 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id d13so2753733plg.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 21:22:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TnNepfMt6SkUB80VLnkD+4T2OWTmkVQGDZU4Ef/AiRA=;
+        b=hKAPTehETeAxx7YcildAqVGRxa9k7ELIQjfmGk4Buh3w43CGMdrfgNra+j/Iglny9w
+         vgW1YGq5Y9ZGcps7qhIbqYR/NRZr5vIJUzI77l4Ze4v/bJLU+QGS8Rd80d4ZDz4w5ZYB
+         21CM1nhjRCggoqQyCGLAj2DatNv6lZel+kdhg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YmprhBUucZtKdCmu+LAa/i7gnU89uApOkepqzbffePM=;
-        b=iaNUsbrvkAnxEKNI/suPdo35uWbfrwyvj58EdmyeXtaz2k89NYamqkBJOJxcTCNLP1
-         3m2CdrWRfpfX61DwYK0jkNexmCgNXcL7ZY/8z98Cz/t9hqtYsujKwAqnIPg74Wanld/F
-         Mi5dkAPM7tdZXwlrBWlu8yVAKKw349GLr+dWStsYYwPzzQExNc5YCs16RSlE2e/brA4H
-         nHR89AhH4ECSoGLFy+awlvrEBBpltUZGMM0PG8C0qIM0WNynAlkgdyBMH7qlQBztnz9l
-         GjxeA5xLNG8DS7jorP0GtNPUhCQ5FTjst5cWEh4Q3H2AGweDcmbmjKWKUPdC+LR3uIIJ
-         JJhQ==
-X-Gm-Message-State: AOAM531tJLPJ/9KLYZdrxl90CU/su+ZXr36+kBmOuaoySznquGFN9UXB
-        ZJzSTnZW4ZUbgKGkLcAYFGZdXOYt+aRrrg==
-X-Google-Smtp-Source: ABdhPJwo/ejHlo1FzbyvQYlQmh5g0eMEySpfj3sTg0+aiNhiw864/oHn2Dlv72HCQOUE7clB/FbORA==
-X-Received: by 2002:a63:f74f:: with SMTP id f15mr6320181pgk.186.1613016358110;
-        Wed, 10 Feb 2021 20:05:58 -0800 (PST)
-Received: from localhost ([2601:647:5b00:1161:a4cc:eef9:fbc0:2781])
-        by smtp.gmail.com with ESMTPSA id z186sm3758954pgb.78.2021.02.10.20.05.57
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TnNepfMt6SkUB80VLnkD+4T2OWTmkVQGDZU4Ef/AiRA=;
+        b=qBnCzhdEZGGgtmvXoSZlKme+o0bIqYgshfX3CfGFHX3kJNNKtpS26bfv+5shO5x5oO
+         niQ7fykrg6DRVl1D74GcYREtbCEG3scooZTnz2SMYyYRPGla94/8+aCjSbtXyAqvgc8p
+         0PMG1N/t4YvseDFDgaPipkoRQmTq1gRiTuz9tyX1F1GOuOSOztBwWuUKsZDcJ5hrkl3M
+         wXrhbv6FVD/z1RO1qV5TeTie9DWwIgl8ASFEAXP1uS09M/MzDEtW+NRV4B05T2RKvs97
+         x/e/3De+pnW5EBmMay6OqDpDPASK68vitiTGrSpEwbD/lyBMs259VoTUS4uqB020Ed/u
+         fw1w==
+X-Gm-Message-State: AOAM531vhMLJyoLbmQDC3+YSiu84hOgk9/MQAsy76t+Va+LygLHcsHxy
+        HOVCc3YlwO2l3KIvRmeVSbjwy3Zb4czVAg==
+X-Google-Smtp-Source: ABdhPJxm9oq3kysAb4UsaHFK9obWwRxLAj7T0n4HlVeKP+0AkVLpg2wqoyeo8d/MtmBWD0fi4V2DXw==
+X-Received: by 2002:a17:90a:2ec7:: with SMTP id h7mr2350979pjs.200.1613020952009;
+        Wed, 10 Feb 2021 21:22:32 -0800 (PST)
+Received: from shiro.work (p345188-ipngn200408sizuokaden.shizuoka.ocn.ne.jp. [124.98.97.188])
+        by smtp.googlemail.com with ESMTPSA id o21sm3493511pjp.42.2021.02.10.21.22.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Feb 2021 20:05:57 -0800 (PST)
-Date:   Wed, 10 Feb 2021 20:05:56 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, lars@metafoo.de,
-        linux-fpga@vger.kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-Subject: Re: [PATCH 2/2] clk: axi-clkgen: Add support for FPGA info
-Message-ID: <YCStJFVsYIB2ogKU@epycbox.lan>
-References: <20210210101535.47979-1-alexandru.ardelean@analog.com>
- <20210210101535.47979-2-alexandru.ardelean@analog.com>
+        Wed, 10 Feb 2021 21:22:31 -0800 (PST)
+From:   Daniel Palmer <daniel@0x0f.com>
+To:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        devicetree@vger.kernel.org
+Cc:     w@1wt.eu, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH v2 0/7] ARM: mstar: Basic MPLL support
+Date:   Thu, 11 Feb 2021 14:21:59 +0900
+Message-Id: <20210211052206.2955988-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.30.0.rc2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210210101535.47979-2-alexandru.ardelean@analog.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 10, 2021 at 12:15:35PM +0200, Alexandru Ardelean wrote:
-> From: Mircea Caprioru <mircea.caprioru@analog.com>
-> 
-> This patch adds support for vco maximum and minimum ranges in accordance
-VCO
-> with fpga speed grade, voltage, device package, technology and family. This
-FPGA
-> new information is extracted from two new registers implemented in the ip
-> core: ADI_REG_FPGA_INFO and ADI_REG_FPGA_VOLTAGE, which are stored in the
-> 'include/linux/fpga/adi-axi-common.h' file as they are common to all ADI
-> FPGA cores.
-Either all caps FPGA or all non-caps.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  drivers/clk/clk-axi-clkgen.c | 52 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> index ac6ff736ac8f..e4d6c87f8a07 100644
-> --- a/drivers/clk/clk-axi-clkgen.c
-> +++ b/drivers/clk/clk-axi-clkgen.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/fpga/adi-axi-common.h>
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> @@ -240,6 +241,50 @@ static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
->  	*val = readl(axi_clkgen->base + reg);
->  }
->  
-> +static void axi_clkgen_setup_ranges(struct axi_clkgen *axi_clkgen)
-> +{
-> +	struct axi_clkgen_limits *limits = &axi_clkgen->limits;
-> +	unsigned int reg_value;
-> +	unsigned int tech, family, speed_grade, voltage;
-Reverse xmas-tree please.
+This series adds support for the MPLL block that is present in
+MStar/SigmaStar ARMv7 SoCs.
 
-xxxxxx
-xxx
-x
-> +
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_INFO, &reg_value);
-> +	tech = ADI_AXI_INFO_FPGA_TECH(reg_value);
-> +	family = ADI_AXI_INFO_FPGA_FAMILY(reg_value);
-> +	speed_grade = ADI_AXI_INFO_FPGA_SPEED_GRADE(reg_value);
-> +
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_VOLTAGE, &reg_value);
-> +	voltage = ADI_AXI_INFO_FPGA_VOLTAGE(reg_value);
-> +
-> +	switch (speed_grade) {
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_1 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_1LV:
-> +		limits->fvco_max = 1200000;
-> +		limits->fpfd_max = 450000;
-> +		break;
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_2 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_2LV:
-> +		limits->fvco_max = 1440000;
-> +		limits->fpfd_max = 500000;
-> +		if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
-> +		    (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
-> +			if (voltage < 950) {
-> +				limits->fvco_max = 1200000;
-> +				limits->fpfd_max = 450000;
-> +			}
-> +		}
-> +		break;
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_3:
-> +		limits->fvco_max = 1600000;
-> +		limits->fpfd_max = 550000;
-> +		break;
-> +	default:
-No warning? Does PCORE_VER_MAJOR(ver) > 0x04 not imply this to be known
-or valid?
-> +		break;
-> +	};
-> +
-Maybe:
-"For Ultrascale+ the speedgrades don't matter" or something as a comment?
-> +	if (tech == ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE_PLUS) {
-> +		limits->fvco_max = 1600000;
-> +		limits->fvco_min = 800000;
-> +	}
-> +}
-> +
->  static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
->  {
->  	unsigned int timeout = 10000;
-> @@ -510,7 +555,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  	struct clk_init_data init;
->  	const char *parent_names[2];
->  	const char *clk_name;
-> -	unsigned int i;
-> +	unsigned int i, ver;
->  	int ret;
->  
->  	dflt_limits = device_get_match_data(&pdev->dev);
-> @@ -537,6 +582,11 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  
->  	memcpy(&axi_clkgen->limits, dflt_limits, sizeof(axi_clkgen->limits));
->  
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_VERSION, &ver);
-> +
-> +	if (ADI_AXI_PCORE_VER_MAJOR(ver) > 0x04)
-Nit: 0x4 is fine?
-> +		axi_clkgen_setup_ranges(axi_clkgen);
-> +
->  	clk_name = pdev->dev.of_node->name;
->  	of_property_read_string(pdev->dev.of_node, "clock-output-names",
->  		&clk_name);
-> -- 
-> 2.17.1
-> 
-Thanks,
-Moritz
+This block is intended to be set and forgotten about before
+Linux is running so all it actually does it read the registers
+and calculate what the output frequencies should be.
+
+We only care about this block because there are upstream dividers,
+gates, muxes etc that need something between the input crystal
+and themselves to calculate their own rates.
+
+Changes since v1:
+  - The clock output name related parts of the binding
+    description are gone. Clock names are generated inside the driver.
+    I dropped Rob's reviewed-by because of these changes.
+  - A devm helper has been added for clk_hw_register_fixed_factor()
+    to allow drivers to register multiple fixed factor clks  
+    without having to handle all of the clean up.             
+  - Numerous clean ups to the mpll driver itself based on Stephen's 
+    feedback.
+
+Daniel Palmer (7):
+  dt-bindings: clk: mstar msc313 mpll binding header
+  dt-bindings: clk: mstar msc313 mpll binding description
+  clk: fixed: add devm helper for clk_hw_register_fixed_factor()
+  clk: mstar: MStar/SigmaStar MPLL driver
+  ARM: mstar: Select MSTAR_MSC313_MPLL
+  ARM: mstar: Add the external clocks to the base dsti
+  ARM: mstar: Add mpll to base dtsi
+
+ .../bindings/clock/mstar,msc313-mpll.yaml     |  46 ++++++
+ MAINTAINERS                                   |   3 +
+ arch/arm/boot/dts/mstar-v7.dtsi               |  23 +++
+ arch/arm/mach-mstar/Kconfig                   |   1 +
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-fixed-factor.c                |  39 ++++-
+ drivers/clk/mstar/Kconfig                     |   5 +
+ drivers/clk/mstar/Makefile                    |   6 +
+ drivers/clk/mstar/clk-msc313-mpll.c           | 155 ++++++++++++++++++
+ include/dt-bindings/clock/mstar-msc313-mpll.h |  19 +++
+ include/linux/clk-provider.h                  |   4 +-
+ 12 files changed, 296 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-mpll.yaml
+ create mode 100644 drivers/clk/mstar/Kconfig
+ create mode 100644 drivers/clk/mstar/Makefile
+ create mode 100644 drivers/clk/mstar/clk-msc313-mpll.c
+ create mode 100644 include/dt-bindings/clock/mstar-msc313-mpll.h
+
+-- 
+2.30.0.rc2
+
