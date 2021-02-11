@@ -2,100 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AE8C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55956C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7CCC64DA1
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACC764DCE
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbhBKTGc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 14:06:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35780 "EHLO mail.kernel.org"
+        id S229700AbhBKTKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 14:10:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230305AbhBKTF4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Feb 2021 14:05:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7012164E6C;
-        Thu, 11 Feb 2021 19:05:15 +0000 (UTC)
+        id S229617AbhBKTKd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 14:10:33 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9DB3564DE3;
+        Thu, 11 Feb 2021 19:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613070315;
-        bh=8kiRepUjNeVgukin7TwKjMbpmdvai9OE+G45svt4vIg=;
+        s=k20201202; t=1613070592;
+        bh=cePJ2alhUwsen+CxYJcc2peFQ9GXfSY/m0PECxkNV3U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=a93R/82gY7D5m8xOkU/KHFaTjpv8x4alX0s0kgqDPvFY55ZWuEoc7LtergDH0gYVQ
-         4x0JTgu0DJfXdQIBzs/AVz//3RqJZai0dPBxoLSzi8bXYw/QyRj9H8X/H3xlJpD+uX
-         ps2UwybyEVYGPebwlKT/ROVQyvMGFLMZIBKksp68dMPH/ouEvcrIrOTNLxKRmZxbI/
-         N19DJek89EdQAgC7bkvh5DR4/29KOoBFw5czdHkxgYrOlMrp1WP3C6okC9uU+vg9PV
-         16Ucqf8z3a41+3B2510XhEsCEe2Q/ye328aXkWTJn7sQ4mJOoxumGeaWcQKzHh1olm
-         uhYdilhVfKKOg==
+        b=laFgWuEZL1mjeRR3ieFUD8/ONseSp31a/OXuaqC/f/NhBu3Q/kiXllf4GV3a/1YF1
+         ERmZETBOKwm1v3gjnFg7GOmAWxXr7lOAWDbdtvdsyIIhvpS+wWjn3kY5p/zMog6RRZ
+         ZU4xmhlNN9nZagvFjvUZyricBcw2Q8U4vPhtd+nWqkpzMhkmKDvgOe4bc3byWs4FVS
+         UrRQaj8mKRh3GHwaS/YgH/6W1Vg196dOc4z6aA6iAEBYcJJuvwJYgoYm0Rvx/3n0oY
+         nuBGKFtXpVOFdvq6H3inhurbVm5TyfdbeOaj2QDXsqzM0fVzZkTQGeUpm+Gt0QKIuz
+         AoXV7j3YlpB+A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210211073906.GC30300@pengutronix.de>
-References: <20210210184938.146124-1-colin.king@canonical.com> <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com> <20210211073906.GC30300@pengutronix.de>
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider check
+In-Reply-To: <YCUJAGKKkP0AI5fX@smile.fi.intel.com>
+References: <20210209170952.49794-1-andriy.shevchenko@linux.intel.com> <161291514590.418021.17536537656317500613@swboyd.mtv.corp.google.com> <YCO9IZ4IHI2gruds@smile.fi.intel.com> <161301033161.1254594.5999850767233898633@swboyd.mtv.corp.google.com> <YCUJAGKKkP0AI5fX@smile.fi.intel.com>
+Subject: Re: [PATCH v1] clk: Move struct clk_core to use struct fwnode_handle
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Date:   Thu, 11 Feb 2021 11:05:14 -0800
-Message-ID: <161307031421.1254594.40010291545314425@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date:   Thu, 11 Feb 2021 11:09:51 -0800
+Message-ID: <161307059118.1254594.7158693162962637883@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Tretter (2021-02-10 23:39:06)
-> On Wed, 10 Feb 2021 19:28:18 -0800, Stephen Boyd wrote:
-> > Quoting Colin King (2021-02-10 10:49:38)
-> > > From: Colin Ian King <colin.king@canonical.com>
+Quoting Andy Shevchenko (2021-02-11 02:37:52)
+> On Wed, Feb 10, 2021 at 06:25:31PM -0800, Stephen Boyd wrote:
+> > Quoting Andy Shevchenko (2021-02-10 03:01:53)
+> > > On Tue, Feb 09, 2021 at 03:59:05PM -0800, Stephen Boyd wrote:
+> > > > Quoting Andy Shevchenko (2021-02-09 09:09:52)
+> > > > > fwnode is an abstraction on the different types of firmware nodes.
+> > > > > In order to allow clocks to be linked with any type of such node,
+> > > > > start a conversion to the struct fwnode_handle instead of being
+> > > > > stuck with struct device_node.
+> > > >=20
+> > > > Is ACPI going to support clk hardware? We're "stuck" with device no=
+des
+> > > > mostly because there isn't a clk framework for ACPI.
 > > >=20
-> > > The pointer 'divider' has previously been null checked followed by
-> > > a return, hence the subsequent null check is redundant deadcode
-> > > that can be removed.  Clean up the code and remove it.
+> > > Here I'm not talking about ACPI vs. DT vs. anything, the pure motivat=
+ion is to
+> > > make less divergence of standalone OF vs. fwnode (see IRQ domain APIs=
+, for
+> > > example, which allows to use them in regmap IRQ APIs).
 > > >=20
-> > > Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for =
-output clocks")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
-> > >  1 file changed, 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_=
-vcu.c
-> > > index d66b1315114e..607936d7a413 100644
-> > > --- a/drivers/clk/xilinx/xlnx_vcu.c
-> > > +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> > > @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct cl=
-k_hw *hw)
-> > > =20
-> > >         mux =3D clk_hw_get_parent(divider);
-> > >         clk_hw_unregister_mux(mux);
-> > > -       if (!divider)
-> > > -               return;
-> > > -
 > >=20
-> > This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
-> > reply
+> > I thought the fwnode changes in IRQ domain APIs was to work across both
+> > ACPI and DT. Please tell me more!
 >=20
-> Can you elaborate what you find confusing about this code. I would gladly=
- try
-> to clarify and improve the code.
-
-The fact that pointers are being checked and then bailing out of the
-function early, vs. doing something if the pointer is non-NULL.
-
+> I wish I could dig this out from the commit
+> f110711a6053 ("irqdomain: Convert irqdomain-%3Eof_node to fwnode")
+> but it kept silent what the motivation of doing that.
 >=20
-> What happens here is that the driver registers a mux -> divider -> gate c=
-hain
-> for each output clock, but only stores the gate clock. When unregistering=
- the
-> clocks, the driver starts at the gate and walks up to the mux while
-> unregistering the clocks.
->
+> For me the fwnode API brings an agnostic interface which is good thing to=
+ have
+> and makes it easier to be used by other providers (you know that we have =
+swnode
+> besides ACPI and DT, right?).
+>=20
+> I would like to re-use clk-gpio in ACPI based environment and I found it =
+quite
+> difficult without changing a lot of things in clk framework which is tigh=
+ten to
+> OF by nails. This is not good from design perspective and makes my journey
+> miserable. Of course if clk is against this, I would live with copy'n'pas=
+te
+> approach =E2=80=94 no hard feelings. Just let me know.
+>=20
+
+Please add this motivation to the commit text. In particular how it will
+help the clk-gpio code be used on an ACPI environment. Or maybe even
+send it along with the clk-gpio changes that you've made.
