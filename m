@@ -2,86 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0F9C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 05:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A6EC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCF6A64E30
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 05:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 886A564E3C
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbhBKFkb convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 00:40:31 -0500
-Received: from mailoutvs34.siol.net ([185.57.226.225]:47598 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229467AbhBKFkb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 00:40:31 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id BBBF7522F77;
-        Thu, 11 Feb 2021 06:39:46 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id zympFg3kgA5V; Thu, 11 Feb 2021 06:39:46 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 71452521B94;
-        Thu, 11 Feb 2021 06:39:46 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe-86-58-58-53.static.triera.net [86.58.58.53])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 754F6522B31;
-        Thu, 11 Feb 2021 06:39:43 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime@cerno.tech>, mturquette@baylibre.com,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
+        id S229668AbhBKHcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 02:32:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229564AbhBKHcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 02:32:52 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCB08C061574
+        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 23:32:11 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1lA6SF-0001oW-CK; Thu, 11 Feb 2021 08:31:59 +0100
+Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1lA6SC-0006Wh-3t; Thu, 11 Feb 2021 08:31:56 +0100
+Date:   Thu, 11 Feb 2021 08:31:56 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Andre Heider <a.heider@gmail.com>
-Subject: Re: [PATCH v3 1/5] clk: sunxi-ng: mp: fix parent rate change flag check
-Date:   Thu, 11 Feb 2021 06:39:43 +0100
-Message-ID: <44806885.xO3ZHcXyXd@jernej-laptop>
-In-Reply-To: <161301048085.1254594.6786751472945742937@swboyd.mtv.corp.google.com>
-References: <20210209175900.7092-1-jernej.skrabec@siol.net> <20210210102904.xyr6bftn4ueuu74z@gilmour> <161301048085.1254594.6786751472945742937@swboyd.mtv.corp.google.com>
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider
+ check
+Message-ID: <20210211073156.GB30300@pengutronix.de>
+References: <20210210184938.146124-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210210184938.146124-1-colin.king@canonical.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:21:46 up 70 days, 19:48, 76 users,  load average: 0.32, 0.16,
+ 0.11
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne četrtek, 11. februar 2021 ob 03:28:00 CET je Stephen Boyd napisal(a):
-> Quoting Maxime Ripard (2021-02-10 02:29:04)
+On Wed, 10 Feb 2021 18:49:38 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> > Hi Mike, Stephen,
-> > 
-> > On Tue, Feb 09, 2021 at 06:58:56PM +0100, Jernej Skrabec wrote:
-> > > CLK_SET_RATE_PARENT flag is checked on parent clock instead of current
-> > > one. Fix that.
-> > > 
-> > > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when
-> > > allowed") Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > Tested-by: Andre Heider <a.heider@gmail.com>
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > 
-> > This is a last minute fix for us, can you merge it into clk-fixes
-> > directly?
-> > 
-> > Acked-by: Maxime Ripard <mripard@kernel.org>
+> The pointer 'divider' has previously been null checked followed by
+> a return, hence the subsequent null check is redundant deadcode
+> that can be removed.  Clean up the code and remove it.
 > 
-> It's also fixing a problem that's been around since v5.0. Is something
-> broken that needs fixing this late? The motivation could be added to the
-> commit text because right now it looks like a typo fix spotted visually.
+> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+> index d66b1315114e..607936d7a413 100644
+> --- a/drivers/clk/xilinx/xlnx_vcu.c
+> +++ b/drivers/clk/xilinx/xlnx_vcu.c
+> @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+>  
+>  	mux = clk_hw_get_parent(divider);
+>  	clk_hw_unregister_mux(mux);
+> -	if (!divider)
+> -		return;
+> -
+>  	clk_hw_unregister_divider(divider);
 
-Yes, it's needed. Without this patch, 4k@60 doesn't work and probably some 
-other resolutions too. That's why it's send with other display related fixes. 
-This is part of solution for longstanding display issues.
+Thanks for pointing this out. There is actually a different bug there.
 
-Best regards,
-Jernej
+There should have been a check for !mux before unregistering the mux:
 
+	mux = clk_hw_get_parent(divider);
+	clk_hw_unregister_divider(divider);
+	if (!mux)
+		return;
 
+	clk_hw_unregister_mux(mux);
 
+Michael
+
+>  }
+>  
+> -- 
+> 2.30.0
+> 
+> 
