@@ -2,229 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF24C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6FEC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4859664EA1
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E04C64E95
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbhBKOV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 09:21:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbhBKOTm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 09:19:42 -0500
-Received: from mail-wm1-x364.google.com (mail-wm1-x364.google.com [IPv6:2a00:1450:4864:20::364])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC38C0613D6
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:18:55 -0800 (PST)
-Received: by mail-wm1-x364.google.com with SMTP id w4so5704647wmi.4
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:18:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flowbird.group; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=X6a3XjmDak/vsr4FAYNcNkOoo6lQjp5prDu/T8MjYs4=;
-        b=PaMLeJ1ScHlVK9d06eDyMw6Uzh8Ov+ByK/0Vfx/1HuqrD04SW+qOGX/9tXJe7Jkhtf
-         02kv3FSr+XIxuYPctfML1aWlTAzS/Aa3Q1q6yxi02wyE8cObXlxtFLpFEnSoABPpsOtU
-         AizQtWIv7tNGvVG6LkzRb3bfxVEZTXvHNB0OfvtyFJNlNZEW8ab8q7Krv5Z9pmr4W9WA
-         EgQzCiuEutRKeSRY7TYwbZ6SjNpraoQB9Swe3OwZd+wt9/7EBd/vyxNgM9/TQdWcUoq+
-         lvBFs8I/NDRiqe/2lGqvdmEFNAvEFUH0KVCuZVyLlBfeUot0hFMtC790Wm5qVlqKvyiT
-         M/gg==
+        id S229649AbhBKOxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 09:53:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30784 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231252AbhBKOqK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 09:46:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1613054679;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RcinVWu3bcunxMizVr6YdOQZJoRP+W/VNBiBV+7EN7Y=;
+        b=URKZt45+av0h1oYGRGdrjdzOwUNMzRfYH8OmLdT+7MYa8eLY6xPHR4iCvaT/SUozt8v+K3
+        /D4czgeHibkQG0uYxpGTOaV3mod39HSrCf4RdOGZA5Fb9I/Vj1I7+fkLMjzfYSK3058FEA
+        dGkbz8ddVtmsgYvTv/s1oFJw6Wca1HA=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-126-X8-a4VShN66-ddaP1sl37A-1; Thu, 11 Feb 2021 09:44:38 -0500
+X-MC-Unique: X8-a4VShN66-ddaP1sl37A-1
+Received: by mail-qk1-f197.google.com with SMTP id u66so4387372qkd.13
+        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:44:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=X6a3XjmDak/vsr4FAYNcNkOoo6lQjp5prDu/T8MjYs4=;
-        b=L9wWM47yqQfFkBXsvnBBlb/tBc62UfV+qTcn6C9i3VgvOoLIaowiD20NSOfwlKoCO0
-         evjiBSY8YYvMsN9ODSZseTTV35rcxuSLz0Axaj77XcgmYDf4VKpmFTRRZ3vmaDu7M7b9
-         okwQoyeOJ37tZ3Al+OOuXIm+w4sfWt4fujvve9aKbfkxdkSugapqca78XbcGNeeN0mNG
-         Hds4QnnMQ/yZibpUwiknH02D3GR5aM943RoaLZkXXSMdJCIvVbxgKBZGbp6Haq7P0bE3
-         5RHK6tJxmq0ylA0/PL0AAk1SVFGtKdlOmp3sByWGTdq5Z2+m5EUybV0Ir+X3oRywGJFP
-         28/Q==
-X-Gm-Message-State: AOAM531zR/vuUSPoFMTXV76X/X3btHUE4Abiu9OdFPip8Ois8C099PqV
-        JESoEtdCR6cDPu2KNxWFWqxszn4Pc3kxhfOuyBqRzCOhTF0x
-X-Google-Smtp-Source: ABdhPJzmbaQRYk1FPRG9nFSfphAIkK5ARQ/Tk+97XvI+n4pIOgAF7ES9DqgwRGeJ27BnVwhBv3weR8GU6n4+
-X-Received: by 2002:a7b:c193:: with SMTP id y19mr5363115wmi.23.1613053133686;
-        Thu, 11 Feb 2021 06:18:53 -0800 (PST)
-Received: from mta1.parkeon.com ([185.149.63.251])
-        by smtp-relay.gmail.com with ESMTPS id r16sm253298wrx.37.2021.02.11.06.18.53
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Thu, 11 Feb 2021 06:18:53 -0800 (PST)
-X-Relaying-Domain: flowbird.group
-Received: from [172.16.13.226] (port=59918 helo=PC12445-BES.dynamic.besancon.parkeon.com)
-        by mta1.parkeon.com with esmtp (Exim 4.71)
-        (envelope-from <martin.fuzzey@flowbird.group>)
-        id 1lACo1-0007Sd-5V; Thu, 11 Feb 2021 15:18:53 +0100
-From:   Martin Fuzzey <martin.fuzzey@flowbird.group>
-To:     Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: stm32mp1: wait for LSE to become ready after enabling
-Date:   Thu, 11 Feb 2021 15:17:52 +0100
-Message-Id: <1613053132-29632-1-git-send-email-martin.fuzzey@flowbird.group>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=RcinVWu3bcunxMizVr6YdOQZJoRP+W/VNBiBV+7EN7Y=;
+        b=gSHyf45mZZ/7GQUC01IqlFOzkcv6XOuNBiU0dag3OV232rtKVvqlDsvXQBb7cZ6Gqf
+         8yCHdaQ09RT41UuDqeBLmjdydk4gmmutoYkSM9Xx69CLrVl6odZEWaH0QswnH7O2PaE3
+         V8Sz1oDJ60BKTAfxqny5ykjL2uOvqMl6/KXxms/HDu0qhAAwR+N4OB6vJ/jGvxh1PaNi
+         vMjhMP+rWAgAYGL45rLyKKTvDSoWPaH0aFPDspLJg19EpQnS2QHgsB/ILLE1CtQ0B1fV
+         V2BXve90gXGWqLBCDUewTx3wgcp5DyK8fLFNwRsTE/J0abMXslR3L4IK6wKsb7fUvnyF
+         7nCQ==
+X-Gm-Message-State: AOAM533hzYeNQZ0mr+1nwV6n93T44pWj46wv/L1W+5mPq6aIiRO12NY3
+        b/t86kEbthMumP3JNZtkbSbnfuudNVn10jn9VEGVcaN3IJ8obK1uFowt2ZMwC2upySD6dSKRnRx
+        Rv/EbBL6muljhnUuUCn2k
+X-Received: by 2002:ac8:ecd:: with SMTP id w13mr7771277qti.91.1613054677867;
+        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwy2sdyEM6H+86CchK4C9MQe83PTDkHtsADOMUokbWbPMagfuKn9UL1YevyhiDGgrW3FS/YeQ==
+X-Received: by 2002:ac8:ecd:: with SMTP id w13mr7771251qti.91.1613054677626;
+        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id b16sm3521564qtx.85.2021.02.11.06.44.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
+Subject: Re: [PATCH 2/2] clk: axi-clkgen: Add support for FPGA info
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, lars@metafoo.de,
+        linux-fpga@vger.kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+References: <20210210101535.47979-1-alexandru.ardelean@analog.com>
+ <20210210101535.47979-2-alexandru.ardelean@analog.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <26eae7d2-768d-4df4-5646-c44d53b8659e@redhat.com>
+Date:   Thu, 11 Feb 2021 06:44:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <20210210101535.47979-2-alexandru.ardelean@analog.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After enabling the LSE clock it is necessary to wait to for
-the ready bit to be set.
-This takes 4096 cycles of the clock frequency (typically 32kHz)
 
-Currently this is not done and causes the RTC driver to fail to probe
-when built as a module:
-	stm32_rtc 5c004000.rtc: Can't enter in init mode. Prescaler config failed.
+On 2/10/21 2:15 AM, Alexandru Ardelean wrote:
+> From: Mircea Caprioru <mircea.caprioru@analog.com>
+>
+> This patch adds support for vco maximum and minimum ranges in accordance
+> with fpga speed grade, voltage, device package, technology and family. This
+> new information is extracted from two new registers implemented in the ip
+> core: ADI_REG_FPGA_INFO and ADI_REG_FPGA_VOLTAGE, which are stored in the
+> 'include/linux/fpga/adi-axi-common.h' file as they are common to all ADI
+> FPGA cores.
+>
+> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>  drivers/clk/clk-axi-clkgen.c | 52 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 51 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> index ac6ff736ac8f..e4d6c87f8a07 100644
+> --- a/drivers/clk/clk-axi-clkgen.c
+> +++ b/drivers/clk/clk-axi-clkgen.c
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/platform_device.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/fpga/adi-axi-common.h>
+>  #include <linux/slab.h>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> @@ -240,6 +241,50 @@ static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
+>  	*val = readl(axi_clkgen->base + reg);
+>  }
+>  
+> +static void axi_clkgen_setup_ranges(struct axi_clkgen *axi_clkgen)
+> +{
+> +	struct axi_clkgen_limits *limits = &axi_clkgen->limits;
+> +	unsigned int reg_value;
+> +	unsigned int tech, family, speed_grade, voltage;
+> +
+> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_INFO, &reg_value);
+> +	tech = ADI_AXI_INFO_FPGA_TECH(reg_value);
+> +	family = ADI_AXI_INFO_FPGA_FAMILY(reg_value);
+> +	speed_grade = ADI_AXI_INFO_FPGA_SPEED_GRADE(reg_value);
+> +
+> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_VOLTAGE, &reg_value);
+> +	voltage = ADI_AXI_INFO_FPGA_VOLTAGE(reg_value);
+> +
+> +	switch (speed_grade) {
+> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_1 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_1LV:
+> +		limits->fvco_max = 1200000;
+> +		limits->fpfd_max = 450000;
+> +		break;
+> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_2 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_2LV:
+> +		limits->fvco_max = 1440000;
+> +		limits->fpfd_max = 500000;
+> +		if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
+> +		    (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+3a419c9317b157ef06ca347b7e6bbab846a3d605 clk: axi-clkgen: Add support for FPGA info
+CHECK: Unnecessary parentheses around 'family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX'
+#57: FILE: drivers/clk/clk-axi-clkgen.c:266:
++        if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
++            (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
 
-The reason is that if no built in driver uses LSE the clock framework will
-switch it off at the end of kernel boot. When the RTC driver is later
-probed as a module it will enable the LSE clock but since there is no
-wait the RTC driver will time out waiting for the RTC to initialise.
+Please use checkpatch -strict to find this problem.
 
-When the RTC driver is built in it works, provided the LSE has already
-been enabled by the bootloader.
+Likely the '|', should be '||'
 
-Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
----
- drivers/clk/clk-stm32mp1.c | 73 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 69 insertions(+), 4 deletions(-)
+Tom
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index a875649..b85ec88 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -10,6 +10,7 @@
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-@@ -325,9 +326,19 @@ struct clock_config {
- 
- #define NO_ID ~0
- 
-+struct stm32_clk_rdy_gate {
-+	struct clk_gate gate;
-+	u32 timeout_us;
-+	u8 rdy_bit_idx;
-+};
-+
-+#define to_clk_rdy_gate(_gate) container_of(_gate, struct stm32_clk_rdy_gate, gate)
-+
- struct gate_cfg {
- 	u32 reg_off;
-+	u32 timeout_us;
- 	u8 bit_idx;
-+	u8 rdy_bit_idx;
- 	u8 gate_flags;
- };
- 
-@@ -469,6 +480,36 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	.is_enabled	= clk_gate_is_enabled,
- };
- 
-+static int ready_gate_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	struct stm32_clk_rdy_gate *rdy_gate = to_clk_rdy_gate(gate);
-+	int ret = 0;
-+
-+	if (!clk_gate_ops.is_enabled(hw)) {
-+		u32 val;
-+
-+		clk_gate_ops.enable(hw);
-+		ret = readl_relaxed_poll_timeout_atomic(
-+					gate->reg,
-+					val, (val & BIT(rdy_gate->rdy_bit_idx)),
-+					100, rdy_gate->timeout_us);
-+	}
-+
-+	return ret;
-+}
-+
-+static void ready_gate_clk_disable(struct clk_hw *hw)
-+{
-+	clk_gate_ops.disable(hw);
-+}
-+
-+static const struct clk_ops ready_gate_clk_ops = {
-+	.enable		= ready_gate_clk_enable,
-+	.disable	= ready_gate_clk_disable,
-+	.is_enabled	= clk_gate_is_enabled,
-+};
-+
- static struct clk_hw *_get_stm32_mux(void __iomem *base,
- 				     const struct stm32_mux_cfg *cfg,
- 				     spinlock_t *lock)
-@@ -535,7 +576,7 @@ static struct clk_hw *_get_stm32_div(void __iomem *base,
- 		const struct stm32_gate_cfg *cfg, spinlock_t *lock)
- {
- 	struct stm32_clk_mgate *mgate;
--	struct clk_gate *gate;
-+	struct stm32_clk_rdy_gate *rdy_gate;
- 	struct clk_hw *gate_hw;
- 
- 	if (cfg->mgate) {
-@@ -554,10 +595,15 @@ static struct clk_hw *_get_stm32_div(void __iomem *base,
- 		gate_hw = &mgate->gate.hw;
- 
- 	} else {
--		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--		if (!gate)
-+		struct clk_gate *gate;
-+
-+		rdy_gate = kzalloc(sizeof(*rdy_gate), GFP_KERNEL);
-+		if (!rdy_gate)
- 			return ERR_PTR(-ENOMEM);
- 
-+		gate = &rdy_gate->gate;
-+		rdy_gate->rdy_bit_idx = cfg->gate->rdy_bit_idx;
-+		rdy_gate->timeout_us = cfg->gate->timeout_us;
- 		gate->reg = cfg->gate->reg_off + base;
- 		gate->bit_idx = cfg->gate->bit_idx;
- 		gate->flags = cfg->gate->gate_flags;
-@@ -1211,6 +1257,23 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
- 	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
- 		    NULL, NULL)\
- 
-+#define _READY_GATE(_gate_offset, _gate_bit_idx, _rdy_bit_idx, _timeout_us, _gate_flags)\
-+	(&(struct stm32_gate_cfg) {\
-+		&(struct gate_cfg) {\
-+			.reg_off	= _gate_offset,\
-+			.bit_idx	= _gate_bit_idx,\
-+			.rdy_bit_idx	= _rdy_bit_idx,\
-+			.timeout_us	= _timeout_us, \
-+			.gate_flags	= _gate_flags,\
-+		},\
-+		.ops		= &ready_gate_clk_ops,\
-+	})
-+
-+#define GATE_READY(_id, _name, _parent, _flags, _offset, _bit_idx, \
-+		   _rdy_bit_idx, _timeout_us, _gate_flags) \
-+	STM32_GATE(_id, _name, _parent, _flags,\
-+		   _READY_GATE(_offset, _bit_idx, _rdy_bit_idx, _timeout_us, _gate_flags))
-+
- #define _GATE_MP1(_gate_offset, _gate_bit_idx, _gate_flags)\
- 	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
- 		    NULL, &mp1_gate_clk_ops)\
-@@ -1668,7 +1731,9 @@ enum {
- 		 RCC_OCENSETR, 4, 0),
- 	GATE_MP1(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
- 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
--	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
-+	GATE_READY(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 2,
-+		   /* Ready bit set after 4096 cycles of 32kHz clock 2* for safety */
-+		   USEC_PER_SEC / 32768 * 4096 * 2, 0),
- 
- 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
- 
--- 
-1.9.1
+> +			if (voltage < 950) {
+> +				limits->fvco_max = 1200000;
+> +				limits->fpfd_max = 450000;
+> +			}
+> +		}
+> +		break;
+> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_3:
+> +		limits->fvco_max = 1600000;
+> +		limits->fpfd_max = 550000;
+> +		break;
+> +	default:
+> +		break;
+> +	};
+> +
+> +	if (tech == ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE_PLUS) {
+> +		limits->fvco_max = 1600000;
+> +		limits->fvco_min = 800000;
+> +	}
+> +}
+> +
+>  static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
+>  {
+>  	unsigned int timeout = 10000;
+> @@ -510,7 +555,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+>  	struct clk_init_data init;
+>  	const char *parent_names[2];
+>  	const char *clk_name;
+> -	unsigned int i;
+> +	unsigned int i, ver;
+>  	int ret;
+>  
+>  	dflt_limits = device_get_match_data(&pdev->dev);
+> @@ -537,6 +582,11 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+>  
+>  	memcpy(&axi_clkgen->limits, dflt_limits, sizeof(axi_clkgen->limits));
+>  
+> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_VERSION, &ver);
+> +
+> +	if (ADI_AXI_PCORE_VER_MAJOR(ver) > 0x04)
+> +		axi_clkgen_setup_ranges(axi_clkgen);
+> +
+>  	clk_name = pdev->dev.of_node->name;
+>  	of_property_read_string(pdev->dev.of_node, "clock-output-names",
+>  		&clk_name);
 
