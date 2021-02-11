@@ -2,60 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D84DC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 20:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D24C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 20:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C43B264DEE
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 20:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247B064E35
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 20:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230382AbhBKUhF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 15:37:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49060 "EHLO mail.kernel.org"
+        id S230453AbhBKUry (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 15:47:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229849AbhBKUhF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Feb 2021 15:37:05 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D862964DDF;
-        Thu, 11 Feb 2021 20:36:24 +0000 (UTC)
+        id S230450AbhBKUrx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 15:47:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D6FD864E3B;
+        Thu, 11 Feb 2021 20:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613075785;
-        bh=s6MK6AyHiNoTAcSPwsbFg/BT3aG4WkFax9HWorC7jXI=;
+        s=k20201202; t=1613076432;
+        bh=vG0YvE0JNwxsy3Hevz/Y83+mEgLMI6DUHbIarDb9OXE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iLcHnCs+ioTDI5dxVpm31eMs90IveMF2b7IkPgBT3Rwn1SHdVcM4p92Q+R5VJ7Bd3
-         mEMcF11/QlxhBF0TXZL1zSKQpx6VGY5Tb2Jlb6yeilM/ivhr+KTGLGfw3qTNvsLYTu
-         DyW6WuR1JXVJ5opcXulv7iVKOfe/YjM4x5JWiqf4Ou1a3Io/Y6YiN0uwJkJMXUlMQa
-         M94mUC3/mpLtKUSKrje3v2wOGV43Ej4DPUadui5vMuHuPrWT8sIdxAbe9cIjbbJ8Hg
-         Ptu1Sdczvc5Rwuu1vwBBWrHkn/mjorCBz3qjmNux7s8MkB6t3OZsTL1y+/6h4OMq8b
-         tIS6VlmtImmPw==
+        b=PVxo1LcX30rdtmFh6xUTj0kdmeNXam0jtuw6i0BLJQDVuKWEDUq9DsCKxKe5cZ7j1
+         75/Mjac7W7cQpPmKJWeJ29DNvE8fjxy3nKld2+4lQpBanSpgWJPv4/VETRy6/iVUXD
+         YLffOrahpYQWiA4lqBppMqKoxm6/rN83EQZJ5dnLQqqLrX1/UxngHD0L11G42nD4xd
+         qvjtqSD9WCW+CnL5eGFhL75f7lIx+A81XawEnKMMXzZNi7lT9lmmZYGnIfE2z3+1iD
+         UQ+OsCH6IuHmlXyDe7uIqmrktnI8W8QvKTviHz47x2lPSsVy5PWxgrUX3iMD7uVGnZ
+         E90e1uh8zSx2A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210119061715.6043-1-ryan_chen@aspeedtech.com>
-References: <20210118100813.30821-2-ryan_chen@aspeedtech.com> <20210119061715.6043-1-ryan_chen@aspeedtech.com>
-Subject: Re: [PATCH v2] clk: aspeed: Fix APLL calculate formula from ast2600-A2
+In-Reply-To: <20210126124540.3320214-1-lee.jones@linaro.org>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Ryan Chen <ryan_chen@aspeedtech.com>
-To:     BMC-SW@aspeedtech.com, Michael Turquette <mturquette@baylibre.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>, andrewrj@aj.id.au,
-        joel@linux.ibm.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 11 Feb 2021 12:36:23 -0800
-Message-ID: <161307578346.1254594.3414342188074176198@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+To:     lee.jones@linaro.org
+Date:   Thu, 11 Feb 2021 12:47:11 -0800
+Message-ID: <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ryan Chen (2021-01-18 22:17:15)
-> Starting from A2, the A-PLL calculation has changed. Use the
-> existing formula for A0/A1 and the new formula for A2 onwards.
+Quoting Lee Jones (2021-01-26 04:45:19)
+> This set is part of a larger effort attempting to clean-up W=3D1
+> kernel builds, which are currently overwhelmingly riddled with
+> niggly little warnings.
 >=20
-> Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
+> This is the last set.  Clock is clean after this.
 
-Applied to clk-next
+Is it possible to slam in some patch that makes W=3D1 the default for the
+clk directory? I'm trying to avoid seeing this patch series again.
