@@ -2,99 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7372C433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 09:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B692BC433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 10:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9A864E87
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 09:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A7F64E9C
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 10:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229983AbhBKJrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 04:47:42 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44976 "EHLO
+        id S230124AbhBKKAJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 05:00:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45523 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229564AbhBKJl7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 04:41:59 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        with ESMTP id S230198AbhBKJ5r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 04:57:47 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <colin.king@canonical.com>)
-        id 1lA8TL-0003KX-5G; Thu, 11 Feb 2021 09:41:15 +0000
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider
- check
-To:     Michael Tretter <m.tretter@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id 1lA8ib-0004VP-1m; Thu, 11 Feb 2021 09:57:01 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michal Simek <michal.simek@xilinx.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210210184938.146124-1-colin.king@canonical.com>
- <20210211073156.GB30300@pengutronix.de>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <8c01414b-fba3-f22d-152f-bfb7d76f9d00@canonical.com>
-Date:   Thu, 11 Feb 2021 09:41:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Michael Tretter <m.tretter@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] soc: xilinx: vcu: fix error check on clk_hw_get_parent call
+Date:   Thu, 11 Feb 2021 09:57:00 +0000
+Message-Id: <20210211095700.158960-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <20210211073156.GB30300@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/02/2021 07:31, Michael Tretter wrote:
-> On Wed, 10 Feb 2021 18:49:38 +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The pointer 'divider' has previously been null checked followed by
->> a return, hence the subsequent null check is redundant deadcode
->> that can be removed.  Clean up the code and remove it.
->>
->> Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
->> index d66b1315114e..607936d7a413 100644
->> --- a/drivers/clk/xilinx/xlnx_vcu.c
->> +++ b/drivers/clk/xilinx/xlnx_vcu.c
->> @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
->>  
->>  	mux = clk_hw_get_parent(divider);
->>  	clk_hw_unregister_mux(mux);
->> -	if (!divider)
->> -		return;
->> -
->>  	clk_hw_unregister_divider(divider);
-> 
-> Thanks for pointing this out. There is actually a different bug there.
-> 
-> There should have been a check for !mux before unregistering the mux:
-> 
-> 	mux = clk_hw_get_parent(divider);
-> 	clk_hw_unregister_divider(divider);
-> 	if (!mux)
-> 		return;
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah, that makes sense, I'll send a V2.
+Currently the check for failur on the call to clk_hw_get_parent
+is checking for a null return in the divider pointer instead of
+checking the mux pointer. Fix this.
 
-> 
-> 	clk_hw_unregister_mux(mux);
-> 
-> Michael
-> 
->>  }
->>  
->> -- 
->> 2.30.0
->>
->>
+Thanks to Michael Tretter for suggesting the correct fix.
+
+Addresses-Coverity: ("Logically Dead Code")
+Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Check on mux pointer rather than removing deadcode that wasn't
+    actually really dead code.
+
+---
+ drivers/clk/xilinx/xlnx_vcu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+index d66b1315114e..256b8c4b9ee4 100644
+--- a/drivers/clk/xilinx/xlnx_vcu.c
++++ b/drivers/clk/xilinx/xlnx_vcu.c
+@@ -512,7 +512,7 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
+ 
+ 	mux = clk_hw_get_parent(divider);
+ 	clk_hw_unregister_mux(mux);
+-	if (!divider)
++	if (!mux)
+ 		return;
+ 
+ 	clk_hw_unregister_divider(divider);
+-- 
+2.30.0
 
