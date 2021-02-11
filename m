@@ -2,67 +2,248 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22279C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 02:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3AFC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D99DC64E2E
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 02:56:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2534664E31
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 03:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbhBKC4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Feb 2021 21:56:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57018 "EHLO mail.kernel.org"
+        id S229799AbhBKDGS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Feb 2021 22:06:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229485AbhBKC4l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Feb 2021 21:56:41 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2C5C264DBA;
-        Thu, 11 Feb 2021 02:56:01 +0000 (UTC)
+        id S229763AbhBKDGS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Feb 2021 22:06:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D26164EBB;
+        Thu, 11 Feb 2021 03:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613012161;
-        bh=/IWRxwCmtIxZBUuHS0+t/oVWw89lAGEyoFWFw7vLZNU=;
+        s=k20201202; t=1613012737;
+        bh=4ecn8gSYd2ADWPrcofKdtHOgmHlpK9CW62M5mx9kvEM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hp2BHKSigiWBJ4auAFAQ6iKu1WtfeLill9ls1jFg3GuePoSNk9+5tMCIBLdX7k7YG
-         8fVxmka87bPLRL9+X6MP7N6SjEsYF9h2f8L0ui5MQYMkd6M2xYjQk6opDgHsrliKOn
-         6JnUmL0g0a8mAdcZdwN13JApKWhjZI/Y6rGQ+Dh584ZQBV2dOqWCPRrDt6/Ep28e+7
-         CvCNINsSdusnRB61L2Vd1AwbYLWVFiBKy3kjE3uBtATeoiOjQxTb5jWm+2u/2Ge5+s
-         iSetek+wSgfHrYX8SfBMWQfIi6Pz1wbVWiMT0pQhJHgMJT0lJwsKo86VNyEcxdtdtf
-         /qrJrlnE7KCAA==
+        b=V695XtNOqM6levao0KD4RikBk8G3B6h18TRcdFGZqOrwxOQqEc/C2jHdFrKKFNfB0
+         XCHGt1ZKPkAp20gid5/h3YX6XcsoSNMSBIcQ0alVYil1B49+Yj4PsqtPg6tHeunCfu
+         H0eEI844tP9t5Dfc/xyvvXS7Btia66ciMyNx5thPnbk+kToKKWbIge/ME6JTrHubMB
+         gFQihkoAcBDGWBvvgUUATv2VemDY/yEhfCGEzV2PA81gmD3Gd79FGP2GqZw3Pzuacr
+         WR53l8KViWv4ajW6yv5dcJtsG2h+bhIEbWO4CSIxan/d5PP/3PQtOwR+RSgGjVOCQj
+         U2U/kfC4OnivQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFr9PXkGeFUyGCKZgYF+0uJT1ywad42RvPg39ggO8WRngY8uWw@mail.gmail.com>
-References: <20201114135044.724385-1-daniel@0x0f.com> <20201114135044.724385-3-daniel@0x0f.com> <160843556037.1580929.13575770228476494246@swboyd.mtv.corp.google.com> <CAFr9PX=f=HyHBk4s3e_vnMDC53R1X18m7sKFCLMMjitPm+8oEQ@mail.gmail.com> <160848984935.1580929.936824086681978646@swboyd.mtv.corp.google.com> <CAFr9PX=oLqQqvykiwOGAGg1H2CG0BTEqn0TuSrijodjxY52LxQ@mail.gmail.com> <161292417080.418021.13416197091150418216@swboyd.mtv.corp.google.com> <CAFr9PXkGeFUyGCKZgYF+0uJT1ywad42RvPg39ggO8WRngY8uWw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clk: mstar msc313 mpll binding description
+In-Reply-To: <20210105192956.2059505-1-dinguyen@kernel.org>
+References: <20210105192956.2059505-1-dinguyen@kernel.org>
+Subject: Re: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X platform
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>
-To:     Daniel Palmer <daniel@0x0f.com>
-Date:   Wed, 10 Feb 2021 18:55:59 -0800
-Message-ID: <161301215989.1254594.8224717086717364802@swboyd.mtv.corp.google.com>
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Date:   Wed, 10 Feb 2021 19:05:35 -0800
+Message-ID: <161301273585.1254594.15922396130376508467@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Palmer (2021-02-10 18:28:40)
-> Hi Stephen,
+Quoting Dinh Nguyen (2021-01-05 11:29:56)
+> Add support for Intel's eASIC N5X platform. The clock manager driver for
+> the N5X is very similar to the Agilex platform, we can re-use most of
+> the Agilex clock driver.
 >=20
-> On Wed, 10 Feb 2021 at 11:29, Stephen Boyd <sboyd@kernel.org> wrote:
-> > The child clks should be using clk_parent_data to point to the parent
-> > clks through DT. That way the name of the clk doesn't matter except for
-> > debug purposes.
+> This patch makes the necessary changes for the driver to differentiate
+> between the Agilex and the N5X platforms.
 >=20
-> I think I get it now. I was using of_clk_parent_fill() to get the
-> parent clocks sourced
-> from the mpll but I seems like I should be filling out an array of
-> struct clk_parent_data
-> with the indices of the parents and using
-> clk_register_composite_pdata() etc instead.
->=20
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
 
-Yes that's the idea. Thanks!
+Sorry this patch fell off my radar.
+
+I ran checkpatch
+
+WARNING: function definition argument 'struct platform_device *' should als=
+o have an identifier name
+#135: FILE: drivers/clk/socfpga/clk-agilex.c:500:
++       int (*probe_func)(struct platform_device *);
+
+WARNING: Statements terminations use 1 semicolon
+#140: FILE: drivers/clk/socfpga/clk-agilex.c:505:
++       return  probe_func(pdev);;
+
+WARNING: DT compatible string "intel,n5x-clkmgr" appears un-documented -- c=
+heck ./Documentation/devicetree/bindings/
+#147: FILE: drivers/clk/socfpga/clk-agilex.c:511:
++       { .compatible =3D "intel,n5x-clkmgr",
+
+WARNING: struct clk_ops should normally be const
+#290: FILE: drivers/clk/socfpga/clk-pll-s10.c:166:
++static struct clk_ops n5x_clk_pll_ops =3D {
+
+WARNING: struct clk_ops should normally be const
+#296: FILE: drivers/clk/socfpga/clk-pll-s10.c:172:
++static struct clk_ops agilex_clk_pll_ops =3D {
+
+WARNING: function definition argument 'const struct stratix10_pll_clock *' =
+should also have an identifier name
+#367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
++struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
+
+WARNING: function definition argument 'void __iomem *' should also have an =
+identifier name
+#367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
++struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
+
+WARNING: function definition argument 'const struct n5x_perip_c_clock *' sh=
+ould also have an identifier name
+#371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
++struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
+
+WARNING: function definition argument 'void __iomem *' should also have an =
+identifier name
+#371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
++struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
+
+Can you fix these up and resend?
+
+>  drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
+>  drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
+>  drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
+>  drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
+>  4 files changed, 238 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/c=
+lk-periph-s10.c
+> index 397b77b89b16..135581c41c05 100644
+> --- a/drivers/clk/socfpga/clk-periph-s10.c
+> +++ b/drivers/clk/socfpga/clk-periph-s10.c
+> @@ -15,6 +15,21 @@
+> =20
+>  #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.h=
+w)
+> =20
+> +static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
+> +                                            unsigned long parent_rate)
+> +{
+> +       struct socfpga_periph_clk *socfpgaclk =3D to_periph_clk(hwclk);
+> +       unsigned long div;
+> +       unsigned long shift =3D socfpgaclk->shift;
+> +       u32 val;
+> +
+> +       val =3D readl(socfpgaclk->hw.reg);
+> +       val &=3D (0x1F << shift);
+
+Prefer lowercase hex.
+
+> +       div =3D (val >> shift) + 1;
+> +
+> +       return parent_rate / div;
+> +}
+> +
+>  static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
+>                                              unsigned long parent_rate)
+>  {
+> @@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
+>         return parent;
+>  }
+> =20
+> +static const struct clk_ops n5x_peri_c_clk_ops =3D {
+> +       .recalc_rate =3D n5x_clk_peri_c_clk_recalc_rate,
+> +       .get_parent =3D clk_periclk_get_parent,
+> +};
+> +
+>  static const struct clk_ops peri_c_clk_ops =3D {
+>         .recalc_rate =3D clk_peri_c_clk_recalc_rate,
+>         .get_parent =3D clk_periclk_get_parent,
+> @@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix=
+10_perip_c_clock *clks,
+>         return clk;
+>  }
+> =20
+> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+> +                               void __iomem *regbase)
+> +{
+> +       struct clk *clk;
+> +       struct socfpga_periph_clk *periph_clk;
+> +       struct clk_init_data init;
+> +       const char *name =3D clks->name;
+> +       const char *parent_name =3D clks->parent_name;
+> +
+> +       periph_clk =3D kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+> +       if (WARN_ON(!periph_clk))
+> +               return NULL;
+> +
+> +       periph_clk->hw.reg =3D regbase + clks->offset;
+> +       periph_clk->shift =3D clks->shift;
+> +
+> +       init.name =3D name;
+> +       init.ops =3D &n5x_peri_c_clk_ops;
+> +       init.flags =3D clks->flags;
+> +
+> +       init.num_parents =3D clks->num_parents;
+> +       init.parent_names =3D parent_name ? &parent_name : NULL;
+> +
+> +       periph_clk->hw.hw.init =3D &init;
+> +
+> +       clk =3D clk_register(NULL, &periph_clk->hw.hw);
+
+Can you use clk_hw_register?
+
+> +       if (WARN_ON(IS_ERR(clk))) {
+> +               kfree(periph_clk);
+> +               return NULL;
+> +       }
+> +       return clk;
+> +}
+> +
+>  struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clo=
+ck *clks,
+>                                     void __iomem *regbase)
+>  {
+[...]
+> @@ -214,3 +260,40 @@ struct clk *agilex_register_pll(const struct stratix=
+10_pll_clock *clks,
+>         }
+>         return clk;
+>  }
+> +
+> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
+> +                            void __iomem *reg)
+> +{
+> +       struct clk *clk;
+> +       struct socfpga_pll *pll_clk;
+> +       struct clk_init_data init;
+> +       const char *name =3D clks->name;
+> +
+> +       pll_clk =3D kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+> +       if (WARN_ON(!pll_clk))
+> +               return NULL;
+> +
+> +       pll_clk->hw.reg =3D reg + clks->offset;
+> +
+> +       if (streq(name, SOCFPGA_BOOT_CLK))
+> +               init.ops =3D &clk_boot_ops;
+> +       else
+> +               init.ops =3D &n5x_clk_pll_ops;
+> +
+> +       init.name =3D name;
+> +       init.flags =3D clks->flags;
+> +
+> +       init.num_parents =3D clks->num_parents;
+> +       init.parent_names =3D NULL;
+> +       init.parent_data =3D clks->parent_data;
+> +       pll_clk->hw.hw.init =3D &init;
+> +
+> +       pll_clk->hw.bit_idx =3D SOCFPGA_PLL_POWER;
+> +
+> +       clk =3D clk_register(NULL, &pll_clk->hw.hw);
+
+Can you use clk_hw_register?
+
+> +       if (WARN_ON(IS_ERR(clk))) {
+> +               kfree(pll_clk);
+> +               return NULL;
+> +       }
+> +       return clk;
+> +}
