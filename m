@@ -5,352 +5,226 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C4BC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF24C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52EAF64E87
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4859664EA1
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbhBKOGP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 09:06:15 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:39112 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231929AbhBKODw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 09:03:52 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11BE1bcT022739;
-        Thu, 11 Feb 2021 06:02:57 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=pfpt0220; bh=ku6ByRggc3b//Tl1AeBbBrZrTS+TdhuxenGQh3F9vhk=;
- b=QYfFZx1VWBiBKffjum2uRuYp0DuVWeoxI3l1g+BbZaIAu7pm10PkpVtV7iUev+aPrKTS
- 9d1DmKlTiVBCDqbEIeMTu7oy92m3ZzD1FdRUjB3lAUgYtZpt006Yv9nq55GWWO2Qr0XL
- Cv4+TCRBkahN94FLVuUFkS6782P4ddajxhytdeOlL5LhrZS/X8gp05VByiYnJ7XUCced
- TYyDqEdd2qnu0oqhOKoWPUV9EnbnKltjwuBKGAxHF8Og+gSVWV3PXhruXYTnkvolf+Zw
- Mwoqi0uE4Qo7QvvA1rsCUQDFNgCOH9zAZWI95IcOm2Jg3WDXoJi+zezV8QZNmRTZQESb Kg== 
-Received: from dc5-exch02.marvell.com ([199.233.59.182])
-        by mx0b-0016f401.pphosted.com with ESMTP id 36hugqew7r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 11 Feb 2021 06:02:57 -0800
-Received: from DC5-EXCH02.marvell.com (10.69.176.39) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 11 Feb
- 2021 06:02:55 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 11 Feb 2021 06:02:55 -0800
-Received: from octopus.marvell.com (octopus.marvell.com [10.5.24.3])
-        by maili.marvell.com (Postfix) with ESMTP id 849A73F7043;
-        Thu, 11 Feb 2021 06:02:51 -0800 (PST)
-From:   <kostap@marvell.com>
-To:     <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <Julia.Lawall@inria.fr>, <amitk@kernel.org>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <miquel.raynal@bootlin.com>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <mw@semihalf.com>, <jaz@semihalf.com>,
-        <nadavh@marvell.com>, <stefanc@marvell.com>, <bpeled@marvell.com>,
-        "Konstantin Porotchkin" <kostap@marvell.com>
-Subject: [PATCH v3 2/2] clk: mvebu: use firmware SiP service for accessing dfx register set
-Date:   Thu, 11 Feb 2021 16:02:40 +0200
-Message-ID: <20210211140240.23778-3-kostap@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210211140240.23778-1-kostap@marvell.com>
-References: <20210211140240.23778-1-kostap@marvell.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-11_06:2021-02-10,2021-02-11 signatures=0
+        id S230386AbhBKOV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 09:21:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232144AbhBKOTm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 09:19:42 -0500
+Received: from mail-wm1-x364.google.com (mail-wm1-x364.google.com [IPv6:2a00:1450:4864:20::364])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC38C0613D6
+        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:18:55 -0800 (PST)
+Received: by mail-wm1-x364.google.com with SMTP id w4so5704647wmi.4
+        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:18:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flowbird.group; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=X6a3XjmDak/vsr4FAYNcNkOoo6lQjp5prDu/T8MjYs4=;
+        b=PaMLeJ1ScHlVK9d06eDyMw6Uzh8Ov+ByK/0Vfx/1HuqrD04SW+qOGX/9tXJe7Jkhtf
+         02kv3FSr+XIxuYPctfML1aWlTAzS/Aa3Q1q6yxi02wyE8cObXlxtFLpFEnSoABPpsOtU
+         AizQtWIv7tNGvVG6LkzRb3bfxVEZTXvHNB0OfvtyFJNlNZEW8ab8q7Krv5Z9pmr4W9WA
+         EgQzCiuEutRKeSRY7TYwbZ6SjNpraoQB9Swe3OwZd+wt9/7EBd/vyxNgM9/TQdWcUoq+
+         lvBFs8I/NDRiqe/2lGqvdmEFNAvEFUH0KVCuZVyLlBfeUot0hFMtC790Wm5qVlqKvyiT
+         M/gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=X6a3XjmDak/vsr4FAYNcNkOoo6lQjp5prDu/T8MjYs4=;
+        b=L9wWM47yqQfFkBXsvnBBlb/tBc62UfV+qTcn6C9i3VgvOoLIaowiD20NSOfwlKoCO0
+         evjiBSY8YYvMsN9ODSZseTTV35rcxuSLz0Axaj77XcgmYDf4VKpmFTRRZ3vmaDu7M7b9
+         okwQoyeOJ37tZ3Al+OOuXIm+w4sfWt4fujvve9aKbfkxdkSugapqca78XbcGNeeN0mNG
+         Hds4QnnMQ/yZibpUwiknH02D3GR5aM943RoaLZkXXSMdJCIvVbxgKBZGbp6Haq7P0bE3
+         5RHK6tJxmq0ylA0/PL0AAk1SVFGtKdlOmp3sByWGTdq5Z2+m5EUybV0Ir+X3oRywGJFP
+         28/Q==
+X-Gm-Message-State: AOAM531zR/vuUSPoFMTXV76X/X3btHUE4Abiu9OdFPip8Ois8C099PqV
+        JESoEtdCR6cDPu2KNxWFWqxszn4Pc3kxhfOuyBqRzCOhTF0x
+X-Google-Smtp-Source: ABdhPJzmbaQRYk1FPRG9nFSfphAIkK5ARQ/Tk+97XvI+n4pIOgAF7ES9DqgwRGeJ27BnVwhBv3weR8GU6n4+
+X-Received: by 2002:a7b:c193:: with SMTP id y19mr5363115wmi.23.1613053133686;
+        Thu, 11 Feb 2021 06:18:53 -0800 (PST)
+Received: from mta1.parkeon.com ([185.149.63.251])
+        by smtp-relay.gmail.com with ESMTPS id r16sm253298wrx.37.2021.02.11.06.18.53
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Thu, 11 Feb 2021 06:18:53 -0800 (PST)
+X-Relaying-Domain: flowbird.group
+Received: from [172.16.13.226] (port=59918 helo=PC12445-BES.dynamic.besancon.parkeon.com)
+        by mta1.parkeon.com with esmtp (Exim 4.71)
+        (envelope-from <martin.fuzzey@flowbird.group>)
+        id 1lACo1-0007Sd-5V; Thu, 11 Feb 2021 15:18:53 +0100
+From:   Martin Fuzzey <martin.fuzzey@flowbird.group>
+To:     Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: stm32mp1: wait for LSE to become ready after enabling
+Date:   Thu, 11 Feb 2021 15:17:52 +0100
+Message-Id: <1613053132-29632-1-git-send-email-martin.fuzzey@flowbird.group>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Grzegorz Jaszczyk <jaz@semihalf.com>
+After enabling the LSE clock it is necessary to wait to for
+the ready bit to be set.
+This takes 4096 cycles of the clock frequency (typically 32kHz)
 
-This patch introduces support for cpu clk driver in case when SoC
-DFX region is marked as secure by the firmware. In such case accessing
-cpu clk registers, which are part of dfx register set, will not be
-possible from non-secure world.
+Currently this is not done and causes the RTC driver to fail to probe
+when built as a module:
+	stm32_rtc 5c004000.rtc: Can't enter in init mode. Prescaler config failed.
 
-The ARM Trusted Firmware exposes SiP service which allows to read/write
-some dfx registers (white-listed in firmware). This allows Linux cpu clk
-driver to set_rate and recalc_rate with use of SMC calls.
+The reason is that if no built in driver uses LSE the clock framework will
+switch it off at the end of kernel boot. When the RTC driver is later
+probed as a module it will enable the LSE clock but since there is no
+wait the RTC driver will time out waiting for the RTC to initialise.
 
-If during cpu clk operation the SMC is unhandled (old fw case), fallback
-to regmap handling.
+When the RTC driver is built in it works, provided the LSE has already
+been enabled by the bootloader.
 
-Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
-Signed-off-by: Konstantin Porotchkin <kostap@marvell.com>
+Signed-off-by: Martin Fuzzey <martin.fuzzey@flowbird.group>
 ---
- drivers/clk/mvebu/ap-cpu-clk.c    | 174 ++++++++++++++++++--
- include/soc/marvell/armada8k/fw.h |   3 +
- 2 files changed, 161 insertions(+), 16 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 73 +++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 69 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
-index b4259b60dcfd..9ddfa3f8a32d 100644
---- a/drivers/clk/mvebu/ap-cpu-clk.c
-+++ b/drivers/clk/mvebu/ap-cpu-clk.c
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index a875649..b85ec88 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
 @@ -10,6 +10,7 @@
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+@@ -325,9 +326,19 @@ struct clock_config {
  
- #define pr_fmt(fmt) "ap-cpu-clk: " fmt
+ #define NO_ID ~0
  
-+#include <linux/arm-smccc.h>
- #include <linux/clk-provider.h>
- #include <linux/clk.h>
- #include <linux/mfd/syscon.h>
-@@ -19,6 +20,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include "armada_ap_cp_helper.h"
-+#include "soc/marvell/armada8k/fw.h"
- 
- #define AP806_CPU_CLUSTER0		0
- #define AP806_CPU_CLUSTER1		1
-@@ -139,8 +141,122 @@ struct ap_cpu_clk {
- 	struct clk_hw hw;
- 	struct regmap *pll_cr_base;
- 	const struct cpu_dfs_regs *pll_regs;
-+	phys_addr_t phys;
-+	int (*clk_regmap_read)(struct ap_cpu_clk *clk, unsigned int reg,
-+			       unsigned int *val);
-+	int (*clk_regmap_write)(struct ap_cpu_clk *clk, unsigned int reg,
-+				unsigned int val);
-+	int (*clk_regmap_update_bits)(struct ap_cpu_clk *clk, unsigned int reg,
-+				      unsigned int mask, unsigned int val);
-+	int (*clk_regmap_read_poll_timeout)(struct ap_cpu_clk *clk, unsigned int reg,
-+					    unsigned int stable_bit);
++struct stm32_clk_rdy_gate {
++	struct clk_gate gate;
++	u32 timeout_us;
++	u8 rdy_bit_idx;
++};
 +
++#define to_clk_rdy_gate(_gate) container_of(_gate, struct stm32_clk_rdy_gate, gate)
++
+ struct gate_cfg {
+ 	u32 reg_off;
++	u32 timeout_us;
+ 	u8 bit_idx;
++	u8 rdy_bit_idx;
+ 	u8 gate_flags;
  };
  
-+static int dfx_sread_smc(unsigned long addr, unsigned int *reg)
+@@ -469,6 +480,36 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	.is_enabled	= clk_gate_is_enabled,
+ };
+ 
++static int ready_gate_clk_enable(struct clk_hw *hw)
 +{
-+	struct arm_smccc_res res;
++	struct clk_gate *gate = to_clk_gate(hw);
++	struct stm32_clk_rdy_gate *rdy_gate = to_clk_rdy_gate(gate);
++	int ret = 0;
 +
-+	arm_smccc_smc(MV_SIP_DFX, MV_SIP_DFX_SREAD, addr, 0, 0, 0, 0, 0, &res);
++	if (!clk_gate_ops.is_enabled(hw)) {
++		u32 val;
 +
-+	if (res.a0 == 0 && reg != NULL)
-+		*reg = res.a1;
-+
-+	return res.a0;
-+}
-+
-+static int dfx_swrite_smc(unsigned long addr, unsigned long val)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(MV_SIP_DFX, MV_SIP_DFX_SWRITE, addr, val,
-+		      0, 0, 0, 0, &res);
-+
-+	return res.a0;
-+}
-+
-+static int smc_regmap_read(struct ap_cpu_clk *clk, unsigned int reg,
-+			   unsigned int *val)
-+{
-+	return dfx_sread_smc(clk->phys + reg, val);
-+}
-+
-+static int legacy_regmap_read(struct ap_cpu_clk *clk, unsigned int reg,
-+			      unsigned int *val)
-+{
-+	return regmap_read(clk->pll_cr_base, reg, val);
-+}
-+
-+static int smc_regmap_write(struct ap_cpu_clk *clk, unsigned int reg,
-+			    unsigned int val)
-+{
-+	return dfx_swrite_smc(clk->phys + reg, val);
-+}
-+
-+static int legacy_regmap_write(struct ap_cpu_clk *clk, unsigned int reg,
-+			       unsigned int val)
-+{
-+	return regmap_write(clk->pll_cr_base, reg, val);
-+}
-+
-+static int smc_regmap_update_bits(struct ap_cpu_clk *clk, unsigned int reg,
-+				  unsigned int mask, unsigned int val)
-+{
-+	int ret;
-+	unsigned int tmp;
-+
-+	ret = dfx_sread_smc(clk->phys + reg, &tmp);
-+	if (ret != SMCCC_RET_SUCCESS)
-+		return ret;
-+
-+	tmp &= ~mask;
-+	tmp |= val & mask;
-+
-+	return dfx_swrite_smc(clk->phys + reg, tmp);
-+}
-+
-+static int legacy_regmap_update_bits(struct ap_cpu_clk *clk, unsigned int reg,
-+				     unsigned int mask, unsigned int val)
-+{
-+	return regmap_update_bits(clk->pll_cr_base, reg, mask, val);
-+}
-+
-+static int smc_regmap_read_poll_timeout(struct ap_cpu_clk *clk,
-+					unsigned int reg,
-+					unsigned int stable_bit)
-+{
-+	int ret;
-+	u32 val;
-+	ktime_t timeout;
-+
-+	timeout = ktime_add_us(ktime_get(), STATUS_POLL_TIMEOUT_US);
-+	do {
-+		ret = dfx_sread_smc(clk->phys + reg, &val);
-+		if (ret || (val & stable_bit))
-+			break;
-+
-+		usleep_range((STATUS_POLL_PERIOD_US >> 2) + 1,
-+			     STATUS_POLL_PERIOD_US);
-+
-+	} while (ktime_before(ktime_get(), timeout));
-+
-+	if (ret == SMCCC_RET_SUCCESS)
-+		return (val & stable_bit) ? 0 : -ETIMEDOUT;
++		clk_gate_ops.enable(hw);
++		ret = readl_relaxed_poll_timeout_atomic(
++					gate->reg,
++					val, (val & BIT(rdy_gate->rdy_bit_idx)),
++					100, rdy_gate->timeout_us);
++	}
 +
 +	return ret;
 +}
 +
-+static int legacy_regmap_read_poll_timeout(struct ap_cpu_clk *clk,
-+					   unsigned int reg,
-+					   unsigned int stable_bit)
++static void ready_gate_clk_disable(struct clk_hw *hw)
 +{
-+	u32 val;
-+
-+	return regmap_read_poll_timeout(clk->pll_cr_base,
-+					reg, val,
-+					(val & stable_bit), STATUS_POLL_PERIOD_US,
-+					STATUS_POLL_TIMEOUT_US);
++	clk_gate_ops.disable(hw);
 +}
- static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate)
++
++static const struct clk_ops ready_gate_clk_ops = {
++	.enable		= ready_gate_clk_enable,
++	.disable	= ready_gate_clk_disable,
++	.is_enabled	= clk_gate_is_enabled,
++};
++
+ static struct clk_hw *_get_stm32_mux(void __iomem *base,
+ 				     const struct stm32_mux_cfg *cfg,
+ 				     spinlock_t *lock)
+@@ -535,7 +576,7 @@ static struct clk_hw *_get_stm32_div(void __iomem *base,
+ 		const struct stm32_gate_cfg *cfg, spinlock_t *lock)
  {
-@@ -150,7 +266,7 @@ static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
+ 	struct stm32_clk_mgate *mgate;
+-	struct clk_gate *gate;
++	struct stm32_clk_rdy_gate *rdy_gate;
+ 	struct clk_hw *gate_hw;
  
- 	cpu_clkdiv_reg = clk->pll_regs->divider_reg +
- 		(clk->cluster * clk->pll_regs->cluster_offset);
--	regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
-+	clk->clk_regmap_read(clk, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
- 	cpu_clkdiv_ratio &= clk->pll_regs->divider_mask;
- 	cpu_clkdiv_ratio >>= clk->pll_regs->divider_offset;
+ 	if (cfg->mgate) {
+@@ -554,10 +595,15 @@ static struct clk_hw *_get_stm32_div(void __iomem *base,
+ 		gate_hw = &mgate->gate.hw;
  
-@@ -171,7 +287,7 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	cpu_ratio_reg = clk->pll_regs->ratio_reg +
- 		(clk->cluster * clk->pll_regs->cluster_offset);
- 
--	regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &reg);
-+	clk->clk_regmap_read(clk, cpu_clkdiv_reg, &reg);
- 	reg &= ~(clk->pll_regs->divider_mask);
- 	reg |= (divider << clk->pll_regs->divider_offset);
- 
-@@ -184,29 +300,27 @@ static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		reg |= ((divider * clk->pll_regs->divider_ratio) <<
- 				AP807_PLL_CR_1_CPU_CLK_DIV_RATIO_OFFSET);
- 	}
--	regmap_write(clk->pll_cr_base, cpu_clkdiv_reg, reg);
-+	clk->clk_regmap_write(clk, cpu_clkdiv_reg, reg);
- 
-+	clk->clk_regmap_update_bits(clk, cpu_force_reg,
-+				    clk->pll_regs->force_mask,
-+				    clk->pll_regs->force_mask);
- 
--	regmap_update_bits(clk->pll_cr_base, cpu_force_reg,
--			   clk->pll_regs->force_mask,
--			   clk->pll_regs->force_mask);
--
--	regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
--			   BIT(clk->pll_regs->ratio_offset),
--			   BIT(clk->pll_regs->ratio_offset));
-+	clk->clk_regmap_update_bits(clk, cpu_ratio_reg,
-+				    BIT(clk->pll_regs->ratio_offset),
-+				    BIT(clk->pll_regs->ratio_offset));
- 
- 	stable_bit = BIT(clk->pll_regs->ratio_state_offset +
- 			 clk->cluster *
- 			 clk->pll_regs->ratio_state_cluster_offset);
--	ret = regmap_read_poll_timeout(clk->pll_cr_base,
--				       clk->pll_regs->ratio_state_reg, reg,
--				       reg & stable_bit, STATUS_POLL_PERIOD_US,
--				       STATUS_POLL_TIMEOUT_US);
-+	ret = clk->clk_regmap_read_poll_timeout(clk,
-+						clk->pll_regs->ratio_state_reg,
-+						stable_bit);
- 	if (ret)
- 		return ret;
- 
--	regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
--			   BIT(clk->pll_regs->ratio_offset), 0);
-+	clk->clk_regmap_update_bits(clk, cpu_ratio_reg,
-+				BIT(clk->pll_regs->ratio_offset), 0);
- 
- 	return 0;
- }
-@@ -235,6 +349,11 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
- 	struct clk_hw_onecell_data *ap_cpu_data;
- 	struct ap_cpu_clk *ap_cpu_clk;
- 	struct regmap *regmap;
-+	struct resource res;
+ 	} else {
+-		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-		if (!gate)
++		struct clk_gate *gate;
 +
-+	ret = of_address_to_resource(np->parent, 0, &res);
-+	if (ret)
-+		return ret;
++		rdy_gate = kzalloc(sizeof(*rdy_gate), GFP_KERNEL);
++		if (!rdy_gate)
+ 			return ERR_PTR(-ENOMEM);
  
- 	regmap = syscon_node_to_regmap(np->parent);
- 	if (IS_ERR(regmap)) {
-@@ -286,6 +405,7 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
- 		const char *parent_name;
- 		struct clk *parent;
- 		int cpu, err;
-+		unsigned int tmp;
++		gate = &rdy_gate->gate;
++		rdy_gate->rdy_bit_idx = cfg->gate->rdy_bit_idx;
++		rdy_gate->timeout_us = cfg->gate->timeout_us;
+ 		gate->reg = cfg->gate->reg_off + base;
+ 		gate->bit_idx = cfg->gate->bit_idx;
+ 		gate->flags = cfg->gate->gate_flags;
+@@ -1211,6 +1257,23 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
+ 	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
+ 		    NULL, NULL)\
  
- 		err = of_property_read_u32(dn, "reg", &cpu);
- 		if (WARN_ON(err))
-@@ -313,6 +433,28 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
- 		ap_cpu_clk[cluster_index].dev = dev;
- 		ap_cpu_clk[cluster_index].pll_regs = of_device_get_match_data(&pdev->dev);
- 
-+		/* Get the physical address to hand to the firmware. */
-+		ap_cpu_clk[cluster_index].phys = res.start;
++#define _READY_GATE(_gate_offset, _gate_bit_idx, _rdy_bit_idx, _timeout_us, _gate_flags)\
++	(&(struct stm32_gate_cfg) {\
++		&(struct gate_cfg) {\
++			.reg_off	= _gate_offset,\
++			.bit_idx	= _gate_bit_idx,\
++			.rdy_bit_idx	= _rdy_bit_idx,\
++			.timeout_us	= _timeout_us, \
++			.gate_flags	= _gate_flags,\
++		},\
++		.ops		= &ready_gate_clk_ops,\
++	})
 +
-+		/* Try to read a register using SMC and setup DFX access APIs accordingly */
-+		ret = smc_regmap_read(&ap_cpu_clk[cluster_index],
-+				      ap_cpu_clk[cluster_index].pll_regs->divider_reg,
-+				      &tmp);
-+		if (ret == SMCCC_RET_SUCCESS) {
-+			ap_cpu_clk[cluster_index].clk_regmap_read = smc_regmap_read;
-+			ap_cpu_clk[cluster_index].clk_regmap_write = smc_regmap_write;
-+			ap_cpu_clk[cluster_index].clk_regmap_update_bits = smc_regmap_update_bits;
-+			ap_cpu_clk[cluster_index].clk_regmap_read_poll_timeout =
-+								smc_regmap_read_poll_timeout;
-+		} else {
-+			ap_cpu_clk[cluster_index].clk_regmap_read = legacy_regmap_read;
-+			ap_cpu_clk[cluster_index].clk_regmap_write = legacy_regmap_write;
-+			ap_cpu_clk[cluster_index].clk_regmap_update_bits =
-+								legacy_regmap_update_bits;
-+			ap_cpu_clk[cluster_index].clk_regmap_read_poll_timeout =
-+								legacy_regmap_read_poll_timeout;
-+		}
++#define GATE_READY(_id, _name, _parent, _flags, _offset, _bit_idx, \
++		   _rdy_bit_idx, _timeout_us, _gate_flags) \
++	STM32_GATE(_id, _name, _parent, _flags,\
++		   _READY_GATE(_offset, _bit_idx, _rdy_bit_idx, _timeout_us, _gate_flags))
 +
- 		init.name = ap_cpu_clk[cluster_index].clk_name;
- 		init.ops = &ap_cpu_clk_ops;
- 		init.num_parents = 1;
-diff --git a/include/soc/marvell/armada8k/fw.h b/include/soc/marvell/armada8k/fw.h
-index 2a80f26cbf6f..e646212a3796 100644
---- a/include/soc/marvell/armada8k/fw.h
-+++ b/include/soc/marvell/armada8k/fw.h
-@@ -16,4 +16,7 @@
- #define MV_SIP_DFX_THERMAL_THRESH	5
- #define MV_SIP_DFX_THERMAL_SEL_CHANNEL	6
+ #define _GATE_MP1(_gate_offset, _gate_bit_idx, _gate_flags)\
+ 	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
+ 		    NULL, &mp1_gate_clk_ops)\
+@@ -1668,7 +1731,9 @@ enum {
+ 		 RCC_OCENSETR, 4, 0),
+ 	GATE_MP1(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
+ 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
+-	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
++	GATE_READY(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 2,
++		   /* Ready bit set after 4096 cycles of 32kHz clock 2* for safety */
++		   USEC_PER_SEC / 32768 * 4096 * 2, 0),
  
-+#define MV_SIP_DFX_SREAD		20
-+#define MV_SIP_DFX_SWRITE		21
-+
- #endif /* _SOC_MARVELL_ARMADA8K_FW_H */
+ 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
+ 
 -- 
-2.17.1
+1.9.1
 
