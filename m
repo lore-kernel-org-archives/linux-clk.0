@@ -2,92 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FFDC433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A425C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B561D64DFF
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F19E564DE7
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 13:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231406AbhBKNJd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 08:09:33 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:40210 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbhBKNGj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 08:06:39 -0500
-Received: by mail-oi1-f182.google.com with SMTP id 18so5950414oiz.7;
-        Thu, 11 Feb 2021 05:06:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xObaF1XR6HJKRkZuGgQPbLa0Xlc9E/4S3iOJ2jtrHq4=;
-        b=gsyputBnbCOygMxEmMz4Vq2cKt/ZqBRtF4q+V0vWouxbYNSHuTa8mJn9Vt8l6XwNjc
-         D2AP1S50QQQFkm2LCKGB+BU9IhklczhBGMI+dRoPmT+L7bDhlX6Pe/EOE0zR4hdUC0jj
-         X0aS86sm1XXlkG3fqNwPJH8pHLaO8DuKfUzWOr3GtrNJ/RidR8FpnF6fn7BWNJUwlNQx
-         gfxlJhPirM+afOHG0+EYcr+YdbANDNfGxhxE6TDMBHRAp4P6GJfMyMH4dIT8ySAmywAJ
-         zXzbfj8JItbNGfeJxhyIjkUui+x41IQpm/ggmNd9xhk4joOi6fI6bGfbR+eeyllSxdk5
-         hZjQ==
-X-Gm-Message-State: AOAM53311PRJu4hTHpT9GlyIv+GNJFC/mGZpVTbGCZj2vQtTUTzEm/eM
-        uxEgpVQT1Rm9U+wgKjzv3/Hjp7GiWb30LsuMsgfJc+qW
-X-Google-Smtp-Source: ABdhPJzwYtQCs4VAB8ju7w94RZlUjgs0rmPh9eN3vSDuKS9kLskA4ogyi1srA8z4N9XHP/Hjkill3F4k3WedUrRufNU=
-X-Received: by 2002:a54:4e88:: with SMTP id c8mr2600538oiy.148.1613048757267;
- Thu, 11 Feb 2021 05:05:57 -0800 (PST)
+        id S231610AbhBKNvx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 08:51:53 -0500
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:33552 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232185AbhBKNtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 08:49:50 -0500
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11BDlpMn007387;
+        Thu, 11 Feb 2021 05:49:00 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=pfpt0220;
+ bh=YmkCPSy4LnAclW31OySWPKpjYg4msFSDLJ3PxqY/wLk=;
+ b=MpXe3EyjbDzQRzKG9t7e71sTWj+KLdOYLUlVPYZvZqLz5cHvPUsQNroD0nrsO1MCeSP7
+ KoQLY9X/ap62klbeU33DHfCBWuK6FZLP4G4suv/+0kqgHQI3ZaErUuESZJM82BOXk0p0
+ sQ6of71BFxaJWuHhx8HdNptPsKQPd3/q7PhM7HavCl9V40JaxuLfHsZKO445c/W7cMMK
+ 63OtCQu0ouwU/NucD/KtyEKlXsBFu7gvIZNrE2JD/QwFW9kf6oIkB/PVX8pjXt7+UZJ3
+ gDLOPSgfpfhqqLdi5a3prS9vZRhodVs1u+63UiPhUrDH4uZzMAR6QyZaLgIP4uf1wivC NA== 
+Received: from dc5-exch01.marvell.com ([199.233.59.181])
+        by mx0a-0016f401.pphosted.com with ESMTP id 36hsbrq5en-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 11 Feb 2021 05:49:00 -0800
+Received: from SC-EXCH04.marvell.com (10.93.176.84) by DC5-EXCH01.marvell.com
+ (10.69.176.38) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 11 Feb
+ 2021 05:48:58 -0800
+Received: from DC5-EXCH02.marvell.com (10.69.176.39) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 11 Feb
+ 2021 05:48:58 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH02.marvell.com
+ (10.69.176.39) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 11 Feb 2021 05:48:58 -0800
+Received: from octopus.marvell.com (octopus.marvell.com [10.5.24.3])
+        by maili.marvell.com (Postfix) with ESMTP id C582F3F703F;
+        Thu, 11 Feb 2021 05:48:54 -0800 (PST)
+From:   <kostap@marvell.com>
+To:     <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <Julia.Lawall@inria.fr>, <amitk@kernel.org>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <miquel.raynal@bootlin.com>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>, <mw@semihalf.com>, <jaz@semihalf.com>,
+        <nadavh@marvell.com>, <stefanc@marvell.com>, <bpeled@marvell.com>,
+        "Konstantin Porotchkin" <kostap@marvell.com>
+Subject: [PATCH 0/2] Enable usage of Marvell FW SIP services
+Date:   Thu, 11 Feb 2021 15:48:50 +0200
+Message-ID: <20210211134852.23648-1-kostap@marvell.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com> <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 11 Feb 2021 14:05:45 +0100
-Message-ID: <CAMuHMdUZ1DsWycqreuvDN-bs+ZKJw9Dj6bsUfG0NzuM9LrBuig@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-11_06:2021-02-10,2021-02-11 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Saravana,
+From: Konstantin Porotchkin <kostap@marvell.com>
 
-On Thu, Feb 11, 2021 at 2:00 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->       - Disabling CONFIG_RCAR_DMAC works for most devices, except for
->         sound:
+These patches enable usage of Arm Trusted Firmware SIP services on
+Marvell Armada plaforms for accessing system registers that are not
+normally accessible from kernel or user space (EL1/EL0), like DFX
+registers group.
 
-Please ignore.  DMA is mandatory for sound, and thus fails in the same
-way on v5.11-rc5.
+v2:
+* use separate legacy/smc regmap functions registered at ap-cpu
+  clock driver probe according to FW response
 
-Gr{oetje,eeting}s,
+v3:
+* fix build errors and rebase on clk-next branch
 
-                        Geert
+Grzegorz Jaszczyk (2):
+  thermal: armada: ap806: use firmware SiP services for thermal
+    operations
+  clk: mvebu: use firmware SiP service for accessing dfx register set
+
+ drivers/clk/mvebu/ap-cpu-clk.c    | 174 ++++++++++++++++++--
+ drivers/thermal/armada_thermal.c  | 125 +++++++++++++-
+ include/soc/marvell/armada8k/fw.h |  22 +++
+ 3 files changed, 302 insertions(+), 19 deletions(-)
+ create mode 100644 include/soc/marvell/armada8k/fw.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
