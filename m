@@ -2,199 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6FEC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9561DC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E04C64E95
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:55:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF6664E7E
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 14:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbhBKOxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 09:53:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30784 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231252AbhBKOqK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 09:46:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613054679;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RcinVWu3bcunxMizVr6YdOQZJoRP+W/VNBiBV+7EN7Y=;
-        b=URKZt45+av0h1oYGRGdrjdzOwUNMzRfYH8OmLdT+7MYa8eLY6xPHR4iCvaT/SUozt8v+K3
-        /D4czgeHibkQG0uYxpGTOaV3mod39HSrCf4RdOGZA5Fb9I/Vj1I7+fkLMjzfYSK3058FEA
-        dGkbz8ddVtmsgYvTv/s1oFJw6Wca1HA=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-126-X8-a4VShN66-ddaP1sl37A-1; Thu, 11 Feb 2021 09:44:38 -0500
-X-MC-Unique: X8-a4VShN66-ddaP1sl37A-1
-Received: by mail-qk1-f197.google.com with SMTP id u66so4387372qkd.13
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 06:44:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=RcinVWu3bcunxMizVr6YdOQZJoRP+W/VNBiBV+7EN7Y=;
-        b=gSHyf45mZZ/7GQUC01IqlFOzkcv6XOuNBiU0dag3OV232rtKVvqlDsvXQBb7cZ6Gqf
-         8yCHdaQ09RT41UuDqeBLmjdydk4gmmutoYkSM9Xx69CLrVl6odZEWaH0QswnH7O2PaE3
-         V8Sz1oDJ60BKTAfxqny5ykjL2uOvqMl6/KXxms/HDu0qhAAwR+N4OB6vJ/jGvxh1PaNi
-         vMjhMP+rWAgAYGL45rLyKKTvDSoWPaH0aFPDspLJg19EpQnS2QHgsB/ILLE1CtQ0B1fV
-         V2BXve90gXGWqLBCDUewTx3wgcp5DyK8fLFNwRsTE/J0abMXslR3L4IK6wKsb7fUvnyF
-         7nCQ==
-X-Gm-Message-State: AOAM533hzYeNQZ0mr+1nwV6n93T44pWj46wv/L1W+5mPq6aIiRO12NY3
-        b/t86kEbthMumP3JNZtkbSbnfuudNVn10jn9VEGVcaN3IJ8obK1uFowt2ZMwC2upySD6dSKRnRx
-        Rv/EbBL6muljhnUuUCn2k
-X-Received: by 2002:ac8:ecd:: with SMTP id w13mr7771277qti.91.1613054677867;
-        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwy2sdyEM6H+86CchK4C9MQe83PTDkHtsADOMUokbWbPMagfuKn9UL1YevyhiDGgrW3FS/YeQ==
-X-Received: by 2002:ac8:ecd:: with SMTP id w13mr7771251qti.91.1613054677626;
-        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id b16sm3521564qtx.85.2021.02.11.06.44.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Feb 2021 06:44:37 -0800 (PST)
-Subject: Re: [PATCH 2/2] clk: axi-clkgen: Add support for FPGA info
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, lars@metafoo.de,
-        linux-fpga@vger.kernel.org, mdf@kernel.org, ardeleanalex@gmail.com,
-        Mircea Caprioru <mircea.caprioru@analog.com>
-References: <20210210101535.47979-1-alexandru.ardelean@analog.com>
- <20210210101535.47979-2-alexandru.ardelean@analog.com>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <26eae7d2-768d-4df4-5646-c44d53b8659e@redhat.com>
-Date:   Thu, 11 Feb 2021 06:44:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        id S229649AbhBKO6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 09:58:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231341AbhBKOxj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 09:53:39 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9463864E7E;
+        Thu, 11 Feb 2021 14:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613055171;
+        bh=y9W1QoA11D/YlFhp7AxmUd3UQsfGyTGGB4b+xoKvpDw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=E1IqgqsO4b5AXFtD7WsZkQRJS1/AHZL2t36GzJjggnGdE22TKkvR+jmIibh4A1xZ0
+         4lSnt50ezkumgvmdhcFspKes6vONqmnQQT4dn9jrzexA/b94OAh/TWuzYGh0Ebx2h/
+         XRZkZHdmwGsDpykWFwbquiIEv6WoC1R/G5bWoC48U9Nw6VA8psLepDHwIm49ibD4ZG
+         GQIQuf5RUQtnEeP6HG1OtoqS2tUyZu2tW9qRiCXVbGGT516p/0Znc3Fa77Hri6rZns
+         P65jHZl5iPs1UEY5Vohiq3NX97au7ubTFmPPWvuMYVjt4veXp8IITN1V2UncoKXdqa
+         /ms+UZgNQFG8A==
+Received: by mail-ej1-f42.google.com with SMTP id a9so10485807ejr.2;
+        Thu, 11 Feb 2021 06:52:51 -0800 (PST)
+X-Gm-Message-State: AOAM530QS+omPy3z+IUHCjFrBc5TcD1Q+URxbWTp1sNGW6DuZmrS6mlM
+        QOh7pUIH/X+tnnGBXpA3FYKyKSrypwuQnWrSXw==
+X-Google-Smtp-Source: ABdhPJzbMfh6cditDQ2L4N8t5L52D9PUJSbfLo3iVj5V1td26kANC6HGLI+jOPHwx42tG+2V29psrF71rJAhFg4JZhU=
+X-Received: by 2002:a17:906:f85:: with SMTP id q5mr8757682ejj.108.1613055170111;
+ Thu, 11 Feb 2021 06:52:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210210101535.47979-2-alexandru.ardelean@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20210207185140.3653350-1-aford173@gmail.com> <20210210201841.GA2688439@robh.at.kernel.org>
+ <CAHCN7xJwd=u8O33j0Gkaw7=5-k5F=pEuSxqoe+hV=LxAPMk_vQ@mail.gmail.com>
+In-Reply-To: <CAHCN7xJwd=u8O33j0Gkaw7=5-k5F=pEuSxqoe+hV=LxAPMk_vQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 11 Feb 2021 08:52:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKXrax2GAzNR5UUUdY60PzBMKSMPB32AyP+YKPEtSvOhw@mail.gmail.com>
+Message-ID: <CAL_JsqKXrax2GAzNR5UUUdY60PzBMKSMPB32AyP+YKPEtSvOhw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: clk: versaclock5: Add optional load
+ capacitance property
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 2/10/21 2:15 AM, Alexandru Ardelean wrote:
-> From: Mircea Caprioru <mircea.caprioru@analog.com>
+On Wed, Feb 10, 2021 at 2:40 PM Adam Ford <aford173@gmail.com> wrote:
 >
-> This patch adds support for vco maximum and minimum ranges in accordance
-> with fpga speed grade, voltage, device package, technology and family. This
-> new information is extracted from two new registers implemented in the ip
-> core: ADI_REG_FPGA_INFO and ADI_REG_FPGA_VOLTAGE, which are stored in the
-> 'include/linux/fpga/adi-axi-common.h' file as they are common to all ADI
-> FPGA cores.
+> On Wed, Feb 10, 2021 at 2:18 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Sun, Feb 07, 2021 at 12:51:38PM -0600, Adam Ford wrote:
+> > > There are two registers which can set the load capacitance for
+> > > XTAL1 and XTAL2. These are optional registers when using an
+> > > external crystal.  Since XTAL1 and XTAL2 will set to the same value,
+> > > update the binding to support a single property called
+> > > xtal-load-femtofarads.
+> > >
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > > ---
+> > > V3:  No Change
+> > > V2:  No Change
+> > >
+> > > A couple people suggested that I not use the $ref, but without it,
+> > > the bindings check failed with errors.
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > index 2ac1131fd922..c268debe5b8d 100644
+> > > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> > > @@ -59,6 +59,12 @@ properties:
+> > >      minItems: 1
+> > >      maxItems: 2
+> > >
+> > > +  idt,xtal-load-femtofarads:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> >
+> > Don't need a type with standard unit suffix.
 >
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  drivers/clk/clk-axi-clkgen.c | 52 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> index ac6ff736ac8f..e4d6c87f8a07 100644
-> --- a/drivers/clk/clk-axi-clkgen.c
-> +++ b/drivers/clk/clk-axi-clkgen.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/platform_device.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/fpga/adi-axi-common.h>
->  #include <linux/slab.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> @@ -240,6 +241,50 @@ static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
->  	*val = readl(axi_clkgen->base + reg);
->  }
->  
-> +static void axi_clkgen_setup_ranges(struct axi_clkgen *axi_clkgen)
-> +{
-> +	struct axi_clkgen_limits *limits = &axi_clkgen->limits;
-> +	unsigned int reg_value;
-> +	unsigned int tech, family, speed_grade, voltage;
-> +
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_INFO, &reg_value);
-> +	tech = ADI_AXI_INFO_FPGA_TECH(reg_value);
-> +	family = ADI_AXI_INFO_FPGA_FAMILY(reg_value);
-> +	speed_grade = ADI_AXI_INFO_FPGA_SPEED_GRADE(reg_value);
-> +
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_FPGA_VOLTAGE, &reg_value);
-> +	voltage = ADI_AXI_INFO_FPGA_VOLTAGE(reg_value);
-> +
-> +	switch (speed_grade) {
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_1 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_1LV:
-> +		limits->fvco_max = 1200000;
-> +		limits->fpfd_max = 450000;
-> +		break;
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_2 ... ADI_AXI_FPGA_SPEED_GRADE_XILINX_2LV:
-> +		limits->fvco_max = 1440000;
-> +		limits->fpfd_max = 500000;
-> +		if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
-> +		    (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
-NOTE: If any of the errors are false positives, please report
-      them to the maintainer, see CHECKPATCH in MAINTAINERS.
-3a419c9317b157ef06ca347b7e6bbab846a3d605 clk: axi-clkgen: Add support for FPGA info
-CHECK: Unnecessary parentheses around 'family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX'
-#57: FILE: drivers/clk/clk-axi-clkgen.c:266:
-+        if ((family == ADI_AXI_FPGA_FAMILY_XILINX_KINTEX) |
-+            (family == ADI_AXI_FPGA_FAMILY_XILINX_ARTIX)) {
+> If I remove that line, the binding check fails.
 
-Please use checkpatch -strict to find this problem.
+Ah, looks like femtofarads got added to property-units.txt but not the
+schemas. I'll add it, but fine to leave this as-is for now.
 
-Likely the '|', should be '||'
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Tom
-
-> +			if (voltage < 950) {
-> +				limits->fvco_max = 1200000;
-> +				limits->fpfd_max = 450000;
-> +			}
-> +		}
-> +		break;
-> +	case ADI_AXI_FPGA_SPEED_GRADE_XILINX_3:
-> +		limits->fvco_max = 1600000;
-> +		limits->fpfd_max = 550000;
-> +		break;
-> +	default:
-> +		break;
-> +	};
-> +
-> +	if (tech == ADI_AXI_FPGA_TECH_XILINX_ULTRASCALE_PLUS) {
-> +		limits->fvco_max = 1600000;
-> +		limits->fvco_min = 800000;
-> +	}
-> +}
-> +
->  static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
->  {
->  	unsigned int timeout = 10000;
-> @@ -510,7 +555,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  	struct clk_init_data init;
->  	const char *parent_names[2];
->  	const char *clk_name;
-> -	unsigned int i;
-> +	unsigned int i, ver;
->  	int ret;
->  
->  	dflt_limits = device_get_match_data(&pdev->dev);
-> @@ -537,6 +582,11 @@ static int axi_clkgen_probe(struct platform_device *pdev)
->  
->  	memcpy(&axi_clkgen->limits, dflt_limits, sizeof(axi_clkgen->limits));
->  
-> +	axi_clkgen_read(axi_clkgen, ADI_AXI_REG_VERSION, &ver);
-> +
-> +	if (ADI_AXI_PCORE_VER_MAJOR(ver) > 0x04)
-> +		axi_clkgen_setup_ranges(axi_clkgen);
-> +
->  	clk_name = pdev->dev.of_node->name;
->  	of_property_read_string(pdev->dev.of_node, "clock-output-names",
->  		&clk_name);
-
+Rob
