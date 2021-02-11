@@ -2,108 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F3EC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCECC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 235F864E74
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AB2B6024A
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 07:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbhBKHkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 02:40:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbhBKHjy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 02:39:54 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54FD8C061756
-        for <linux-clk@vger.kernel.org>; Wed, 10 Feb 2021 23:39:14 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lA6Z9-0002Uj-3t; Thu, 11 Feb 2021 08:39:07 +0100
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1lA6Z8-0006lR-FY; Thu, 11 Feb 2021 08:39:06 +0100
-Date:   Thu, 11 Feb 2021 08:39:06 +0100
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] soc: xilinx: vcu: remove deadcode on null divider
- check
-Message-ID: <20210211073906.GC30300@pengutronix.de>
-References: <20210210184938.146124-1-colin.king@canonical.com>
- <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
+        id S229803AbhBKH5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 02:57:21 -0500
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:41409 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229818AbhBKHzQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Feb 2021 02:55:16 -0500
+Received: by mail-ot1-f48.google.com with SMTP id s107so4369052otb.8;
+        Wed, 10 Feb 2021 23:55:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+y2ykRo35Ho1Ay2BjBPfbis5WVr8Yo45047sbXAu03U=;
+        b=NoZWoxODDM8XN2MeaY7pdhAM1vX6YtPM9qUWchjPVxU0pLKY6R8qLXy2UftHHocyHN
+         72KFdKV2EvaPdxGH0cjC3X1+C8bSOV+891yR/DygBawkR3b048Eib3ndzX/QNajjU93G
+         cueYJNYZGnBrMjxnK0HYECTLp/q5Q2bpnUrTWqne+GDx7RlwgJWhiepAQsyKzFvrq2oA
+         4N3kx1n4FCnSRk6/XVH4AQ81jR8jH44IIX85bW5TXxqahvMaS+7ojZ0FvIYSM1tSUrY3
+         FHyuTzC/5zrxbbefPFdteASm+MEeqDvpcDBhfIa90zUD7bCnq4m0z9ykDRvSPslChG3R
+         GXAw==
+X-Gm-Message-State: AOAM530Rc3cIj/DksDewsvbyr2kbnGox8x5J+vFKxwfri4OAvi15wKyZ
+        2BEhDuEttpCza/+fLXl2C5F5DO8z37j3ITwzKqZ3ZGqC
+X-Google-Smtp-Source: ABdhPJxeLTHAjoZoTOkYH7ZF43miE01Q6qTrxl9a0rDUSducWvD6ALn4VvYN6F14WIJQEZoKHkr28cLiwhnnxCnSv90=
+X-Received: by 2002:a9d:77d6:: with SMTP id w22mr4966439otl.145.1613030118370;
+ Wed, 10 Feb 2021 23:55:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <161301409895.1254594.6980739457487251623@swboyd.mtv.corp.google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:32:05 up 70 days, 19:59, 77 users,  load average: 0.10, 0.24,
- 0.22
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <17nqrn25-rp5s-4652-o5o1-72p2oprqpq90@onlyvoer.pbz>
+ <CAJZ5v0hj4VC_kjB5e_b_ho=ET_quG5zUh0Dbbdwofp-6azopsw@mail.gmail.com>
+ <CA+G9fYsRVxWPW1nvSXMTLWfEadrdBDSH5hRPtoUYpfpqq8zRSw@mail.gmail.com>
+ <CAJZ5v0gsYb1uxDUTHUe539w8uXhk=m337Xn6wtPhF1oPKzaYrQ@mail.gmail.com>
+ <30np982n-r2q8-8532-q6os-9p9729ppos45@syhkavp.arg> <CAJZ5v0iNtmXWr3uXzit5Er_j7G=LkGVyhdNAsjwpVWsDy8F7KQ@mail.gmail.com>
+ <61p41n8-r88q-9npq-879o-s4r5856os9s1@onlyvoer.pbz> <CAJZ5v0hn=aUXS-cBG333YXiG2_SUhfkvzsJPYqmWRyDu1zc+VA@mail.gmail.com>
+ <82qo9ooo-32q0-2r4r-26q-o8482651qr91@onlyvoer.pbz> <p19331q-3579-p18s-s832-qps97sp5o6sq@onlyvoer.pbz>
+ <161301451636.1254594.7473642352348913785@swboyd.mtv.corp.google.com>
+In-Reply-To: <161301451636.1254594.7473642352348913785@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 11 Feb 2021 08:55:07 +0100
+Message-ID: <CAMuHMdXvkhH3ELV2TF-KxWK1neeKEWdFFtLvbxrnorZk-yW1Pg@mail.gmail.com>
+Subject: Re: [PATCH v4] PM / clk: make PM clock layer compatible with clocks
+ that must sleep
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Pitre <npitre@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 10 Feb 2021 19:28:18 -0800, Stephen Boyd wrote:
-> Quoting Colin King (2021-02-10 10:49:38)
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The pointer 'divider' has previously been null checked followed by
-> > a return, hence the subsequent null check is redundant deadcode
-> > that can be removed.  Clean up the code and remove it.
-> > 
-> > Fixes: 9c789deea206 ("soc: xilinx: vcu: implement clock provider for output clocks")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/clk/xilinx/xlnx_vcu.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-> > index d66b1315114e..607936d7a413 100644
-> > --- a/drivers/clk/xilinx/xlnx_vcu.c
-> > +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> > @@ -512,9 +512,6 @@ static void xvcu_clk_hw_unregister_leaf(struct clk_hw *hw)
-> >  
-> >         mux = clk_hw_get_parent(divider);
-> >         clk_hw_unregister_mux(mux);
-> > -       if (!divider)
-> > -               return;
-> > -
-> 
-> This code is pretty confusing. Waiting for m.tretter@pengutronix.de to
-> reply
+Hi Stephen,
 
-Can you elaborate what you find confusing about this code. I would gladly try
-to clarify and improve the code.
-
-What happens here is that the driver registers a mux -> divider -> gate chain
-for each output clock, but only stores the gate clock. When unregistering the
-clocks, the driver starts at the gate and walks up to the mux while
-unregistering the clocks.
-
-Michael
-
-> 
-> >         clk_hw_unregister_divider(divider);
-> >  }
+On Thu, Feb 11, 2021 at 4:35 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Nicolas Pitre (2021-01-25 11:29:18)
+> > The clock API splits its interface into sleepable ant atomic contexts:
 > >
-> 
+> > - clk_prepare/clk_unprepare for stuff that might sleep
+> >
+> > - clk_enable_clk_disable for anything that may be done in atomic context
+> >
+> > The code handling runtime PM for clocks only calls clk_disable() on
+> > suspend requests, and clk_enable on resume requests. This means that
+> > runtime PM with clock providers that only have the prepare/unprepare
+> > methods implemented is basically useless.
+> >
+> > Many clock implementations can't accommodate atomic contexts. This is
+> > often the case when communication with the clock happens through another
+> > subsystem like I2C or SCMI.
+> >
+> > Let's make the clock PM code useful with such clocks by safely invoking
+> > clk_prepare/clk_unprepare upon resume/suspend requests. Of course, when
+> > such clocks are registered with the PM layer then pm_runtime_irq_safe()
+> > can't be used, and neither pm_runtime_suspend() nor pm_runtime_resume()
+> > may be invoked in atomic context.
+> >
+> > For clocks that do implement the enable and disable methods then
+> > everything just works as before.
+> >
+> > A note on sparse:
+> > According to https://lwn.net/Articles/109066/ there are things
+> > that sparse can't cope with. In particular, pm_clk_op_lock() and
+> > pm_clk_op_unlock() may or may not lock/unlock psd->lock depending on
+> > some runtime condition. To work around that we tell it the lock is
+> > always untaken for the purpose of static analisys.
+> >
+> > Thanks to Naresh Kamboju for reporting issues with the initial patch.
+> >
+> > Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> > Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> >
+> > ---
+>
+> Thanks for doing this. I think it's the main reason why nobody uses the
+> PM clock code so far.
+
+"git grep pm_clk_add" tells you otherwise?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
