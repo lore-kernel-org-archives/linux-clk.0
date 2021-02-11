@@ -4,75 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A230DC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C16BC433E9
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A68264E45
+	by mail.kernel.org (Postfix) with ESMTP id CCC9364E4A
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Feb 2021 19:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231281AbhBKTzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 14:55:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38006 "EHLO mail.kernel.org"
+        id S231304AbhBKTz1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 14:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231289AbhBKTzI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Feb 2021 14:55:08 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 562FB64E45;
-        Thu, 11 Feb 2021 19:54:27 +0000 (UTC)
+        id S231308AbhBKTzU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 14:55:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 423DD61493;
+        Thu, 11 Feb 2021 19:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613073267;
-        bh=plow/Nl5sp9Qbeaz3RuFOPCFMn6bO2c6VClH6R59zz4=;
+        s=k20201202; t=1613073278;
+        bh=WQ4lNSjrQeMVaNYSEnThIJAjEycKGb4cOMMSp0E7+6g=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ca7DW4sLXSieMVfSFut4k56gQwBe1Q5uq9J9KDM3XKf5JG1mZ8cceSnDRHw16lBJt
-         9xp5AHGaIn7ztuqI/pz9XHWGo2DIRC41qtONn0xIWEwU6mfx+Ro3nFwdcub0zRJvUe
-         CRG5mWPQSpY+8K9izAqiz+3EV0OzipTRmUVb4EETwsuBBV03xtKketM/YYJRu+T29N
-         DcUHy/Lhfo8pKntyiqB5speVd/pXovprwuSPXUNy6cyK6kdRnGrYXqUvptDePO10q9
-         duinsTH4GqImQItKRENaW73J3DNKMniSrc6eHDsYZhDd6/H2+glIynbkI670cXAezg
-         NCn8B6wNsIfeQ==
+        b=URZ1zh2yGTgqFIXz41SXkwChbIIcItqEGC4nRunG4s6Qss0XLpdKJPPV5CA5cQJ3d
+         zmiSiN7ZdNXBKDGbC/nlNMXocOrxofpomAgkP9IH/kIaWATq6qoxV31qQFJQsVB8md
+         yRM+X3GGdBQBneLb4tSw0o/DbmTRNR5rpDCUlNWzuqYkpiQ7Ih97TUMkyMKXdolore
+         89vbW2ooOqtBbxZZpJK0i4HA+JwOjHVpRjzEmxxDIm1PTIVG8zUYxPtrCkn2Qq0xtY
+         mbk3XZ9b54uHr2L0fXyVV42XSQJkZRTTeBxD11yNyuroIupACtUrL+hQJZRwOE6eHA
+         /+50jUNO+ieVQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210126124540.3320214-2-lee.jones@linaro.org>
-References: <20210126124540.3320214-1-lee.jones@linaro.org> <20210126124540.3320214-2-lee.jones@linaro.org>
-Subject: Re: [PATCH 01/21] clk: zynq: pll: Fix kernel-doc formatting in 'clk_register_zynq_pll's header
+In-Reply-To: <20210126124540.3320214-3-lee.jones@linaro.org>
+References: <20210126124540.3320214-1-lee.jones@linaro.org> <20210126124540.3320214-3-lee.jones@linaro.org>
+Subject: Re: [PATCH 02/21] clk: ti: clkt_dpll: Fix some kernel-doc misdemeanours
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        Richard Woodruff <r-woodruff2@ti.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
 To:     lee.jones@linaro.org
-Date:   Thu, 11 Feb 2021 11:54:25 -0800
-Message-ID: <161307326594.1254594.18156729685110988578@swboyd.mtv.corp.google.com>
+Date:   Thu, 11 Feb 2021 11:54:37 -0800
+Message-ID: <161307327701.1254594.13576853995244975064@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lee Jones (2021-01-26 04:45:20)
+Quoting Lee Jones (2021-01-26 04:45:21)
 > Fixes the following W=3D1 kernel build warning(s):
 >=20
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'name'=
- not described in 'clk_register_zynq_pll'
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'paren=
-t' not described in 'clk_register_zynq_pll'
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'pll_c=
-trl' not described in 'clk_register_zynq_pll'
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'pll_s=
-tatus' not described in 'clk_register_zynq_pll'
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'lock_=
-index' not described in 'clk_register_zynq_pll'
->  drivers/clk/zynq/pll.c:187: warning: Function parameter or member 'lock'=
- not described in 'clk_register_zynq_pll'
+>  drivers/clk/ti/clkt_dpll.c:284: warning: Function parameter or member 'h=
+w' not described in 'omap2_dpll_round_rate'
+>  drivers/clk/ti/clkt_dpll.c:284: warning: Function parameter or member 'p=
+arent_rate' not described in 'omap2_dpll_round_rate'
+>  drivers/clk/ti/clkt_dpll.c:284: warning: Excess function parameter 'clk'=
+ description in 'omap2_dpll_round_rate'
 >=20
+> Cc: Tero Kristo <kristo@kernel.org>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
+> Cc: Richard Woodruff <r-woodruff2@ti.com>
+> Cc: linux-omap@vger.kernel.org
 > Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
 > Signed-off-by: Lee Jones <lee.jones@linaro.org>
 > ---
 
