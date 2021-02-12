@@ -2,149 +2,260 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ECBC433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 05:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF787C433E9
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8834464E70
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 05:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8757264E79
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229464AbhBLFYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 00:24:36 -0500
-Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:28994
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229651AbhBLFY1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Feb 2021 00:24:27 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PGwJqSAPTiI6z0Qdqf8rWrTjxRWqG8oLCXYVCJ9udnoDVUO2NswXNvAGlnjWQZH3XjVxaIC+8ox93K7Qxm3Wbp6qZrOtP2heUqyRfDicvEsLVkWBJ1V605zPxwyhWqO8smvwId2d5ZCeTL+HIHwi+z5DDj9yt2dstUcEJDCqbpAC2DhBRMzPofbgCb6ZN6jckmKt0xPyRbwT5xEBsxfdmIhD0XSS2KKFnkKbtlqWpR6BhFIJP9N9puKoPvLnc2XdYQTBgpkrZPggke57uGIU4tyrWim3cO8O5fK4rkOaIb+8MVVhGy32iSQfFdepU2t4GlbgpBEGUzZLBbUn3sNFhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSWs6z3GgYuTYW9cDslvKKiBSlT++JRTdKN681sdg4A=;
- b=LWsQoFztlTWQgZYwE9+f++1TEjDpyrWsa2tLy4672UkTUYbshyaWx4EjS3DB/qrtB7ZSWvN93czgcxfJNF29Slxj0TiPnjr2TEYdq6Wj/lUZNi7sRoqWtlXEfDroAyhc2CRyT9pt8rBrr2M0xfl4PVCAifRLenyNcsZ6gKqzz25RqwXWEnEvAd4bRX3L7nT8wkQ1fBVtNaJK00FoK52IxrUFnmsteOT0rlj15mqL2lrZiny3o/OpNzSxLkTtGNCZC6fQ0jLxIX/USu7nXE7Vke+pyOASyCteOoo+rBGOa+0Nl8pWt4o64gvvSQI0pwZYnSvEASkpC08Xba6ap+3xDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSWs6z3GgYuTYW9cDslvKKiBSlT++JRTdKN681sdg4A=;
- b=mrub5foimKfc3JWIOlbUSl6CgkamDDtccBMYzNCpEmgkTV0IPE1S+mdoryIz+lVBFIW0c91G/vRylRDBQOjdkDOh0dbI9oN972JFUg8rw9+a/m1C+AMgRa519MCMqEBHMdrprLHSTS6NicMyykFFVCmO3U+i1R3NyzFGRgH5UAg=
-Received: from VE1PR04MB6702.eurprd04.prod.outlook.com (2603:10a6:803:123::13)
- by VI1PR04MB6016.eurprd04.prod.outlook.com (2603:10a6:803:d3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3846.26; Fri, 12 Feb
- 2021 05:23:36 +0000
-Received: from VE1PR04MB6702.eurprd04.prod.outlook.com
- ([fe80::8da8:ad8f:e241:457b]) by VE1PR04MB6702.eurprd04.prod.outlook.com
- ([fe80::8da8:ad8f:e241:457b%3]) with mapi id 15.20.3846.026; Fri, 12 Feb 2021
- 05:23:36 +0000
-From:   "Wasim Khan (OSS)" <wasim.khan@oss.nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Varun Sethi <V.Sethi@nxp.com>,
-        "Wasim Khan (OSS)" <wasim.khan@oss.nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH] clk: qoriq: use macros to generate pll_mask
-Thread-Topic: [PATCH] clk: qoriq: use macros to generate pll_mask
-Thread-Index: AQHW8yXtCqcwmJSgWUOmwPrlAuDJzapT+RQAgAAcFVA=
-Date:   Fri, 12 Feb 2021 05:23:36 +0000
-Message-ID: <VE1PR04MB6702E532A1AD82E7B93EE5E3908B9@VE1PR04MB6702.eurprd04.prod.outlook.com>
-References: <20210125142513.3919014-1-wasim.khan@oss.nxp.com>
- <161310074861.1254594.15086479842768097422@swboyd.mtv.corp.google.com>
-In-Reply-To: <161310074861.1254594.15086479842768097422@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [223.189.174.146]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e9dd9a70-dee0-4643-1edc-08d8cf165904
-x-ms-traffictypediagnostic: VI1PR04MB6016:
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB60166BCDEA2B33D49901252CD18B9@VI1PR04MB6016.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: KZm0fONTPO70lybxCwOUsQUxxEhDGkYaAQR2FA40MAFiD5GpQMf18HfHXt7nxUSiuGkvM9lduVprFXhD1LJh9I7jDzAWKE/oWtqc3W4LhmTGcJf5qAnYHLkw7PIYCnVZ7/AbiqIhGl2rC9mR+CpVOrTb9dkvt8oHwXdn2Qe9aigqudYyQ44N+7A4lXQHQ7VsBPXpxOmiHl6/B/c4+omkj3EbGPb4RN5IOPDChCnPZUyF4NnmPjIbZSV2suP07IsnO1aJ/rCgpnz7uI3sZE3wG7OGIvbnAXZY7hc3a/Kf0g4t4wJLGUwUK0csgJoJgJmHRXhhO7B13NxTsGfEvukfV59hLSd3Cl4r7IcnmQD7eFXV4Jo5FTnobzWbEXwxo4tgaBRrmbSpIeB5XkzVIBuBxbLE22f1fc4mGrUlrTczz9qsEzob7xxVO4SGVxOXbENr7mPRlpza7tqidq659n2f+f1qsE0yhTMARQmeBiD9hcHbp3PZR6P2Szm18lORt0edB5WzvvBRRRoAA4NXOiwxFQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB6702.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(376002)(396003)(136003)(366004)(39860400002)(5660300002)(52536014)(66476007)(64756008)(66446008)(8676002)(66946007)(66556008)(4326008)(53546011)(76116006)(8936002)(33656002)(478600001)(83380400001)(316002)(110136005)(2906002)(86362001)(7696005)(9686003)(55016002)(6506007)(71200400001)(186003)(26005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?N015U2tVWFQ0Q0wybkpuT0NxQklwdVBhaXU2NnNER1cvU3lMc0plSEkrOXpp?=
- =?utf-8?B?bGRUaG5pckw3QXRWaDYyd2JGL1oySitySWR2NjFIMi93ZzQvbElsOXdMTXk1?=
- =?utf-8?B?OTgrL2pGeGxZejErTHBwYnY1Q0VkaGZuNXN4RVMvNmxtN052RTQwOWM1UmxD?=
- =?utf-8?B?ZENVcVhNMzlxSGk1ZHZSZ3BhMHRoWTdqYlNMZE9rSHZOclp3bk95OURESVN4?=
- =?utf-8?B?YWNDbHY2UUZRYkVSZ0tXV2wyVEEzK3JNS0ZseHAvWEI1SHQ1T0d4eGVpY1U0?=
- =?utf-8?B?c0ErQ0tpUy83bEhxWUx4NHR1RUp3NnVhNG81YUF4UzZxMGZOWDRsdW9oT01u?=
- =?utf-8?B?NFJ6andzVnRaSEVVZ1ZQdjBWeEFNaG5UUGR4ZExWdGowb1I4WUxCT3FNalpN?=
- =?utf-8?B?cGVYUHliV1JXbDB2ZTBZWHcxS2RvQXVGNEwzUVhnOE4rRlpkeGtGWGpEVnFt?=
- =?utf-8?B?ZzhOMmlMd2NwWFJULzdQYzFUekpKUmtJMDZGNUdBdG8wNUtYdXVQaEpmTk1Z?=
- =?utf-8?B?Njh1cTB3em9VL3pEU1E5dEk4RDlmbHIwM1BNc3k1ZGxJaG1tbk5UZ1pJY0Ex?=
- =?utf-8?B?alN4TkRiTkZJWmhUMUxWUlNEOVpXWERMdERRZzhZb1kydDJPendJczdxZVps?=
- =?utf-8?B?QkQxMUhGZ3loOWE5TUx0dTA2aVExL2VrWmV0SldKQXdLbFk4R3FiWTRqaXhO?=
- =?utf-8?B?REc4NG1TSmNLb1U2Ly9WYy9SSlFGTElQQXVGYW5QTHJrNFFtZENVRjNyOEsw?=
- =?utf-8?B?bjBNWXZPaUFkUmlnTVBjbllITm56KzVVWDgybDRPallvSWJIN3UyNDQ2WHlV?=
- =?utf-8?B?Y2pyVlRJK1B1RmVlZ2ppMU9BNkVUZmdPU1R1OHp2L21iQ1QxVklWeEZ0TWJa?=
- =?utf-8?B?MTRvbFhYeDRQbC8rNVREd2cwM1cxUnZ5VjFqRGMwV093cjV1UEp5aldiUlF2?=
- =?utf-8?B?TzB5VGJ0SXZML1FsODJILzdhbmtoUmhXNzRGNFJzbDBMdE0yU1NtMHg3RVVQ?=
- =?utf-8?B?TFU5K2pVenQ0VkMzMkR6QVlLUDRGZ2doT2tNckg5cVR1NzJQTWdFQkxzbnVr?=
- =?utf-8?B?eExaYTdKVDlMUEgwQTNtVHlHSDhkSTVHTE4zUmNqZGtOa2FKMTRyWkczdEZ3?=
- =?utf-8?B?OWJuZlVLOXZrbHpOclJmV09LU1J4R0dneHF0UXhjcUpXc1I3aXlWM2pUdlhh?=
- =?utf-8?B?cDBidVZuUHhqaXorVFRNcDdMa3BOd3VtWHNLRWxCM2YyaTVIR3ovYmc0YjJp?=
- =?utf-8?B?SXR2em9pRXdUMS9TWE1EVXI3QXA0NmoxS2NlRThqTDdKYW5tb0xpZWpnUHRm?=
- =?utf-8?B?b1lHWWlXbDZ0OGxxeXZucUhFWnhEc0NPbndpTHZZQnZHUW1jV1grZ20xUXVh?=
- =?utf-8?B?cVlicXVOT2JQNGZUK0dyZzNnQytQcy9TL0d0MkJ0RDg4ekJhM3BuZG45NUhE?=
- =?utf-8?B?SUlWU01yQmg0RnYxckRGcE1LVmJyZyt2MjhVV2FTaEN5L21CZHphTVJPWnRu?=
- =?utf-8?B?UVhKdmMwOU9QbVJpWTZvSjdHOUVERWhGNStrMlpXeU8vaWtqamlCbWsxQVZF?=
- =?utf-8?B?YS9YQkx4T0ZlSFhFeGVyd0xPWEFvZlc0bkdQVURnNjY5TzEzT01DanJtZ2g2?=
- =?utf-8?B?N0o4NFdtUUxOenVEUnBIZTV5ZzVKZHlPai9Ma3pFV3BIa2FWY20xTHljckxZ?=
- =?utf-8?B?cysvTkRzc281Z2NJL0creExrRlpHYmF2ZDQ0TlRRR0VDSHlYMVY5UHdJZFg2?=
- =?utf-8?Q?aixXCL6oVLQT7yH4vkympajAVryxmA2j3honkNs?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S229974AbhBLHo2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 02:44:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35838 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229976AbhBLHoM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 02:44:12 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A65C061756;
+        Thu, 11 Feb 2021 23:43:32 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id t15so4489123wrx.13;
+        Thu, 11 Feb 2021 23:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fVYAsX7BC7ybRtPxSVK+C8UsmpoC3evowqnH/82bplU=;
+        b=HlkuzMoN56FUdd8/ykAZLnT0yBvhhPE/RcJigpD4USgAIcThh0YxKG6aVVmLYvkoAk
+         pTKWRW9GTpA6IUDaWhbuOyVpaQ5xRhEFvVE+22d4MvPs8iHGBrXBxdlOkZve3U2HszoD
+         jR9ivsBoE2Mx5KAsPSILC/zAkF/hALk7s3F4fHIKVHuE9jsC3PtEpg3BmJLSlMNY9s1X
+         hw8yJgp4mhK1hoponVct8gfi0x26s5+mV6NZiTAiNAvorVTcRaqIiohJNLtj/NK2iED9
+         HqukXZ9voOP+C/OchwdfsHKXvDLrsmc5CWalMn49U+F7suSj74FtWFs4oUI/LrtkS4cC
+         MPYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fVYAsX7BC7ybRtPxSVK+C8UsmpoC3evowqnH/82bplU=;
+        b=DrIu3Wp5h28ga4HsRn0hPc9+AqscwWQYQDbIp/vw1iUF3NM2CyIyswkrymjDXOUtMS
+         olWmZ9HO57HZ1/p3OIT2Fpqv+5Jhu7Ke2U79qzjHVDGAALJblTyd6+pLCIs6Kp2S/vH9
+         vEIqtanlaezVVQQaQhu0yW2QyTh/PmZOjCquZPXmy00qcB4TqIj8eluXUEJEYvECpw42
+         2OSHHevXhwwD9FhZ0G8jvL353BTcEfrTSZn4pWQJNYJa6dj2FhmAUQ5bSJ4zC3u55ERL
+         qen/kdjeu4ydCZ/rGOCqNwedMrubBtZPUGkvJDC6hXoWPZO3nmdMltRBIkGdywfjBEpt
+         GWag==
+X-Gm-Message-State: AOAM530xUYpyEEygKB8a8yqWxGbhs+fBYJlELJUVnzv7VFfZqkUrjQca
+        nSmvgDNmFqrXVTz+kxmSRRo=
+X-Google-Smtp-Source: ABdhPJwnNpbAWbeCVPX62BmNh8UNQ5mAsxT7w1t/0zMlLDLDLiOk7wngkkV/02HWTndDyWBjGVFMew==
+X-Received: by 2002:a5d:6847:: with SMTP id o7mr1844824wrw.216.1613115811094;
+        Thu, 11 Feb 2021 23:43:31 -0800 (PST)
+Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
+        by smtp.gmail.com with ESMTPSA id a17sm9663858wrx.63.2021.02.11.23.43.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Feb 2021 23:43:30 -0800 (PST)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     sboyd@kernel.org
+Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
+        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [RESEND PATCH v5 0/6] MIPS: ralink: add CPU clock detection and clock driver for MT7621
+Date:   Fri, 12 Feb 2021 08:43:24 +0100
+Message-Id: <20210212074330.4650-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB6702.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9dd9a70-dee0-4643-1edc-08d8cf165904
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2021 05:23:36.1558
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: K/VeCZ46QzXkE2KkiJcAUlIG+/8tQIPEY90yFqIJqRRX3AzkJFscp6L3wJLvkWXakHKvri/lDucb9dNFQS6AZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6016
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
-aGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IEZyaWRheSwgRmVicnVhcnkgMTIs
-IDIwMjEgOTowMiBBTQ0KPiBUbzogVmFydW4gU2V0aGkgPFYuU2V0aGlAbnhwLmNvbT47IFdhc2lt
-IEtoYW4gKE9TUykNCj4gPHdhc2ltLmtoYW5Ab3NzLm54cC5jb20+OyBtdHVycXVldHRlQGJheWxp
-YnJlLmNvbQ0KPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgV2FzaW0gS2hhbiA8d2Fz
-aW0ua2hhbkBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBjbGs6IHFvcmlxOiB1c2Ug
-bWFjcm9zIHRvIGdlbmVyYXRlIHBsbF9tYXNrDQo+IA0KPiBRdW90aW5nIFdhc2ltIEtoYW4gKDIw
-MjEtMDEtMjUgMDY6MjU6MTMpDQo+ID4gRnJvbTogV2FzaW0gS2hhbiA8d2FzaW0ua2hhbkBueHAu
-Y29tPg0KPiA+DQo+ID4gVXNlIG1hY3JvcyB0byBnZW5lcmF0ZSBwbGxfbWFzayB0byBtYWtlIGNv
-ZGUgbW9yZSByZWFkYWJsZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdhc2ltIEtoYW4gPHdh
-c2ltLmtoYW5AbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMg
-fCA2Mg0KPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tDQo+ID4g
-IDEgZmlsZSBjaGFuZ2VkLCA0MyBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkNCj4gDQo+
-IFRoZSBjb2RlIGFsc28gZ290IGxvbmdlci4gV2h5IGlzIHRoaXMgYmV0dGVyPw0KDQpUaGFuayB5
-b3UgZm9yIHRoZSByZXZpZXcuDQpIYXJkY29kZWQgdmFsdWVzIG9mIHBsbF9tYXNrIHdlcmUgZGlm
-ZmljdWx0IHRvIHVuZGVyc3RhbmQgdGhhdCB3aGF0IGFsbCBDR3ggYW5kIFBMTHkgYXJlIHVzZWQg
-Zm9yIGEgZ2l2ZW4gcGxhdGZvcm0uIA0KQWxzbyB0aGUgYml0WzRdIGNhbiBiZSAxIGZvciBDR0Ff
-UExMNCBvciBDQkdfUExMMSBib3RoICwgc28gdGhlIGhhcmRjb2RlZCB2YWx1ZSBkb2VzIG5vdCB0
-ZWxsIHdoaWNoIFBMTCBpcyB1c2VkIChDR0FfUExMNCAgb3IgQ0JHX1BMTDEpIGFuZCBvbmx5IHdh
-eSB0byBrbm93IHRoaXMgaXMgdG8gcmVmZXIgdGhlIFNvQyByZWZlcmVuY2UgbWFudWFsLg0KVG8g
-YXZvaWQgdGhpcyBhbWJpZ3VpdHksIGxldCB1cyB1c2UgQ0d4X1BMTHkgbWFjcm9zIHRvIGNsZWFy
-bHkga25vdyB0aGUgY2x1c3RlciBncm91cCBwbGxzIG1hcHBpbmcgZm9yIGEgZ2l2ZW4gcGxhdGZv
-cm0uDQo=
+This patchset ports CPU clock detection for MT7621 from OpenWrt
+and adds a complete clock plan for the mt7621 SOC.
+
+The documentation for this SOC only talks about two registers
+regarding to the clocks:
+* SYSC_REG_CPLL_CLKCFG0 - provides some information about boostrapped
+refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
+* SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
+all or some ip cores. 
+
+No documentation about a probably existent set of dividers for each ip
+core is included in the datasheets. So we cannot make anything better,
+AFAICT.
+
+Looking into driver code, and some openWRT patched there are
+another frequences which are used in some drivers (uart, sd...).
+According to all of this information the clock plan for this
+SoC is set as follows:
+ - Main top clock "xtal" from where all the rest of the world is
+   derived.
+ - CPU clock "cpu" derived from "xtal" frequencies and a bunch of
+   register reads and predividers.
+ - BUS clock "bus" derived from "cpu" and with (cpu / 4) MHz.
+ - Fixed clocks from "xtal":
+    * "50m": 50 MHz.
+    * "125m": 125 MHz.
+    * "150m": 150 MHz.
+    * "250m": 250 MHz.
+    * "270m": 270 MHz.
+
+We also have a buch of gate clocks with their parents:
+ - "hsdma": "150m"
+ - "fe": "250m"
+ - "sp_divtx": "270m"
+ - "timer": "50m"
+ - "pcm": "270m"
+ - "pio": "50m"
+ - "gdma": "bus"
+ - "nand": "125m"
+ - "i2c": "50m"
+ - "i2s": "270m"
+ - "spi": "bus"
+ - "uart1": "50m"
+ - "uart2": "50m"
+ - "uart3": "50m"
+ - "eth": "50m"
+ - "pcie0": "125m"
+ - "pcie1": "125m"
+ - "pcie2": "125m"
+ - "crypto": "250m"
+ - "shxc": "50m"
+
+There was a previous attempt of doing this here[0] but the author
+(Chuanhong Guo) did not wanted to make assumptions of a clock plan
+for the platform that time. It seems that now he has a better idea of
+how the clocks are dispossed for this SoC so he share code[1] where
+some frequencies and clock parents for the gates are coded from a
+real mediatek private clock plan.
+                                                
+I do really want this to be upstreamed so according to the comments
+in previous attempt[0] from Oleksij Rempel and the frequencies in
+code[1] I have tried to do this by myself.
+
+All of this patches have been tested in a GNUBee PC1 resulting in a
+working platform.
+
+v5 RESEND notes:
+ - I am resending this as I was told to do that.
+ - Please, take into account Rob's comments to DT node patch and my
+   reply with explanation about how are the current device tree nodes
+   for this architecture being used in [2].
+Changes in v5:
+ - Avoid the use of syscon. All drivers of this platform are just using
+   platform operations defined in 'asm/mach-ralink/ralink_regs.h'. We also
+   need them for some PLL registers that are not in the sys control area.
+   Hence, since we must use this dependency avoid to define clock driver
+   as a child of the sysc node in the device tree and follow current
+   platform code style.
+ - Update bindings documentation to don't refer the syscon and make
+   remove 'clock-output-names' property from required ones.
+ - Use 'asm/mach-ralink/ralink_regs.h' platform read and write operations
+   instead of regmap from the syscon node.
+ - Remove 'mt7621_clk_provider' and directly declare 'clk_hw_onecell_data'
+   pointer in 'mt7621_clk_init' and pass from there into different register
+   functions. Remove pointers to 'mt7621_clk_provider' in the rest fo structs
+   used in this driver.
+ - Remove MHZ macro and just pass values directly in hertzs.
+ - Avoid 'CLK_IGNORE_UNUSED' flag for gates and add a new function called
+   'mt7621_prepare_enable_clocks' to prepare all of them to make clocks
+   referenced and don't affect current driver code.
+ - Remove COMPILE_TEST from Kconfig because of the use of especific arch
+   stuff.
+ - Fix commit message where a typo for "frequencies" word was present.
+ - Make use of parent_clk_data in 'CLK_BASE' macro.
+ - Remove MODULE_* macros from code since this is not a module.
+ - Remove not needed includes.
+ - Hardcode "xtal" as parent in FIXED macro.
+ - Change 'else if' clause into 'if' clause since a return statement was
+   being used in 'mt7621_xtal_recalc_rate'.
+
+ NOTES:
+   - Driver is still being declared using 'CLK_OF_DECLARE' for all the  
+     clocks. I have explored the possibility to make some of them available
+     afterwards using 'CLK_OF_DECLARE_DRIVER' for top clocks and the rest
+     using a platform driver. The resulting code was uglier since we only want
+     to use the same device tree node and the top clocks must be copied again
+     for the new platform register stuff to properly have a good hierarchy.
+     New globals needs to be introduced and in this particular case I don't
+     really see the benefits of doing in this way. I am totally ok to have all
+     the clocks registered at early stage since from other drivers perspective
+     we only really need to enable gates. So, I prefer to have them in that
+     way if it is not a real problem, of course.
+
+Changes in v4:
+ - Add Acked-by from Rob Herring for binding headers (PATCH 1/6).
+ - Convert bindings to not use syscon phandle and declare clock as
+   a child of the syscon node. Update device tree and binding doc
+   accordly.
+ - Make use of 'syscon_node_to_regmap' in driver code instead of
+   get this using the phandle function.
+ - Properly unregister clocks for the error path of the function
+   'mt7621_clk_init'.
+ - Include ARRAY_SIZE of fixed clocks in the 'count' to kzalloc
+   of 'clk_data'.
+ - Add new patch changing invalid vendor 'mtk' in favour of 'mediatek'
+   which is the one listed in 'vendor-prefixes.yaml'. Update mt7621 code
+   accordly. I have added this patch inside this series because clk
+   binding is referring syscon node and the string for that node was
+   with not listed vendor. Hence update and have all of this correct
+   in the same series.
+
+Changes in v3:
+ - Fix compilation warnings reported by kernel test robot because of
+   ignoring return values of 'of_clk_hw_register' in functions
+   'mt7621_register_top_clocks' and 'mt7621_gate_ops_init'.
+ - Fix dts file and binding documentation 'clock-output-names'.
+
+Changes in v2:
+ - Remove the following patches:
+   * dt: bindings: add mt7621-pll device tree binding documentation.
+   * MIPS: ralink: add clock device providing cpu/ahb/apb clock for mt7621.
+ - Move all relevant clock code to 'drivers/clk/ralink/clk-mt7621.c' and
+   unify there previous 'mt7621-pll' and 'mt7621-clk' into a unique driver
+   and binding 'mt7621-clk'.
+ - Driver is not a platform driver anymore and now make use of 'CLK_OF_DECLARE'
+   because we need clocks available in 'plat_time_init' before setting up
+   the timer for the GIC.
+ - Use new fixed clocks as parents for different gates and deriving from 'xtal'
+   using frequencies in[1].
+ - Adapt dts file and bindings header and documentation for new changes.
+ - Change MAINTAINERS file to only contains clk-mt7621.c code and
+   mediatek,mt7621-clk.yaml file.
+
+[0]: https://www.lkml.org/lkml/2019/7/23/1044
+[1]: https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
+[2]: https://lkml.org/lkml/2020/12/20/47
+
+Sergio Paracuellos (6):
+  dt-bindings: clock: add dt binding header for mt7621 clocks
+  dt: bindings: add mt7621-clk device tree binding documentation
+  clk: ralink: add clock driver for mt7621 SoC
+  staging: mt7621-dts: make use of new 'mt7621-clk'
+  staging: mt7621-dts: use valid vendor 'mediatek' instead of invalid
+    'mtk'
+  MAINTAINERS: add MT7621 CLOCK maintainer
+
+ .../bindings/clock/mediatek,mt7621-clk.yaml   |  52 +++
+ MAINTAINERS                                   |   6 +
+ arch/mips/ralink/mt7621.c                     |   6 +-
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/ralink/Kconfig                    |  14 +
+ drivers/clk/ralink/Makefile                   |   2 +
+ drivers/clk/ralink/clk-mt7621.c               | 411 ++++++++++++++++++
+ drivers/staging/mt7621-dts/gbpc1.dts          |  11 -
+ drivers/staging/mt7621-dts/mt7621.dtsi        |  85 ++--
+ include/dt-bindings/clock/mt7621-clk.h        |  41 ++
+ 11 files changed, 571 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+ create mode 100644 drivers/clk/ralink/Kconfig
+ create mode 100644 drivers/clk/ralink/Makefile
+ create mode 100644 drivers/clk/ralink/clk-mt7621.c
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
+
+-- 
+2.25.1
+
