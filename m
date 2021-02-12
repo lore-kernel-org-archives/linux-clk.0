@@ -2,129 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC53C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 21:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC22EC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 21:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2186764DF0
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 21:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87B8A64EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 21:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231835AbhBLVDI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 16:03:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
+        id S231830AbhBLVS4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 16:18:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231289AbhBLVDD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Feb 2021 16:03:03 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 77F8864E05;
-        Fri, 12 Feb 2021 21:02:22 +0000 (UTC)
+        id S231175AbhBLVSx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Feb 2021 16:18:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0CD9D64DA1;
+        Fri, 12 Feb 2021 21:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613163742;
-        bh=W+5rNCA1AtqnGKfforyDrX1jEmPAq1AoeUYShAARidk=;
+        s=k20201202; t=1613164693;
+        bh=4TFSTvj6ttdPFslO5+a0fodyQQ+7J57hi9zacbZWyJs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=L8vv2t4t8eAuoCqn8NxiLKXPHOLn2qbZG/rTldBEck1qE3UJ9ZQgBMmDyAS+LCWPW
-         EzmQrYymjIjWzdM9L/7FXHZGGuj4mL3xtQEcEf8CqaYplO6L5RYs8XX06VCEcsrfdR
-         DnZefkSwJ3C/7GBHqDkPzplqR/1x05jRlJKJ6qT2qfEMeI8gZgeYtGj7iTUFb1gaWJ
-         0ewKJtGcnZgMY3nAWLZLIyhSM+nXjoN/Oz5tcLNPp2ONVxpr8E+MxgzJz7ExgeG7/5
-         lQhWIt1CShxke8FA18oo80Hy1k04ysgkM9gd+JOi/WRC9EeZrRZTWgw/1ZKPKae8Jz
-         RI+6N32IPbIKg==
+        b=u2vcnA/DOj+ItizXjVG5627+qp5r2GJa6v4FcbNYyT2u0oU7GwjstZImCDltbyvdT
+         a0N23oq3n7v5d52OtGjnpA1yEx2w7gJm5uLRL3PDpiw76Vq4Ldk03vuXF29qqlcvrq
+         GtXCJxGQ8h2W2HZTlP+SEQ+85bsehw/wHkhdksUpOjzWrgAC6S4EB2DyUgqlWNptXu
+         RFtid48EMVEMX680zZZ1evLQY+oJ06vonq47DzjsjL3x5L/XrRsv5wYEHhnk6jX8JH
+         PMDOhuVobQXOb9Yb0IqiUaCsftkDDVQ068HxlFDvOfICIzZbY+DX8WQaifXk+r9G0E
+         opbRiVxdHcZ7g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210212092016.GF4572@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org> <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com> <20210211211054.GD4572@dell> <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com> <20210212092016.GF4572@dell>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+In-Reply-To: <20210212143059.478554-1-dinguyen@kernel.org>
+References: <20210212143059.478554-1-dinguyen@kernel.org>
+Subject: Re: [PATCHv1 1/2] dt-bindings: documentation: add clock bindings information for eASIC N5X
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Date:   Fri, 12 Feb 2021 13:02:21 -0800
-Message-ID: <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Date:   Fri, 12 Feb 2021 13:18:11 -0800
+Message-ID: <161316469175.1254594.17867254186604019043@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lee Jones (2021-02-12 01:20:16)
-> On Thu, 11 Feb 2021, Stephen Boyd wrote:
+Quoting Dinh Nguyen (2021-02-12 06:30:58)
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the eASIC
+> N5X platform.
 >=20
-> > Quoting Lee Jones (2021-02-11 13:10:54)
-> > > On Thu, 11 Feb 2021, Stephen Boyd wrote:
-> > >=20
-> > > > Quoting Lee Jones (2021-01-26 04:45:19)
-> > > > > This set is part of a larger effort attempting to clean-up W=3D1
-> > > > > kernel builds, which are currently overwhelmingly riddled with
-> > > > > niggly little warnings.
-> > > > >=20
-> > > > > This is the last set.  Clock is clean after this.
-> > > >=20
-> > > > Is it possible to slam in some patch that makes W=3D1 the default f=
-or the
-> > > > clk directory? I'm trying to avoid seeing this patch series again.
-> > >=20
-> > > One of my main goals of this project is that everyone (contributors,
-> > > maintainers auto-builder robots etc) will be enabling W=3D1 builds
-> > > *locally*.
-> > >=20
-> > > This isn't something you'll want to do at a global (i.e. in Mainline)
-> > > level.  That's kinda the point of W=3D1.
-> > >=20
-> >=20
-> > Agreed, but is it possible to pass W=3D1 in the drivers/clk/Makefile?
->=20
-> That would circumvent the point of W=3D1.  Level-1 warnings are deemed,
-> and I'm paraphrasing/making this up "not worth rejecting pull-requests
-> over".  In contrast, if Linus catches any W=3D0 warnings at pull-time,
-> he will reject the pull-request as 'untested'.
->=20
-> W=3D1 is defiantly something you'll want to enable locally though, and
-> subsequently push back on contributors submitting code adding new
-> ones.
->=20
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
 
-Why should I install a land mine for others to trip over? Won't that
-just take them more time because they won't know to compile with W=3D1 and
-then will have to go for another round of review while I push back on
-them submitting new warnings?
+Applied to clk-next
