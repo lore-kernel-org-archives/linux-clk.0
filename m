@@ -2,64 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A72C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73404C433E9
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90F7864E62
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A2064E2A
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbhBLDHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 22:07:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53556 "EHLO mail.kernel.org"
+        id S230002AbhBLDIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 22:08:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229756AbhBLDHO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Feb 2021 22:07:14 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7BCC564D8F;
-        Fri, 12 Feb 2021 03:06:33 +0000 (UTC)
+        id S229573AbhBLDIM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 22:08:12 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7AB7164DE9;
+        Fri, 12 Feb 2021 03:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613099193;
-        bh=Y5jlZ1AxNHbt3YDm7bqmvIY0oj4JfdcMXAG3Sn9zFww=;
+        s=k20201202; t=1613099251;
+        bh=JzVhC9UdJJv6ZQYoxZTHOXMBUYZPfGjZSYy10m7haaw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LUYfOHY5xWeHN5nIymwETMGQtD84vyNSuj+XDv/VGEX+hqHmfnzXIthcbeZyWqMjW
-         QeVDX23eU689XSQdw9ePn3JohaTJn3Xxsra5o1D0Ll3UWfmK+IW5vjlH5l2W3tsGLf
-         bku87/bIuj4QkmbmUX6k62E2TBqIFCHBMyg0gSquH3vmN9Qpz69f3+PqOs8H5LnfRX
-         JOHwou6cPmbJxWVBS5k6us+DXe26owh6u/Jh00mvNVhcGo+XccaIVDP6tF4dVBJ4x9
-         VKSHLcbizp351h5j7mhEkQduqNEZG5t+ndFUNEqsAszCgrr/W37xmDl4Ty+bTt0yuW
-         bI/RrooWldyTQ==
+        b=SYmvPCI5iLDLklNsYLfXsKhdIGU0kxMM/XaL2DlnmiZraToGSaET422RLhim0mkKG
+         RoiGu0ntDl6hHLODMR8ALSW7kpifw5WjKBjNjhs4fdpyAOJVVnJbYvtF6Mpb9ve000
+         0Zrh9JsUqA1ekIBdiTfFZEXtSJmxsXcUcYw80epyZtLr/HcY/wJGMs2NjqqbTrpiKG
+         vSfka5Bd8hbU28plm6Y7njg9koYzROBKyfm+v1ULHhsyN2yv2NsFrjDeJjGvieHg4f
+         ZWDDNV7z8uS/Vg9ApuUuSt3gkxZIgeXFrAnz+7xsEPBw/7+nv2P4FnwnaFYnSH8Nof
+         thlWWB5HE1I8Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210209175900.7092-2-jernej.skrabec@siol.net>
-References: <20210209175900.7092-1-jernej.skrabec@siol.net> <20210209175900.7092-2-jernej.skrabec@siol.net>
-Subject: Re: [PATCH v3 1/5] clk: sunxi-ng: mp: fix parent rate change flag check
+In-Reply-To: <20210211211054.GD4572@dell>
+References: <20210126124540.3320214-1-lee.jones@linaro.org> <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com> <20210211211054.GD4572@dell>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, airlied@linux.ie, daniel@ffwll.ch,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Andre Heider <a.heider@gmail.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>, mripard@kernel.org,
-        wens@csie.org
-Date:   Thu, 11 Feb 2021 19:06:32 -0800
-Message-ID: <161309919221.1254594.13394926523127979721@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?utf-8?q?L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?utf-8?q?S=C3=B6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Date:   Thu, 11 Feb 2021 19:07:30 -0800
+Message-ID: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2021-02-09 09:58:56)
-> CLK_SET_RATE_PARENT flag is checked on parent clock instead of current
-> one. Fix that.
+Quoting Lee Jones (2021-02-11 13:10:54)
+> On Thu, 11 Feb 2021, Stephen Boyd wrote:
 >=20
-> Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when all=
-owed")
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Tested-by: Andre Heider <a.heider@gmail.com>
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
+> > Quoting Lee Jones (2021-01-26 04:45:19)
+> > > This set is part of a larger effort attempting to clean-up W=3D1
+> > > kernel builds, which are currently overwhelmingly riddled with
+> > > niggly little warnings.
+> > >=20
+> > > This is the last set.  Clock is clean after this.
+> >=20
+> > Is it possible to slam in some patch that makes W=3D1 the default for t=
+he
+> > clk directory? I'm trying to avoid seeing this patch series again.
+>=20
+> One of my main goals of this project is that everyone (contributors,
+> maintainers auto-builder robots etc) will be enabling W=3D1 builds
+> *locally*.
+>=20
+> This isn't something you'll want to do at a global (i.e. in Mainline)
+> level.  That's kinda the point of W=3D1.
+>=20
 
-Ok, Applied to clk-fixes
+Agreed, but is it possible to pass W=3D1 in the drivers/clk/Makefile?
