@@ -2,121 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12FDC433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C38AC433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 08:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70A3264DEC
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7EE464E57
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 08:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbhBLHqX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 02:46:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36242 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbhBLHqC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 02:46:02 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAF5C061574
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 23:45:22 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id a5so6473048otq.4
-        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 23:45:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t5Rmihl3ZUqPFY+0XWkN11ZaPgqMVvxJiffTmBNGsCI=;
-        b=m1Z8jW8F8k61Z40NAIYZOEf26z09pX7fBF2c3K6HPf9p/welO0JrjOPwIiiZv6D5W5
-         +N5T+HIMAVSp1qypVM3WB+2u2ywKXACOpDsI4StMW8Kh+fsY96yqfmSx9BixP3Xae3lv
-         MLq8mczMtMQKvmD7xplUQsJdqcdnmmql2vbuwdfJNMeTUK/uUJrhLQH9+dngPzt2f3Ee
-         Z0ZFB4XGHBc7nYK41Lbf6CaGLIAus1hkqOTwJp9vAzS+2Yj2i5FHncjzimREPtwlHYDL
-         Qns8gtMugDL0Q800yw11Rn+BEMzUzFaSYE7T6kiN1N/49W4uyy5J49MsBbhg/MzOn+DP
-         XXFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t5Rmihl3ZUqPFY+0XWkN11ZaPgqMVvxJiffTmBNGsCI=;
-        b=RnGkFyndh1tHHLkqiGe7tSHTyZTKi/yzsMxuVrKyOSJYlcUsLdIsbUJpRg6HtqKafr
-         af/+fBlMLe/gzLhUfpMME4NoazcCWGS7MO4/E7f6RRdfPl48lgyUDXp1zwcZa+fQVAed
-         F7rr6mR2waCSC/nKhZHL6O6nG4by1bYw9lPOzTdSiFl1VElklai0uvWmsI4PPaDMBPgL
-         DbBwEigYy/H+qeABQ+HZ3eoVjpmZCc+g9K9PP5KtJghxV9bUgHvkeP4/Qn5SQ3/Z5QMR
-         RH9NWUv68+PUuk9cqqtz9xuvHL29QUfXt4hUn7VOhuvFnS6N0+YZr1/mLGSCUBQNRlwB
-         q/Jg==
-X-Gm-Message-State: AOAM531Ykx1odOUZRPtDHC+PAp4wkhXGkfpBa9J97Wf8XTJ55/UeDisR
-        qAlavSCcgw/xXNpyibi3lc0qAH+TQRA+5Np2Ats=
-X-Google-Smtp-Source: ABdhPJzDOW6UpUWOPHL4aDhfngKTY22nYybkNEb0SyuOAUQttgaru85FxN9LZfpCdDhHgUlXbDeUj8eQdTE+z/9oX3E=
-X-Received: by 2002:a9d:a77:: with SMTP id 110mr1238249otg.74.1613115922114;
- Thu, 11 Feb 2021 23:45:22 -0800 (PST)
+        id S229895AbhBLIJu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 03:09:50 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60942 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229598AbhBLIJt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 03:09:49 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11C86l2M029175;
+        Fri, 12 Feb 2021 09:08:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=DHLRE2UmB8C4wlDYI8k7uWIN7I9RjaZ2KYe3yihptMU=;
+ b=SgPTIN9lqgwaVVpkZ+RZC5gItARGIhGqsdMWlXL1ng4qFgK0ZH84btADnmv2q3JCF1Kz
+ Dmm8a8gSrwSDMO0D/E6d5q5JaEgv4K3d87myhQStAeUWyuC7qJOksxTAQBeSwdOWURPx
+ ADunrwMYfVxgYkq92XrWDWIargGuzOOt21Smh5SMBGs+RR4AUNP8Ppm3HJlgp8Wl1L3L
+ qpyzqABA08S0MaSiIztNlXwubfAVtZjlMe/h6QK33DVRHc1uo3jFzQ+SGyQzc+mgnteI
+ Qp8BlbUt3PgDCwhlMPga9upVHJ81MNFkgF1QFs9PlyRuIRW2bpgZ5t0JkMJYhHd8OGUg jg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 36hravbcje-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 12 Feb 2021 09:08:42 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DCD72100034;
+        Fri, 12 Feb 2021 09:08:41 +0100 (CET)
+Received: from Webmail-eu.st.com (gpxdag2node6.st.com [10.75.127.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B967B219D40;
+        Fri, 12 Feb 2021 09:08:41 +0100 (CET)
+Received: from lmecxl0572.lme.st.com (10.75.127.121) by GPXDAG2NODE6.st.com
+ (10.75.127.70) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 12 Feb
+ 2021 09:08:40 +0100
+Subject: Re: [PATCH v2 02/14] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc'
+ into one clock
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>, <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <20210126090120.19900-3-gabriel.fernandez@foss.st.com>
+ <161285764074.418021.15522379930579131077@swboyd.mtv.corp.google.com>
+From:   "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>
+Message-ID: <5cc12945-0347-820c-1125-30ab4a947a00@foss.st.com>
+Date:   Fri, 12 Feb 2021 09:08:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201220093724.4906-1-sergio.paracuellos@gmail.com>
- <CAMhs-H92MHRO9RqkBW-c_+dVEtVUF-eHH4-zVXO2wCpdX0A55g@mail.gmail.com> <161309979908.1254594.5215549085877905591@swboyd.mtv.corp.google.com>
-In-Reply-To: <161309979908.1254594.5215549085877905591@swboyd.mtv.corp.google.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Fri, 12 Feb 2021 08:45:11 +0100
-Message-ID: <CAMhs-H-35G98rL2qTE4b1npNwF-DXzapG-ZRwX64hNFKCS7Zdw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] MIPS: ralink: add CPU clock detection and clock
- driver for MT7621
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, John Crispin <john@phrozen.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Weijie Gao <hackpascal@gmail.com>,
-        COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-        <devicetree@vger.kernel.org>, linux-kernel
-        <linux-kernel@vger.kernel.org>, open list:MIPS
-        <linux-mips@vger.kernel.org>, open list:STAGING SUBSYSTEM
-        <devel@driverdev.osuosl.org>, NeilBrown" <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <161285764074.418021.15522379930579131077@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.75.127.121]
+X-ClientProxiedBy: GPXDAG1NODE5.st.com (10.75.127.66) To GPXDAG2NODE6.st.com
+ (10.75.127.70)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
+ definitions=2021-02-12_02:2021-02-12,2021-02-12 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
 
-On Fri, Feb 12, 2021 at 4:16 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Sergio Paracuellos (2021-01-17 06:19:36)
-> > Hi all,
-> >
-> > On Sun, Dec 20, 2020 at 10:37 AM Sergio Paracuellos
-> > <sergio.paracuellos@gmail.com> wrote:
-> > >
-> > >  - Hardcode "xtal" as parent in FIXED macro.
-> > >  - Change 'else if' clause into 'if' clause since a return statement was
-> > >    being used in 'mt7621_xtal_recalc_rate'.
-> > >
-> > >  NOTES:
-> > >    - Driver is still being declared using 'CLK_OF_DECLARE' for all the
-> > >      clocks. I have explored the possibility to make some of them available
-> > >      afterwards using 'CLK_OF_DECLARE_DRIVER' for top clocks and the rest
-> > >      using a platform driver. The resulting code was uglier since we only want
-> > >      to use the same device tree node and the top clocks must be copied again
-> > >      for the new platform register stuff to properly have a good hierarchy.
-> > >      New globals needs to be introduced and in this particular case I don't
-> > >      really see the benefits of doing in this way. I am totally ok to have all
-> > >      the clocks registered at early stage since from other drivers perspective
-> > >      we only really need to enable gates. So, I prefer to have them in that
-> > >      way if it is not a real problem, of course.
-> >
-> > Any comments on this? Is ok to maintain this as it is done in this
-> > version or should I change this to any other approach taking into
-> > account my comments in device tree related PATCH? Nothing has been
-> > suggested there yet.
+On 2/9/21 9:00 AM, Stephen Boyd wrote:
+> Quoting gabriel.fernandez@foss.st.com (2021-01-26 01:01:08)
+>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>
+>> 'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
+>> A divider is available only on the specific rtc input for ck_hse.
+>> This Merge will facilitate to have a more coherent clock tree
+>> in no trusted / trusted world.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>> ---
+>>   drivers/clk/clk-stm32mp1.c | 49 +++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 43 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+>> index 35d5aee8f9b0..0e1d4427a8df 100644
+>> --- a/drivers/clk/clk-stm32mp1.c
+>> +++ b/drivers/clk/clk-stm32mp1.c
+>> @@ -245,7 +245,7 @@ static const char * const dsi_src[] = {
+>>   };
+>>   
+>>   static const char * const rtc_src[] = {
+>> -       "off", "ck_lse", "ck_lsi", "ck_hse_rtc"
+>> +       "off", "ck_lse", "ck_lsi", "ck_hse"
+>>   };
+>>   
+>>   static const char * const mco1_src[] = {
+>> @@ -1031,6 +1031,42 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
+>>          return hw;
+>>   }
+>>   
+>> +/* The divider of RTC clock concerns only ck_hse clock */
+>> +#define HSE_RTC 3
+>> +
+>> +static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
+>> +                                                unsigned long parent_rate)
+>> +{
+>> +       if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
+>> +               return clk_divider_ops.recalc_rate(hw, parent_rate);
+>> +
+>> +       return parent_rate;
+>> +}
+>> +
+>> +static long clk_divider_rtc_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                      unsigned long *prate)
+>> +{
+>> +       if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
+> This clk op can be called at basically any time. Maybe this should use
+> the determine rate op and then look to see what the parent is that comes
+> in via the rate request structure? Or is the intention to keep this
+> pinned to one particular parent? Looking at this right now it doesn't
+> really make much sense why the current parent state should play into
+> what rate the clk can round to, unless there is some more clk flags
+> going on that constrain the ability to change this clk's parent.
 
-> >
->
-> Please resend. It seems to have fallen off of DT review list.
+Yes the intention is to keep this pinned for one particular parent.
 
-I have just resent the whole series as I was told here. Please, take
-into account comment from Rob and my explanation of current device
-tree here:
-https://lkml.org/lkml/2020/12/20/47
+This divider is only applied on the 4th input of the MUX of the RTC and
 
-Best regards,
-    Sergio Paracuellos
+doesn't affect the HSE frequency for all the system.
+
+
+Oscillators
+  -----
+| lse |----------------+----------------> ck_lse
+  -----                 |
+  -----                 |
+| lsi |------------+--------------------> ck_lsi
+  -----             |   |
+                    |   |
+  -----             |   |
+| hse |----+-------|---|----------------> ck_hse
+  -----     |       |   |
+            |       |   |         |\ mux
+            |       |   |  OFF -->| \
+            |       |   |         |  \     gate
+            |       |   --------->|  |     ---
+            |       |             |  |--->|   |--> ck_rtc
+            |       ------------->|  |     ---
+            |    -----------      |  |
+             ----| % 1 to 64 |--->| /
+                  -----------     |/
+                    divider
+
+I manage the RTC with a clock composite with a gate a mux and a specific 
+rate ops for hse input.
+
+That why i need to the parent state.
+
+Best Regards
+
+Gabriel
+
+
+>> +               return clk_divider_ops.round_rate(hw, rate, prate);
+>> +
+>> +       return *prate;
+>> +}
+>> +
+>> +static int clk_divider_rtc_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                   unsigned long parent_rate)
+>> +{
+>> +       if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
+>> +               return clk_divider_ops.set_rate(hw, rate, parent_rate);
+>> +
+>> +       return parent_rate;
+>> +}
+>> +
