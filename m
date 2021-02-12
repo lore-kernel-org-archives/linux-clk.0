@@ -2,156 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9460C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37777C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 11:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE5F64DE3
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A4A64E70
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 11:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbhBLJVS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 04:21:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56514 "EHLO
+        id S229959AbhBLLRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 06:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbhBLJVB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 04:21:01 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0206C061788
-        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id n10so321868wmq.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
+        with ESMTP id S229653AbhBLLRw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 06:17:52 -0500
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E1DC061574
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 03:17:12 -0800 (PST)
+Received: by mail-pj1-x1034.google.com with SMTP id lw17so261668pjb.0
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 03:17:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
-        b=QFvzjb1GkmDAeWGmn0HBsLlJ5qWtRzXU3LQZdoxoTZf9a7D0uxaXnwTzEi3yg3K+R6
-         0KxRGJAJ40ru1Jy+eFG3H628g1eUsLyx62qGM9QYm3wRfMsp2GN045FaOhN8hM++OVa6
-         9FmtkdB8GGwPPcX3fBFQiEzdjM0yiklqoeJZS3RxJdYdeWoU6cxjyqVMcdmt0asZRjlD
-         cWNvyF51ci/nq/9S/KpoRK3wKuMMN2LcrjgBWQ355U+hBe1RHZKPgxjejrHDvUIK/QRZ
-         UUHuVY3UTJBxhEoGoYvYIDX2kMO8XxAv52ByEvaY6JnnjJacsF9cwmlvuWp1vrsd08GC
-         9DTA==
+        d=0x0f.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hv7MSJVHtHXztJBfrSH2Nz4awP2XcECwcmmy9ZhdyEc=;
+        b=U7q1M4AUe1upYev75AvznpBzLqxHDrs6VH71WqHkutQDeQjhqE/ItVHv1YIo3kPjZx
+         cxR2bl9eKMo4V+OqjQ4neNup/bok1cG0545eQg2BN6rK1oK9N84+NOwqklVTGm5s49vx
+         PE37zK4yIEgoMfFYtFgZdjsW7yEwBSEYNC40M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
-        b=IAlLiVivASyFDRTz7ExsGI0cmpLSFqDLkQh37TmVuGvAjfaU/Nwd55zDwt4KhEi7G4
-         tIWDF0PiNto7eTdxhzbTkPdtJzVpBI3X+Gbe8IBjtA8Ast5xfTBbm5DCXDRNvP1/n7Xd
-         /luQHkmal6hTXyl/G6xgxpBYYuuTf5K6VJTlMMP/8AHTqmhuCv7GVvhhRWzc67pQDKlP
-         59ue9adqA9hE6OcsiMrTwOtFkmKCcv6Dw6wcrNJRGoBwPl/0TVFSiwKaeXTjC9p1L3YZ
-         koxuKcCKhTWvBmNEFTRvlRLvkafV3TCZkdJXPDB1j3jEppXmyvxbIMEyeLLODZuKsCvQ
-         kMGg==
-X-Gm-Message-State: AOAM530FCVIpOflJi05+838tOMZrZ6i23goWi84IzW59vvpMK8C8jgU3
-        q3nsCTaA+RkxBROAbfPIoTXbkQ==
-X-Google-Smtp-Source: ABdhPJzfB+2m0CuwIvKupkk6mtJvy2bOkvYMQcFwy8G4Q2gLr8baAJCjDmApyqiyqqb9nNKw9aR0fQ==
-X-Received: by 2002:a1c:113:: with SMTP id 19mr1795873wmb.7.1613121619466;
-        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
-Received: from dell ([91.110.221.187])
-        by smtp.gmail.com with ESMTPSA id x4sm9178784wrn.64.2021.02.12.01.20.17
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hv7MSJVHtHXztJBfrSH2Nz4awP2XcECwcmmy9ZhdyEc=;
+        b=rEhPer/aVbvfDJGDZZ+pFQ8FV2duTWLy94PSkdrCw5pJli+Ca9BryCGmApG7u37+8W
+         l85P7aT18h0qnVrv3OFoCQMOYfEQzEWoNhwD8shQFSDR3zWvOJLTtt3/AYOZAzCWlQ/D
+         YzEWIGmL8YgRnofF5fIC1URmglsKXGYkB7w4tCNe2Nt5uDKSucNNp/CXokvU5+Z8C4aP
+         /g3pb5O0C5MpvSFB1qSPYB4IZNSuRsU06CBF4acxb+ePHg1RbLzhNduh7WZ873lKUfN0
+         KCfECgEkqUcl37u48Kb304nPLUTIYDlS857R/QKFy3uySWzVO0SlsB4lbs+21bFFOFgB
+         GTug==
+X-Gm-Message-State: AOAM532ZslZHmG0x+wqCNXlUnfcFc9kjqH+O2ObyXv+za3X3rPbEVZin
+        ZTwnPx/XXFE0BT6ejzv25KAt0O18bk4EFA==
+X-Google-Smtp-Source: ABdhPJxEuXqr7x4iyj35D8dZS/g8HLKTsn1k/I7QIfJPLc3C7aTm8jXEWF05G1Q2LzoSD9+BCGi9mA==
+X-Received: by 2002:a17:90a:fe89:: with SMTP id co9mr2334345pjb.83.1613128631779;
+        Fri, 12 Feb 2021 03:17:11 -0800 (PST)
+Received: from shiro.work (p345188-ipngn200408sizuokaden.shizuoka.ocn.ne.jp. [124.98.97.188])
+        by smtp.googlemail.com with ESMTPSA id h20sm5752662pfv.164.2021.02.12.03.17.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
-Date:   Fri, 12 Feb 2021 09:20:16 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210212092016.GF4572@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com>
- <20210211211054.GD4572@dell>
- <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
+        Fri, 12 Feb 2021 03:17:11 -0800 (PST)
+From:   Daniel Palmer <daniel@0x0f.com>
+To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Daniel Palmer <daniel@0x0f.com>
+Subject: [RFC PATCH 0/1] Potential binding MStar clk muxes.
+Date:   Fri, 12 Feb 2021 20:16:48 +0900
+Message-Id: <20210212111649.3251306-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.30.0.rc2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 11 Feb 2021, Stephen Boyd wrote:
+Hi all,
 
-> Quoting Lee Jones (2021-02-11 13:10:54)
-> > On Thu, 11 Feb 2021, Stephen Boyd wrote:
-> > 
-> > > Quoting Lee Jones (2021-01-26 04:45:19)
-> > > > This set is part of a larger effort attempting to clean-up W=1
-> > > > kernel builds, which are currently overwhelmingly riddled with
-> > > > niggly little warnings.
-> > > > 
-> > > > This is the last set.  Clock is clean after this.
-> > > 
-> > > Is it possible to slam in some patch that makes W=1 the default for the
-> > > clk directory? I'm trying to avoid seeing this patch series again.
-> > 
-> > One of my main goals of this project is that everyone (contributors,
-> > maintainers auto-builder robots etc) will be enabling W=1 builds
-> > *locally*.
-> > 
-> > This isn't something you'll want to do at a global (i.e. in Mainline)
-> > level.  That's kinda the point of W=1.
-> > 
-> 
-> Agreed, but is it possible to pass W=1 in the drivers/clk/Makefile?
+While getting this driver ready to send I realised the current
+binding I have is pretty unwieldly. I'm thinking of refactoring
+the driver to work like this binding desribes and would like
+some feedback before I rework the driver.
 
-That would circumvent the point of W=1.  Level-1 warnings are deemed,
-and I'm paraphrasing/making this up "not worth rejecting pull-requests
-over".  In contrast, if Linus catches any W=0 warnings at pull-time,
-he will reject the pull-request as 'untested'.
+Thanks,
 
-W=1 is defiantly something you'll want to enable locally though, and
-subsequently push back on contributors submitting code adding new
-ones.
+Daniel
+
+Daniel Palmer (1):
+  dt-bindings: clk: Mstar msc313 clkgen mux
+
+ .../clock/mstar,msc313-clkgen-mux.yaml        | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-clkgen-mux.yaml
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.30.0.rc2
+
