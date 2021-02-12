@@ -2,196 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C67C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 14:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC57C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 20:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE4FE64E6B
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 14:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B678564E9C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 20:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbhBLOeB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 09:34:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229580AbhBLOeA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Feb 2021 09:34:00 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0A9E664E3D;
-        Fri, 12 Feb 2021 14:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613140399;
-        bh=xn8eIL2QPali4UJ82x4MM/cPK1TOo8yaggTJVLNOc8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NJB9/6CbYmHvpYGtgJcLCuwkQLRAsFc3q3MGcO4J+dDu/aVcrES/BAYJYHHlaJ71m
-         htRTJ3bfJwzoe1tz8AOjVJTgaZ9moTOcw9eeQaVM6fkDsrPSFBWJm3HmAx597p6Q3Y
-         DzBWRoZ4jwFx6mo9cFJFCVuyWf08WQd8PHYxNVnMxz5l3Xfb3M2HY/zMKYz+f7hFF7
-         o1qVOjefMfnlLU//0KtUKemGlL7+ZSTm0YUPloADul/yWu0h9GfAcezDM0RW/oacyS
-         59uk3CFlJVlAf1N2U/3VSdn9Qk3BG/6LmpqhwC9n+ayKLkYmVfXZdDaq1+j2dOnYxF
-         IWehZgKIQxQ8A==
-Subject: Re: [PATCH] clk: socfpga: agilex: add clock driver for eASIC N5X
- platform
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210105192956.2059505-1-dinguyen@kernel.org>
- <161301273585.1254594.15922396130376508467@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <2131f1b9-6929-9b28-1d82-7e55e6abf6ba@kernel.org>
-Date:   Fri, 12 Feb 2021 08:33:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232065AbhBLU7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 15:59:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231932AbhBLU6l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 15:58:41 -0500
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B80FC061793
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 12:58:01 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id 133so760468ybd.5
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 12:58:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CqAzPT6VwnPBuxPka3afIBXbnCQbD8+pdFwxBKcHhXQ=;
+        b=uBTJQG+mWgC2KaNYo1bb3HfZG5kNKJ7vb1CkEXXuyZyIlMIUmRy7u+Ui98xv5m6wXD
+         R7N5LfNkcmh1NQ9NxgRQP3cWOkQFo7SAC+qn3I64HrXBzaGyP8UoGVC/bj+K+cZ8nSWe
+         YQAtaHJyorTUUKIOxX53zOw5ATfxwx2KVYuQOmCF02rn7CG0N1rPqvKrBgWPiLi45FON
+         shvjdCt7F02vXc8OsQJNlQ5Dg8hPGX1Xh3uWdinc2aBX3WWsUPVTakWNa4yKxhzAKQdV
+         EuNXoz2GuhV1z+hCYh7JVx2iqHGoG2X6f6zTTF5209mcejt6xlzEddhC7ShsSohFBkLy
+         xwLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CqAzPT6VwnPBuxPka3afIBXbnCQbD8+pdFwxBKcHhXQ=;
+        b=bLKIj0lDmnUbLeNiFI/4NQRUqikHobT950GBi0/UuSKSIFArQAadEi358gCqdDqIT5
+         L8V+hCpuJFUMzxhq588Ut/ENyntgxf07erCSUj/OzI9TedCTj+9acTPgJ/VASWlQY0QT
+         luqPHvZkmoC8+B8MgcvC4Wa5gbbCAgOgGUjV1BvXl9ntxRYrCsDLgbu1ep03IVqu209X
+         N89ZK/X0+jQb+jubWLmaTIVolHUeimE8pg1BqMvYHH/vrksB79C2Exi0KAINqRNZSanv
+         YxqixvEAFO9+e4uHFOl0LExYKb/zVr/gKlCitZO2LvalmxRAsQjmlW8mdgNqAicyp4gG
+         8q2w==
+X-Gm-Message-State: AOAM530L4iArbEh1oldMXzSn1qSFH3EszJJZc52UkoYFuK3bE6WBfpi8
+        BPqjI7JwZRx1Y9IvaFzQoieAvLIjIrLCqxNwsZjr2Q==
+X-Google-Smtp-Source: ABdhPJwK0fc2ml/1MYUHRvi8x2ga/wmAbYgOqo2Dy3Txjf3hoDchCtA5qthJoSF2yZyW//AH/pAR//MQ+c+2yrZOeqg=
+X-Received: by 2002:a25:718b:: with SMTP id m133mr6949864ybc.412.1613163480367;
+ Fri, 12 Feb 2021 12:58:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <161301273585.1254594.15922396130376508467@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+ <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com> <CAMuHMdVG97Zjr1WO0554h9eUZhfeyxwUfNYuAdPoacpznkA6-Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVG97Zjr1WO0554h9eUZhfeyxwUfNYuAdPoacpznkA6-Q@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 12 Feb 2021 12:57:24 -0800
+Message-ID: <CAGETcx9GAyWQTb1kuUpjAcYyPGYtxxWMRe9u0o5UOSMrryTdvg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Feb 12, 2021 at 12:15 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Saravana,
+>
+> On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
+> > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >   1. R-Car Gen2 (Koelsch), R-Car Gen3 (Salvator-X(S), Ebisu).
+> > >
+> > >       - Commit 2dfc564bda4a31bc ("soc: renesas: rcar-sysc: Mark device
+> > >         node OF_POPULATED after init") is no longer needed (but already
+> > >         queued for v5.12 anyway)
+> >
+> > Rob doesn't like the proliferation of OF_POPULATED and we don't need
+> > it anymore, so maybe work it out with him? It's a balance between some
+> > wasted memory (struct device(s)) vs not proliferating OF_POPULATED.
+>
+> Rob: should it be reverted?  For v5.13?
+> I guess other similar "fixes" went in in the mean time.
+>
+> > >       - Some devices are reprobed, despite their drivers returning
+> > >         a real error code, and not -EPROBE_DEFER:
+> >
+> > Sorry, it's not obvious from the logs below where "reprobing" is
+> > happening. Can you give more pointers please?
+>
+> My log was indeed not a full log, but just the reprobes happening.
+> I'll send you a full log by private email.
+>
+> > Also, thinking more about this, the only way I could see this happen is:
+> > 1. Device fails with error that's not -EPROBE_DEFER
+> > 2. It somehow gets added to a device link (with AUTOPROBE_CONSUMER
+> > flag) where it's a consumer.
+> > 3. The supplier probes and the device gets added to the deferred probe
+> > list again.
+> >
+> > But I can't see how this sequence can happen. Device links are created
+> > only when a device is added. And is the supplier isn't added yet, the
+> > consumer wouldn't have probed in the first place.
+>
+> The full log doesn't show any evidence of the device being added
+> to a list in between the two probes.
+>
+> > Other than "annoying waste of time" is this causing any other problems?
+>
+> Probably not.  But see below.
+>
+> > >       - The PCI reprobing leads to a memory leak, for which I've sent a fix
+> > >         "[PATCH] PCI: Fix memory leak in pci_register_io_range()"
+> > >         https://lore.kernel.org/linux-pci/20210202100332.829047-1-geert+renesas@glider.be/
+> >
+> > Wrt PCI reprobing,
+> > 1. Is this PCI never expected to probe, but it's being reattempted
+> > despite the NOT EPROBE_DEFER error? Or
+>
+> There is no PCIe card present, so the failure is expected.
+> Later it is reprobed, which of course fails again.
+>
+> > 2. The PCI was deferred probe when it should have probed and then when
+> > it's finally reattemped and it could succeed, we are hitting this mem
+> > leak issue?
+>
+> I think the leak has always been there, but it was just exposed by
+> this unneeded reprobe.  I don't think a reprobe after that specific
+> error path had ever happened before.
+>
+> > I'm basically trying to distinguish between "this stuff should never
+> > be retried" vs "this/it's suppliers got probe deferred with
+> > fw_devlink=on vs but didn't get probe deferred with
+> > fw_devlink=permissive and that's causing issues"
+>
+> There should not be a probe deferral, as no -EPROBE_DEFER was
+> returned.
+>
+> > >       - I2C on R-Car Gen3 does not seem to use DMA, according to
+> > >         /sys/kernel/debug/dmaengine/summary:
+> > >
+> > >             -dma4chan0    | e66d8000.i2c:tx
+> > >             -dma4chan1    | e66d8000.i2c:rx
+> > >             -dma5chan0    | e6510000.i2c:tx
+> >
+> > I think I need more context on the problem before I can try to fix it.
+> > I'm also very unfamiliar with that file. With fw_devlink=permissive,
+> > I2C was using DMA? If so, the next step is to see if the I2C relative
+> > probe order with DMA is getting changed and if so, why.
+>
+> Yes, I plan to dig deeper to see what really happens...
 
-
-On 2/10/21 9:05 PM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2021-01-05 11:29:56)
->> Add support for Intel's eASIC N5X platform. The clock manager driver for
->> the N5X is very similar to the Agilex platform, we can re-use most of
->> the Agilex clock driver.
->>
->> This patch makes the necessary changes for the driver to differentiate
->> between the Agilex and the N5X platforms.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
-> 
-> Sorry this patch fell off my radar.
-> 
-> I ran checkpatch
-> 
-> WARNING: function definition argument 'struct platform_device *' should also have an identifier name
-> #135: FILE: drivers/clk/socfpga/clk-agilex.c:500:
-> +       int (*probe_func)(struct platform_device *);
-> 
-> WARNING: Statements terminations use 1 semicolon
-> #140: FILE: drivers/clk/socfpga/clk-agilex.c:505:
-> +       return  probe_func(pdev);;
-> 
-> WARNING: DT compatible string "intel,n5x-clkmgr" appears un-documented -- check ./Documentation/devicetree/bindings/
-> #147: FILE: drivers/clk/socfpga/clk-agilex.c:511:
-> +       { .compatible = "intel,n5x-clkmgr",
-> 
-> WARNING: struct clk_ops should normally be const
-> #290: FILE: drivers/clk/socfpga/clk-pll-s10.c:166:
-> +static struct clk_ops n5x_clk_pll_ops = {
-> 
-> WARNING: struct clk_ops should normally be const
-> #296: FILE: drivers/clk/socfpga/clk-pll-s10.c:172:
-> +static struct clk_ops agilex_clk_pll_ops = {
-> 
-> WARNING: function definition argument 'const struct stratix10_pll_clock *' should also have an identifier name
-> #367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
-> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-> 
-> WARNING: function definition argument 'void __iomem *' should also have an identifier name
-> #367: FILE: drivers/clk/socfpga/stratix10-clk.h:78:
-> +struct clk *n5x_register_pll(const struct stratix10_pll_clock *,
-> 
-> WARNING: function definition argument 'const struct n5x_perip_c_clock *' should also have an identifier name
-> #371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
-> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-> 
-> WARNING: function definition argument 'void __iomem *' should also have an identifier name
-> #371: FILE: drivers/clk/socfpga/stratix10-clk.h:82:
-> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *,
-> 
-> Can you fix these up and resend?
-> 
->>   drivers/clk/socfpga/clk-agilex.c     | 88 +++++++++++++++++++++++++++-
->>   drivers/clk/socfpga/clk-periph-s10.c | 53 +++++++++++++++++
->>   drivers/clk/socfpga/clk-pll-s10.c    | 85 ++++++++++++++++++++++++++-
->>   drivers/clk/socfpga/stratix10-clk.h  | 15 +++++
->>   4 files changed, 238 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
->> index 397b77b89b16..135581c41c05 100644
->> --- a/drivers/clk/socfpga/clk-periph-s10.c
->> +++ b/drivers/clk/socfpga/clk-periph-s10.c
->> @@ -15,6 +15,21 @@
->>   
->>   #define to_periph_clk(p) container_of(p, struct socfpga_periph_clk, hw.hw)
->>   
->> +static unsigned long n5x_clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
->> +                                            unsigned long parent_rate)
->> +{
->> +       struct socfpga_periph_clk *socfpgaclk = to_periph_clk(hwclk);
->> +       unsigned long div;
->> +       unsigned long shift = socfpgaclk->shift;
->> +       u32 val;
->> +
->> +       val = readl(socfpgaclk->hw.reg);
->> +       val &= (0x1F << shift);
-> 
-> Prefer lowercase hex.
-> 
->> +       div = (val >> shift) + 1;
->> +
->> +       return parent_rate / div;
->> +}
->> +
->>   static unsigned long clk_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
->>                                               unsigned long parent_rate)
->>   {
->> @@ -63,6 +78,11 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
->>          return parent;
->>   }
->>   
->> +static const struct clk_ops n5x_peri_c_clk_ops = {
->> +       .recalc_rate = n5x_clk_peri_c_clk_recalc_rate,
->> +       .get_parent = clk_periclk_get_parent,
->> +};
->> +
->>   static const struct clk_ops peri_c_clk_ops = {
->>          .recalc_rate = clk_peri_c_clk_recalc_rate,
->>          .get_parent = clk_periclk_get_parent,
->> @@ -107,6 +127,39 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
->>          return clk;
->>   }
->>   
->> +struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
->> +                               void __iomem *regbase)
->> +{
->> +       struct clk *clk;
->> +       struct socfpga_periph_clk *periph_clk;
->> +       struct clk_init_data init;
->> +       const char *name = clks->name;
->> +       const char *parent_name = clks->parent_name;
->> +
->> +       periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
->> +       if (WARN_ON(!periph_clk))
->> +               return NULL;
->> +
->> +       periph_clk->hw.reg = regbase + clks->offset;
->> +       periph_clk->shift = clks->shift;
->> +
->> +       init.name = name;
->> +       init.ops = &n5x_peri_c_clk_ops;
->> +       init.flags = clks->flags;
->> +
->> +       init.num_parents = clks->num_parents;
->> +       init.parent_names = parent_name ? &parent_name : NULL;
->> +
->> +       periph_clk->hw.hw.init = &init;
->> +
->> +       clk = clk_register(NULL, &periph_clk->hw.hw);
-> 
-> Can you use clk_hw_register?
-> 
-
-Thanks for the review. If you don't mind, changing this to use 
-clk_hw_register will need a few modifications to the driver, I'd like to 
-submit that in a separate patch series after this.
+Try fw_devlink.strict (you'll need IOMMU enabled too). If that fixes
+it and you also don't see this issue with fw_devlink=permissive, then
+it means there's probably some unnecessary probe deferral that we
+should try to avoid. At least, that's my hunch right now.
 
 Thanks,
-Dinh
+Saravana
+
+>
+> > >       - On R-Mobile A1, I get a BUG and a memory leak:
+> > >
+> > >             BUG: spinlock bad magic on CPU#0, swapper/1
+>
+> >
+> > Hmm... I looked at this in bits and pieces throughout the day. At
+> > least spent an hour looking at this. This doesn't make a lot of sense
+> > to me. I don't even touch anything in this code path AFAICT.  Are
+> > modules/kernel mixed up somehow? I need more info before I can help.
+> > Does reverting my pm domain change make any difference (assume it
+> > boots this far without it).
+>
+> I plan to dig deeper to see what really happens...
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
