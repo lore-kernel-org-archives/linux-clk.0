@@ -2,66 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7C8C43381
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 08:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9460C43381
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE8464D73
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 08:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE5F64DE3
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 09:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229904AbhBLIrK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 03:47:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhBLIrJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Feb 2021 03:47:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 183BC64DEA;
-        Fri, 12 Feb 2021 08:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1613119588;
-        bh=bO137mz/8aJj4gBEHwiun0O1/gC0qRXtCtcKT7Nkfy0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0H/ncv0AgbQiidabpL8pfcLbuP9+0o+CjvGLr1/FyYzD7wFuoYWtSkKARKmwBLPlp
-         G9O1tmJ0+BwayVnu7vPz2FKtpJjMfkl3Z3I/KneluOOg6xB/TxFsDz2Bt80Z+dFFe9
-         bezXBac7AofaLrbMOfDI5kHbDCU5CJNwoSqiNjV4=
-Date:   Fri, 12 Feb 2021 09:46:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     sboyd@kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, tsbogend@alpha.franken.de,
-        linux-mips@vger.kernel.org, robh+dt@kernel.org, john@phrozen.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH v5 5/6] staging: mt7621-dts: use valid vendor
- 'mediatek' instead of invalid 'mtk'
-Message-ID: <YCZAYhyJJRSi+axv@kroah.com>
-References: <20210212074330.4650-1-sergio.paracuellos@gmail.com>
- <20210212074330.4650-6-sergio.paracuellos@gmail.com>
+        id S229497AbhBLJVS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 04:21:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229906AbhBLJVB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 04:21:01 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0206C061788
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id n10so321868wmq.0
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 01:20:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
+        b=QFvzjb1GkmDAeWGmn0HBsLlJ5qWtRzXU3LQZdoxoTZf9a7D0uxaXnwTzEi3yg3K+R6
+         0KxRGJAJ40ru1Jy+eFG3H628g1eUsLyx62qGM9QYm3wRfMsp2GN045FaOhN8hM++OVa6
+         9FmtkdB8GGwPPcX3fBFQiEzdjM0yiklqoeJZS3RxJdYdeWoU6cxjyqVMcdmt0asZRjlD
+         cWNvyF51ci/nq/9S/KpoRK3wKuMMN2LcrjgBWQ355U+hBe1RHZKPgxjejrHDvUIK/QRZ
+         UUHuVY3UTJBxhEoGoYvYIDX2kMO8XxAv52ByEvaY6JnnjJacsF9cwmlvuWp1vrsd08GC
+         9DTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bqamNlgMJwnX1NfLFZzeEkJ+qDBnsfEzOwlb2Z22/gs=;
+        b=IAlLiVivASyFDRTz7ExsGI0cmpLSFqDLkQh37TmVuGvAjfaU/Nwd55zDwt4KhEi7G4
+         tIWDF0PiNto7eTdxhzbTkPdtJzVpBI3X+Gbe8IBjtA8Ast5xfTBbm5DCXDRNvP1/n7Xd
+         /luQHkmal6hTXyl/G6xgxpBYYuuTf5K6VJTlMMP/8AHTqmhuCv7GVvhhRWzc67pQDKlP
+         59ue9adqA9hE6OcsiMrTwOtFkmKCcv6Dw6wcrNJRGoBwPl/0TVFSiwKaeXTjC9p1L3YZ
+         koxuKcCKhTWvBmNEFTRvlRLvkafV3TCZkdJXPDB1j3jEppXmyvxbIMEyeLLODZuKsCvQ
+         kMGg==
+X-Gm-Message-State: AOAM530FCVIpOflJi05+838tOMZrZ6i23goWi84IzW59vvpMK8C8jgU3
+        q3nsCTaA+RkxBROAbfPIoTXbkQ==
+X-Google-Smtp-Source: ABdhPJzfB+2m0CuwIvKupkk6mtJvy2bOkvYMQcFwy8G4Q2gLr8baAJCjDmApyqiyqqb9nNKw9aR0fQ==
+X-Received: by 2002:a1c:113:: with SMTP id 19mr1795873wmb.7.1613121619466;
+        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
+Received: from dell ([91.110.221.187])
+        by smtp.gmail.com with ESMTPSA id x4sm9178784wrn.64.2021.02.12.01.20.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Feb 2021 01:20:19 -0800 (PST)
+Date:   Fri, 12 Feb 2021 09:20:16 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Andy Gross <agross@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Loc Ho <lho@apm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        NXP Linux Team <linux-imx@nxp.com>, openbmc@lists.ozlabs.org,
+        Patrick Venture <venture@google.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <20210212092016.GF4572@dell>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+ <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com>
+ <20210211211054.GD4572@dell>
+ <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210212074330.4650-6-sergio.paracuellos@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 08:43:29AM +0100, Sergio Paracuellos wrote:
-> Vendor listed for mediatek in kernel vendor file 'vendor-prefixes.yaml'
-> contains 'mediatek' as a valid vendor string. Some nodes in the device
-> tree are using an invalid vendor string vfor 'mtk' instead. Fix all of
-> them in dts file. Update also ralink mt7621 related code to properly
-> match new strings. Even there are used in the device tree there are
-> some strings that are not referred anywhere but have been also updated
-> with new vendor name. These are 'mtk,mt7621-wdt', 'mtk,mt7621-nand',
-> 'mtk,mt7621-mc', and 'mtk,mt7621-cpc'.
-> 
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
->  arch/mips/ralink/mt7621.c              |  6 +++---
->  drivers/staging/mt7621-dts/mt7621.dtsi | 12 ++++++------
->  2 files changed, 9 insertions(+), 9 deletions(-)
+On Thu, 11 Feb 2021, Stephen Boyd wrote:
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Quoting Lee Jones (2021-02-11 13:10:54)
+> > On Thu, 11 Feb 2021, Stephen Boyd wrote:
+> > 
+> > > Quoting Lee Jones (2021-01-26 04:45:19)
+> > > > This set is part of a larger effort attempting to clean-up W=1
+> > > > kernel builds, which are currently overwhelmingly riddled with
+> > > > niggly little warnings.
+> > > > 
+> > > > This is the last set.  Clock is clean after this.
+> > > 
+> > > Is it possible to slam in some patch that makes W=1 the default for the
+> > > clk directory? I'm trying to avoid seeing this patch series again.
+> > 
+> > One of my main goals of this project is that everyone (contributors,
+> > maintainers auto-builder robots etc) will be enabling W=1 builds
+> > *locally*.
+> > 
+> > This isn't something you'll want to do at a global (i.e. in Mainline)
+> > level.  That's kinda the point of W=1.
+> > 
+> 
+> Agreed, but is it possible to pass W=1 in the drivers/clk/Makefile?
+
+That would circumvent the point of W=1.  Level-1 warnings are deemed,
+and I'm paraphrasing/making this up "not worth rejecting pull-requests
+over".  In contrast, if Linus catches any W=0 warnings at pull-time,
+he will reject the pull-request as 'untested'.
+
+W=1 is defiantly something you'll want to enable locally though, and
+subsequently push back on contributors submitting code adding new
+ones.
+
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
