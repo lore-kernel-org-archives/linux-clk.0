@@ -2,102 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC01C433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12FDC433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D31464E70
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70A3264DEC
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 07:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbhBLHpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 02:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36032 "EHLO
+        id S230007AbhBLHqX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 02:46:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229871AbhBLHpD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 02:45:03 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E28AC06178C;
-        Thu, 11 Feb 2021 23:43:38 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id b3so6819733wrj.5;
-        Thu, 11 Feb 2021 23:43:38 -0800 (PST)
+        with ESMTP id S229888AbhBLHqC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 02:46:02 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAF5C061574
+        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 23:45:22 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id a5so6473048otq.4
+        for <linux-clk@vger.kernel.org>; Thu, 11 Feb 2021 23:45:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=m10UBKJBthWio+4ksO5Z9Dkd3ZlCqAP161BEeEUt8Io=;
-        b=f6wLsGMhI6Z139SNVZQLqJAe8av558XjZ9b+fCIV8LGKgJGDIqEm/JBW0XvqPUOZqY
-         KhoNVH7rL5FKgf2ucb74TDsPs/quFx54Kr0Dq2UzfLiCg+0lOjNHXjpaZe7sx+b+fZ9H
-         Tm/r0EslGIH59r/DifvnA9QSqMz80zjReZb0wN80MvJSxhPHB6ZIB5vYogw/pQZQpgm7
-         IaHaDDj1A5KZUfBi8cnC8mfOJpN3k/FAfyTfjQjPLse9Tq9/8qLtzPq4L+oqw0E8g5Mj
-         ulStsPewdShNTd3s87dSx5RnTLeU3Zpgxm1jfmIESHh5HXNmyiieSAisFkOqRNqMMGUX
-         Me3A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t5Rmihl3ZUqPFY+0XWkN11ZaPgqMVvxJiffTmBNGsCI=;
+        b=m1Z8jW8F8k61Z40NAIYZOEf26z09pX7fBF2c3K6HPf9p/welO0JrjOPwIiiZv6D5W5
+         +N5T+HIMAVSp1qypVM3WB+2u2ywKXACOpDsI4StMW8Kh+fsY96yqfmSx9BixP3Xae3lv
+         MLq8mczMtMQKvmD7xplUQsJdqcdnmmql2vbuwdfJNMeTUK/uUJrhLQH9+dngPzt2f3Ee
+         Z0ZFB4XGHBc7nYK41Lbf6CaGLIAus1hkqOTwJp9vAzS+2Yj2i5FHncjzimREPtwlHYDL
+         Qns8gtMugDL0Q800yw11Rn+BEMzUzFaSYE7T6kiN1N/49W4uyy5J49MsBbhg/MzOn+DP
+         XXFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=m10UBKJBthWio+4ksO5Z9Dkd3ZlCqAP161BEeEUt8Io=;
-        b=kT9IjvJ68V73xufwMOfuKw3GXMTJu3wHQUgF+o8irndQQvaSK3UTaS8SQRdCkjAeEK
-         3kXHBwus4tTaTqjhJWLz12j0hWuBu2Gke2sjTKZw8JrbO1gRV0FXtQzeoB0XtLIINtNH
-         kajeckpPklqlahJ+LY+fKNlrZxyEXySFV/BfiPL4guVX+EaqxEjOGl6UI/HPiFzdOnnR
-         xywcGOFB/CRyRTwxsAzB9GUWFhFOOYuoqypGcyZe2+Mft+xGBCesxRouuU32PWlJZH8r
-         +1wu37rKG3Fa+lGY2QTQC7JaJy9dZVHaT+GFeUgWJVGBYhlMXBpOZ1Sw6E4R3BfckC2B
-         1kzQ==
-X-Gm-Message-State: AOAM533mbz1qTekqHDaTqQ4vX2EUtfN4MsyN1UTzg4vBlkiGXv/UgHVL
-        MoDFzRzaHD9wEOun7o6xGlI=
-X-Google-Smtp-Source: ABdhPJwaIyU5WDqbb7ACB6YCXWk2H6LmrqTYmJsjC1DVjAHVYfNpHIqezw+x0S7+W3tzYbES0hVX0Q==
-X-Received: by 2002:a5d:6807:: with SMTP id w7mr1921499wru.0.1613115817029;
-        Thu, 11 Feb 2021 23:43:37 -0800 (PST)
-Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
-        by smtp.gmail.com with ESMTPSA id a17sm9663858wrx.63.2021.02.11.23.43.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Feb 2021 23:43:36 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [RESEND PATCH v5 6/6] MAINTAINERS: add MT7621 CLOCK maintainer
-Date:   Fri, 12 Feb 2021 08:43:30 +0100
-Message-Id: <20210212074330.4650-7-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210212074330.4650-1-sergio.paracuellos@gmail.com>
-References: <20210212074330.4650-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t5Rmihl3ZUqPFY+0XWkN11ZaPgqMVvxJiffTmBNGsCI=;
+        b=RnGkFyndh1tHHLkqiGe7tSHTyZTKi/yzsMxuVrKyOSJYlcUsLdIsbUJpRg6HtqKafr
+         af/+fBlMLe/gzLhUfpMME4NoazcCWGS7MO4/E7f6RRdfPl48lgyUDXp1zwcZa+fQVAed
+         F7rr6mR2waCSC/nKhZHL6O6nG4by1bYw9lPOzTdSiFl1VElklai0uvWmsI4PPaDMBPgL
+         DbBwEigYy/H+qeABQ+HZ3eoVjpmZCc+g9K9PP5KtJghxV9bUgHvkeP4/Qn5SQ3/Z5QMR
+         RH9NWUv68+PUuk9cqqtz9xuvHL29QUfXt4hUn7VOhuvFnS6N0+YZr1/mLGSCUBQNRlwB
+         q/Jg==
+X-Gm-Message-State: AOAM531Ykx1odOUZRPtDHC+PAp4wkhXGkfpBa9J97Wf8XTJ55/UeDisR
+        qAlavSCcgw/xXNpyibi3lc0qAH+TQRA+5Np2Ats=
+X-Google-Smtp-Source: ABdhPJzDOW6UpUWOPHL4aDhfngKTY22nYybkNEb0SyuOAUQttgaru85FxN9LZfpCdDhHgUlXbDeUj8eQdTE+z/9oX3E=
+X-Received: by 2002:a9d:a77:: with SMTP id 110mr1238249otg.74.1613115922114;
+ Thu, 11 Feb 2021 23:45:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201220093724.4906-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H92MHRO9RqkBW-c_+dVEtVUF-eHH4-zVXO2wCpdX0A55g@mail.gmail.com> <161309979908.1254594.5215549085877905591@swboyd.mtv.corp.google.com>
+In-Reply-To: <161309979908.1254594.5215549085877905591@swboyd.mtv.corp.google.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Fri, 12 Feb 2021 08:45:11 +0100
+Message-ID: <CAMhs-H-35G98rL2qTE4b1npNwF-DXzapG-ZRwX64hNFKCS7Zdw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] MIPS: ralink: add CPU clock detection and clock
+ driver for MT7621
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, John Crispin <john@phrozen.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Weijie Gao <hackpascal@gmail.com>,
+        COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+        <devicetree@vger.kernel.org>, linux-kernel
+        <linux-kernel@vger.kernel.org>, open list:MIPS
+        <linux-mips@vger.kernel.org>, open list:STAGING SUBSYSTEM
+        <devel@driverdev.osuosl.org>, NeilBrown" <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adding myself as maintainer for mt7621 clock driver.
+Hi Stephen,
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Fri, Feb 12, 2021 at 4:16 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Sergio Paracuellos (2021-01-17 06:19:36)
+> > Hi all,
+> >
+> > On Sun, Dec 20, 2020 at 10:37 AM Sergio Paracuellos
+> > <sergio.paracuellos@gmail.com> wrote:
+> > >
+> > >  - Hardcode "xtal" as parent in FIXED macro.
+> > >  - Change 'else if' clause into 'if' clause since a return statement was
+> > >    being used in 'mt7621_xtal_recalc_rate'.
+> > >
+> > >  NOTES:
+> > >    - Driver is still being declared using 'CLK_OF_DECLARE' for all the
+> > >      clocks. I have explored the possibility to make some of them available
+> > >      afterwards using 'CLK_OF_DECLARE_DRIVER' for top clocks and the rest
+> > >      using a platform driver. The resulting code was uglier since we only want
+> > >      to use the same device tree node and the top clocks must be copied again
+> > >      for the new platform register stuff to properly have a good hierarchy.
+> > >      New globals needs to be introduced and in this particular case I don't
+> > >      really see the benefits of doing in this way. I am totally ok to have all
+> > >      the clocks registered at early stage since from other drivers perspective
+> > >      we only really need to enable gates. So, I prefer to have them in that
+> > >      way if it is not a real problem, of course.
+> >
+> > Any comments on this? Is ok to maintain this as it is done in this
+> > version or should I change this to any other approach taking into
+> > account my comments in device tree related PATCH? Nothing has been
+> > suggested there yet.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f5eafee83bc6..f0c51d9760ec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11247,6 +11247,12 @@ L:	linux-wireless@vger.kernel.org
- S:	Maintained
- F:	drivers/net/wireless/mediatek/mt7601u/
- 
-+MEDIATEK MT7621 CLOCK DRIVER
-+M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
-+F:	drivers/clk/ralink/clk-mt7621.c
-+
- MEDIATEK MT7621/28/88 I2C DRIVER
- M:	Stefan Roese <sr@denx.de>
- L:	linux-i2c@vger.kernel.org
--- 
-2.25.1
+> >
+>
+> Please resend. It seems to have fallen off of DT review list.
 
+I have just resent the whole series as I was told here. Please, take
+into account comment from Rob and my explanation of current device
+tree here:
+https://lkml.org/lkml/2020/12/20/47
+
+Best regards,
+    Sergio Paracuellos
