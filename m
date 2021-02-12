@@ -4,116 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCD8C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FE3C433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 468D864D9D
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8184364E3C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Feb 2021 03:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbhBLDb3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Feb 2021 22:31:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
+        id S229608AbhBLDdP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Feb 2021 22:33:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229547AbhBLDb3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Feb 2021 22:31:29 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4155B60231;
-        Fri, 12 Feb 2021 03:30:48 +0000 (UTC)
+        id S229547AbhBLDdM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Feb 2021 22:33:12 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D86EA64E39;
+        Fri, 12 Feb 2021 03:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613100648;
-        bh=ugam9oRjHrtW+kW58+/nzrA/HAjnVYvAzMVFQMenhL8=;
+        s=k20201202; t=1613100752;
+        bh=RMEFgOzFiltHrVxSKPBO9qssLaG41Z3LLQhahcVjLxE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=b03ZFsREcxdYdDbXCEOrVGDbW9ssf/LODbDEekBwTb5nMnlapPHkLQuUJKzWShCRO
-         zYadfIEcSxFGT5Ty9I8TTFe4DlXY0tWhTtfhotALNPJL6j9R1r9PVVJ0Ho9tQLbpAa
-         dgh3eoysJB3QqMd+FF4/8LRFj0UIBZoL0SD4FFH33RMMYT4bdqwvr4y3nI4ViREK+u
-         QDIIlbAENuP40QIFtKxWffew5H5r2MWWkcoFQOv9smG2XcRLnlx9EfxDxkFaZqoGjr
-         l1YfrKreTfPBqPV86gKQ/1scEHRc5nrLhzh7dF8LvRwlhy44ICYWoYDnwQKakyGviZ
-         rLowkfOxKekNw==
+        b=t6PDJ7hoA7tvuF+9wX49Wc8PnVALhoMaW4NLHvaWdQrkauj2uidrzmFeuCB45LkW9
+         gXfU1Yd9cqXmJrBL/yLwd2CnPHFhp0H3lTa7PnKEVbGazxrDCglErVmZh+vDid9nXY
+         eBUloANXZLYqy6dGP2+7Z1+/M79iBF5RO93rBY1SWejDst5jCpK/AxI4rOA0Rqhtmz
+         37O7W9qbn/+uVpWMF7xAZEMU51hQ+hHXjaqhc0nvGRLhYj57frX8xhDZeq7INmp7zL
+         toMpvkf/QUojM0KQJ2tA2AA/4xSL24M4BjBtpFoNawIEk7k7uRHr9rSdJWuHP3Cf35
+         2vu+vH/Uj2zrg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210106070436.14870-1-mike.looijmans@topic.nl>
-References: <20210106070436.14870-1-mike.looijmans@topic.nl>
-Subject: Re: [PATCH v2] clk-si5341: Support NVM programming through sysfs
+In-Reply-To: <20210125142513.3919014-1-wasim.khan@oss.nxp.com>
+References: <20210125142513.3919014-1-wasim.khan@oss.nxp.com>
+Subject: Re: [PATCH] clk: qoriq: use macros to generate pll_mask
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-To:     Mike Looijmans <mike.looijmans@topic.nl>,
-        linux-clk@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date:   Thu, 11 Feb 2021 19:30:44 -0800
-Message-ID: <161310064437.1254594.4211144292317753592@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, Wasim Khan <wasim.khan@nxp.com>
+To:     V.Sethi@nxp.com, Wasim Khan <wasim.khan@oss.nxp.com>,
+        mturquette@baylibre.com
+Date:   Thu, 11 Feb 2021 19:32:28 -0800
+Message-ID: <161310074861.1254594.15086479842768097422@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Looijmans (2021-01-05 23:04:36)
-> Export an attribute program_nvm_bank that when read reports the current
-> bank value. To program the chip's current state into NVM, write the
-> magic value 0xC7 into this attribute.
+Quoting Wasim Khan (2021-01-25 06:25:13)
+> From: Wasim Khan <wasim.khan@nxp.com>
 >=20
-> This allows the clock chip to be programmed "in system" to reduce boot
-> time by 300ms and allows the clock to be up and running before the
-> kernel boots (e.g. for bootloader usage). Some vendors initialize PLLs
-> only in their bootloader and thus need the clock running at boot.
+> Use macros to generate pll_mask to make code
+> more readable.
 >=20
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> Signed-off-by: Wasim Khan <wasim.khan@nxp.com>
 > ---
-> v2: Add description in Documentation/ABI/
->     Use regmap_read_poll_timeout()
->     Abort on sysfs_create_group error
->=20
->  .../ABI/testing/sysfs-devices-clk-si5341      | 24 +++++++
->  drivers/clk/clk-si5341.c                      | 68 +++++++++++++++++++
->  2 files changed, 92 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-devices-clk-si5341
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-devices-clk-si5341 b/Documen=
-tation/ABI/testing/sysfs-devices-clk-si5341
-> new file mode 100644
-> index 000000000000..7243b82a3729
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-devices-clk-si5341
-> @@ -0,0 +1,24 @@
-> +What:          /sys/bus/i2c/devices/.../clk-si534*/program_nvm_bank
+>  drivers/clk/clk-qoriq.c | 62 ++++++++++++++++++++++++++++-------------
+>  1 file changed, 43 insertions(+), 19 deletions(-)
 
-I'm still curious why this is exposed here instead of through nvmem
-framework. I think we talked about it before, but it would be great if
-the commit text could quiet any concerns about that so we have a record
-of why using the existing nvmem framework wasn't suitable.
-
-> +Date:          Jan 2021
-> +KernelVersion: 5.12
-> +Contact:       Mike Looijmans <mike.looijmans@topic.nl>
-> +Description:   Allows programming the NVM memory of the clock chip, so i=
-t boots
-> +               up in the current configuration. This saves boot time (30=
-0ms
-> +               clock initialization) and allows the clock to be available
-> +               before the kernel boots (e.g. u-boot ethernet clock).
-> +
-> +               Write the magic value 0xc7 to this attribute to program t=
-he
-> +               chip's current settings into its NVM storage. This magic =
-value
-> +               is taken from the datasheet, it's the same value that mus=
-t be
-> +               written to the hardware to program it. Programming can on=
-ly be
-> +               done twice in the lifetime of the chip.
-> +
-> +               Read the value to check the state of the chip. This retur=
-ns the
-> +               raw value as read from the hardware. Possible values:
-> +               0x03: Not programmed
-> +               0x0f: Programmed once
-> +               0x3f: Programmed twice, can no longer be programmed
-> +
-> +Users:         User space applications for embedded boards equipped with=
- one
-> +               or more Si534x programmable clock devices. Would typicall=
-y be
-> +               used at the end of production stages.
+The code also got longer. Why is this better?
