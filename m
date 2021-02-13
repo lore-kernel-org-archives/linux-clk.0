@@ -2,102 +2,205 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD232C433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB8AC433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 10:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE0A764E8E
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7D664E44
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 10:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbhBMBRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 20:17:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35596 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232429AbhBMBRq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 20:17:46 -0500
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FBEC061756
-        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 17:17:06 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id h8so1456098qkk.6
-        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 17:17:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mTEbv5UNbSTlYB1xm32x9/DCqXjo1QtRBFU8/a0HqNA=;
-        b=pHzRw8KSl/NOw8kNlFNbA9bpBrNgc14HZimZ4rnKUaZGHNNs+Q4oSdFLhUTOlyW2c+
-         cFuCbWYTyWVx84Ee649373Tr7VG3szkZH1PF0jeoneZ630F7qYHlw7N0W+Fqsx8iQRrH
-         htYT7DQ4b5cEUJYTigzRLK7UZ8JYJw46C37vQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mTEbv5UNbSTlYB1xm32x9/DCqXjo1QtRBFU8/a0HqNA=;
-        b=lcPolbtYIPw0ne7xF3yFU+PmnG4k3G4RLxQk/Nv8sOeiseI9LCAErkexKOGU8y7K6k
-         Ons51N4Ap4sB5WMMzABZ/4UQ/XaMlcchR74wwPDz0r4TOyhg0kh0yreo0oXzeBItj4H7
-         dr7OEmAqf53vGkcW0ULSoRwv083KFt0MPF5Jl7bKSjKnr/kAUNS68u8pdrC9x/hC6iV0
-         ZyF8rhwYnH76spLhqswzXm9Mg15goikC0p9wqtp9Sfh6GjI6jkqBiVdwpV+tXBJ8QPdn
-         +e5qpsg1fBe3qgfvu9pFC4+w0UUKWdGNR1P2fHgTqPzLXwr0KeJwi+3wefDHdTw3F28h
-         kjng==
-X-Gm-Message-State: AOAM532NDlNPDplwv3b/cpLLvA1xMQAp/sRfT84YFDla5H8lQ6kgtGEz
-        X3eJulm5oqdO3MsHXjnC2Y5/7NWp2Cso0Nba91c8kA==
-X-Google-Smtp-Source: ABdhPJxIcWVe9/GQdJ9gQ61xMbgGggEPVTVmkiUHQj1/Wb9bBIqZlbXQcht/hgLm0X9lJs8edVu/G9kMV+iikB2Tz9c=
-X-Received: by 2002:a37:7c84:: with SMTP id x126mr5593134qkc.390.1613179025739;
- Fri, 12 Feb 2021 17:17:05 -0800 (PST)
+        id S229636AbhBMKC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Feb 2021 05:02:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229475AbhBMKCX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Feb 2021 05:02:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 28A5764DEB;
+        Sat, 13 Feb 2021 10:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613210502;
+        bh=9AVbcKpY++jHCFHcpKm1T4VPl3ysmTlvIgxJg0YH5ws=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eu4I12qkVsNVICSJSm0GnvHT8cTMGITutq1eEha/PVxXnItHoDFxcCvw6J8Dgn/v0
+         7KIEWU6FfDnkZhGqMsn1yqr9rlsS2NP8Uuux6Gv4QeY0Wt4/gO1xX9hJE4N2lY5xUQ
+         K5jYHXX/89Yyib+xH01sM4C+h2cgORBvIMJQK39cAx4GTi8I1VsPrMth8F83hFIwAX
+         imM+99pgM5Z1otNAyByvBfCqwTPgEfZs5dWWwo4dkDvbvg0zrvkl7RxYC+NB0WXRoO
+         iFdL15GLryOR/ASx+zyzS1OUdbr12HnBL2NtUFFmHuyf2ldWEXrqnCJVUun/b8Gh9t
+         NvFDhwF9jE7+g==
+Received: by pali.im (Postfix)
+        id D7666677; Sat, 13 Feb 2021 11:01:39 +0100 (CET)
+Date:   Sat, 13 Feb 2021 11:01:39 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     nnet <nnet@fastmail.fm>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
+        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
+        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
+        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
+ CPU speed to 800 MHz from 1000 MHz
+Message-ID: <20210213100139.ckrscepg72zjkj4f@pali>
+References: <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
+ <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
+ <20210210092339.qy6wwuq6qr5m2ozr@pali>
+ <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
+ <20210210180322.rlfxdussqhejqpo6@pali>
+ <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
+ <20210211195559.n2j4jnchl2ho54mg@pali>
+ <1ad78446-4a40-4c3e-8680-6dbf19616515@www.fastmail.com>
+ <20210211234445.hbv2diphmgbir76u@pali>
+ <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
 MIME-Version: 1.0
-References: <20210212111649.3251306-1-daniel@0x0f.com> <20210212111649.3251306-2-daniel@0x0f.com>
- <161317510165.1254594.14810451393733659018@swboyd.mtv.corp.google.com>
-In-Reply-To: <161317510165.1254594.14810451393733659018@swboyd.mtv.corp.google.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Sat, 13 Feb 2021 10:18:14 +0900
-Message-ID: <CAFr9PXmhnW8PgdZ7i3W2J0SGfW5sNfYd6cHDMSt_E_4Z9XNbUg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] dt-bindings: clk: Mstar msc313 clkgen mux
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Thursday 11 February 2021 16:41:13 nnet wrote:
+> On Thu, Feb 11, 2021, at 3:44 PM, Pali Rohár wrote:
+> > On Thursday 11 February 2021 12:22:52 nnet wrote:
+> > > On Thu, Feb 11, 2021, at 11:55 AM, Pali Rohár wrote:
+> > > > On Wednesday 10 February 2021 11:08:59 nnet wrote:
+> > > > > On Wed, Feb 10, 2021, at 10:03 AM, Pali Rohár wrote:
+> > > > > > > > Hello! Could you please enable userspace governor during kernel
+> > > > > > > > compilation?
+> > > > > > > > 
+> > > > > > > >     CONFIG_CPU_FREQ_GOV_USERSPACE=y
+> > > > > > > > 
+> > > > > > > > It can be activated via command:
+> > > > > > > > 
+> > > > > > > >     echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> > > > > > > > 
+> > > > > > > > After that you can "force" CPU frequency to specific value, e.g.:
+> > > > > > > > 
+> > > > > > > >     echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
+> > > > > > > > 
+> > > > > > > > I need to know which switch (from --> to freq) cause this system hang.
+> > > > > > > > 
+> > > > > > > > This patch series (via MIN_VOLT_MV_FOR_L0_L1_1GHZ) is fixing only
+> > > > > > > > switching from 500 MHz to 1000 MHz on 1 GHz variant. As only this switch
+> > > > > > > > is causing issue.
+> > > > > > > > 
+> > > > > > > > I have used following simple bash script to check that switching between
+> > > > > > > > 500 MHz and 1 GHz is stable:
+> > > > > > > > 
+> > > > > > > >     while true; do
+> > > > > > > >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > >     done
+> > > > > > > 
+> > > > > > > echo userspace | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> > > > > > > while true; do
+> > > > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > >   echo 600000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > done
+> > > > > > > 
+> > > > > > > >> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
+> > > > > > > 
+> > > > > > > With 1108 I get a freeze within a minute. The last output to stdout is 600000.
+> > > > > > > 
+> > > > > > > With 1120 it takes a few minutes.
+> > > > > > > 
+> > > > > > > With any of 1225, 1155, 1132 the device doesn't freeze over the full 5 minute load test.
+> > > > > > > 
+> > > > > > > I'm using ondemand now with the above at 1132 without issue so far.
+> > > > > > 
+> > > > > > Great, thank you for testing!
+> > > > > > 
+> > > > > > Can you check if switching between any two lower frequencies 200000
+> > > > > > 300000 600000 is stable?
+> > > > > 
+> > > > > This is stable using 1132 mV for MIN_VOLT_MV_FOR_L0_L1_1GHZ:
+> > > > > 
+> > > > > while true; do
+> > > > >   # down
+> > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > ...
+> > > > 
+> > > > Hello!
+> > > > 
+> > > > Could you please re-run test without tee, in form as I have shown above?
+> > > > UART is slow and printing something to console adds delay which decrease
+> > > > probability that real issue is triggered as this is timing issue.
+> > > 
+> > > The test was done over SSH.
+> > 
+> > Ok! But it is still better to not print any results as it adds unwanted
+> > delay between frequency switching.
+> > 
+> > > > Also please do tests just between two frequencies in loop as I observed
+> > > > that switching between more decreased probability to hit issue.
+> > > 
+> > > > > > > echo userspace | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> > > > > > > while true; do
+> > > > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > >   echo 600000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> > > > > > > done
+> > > 
+> > > The first test ^ switched between 600 MHz and 1.2 GHz.
+> > > 
+> > > > The real issue for 1 GHz variant of A3720 is only when doing switch from
+> > > > 500 MHz to 1 GHz. So could you try to do some tests also without
+> > > > changing MIN_VOLT_MV_FOR_L0_L1_1GHZ and switching just between non-1.2
+> > > > frequencies (to verify that on 1.2 GHz variant it is also from 600 MHz
+> > > > to 1.2 GHz)?
+> > > 
+> > > With 1108 mV and switching between 600 MHz and 1.2GHz, I always saw a freeze within a minute.
+> > 
+> > I mean to try switching with 1.108 V between 200 MHz and 300 MHz or
+> > between 300 MHz and 600 MHz. To check that issue is really only with
+> > switch from 600 MHz to 1.2 GHz.
+> 
+> With:
+> 
+> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
+> 
+> with 5 min load:
+> 
+> # no lock-up
+> 
+> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> while true; do
+>   echo 200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+>   echo 300000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> done
+> 
+> # no lock-up
+> 
+> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> while true; do
+>   echo 300000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+>   echo 600000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> done
+> 
+> # lock-up with 10 seconds of load applied
+> 
+> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> while true; do
+>   echo 600000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+>   echo 1200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
+> done
 
-On Sat, 13 Feb 2021 at 09:11, Stephen Boyd <sboyd@kernel.org> wrote:
-> > +examples:
-> > +  - |
-> > +    clkgen_mux_mspi0: clkgen_mux_mspi0 {
-> > +      compatible = "mstar,msc313-clkgen-mux";
-> > +      regmap = <&clkgen>;
-> > +      offset = <0xcc>;
-> > +      #clock-cells = <1>;
-> > +      mstar,gate = <0>;
-> > +      mstar,mux-shift = <2>;
-> > +      mstar,mux-width = <2>;
->
-> It looks like a node-per clk sort of binding which has been rejected
-> multiple times in the past. If the clks are spread across various
-> devices then it sounds like the mediatek design where they have many
-> syscon nodes that also register clks inside those register spaces. In
-> this case, I would expect the clkgen node to be registering clks. Given
-> that there isn't a reg property and there's these mstar specific
-> properties like shift/width it looks really wrong. Please don't do this.
+Ok! So it really looks like that on 1.2 GHz is the same issue. We need
+to increase voltage for L1 load (600 MHz). But question is what is the
+threshold (it is 1132 mV or lower?) and second question is what
+increasing minimal voltage may cause with board.
 
-Ok. I will rethink this. One of the problems I face here is that there
-isn't any documentation for what the clkgen looks like.
-I have a list of offsets and bit positions for these muxes but very little else.
-Looking at the mediatek clock drivers it seems like they have a driver
-that consumes some register areas and then creates all of the muxes
-etc within those areas within the driver instead. If that's an
-acceptable solution I will go for that.
-There would probably be 2 compatible strings right now (one for the pm
-area and one for the normal area) and that would take a phandle to the
-syscon that holds the registers. Then there would be a big table of
-the offsets, masks etc in the driver.
+Basically there is absolutely no information about 1.2 GHz variant and
+this issue...
 
-Thanks,
-
-Daniel
+> > I need to know if current settings are fine for 200, 300 and 600 MHz
+> > frequencies and the only 600 --> 1200 needs to be fixed.
+> >
