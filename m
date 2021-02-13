@@ -2,237 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36B3C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 14:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCA2C433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 16:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6836D64E3F
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 14:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA0764DDF
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 16:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbhBMOpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Feb 2021 09:45:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbhBMOpV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Feb 2021 09:45:21 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D3AC061574;
-        Sat, 13 Feb 2021 06:44:40 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id nm1so1225594pjb.3;
-        Sat, 13 Feb 2021 06:44:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Clxbg1NQpCvPFEarfm0To7I3vKJpGaiNXI2i281I7Rw=;
-        b=W+dBEZlCNadlIzeZWv/YGZQTDie+YXuykOE/f8tiy8//PRkmN87eWg+diFlAJbsPLo
-         AP++b0SbrQlNMirtgKoBAb0xGfTPNSRLVrMD7wo9G7szbfObmqhdx22r28xwZ7K39vqk
-         ROEkUiopqVPELhcL/3eVUfHcg0aE4ZeX3OD572QovE7YeO+8Lc9tQN3Ani+jrhnObgDR
-         AzcJuQJxJ93TSEiWsErfTj9A/nqRdDB35HGO4wEZYa+lU955pw0nfCenmEktF4bOJhGQ
-         vtqfXgO9uVwi9pzO9H/016J0JSROUyUY8SqIQWMtK/g0ORYWR/ECDVgrFpSWKJ9WPfGi
-         deiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Clxbg1NQpCvPFEarfm0To7I3vKJpGaiNXI2i281I7Rw=;
-        b=hcM8IOXliE883OkIdjbgHqi5vhXzZ9NwPIzb7giziN/wD6TTG0ocRvQtLRiodZT3Yv
-         qEIcZ70tU/JL7Gx03+5PEkqJJiXCbrvPxMm8WAfhiQ7hj7kSFihg7TvystTxUZ3FHLBy
-         XrLDNJq9jfCI4j38dtgg0zyvMj5YHV9Ep4TUO/KIyexHLSN6CUkpSNWp5N6vZIF9Vbm3
-         mjrrLgNrrxMpsPtPKD6o2cZ0YsX9Mg9st/l31b82BTuZa8ngTtFjVySE6alRNHmFredK
-         mbs7xSm8Ze+dZBReOHk891uE+8kdEO/rmkSK52aG1rMLuiKPRJD1kjv/tNUfk6FxVhV0
-         9ocw==
-X-Gm-Message-State: AOAM531rprX1W2pyqNsAwdGn57ot/MEvi1fWu6fFJY2w0ArSYoa/nNDN
-        GrKAqaWe4gkqKGO/X9DlBACK9kkSKuWXgcZANRQ=
-X-Google-Smtp-Source: ABdhPJyQflbftXv7GvNOE5gtCApEhN+4XtEadPJAB7B+KQGWan+Nt0DGjVri0hbD2Rw4pX1dzBL2Sg3Z7TBjUNm1Ru4=
-X-Received: by 2002:a17:90a:9f96:: with SMTP id o22mr2524278pjp.119.1613227479289;
- Sat, 13 Feb 2021 06:44:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20210115182909.314756-1-aford173@gmail.com> <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
- <CAHCN7x+CXUuPN7upiv3D+REOU4d_=i30no+SkRzUjWY58o=uUQ@mail.gmail.com>
- <20210120144454.f6b72lnasw4q3bde@fsr-ub1664-175> <20210120151305.GC19063@pengutronix.de>
- <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175> <20210120155001.GD19063@pengutronix.de>
- <20210120161421.h3yng57m3fetwwih@fsr-ub1664-175> <20210121095617.GI19063@pengutronix.de>
- <20210121102450.lisl3mzqczdsmzda@fsr-ub1664-175> <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
-In-Reply-To: <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sat, 13 Feb 2021 08:44:28 -0600
-Message-ID: <CAHCN7xLc6dnkA5Fw4cC1_nDG3KrrR4AffUzy-8gG4UKLn-rhzQ@mail.gmail.com>
-Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated with sdout
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
+        id S229713AbhBMQAE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Feb 2021 11:00:04 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:39086 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229592AbhBMQAD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Feb 2021 11:00:03 -0500
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1lAxJT-0064CT-UT; Sat, 13 Feb 2021 16:58:27 +0100
+Date:   Sat, 13 Feb 2021 16:58:27 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Jan Kotas <jank@cadence.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
+        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Tero Kristo <kristo@kernel.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <YCf3Iwt3KGZRtNgN@lunn.ch>
+References: <20210126124540.3320214-1-lee.jones@linaro.org>
+ <161307643148.1254594.6590013599999468609@swboyd.mtv.corp.google.com>
+ <20210211211054.GD4572@dell>
+ <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161309925025.1254594.6210738031889810500@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 3, 2021 at 3:22 PM Adam Ford <aford173@gmail.com> wrote:
->
-> On Thu, Jan 21, 2021 at 4:24 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> >
-> > On 21-01-21 10:56:17, Sascha Hauer wrote:
-> > > On Wed, Jan 20, 2021 at 06:14:21PM +0200, Abel Vesa wrote:
-> > > > On 21-01-20 16:50:01, Sascha Hauer wrote:
-> > > > > On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
-> > > > > > On 21-01-20 16:13:05, Sascha Hauer wrote:
-> > > > > > > Hi Abel,
-> > > > > > >
-> > > > > > > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
-> > > > > > > > On 21-01-18 08:00:43, Adam Ford wrote:
-> > > > > > > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.=
-com> wrote:
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > TBH, I'm against the idea of having to call consumer AP=
-I from a clock provider driver.
-> > > > > > > > > > I'm still investigating a way of moving the uart clock =
-control calls in drivers/serial/imx,
-> > > > > > > > > > where they belong.
-> > > > > > > > >
-> > > > > > > > > That makes sense.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > Just a thought. The uart clock used for console remains on =
-from u-boot,
-> > > > > > > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag=
- to all the
-> > > > > > > > uart root clocks and remove the prepare/enable calls for ua=
-rt clocks
-> > > > > > > > for good. I don't really have a way to test it right now, b=
-ut maybe
-> > > > > > > > you could give it a try.
-> > > > > > >
-> > > > > > > That would mean that UART clocks will never be disabled, rega=
-rdless of
-> > > > > > > whether they are used for console or not. That doesn't sound =
-very
-> > > > > > > appealing.
-> > > > > >
-> > > > > > AFAIK, the only uart clock that is enabled by u-boot is the one=
- used for
-> > > > > > the console. Later on, when the serial driver probes, it will e=
-nable it itself.
-> > > > > >
-> > > > > > Unless I'm missing something, this is exactly what we need.
-> > > > >
-> > > > > It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
-> > > > > disabled again when a port is closed after usage
-> > > >
-> > > > OK, tell me what I'm getting wrong in the following scenario:
-> > > >
-> > > > U-boot leaves the console uart clock enabled. All the other ones ar=
-e disabled.
-> > > >
-> > > > Kernel i.MX clk driver registers the uart clocks with flag CLK_IGNO=
-RE_UNUSED.
-> > >
-> > > I was wrong at that point. I originally thought the kernel will never
-> > > disable these clocks, but in fact it only leaves them enabled during =
-the
-> > > clk_disable_unused call.
-> > >
-> > > However, when CLK_IGNORE_UNUSED becomes relevant it's too late alread=
-y.
-> > > I just chatted with Lucas and he told me what the original problem wa=
-s
-> > > that his patch solved.
-> > >
-> > > The problem comes when an unrelated device and the earlycon UART have
-> > > the same parent clocks. The parent clock is enabled, but it's referen=
-ce
-> > > count is zero. Now when the unrelated device probes and toggles its
-> > > clocks then the shared parent clock will be disabled due to the
-> > > reference count being zero. Next time earlycon prints a character the
-> > > system hangs because the UART gates are still enabled, but their pare=
-nt
-> > > clocks no longer are.
-> > >
-> >
-> > Hmm, that is indeed a problem. That's why I think there should be some
-> > kind of NOCACHE flag for almost all the types of clocks. For example,
-> > in this case, it makes sense for the core to check the bit in the regis=
-ter
-> > and then disable the parent based on that instead of relying on the ref=
-count.
-> > Anyway, that's something that needs to be added in the CCF.
-> >
-> > > Overall I think Lucas' patches are still valid and relevant and with
-> > > Adams patches we even no longer have to enable all UART clocks, but
-> > > only the ones which are actually needed.
-> >
-> > Yeah, for now, I think we can go with Adam's patches. But longterm, I w=
-ould
-> > like to remove the special case of the uart clocks we have right now in=
- all
-> > the i.MX clock drivers.
+On Thu, Feb 11, 2021 at 07:07:30PM -0800, Stephen Boyd wrote:
+> Quoting Lee Jones (2021-02-11 13:10:54)
+> > On Thu, 11 Feb 2021, Stephen Boyd wrote:
+> > 
+> > > Quoting Lee Jones (2021-01-26 04:45:19)
+> > > > This set is part of a larger effort attempting to clean-up W=1
+> > > > kernel builds, which are currently overwhelmingly riddled with
+> > > > niggly little warnings.
+> > > > 
+> > > > This is the last set.  Clock is clean after this.
+> > > 
+> > > Is it possible to slam in some patch that makes W=1 the default for the
+> > > clk directory? I'm trying to avoid seeing this patch series again.
+> > 
+> > One of my main goals of this project is that everyone (contributors,
+> > maintainers auto-builder robots etc) will be enabling W=1 builds
+> > *locally*.
+> > 
+> > This isn't something you'll want to do at a global (i.e. in Mainline)
+> > level.  That's kinda the point of W=1.
+> > 
+> 
+> Agreed, but is it possible to pass W=1 in the drivers/clk/Makefile?
 
-I looked around at other serial drivers, and I found nothing like this
-function for enabling all UART clocks.  There are generic functions
-for registering consoles, earlycon etc, and the serial driver fetches
-the per and igp clocks from the device tree, so I attempted to simply
-remove imx_register_uart_clocks().  I booted an i.MX8M Nano from a
-fully-powered off state, and my serial console came up just fine.
+About a cycle ago, Arnd and i played around with this idea. The
+Ethernet PHY subsystem is W=1 clean, and most of he network stack
+is. But keeping it clean is not so easy, when developers do sometimes
+add new warnings, since they have no idea the code is W=1 clean.
 
-I checked the clk_summary, and the clock parents are set correctly and
-the respective clock rates appear to be correct (ie, the console is
-working at the desired baud rate, and Bluetooth is happy)
+You are also not the only one asking for such a feature. RDMA also
+asked recently.
 
-Since I don't fully understand the serial driver and the clock
-dependencies, I don't want to just simply remove the function without
-discussing it, because I don't know the ramifications.  However, when
-testing on the i.MX8M Nano, things look OK.
-I also tested suspend-resume and the console UART appears to return
-and the Bluetooth UART set to 4Mbps works just fine too.
+Arnd, do you plan to push the patches?
 
-I'd like to post a V4 which just removes imx_register_uart_clocks and
-the corresponding calls to it.  I don't know enough about the older
-32-bit i.MX SoC's, but I have build-tested it, and I can generate a
-patch. Are there any objections and/or concerns?
-
-adam
-> >
->
-> Is the patch I submitted good enough for someone's acked-by or
-> reviewed-by, or are there changes I need to implement?
->
-> adam
->
-> > >
-> > > Sascha
-> > >
-> > >
-> > > --
-> > > Pengutronix e.K.                           |                         =
-    |
-> > > Steuerwalder Str. 21                       | https://eur01.safelinks.=
-protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=
-=3D04%7C01%7Cabel.vesa%40nxp.com%7Ceed68987c68f4aeaa63408d8bdf2d051%7C686ea=
-1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637468197861821302%7CUnknown%7CTWFpbG=
-Zsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C=
-1000&amp;sdata=3DX1J8KgxFquNin80zKVz0Ao22vv1MuTMWf91BUTczh9Y%3D&amp;reserve=
-d=3D0  |
-> > > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0=
-    |
-> > > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5=
-555 |
+      Andrew
