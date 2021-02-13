@@ -2,205 +2,237 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB8AC433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 10:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36B3C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 14:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7D664E44
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 10:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6836D64E3F
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 14:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229636AbhBMKC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Feb 2021 05:02:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229475AbhBMKCX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Feb 2021 05:02:23 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 28A5764DEB;
-        Sat, 13 Feb 2021 10:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613210502;
-        bh=9AVbcKpY++jHCFHcpKm1T4VPl3ysmTlvIgxJg0YH5ws=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eu4I12qkVsNVICSJSm0GnvHT8cTMGITutq1eEha/PVxXnItHoDFxcCvw6J8Dgn/v0
-         7KIEWU6FfDnkZhGqMsn1yqr9rlsS2NP8Uuux6Gv4QeY0Wt4/gO1xX9hJE4N2lY5xUQ
-         K5jYHXX/89Yyib+xH01sM4C+h2cgORBvIMJQK39cAx4GTi8I1VsPrMth8F83hFIwAX
-         imM+99pgM5Z1otNAyByvBfCqwTPgEfZs5dWWwo4dkDvbvg0zrvkl7RxYC+NB0WXRoO
-         iFdL15GLryOR/ASx+zyzS1OUdbr12HnBL2NtUFFmHuyf2ldWEXrqnCJVUun/b8Gh9t
-         NvFDhwF9jE7+g==
-Received: by pali.im (Postfix)
-        id D7666677; Sat, 13 Feb 2021 11:01:39 +0100 (CET)
-Date:   Sat, 13 Feb 2021 11:01:39 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
-        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
-        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
-        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210213100139.ckrscepg72zjkj4f@pali>
-References: <1cd0c2ee-aa3a-4da2-9c0c-57cc5a1dad49@www.fastmail.com>
- <a1277b1f-f829-4d02-9e54-68ab4faaa047@www.fastmail.com>
- <20210210092339.qy6wwuq6qr5m2ozr@pali>
- <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
- <20210210180322.rlfxdussqhejqpo6@pali>
- <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
- <20210211195559.n2j4jnchl2ho54mg@pali>
- <1ad78446-4a40-4c3e-8680-6dbf19616515@www.fastmail.com>
- <20210211234445.hbv2diphmgbir76u@pali>
- <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+        id S229671AbhBMOpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Feb 2021 09:45:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229531AbhBMOpV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Feb 2021 09:45:21 -0500
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D3AC061574;
+        Sat, 13 Feb 2021 06:44:40 -0800 (PST)
+Received: by mail-pj1-x1031.google.com with SMTP id nm1so1225594pjb.3;
+        Sat, 13 Feb 2021 06:44:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Clxbg1NQpCvPFEarfm0To7I3vKJpGaiNXI2i281I7Rw=;
+        b=W+dBEZlCNadlIzeZWv/YGZQTDie+YXuykOE/f8tiy8//PRkmN87eWg+diFlAJbsPLo
+         AP++b0SbrQlNMirtgKoBAb0xGfTPNSRLVrMD7wo9G7szbfObmqhdx22r28xwZ7K39vqk
+         ROEkUiopqVPELhcL/3eVUfHcg0aE4ZeX3OD572QovE7YeO+8Lc9tQN3Ani+jrhnObgDR
+         AzcJuQJxJ93TSEiWsErfTj9A/nqRdDB35HGO4wEZYa+lU955pw0nfCenmEktF4bOJhGQ
+         vtqfXgO9uVwi9pzO9H/016J0JSROUyUY8SqIQWMtK/g0ORYWR/ECDVgrFpSWKJ9WPfGi
+         deiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Clxbg1NQpCvPFEarfm0To7I3vKJpGaiNXI2i281I7Rw=;
+        b=hcM8IOXliE883OkIdjbgHqi5vhXzZ9NwPIzb7giziN/wD6TTG0ocRvQtLRiodZT3Yv
+         qEIcZ70tU/JL7Gx03+5PEkqJJiXCbrvPxMm8WAfhiQ7hj7kSFihg7TvystTxUZ3FHLBy
+         XrLDNJq9jfCI4j38dtgg0zyvMj5YHV9Ep4TUO/KIyexHLSN6CUkpSNWp5N6vZIF9Vbm3
+         mjrrLgNrrxMpsPtPKD6o2cZ0YsX9Mg9st/l31b82BTuZa8ngTtFjVySE6alRNHmFredK
+         mbs7xSm8Ze+dZBReOHk891uE+8kdEO/rmkSK52aG1rMLuiKPRJD1kjv/tNUfk6FxVhV0
+         9ocw==
+X-Gm-Message-State: AOAM531rprX1W2pyqNsAwdGn57ot/MEvi1fWu6fFJY2w0ArSYoa/nNDN
+        GrKAqaWe4gkqKGO/X9DlBACK9kkSKuWXgcZANRQ=
+X-Google-Smtp-Source: ABdhPJyQflbftXv7GvNOE5gtCApEhN+4XtEadPJAB7B+KQGWan+Nt0DGjVri0hbD2Rw4pX1dzBL2Sg3Z7TBjUNm1Ru4=
+X-Received: by 2002:a17:90a:9f96:: with SMTP id o22mr2524278pjp.119.1613227479289;
+ Sat, 13 Feb 2021 06:44:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+References: <20210115182909.314756-1-aford173@gmail.com> <20210118125204.hxsanoohwvdtdvym@fsr-ub1664-175>
+ <CAHCN7x+CXUuPN7upiv3D+REOU4d_=i30no+SkRzUjWY58o=uUQ@mail.gmail.com>
+ <20210120144454.f6b72lnasw4q3bde@fsr-ub1664-175> <20210120151305.GC19063@pengutronix.de>
+ <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175> <20210120155001.GD19063@pengutronix.de>
+ <20210120161421.h3yng57m3fetwwih@fsr-ub1664-175> <20210121095617.GI19063@pengutronix.de>
+ <20210121102450.lisl3mzqczdsmzda@fsr-ub1664-175> <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
+In-Reply-To: <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sat, 13 Feb 2021 08:44:28 -0600
+Message-ID: <CAHCN7xLc6dnkA5Fw4cC1_nDG3KrrR4AffUzy-8gG4UKLn-rhzQ@mail.gmail.com>
+Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated with sdout
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thursday 11 February 2021 16:41:13 nnet wrote:
-> On Thu, Feb 11, 2021, at 3:44 PM, Pali Rohár wrote:
-> > On Thursday 11 February 2021 12:22:52 nnet wrote:
-> > > On Thu, Feb 11, 2021, at 11:55 AM, Pali Rohár wrote:
-> > > > On Wednesday 10 February 2021 11:08:59 nnet wrote:
-> > > > > On Wed, Feb 10, 2021, at 10:03 AM, Pali Rohár wrote:
-> > > > > > > > Hello! Could you please enable userspace governor during kernel
-> > > > > > > > compilation?
-> > > > > > > > 
-> > > > > > > >     CONFIG_CPU_FREQ_GOV_USERSPACE=y
-> > > > > > > > 
-> > > > > > > > It can be activated via command:
-> > > > > > > > 
-> > > > > > > >     echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> > > > > > > > 
-> > > > > > > > After that you can "force" CPU frequency to specific value, e.g.:
-> > > > > > > > 
-> > > > > > > >     echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
-> > > > > > > > 
-> > > > > > > > I need to know which switch (from --> to freq) cause this system hang.
-> > > > > > > > 
-> > > > > > > > This patch series (via MIN_VOLT_MV_FOR_L0_L1_1GHZ) is fixing only
-> > > > > > > > switching from 500 MHz to 1000 MHz on 1 GHz variant. As only this switch
-> > > > > > > > is causing issue.
-> > > > > > > > 
-> > > > > > > > I have used following simple bash script to check that switching between
-> > > > > > > > 500 MHz and 1 GHz is stable:
-> > > > > > > > 
-> > > > > > > >     while true; do
-> > > > > > > >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > >         echo 1000000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > >         echo 500000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > >     done
-> > > > > > > 
-> > > > > > > echo userspace | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> > > > > > > while true; do
-> > > > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > >   echo 600000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > done
-> > > > > > > 
-> > > > > > > >> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
-> > > > > > > 
-> > > > > > > With 1108 I get a freeze within a minute. The last output to stdout is 600000.
-> > > > > > > 
-> > > > > > > With 1120 it takes a few minutes.
-> > > > > > > 
-> > > > > > > With any of 1225, 1155, 1132 the device doesn't freeze over the full 5 minute load test.
-> > > > > > > 
-> > > > > > > I'm using ondemand now with the above at 1132 without issue so far.
-> > > > > > 
-> > > > > > Great, thank you for testing!
-> > > > > > 
-> > > > > > Can you check if switching between any two lower frequencies 200000
-> > > > > > 300000 600000 is stable?
-> > > > > 
-> > > > > This is stable using 1132 mV for MIN_VOLT_MV_FOR_L0_L1_1GHZ:
-> > > > > 
-> > > > > while true; do
-> > > > >   # down
-> > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > ...
-> > > > 
-> > > > Hello!
-> > > > 
-> > > > Could you please re-run test without tee, in form as I have shown above?
-> > > > UART is slow and printing something to console adds delay which decrease
-> > > > probability that real issue is triggered as this is timing issue.
-> > > 
-> > > The test was done over SSH.
-> > 
-> > Ok! But it is still better to not print any results as it adds unwanted
-> > delay between frequency switching.
-> > 
-> > > > Also please do tests just between two frequencies in loop as I observed
-> > > > that switching between more decreased probability to hit issue.
-> > > 
-> > > > > > > echo userspace | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> > > > > > > while true; do
-> > > > > > >   echo 1200000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > >   echo 600000 | tee /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> > > > > > > done
-> > > 
-> > > The first test ^ switched between 600 MHz and 1.2 GHz.
-> > > 
-> > > > The real issue for 1 GHz variant of A3720 is only when doing switch from
-> > > > 500 MHz to 1 GHz. So could you try to do some tests also without
-> > > > changing MIN_VOLT_MV_FOR_L0_L1_1GHZ and switching just between non-1.2
-> > > > frequencies (to verify that on 1.2 GHz variant it is also from 600 MHz
-> > > > to 1.2 GHz)?
-> > > 
-> > > With 1108 mV and switching between 600 MHz and 1.2GHz, I always saw a freeze within a minute.
-> > 
-> > I mean to try switching with 1.108 V between 200 MHz and 300 MHz or
-> > between 300 MHz and 600 MHz. To check that issue is really only with
-> > switch from 600 MHz to 1.2 GHz.
-> 
-> With:
-> 
-> +#define MIN_VOLT_MV_FOR_L0_L1_1GHZ 1108
-> 
-> with 5 min load:
-> 
-> # no lock-up
-> 
-> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> while true; do
->   echo 200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
->   echo 300000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> done
-> 
-> # no lock-up
-> 
-> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> while true; do
->   echo 300000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
->   echo 600000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> done
-> 
-> # lock-up with 10 seconds of load applied
-> 
-> echo userspace > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-> while true; do
->   echo 600000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
->   echo 1200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed;
-> done
-
-Ok! So it really looks like that on 1.2 GHz is the same issue. We need
-to increase voltage for L1 load (600 MHz). But question is what is the
-threshold (it is 1132 mV or lower?) and second question is what
-increasing minimal voltage may cause with board.
-
-Basically there is absolutely no information about 1.2 GHz variant and
-this issue...
-
-> > I need to know if current settings are fine for 200, 300 and 600 MHz
-> > frequencies and the only 600 --> 1200 needs to be fixed.
+On Wed, Feb 3, 2021 at 3:22 PM Adam Ford <aford173@gmail.com> wrote:
+>
+> On Thu, Jan 21, 2021 at 4:24 AM Abel Vesa <abel.vesa@nxp.com> wrote:
 > >
+> > On 21-01-21 10:56:17, Sascha Hauer wrote:
+> > > On Wed, Jan 20, 2021 at 06:14:21PM +0200, Abel Vesa wrote:
+> > > > On 21-01-20 16:50:01, Sascha Hauer wrote:
+> > > > > On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
+> > > > > > On 21-01-20 16:13:05, Sascha Hauer wrote:
+> > > > > > > Hi Abel,
+> > > > > > >
+> > > > > > > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
+> > > > > > > > On 21-01-18 08:00:43, Adam Ford wrote:
+> > > > > > > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.=
+com> wrote:
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > TBH, I'm against the idea of having to call consumer AP=
+I from a clock provider driver.
+> > > > > > > > > > I'm still investigating a way of moving the uart clock =
+control calls in drivers/serial/imx,
+> > > > > > > > > > where they belong.
+> > > > > > > > >
+> > > > > > > > > That makes sense.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Just a thought. The uart clock used for console remains on =
+from u-boot,
+> > > > > > > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag=
+ to all the
+> > > > > > > > uart root clocks and remove the prepare/enable calls for ua=
+rt clocks
+> > > > > > > > for good. I don't really have a way to test it right now, b=
+ut maybe
+> > > > > > > > you could give it a try.
+> > > > > > >
+> > > > > > > That would mean that UART clocks will never be disabled, rega=
+rdless of
+> > > > > > > whether they are used for console or not. That doesn't sound =
+very
+> > > > > > > appealing.
+> > > > > >
+> > > > > > AFAIK, the only uart clock that is enabled by u-boot is the one=
+ used for
+> > > > > > the console. Later on, when the serial driver probes, it will e=
+nable it itself.
+> > > > > >
+> > > > > > Unless I'm missing something, this is exactly what we need.
+> > > > >
+> > > > > It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
+> > > > > disabled again when a port is closed after usage
+> > > >
+> > > > OK, tell me what I'm getting wrong in the following scenario:
+> > > >
+> > > > U-boot leaves the console uart clock enabled. All the other ones ar=
+e disabled.
+> > > >
+> > > > Kernel i.MX clk driver registers the uart clocks with flag CLK_IGNO=
+RE_UNUSED.
+> > >
+> > > I was wrong at that point. I originally thought the kernel will never
+> > > disable these clocks, but in fact it only leaves them enabled during =
+the
+> > > clk_disable_unused call.
+> > >
+> > > However, when CLK_IGNORE_UNUSED becomes relevant it's too late alread=
+y.
+> > > I just chatted with Lucas and he told me what the original problem wa=
+s
+> > > that his patch solved.
+> > >
+> > > The problem comes when an unrelated device and the earlycon UART have
+> > > the same parent clocks. The parent clock is enabled, but it's referen=
+ce
+> > > count is zero. Now when the unrelated device probes and toggles its
+> > > clocks then the shared parent clock will be disabled due to the
+> > > reference count being zero. Next time earlycon prints a character the
+> > > system hangs because the UART gates are still enabled, but their pare=
+nt
+> > > clocks no longer are.
+> > >
+> >
+> > Hmm, that is indeed a problem. That's why I think there should be some
+> > kind of NOCACHE flag for almost all the types of clocks. For example,
+> > in this case, it makes sense for the core to check the bit in the regis=
+ter
+> > and then disable the parent based on that instead of relying on the ref=
+count.
+> > Anyway, that's something that needs to be added in the CCF.
+> >
+> > > Overall I think Lucas' patches are still valid and relevant and with
+> > > Adams patches we even no longer have to enable all UART clocks, but
+> > > only the ones which are actually needed.
+> >
+> > Yeah, for now, I think we can go with Adam's patches. But longterm, I w=
+ould
+> > like to remove the special case of the uart clocks we have right now in=
+ all
+> > the i.MX clock drivers.
+
+I looked around at other serial drivers, and I found nothing like this
+function for enabling all UART clocks.  There are generic functions
+for registering consoles, earlycon etc, and the serial driver fetches
+the per and igp clocks from the device tree, so I attempted to simply
+remove imx_register_uart_clocks().  I booted an i.MX8M Nano from a
+fully-powered off state, and my serial console came up just fine.
+
+I checked the clk_summary, and the clock parents are set correctly and
+the respective clock rates appear to be correct (ie, the console is
+working at the desired baud rate, and Bluetooth is happy)
+
+Since I don't fully understand the serial driver and the clock
+dependencies, I don't want to just simply remove the function without
+discussing it, because I don't know the ramifications.  However, when
+testing on the i.MX8M Nano, things look OK.
+I also tested suspend-resume and the console UART appears to return
+and the Bluetooth UART set to 4Mbps works just fine too.
+
+I'd like to post a V4 which just removes imx_register_uart_clocks and
+the corresponding calls to it.  I don't know enough about the older
+32-bit i.MX SoC's, but I have build-tested it, and I can generate a
+patch. Are there any objections and/or concerns?
+
+adam
+> >
+>
+> Is the patch I submitted good enough for someone's acked-by or
+> reviewed-by, or are there changes I need to implement?
+>
+> adam
+>
+> > >
+> > > Sascha
+> > >
+> > >
+> > > --
+> > > Pengutronix e.K.                           |                         =
+    |
+> > > Steuerwalder Str. 21                       | https://eur01.safelinks.=
+protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=
+=3D04%7C01%7Cabel.vesa%40nxp.com%7Ceed68987c68f4aeaa63408d8bdf2d051%7C686ea=
+1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637468197861821302%7CUnknown%7CTWFpbG=
+Zsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C=
+1000&amp;sdata=3DX1J8KgxFquNin80zKVz0Ao22vv1MuTMWf91BUTczh9Y%3D&amp;reserve=
+d=3D0  |
+> > > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0=
+    |
+> > > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5=
+555 |
