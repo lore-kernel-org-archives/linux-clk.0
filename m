@@ -2,87 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B13BC433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD232C433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0864064E8A
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0A764E8E
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 01:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232263AbhBMBPS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Feb 2021 20:15:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229903AbhBMBPS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Feb 2021 20:15:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D1DF564E8A;
-        Sat, 13 Feb 2021 01:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613178877;
-        bh=xKaV6FK/Ficlxn1hBqpGRH6ioxbR3kHSmD95kEm9UEE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=acS1T/Caltierk5WZIY/Ta0j7WkeW9TSS/EOpAzRELuu2l1RYnFxIT7T26/HZOEZo
-         DrQoaeCDBYDoEgqlhimxmT9UhAXWd69GKCflp/1NCalXXEpZE8ZxY6wVBYQCd6bu5p
-         ja04alEGpLkRC8nD6tZJYwrWAmGbwmWM2gmKb5OdZwHCJsH3fSkM2bVx4jz+uMcjd2
-         xKgqoGmsjFHWS1rL7FDRwV9eBWSP6lGpZjGFv7g/fAa6sYMfWYgqVyYehXu40yE6Jz
-         s6JkIzEDV05V+zse04f+BGJNCB8jeoTtzIOlNwQc+uXsDoJM+kmLwjdg39eqNhBpeB
-         qfdC2mjVGAcDQ==
-Content-Type: text/plain; charset="utf-8"
+        id S232479AbhBMBRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Feb 2021 20:17:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232429AbhBMBRq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Feb 2021 20:17:46 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FBEC061756
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 17:17:06 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id h8so1456098qkk.6
+        for <linux-clk@vger.kernel.org>; Fri, 12 Feb 2021 17:17:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mTEbv5UNbSTlYB1xm32x9/DCqXjo1QtRBFU8/a0HqNA=;
+        b=pHzRw8KSl/NOw8kNlFNbA9bpBrNgc14HZimZ4rnKUaZGHNNs+Q4oSdFLhUTOlyW2c+
+         cFuCbWYTyWVx84Ee649373Tr7VG3szkZH1PF0jeoneZ630F7qYHlw7N0W+Fqsx8iQRrH
+         htYT7DQ4b5cEUJYTigzRLK7UZ8JYJw46C37vQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mTEbv5UNbSTlYB1xm32x9/DCqXjo1QtRBFU8/a0HqNA=;
+        b=lcPolbtYIPw0ne7xF3yFU+PmnG4k3G4RLxQk/Nv8sOeiseI9LCAErkexKOGU8y7K6k
+         Ons51N4Ap4sB5WMMzABZ/4UQ/XaMlcchR74wwPDz0r4TOyhg0kh0yreo0oXzeBItj4H7
+         dr7OEmAqf53vGkcW0ULSoRwv083KFt0MPF5Jl7bKSjKnr/kAUNS68u8pdrC9x/hC6iV0
+         ZyF8rhwYnH76spLhqswzXm9Mg15goikC0p9wqtp9Sfh6GjI6jkqBiVdwpV+tXBJ8QPdn
+         +e5qpsg1fBe3qgfvu9pFC4+w0UUKWdGNR1P2fHgTqPzLXwr0KeJwi+3wefDHdTw3F28h
+         kjng==
+X-Gm-Message-State: AOAM532NDlNPDplwv3b/cpLLvA1xMQAp/sRfT84YFDla5H8lQ6kgtGEz
+        X3eJulm5oqdO3MsHXjnC2Y5/7NWp2Cso0Nba91c8kA==
+X-Google-Smtp-Source: ABdhPJxIcWVe9/GQdJ9gQ61xMbgGggEPVTVmkiUHQj1/Wb9bBIqZlbXQcht/hgLm0X9lJs8edVu/G9kMV+iikB2Tz9c=
+X-Received: by 2002:a37:7c84:: with SMTP id x126mr5593134qkc.390.1613179025739;
+ Fri, 12 Feb 2021 17:17:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210211080509.5kl2u3ofdggyzuvj@pengutronix.de>
-References: <20201221092713.vq6cfo2jyxl5l2rm@pengutronix.de> <20210113083042.tezxr5sim2oevtvm@pengutronix.de> <161301324986.1254594.14610246660375821616@swboyd.mtv.corp.google.com> <20210211080509.5kl2u3ofdggyzuvj@pengutronix.de>
-Subject: Re: [PATCH] clk: Warn when clk_get_rate is called for a disabled clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Simon South <simon@simonsouth.net>, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de
-To:     <u.kleine-koenig@pengutronix.de>
-Date:   Fri, 12 Feb 2021 17:14:36 -0800
-Message-ID: <161317887654.1254594.6078241024095194891@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20210212111649.3251306-1-daniel@0x0f.com> <20210212111649.3251306-2-daniel@0x0f.com>
+ <161317510165.1254594.14810451393733659018@swboyd.mtv.corp.google.com>
+In-Reply-To: <161317510165.1254594.14810451393733659018@swboyd.mtv.corp.google.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Sat, 13 Feb 2021 10:18:14 +0900
+Message-ID: <CAFr9PXmhnW8PgdZ7i3W2J0SGfW5sNfYd6cHDMSt_E_4Z9XNbUg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] dt-bindings: clk: Mstar msc313 clkgen mux
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Uwe (2021-02-11 00:05:09)
-> Hello Stephen,
->=20
-> On Wed, Feb 10, 2021 at 07:14:09PM -0800, Stephen Boyd wrote:
->=20
-> > What problem are you trying to address? Is there some issue you've
-> > encountered in the kernel that would have been fixed by having this
-> > warning?
->=20
-> The warning obviously doesn't fix anything. My eventual goal is to
-> answer the question in the initial mail in this thread. The motivating
-> situation is: Should I continue to tell patch authors who use
-> clk_get_rate() that they have to ensure that the given clk must be
-> enabled as the documentation suggests? And if yes: Can we please check
-> this automatically (e.g. with my patch or by returning 0 for a disabled
-> clk) and don't rely on human review to adhere to this rule.
->=20
+Hi Stephen,
 
-I suggest to stop telling folks that they must enable the clk before
-getting the rate. The documentation says
+On Sat, 13 Feb 2021 at 09:11, Stephen Boyd <sboyd@kernel.org> wrote:
+> > +examples:
+> > +  - |
+> > +    clkgen_mux_mspi0: clkgen_mux_mspi0 {
+> > +      compatible = "mstar,msc313-clkgen-mux";
+> > +      regmap = <&clkgen>;
+> > +      offset = <0xcc>;
+> > +      #clock-cells = <1>;
+> > +      mstar,gate = <0>;
+> > +      mstar,mux-shift = <2>;
+> > +      mstar,mux-width = <2>;
+>
+> It looks like a node-per clk sort of binding which has been rejected
+> multiple times in the past. If the clks are spread across various
+> devices then it sounds like the mediatek design where they have many
+> syscon nodes that also register clks inside those register spaces. In
+> this case, I would expect the clkgen node to be registering clks. Given
+> that there isn't a reg property and there's these mstar specific
+> properties like shift/width it looks really wrong. Please don't do this.
 
- "This is only valid once the clock source has been enabled"
+Ok. I will rethink this. One of the problems I face here is that there
+isn't any documentation for what the clkgen looks like.
+I have a list of offsets and bit positions for these muxes but very little else.
+Looking at the mediatek clock drivers it seems like they have a driver
+that consumes some register areas and then creates all of the muxes
+etc within those areas within the driver instead. If that's an
+acceptable solution I will go for that.
+There would probably be 2 compatible strings right now (one for the pm
+area and one for the normal area) and that would take a phandle to the
+syscon that holds the registers. Then there would be a big table of
+the offsets, masks etc in the driver.
 
-which is really ambiguous. What is "this?" supposed to be? Is it trying
-to say the clk isn't toggling at the frequency until it is enabled, so
-the rate isn't valid until it is toggling? Or is it saying that the
-return value isn't valid until the clk is enabled?  It's been there for
-a long time, in fact since Russell introduced the header file on arm in
-2004[1]. I'm inclined to read it as:
+Thanks,
 
- "The clk won't be toggling at the rate returned by this function until
-  the clk is enabled by clk_enable()"
-
-Maybe send a documentation update instead?
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit=
-/include/asm-arm/hardware/clock.h?id=3D0471b5fb91816b448f10e43f922b8a5e264f=
-e039
+Daniel
