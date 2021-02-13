@@ -2,74 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E544C433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 21:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A02BC433E6
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 23:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F324F64E3F
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 21:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3375164E3F
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Feb 2021 23:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbhBMVUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Feb 2021 16:20:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39638 "EHLO mail.kernel.org"
+        id S229745AbhBMXe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Feb 2021 18:34:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229649AbhBMVUe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Feb 2021 16:20:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 70D3A64E07;
-        Sat, 13 Feb 2021 21:19:53 +0000 (UTC)
+        id S229690AbhBMXe0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Feb 2021 18:34:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id C038364E3D;
+        Sat, 13 Feb 2021 23:33:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613251193;
-        bh=AciXU5G6i/inyBsBJJJaM57WVRBnmaQtCGGm7lKuzhY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=P7R/hqkZuKtF6iw9N1sx4eJHQjs8SVYb8y2dDKGlEQKuLzsjnLrHTYTD7MAiJRL/c
-         3PETCLNWdKYVNalgNS1A9psyrHSt9mHcfemefiz59SIcYBu/6v609zdLEzByLNX3IM
-         mtEAJD1KI7a43n5/dKEhH+WSIR4pkuN58Hd8uotePDKPUepsfC/IsRxUTe7TNf0Jeh
-         kQ8S9EnzheKGuv9rBOEviifNrAI2Qi176jWkS485N+sZV8zwgRAeDKyv/4QsolQ6iO
-         YFUnOP6yHiJ+oJxU4vSkxUyx3NUhxsjVPVWsOiJflzrNVq+sUdUcnatq4J2GX+0AQu
-         InwzE8rtw0WKw==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=k20201202; t=1613259225;
+        bh=48BTI87qPxYwZwb0+TlbgSOrURgCaQ7hgYp6X1cvtXs=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=lsfUMDbgbrwTj81LSnJuy8NaqhIzWDf+qSFDBps8HRfAGaxs5eeQ0J3Jgr2eKdpVz
+         65FKpBaM6hicxyv42Je/9yXIuOgA7Trc93tnEl/nFo5/h8xqnmyUlRJhMe2XK0KE4X
+         uBL5Tuv1qiS32l8tcDFZkcu/Y6o0TCvRGRBNc49yFICa9FBPmKfrUDpL+LeFHgBhXF
+         539nF02lPyJ1DoOGBTI6t60AkfBOPeAlVf4hFzKS1Kj9s1eSUqLZMcy0hqh4k2D2jf
+         LfXS7zYV/8PcSn38ts+5HxCMVoEpc2KG4HWmLM1s0vG5RD2aScJxSznMjmA+7G7373
+         2MpUXGuzn8U2g==
+Subject: Re: [GIT PULL] clk fix for v5.11-rc7
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210213211952.1071982-1-sboyd@kernel.org>
+References: <20210213211952.1071982-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210213211952.1071982-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 245090ab2636c0869527ce563afbfb8aff29e825
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 358feceebbf68f33c44c6650d14455389e65282d
+Message-Id: <161325922575.6166.15566733362572520126.pr-tracker-bot@kernel.org>
+Date:   Sat, 13 Feb 2021 23:33:45 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fix for v5.11-rc7
-Date:   Sat, 13 Feb 2021 13:19:52 -0800
-Message-Id: <20210213211952.1071982-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit c361c5a6c559d1e0a2717abe9162a71aa602954f:
+The pull request you sent on Sat, 13 Feb 2021 13:19:52 -0800:
 
-  clk: mmp2: fix build without CONFIG_PM (2021-01-12 12:10:55 -0800)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/358feceebbf68f33c44c6650d14455389e65282d
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 245090ab2636c0869527ce563afbfb8aff29e825:
-
-  clk: sunxi-ng: mp: fix parent rate change flag check (2021-02-11 19:02:24 -0800)
-
-----------------------------------------------------------------
-One small fix for the Allwinner clk driver so that display clks figure
-out the correct rate to use. This fixes displays running 4k@60Hz and
-some other resolutions that haven't been exercised and fully understood
-until now.
-
-----------------------------------------------------------------
-Jernej Skrabec (1):
-      clk: sunxi-ng: mp: fix parent rate change flag check
-
- drivers/clk/sunxi-ng/ccu_mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
