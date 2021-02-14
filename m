@@ -3,116 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D109C433DB
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA663C433DB
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4419E60203
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7211264E29
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbhBNUtF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Feb 2021 15:49:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
+        id S229818AbhBNU55 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Feb 2021 15:57:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229772AbhBNUtC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 Feb 2021 15:49:02 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9DAB064E10;
-        Sun, 14 Feb 2021 20:48:21 +0000 (UTC)
+        id S229793AbhBNU54 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 14 Feb 2021 15:57:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6630B64E26;
+        Sun, 14 Feb 2021 20:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613335701;
-        bh=YCDgrMmMEQRKaIw3p1f9TDxO94Yx2dVNQ1+mCo/Ju2I=;
+        s=k20201202; t=1613336236;
+        bh=b7EUSU2wg84pHjqL78adUCRrMW1SRuGgH8O7wYdT/Qw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Cgbhi/lKIiv2sKGb6wTfEPgjH8dxoTn51df3rOt0+ph6mvQNabv6TRicNnbr2iQwZ
-         6dH5FmlfPDQTjWT5j68DWyYUZ208ijSsrN3DqnGXEgeK8ZmAHA86hrFs90b4IORpkL
-         8PhKpLwdJpBRsoQcnBKAviEAEvCAMfOCbxgHTsr1eUUjzVurxzcvhmRaGUuKaA+dFc
-         WDG6/CNp2bKCcqnfaA2gUWXIgWBai+eJWgdOG8T69FTzgOD0JQI377hQCSS0tpPlD8
-         Mux5KZrVCSa5dsJkOGZy1ymm9XRnpb0lsM4jUV8WSeQQmCnq3S22VCAkkgfpoBQqnL
-         VL1GCrQJosh4w==
+        b=sYidP2fP83RzbRnAe7SpXpqMP9WCv95+Qo3fi7/WyVeJN+XFANz81NK73e7d5jeSy
+         PL0L0ZVZwToalwy/ZzDdAEY+R9hWjZA7Rlt/0Zx5WHJujUpXERR6/UTWVr22ttfaiO
+         p0GLrBUiid50ZDWLt2DHMEISP7PaZbrAAxuqU2glnBboYp4cjK5LFiYZIoaau/r0hj
+         sHTATd9M3na0+RBoC4oFW6/q8xWbXkJwoneff3rnoRf+bx1p6vxwWqn88+bYkgYHdb
+         8hnNyslK3auDw2Nbk+BOWj5W22cfCFkWuTIk1QMxdAz9fj6ZMY8nacclFGQmUF8HW5
+         ckIUpDqp8fSyw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210211052206.2955988-5-daniel@0x0f.com>
-References: <20210211052206.2955988-1-daniel@0x0f.com> <20210211052206.2955988-5-daniel@0x0f.com>
-Subject: Re: [PATCH v2 4/7] clk: mstar: MStar/SigmaStar MPLL driver
+In-Reply-To: <202102142027.QnL2H9Am-lkp@intel.com>
+References: <202102142027.QnL2H9Am-lkp@intel.com>
+Subject: Re: [clk:clk-qcom 27/42] drivers/clk/qcom/gpucc-msm8998.c:265:45: error: 'NO_RET_PERIPH' undeclared here (not in a function)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     w@1wt.eu, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Daniel Palmer <daniel@0x0f.com>
-To:     Daniel Palmer <daniel@0x0f.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Date:   Sun, 14 Feb 2021 12:48:20 -0800
-Message-ID: <161333570036.1254594.12678747655338761485@swboyd.mtv.corp.google.com>
+Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        kernel test robot <lkp@intel.com>
+Date:   Sun, 14 Feb 2021 12:57:14 -0800
+Message-ID: <161333623495.1254594.5276827354452666923@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Palmer (2021-02-10 21:22:03)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 85856cff506c..a29c15444d0e 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -379,6 +379,7 @@ source "drivers/clk/ingenic/Kconfig"
->  source "drivers/clk/keystone/Kconfig"
->  source "drivers/clk/mediatek/Kconfig"
->  source "drivers/clk/meson/Kconfig"
-> +source "drivers/clk/mstar/Kconfig"
->  source "drivers/clk/mvebu/Kconfig"
->  source "drivers/clk/qcom/Kconfig"
->  source "drivers/clk/renesas/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index dbdc590e7de3..7fed7e5944cd 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -95,6 +95,7 @@ obj-$(CONFIG_MACH_PIC32)              +=3D microchip/
->  ifeq ($(CONFIG_COMMON_CLK), y)
->  obj-$(CONFIG_ARCH_MMP)                 +=3D mmp/
->  endif
-> +obj-$(CONFIG_ARCH_MSTARV7)             +=3D mstar/
->  obj-y                                  +=3D mvebu/
->  obj-$(CONFIG_ARCH_MXS)                 +=3D mxs/
->  obj-$(CONFIG_COMMON_CLK_NXP)           +=3D nxp/
-> diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
-> new file mode 100644
-> index 000000000000..23765edde3af
-> --- /dev/null
-> +++ b/drivers/clk/mstar/Kconfig
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config MSTAR_MSC313_MPLL
-> +       bool
-> +       select REGMAP
-> +       select REGMAP_MMIO
+Quoting kernel test robot (2021-02-14 04:52:28)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
+-qcom
+> head:   27aef2b9462a57798e9bc54bf471ed39cf60117a
+> commit: 1e40c64b4026021a11bba22253741bb40141b778 [27/42] clk: qcom: gpucc=
+-msm8998: Add resets, cxc, fix flags on gpu_gx_gdsc
+> config: powerpc-allyesconfig (attached as .config)
+> compiler: powerpc64-linux-gcc (GCC) 9.3.0
+> reproduce (this is a W=3D1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
+n/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
+ommit/?id=3D1e40c64b4026021a11bba22253741bb40141b778
+>         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
+t/clk/linux.git
+>         git fetch --no-tags clk clk-qcom
+>         git checkout 1e40c64b4026021a11bba22253741bb40141b778
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dgcc-9.3.0 make.cros=
+s ARCH=3Dpowerpc=20
+>=20
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+>=20
+> Note: the clk/clk-qcom HEAD 27aef2b9462a57798e9bc54bf471ed39cf60117a buil=
+ds fine.
+>       It only hurts bisectibility.
 
-BTW, it would be nice to expose this driver to compile testing instead
-of putting it behind ARCH_MSTARTV7. Can we have this patch?
-
----8<---
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 7fed7e5944cd..e5e23a44fbe9 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -95,7 +95,7 @@ obj-$(CONFIG_MACH_PIC32)		+=3D microchip/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+=3D mmp/
- endif
--obj-$(CONFIG_ARCH_MSTARV7)		+=3D mstar/
-+obj-y					+=3D mstar/
- obj-y					+=3D mvebu/
- obj-$(CONFIG_ARCH_MXS)			+=3D mxs/
- obj-$(CONFIG_COMMON_CLK_NXP)		+=3D nxp/
-diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
-index 23765edde3af..adac76f60f3e 100644
---- a/drivers/clk/mstar/Kconfig
-+++ b/drivers/clk/mstar/Kconfig
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config MSTAR_MSC313_MPLL
--	bool
--	select REGMAP
-+	bool "MStar MPLL driver"
-+	depends on ARCH_MSTARV7 || COMPILE_TEST
-+	default ARCH_MSTARV7
- 	select REGMAP_MMIO
+Thanks I reordered the patches so it should be fixed now.
