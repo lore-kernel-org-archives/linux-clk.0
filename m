@@ -3,34 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5020C4332D
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D109C433DB
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A53B364E61
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4419E60203
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 20:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbhBNUdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Feb 2021 15:33:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45576 "EHLO mail.kernel.org"
+        id S229792AbhBNUtF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Feb 2021 15:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229938AbhBNUbH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 Feb 2021 15:31:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A8EC964E07;
-        Sun, 14 Feb 2021 20:32:18 +0000 (UTC)
+        id S229772AbhBNUtC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 14 Feb 2021 15:49:02 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9DAB064E10;
+        Sun, 14 Feb 2021 20:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613334738;
-        bh=hjAz5d+qbxoXEq420RmleWCQIeEnvdi17FPWs6qwda8=;
+        s=k20201202; t=1613335701;
+        bh=YCDgrMmMEQRKaIw3p1f9TDxO94Yx2dVNQ1+mCo/Ju2I=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IxSBnZqLdpzo8rraRIHe0tvCYQbKDNWmyXJqR/LU6klUROInjREIew+aBQmCJLSQp
-         tIf4PJccyLwT/wx7Z4JB8qHDjjXucVRxt1ojg6CVCTyznVZ7hLAkZPoOV6vTPeXJZL
-         rIfVRfjW8MjUdHx96q0VXamHw3YaESM2MsAKLOlhRI9Z0oAKJmJnBHENd9o71dgwpE
-         Gbfi2ZMi0IdQzb01AXkO2K7dmwC3xeNERPuVxY6+EB+iUBI1zx9q2icXegUDxjq8j/
-         Tmuiw8je98WQbTpdTdSuAQVQvzjV+6y55lILkAbKrCEWLMlsJMP8qKp2kXIVrX59pI
-         ddH6rMJzmnN6g==
+        b=Cgbhi/lKIiv2sKGb6wTfEPgjH8dxoTn51df3rOt0+ph6mvQNabv6TRicNnbr2iQwZ
+         6dH5FmlfPDQTjWT5j68DWyYUZ208ijSsrN3DqnGXEgeK8ZmAHA86hrFs90b4IORpkL
+         8PhKpLwdJpBRsoQcnBKAviEAEvCAMfOCbxgHTsr1eUUjzVurxzcvhmRaGUuKaA+dFc
+         WDG6/CNp2bKCcqnfaA2gUWXIgWBai+eJWgdOG8T69FTzgOD0JQI377hQCSS0tpPlD8
+         Mux5KZrVCSa5dsJkOGZy1ymm9XRnpb0lsM4jUV8WSeQQmCnq3S22VCAkkgfpoBQqnL
+         VL1GCrQJosh4w==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,26 +42,77 @@ Cc:     w@1wt.eu, linux-kernel@vger.kernel.org,
         Daniel Palmer <daniel@0x0f.com>
 To:     Daniel Palmer <daniel@0x0f.com>, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org
-Date:   Sun, 14 Feb 2021 12:32:17 -0800
-Message-ID: <161333473746.1254594.8116415179063395207@swboyd.mtv.corp.google.com>
+Date:   Sun, 14 Feb 2021 12:48:20 -0800
+Message-ID: <161333570036.1254594.12678747655338761485@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Quoting Daniel Palmer (2021-02-10 21:22:03)
-> This adds a basic driver for the MPLL block found in MStar/SigmaStar
-> ARMv7 SoCs.
->=20
-> Currently this driver is only good for calculating the rates of it's
-> outputs and the actual configuration must be done before the kernel
-> boots. Usually this is done even before u-boot starts.
->=20
-> This driver targets the MPLL block found in the MSC313/MSC313E but
-> there is no documentation this chip so the register descriptions for
-> the another MStar chip the MST786 were used as they seem to match.
->=20
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> ---
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 85856cff506c..a29c15444d0e 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -379,6 +379,7 @@ source "drivers/clk/ingenic/Kconfig"
+>  source "drivers/clk/keystone/Kconfig"
+>  source "drivers/clk/mediatek/Kconfig"
+>  source "drivers/clk/meson/Kconfig"
+> +source "drivers/clk/mstar/Kconfig"
+>  source "drivers/clk/mvebu/Kconfig"
+>  source "drivers/clk/qcom/Kconfig"
+>  source "drivers/clk/renesas/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index dbdc590e7de3..7fed7e5944cd 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -95,6 +95,7 @@ obj-$(CONFIG_MACH_PIC32)              +=3D microchip/
+>  ifeq ($(CONFIG_COMMON_CLK), y)
+>  obj-$(CONFIG_ARCH_MMP)                 +=3D mmp/
+>  endif
+> +obj-$(CONFIG_ARCH_MSTARV7)             +=3D mstar/
+>  obj-y                                  +=3D mvebu/
+>  obj-$(CONFIG_ARCH_MXS)                 +=3D mxs/
+>  obj-$(CONFIG_COMMON_CLK_NXP)           +=3D nxp/
+> diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
+> new file mode 100644
+> index 000000000000..23765edde3af
+> --- /dev/null
+> +++ b/drivers/clk/mstar/Kconfig
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config MSTAR_MSC313_MPLL
+> +       bool
+> +       select REGMAP
+> +       select REGMAP_MMIO
 
-Applied to clk-next
+BTW, it would be nice to expose this driver to compile testing instead
+of putting it behind ARCH_MSTARTV7. Can we have this patch?
+
+---8<---
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 7fed7e5944cd..e5e23a44fbe9 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -95,7 +95,7 @@ obj-$(CONFIG_MACH_PIC32)		+=3D microchip/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+=3D mmp/
+ endif
+-obj-$(CONFIG_ARCH_MSTARV7)		+=3D mstar/
++obj-y					+=3D mstar/
+ obj-y					+=3D mvebu/
+ obj-$(CONFIG_ARCH_MXS)			+=3D mxs/
+ obj-$(CONFIG_COMMON_CLK_NXP)		+=3D nxp/
+diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
+index 23765edde3af..adac76f60f3e 100644
+--- a/drivers/clk/mstar/Kconfig
++++ b/drivers/clk/mstar/Kconfig
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config MSTAR_MSC313_MPLL
+-	bool
+-	select REGMAP
++	bool "MStar MPLL driver"
++	depends on ARCH_MSTARV7 || COMPILE_TEST
++	default ARCH_MSTARV7
+ 	select REGMAP_MMIO
