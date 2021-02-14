@@ -2,59 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7BFC433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 21:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699AAC433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 21:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A489E64E4E
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 21:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3454064E29
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Feb 2021 21:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbhBNVC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Feb 2021 16:02:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229642AbhBNVCw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 14 Feb 2021 16:02:52 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4518664E4E;
-        Sun, 14 Feb 2021 21:02:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613336532;
-        bh=fbNNdH+cmx0C4+AyuHbbSsUtElMRP1OPzEeeeLRapCo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=k4GEmK4deH8xxDE7ia9aR2XKTybTgY1LdpyZjBb+wI63dny37X/dF8hNp2RdImT0w
-         4V4JTodO+oVvBhKgFweRk5KUiM5dDb18rRzYU4jKbcoAsfiu32ifFIzroLofsnvTj/
-         7wYE3CVXWfmE/2nKxYMF8n5BoIVz2MXnJ8P+/uOrI1n/Ge+I2gNcPE0m6b87NgMwTV
-         uWguEVQdRH+6TujQS6GozMrCDk1zqps2LMUxNW7CQ2Gr3DQA8mVyORr3DnFnsOXRbj
-         cyOoskhZuvLYSY8VHonIfBUAgdCMP9kG5A5jvSt9iDa69awF9ixr+MbDA4mPo7ZrG1
-         iSWxqoD+bRulw==
-Content-Type: text/plain; charset="utf-8"
+        id S230010AbhBNVRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Feb 2021 16:17:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229901AbhBNVRF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Feb 2021 16:17:05 -0500
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FFAC061786
+        for <linux-clk@vger.kernel.org>; Sun, 14 Feb 2021 13:16:24 -0800 (PST)
+Received: by mail-yb1-xb2a.google.com with SMTP id x19so5330111ybe.0
+        for <linux-clk@vger.kernel.org>; Sun, 14 Feb 2021 13:16:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=phdV8WYNd3IGThDsn8i4M24CobH7ljSVjSrnflRr3qU=;
+        b=RWR4roQbM83TfOeedHSPPpdMu2Nrv1ah6uwnFW7JAwYCOunQAZ8ts3tL6Uzai09gGa
+         LT56JMZcLhRHUVb7BIv9a9Fgcj/aqSsFk5h0+/P35/WMudzT1DP3ZIJaoMUE7V9Kw5bf
+         1KY4nwyux5ymiaNyvoH7myw304kgkIsPme80xuiZ/8oJ6irIzBSN7B5TA5C6wHYHKGer
+         AsFY/uKt4Typt7Sfa3f1Pqmue/ogKAp9PKQKvOKZHJ0u6Xx2gFMwIC2wLn2ox9t4XNJZ
+         t69rSTJuJWKZmRkDhDUvmUixL5yCEpgZXNVyuR0eMeqwaewN6d1CYsAtITkIvU+yV34N
+         0hJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=phdV8WYNd3IGThDsn8i4M24CobH7ljSVjSrnflRr3qU=;
+        b=Ss4noT/+iF2M2wZbjdw1/SXp8Q8z+SAdSmABR4tEMzfsc7vL+MOgY8P6ijpMfZXNOW
+         KdjNYGvA1i+kQpxVOdIs+MEMcdEQ3jWM6Dzebyej/riCk88Ybf+/1sBduKbH7WBOGPs4
+         u5wFXVE44znQNLNHsdhEiyGGri3oKlSoDGrNcufvi5PmNn17a+MWKiWbJ1BYSl1b4aRe
+         V+kNVee+prchbTFqZV6XQNwpLRF2av35TsaOil7qouj/fH5qlfa107Y5q4+MLA2AfW8U
+         oWuwfB+FYF/TP0877lyShqec2HnnkKwWx1iMWfCSJSzuoHtXtxQqSvzQ6rm3LyzPIey0
+         lveA==
+X-Gm-Message-State: AOAM5333gKneWJJoe16pMJZQY0rIxZK4EukzMHjG9hyaPmjiSYuTfTTw
+        S95DwXsq4UoBh4gmNw7mAR5Qpwb9NF97659MWVh31Q==
+X-Google-Smtp-Source: ABdhPJwKlOywjb9o1r0z+/aEElhBXr3muf5MaDtLIwSmnIybpMmvKkrG398c3xt84cwnEWzqUgzwx2tz3LZ7RBGCdE0=
+X-Received: by 2002:a25:718b:: with SMTP id m133mr19551522ybc.412.1613337383889;
+ Sun, 14 Feb 2021 13:16:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210125142513.3919014-1-wasim.khan@oss.nxp.com>
-References: <20210125142513.3919014-1-wasim.khan@oss.nxp.com>
-Subject: Re: [PATCH] clk: qoriq: use macros to generate pll_mask
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Wasim Khan <wasim.khan@nxp.com>
-To:     V.Sethi@nxp.com, Wasim Khan <wasim.khan@oss.nxp.com>,
-        mturquette@baylibre.com
-Date:   Sun, 14 Feb 2021 13:02:11 -0800
-Message-ID: <161333653103.1254594.2877661434623451431@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <20210205222644.2357303-9-saravanak@google.com> <161317679292.1254594.15797939257637374295@swboyd.mtv.corp.google.com>
+In-Reply-To: <161317679292.1254594.15797939257637374295@swboyd.mtv.corp.google.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Sun, 14 Feb 2021 13:15:48 -0800
+Message-ID: <CAGETcx_vTSGgmYVHPgi1uqHEGU9y4ZDd_=Z3Xg-Nbrsu-r5Tog@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] clk: Mark fwnodes when their clock provider is added/removed
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wasim Khan (2021-01-25 06:25:13)
-> From: Wasim Khan <wasim.khan@nxp.com>
->=20
-> Use macros to generate pll_mask to make code
-> more readable.
->=20
-> Signed-off-by: Wasim Khan <wasim.khan@nxp.com>
-> ---
+On Fri, Feb 12, 2021 at 4:39 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Saravana Kannan (2021-02-05 14:26:44)
+> > This allows fw_devlink to recognize clock provider drivers that don't
+> > use the device-driver model to initialize the device. fw_devlink will
+> > use this information to make sure consumers of such clock providers
+> > aren't indefinitely blocked from probing, waiting for the power domain
+> > device to appear and bind to a driver.
+>
+> The "power domain" part of this commit text doesn't make any sense. Is
+> it copy/pasted from some other patch? Should probably say "waiting for
+> the clk providing device"?
 
-Applied to clk-next
+Yeah, copy-pasta.
+
+>
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+Thanks,
+Saravana
