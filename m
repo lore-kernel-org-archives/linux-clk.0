@@ -2,93 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D20C43381
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED15AC433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 12:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2F8864E73
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDBBA64DEC
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 12:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbhBOL6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Feb 2021 06:58:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbhBOL6O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 06:58:14 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A908C061756
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:57:28 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id cl8so3606925pjb.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:57:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=getDYJkOREyrDs/0rynDHefIGcA6GT+0fzVf6Cpniv4=;
-        b=KrifFaHePzV27JoUDHI9pCTeJ1V7Hmvyxc7tJtWlkgmlEi3WA6ZT8/Db26uL2Ye3jg
-         1S7UMCP4bbkLYeAkavaSGSEHrI6g/MW7T/Js3f04Dcj7R1Y2vB869LGWE+K/WaytthD4
-         PAB6EI7ET0vd2LRDse8OIMXXBG49OY6XMeWi0=
+        id S229996AbhBOMjM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Feb 2021 07:39:12 -0500
+Received: from mail-oo1-f41.google.com ([209.85.161.41]:36915 "EHLO
+        mail-oo1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230101AbhBOMjK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 07:39:10 -0500
+Received: by mail-oo1-f41.google.com with SMTP id e17so1495390oow.4;
+        Mon, 15 Feb 2021 04:38:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=getDYJkOREyrDs/0rynDHefIGcA6GT+0fzVf6Cpniv4=;
-        b=UYUjukd8aahnm7nkqGIqiQzJuitYTkgwz2vav8P5AKPVP4Q+j5k8PYFsNi19G6tZcM
-         OVcfJTIMXLr6rY857jK91pP6Z3nWIQ+CEJLyknzzAFk8pE2U5xmb4IJCGKNC/mGzyFqP
-         t7cPsS+hT6JsIADGR7UjBg9+2EsweTysmickyRBeXubZ4zQf1BsTQY4ByBhZWvdImUpK
-         wST90ZVlKEnYnxEQmTm2t6TJvUBALGM/eoqTxUl7quXZ5HjMDJj5+LeArbw7/yt2b1m1
-         AQXM+0u5eQ8viq7FhevtzU3YIhDTqj6kTS1gEZATmAZ9d35KLoQWYVoYG5LTI5dxWKO4
-         YcFA==
-X-Gm-Message-State: AOAM531I2JEimp9VHWwa2PgbCSWscH9Mt0EjgfIhHNPNXwlznSf4k9IR
-        13F1Dn+7tNgF5/YHTDYT69boDBwAcTRiaQ==
-X-Google-Smtp-Source: ABdhPJwu5oJbkzX3rOPC1H1Om9T6YHyFR1lXTMEXvstdnb98Q0vmBHsvSUvTyFE1cRj8S+TAdd17mQ==
-X-Received: by 2002:a17:90a:b28b:: with SMTP id c11mr15657206pjr.62.1613390247984;
-        Mon, 15 Feb 2021 03:57:27 -0800 (PST)
-Received: from shiro.work (p345188-ipngn200408sizuokaden.shizuoka.ocn.ne.jp. [124.98.97.188])
-        by smtp.googlemail.com with ESMTPSA id a5sm17929504pgl.41.2021.02.15.03.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Feb 2021 03:57:27 -0800 (PST)
-From:   Daniel Palmer <daniel@0x0f.com>
-To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sboyd@kernel.org
-Cc:     Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH 2/2] clk: mstar: msc313-mpll: Fix format specifier
-Date:   Mon, 15 Feb 2021 20:57:10 +0900
-Message-Id: <20210215115710.3762276-2-daniel@0x0f.com>
-X-Mailer: git-send-email 2.30.0.rc2
-In-Reply-To: <20210215115710.3762276-1-daniel@0x0f.com>
-References: <20210215115710.3762276-1-daniel@0x0f.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YakQtSEFQoUcp92B7pBu7SXNAlj7zK9R9/BYJta3QcY=;
+        b=fYzbxOmHBPssdE8OpfNAVvZ3nwkzRi9LWYn9izc/3vUMrd9JZ8p7LCkghwoYcqPAlx
+         eokqIYxdKOagYeI6opI6H2zeaesDNM3N/VjHWTjHrKa39bouU0CN433W5wJjanxWZuG2
+         8AhqtSAIl7UUTFwpEdktYtl1H9myKKoCjNZWTvjYGmQfLndwRnJNtuU2I/Xs81V4eSH3
+         jOYhbzlmmhrU2qG+MO3UWLcIdBhBJzakASxvBFccF33L5aU82lSK78RAXxIG25toDC8T
+         /8QL8HfQmNuItwC2J5BxOFUpHAQ0KPeWDxDHx6PvPVPttUmQHDbsvSyZiE8RlEUL3GmN
+         ZTmQ==
+X-Gm-Message-State: AOAM532S1139ilrF6reLvhj065dwYkR+goL0YUZDverx1DeoRXhtUexg
+        DVJAzcaGXNZ4hKNmQE7vJ9ETuXyo3LhVfODmohY=
+X-Google-Smtp-Source: ABdhPJzsOaXkky53goutSDt4s3Qrndo6ZxhMZ+k2llX7tHWrnfhh68oTGJsqDIbrVVqlcPFpeGNGsoMWNtvUxybCm7w=
+X-Received: by 2002:a4a:3bcb:: with SMTP id s194mr10782339oos.1.1613392708214;
+ Mon, 15 Feb 2021 04:38:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com> <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
+In-Reply-To: <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 15 Feb 2021 13:38:16 +0100
+Message-ID: <CAMuHMdXduvBqjAqraXkEKErNJFyN6JNq5wqagc4yHHPpH5SPGQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The output dividers are unsigned int so the format specifier
-should have been %u not %d.
+Hi Saravana,
 
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
----
- drivers/clk/mstar/clk-msc313-mpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
+> On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >       - I2C on R-Car Gen3 does not seem to use DMA, according to
+> >         /sys/kernel/debug/dmaengine/summary:
+> >
+> >             -dma4chan0    | e66d8000.i2c:tx
+> >             -dma4chan1    | e66d8000.i2c:rx
+> >             -dma5chan0    | e6510000.i2c:tx
+>
+> I think I need more context on the problem before I can try to fix it.
+> I'm also very unfamiliar with that file. With fw_devlink=permissive,
+> I2C was using DMA? If so, the next step is to see if the I2C relative
+> probe order with DMA is getting changed and if so, why.
 
-diff --git a/drivers/clk/mstar/clk-msc313-mpll.c b/drivers/clk/mstar/clk-msc313-mpll.c
-index 09f578108eef..61beb4e87525 100644
---- a/drivers/clk/mstar/clk-msc313-mpll.c
-+++ b/drivers/clk/mstar/clk-msc313-mpll.c
-@@ -123,7 +123,7 @@ static int msc313_mpll_probe(struct platform_device *pdev)
- 	mpll->clk_data->hws[0] = &mpll->clk_hw;
- 
- 	for (i = 0; i < ARRAY_SIZE(output_dividers); i++) {
--		outputname = devm_kasprintf(dev, GFP_KERNEL, "%s_div_%d",
-+		outputname = devm_kasprintf(dev, GFP_KERNEL, "%s_div_%u",
- 				clk_init.name, output_dividers[i]);
- 		if (!outputname)
- 			return -ENOMEM;
+More detailed log:
+
+    platform e66d8000.i2c: Linked as a consumer to e6150000.clock-controller
+    platform e66d8000.i2c: Linked as a sync state only consumer to e6055400.gpio
+
+Why is e66d8000.i2c not linked as a consumer to e6700000.dma-controller?
+
+    platform e6700000.dma-controller: Linked as a consumer to
+e6150000.clock-controller
+    platform e66d8000.i2c: Added to deferred list
+    platform e6700000.dma-controller: Added to deferred list
+
+    bus: 'platform': driver_probe_device: matched device
+e6700000.dma-controller with driver rcar-dmac
+    bus: 'platform': really_probe: probing driver rcar-dmac with
+device e6700000.dma-controller
+    platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
+
+    bus: 'platform': driver_probe_device: matched device e66d8000.i2c
+with driver i2c-rcar
+    bus: 'platform': really_probe: probing driver i2c-rcar with device
+e66d8000.i2c
+
+I2C becomes available...
+
+    i2c-rcar e66d8000.i2c: request_channel failed for tx (-517)
+    [...]
+
+but DMA is not available yet, so the driver falls back to PIO.
+
+    driver: 'i2c-rcar': driver_bound: bound to device 'e66d8000.i2c'
+    bus: 'platform': really_probe: bound device e66d8000.i2c to driver i2c-rcar
+
+    platform e6700000.dma-controller: Retrying from deferred list
+    bus: 'platform': driver_probe_device: matched device
+e6700000.dma-controller with driver rcar-dmac
+    bus: 'platform': really_probe: probing driver rcar-dmac with
+device e6700000.dma-controller
+    platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
+    platform e6700000.dma-controller: Added to deferred list
+    platform e6700000.dma-controller: Retrying from deferred list
+    bus: 'platform': driver_probe_device: matched device
+e6700000.dma-controller with driver rcar-dmac
+    bus: 'platform': really_probe: probing driver rcar-dmac with
+device e6700000.dma-controller
+    driver: 'rcar-dmac': driver_bound: bound to device 'e6700000.dma-controller'
+    bus: 'platform': really_probe: bound device
+e6700000.dma-controller to driver rcar-dmac
+
+DMA becomes available.
+
+Here userspace is entered. /sys/kernel/debug/dmaengine/summary shows
+that the I2C controllers do not have DMA channels allocated, as the
+kernel has performed no more I2C transfers after DMA became available.
+
+Using i2cdetect shows that DMA is used, which is good:
+
+    i2c-rcar e66d8000.i2c: got DMA channel for rx
+
+With permissive devlinks, the clock controller consumers are not added
+to the deferred probing list, and probe order is slightly different.
+The I2C controllers are still probed before the DMA controllers.
+But DMA becomes available a bit earlier, before the probing of the last
+I2C slave driver.  Hence /sys/kernel/debug/dmaengine/summary shows that
+some I2C transfers did use DMA.
+
+So the real issue is that e66d8000.i2c not linked as a consumer to
+e6700000.dma-controller.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.30.0.rc2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
