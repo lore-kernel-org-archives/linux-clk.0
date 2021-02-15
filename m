@@ -2,138 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF7FC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DD4C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9066164E5E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7653A64E04
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbhBOLUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Feb 2021 06:20:31 -0500
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:39330 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbhBOLUZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 06:20:25 -0500
-Received: by mail-oi1-f173.google.com with SMTP id l19so7380179oih.6;
-        Mon, 15 Feb 2021 03:20:09 -0800 (PST)
+        id S229912AbhBOL6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Feb 2021 06:58:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229919AbhBOL6H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 06:58:07 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194DEC061574
+        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:57:27 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id o38so4066399pgm.9
+        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:57:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wtOFBAROWn4tRAGWU26y/eJJ/kwxNC4QA5jAPbFGV7g=;
+        b=wlHupBR1vtKwm24/995UNv8lpusZKFFBBgk6UJmyW9yZoohl0GKOvEJMd6AQZBaAMT
+         l7A94hvMo+jrQr753WX/IQbq50M36674RcdQ16U8aCORaUhajyzppg1jXt80Ltvz8lpD
+         I5C8f4TQgvUsKynlv3JMRKYRUiQG3o0SAguTs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g+2l6KM1UP6n61yvg+ftleSaZOAPmTS96UBlT5bgVOw=;
-        b=EQX1VzOfpryADedahZgHDQ/na8KZ5NFdG8eGPrKMAjbAhkaibs/wx9FsgtbVTBrjh/
-         jFTxZYUORcw23zr8hRa6LVJBq9CRTVWOM2tQbcF3Oifqy9bPEfIOBLJKoLRpOz77xcad
-         YQ3PsgccOH96XkLEE3u8qvVEQum1CEeiq5VjZbxrS0eRdjQnz0ROIgptVGECQNHkGjHn
-         Kqw/PshVAswVrq0dktl3YuDwOARSvR9BAjoKR9r80tt74Ey9oEgJnQBf/hPspsPXFARM
-         GDYahSsuWANpZdTBuTDFLBwz24kO4g6Cdvv6tJHUnuM7UD9oXeRNb4XzPGrsDskAiNJA
-         0lLA==
-X-Gm-Message-State: AOAM5326cj/POgmd+sUbJmRp7UgbMeJFeqIosFN1FEAlLqLXZ5QXuWyB
-        3xGF4LAvNl1kxNBIZ9tFWzTmTkGaWBmuNdcJKOg=
-X-Google-Smtp-Source: ABdhPJzMI39m+KunbmWjRc0zXWvqEeHuECgd3ZsHjx+5rhHkVKdfXJ1QGr9mXD/zemLpBd0PNc0mqgI1Ax9YA4EUGXE=
-X-Received: by 2002:aca:d8c6:: with SMTP id p189mr8141707oig.54.1613387983592;
- Mon, 15 Feb 2021 03:19:43 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wtOFBAROWn4tRAGWU26y/eJJ/kwxNC4QA5jAPbFGV7g=;
+        b=JsEA4D/vuW7sPct+jJi67fYOCMSkJl0NSpb188oCDIv/za9XcS31fcx25Qc6ifnAKV
+         heRYGdoeNmK0lGPfoDHsVxkKacPhhm/NZs2F3BvmrS2fJ9AVr9Lu99tyg4tYyTgyIYoC
+         hbKITYVW7Ek0/FZ3rVgsV8Wj4xk4/+0hYPfIRNR0BZFVNLNF7i6vE6Zk9NLvvpT7d2wu
+         4U6DQHbfe0kXlbC7FZNJqI2xGy/mm9WPnDhcE67Ubc8j02/wqFcEq1pHiuPxlwXURha/
+         839Tyb7pyiKmKVbAWpshtKNHvHaxTwQbXHOfrZVQtOx1MzCRjmdLDflXQq5ZdAlVtzbS
+         hYdw==
+X-Gm-Message-State: AOAM5304qoiow1INYvRVB6unX1jH4ZQavWFH0DMWbV6C9hQDIVI0FXaG
+        hu5tYATdB5+lmoE1yGlTaCWj/Agn0rYcUg==
+X-Google-Smtp-Source: ABdhPJz/yAzGJGWuL52vFZHe7Ni8abCUE2hGZsqISk9nlVj//hWIJ9T8D0L6v6AOWZqWKDjhxzqI+Q==
+X-Received: by 2002:a62:640d:0:b029:1c0:3a5c:f0f7 with SMTP id y13-20020a62640d0000b02901c03a5cf0f7mr15223480pfb.12.1613390246286;
+        Mon, 15 Feb 2021 03:57:26 -0800 (PST)
+Received: from shiro.work (p345188-ipngn200408sizuokaden.shizuoka.ocn.ne.jp. [124.98.97.188])
+        by smtp.googlemail.com with ESMTPSA id a5sm17929504pgl.41.2021.02.15.03.57.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Feb 2021 03:57:25 -0800 (PST)
+From:   Daniel Palmer <daniel@0x0f.com>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        sboyd@kernel.org
+Cc:     Daniel Palmer <daniel@0x0f.com>
+Subject: [PATCH 1/2] clk: mstar: Allow MStar clk drivers to be compile tested
+Date:   Mon, 15 Feb 2021 20:57:09 +0900
+Message-Id: <20210215115710.3762276-1-daniel@0x0f.com>
+X-Mailer: git-send-email 2.30.0.rc2
 MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com> <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 15 Feb 2021 12:19:32 +0100
-Message-ID: <CAMuHMdUi-_LJBB7fYB9ugpcj0J+FWXrqn2u44n7MemmvwiWQWw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 11, 2021 at 2:00 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Fri, Feb 5, 2021 at 11:26 PM Saravana Kannan <saravanak@google.com> wrote:
-> > There are a lot of devices/drivers where they never have a struct device
-> > created for them or the driver initializes the hardware without ever
-> > binding to the struct device.
-> >
-> > This series is intended to avoid any boot regressions due to such
-> > devices/drivers when fw_devlink=on and also address the handling of
-> > optional suppliers.
+Allow COMPILE_TEST to also build the MStar clk drivers
+instead of only building them when ARCH_MSTARV7 is selected.
 
->       - Some devices are reprobed, despite their drivers returning
->         a real error code, and not -EPROBE_DEFER:
->
->             renesas_wdt e6020000.watchdog: Watchdog blacklisted on r8a7791 ES1.*
->             (rwdt_probe() returns -ENODEV)
->
->             sh-pfc e6060000.pinctrl: pin GP_7_23 already requested by
-> ee090000.pci; cannot claim for e6590000.usb
->             sh-pfc e6060000.pinctrl: pin-247 (e6590000.usb) status -22
->             sh-pfc e6060000.pinctrl: could not request pin 247
-> (GP_7_23) from group usb0  on device sh-pfc
->             renesas_usbhs e6590000.usb: Error applying setting,
-> reverse things back
->             renesas_usbhs: probe of e6590000.usb failed with error -22
->
->             rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
->             rcar-pcie fe000000.pcie:       IO
-> 0x00fe100000..0x00fe1fffff -> 0x0000000000
->             rcar-pcie fe000000.pcie:      MEM
-> 0x00fe200000..0x00fe3fffff -> 0x00fe200000
->             rcar-pcie fe000000.pcie:      MEM
-> 0x0030000000..0x0037ffffff -> 0x0030000000
->             rcar-pcie fe000000.pcie:      MEM
-> 0x0038000000..0x003fffffff -> 0x0038000000
->             rcar-pcie fe000000.pcie:   IB MEM
-> 0x0040000000..0x00bfffffff -> 0x0040000000
->             rcar-pcie fe000000.pcie:   IB MEM
-> 0x0200000000..0x02ffffffff -> 0x0200000000
->             rcar-pcie fe000000.pcie: PCIe link down
->             (rcar_pcie_probe() returns -ENODEV)
->
->             xhci-hcd ee000000.usb: xHCI Host Controller
->             xhci-hcd ee000000.usb: new USB bus registered, assigned bus number 7
->             xhci-hcd ee000000.usb: Direct firmware load for
-> r8a779x_usb3_v3.dlmem failed with error -2
->             xhci-hcd ee000000.usb: can't setup: -2
->             xhci-hcd ee000000.usb: USB bus 7 deregistered
->             xhci-hcd: probe of ee000000.usb failed with error -2
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/Makefile      | 2 +-
+ drivers/clk/mstar/Kconfig | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-Consumers are added to the deferred probe pending list before
-they are probed, but not removed on probe failure.
-Patch sent
-"[PATCH] driver core: Fix double failed probing with fw_devlink=on"
-https://lore.kernel.org/linux-renesas-soc/20210215111619.2385030-1-geert+renesas@glider.be/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 7fed7e5944cd..e5e23a44fbe9 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -95,7 +95,7 @@ obj-$(CONFIG_MACH_PIC32)		+= microchip/
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-$(CONFIG_ARCH_MMP)			+= mmp/
+ endif
+-obj-$(CONFIG_ARCH_MSTARV7)		+= mstar/
++obj-y					+= mstar/
+ obj-y					+= mvebu/
+ obj-$(CONFIG_ARCH_MXS)			+= mxs/
+ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
+index 23765edde3af..eab8f7dcaa90 100644
+--- a/drivers/clk/mstar/Kconfig
++++ b/drivers/clk/mstar/Kconfig
+@@ -1,5 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config MSTAR_MSC313_MPLL
+-	bool
++	bool "MStar MPLL driver"
++	depends on ARCH_MSTARV7 || COMPILE_TEST
++	default ARCH_MSTARV7
+ 	select REGMAP
+ 	select REGMAP_MMIO
++	help
++	  Support for the MPLL PLL and dividers block present on
++	  MStar/Sigmastar SoCs.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.30.0.rc2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
