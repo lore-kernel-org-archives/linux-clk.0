@@ -2,77 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0EAC433E6
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF7FC433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50A8164E73
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9066164E5E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 11:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbhBOLDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Feb 2021 06:03:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbhBOLDf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 06:03:35 -0500
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC92C061574
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:02:54 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id y10so2948854qvo.6
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 03:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fDr1BuifwzyoWRoQ5nTu2V5InpMPwBH2+c3dV1Auu2Y=;
-        b=mzvkliDYbed4+nr/rjo8zg7Gmfo0Loo0KQ7bdyau7Mjqdg3DvYoiS7DLuoJ+Ri1eeM
-         d7ARkBgG+yK4SurA/oGmmhBnRlrWEwcWD3L0/7jOL0L2frn+h3kdnIebuLG9QSUBgEay
-         qU/OIurKpGeneRALDa98hQR1H8KBc5FJfDtYY=
+        id S229779AbhBOLUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Feb 2021 06:20:31 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:39330 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229627AbhBOLUZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 06:20:25 -0500
+Received: by mail-oi1-f173.google.com with SMTP id l19so7380179oih.6;
+        Mon, 15 Feb 2021 03:20:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fDr1BuifwzyoWRoQ5nTu2V5InpMPwBH2+c3dV1Auu2Y=;
-        b=QG2GP47IZTfA8U2lWBqm6ZnhhVo4dxDz6ZyFR/kNLivoTWH1OTRa3MKI/9POgjWLxv
-         dl1GSiTDDFeuqnkPW6EsqJCKvHXpqUntVX9cDIzscyHsRQCXrOpWXp8Qa1RF1UstLrnP
-         q6DHeYFUF6LUZ5K52L471MAdVhDE+fKqtvQR4WN19hD5fBVEPjNiZ4i1FACrH1XO5/Zn
-         u8m5GxTUKjhXpjzFrv26R2cJvNUcxfWhxwC52dU84D0/aQJx9z3FksPsVJnv5lTv5R06
-         D0AodXBsdMVVZXeDoFam6l/t+6xPFKgpgZjZeuI+ELw+nl3Th/CRyyxAqUsCletcWdoz
-         iONg==
-X-Gm-Message-State: AOAM531cnmYgAL01tR6pxVkEv5iqYaepR+8QS//FvvRxnECIyB7ju05H
-        nb8VyuTj1Eh4y+sLJSFN2EAVVzPnDvrApkgUHpVqYw==
-X-Google-Smtp-Source: ABdhPJx9+wmhXo0mXHnYKLqCbR8F1hlaIryUeMf/Uz2k++l/gnfo6Z/UBu4p2PLLEaPnDfkI1CP2aZ5JiRRPprUUMyY=
-X-Received: by 2002:a0c:fc44:: with SMTP id w4mr12910155qvp.55.1613386973823;
- Mon, 15 Feb 2021 03:02:53 -0800 (PST)
+        bh=g+2l6KM1UP6n61yvg+ftleSaZOAPmTS96UBlT5bgVOw=;
+        b=EQX1VzOfpryADedahZgHDQ/na8KZ5NFdG8eGPrKMAjbAhkaibs/wx9FsgtbVTBrjh/
+         jFTxZYUORcw23zr8hRa6LVJBq9CRTVWOM2tQbcF3Oifqy9bPEfIOBLJKoLRpOz77xcad
+         YQ3PsgccOH96XkLEE3u8qvVEQum1CEeiq5VjZbxrS0eRdjQnz0ROIgptVGECQNHkGjHn
+         Kqw/PshVAswVrq0dktl3YuDwOARSvR9BAjoKR9r80tt74Ey9oEgJnQBf/hPspsPXFARM
+         GDYahSsuWANpZdTBuTDFLBwz24kO4g6Cdvv6tJHUnuM7UD9oXeRNb4XzPGrsDskAiNJA
+         0lLA==
+X-Gm-Message-State: AOAM5326cj/POgmd+sUbJmRp7UgbMeJFeqIosFN1FEAlLqLXZ5QXuWyB
+        3xGF4LAvNl1kxNBIZ9tFWzTmTkGaWBmuNdcJKOg=
+X-Google-Smtp-Source: ABdhPJzMI39m+KunbmWjRc0zXWvqEeHuECgd3ZsHjx+5rhHkVKdfXJ1QGr9mXD/zemLpBd0PNc0mqgI1Ax9YA4EUGXE=
+X-Received: by 2002:aca:d8c6:: with SMTP id p189mr8141707oig.54.1613387983592;
+ Mon, 15 Feb 2021 03:19:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20210211052206.2955988-1-daniel@0x0f.com> <20210211052206.2955988-5-daniel@0x0f.com>
- <161333570036.1254594.12678747655338761485@swboyd.mtv.corp.google.com>
-In-Reply-To: <161333570036.1254594.12678747655338761485@swboyd.mtv.corp.google.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Mon, 15 Feb 2021 20:04:00 +0900
-Message-ID: <CAFr9PXkEz-pOck7M5Q2a9FqXxN7vO0D_E7B=OYLCaqWiKijhBw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] clk: mstar: MStar/SigmaStar MPLL driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>, linux-clk@vger.kernel.org,
-        Willy Tarreau <w@1wt.eu>,
+References: <20210205222644.2357303-1-saravanak@google.com> <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 15 Feb 2021 12:19:32 +0100
+Message-ID: <CAMuHMdUi-_LJBB7fYB9ugpcj0J+FWXrqn2u44n7MemmvwiWQWw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Thu, Feb 11, 2021 at 2:00 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, Feb 5, 2021 at 11:26 PM Saravana Kannan <saravanak@google.com> wrote:
+> > There are a lot of devices/drivers where they never have a struct device
+> > created for them or the driver initializes the hardware without ever
+> > binding to the struct device.
+> >
+> > This series is intended to avoid any boot regressions due to such
+> > devices/drivers when fw_devlink=on and also address the handling of
+> > optional suppliers.
 
-On Mon, 15 Feb 2021 at 05:48, Stephen Boyd <sboyd@kernel.org> wrote:
-> BTW, it would be nice to expose this driver to compile testing instead
-> of putting it behind ARCH_MSTARTV7. Can we have this patch?
+>       - Some devices are reprobed, despite their drivers returning
+>         a real error code, and not -EPROBE_DEFER:
+>
+>             renesas_wdt e6020000.watchdog: Watchdog blacklisted on r8a7791 ES1.*
+>             (rwdt_probe() returns -ENODEV)
+>
+>             sh-pfc e6060000.pinctrl: pin GP_7_23 already requested by
+> ee090000.pci; cannot claim for e6590000.usb
+>             sh-pfc e6060000.pinctrl: pin-247 (e6590000.usb) status -22
+>             sh-pfc e6060000.pinctrl: could not request pin 247
+> (GP_7_23) from group usb0  on device sh-pfc
+>             renesas_usbhs e6590000.usb: Error applying setting,
+> reverse things back
+>             renesas_usbhs: probe of e6590000.usb failed with error -22
+>
+>             rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
+>             rcar-pcie fe000000.pcie:       IO
+> 0x00fe100000..0x00fe1fffff -> 0x0000000000
+>             rcar-pcie fe000000.pcie:      MEM
+> 0x00fe200000..0x00fe3fffff -> 0x00fe200000
+>             rcar-pcie fe000000.pcie:      MEM
+> 0x0030000000..0x0037ffffff -> 0x0030000000
+>             rcar-pcie fe000000.pcie:      MEM
+> 0x0038000000..0x003fffffff -> 0x0038000000
+>             rcar-pcie fe000000.pcie:   IB MEM
+> 0x0040000000..0x00bfffffff -> 0x0040000000
+>             rcar-pcie fe000000.pcie:   IB MEM
+> 0x0200000000..0x02ffffffff -> 0x0200000000
+>             rcar-pcie fe000000.pcie: PCIe link down
+>             (rcar_pcie_probe() returns -ENODEV)
+>
+>             xhci-hcd ee000000.usb: xHCI Host Controller
+>             xhci-hcd ee000000.usb: new USB bus registered, assigned bus number 7
+>             xhci-hcd ee000000.usb: Direct firmware load for
+> r8a779x_usb3_v3.dlmem failed with error -2
+>             xhci-hcd ee000000.usb: can't setup: -2
+>             xhci-hcd ee000000.usb: USB bus 7 deregistered
+>             xhci-hcd: probe of ee000000.usb failed with error -2
 
-I like that idea. I'll send a patch.
+Consumers are added to the deferred probe pending list before
+they are probed, but not removed on probe failure.
+Patch sent
+"[PATCH] driver core: Fix double failed probing with fw_devlink=on"
+https://lore.kernel.org/linux-renesas-soc/20210215111619.2385030-1-geert+renesas@glider.be/
 
-Thanks,
+Gr{oetje,eeting}s,
 
-Daniel
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
