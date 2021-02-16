@@ -2,141 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E235C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 10:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C997C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 12:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 105B264DF0
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 10:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2784661606
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 12:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbhBPKmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Feb 2021 05:42:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230188AbhBPKm1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Feb 2021 05:42:27 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0F16764D9F;
-        Tue, 16 Feb 2021 10:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613472105;
-        bh=ASz9Sl1wTTYIwHfsTK6S3lnvdOhYftuFwTQN9OYls7s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vQRoYOE/VwptjfXPJutfQrrHRnE0kMLzGnkukKL8lj2RD3SDy3vsnSyx171Xv4F9/
-         4MKpga6trHBaVLDO83lC9MZMw5GpYWR9KAlByVsNWdKRA12aghcb05LBZKAuBcNyAf
-         T+/+KCBGRg4TUR7us7xoHJGaFik6nSvpOnPkpLkvowwPAMk8c4ecyDM2p7g6PQZCGz
-         dUyMdIvN1lltz6aGDaCSO+a+xO1LQmIW6UlsUOfWnGGIxFCe3f77BPI8VxOJVqebtT
-         8UM6ljdDBw+NspdKa8VDjuAJryVipiJ2d5BMdGobjTcCsnoMkvi+92liIz/lCdpjpD
-         1dcLRxmGKj4oA==
-Received: by pali.im (Postfix)
-        id 9FFDF895; Tue, 16 Feb 2021 11:41:41 +0100 (CET)
-Date:   Tue, 16 Feb 2021 11:41:41 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
-        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
-        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
-        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210216104141.umy6zrrkal3dlj5j@pali>
-References: <20210210180322.rlfxdussqhejqpo6@pali>
- <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
- <20210211195559.n2j4jnchl2ho54mg@pali>
- <1ad78446-4a40-4c3e-8680-6dbf19616515@www.fastmail.com>
- <20210211234445.hbv2diphmgbir76u@pali>
- <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
- <20210213100139.ckrscepg72zjkj4f@pali>
- <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
- <20210214123310.d6armpep7kxbymbu@pali>
- <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
+        id S229889AbhBPM7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Feb 2021 07:59:34 -0500
+Received: from mail-oo1-f44.google.com ([209.85.161.44]:33618 "EHLO
+        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229790AbhBPM7b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2021 07:59:31 -0500
+Received: by mail-oo1-f44.google.com with SMTP id f1so2260750oou.0;
+        Tue, 16 Feb 2021 04:59:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TVzLBkqKt0MyMwotNPEi8xMZ2SypGbVfWBR5eQRTmO0=;
+        b=TSrlLp/dLEvzVgYJtBCOI3GotDN81ZyYyNXCWTYNpHQgk7Li5hOwwdA5DI2aVSvN9u
+         QICOgn7PbSKOcD4TmUPyNR7oKuxBs3DRmjIHypg4EVgbNimg6pKuT5bwMw7moz4dwLlL
+         gjdt7k5aWaERMGI3+fJDXSrlHu2OJ9hawJ1IIJ519xcScgkh+VYkKXqvBJEeJYysa/jh
+         YXE+7Ldl1Zi4IScqJWUOTLySBilR7SJVmtB2c1olcSBMQ1p5so5ih9WB4v9f2GCIdtQX
+         90JznuDtxze58Ae7oSVog6crOzMwV4EJrKQef2q+3GOVSCtmHuJyt0kO8hHSu38Bx9ch
+         Kc3w==
+X-Gm-Message-State: AOAM533dFVUWMFTeNpqtYrlApLDE2W6QZi7whbG0yNmAx4DrvYCjd2vI
+        GNT/Gs4D//cYdXj1Xg9+ht5WAUkYOp5oeLp67ns=
+X-Google-Smtp-Source: ABdhPJxqORgG+iXS2MUSd76bl5TBZKlc/qcbt9O7R3tRFXJ0lESsAEHwXxj7DFW88YmAQPIcXwkV95yEjue34nqZXjY=
+X-Received: by 2002:a4a:ab08:: with SMTP id i8mr13952968oon.40.1613480328418;
+ Tue, 16 Feb 2021 04:58:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+ <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
+ <CAMuHMdWFp_teT5Lgxe6BOpOb4UMM2_4FrKJm-2C6kuCH2YUMrw@mail.gmail.com> <CAGETcx9AZct4h0AdjbNzF5vjoYxT+M+zJ2ddsEN5SV9ALqV48A@mail.gmail.com>
+In-Reply-To: <CAGETcx9AZct4h0AdjbNzF5vjoYxT+M+zJ2ddsEN5SV9ALqV48A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 16 Feb 2021 13:58:37 +0100
+Message-ID: <CAMuHMdULCQrjba0sM3wUFdPDTB4Txh3LVY-8ACq6P_vFJvk+SA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Monday 15 February 2021 21:48:08 nnet wrote:
-> > Could you test following change instead of PATCH 04/10? I added here also
-> > logic for 1.2 GHz variant with 1.132 V value another change is that
-> > value for load L0 is not touched as it is stable.
-> 
-> These changes to patch 04/10 worked going 600 MHz <-> 1.2 GHz , _but_ only with:
-> 
-> ++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1213
-> 
-> During this latest testing I saw freezes with 1132 mV.
-> 
-> I've had no lockups with 1213 mV which I just used from the values for L1/L0 from OTP.
+Hi Saravana,
 
-I still do not know what is the meaning of values stored in OTP...
-And there are more non-zero bits which are not used (yet).
+On Mon, Feb 15, 2021 at 10:57 PM Saravana Kannan <saravanak@google.com> wrote:
+> On Mon, Feb 15, 2021 at 7:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
+> > > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > >   1. R-Car Gen2 (Koelsch), R-Car Gen3 (Salvator-X(S), Ebisu).
+> > > >
+> > > >       - Commit 2dfc564bda4a31bc ("soc: renesas: rcar-sysc: Mark device
+> > > >         node OF_POPULATED after init") is no longer needed (but already
+> > > >         queued for v5.12 anyway)
+> > >
+> > > Rob doesn't like the proliferation of OF_POPULATED and we don't need
+> > > it anymore, so maybe work it out with him? It's a balance between some
+> > > wasted memory (struct device(s)) vs not proliferating OF_POPULATED.
+> >
+> > > >   2. SH/R-Mobile AG5 (kzm9g), APE6 (ape6evm), A1 (armadillo800-eva)
+> > > >
+> > > >       - "PATCH] soc: renesas: rmobile-sysc: Set OF_POPULATED and absorb
+> > > >         reset handling" is no longer needed
+> > > >         https://lore.kernel.org/linux-arm-kernel/20210205133319.1921108-1-geert+renesas@glider.be/
+> > >
+> > > Good to see more evidence that this series is fixing things at a more
+> > > generic level.
+> >
+> > I spoke too soon: if CONFIG_POWER_RESET_RMOBILE=n,
+> > booting fails again, as everything is waiting on the system controller,
+> > which never becomes available.
+> > Rcar-sysc doesn't suffer from this problem, cfr. above.
+> > Perhaps because the rmobile-sysc bindings use a hierarchical instead
+> > of a linear PM domain description, and thus consumers point to the
+> > children of the system controller node?
+> > Cfr. system-controller@e6180000 in arch/arm/boot/dts/r8a7740.dtsi.
+>
+> Ok, I see what's going on. The problem is that the "power domain"
+> fwnode being registered is not the node that contains the "compatible"
+> property and becomes a device. So this patch[1] is not helping here.
+> Fix is to do something like this (to avoid using OF_POPULATED flag and
+> breaking reset):
+>
+> diff --git a/drivers/soc/renesas/rmobile-sysc.c
+> b/drivers/soc/renesas/rmobile-sysc.c
+> index 9046b8c933cb..b7e66139ef7d 100644
+> --- a/drivers/soc/renesas/rmobile-sysc.c
+> +++ b/drivers/soc/renesas/rmobile-sysc.c
+> @@ -344,6 +344,7 @@ static int __init rmobile_init_pm_domains(void)
+>                         of_node_put(np);
+>                         break;
+>                 }
+> +               fwnode_dev_initialized(&np->fwnode, true);
+>         }
+>
+>         put_special_pds();
+>
+> Can you give it a shot?
 
-Anyway, with your another test it looks like that limit is not based on
-fixed value but rather on current L0 value. Therefore I'm thinking if
-the correct way is instead to use L1 := L0 voltage value for 1/1.2 GHz
-mode. Could you try following change instead of previous and PATCH 04/10?
+Thanks, works.  Patch sent
+"[PATCH v2] soc: renesas: rmobile-sysc: Mark fwnode when PM domain is added"
+https://lore.kernel.org/linux-arm-kernel/20210216123958.3180014-1-geert+renesas@glider.be/
 
-diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-index b8dc6c849..12d0ff7b1 100644
---- a/drivers/cpufreq/armada-37xx-cpufreq.c
-+++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-@@ -208,6 +208,8 @@ static u32 armada_37xx_avs_val_match(int target_vm)
-  * - L2 & L3 voltage should be about 150mv smaller than L0 voltage.
-  * This function calculates L1 & L2 & L3 AVS values dynamically based
-  * on L0 voltage and fill all AVS values to the AVS value table.
-+ * When base CPU frequency is 1000 or 1200 MHz then there is additional
-+ * minimal avs value for load L1.
-  */
- static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
- 						struct armada_37xx_dvfs *dvfs)
-@@ -239,17 +241,36 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
- 		for (load_level = 1; load_level < LOAD_LEVEL_NR; load_level++)
- 			dvfs->avs[load_level] = avs_min;
- 
-+		/*
-+		 * Set the avs values for load L0 and L1 when base CPU frequency
-+		 * is 1000/1200 MHz to its typical initial values according to
-+		 * the Armada 3700 Hardware Specifications.
-+		 */
-+		if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-+			if (dvfs->cpu_freq_max >= 1200*1000*1000)
-+				avs_min = armada_37xx_avs_val_match(1155);
-+			else
-+				avs_min = armada_37xx_avs_val_match(1108);
-+			dvfs->avs[0] = dvfs->avs[1] = avs_min;
-+		}
-+
- 		return;
- 	}
- 
- 	/*
- 	 * L1 voltage is equal to L0 voltage - 100mv and it must be
--	 * larger than 1000mv
-+	 * larger than 1000mv. When base CPU frequency is 1000/1200 MHz,
-+	 * L1 voltage must must be equal to L0 voltage, otherwise
-+	 * the CPU gets stuck when switching from load L1 to load L0.
- 	 */
- 
--	target_vm = avs_map[l0_vdd_min] - 100;
--	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
--	dvfs->avs[1] = armada_37xx_avs_val_match(target_vm);
-+	if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-+		dvfs->avs[1] = dvfs->avs[0];
-+	} else {
-+		target_vm = avs_map[l0_vdd_min] - 100;
-+		target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
-+		dvfs->avs[1] = armada_37xx_avs_val_match(target_vm);
-+	}
- 
- 	/*
- 	 * L2 & L3 voltage is equal to L0 voltage - 150mv and it must
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
