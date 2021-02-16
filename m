@@ -2,188 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB10C433E9
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 21:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D72C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 05:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F29264E00
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Feb 2021 21:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D70B764DF0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 05:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbhBOV6c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Feb 2021 16:58:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbhBOV6b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Feb 2021 16:58:31 -0500
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1D8C06178B
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 13:57:38 -0800 (PST)
-Received: by mail-yb1-xb35.google.com with SMTP id p193so8575387yba.4
-        for <linux-clk@vger.kernel.org>; Mon, 15 Feb 2021 13:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6sRa/U5Kzs1JI5RnyoYklyv1NRbU9v8LrTPHarr/PE8=;
-        b=gJEho7HAFjs40VouEGob2eg5Oy9aEdcZUBjHihE6mZQzi6czZHwv0m73BpYkXKdo5q
-         68ZV+goSq9Fae1dld8Dj2zZYLuDTZktAzE0ZwFkpES3da8W1hs5RObUljgUwwZubEMQR
-         Ca4nrFf96n+Kq21fygN6AVWqtnC1b+1lh90Ad/OFDLwRqlp57eBni+kkmVmwYsQmfAjJ
-         NcDt4L5//G6ue+WDbsA4Z4M/o7lFxOzbQQJ4D6/zpk72I1HGrEAZGi0vXqowaDBLiSCa
-         tPx3s6gkUPD/Kyv6NGu1ljv+0hfUIqhnOIrU799/0jGVFl7RUVlE+Da+9mHdD+VFVUH6
-         Lj/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6sRa/U5Kzs1JI5RnyoYklyv1NRbU9v8LrTPHarr/PE8=;
-        b=bZxMEjZxRK7eBr3TEO6+uj01seeHTxqToap/9fDDu9rwoBBfIF7NdCmHxWBEQY7jh5
-         CiDrLOTt+frKd94I2W+71SjnSkLTZ+vGD/YcYKz1U0mZgJxyJ8OOSbHlJGPVMyZNjq35
-         VYXTIwBpSSjXBxI4ClLcRiXsl7bjCmgB5uT30bqelV1MxyprSsDMiCr7a8p6ZJQCO3aa
-         xl6n2D0+hD+BeI1JhYGTHKXredHk+oqIC9ympFCffI1FHGZxNRi3snCjgq8K1w/X/N0a
-         ntBC7tujNXf/o8WOElzOojME1w+EapwK/s6kxKQtpIBcTO+MyXBegshbC7D05Ps1kabQ
-         Nqcw==
-X-Gm-Message-State: AOAM533/3nU/pD4l6XFXtFbI55Vav5fJe0D7rb7iAtvr1STarmKZJq/+
-        qELZB/czmOMqjV8SICshVBybUYodPR2WtCwluNRY9w==
-X-Google-Smtp-Source: ABdhPJwKttGJ/WSxMO3AOYN0BMrFeAFmWmg7rlKUzB3nt2oaOmB07PQ56EVlNxhui2daNXPCPW1sMy0iGvA9c5ZrRD4=
-X-Received: by 2002:a25:aa43:: with SMTP id s61mr27067882ybi.32.1613426257227;
- Mon, 15 Feb 2021 13:57:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
- <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
- <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com> <CAMuHMdWFp_teT5Lgxe6BOpOb4UMM2_4FrKJm-2C6kuCH2YUMrw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWFp_teT5Lgxe6BOpOb4UMM2_4FrKJm-2C6kuCH2YUMrw@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 15 Feb 2021 13:57:00 -0800
-Message-ID: <CAGETcx9AZct4h0AdjbNzF5vjoYxT+M+zJ2ddsEN5SV9ALqV48A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S229662AbhBPFtv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Feb 2021 00:49:51 -0500
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:50443 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229617AbhBPFtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2021 00:49:50 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 7FC1A132B;
+        Tue, 16 Feb 2021 00:48:43 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 16 Feb 2021 00:48:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm2; bh=WSnSql5Nk/B6CTEKY4t61hWZEpUE18B
+        J+CK9zfoz99g=; b=I4oGdPxqHKObB/YTMrLFV3FNNUI+yjEZcjnVYOjZpjtwK0T
+        TAbyCWcg/ojykZHGcmu7fM3Ea4MGO/J+4nOhfWS2uTUThwiuIIG6apxJEhdMPCQP
+        cH9Z0ZrQVfhJgLl/mlCDi/5TEEFcmwVfXU5j4ZT0g65+UhWKoU45oo1FEDmhkrDk
+        G/Rg3ujRXdPwXtkap68oWCAqzMKCZX//3SGpnWQL8v24QzZckc+tOv+uXrFxOZYJ
+        eaYdhtblfF9e9xvKZHwUsM+O2D2UmnMDSXrUeUSWq6Xi9TPbEcyYm83VBhQ1fRJN
+        TxDd/PThoAbs17+Li4nv7RCXFtZRP0COaKpog8A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=WSnSql
+        5Nk/B6CTEKY4t61hWZEpUE18BJ+CK9zfoz99g=; b=aH6eJjgHx+VbycUNBb+bC1
+        /Z5tPNlocPPLrhtCc+V5ZTq1e9Nuyn7mxckueHz/RgZKV5wvQhmTi48mk5qbfDOo
+        xWpf3qasjpjDuzGKqPoJVRgPb4y4Q5G9P46G6L4YIgAUQ6A1/eUnwp08FO87+Atl
+        v+pGgLTLMmuDrO8QakB2jT5Y95ztnrzCnkkcMy575ySMFGE5N4yk7vDlw0hcgMAW
+        +/Dlj8hOWCWoKCgccIWqPPTpCUaE/y7t298DglebHNFbBx4gJBTlKfokl33IQExG
+        xMHngYrDashTOZQuxKguA7ecAb75YTPPkjSt4Im00sHU150cbtubjtKJ9YLZRt7A
+        ==
+X-ME-Sender: <xms:uVwrYFz-DLs9r62UGEEFLmUDlEVEyxOJIUuSth0QoGZhqJetIyIeqA>
+    <xme:uVwrYFQR1d0vX2yDIchDbJJ4ymI4wdKGU7bVA0q6R-ocG1dHhd7Uh-UXj-DJ6U1lp
+    Tp1q4C_antk0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrieelgdekjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpehnnhgvthcu
+    oehnnhgvthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhephfejledtke
+    ehtdejtdekgfegheehfeevfeejffevkeevveekjefhtdehfeeffeegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhnvghtsehfrghsthhmrg
+    hilhdrfhhm
+X-ME-Proxy: <xmx:uVwrYPUwGqozu9AFAw6U5JrLiaWh8KqwMRSrC4udlCKT6Kmhf-BaSA>
+    <xmx:uVwrYHhi4tEvT6Wm0NmM6K-hF-lIELeS2Xs-BoDL6T94zvMWn4zGHQ>
+    <xmx:uVwrYHCBv9Re_P6C4gvnmZ3sRBz_l49iIe7erce0aDbBA812j3I9gg>
+    <xmx:u1wrYPZw0Pz3TvHMgYa2-nYD4RZ-uVIFOoSPdWZ4WhzEjFAE222TVGfAjmk>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 87BA3A0005E; Tue, 16 Feb 2021 00:48:41 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-141-gf094924a34-fm-20210210.001-gf094924a
+Mime-Version: 1.0
+Message-Id: <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
+In-Reply-To: <20210214123310.d6armpep7kxbymbu@pali>
+References: <20210210092339.qy6wwuq6qr5m2ozr@pali>
+ <d6971325-af71-4f71-91c2-7b661804c022@www.fastmail.com>
+ <20210210180322.rlfxdussqhejqpo6@pali>
+ <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
+ <20210211195559.n2j4jnchl2ho54mg@pali>
+ <1ad78446-4a40-4c3e-8680-6dbf19616515@www.fastmail.com>
+ <20210211234445.hbv2diphmgbir76u@pali>
+ <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+ <20210213100139.ckrscepg72zjkj4f@pali>
+ <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
+ <20210214123310.d6armpep7kxbymbu@pali>
+Date:   Mon, 15 Feb 2021 21:48:08 -0800
+From:   nnet <nnet@fastmail.fm>
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+        a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
+        gregory.clement@bootlin.com, kostap@marvell.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
+        miquel.raynal@bootlin.com, mturquette@baylibre.com,
+        rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
+        vladimir.vid@sartura.hr
+Subject: =?UTF-8?Q?Re:_[PATCH_mvebu_v2_00/10]_Armada_37xx:_Fix_cpufreq_changing_b?=
+ =?UTF-8?Q?ase_CPU_speed_to_800_MHz_from_1000_MHz?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+> Could you test following change instead of PATCH 04/10? I added here also
+> logic for 1.2 GHz variant with 1.132 V value another change is that
+> value for load L0 is not touched as it is stable.
 
-On Mon, Feb 15, 2021 at 7:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
-> > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > >   1. R-Car Gen2 (Koelsch), R-Car Gen3 (Salvator-X(S), Ebisu).
-> > >
-> > >       - Commit 2dfc564bda4a31bc ("soc: renesas: rcar-sysc: Mark device
-> > >         node OF_POPULATED after init") is no longer needed (but already
-> > >         queued for v5.12 anyway)
-> >
-> > Rob doesn't like the proliferation of OF_POPULATED and we don't need
-> > it anymore, so maybe work it out with him? It's a balance between some
-> > wasted memory (struct device(s)) vs not proliferating OF_POPULATED.
->
-> > >   2. SH/R-Mobile AG5 (kzm9g), APE6 (ape6evm), A1 (armadillo800-eva)
-> > >
-> > >       - "PATCH] soc: renesas: rmobile-sysc: Set OF_POPULATED and absorb
-> > >         reset handling" is no longer needed
-> > >         https://lore.kernel.org/linux-arm-kernel/20210205133319.1921108-1-geert+renesas@glider.be/
-> >
-> > Good to see more evidence that this series is fixing things at a more
-> > generic level.
->
-> I spoke too soon: if CONFIG_POWER_RESET_RMOBILE=n,
-> booting fails again, as everything is waiting on the system controller,
-> which never becomes available.
-> Rcar-sysc doesn't suffer from this problem, cfr. above.
-> Perhaps because the rmobile-sysc bindings use a hierarchical instead
-> of a linear PM domain description, and thus consumers point to the
-> children of the system controller node?
-> Cfr. system-controller@e6180000 in arch/arm/boot/dts/r8a7740.dtsi.
+These changes to patch 04/10 worked going 600 MHz <-> 1.2 GHz , _but_ only with:
 
-Ok, I see what's going on. The problem is that the "power domain"
-fwnode being registered is not the node that contains the "compatible"
-property and becomes a device. So this patch[1] is not helping here.
-Fix is to do something like this (to avoid using OF_POPULATED flag and
-breaking reset):
+++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1213
 
-diff --git a/drivers/soc/renesas/rmobile-sysc.c
-b/drivers/soc/renesas/rmobile-sysc.c
-index 9046b8c933cb..b7e66139ef7d 100644
---- a/drivers/soc/renesas/rmobile-sysc.c
-+++ b/drivers/soc/renesas/rmobile-sysc.c
-@@ -344,6 +344,7 @@ static int __init rmobile_init_pm_domains(void)
-                        of_node_put(np);
-                        break;
-                }
-+               fwnode_dev_initialized(&np->fwnode, true);
-        }
+During this latest testing I saw freezes with 1132 mV.
 
-        put_special_pds();
+I've had no lockups with 1213 mV which I just used from the values for L1/L0 from OTP.
 
-Can you give it a shot?
-
-[1] - https://lore.kernel.org/lkml/20210205222644.2357303-8-saravanak@google.com/
-
-> > >       - On R-Mobile A1, I get a BUG and a memory leak:
-> > >
-> > >             BUG: spinlock bad magic on CPU#0, swapper/1
-> > >              lock: lcdc0_device+0x10c/0x308, .magic: 00000000, .owner:
-> > > <none>/-1, .owner_cpu: 0
-> > >             CPU: 0 PID: 1 Comm: swapper Not tainted
-> > > 5.11.0-rc5-armadillo-00032-gf0a85c26907e #266
-> > >             Hardware name: Generic R8A7740 (Flattened Device Tree)
-> > >             [<c010c3c8>] (unwind_backtrace) from [<c010a49c>]
-> > > (show_stack+0x10/0x14)
-> > >             [<c010a49c>] (show_stack) from [<c0159534>]
-> > > (do_raw_spin_lock+0x20/0x94)
-> > >             [<c0159534>] (do_raw_spin_lock) from [<c04089d8>]
-> > > (dev_pm_get_subsys_data+0x30/0xa0)
-> > >             [<c04089d8>] (dev_pm_get_subsys_data) from [<c0413698>]
-> > > (genpd_add_device+0x34/0x1c0)
-> > >             [<c0413698>] (genpd_add_device) from [<c041389c>]
-> > > (of_genpd_add_device+0x34/0x4c)
-> > >             [<c041389c>] (of_genpd_add_device) from [<c0a1e9bc>]
-> > > (board_staging_register_device+0xf8/0x118)
-> > >             [<c0a1e9bc>] (board_staging_register_device) from
->
-> This is indeed a pre-existing problem.
-> of_genpd_add_device() is called before platform_device_register(),
-> as it needs to attach the genpd before the device is probed.
-> But the spinlock is only initialized when the device is registered.
-> This was masked before due to an unrelated wait context check failure,
-> which disabled any further spinlock checks, and exposed by fw_devlinks
-> changing probe order.
-> Patch sent.
-> "[PATCH] staging: board: Fix uninitialized spinlock when attaching genpd"
-> https://lore.kernel.org/r/20210215151405.2551143-1-geert+renesas@glider.be
->
-
-Great!
-
-Thanks,
-Saravana
+I only tested with those two values.
