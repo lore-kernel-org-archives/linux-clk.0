@@ -2,103 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FECBC43381
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 13:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E5FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 16:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D46464DFF
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 13:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FBB764DF0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 16:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbhBPNh4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Feb 2021 08:37:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbhBPNhm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2021 08:37:42 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8B0C06178A;
-        Tue, 16 Feb 2021 05:36:26 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id x4so14519158wmi.3;
-        Tue, 16 Feb 2021 05:36:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jiX7X0M+t1Zm8HAFufsMGCFO60ftU2nIQxPg0v/LgAc=;
-        b=dh0TVcFk5TipZh+je3Yb1saPAbf3bXpgLvSW/RGqK4JrroyTmw3zMbAj8I1BJWA5Zv
-         HlzbFBGp7ACXr+lRXPasomLMIToJAhfnI+kue64Cy9rD8sDBKzyYiuRVmpOTioh54Dcp
-         IF86skOMDZ/UyF+ZIPvW1EyaIryJDnYqpv9ncNoWP+OTZcXZfgcjXhHooAqFOdI/7Unu
-         SwFBRPH5ayZ8frAy9JduLtvCioBYlaoh88vcTdf5kMOPYUNHpufTJwFcQ9RQEnecELu7
-         TDGD8HlLds6n7vQElDnHmO57dnKMQfJomo8Hp1x8O08SQkV7fXH252XjaZ2jU3dzOUNt
-         wCBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jiX7X0M+t1Zm8HAFufsMGCFO60ftU2nIQxPg0v/LgAc=;
-        b=iUJM4m6YEX883+PGuYkh7BKUJKJmH9R4h1URNn6+FFYr9OXR9L1agapwGFvoCkhaL2
-         nS8VzcDsrVO4bla4Qk217RpYoHCkntjrpgn2SL/mFC/Nck4QkQKcVAemJhIIfsftkI5R
-         oKVgLo05ZgLuvklVFivSN64HoZrCsweKIr4YYboHh+zBbNo9U8E1xMBwTZp00piUDQCf
-         acXSuiQWehBADK1dkKf7UfiDSJivtDVT/Wkr9k2V1xfRQEjcjddX+Wmh8IF0GhJA0IDz
-         splJcWr0RmDqtV08gIaxMMiKiw+fzejD1x+0rdrzB2gHdgeyIG0iNkpchjeJkTQvKn/l
-         5vzw==
-X-Gm-Message-State: AOAM531ZelyhVTXSdR9xHiC1KMfFyToxEqjW8q0/eQ5bpgh4VWwVa3Ff
-        mOfl0Z/d+8tC6q80YAoSsTY=
-X-Google-Smtp-Source: ABdhPJxvZl5N1RQSXEvtJw2P035XT2xAYee21rE7WC7JbYEQs20JATwlQuPzFedpn1HJ1rgx2XNaZQ==
-X-Received: by 2002:a05:600c:414b:: with SMTP id h11mr3373384wmm.125.1613482585467;
-        Tue, 16 Feb 2021 05:36:25 -0800 (PST)
-Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
-        by smtp.gmail.com with ESMTPSA id l7sm28032530wrn.11.2021.02.16.05.36.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Feb 2021 05:36:25 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/6] MAINTAINERS: add MT7621 CLOCK maintainer
-Date:   Tue, 16 Feb 2021 14:36:17 +0100
-Message-Id: <20210216133617.22333-7-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210216133617.22333-1-sergio.paracuellos@gmail.com>
-References: <20210216133617.22333-1-sergio.paracuellos@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S229894AbhBPQ2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Feb 2021 11:28:48 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:58473 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229812AbhBPQ2l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Feb 2021 11:28:41 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id D670A58016D;
+        Tue, 16 Feb 2021 11:27:34 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 16 Feb 2021 11:27:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm2; bh=5u+CoCQxCQHhuISnr7oaYs4kFfzp5tD
+        HZ80oWDpg/OM=; b=A5IzYkDA9xR5Ja1bOpctMItWprM6ZOFcYl/a7Eh7UOJdUKp
+        uRFMNMfurMYO9pcNyLCoXIz/rG2GeMoMiQZNBuTHoqijnsFM6H4I+qf6oVdcZ37K
+        RES1DgCDiEoT6F2GR8yQ7eka2u6Gj6Xl7czQbWIq6RtwjwhOduYXYiT/ccERNNFU
+        udmRWfmmphm95wDJy0u6kDcGZk51/KTg5G/g3TmhdwF6brs44GnSEQB1X6gymJtp
+        5Hs0XqHyInE9DHgOTNrcGFHDsYn9KWzhnt0bzZBlLnI4wDVHiw5Z7QwYxZdDaoYk
+        e9/Rl25ydHuB8S3L5s72tIEcHbMaCp7Ppgtcjrw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=5u+CoC
+        QxCQHhuISnr7oaYs4kFfzp5tDHZ80oWDpg/OM=; b=FOEfrp0zCb+crUOx+Lr0U1
+        bELTWwLDVYghTOTHlUheCZQ53XtchkjaxSrhoR8iYfRT2mzejm5UE9noHzcVO8VT
+        nyUDemfGb2vG/CA6seGVVL4Tu8fVkOzc3DjQINYRwuRwfugKQu3Gv0g/XZXTfS5s
+        q/Bfyd36yCn51i9Km2KxJMQ6TaVLosxdq0OucfN8chyfO805osqiGQg81NJ+0CHN
+        O5AxQeBD0hx0erpUrsMlA4w67pRYwx5PsmHFxuFArfITgTOrgo5Yi7DP7o5scAid
+        9pbWxzBQooB9uti2JxBYtufy/Xyieg7+TJqapuX5pDSmMHaCid9Y5QLMOuMz13mA
+        ==
+X-ME-Sender: <xms:dfIrYNq9Q8bzQ04_33ZUcxGXlbymi05B2VFcykn-yMUnzWvnXgmtWw>
+    <xme:dfIrYPrNV6BSy_q_o2mt0PInxdzACFgXrN21DPMt5bsFauQxewmc1t-U3wcMh7NUY
+    EiAUOagpiy-YQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjedtgdeklecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpehnnhgvthcu
+    oehnnhgvthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhephfejledtke
+    ehtdejtdekgfegheehfeevfeejffevkeevveekjefhtdehfeeffeegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhnvghtsehfrghsthhmrg
+    hilhdrfhhm
+X-ME-Proxy: <xmx:dfIrYKOnSc7Q_I-DeD8-ZkQGL-E2GbEC7SsRS1gcVc8wlKhq_EM3mw>
+    <xmx:dfIrYI4-ICsoMAzGRPl2YrrnQQAoFxeiVPzu38ArfW15uo8eYwMA_w>
+    <xmx:dfIrYM76GWCWdmlNg78Dg1eiSxWcyTwHEIfM3xUPYhhDjsvJP-FFFA>
+    <xmx:dvIrYLQt--O_EPMM_JWDPZaWyneGnXxWuYc1K0sxf6A3R-PurIIFqA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 07794A00060; Tue, 16 Feb 2021 11:27:33 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-141-gf094924a34-fm-20210210.001-gf094924a
+Mime-Version: 1.0
+Message-Id: <d057d7f7-27a5-45ec-88f0-a653572a8ca6@www.fastmail.com>
+In-Reply-To: <20210216104141.umy6zrrkal3dlj5j@pali>
+References: <20210210180322.rlfxdussqhejqpo6@pali>
+ <966f50f2-68b2-4d4f-85f0-396df112c0f4@www.fastmail.com>
+ <20210211195559.n2j4jnchl2ho54mg@pali>
+ <1ad78446-4a40-4c3e-8680-6dbf19616515@www.fastmail.com>
+ <20210211234445.hbv2diphmgbir76u@pali>
+ <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+ <20210213100139.ckrscepg72zjkj4f@pali>
+ <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
+ <20210214123310.d6armpep7kxbymbu@pali>
+ <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
+ <20210216104141.umy6zrrkal3dlj5j@pali>
+Date:   Tue, 16 Feb 2021 08:27:10 -0800
+From:   nnet <nnet@fastmail.fm>
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+        a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
+        gregory.clement@bootlin.com, kostap@marvell.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
+        miquel.raynal@bootlin.com, mturquette@baylibre.com,
+        rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
+        vladimir.vid@sartura.hr
+Subject: =?UTF-8?Q?Re:_[PATCH_mvebu_v2_00/10]_Armada_37xx:_Fix_cpufreq_changing_b?=
+ =?UTF-8?Q?ase_CPU_speed_to_800_MHz_from_1000_MHz?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adding myself as maintainer for mt7621 clock driver.
+> Therefore I'm thinking if the correct way is instead to use L1 := L0 voltage value for 1/1.2 GHz mode.
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 809a68af5efd..be5ada6b4309 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11288,6 +11288,12 @@ L:	linux-wireless@vger.kernel.org
- S:	Maintained
- F:	drivers/net/wireless/mediatek/mt7601u/
- 
-+MEDIATEK MT7621 CLOCK DRIVER
-+M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
-+F:	drivers/clk/ralink/clk-mt7621.c
-+
- MEDIATEK MT7621/28/88 I2C DRIVER
- M:	Stefan Roese <sr@denx.de>
- L:	linux-i2c@vger.kernel.org
--- 
-2.25.1
-
+This latest 04/10 works fine for me going 600MHz <-> 1.2GHz under with and without load.
