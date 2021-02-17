@@ -2,93 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4389BC433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 20:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCC5C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Feb 2021 11:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E707064EB3
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Feb 2021 20:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADFEC64E02
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Feb 2021 11:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230198AbhBPUy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Feb 2021 15:54:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229699AbhBPUy4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Feb 2021 15:54:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8209064E7D;
-        Tue, 16 Feb 2021 20:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613508855;
-        bh=Li8MKyTXIVRWSKg+RMW6Yzb5jQd5e78mMM6/hLJ4Ubk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Jvwl5KWrHMv0FQdeXBsvYi89OCrSswqG9DOiN+M/xbxHUuiawVwfKzFDdCHUHHEXB
-         9TKkJz99FhV0jvNTKsVHzdaL1iGmd5C+JwbenCPDfdy+k6XBX5UA/Bi11rYzqzaau9
-         RMIhcRU0sZLyzvqPoh0mzeQ1qgIOOE1Mtw2x4Wdu3TyR+wDYE51AuBpgrPBpk+BO8u
-         sKH5rGmNIz0Ikx7j1UBIucdSaCU/wP0OuJzQgsgfcWGPs5TXz64u84CFtZZ6jexYdu
-         DB+UM7GjD/hWHeXU3aeqoq6ljnxqdHb30A8kTrGYdZYvzlwF1YI+V7jMPdok0Smgql
-         dp/ptNDjKt/8g==
-Content-Type: text/plain; charset="utf-8"
+        id S232041AbhBQLnJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Feb 2021 06:43:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232111AbhBQLkw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2021 06:40:52 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06455C061756;
+        Wed, 17 Feb 2021 03:40:06 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id v1so17035137wrd.6;
+        Wed, 17 Feb 2021 03:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0Ub3gKGJwLJRaryXIKn0038/d6bzjLaWe3sRPb09LY0=;
+        b=DT5YyN1MOvKp2WuAgEYIlR4ajbLPAmzH8CueHGYC6nk8Xn8oz+MgtOH9LJI/Ptgo+a
+         iv0wBtsjV/NINYVMTY0I2UZ6KaFbgb/kkpWwg50vfmNUbG0VXUAxpIDqwmGsf7uTT9MU
+         dzzxwcaYJ8qRByQsqALtL9jP1ZidNrraUtKtDWaGZrBF0nh5Yg/efaebvZX8FH+3KlS4
+         j1myj9gs82TAASf+YCECDYCpDjJhGsW9pu/TG9Uavm3dFEf1li6DNkjcGMiJPxYC/MEO
+         fllzQFRsvy/3DjMnkvBgAaT876WxFRjk196510alcNpJV59Z690xDGW6id7tb72US0Oh
+         FqFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0Ub3gKGJwLJRaryXIKn0038/d6bzjLaWe3sRPb09LY0=;
+        b=HhMutll4R9YiHaHWVV/4jKHAQjJahdOkL+O0lvIAgerNqKWnlyMnML1JFPPIu4Qk/J
+         OIUmRRW0qlUQYVqXn7I02f73c0QsHPDDj0dvSME63tSxntbL6+FZKgXH69C0ONpzUTF4
+         6vFSHwBBFBY6KceGJQPU0yDUrp2dsRB1FYFzpZNBwpxQv8bV04t7vhOReT2x0EOoEDDc
+         /MB5FuXrhbKghSdXAztywOpm9JkNsUZg6kmEBFbtUqyHfEtrmmIBiNE851Jg7T6TmGiU
+         wTLGy1tOFaLlv6cV7WrcOAlDQ7EBCquDQrTZb9Vt1+TWAF888tGmUsZwhEykZqk0891k
+         eGTw==
+X-Gm-Message-State: AOAM530wXBftYs4/Xs53q7m3zKpNvf1wRIUYSI3MAMJQlKa2sLHGiXUK
+        L2+Bvojt+53KZFf8ubjBOkI=
+X-Google-Smtp-Source: ABdhPJzduoPzl6qqnC0sKdwQMRl++JTO9gIqK1bXITzDft6XpAaJ5pRosTgHGQ+BZ2EeLgp5iZol+A==
+X-Received: by 2002:adf:edc8:: with SMTP id v8mr28901840wro.330.1613562004775;
+        Wed, 17 Feb 2021 03:40:04 -0800 (PST)
+Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
+        by smtp.gmail.com with ESMTPSA id q140sm3600813wme.0.2021.02.17.03.40.03
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Feb 2021 03:40:04 -0800 (PST)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     sboyd@kernel.org
+Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
+        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        neil@brown.name, Rob Herring <robh@kernel.org>
+Subject: [PATCH v7 1/6] dt-bindings: clock: add dt binding header for mt7621 clocks
+Date:   Wed, 17 Feb 2021 12:39:55 +0100
+Message-Id: <20210217114000.19571-2-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210217114000.19571-1-sergio.paracuellos@gmail.com>
+References: <20210217114000.19571-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210215115710.3762276-1-daniel@0x0f.com>
-References: <20210215115710.3762276-1-daniel@0x0f.com>
-Subject: Re: [PATCH 1/2] clk: mstar: Allow MStar clk drivers to be compile tested
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Palmer <daniel@0x0f.com>
-To:     Daniel Palmer <daniel@0x0f.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Date:   Tue, 16 Feb 2021 12:54:14 -0800
-Message-ID: <161350885409.1254594.4380070292122043991@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Palmer (2021-02-15 03:57:09)
-> Allow COMPILE_TEST to also build the MStar clk drivers
-> instead of only building them when ARCH_MSTARV7 is selected.
->=20
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/Makefile      | 2 +-
->  drivers/clk/mstar/Kconfig | 7 ++++++-
->  2 files changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 7fed7e5944cd..e5e23a44fbe9 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -95,7 +95,7 @@ obj-$(CONFIG_MACH_PIC32)              +=3D microchip/
->  ifeq ($(CONFIG_COMMON_CLK), y)
->  obj-$(CONFIG_ARCH_MMP)                 +=3D mmp/
->  endif
-> -obj-$(CONFIG_ARCH_MSTARV7)             +=3D mstar/
-> +obj-y                                  +=3D mstar/
->  obj-y                                  +=3D mvebu/
->  obj-$(CONFIG_ARCH_MXS)                 +=3D mxs/
->  obj-$(CONFIG_COMMON_CLK_NXP)           +=3D nxp/
-> diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
-> index 23765edde3af..eab8f7dcaa90 100644
-> --- a/drivers/clk/mstar/Kconfig
-> +++ b/drivers/clk/mstar/Kconfig
-> @@ -1,5 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config MSTAR_MSC313_MPLL
-> -       bool
-> +       bool "MStar MPLL driver"
-> +       depends on ARCH_MSTARV7 || COMPILE_TEST
-> +       default ARCH_MSTARV7
->         select REGMAP
+Adds dt binding header for 'mediatek,mt7621-clk' clocks.
 
-I've also removed this select REGMAP. It isn't necessary as this selects
-REGMAP_MMIO.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ include/dt-bindings/clock/mt7621-clk.h | 41 ++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 include/dt-bindings/clock/mt7621-clk.h
 
->         select REGMAP_MMIO
-> +       help
-> +         Support for the MPLL PLL and dividers block present on
-> +         MStar/Sigmastar SoCs.
+diff --git a/include/dt-bindings/clock/mt7621-clk.h b/include/dt-bindings/clock/mt7621-clk.h
+new file mode 100644
+index 000000000000..1422badcf9de
+--- /dev/null
++++ b/include/dt-bindings/clock/mt7621-clk.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_MT7621_H
++#define _DT_BINDINGS_CLK_MT7621_H
++
++#define MT7621_CLK_XTAL		0
++#define MT7621_CLK_CPU		1
++#define MT7621_CLK_BUS		2
++#define MT7621_CLK_50M		3
++#define MT7621_CLK_125M		4
++#define MT7621_CLK_150M		5
++#define MT7621_CLK_250M		6
++#define MT7621_CLK_270M		7
++
++#define MT7621_CLK_HSDMA	8
++#define MT7621_CLK_FE		9
++#define MT7621_CLK_SP_DIVTX	10
++#define MT7621_CLK_TIMER	11
++#define MT7621_CLK_PCM		12
++#define MT7621_CLK_PIO		13
++#define MT7621_CLK_GDMA		14
++#define MT7621_CLK_NAND		15
++#define MT7621_CLK_I2C		16
++#define MT7621_CLK_I2S		17
++#define MT7621_CLK_SPI		18
++#define MT7621_CLK_UART1	19
++#define MT7621_CLK_UART2	20
++#define MT7621_CLK_UART3	21
++#define MT7621_CLK_ETH		22
++#define MT7621_CLK_PCIE0	23
++#define MT7621_CLK_PCIE1	24
++#define MT7621_CLK_PCIE2	25
++#define MT7621_CLK_CRYPTO	26
++#define MT7621_CLK_SHXC		27
++
++#define MT7621_CLK_MAX		28
++
++#endif /* _DT_BINDINGS_CLK_MT7621_H */
+-- 
+2.25.1
+
