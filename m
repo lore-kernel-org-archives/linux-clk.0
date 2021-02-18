@@ -2,116 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6147AC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB52DC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A40D64E68
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63E5D64E6F
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:28:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230438AbhBRIM1 convert rfc822-to-8bit (ORCPT
+        id S230223AbhBRI2H convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 03:12:27 -0500
-Received: from mail-lj1-f177.google.com ([209.85.208.177]:33791 "EHLO
-        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231432AbhBRIJ3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:09:29 -0500
-Received: by mail-lj1-f177.google.com with SMTP id c17so2731874ljn.0;
-        Thu, 18 Feb 2021 00:08:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2JZs1ZJKk51l3YchsPITzi18reItTFJEkOmfTPO4cok=;
-        b=Y/dlosL+jBD3uldB0QV31nDjcm9IOvwM3ZrKalsJTunZ2dTdiUjfNfozbxGbBkhpa1
-         0o4zLla2Txm/SV+jG7AIPJs/3aFsvMkVARMVTp7FfK7JvTv9WyD9uphvwFiqw7oJ9tZr
-         lQDZlzTsEx/6CEymucGrRLMD9vSwVNjw1ul5Ec3KHxc1CLcETXJz6tekjfd1T/Pnmn9a
-         6DP98SSb2iMhz5OXKuZ87H8BdVWb3o3/gq8UQtiUotdYf0hfUqlkvOEbrhaGOoZbbBzd
-         bZ+IAiDiCeR3Bcr9VxGS+IK94ILkPp826oufdtQIgFxOYbTAmTBdf0Duo1Hv4Fdy1KS3
-         TCtQ==
-X-Gm-Message-State: AOAM533xmqxA9Z5raJF9qpb3xdomLfIarOabbAwRXLl1BQtG9vVNYRjh
-        nkHUlKaMiGKwoB7xZdwOUc2mwAVGQcH2SQ==
-X-Google-Smtp-Source: ABdhPJwlB0LbQ2F3xjvUlPsViXClSk1breqtX+mJiVUUt5gk+Ls5ZsF2vwk9rlTNLsia+qoXG62h5w==
-X-Received: by 2002:a05:651c:11c7:: with SMTP id z7mr1961692ljo.494.1613635701372;
-        Thu, 18 Feb 2021 00:08:21 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id r25sm523182lfn.213.2021.02.18.00.08.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Feb 2021 00:08:20 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id j6so2681292ljo.5;
-        Thu, 18 Feb 2021 00:08:20 -0800 (PST)
-X-Received: by 2002:a2e:ba18:: with SMTP id p24mr1864954lja.488.1613635700512;
- Thu, 18 Feb 2021 00:08:20 -0800 (PST)
+        Thu, 18 Feb 2021 03:28:07 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:46515 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230468AbhBRIZh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:25:37 -0500
+Received: from xps13 (lfbn-tou-1-972-113.w86-210.abo.wanadoo.fr [86.210.203.113])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id C6800240008;
+        Thu, 18 Feb 2021 08:24:41 +0000 (UTC)
+Date:   Thu, 18 Feb 2021 09:24:40 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <gregkh@linuxfoundation.org>, <shubhrajyoti.datta@gmail.com>
+Subject: Re: [PATCH v9 0/7] clk: clk-wizard: clock-wizard: Driver updates
+Message-ID: <20210218092440.7ddeb617@xps13>
+In-Reply-To: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20210212135725.283877-1-t.schramm@manjaro.org>
- <20210218075835.o43tyarpimrcwbvk@gilmour> <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
-In-Reply-To: <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 18 Feb 2021 16:08:09 +0800
-X-Gmail-Original-Message-ID: <CAGb2v651jyoD9g25gv4+LoRDopNz2L7YYwp6O=GDNq4E0=HO7Q@mail.gmail.com>
-Message-ID: <CAGb2v651jyoD9g25gv4+LoRDopNz2L7YYwp6O=GDNq4E0=HO7Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio
- pll output
-To:     Tobias Schramm <t.schramm@manjaro.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 18, 2021 at 4:06 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->
->
->
-> 于 2021年2月18日 GMT+08:00 下午3:58:35, Maxime Ripard <maxime@cerno.tech> 写到:
-> >Hi,
-> >
-> >On Fri, Feb 12, 2021 at 02:57:25PM +0100, Tobias Schramm wrote:
-> >> Previously the variable rate audio pll output was fixed to a divider
-> >of
-> >> four. This is unfortunately incompatible with generating commonly
-> >used
-> >> I2S core clock rates like 24.576MHz from the 24MHz parent clock.
-> >> This commit adds support for arbitrary audio pll output dividers to
-> >fix
-> >> that.
-> >>
-> >> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
-> >
-> >It's not really clear to me how that would help.
->
-> We have introducee SDM-based accurate audio PLL on several
-> other SoCs. Some people is quite sensitive about audio-related things.
+Hi Shubhrajyoti,
 
-Right. What you really want is the SDM-based fractional clock support.
-Just look at the other drivers.
+Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 Feb
+2021 10:19:44 +0530:
 
-> >
-> >The closest frequency we can provide for 24.576MHz would be 24580645
-> >Hz,
-> >with N = 127, M = 31 and P = 4, so it would work with what we have
-> >already?
+> In the thread [1] Greg suggested that we move the driver
+> to the clk from the staging.
+> Add patches to address the concerns regarding the fractional and
+> set rate support in the TODO.
+> 
+> The patch set does the following
+> - Trivial fixes for kernel doc.
+> - Move the driver to the clk folder
+> - Add capability to set rate.
+> - Add fractional support.
+> - Add support for configurable outputs.
+> - Make the output names unique so that multiple instances
+> do not crib.
 
-Correct. And that is still slightly off. It's even worse for the 44.1khz
-family.
+I think we prefer to move "clean" drivers out of the staging tree
+rather than "to be fixed" code. So I would invert the order of the
+patches in this series to make more sense:
+* 3/7-7/7 (various fixes/improvements)
+* 1/7 (bindings)
+* 2/7 (move to clk)
 
+> Shubhrajyoti Datta (7):
+>   dt-bindings: add documentation of xilinx clocking wizard
+>   clk: clock-wizard: Add the clockwizard to clk directory
+>   clk: clock-wizard: Fix kernel-doc warning
+>   clk: clock-wizard: Add support for dynamic reconfiguration
+>   clk: clock-wizard: Add support for fractional support
+>   clk: clock-wizard: Remove the hardcoding of the clock outputs
+>   clk: clock-wizard: Update the fixed factor divisors
+> 
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       |  65 ++
+>  drivers/clk/Kconfig                                |   9 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-xlnx-clock-wizard.c                | 689 +++++++++++++++++++++
+>  drivers/staging/Kconfig                            |   2 -
+>  drivers/staging/Makefile                           |   1 -
+>  drivers/staging/clocking-wizard/Kconfig            |  10 -
+>  drivers/staging/clocking-wizard/Makefile           |   2 -
+>  drivers/staging/clocking-wizard/TODO               |  12 -
+>  .../clocking-wizard/clk-xlnx-clock-wizard.c        | 333 ----------
+>  drivers/staging/clocking-wizard/dt-binding.txt     |  30 -
+>  11 files changed, 764 insertions(+), 390 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+>  create mode 100644 drivers/clk/clk-xlnx-clock-wizard.c
+>  delete mode 100644 drivers/staging/clocking-wizard/Kconfig
+>  delete mode 100644 drivers/staging/clocking-wizard/Makefile
+>  delete mode 100644 drivers/staging/clocking-wizard/TODO
+>  delete mode 100644 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c
+>  delete mode 100644 drivers/staging/clocking-wizard/dt-binding.txt
+> 
 
-ChenYu
-
-> >Maxime
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thanks,
+Miquèl
