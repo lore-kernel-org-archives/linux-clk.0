@@ -2,122 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34019C43381
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F3AC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3B5664E79
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D336A64E68
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230508AbhBRIFF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 03:05:05 -0500
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:52769 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231273AbhBRIBA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:01:00 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id ED64E9A7;
-        Thu, 18 Feb 2021 02:58:39 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 18 Feb 2021 02:58:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=8o/m5OJPItfrGDLkKjJ6a/AXkvF
-        mxcbN4FoGW2HUgRU=; b=OFEzlboBVzy/p1Z2s+wZXvS7qqKe7zppXjm8Wv0cYIx
-        I9DDGv7K0sDdOOD74454Q0zp3gIo1E2s8+TqK6Gq+2vIg57f7QQuyjaYRDmtd6nX
-        1Nx38TmJZiKN1ianXllkD6EtnFA9YlKPVR5NYT4CtVfvaO8CNx38D9/5Vt5k77MS
-        oDVwmugHQYuIQeI7lELe4OTBlru5I6W+lz2ejJ74kAJ7bNhESQNdXjCfGBysPcTc
-        KMcXNzljODJtXdXsm5kozRtQI5mappiwNHR0fmyjNYvLruWe2GvpsDzDYHrdYk7/
-        i4xKkSPjlAqiQMT9TqQJkc/czWekK9y5ZAnkf4bIz3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=8o/m5O
-        JPItfrGDLkKjJ6a/AXkvFmxcbN4FoGW2HUgRU=; b=BiDzekodkeJZpcAg/Ekuqt
-        RyzB5SqH4dv85fZiVOgL1AKgJCb2/iEWNRNKD4OF84E5uzOxhCIKfF5SuKJHW+YZ
-        KwhcQ9srJJaPke/VkkGdOrcFOJAdvnb0B/tiWPnK4hR2USrJ93F7QOSgIzsT6O2K
-        xiR9evsvxf/abOQGJ/Q5w5RYIm5/QGc5SoKaHtAvwZqu/WvsSc+pjWKOSCDJzEaM
-        HWZ/FfRuduvqgcMuJQtjYmJWmlPjGTKvWNjl0oO9fgp2j7eQrLyztLV1d0RM7fbe
-        2TdQk1eYlPCD3h5CoVrNMPNdFnF6oG2GyqSUWYoqpkU6oD5UbLlciboRjeo75c4w
-        ==
-X-ME-Sender: <xms:Lh4uYHP4O43IydryLhnidczXbOnoEvGQk5Me6Y4zk3-DlFDB6NUoLQ>
-    <xme:Lh4uYB83ug-rs35tljtug8RxS9q_lW6kODW9oyF1h28dAIa_7I4kg2YpE3mAqmckg
-    J6Ox8S9kf9RqIYZJ8I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeefgdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Lh4uYGSqw6l1lZCgeG96NUxmKTTuGK4XJzTs7ze5LGC3wnQWZnVb6Q>
-    <xmx:Lh4uYLvQeCSh7FQiDHOO62chMihK9Jrazj-NXveFyQCX9avbyVjd2Q>
-    <xmx:Lh4uYPeloOUC0TQUWjCDayffBbs-xM0TmGXkomWbacM2Tyow76KDCw>
-    <xmx:Lx4uYHRgtLMoOgOsBsRFpfkPXgXqsYv6BNW_G01t0A3LSdDe13rUSw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EEF3A1080057;
-        Thu, 18 Feb 2021 02:58:37 -0500 (EST)
-Date:   Thu, 18 Feb 2021 08:58:35 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Tobias Schramm <t.schramm@manjaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        id S230423AbhBRIJj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Feb 2021 03:09:39 -0500
+Received: from relay5.mymailcheap.com ([159.100.241.64]:50619 "EHLO
+        relay5.mymailcheap.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230520AbhBRIHz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:07:55 -0500
+Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.66.161])
+        by relay5.mymailcheap.com (Postfix) with ESMTPS id 48E3E200FE;
+        Thu, 18 Feb 2021 08:06:59 +0000 (UTC)
+Received: from filter1.mymailcheap.com (filter1.mymailcheap.com [149.56.130.247])
+        by relay3.mymailcheap.com (Postfix) with ESMTPS id 8DC353ECDF;
+        Thu, 18 Feb 2021 09:05:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by filter1.mymailcheap.com (Postfix) with ESMTP id C808B2A17A;
+        Thu, 18 Feb 2021 03:05:00 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mymailcheap.com;
+        s=default; t=1613635500;
+        bh=vayAPymKDO5arWdIdiTG0Kavs2NltsJBgurWKj2dCH4=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=rueLQUIutrfTxQzTLEcHcbSCYS7tgx5X+7zDo9YtHbUgFqtE1Wt+TX3DJmNiwq9eh
+         SBSzDN6WJbsHMMt54wNuiaF5R6mt5bD3WzDPp7M1jGSOzGuFuEkz25wwUvLG+QTfSf
+         dVsfuV37Y2Hdv8FFZbVzDVpzjyp3NbGYgxWJaw+8=
+X-Virus-Scanned: Debian amavisd-new at filter1.mymailcheap.com
+Received: from filter1.mymailcheap.com ([127.0.0.1])
+        by localhost (filter1.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id jOQ1kXehAbxp; Thu, 18 Feb 2021 03:04:58 -0500 (EST)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by filter1.mymailcheap.com (Postfix) with ESMTPS;
+        Thu, 18 Feb 2021 03:04:58 -0500 (EST)
+Received: from [148.251.23.173] (ml.mymailcheap.com [148.251.23.173])
+        by mail20.mymailcheap.com (Postfix) with ESMTP id C9271400B5;
+        Thu, 18 Feb 2021 08:04:56 +0000 (UTC)
+Authentication-Results: mail20.mymailcheap.com;
+        dkim=pass (1024-bit key; unprotected) header.d=aosc.io header.i=@aosc.io header.b="BID+L3Nb";
+        dkim-atps=neutral
+AI-Spam-Status: Not processed
+Received: from [10.68.68.85] (unknown [117.136.12.200])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail20.mymailcheap.com (Postfix) with ESMTPSA id 6D6E8400B5;
+        Thu, 18 Feb 2021 08:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+        t=1613635485; bh=vayAPymKDO5arWdIdiTG0Kavs2NltsJBgurWKj2dCH4=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=BID+L3Nb93KYVK7HZjyWKopXYnV0IbcWoZAaLFZXXYBUX+bZhW5qxk1L7ioTYrNqr
+         8ddH5mi9rsZ/RxMdt3xN7E9L8TU80jZ/AHAxzJQlPe9NJf61tXpgJnHOmbaNcLRBzF
+         lNb2EloDoCyyRvR/zmOSXkma+GvEVFXl7u5mVRL8=
+Date:   Thu, 18 Feb 2021 16:04:03 +0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20210218075835.o43tyarpimrcwbvk@gilmour>
+References: <20210212135725.283877-1-t.schramm@manjaro.org> <20210218075835.o43tyarpimrcwbvk@gilmour>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio pll output
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Tobias Schramm <t.schramm@manjaro.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio
- pll output
-Message-ID: <20210218075835.o43tyarpimrcwbvk@gilmour>
-References: <20210212135725.283877-1-t.schramm@manjaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eajg6aowebrbouve"
-Content-Disposition: inline
-In-Reply-To: <20210212135725.283877-1-t.schramm@manjaro.org>
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
+X-Spamd-Result: default: False [2.90 / 10.00];
+         RCVD_VIA_SMTP_AUTH(0.00)[];
+         RECEIVED_SPAMHAUS_XBL(3.00)[117.136.12.200:received];
+         R_DKIM_ALLOW(0.00)[aosc.io:s=default];
+         RECEIVED_SPAMHAUS_PBL(0.00)[117.136.12.200:received];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DMARC_NA(0.00)[aosc.io];
+         ARC_NA(0.00)[];
+         R_SPF_SOFTFAIL(0.00)[~all];
+         ML_SERVERS(-3.10)[148.251.23.173];
+         DKIM_TRACE(0.00)[aosc.io:+];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         RCVD_NO_TLS_LAST(0.10)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         ASN(0.00)[asn:24940, ipnet:148.251.0.0/16, country:DE];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         HFILTER_HELO_BAREIP(3.00)[148.251.23.173,1]
+X-Rspamd-Queue-Id: C9271400B5
+X-Rspamd-Server: mail20.mymailcheap.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---eajg6aowebrbouve
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+=E4=BA=8E 2021=E5=B9=B42=E6=9C=8818=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=883=
+:58:35, Maxime Ripard <maxime@cerno=2Etech> =E5=86=99=E5=88=B0:
+>Hi,
+>
+>On Fri, Feb 12, 2021 at 02:57:25PM +0100, Tobias Schramm wrote:
+>> Previously the variable rate audio pll output was fixed to a divider
+>of
+>> four=2E This is unfortunately incompatible with generating commonly
+>used
+>> I2S core clock rates like 24=2E576MHz from the 24MHz parent clock=2E
+>> This commit adds support for arbitrary audio pll output dividers to
+>fix
+>> that=2E
+>>=20
+>> Signed-off-by: Tobias Schramm <t=2Eschramm@manjaro=2Eorg>
+>
+>It's not really clear to me how that would help=2E
 
-On Fri, Feb 12, 2021 at 02:57:25PM +0100, Tobias Schramm wrote:
-> Previously the variable rate audio pll output was fixed to a divider of
-> four. This is unfortunately incompatible with generating commonly used
-> I2S core clock rates like 24.576MHz from the 24MHz parent clock.
-> This commit adds support for arbitrary audio pll output dividers to fix
-> that.
->=20
-> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+We have introducee SDM-based accurate audio PLL on several
+other SoCs=2E Some people is quite sensitive about audio-related things=2E
 
-It's not really clear to me how that would help.
-
-The closest frequency we can provide for 24.576MHz would be 24580645 Hz,
-with N =3D 127, M =3D 31 and P =3D 4, so it would work with what we have
-already?
-
-Maxime
-
---eajg6aowebrbouve
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYC4eKwAKCRDj7w1vZxhR
-xY7sAP9EMNcUCVMrqJAuITaMVv3u75Oy0e7v493CUjwhWNZLTwD/ThCNEGxNkpoE
-2vggeshrvzbJePDtvl021bFNAJjxWws=
-=BmSU
------END PGP SIGNATURE-----
-
---eajg6aowebrbouve--
+>
+>The closest frequency we can provide for 24=2E576MHz would be 24580645
+>Hz,
+>with N =3D 127, M =3D 31 and P =3D 4, so it would work with what we have
+>already?
+>
+>Maxime
