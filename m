@@ -2,157 +2,337 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FE0C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64288C433E6
 	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 11:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8EFE64E6F
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 11:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10FE064E76
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 11:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbhBRLfY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 06:35:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38866 "EHLO
+        id S231336AbhBRLgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Feb 2021 06:36:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232004AbhBRJbz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 04:31:55 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75566C061788
-        for <linux-clk@vger.kernel.org>; Thu, 18 Feb 2021 01:31:14 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id t15so2063606wrx.13
-        for <linux-clk@vger.kernel.org>; Thu, 18 Feb 2021 01:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=VaSKa4DdnHoyZyCFHmPaCow3KCxH2Ne1C09ADbZ1yus=;
-        b=dRsXTrRzk7Wc31VNcTbJfc4NgGYL0oYa4TrPkTQZMezCPZJix76Gti85Vp4Yt4U+uY
-         qvfk2XL5qC9qgVqCHKJ9gGyJh/v2yDaSoxO5sAkmaNzasrphNDslGJIOOjdGbKAz1QQK
-         4xghW/rirIb3npghDbJJSNGXUipsbkyVznUa4nXfrFhP8ZjY8c+Ngpd8ML3l765bhShk
-         uP8iWjoRLeekT1gz2uN5nT6zKWr0JErbR50lvlx6YtfOcFshe+PTQqtahpMP8imSEncX
-         8m2OjhT/DZN+hMQTXLqi/ott3uA8MLN18PbnxALj4/JHkwpwuvmJoM83JRMCZM5wrFlR
-         rwmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=VaSKa4DdnHoyZyCFHmPaCow3KCxH2Ne1C09ADbZ1yus=;
-        b=JNjXU92m9t4GFhi68uBkSDYVIceFDh4oeA2z2NWuEuMcGEXMYqgalUZBGR+jKY/d3y
-         I6JiQ1JoH/H+wtDch0IuICSHf33F/XEAMSXpFoKyl2EWUGVvUgWVd1NcjWz3v6V8sj0d
-         Wunm7mAH8et3t51B6ShN1lgAlZI3W2IsanEXwoyBIbf8ktpvdBxzI8E3k7oU2aWvPVc1
-         P5hAYE0ywxqAgNlR9wR1S1oLOKP23cNgF1ivz6p7IamA9ZFnJCwCDZObs56CkU5n+UPQ
-         kCQnNnwfeUFBlLE3oMJx+huo0TArsd4ld/JxTECdtkx9cQxtSRO+Au8J91Tnsc0UO1rr
-         YgwA==
-X-Gm-Message-State: AOAM5327b/lQCaOltuX94npy9ZZm9h3HQZ4415yNXBC9n2/vl01D2xhv
-        Yp/xLe3a62Rbd5Pd/U1cIK9wGA==
-X-Google-Smtp-Source: ABdhPJxE8kmixkGOJBaQqpcOpvjiGzXrQRnCSlhlsVN/0EM3RqJlhWDEhhKX5MEo/csg0r4Y/dUISA==
-X-Received: by 2002:adf:d1ce:: with SMTP id b14mr3340189wrd.329.1613640671985;
-        Thu, 18 Feb 2021 01:31:11 -0800 (PST)
-Received: from dell ([91.110.221.153])
-        by smtp.gmail.com with ESMTPSA id m24sm8233954wml.36.2021.02.18.01.31.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Feb 2021 01:31:11 -0800 (PST)
-Date:   Thu, 18 Feb 2021 09:31:08 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S230087AbhBRJy6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 04:54:58 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB68AC06178A
+        for <linux-clk@vger.kernel.org>; Thu, 18 Feb 2021 01:45:53 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lCfsc-0008BA-Uu; Thu, 18 Feb 2021 10:45:51 +0100
+Subject: Re: [Linux-stm32] [PATCH v2 12/14] ARM: dts: stm32: move
+ clocks/resets to SCMI resources for stm32mp15
+To:     gabriel.fernandez@foss.st.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Jan Kotas <jank@cadence.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
-        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Tali Perry <tali.perry1@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Tero Kristo <kristo@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210218093108.GA62231@dell>
-References: <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
- <20210212223739.GE179940@dell>
- <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
- <YCf4kkMsX+Ymgy6N@lunn.ch>
- <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
- <YCmUOHTtc+j4eLkO@lunn.ch>
- <20210215084952.GF179940@dell>
- <20210215094509.0b1f0bbf@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <20210216082046.GA4803@dell>
- <20210217100830.50db2195@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        Etienne Carriere <etienne.carriere@st.com>, marex@denx.de
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <20210126090120.19900-13-gabriel.fernandez@foss.st.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <c74e8909-84a3-f6dc-50fb-18349fd79ece@pengutronix.de>
+Date:   Thu, 18 Feb 2021 10:45:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
+In-Reply-To: <20210126090120.19900-13-gabriel.fernandez@foss.st.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210217100830.50db2195@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 17 Feb 2021, Jakub Kicinski wrote:
+Hello Gabriel,
 
-> On Tue, 16 Feb 2021 08:20:46 +0000 Lee Jones wrote:
-> > On Mon, 15 Feb 2021, Jakub Kicinski wrote:
-> > > On Mon, 15 Feb 2021 08:49:52 +0000 Lee Jones wrote:  
-> > > > Yes, please share.  
-> > > 
-> > > https://github.com/kuba-moo/nipa  
-> > 
-> > Thanks for this.
-> > 
-> > Oh, I see.  So you conduct tests locally, then post them up in a
-> > section called 'Checks' using the provided API.  
+On 26.01.21 10:01, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 > 
-> For some definition of "locally" - NIPA runs on a rented VM.
-
-Right.  Infrastructure that you control vs by Patchwork.
-
-> > I assume that Patchwork does not alert the user when something has
-> > gone awry?  Is this something Nipa does?
+> This change reflects board hardware configuration where RCC security
+> features are configured for RCC[TZEN]=1 and RCC[MCKPROT]=0, that is
+> RCC TrustZone is hardened and RCC MCKPROT is disabled.
 > 
-> The way we run it on netdev is maintainer-centric, IOW we see 
-> the failures in patchwork and complain to people manually.
-> The netdev mailing list gets too many messages as is, if NIPA 
-> responded with results automatically (which is not that hard
-> technically) my concern is that people would be more likely to
-> send untested patches to the mailing list and rely on the bot.
+> Clock and reset controllers that relate to SoC secure resources are
+> moved from a RCC clock/reset handle to a SCMI clock/reset_domain handle.
+> 
+> These clocks are all the platform oscillators (HSI/LSI/CSI/HSE/LSE),
+> clocks for few subsystem and peripheral interfaces.
+> 
+> This change add a SCMI clock dependency on RCC clock device since it
+> registers clocks which parent clocks are provided by the SCMI clock
+> driver. This change allows the RCC clock device probe to be deferred
+> until SCMI clocks are fully registered in the system.
 
-That makes sense.  Thank you for the explanation.
+This would break existing boards, right? If so, you should move the
+last patch in the series before this one and patch all existing boards
+to use it. Maintainers of individual boards can then opt-in later by
+deleting the arch/arm/boot/dts/stm32mp15-no-scmi.dtsi inclusion.
+
+Cheers,
+Ahmad
+
+> 
+> Signed-off-by: Etienne Carriere <etienne.carriere@st.com>
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  arch/arm/boot/dts/stm32mp151.dtsi  | 77 +++++++++++-------------------
+>  arch/arm/boot/dts/stm32mp153.dtsi  |  4 +-
+>  arch/arm/boot/dts/stm32mp157.dtsi  |  2 +-
+>  arch/arm/boot/dts/stm32mp15xc.dtsi |  4 +-
+>  4 files changed, 32 insertions(+), 55 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+> index da3647373365..e06882e0611d 100644
+> --- a/arch/arm/boot/dts/stm32mp151.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp151.dtsi
+> @@ -102,38 +102,6 @@
+>  		interrupt-parent = <&intc>;
+>  	};
+>  
+> -	clocks {
+> -		clk_hse: clk-hse {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <24000000>;
+> -		};
+> -
+> -		clk_hsi: clk-hsi {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <64000000>;
+> -		};
+> -
+> -		clk_lse: clk-lse {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <32768>;
+> -		};
+> -
+> -		clk_lsi: clk-lsi {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <32000>;
+> -		};
+> -
+> -		clk_csi: clk-csi {
+> -			#clock-cells = <0>;
+> -			compatible = "fixed-clock";
+> -			clock-frequency = <4000000>;
+> -		};
+> -	};
+> -
+>  	thermal-zones {
+>  		cpu_thermal: cpu-thermal {
+>  			polling-delay-passive = <0>;
+> @@ -595,7 +563,7 @@
+>  			compatible = "st,stm32-cec";
+>  			reg = <0x40016000 0x400>;
+>  			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc CEC_K>, <&clk_lse>;
+> +			clocks = <&rcc CEC_K>, <&scmi0_clk CK_SCMI0_LSE>;
+>  			clock-names = "cec", "hdmi-cec";
+>  			status = "disabled";
+>  		};
+> @@ -1156,10 +1124,17 @@
+>  		};
+>  
+>  		rcc: rcc@50000000 {
+> -			compatible = "st,stm32mp1-rcc", "syscon";
+> +			compatible = "st,stm32mp1-rcc-secure", "st,stm32mp1-rcc", "syscon";
+>  			reg = <0x50000000 0x1000>;
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+> +
+> +			clock-names = "hse", "hsi", "csi", "lse", "lsi";
+> +			clocks = <&scmi0_clk CK_SCMI0_HSE>,
+> +				 <&scmi0_clk CK_SCMI0_HSI>,
+> +				 <&scmi0_clk CK_SCMI0_CSI>,
+> +				 <&scmi0_clk CK_SCMI0_LSE>,
+> +				 <&scmi0_clk CK_SCMI0_LSI>;
+>  		};
+>  
+>  		pwr_regulators: pwr@50001000 {
+> @@ -1342,8 +1317,8 @@
+>  			compatible = "st,stm32f756-hash";
+>  			reg = <0x54002000 0x400>;
+>  			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc HASH1>;
+> -			resets = <&rcc HASH1_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_HASH1>;
+> +			resets = <&scmi0_reset RST_SCMI0_HASH1>;
+>  			dmas = <&mdma1 31 0x2 0x1000A02 0x0 0x0>;
+>  			dma-names = "in";
+>  			dma-maxburst = <2>;
+> @@ -1353,8 +1328,8 @@
+>  		rng1: rng@54003000 {
+>  			compatible = "st,stm32-rng";
+>  			reg = <0x54003000 0x400>;
+> -			clocks = <&rcc RNG1_K>;
+> -			resets = <&rcc RNG1_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_RNG1>;
+> +			resets = <&scmi0_reset RST_SCMI0_RNG1>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -1363,7 +1338,7 @@
+>  			reg = <0x58000000 0x1000>;
+>  			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&rcc MDMA>;
+> -			resets = <&rcc MDMA_R>;
+> +			resets = <&scmi0_reset RST_SCMI0_MDMA>;
+>  			#dma-cells = <5>;
+>  			dma-channels = <32>;
+>  			dma-requests = <48>;
+> @@ -1524,7 +1499,7 @@
+>  		iwdg2: watchdog@5a002000 {
+>  			compatible = "st,stm32mp1-iwdg";
+>  			reg = <0x5a002000 0x400>;
+> -			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
+> +			clocks = <&rcc IWDG2>, <&scmi0_clk CK_SCMI0_LSI>;
+>  			clock-names = "pclk", "lsi";
+>  			status = "disabled";
+>  		};
+> @@ -1553,7 +1528,8 @@
+>  			compatible = "st,stm32h7-uart";
+>  			reg = <0x5c000000 0x400>;
+>  			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc USART1_K>;
+> +			clocks = <&scmi0_clk CK_SCMI0_USART1>;
+> +			resets = <&scmi0_reset RST_SCMI0_USART1>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -1563,8 +1539,8 @@
+>  			compatible = "st,stm32h7-spi";
+>  			reg = <0x5c001000 0x400>;
+>  			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc SPI6_K>;
+> -			resets = <&rcc SPI6_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_SPI6>;
+> +			resets = <&scmi0_reset RST_SCMI0_SPI6>;
+>  			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0>,
+>  			       <&mdma1 35 0x0 0x40002 0x0 0x0>;
+>  			dma-names = "rx", "tx";
+> @@ -1577,8 +1553,8 @@
+>  			interrupt-names = "event", "error";
+>  			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc I2C4_K>;
+> -			resets = <&rcc I2C4_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_I2C4>;
+> +			resets = <&scmi0_reset RST_SCMI0_I2C4>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  			st,syscfg-fmp = <&syscfg 0x4 0x8>;
+> @@ -1589,7 +1565,8 @@
+>  		rtc: rtc@5c004000 {
+>  			compatible = "st,stm32mp1-rtc";
+>  			reg = <0x5c004000 0x400>;
+> -			clocks = <&rcc RTCAPB>, <&rcc RTC>;
+> +			clocks = <&scmi0_clk CK_SCMI0_RTCAPB>,
+> +				 <&scmi0_clk CK_SCMI0_RTC>;
+>  			clock-names = "pclk", "rtc_ck";
+>  			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+>  			status = "disabled";
+> @@ -1614,8 +1591,8 @@
+>  			interrupt-names = "event", "error";
+>  			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc I2C6_K>;
+> -			resets = <&rcc I2C6_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_I2C6>;
+> +			resets = <&scmi0_reset RST_SCMI0_I2C6>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+>  			st,syscfg-fmp = <&syscfg 0x4 0x20>;
+> @@ -1778,7 +1755,7 @@
+>  				interrupt-controller;
+>  				#interrupt-cells = <2>;
+>  				reg = <0 0x400>;
+> -				clocks = <&rcc GPIOZ>;
+> +				clocks = <&scmi0_clk CK_SCMI0_GPIOZ>;
+>  				st,bank-name = "GPIOZ";
+>  				st,bank-ioport = <11>;
+>  				status = "disabled";
+> @@ -1800,7 +1777,7 @@
+>  			reg = <0x10000000 0x40000>,
+>  			      <0x30000000 0x40000>,
+>  			      <0x38000000 0x10000>;
+> -			resets = <&rcc MCU_R>;
+> +			resets = <&scmi0_reset RST_SCMI0_MCU>;
+>  			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+>  			st,syscfg-tz = <&rcc 0x000 0x1>;
+>  			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+> diff --git a/arch/arm/boot/dts/stm32mp153.dtsi b/arch/arm/boot/dts/stm32mp153.dtsi
+> index 1c1889b194cf..db1273854675 100644
+> --- a/arch/arm/boot/dts/stm32mp153.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp153.dtsi
+> @@ -30,7 +30,7 @@
+>  			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+>  			interrupt-names = "int0", "int1";
+> -			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
+> +			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+>  			clock-names = "hclk", "cclk";
+>  			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
+>  			status = "disabled";
+> @@ -43,7 +43,7 @@
+>  			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+>  			interrupt-names = "int0", "int1";
+> -			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
+> +			clocks = <&scmi0_clk CK_SCMI0_HSE>, <&rcc FDCAN_K>;
+>  			clock-names = "hclk", "cclk";
+>  			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+>  			status = "disabled";
+> diff --git a/arch/arm/boot/dts/stm32mp157.dtsi b/arch/arm/boot/dts/stm32mp157.dtsi
+> index 54e73ccea446..7b06c08e3a23 100644
+> --- a/arch/arm/boot/dts/stm32mp157.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157.dtsi
+> @@ -20,7 +20,7 @@
+>  		dsi: dsi@5a000000 {
+>  			compatible = "st,stm32-dsi";
+>  			reg = <0x5a000000 0x800>;
+> -			clocks = <&rcc DSI_K>, <&clk_hse>, <&rcc DSI_PX>;
+> +			clocks = <&rcc DSI_K>, <&scmi0_clk CK_SCMI0_HSE>, <&rcc DSI_PX>;
+>  			clock-names = "pclk", "ref", "px_clk";
+>  			resets = <&rcc DSI_R>;
+>  			reset-names = "apb";
+> diff --git a/arch/arm/boot/dts/stm32mp15xc.dtsi b/arch/arm/boot/dts/stm32mp15xc.dtsi
+> index b06a55a2fa18..435846883f25 100644
+> --- a/arch/arm/boot/dts/stm32mp15xc.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp15xc.dtsi
+> @@ -10,8 +10,8 @@
+>  			compatible = "st,stm32mp1-cryp";
+>  			reg = <0x54001000 0x400>;
+>  			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&rcc CRYP1>;
+> -			resets = <&rcc CRYP1_R>;
+> +			clocks = <&scmi0_clk CK_SCMI0_CRYP1>;
+> +			resets = <&scmi0_reset RST_SCMI0_CRYP1>;
+>  			status = "disabled";
+>  		};
+>  	};
+> 
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
