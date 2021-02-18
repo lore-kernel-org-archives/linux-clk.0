@@ -2,236 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_2
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC02C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Feb 2021 23:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6419C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 01:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0588D64E6F
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Feb 2021 23:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63CEC64E3E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 01:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbhBQX6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Feb 2021 18:58:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbhBQX6g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2021 18:58:36 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC81C061574
-        for <linux-clk@vger.kernel.org>; Wed, 17 Feb 2021 15:57:55 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id b10so433159ybn.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Feb 2021 15:57:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gyyd+fg6rE1jikDjwjComYSD9NHlv04HXSqrgjKmU18=;
-        b=g74HmmdJSYKVCHRbytSRkHgd4z3jdETXm4uDfSzCa6DrvZZX/JtQKKxBIabrkWOhUx
-         JzLhYIdmK9+4a+TIIIpgQpcTPa10bFzsd5Obcs+85Zd2729d+a79LfumiVXstLdfaFeX
-         3PmgDObTOtKT2+StqbGtYMqk/V2b7H2RjvrEJZE8xbEFQvimTrlbT1Juz9HtX3utvtrx
-         2tMaWKn9BEQ2GIPCsLDcVVnRIXv31H00A2I2ET5OzWRD0nJe1PzwB1JZPL3YCssCVygf
-         7HuR5fDQf9DNuu2M8Ow1OdqHHmgf9NFSWIRYWIqVn9YTIynb5OGRcisVQcnO3WBoRasl
-         1T+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gyyd+fg6rE1jikDjwjComYSD9NHlv04HXSqrgjKmU18=;
-        b=fipFKHieffrz8I1G/122gycRS9+caMDaIJu1ZBSVg6FkmhjkD2LcD+fWw+zkypNRcU
-         MD2UdEWXRNjHiKYyWy2BZJFQndY/X9FSg3sWyVHzhJe3F14CDQcoDY6MeOSelQA7lLIJ
-         p04vh/LI2reoT5Cv510rlC89SHLgGsLJXVrdqVNU5GwXoJUnstL3H0LsYjlYzkvAPiqu
-         li9ryRlHaKdLuYGsavNndkPoH11wMvNTBQV6Plnc7I2S2ibwtKuSQR3rcApCLP/dZlUX
-         fesLS+W5HV0rKwEbyNhSyjGYipBESo1r+2a1y2i/8WafZc/IZSc/H9u4mzsYl6cZQUup
-         jzqw==
-X-Gm-Message-State: AOAM533Ya+Bn6i2RzRd/bRY4CxfQnt7LVgjI8SB/srEviOBVt9eVvwlW
-        lFYcpt9jAGqHFweXiFRvj0VsaopA6KE5ynL3kHBMlA==
-X-Google-Smtp-Source: ABdhPJyOSQa4Jj9rh8MYWVVAqAFPqUPnVtB1UzPtZJ/GyByZHitchaJCswelIanrPLQJ+P5TzrwtxVaA8GlnZr7rWrE=
-X-Received: by 2002:a25:8b8b:: with SMTP id j11mr2655973ybl.310.1613606274746;
- Wed, 17 Feb 2021 15:57:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
- <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
- <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
- <CAMuHMdXduvBqjAqraXkEKErNJFyN6JNq5wqagc4yHHPpH5SPGQ@mail.gmail.com>
- <CAGETcx_4FGa-rzLp6bjXbm4F4R6H2W78+nM_kN=XPz5hswzANA@mail.gmail.com>
- <CAMuHMdVodauqBmLMxsfi0kQtAFT8ruJ36LJL9YuQgqwQNKwHHg@mail.gmail.com>
- <CAGETcx_-yBvhXDPtOiKjenvx83oMNr32UvpMN0Dt-qz5ToXEbw@mail.gmail.com> <CAMuHMdXTO8wQ3=woLMjDaf9g3tTr-dRB3Nu_XvZUrr+wGSXyeg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXTO8wQ3=woLMjDaf9g3tTr-dRB3Nu_XvZUrr+wGSXyeg@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 17 Feb 2021 15:57:18 -0800
-Message-ID: <CAGETcx8jXkbtdgMCr6KGT4ScoaoP=AwaW6MQeEv-gsDySiY35A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        id S229808AbhBRB0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Feb 2021 20:26:20 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56358 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229774AbhBRB0U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Feb 2021 20:26:20 -0500
+X-UUID: ea305bbacc9b440d9935d0c8ca95f706-20210218
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=zUPZ2aJmFI9QcMLgtweqxZvlkzc1wFncpS87E7I4qH8=;
+        b=j19ZM6ErzZTSuwarDLGKz9UjVZutgqS6WLrfzhoJBdGt/LeJIZ0kdW/QC0t6O6zqZvl8UsiJdCwWCn7HXn4HfpcAbpYZdQzMKCQPusONBFOcg216NOvKhENSN8aQOBFg1O8xX9qHdBOw4iaKMMCJwTeyMX+X26t21tkwAqmtkU8=;
+X-UUID: ea305bbacc9b440d9935d0c8ca95f706-20210218
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1114011714; Thu, 18 Feb 2021 09:25:35 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 18 Feb 2021 09:25:34 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 18 Feb 2021 09:25:34 +0800
+Message-ID: <1613611534.10714.1.camel@mtksdaap41>
+Subject: Re: [PATCH v6 00/22] Mediatek MT8192 clock support
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>, <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Thu, 18 Feb 2021 09:25:34 +0800
+In-Reply-To: <161283242250.76967.15026468818750276885@swboyd.mtv.corp.google.com>
+References: <1608642587-15634-1-git-send-email-weiyi.lu@mediatek.com>
+         <161283242250.76967.15026468818750276885@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 12:31 PM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Saravana,
->
-> On Tue, Feb 16, 2021 at 7:49 PM Saravana Kannan <saravanak@google.com> wrote:
-> > On Tue, Feb 16, 2021 at 12:05 AM Geert Uytterhoeven
-> > <geert@linux-m68k.org> wrote:
-> > > On Mon, Feb 15, 2021 at 10:27 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > > On Mon, Feb 15, 2021 at 4:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > >       - I2C on R-Car Gen3 does not seem to use DMA, according to
-> > > > > > >         /sys/kernel/debug/dmaengine/summary:
-> > > > > > >
-> > > > > > >             -dma4chan0    | e66d8000.i2c:tx
-> > > > > > >             -dma4chan1    | e66d8000.i2c:rx
-> > > > > > >             -dma5chan0    | e6510000.i2c:tx
-> > > > > >
-> > > > > > I think I need more context on the problem before I can try to fix it.
-> > > > > > I'm also very unfamiliar with that file. With fw_devlink=permissive,
-> > > > > > I2C was using DMA? If so, the next step is to see if the I2C relative
-> > > > > > probe order with DMA is getting changed and if so, why.
-> > > > >
-> > > > > More detailed log:
-> > > > >
-> > > > >     platform e66d8000.i2c: Linked as a consumer to e6150000.clock-controller
-> > > > >     platform e66d8000.i2c: Linked as a sync state only consumer to e6055400.gpio
-> > > > >
-> > > > > Why is e66d8000.i2c not linked as a consumer to e6700000.dma-controller?
-> > > >
-> > > > Because fw_devlink.strict=1 is not set and dma/iommu is considered an
-> > > > "optional"/"driver decides" dependency.
-> > >
-> > > Oh, I thought dma/iommu were considered mandatory initially,
-> > > but dropped as dependencies in the late boot process?
-> >
-> > No, I didn't do that in case the drivers that didn't need the
-> > IOMMU/DMA were sensitive to probe order.
-> >
-> > My goal was for fw_devlink=on to not affect probe order for devices
-> > that currently don't need to defer probe. But see below...
-> >
-> > >
-> > > >
-> > > > >     platform e6700000.dma-controller: Linked as a consumer to
-> > > > > e6150000.clock-controller
-> > > >
-> > > > Is this the only supplier of dma-controller?
-> > >
-> > > No, e6180000.system-controller is also a supplier.
-> > >
-> > > > >     platform e66d8000.i2c: Added to deferred list
-> > > > >     platform e6700000.dma-controller: Added to deferred list
-> > > > >
-> > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > device e6700000.dma-controller
-> > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
-> > > > >
-> > > > >     bus: 'platform': driver_probe_device: matched device e66d8000.i2c
-> > > > > with driver i2c-rcar
-> > > > >     bus: 'platform': really_probe: probing driver i2c-rcar with device
-> > > > > e66d8000.i2c
-> > > > >
-> > > > > I2C becomes available...
-> > > > >
-> > > > >     i2c-rcar e66d8000.i2c: request_channel failed for tx (-517)
-> > > > >     [...]
-> > > > >
-> > > > > but DMA is not available yet, so the driver falls back to PIO.
-> > > > >
-> > > > >     driver: 'i2c-rcar': driver_bound: bound to device 'e66d8000.i2c'
-> > > > >     bus: 'platform': really_probe: bound device e66d8000.i2c to driver i2c-rcar
-> > > > >
-> > > > >     platform e6700000.dma-controller: Retrying from deferred list
-> > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > device e6700000.dma-controller
-> > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
-> > > > >     platform e6700000.dma-controller: Added to deferred list
-> > > > >     platform e6700000.dma-controller: Retrying from deferred list
-> > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > device e6700000.dma-controller
-> > > > >     driver: 'rcar-dmac': driver_bound: bound to device 'e6700000.dma-controller'
-> > > > >     bus: 'platform': really_probe: bound device
-> > > > > e6700000.dma-controller to driver rcar-dmac
-> > > > >
-> > > > > DMA becomes available.
-> > > > >
-> > > > > Here userspace is entered. /sys/kernel/debug/dmaengine/summary shows
-> > > > > that the I2C controllers do not have DMA channels allocated, as the
-> > > > > kernel has performed no more I2C transfers after DMA became available.
-> > > > >
-> > > > > Using i2cdetect shows that DMA is used, which is good:
-> > > > >
-> > > > >     i2c-rcar e66d8000.i2c: got DMA channel for rx
-> > > > >
-> > > > > With permissive devlinks, the clock controller consumers are not added
-> > > > > to the deferred probing list, and probe order is slightly different.
-> > > > > The I2C controllers are still probed before the DMA controllers.
-> > > > > But DMA becomes available a bit earlier, before the probing of the last
-> > > > > I2C slave driver.
-> > > >
-> > > > This seems like a race? I'm guessing it's two different threads
-> > > > probing those two devices? And it just happens to work for
-> > > > "permissive" assuming the boot timing doesn't change?
-> > > >
-> > > > > Hence /sys/kernel/debug/dmaengine/summary shows that
-> > > > > some I2C transfers did use DMA.
-> > > > >
-> > > > > So the real issue is that e66d8000.i2c not linked as a consumer to
-> > > > > e6700000.dma-controller.
-> > > >
-> > > > That's because fw_devlink.strict=1 isn't set. If you need DMA to be
-> > > > treated as a mandatory supplier, you'll need to set the flag.
-> > > >
-> > > > Is fw_devlink=on really breaking anything here? It just seems like
-> > > > "permissive" got lucky with the timing and it could break at any point
-> > > > in the future. Thought?
-> > >
-> > > I don't think there is a race.
-> >
-> > Can you explain more please? This below makes it sound like DMA just
-> > sneaks in at the last minute.
->
-> Yes it does, as the DMAC also has a consumer link to the IOMMU.
-> If you ignore the consumer link from I2C to DMAC, the I2C device has
-> less dependencies than the DMAC, so the I2C device, and the
-> devices on the I2C bus, are probed much earlier than the DMAC.
+T24gTW9uLCAyMDIxLTAyLTA4IGF0IDE3OjAwIC0wODAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
+IFF1b3RpbmcgV2VpeWkgTHUgKDIwMjAtMTItMjIgMDU6MDk6MjUpDQo+ID4gVGhpcyBzZXJpZXMg
+aXMgYmFzZWQgb24gdjUuMTAtcmMxLg0KPiA+IA0KPiANCj4gVGhlIERUIGJpbmRpbmdzIGZhaWws
+IGNhbiB5b3UgZml4IGFuZCByZXNlbmQ/DQo+IA0KDQpPSywgSSdsbCBmaXggYW5kIHJlc2VuZC4g
+VGhhbmsgeW91IGZvciByZXZpZXdpbmcuDQoNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxtc2RjLnlhbWw6ICdhZGRpdGlvbmFsUHJvcGVy
+dGllcycgaXMgYSByZXF1aXJlZCBwcm9wZXJ0eQ0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltcF9paWNfd3JhcC55YW1sOiAnYWRkaXRp
+b25hbFByb3BlcnRpZXMnIGlzIGEgcmVxdWlyZWQgcHJvcGVydHkNCj4gRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxtZHBzeXMueWFtbDogJ2Fk
+ZGl0aW9uYWxQcm9wZXJ0aWVzJyBpcyBhIHJlcXVpcmVkIHByb3BlcnR5DQo+IERvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssc2NwLWFkc3AueWFt
+bDogJ2FkZGl0aW9uYWxQcm9wZXJ0aWVzJyBpcyBhIHJlcXVpcmVkIHByb3BlcnR5DQo+IERvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssbXNkYy55
+YW1sOiBpZ25vcmluZywgZXJyb3IgaW4gc2NoZW1hOg0KPiB3YXJuaW5nOiBubyBzY2hlbWEgZm91
+bmQgaW4gZmlsZTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRl
+ay9tZWRpYXRlayxtc2RjLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2FybS9tZWRpYXRlay9tZWRpYXRlayxpbXBfaWljX3dyYXAueWFtbDogaWdub3JpbmcsIGVycm9y
+IGluIHNjaGVtYToNCj4gd2FybmluZzogbm8gc2NoZW1hIGZvdW5kIGluIGZpbGU6IERvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssaW1wX2lpY193
+cmFwLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRl
+ay9tZWRpYXRlayxtZHBzeXMueWFtbDogaWdub3JpbmcsIGVycm9yIGluIHNjaGVtYToNCj4gd2Fy
+bmluZzogbm8gc2NoZW1hIGZvdW5kIGluIGZpbGU6IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssbWRwc3lzLnlhbWwNCj4gRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxzY3AtYWRzcC55YW1s
+OiBpZ25vcmluZywgZXJyb3IgaW4gc2NoZW1hOg0KPiB3YXJuaW5nOiBubyBzY2hlbWEgZm91bmQg
+aW4gZmlsZTogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9t
+ZWRpYXRlayxzY3AtYWRzcC55YW1sDQo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssbXNkYy5leGFtcGxlLmR0LnlhbWw6IGV4YW1wbGUtMDog
+c3lzY29uQDExZjYwMDAwOnJlZzowOiBbMCwgMzAxMzM0NTI4LCAwLCA0MDk2XSBpcyB0b28gbG9u
+Zw0KPiAgICAgICAgIEZyb20gc2NoZW1hOiB+Ly5sb2NhbC9saWIvcHl0aG9uMy44L3NpdGUtcGFj
+a2FnZXMvZHRzY2hlbWEvc2NoZW1hcy9yZWcueWFtbA0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLG1zZGMuZXhhbXBsZS5kdC55YW1sOiBl
+eGFtcGxlLTE6IHN5c2NvbkAxMWYxMDAwMDpyZWc6MDogWzAsIDMwMTAwNjg0OCwgMCwgNDA5Nl0g
+aXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwvbGliL3B5dGhvbjMu
+OC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4gRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxtZHBzeXMuZXhhbXBs
+ZS5kdC55YW1sOiBleGFtcGxlLTA6IHN5c2NvbkAxZjAwMDAwMDpyZWc6MDogWzAsIDUyMDA5MzY5
+NiwgMCwgNDA5Nl0gaXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwv
+bGliL3B5dGhvbjMuOC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4g
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxp
+bXBfaWljX3dyYXAuZXhhbXBsZS5kdC55YW1sOiBleGFtcGxlLTA6IHN5c2NvbkAxMTAwNzAwMDpy
+ZWc6MDogWzAsIDI4NTI0MTM0NCwgMCwgNDA5Nl0gaXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9t
+IHNjaGVtYTogfi8ubG9jYWwvbGliL3B5dGhvbjMuOC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3Nj
+aGVtYXMvcmVnLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9t
+ZWRpYXRlay9tZWRpYXRlayxpbXBfaWljX3dyYXAuZXhhbXBsZS5kdC55YW1sOiBleGFtcGxlLTE6
+IHN5c2NvbkAxMWNiMTAwMDpyZWc6MDogWzAsIDI5ODUyMDU3NiwgMCwgNDA5Nl0gaXMgdG9vIGxv
+bmcNCj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwvbGliL3B5dGhvbjMuOC9zaXRlLXBh
+Y2thZ2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbXBfaWljX3dyYXAuZXhhbXBsZS5k
+dC55YW1sOiBleGFtcGxlLTI6IHN5c2NvbkAxMWQwMzAwMDpyZWc6MDogWzAsIDI5ODg1NjQ0OCwg
+MCwgNDA5Nl0gaXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwvbGli
+L3B5dGhvbjMuOC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4gRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbXBf
+aWljX3dyYXAuZXhhbXBsZS5kdC55YW1sOiBleGFtcGxlLTM6IHN5c2NvbkAxMWQyMzAwMDpyZWc6
+MDogWzAsIDI5ODk4NzUyMCwgMCwgNDA5Nl0gaXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9tIHNj
+aGVtYTogfi8ubG9jYWwvbGliL3B5dGhvbjMuOC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3NjaGVt
+YXMvcmVnLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRp
+YXRlay9tZWRpYXRlayxpbXBfaWljX3dyYXAuZXhhbXBsZS5kdC55YW1sOiBleGFtcGxlLTQ6IHN5
+c2NvbkAxMWUwMTAwMDpyZWc6MDogWzAsIDI5OTg5NjgzMiwgMCwgNDA5Nl0gaXMgdG9vIGxvbmcN
+Cj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwvbGliL3B5dGhvbjMuOC9zaXRlLXBhY2th
+Z2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxpbXBfaWljX3dyYXAuZXhhbXBsZS5kdC55
+YW1sOiBleGFtcGxlLTU6IHN5c2NvbkAxMWYwMjAwMDpyZWc6MDogWzAsIDMwMDk0OTUwNCwgMCwg
+NDA5Nl0gaXMgdG9vIGxvbmcNCj4gICAgICAgICBGcm9tIHNjaGVtYTogfi8ubG9jYWwvbGliL3B5
+dGhvbjMuOC9zaXRlLXBhY2thZ2VzL2R0c2NoZW1hL3NjaGVtYXMvcmVnLnlhbWwNCj4gDQo+IF9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IExpbnV4LW1l
+ZGlhdGVrIG1haWxpbmcgbGlzdA0KPiBMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3Jn
+DQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVk
+aWF0ZWsNCg0K
 
-Can you give this a shot?
-https://lore.kernel.org/lkml/20210217235130.1744843-1-saravanak@google.com/T/#u
-
-It should make sure fw_devlink doesn't add a device to the deferred
-probe list too soon and change the probe ordering unnecessarily.
-
--Saravana
