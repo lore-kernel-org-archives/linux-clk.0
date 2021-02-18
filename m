@@ -2,77 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D9EC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF5BC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B653564E85
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F12FE64E85
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbhBRIyV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 03:54:21 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:38097 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230334AbhBRIu4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:50:56 -0500
-Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id AF5D83AC661;
-        Thu, 18 Feb 2021 08:38:19 +0000 (UTC)
-X-Originating-IP: 86.210.203.113
-Received: from xps13 (lfbn-tou-1-972-113.w86-210.abo.wanadoo.fr [86.210.203.113])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 6DADB4000F;
-        Thu, 18 Feb 2021 08:35:11 +0000 (UTC)
-Date:   Thu, 18 Feb 2021 09:35:10 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <gregkh@linuxfoundation.org>, <shubhrajyoti.datta@gmail.com>,
-        Chirag Parekh <chirag.parekh@xilinx.com>
-Subject: Re: [PATCH v9 4/7] clk: clock-wizard: Add support for dynamic
- reconfiguration
-Message-ID: <20210218093510.1ea35ac3@xps13>
-In-Reply-To: <1613623791-4598-5-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-        <1613623791-4598-5-git-send-email-shubhrajyoti.datta@xilinx.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S230334AbhBRIy3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Feb 2021 03:54:29 -0500
+Received: from mail.manjaro.org ([176.9.38.148]:41358 "EHLO mail.manjaro.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231277AbhBRIxB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Feb 2021 03:53:01 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.manjaro.org (Postfix) with ESMTP id AD8283E60018;
+        Thu, 18 Feb 2021 09:52:00 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at manjaro.org
+Received: from mail.manjaro.org ([127.0.0.1])
+        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HKvwoosvfVV0; Thu, 18 Feb 2021 09:51:58 +0100 (CET)
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio
+ pll output
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20210212135725.283877-1-t.schramm@manjaro.org>
+ <20210218075835.o43tyarpimrcwbvk@gilmour>
+From:   Tobias Schramm <t.schramm@manjaro.org>
+Message-ID: <7379a9c3-3578-5cf1-53ed-ace8ff68434b@manjaro.org>
+Date:   Thu, 18 Feb 2021 09:51:54 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20210218075835.o43tyarpimrcwbvk@gilmour>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shubhrajyoti,
-
-Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 Feb
-2021 10:19:48 +0530:
-
-> The patch adds support for dynamic reconfiguration of clock output rate.
-> Output clocks are registered as dividers and set rate callback function
-> is used for dynamic reconfiguration.
+Hi Maxime,
 > 
-> Based on the initial work from Chirag.
+> It's not really clear to me how that would help.
 > 
-> Signed-off-by: Chirag Parekh <chirag.parekh@xilinx.com>
+> The closest frequency we can provide for 24.576MHz would be 24580645 Hz,
+> with N = 127, M = 31 and P = 4, so it would work with what we have
+> already?
+> 
 
-The first SoB should match the author.
+As far as I'm aware the multiplier N ranges from 0 to 128 (offset of 1 
+from 0 to 127). Thus 24MHz * 128 / 25 / 5 = 24.576MHz. Since this 
+requires the postdiv to be set to 5 it is not supported yet.
 
-Either your just did minor changes and keep Chirag's Authorship + SoB
-and add your SoB as you already did below, or either use the
-Codevelopped tag or if you really change a lot of things you can keep
-the authorship and give Chirag credit with a Suggested-by or something
-like this.
-
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-
-Thanks,
-Miquèl
+Cheers,
+Tobias
