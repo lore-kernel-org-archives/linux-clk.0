@@ -2,140 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F3AC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6147AC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D336A64E68
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A40D64E68
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Feb 2021 08:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230423AbhBRIJj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 03:09:39 -0500
-Received: from relay5.mymailcheap.com ([159.100.241.64]:50619 "EHLO
-        relay5.mymailcheap.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230520AbhBRIHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:07:55 -0500
-Received: from relay3.mymailcheap.com (relay3.mymailcheap.com [217.182.66.161])
-        by relay5.mymailcheap.com (Postfix) with ESMTPS id 48E3E200FE;
-        Thu, 18 Feb 2021 08:06:59 +0000 (UTC)
-Received: from filter1.mymailcheap.com (filter1.mymailcheap.com [149.56.130.247])
-        by relay3.mymailcheap.com (Postfix) with ESMTPS id 8DC353ECDF;
-        Thu, 18 Feb 2021 09:05:01 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by filter1.mymailcheap.com (Postfix) with ESMTP id C808B2A17A;
-        Thu, 18 Feb 2021 03:05:00 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mymailcheap.com;
-        s=default; t=1613635500;
-        bh=vayAPymKDO5arWdIdiTG0Kavs2NltsJBgurWKj2dCH4=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=rueLQUIutrfTxQzTLEcHcbSCYS7tgx5X+7zDo9YtHbUgFqtE1Wt+TX3DJmNiwq9eh
-         SBSzDN6WJbsHMMt54wNuiaF5R6mt5bD3WzDPp7M1jGSOzGuFuEkz25wwUvLG+QTfSf
-         dVsfuV37Y2Hdv8FFZbVzDVpzjyp3NbGYgxWJaw+8=
-X-Virus-Scanned: Debian amavisd-new at filter1.mymailcheap.com
-Received: from filter1.mymailcheap.com ([127.0.0.1])
-        by localhost (filter1.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jOQ1kXehAbxp; Thu, 18 Feb 2021 03:04:58 -0500 (EST)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by filter1.mymailcheap.com (Postfix) with ESMTPS;
-        Thu, 18 Feb 2021 03:04:58 -0500 (EST)
-Received: from [148.251.23.173] (ml.mymailcheap.com [148.251.23.173])
-        by mail20.mymailcheap.com (Postfix) with ESMTP id C9271400B5;
-        Thu, 18 Feb 2021 08:04:56 +0000 (UTC)
-Authentication-Results: mail20.mymailcheap.com;
-        dkim=pass (1024-bit key; unprotected) header.d=aosc.io header.i=@aosc.io header.b="BID+L3Nb";
-        dkim-atps=neutral
-AI-Spam-Status: Not processed
-Received: from [10.68.68.85] (unknown [117.136.12.200])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail20.mymailcheap.com (Postfix) with ESMTPSA id 6D6E8400B5;
-        Thu, 18 Feb 2021 08:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-        t=1613635485; bh=vayAPymKDO5arWdIdiTG0Kavs2NltsJBgurWKj2dCH4=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=BID+L3Nb93KYVK7HZjyWKopXYnV0IbcWoZAaLFZXXYBUX+bZhW5qxk1L7ioTYrNqr
-         8ddH5mi9rsZ/RxMdt3xN7E9L8TU80jZ/AHAxzJQlPe9NJf61tXpgJnHOmbaNcLRBzF
-         lNb2EloDoCyyRvR/zmOSXkma+GvEVFXl7u5mVRL8=
-Date:   Thu, 18 Feb 2021 16:04:03 +0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20210218075835.o43tyarpimrcwbvk@gilmour>
-References: <20210212135725.283877-1-t.schramm@manjaro.org> <20210218075835.o43tyarpimrcwbvk@gilmour>
+        id S230438AbhBRIM1 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Feb 2021 03:12:27 -0500
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:33791 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231432AbhBRIJ3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Feb 2021 03:09:29 -0500
+Received: by mail-lj1-f177.google.com with SMTP id c17so2731874ljn.0;
+        Thu, 18 Feb 2021 00:08:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2JZs1ZJKk51l3YchsPITzi18reItTFJEkOmfTPO4cok=;
+        b=Y/dlosL+jBD3uldB0QV31nDjcm9IOvwM3ZrKalsJTunZ2dTdiUjfNfozbxGbBkhpa1
+         0o4zLla2Txm/SV+jG7AIPJs/3aFsvMkVARMVTp7FfK7JvTv9WyD9uphvwFiqw7oJ9tZr
+         lQDZlzTsEx/6CEymucGrRLMD9vSwVNjw1ul5Ec3KHxc1CLcETXJz6tekjfd1T/Pnmn9a
+         6DP98SSb2iMhz5OXKuZ87H8BdVWb3o3/gq8UQtiUotdYf0hfUqlkvOEbrhaGOoZbbBzd
+         bZ+IAiDiCeR3Bcr9VxGS+IK94ILkPp826oufdtQIgFxOYbTAmTBdf0Duo1Hv4Fdy1KS3
+         TCtQ==
+X-Gm-Message-State: AOAM533xmqxA9Z5raJF9qpb3xdomLfIarOabbAwRXLl1BQtG9vVNYRjh
+        nkHUlKaMiGKwoB7xZdwOUc2mwAVGQcH2SQ==
+X-Google-Smtp-Source: ABdhPJwlB0LbQ2F3xjvUlPsViXClSk1breqtX+mJiVUUt5gk+Ls5ZsF2vwk9rlTNLsia+qoXG62h5w==
+X-Received: by 2002:a05:651c:11c7:: with SMTP id z7mr1961692ljo.494.1613635701372;
+        Thu, 18 Feb 2021 00:08:21 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id r25sm523182lfn.213.2021.02.18.00.08.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Feb 2021 00:08:20 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id j6so2681292ljo.5;
+        Thu, 18 Feb 2021 00:08:20 -0800 (PST)
+X-Received: by 2002:a2e:ba18:: with SMTP id p24mr1864954lja.488.1613635700512;
+ Thu, 18 Feb 2021 00:08:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio pll output
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Tobias Schramm <t.schramm@manjaro.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+References: <20210212135725.283877-1-t.schramm@manjaro.org>
+ <20210218075835.o43tyarpimrcwbvk@gilmour> <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
+In-Reply-To: <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 18 Feb 2021 16:08:09 +0800
+X-Gmail-Original-Message-ID: <CAGb2v651jyoD9g25gv4+LoRDopNz2L7YYwp6O=GDNq4E0=HO7Q@mail.gmail.com>
+Message-ID: <CAGb2v651jyoD9g25gv4+LoRDopNz2L7YYwp6O=GDNq4E0=HO7Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: add support for variable rate audio
+ pll output
+To:     Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <C1E55B65-370F-4875-B7D6-7CD7A82A91DD@aosc.io>
-X-Spamd-Result: default: False [2.90 / 10.00];
-         RCVD_VIA_SMTP_AUTH(0.00)[];
-         RECEIVED_SPAMHAUS_XBL(3.00)[117.136.12.200:received];
-         R_DKIM_ALLOW(0.00)[aosc.io:s=default];
-         RECEIVED_SPAMHAUS_PBL(0.00)[117.136.12.200:received];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DMARC_NA(0.00)[aosc.io];
-         ARC_NA(0.00)[];
-         R_SPF_SOFTFAIL(0.00)[~all];
-         ML_SERVERS(-3.10)[148.251.23.173];
-         DKIM_TRACE(0.00)[aosc.io:+];
-         RCPT_COUNT_SEVEN(0.00)[9];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:24940, ipnet:148.251.0.0/16, country:DE];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         HFILTER_HELO_BAREIP(3.00)[148.251.23.173,1]
-X-Rspamd-Queue-Id: C9271400B5
-X-Rspamd-Server: mail20.mymailcheap.com
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Feb 18, 2021 at 4:06 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+>
+> 于 2021年2月18日 GMT+08:00 下午3:58:35, Maxime Ripard <maxime@cerno.tech> 写到:
+> >Hi,
+> >
+> >On Fri, Feb 12, 2021 at 02:57:25PM +0100, Tobias Schramm wrote:
+> >> Previously the variable rate audio pll output was fixed to a divider
+> >of
+> >> four. This is unfortunately incompatible with generating commonly
+> >used
+> >> I2S core clock rates like 24.576MHz from the 24MHz parent clock.
+> >> This commit adds support for arbitrary audio pll output dividers to
+> >fix
+> >> that.
+> >>
+> >> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+> >
+> >It's not really clear to me how that would help.
+>
+> We have introducee SDM-based accurate audio PLL on several
+> other SoCs. Some people is quite sensitive about audio-related things.
+
+Right. What you really want is the SDM-based fractional clock support.
+Just look at the other drivers.
+
+> >
+> >The closest frequency we can provide for 24.576MHz would be 24580645
+> >Hz,
+> >with N = 127, M = 31 and P = 4, so it would work with what we have
+> >already?
+
+Correct. And that is still slightly off. It's even worse for the 44.1khz
+family.
 
 
-=E4=BA=8E 2021=E5=B9=B42=E6=9C=8818=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=883=
-:58:35, Maxime Ripard <maxime@cerno=2Etech> =E5=86=99=E5=88=B0:
->Hi,
->
->On Fri, Feb 12, 2021 at 02:57:25PM +0100, Tobias Schramm wrote:
->> Previously the variable rate audio pll output was fixed to a divider
->of
->> four=2E This is unfortunately incompatible with generating commonly
->used
->> I2S core clock rates like 24=2E576MHz from the 24MHz parent clock=2E
->> This commit adds support for arbitrary audio pll output dividers to
->fix
->> that=2E
->>=20
->> Signed-off-by: Tobias Schramm <t=2Eschramm@manjaro=2Eorg>
->
->It's not really clear to me how that would help=2E
+ChenYu
 
-We have introducee SDM-based accurate audio PLL on several
-other SoCs=2E Some people is quite sensitive about audio-related things=2E
-
+> >Maxime
 >
->The closest frequency we can provide for 24=2E576MHz would be 24580645
->Hz,
->with N =3D 127, M =3D 31 and P =3D 4, so it would work with what we have
->already?
->
->Maxime
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
