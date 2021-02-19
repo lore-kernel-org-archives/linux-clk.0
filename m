@@ -4,132 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A2C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D06C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA53664EC7
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D185864E44
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229474AbhBSBY6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 20:24:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41338 "EHLO mail.kernel.org"
+        id S229577AbhBSB0l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Feb 2021 20:26:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229468AbhBSBY5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Feb 2021 20:24:57 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0FE0A64E44;
-        Fri, 19 Feb 2021 01:24:17 +0000 (UTC)
+        id S229468AbhBSB0k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Feb 2021 20:26:40 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E94664E44;
+        Fri, 19 Feb 2021 01:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613697857;
-        bh=+unYTifO0TGH/0BCByaFUkWR19TSyWyG4C8bxvnjEvQ=;
+        s=k20201202; t=1613697959;
+        bh=42x/LKbzJxEUPanyTDGHE4i4CEWQkTuN5dQZZslOgFk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XNY9RgvnEaMZUPaOtBMPBSBy3ZIedSZdoZKehp5mYho1TPfMPFVgJauJzJlxsAebg
-         +o2IR2SQs8H/cXUNTDjSbVLHExfZwcTUcNrOTlHgEC1B62KBBFJmjA2MvowY0+Te/i
-         5UoOADNzAmQpiEnQFxB293ZHYHXXHUGMctTYNA331nQWocd1EiydIfPOC1xIYPjrGg
-         Az2s2hpdVROiuwM+z6ADdg+SinXNVnpfMDb8cN2XKwhSAlg1zkpKfmY43h6kl40HbU
-         ox/T9Wgnn44rtYGODHxhc6+931aAsmeTSxKALITNBIMfe2TtLewXXPzB7tR60pP5BX
-         5B18ZLHIWqrTQ==
+        b=HJmJGYzyp5/V+0D+eI0Zd+pf8+2dpsReIQYSD+fl41S2QvyCm6YULtaO/RvuSzCt8
+         V8p3UG7VlY7yvFSmAsaNrfjjl1IoUq6pBf4YnBU1aghCx1C8XcxMgpsJfNWVHQ9+2W
+         wrrFzUFm8HooUwmNErq1uK6n4RNIvHgcAA/Oh52nrMlCPi8QTQy+WES4pM2/AKZt+y
+         aVQHlg4wJReedq69nfRJeVLZS+rT7iTemzfduFrWEk4KsxcCDmNsXzn/EjHctIIFe7
+         /ZXh1gw3OvN/zeeG3IyplHUpywyj55RLWNBMKPQXmxFbPqbvj4OJ0cv0ry6vYgVzhE
+         kDsulqiKpKk5Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210218092804.6c78c99c@xps13>
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1613623791-4598-2-git-send-email-shubhrajyoti.datta@xilinx.com> <20210218092804.6c78c99c@xps13>
-Subject: Re: [PATCH v9 1/7] dt-bindings: add documentation of xilinx clocking wizard
+In-Reply-To: <20210218093715.7fdc27ee@xps13>
+References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1613623791-4598-7-git-send-email-shubhrajyoti.datta@xilinx.com> <20210218093715.7fdc27ee@xps13>
+Subject: Re: [PATCH v9 6/7] clk: clock-wizard: Remove the hardcoding of the clock outputs
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         mturquette@baylibre.com, gregkh@linuxfoundation.org,
         shubhrajyoti.datta@gmail.com
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Date:   Thu, 18 Feb 2021 17:24:15 -0800
-Message-ID: <161369785558.1254594.14662342386099652001@swboyd.mtv.corp.google.com>
+Date:   Thu, 18 Feb 2021 17:25:57 -0800
+Message-ID: <161369795774.1254594.6203789110347055936@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2021-02-18 00:28:04)
+Quoting Miquel Raynal (2021-02-18 00:37:15)
 > Hi Shubhrajyoti,
 >=20
 > Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 Feb
-> 2021 10:19:45 +0530:
+> 2021 10:19:50 +0530:
 >=20
-> > Add the devicetree binding for the xilinx clocking wizard.
+> > The number of output clocks are configurable in the hardware.
+> > Currently the driver registers the maximum number of outputs.
+> > Fix the same by registering only the outputs that are there.
 > >=20
 > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 > > ---
-> > v6:
-> > Fix a yaml warning
-> > v7:
-> > Add vendor prefix speed-grade
-> > v8:
-> > Fix the warnings
-> > v9:
-> > Fix the warnings
+> > v4:
+> > Assign output in this patch
 > >=20
-> >  .../bindings/clock/xlnx,clocking-wizard.yaml       | 65 ++++++++++++++=
-++++++++
-> >  1 file changed, 65 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocki=
-ng-wizard.yaml
+> >  drivers/clk/clk-xlnx-clock-wizard.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
 > >=20
-> > diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wiza=
-rd.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> > new file mode 100644
-> > index 0000000..d209140
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> > @@ -0,0 +1,65 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: "http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#"
-> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > +
-> > +title: Xilinx clocking wizard
-> > +
-> > +maintainers:
-> > +  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > +
-> > +description:
-> > +  The clocking wizard is a soft ip clocking block of Xilinx versal. It
-> > +  reads required input clock frequencies from the devicetree and acts =
-as clock
-> > +  clock output.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: xlnx,clocking-wizard
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: clock input
-> > +      - description: axi clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: clk_in1
-> > +      - const: s_axi_aclk
-> > +
-> > +  clock-output-names: true
-> > +
-> > +  xlnx,speed-grade:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    enum: [1, 2, 3]
-> > +    description:
-> > +      Speed grade of the device.
+> > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx=
+-clock-wizard.c
+> > index ed3b0ef..d403a74 100644
+> > --- a/drivers/clk/clk-xlnx-clock-wizard.c
+> > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
+> > @@ -473,6 +473,7 @@ static int clk_wzrd_probe(struct platform_device *p=
+dev)
+> >       unsigned long rate;
+> >       const char *clk_name;
+> >       struct clk_wzrd *clk_wzrd;
+> > +     int outputs;
+> >       struct device_node *np =3D pdev->dev.of_node;
+> > =20
+> >       clk_wzrd =3D devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERN=
+EL);
+> > @@ -541,6 +542,7 @@ static int clk_wzrd_probe(struct platform_device *p=
+dev)
+> >               goto err_disable_clk;
+> >       }
+> > =20
+> > +     outputs =3D of_property_count_strings(np, "clock-output-names");
 >=20
-> A bit of explanation of what this describes would be welcome.
+> A check on outputs validity is probably welcome.
 >=20
-> Don't forget that binding are not tied to any driver implementation,
-> these are supposed to be hardware description properties.
+> Also I usually prefer noutputs or nb_outputs for such variable name,
+> which implies a number rather than an array, but this is personal taste.
 
-Would opp tables work for this?
+Ideally we get rid of clock-output-names and generate them at runtime
+instead based on some combination of device name and something else.
