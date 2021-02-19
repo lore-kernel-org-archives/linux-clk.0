@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5ABC43381
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB4EC433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67F0464E92
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB2A64E92
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbhBSQBt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Feb 2021 11:01:49 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:35672 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229766AbhBSQBs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S229826AbhBSQBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 19 Feb 2021 11:01:48 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B225C1A0041;
-        Fri, 19 Feb 2021 17:00:58 +0100 (CET)
+Received: from inva021.nxp.com ([92.121.34.21]:55588 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229746AbhBSQBr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Feb 2021 11:01:47 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 527112000AA;
+        Fri, 19 Feb 2021 17:00:57 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A589F1A023B;
-        Fri, 19 Feb 2021 17:00:58 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 413E72000E5;
+        Fri, 19 Feb 2021 17:00:57 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 081BD2042F;
-        Fri, 19 Feb 2021 17:00:58 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9DCC22042F;
+        Fri, 19 Feb 2021 17:00:56 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -42,47 +42,99 @@ To:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         linux-clk@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     NXP Linux Team <linux-imx@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RFC 02/19] dt-bindings: interconnect: imx8mq: Add missing pl301 and SAI ids
-Date:   Fri, 19 Feb 2021 17:59:59 +0200
-Message-Id: <1613750416-11901-3-git-send-email-abel.vesa@nxp.com>
+Subject: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
+Date:   Fri, 19 Feb 2021 17:59:57 +0200
+Message-Id: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the bus diagram, there are two more pl301s that need to
-be added here. The pl301_per_m which is an intermediary node between
-pl301_main and its masters: usdhc1, usdhc2 and sdma. The pl301_wakeup
-is an intermediary node between pl301_main and its masters, in this case
-all the SAIs.
+This has been on my queue for quite some time now. It is more of a
+proof-of-concept.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- include/dt-bindings/interconnect/imx8mq.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This rework is done with the compatibility of future i.MX platforms in
+mind. For example, the i.MX8MP platform has multiple NoCs. This
+patchsets prepares the imx interconnect and imx devfreq for that too.
 
-diff --git a/include/dt-bindings/interconnect/imx8mq.h b/include/dt-bindings/interconnect/imx8mq.h
-index 1a4cae7f8be2..1953de8af5cb 100644
---- a/include/dt-bindings/interconnect/imx8mq.h
-+++ b/include/dt-bindings/interconnect/imx8mq.h
-@@ -44,5 +44,14 @@
- #define IMX8MQ_ICM_PCIE1	26
- #define IMX8MQ_ICM_PCIE2	27
- #define IMX8MQ_ICN_MAIN		28
-+#define IMX8MQ_ICN_PER_M	30
-+
-+#define IMX8MQ_ICN_WAKEUP	31
-+#define IMX8MQ_ICM_SAI1		32
-+#define IMX8MQ_ICM_SAI2		33
-+#define IMX8MQ_ICM_SAI3		34
-+#define IMX8MQ_ICM_SAI4		35
-+#define IMX8MQ_ICM_SAI5		36
-+#define IMX8MQ_ICM_SAI6		37
- 
- #endif /* __DT_BINDINGS_INTERCONNECT_IMX8MQ_H */
+As of now, none of the drivers involved are being used and there is no
+icc consumer on any off the i.MX platforms.
+
+Basically, the steps taken here are the following:
+
+1. Make the dram_apb clock "reparantable" from kernel.
+This is needed in order to keep track of the actual parent of the 
+dram_apb clock in the kernel clock hierarchy. Note that the actual
+switch is done EL3 (TF-A).
+
+2. Rework the imx-bus so the actual link between the icc and the 
+NoCs or the pl301s is not tightly coupled. This allows us to have
+as many NoCs as necessary but also allows as to use the same driver
+for the pl301s. The pl301s have their own clocks too, so we need to
+reduce their rates too.
+
+3. Rework the imx8m-ddrc driver. Remove the support for dts defined
+OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
+both EL3 and kernel in sync, we rely on what the EL3 gives us.
+Also, when the platform suspends, the bus needs to be running at highest
+rate, otherwise there is a chance it might not resume anymore.
+By adding the late system sleep PM ops we can handle that easily.
+
+4. Rework the imx interconnect driver to use the fsl,icc-id instead
+of the robust imx_icc_node_adj_desc for linking with the target node.
+By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
+we can link each icc node to their corresponding NoC, pl301 or dram.
+Basically, when the imx interconnect platform specific driver probes,
+it will take each node defined for that platform and look-up the
+corresponding dts node based on the id and add that as the qos device.
+
+5. Added the fec and usdhc as icc consumers. This is just as an example.
+All the other consumers can be added later. Basically, each consumer
+will add a path to their device node and in the driver will have to
+handle that icc path accordingly.
+
+Abel Vesa (19):
+  clk: imx8mq: Replace critical with ignore_unused flag for dram_apb
+    clock
+  dt-bindings: interconnect: imx8mq: Add missing pl301 and SAI ids
+  devfreq: imx-bus: Switch governor to powersave
+  devfreq: imx-bus: Decouple imx-bus from icc made
+  devfreq: imx8m-ddrc: Change governor to powersave
+  devfreq: imx8m-ddrc: Use the opps acquired from EL3
+  devfreq: imx8m-ddrc: Add late system sleep PM ops
+  interconnect: imx: Switch from imx_icc_node_adj_desc to fsl,icc-id
+    node assignment
+  interconnect: imx8: Remove the imx_icc_node_adj_desc
+  interconnect: imx8mq: Add the pl301_per_m and pl301_wakeup nodes and
+    subnodes
+  interconnect: imx8mq: Add of_match_table
+  interconnect: imx: Add imx_icc_get_bw and imx_icc_aggregate functions
+  arm64: dts: imx8mq: Add fsl,icc-id property to ddrc node
+  arm64: dts: imx8mq: Add fsl,icc-id to noc node
+  arm64: dts: imx8mq: Add all pl301 nodes
+  arm64: dts: imx8mq: Add the interconnect node
+  arm64: dts: imx8mq: Add interconnect properties to icc consumer nodes
+  net: ethernet: fec_main: Add interconnect support
+  mmc: sdhci-esdhc-imx: Add interconnect support
+
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 200 +++++++++++++++++++++-
+ drivers/clk/imx/clk-imx8mq.c              |   2 +-
+ drivers/devfreq/imx-bus.c                 |  42 +----
+ drivers/devfreq/imx8m-ddrc.c              |  75 +++-----
+ drivers/interconnect/imx/imx.c            |  92 +++++-----
+ drivers/interconnect/imx/imx.h            |  19 +-
+ drivers/interconnect/imx/imx8mm.c         |  32 ++--
+ drivers/interconnect/imx/imx8mn.c         |  28 +--
+ drivers/interconnect/imx/imx8mq.c         |  59 ++++---
+ drivers/mmc/host/sdhci-esdhc-imx.c        |  26 +++
+ drivers/net/ethernet/freescale/fec.h      |   3 +
+ drivers/net/ethernet/freescale/fec_main.c |  19 ++
+ include/dt-bindings/interconnect/imx8mq.h |   9 +
+ scripts/dtc/fdtoverlay                    | Bin 0 -> 61280 bytes
+ 14 files changed, 393 insertions(+), 213 deletions(-)
+ create mode 100755 scripts/dtc/fdtoverlay
+
 -- 
 2.29.2
 
