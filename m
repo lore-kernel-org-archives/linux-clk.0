@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B598FC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D838C4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A99F64EB3
+	by mail.kernel.org (Postfix) with ESMTP id C2F8264EC7
 	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 16:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229919AbhBSQBz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Feb 2021 11:01:55 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:55742 "EHLO inva021.nxp.com"
+        id S229930AbhBSQB7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Feb 2021 11:01:59 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:35946 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229862AbhBSQBv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Feb 2021 11:01:51 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 30002200113;
-        Fri, 19 Feb 2021 17:01:02 +0100 (CET)
+        id S229890AbhBSQBx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Feb 2021 11:01:53 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35AF41A02DA;
+        Fri, 19 Feb 2021 17:01:04 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FBA52001B3;
-        Fri, 19 Feb 2021 17:01:02 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 288691A0401;
+        Fri, 19 Feb 2021 17:01:04 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 807ED2042F;
-        Fri, 19 Feb 2021 17:01:01 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 88C4D20430;
+        Fri, 19 Feb 2021 17:01:03 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -42,9 +42,9 @@ To:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         linux-clk@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     NXP Linux Team <linux-imx@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RFC 07/19] devfreq: imx8m-ddrc: Add late system sleep PM ops
-Date:   Fri, 19 Feb 2021 18:00:04 +0200
-Message-Id: <1613750416-11901-8-git-send-email-abel.vesa@nxp.com>
+Subject: [RFC 10/19] interconnect: imx8mq: Add the pl301_per_m and pl301_wakeup nodes and subnodes
+Date:   Fri, 19 Feb 2021 18:00:07 +0200
+Message-Id: <1613750416-11901-11-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
 References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
@@ -53,78 +53,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Seems that, in order to be able to resume from suspend, the dram rate
-needs to be the highest one available. Therefore, add the late system
-suspend/resume PM ops which set the highest rate on suspend and the
-latest one used before suspending on resume.
+According to the bus diagram, there are two more pl301s that need to
+be added here. The pl301_per_m which is an intermediary node between
+pl301_main and its masters: usdhc1, usdhc2 and sdma. The pl301_wakeup
+is an intermediary node between pl301_main and its masters, in this case
+all the SAIs.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/devfreq/imx8m-ddrc.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/interconnect/imx/imx8mq.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-index 33de83acfd8b..04347dee781b 100644
---- a/drivers/devfreq/imx8m-ddrc.c
-+++ b/drivers/devfreq/imx8m-ddrc.c
-@@ -72,6 +72,8 @@ struct imx8m_ddrc {
- 	struct clk *dram_alt;
- 	struct clk *dram_apb;
+diff --git a/drivers/interconnect/imx/imx8mq.c b/drivers/interconnect/imx/imx8mq.c
+index b8c36d668946..010ad3d76286 100644
+--- a/drivers/interconnect/imx/imx8mq.c
++++ b/drivers/interconnect/imx/imx8mq.c
+@@ -57,14 +57,25 @@ static struct imx_icc_node_desc nodes[] = {
+ 	DEFINE_BUS_INTERCONNECT("PL301_ENET", IMX8MQ_ICN_ENET, IMX8MQ_ICN_MAIN),
  
-+	unsigned long suspend_rate;
-+	unsigned long resume_rate;
- 	int freq_count;
- 	struct imx8m_ddrc_freq freq_table[IMX8M_DDRC_MAX_FREQ_COUNT];
+ 	/* OTHER */
+-	DEFINE_BUS_MASTER("SDMA1", IMX8MQ_ICM_SDMA1, IMX8MQ_ICN_MAIN),
+ 	DEFINE_BUS_MASTER("NAND", IMX8MQ_ICM_NAND, IMX8MQ_ICN_MAIN),
+-	DEFINE_BUS_MASTER("USDHC1", IMX8MQ_ICM_USDHC1, IMX8MQ_ICN_MAIN),
+-	DEFINE_BUS_MASTER("USDHC2", IMX8MQ_ICM_USDHC2, IMX8MQ_ICN_MAIN),
+ 	DEFINE_BUS_MASTER("PCIE1", IMX8MQ_ICM_PCIE1, IMX8MQ_ICN_MAIN),
+ 	DEFINE_BUS_MASTER("PCIE2", IMX8MQ_ICM_PCIE2, IMX8MQ_ICN_MAIN),
+ 	DEFINE_BUS_INTERCONNECT("PL301_MAIN", IMX8MQ_ICN_MAIN,
+ 			IMX8MQ_ICN_NOC, IMX8MQ_ICS_OCRAM),
++	DEFINE_BUS_MASTER("SDMA1", IMX8MQ_ICM_SDMA1, IMX8MQ_ICN_PER_M),
++	DEFINE_BUS_MASTER("USDHC1", IMX8MQ_ICM_USDHC1, IMX8MQ_ICN_PER_M),
++	DEFINE_BUS_MASTER("USDHC2", IMX8MQ_ICM_USDHC2, IMX8MQ_ICN_PER_M),
++	DEFINE_BUS_INTERCONNECT("PL301_PER_M", IMX8MQ_ICN_PER_M,
++			IMX8MQ_ICN_MAIN),
++
++	DEFINE_BUS_MASTER("SAI1", IMX8MQ_ICM_SAI1, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_MASTER("SAI2", IMX8MQ_ICM_SAI2, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_MASTER("SAI3", IMX8MQ_ICM_SAI3, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_MASTER("SAI4", IMX8MQ_ICM_SAI4, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_MASTER("SAI5", IMX8MQ_ICM_SAI5, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_MASTER("SAI6", IMX8MQ_ICM_SAI6, IMX8MQ_ICN_WAKEUP),
++	DEFINE_BUS_INTERCONNECT("PL301_WAKEUP", IMX8MQ_ICN_WAKEUP,
++			IMX8MQ_ICN_MAIN),
  };
-@@ -271,6 +273,22 @@ static int imx8m_ddrc_target(struct device *dev, unsigned long *freq, u32 flags)
- 	return ret;
- }
  
-+static int imx8m_ddrc_suspend(struct device *dev)
-+{
-+	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-+
-+	priv->resume_rate = clk_get_rate(priv->dram_core);
-+
-+	return imx8m_ddrc_target(dev, &priv->suspend_rate, 0);
-+}
-+
-+static int imx8m_ddrc_resume(struct device *dev)
-+{
-+	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-+
-+	return imx8m_ddrc_target(dev, &priv->resume_rate, 0);
-+}
-+
- static int imx8m_ddrc_get_cur_freq(struct device *dev, unsigned long *freq)
- {
- 	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-@@ -336,6 +354,9 @@ static int imx8m_ddrc_init_freq_info(struct device *dev)
- 
- 		if (dev_pm_opp_add(dev, freq->rate * 250000, 0))
- 			return -ENODEV;
-+
-+		if (index ==  0)
-+			priv->suspend_rate = freq->rate * 250000;
- 	}
- 
- 	return 0;
-@@ -412,10 +433,15 @@ static const struct of_device_id imx8m_ddrc_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, imx8m_ddrc_of_match);
- 
-+static const struct dev_pm_ops imx8m_ddrc_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx8m_ddrc_suspend, imx8m_ddrc_resume)
-+};
-+
- static struct platform_driver imx8m_ddrc_platdrv = {
- 	.probe		= imx8m_ddrc_probe,
- 	.driver = {
- 		.name	= "imx8m-ddrc-devfreq",
-+		.pm = &imx8m_ddrc_pm_ops,
- 		.of_match_table = of_match_ptr(imx8m_ddrc_of_match),
- 	},
- };
+ static int imx8mq_icc_probe(struct platform_device *pdev)
 -- 
 2.29.2
 
