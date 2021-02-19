@@ -2,98 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D06C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BF8C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 12:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D185864E44
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 01:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8D564EC0
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Feb 2021 12:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbhBSB0l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Feb 2021 20:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229468AbhBSB0k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Feb 2021 20:26:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E94664E44;
-        Fri, 19 Feb 2021 01:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613697959;
-        bh=42x/LKbzJxEUPanyTDGHE4i4CEWQkTuN5dQZZslOgFk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=HJmJGYzyp5/V+0D+eI0Zd+pf8+2dpsReIQYSD+fl41S2QvyCm6YULtaO/RvuSzCt8
-         V8p3UG7VlY7yvFSmAsaNrfjjl1IoUq6pBf4YnBU1aghCx1C8XcxMgpsJfNWVHQ9+2W
-         wrrFzUFm8HooUwmNErq1uK6n4RNIvHgcAA/Oh52nrMlCPi8QTQy+WES4pM2/AKZt+y
-         aVQHlg4wJReedq69nfRJeVLZS+rT7iTemzfduFrWEk4KsxcCDmNsXzn/EjHctIIFe7
-         /ZXh1gw3OvN/zeeG3IyplHUpywyj55RLWNBMKPQXmxFbPqbvj4OJ0cv0ry6vYgVzhE
-         kDsulqiKpKk5Q==
-Content-Type: text/plain; charset="utf-8"
+        id S229958AbhBSMDo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Feb 2021 07:03:44 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:32939 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231136AbhBSMCf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Feb 2021 07:02:35 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 6CE863E5;
+        Fri, 19 Feb 2021 07:01:27 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 19 Feb 2021 07:01:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=zO2+KACVCBF9wPIu/yH5KH2QXWS
+        QL5/8EumXFIR8eo8=; b=LN63jKfwAVfkQhPkAmtvaCtkvElndUggyWlDn85P1+l
+        Am7hTq5ErVfhIxbh/6rjeipmAWJCimTpOoveZcjlLeSieUkPJ7hzYd72C8/kP6mo
+        5KCKycRxRHWUQ2UOdApkEfRJM65DJGyN7QAMBx/Sg4u02KsculdyaVuQw4zqVTZO
+        O/rytldqLwsHyRtRggoJ/yhpnuTsEMl1W5LRiSzKZBtHZk+URIjGFQJAHeLlQQY7
+        2KLpDhalEgBe2Hh4A2ObusuP+GMWOtV2J+iBKIdsK2i8bFDU025HvDEXy/yUj+e3
+        gDortjNdut6uNB5dYz6eU1wIA17vjrS8OzPpBZuyC+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=zO2+KA
+        CVCBF9wPIu/yH5KH2QXWSQL5/8EumXFIR8eo8=; b=FTYfYQ8/8+88oq9ECKRWCq
+        RFVnwCt99ZtOfsZMpiE/xg8DdBypsGfCaTIZTEBSNsTOtWOcWKS8oKumtBsl4IWw
+        wugBSSycxlqwuzJSQhG7ZM8q70d6SAI9ly8wypF1bGnumWLKXEY6sYrkbhQEy9I3
+        0r1+74PCeuCwCOEOIOyjtdlT+q0MLNxZ1p7ypcLN8cU0xDATHcK9QWo0qDNwggQk
+        ie2JnXMdhNOqeupPLIC69CglsG5EiYgmARWzP51pAwxNqZsfE6r3QlI94xRqDNLX
+        BWVDjjjlWq5Vsgct919vI6lKes8XPUbhgCoiXhbFeMAnszIgoDaydiTN4X0azjCQ
+        ==
+X-ME-Sender: <xms:lKgvYEdvgIXhs2p0j4b0XnoEABZfeFW51cyZdj_PRgQQssUX9GsUXw>
+    <xme:lKgvYPKEGWeIrV4OPfwEXIR-XBWSq3A1PY12D23TctqXAvliooi5V1CPeQIITz63e
+    5wRf6p4PYXatB7exWc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrjeeigdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:lKgvYBFPoJTadOhRLZOploO2qxizfkxuk5ulJ4oJWgI56tpeJTamvA>
+    <xmx:lKgvYKAxaOi581VsH_ynDaUj7XdaOC2qk-oiP9QoTK_AsxJbuqnieA>
+    <xmx:lKgvYM87Nlle8X6aN8fMqeQ8X-Hg9WRe5zRSbTvOA6cxiZmONV4oyw>
+    <xmx:l6gvYPkcOyBDFmWcA1QplWZ8ePSM7t6K4Ep5gF88iXIymQVkjIIpGg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AE1501080057;
+        Fri, 19 Feb 2021 07:01:24 -0500 (EST)
+Date:   Fri, 19 Feb 2021 13:01:23 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Tobias Schramm <t.schramm@manjaro.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [PATCH v2 1/1] clk: sunxi-ng: v3s: use sigma-delta modulation
+ for audio-pll
+Message-ID: <20210219120123.4q5m27byxylpsrtb@gilmour>
+References: <20210218112001.479018-1-t.schramm@manjaro.org>
+ <20210218112001.479018-2-t.schramm@manjaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210218093715.7fdc27ee@xps13>
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1613623791-4598-7-git-send-email-shubhrajyoti.datta@xilinx.com> <20210218093715.7fdc27ee@xps13>
-Subject: Re: [PATCH v9 6/7] clk: clock-wizard: Remove the hardcoding of the clock outputs
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, gregkh@linuxfoundation.org,
-        shubhrajyoti.datta@gmail.com
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Date:   Thu, 18 Feb 2021 17:25:57 -0800
-Message-ID: <161369795774.1254594.6203789110347055936@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oyfqdg5wwwj4kjco"
+Content-Disposition: inline
+In-Reply-To: <20210218112001.479018-2-t.schramm@manjaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2021-02-18 00:37:15)
-> Hi Shubhrajyoti,
->=20
-> Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 Feb
-> 2021 10:19:50 +0530:
->=20
-> > The number of output clocks are configurable in the hardware.
-> > Currently the driver registers the maximum number of outputs.
-> > Fix the same by registering only the outputs that are there.
-> >=20
-> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > ---
-> > v4:
-> > Assign output in this patch
-> >=20
-> >  drivers/clk/clk-xlnx-clock-wizard.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx=
--clock-wizard.c
-> > index ed3b0ef..d403a74 100644
-> > --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> > @@ -473,6 +473,7 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
-> >       unsigned long rate;
-> >       const char *clk_name;
-> >       struct clk_wzrd *clk_wzrd;
-> > +     int outputs;
-> >       struct device_node *np =3D pdev->dev.of_node;
-> > =20
-> >       clk_wzrd =3D devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERN=
-EL);
-> > @@ -541,6 +542,7 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
-> >               goto err_disable_clk;
-> >       }
-> > =20
-> > +     outputs =3D of_property_count_strings(np, "clock-output-names");
->=20
-> A check on outputs validity is probably welcome.
->=20
-> Also I usually prefer noutputs or nb_outputs for such variable name,
-> which implies a number rather than an array, but this is personal taste.
 
-Ideally we get rid of clock-output-names and generate them at runtime
-instead based on some combination of device name and something else.
+--oyfqdg5wwwj4kjco
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 18, 2021 at 12:20:01PM +0100, Tobias Schramm wrote:
+> Previously it was not possible to achieve clock rates of 24.576MHz and
+> 22.5792MHz, which are commonly required core clocks for the i2s
+> peripheral of v3s based SoCs.
+>=20
+> Add support for those clock rates through the audio pll's sigma-delta
+> modulator.
+>=20
+> Signed-off-by: Tobias Schramm <t.schramm@manjaro.org>
+
+Applied, thanks
+Maxime
+
+--oyfqdg5wwwj4kjco
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYC+okwAKCRDj7w1vZxhR
+xWUPAP9UlOHIEd8Mmjjo0yVzV4BlzO+qFihrLW4LloAikQ6UYAD/fvjjkFGKwNzi
+dliEhvNt3GxZ/wy5dEbCJrAgdYNiVQM=
+=RVBT
+-----END PGP SIGNATURE-----
+
+--oyfqdg5wwwj4kjco--
