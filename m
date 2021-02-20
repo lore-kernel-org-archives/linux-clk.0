@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3994EC433E6
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Feb 2021 15:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18239C433E9
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Feb 2021 15:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17D5764ED7
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Feb 2021 15:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E246764ED7
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Feb 2021 15:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbhBTP5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Feb 2021 10:57:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
+        id S229784AbhBTP6R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Feb 2021 10:58:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbhBTP5d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Feb 2021 10:57:33 -0500
-Received: from m-r1.th.seeweb.it (m-r1.th.seeweb.it [IPv6:2001:4b7a:2000:18::170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34395C061786;
-        Sat, 20 Feb 2021 07:56:38 -0800 (PST)
+        with ESMTP id S229808AbhBTP6O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Feb 2021 10:58:14 -0500
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E23A3C061797
+        for <linux-clk@vger.kernel.org>; Sat, 20 Feb 2021 07:56:39 -0800 (PST)
 Received: from localhost.localdomain (abab236.neoplus.adsl.tpnet.pl [83.6.165.236])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id A10AD1F4A3;
-        Sat, 20 Feb 2021 16:56:33 +0100 (CET)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id DA5301F613;
+        Sat, 20 Feb 2021 16:56:36 +0100 (CET)
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 To:     phone-devel@vger.kernel.org
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
@@ -40,9 +40,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
         Craig Tatlor <ctatlor97@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 2/6] clk: qcom: gcc-sdm660: Set HWCG bit to 1 on some clocks
-Date:   Sat, 20 Feb 2021 16:56:13 +0100
-Message-Id: <20210220155618.176559-2-konrad.dybcio@somainline.org>
+Subject: [PATCH 4/6] clk: qcom: gcc-sdm660: Remove gds_hw_ctrl from GDSCs
+Date:   Sat, 20 Feb 2021 16:56:15 +0100
+Message-Id: <20210220155618.176559-4-konrad.dybcio@somainline.org>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210220155618.176559-1-konrad.dybcio@somainline.org>
 References: <20210220155618.176559-1-konrad.dybcio@somainline.org>
@@ -52,55 +52,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the downstream kernel, some clocks need to have
-HWCG disabled. Fix it.
+These GDSCs do not support HW control, so remove the property.
 
 Fixes: f2a76a2955c0 ("clk: qcom: Add Global Clock controller (GCC) driver for SDM660")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 ---
- drivers/clk/qcom/gcc-sdm660.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/qcom/gcc-sdm660.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-index 597800ce1bdf..2bf4e29462e8 100644
+index 05664d6b612a..bc8dfcd6d629 100644
 --- a/drivers/clk/qcom/gcc-sdm660.c
 +++ b/drivers/clk/qcom/gcc-sdm660.c
-@@ -980,6 +980,8 @@ static struct clk_rcg2 usb3_phy_aux_clk_src = {
- static struct clk_branch gcc_aggre2_ufs_axi_clk = {
- 	.halt_reg = 0x75034,
- 	.halt_check = BRANCH_HALT,
-+	.hwcg_reg = 0x75034,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x75034,
- 		.enable_mask = BIT(0),
-@@ -1027,6 +1029,8 @@ static struct clk_branch gcc_bimc_gfx_clk = {
- static struct clk_branch gcc_bimc_hmss_axi_clk = {
- 	.halt_reg = 0x48004,
- 	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0x48004,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x52004,
- 		.enable_mask = BIT(22),
-@@ -1698,6 +1702,8 @@ static struct clk_branch gcc_mmss_noc_cfg_ahb_clk = {
- static struct clk_branch gcc_mmss_sys_noc_axi_clk = {
- 	.halt_reg = 0x9000,
- 	.halt_check = BRANCH_HALT,
-+	.hwcg_reg = 0x9000,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x9000,
- 		.enable_mask = BIT(0),
-@@ -1956,6 +1962,8 @@ static struct clk_branch gcc_ufs_ahb_clk = {
- static struct clk_branch gcc_ufs_axi_clk = {
- 	.halt_reg = 0x75008,
- 	.halt_check = BRANCH_HALT,
-+	.hwcg_reg = 0x75008,
-+	.hwcg_bit = 1,
- 	.clkr = {
- 		.enable_reg = 0x75008,
- 		.enable_mask = BIT(0),
+@@ -2362,7 +2362,6 @@ static struct clk_branch hlos2_vote_turing_adsp_smmu_clk = {
+ 
+ static struct gdsc ufs_gdsc = {
+ 	.gdscr = 0x75004,
+-	.gds_hw_ctrl = 0x0,
+ 	.pd = {
+ 		.name = "ufs_gdsc",
+ 	},
+@@ -2372,7 +2371,6 @@ static struct gdsc ufs_gdsc = {
+ 
+ static struct gdsc usb_30_gdsc = {
+ 	.gdscr = 0xf004,
+-	.gds_hw_ctrl = 0x0,
+ 	.pd = {
+ 		.name = "usb_30_gdsc",
+ 	},
+@@ -2382,7 +2380,6 @@ static struct gdsc usb_30_gdsc = {
+ 
+ static struct gdsc pcie_0_gdsc = {
+ 	.gdscr = 0x6b004,
+-	.gds_hw_ctrl = 0x0,
+ 	.pd = {
+ 		.name = "pcie_0_gdsc",
+ 	},
 -- 
 2.30.1
 
