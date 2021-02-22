@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839B1C4332B
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8E7C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B74064E31
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060F964E31
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233119AbhBVTnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:43:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54750 "EHLO mail.kernel.org"
+        id S233280AbhBVTnn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 14:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232983AbhBVTnA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:43:00 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AA22B64E02;
-        Mon, 22 Feb 2021 19:42:18 +0000 (UTC)
+        id S233255AbhBVTnj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Feb 2021 14:43:39 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CB72364E4B;
+        Mon, 22 Feb 2021 19:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614022939;
-        bh=ABuBsMdkyLfGL+k7g+MNLq9V3ierJFRdHgGS1x45AwU=;
+        s=k20201202; t=1614022941;
+        bh=cpT8r+QNxpmRXss3pRVBFNzKbr6LNSXB9+ugmFgVo0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JgKjJJjHWloLza27ScGiZXzMizkKHkPE7YQD0NKcyQHlNpRwjdUM0J5MllDZhCF64
-         bZOpbvMNSHotVzw1oTzglbwoLV6U1bYIpSiDFv4+fZSnjCfT2RfYfRcb3ev+GfJMkh
-         +LenIZlQyWUADO/CRCGdvZvh3no/5G1Mw8jAiROyC+FGXkeMj/7AEFRoGh5/gqCJLr
-         WNuf9NX44CWM0tBM3hMqNTPT8B5g3f9RcbgTQgEAjICqoMLLTF1mU0be+r2CBapPSz
-         VKoSxMCle/DRlabWKUm5bxHNh7R7LN4onRmS++WFCj7fbwsEKCCa5CCI197MKVftN/
-         MHKZWs5c2MqVg==
+        b=RKz7HFx18UziBmJyTPn38dL5UQ7qoCfLSbMiyen3lh0OzSK4/KqE2+lLTp1M9e94R
+         1elb6o+d7xrOfscDfmwdPbOz6wZPWm7e/BOXwbTy8Qf3uUCLJbVFSN69XBTKT0yD54
+         NO+cG6kEjP4bzG7ucDw1+88g8aU2KD6K89mgDR8R7gP0Dt1WrYk5yn1DrSi5dLh7L4
+         4UNZTt4eavrOPk02dlg6MvBizjyHJUyvyiOQE/qI486evd22cSkO9VLMfkNCgzc0Oy
+         fojlaCUx/vZybyfcCG5+TzueYLraowQ9xna9nNcqfXUjqHX/TF0j/XQPbObC6hNpQh
+         8vIRhIru9U2Nw==
 Received: by pali.im (Postfix)
-        id B724AEB8; Mon, 22 Feb 2021 20:42:16 +0100 (CET)
+        id 98DC2F8D; Mon, 22 Feb 2021 20:42:17 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?UTF-8?q?G=C3=A9rald=20Kerma?= <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: [PATCH mvebu v3 02/10] cpufreq: armada-37xx: Fix setting TBG parent for load levels
-Date:   Mon, 22 Feb 2021 20:41:50 +0100
-Message-Id: <20210222194158.12342-3-pali@kernel.org>
+Subject: [PATCH mvebu v3 05/10] clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to 1 GHz
+Date:   Mon, 22 Feb 2021 20:41:53 +0100
+Message-Id: <20210222194158.12342-6-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
@@ -63,144 +63,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marek Behún <kabel@kernel.org>
+It was observed that the workaround introduced by commit 61c40f35f5cd
+("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to
+1.2GHz") when base CPU frequency is 1.2 GHz is also required when base
+CPU frequency is 1 GHz. Otherwise switching CPU frequency directly from
+L2 (250 MHz) to L0 (1 GHz) causes a crash.
 
-With CPU frequency determining software [1] we have discovered that
-after this driver does one CPU frequency change, the base frequency of
-the CPU is set to the frequency of TBG-A-P clock, instead of the TBG
-that is parent to the CPU.
+When base CPU frequency is just 800 MHz no crashed were observed during
+switch from L2 to L0.
 
-This can be reproduced on EspressoBIN and Turris MOX:
-  cd /sys/devices/system/cpu/cpufreq/policy0
-  echo powersave >scaling_governor
-  echo performance >scaling_governor
-
-Running the mhz tool before this driver is loaded reports 1000 MHz, and
-after loading the driver and executing commands above the tool reports
-800 MHz.
-
-The change of TBG clock selector is supposed to happen in function
-armada37xx_cpufreq_dvfs_setup. Before the function returns, it does
-this:
-  parent = clk_get_parent(clk);
-  clk_set_parent(clk, parent);
-
-The armada-37xx-periph clock driver has the .set_parent method
-implemented correctly for this, so if the method was actually called,
-this would work. But since the introduction of the common clock
-framework in commit b2476490ef11 ("clk: introduce the common clock..."),
-the clk_set_parent function checks whether the parent is actually
-changing, and if the requested new parent is same as the old parent
-(which is obviously the case for the code above), the .set_parent method
-is not called at all.
-
-This patch fixes this issue by filling the correct TBG clock selector
-directly in the armada37xx_cpufreq_dvfs_setup during the filling of
-other registers at the same address. But the determination of CPU TBG
-index cannot be done via the common clock framework, therefore we need
-to access the North Bridge Peripheral Clock registers directly in this
-driver.
-
-[1] https://github.com/wtarreau/mhz
-
-Signed-off-by: Marek Behún <kabel@kernel.org>
-Tested-by: Pali Rohár <pali@kernel.org>
+Signed-off-by: Pali Rohár <pali@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 Tested-by: Philip Soares <philips@netisense.com>
-Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
-Cc: stable@vger.kernel.org
+Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+Cc: stable@vger.kernel.org # 61c40f35f5cd ("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz")
 ---
- drivers/cpufreq/armada-37xx-cpufreq.c | 35 ++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ drivers/clk/mvebu/armada-37xx-periph.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-index b4af4094309b..b8dc6c849579 100644
---- a/drivers/cpufreq/armada-37xx-cpufreq.c
-+++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-@@ -25,6 +25,10 @@
- 
- #include "cpufreq-dt.h"
- 
-+/* Clk register set */
-+#define ARMADA_37XX_CLK_TBG_SEL		0
-+#define ARMADA_37XX_CLK_TBG_SEL_CPU_OFF	22
-+
- /* Power management in North Bridge register set */
- #define ARMADA_37XX_NB_L0L1	0x18
- #define ARMADA_37XX_NB_L2L3	0x1C
-@@ -120,10 +124,15 @@ static struct armada_37xx_dvfs *armada_37xx_cpu_freq_info_get(u32 freq)
-  * will be configured then the DVFS will be enabled.
-  */
- static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
--						 struct clk *clk, u8 *divider)
-+						 struct regmap *clk_base, u8 *divider)
- {
-+	u32 cpu_tbg_sel;
- 	int load_lvl;
--	struct clk *parent;
-+
-+	/* Determine to which TBG clock is CPU connected */
-+	regmap_read(clk_base, ARMADA_37XX_CLK_TBG_SEL, &cpu_tbg_sel);
-+	cpu_tbg_sel >>= ARMADA_37XX_CLK_TBG_SEL_CPU_OFF;
-+	cpu_tbg_sel &= ARMADA_37XX_NB_TBG_SEL_MASK;
- 
- 	for (load_lvl = 0; load_lvl < LOAD_LEVEL_NR; load_lvl++) {
- 		unsigned int reg, mask, val, offset = 0;
-@@ -142,6 +151,11 @@ static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
- 		mask = (ARMADA_37XX_NB_CLK_SEL_MASK
- 			<< ARMADA_37XX_NB_CLK_SEL_OFF);
- 
-+		/* Set TBG index, for all levels we use the same TBG */
-+		val = cpu_tbg_sel << ARMADA_37XX_NB_TBG_SEL_OFF;
-+		mask = (ARMADA_37XX_NB_TBG_SEL_MASK
-+			<< ARMADA_37XX_NB_TBG_SEL_OFF);
-+
- 		/*
- 		 * Set cpu divider based on the pre-computed array in
- 		 * order to have balanced step.
-@@ -160,14 +174,6 @@ static void __init armada37xx_cpufreq_dvfs_setup(struct regmap *base,
- 
- 		regmap_update_bits(base, reg, mask, val);
- 	}
--
--	/*
--	 * Set cpu clock source, for all the level we keep the same
--	 * clock source that the one already configured. For this one
--	 * we need to use the clock framework
--	 */
--	parent = clk_get_parent(clk);
--	clk_set_parent(clk, parent);
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 6507bd2c5f31..b15e177bea7e 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -487,8 +487,10 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
  }
  
  /*
-@@ -358,11 +364,16 @@ static int __init armada37xx_cpufreq_driver_init(void)
- 	struct platform_device *pdev;
- 	unsigned long freq;
- 	unsigned int cur_frequency, base_frequency;
--	struct regmap *nb_pm_base, *avs_base;
-+	struct regmap *nb_clk_base, *nb_pm_base, *avs_base;
- 	struct device *cpu_dev;
- 	int load_lvl, ret;
- 	struct clk *clk, *parent;
+- * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+- * respectively) to L0 frequency (1.2 Ghz) requires a significant
++ * Workaround when base CPU frequnecy is 1000 or 1200 MHz
++ *
++ * Switching the CPU from the L2 or L3 frequencies (250/300 or 200 MHz
++ * respectively) to L0 frequency (1/1.2 GHz) requires a significant
+  * amount of time to let VDD stabilize to the appropriate
+  * voltage. This amount of time is large enough that it cannot be
+  * covered by the hardware countdown register. Due to this, the CPU
+@@ -498,15 +500,15 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+  * To work around this problem, we prevent switching directly from the
+  * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+  * frequency in-between. The sequence therefore becomes:
+- * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
++ * 1. First switch from L2/L3 (200/250/300 MHz) to L1 (500/600 MHz)
+  * 2. Sleep 20ms for stabling VDD voltage
+- * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
++ * 3. Then switch from L1 (500/600 MHz) to L0 (1000/1200 MHz).
+  */
+ static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
+ {
+ 	unsigned int cur_level;
  
-+	nb_clk_base =
-+		syscon_regmap_lookup_by_compatible("marvell,armada-3700-periph-clock-nb");
-+	if (IS_ERR(nb_clk_base))
-+		return -ENODEV;
-+
- 	nb_pm_base =
- 		syscon_regmap_lookup_by_compatible("marvell,armada-3700-nb-pm");
+-	if (rate != 1200 * 1000 * 1000)
++	if (rate < 1000 * 1000 * 1000)
+ 		return;
  
-@@ -439,7 +450,7 @@ static int __init armada37xx_cpufreq_driver_init(void)
- 	armada37xx_cpufreq_avs_configure(avs_base, dvfs);
- 	armada37xx_cpufreq_avs_setup(avs_base, dvfs);
- 
--	armada37xx_cpufreq_dvfs_setup(nb_pm_base, clk, dvfs->divider);
-+	armada37xx_cpufreq_dvfs_setup(nb_pm_base, nb_clk_base, dvfs->divider);
- 	clk_put(clk);
- 
- 	for (load_lvl = ARMADA_37XX_DVFS_LOAD_0; load_lvl < LOAD_LEVEL_NR;
+ 	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
 -- 
 2.20.1
 
