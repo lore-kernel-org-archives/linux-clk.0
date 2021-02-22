@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB2FC4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8BAC4332B
 	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86BB564E3F
+	by mail.kernel.org (Postfix) with ESMTP id 713FC64ED3
 	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232530AbhBVTns (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55070 "EHLO mail.kernel.org"
+        id S233317AbhBVTnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 14:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233276AbhBVTnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S233277AbhBVTnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 22 Feb 2021 14:43:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0AC7964ECB;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0767864E5B;
         Mon, 22 Feb 2021 19:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1614022941;
-        bh=kI6a5fpPOoHyR23MS8XsVVO3TkRdhqh+1vmUgjHNL+s=;
+        bh=6ZRXacZwBMTVavJ32wJarmiD2obBpZ5uNUZXITH4fqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KqcPh3/hotXpXBp4eFJKe8i7oC2W5DaNqDNwc2vXheVsls88r8PCXCLS9sFLNHHT0
-         3vxCehq8WEZ3OmTwQdhsIKEFmWNGnDWj3wKiMY8cH2AbSlRONIe6rJrnqn0JeDBu4K
-         CtdVZ+5t+OR+Yhe1tTkws/WhGrC45/+JOTEykwYhcH/P3kXpasJpSdXHwxVN3+a+j8
-         h4bquHP+X9COVFZHGaAfwricJLFzzJJw3v6fvc1a9bw5iFcWEUMuqzhD8SwV/6vQWb
-         9RIJBfsai6z8/VIopg0qSIAeP89ExvxSpHLaW4jN7J3FQJjLAM7+34AxkLDcLd0wGk
-         gFmnhGXwdyPEQ==
+        b=uLwCgJ+ntkkya8r77vm4W3u0cr6CaygbZb4Ul/vCX657VyHj94QoR7AJakjf0TXLQ
+         12ckfewl+fj3CO+BOvNFrQJrqZp7GcwfLp6xgwQhKVBqG2CNjQODr7qdwoVy1sb9Zy
+         N69DjvXzv/u374VUXPc7uHzEvV1lLDZR3l785ISFzulotECQEaaObNX79i7nnxCF5t
+         sWCH8HyB0U0B9GeT9XESbYC+U747NWGQNTWmzLcrmiubL0mRrlO+T5l2o1VF+YQk9V
+         Q4LC0ZXdiidf2KeL3sS2f8qmS2ul5y0y2GeH+e3E+KGxOlXeZpnathlpp7jK8Ul0Ra
+         W+WXx21wkQ6EQ==
 Received: by pali.im (Postfix)
-        id AB17D111B; Mon, 22 Feb 2021 20:42:18 +0100 (CET)
+        id 4CB4310B4; Mon, 22 Feb 2021 20:42:18 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?UTF-8?q?G=C3=A9rald=20Kerma?= <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: [PATCH mvebu v3 10/10] cpufreq: armada-37xx: Fix module unloading
-Date:   Mon, 22 Feb 2021 20:41:58 +0100
-Message-Id: <20210222194158.12342-11-pali@kernel.org>
+Subject: [PATCH mvebu v3 08/10] cpufreq: armada-37xx: Fix determining base CPU frequency
+Date:   Mon, 22 Feb 2021 20:41:56 +0100
+Message-Id: <20210222194158.12342-9-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
@@ -63,67 +63,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver is missing module_exit hook. Add proper driver exit function
-which unregisters the platform device and cleans up the data.
+When current CPU load is not L0 then loading armada-37xx-cpufreq.ko driver
+fails with following error:
+
+    # modprobe armada-37xx-cpufreq
+    [  502.702097] Unsupported CPU frequency 250 MHz
+
+This issue was partially fixed by commit 8db82563451f ("cpufreq:
+armada-37xx: fix frequency calculation for opp"), but only for calculating
+CPU frequency for opp.
+
+Fix this also for determination of base CPU frequency.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 Tested-by: Philip Soares <philips@netisense.com>
+Fixes: 92ce45fb875d ("cpufreq: Add DVFS support for Armada 37xx")
+Cc: stable@vger.kernel.org # 8db82563451f ("cpufreq: armada-37xx: fix frequency calculation for opp")
 ---
- drivers/cpufreq/armada-37xx-cpufreq.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/cpufreq/armada-37xx-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-index 050abff18308..3fc98a3ffd91 100644
+index 1ab2113daef5..e4782f562e7a 100644
 --- a/drivers/cpufreq/armada-37xx-cpufreq.c
 +++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-@@ -86,6 +86,8 @@ static int avs_map[] = {
- };
+@@ -469,7 +469,7 @@ static int __init armada37xx_cpufreq_driver_init(void)
+ 		return -EINVAL;
+ 	}
  
- struct armada37xx_cpufreq_state {
-+	struct platform_device *pdev;
-+	struct device *cpu_dev;
- 	struct regmap *regmap;
- 	u32 nb_l0l1;
- 	u32 nb_l2l3;
-@@ -506,6 +508,9 @@ static int __init armada37xx_cpufreq_driver_init(void)
- 	if (ret)
- 		goto disable_dvfs;
- 
-+	armada37xx_cpufreq_state->cpu_dev = cpu_dev;
-+	armada37xx_cpufreq_state->pdev = pdev;
-+	platform_set_drvdata(pdev, dvfs);
- 	return 0;
- 
- disable_dvfs:
-@@ -524,6 +529,26 @@ static int __init armada37xx_cpufreq_driver_init(void)
- /* late_initcall, to guarantee the driver is loaded after A37xx clock driver */
- late_initcall(armada37xx_cpufreq_driver_init);
- 
-+static void __exit armada37xx_cpufreq_driver_exit(void)
-+{
-+	struct platform_device *pdev = armada37xx_cpufreq_state->pdev;
-+	struct armada_37xx_dvfs *dvfs = platform_get_drvdata(pdev);
-+	unsigned long freq;
-+	int load_lvl;
-+
-+	platform_device_unregister(pdev);
-+
-+	armada37xx_cpufreq_disable_dvfs(armada37xx_cpufreq_state->regmap);
-+
-+	for (load_lvl = ARMADA_37XX_DVFS_LOAD_0; load_lvl < LOAD_LEVEL_NR; load_lvl++) {
-+		freq = dvfs->cpu_freq_max / dvfs->divider[load_lvl];
-+		dev_pm_opp_remove(armada37xx_cpufreq_state->cpu_dev, freq);
-+	}
-+
-+	kfree(armada37xx_cpufreq_state);
-+}
-+module_exit(armada37xx_cpufreq_driver_exit);
-+
- static const struct of_device_id __maybe_unused armada37xx_cpufreq_of_match[] = {
- 	{ .compatible = "marvell,armada-3700-nb-pm" },
- 	{ },
+-	dvfs = armada_37xx_cpu_freq_info_get(cur_frequency);
++	dvfs = armada_37xx_cpu_freq_info_get(base_frequency);
+ 	if (!dvfs) {
+ 		clk_put(clk);
+ 		return -EINVAL;
 -- 
 2.20.1
 
