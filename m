@@ -2,189 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555E3C4332B
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56683C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6BB64DD3
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17A4C64EC3
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbhBVQFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 11:05:39 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:47893 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231238AbhBVQEl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 11:04:41 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id D26BF2400FE
-        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 17:03:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1614009798; bh=LvquAM2J5zLig8UiWE7YNNTosNOEsZkwWbtbd26zOZI=;
-        h=To:Cc:From:Subject:Date:From;
-        b=nEFtYiWgLTqI2pE9oY4HiC/P8e+FKC2JOkaB2eSDla3UN8OPQN8IO2+k0zJ8XGWFD
-         B+wR7IcgewkASzWqfYvbc25hYRIPKEBQ5+Ku2q0TxurcAtoSWivfPJLVAGtcMOTubh
-         pRSBIjAURv0BCxR/0F6wlS5g15j4LyziablLUk3fbCLEui/oIBYBkkgGRgun4e87wc
-         yzwaMNtavzd+Afqslh51OvxndxLwC+1y8vUwbZzWY/Ko9t1aa8KnWHXZQDBi+0B76d
-         0w7JFHsWs1wpt8HplU9cvTCIKqldow8jvXYj/dyBsIVZlFfLCaTM9mHnTpFb2Wqi7o
-         5w/h/Elt2zVLA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4Dkn5s6W55z9rxp;
-        Mon, 22 Feb 2021 17:03:13 +0100 (CET)
-To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
+        id S230355AbhBVQiR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 11:38:17 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:34453 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230218AbhBVQiQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2021 11:38:16 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id A258D5814F6;
+        Mon, 22 Feb 2021 11:37:17 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Mon, 22 Feb 2021 11:37:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm2; bh=c28hTrZAUemv4yqSSQH1LBZ4DoA5FmR
+        Q414ixUeMM2Y=; b=n93/MUxYnt1mfFwvp4bF0iuyRDq8QMpIVFEbx8M9zL7YEmt
+        Bsduc60yoriiSYl7qeQjaHqVDthjcRsMtJEcXBtPp8QLd5BZgmPEthKFnoanJO/U
+        paa39Ym2UEK8cq6vIspTomaya9HrCKUCDnfn90sUDpHHjHyf/L5rQZrAw/cNoA4A
+        0t9vo0ZrSEVXkLwMVlvaIRWTff9RAhxcK1B00dXv1Thrvo6oJrK48VQAgA/Ub1f2
+        w7DrjRgI7fTu/cPYqp110ODlgXMTaig6ctquyiki0FvYsTb8rjUz2j6H+ZNCjTS6
+        MPGvyjlS26TLbTwG45UHRMqCpd9Uu5QQf2//J0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=c28hTr
+        ZAUemv4yqSSQH1LBZ4DoA5FmRQ414ixUeMM2Y=; b=ciGz/ivIUjuQDtCQrdmQ2D
+        PZFPWMX1m2D1JYbSIpFf9TKQJoMW3SyiWY6VHuV7bO01O0HRDRRUffXfAh7Ki0IJ
+        uOpR0LFHunD4tncFxv4eU58LcK8dLqL51fhbvqJBwRvFHvw6aYjx7cxdBJTajIvT
+        U4VR1+DGZcK+jhxP12rXRYb1975tILeCbYPply1QPAoXZjBgKqOYRAM4mjRT7BnJ
+        gg+OG+inm6XQAku6fCWVVf5Jud2OkocUl1i8vnZAIQz9ogyWMLXmbB5IKJRWuMEA
+        N9euqRYv2f8tzensKapWiD0oT4q/oiPVVSnzrWcX7+cJbsWQgaKr7iiBXVvMynHw
+        ==
+X-ME-Sender: <xms:u90zYFX2EZSAy4eU3W1YL3QgUhx16WEv1PWjfscv7xn7aBkWYfqhIQ>
+    <xme:u90zYFlcSEMGLcbHVbEN2O4g3IUjXoEkYi_nadE_PRy4PjKtRlZI2zF3neWMTFrq_
+    -h7fjDnOsEaEw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeefgdeltdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderreejnecuhfhrohhmpehnnhgvthcu
+    oehnnhgvthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhephfejledtke
+    ehtdejtdekgfegheehfeevfeejffevkeevveekjefhtdehfeeffeegnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhnvghtsehfrghsthhmrg
+    hilhdrfhhm
+X-ME-Proxy: <xmx:u90zYBagM_A9SEqUYG8w4a7FZCSaCJl84_uPZr_ZcsUxm86Qmuk_gw>
+    <xmx:u90zYIVZ-pTsyNkFoHDH-9NBXJR-Sp0Un4YsuN9JIlB42OlmeifgPA>
+    <xmx:u90zYPlf5XMHBmcfvB0kKIWkbkxC33RNWqXA8bHC1YTF7t-70t064g>
+    <xmx:vd0zYHngyDr_RocKIPve-KTS1ROUxGoxpTfwogCF5WdU8C8NudBCYg>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id C0D59A00060; Mon, 22 Feb 2021 11:37:15 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-141-gf094924a34-fm-20210210.001-gf094924a
+Mime-Version: 1.0
+Message-Id: <780f6c9d-388c-4d52-bab5-790cdd62b689@www.fastmail.com>
+In-Reply-To: <20210222095111.zcokx4g3sqghjgyl@pali>
+References: <20210211234445.hbv2diphmgbir76u@pali>
+ <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+ <20210213100139.ckrscepg72zjkj4f@pali>
+ <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
+ <20210214123310.d6armpep7kxbymbu@pali>
+ <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
+ <20210216104141.umy6zrrkal3dlj5j@pali>
+ <d057d7f7-27a5-45ec-88f0-a653572a8ca6@www.fastmail.com>
+ <20210219193302.odcjcaukxxjaedd5@pali>
+ <c0ade595-9bfa-4cfc-8c87-0e955173d5db@www.fastmail.com>
+ <20210222095111.zcokx4g3sqghjgyl@pali>
+Date:   Mon, 22 Feb 2021 08:36:55 -0800
+From:   nnet <nnet@fastmail.fm>
+To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc:     =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+        a.heider@gmail.com, andrew@lunn.ch, gerald@gk2.net,
+        gregory.clement@bootlin.com, kostap@marvell.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "kernel@puri.sm" <kernel@puri.sm>
-Cc:     NXP Linux Team <linux-imx@nxp.com>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
-From:   Martin Kepplinger <martink@posteo.de>
-Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
-Message-ID: <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
-Date:   Mon, 22 Feb 2021 17:03:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
-MIME-Version: 1.0
-In-Reply-To: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
+        miquel.raynal@bootlin.com, mturquette@baylibre.com,
+        rmk+kernel@armlinux.org.uk, sboyd@kernel.org, tmn505@gmail.com,
+        vladimir.vid@sartura.hr, "Philip Soares" <philips@netisense.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_mvebu_v2_00/10]_Armada_37xx:_Fix_cpufreq_changing_b?=
+ =?UTF-8?Q?ase_CPU_speed_to_800_MHz_from_1000_MHz?=
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19.02.21 16:59, Abel Vesa wrote:
-> This has been on my queue for quite some time now. It is more of a
-> proof-of-concept.
-> 
-> This rework is done with the compatibility of future i.MX platforms in
-> mind. For example, the i.MX8MP platform has multiple NoCs. This
-> patchsets prepares the imx interconnect and imx devfreq for that too.
-> 
-> As of now, none of the drivers involved are being used and there is no
-> icc consumer on any off the i.MX platforms.
-> 
-> Basically, the steps taken here are the following:
-> 
-> 1. Make the dram_apb clock "reparantable" from kernel.
-> This is needed in order to keep track of the actual parent of the
-> dram_apb clock in the kernel clock hierarchy. Note that the actual
-> switch is done EL3 (TF-A).
-> 
-> 2. Rework the imx-bus so the actual link between the icc and the
-> NoCs or the pl301s is not tightly coupled. This allows us to have
-> as many NoCs as necessary but also allows as to use the same driver
-> for the pl301s. The pl301s have their own clocks too, so we need to
-> reduce their rates too.
-> 
-> 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
-> OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
-> both EL3 and kernel in sync, we rely on what the EL3 gives us.
-> Also, when the platform suspends, the bus needs to be running at highest
-> rate, otherwise there is a chance it might not resume anymore.
-> By adding the late system sleep PM ops we can handle that easily.
-> 
-> 4. Rework the imx interconnect driver to use the fsl,icc-id instead
-> of the robust imx_icc_node_adj_desc for linking with the target node.
-> By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
-> we can link each icc node to their corresponding NoC, pl301 or dram.
-> Basically, when the imx interconnect platform specific driver probes,
-> it will take each node defined for that platform and look-up the
-> corresponding dts node based on the id and add that as the qos device.
-> 
-> 5. Added the fec and usdhc as icc consumers. This is just as an example.
-> All the other consumers can be added later. Basically, each consumer
-> will add a path to their device node and in the driver will have to
-> handle that icc path accordingly.
-> 
+> Could I add your Tested-by line to patch series?
 
-thanks for working on this Abel,
+Yes, by: Philip Soares <philips@netisense.com>
 
-It looks like the icc path requests don't work for me:
-
-when applying this onto v5.11 (without any other workaround in that 
-area, but some out-of-tree icc-requests like in mxsfb) my rootfs isn't 
-being mounted anymore. Since you add icc requests to the usdhc driver, 
-there could be something wrong.
-
-So I revert 19/19 ("mmc: sdhci-esdhc-imx: Add interconnect support") and 
-then my imx8mq (Librem 5) rootfs system boots, but all frequencies stay 
-at the minimum (despite the icc request like this: 
-https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1692de27d1475c53574dd7359c68ba613e0fea10 
-so I can't use the display).
-
-What could be missing? As I said I'm trying on top of v5.11, (at least I 
-have the NOC node described: 
-https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1d74a24c9944d1bf618abdd57d24101368cc8df0 
-and (with the revert from 
-https://lore.kernel.org/linux-arm-kernel/20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175/ 
-devfreq works without your patchset ) Is there anything I'm missing that 
-is not yet merged in v5.11?
-
-Can I test anything else that would help?
-
-/sys/class/devfreq# cat */cur_freq
-133333334
-25000000
-25641026
-25000000
-800000000
-25000000
-0
-25000000
-25000000
-25000000
-0
-
-the available freqs look ok (opp table removed from device dts, but you 
-don't read that anymore anyway):
-
-cat */available_frequencies
-133333333 400000000 800000000
-25000000 100000000 800000000
-25000000 133333333 333333333
-25000000 266666666
-25000000 800000000
-25000000 800000000
-25000000 333333333
-25000000 500000000
-25000000 500000000
-25000000 128000000 500000000
-25000000 133333333
-
-where ls is:
-
-32700000.noc 
-
-3d400000.memory-controller 
-
-soc@0:pl301@0 
-
-soc@0:pl301@1 
-
-soc@0:pl301@2 
-
-soc@0:pl301@3 
-
-soc@0:pl301@4 
-
-soc@0:pl301@5 
-
-soc@0:pl301@6 
-
-soc@0:pl301@7 
-
-soc@0:pl301@8
-
-thanks,
-                                 martin
+Thank you for the patches!
