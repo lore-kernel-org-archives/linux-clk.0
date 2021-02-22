@@ -2,152 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75361C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 09:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555E3C4332B
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0FF664E44
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 09:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F6BB64DD3
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 16:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230036AbhBVJwC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 04:52:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51656 "EHLO mail.kernel.org"
+        id S231605AbhBVQFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 11:05:39 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:47893 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229995AbhBVJvz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 04:51:55 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C5BE664E13;
-        Mon, 22 Feb 2021 09:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613987473;
-        bh=Yu/qN8STAau22SmwxKcvT5Lel5uW0oN72WFz+Pv29SI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ojMcOtCF8a6RX8HGZnEdqE1r3Rb7ZEEPIj86z2Tq5ncrGQBXtlLZmKGK9h7EEqzso
-         frAx2sa7klpY1ZxLTOUX5QhlxClfFmLgOPymUQHCfvHSbtuG5/XK22qk077SPBHYoU
-         QEO/taupT2HnwZylbF8/1rBEEX/S3v5XMbBmTbLR9XTgfAg+6pcc1A6c/P+znfqhj5
-         D2ahVEXud88bF2HO5uBRY97+p2F/Wo7qd0mTfFYsDgUh6/oxrZYiyOVRV6lzgICRHK
-         UjOKzsQd/YzHLsG/3wosV7tHADShns2JHDc8s5M5GY/jz4gUUtMxjS4UJPALcEFQU8
-         GWoSNM9oC43Zg==
-Received: by pali.im (Postfix)
-        id 72680C9A; Mon, 22 Feb 2021 10:51:11 +0100 (CET)
-Date:   Mon, 22 Feb 2021 10:51:11 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     nnet <nnet@fastmail.fm>
-Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
-        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
-        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
-        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
-Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
- CPU speed to 800 MHz from 1000 MHz
-Message-ID: <20210222095111.zcokx4g3sqghjgyl@pali>
-References: <20210211234445.hbv2diphmgbir76u@pali>
- <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
- <20210213100139.ckrscepg72zjkj4f@pali>
- <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
- <20210214123310.d6armpep7kxbymbu@pali>
- <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
- <20210216104141.umy6zrrkal3dlj5j@pali>
- <d057d7f7-27a5-45ec-88f0-a653572a8ca6@www.fastmail.com>
- <20210219193302.odcjcaukxxjaedd5@pali>
- <c0ade595-9bfa-4cfc-8c87-0e955173d5db@www.fastmail.com>
+        id S231238AbhBVQEl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Feb 2021 11:04:41 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id D26BF2400FE
+        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 17:03:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1614009798; bh=LvquAM2J5zLig8UiWE7YNNTosNOEsZkwWbtbd26zOZI=;
+        h=To:Cc:From:Subject:Date:From;
+        b=nEFtYiWgLTqI2pE9oY4HiC/P8e+FKC2JOkaB2eSDla3UN8OPQN8IO2+k0zJ8XGWFD
+         B+wR7IcgewkASzWqfYvbc25hYRIPKEBQ5+Ku2q0TxurcAtoSWivfPJLVAGtcMOTubh
+         pRSBIjAURv0BCxR/0F6wlS5g15j4LyziablLUk3fbCLEui/oIBYBkkgGRgun4e87wc
+         yzwaMNtavzd+Afqslh51OvxndxLwC+1y8vUwbZzWY/Ko9t1aa8KnWHXZQDBi+0B76d
+         0w7JFHsWs1wpt8HplU9cvTCIKqldow8jvXYj/dyBsIVZlFfLCaTM9mHnTpFb2Wqi7o
+         5w/h/Elt2zVLA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4Dkn5s6W55z9rxp;
+        Mon, 22 Feb 2021 17:03:13 +0100 (CET)
+To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "kernel@puri.sm" <kernel@puri.sm>
+Cc:     NXP Linux Team <linux-imx@nxp.com>
+References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+From:   Martin Kepplinger <martink@posteo.de>
+Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
+Message-ID: <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
+Date:   Mon, 22 Feb 2021 17:03:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0ade595-9bfa-4cfc-8c87-0e955173d5db@www.fastmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sunday 21 February 2021 19:17:40 nnet wrote:
-> > Could you test if 1.155V voltage for L1 is stable on 1.2 GHz variant?
+On 19.02.21 16:59, Abel Vesa wrote:
+> This has been on my queue for quite some time now. It is more of a
+> proof-of-concept.
 > 
-> ++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
-> ...
-> ++              if (avs_min_l1 > dvfs->avs[0])
-> ++                      avs_min_l1 = dvfs->avs[0];
-> ++
-> ++              if (dvfs->avs[1] < avs_min_l1)
-> ++                      dvfs->avs[1] = avs_min_l1;
+> This rework is done with the compatibility of future i.MX platforms in
+> mind. For example, the i.MX8MP platform has multiple NoCs. This
+> patchsets prepares the imx interconnect and imx devfreq for that too.
 > 
-> This works fine. Tested with switching 600MHz to 1.2GHz under load.
+> As of now, none of the drivers involved are being used and there is no
+> icc consumer on any off the i.MX platforms.
+> 
+> Basically, the steps taken here are the following:
+> 
+> 1. Make the dram_apb clock "reparantable" from kernel.
+> This is needed in order to keep track of the actual parent of the
+> dram_apb clock in the kernel clock hierarchy. Note that the actual
+> switch is done EL3 (TF-A).
+> 
+> 2. Rework the imx-bus so the actual link between the icc and the
+> NoCs or the pl301s is not tightly coupled. This allows us to have
+> as many NoCs as necessary but also allows as to use the same driver
+> for the pl301s. The pl301s have their own clocks too, so we need to
+> reduce their rates too.
+> 
+> 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
+> OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
+> both EL3 and kernel in sync, we rely on what the EL3 gives us.
+> Also, when the platform suspends, the bus needs to be running at highest
+> rate, otherwise there is a chance it might not resume anymore.
+> By adding the late system sleep PM ops we can handle that easily.
+> 
+> 4. Rework the imx interconnect driver to use the fsl,icc-id instead
+> of the robust imx_icc_node_adj_desc for linking with the target node.
+> By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
+> we can link each icc node to their corresponding NoC, pl301 or dram.
+> Basically, when the imx interconnect platform specific driver probes,
+> it will take each node defined for that platform and look-up the
+> corresponding dts node based on the id and add that as the qos device.
+> 
+> 5. Added the fec and usdhc as icc consumers. This is just as an example.
+> All the other consumers can be added later. Basically, each consumer
+> will add a path to their device node and in the driver will have to
+> handle that icc path accordingly.
+> 
 
-Perfect! Therefore here is final version of patch 04/10 for both 1 GHz
-and 1.2 GHz variants of A3720 SoC. I will resend whole patch series.
-Could I add your Tested-by line to patch series?
+thanks for working on this Abel,
 
-diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-index b8dc6c849..c7683d447 100644
---- a/drivers/cpufreq/armada-37xx-cpufreq.c
-+++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-@@ -73,6 +73,8 @@
- #define LOAD_LEVEL_NR	4
- 
- #define MIN_VOLT_MV 1000
-+#define MIN_VOLT_MV_FOR_L1_1000MHZ 1108
-+#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
- 
- /*  AVS value for the corresponding voltage (in mV) */
- static int avs_map[] = {
-@@ -208,6 +210,8 @@ static u32 armada_37xx_avs_val_match(int target_vm)
-  * - L2 & L3 voltage should be about 150mv smaller than L0 voltage.
-  * This function calculates L1 & L2 & L3 AVS values dynamically based
-  * on L0 voltage and fill all AVS values to the AVS value table.
-+ * When base CPU frequency is 1000 or 1200 MHz then there is additional
-+ * minimal avs value for load L1.
-  */
- static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
- 						struct armada_37xx_dvfs *dvfs)
-@@ -239,6 +243,19 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
- 		for (load_level = 1; load_level < LOAD_LEVEL_NR; load_level++)
- 			dvfs->avs[load_level] = avs_min;
- 
-+		/*
-+		 * Set the avs values for load L0 and L1 when base CPU frequency
-+		 * is 1000/1200 MHz to its typical initial values according to
-+		 * the Armada 3700 Hardware Specifications.
-+		 */
-+		if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-+			if (dvfs->cpu_freq_max >= 1200*1000*1000)
-+				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
-+			else
-+				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
-+			dvfs->avs[0] = dvfs->avs[1] = avs_min;
-+		}
-+
- 		return;
- 	}
- 
-@@ -258,6 +275,26 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
- 	target_vm = avs_map[l0_vdd_min] - 150;
- 	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
- 	dvfs->avs[2] = dvfs->avs[3] = armada_37xx_avs_val_match(target_vm);
-+
-+	/*
-+	 * Fix the avs value for load L1 when base CPU frequency is 1000/1200 MHz,
-+	 * otherwise the CPU gets stuck when switching from load L1 to load L0.
-+	 * Also ensure that avs value for load L1 is not higher than for L0.
-+	 */
-+	if (dvfs->cpu_freq_max >= 1000*1000*1000) {
-+		u32 avs_min_l1;
-+
-+		if (dvfs->cpu_freq_max >= 1200*1000*1000)
-+			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
-+		else
-+			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
-+
-+		if (avs_min_l1 > dvfs->avs[0])
-+			avs_min_l1 = dvfs->avs[0];
-+
-+		if (dvfs->avs[1] < avs_min_l1)
-+			dvfs->avs[1] = avs_min_l1;
-+	}
- }
- 
- static void __init armada37xx_cpufreq_avs_setup(struct regmap *base,
+It looks like the icc path requests don't work for me:
+
+when applying this onto v5.11 (without any other workaround in that 
+area, but some out-of-tree icc-requests like in mxsfb) my rootfs isn't 
+being mounted anymore. Since you add icc requests to the usdhc driver, 
+there could be something wrong.
+
+So I revert 19/19 ("mmc: sdhci-esdhc-imx: Add interconnect support") and 
+then my imx8mq (Librem 5) rootfs system boots, but all frequencies stay 
+at the minimum (despite the icc request like this: 
+https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1692de27d1475c53574dd7359c68ba613e0fea10 
+so I can't use the display).
+
+What could be missing? As I said I'm trying on top of v5.11, (at least I 
+have the NOC node described: 
+https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1d74a24c9944d1bf618abdd57d24101368cc8df0 
+and (with the revert from 
+https://lore.kernel.org/linux-arm-kernel/20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175/ 
+devfreq works without your patchset ) Is there anything I'm missing that 
+is not yet merged in v5.11?
+
+Can I test anything else that would help?
+
+/sys/class/devfreq# cat */cur_freq
+133333334
+25000000
+25641026
+25000000
+800000000
+25000000
+0
+25000000
+25000000
+25000000
+0
+
+the available freqs look ok (opp table removed from device dts, but you 
+don't read that anymore anyway):
+
+cat */available_frequencies
+133333333 400000000 800000000
+25000000 100000000 800000000
+25000000 133333333 333333333
+25000000 266666666
+25000000 800000000
+25000000 800000000
+25000000 333333333
+25000000 500000000
+25000000 500000000
+25000000 128000000 500000000
+25000000 133333333
+
+where ls is:
+
+32700000.noc 
+
+3d400000.memory-controller 
+
+soc@0:pl301@0 
+
+soc@0:pl301@1 
+
+soc@0:pl301@2 
+
+soc@0:pl301@3 
+
+soc@0:pl301@4 
+
+soc@0:pl301@5 
+
+soc@0:pl301@6 
+
+soc@0:pl301@7 
+
+soc@0:pl301@8
+
+thanks,
+                                 martin
