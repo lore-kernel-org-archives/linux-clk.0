@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8E7C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D782C433E6
 	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 060F964E31
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F65A64E3F
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233280AbhBVTnn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:43:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55060 "EHLO mail.kernel.org"
+        id S233293AbhBVTno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 14:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233255AbhBVTnj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:43:39 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CB72364E4B;
+        id S233274AbhBVTnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Feb 2021 14:43:40 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E68C264E77;
         Mon, 22 Feb 2021 19:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1614022941;
-        bh=cpT8r+QNxpmRXss3pRVBFNzKbr6LNSXB9+ugmFgVo0A=;
+        bh=01MxcmLrabdc8FEG08f/1GCdu8iEiJXD04j/6rQ8KDU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RKz7HFx18UziBmJyTPn38dL5UQ7qoCfLSbMiyen3lh0OzSK4/KqE2+lLTp1M9e94R
-         1elb6o+d7xrOfscDfmwdPbOz6wZPWm7e/BOXwbTy8Qf3uUCLJbVFSN69XBTKT0yD54
-         NO+cG6kEjP4bzG7ucDw1+88g8aU2KD6K89mgDR8R7gP0Dt1WrYk5yn1DrSi5dLh7L4
-         4UNZTt4eavrOPk02dlg6MvBizjyHJUyvyiOQE/qI486evd22cSkO9VLMfkNCgzc0Oy
-         fojlaCUx/vZybyfcCG5+TzueYLraowQ9xna9nNcqfXUjqHX/TF0j/XQPbObC6hNpQh
-         8vIRhIru9U2Nw==
+        b=TQdxZNlt82acKOAaeQBsEmWJ6dSXW+HirLW7O8f9tUVmsc44fH7t5BUPc+FruQQuZ
+         gRJa45nhjamp716vOgDWYW5yTuspoB8KK8rX170wF2ybqPCDmDouIk0rkjRoDws3ks
+         KoGCi7sPcSCc4Txgm9H7bVtnb/TW36dqrGSfOuRHEyOQ1y3PSE3xL7rYm6RZRBZvxL
+         LEB9vWzMuf4/+wRPDfOvYNewQ+Hv03PgbfBN/ph9rTRiuTqwHN21j5TSh5ETU51YU0
+         QsrlFEaoOzMHvnE4tYENn9JZn32bks1eRqHXigWpKEZdB1k5USiZzFKD2GgbA6yNOR
+         Dr6pmJprbx8gA==
 Received: by pali.im (Postfix)
-        id 98DC2F8D; Mon, 22 Feb 2021 20:42:17 +0100 (CET)
+        id 7DB1E10D1; Mon, 22 Feb 2021 20:42:18 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?UTF-8?q?G=C3=A9rald=20Kerma?= <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: [PATCH mvebu v3 05/10] clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to 1 GHz
-Date:   Mon, 22 Feb 2021 20:41:53 +0100
-Message-Id: <20210222194158.12342-6-pali@kernel.org>
+Subject: [PATCH mvebu v3 09/10] cpufreq: armada-37xx: Remove cur_frequency variable
+Date:   Mon, 22 Feb 2021 20:41:57 +0100
+Message-Id: <20210222194158.12342-10-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
@@ -63,62 +63,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It was observed that the workaround introduced by commit 61c40f35f5cd
-("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to
-1.2GHz") when base CPU frequency is 1.2 GHz is also required when base
-CPU frequency is 1 GHz. Otherwise switching CPU frequency directly from
-L2 (250 MHz) to L0 (1 GHz) causes a crash.
-
-When base CPU frequency is just 800 MHz no crashed were observed during
-switch from L2 to L0.
+Variable cur_frequency in armada37xx_cpufreq_driver_init() is unused.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 Tested-by: Philip Soares <philips@netisense.com>
-Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
-Cc: stable@vger.kernel.org # 61c40f35f5cd ("clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz")
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/cpufreq/armada-37xx-cpufreq.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 6507bd2c5f31..b15e177bea7e 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -487,8 +487,10 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
- }
+diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+index e4782f562e7a..050abff18308 100644
+--- a/drivers/cpufreq/armada-37xx-cpufreq.c
++++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+@@ -400,7 +400,7 @@ static int __init armada37xx_cpufreq_driver_init(void)
+ 	struct armada_37xx_dvfs *dvfs;
+ 	struct platform_device *pdev;
+ 	unsigned long freq;
+-	unsigned int cur_frequency, base_frequency;
++	unsigned int base_frequency;
+ 	struct regmap *nb_clk_base, *nb_pm_base, *avs_base;
+ 	struct device *cpu_dev;
+ 	int load_lvl, ret;
+@@ -461,14 +461,6 @@ static int __init armada37xx_cpufreq_driver_init(void)
+ 		return -EINVAL;
+ 	}
  
- /*
-- * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-- * respectively) to L0 frequency (1.2 Ghz) requires a significant
-+ * Workaround when base CPU frequnecy is 1000 or 1200 MHz
-+ *
-+ * Switching the CPU from the L2 or L3 frequencies (250/300 or 200 MHz
-+ * respectively) to L0 frequency (1/1.2 GHz) requires a significant
-  * amount of time to let VDD stabilize to the appropriate
-  * voltage. This amount of time is large enough that it cannot be
-  * covered by the hardware countdown register. Due to this, the CPU
-@@ -498,15 +500,15 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
-  * To work around this problem, we prevent switching directly from the
-  * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-  * frequency in-between. The sequence therefore becomes:
-- * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-+ * 1. First switch from L2/L3 (200/250/300 MHz) to L1 (500/600 MHz)
-  * 2. Sleep 20ms for stabling VDD voltage
-- * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
-+ * 3. Then switch from L1 (500/600 MHz) to L0 (1000/1200 MHz).
-  */
- static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
- {
- 	unsigned int cur_level;
- 
--	if (rate != 1200 * 1000 * 1000)
-+	if (rate < 1000 * 1000 * 1000)
- 		return;
- 
- 	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
+-	/* Get nominal (current) CPU frequency */
+-	cur_frequency = clk_get_rate(clk);
+-	if (!cur_frequency) {
+-		dev_err(cpu_dev, "Failed to get clock rate for CPU\n");
+-		clk_put(clk);
+-		return -EINVAL;
+-	}
+-
+ 	dvfs = armada_37xx_cpu_freq_info_get(base_frequency);
+ 	if (!dvfs) {
+ 		clk_put(clk);
 -- 
 2.20.1
 
