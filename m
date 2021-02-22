@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B774C433E6
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1F6C433E9
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE7864E31
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 211F664E3F
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbhBVTnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:43:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54718 "EHLO mail.kernel.org"
+        id S233103AbhBVTnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 14:43:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232964AbhBVTm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 14:42:59 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B02F964E15;
-        Mon, 22 Feb 2021 19:42:18 +0000 (UTC)
+        id S232985AbhBVTnA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Feb 2021 14:43:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C27364EC1;
+        Mon, 22 Feb 2021 19:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614022938;
-        bh=HLrwUFqhZjviGtmC98wsdr0vgUKSFtk5wKxUM6Kowug=;
+        s=k20201202; t=1614022939;
+        bh=g7I54Xx87A8O+3hHocomlXJ+qgIiONJK4DHpRS8aEOM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WUmTX4XaTO/dYlK7Oyg5zX2T418K2D+BdaIGokyaBUqVWgMENx2AoxwjpUhlbPHpx
-         jGmp44+pfotq34vPc8ns5gw11WreCJibIn82ekVsBUEMWjgPfUZH4ms2jubGsi80Uu
-         Er64H2AQW2IvqEfFzdGwbQRsVqTgNJNIDxHA8UaBKZlAwkSnOUy9X1RvQepqqYGG56
-         DGjQZrKMoOz11HsACqghKomGo9ZVm3gvS7zCcdLTwHyj9IQb7iYICa6HIS/91fUvHQ
-         NxeC2tIL1Ebmsut/NScYj1DLOG2EIQhff69j+IcbTTGbECFhHhrMe+HTdn/yeC0Qyb
-         vpoitB8/Ptgjw==
+        b=rIM4/TITjHNhYlYnDD0kak708vDb9Erq7OvQPzCzEzZSjIRVvyGtGnL+ulWmM9Uxf
+         v5Bxp372CZ7hEUEnE1ukKhAYyizQtGjKUT8dSyFsBrY7qQIUEyQ/DZtkldLumOqRJn
+         ecSlrKGsL/0OL87leK4VmJ4fRZE58gAsTrRsCSNqLBZQwjlaPb4e843Jgt0s9gxeC2
+         U7IMZuPedxkWB4yoApfzP0gMpZCNcimKQdYV7TM2iVi1GVSpg9xT6Og6uvs6Us6dI6
+         01Yk58RfhUUgy22l6CKU3ItYbyCcaMJ58xq4xb25lB2ebOyxwZ8TnP5pKdJnXWgGj2
+         OSH8KWds8YEhw==
 Received: by pali.im (Postfix)
-        id 71F2EE94; Mon, 22 Feb 2021 20:42:16 +0100 (CET)
+        id 4408EF17; Mon, 22 Feb 2021 20:42:17 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?UTF-8?q?G=C3=A9rald=20Kerma?= <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: [PATCH mvebu v3 01/10] arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
-Date:   Mon, 22 Feb 2021 20:41:49 +0100
-Message-Id: <20210222194158.12342-2-pali@kernel.org>
+Subject: [PATCH mvebu v3 04/10] cpufreq: armada-37xx: Fix the AVS value for load L1
+Date:   Mon, 22 Feb 2021 20:41:52 +0100
+Message-Id: <20210222194158.12342-5-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
@@ -63,38 +63,116 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marek Behún <kabel@kernel.org>
+The original CPU voltage value for load L1 is too low for Armada 37xx SoC
+when base CPU frequency is 1000 or 1200 MHz. It leads to instabilities
+where CPU gets stuck soon after dynamic voltage scaling from load L1 to L0.
 
-Add "syscon" compatible to the North Bridge clocks node to allow the
-cpufreq driver to access these registers via syscon API.
+Update the CPU voltage value for load L1 accordingly when base frequency is
+1000 or 1200 MHz. The minimal L1 value for base CPU frequency 1000 MHz is
+updated from the original 1.05V to 1.108V and for 1200 MHz is updated to
+1.155V. This minimal L1 value is used only in the case when it is lower
+than value for L0.
 
-This is needed for a fix of cpufreq driver.
+This change fixes CPU instability issues on 1 GHz and 1.2 GHz variants of
+Espressobin and 1 GHz Turris Mox.
 
-Signed-off-by: Marek Behún <kabel@kernel.org>
-Tested-by: Pali Rohár <pali@kernel.org>
+Marvell previously for 1 GHz variant of Espressobin provided a patch [1]
+suitable only for their Marvell Linux kernel 4.4 fork which workarounded
+this issue. Patch forced CPU voltage value to 1.108V in all loads. But
+such change does not fix CPU instability issues on 1.2 GHz variants of
+Armada 3720 SoC.
+
+During testing we come to the conclusion that using 1.108V as minimal
+value for L1 load makes 1 GHz variants of Espressobin and Turris Mox boards
+stable. And similarly 1.155V for 1.2 GHz variant of Espressobin.
+
+These two values 1.108V and 1.155V are documented in Armada 3700 Hardware
+Specifications as typical initial CPU voltage values.
+
+Discussion about this issue is also at the Armbian forum [2].
+
+[1] - https://github.com/MarvellEmbeddedProcessors/linux-marvell/commit/dc33b62c90696afb6adc7dbcc4ebbd48bedec269
+[2] - https://forum.armbian.com/topic/10429-how-to-make-espressobin-v7-stable/
+
+Signed-off-by: Pali Rohár <pali@kernel.org>
 Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 Tested-by: Philip Soares <philips@netisense.com>
-Fixes: e8d66e7927b2 ("arm64: dts: marvell: armada-37xx: add nodes...")
+Fixes: 1c3528232f4b ("cpufreq: armada-37xx: Add AVS support")
 Cc: stable@vger.kernel.org
 ---
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/cpufreq/armada-37xx-cpufreq.c | 37 +++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-index d5b6c0a1c54a..a89e47d95eef 100644
---- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-@@ -156,7 +156,8 @@
- 			};
+diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+index b8dc6c849579..c7683d447b11 100644
+--- a/drivers/cpufreq/armada-37xx-cpufreq.c
++++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+@@ -73,6 +73,8 @@
+ #define LOAD_LEVEL_NR	4
  
- 			nb_periph_clk: nb-periph-clk@13000 {
--				compatible = "marvell,armada-3700-periph-clock-nb";
-+				compatible = "marvell,armada-3700-periph-clock-nb",
-+					     "syscon";
- 				reg = <0x13000 0x100>;
- 				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
- 				<&tbg 3>, <&xtalclk>;
+ #define MIN_VOLT_MV 1000
++#define MIN_VOLT_MV_FOR_L1_1000MHZ 1108
++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
+ 
+ /*  AVS value for the corresponding voltage (in mV) */
+ static int avs_map[] = {
+@@ -208,6 +210,8 @@ static u32 armada_37xx_avs_val_match(int target_vm)
+  * - L2 & L3 voltage should be about 150mv smaller than L0 voltage.
+  * This function calculates L1 & L2 & L3 AVS values dynamically based
+  * on L0 voltage and fill all AVS values to the AVS value table.
++ * When base CPU frequency is 1000 or 1200 MHz then there is additional
++ * minimal avs value for load L1.
+  */
+ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 						struct armada_37xx_dvfs *dvfs)
+@@ -239,6 +243,19 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 		for (load_level = 1; load_level < LOAD_LEVEL_NR; load_level++)
+ 			dvfs->avs[load_level] = avs_min;
+ 
++		/*
++		 * Set the avs values for load L0 and L1 when base CPU frequency
++		 * is 1000/1200 MHz to its typical initial values according to
++		 * the Armada 3700 Hardware Specifications.
++		 */
++		if (dvfs->cpu_freq_max >= 1000*1000*1000) {
++			if (dvfs->cpu_freq_max >= 1200*1000*1000)
++				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
++			else
++				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
++			dvfs->avs[0] = dvfs->avs[1] = avs_min;
++		}
++
+ 		return;
+ 	}
+ 
+@@ -258,6 +275,26 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 	target_vm = avs_map[l0_vdd_min] - 150;
+ 	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
+ 	dvfs->avs[2] = dvfs->avs[3] = armada_37xx_avs_val_match(target_vm);
++
++	/*
++	 * Fix the avs value for load L1 when base CPU frequency is 1000/1200 MHz,
++	 * otherwise the CPU gets stuck when switching from load L1 to load L0.
++	 * Also ensure that avs value for load L1 is not higher than for L0.
++	 */
++	if (dvfs->cpu_freq_max >= 1000*1000*1000) {
++		u32 avs_min_l1;
++
++		if (dvfs->cpu_freq_max >= 1200*1000*1000)
++			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
++		else
++			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
++
++		if (avs_min_l1 > dvfs->avs[0])
++			avs_min_l1 = dvfs->avs[0];
++
++		if (dvfs->avs[1] < avs_min_l1)
++			dvfs->avs[1] = avs_min_l1;
++	}
+ }
+ 
+ static void __init armada37xx_cpufreq_avs_setup(struct regmap *base,
 -- 
 2.20.1
 
