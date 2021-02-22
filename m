@@ -2,126 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FE7C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 06:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75361C433DB
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 09:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6466064EC3
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 06:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0FF664E44
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 09:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229908AbhBVGsT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 01:48:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbhBVGsS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2021 01:48:18 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583F3C061786;
-        Sun, 21 Feb 2021 22:47:38 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id f20so12113606ioo.10;
-        Sun, 21 Feb 2021 22:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CzbwqBo7/54EtEOzwje3BHhr7xtEcrRjjyrnOowJ3RA=;
-        b=tZoM/ei03nNFQkhXPVPvquxs1T2YkAgjONYNooJYzDxSnoZqlnZoIUckliO56T/N0k
-         l8mInoPyoBFCdb5bdj2k3U9uVOBmCaOkBpZVZ8Mvx6i/j3zbxNhRzbbXd6yqFf9y+6xr
-         cwyD5aJhp9gxGob/g+RRmDDiIW+ZJ42u85L40NLxiFuS95YPZAYtSYb/ZJui+H/hjoUM
-         b7s1IRQn65x3MrublhdQI8DfAaohCWeMFwn0Ee5WHCNQGxsP4C14chRN52dEXqckWuCV
-         pcDl5z3GIcjorydEjOKOGc9K2KzSQE0lnut5KLvdUyuCRO+aFj5qhPQ3TA4TUWB7Fy0S
-         vHrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CzbwqBo7/54EtEOzwje3BHhr7xtEcrRjjyrnOowJ3RA=;
-        b=VzGF1P90KS0x21cSA8SV0hXID9zgIJRKpQVlSRCwBHjEUcEhGfQzpqyp0V7vkrIoQu
-         Ln/esvopcpIgrf4Hcfc9qCpFYgwCTozR9O8VUgkcOuYMZHM1kCBGF3TMHASCLHi4ssp7
-         oPMqmwMMhBoLtMJ2h6XPjnYdoWgV1sqMDFbTnC3QolKyVvsgaqZiqwCiBlPoY0YplyQn
-         BX5NfsKLdpmROq4Al/fwIiTETT/Ztu2w5O1jXHGOyw8w0GAsPqkDx5tGKPwz8nn20ZmV
-         cRTkzOqVOUjxIgyWOLfLLpUjY9M7cdkYEnr73DT241M+vr+keMiKiyqHbwMQANdQVSQ8
-         zhDw==
-X-Gm-Message-State: AOAM531M0T92nilIGI5xnuJOgvjXjGZrgOr6a4JNj3eG8PhIkzXgwXoY
-        9KE9edFPzvM2Z+5ycUjtiZcv0eMKhhykbzLhkKz/Hl9S
-X-Google-Smtp-Source: ABdhPJxYz88oi9/UfUiw4DjF5LrZyBs4jxg6vz1nOlTfxssQ6ydATcxoSxhI75o3Nxa+X9Vql47SZFLy9ytTVhiR6xw=
-X-Received: by 2002:a5e:980a:: with SMTP id s10mr14511315ioj.101.1613976457881;
- Sun, 21 Feb 2021 22:47:37 -0800 (PST)
+        id S230036AbhBVJwC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 04:52:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229995AbhBVJvz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Feb 2021 04:51:55 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C5BE664E13;
+        Mon, 22 Feb 2021 09:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613987473;
+        bh=Yu/qN8STAau22SmwxKcvT5Lel5uW0oN72WFz+Pv29SI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ojMcOtCF8a6RX8HGZnEdqE1r3Rb7ZEEPIj86z2Tq5ncrGQBXtlLZmKGK9h7EEqzso
+         frAx2sa7klpY1ZxLTOUX5QhlxClfFmLgOPymUQHCfvHSbtuG5/XK22qk077SPBHYoU
+         QEO/taupT2HnwZylbF8/1rBEEX/S3v5XMbBmTbLR9XTgfAg+6pcc1A6c/P+znfqhj5
+         D2ahVEXud88bF2HO5uBRY97+p2F/Wo7qd0mTfFYsDgUh6/oxrZYiyOVRV6lzgICRHK
+         UjOKzsQd/YzHLsG/3wosV7tHADShns2JHDc8s5M5GY/jz4gUUtMxjS4UJPALcEFQU8
+         GWoSNM9oC43Zg==
+Received: by pali.im (Postfix)
+        id 72680C9A; Mon, 22 Feb 2021 10:51:11 +0100 (CET)
+Date:   Mon, 22 Feb 2021 10:51:11 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     nnet <nnet@fastmail.fm>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, a.heider@gmail.com,
+        andrew@lunn.ch, gerald@gk2.net, gregory.clement@bootlin.com,
+        kostap@marvell.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luka.perkov@sartura.hr, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, rmk+kernel@armlinux.org.uk,
+        sboyd@kernel.org, tmn505@gmail.com, vladimir.vid@sartura.hr
+Subject: Re: [PATCH mvebu v2 00/10] Armada 37xx: Fix cpufreq changing base
+ CPU speed to 800 MHz from 1000 MHz
+Message-ID: <20210222095111.zcokx4g3sqghjgyl@pali>
+References: <20210211234445.hbv2diphmgbir76u@pali>
+ <000b92cc-9b54-4af9-b95c-d1317fb6f97f@www.fastmail.com>
+ <20210213100139.ckrscepg72zjkj4f@pali>
+ <c0b02aa0-1789-43a3-8d73-057890f703f1@www.fastmail.com>
+ <20210214123310.d6armpep7kxbymbu@pali>
+ <675b7a74-066b-4dc0-8dcb-f11c5606ae52@www.fastmail.com>
+ <20210216104141.umy6zrrkal3dlj5j@pali>
+ <d057d7f7-27a5-45ec-88f0-a653572a8ca6@www.fastmail.com>
+ <20210219193302.odcjcaukxxjaedd5@pali>
+ <c0ade595-9bfa-4cfc-8c87-0e955173d5db@www.fastmail.com>
 MIME-Version: 1.0
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1613623791-4598-7-git-send-email-shubhrajyoti.datta@xilinx.com>
- <20210218093715.7fdc27ee@xps13> <161369795774.1254594.6203789110347055936@swboyd.mtv.corp.google.com>
-In-Reply-To: <161369795774.1254594.6203789110347055936@swboyd.mtv.corp.google.com>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Mon, 22 Feb 2021 12:17:26 +0530
-Message-ID: <CAKfKVtHVRT-8-yCwAt8+8RkS5Mi7v2RHSFg8wMNw75VkmUa+tQ@mail.gmail.com>
-Subject: Re: [PATCH v9 6/7] clk: clock-wizard: Remove the hardcoding of the
- clock outputs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c0ade595-9bfa-4cfc-8c87-0e955173d5db@www.fastmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Sunday 21 February 2021 19:17:40 nnet wrote:
+> > Could you test if 1.155V voltage for L1 is stable on 1.2 GHz variant?
+> 
+> ++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
+> ...
+> ++              if (avs_min_l1 > dvfs->avs[0])
+> ++                      avs_min_l1 = dvfs->avs[0];
+> ++
+> ++              if (dvfs->avs[1] < avs_min_l1)
+> ++                      dvfs->avs[1] = avs_min_l1;
+> 
+> This works fine. Tested with switching 600MHz to 1.2GHz under load.
 
-On Fri, Feb 19, 2021 at 6:55 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Miquel Raynal (2021-02-18 00:37:15)
-> > Hi Shubhrajyoti,
-> >
-> > Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 Feb
-> > 2021 10:19:50 +0530:
-> >
-> > > The number of output clocks are configurable in the hardware.
-> > > Currently the driver registers the maximum number of outputs.
-> > > Fix the same by registering only the outputs that are there.
-> > >
-> > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > > ---
-> > > v4:
-> > > Assign output in this patch
-> > >
-> > >  drivers/clk/clk-xlnx-clock-wizard.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-> > > index ed3b0ef..d403a74 100644
-> > > --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> > > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> > > @@ -473,6 +473,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >       unsigned long rate;
-> > >       const char *clk_name;
-> > >       struct clk_wzrd *clk_wzrd;
-> > > +     int outputs;
-> > >       struct device_node *np = pdev->dev.of_node;
-> > >
-> > >       clk_wzrd = devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERNEL);
-> > > @@ -541,6 +542,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >               goto err_disable_clk;
-> > >       }
-> > >
-> > > +     outputs = of_property_count_strings(np, "clock-output-names");
-> >
-> > A check on outputs validity is probably welcome.
-> >
-> > Also I usually prefer noutputs or nb_outputs for such variable name,
-> > which implies a number rather than an array, but this is personal taste.
->
-> Ideally we get rid of clock-output-names and generate them at runtime
-> instead based on some combination of device name and something else.
+Perfect! Therefore here is final version of patch 04/10 for both 1 GHz
+and 1.2 GHz variants of A3720 SoC. I will resend whole patch series.
+Could I add your Tested-by line to patch series?
 
-Makes sense. However it may break the current binding.
-Do you think that shoud be okay?
+diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+index b8dc6c849..c7683d447 100644
+--- a/drivers/cpufreq/armada-37xx-cpufreq.c
++++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+@@ -73,6 +73,8 @@
+ #define LOAD_LEVEL_NR	4
+ 
+ #define MIN_VOLT_MV 1000
++#define MIN_VOLT_MV_FOR_L1_1000MHZ 1108
++#define MIN_VOLT_MV_FOR_L1_1200MHZ 1155
+ 
+ /*  AVS value for the corresponding voltage (in mV) */
+ static int avs_map[] = {
+@@ -208,6 +210,8 @@ static u32 armada_37xx_avs_val_match(int target_vm)
+  * - L2 & L3 voltage should be about 150mv smaller than L0 voltage.
+  * This function calculates L1 & L2 & L3 AVS values dynamically based
+  * on L0 voltage and fill all AVS values to the AVS value table.
++ * When base CPU frequency is 1000 or 1200 MHz then there is additional
++ * minimal avs value for load L1.
+  */
+ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 						struct armada_37xx_dvfs *dvfs)
+@@ -239,6 +243,19 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 		for (load_level = 1; load_level < LOAD_LEVEL_NR; load_level++)
+ 			dvfs->avs[load_level] = avs_min;
+ 
++		/*
++		 * Set the avs values for load L0 and L1 when base CPU frequency
++		 * is 1000/1200 MHz to its typical initial values according to
++		 * the Armada 3700 Hardware Specifications.
++		 */
++		if (dvfs->cpu_freq_max >= 1000*1000*1000) {
++			if (dvfs->cpu_freq_max >= 1200*1000*1000)
++				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
++			else
++				avs_min = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
++			dvfs->avs[0] = dvfs->avs[1] = avs_min;
++		}
++
+ 		return;
+ 	}
+ 
+@@ -258,6 +275,26 @@ static void __init armada37xx_cpufreq_avs_configure(struct regmap *base,
+ 	target_vm = avs_map[l0_vdd_min] - 150;
+ 	target_vm = target_vm > MIN_VOLT_MV ? target_vm : MIN_VOLT_MV;
+ 	dvfs->avs[2] = dvfs->avs[3] = armada_37xx_avs_val_match(target_vm);
++
++	/*
++	 * Fix the avs value for load L1 when base CPU frequency is 1000/1200 MHz,
++	 * otherwise the CPU gets stuck when switching from load L1 to load L0.
++	 * Also ensure that avs value for load L1 is not higher than for L0.
++	 */
++	if (dvfs->cpu_freq_max >= 1000*1000*1000) {
++		u32 avs_min_l1;
++
++		if (dvfs->cpu_freq_max >= 1200*1000*1000)
++			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1200MHZ);
++		else
++			avs_min_l1 = armada_37xx_avs_val_match(MIN_VOLT_MV_FOR_L1_1000MHZ);
++
++		if (avs_min_l1 > dvfs->avs[0])
++			avs_min_l1 = dvfs->avs[0];
++
++		if (dvfs->avs[1] < avs_min_l1)
++			dvfs->avs[1] = avs_min_l1;
++	}
+ }
+ 
+ static void __init armada37xx_cpufreq_avs_setup(struct regmap *base,
