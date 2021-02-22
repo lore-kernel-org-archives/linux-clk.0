@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B6CC433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B774C433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AFDA64E31
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE7864E31
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Feb 2021 19:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233002AbhBVTm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 14:42:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        id S233040AbhBVTnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 14:43:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232971AbhBVTm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S232964AbhBVTm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 22 Feb 2021 14:42:59 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D833F64E3F;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B02F964E15;
         Mon, 22 Feb 2021 19:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614022939;
-        bh=+mUDeuOWLKyEBqA8AdkAHb887NlhdAD1/y956h82d2U=;
+        s=k20201202; t=1614022938;
+        bh=HLrwUFqhZjviGtmC98wsdr0vgUKSFtk5wKxUM6Kowug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cNV9HDGqtP1nSoySEYrlCpxBWY98eBDqY+mPelE+Ew5lCo3lA1nCZWcbfBe8D0ohl
-         95zZhv/RQFPNaE95pqP34cvhmdf42f/7V/SC1uT7F2ff/y0g5rzuQZmtMnm5ycUrJG
-         J0X9rAZBEVNYIYYxYFYtU3K8d5ONnwC6OQ60PgfFuLs+yvozNAjMTGd38mtIw9TvJa
-         PmxQQGVlgZ74as5wcFmkaUPOJSDYaedKZSoNZw4vDUlzWZ3guwWki+/ppBEPeck0h1
-         T6sPxcMrrJLqEIShvCEJCnNoKU/mW08j6WYDrCnKI/q7itr0EUVHokihVrwNPQO2Pv
-         ancRfLohkWzsw==
+        b=WUmTX4XaTO/dYlK7Oyg5zX2T418K2D+BdaIGokyaBUqVWgMENx2AoxwjpUhlbPHpx
+         jGmp44+pfotq34vPc8ns5gw11WreCJibIn82ekVsBUEMWjgPfUZH4ms2jubGsi80Uu
+         Er64H2AQW2IvqEfFzdGwbQRsVqTgNJNIDxHA8UaBKZlAwkSnOUy9X1RvQepqqYGG56
+         DGjQZrKMoOz11HsACqghKomGo9ZVm3gvS7zCcdLTwHyj9IQb7iYICa6HIS/91fUvHQ
+         NxeC2tIL1Ebmsut/NScYj1DLOG2EIQhff69j+IcbTTGbECFhHhrMe+HTdn/yeC0Qyb
+         vpoitB8/Ptgjw==
 Received: by pali.im (Postfix)
-        id EEFD7F04; Mon, 22 Feb 2021 20:42:16 +0100 (CET)
+        id 71F2EE94; Mon, 22 Feb 2021 20:42:16 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -49,9 +49,9 @@ Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         =?UTF-8?q?G=C3=A9rald=20Kerma?= <gerald@gk2.net>,
         Konstantin Porotchkin <kostap@marvell.com>
-Subject: [PATCH mvebu v3 03/10] clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM clock
-Date:   Mon, 22 Feb 2021 20:41:51 +0100
-Message-Id: <20210222194158.12342-4-pali@kernel.org>
+Subject: [PATCH mvebu v3 01/10] arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
+Date:   Mon, 22 Feb 2021 20:41:49 +0100
+Message-Id: <20210222194158.12342-2-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
 References: <20210114124032.12765-1-pali@kernel.org>
@@ -65,70 +65,36 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Marek Behún <kabel@kernel.org>
 
-Remove the .set_parent method in clk_pm_cpu_ops.
+Add "syscon" compatible to the North Bridge clocks node to allow the
+cpufreq driver to access these registers via syscon API.
 
-This method was supposed to be needed by the armada-37xx-cpufreq driver,
-but was never actually called due to wrong assumptions in the cpufreq
-driver. After this was fixed in the cpufreq driver, this method is not
-needed anymore.
+This is needed for a fix of cpufreq driver.
 
 Signed-off-by: Marek Behún <kabel@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Pali Rohár <pali@kernel.org>
 Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 Tested-by: Anders Trier Olesen <anders.trier.olesen@gmail.com>
 Tested-by: Philip Soares <philips@netisense.com>
-Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+Fixes: e8d66e7927b2 ("arm64: dts: marvell: armada-37xx: add nodes...")
+Cc: stable@vger.kernel.org
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 28 --------------------------
- 1 file changed, 28 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index f5746f9ea929..6507bd2c5f31 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -440,33 +440,6 @@ static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
- 	return val;
- }
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index d5b6c0a1c54a..a89e47d95eef 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -156,7 +156,8 @@
+ 			};
  
--static int clk_pm_cpu_set_parent(struct clk_hw *hw, u8 index)
--{
--	struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
--	struct regmap *base = pm_cpu->nb_pm_base;
--	int load_level;
--
--	/*
--	 * We set the clock parent only if the DVFS is available but
--	 * not enabled.
--	 */
--	if (IS_ERR(base) || armada_3700_pm_dvfs_is_enabled(base))
--		return -EINVAL;
--
--	/* Set the parent clock for all the load level */
--	for (load_level = 0; load_level < LOAD_LEVEL_NR; load_level++) {
--		unsigned int reg, mask,  val,
--			offset = ARMADA_37XX_NB_TBG_SEL_OFF;
--
--		armada_3700_pm_dvfs_update_regs(load_level, &reg, &offset);
--
--		val = index << offset;
--		mask = ARMADA_37XX_NB_TBG_SEL_MASK << offset;
--		regmap_update_bits(base, reg, mask, val);
--	}
--	return 0;
--}
--
- static unsigned long clk_pm_cpu_recalc_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate)
- {
-@@ -592,7 +565,6 @@ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops clk_pm_cpu_ops = {
- 	.get_parent = clk_pm_cpu_get_parent,
--	.set_parent = clk_pm_cpu_set_parent,
- 	.round_rate = clk_pm_cpu_round_rate,
- 	.set_rate = clk_pm_cpu_set_rate,
- 	.recalc_rate = clk_pm_cpu_recalc_rate,
+ 			nb_periph_clk: nb-periph-clk@13000 {
+-				compatible = "marvell,armada-3700-periph-clock-nb";
++				compatible = "marvell,armada-3700-periph-clock-nb",
++					     "syscon";
+ 				reg = <0x13000 0x100>;
+ 				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
+ 				<&tbg 3>, <&xtalclk>;
 -- 
 2.20.1
 
