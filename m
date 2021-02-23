@@ -2,171 +2,182 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05884C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 10:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653B1C433E6
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 16:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC20A64E4B
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 10:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D66C64D99
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 16:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232236AbhBWKzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Feb 2021 05:55:41 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:57504 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232181AbhBWKzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Feb 2021 05:55:16 -0500
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lEVKp-0000KT-FJ; Tue, 23 Feb 2021 11:54:31 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Elaine Zhang <zhangqing@rock-chips.com>, sboyd@kernel.org,
-        Johan Jonker <jbx6244@gmail.com>
-Cc:     huangtao@rock-chips.com, linux-kernel@vger.kernel.org,
-        kever.yang@rock-chips.com, linux-rockchip@lists.infradead.org,
-        tony.xie@rock-chips.com, finley.xiao@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        cl@rock-chips.com
-Subject: Re: [PATCH v1 1/4] dt-bindings: add bindings for rk3568 clock controller
-Date:   Tue, 23 Feb 2021 11:54:30 +0100
-Message-ID: <6385562.anssfa2V6d@diego>
-In-Reply-To: <eb82f0a4-ca89-d1bc-5660-49bd05b7fc50@gmail.com>
-References: <20210223095352.11544-1-zhangqing@rock-chips.com> <20210223095352.11544-2-zhangqing@rock-chips.com> <eb82f0a4-ca89-d1bc-5660-49bd05b7fc50@gmail.com>
+        id S233416AbhBWQfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Feb 2021 11:35:14 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17018 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233389AbhBWQfN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 11:35:13 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11NGRP62029750;
+        Tue, 23 Feb 2021 17:34:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=qiJao0/ysEkLSzLZfmMgPEk3xL+/xnEzNXWUrVhuTVU=;
+ b=ToHT2D+u0wDc4hioDucSyBWmV0zXH74Oh+UAjfRElR7m8WnM+Z3luTIglZ4USsw/qwwC
+ vhHgjcJCoQEmvFjcAaD/bsCR5eGqa4iUgr9TVvyymD3Vy3KBkxUJJZZy0AB398ZIGgxk
+ 1YLHBX6yCYHkP3Lhv05P/5ugdAYZH6oi3aP/3Iaw3A83hU2D1kp5mHJwYKj/lYeuX3+s
+ qhq+jJrC/BNs29vExKQOPDFFDzGi4VJWY4/6xTTyxg8ZCjcBLMl3V8uHBa0z9RAVwbWI
+ 87tPweZwHXNJJ2rM6/73Y/qovVRVzwoHuI0bFOWLmdFtlHgAYOJuvbWyYhR6HDvNNXnE SA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 36tree6a2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Feb 2021 17:34:15 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 67FA010002A;
+        Tue, 23 Feb 2021 17:34:13 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 41BC62252A5;
+        Tue, 23 Feb 2021 17:34:13 +0100 (CET)
+Received: from lmecxl0572.lme.st.com (10.75.127.47) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 23 Feb
+ 2021 17:34:12 +0100
+Subject: Re: [PATCH v2 02/14] clk: stm32mp1: merge 'ck_hse_rtc' and 'ck_rtc'
+ into one clock
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Etienne Carriere <etienne.carriere@st.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>, <marex@denx.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <20210126090120.19900-3-gabriel.fernandez@foss.st.com>
+ <161285764074.418021.15522379930579131077@swboyd.mtv.corp.google.com>
+ <5cc12945-0347-820c-1125-30ab4a947a00@foss.st.com>
+ <161369805767.1254594.5233096495913117772@swboyd.mtv.corp.google.com>
+From:   "gabriel.fernandez@foss.st.com" <gabriel.fernandez@foss.st.com>
+Message-ID: <b66530be-2b01-0306-ad56-af00e8e1d0a5@foss.st.com>
+Date:   Tue, 23 Feb 2021 17:34:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <161369805767.1254594.5233096495913117772@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG2NODE3.st.com
+ (10.75.127.6)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-23_08:2021-02-23,2021-02-23 signatures=0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Dienstag, 23. Februar 2021, 11:50:25 CET schrieb Johan Jonker:
-> Hi Elaine,
-> 
-> This is a new document.
-> Could you convert rockchip,rk3568-cru.txt to yaml?
 
-I'll definitly second that wish for a conversion to yaml.
+On 2/19/21 2:27 AM, Stephen Boyd wrote:
+> Quoting gabriel.fernandez@foss.st.com (2021-02-12 00:08:40)
+>> On 2/9/21 9:00 AM, Stephen Boyd wrote:
+>>> Quoting gabriel.fernandez@foss.st.com (2021-01-26 01:01:08)
+>>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>>
+>>>> 'ck_rtc' has multiple clocks as input (ck_hsi, ck_lsi, and ck_hse).
+>>>> A divider is available only on the specific rtc input for ck_hse.
+>>>> This Merge will facilitate to have a more coherent clock tree
+>>>> in no trusted / trusted world.
+>>>>
+>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>> ---
+>>>>    drivers/clk/clk-stm32mp1.c | 49 +++++++++++++++++++++++++++++++++-----
+>>>>    1 file changed, 43 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+>>>> index 35d5aee8f9b0..0e1d4427a8df 100644
+>>>> --- a/drivers/clk/clk-stm32mp1.c
+>>>> +++ b/drivers/clk/clk-stm32mp1.c
+>>>> @@ -245,7 +245,7 @@ static const char * const dsi_src[] = {
+>>>>    };
+>>>>    
+>>>>    static const char * const rtc_src[] = {
+>>>> -       "off", "ck_lse", "ck_lsi", "ck_hse_rtc"
+>>>> +       "off", "ck_lse", "ck_lsi", "ck_hse"
+>>>>    };
+>>>>    
+>>>>    static const char * const mco1_src[] = {
+>>>> @@ -1031,6 +1031,42 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
+>>>>           return hw;
+>>>>    }
+>>>>    
+>>>> +/* The divider of RTC clock concerns only ck_hse clock */
+>>>> +#define HSE_RTC 3
+>>>> +
+>>>> +static unsigned long clk_divider_rtc_recalc_rate(struct clk_hw *hw,
+>>>> +                                                unsigned long parent_rate)
+>>>> +{
+>>>> +       if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
+>>>> +               return clk_divider_ops.recalc_rate(hw, parent_rate);
+>>>> +
+>>>> +       return parent_rate;
+>>>> +}
+>>>> +
+>>>> +static long clk_divider_rtc_round_rate(struct clk_hw *hw, unsigned long rate,
+>>>> +                                      unsigned long *prate)
+>>>> +{
+>>>> +       if (clk_hw_get_parent(hw) == clk_hw_get_parent_by_index(hw, HSE_RTC))
+>>> This clk op can be called at basically any time. Maybe this should use
+>>> the determine rate op and then look to see what the parent is that comes
+>>> in via the rate request structure? Or is the intention to keep this
+>>> pinned to one particular parent? Looking at this right now it doesn't
+>>> really make much sense why the current parent state should play into
+>>> what rate the clk can round to, unless there is some more clk flags
+>>> going on that constrain the ability to change this clk's parent.
+>> Yes the intention is to keep this pinned for one particular parent.
+>>
+>> This divider is only applied on the 4th input of the MUX of the RTC and
+>>
+>> doesn't affect the HSE frequency for all the system.
+>>
+>>
+>> Oscillators
+>>    -----
+>> | lse |----------------+----------------> ck_lse
+>>    -----                 |
+>>    -----                 |
+>> | lsi |------------+--------------------> ck_lsi
+>>    -----             |   |
+>>                      |   |
+>>    -----             |   |
+>> | hse |----+-------|---|----------------> ck_hse
+>>    -----     |       |   |
+>>              |       |   |         |\ mux
+>>              |       |   |  OFF -->| \
+>>              |       |   |         |  \     gate
+>>              |       |   --------->|  |     ---
+>>              |       |             |  |--->|   |--> ck_rtc
+>>              |       ------------->|  |     ---
+>>              |    -----------      |  |
+>>               ----| % 1 to 64 |--->| /
+>>                    -----------     |/
+>>                      divider
+>>
+>> I manage the RTC with a clock composite with a gate a mux and a specific
+>> rate ops for hse input.
+>>
+>> That why i need to the parent state.
+>>
+> So would using determine_rate op instead of round_rate op help here? That
+> will provide the current parent rate and hw pointer in the rate request
+> structure.
 
-Having the ability to check devicetrees for correctness is
-quite helpful :-)
+yes u understand what you mean, i will send you a v3.
 
-
-Heiko
-
-
-> To get an acked-by you must include:
-> 
-> robh+dt@kernel.org
-> devicetree@vger.kernel.org
-> 
-> ./scripts/get_maintainer.pl --noroles --norolestats --nogit-fallback
-> --nogit <patch>
-> 
-> Your patch should show up here after filtering:
-> https://patchwork.ozlabs.org/project/devicetree-bindings/list/
-> 
-> Check with:
-> 
-> make ARCH=arm64 dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pinctrl/rockchip,rk3568-cru.yaml
-> 
-> make ARCH=arm64 dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pinctrl/rockchip,rk3568-cru.yaml
-> 
-> ./scripts/checkpatch.pl --strict <patch>
-> 
-> 
-> On 2/23/21 10:53 AM, Elaine Zhang wrote:
-> > Add devicetree bindings for Rockchip cru which found on
-> > Rockchip SoCs.
-> > 
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > ---
-> >  .../bindings/clock/rockchip,rk3568-cru.txt    | 66 +++++++++++++++++++
-> >  1 file changed, 66 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.txt
-> > new file mode 100644
-> > index 000000000000..b1119aecb7c7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.txt
-> > @@ -0,0 +1,66 @@
-> > +* Rockchip RK3568 Clock and Reset Unit
-> > +
-> > +The RK3568 clock controller generates and supplies clock to various
-> > +controllers within the SoC and also implements a reset controller for SoC
-> > +peripherals.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: PMU for CRU should be "rockchip,rk3568-pmucru"
-> > +- compatible: CRU should be "rockchip,rk3568-cru"
-> > +- reg: physical base address of the controller and length of memory mapped
-> > +  region.
-> > +- #clock-cells: should be 1.
-> > +- #reset-cells: should be 1.
-> > +
-> > +Optional Properties:
-> > +
-> > +- rockchip,grf: phandle to the syscon managing the "general register files"
-> > +  If missing, pll rates are not changeable, due to the missing pll lock status.
-> > +
-> > +Each clock is assigned an identifier and client nodes can use this identifier
-> > +to specify the clock which they consume. All available clocks are defined as
-> > +preprocessor macros in the dt-bindings/clock/rk3568-cru.h headers and can be
-> > +used in device tree sources. Similar macros exist for the reset sources in
-> > +these files.
-> > +
-> > +External clocks:
-> > +
-> > +There are several clocks that are generated outside the SoC. It is expected
-> > +that they are defined using standard clock bindings with following
-> > +clock-output-names:
-> > + - "xin24m" - crystal input - required,
-> > + - "xin32k" - rtc clock - optional,
-> > + - "i2sx_mclkin" - external I2S clock - optional,
-> > + - "xin_osc0_usbphyx_g" - external USBPHY clock - optional,
-> > + - "xin_osc0_mipidsiphyx_g" - external MIPIDSIPHY clock - optional,
-> > +
-> > +Example: Clock controller node:
-> > +
-> > +	pmucru: clock-controller@fdd00000 {
-> > +		compatible = "rockchip,rK3568-pmucru";
-> > +		reg = <0x0 0xfdd00000 0x0 0x1000>;
-> > +		#clock-cells = <1>;
-> > +		#reset-cells = <1>;
-> > +	};
-> > +
-> > +	cru: clock-controller@fdd20000 {
-> > +		compatible = "rockchip,rK3568-cru";
-> > +		reg = <0x0 0xfdd20000 0x0 0x1000>;
-> > +		rockchip,grf = <&grf>;
-> > +		#clock-cells = <1>;
-> > +		#reset-cells = <1>;
-> > +	};
-> > +
-> > +Example: UART controller node that consumes the clock generated by the clock
-> > +  controller:
-> > +
-> > +	uart1: serial@fe650000 {
-> > +		compatible = "rockchip,rK3568-uart", "snps,dw-apb-uart";
-> > +		reg = <0x0 0xfe650000 0x0 0x100>;
-> > +		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> > +		reg-shift = <2>;
-> > +		reg-io-width = <4>;
-> > +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
-> > +		clock-names = "baudclk", "apb_pclk";
-> > +	};
-> > 
-> 
-> 
-
-
-
+Many Thanks.
 
