@@ -2,241 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DC8C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 17:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A19C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 19:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6203464DE7
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 17:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F42764E12
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 19:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233668AbhBWRVE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Feb 2021 12:21:04 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:53632 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233605AbhBWRVC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Feb 2021 12:21:02 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 111F11A0EE8;
-        Tue, 23 Feb 2021 18:20:14 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 02B3E1A07C5;
-        Tue, 23 Feb 2021 18:20:14 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E0270203C1;
-        Tue, 23 Feb 2021 18:20:13 +0100 (CET)
-Date:   Tue, 23 Feb 2021 19:20:13 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Martin Kepplinger <martink@posteo.de>
-Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "kernel@puri.sm" <kernel@puri.sm>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
-Message-ID: <20210223172013.tsip6uiuwtfnmqav@fsr-ub1664-175>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S234045AbhBWTe5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Feb 2021 14:34:57 -0500
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:46617 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234040AbhBWTey (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 14:34:54 -0500
+Received: by mail-oi1-f179.google.com with SMTP id f3so18812138oiw.13;
+        Tue, 23 Feb 2021 11:34:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=Jd0iJwzzoy2OV01YxLUppnxWSo+h7hTXkFr7aHmltkk=;
+        b=IEDQbE4qPCLyKDZSeq8Mvld04gQbVnrZSonBfeTM1MgqLNEI6hK/wddNk9LQPCvBI6
+         lxnOltQPxLM24qTvoB0b8r2yrIKoztEQ9qCyiBzDOUjsD1qwEMVh/A5vwKmh5xNwIKXK
+         ykTlNXblVD3HKYtTd9sbqcf6GUoe9B/uge8T6RiJe3eBqP9I4MrVyKJhgjV7uO0THO9y
+         Zv8o7h25YIvk5eTISQmDEfem6k6rENPCtOCWy2qDZhF4VbgPEUEPTgC/YRAvlXsTaSXQ
+         YLMdyxTBYCRq0xHntd7DpXqiAEwRExeSbe0LI5ePkqOEVPkKL1JnBuLcit/wKLDU/ha/
+         b/sw==
+X-Gm-Message-State: AOAM533hYw5HiBjUTCbv/gDSso1s+6FrE5e8IgUV9K0mf6bHuqeIbTQ9
+        qe/yHkBkMjLmvw0QVbWQ78EJcyw1Og==
+X-Google-Smtp-Source: ABdhPJy1jssNdKq9KMlLx33dO0mbsh9DPwl9N6mfsOaL+GaoxMUl57imtSClS4z55ss1nOpkGacR2g==
+X-Received: by 2002:a05:6808:d47:: with SMTP id w7mr257519oik.150.1614108852913;
+        Tue, 23 Feb 2021 11:34:12 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q25sm4528236ota.16.2021.02.23.11.34.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Feb 2021 11:34:11 -0800 (PST)
+Received: (nullmailer pid 4116104 invoked by uid 1000);
+        Tue, 23 Feb 2021 19:34:10 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Palmer <daniel@0x0f.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     soc@kernel.org, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, w@1wt.eu,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20210223061830.1913700-2-daniel@0x0f.com>
+References: <20210223061830.1913700-1-daniel@0x0f.com> <20210223061830.1913700-2-daniel@0x0f.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clk: mstar msc313 cpupll binding description
+Date:   Tue, 23 Feb 2021 13:34:10 -0600
+Message-Id: <1614108850.540354.4116103.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-02-22 17:03:13, Martin Kepplinger wrote:
-> On 19.02.21 16:59, Abel Vesa wrote:
-> > This has been on my queue for quite some time now. It is more of a
-> > proof-of-concept.
-> > 
-> > This rework is done with the compatibility of future i.MX platforms in
-> > mind. For example, the i.MX8MP platform has multiple NoCs. This
-> > patchsets prepares the imx interconnect and imx devfreq for that too.
-> > 
-> > As of now, none of the drivers involved are being used and there is no
-> > icc consumer on any off the i.MX platforms.
-> > 
-> > Basically, the steps taken here are the following:
-> > 
-> > 1. Make the dram_apb clock "reparantable" from kernel.
-> > This is needed in order to keep track of the actual parent of the
-> > dram_apb clock in the kernel clock hierarchy. Note that the actual
-> > switch is done EL3 (TF-A).
-> > 
-> > 2. Rework the imx-bus so the actual link between the icc and the
-> > NoCs or the pl301s is not tightly coupled. This allows us to have
-> > as many NoCs as necessary but also allows as to use the same driver
-> > for the pl301s. The pl301s have their own clocks too, so we need to
-> > reduce their rates too.
-> > 
-> > 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
-> > OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
-> > both EL3 and kernel in sync, we rely on what the EL3 gives us.
-> > Also, when the platform suspends, the bus needs to be running at highest
-> > rate, otherwise there is a chance it might not resume anymore.
-> > By adding the late system sleep PM ops we can handle that easily.
-> > 
-> > 4. Rework the imx interconnect driver to use the fsl,icc-id instead
-> > of the robust imx_icc_node_adj_desc for linking with the target node.
-> > By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
-> > we can link each icc node to their corresponding NoC, pl301 or dram.
-> > Basically, when the imx interconnect platform specific driver probes,
-> > it will take each node defined for that platform and look-up the
-> > corresponding dts node based on the id and add that as the qos device.
-> > 
-> > 5. Added the fec and usdhc as icc consumers. This is just as an example.
-> > All the other consumers can be added later. Basically, each consumer
-> > will add a path to their device node and in the driver will have to
-> > handle that icc path accordingly.
-> > 
+On Tue, 23 Feb 2021 15:18:23 +0900, Daniel Palmer wrote:
+> Add a binding description for the MStar/SigmaStar CPU PLL block.
 > 
-> thanks for working on this Abel,
-> 
-> It looks like the icc path requests don't work for me:
-> 
-> when applying this onto v5.11 (without any other workaround in that area,
-> but some out-of-tree icc-requests like in mxsfb) my rootfs isn't being
-> mounted anymore. Since you add icc requests to the usdhc driver, there could
-> be something wrong.
-> 
-> So I revert 19/19 ("mmc: sdhci-esdhc-imx: Add interconnect support") and
-> then my imx8mq (Librem 5) rootfs system boots, but all frequencies stay at
-> the minimum (despite the icc request like this:
-> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1692de27d1475c53574dd7359c68ba613e0fea10  
-> so I can't use the display).
-> 
-> What could be missing? As I said I'm trying on top of v5.11, (at least I
-> have the NOC node described:
-> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1d74a24c9944d1bf618abdd57d24101368cc8df0 
-> and (with the revert from 
-> https://lore.kernel.org/linux-arm-kernel/20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175/
-> devfreq works without your patchset ) Is there anything I'm missing that is
-> not yet merged in v5.11?
-> 
-> Can I test anything else that would help?
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> ---
+>  .../bindings/clock/mstar,msc313-cpupll.yaml   | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.yaml
 > 
 
-Sorry about this, I messed up the usdhc change.
-I tested mostly with nfs rootfs.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-I'll just paste here the things that are missing in order for the USHCs to work.
-I'll fold them in the next version of this patch set.
+yamllint warnings/errors:
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 43760316052f..90398408b55e 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -1637,6 +1637,25 @@ opp-133M {
-                        };
-                };
- 
-+               pl301_per_m: pl301@9 {
-+                       compatible = "fsl,imx8m-nic";
-+                       clocks = <&clk IMX8MQ_CLK_NAND_USDHC_BUS>;
-+                       operating-points-v2 = <&pl301_per_m_opp_table>;
-+                       #interconnect-cells = <0>;
-+                       fsl,icc-id = <IMX8MQ_ICN_PER_M>;
-+
-+                       pl301_per_m_opp_table: opp-table {
-+                               compatible = "operating-points-v2";
-+
-+                               opp-25M {
-+                                       opp-hz = /bits/ 64 <25000000>;
-+                               };
-+                               opp-133M {
-+                                       opp-hz = /bits/ 64 <133333333>;
-+                               };
-+                       };
-+               };
-+
-                icc: interconnect@0 {
-                        compatible = "fsl,imx8mq-icc", "fsl,imx8m-icc";
-                        #interconnect-cells = <1>;
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 65c5caf82e0c..cb8d341faf71 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -1545,7 +1545,8 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
- 
-        imx_data->bus_path = devm_of_icc_get(&pdev->dev, "path");
-        if (IS_ERR(imx_data->bus_path)) {
--               return PTR_ERR(imx_data->bus_path);
-+               err = PTR_ERR(imx_data->bus_path);
-+               goto free_sdhci;
-        } else if (imx_data->bus_path) {
-                if (of_property_read_u32(pdev->dev.of_node, "fsl,icc-rate", &imx_data->bus_rate)) {
-                        dev_err(&pdev->dev, "icc-rate missing\n");
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.example.dts:19:18: fatal error: dt-bindings/clock/mstar-msc313-mpll.h: No such file or directory
+   19 |         #include <dt-bindings/clock/mstar-msc313-mpll.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [scripts/Makefile.lib:344: Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1370: dt_binding_check] Error 2
 
-> /sys/class/devfreq# cat */cur_freq
-> 133333334
-> 25000000
-> 25641026
-> 25000000
-> 800000000
-> 25000000
-> 0
-> 25000000
-> 25000000
-> 25000000
-> 0
-> 
-> the available freqs look ok (opp table removed from device dts, but you
-> don't read that anymore anyway):
-> 
-> cat */available_frequencies
-> 133333333 400000000 800000000
-> 25000000 100000000 800000000
-> 25000000 133333333 333333333
-> 25000000 266666666
-> 25000000 800000000
-> 25000000 800000000
-> 25000000 333333333
-> 25000000 500000000
-> 25000000 500000000
-> 25000000 128000000 500000000
-> 25000000 133333333
-> 
-> where ls is:
-> 
-> 32700000.noc
-> 
-> 3d400000.memory-controller
-> 
-> soc@0:pl301@0
-> 
-> soc@0:pl301@1
-> 
-> soc@0:pl301@2
-> 
-> soc@0:pl301@3
-> 
-> soc@0:pl301@4
-> 
-> soc@0:pl301@5
-> 
-> soc@0:pl301@6
-> 
-> soc@0:pl301@7
-> 
-> soc@0:pl301@8
-> 
-> thanks,
+See https://patchwork.ozlabs.org/patch/1443402
 
-Also, here is this oneliner that allows you to see the transition stats for each node:
-for each in `ls -1d /sys/devices/platform/soc@0/*/devfreq/*`; do echo $each; cat $each/trans_stat; done
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
->                                 martin
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
