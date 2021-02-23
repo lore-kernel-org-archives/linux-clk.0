@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C69C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 06:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9774C433E6
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 06:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC0C64E2E
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 06:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1D164EC9
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 06:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbhBWGVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Feb 2021 01:21:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        id S231800AbhBWGWY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Feb 2021 01:22:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231706AbhBWGVD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 01:21:03 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018B4C061224
-        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 22:19:30 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id d2so1184940pjs.4
-        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 22:19:29 -0800 (PST)
+        with ESMTP id S231742AbhBWGV2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 01:21:28 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5884AC0611C0
+        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 22:19:32 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id c19so1128254pjq.3
+        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 22:19:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=0x0f.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=G4thmjduZ43HX5eyCNJENeVZMcyA8AVKFXPpIRfsEmo=;
-        b=amHWH1xFUTFu36kpCUT4l9b90U0fBp3Q9fyx8iXV9r/xiRDq9pDWnJnL5GPlqLxbSj
-         HR0yuPTyY+r+HwX+t5dEfOPeVRXaEaI3mggCZWThxuvElg0+eLqgqpVKAuTGcld4bc6X
-         MHx5hnu+uT3f4oMN6r166FajTuyU6Mtf+FsqQ=
+        bh=aI5IVkQJA7PDNbBU/+1PZqGp3m7b3MnBtGAvzpqE9DI=;
+        b=krfujBl0J3RTa+9MxhJ1pPz8nrwfBTvIuo2aMFitjGAWxGPWV7xeKZzzG+bMU+3iUy
+         Mc5Us7xmjCKRjKJsudStwDXQ5GMoRh7bmyzyoFgQlsU0Or3Ww9ad+a7WksQ9IzdZLbay
+         MULJZM57YvPqTgUTD2YUj/28tKRa7nzcg8ztI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=G4thmjduZ43HX5eyCNJENeVZMcyA8AVKFXPpIRfsEmo=;
-        b=R7fV/61H+plx3HwjgmZRxvkg8O4xOCsjFXtpTdNCa/z31W8LeM1fVrQfKsZBAOtNL3
-         zkMePsNVXgaJQDE/w26zu9gnd2SJijnUpJ0LtXYacRPnMavSUD8D2NbE+Y8DFBsqgp9d
-         wLHVCjf8DP3XhAnGQd28zj9x7UvnocX/Pg8mMRCWAcfcRB8Jz9MeH7mocRN0zmDRzUZj
-         sNffU9D/4uwX0XCEEeLI75GEwnTka9Sja6i40NL5NxuspN0QvVFzIahXEnETq+3hDet/
-         NBRp5djdvL87EuUAgaFusI803uAS604Nz6CXLVfzf3r83OqYygu66tLzUmyWWFsqvPSZ
-         6ciQ==
-X-Gm-Message-State: AOAM5306/sjrjMYTrtKZKnMbW0lwNB38SOlrdtuJAihSa2/XZ2m88Vzx
-        a7gzOH7vfwaJDw4a1jR6bzioow==
-X-Google-Smtp-Source: ABdhPJzKdWD/HPnom8Qx8jH6AAUN43gD8lpStgM44BbHKJBQkB14izYGXPrhe4CCETIu2OGeezBwGg==
-X-Received: by 2002:a17:90a:7e94:: with SMTP id j20mr28131038pjl.218.1614061169617;
-        Mon, 22 Feb 2021 22:19:29 -0800 (PST)
+        bh=aI5IVkQJA7PDNbBU/+1PZqGp3m7b3MnBtGAvzpqE9DI=;
+        b=Ckvl0pJOhuk81Hj7dqGSwSjf3z5L4a0nuOOP9cEJ6nmXgVVCjp91sg1g2jrxHwwCAQ
+         tmwpljb1ITdylY5KCXCkTu2cfWkWHAgEzQ7XmXXProHZN0RDkYIF/4+3GnTAeUQJl+Bt
+         QqSxmaU1w+qLq27rMRKCVTWMwjAUTUDeFfEeEqY8HFqHfLYAF/nxUVgYo948/rQCWk+j
+         X9y3CmQC6FRSTkV6C0v1KsHmPxufXnG+IZGVhRoaoKeyjXzQPVXKulbJVMPcx+niR4fK
+         +m5/NrAp6Nvl6bz7KksuuZLX1/NSDqYcC2U4kR659aVK9r+UqlYqoBZSo7sf6E+R0xyv
+         q3Kw==
+X-Gm-Message-State: AOAM531N8Mj4EImckRQrkYdSmM6B2D+B7gDaV4Oi5VSDxlM/w5OFAoiC
+        UgUP4GoKi1ZPVTlrXQ0vY3ac4A==
+X-Google-Smtp-Source: ABdhPJxKcQ0XdzH66RpqYbTQ6lbBZie3kabhudXrxsFNyvw+rqjI5s3m5LdmnSloa1eUTFccWA5bRQ==
+X-Received: by 2002:a17:90a:7e0a:: with SMTP id i10mr26715766pjl.152.1614061171969;
+        Mon, 22 Feb 2021 22:19:31 -0800 (PST)
 Received: from shiro.work (p345188-ipngn200408sizuokaden.shizuoka.ocn.ne.jp. [124.98.97.188])
-        by smtp.googlemail.com with ESMTPSA id n10sm20135169pgk.91.2021.02.22.22.19.27
+        by smtp.googlemail.com with ESMTPSA id n10sm20135169pgk.91.2021.02.22.22.19.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Feb 2021 22:19:29 -0800 (PST)
+        Mon, 22 Feb 2021 22:19:31 -0800 (PST)
 From:   Daniel Palmer <daniel@0x0f.com>
 List-Id: <soc.lore.kernel.org>
 To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         soc@kernel.org, sboyd@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         w@1wt.eu, Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH 7/8] ARM: mstar: Add OPP table for infinity3
-Date:   Tue, 23 Feb 2021 15:18:29 +0900
-Message-Id: <20210223061830.1913700-8-daniel@0x0f.com>
+Subject: [PATCH 8/8] ARM: mstar: Add OPP table for mercury5
+Date:   Tue, 23 Feb 2021 15:18:30 +0900
+Message-Id: <20210223061830.1913700-9-daniel@0x0f.com>
 X-Mailer: git-send-email 2.30.0.rc2
 In-Reply-To: <20210223061830.1913700-1-daniel@0x0f.com>
 References: <20210223061830.1913700-1-daniel@0x0f.com>
@@ -70,78 +70,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The infinity3 has a slightly higher max frequency
-compared to the infinity so extend the OPP table.
+Add an OPP table for mercury5 so that cpu frequency scaling can
+happen.
 
-Co-authored-by: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 ---
- arch/arm/boot/dts/mstar-infinity3.dtsi | 58 ++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ arch/arm/boot/dts/mstar-mercury5.dtsi | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mstar-infinity3.dtsi b/arch/arm/boot/dts/mstar-infinity3.dtsi
-index 9857e2a9934d..a56cf29e5d82 100644
---- a/arch/arm/boot/dts/mstar-infinity3.dtsi
-+++ b/arch/arm/boot/dts/mstar-infinity3.dtsi
-@@ -6,6 +6,64 @@
+diff --git a/arch/arm/boot/dts/mstar-mercury5.dtsi b/arch/arm/boot/dts/mstar-mercury5.dtsi
+index a7d0dd9d6132..80a19bd23c9c 100644
+--- a/arch/arm/boot/dts/mstar-mercury5.dtsi
++++ b/arch/arm/boot/dts/mstar-mercury5.dtsi
+@@ -6,6 +6,42 @@
  
- #include "mstar-infinity.dtsi"
+ #include "mstar-v7.dtsi"
  
-+&cpu0_opp_table {
-+	opp-1008000000 {
-+		opp-hz = /bits/ 64 <1008000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+	};
++/ {
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+	// overclock frequencies below, shown to work fine up to 1.3 GHz
-+	opp-108000000 {
-+		opp-hz = /bits/ 64 <1080000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
++		opp-100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++			opp-microvolt = <800000 800000 850000>;
++			clock-latency-ns = <300000>;
++		};
 +
-+	opp-1188000000 {
-+		opp-hz = /bits/ 64 <1188000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <850000 850000 880000>;
++			clock-latency-ns = <300000>;
++		};
 +
-+	opp-1296000000 {
-+		opp-hz = /bits/ 64 <1296000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <880000 880000 890000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <900000 900000 1000000>;
++			clock-latency-ns = <300000>;
++		};
 +
-+	opp-1350000000 {
-+		opp-hz = /bits/ 64 <1350000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
-+
-+	opp-1404000000 {
-+		opp-hz = /bits/ 64 <1404000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
-+
-+	opp-1458000000 {
-+		opp-hz = /bits/ 64 <1458000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
-+	};
-+
-+	opp-1512000000 {
-+		opp-hz = /bits/ 64 <1512000000>;
-+		opp-microvolt = <1000000>;
-+		clock-latency-ns = <300000>;
-+		turbo-mode;
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <900000 900000 1000000>;
++			clock-latency-ns = <300000>;
++		};
 +	};
 +};
 +
