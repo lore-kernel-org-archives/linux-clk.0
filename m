@@ -2,118 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43143C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 01:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A5EC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 01:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E04A664E4A
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 01:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49ECD64E57
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Feb 2021 01:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbhBWBCn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Feb 2021 20:02:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230179AbhBWBCm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Feb 2021 20:02:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 381BC64E2E;
-        Tue, 23 Feb 2021 01:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614042121;
-        bh=lv0YbuJHNgCGE7yojRyC3RU2ldeJzKDTfRZQ2c7tVLs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=N8Xv70N/W6WCR/Ux/r300sdmBBHOC+hSExhL7/qHvXictwKxa/Ntn8f6IBoio7Dlu
-         NLgx91fb1c5tl6nIDOqxuU35DfsNj3XIVXFK3Kmkjve58c6sIVQLD7QccCrQ9YRjEs
-         fJp16Fny31gUYwYsSQIBO9hOJus3AOYN7YqSgy+jeT/93Kj52FGMr6mVvi4+Ribr3S
-         fK5i5JeqAR09sPQwRgjt4vck+1HbbFCeMyl5seK/13Xzb8GQkhRYyG6HMLt+BVHJDh
-         gLxxxismGH3lEBopceJH2dfXFZVbTW4L7gqmF/s0ykhYPhkhTWzf3O2wBadKwvFZ8c
-         zfNIpxlwnwK3A==
-Content-Type: text/plain; charset="utf-8"
+        id S230175AbhBWBpV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Feb 2021 20:45:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34824 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229991AbhBWBpP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Feb 2021 20:45:15 -0500
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757A1C061793
+        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 17:44:35 -0800 (PST)
+Received: by mail-qk1-x72c.google.com with SMTP id z128so10270367qkc.12
+        for <linux-clk@vger.kernel.org>; Mon, 22 Feb 2021 17:44:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T2LlCCT6zt358q3HdAnMzHHVxdjb2JCGvdj5DHbQbFY=;
+        b=enjeBWihK/qhVzZdUUZ1nTSacCyf4mFjGMHWHuea5iiyYT44dZoUS6Uo4FR0o9PMHY
+         06msOISTL65F4REAtjvQHAAhGWHuH33jTFUohh++SuVZcGmKQWR891ZRiMk0b5kSl7An
+         LwI5S5NldfBrK5BEtQJ6QJeB43dnB945gc8js=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T2LlCCT6zt358q3HdAnMzHHVxdjb2JCGvdj5DHbQbFY=;
+        b=ZH3yMLpHrsEB2v+RbpZq5T/wxg4VMlfS4FaXPkqgN49LNxcAefvbUgx/n1ExLGjbsx
+         ILL/ljWUrRpLc5KvVBjRDpGm3+Tv1bRs9cIMcqIGDrXBZFBJqlFcf6wpjTcHsSDz/glM
+         r7OQKallgBOpg1b6dpSTyTleQALcIuC9X3QoUro4uQXauaUawTi8dqAco8jm04aQRUvc
+         I6edR849DG4u2kO0gprBOj973Q4JZhMBZz3vNasehPGlTCpRjHr/O4i+BlJTwPbJoI2Q
+         GmxYB0h5LLe6YvokCAxluaVyKdf5YGR735XGVZGV6hx4wxOukKVPTJuYHhQiVG5jCpTq
+         VhkQ==
+X-Gm-Message-State: AOAM531S7JJ5OCWVeqi5DRpv3hpUOY6vkEgowHHe1uVMNQnLYy+xBgt6
+        STYpHDpf9zamyAmJITbk8HUN5qGW7vBQHgkAmGo7nw==
+X-Google-Smtp-Source: ABdhPJw858HVZIWbHL+u++qtIQfY42d7VcRXfkLZLkj6Q7cWPABWtwGIMWCbKgKSxuVAxQe1guSCEm0AFoSKjx10idg=
+X-Received: by 2002:ae9:de85:: with SMTP id s127mr7564183qkf.468.1614044674272;
+ Mon, 22 Feb 2021 17:44:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAKfKVtHVRT-8-yCwAt8+8RkS5Mi7v2RHSFg8wMNw75VkmUa+tQ@mail.gmail.com>
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1613623791-4598-7-git-send-email-shubhrajyoti.datta@xilinx.com> <20210218093715.7fdc27ee@xps13> <161369795774.1254594.6203789110347055936@swboyd.mtv.corp.google.com> <CAKfKVtHVRT-8-yCwAt8+8RkS5Mi7v2RHSFg8wMNw75VkmUa+tQ@mail.gmail.com>
-Subject: Re: [PATCH v9 6/7] clk: clock-wizard: Remove the hardcoding of the clock outputs
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org, open list:
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ;
-Illegal-Object: Syntax error in Cc: address found on vger.kernel.org:
-        Cc:     ;
-                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Mon, 22 Feb 2021 17:01:59 -0800
-Message-ID: <161404211975.1254594.9689445473737784408@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+References: <20210211052206.2955988-1-daniel@0x0f.com>
+In-Reply-To: <20210211052206.2955988-1-daniel@0x0f.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Tue, 23 Feb 2021 10:44:23 +0900
+Message-ID: <CAFr9PXkvJN2AwTFTXLoTFj988LD+53eW4Y28nJ2M+7YygBJ58g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] ARM: mstar: Basic MPLL support
+To:     Arnd Bergmann <arnd@kernel.org>, Olof Johansson <olof@lixom.net>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Cc:     Willy Tarreau <w@1wt.eu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2021-02-21 22:47:26)
-> Hi Stephen,
->=20
-> On Fri, Feb 19, 2021 at 6:55 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Miquel Raynal (2021-02-18 00:37:15)
-> > > Hi Shubhrajyoti,
-> > >
-> > > Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com> wrote on Thu, 18 F=
-eb
-> > > 2021 10:19:50 +0530:
-> > >
-> > > > The number of output clocks are configurable in the hardware.
-> > > > Currently the driver registers the maximum number of outputs.
-> > > > Fix the same by registering only the outputs that are there.
-> > > >
-> > > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > > > ---
-> > > > v4:
-> > > > Assign output in this patch
-> > > >
-> > > >  drivers/clk/clk-xlnx-clock-wizard.c | 6 ++++--
-> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-=
-xlnx-clock-wizard.c
-> > > > index ed3b0ef..d403a74 100644
-> > > > --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> > > > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> > > > @@ -473,6 +473,7 @@ static int clk_wzrd_probe(struct platform_devic=
-e *pdev)
-> > > >       unsigned long rate;
-> > > >       const char *clk_name;
-> > > >       struct clk_wzrd *clk_wzrd;
-> > > > +     int outputs;
-> > > >       struct device_node *np =3D pdev->dev.of_node;
-> > > >
-> > > >       clk_wzrd =3D devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_=
-KERNEL);
-> > > > @@ -541,6 +542,7 @@ static int clk_wzrd_probe(struct platform_devic=
-e *pdev)
-> > > >               goto err_disable_clk;
-> > > >       }
-> > > >
-> > > > +     outputs =3D of_property_count_strings(np, "clock-output-names=
-");
-> > >
-> > > A check on outputs validity is probably welcome.
-> > >
-> > > Also I usually prefer noutputs or nb_outputs for such variable name,
-> > > which implies a number rather than an array, but this is personal tas=
-te.
-> >
-> > Ideally we get rid of clock-output-names and generate them at runtime
-> > instead based on some combination of device name and something else.
->=20
-> Makes sense. However it may break the current binding.
-> Do you think that shoud be okay?
+Hi Arnd and Olof,
 
-I think it is OK given that the current binding is for the staging tree.
-The assumption is those bindings aren't stable.
+On Thu, 11 Feb 2021 at 14:22, Daniel Palmer <daniel@0x0f.com> wrote:
+> Daniel Palmer (7):
+>   dt-bindings: clk: mstar msc313 mpll binding header
+>   dt-bindings: clk: mstar msc313 mpll binding description
+>   clk: fixed: add devm helper for clk_hw_register_fixed_factor()
+>   clk: mstar: MStar/SigmaStar MPLL driver
+>   ARM: mstar: Select MSTAR_MSC313_MPLL
+>   ARM: mstar: Add the external clocks to the base dsti
+>   ARM: mstar: Add mpll to base dtsi
+
+The first four patches have now been merged.
+I forgot to send these to the soc patchwork so I think the last 3
+didn't show up on your radar..
+What do I need to do to get the last 3 merged?
+
+Thanks,
+
+Daniel
