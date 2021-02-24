@@ -2,68 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D09C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 02:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAF3C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 02:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B27364E02
+	by mail.kernel.org (Postfix) with ESMTP id D6C9364E7A
 	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 02:32:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232730AbhBXCcG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Feb 2021 21:32:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43136 "EHLO
+        id S232806AbhBXCcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Feb 2021 21:32:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232723AbhBXCcF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 21:32:05 -0500
+        with ESMTP id S232760AbhBXCcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 21:32:07 -0500
 Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B684C06174A;
-        Tue, 23 Feb 2021 18:31:25 -0800 (PST)
-Received: by mail-qk1-x72f.google.com with SMTP id z128so820084qkc.12;
-        Tue, 23 Feb 2021 18:31:25 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB59C06178B;
+        Tue, 23 Feb 2021 18:31:27 -0800 (PST)
+Received: by mail-qk1-x72f.google.com with SMTP id m144so833940qke.10;
+        Tue, 23 Feb 2021 18:31:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qNlPGBrBmQEGfGvvIqq94eLCgAYa7qCblYspH9x9rtk=;
-        b=iT0UqgEqaQ+ghiwYQcZjHAjRi+G9mc6ph/250tQEojh47HWlhlaDHvsc56xyqfxy2m
-         Van0Kz/lss+TAgFhAia9hTE+A3huiCCY3FpI20McqHua6msxU3F55Gcbov4eO6LViPwY
-         4bi33dLfYI1DeEt0QcJC73UVzdvtMkPJ20kluoy0KUf0K0Mdj7snIMC07WczATPUaZ8C
-         PHBHUbZSR9hRMjcDxhCPVV1bGAWFBKQrAs9HkBcyUWzaTH35yf1sViQIPr2Mqwj8ye+c
-         l8Kd9wnC1Qha/sG1G0KqA8p0ATWusC2Jy4BSVh4YMkq63/ETAXTSyl/K/OLg6x7T/m4d
-         N1aA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Px/VQYAYndg6+A8nhIaz96Rh/6Tl+ytn6H8ro/fcnBU=;
+        b=eLLDSxaLh2cnv8pfaqj6iCWtdcMGFl3mA98wMvICJfuWOrNA+tml/X4FHhaCiVc5sB
+         13nWDkI1qynakKSrndcquSy+Opioh382lvv/ToxrZIlBNp/k8SlhStDgT6WYjHPVQiEA
+         29MJ3BtbbTEpiO8t49NxlcYTxEdRVpq5XT4L98kRO5IRX9TQEgR9WoWLIPUPxa9fUMBo
+         KGUtle2eI9Bn7e/ugzYxw89iAcYsyOPbeYprhCtxJNqDenor3bsUUxKQuWnMI+XFg1Aq
+         XH6ne27D2Uhyp34DEhI/b8pjt+ep3eBBSY/LaaB3HiUfq+DabNgKz/xgsONvxoMJPW+T
+         7mDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qNlPGBrBmQEGfGvvIqq94eLCgAYa7qCblYspH9x9rtk=;
-        b=r2t5nQ5Rc/b96Ab9UBep6JdkQthhahGOIrw8WkvVUO3AMIa/eotituAZy4PicEo8EP
-         LEoXOlukrb+6NIiJmX8Bh09+qNKLIO0tfbzeqhaBvRA+L+zlrR1X51Eh1LCgrsQirr9y
-         iSHNZfk67FO8lVyw8EEcN8AXoQfrvWz33J6SEY/4Mvjy7KzlTv04pYk0/OAY3uu33Ia3
-         0J2whkm3lm4lmLpLLD6yhHpoEBLB8gDMdmMl7MoCRbaOkXeU9oKAlNYiyMzhYFhMPPUl
-         S51l0R59fObBXDd3p0FLCntk4u+U+5TCNkcQnB1WNtv1nlxzLdZBOcdskVAnzU1eC2G4
-         AQSA==
-X-Gm-Message-State: AOAM530ZvJyrY7ecx1C8AZQe+vrI/+oCLViQQCVEC+25LHz0e1kV+Nhp
-        HY82a69o/7UAcvNF7qPx9qzs4eYnBzmgz+6v
-X-Google-Smtp-Source: ABdhPJxWx+DSCwYXwsbc8QClG50dYhORqWjnHZcI+w8osOeJgCw9l86feTXTVXxj1JPAybxw/juNyA==
-X-Received: by 2002:a37:e31a:: with SMTP id y26mr4506206qki.178.1614133884276;
-        Tue, 23 Feb 2021 18:31:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Px/VQYAYndg6+A8nhIaz96Rh/6Tl+ytn6H8ro/fcnBU=;
+        b=DsNlwYsLMQwQ4vmibU+dIXidcNUD4KZeKelP6/r/salFKN1Oi200AL+jGVIsOv1NPa
+         4fLyaQ6+B8IxtuhQPwQoMKESAxPkm8XEW0aoxh4HWg3rcmpPzsO6+kzGgUZjBvlS6aBf
+         vgN8/+iNuPNPK8MXaygcQkg5fwPegINkIrI43QYratUKM8fIqE/I405xkm5id+3+9/eP
+         wHVlvUDdi8w89/tbVmOEdwUgqCyYJHny9PKKRQC1NmAVJp/xB+MwdEqp9CTvDNIl1K+u
+         BdsqmTH6wrkbtbio4kEUe0ZWa+6tr0wB6q7Hn6geDI6f3Cpi0Amk2CXrkkdzaUJGm0GX
+         KMqQ==
+X-Gm-Message-State: AOAM533bu+uMIu5zK4jdgjeIuhxIa8HtC9ZB7tatjoZklL1x0dTVWWF0
+        30MPp4k2fWfE+/qigpDtJAk=
+X-Google-Smtp-Source: ABdhPJxSMPq8X+QiZwY+V+5icA3RV2AIM97NtowM+2KHbCz40J+Cw+f7NHQnmoZphxlkWtPFxVAyCg==
+X-Received: by 2002:a05:620a:1312:: with SMTP id o18mr28713073qkj.307.1614133886249;
+        Tue, 23 Feb 2021 18:31:26 -0800 (PST)
 Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id p25sm529500qkh.79.2021.02.23.18.31.23
+        by smtp.gmail.com with ESMTPSA id p25sm529500qkh.79.2021.02.23.18.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 18:31:23 -0800 (PST)
+        Tue, 23 Feb 2021 18:31:25 -0800 (PST)
 From:   Liam Beguin <liambeguin@gmail.com>
 To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh+dt@kernel.org
-Subject: [PATCH v3 0/3]  add support for the lmk04832
-Date:   Tue, 23 Feb 2021 21:31:13 -0500
-Message-Id: <20210224023116.571718-1-liambeguin@gmail.com>
+Subject: [PATCH v3 2/3] clk: lmk04832: add support for digital delay
+Date:   Tue, 23 Feb 2021 21:31:15 -0500
+Message-Id: <20210224023116.571718-3-liambeguin@gmail.com>
 X-Mailer: git-send-email 2.30.1.489.g328c10930387
+In-Reply-To: <20210224023116.571718-1-liambeguin@gmail.com>
+References: <20210224023116.571718-1-liambeguin@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -72,339 +74,454 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Liam Beguin <lvb@xiphos.com>
 
-Hi,
+The digital delay allows outputs to be delayed from 8 to 1023 VCO
+cycles. The delay step can be as small as half the period of the clock
+distribution path. For example, a 3.2-GHz VCO frequency results in
+156.25-ps steps.  The digital delay value takes effect on the clock
+output phase after a SYNC event.
 
-The LMK04832 is an ultra-high performance clock conditioner with JEDEC
-JESD204B support and is also pin compatible with the LMK0482x family of
-devices.
+This is required to support JESD204B subclass 1.
 
-This driver adds initial support to configure the LMK04832 clocks using
-the clock framework.
+Signed-off-by: Liam Beguin <lvb@xiphos.com>
+---
+ drivers/clk/clk-lmk04832.c | 321 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 315 insertions(+), 6 deletions(-)
 
-This has been tested on a system using JESD204B subclass 1.
-
-At the moment, the VCO rate has to be set manually from the devicetree
-and a dclk (or sclk) rate change isn't propagated to the VCO
-automatically.
-
-Changes since v1:
-- add yaml devicetree documentation,
-- add links to datasheet,
-- use {u8,u16,u32} instead of Uint_ variants,
-- drop redundant debugfs code,
-- use a pointer to device_info instead of struct copy,
-- add of_device_id table,
-- add support for SYSREF digital delay and JESD204B subclass 1
-
-Changes since v2:
-- fix dt-bindings documentation, apologies for the broken build
-- fix property vendor prefixes
-- split dt-bindings into a separate patch
-
-Thanks for your time,
-Liam
-
-Liam Beguin (3):
-  clk: add support for the lmk04832
-  clk: lmk04832: add support for digital delay
-  dt-bindings: clock: add ti,lmk04832 bindings
-
- .../bindings/clock/ti,lmk04832.yaml           |  198 ++
- drivers/clk/Kconfig                           |    7 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/clk-lmk04832.c                    | 1595 +++++++++++++++++
- 4 files changed, 1801 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
- create mode 100644 drivers/clk/clk-lmk04832.c
-
-Interdiff against v2:
-diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-index 9c56e37214e4..c0d9ab650e80 100644
---- a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-@@ -27,44 +27,38 @@ properties:
-     const: 1
- 
-   clocks:
--    maxItems: 1
-     items:
-       - description: PLL2 reference clock.
- 
-   clock-names:
--    maxItems: 1
-     items:
-       - const: oscin
- 
-   reset-gpios:
--    description: A connection of the 'reset' gpio line.
-     maxItems: 1
- 
--  lmk,spi-4wire-rdbk:
-+  ti,spi-4wire-rdbk:
-     description: |
-       Select SPI 4wire readback pin configuration.
-       Available readback pins are,
-         CLKin_SEL0 0
-         CLKin_SEL1 1
-         RESET 2
--    allOf:
--      - $ref: /schemas/types.yaml#/definitions/uint32
--      - enum: [0, 1, 2]
--      - default: 1
--
--  lmk,vco-rate:
--    description: VCO rate to use (in Hz).
-     $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
- 
--  lmk,sysref-ddly:
-+  ti,vco-hz:
-+    description: Optional to set VCO frequency of the PLL in Hertz.
-+
-+  ti,sysref-ddly:
-     description: SYSREF digital delay value.
--    allOf:
--      - $ref: /schemas/types.yaml#/definitions/uint32
--      - minimum: 8
--      - maximum: 8191
--      - default: 8
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 8
-+    maximum: 8191
-+    default: 8
- 
--  lmk,sysref-mux:
-+  ti,sysref-mux:
-     description: |
-       SYSREF Mux configuration.
-       Available options are,
-@@ -72,28 +66,25 @@ properties:
-         Re-clocked 1
-         SYSREF Pulser 2
-         SYSREF Continuous 3
--    allOf:
--      - $ref: /schemas/types.yaml#/definitions/uint32
--      - enum: [0, 1, 2, 3]
--      - default: 3
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+    default: 3
- 
--  lmk,sync-mode:
-+  ti,sync-mode:
-     description: SYNC pin configuration.
--    allOf:
--      - $ref: /schemas/types.yaml#/definitions/uint32
--      - enum: [0, 1, 2]
--      - default: 1
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
- 
--  lmk,sysref-pulse-count:
-+  ti,sysref-pulse-count:
-     description:
-       Number of SYSREF pulses to send when SYSREF is not in continuous mode.
--    allOf:
--      - $ref: /schemas/types.yaml#/definitions/uint32
--      - enum: [1, 2, 4, 8]
--      - default: 4
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8]
-+    default: 4
- 
- patternProperties:
--  "^.*@[0-9a-f]+$":
-+  "@[0-9a-d]+$":
-     type: object
-     description:
-       Child nodes used to configure output clocks.
-@@ -105,7 +96,7 @@ patternProperties:
-         minimum: 0
-         maximum: 13
- 
--      lmk,clkout-fmt:
-+      ti,clkout-fmt:
-         description:
-           Clock output format.
-           Available options are,
-@@ -125,12 +116,11 @@ patternProperties:
-             CMOS (Inverted/Normal) 0x0d
-             CMOS (Normal/Inverted) 0x0e
-             CMOS (Normal/Normal) 0x0f
--        allOf:
--          - $ref: /schemas/types.yaml#/definitions/uint32
--          - minimum: 0
--          - maximum: 15
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        minimum: 0
-+        maximum: 15
- 
--      lmk,clkout-sysref:
-+      ti,clkout-sysref:
-         description:
-           Select SYSREF clock path for output clock.
-         type: boolean
-@@ -142,6 +132,8 @@ required:
-   - compatible
-   - reg
-   - '#clock-cells'
-+  - clocks
-+  - clock-names
- 
- additionalProperties: false
- 
-@@ -157,45 +149,50 @@ examples:
-         };
-     };
- 
--    lmk04832: lmk04832@0 {
--        reg = <0>;
-+    spi0 {
-         #address-cells = <1>;
-         #size-cells = <0>;
- 
--        compatible = "ti,lmk04832";
--        spi-max-frequency = <781250>;
--
--        reset-gpios = <&gpio_lmk 0 0 0>;
--
--        #clock-cells = <1>;
--        clocks = <&lmk04832_oscin>;
--        clock-names = "oscin";
--
--        lmk,spi-4wire-rdbk = <0>;
--        lmk,vco-rate = <2457600000>;
--
--        assigned-clocks =
--            <&lmk04832 0>, <&lmk04832 1>,
--            <&lmk04832 2>, <&lmk04832 3>,
--            <&lmk04832 4>,
--            <&lmk04832 6>, <&lmk04832 7>,
--            <&lmk04832 10>, <&lmk04832 11>;
--      assigned-clock-rates =
--            <122880000>, <384000>,
--            <122880000>, <384000>,
--            <122880000>,
--            <153600000>, <384000>,
--            <614400000>, <384000>;
--
--      clkout0@0 {
--          reg = <0>;
--          lmk,clkout-fmt = <0x01>; // LVDS
--      };
--
--      clkout1@1 {
--          reg = <1>;
--          lmk,clkout-fmt = <0x01>; // LVDS
--          lmk,clkout-sysref;
--      };
--  };
--
-+        lmk04832: clock-controller@0 {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            reg = <0>;
-+
-+            compatible = "ti,lmk04832";
-+            spi-max-frequency = <781250>;
-+
-+            reset-gpios = <&gpio_lmk 0 0 0>;
-+
-+            #clock-cells = <1>;
-+            clocks = <&lmk04832_oscin>;
-+            clock-names = "oscin";
-+
-+            ti,spi-4wire-rdbk = <0>;
-+            ti,vco-hz = <2457600000>;
-+
-+            assigned-clocks =
-+                <&lmk04832 0>, <&lmk04832 1>,
-+                <&lmk04832 2>, <&lmk04832 3>,
-+                <&lmk04832 4>,
-+                <&lmk04832 6>, <&lmk04832 7>,
-+                <&lmk04832 10>, <&lmk04832 11>;
-+            assigned-clock-rates =
-+                <122880000>, <384000>,
-+                <122880000>, <384000>,
-+                <122880000>,
-+                <153600000>, <384000>,
-+                <614400000>, <384000>;
-+
-+            clkout0@0 {
-+                reg = <0>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+            };
-+
-+            clkout1@1 {
-+                reg = <1>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+                ti,clkout-sysref;
-+            };
-+        };
-+    };
 diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index e0f01aacc8f4..5393088fa68e 100644
+index 387a60fa2111..5393088fa68e 100644
 --- a/drivers/clk/clk-lmk04832.c
 +++ b/drivers/clk/clk-lmk04832.c
-@@ -1444,21 +1444,21 @@ static int lmk04832_probe(struct spi_device *spi)
- 		goto err_disable_oscin;
+@@ -36,16 +36,24 @@
+ #define LMK04832_REG_CLKOUT_CTRL0(ch)	(0x100 + (ch >> 1) * 8)
+ #define LMK04832_BIT_DCLK_DIV_LSB		GENMASK(7, 0)
+ #define LMK04832_REG_CLKOUT_CTRL1(ch)	(0x101 + (ch >> 1) * 8)
++#define LMK04832_BIT_DCLKX_Y_DDLY_LSB		GENMASK(7, 0)
+ #define LMK04832_REG_CLKOUT_CTRL2(ch)	(0x102 + (ch >> 1) * 8)
+ #define LMK04832_BIT_CLKOUTX_Y_PD		BIT(7)
++#define LMK04832_BIT_DCLKX_Y_DDLY_PD		BIT(4)
++#define LMK04832_BIT_DCLKX_Y_DDLY_MSB		GENMASK(3, 2)
+ #define LMK04832_BIT_DCLK_DIV_MSB		GENMASK(1, 0)
+ #define LMK04832_REG_CLKOUT_SRC_MUX(ch)	(0x103 + (ch % 2) + (ch >> 1) * 8)
+ #define LMK04832_BIT_CLKOUT_SRC_MUX		BIT(5)
+ #define LMK04832_REG_CLKOUT_CTRL3(ch)	(0x103 + (ch >> 1) * 8)
+ #define LMK04832_BIT_DCLKX_Y_PD			BIT(4)
+ #define LMK04832_BIT_DCLKX_Y_DCC		BIT(2)
++#define LMK04832_BIT_DCLKX_Y_HS			BIT(0)
+ #define LMK04832_REG_CLKOUT_CTRL4(ch)	(0x104 + (ch >> 1) * 8)
+ #define LMK04832_BIT_SCLK_PD			BIT(4)
++#define LMK04832_BIT_SCLKX_Y_DIS_MODE		GENMASK(3, 2)
++#define LMK04832_REG_SCLKX_Y_ADLY(ch)	(0x105 + (ch >> 1) * 8)
++#define LMK04832_REG_SCLKX_Y_DDLY(ch)	(0x106 + (ch >> 1) * 8)
++#define LMK04832_BIT_SCLKX_Y_DDLY		GENMASK(3, 0)
+ #define LMK04832_REG_CLKOUT_FMT(ch)	(0x107 + (ch >> 1) * 8)
+ #define LMK04832_BIT_CLKOUT_FMT(ch)		(ch % 2 ? 0xf0 : 0x0f)
+ #define LMK04832_VAL_CLKOUT_FMT_POWERDOWN		0x00
+@@ -72,11 +80,19 @@
+ #define LMK04832_VAL_VCO_MUX_VCO1			0x01
+ #define LMK04832_VAL_VCO_MUX_EXT			0x02
+ #define LMK04832_REG_SYSREF_OUT		0x139
++#define LMK04832_BIT_SYSREF_REQ_EN		BIT(6)
+ #define LMK04832_BIT_SYSREF_MUX			GENMASK(1, 0)
++#define LMK04832_VAL_SYSREF_MUX_NORMAL_SYNC		0x00
++#define LMK04832_VAL_SYSREF_MUX_RECLK			0x01
++#define LMK04832_VAL_SYSREF_MUX_PULSER			0x02
+ #define LMK04832_VAL_SYSREF_MUX_CONTINUOUS		0x03
+ #define LMK04832_REG_SYSREF_DIV_MSB	0x13a
+ #define LMK04832_BIT_SYSREF_DIV_MSB		GENMASK(4, 0)
+ #define LMK04832_REG_SYSREF_DIV_LSB	0x13b
++#define LMK04832_REG_SYSREF_DDLY_MSB	0x13c
++#define LMK04832_BIT_SYSREF_DDLY_MSB		GENMASK(4, 0)
++#define LMK04832_REG_SYSREF_DDLY_LSB	0x13d
++#define LMK04832_REG_SYSREF_PULSE_CNT	0x13e
+ #define LMK04832_REG_FB_CTRL		0x13f
+ #define LMK04832_BIT_PLL2_RCLK_MUX		BIT(7)
+ #define LMK04832_VAL_PLL2_RCLK_MUX_OSCIN		0x00
+@@ -95,7 +111,15 @@
+ #define LMK04832_BIT_SYSREF_DDLY_PD		BIT(1)
+ #define LMK04832_BIT_SYSREF_PLSR_PD		BIT(0)
+ #define LMK04832_REG_SYNC		0x143
++#define LMK04832_BIT_SYNC_CLR			BIT(7)
++#define LMK04832_BIT_SYNC_1SHOT_EN		BIT(6)
++#define LMK04832_BIT_SYNC_POL			BIT(5)
+ #define LMK04832_BIT_SYNC_EN			BIT(4)
++#define LMK04832_BIT_SYNC_MODE			GENMASK(1, 0)
++#define LMK04832_VAL_SYNC_MODE_OFF			0x00
++#define LMK04832_VAL_SYNC_MODE_ON			0x01
++#define LMK04832_VAL_SYNC_MODE_PULSER_PIN		0x02
++#define LMK04832_VAL_SYNC_MODE_PULSER_SPI		0x03
+ #define LMK04832_REG_SYNC_DIS		0x144
+ 
+ /* 0x146 - 0x14a CLKin Control */
+@@ -127,6 +151,7 @@
+ #define LMK04832_BIT_PLL2_N_0			GENMASK(1, 0)
+ #define LMK04832_REG_PLL2_N_1		0x167
+ #define LMK04832_REG_PLL2_N_2		0x168
++#define LMK04832_REG_PLL2_DLD_CNT_MSB	0x16a
+ #define LMK04832_REG_PLL2_DLD_CNT_LSB	0x16b
+ #define LMK04832_REG_PLL2_LD		0x16e
+ #define LMK04832_BIT_PLL2_LD_MUX		GENMASK(7, 3)
+@@ -203,6 +228,11 @@ struct lmk_clkout {
+  *
+  * @dev: reference to a struct device, linked to the spi_device
+  * @regmap: struct regmap instance use to access the chip
++ * @sync_mode: operational mode for SYNC signal
++ * @sysref_mux: select SYSREF source
++ * @sysref_pulse_cnt: number of SYSREF pulses generated while not in continuous
++ *                    mode.
++ * @sysref_ddly: SYSREF digital delay value
+  * @oscin: PLL2 input clock
+  * @vco: reference to the internal VCO clock
+  * @sclk: reference to the internal sysref clock (SCLK)
+@@ -217,6 +247,11 @@ struct lmk04832 {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 
++	unsigned int sync_mode;
++	unsigned int sysref_mux;
++	unsigned int sysref_pulse_cnt;
++	unsigned int sysref_ddly;
++
+ 	struct clk *oscin;
+ 	struct clk_hw vco;
+ 	struct clk_hw sclk;
+@@ -613,6 +648,212 @@ static int lmk04832_register_vco(struct lmk04832 *lmk)
+ 	return devm_clk_hw_register(lmk->dev, &lmk->vco);
+ }
+ 
++static int lmk04832_clkout_set_ddly(struct lmk04832 *lmk, int id)
++{
++	int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
++	unsigned int sclkx_y_ddly = 10;
++	unsigned int dclkx_y_ddly;
++	unsigned int dclkx_y_div;
++	unsigned int sysref_ddly;
++	unsigned int dclkx_y_hs;
++	unsigned int lsb, msb;
++	int ret;
++
++	ret = regmap_update_bits(lmk->regmap,
++				 LMK04832_REG_CLKOUT_CTRL2(id),
++				 LMK04832_BIT_DCLKX_Y_DDLY_PD,
++				 FIELD_PREP(LMK04832_BIT_DCLKX_Y_DDLY_PD, 0));
++	if (ret)
++		return ret;
++
++	ret = regmap_read(lmk->regmap, LMK04832_REG_SYSREF_DDLY_LSB, &lsb);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(lmk->regmap, LMK04832_REG_SYSREF_DDLY_MSB, &msb);
++	if (ret)
++		return ret;
++
++	sysref_ddly = FIELD_GET(LMK04832_BIT_SYSREF_DDLY_MSB, msb) << 8 | lsb;
++
++	ret = regmap_read(lmk->regmap, LMK04832_REG_CLKOUT_CTRL0(id), &lsb);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(lmk->regmap, LMK04832_REG_CLKOUT_CTRL2(id), &msb);
++	if (ret)
++		return ret;
++
++	dclkx_y_div = FIELD_GET(LMK04832_BIT_DCLK_DIV_MSB, msb) << 8 | lsb;
++
++	ret = regmap_read(lmk->regmap, LMK04832_REG_CLKOUT_CTRL3(id), &lsb);
++	if (ret)
++		return ret;
++
++	dclkx_y_hs = FIELD_GET(LMK04832_BIT_DCLKX_Y_HS, lsb);
++
++	dclkx_y_ddly = sysref_ddly + 1 -
++		dclk_div_adj[dclkx_y_div < 6 ?  dclkx_y_div : 7] -
++		dclkx_y_hs + sclkx_y_ddly;
++
++	if (dclkx_y_ddly < 7 || dclkx_y_ddly > 0x3fff) {
++		dev_err(lmk->dev, "DCLKX_Y_DDLY out of range (%d)\n",
++			dclkx_y_ddly);
++		return -EINVAL;
++	}
++
++	ret = regmap_write(lmk->regmap,
++			   LMK04832_REG_SCLKX_Y_DDLY(id),
++			   FIELD_GET(LMK04832_BIT_SCLKX_Y_DDLY, sclkx_y_ddly));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(lmk->regmap, LMK04832_REG_CLKOUT_CTRL1(id),
++				FIELD_GET(0x00ff, dclkx_y_ddly));
++	if (ret)
++		return ret;
++
++	dev_dbg(lmk->dev, "clkout%02u: sysref_ddly=%u, dclkx_y_ddly=%u, "
++		"dclk_div_adj=%+d, dclkx_y_hs=%u, sclkx_y_ddly=%u\n",
++		id, sysref_ddly, dclkx_y_ddly,
++		dclk_div_adj[dclkx_y_div < 6 ? dclkx_y_div : 7],
++		dclkx_y_hs, sclkx_y_ddly);
++
++	return regmap_update_bits(lmk->regmap, LMK04832_REG_CLKOUT_CTRL2(id),
++				  LMK04832_BIT_DCLKX_Y_DDLY_MSB,
++				  FIELD_GET(0x0300, dclkx_y_ddly));
++}
++
++/** lmk04832_sclk_sync - Establish deterministic phase relationship between sclk
++ *                       and dclk
++ *
++ * @lmk: Reference to the lmk device
++ *
++ * The synchronization sequence:
++ * - in the datasheet https://www.ti.com/lit/ds/symlink/lmk04832.pdf, p.31
++ *   (8.3.3.1 How to enable SYSREF)
++ * - Ti forum: https://e2e.ti.com/support/clock-and-timing/f/48/t/970972
++ *
++ * Returns 0 or negative errno.
++ */
++static int lmk04832_sclk_sync_sequence(struct lmk04832 *lmk)
++{
++	int ret;
++	int i;
++
++	/* 1. (optional) mute all sysref_outputs during synchronization */
++	/* 2. Enable and write device clock digital delay to applicable clocks */
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_MAIN_PD,
++				 LMK04832_BIT_SYSREF_DDLY_PD,
++				 FIELD_PREP(LMK04832_BIT_SYSREF_DDLY_PD, 0));
++	if (ret)
++		return ret;
++
++	for (i = 0; i < lmk->clk_data->num; i += 2) {
++		ret = lmk04832_clkout_set_ddly(lmk, i);
++		if (ret)
++			return ret;
++	}
++
++	/*
++	 * 3. Configure SYNC_MODE to SYNC_PIN and SYSREF_MUX to Normal SYNC,
++	 *    and clear SYSREF_REQ_EN (see 6.)
++	 */
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYSREF_OUT,
++				 LMK04832_BIT_SYSREF_REQ_EN |
++				 LMK04832_BIT_SYSREF_MUX,
++				 FIELD_PREP(LMK04832_BIT_SYSREF_REQ_EN, 0) |
++				 FIELD_PREP(LMK04832_BIT_SYSREF_MUX,
++					    LMK04832_VAL_SYSREF_MUX_NORMAL_SYNC));
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++				 LMK04832_BIT_SYNC_MODE,
++				 FIELD_PREP(LMK04832_BIT_SYNC_MODE,
++					    LMK04832_VAL_SYNC_MODE_ON));
++	if (ret)
++		return ret;
++
++	/* 4. Clear SYNXC_DISx or applicable clocks and clear SYNC_DISSYSREF */
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYNC_DIS, 0x00);
++	if (ret)
++		return ret;
++
++	/*
++	 * 5. If SCLKX_Y_DDLY != 0, Set SYSREF_CLR=1 for at least 15 clock
++	 *    distribution path cycles (VCO cycles), then back to 0. In
++	 *    PLL2-only use case, this will be complete in less than one SPI
++	 *    transaction. If SYSREF local digital delay is not used, this step
++	 *    can be skipped.
++	 */
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++				 LMK04832_BIT_SYNC_CLR,
++				 FIELD_PREP(LMK04832_BIT_SYNC_CLR, 0x01));
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++				 LMK04832_BIT_SYNC_CLR,
++				 FIELD_PREP(LMK04832_BIT_SYNC_CLR, 0x00));
++	if (ret)
++		return ret;
++
++	/*
++	 * 6. Toggle SYNC_POL state between inverted and not inverted.
++	 *    If you use an external signal on the SYNC pin instead of toggling
++	 *    SYNC_POL, make sure that SYSREF_REQ_EN=0 so that the SYSREF_MUX
++	 *    does not shift into continuous SYSREF mode.
++	 */
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++			   LMK04832_BIT_SYNC_POL,
++			   FIELD_PREP(LMK04832_BIT_SYNC_POL, 0x01));
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++			   LMK04832_BIT_SYNC_POL,
++			   FIELD_PREP(LMK04832_BIT_SYNC_POL, 0x00));
++	if (ret)
++		return ret;
++
++	/* 7. Set all SYNC_DISx=1, including SYNC_DISSYSREF */
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYNC_DIS, 0xff);
++	if (ret)
++		return ret;
++
++	/* 8. Restore state of SYNC_MODE and SYSREF_MUX to desired values */
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYSREF_OUT,
++				 LMK04832_BIT_SYSREF_MUX,
++				 FIELD_PREP(LMK04832_BIT_SYSREF_MUX,
++					    lmk->sysref_mux));
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
++				 LMK04832_BIT_SYNC_MODE,
++				 FIELD_PREP(LMK04832_BIT_SYNC_MODE,
++					    lmk->sync_mode));
++	if (ret)
++		return ret;
++
++	/*
++	 * 9. (optional) if SCLKx_y_DIS_MODE was used to mute SYSREF outputs
++	 *    during the SYNC event, restore SCLKx_y_DIS_MODE=0 for active state,
++	 *    or set SYSREF_GBL_PD=0 if SCLKx_y_DIS_MODE is set to a conditional
++	 *    option.
++	 */
++
++	/*
++	 * 10. (optional) To reduce power consumption, after the synchronization
++	 *     event is complete, DCLKx_y_DDLY_PD=1 and SYSREF_DDLY_PD=1 disable the
++	 *     digital delay counters (which are only used immediately after the
++	 *     SYNC pulse to delay the output by some number of VCO counts).
++	 */
++
++	return ret;
++}
++
+ static int lmk04832_sclk_is_enabled(struct clk_hw *hw)
+ {
+ 	struct lmk04832 *lmk = container_of(hw, struct lmk04832, sclk);
+@@ -700,8 +941,16 @@ static int lmk04832_sclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (ret)
+ 		return ret;
+ 
+-	return regmap_write(lmk->regmap, LMK04832_REG_SYSREF_DIV_LSB,
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYSREF_DIV_LSB,
+ 			    FIELD_GET(0x00ff, sysref_div));
++	if (ret)
++		return ret;
++
++	ret = lmk04832_sclk_sync_sequence(lmk);
++	if (ret)
++		dev_err(lmk->dev, "SYNC sequence failed\n");
++
++	return ret;
+ }
+ 
+ static const struct clk_ops lmk04832_sclk_ops = {
+@@ -730,18 +979,37 @@ static int lmk04832_register_sclk(struct lmk04832 *lmk)
+ 	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYSREF_OUT,
+ 				 LMK04832_BIT_SYSREF_MUX,
+ 				 FIELD_PREP(LMK04832_BIT_SYSREF_MUX,
+-					    LMK04832_VAL_SYSREF_MUX_CONTINUOUS));
++					    lmk->sysref_mux));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYSREF_DDLY_LSB,
++			   FIELD_GET(0x00ff, lmk->sysref_ddly));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYSREF_DDLY_MSB,
++			   FIELD_GET(0x1f00, lmk->sysref_ddly));
++	if (ret)
++		return ret;
++
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYSREF_PULSE_CNT,
++			   ilog2(lmk->sysref_pulse_cnt));
+ 	if (ret)
+ 		return ret;
+ 
+ 	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_MAIN_PD,
++				 LMK04832_BIT_SYSREF_DDLY_PD |
+ 				 LMK04832_BIT_SYSREF_PLSR_PD,
+-				 LMK04832_BIT_SYSREF_PLSR_PD);
++				 FIELD_PREP(LMK04832_BIT_SYSREF_DDLY_PD, 0) |
++				 FIELD_PREP(LMK04832_BIT_SYSREF_PLSR_PD, 0));
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
+-				 LMK04832_BIT_SYNC_EN, 0xff);
++	ret = regmap_write(lmk->regmap, LMK04832_REG_SYNC,
++			   FIELD_PREP(LMK04832_BIT_SYNC_POL, 0) |
++			   FIELD_PREP(LMK04832_BIT_SYNC_EN, 1) |
++			   FIELD_PREP(LMK04832_BIT_SYNC_MODE, lmk->sync_mode));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -861,15 +1129,41 @@ static int lmk04832_dclk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			return ret;
  	}
  
--	device_property_read_u32(lmk->dev, "lmk,vco-rate", &lmk->vco_rate);
-+	device_property_read_u32(lmk->dev, "ti,vco-hz", &lmk->vco_rate);
++	/*
++	 * While using Divide-by-2 or Divide-by-3 for DCLK_X_Y_DIV, SYNC
++	 * procedure requires to first program Divide-by-4 and then back to
++	 * Divide-by-2 or Divide-by-3 before doing SYNC.
++	 */
++	if (dclk_div == 2 || dclk_div == 3) {
++		ret = regmap_update_bits(lmk->regmap,
++					 LMK04832_REG_CLKOUT_CTRL2(dclk->id),
++					 LMK04832_BIT_DCLK_DIV_MSB, 0x00);
++		if (ret)
++			return ret;
++
++		ret = regmap_write(lmk->regmap,
++				   LMK04832_REG_CLKOUT_CTRL0(dclk->id), 0x04);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = regmap_write(lmk->regmap, LMK04832_REG_CLKOUT_CTRL0(dclk->id),
+ 			   FIELD_GET(0x0ff, dclk_div));
+ 	if (ret)
+ 		return ret;
  
- 	lmk->sysref_ddly = 8;
--	device_property_read_u32(lmk->dev, "lmk,sysref-ddly", &lmk->sysref_ddly);
+-	return regmap_update_bits(lmk->regmap,
++	ret = regmap_update_bits(lmk->regmap,
+ 				  LMK04832_REG_CLKOUT_CTRL2(dclk->id),
+ 				  LMK04832_BIT_DCLK_DIV_MSB,
+ 				  FIELD_GET(0x300, dclk_div));
++	if (ret)
++		return ret;
++
++	ret = lmk04832_sclk_sync_sequence(lmk);
++	if (ret)
++		dev_err(lmk->dev, "SYNC sequence failed\n");
++
++	return ret;
+ };
+ 
+ static const struct clk_ops lmk04832_dclk_ops = {
+@@ -1152,6 +1446,21 @@ static int lmk04832_probe(struct spi_device *spi)
+ 
+ 	device_property_read_u32(lmk->dev, "ti,vco-hz", &lmk->vco_rate);
+ 
++	lmk->sysref_ddly = 8;
 +	device_property_read_u32(lmk->dev, "ti,sysref-ddly", &lmk->sysref_ddly);
- 
- 	lmk->sysref_mux = LMK04832_VAL_SYSREF_MUX_CONTINUOUS;
--	device_property_read_u32(lmk->dev, "lmk,sysref-mux",
++
++	lmk->sysref_mux = LMK04832_VAL_SYSREF_MUX_CONTINUOUS;
 +	device_property_read_u32(lmk->dev, "ti,sysref-mux",
- 				 &lmk->sysref_mux);
- 
- 	lmk->sync_mode = LMK04832_VAL_SYNC_MODE_OFF;
--	device_property_read_u32(lmk->dev, "lmk,sync-mode",
++				 &lmk->sysref_mux);
++
++	lmk->sync_mode = LMK04832_VAL_SYNC_MODE_OFF;
 +	device_property_read_u32(lmk->dev, "ti,sync-mode",
- 				 &lmk->sync_mode);
- 
- 	lmk->sysref_pulse_cnt = 4;
--	device_property_read_u32(lmk->dev, "lmk,sysref-pulse-count",
++				 &lmk->sync_mode);
++
++	lmk->sysref_pulse_cnt = 4;
 +	device_property_read_u32(lmk->dev, "ti,sysref-pulse-count",
- 				 &lmk->sysref_pulse_cnt);
- 
++				 &lmk->sysref_pulse_cnt);
++
  	for_each_child_of_node(lmk->dev->of_node, child) {
-@@ -1471,7 +1471,7 @@ static int lmk04832_probe(struct spi_device *spi)
- 			goto err_disable_oscin;
- 		}
+ 		int reg;
  
--		of_property_read_u32(child, "lmk,clkout-fmt",
-+		of_property_read_u32(child, "ti,clkout-fmt",
- 				     &lmk->clkout[reg].format);
- 
- 		if (lmk->clkout[reg].format >= 0x0a && reg % 2 == 0
-@@ -1480,7 +1480,7 @@ static int lmk04832_probe(struct spi_device *spi)
- 				reg);
- 
- 		lmk->clkout[reg].sysref =
--			of_property_read_bool(child, "lmk,clkout-sysref");
-+			of_property_read_bool(child, "ti,clkout-sysref");
- 	};
- 
- 	lmk->regmap = devm_regmap_init_spi(spi, &regmap_config);
-@@ -1495,7 +1495,7 @@ static int lmk04832_probe(struct spi_device *spi)
- 	regmap_write(lmk->regmap, LMK04832_REG_RST3W, LMK04832_BIT_RESET);
- 
- 	if (!(spi->mode & SPI_3WIRE)) {
--		device_property_read_u32(lmk->dev, "lmk,spi-4wire-rdbk",
-+		device_property_read_u32(lmk->dev, "ti,spi-4wire-rdbk",
- 					 &rdbk_pin);
- 		ret = lmk04832_set_spi_rdbk(lmk, rdbk_pin);
- 		if (ret)
-
-base-commit: f40ddce88593482919761f74910f42f4b84c004b
 -- 
 2.30.1.489.g328c10930387
 
