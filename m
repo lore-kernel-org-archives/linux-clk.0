@@ -2,293 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DCAC4332D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 02:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A125C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 03:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3291B64E7A
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 02:32:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C55E1601FF
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 03:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbhBXCcV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Feb 2021 21:32:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232767AbhBXCcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 21:32:08 -0500
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF77C06178C;
-        Tue, 23 Feb 2021 18:31:28 -0800 (PST)
-Received: by mail-qk1-x72e.google.com with SMTP id b14so901546qkk.0;
-        Tue, 23 Feb 2021 18:31:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MuMjbMprp+Bw9LEw8td5Yoyyayc1sM1whmj4n8ou/d0=;
-        b=mDLKBUTM6IqATV8ghXEmhfNtSsXxXZwm6/zwoxNMrEmGPLG9qu1CFo6cQo1u7UZu6r
-         QAJD48/Kb4RBef7UZZ2EAnCP7ADdKOpDJTN4KZGKo4PBm9BzvDsDLUdobsVh2pVzufxQ
-         sEjyR9dufngzn+kohxmZGRy1bqhtZuKrdQpb2ddxIdmDpZpfhOQt3ZqaRHcDR5Z+NJ2x
-         NSYMtwZYodxHkSfmBn/d/OqVqKhnsmu6D6sQHau1QtxdTbS/ClfylPkjldSvziHhQ40F
-         hmU1lKyCndqFS/7O9wXlkMboh+8O2fx9MzaZ5uBOhGUgRsnPKzoZEL7jd+HdKehb9SuX
-         v/qg==
+        id S233659AbhBXDtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Feb 2021 22:49:49 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:40994 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233635AbhBXDtq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Feb 2021 22:49:46 -0500
+Received: by mail-ot1-f44.google.com with SMTP id s107so892979otb.8;
+        Tue, 23 Feb 2021 19:49:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MuMjbMprp+Bw9LEw8td5Yoyyayc1sM1whmj4n8ou/d0=;
-        b=lHEf6o67cgQlCDrO+3Q1+wxVEq9ylzAX+JbSjQCKYXR8jY7AHJ5bUKuPUyCdAQCPdJ
-         e2RO5auJY+u9lyVnBkA5y56lt33meRYTFGn8LE7jddSGiou5r+MfR6oVQIiAWHrRNNDL
-         zN/xOPyIRgFK+OYFae/BUuLDx5gGQtiULLNQxD27eRFBER0YkXpNHm4UeAgopdnSz62e
-         kUmgGko8iNKkDWoM+JDTMTMfDfYQTpdv/920SBXnOpbGu7jpOw73Y9Mke2E/wgTkkanJ
-         wtod9uCVoMXnX+Pq4WboKgrFF4njVjfwu/COQQH5DOQzkinCKKd88IBE64MsSQ1GVuhh
-         9HcA==
-X-Gm-Message-State: AOAM533OqWYMEqZaVBfdGy0YEpp8ROf2kxoWuDKV73e0RxcdWrAt04Wk
-        M4/rTyButfNbBWS9X8unIX4=
-X-Google-Smtp-Source: ABdhPJyQx+CwbLw26Hx2gJtARm+DbBue/6az9wFFP2tytXsMv1Ey7wVAvJy4aSnRbwLsahKhrPyB9w==
-X-Received: by 2002:a37:7747:: with SMTP id s68mr3970523qkc.198.1614133887235;
-        Tue, 23 Feb 2021 18:31:27 -0800 (PST)
-Received: from shaak.xiphos.ca (198-48-202-89.cpe.pppoe.ca. [198.48.202.89])
-        by smtp.gmail.com with ESMTPSA id p25sm529500qkh.79.2021.02.23.18.31.26
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=Vj+GaDBHsdtJo8wsFzM49IM004p3o3LltrI7rg33ymk=;
+        b=h2OmakugkkKJidwiMrQpASCRIk/3et2jQYmLhfcXDbi1Vm4P+0V/rglZ9x1XuhQ0pL
+         wV4s/n4C6ixdzDSbDsJ0uS3ng2E8D61h2uEOUfjrjCDIloYOSyEPSMqU11ckZ6HYa/hj
+         YnZ88tjptGgm0TvveTAB7HaWtssHz+XDmEpqInQl2pbZLpDxegK/uIt0JVgVWZ919ksu
+         HqPegzAWrxuhFXT4U+tQ2XmEjawmRDB01SYttu4zvG1JCmNjf1XWErYUSQ+UU11bd6l9
+         Z0c3HtBP5oJ7w3Xk3vJMLLozvWm53yJe5RNrwBEZrKcvvI03R+CwAnDzDfGUg97WPQzQ
+         cGBw==
+X-Gm-Message-State: AOAM533WdOgcI/zCUpYx627BKwDyqpcbRBaaqNEO4w4zAlcLk8CBeb6A
+        lEW1pyjr0gcflscoNxDqgA==
+X-Google-Smtp-Source: ABdhPJzRQi+Pm9K3uybCnSzlInlPtQVeNYzmm8dCH+tCrWr5x3gTbhHM86QGMzaTXuCQjW5ugJlYSg==
+X-Received: by 2002:a05:6830:3152:: with SMTP id c18mr22963284ots.191.1614138545586;
+        Tue, 23 Feb 2021 19:49:05 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f19sm170665oiw.38.2021.02.23.19.49.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Feb 2021 18:31:26 -0800 (PST)
-From:   Liam Beguin <liambeguin@gmail.com>
-To:     liambeguin@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org
-Subject: [PATCH v3 3/3] dt-bindings: clock: add ti,lmk04832 bindings
-Date:   Tue, 23 Feb 2021 21:31:16 -0500
-Message-Id: <20210224023116.571718-4-liambeguin@gmail.com>
-X-Mailer: git-send-email 2.30.1.489.g328c10930387
-In-Reply-To: <20210224023116.571718-1-liambeguin@gmail.com>
-References: <20210224023116.571718-1-liambeguin@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 23 Feb 2021 19:49:04 -0800 (PST)
+Received: (nullmailer pid 735526 invoked by uid 1000);
+        Wed, 24 Feb 2021 03:49:02 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Liam Beguin <liambeguin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org
+In-Reply-To: <20210224023116.571718-4-liambeguin@gmail.com>
+References: <20210224023116.571718-1-liambeguin@gmail.com> <20210224023116.571718-4-liambeguin@gmail.com>
+Subject: Re: [PATCH v3 3/3] dt-bindings: clock: add ti,lmk04832 bindings
+Date:   Tue, 23 Feb 2021 21:49:02 -0600
+Message-Id: <1614138542.304286.735525.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Liam Beguin <lvb@xiphos.com>
+On Tue, 23 Feb 2021 21:31:16 -0500, Liam Beguin wrote:
+> From: Liam Beguin <lvb@xiphos.com>
+> 
+> Document devicetree bindings for Texas Instruments' LMK04832.
+> The LMK04208 is a high performance clock conditioner with superior clock
+> jitter cleaning, generation, and distribution with JEDEC JESD204B
+> support.
+> 
+> Signed-off-by: Liam Beguin <lvb@xiphos.com>
+> ---
+>  .../bindings/clock/ti,lmk04832.yaml           | 198 ++++++++++++++++++
+>  1 file changed, 198 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+> 
 
-Document devicetree bindings for Texas Instruments' LMK04832.
-The LMK04208 is a high performance clock conditioner with superior clock
-jitter cleaning, generation, and distribution with JEDEC JESD204B
-support.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Signed-off-by: Liam Beguin <lvb@xiphos.com>
----
- .../bindings/clock/ti,lmk04832.yaml           | 198 ++++++++++++++++++
- 1 file changed, 198 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+yamllint warnings/errors:
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-new file mode 100644
-index 000000000000..c0d9ab650e80
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
-@@ -0,0 +1,198 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,lmk04832.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Clock bindings for the Texas Instruments LMK04832
-+
-+maintainers:
-+  - Liam Beguin <liambeguin@gmail.com>
-+
-+description: |
-+  Devicetree binding for the LMK04832, a clock conditioner with JEDEC JESD204B
-+  support. The LMK04832 is pin compatible with the LMK0482x family.
-+
-+  Link to datasheet, https://www.ti.com/lit/ds/symlink/lmk04832.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,lmk04832
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clocks:
-+    items:
-+      - description: PLL2 reference clock.
-+
-+  clock-names:
-+    items:
-+      - const: oscin
-+
-+  reset-gpios:
-+    maxItems: 1
-+
-+  ti,spi-4wire-rdbk:
-+    description: |
-+      Select SPI 4wire readback pin configuration.
-+      Available readback pins are,
-+        CLKin_SEL0 0
-+        CLKin_SEL1 1
-+        RESET 2
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,vco-hz:
-+    description: Optional to set VCO frequency of the PLL in Hertz.
-+
-+  ti,sysref-ddly:
-+    description: SYSREF digital delay value.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 8
-+    maximum: 8191
-+    default: 8
-+
-+  ti,sysref-mux:
-+    description: |
-+      SYSREF Mux configuration.
-+      Available options are,
-+        Normal SYNC 0
-+        Re-clocked 1
-+        SYSREF Pulser 2
-+        SYSREF Continuous 3
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+    default: 3
-+
-+  ti,sync-mode:
-+    description: SYNC pin configuration.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-+    default: 1
-+
-+  ti,sysref-pulse-count:
-+    description:
-+      Number of SYSREF pulses to send when SYSREF is not in continuous mode.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8]
-+    default: 4
-+
-+patternProperties:
-+  "@[0-9a-d]+$":
-+    type: object
-+    description:
-+      Child nodes used to configure output clocks.
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 0
-+        maximum: 13
-+
-+      ti,clkout-fmt:
-+        description:
-+          Clock output format.
-+          Available options are,
-+            Powerdown 0x00
-+            LVDS 0x01
-+            HSDS 6 mA 0x02
-+            HSDS 8 mA 0x03
-+            LVPECL 1600 mV 0x04
-+            LVPECL 2000 mV 0x05
-+            LCPECL 0x06
-+            CML 16 mA 0x07
-+            CML 24 mA 0x08
-+            CML 32 mA 0x09
-+            CMOS (Off/Inverted) 0x0a
-+            CMOS (Normal/Off) 0x0b
-+            CMOS (Inverted/Inverted) 0x0c
-+            CMOS (Inverted/Normal) 0x0d
-+            CMOS (Normal/Inverted) 0x0e
-+            CMOS (Normal/Normal) 0x0f
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        minimum: 0
-+        maximum: 15
-+
-+      ti,clkout-sysref:
-+        description:
-+          Select SYSREF clock path for output clock.
-+        type: boolean
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clocks {
-+        lmk04832_oscin: oscin {
-+            compatible = "fixed-clock";
-+
-+            #clock-cells = <0>;
-+            clock-frequency = <122880000>;
-+            clock-output-names = "lmk04832-oscin";
-+        };
-+    };
-+
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        lmk04832: clock-controller@0 {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            reg = <0>;
-+
-+            compatible = "ti,lmk04832";
-+            spi-max-frequency = <781250>;
-+
-+            reset-gpios = <&gpio_lmk 0 0 0>;
-+
-+            #clock-cells = <1>;
-+            clocks = <&lmk04832_oscin>;
-+            clock-names = "oscin";
-+
-+            ti,spi-4wire-rdbk = <0>;
-+            ti,vco-hz = <2457600000>;
-+
-+            assigned-clocks =
-+                <&lmk04832 0>, <&lmk04832 1>,
-+                <&lmk04832 2>, <&lmk04832 3>,
-+                <&lmk04832 4>,
-+                <&lmk04832 6>, <&lmk04832 7>,
-+                <&lmk04832 10>, <&lmk04832 11>;
-+            assigned-clock-rates =
-+                <122880000>, <384000>,
-+                <122880000>, <384000>,
-+                <122880000>,
-+                <153600000>, <384000>,
-+                <614400000>, <384000>;
-+
-+            clkout0@0 {
-+                reg = <0>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+            };
-+
-+            clkout1@1 {
-+                reg = <1>;
-+                ti,clkout-fmt = <0x01>; // LVDS
-+                ti,clkout-sysref;
-+            };
-+        };
-+    };
--- 
-2.30.1.489.g328c10930387
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/ti,lmk04832.example.dt.yaml: clock-controller@0: '#address-cells', '#size-cells', 'spi-max-frequency' do not match any of the regexes: '@[0-9a-d]+$', 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/ti,lmk04832.yaml
+
+See https://patchwork.ozlabs.org/patch/1443682
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
