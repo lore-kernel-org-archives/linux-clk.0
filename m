@@ -2,258 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2936FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 12:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE51C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5CB0601FE
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 12:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E23664E7A
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232310AbhBYMOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 07:14:38 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:41133 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230019AbhBYMOY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Feb 2021 07:14:24 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 1E8FE240104
-        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 13:13:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1614255204; bh=ofuwOPdGLQUX+yxDjv2AuophkBsdATeFfPLESr3tZ5A=;
-        h=To:Cc:From:Subject:Date:From;
-        b=BPIOIsmohr4bCs2cl9N7QEqiXdqhcxI9aSC/dEK1R3huyt1RVNbZE4hSrVTCCk/XU
-         8vpY62VuSqoHY9HOOc2iFAemaybjD8pb3vz+vaU9JxC6R2AyT1sn7JJCdxDTUVvWBJ
-         1+AOG3+zUz8cyhcFNHHAeFEgCvmSAxuvmDKEt+nqrPw0Qm+t+U2llmRp20niFEqAWp
-         hjEHKw/a8kS8H3nlziqkrxSBD0YICpsRqX/FsIgDs4wpiZKVouTt/f0Ig3WL8V3loZ
-         jUiMwe457774csWqKx0hU6F8BwlhjkoojffcfWCwnfaAcfC8uyc9goX1MQUo+xmpIo
-         ii5GlAfg2SwhA==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4DmWsB68Grz6tmV;
-        Thu, 25 Feb 2021 13:13:18 +0100 (CET)
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "kernel@puri.sm" <kernel@puri.sm>,
-        NXP Linux Team <linux-imx@nxp.com>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
- <20210223172013.tsip6uiuwtfnmqav@fsr-ub1664-175>
-From:   Martin Kepplinger <martink@posteo.de>
-Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
-Message-ID: <315c1ad8-6274-3654-a410-5d78e35a90fe@posteo.de>
-Date:   Thu, 25 Feb 2021 13:13:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        id S232787AbhBYQAJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 11:00:09 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:50027 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232250AbhBYQAE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:00:04 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id B085AB3C;
+        Thu, 25 Feb 2021 10:59:15 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 25 Feb 2021 10:59:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:content-type:mime-version
+        :content-transfer-encoding; s=fm2; bh=+SMPealCjSq/PwFRY80381eUIB
+        TCEdDPlWwxCC9pVsc=; b=nNtxGAkzeCB1X6yZKvkfF4Blbsu9aKS3pVRn//mq22
+        U/115xG+7ABqKcnJO+olHyMpdyvFG62yVAdVgtmPthpGDn7tiIU35QQKbY5ylqUI
+        GdKVQXN1bKWcrPpJx+N9ER57NjaiODJEQtpugNt5PgEHVPZ4bZmsfPb7oJt12ZsE
+        Z510oTRVDzKp/t6dKAdwnGLsa3+Yc9XIixekEnhQfr9CUEkrc4+VRmrQWkTEfeEQ
+        zH4RVf4Rf5iC5aDKmW0fJhO7b/ZWryKqGoHwi4O+5GoISxe9fFMIrndCAzVtUDie
+        Vuw9jNRXl7mEivbKcTp5doz+3AFS9N/jFKy+J6Zi27bA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+SMPea
+        lCjSq/PwFRY80381eUIBTCEdDPlWwxCC9pVsc=; b=XkBGjbTNEoP/2XZ0G6A9Sh
+        dnPqmUfDFiW3R+fwP5qFoYb+f/0bjcOzcp/94ndZsmQUY/wbI8+pUtNzsZcPLaXN
+        S/Jcg3LzeOWEBI5oKUx3eLzXkImXfmh2Jkx/SxoeYZk08ebKzpJ9G/Rh1JM3Q18O
+        DpAZLqUySqIC+y2x9sF8l6ypycVT+fPsN2RfmU5CJUDSg/iU4g6I3IffHt79bf0n
+        lmLwAw8wllK/hzX2le/MGa62JTjFYl/Lqm+4m+w2Pv4cI6KTNattg+OYu/n0eDTI
+        VH4M9X2r2fTEmhmMcSV+9Ax5Gs42qg3+lTYhdflknes+hWDfrNkD7iBulxoV8kmA
+        ==
+X-ME-Sender: <xms:UMk3YHbFD9pemCouU6D2WuXM6zm7sYHYJw17ueKFqWMNHKNwzEhxpg>
+    <xme:UMk3YGYz3ahhSRDzjdtdp_UF6XpIjzuxkag_5vaXVGQoDEWGbaQ3Iq7YmkWVMiQN8
+    _urFmigJMmBZ81eP3g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeelgdekgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgtggfgsehtqhertdertdejnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnhepteeikefgffekgeekledtheduteetjefgkeeuvefhhfetgedugfektdeugeffgfef
+    necukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:UMk3YJ_exG8mUIgEVkcURn-iHV7ukSol15ZakzDoK-qQpO8ZoWONfg>
+    <xmx:UMk3YNoPTdhNC0xHwR6lGl2nUR38KvVPotHIJY35ef36cyDW5N-7lw>
+    <xmx:UMk3YCpgSTrU8yHGrxWdOOBE6LO1SbuxZOBcYh5CbggoGmLZya6srQ>
+    <xmx:U8k3YIigYUIizC5-g3PSSHEZcePHWOeiultvpMlUePIWeOqXsQWJZo-9Pac>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 935F7240066;
+        Thu, 25 Feb 2021 10:59:12 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc:     Phil Elwell <phil@raspberrypi.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>
+Subject: [PATCH 0/8] drm/vc4: hdmi: Support the 4k @ 60Hz modes
+Date:   Thu, 25 Feb 2021 16:59:01 +0100
+Message-Id: <20210225155909.1853812-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.29.2
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20210223172013.tsip6uiuwtfnmqav@fsr-ub1664-175>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23.02.21 18:20, Abel Vesa wrote:
-> On 21-02-22 17:03:13, Martin Kepplinger wrote:
->> On 19.02.21 16:59, Abel Vesa wrote:
->>> This has been on my queue for quite some time now. It is more of a
->>> proof-of-concept.
->>>
->>> This rework is done with the compatibility of future i.MX platforms in
->>> mind. For example, the i.MX8MP platform has multiple NoCs. This
->>> patchsets prepares the imx interconnect and imx devfreq for that too.
->>>
->>> As of now, none of the drivers involved are being used and there is no
->>> icc consumer on any off the i.MX platforms.
->>>
->>> Basically, the steps taken here are the following:
->>>
->>> 1. Make the dram_apb clock "reparantable" from kernel.
->>> This is needed in order to keep track of the actual parent of the
->>> dram_apb clock in the kernel clock hierarchy. Note that the actual
->>> switch is done EL3 (TF-A).
->>>
->>> 2. Rework the imx-bus so the actual link between the icc and the
->>> NoCs or the pl301s is not tightly coupled. This allows us to have
->>> as many NoCs as necessary but also allows as to use the same driver
->>> for the pl301s. The pl301s have their own clocks too, so we need to
->>> reduce their rates too.
->>>
->>> 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
->>> OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
->>> both EL3 and kernel in sync, we rely on what the EL3 gives us.
->>> Also, when the platform suspends, the bus needs to be running at highest
->>> rate, otherwise there is a chance it might not resume anymore.
->>> By adding the late system sleep PM ops we can handle that easily.
->>>
->>> 4. Rework the imx interconnect driver to use the fsl,icc-id instead
->>> of the robust imx_icc_node_adj_desc for linking with the target node.
->>> By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
->>> we can link each icc node to their corresponding NoC, pl301 or dram.
->>> Basically, when the imx interconnect platform specific driver probes,
->>> it will take each node defined for that platform and look-up the
->>> corresponding dts node based on the id and add that as the qos device.
->>>
->>> 5. Added the fec and usdhc as icc consumers. This is just as an example.
->>> All the other consumers can be added later. Basically, each consumer
->>> will add a path to their device node and in the driver will have to
->>> handle that icc path accordingly.
->>>
->>
->> thanks for working on this Abel,
->>
->> It looks like the icc path requests don't work for me:
->>
->> when applying this onto v5.11 (without any other workaround in that area,
->> but some out-of-tree icc-requests like in mxsfb) my rootfs isn't being
->> mounted anymore. Since you add icc requests to the usdhc driver, there could
->> be something wrong.
->>
->> So I revert 19/19 ("mmc: sdhci-esdhc-imx: Add interconnect support") and
->> then my imx8mq (Librem 5) rootfs system boots, but all frequencies stay at
->> the minimum (despite the icc request like this:
->> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1692de27d1475c53574dd7359c68ba613e0fea10
->> so I can't use the display).
->>
->> What could be missing? As I said I'm trying on top of v5.11, (at least I
->> have the NOC node described:
->> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1d74a24c9944d1bf618abdd57d24101368cc8df0
->> and (with the revert from
->> https://lore.kernel.org/linux-arm-kernel/20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175/
->> devfreq works without your patchset ) Is there anything I'm missing that is
->> not yet merged in v5.11?
->>
->> Can I test anything else that would help?
->>
-> 
-> Sorry about this, I messed up the usdhc change.
-> I tested mostly with nfs rootfs.
-> 
-> I'll just paste here the things that are missing in order for the USHCs to work.
-> I'll fold them in the next version of this patch set.
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> index 43760316052f..90398408b55e 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> @@ -1637,6 +1637,25 @@ opp-133M {
->                          };
->                  };
->   
-> +               pl301_per_m: pl301@9 {
-> +                       compatible = "fsl,imx8m-nic";
-> +                       clocks = <&clk IMX8MQ_CLK_NAND_USDHC_BUS>;
-> +                       operating-points-v2 = <&pl301_per_m_opp_table>;
-> +                       #interconnect-cells = <0>;
-> +                       fsl,icc-id = <IMX8MQ_ICN_PER_M>;
-> +
-> +                       pl301_per_m_opp_table: opp-table {
-> +                               compatible = "operating-points-v2";
-> +
-> +                               opp-25M {
-> +                                       opp-hz = /bits/ 64 <25000000>;
-> +                               };
-> +                               opp-133M {
-> +                                       opp-hz = /bits/ 64 <133333333>;
-> +                               };
-> +                       };
-> +               };
-> +
->                  icc: interconnect@0 {
->                          compatible = "fsl,imx8mq-icc", "fsl,imx8m-icc";
->                          #interconnect-cells = <1>;
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 65c5caf82e0c..cb8d341faf71 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -1545,7 +1545,8 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->   
->          imx_data->bus_path = devm_of_icc_get(&pdev->dev, "path");
->          if (IS_ERR(imx_data->bus_path)) {
-> -               return PTR_ERR(imx_data->bus_path);
-> +               err = PTR_ERR(imx_data->bus_path);
-> +               goto free_sdhci;
->          } else if (imx_data->bus_path) {
->                  if (of_property_read_u32(pdev->dev.of_node, "fsl,icc-rate", &imx_data->bus_rate)) {
->                          dev_err(&pdev->dev, "icc-rate missing\n");
-> 
-
-when simply booting with this instead of my revert, turning on *all* 
-kernel debug output, startup stops here:
-
-[  191.157686] devices_kset: Moving 30b50000.mmc to end of list
-[  191.163388] PM: Moving platform:30b50000.mmc to end of list
-[  191.169003] platform 30b50000.mmc: Retrying from deferred list
-[  191.175305] platform 30b50000.mmc: scheduling asynchronous probe
-[  191.181394] devices_kset: Moving 30b40000.mmc to end of list
-[  191.181493] bus: 'platform': driver_probe_device: matched device 
-30b50000.mmc with driver sdhci-esdhc-imx
-[  191.187096] PM: Moving platform:30b40000.mmc to end of list
-[  191.196706] bus: 'platform': really_probe: probing driver 
-sdhci-esdhc-imx with device 30b50000.mmc
-[  191.202270] platform 30b40000.mmc: Retrying from deferred list
-[  191.211361] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group usdhc2grp num 9
-[  191.217169] platform 30b40000.mmc: scheduling asynchronous probe
-[  191.225259] pinctrl core: add 9 pinctrl maps
-
-or here:
-
-[  185.726775] devices_kset: Moving 30b40000.mmc to end of list
-[  185.732476] PM: Moving platform:30b40000.mmc to end of list
-[  185.738090] platform 30b40000.mmc: Retrying from deferred list
-[  185.744453] platform 30b40000.mmc: scheduling asynchronous probe
-[  185.750541] devices_kset: Moving leds to end of list
-[  185.750660] bus: 'platform': driver_probe_device: matched device 
-30b40000.mmc with driver sdhci-esdhc-imx
-[  185.755556] PM: Moving platform:leds to end of list
-[  185.755575] platform leds: Retrying from deferred list
-[  185.765180] bus: 'platform': really_probe: probing driver 
-sdhci-esdhc-imx with device 30b40000.mmc
-[  185.770120] bus: 'platform': driver_probe_device: matched device leds 
-with driver leds-gpio
-[  185.775525] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group usdhc1grp num 13
-[  185.784200] bus: 'platform': really_probe: probing driver leds-gpio 
-with device leds
-[  185.792619] pinctrl core: add 13 pinctrl maps
-[  185.800915] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group hubnresetgrp num 2
-[  185.808672] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group usdhc1grp100mhz num 13
-[  185.813001] pinctrl core: add 2 pinctrl maps
-[  185.821471] pinctrl core: add 13 pinctrl maps
-[  185.830275] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group sdpwrgrp num 2
-[  185.834578] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group usdhc1grp200mhz num 13
-[  185.838942] pinctrl core: add 2 pinctrl maps
-[  185.847080] pinctrl core: add 13 pinctrl maps
-[  185.855854] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group chargergrp num 2
-[  185.860154] imx8mq-pinctrl 30330000.pinctrl: found group selector 50 
-for usdhc1grp
-[  185.864480] pinctrl core: add 2 pinctrl maps
-[  185.872864] imx8mq-pinctrl 30330000.pinctrl: found group selector 51 
-for usdhc1grp100mhz
-[  185.887696] thermal thermal_zone0: 
-Trip0[type=1,temp=50000]:trend=0,throttle=1
-[  185.892835] imx8mq-pinctrl 30330000.pinctrl: found group selector 52 
-for usdhc1grp200mhz
-[  185.899966] thermal cooling_device5: cur_state=1
-[  185.908180] sdhci-esdhc-imx 30b40000.mmc: no init pinctrl state
-[  185.908208] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
-group smcgrp num 2
-
+Hi,=0D
+=0D
+Here is a series that enables the higher resolutions on the HDMI0 Controlle=
+r=0D
+found in the BCM2711 (RPi4).=0D
+=0D
+In order to work it needs a few adjustments to config.txt, most notably to=
+=0D
+enable the enable_hdmi_4kp60 and force_turbo options.=0D
+=0D
+The firmware also has a glitch at the moment and will not properly release =
+the=0D
+BSC controllers, which will make the EDID retrieval fail.=0D
+=0D
+We can work around this using the following config.txt options:=0D
+=0D
+disable_fw_kms_setup=3D1=0D
+hdmi_edid_file:0=3D1=0D
+hdmi_edid_filename:0=3D1366x768.bin=0D
+hdmi_ignore_edid:0=3D1=0D
+hdmi_edid_file:1=3D1=0D
+hdmi_edid_filename:1=3D1366x768.bin=0D
+hdmi_ignore_edid:1=3D1=0D
+=0D
+A fix will come for the firmware eventually.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+Maxime Ripard (8):=0D
+  clk: Add range accessors=0D
+  drm/vc4: hvs: Make the HVS bind first=0D
+  drm/vc4: hdmi: Properly compute the BVB clock rate=0D
+  drm/vc4: hdmi: Check and warn if we can't reach 4kp60 frequencies=0D
+  drm/vc4: hdmi: Enable the scrambler=0D
+  drm/vc4: hdmi: Raise the maximum clock rate=0D
+  drm/vc4: plane: Fix typo in scaler width and height=0D
+  drm/vc4: plane: Remove redundant assignment=0D
+=0D
+ drivers/clk/clk.c                   | 30 ++++++++++=0D
+ drivers/gpu/drm/vc4/vc4_drv.c       | 11 +++-=0D
+ drivers/gpu/drm/vc4/vc4_hdmi.c      | 88 ++++++++++++++++++++++++++---=0D
+ drivers/gpu/drm/vc4/vc4_hdmi.h      |  8 +++=0D
+ drivers/gpu/drm/vc4/vc4_hdmi_regs.h |  3 +=0D
+ drivers/gpu/drm/vc4/vc4_plane.c     |  5 +-=0D
+ include/linux/clk.h                 | 16 ++++++=0D
+ 7 files changed, 148 insertions(+), 13 deletions(-)=0D
+=0D
+-- =0D
+2.29.2=0D
+=0D
