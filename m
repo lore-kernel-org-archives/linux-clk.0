@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F43C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF65C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1124464E83
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8666564F1B
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233529AbhBYQxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 11:53:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55690 "EHLO
+        id S233844AbhBYQy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 11:54:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233242AbhBYQu7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:50:59 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94348C061574
-        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 08:50:17 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id u125so5423764wmg.4
-        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 08:50:17 -0800 (PST)
+        with ESMTP id S234102AbhBYQwY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:52:24 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59433C061788
+        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 08:51:40 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id b3so5927459wrj.5
+        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 08:51:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=raspberrypi.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ujtq4Dq47uF2eTEGpffKSWLYbYoXaFOz7LZhMGMgJmo=;
-        b=ryg5umGlDRp6y1sOQMhcEBBz9zkU36sVN1nEaT2XCjPSbBuErpKioDj7ge/NrTkygh
-         04qPq9nQ1h+hMy9XTwEwcATvf39Z64gGNeu1k6fkIDFmUhIQVIl56+PPMlWcAINbvyku
-         JLkASHT7Sx67EeAXx3NYxnOi7wdxohuGMdhpuJa4wE86LIWIbQxhOhUnYRq5gnkzuHeI
-         Dhr1dQTKOpoqGAuqJrutZgOkI/LGuBDAcwHdWq/DmWhwbv+8zZQzR9EVODcS2sn5lrhB
-         nKJYptojkdt6a2eEfewwcFIkv40rANfQT4cP8oYXt2rbzLsXIIa8RasVs59ukg5oyn0C
-         hZRQ==
+        bh=pC8GhdhL7FQzyqXKBARK8g3SpEQ7eUs8uU1WApnchic=;
+        b=JNszVqasWRybdF5BPfiaCuQMheCTMfDfriRVZJWjKuwJ2E0sm0/dNmOePpPBohPaNe
+         5pUTIEmXZj6LQuh+XRSwviI4m8nOuQ7HwbPHdnT2A15QAUzbNlR4Zv6/p+c7bbb1CbwA
+         bNPU064gWYVMObYHH2lB9hVj75/SUsLlTsYbAsXrcg2mp3E63xKhHYrfsq2A+XS4vIMP
+         uEbrzjHIDy++H8BfLHv+TArG7SC/n3J0UbSbjAmArv8ct6TNNef2KP5+Z0WPWeKZm3ZE
+         ZZ7RpwK8dCsI28gROB5nCtcdTLXRCdLSSZAH1CUIvicTAUIkSzD/YPZ5ZAhi2vt4ewrR
+         fYBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ujtq4Dq47uF2eTEGpffKSWLYbYoXaFOz7LZhMGMgJmo=;
-        b=BV36bmT+WxfF2quPO+YY3CMHhV56/Xfcmn7c3NzLJFptiJVdNPQnRiWoa132dynVZD
-         3k2PRAdsGeCFr7Am6Iuz45k7tKzeY4PZ00bGcMbvtRc0Gj4NUmbv5LDMt4YfGX0oVzSO
-         bFzlE8RVeEjqiDRY9B4IVLTh9bPGs1SR4WHmm+XJ67ABWWsBTuoseRyb3HxIK465NzVK
-         VnabQ3OHMzsVxnjpWpjeVupeA5CyY3KDStpaLcnGLzHltkZ6T3ZkItrl/EMFUx6L/XE9
-         tINhSBS4qqrnP9c9xwpWK+pNNxkcBdgqC27zBmGyi1pc0Ep2gyrPtG0+lBzyHCivDyQ2
-         SObQ==
-X-Gm-Message-State: AOAM530W/7zsi7AgwraBVpo9pck6zPe9JUrBwIGUwkVkHqZ7abjkM2Dv
-        9XzW3LHmc0tEdypNiMSCuS0YBOv/FpbMHtJ8EIBUxQ==
-X-Google-Smtp-Source: ABdhPJxZqSZhEEKMJ++j9qXWBx8PHurKD3HHd01rqa+Uwo1VLRjo9ks0dRY4UTLj3KZLtNP2UAdHMe//su/KOGVkytE=
-X-Received: by 2002:a1c:28c1:: with SMTP id o184mr3932948wmo.183.1614271816426;
- Thu, 25 Feb 2021 08:50:16 -0800 (PST)
+        bh=pC8GhdhL7FQzyqXKBARK8g3SpEQ7eUs8uU1WApnchic=;
+        b=D7thJr10IJf0EfR86tDalmKBbeC2ynbVjMxF3uH2bdt6hnXLMKMneMe4eoO7B15f69
+         YqN4draannwn4ezK49xDNS2Dz4wPwVd/b8VP/REhyhMdK9ep6idbmY4GFjmhNFgxVhgp
+         FNs7S2aTasepBiGVm4hHKFNNiVqYI8mdRTOPUuXltTVnw3ZgPDlTZ7UYGJoUq2LrNev/
+         TRrdXEy2s0AonINZewYYQtX4KJWdno2vMfUZTlCVudK4ulZytSJ+FT48kjHxcf58SL/Q
+         d6QaF7nJUguw0ePMCNMkAHBepCIImhwksKNcwulhyDvfgDUxPd8SjxolXjTtPdagXcWA
+         Xyww==
+X-Gm-Message-State: AOAM533HQNvZhPSmJagcUvkH1/u3scxhIbT0ENG1VgzxUE7Sk4/msWlo
+        Qy+uR3a6PtR3TJJNiiIEGFSjZMQYAguYwoZYKcwe0A==
+X-Google-Smtp-Source: ABdhPJwvIr51FEdcMlolg+/kkVFJSRrYfHL29cXZcfOelOKj1lJWo2tx8JJS8TlA+oHH861XElivlNjSOtVpt172Fds=
+X-Received: by 2002:a5d:4e05:: with SMTP id p5mr4354391wrt.273.1614271899137;
+ Thu, 25 Feb 2021 08:51:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20210225155909.1853812-1-maxime@cerno.tech> <20210225155909.1853812-8-maxime@cerno.tech>
-In-Reply-To: <20210225155909.1853812-8-maxime@cerno.tech>
+References: <20210225155909.1853812-1-maxime@cerno.tech> <20210225155909.1853812-3-maxime@cerno.tech>
+In-Reply-To: <20210225155909.1853812-3-maxime@cerno.tech>
 From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Thu, 25 Feb 2021 16:50:00 +0000
-Message-ID: <CAPY8ntBtL=mbz1-4yOcaJg2kiawk_1sosDY1Aa0dL=en7W3e9g@mail.gmail.com>
-Subject: Re: [PATCH 7/8] drm/vc4: plane: Fix typo in scaler width and height
+Date:   Thu, 25 Feb 2021 16:51:23 +0000
+Message-ID: <CAPY8ntApkdz_WjuBqgjXHRbE5AGvLUPup=bi2rTt94ssX_CTpw@mail.gmail.com>
+Subject: Re: [PATCH 2/8] drm/vc4: hvs: Make the HVS bind first
 To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -78,32 +78,48 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, 25 Feb 2021 at 15:59, Maxime Ripard <maxime@cerno.tech> wrote:
 >
+> We'll need to have the HVS binding before the HDMI controllers so that
+> we can check whether the firmware allows to run in 4kp60. Reorder a bit
+> the component list, and document the current constraints we're aware of.
+>
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Again no commit text body, but possibly not warranted
+Based on my understanding of bind ordering this makes sense, but I
+don't consider myself an expert there.
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
 > ---
->  drivers/gpu/drm/vc4/vc4_plane.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/vc4/vc4_drv.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-> index 4a075294ff4c..5e8b7f72dc05 100644
-> --- a/drivers/gpu/drm/vc4/vc4_plane.c
-> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
-> @@ -912,9 +912,9 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
->                 if (!vc4_state->is_unity) {
->                         vc4_dlist_write(vc4_state,
->                                         VC4_SET_FIELD(vc4_state->crtc_w,
-> -                                                     SCALER_POS1_SCL_WIDTH) |
-> +                                                     SCALER5_POS1_SCL_WIDTH) |
->                                         VC4_SET_FIELD(vc4_state->crtc_h,
-> -                                                     SCALER_POS1_SCL_HEIGHT));
-> +                                                     SCALER5_POS1_SCL_HEIGHT));
->                 }
+> diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+> index 556ad0f02a0d..0310590ee66e 100644
+> --- a/drivers/gpu/drm/vc4/vc4_drv.c
+> +++ b/drivers/gpu/drm/vc4/vc4_drv.c
+> @@ -303,12 +303,21 @@ static const struct component_master_ops vc4_drm_ops = {
+>         .unbind = vc4_drm_unbind,
+>  };
 >
->                 /* Position Word 2: Source Image Size */
+> +/*
+> + * This list determines the binding order of our components, and we have
+> + * a few constraints:
+> + *   - The TXP driver needs to be bound before the PixelValves (CRTC)
+> + *     but after the HVS to set the possible_crtc field properly
+> + *   - The HDMI driver needs to be bound after the HVS so that we can
+> + *     lookup the HVS maximum core clock rate and figure out if we
+> + *     support 4kp60 or not.
+> + */
+>  static struct platform_driver *const component_drivers[] = {
+> +       &vc4_hvs_driver,
+>         &vc4_hdmi_driver,
+>         &vc4_vec_driver,
+>         &vc4_dpi_driver,
+>         &vc4_dsi_driver,
+> -       &vc4_hvs_driver,
+>         &vc4_txp_driver,
+>         &vc4_crtc_driver,
+>         &vc4_v3d_driver,
 > --
 > 2.29.2
 >
