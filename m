@@ -2,235 +2,258 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21956C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2936FC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 12:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB02764ECE
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CB0601FE
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 12:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236099AbhBYJYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 04:24:07 -0500
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:44576 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233451AbhBYJXI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 04:23:08 -0500
-Received: by mail-ot1-f53.google.com with SMTP id f33so5017649otf.11;
-        Thu, 25 Feb 2021 01:22:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qn/i3Xq3eFPWh+oxu0OZHPlZ+USKUqVpHsfRFlr5yAs=;
-        b=IjQK1Jw32OSdFLTgEU6l9MEedPVJA/d+qPr8XLQR5AMYD6M8rG15HNANzI8MrVGQk5
-         +O8y6xZgPMbOpvL57cZavfOKuYynpb3G6eevo5oFbMyW7EOu7oSB0KwEJwYdXQXgtcX1
-         SxbsfYn3dhmejw+jM06zxA7CadUr5/WNosap5GPh4yhFtR6aVcCNnOqHaiS/7xKg+1Ba
-         7LNRULq7CGLaTs7i6kY/71FY47YoPcdRXKFoY33e114hOVnKJ43EJKu+y0IxAcdqfPes
-         cW5uw+LvDh/4eobtqZZdx3ryJn8VovUgAGHFhOKjEYNwC9SKM1p9epntoqc/T4xuXRLS
-         OdhA==
-X-Gm-Message-State: AOAM532CE1ikjqpZGszA/c85rFzeh5rjn+EL1XpdIkmLzhzWw9AWFCS7
-        KtqIqCCJIavT1ojaErdNy9q2oPI1wbhZxO6aFlg=
-X-Google-Smtp-Source: ABdhPJzA05EhCSKn+fa5olOgbUVwt4c5dphmMfcyJtaw5b2dV5HM2Ob4uwlqTZro9SBDH4FPxRWzTQvs6RjzGS5/u7c=
-X-Received: by 2002:a05:6830:119:: with SMTP id i25mr1515253otp.107.1614244927765;
- Thu, 25 Feb 2021 01:22:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20210205222644.2357303-1-saravanak@google.com>
- <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
- <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
- <CAMuHMdXduvBqjAqraXkEKErNJFyN6JNq5wqagc4yHHPpH5SPGQ@mail.gmail.com>
- <CAGETcx_4FGa-rzLp6bjXbm4F4R6H2W78+nM_kN=XPz5hswzANA@mail.gmail.com>
- <CAMuHMdVodauqBmLMxsfi0kQtAFT8ruJ36LJL9YuQgqwQNKwHHg@mail.gmail.com>
- <CAGETcx_-yBvhXDPtOiKjenvx83oMNr32UvpMN0Dt-qz5ToXEbw@mail.gmail.com>
- <CAMuHMdXTO8wQ3=woLMjDaf9g3tTr-dRB3Nu_XvZUrr+wGSXyeg@mail.gmail.com> <CAGETcx8jXkbtdgMCr6KGT4ScoaoP=AwaW6MQeEv-gsDySiY35A@mail.gmail.com>
-In-Reply-To: <CAGETcx8jXkbtdgMCr6KGT4ScoaoP=AwaW6MQeEv-gsDySiY35A@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 25 Feb 2021 10:21:56 +0100
-Message-ID: <CAMuHMdUVVr8jES51_8_yPoicr-nwad_2nKLYUKweY8mbxx9GJw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        id S232310AbhBYMOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 07:14:38 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:41133 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230019AbhBYMOY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Feb 2021 07:14:24 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 1E8FE240104
+        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 13:13:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1614255204; bh=ofuwOPdGLQUX+yxDjv2AuophkBsdATeFfPLESr3tZ5A=;
+        h=To:Cc:From:Subject:Date:From;
+        b=BPIOIsmohr4bCs2cl9N7QEqiXdqhcxI9aSC/dEK1R3huyt1RVNbZE4hSrVTCCk/XU
+         8vpY62VuSqoHY9HOOc2iFAemaybjD8pb3vz+vaU9JxC6R2AyT1sn7JJCdxDTUVvWBJ
+         1+AOG3+zUz8cyhcFNHHAeFEgCvmSAxuvmDKEt+nqrPw0Qm+t+U2llmRp20niFEqAWp
+         hjEHKw/a8kS8H3nlziqkrxSBD0YICpsRqX/FsIgDs4wpiZKVouTt/f0Ig3WL8V3loZ
+         jUiMwe457774csWqKx0hU6F8BwlhjkoojffcfWCwnfaAcfC8uyc9goX1MQUo+xmpIo
+         ii5GlAfg2SwhA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4DmWsB68Grz6tmV;
+        Thu, 25 Feb 2021 13:13:18 +0100 (CET)
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "kernel@puri.sm" <kernel@puri.sm>,
+        NXP Linux Team <linux-imx@nxp.com>
+References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+ <a2b651de-77a7-2a40-7e51-d0098e4b804b@posteo.de>
+ <20210223172013.tsip6uiuwtfnmqav@fsr-ub1664-175>
+From:   Martin Kepplinger <martink@posteo.de>
+Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
+Message-ID: <315c1ad8-6274-3654-a410-5d78e35a90fe@posteo.de>
+Date:   Thu, 25 Feb 2021 13:13:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <20210223172013.tsip6uiuwtfnmqav@fsr-ub1664-175>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Saravana,
+On 23.02.21 18:20, Abel Vesa wrote:
+> On 21-02-22 17:03:13, Martin Kepplinger wrote:
+>> On 19.02.21 16:59, Abel Vesa wrote:
+>>> This has been on my queue for quite some time now. It is more of a
+>>> proof-of-concept.
+>>>
+>>> This rework is done with the compatibility of future i.MX platforms in
+>>> mind. For example, the i.MX8MP platform has multiple NoCs. This
+>>> patchsets prepares the imx interconnect and imx devfreq for that too.
+>>>
+>>> As of now, none of the drivers involved are being used and there is no
+>>> icc consumer on any off the i.MX platforms.
+>>>
+>>> Basically, the steps taken here are the following:
+>>>
+>>> 1. Make the dram_apb clock "reparantable" from kernel.
+>>> This is needed in order to keep track of the actual parent of the
+>>> dram_apb clock in the kernel clock hierarchy. Note that the actual
+>>> switch is done EL3 (TF-A).
+>>>
+>>> 2. Rework the imx-bus so the actual link between the icc and the
+>>> NoCs or the pl301s is not tightly coupled. This allows us to have
+>>> as many NoCs as necessary but also allows as to use the same driver
+>>> for the pl301s. The pl301s have their own clocks too, so we need to
+>>> reduce their rates too.
+>>>
+>>> 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
+>>> OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
+>>> both EL3 and kernel in sync, we rely on what the EL3 gives us.
+>>> Also, when the platform suspends, the bus needs to be running at highest
+>>> rate, otherwise there is a chance it might not resume anymore.
+>>> By adding the late system sleep PM ops we can handle that easily.
+>>>
+>>> 4. Rework the imx interconnect driver to use the fsl,icc-id instead
+>>> of the robust imx_icc_node_adj_desc for linking with the target node.
+>>> By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
+>>> we can link each icc node to their corresponding NoC, pl301 or dram.
+>>> Basically, when the imx interconnect platform specific driver probes,
+>>> it will take each node defined for that platform and look-up the
+>>> corresponding dts node based on the id and add that as the qos device.
+>>>
+>>> 5. Added the fec and usdhc as icc consumers. This is just as an example.
+>>> All the other consumers can be added later. Basically, each consumer
+>>> will add a path to their device node and in the driver will have to
+>>> handle that icc path accordingly.
+>>>
+>>
+>> thanks for working on this Abel,
+>>
+>> It looks like the icc path requests don't work for me:
+>>
+>> when applying this onto v5.11 (without any other workaround in that area,
+>> but some out-of-tree icc-requests like in mxsfb) my rootfs isn't being
+>> mounted anymore. Since you add icc requests to the usdhc driver, there could
+>> be something wrong.
+>>
+>> So I revert 19/19 ("mmc: sdhci-esdhc-imx: Add interconnect support") and
+>> then my imx8mq (Librem 5) rootfs system boots, but all frequencies stay at
+>> the minimum (despite the icc request like this:
+>> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1692de27d1475c53574dd7359c68ba613e0fea10
+>> so I can't use the display).
+>>
+>> What could be missing? As I said I'm trying on top of v5.11, (at least I
+>> have the NOC node described:
+>> https://source.puri.sm/martin.kepplinger/linux-next/-/commit/1d74a24c9944d1bf618abdd57d24101368cc8df0
+>> and (with the revert from
+>> https://lore.kernel.org/linux-arm-kernel/20210104120512.gmi2zjz7dzhjussp@fsr-ub1664-175/
+>> devfreq works without your patchset ) Is there anything I'm missing that is
+>> not yet merged in v5.11?
+>>
+>> Can I test anything else that would help?
+>>
+> 
+> Sorry about this, I messed up the usdhc change.
+> I tested mostly with nfs rootfs.
+> 
+> I'll just paste here the things that are missing in order for the USHCs to work.
+> I'll fold them in the next version of this patch set.
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> index 43760316052f..90398408b55e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -1637,6 +1637,25 @@ opp-133M {
+>                          };
+>                  };
+>   
+> +               pl301_per_m: pl301@9 {
+> +                       compatible = "fsl,imx8m-nic";
+> +                       clocks = <&clk IMX8MQ_CLK_NAND_USDHC_BUS>;
+> +                       operating-points-v2 = <&pl301_per_m_opp_table>;
+> +                       #interconnect-cells = <0>;
+> +                       fsl,icc-id = <IMX8MQ_ICN_PER_M>;
+> +
+> +                       pl301_per_m_opp_table: opp-table {
+> +                               compatible = "operating-points-v2";
+> +
+> +                               opp-25M {
+> +                                       opp-hz = /bits/ 64 <25000000>;
+> +                               };
+> +                               opp-133M {
+> +                                       opp-hz = /bits/ 64 <133333333>;
+> +                               };
+> +                       };
+> +               };
+> +
+>                  icc: interconnect@0 {
+>                          compatible = "fsl,imx8mq-icc", "fsl,imx8m-icc";
+>                          #interconnect-cells = <1>;
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 65c5caf82e0c..cb8d341faf71 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -1545,7 +1545,8 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
+>   
+>          imx_data->bus_path = devm_of_icc_get(&pdev->dev, "path");
+>          if (IS_ERR(imx_data->bus_path)) {
+> -               return PTR_ERR(imx_data->bus_path);
+> +               err = PTR_ERR(imx_data->bus_path);
+> +               goto free_sdhci;
+>          } else if (imx_data->bus_path) {
+>                  if (of_property_read_u32(pdev->dev.of_node, "fsl,icc-rate", &imx_data->bus_rate)) {
+>                          dev_err(&pdev->dev, "icc-rate missing\n");
+> 
 
-On Thu, Feb 18, 2021 at 12:57 AM Saravana Kannan <saravanak@google.com> wrote:
-> On Tue, Feb 16, 2021 at 12:31 PM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Tue, Feb 16, 2021 at 7:49 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > On Tue, Feb 16, 2021 at 12:05 AM Geert Uytterhoeven
-> > > <geert@linux-m68k.org> wrote:
-> > > > On Mon, Feb 15, 2021 at 10:27 PM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > On Mon, Feb 15, 2021 at 4:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > > > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > > >       - I2C on R-Car Gen3 does not seem to use DMA, according to
-> > > > > > > >         /sys/kernel/debug/dmaengine/summary:
-> > > > > > > >
-> > > > > > > >             -dma4chan0    | e66d8000.i2c:tx
-> > > > > > > >             -dma4chan1    | e66d8000.i2c:rx
-> > > > > > > >             -dma5chan0    | e6510000.i2c:tx
-> > > > > > >
-> > > > > > > I think I need more context on the problem before I can try to fix it.
-> > > > > > > I'm also very unfamiliar with that file. With fw_devlink=permissive,
-> > > > > > > I2C was using DMA? If so, the next step is to see if the I2C relative
-> > > > > > > probe order with DMA is getting changed and if so, why.
-> > > > > >
-> > > > > > More detailed log:
-> > > > > >
-> > > > > >     platform e66d8000.i2c: Linked as a consumer to e6150000.clock-controller
-> > > > > >     platform e66d8000.i2c: Linked as a sync state only consumer to e6055400.gpio
-> > > > > >
-> > > > > > Why is e66d8000.i2c not linked as a consumer to e6700000.dma-controller?
-> > > > >
-> > > > > Because fw_devlink.strict=1 is not set and dma/iommu is considered an
-> > > > > "optional"/"driver decides" dependency.
-> > > >
-> > > > Oh, I thought dma/iommu were considered mandatory initially,
-> > > > but dropped as dependencies in the late boot process?
-> > >
-> > > No, I didn't do that in case the drivers that didn't need the
-> > > IOMMU/DMA were sensitive to probe order.
-> > >
-> > > My goal was for fw_devlink=on to not affect probe order for devices
-> > > that currently don't need to defer probe. But see below...
-> > >
-> > > >
-> > > > >
-> > > > > >     platform e6700000.dma-controller: Linked as a consumer to
-> > > > > > e6150000.clock-controller
-> > > > >
-> > > > > Is this the only supplier of dma-controller?
-> > > >
-> > > > No, e6180000.system-controller is also a supplier.
-> > > >
-> > > > > >     platform e66d8000.i2c: Added to deferred list
-> > > > > >     platform e6700000.dma-controller: Added to deferred list
-> > > > > >
-> > > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > > device e6700000.dma-controller
-> > > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
-> > > > > >
-> > > > > >     bus: 'platform': driver_probe_device: matched device e66d8000.i2c
-> > > > > > with driver i2c-rcar
-> > > > > >     bus: 'platform': really_probe: probing driver i2c-rcar with device
-> > > > > > e66d8000.i2c
-> > > > > >
-> > > > > > I2C becomes available...
-> > > > > >
-> > > > > >     i2c-rcar e66d8000.i2c: request_channel failed for tx (-517)
-> > > > > >     [...]
-> > > > > >
-> > > > > > but DMA is not available yet, so the driver falls back to PIO.
-> > > > > >
-> > > > > >     driver: 'i2c-rcar': driver_bound: bound to device 'e66d8000.i2c'
-> > > > > >     bus: 'platform': really_probe: bound device e66d8000.i2c to driver i2c-rcar
-> > > > > >
-> > > > > >     platform e6700000.dma-controller: Retrying from deferred list
-> > > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > > device e6700000.dma-controller
-> > > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
-> > > > > >     platform e6700000.dma-controller: Added to deferred list
-> > > > > >     platform e6700000.dma-controller: Retrying from deferred list
-> > > > > >     bus: 'platform': driver_probe_device: matched device
-> > > > > > e6700000.dma-controller with driver rcar-dmac
-> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
-> > > > > > device e6700000.dma-controller
-> > > > > >     driver: 'rcar-dmac': driver_bound: bound to device 'e6700000.dma-controller'
-> > > > > >     bus: 'platform': really_probe: bound device
-> > > > > > e6700000.dma-controller to driver rcar-dmac
-> > > > > >
-> > > > > > DMA becomes available.
-> > > > > >
-> > > > > > Here userspace is entered. /sys/kernel/debug/dmaengine/summary shows
-> > > > > > that the I2C controllers do not have DMA channels allocated, as the
-> > > > > > kernel has performed no more I2C transfers after DMA became available.
-> > > > > >
-> > > > > > Using i2cdetect shows that DMA is used, which is good:
-> > > > > >
-> > > > > >     i2c-rcar e66d8000.i2c: got DMA channel for rx
-> > > > > >
-> > > > > > With permissive devlinks, the clock controller consumers are not added
-> > > > > > to the deferred probing list, and probe order is slightly different.
-> > > > > > The I2C controllers are still probed before the DMA controllers.
-> > > > > > But DMA becomes available a bit earlier, before the probing of the last
-> > > > > > I2C slave driver.
-> > > > >
-> > > > > This seems like a race? I'm guessing it's two different threads
-> > > > > probing those two devices? And it just happens to work for
-> > > > > "permissive" assuming the boot timing doesn't change?
-> > > > >
-> > > > > > Hence /sys/kernel/debug/dmaengine/summary shows that
-> > > > > > some I2C transfers did use DMA.
-> > > > > >
-> > > > > > So the real issue is that e66d8000.i2c not linked as a consumer to
-> > > > > > e6700000.dma-controller.
-> > > > >
-> > > > > That's because fw_devlink.strict=1 isn't set. If you need DMA to be
-> > > > > treated as a mandatory supplier, you'll need to set the flag.
-> > > > >
-> > > > > Is fw_devlink=on really breaking anything here? It just seems like
-> > > > > "permissive" got lucky with the timing and it could break at any point
-> > > > > in the future. Thought?
-> > > >
-> > > > I don't think there is a race.
-> > >
-> > > Can you explain more please? This below makes it sound like DMA just
-> > > sneaks in at the last minute.
-> >
-> > Yes it does, as the DMAC also has a consumer link to the IOMMU.
-> > If you ignore the consumer link from I2C to DMAC, the I2C device has
-> > less dependencies than the DMAC, so the I2C device, and the
-> > devices on the I2C bus, are probed much earlier than the DMAC.
->
-> Can you give this a shot?
-> https://lore.kernel.org/lkml/20210217235130.1744843-1-saravanak@google.com/T/#u
->
-> It should make sure fw_devlink doesn't add a device to the deferred
-> probe list too soon and change the probe ordering unnecessarily.
+when simply booting with this instead of my revert, turning on *all* 
+kernel debug output, startup stops here:
 
-(FTR, to keep all info in this thread)
-Yes, this makes I2C use DMA again on Salvator-XS during kernel boot-up.
-I haven't run any more elaborate tests on other platforms.
+[  191.157686] devices_kset: Moving 30b50000.mmc to end of list
+[  191.163388] PM: Moving platform:30b50000.mmc to end of list
+[  191.169003] platform 30b50000.mmc: Retrying from deferred list
+[  191.175305] platform 30b50000.mmc: scheduling asynchronous probe
+[  191.181394] devices_kset: Moving 30b40000.mmc to end of list
+[  191.181493] bus: 'platform': driver_probe_device: matched device 
+30b50000.mmc with driver sdhci-esdhc-imx
+[  191.187096] PM: Moving platform:30b40000.mmc to end of list
+[  191.196706] bus: 'platform': really_probe: probing driver 
+sdhci-esdhc-imx with device 30b50000.mmc
+[  191.202270] platform 30b40000.mmc: Retrying from deferred list
+[  191.211361] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group usdhc2grp num 9
+[  191.217169] platform 30b40000.mmc: scheduling asynchronous probe
+[  191.225259] pinctrl core: add 9 pinctrl maps
 
-Gr{oetje,eeting}s,
+or here:
 
-                        Geert
+[  185.726775] devices_kset: Moving 30b40000.mmc to end of list
+[  185.732476] PM: Moving platform:30b40000.mmc to end of list
+[  185.738090] platform 30b40000.mmc: Retrying from deferred list
+[  185.744453] platform 30b40000.mmc: scheduling asynchronous probe
+[  185.750541] devices_kset: Moving leds to end of list
+[  185.750660] bus: 'platform': driver_probe_device: matched device 
+30b40000.mmc with driver sdhci-esdhc-imx
+[  185.755556] PM: Moving platform:leds to end of list
+[  185.755575] platform leds: Retrying from deferred list
+[  185.765180] bus: 'platform': really_probe: probing driver 
+sdhci-esdhc-imx with device 30b40000.mmc
+[  185.770120] bus: 'platform': driver_probe_device: matched device leds 
+with driver leds-gpio
+[  185.775525] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group usdhc1grp num 13
+[  185.784200] bus: 'platform': really_probe: probing driver leds-gpio 
+with device leds
+[  185.792619] pinctrl core: add 13 pinctrl maps
+[  185.800915] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group hubnresetgrp num 2
+[  185.808672] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group usdhc1grp100mhz num 13
+[  185.813001] pinctrl core: add 2 pinctrl maps
+[  185.821471] pinctrl core: add 13 pinctrl maps
+[  185.830275] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group sdpwrgrp num 2
+[  185.834578] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group usdhc1grp200mhz num 13
+[  185.838942] pinctrl core: add 2 pinctrl maps
+[  185.847080] pinctrl core: add 13 pinctrl maps
+[  185.855854] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group chargergrp num 2
+[  185.860154] imx8mq-pinctrl 30330000.pinctrl: found group selector 50 
+for usdhc1grp
+[  185.864480] pinctrl core: add 2 pinctrl maps
+[  185.872864] imx8mq-pinctrl 30330000.pinctrl: found group selector 51 
+for usdhc1grp100mhz
+[  185.887696] thermal thermal_zone0: 
+Trip0[type=1,temp=50000]:trend=0,throttle=1
+[  185.892835] imx8mq-pinctrl 30330000.pinctrl: found group selector 52 
+for usdhc1grp200mhz
+[  185.899966] thermal cooling_device5: cur_state=1
+[  185.908180] sdhci-esdhc-imx 30b40000.mmc: no init pinctrl state
+[  185.908208] imx8mq-pinctrl 30330000.pinctrl: maps: function pinctrl 
+group smcgrp num 2
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
