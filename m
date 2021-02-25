@@ -2,123 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B63C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 17:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B301C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 03:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4ED64EDD
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Feb 2021 17:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 325BD64EA4
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 03:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232948AbhBXRvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Feb 2021 12:51:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42454 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233902AbhBXRvK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Feb 2021 12:51:10 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7716C06178B
-        for <linux-clk@vger.kernel.org>; Wed, 24 Feb 2021 09:50:47 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id w18so1630308plc.12
-        for <linux-clk@vger.kernel.org>; Wed, 24 Feb 2021 09:50:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c7VHaPow7jAC5tq++zBarZr6XHPcoYMOZKoRn160x7Y=;
-        b=IXPVbl3iNTTi0tXOgvNRSxmQhtDGZpMcAlY+1RY52aTGCe35jxZOd9LB2LD3td8Vu2
-         c3tBE7+9XEbFj3klzAb+Q916xyj8LBE4yJr8Bqni1a6tjszy0Hy9qa4GRGGF/bnHlA0V
-         OvTJysQmcB0fUxdI+efGq3K9d27dHIGBBcnGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c7VHaPow7jAC5tq++zBarZr6XHPcoYMOZKoRn160x7Y=;
-        b=dfaM4zR2IZJbvppuhXZtjNavTmRr+BF08VT/mFHXZUzaT8gREvluod7Jr1l/D8A+4+
-         kSn4WaPcckAy3FSjVQRajzDI8BUIu6itc3k8k0Um7BWp6iCvzKdjCQxR+PVXoVehjb2I
-         X7vfCcowXFPAr6qBJwcrewvLvBOPkzIzg1JrXvgnmbJD1ut3PmdlTMgDYYVMSk39d273
-         UKamkx5PkTxOqAzubiuP88CHkbZ5qcay8NIWrugxQVfNBFdW6Sz1TXunKkqqzkv+Lqyp
-         KMrWxlPqHCj7jjt6dvYaxUNgb7nVFXBYy0MLo2nVl72llpWZRg5Qc9WY1rdFZUj4noSK
-         /1Iw==
-X-Gm-Message-State: AOAM532y96zAkkmK+rUXgqSQy++XHu10fHGQoecNmmLOT58/O7BAycRB
-        rKYixANe+xULpKz/IdvcEZ8nHw==
-X-Google-Smtp-Source: ABdhPJzmRNpHGy06ayS0nHQjSssVWG5cAX63IGvZwKqQfT5K7ETFRjjjcgetZLdhp0MdJF3sjdGSqg==
-X-Received: by 2002:a17:902:9b93:b029:e0:a40b:cbd7 with SMTP id y19-20020a1709029b93b02900e0a40bcbd7mr8696266plp.16.1614189047337;
-        Wed, 24 Feb 2021 09:50:47 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:f92c:e269:f558:e044])
-        by smtp.gmail.com with ESMTPSA id x190sm3484032pfx.60.2021.02.24.09.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 09:50:47 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     sboyd@kernel.org
-Cc:     vbadigan@codeaurora.org, tdas@codeaurora.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-sc7180: Use floor ops for the correct sdcc1 clk
-Date:   Wed, 24 Feb 2021 09:50:25 -0800
-Message-Id: <20210224095013.1.I2e2ba4978cfca06520dfb5d757768f9c42140f7c@changeid>
-X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
+        id S234114AbhBYDFq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Feb 2021 22:05:46 -0500
+Received: from regular1.263xmail.com ([211.150.70.199]:35468 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232847AbhBYDFq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Feb 2021 22:05:46 -0500
+Received: from localhost (unknown [192.168.167.139])
+        by regular1.263xmail.com (Postfix) with ESMTP id 808E312F4;
+        Thu, 25 Feb 2021 10:59:35 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.236] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P26070T139688390141696S1614221972582038_;
+        Thu, 25 Feb 2021 10:59:33 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <a2c3989211289f1cd723bb4fcfcf72a5>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: finley.xiao@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+Subject: Re: [PATCH v1 3/4] clk: rockchip: support more core div setting
+To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, tony.xie@rock-chips.com,
+        finley.xiao@rock-chips.com
+References: <20210223095352.11544-1-zhangqing@rock-chips.com>
+ <20210223095352.11544-4-zhangqing@rock-chips.com> <5312231.BaHzMo0RvP@diego>
+From:   "elaine.zhang" <zhangqing@rock-chips.com>
+Organization: rockchip
+Message-ID: <6759a56c-56d1-da63-5299-0d76966329df@rock-chips.com>
+Date:   Thu, 25 Feb 2021 10:59:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <5312231.BaHzMo0RvP@diego>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While picking commit a8cd989e1a57 ("mmc: sdhci-msm: Warn about
-overclocking SD/MMC") back to my tree I was surprised that it was
-reporting warnings.  I thought I fixed those!  Looking closer at the
-fix, I see that I totally bungled it (or at least I halfway bungled
-it).  The SD card clock got fixed (and that was the one I was really
-focused on fixing), but I totally adjusted the wrong clock for eMMC.
-Sigh.  Let's fix my dumb mistake.
+Hi,Heiko:
 
-Now both SD and eMMC have floor for the "apps" clock.
+ÔÚ 2021/2/23 ÏÂÎç6:22, Heiko St¨¹bner Ð´µÀ:
+> Hi Elaine,
+>
+> Am Dienstag, 23. Februar 2021, 10:53:51 CET schrieb Elaine Zhang:
+>> A55 supports each core to work at different frequencies, and each core
+>> has an independent divider control.
+>>
+>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>> ---
+>>   drivers/clk/rockchip/clk-cpu.c | 25 +++++++++++++++++++++++++
+>>   drivers/clk/rockchip/clk.h     | 17 ++++++++++++++++-
+>>   2 files changed, 41 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+>> index fa9027fb1920..cac06f4f7573 100644
+>> --- a/drivers/clk/rockchip/clk-cpu.c
+>> +++ b/drivers/clk/rockchip/clk-cpu.c
+>> @@ -164,6 +164,18 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
+>>   				     reg_data->mux_core_mask,
+>>   				     reg_data->mux_core_shift),
+>>   		       cpuclk->reg_base + reg_data->core_reg);
+>> +		if (reg_data->core1_reg)
+>> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core1_mask,
+>> +					     reg_data->div_core1_shift),
+>> +			       cpuclk->reg_base + reg_data->core1_reg);
+>> +		if (reg_data->core2_reg)
+>> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core2_mask,
+>> +					     reg_data->div_core2_shift),
+>> +			       cpuclk->reg_base + reg_data->core2_reg);
+>> +		if (reg_data->core3_reg)
+>> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core3_mask,
+>> +					     reg_data->div_core3_shift),
+>> +			       cpuclk->reg_base + reg_data->core3_reg);
+> for (i = 0; i < reg_data->num_cores; i++)
+> 	writel(...)
+>
+>>   	} else {
+>>   		/* select alternate parent */
+>>   		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
+>> @@ -209,6 +221,19 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
+>>   				reg_data->mux_core_shift),
+>>   	       cpuclk->reg_base + reg_data->core_reg);
+>>   
+>> +	if (reg_data->core1_reg)
+>> +		writel(HIWORD_UPDATE(0, reg_data->div_core1_mask,
+>> +				     reg_data->div_core1_shift),
+>> +		       cpuclk->reg_base + reg_data->core1_reg);
+>> +	if (reg_data->core2_reg)
+>> +		writel(HIWORD_UPDATE(0, reg_data->div_core2_mask,
+>> +				     reg_data->div_core2_shift),
+>> +		       cpuclk->reg_base + reg_data->core2_reg);
+>> +	if (reg_data->core3_reg)
+>> +		writel(HIWORD_UPDATE(0, reg_data->div_core3_mask,
+>> +				     reg_data->div_core3_shift),
+>> +		       cpuclk->reg_base + reg_data->core3_reg);
+>> +
+> for (i = 0; i < reg_data->num_cores; i++)
+> 	writel(...)
+>
+>>   	if (ndata->old_rate > ndata->new_rate)
+>>   		rockchip_cpuclk_set_dividers(cpuclk, rate);
+>>   
+>> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+>> index 2271a84124b0..b46c93fd0cb5 100644
+>> --- a/drivers/clk/rockchip/clk.h
+>> +++ b/drivers/clk/rockchip/clk.h
+>> @@ -322,7 +322,7 @@ struct rockchip_cpuclk_clksel {
+>>   	u32 val;
+>>   };
+>>   
+>> -#define ROCKCHIP_CPUCLK_NUM_DIVIDERS	2
+>> +#define ROCKCHIP_CPUCLK_NUM_DIVIDERS	5
+> please move this into a separate patch, as yes the rk3568 needs more
+> dividers but that isn't related to adding separate core divider controls.
+>
+> [...]
+> add
+>
+> #define ROCKCHIP_CPUCLK_MAX_CORES	4
+>
+>>   struct rockchip_cpuclk_rate_table {
+>>   	unsigned long prate;
+>>   	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
+>> @@ -333,6 +333,12 @@ struct rockchip_cpuclk_rate_table {
+>>    * @core_reg:		register offset of the core settings register
+>>    * @div_core_shift:	core divider offset used to divide the pll value
+>>    * @div_core_mask:	core divider mask
+>> + * @div_core1_shift:	core1 divider offset used to divide the pll value
+>> + * @div_core1_mask:	core1 divider mask
+>> + * @div_core2_shift:	core2 divider offset used to divide the pll value
+>> + * @div_core2_mask:	core2 divider mask
+>> + * @div_core3_shift:	core3 divider offset used to divide the pll value
+>> + * @div_core3_mask:	core3 divider mask
+>>    * @mux_core_alt:	mux value to select alternate parent
+>>    * @mux_core_main:	mux value to select main parent of core
+>>    * @mux_core_shift:	offset of the core multiplexer
+>> @@ -342,6 +348,15 @@ struct rockchip_cpuclk_reg_data {
+>>   	int		core_reg;
+>>   	u8		div_core_shift;
+>>   	u32		div_core_mask;
+>> +	int		core1_reg;
+>> +	u8		div_core1_shift;
+>> +	u32		div_core1_mask;
+>> +	int		core2_reg;
+>> +	u8		div_core2_shift;
+>> +	u32		div_core2_mask;
+>> +	int		core3_reg;
+>> +	u8		div_core3_shift;
+>> +	u32		div_core3_mask;
+> please make this instead like:
+>
+> int	core_reg[ROCKCHIP_CPUCLK_MAX_CORES];
+> u8	div_core_shift[ROCKCHIP_CPUCLK_MAX_CORES];
+> u32	div_core_mask[ROCKCHIP_CPUCLK_MAX_CORES];
+> int	num_cores;
+This is also my original intention, but with such modification, other 
+SOCs of RK need to be modified, otherwise they cannot be compatible with 
+the old SOC.
+>
+>
+> Thanks
+> Heiko
+>
+>
+>>   	u8		mux_core_alt;
+>>   	u8		mux_core_main;
+>>   	u8		mux_core_shift;
+>>
+>
+>
+>
+>
+>
 
-This doesn't matter a lot for the final clock rate for HS400 eMMC but
-could matter if someone happens to put some slower eMMC on a sc7180.
-We also transition through some of these lower rates sometimes and
-having them wrong could cause problems during these transitions.
-These were the messages I was seeing at boot:
-  mmc1: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
-  mmc1: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
-  mmc1: Card appears overclocked; req 104000000 Hz, actual 192000000 Hz
-
-Fixes: 6d37a8d19283 ("clk: qcom: gcc-sc7180: Use floor ops for sdcc clks")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- drivers/clk/qcom/gcc-sc7180.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index c5c2e93bda8e..5cacd20a31b3 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -620,7 +620,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
- 		.name = "gcc_sdcc1_apps_clk_src",
- 		.parent_data = gcc_parent_data_1,
- 		.num_parents = 5,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -642,7 +642,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
- 		.name = "gcc_sdcc1_ice_core_clk_src",
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = 4,
--		.ops = &clk_rcg2_floor_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
--- 
-2.30.0.617.g56c4b15f3c-goog
 
