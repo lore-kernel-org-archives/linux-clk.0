@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649C7C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B65C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CBA264EDB
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1253364F19
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbhBYQAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 11:00:55 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:46533 "EHLO
+        id S233132AbhBYQB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 11:01:26 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:35049 "EHLO
         wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229722AbhBYQAx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:00:53 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 04A77B74;
-        Thu, 25 Feb 2021 10:59:21 -0500 (EST)
+        by vger.kernel.org with ESMTP id S232372AbhBYQBO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:01:14 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id A21B2435;
+        Thu, 25 Feb 2021 10:59:26 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 25 Feb 2021 10:59:23 -0500
+  by compute2.internal (MEProxy); Thu, 25 Feb 2021 10:59:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=yiVhkweNcX6LI
-        AOiOficpKa13v18XeI1u1OKFdrNSEQ=; b=OenZPPiheLnWspCACnmVPsRkji/sV
-        e2PySD0+G5te2RNsPELqQExHWKuxe06AvfWWX3hpqifKgAsZxmoTh+IZEeBcicJM
-        8GM6CifSM8AyH//xX/dFHy1jnsMXDLRxeLACuXcYJ4Mb6uVoT/dt2q/r/TL2ClgV
-        v+Ef+FmeSRT2mp1etsSj4w32ZqaMOhYdUvY4BuLUPW8hbZKZ3cwhIaR2GIkWzMQI
-        nq3Ue4miJa50J3JqrrMP5jUZslpsKrhmeYi4J4HzVGhGYa3/1aqvmqvn6OvSsSBN
-        7ybA7e9qOWHm1Xel3f9wqW/+u1xBxQ2TYZGcgvheKwsLw/4CvDkK/0w+g==
+        :mime-version:content-transfer-encoding; s=fm2; bh=npF0HKx+aZLDo
+        9f7QIlgBlgphFmkdTwImcODy0DtSGA=; b=PVCSyL8riY8xeuY02g6/LZUUTHYR0
+        WV0lboQgHgzVJDPnN8UIsvA22EexWzX+N/oZwbpuqxj+EokFXmh4P1BEspLYd/in
+        la1Ir22fAN3wlh1+G3J6uGSXycSzy33yIXpjR3aeanFXd5ewbxLQEzK9LjqT34eN
+        OF8hyf9EpAAn57KnjoEiTDL59fHzE77CKDwiGZkEX5+YiBWyjlINqZ8wXu+poGYW
+        IDmFEbc9YYQJAi0VThnlkAPC9nVPe/x5R2IpiV/XOGqdz7WJP2nTC6kATTIHHyiH
+        p275tJ23IflS//JIdknt/tEIK5XWH4jokjZxLH9zIvibWdwPAF+BynpKg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=yiVhkweNcX6LIAOiOficpKa13v18XeI1u1OKFdrNSEQ=; b=HpE/AwAc
-        6TROccHckNo6eBJnE5gM855c4mwEDgZEK5j1yoQKDDc1KR18OPkbNpwS+URFAaUE
-        NqRJucD7ZUVud4rkaLViIUbVPxFGouAcvSTtwr6GArY0Yu5RFeL6b4fYWipdnR3d
-        9+FyTesoZLG2Bm4oAcJ0UBrfmajsFGCRclMZZeT4FvxmJFL0iJiENpz7FJL/p4zw
-        +1uGd8os7sSVGSN311bgwTxsgK3Eeno5z9Ia0SQwHWcdnpG6n9lPZTl8QPHx6nkY
-        92xhJOJId58AGBwFQZZMzICmeo9i7Q2zu9XiiwRfXZjpeggYzKutQaKk+0YtBrjd
-        dwJ6ad2R4U440A==
-X-ME-Sender: <xms:Wck3YL8D0cstQ_99xeHzXOnZKOUHxsSDPimjt5nC0WUStc9iDRW7NQ>
-    <xme:Wck3YH2zAbJSBye9oeGzICaZ5e2NVhowfTuk_iJFFGngtQTChEo5_pj26nQBIS_Ad
-    CNBzvudvPG_IbQVLpI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeelgdekgecutefuodetggdotefrodftvf
+        fm2; bh=npF0HKx+aZLDo9f7QIlgBlgphFmkdTwImcODy0DtSGA=; b=rz9Gdq5T
+        ThXpLjA24Ht3IP7MYMi44beACZ+vgBfRF7fXyC857SKNww4eaXHQet1PdU9xyrfv
+        H7I3lQQwJLPr2ActrYts9p9loycGekTLckDgP8GKjmQmpFuIBYuqcJzSDKEgDaUs
+        rTzPGt5VdUsm5RRuidGYgFiSsWv6Gvb5JW9A05kod7KB9zwEi7kfYmU7Fpx2Ia4s
+        cPMWnRaSDNAjnzFeSECpmGnKvXHpuA24Cfh7eU7h5vQpMf8zXbTMiqO6CRlkz/3Z
+        yQp8ymmXkChuK+dFS9I8UZAtPqSOQdo771IKzoCwf5xIQnxV/b7/cALhY7U48LPh
+        MAbzAtg4jK98VA==
+X-ME-Sender: <xms:Xsk3YEhYvP06oTy5bYGub9uvY1Spl0WXJgx_JmW_4QGWRss9-zdQPg>
+    <xme:Xsk3YI4Zxwm0lwVA3iFsLruCt15ZXz-UhN3TYs1FkG39eotvZ91w2LHg43Ldyu10r
+    6l_IE_Gp29NZKooo9s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeelgdekhecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
     ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
     gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedunecurf
+    vdenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpeefnecurf
     grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:Wck3YA_ECp10MlJmsYLdzS_bHbJenkdkn4nd5MaT2qnfgLJUqgS26A>
-    <xmx:Wck3YPu0vawX6-PmBUBGY8dZtmD2FuojqHHaRQONkIFzsUl7JjPLPA>
-    <xmx:Wck3YLCereyXXRjDaKqx6dVJzuGoZoiU-6CktGv8BYeOFOsYoRV8cQ>
-    <xmx:Wck3YIRT1a_UK7zkAJO5M2COtAwMCj90JOJ5y0O_KnJIdM3ntHefhcef6cE>
+X-ME-Proxy: <xmx:Xsk3YJGQbo1N3VdtcyH1dwrdPhNSO3cyF1iXhHqWZEFX6pE80qwKDg>
+    <xmx:Xsk3YKI-004GNCzgF2vslqVU_R-5aajd6_xS09_qnzcXs63iNC-v9g>
+    <xmx:Xsk3YGhw4FtH7fg6n8tWnZMUdaGCmHbZti5NBum_4ec_7Gkqav2EHA>
+    <xmx:Xsk3YDsppxyPOm4iBUivH8_j75PXT5gXrPlegTx1cKxe2_Uuz3HgSKEvDpU>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4B5821080059;
-        Thu, 25 Feb 2021 10:59:21 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id EAC361080064;
+        Thu, 25 Feb 2021 10:59:25 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -77,9 +77,9 @@ Cc:     Phil Elwell <phil@raspberrypi.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Daniel Vetter <daniel.vetter@intel.com>,
         David Airlie <airlied@linux.ie>
-Subject: [PATCH 5/8] drm/vc4: hdmi: Enable the scrambler
-Date:   Thu, 25 Feb 2021 16:59:06 +0100
-Message-Id: <20210225155909.1853812-6-maxime@cerno.tech>
+Subject: [PATCH 8/8] drm/vc4: plane: Remove redundant assignment
+Date:   Thu, 25 Feb 2021 16:59:09 +0100
+Message-Id: <20210225155909.1853812-9-maxime@cerno.tech>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210225155909.1853812-1-maxime@cerno.tech>
 References: <20210225155909.1853812-1-maxime@cerno.tech>
@@ -89,140 +89,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The HDMI controller on the BCM2711 includes a scrambler in order to
-reach the modes that require it. Let's add the support for it.
-
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c      | 58 +++++++++++++++++++++++++++++
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h |  3 ++
- 2 files changed, 61 insertions(+)
+ drivers/gpu/drm/vc4/vc4_plane.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index f05f6da286f7..1a6babb53cf4 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -35,6 +35,7 @@
- #include <drm/drm_edid.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
-+#include <drm/drm_scdc_helper.h>
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/i2c.h>
-@@ -76,6 +77,8 @@
- #define VC5_HDMI_VERTB_VSPO_SHIFT		16
- #define VC5_HDMI_VERTB_VSPO_MASK		VC4_MASK(29, 16)
- 
-+#define VC5_HDMI_SCRAMBLER_CTL_ENABLE		BIT(0)
-+
- #define VC5_HDMI_DEEP_COLOR_CONFIG_1_INIT_PACK_PHASE_SHIFT	8
- #define VC5_HDMI_DEEP_COLOR_CONFIG_1_INIT_PACK_PHASE_MASK	VC4_MASK(10, 8)
- 
-@@ -445,6 +448,58 @@ static void vc4_hdmi_set_infoframes(struct drm_encoder *encoder)
- 		vc4_hdmi_set_audio_infoframe(encoder);
- }
- 
-+#define HDMI_14_MAX_TMDS_CLK	(340 * 1000 * 1000)
-+
-+static bool vc4_hdmi_supports_scrambling(struct drm_encoder *encoder,
-+					 struct drm_display_mode *mode)
-+{
-+	struct vc4_hdmi_encoder *vc4_encoder = to_vc4_hdmi_encoder(encoder);
-+	struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
-+	struct drm_display_info *display = &vc4_hdmi->connector.display_info;
-+
-+	if (!vc4_encoder->hdmi_monitor)
-+		return false;
-+
-+	if (!display->hdmi.scdc.supported ||
-+	    !display->hdmi.scdc.scrambling.supported)
-+		return false;
-+
-+	if ((mode->clock * 1000) < HDMI_14_MAX_TMDS_CLK)
-+		return false;
-+
-+	return true;
-+}
-+
-+static void vc4_hdmi_enable_scrambling(struct drm_encoder *encoder)
-+{
-+	struct drm_display_mode *mode = &encoder->crtc->state->adjusted_mode;
-+	struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
-+
-+	if (!vc4_hdmi_supports_scrambling(encoder, mode))
-+		return;
-+
-+	drm_scdc_set_high_tmds_clock_ratio(vc4_hdmi->ddc, true);
-+	drm_scdc_set_scrambling(vc4_hdmi->ddc, true);
-+
-+	HDMI_WRITE(HDMI_SCRAMBLER_CTL, HDMI_READ(HDMI_SCRAMBLER_CTL) |
-+		   VC5_HDMI_SCRAMBLER_CTL_ENABLE);
-+}
-+
-+static void vc4_hdmi_disable_scrambling(struct drm_encoder *encoder)
-+{
-+	struct drm_display_mode *mode = &encoder->crtc->mode;
-+	struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
-+
-+	if (!vc4_hdmi_supports_scrambling(encoder, mode))
-+		return;
-+
-+	HDMI_WRITE(HDMI_SCRAMBLER_CTL, HDMI_READ(HDMI_SCRAMBLER_CTL) &
-+		   ~VC5_HDMI_SCRAMBLER_CTL_ENABLE);
-+
-+	drm_scdc_set_scrambling(vc4_hdmi->ddc, false);
-+	drm_scdc_set_high_tmds_clock_ratio(vc4_hdmi->ddc, false);
-+}
-+
- static void vc4_hdmi_encoder_post_crtc_disable(struct drm_encoder *encoder,
- 					       struct drm_atomic_state *state)
- {
-@@ -457,6 +512,8 @@ static void vc4_hdmi_encoder_post_crtc_disable(struct drm_encoder *encoder,
- 
- 	HDMI_WRITE(HDMI_VID_CTL,
- 		   HDMI_READ(HDMI_VID_CTL) | VC4_HD_VID_CTL_BLANKPIX);
-+
-+	vc4_hdmi_disable_scrambling(encoder);
- }
- 
- static void vc4_hdmi_encoder_post_crtc_powerdown(struct drm_encoder *encoder,
-@@ -901,6 +958,7 @@ static void vc4_hdmi_encoder_post_crtc_enable(struct drm_encoder *encoder,
- 	}
- 
- 	vc4_hdmi_recenter_fifo(vc4_hdmi);
-+	vc4_hdmi_enable_scrambling(encoder);
- }
- 
- static void vc4_hdmi_encoder_enable(struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi_regs.h b/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-index e1b58eac766f..6897586228ad 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-@@ -100,6 +100,7 @@ enum vc4_hdmi_field {
- 	HDMI_RM_FORMAT,
- 	HDMI_RM_OFFSET,
- 	HDMI_SCHEDULER_CONTROL,
-+	HDMI_SCRAMBLER_CTL,
- 	HDMI_SW_RESET_CONTROL,
- 	HDMI_TX_PHY_CHANNEL_SWAP,
- 	HDMI_TX_PHY_CLK_DIV,
-@@ -234,6 +235,7 @@ static const struct vc4_hdmi_register __maybe_unused vc5_hdmi_hdmi0_fields[] = {
- 	VC4_HDMI_REG(HDMI_VERTB1, 0x0f8),
- 	VC4_HDMI_REG(HDMI_MAI_CHANNEL_MAP, 0x09c),
- 	VC4_HDMI_REG(HDMI_MAI_CONFIG, 0x0a0),
-+	VC4_HDMI_REG(HDMI_SCRAMBLER_CTL, 0x1c4),
- 	VC4_HDMI_REG(HDMI_DEEP_COLOR_CONFIG_1, 0x170),
- 	VC4_HDMI_REG(HDMI_GCP_CONFIG, 0x178),
- 	VC4_HDMI_REG(HDMI_GCP_WORD_1, 0x17c),
-@@ -313,6 +315,7 @@ static const struct vc4_hdmi_register __maybe_unused vc5_hdmi_hdmi1_fields[] = {
- 	VC4_HDMI_REG(HDMI_VERTB1, 0x0f8),
- 	VC4_HDMI_REG(HDMI_MAI_CHANNEL_MAP, 0x09c),
- 	VC4_HDMI_REG(HDMI_MAI_CONFIG, 0x0a0),
-+	VC4_HDMI_REG(HDMI_SCRAMBLER_CTL, 0x1c4),
- 	VC4_HDMI_REG(HDMI_DEEP_COLOR_CONFIG_1, 0x170),
- 	VC4_HDMI_REG(HDMI_GCP_CONFIG, 0x178),
- 	VC4_HDMI_REG(HDMI_GCP_WORD_1, 0x17c),
+diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+index 5e8b7f72dc05..201831e924d9 100644
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -1131,7 +1131,6 @@ static void vc4_plane_atomic_async_update(struct drm_plane *plane,
+ 	plane->state->src_y = state->src_y;
+ 	plane->state->src_w = state->src_w;
+ 	plane->state->src_h = state->src_h;
+-	plane->state->src_h = state->src_h;
+ 	plane->state->alpha = state->alpha;
+ 	plane->state->pixel_blend_mode = state->pixel_blend_mode;
+ 	plane->state->rotation = state->rotation;
 -- 
 2.29.2
 
