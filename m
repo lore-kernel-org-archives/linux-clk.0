@@ -2,148 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C943C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 17:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81D1C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 19:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C133A64F13
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 17:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864D164F86
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 19:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbhBYRQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 12:16:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32994 "EHLO
+        id S234383AbhBYTPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 14:15:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhBYRQs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 12:16:48 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBAAC061574
-        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 09:16:07 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id r3so5992357wro.9
-        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 09:16:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pgcY/OZF65ERBl6MAK6W0hY0CpUqOvXRa/TDDVIblrs=;
-        b=Zvr95u8GzHK4DYlgfOFC4q5TZH1ZlqlxSXULVyDhVfyFnWIaKJsaHiWjQc0YTz4yaI
-         BRUtwJSUC8NzJ2TsM1j6CHT6Ykr6rYPFS0HVcn4KFhRQmZTfEvxzQ+QkTdfdcJD7iIwi
-         BDOMs35CANJbfFK/EbSGBJoM4MAim9TuKfa9i7feeDcbl6fhlqe5MBtzKKzZiaa4LF0T
-         ppuVdkQHuHVQHQD3MplBqeHh8AXqEKHiOhzkE5uoPwTv0qNWbD8ZUNcC9yzKWvYPKJLr
-         3UDwV51qh8RjaATBxBzMs3iE+GwBvGJQHPSiDjNZhr6eA2fTAx+OgS7UmM1cKtIPRWs3
-         lVsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pgcY/OZF65ERBl6MAK6W0hY0CpUqOvXRa/TDDVIblrs=;
-        b=lFQ23g0t4Jbogws0h1D4V0GAx0NTSswkbmG7DsQT+FHCkETk5kAospAuL1Kb2FAaHi
-         ttwexjaY4Ax2gX9OC1xPA3qHr7FQh86bHl+4ZqtkH5nH+wVe8RFYZVBlq2tDX91A0jF6
-         5o4Hnii75zKAnWDzTK6iKGIJa4Pscpy4BPBGUghcMpDn+tQ3Q6Y15LUnQj+IlLRsF1cp
-         1Mwcb5OlWhyEl/EzkygrKVmabPfE1KtSVPuzFC6jmAnnzJC8acDCAvE+ZVdhN0CV7U1X
-         z1s/B9stMo+T4CqE77XxBUh7kviKsJG/pD4a5UbeZaWgthDSSLle78W0vxvAnk5AsIkq
-         w5QQ==
-X-Gm-Message-State: AOAM533y4BPZ1nE6Ef7rn1THbLoDmTFLmszA+fD6m4kuom4NG29kXj3L
-        TcKJvhYg/MHjCV9NaSbsTfrdYGTMhnx3q+iMjU1k5g==
-X-Google-Smtp-Source: ABdhPJzvaaIvsIuZY81xtukaleNmpcL7+wykHbOc4CXehrpeggQQBtBruvil1QLIyGhO/rwHf1v7B3hxb6w/IvNSkJY=
-X-Received: by 2002:adf:f681:: with SMTP id v1mr4592118wrp.150.1614273366172;
- Thu, 25 Feb 2021 09:16:06 -0800 (PST)
+        with ESMTP id S234517AbhBYTNQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 14:13:16 -0500
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182D5C0617AB
+        for <linux-clk@vger.kernel.org>; Thu, 25 Feb 2021 11:12:45 -0800 (PST)
+Received: from [192.168.1.101] (abab236.neoplus.adsl.tpnet.pl [83.6.165.236])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 891011F678;
+        Thu, 25 Feb 2021 20:09:16 +0100 (CET)
+Subject: Re: [PATCH 5/6] clk: qcom: gcc-sdm660: Account for needed adjustments
+ in probe function
+To:     Stephen Boyd <sboyd@kernel.org>, phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Craig Tatlor <ctatlor97@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20210220155618.176559-1-konrad.dybcio@somainline.org>
+ <20210220155618.176559-5-konrad.dybcio@somainline.org>
+ <161404077336.1254594.15002572465360321874@swboyd.mtv.corp.google.com>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+Message-ID: <3917fba4-e5b0-911f-9220-f401a90aac38@somainline.org>
+Date:   Thu, 25 Feb 2021 20:09:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-References: <20210225155909.1853812-1-maxime@cerno.tech> <20210225155909.1853812-4-maxime@cerno.tech>
- <CAPY8ntDMm_o8O-SOk7Tkh=yh5czQ0iS37p==DyhxBVPVmriGWw@mail.gmail.com>
-In-Reply-To: <CAPY8ntDMm_o8O-SOk7Tkh=yh5czQ0iS37p==DyhxBVPVmriGWw@mail.gmail.com>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Thu, 25 Feb 2021 17:15:50 +0000
-Message-ID: <CAPY8ntDOwhT7XC4v=HNxy8D0mCc03wJKu+xV3coFNxCkE7abSA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] drm/vc4: hdmi: Properly compute the BVB clock rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <161404077336.1254594.15002572465360321874@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 25 Feb 2021 at 16:44, Dave Stevenson
-<dave.stevenson@raspberrypi.com> wrote:
->
-> Hi Maxime
->
-> On Thu, 25 Feb 2021 at 15:59, Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > The BVB clock rate computation doesn't take into account a mode clock of
-> > 594MHz that we're going to need to support 4k60.
-> >
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 11 +++--------
-> >  1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > index eee9751009c2..b5bc742993a4 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > @@ -91,7 +91,6 @@
-> >  # define VC4_HD_M_ENABLE                       BIT(0)
-> >
-> >  #define CEC_CLOCK_FREQ 40000
-> > -#define VC4_HSM_MID_CLOCK 149985000
-> >
-> >  #define HDMI_14_MAX_TMDS_CLK   (340 * 1000 * 1000)
-> >
-> > @@ -739,7 +738,7 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder,
-> >                 conn_state_to_vc4_hdmi_conn_state(conn_state);
-> >         struct drm_display_mode *mode = &encoder->crtc->state->adjusted_mode;
-> >         struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
-> > -       unsigned long pixel_rate, hsm_rate;
-> > +       unsigned long bvb_rate, pixel_rate, hsm_rate;
-> >         int ret;
-> >
-> >         ret = pm_runtime_get_sync(&vc4_hdmi->pdev->dev);
-> > @@ -793,12 +792,8 @@ static void vc4_hdmi_encoder_pre_crtc_configure(struct drm_encoder *encoder,
-> >
-> >         vc4_hdmi_cec_update_clk_div(vc4_hdmi);
-> >
-> > -       /*
-> > -        * FIXME: When the pixel freq is 594MHz (4k60), this needs to be setup
-> > -        * at 300MHz.
-> > -        */
-> > -       ret = clk_set_min_rate(vc4_hdmi->pixel_bvb_clock,
-> > -                              (hsm_rate > VC4_HSM_MID_CLOCK ? 150000000 : 75000000));
-> > +       bvb_rate = roundup(mode->clock * 1000 / 2, 75000000);
->
-> Minor hesitation here that I would need to check the hardware over.
-> As I read your code, if the clock falls 300MHz and 450MHz then you'd
-> ask for a bvb_rate of 225MHz. Depending on what the source clock is
-> that may not be valid.
-> The firmware goes for 75, 150, or 300MHz only.
+Hi and sorry for the late reply,
 
-The information I have says it has to be an integer divide of 600MHz
-(PLLC @ 3GHz / 5), so 225MHz is not valid.
 
-(Minor contradictory information though as PLLC is bumped to 3.3GHz
-with enable_4kp60, but we still appear to get 300MHz for BVB after the
-/5. A little more checking warranted around here).
+>> +
+>> +       /* Keep bimc gfx clock port on all the time */
+>> +       clk_prepare_enable(gcc_bimc_gfx_clk.clkr.hw.clk);
+>> +
+> Preferably just set these various bits with regmap_update_bits() during
+> probe. Also, please do it before regsitering the clks, not after.
 
->   Dave
->
-> > +       ret = clk_set_min_rate(vc4_hdmi->pixel_bvb_clock, bvb_rate);
-> >         if (ret) {
-> >                 DRM_ERROR("Failed to set pixel bvb clock rate: %d\n", ret);
-> >                 clk_disable_unprepare(vc4_hdmi->hsm_clock);
-> > --
-> > 2.29.2
-> >
+To be fair, now I think that simply adding CLK_IS_CRITICAL flag to the clocks in question is the smartest thing to do. Magic writes don't tell a whole lot.
+
+
+>> +       /* Set the HMSS_GPLL0_SRC for 300MHz to CPU subsystem */
+>> +       clk_set_rate(hmss_gpll0_clk_src.clkr.hw.clk, 300000000);
+> Is this not already the case?
+
+
+This is a mission-critical clock and we cannot trust the bootloader with setting it. Otherwise dragons might appear.
+
+
+Konrad
+
+
