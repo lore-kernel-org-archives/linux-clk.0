@@ -2,188 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A7AC433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21956C433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA11764EDB
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB02764ECE
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 09:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235812AbhBYJKq convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 04:10:46 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:39722 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236089AbhBYJIj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Feb 2021 04:08:39 -0500
-Received: from [95.90.166.74] (helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lFCcS-0000It-Tw; Thu, 25 Feb 2021 10:07:36 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     sboyd@kernel.org, "elaine.zhang" <zhangqing@rock-chips.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com, tony.xie@rock-chips.com,
-        finley.xiao@rock-chips.com
-Subject: Re: [PATCH v1 3/4] clk: rockchip: support more core div setting
-Date:   Thu, 25 Feb 2021 10:07:36 +0100
-Message-ID: <3100125.44csPzL39Z@diego>
-In-Reply-To: <6759a56c-56d1-da63-5299-0d76966329df@rock-chips.com>
-References: <20210223095352.11544-1-zhangqing@rock-chips.com> <5312231.BaHzMo0RvP@diego> <6759a56c-56d1-da63-5299-0d76966329df@rock-chips.com>
+        id S236099AbhBYJYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 04:24:07 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:44576 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233451AbhBYJXI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 04:23:08 -0500
+Received: by mail-ot1-f53.google.com with SMTP id f33so5017649otf.11;
+        Thu, 25 Feb 2021 01:22:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qn/i3Xq3eFPWh+oxu0OZHPlZ+USKUqVpHsfRFlr5yAs=;
+        b=IjQK1Jw32OSdFLTgEU6l9MEedPVJA/d+qPr8XLQR5AMYD6M8rG15HNANzI8MrVGQk5
+         +O8y6xZgPMbOpvL57cZavfOKuYynpb3G6eevo5oFbMyW7EOu7oSB0KwEJwYdXQXgtcX1
+         SxbsfYn3dhmejw+jM06zxA7CadUr5/WNosap5GPh4yhFtR6aVcCNnOqHaiS/7xKg+1Ba
+         7LNRULq7CGLaTs7i6kY/71FY47YoPcdRXKFoY33e114hOVnKJ43EJKu+y0IxAcdqfPes
+         cW5uw+LvDh/4eobtqZZdx3ryJn8VovUgAGHFhOKjEYNwC9SKM1p9epntoqc/T4xuXRLS
+         OdhA==
+X-Gm-Message-State: AOAM532CE1ikjqpZGszA/c85rFzeh5rjn+EL1XpdIkmLzhzWw9AWFCS7
+        KtqIqCCJIavT1ojaErdNy9q2oPI1wbhZxO6aFlg=
+X-Google-Smtp-Source: ABdhPJzA05EhCSKn+fa5olOgbUVwt4c5dphmMfcyJtaw5b2dV5HM2Ob4uwlqTZro9SBDH4FPxRWzTQvs6RjzGS5/u7c=
+X-Received: by 2002:a05:6830:119:: with SMTP id i25mr1515253otp.107.1614244927765;
+ Thu, 25 Feb 2021 01:22:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+References: <20210205222644.2357303-1-saravanak@google.com>
+ <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+ <CAGETcx-668+uGigaOMcsvv00mo6o_eGPcH0YyD28OCVEyVbw+w@mail.gmail.com>
+ <CAMuHMdXduvBqjAqraXkEKErNJFyN6JNq5wqagc4yHHPpH5SPGQ@mail.gmail.com>
+ <CAGETcx_4FGa-rzLp6bjXbm4F4R6H2W78+nM_kN=XPz5hswzANA@mail.gmail.com>
+ <CAMuHMdVodauqBmLMxsfi0kQtAFT8ruJ36LJL9YuQgqwQNKwHHg@mail.gmail.com>
+ <CAGETcx_-yBvhXDPtOiKjenvx83oMNr32UvpMN0Dt-qz5ToXEbw@mail.gmail.com>
+ <CAMuHMdXTO8wQ3=woLMjDaf9g3tTr-dRB3Nu_XvZUrr+wGSXyeg@mail.gmail.com> <CAGETcx8jXkbtdgMCr6KGT4ScoaoP=AwaW6MQeEv-gsDySiY35A@mail.gmail.com>
+In-Reply-To: <CAGETcx8jXkbtdgMCr6KGT4ScoaoP=AwaW6MQeEv-gsDySiY35A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 25 Feb 2021 10:21:56 +0100
+Message-ID: <CAMuHMdUVVr8jES51_8_yPoicr-nwad_2nKLYUKweY8mbxx9GJw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Elaine,
+Hi Saravana,
 
-Am Donnerstag, 25. Februar 2021, 03:59:32 CET schrieb elaine.zhang:
-> 在 2021/2/23 下午6:22, Heiko Stübner 写道:
-> > Am Dienstag, 23. Februar 2021, 10:53:51 CET schrieb Elaine Zhang:
-> >> A55 supports each core to work at different frequencies, and each core
-> >> has an independent divider control.
-> >>
-> >> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> >> ---
-> >>   drivers/clk/rockchip/clk-cpu.c | 25 +++++++++++++++++++++++++
-> >>   drivers/clk/rockchip/clk.h     | 17 ++++++++++++++++-
-> >>   2 files changed, 41 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-> >> index fa9027fb1920..cac06f4f7573 100644
-> >> --- a/drivers/clk/rockchip/clk-cpu.c
-> >> +++ b/drivers/clk/rockchip/clk-cpu.c
-> >> @@ -164,6 +164,18 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
-> >>   				     reg_data->mux_core_mask,
-> >>   				     reg_data->mux_core_shift),
-> >>   		       cpuclk->reg_base + reg_data->core_reg);
-> >> +		if (reg_data->core1_reg)
-> >> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core1_mask,
-> >> +					     reg_data->div_core1_shift),
-> >> +			       cpuclk->reg_base + reg_data->core1_reg);
-> >> +		if (reg_data->core2_reg)
-> >> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core2_mask,
-> >> +					     reg_data->div_core2_shift),
-> >> +			       cpuclk->reg_base + reg_data->core2_reg);
-> >> +		if (reg_data->core3_reg)
-> >> +			writel(HIWORD_UPDATE(alt_div, reg_data->div_core3_mask,
-> >> +					     reg_data->div_core3_shift),
-> >> +			       cpuclk->reg_base + reg_data->core3_reg);
-> > for (i = 0; i < reg_data->num_cores; i++)
-> > 	writel(...)
+On Thu, Feb 18, 2021 at 12:57 AM Saravana Kannan <saravanak@google.com> wrote:
+> On Tue, Feb 16, 2021 at 12:31 PM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Tue, Feb 16, 2021 at 7:49 PM Saravana Kannan <saravanak@google.com> wrote:
+> > > On Tue, Feb 16, 2021 at 12:05 AM Geert Uytterhoeven
+> > > <geert@linux-m68k.org> wrote:
+> > > > On Mon, Feb 15, 2021 at 10:27 PM Saravana Kannan <saravanak@google.com> wrote:
+> > > > > On Mon, Feb 15, 2021 at 4:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > > On Fri, Feb 12, 2021 at 4:00 AM Saravana Kannan <saravanak@google.com> wrote:
+> > > > > > > On Thu, Feb 11, 2021 at 5:00 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > > > >       - I2C on R-Car Gen3 does not seem to use DMA, according to
+> > > > > > > >         /sys/kernel/debug/dmaengine/summary:
+> > > > > > > >
+> > > > > > > >             -dma4chan0    | e66d8000.i2c:tx
+> > > > > > > >             -dma4chan1    | e66d8000.i2c:rx
+> > > > > > > >             -dma5chan0    | e6510000.i2c:tx
+> > > > > > >
+> > > > > > > I think I need more context on the problem before I can try to fix it.
+> > > > > > > I'm also very unfamiliar with that file. With fw_devlink=permissive,
+> > > > > > > I2C was using DMA? If so, the next step is to see if the I2C relative
+> > > > > > > probe order with DMA is getting changed and if so, why.
+> > > > > >
+> > > > > > More detailed log:
+> > > > > >
+> > > > > >     platform e66d8000.i2c: Linked as a consumer to e6150000.clock-controller
+> > > > > >     platform e66d8000.i2c: Linked as a sync state only consumer to e6055400.gpio
+> > > > > >
+> > > > > > Why is e66d8000.i2c not linked as a consumer to e6700000.dma-controller?
+> > > > >
+> > > > > Because fw_devlink.strict=1 is not set and dma/iommu is considered an
+> > > > > "optional"/"driver decides" dependency.
+> > > >
+> > > > Oh, I thought dma/iommu were considered mandatory initially,
+> > > > but dropped as dependencies in the late boot process?
+> > >
+> > > No, I didn't do that in case the drivers that didn't need the
+> > > IOMMU/DMA were sensitive to probe order.
+> > >
+> > > My goal was for fw_devlink=on to not affect probe order for devices
+> > > that currently don't need to defer probe. But see below...
+> > >
+> > > >
+> > > > >
+> > > > > >     platform e6700000.dma-controller: Linked as a consumer to
+> > > > > > e6150000.clock-controller
+> > > > >
+> > > > > Is this the only supplier of dma-controller?
+> > > >
+> > > > No, e6180000.system-controller is also a supplier.
+> > > >
+> > > > > >     platform e66d8000.i2c: Added to deferred list
+> > > > > >     platform e6700000.dma-controller: Added to deferred list
+> > > > > >
+> > > > > >     bus: 'platform': driver_probe_device: matched device
+> > > > > > e6700000.dma-controller with driver rcar-dmac
+> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
+> > > > > > device e6700000.dma-controller
+> > > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
+> > > > > >
+> > > > > >     bus: 'platform': driver_probe_device: matched device e66d8000.i2c
+> > > > > > with driver i2c-rcar
+> > > > > >     bus: 'platform': really_probe: probing driver i2c-rcar with device
+> > > > > > e66d8000.i2c
+> > > > > >
+> > > > > > I2C becomes available...
+> > > > > >
+> > > > > >     i2c-rcar e66d8000.i2c: request_channel failed for tx (-517)
+> > > > > >     [...]
+> > > > > >
+> > > > > > but DMA is not available yet, so the driver falls back to PIO.
+> > > > > >
+> > > > > >     driver: 'i2c-rcar': driver_bound: bound to device 'e66d8000.i2c'
+> > > > > >     bus: 'platform': really_probe: bound device e66d8000.i2c to driver i2c-rcar
+> > > > > >
+> > > > > >     platform e6700000.dma-controller: Retrying from deferred list
+> > > > > >     bus: 'platform': driver_probe_device: matched device
+> > > > > > e6700000.dma-controller with driver rcar-dmac
+> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
+> > > > > > device e6700000.dma-controller
+> > > > > >     platform e6700000.dma-controller: Driver rcar-dmac requests probe deferral
+> > > > > >     platform e6700000.dma-controller: Added to deferred list
+> > > > > >     platform e6700000.dma-controller: Retrying from deferred list
+> > > > > >     bus: 'platform': driver_probe_device: matched device
+> > > > > > e6700000.dma-controller with driver rcar-dmac
+> > > > > >     bus: 'platform': really_probe: probing driver rcar-dmac with
+> > > > > > device e6700000.dma-controller
+> > > > > >     driver: 'rcar-dmac': driver_bound: bound to device 'e6700000.dma-controller'
+> > > > > >     bus: 'platform': really_probe: bound device
+> > > > > > e6700000.dma-controller to driver rcar-dmac
+> > > > > >
+> > > > > > DMA becomes available.
+> > > > > >
+> > > > > > Here userspace is entered. /sys/kernel/debug/dmaengine/summary shows
+> > > > > > that the I2C controllers do not have DMA channels allocated, as the
+> > > > > > kernel has performed no more I2C transfers after DMA became available.
+> > > > > >
+> > > > > > Using i2cdetect shows that DMA is used, which is good:
+> > > > > >
+> > > > > >     i2c-rcar e66d8000.i2c: got DMA channel for rx
+> > > > > >
+> > > > > > With permissive devlinks, the clock controller consumers are not added
+> > > > > > to the deferred probing list, and probe order is slightly different.
+> > > > > > The I2C controllers are still probed before the DMA controllers.
+> > > > > > But DMA becomes available a bit earlier, before the probing of the last
+> > > > > > I2C slave driver.
+> > > > >
+> > > > > This seems like a race? I'm guessing it's two different threads
+> > > > > probing those two devices? And it just happens to work for
+> > > > > "permissive" assuming the boot timing doesn't change?
+> > > > >
+> > > > > > Hence /sys/kernel/debug/dmaengine/summary shows that
+> > > > > > some I2C transfers did use DMA.
+> > > > > >
+> > > > > > So the real issue is that e66d8000.i2c not linked as a consumer to
+> > > > > > e6700000.dma-controller.
+> > > > >
+> > > > > That's because fw_devlink.strict=1 isn't set. If you need DMA to be
+> > > > > treated as a mandatory supplier, you'll need to set the flag.
+> > > > >
+> > > > > Is fw_devlink=on really breaking anything here? It just seems like
+> > > > > "permissive" got lucky with the timing and it could break at any point
+> > > > > in the future. Thought?
+> > > >
+> > > > I don't think there is a race.
+> > >
+> > > Can you explain more please? This below makes it sound like DMA just
+> > > sneaks in at the last minute.
 > >
-> >>   	} else {
-> >>   		/* select alternate parent */
-> >>   		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
-> >> @@ -209,6 +221,19 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
-> >>   				reg_data->mux_core_shift),
-> >>   	       cpuclk->reg_base + reg_data->core_reg);
-> >>   
-> >> +	if (reg_data->core1_reg)
-> >> +		writel(HIWORD_UPDATE(0, reg_data->div_core1_mask,
-> >> +				     reg_data->div_core1_shift),
-> >> +		       cpuclk->reg_base + reg_data->core1_reg);
-> >> +	if (reg_data->core2_reg)
-> >> +		writel(HIWORD_UPDATE(0, reg_data->div_core2_mask,
-> >> +				     reg_data->div_core2_shift),
-> >> +		       cpuclk->reg_base + reg_data->core2_reg);
-> >> +	if (reg_data->core3_reg)
-> >> +		writel(HIWORD_UPDATE(0, reg_data->div_core3_mask,
-> >> +				     reg_data->div_core3_shift),
-> >> +		       cpuclk->reg_base + reg_data->core3_reg);
-> >> +
-> > for (i = 0; i < reg_data->num_cores; i++)
-> > 	writel(...)
-> >
-> >>   	if (ndata->old_rate > ndata->new_rate)
-> >>   		rockchip_cpuclk_set_dividers(cpuclk, rate);
-> >>   
-> >> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-> >> index 2271a84124b0..b46c93fd0cb5 100644
-> >> --- a/drivers/clk/rockchip/clk.h
-> >> +++ b/drivers/clk/rockchip/clk.h
-> >> @@ -322,7 +322,7 @@ struct rockchip_cpuclk_clksel {
-> >>   	u32 val;
-> >>   };
-> >>   
-> >> -#define ROCKCHIP_CPUCLK_NUM_DIVIDERS	2
-> >> +#define ROCKCHIP_CPUCLK_NUM_DIVIDERS	5
-> > please move this into a separate patch, as yes the rk3568 needs more
-> > dividers but that isn't related to adding separate core divider controls.
-> >
-> > [...]
-> > add
-> >
-> > #define ROCKCHIP_CPUCLK_MAX_CORES	4
-> >
-> >>   struct rockchip_cpuclk_rate_table {
-> >>   	unsigned long prate;
-> >>   	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-> >> @@ -333,6 +333,12 @@ struct rockchip_cpuclk_rate_table {
-> >>    * @core_reg:		register offset of the core settings register
-> >>    * @div_core_shift:	core divider offset used to divide the pll value
-> >>    * @div_core_mask:	core divider mask
-> >> + * @div_core1_shift:	core1 divider offset used to divide the pll value
-> >> + * @div_core1_mask:	core1 divider mask
-> >> + * @div_core2_shift:	core2 divider offset used to divide the pll value
-> >> + * @div_core2_mask:	core2 divider mask
-> >> + * @div_core3_shift:	core3 divider offset used to divide the pll value
-> >> + * @div_core3_mask:	core3 divider mask
-> >>    * @mux_core_alt:	mux value to select alternate parent
-> >>    * @mux_core_main:	mux value to select main parent of core
-> >>    * @mux_core_shift:	offset of the core multiplexer
-> >> @@ -342,6 +348,15 @@ struct rockchip_cpuclk_reg_data {
-> >>   	int		core_reg;
-> >>   	u8		div_core_shift;
-> >>   	u32		div_core_mask;
-> >> +	int		core1_reg;
-> >> +	u8		div_core1_shift;
-> >> +	u32		div_core1_mask;
-> >> +	int		core2_reg;
-> >> +	u8		div_core2_shift;
-> >> +	u32		div_core2_mask;
-> >> +	int		core3_reg;
-> >> +	u8		div_core3_shift;
-> >> +	u32		div_core3_mask;
-> > please make this instead like:
-> >
-> > int	core_reg[ROCKCHIP_CPUCLK_MAX_CORES];
-> > u8	div_core_shift[ROCKCHIP_CPUCLK_MAX_CORES];
-> > u32	div_core_mask[ROCKCHIP_CPUCLK_MAX_CORES];
-> > int	num_cores;
+> > Yes it does, as the DMAC also has a consumer link to the IOMMU.
+> > If you ignore the consumer link from I2C to DMAC, the I2C device has
+> > less dependencies than the DMAC, so the I2C device, and the
+> > devices on the I2C bus, are probed much earlier than the DMAC.
 >
-> This is also my original intention, but with such modification, other 
-> SOCs of RK need to be modified, otherwise they cannot be compatible with 
-> the old SOC.
+> Can you give this a shot?
+> https://lore.kernel.org/lkml/20210217235130.1744843-1-saravanak@google.com/T/#u
+>
+> It should make sure fw_devlink doesn't add a device to the deferred
+> probe list too soon and change the probe ordering unnecessarily.
 
-That is actually no problem, especially as the diff should be just a simple
+(FTR, to keep all info in this thread)
+Yes, this makes I2C use DMA again on Salvator-XS during kernel boot-up.
+I haven't run any more elaborate tests on other platforms.
 
-static const struct rockchip_cpuclk_reg_data px30_cpuclk_data = {
--	.core_reg = PX30_CLKSEL_CON(0),
--	.div_core_shift = 0,
--	.div_core_mask = 0xf,
-+	.core_reg[0] = PX30_CLKSEL_CON(0),
-+	.div_core_shift[0] = 0,
-+	.div_core_mask[0] = 0xf,
-+	.num_cores = 1,
-	.mux_core_alt = 1,
-	.mux_core_main = 0,
-	.mux_core_shift = 7,
-	.mux_core_mask = 0x1,
-};
+Gr{oetje,eeting}s,
 
-So please go the clean way :-) 
+                        Geert
 
-Thanks
-Heiko
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
