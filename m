@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B65C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8026CC433E6
 	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1253364F19
+	by mail.kernel.org (Postfix) with ESMTP id 4479164ED3
 	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 16:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233132AbhBYQB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 11:01:26 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:35049 "EHLO
+        id S232372AbhBYQB1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Feb 2021 11:01:27 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:38439 "EHLO
         wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232372AbhBYQBO (ORCPT
+        by vger.kernel.org with ESMTP id S232949AbhBYQBO (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 11:01:14 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id A21B2435;
-        Thu, 25 Feb 2021 10:59:26 -0500 (EST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 69010B77;
+        Thu, 25 Feb 2021 10:59:27 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 25 Feb 2021 10:59:27 -0500
+  by compute4.internal (MEProxy); Thu, 25 Feb 2021 10:59:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=npF0HKx+aZLDo
-        9f7QIlgBlgphFmkdTwImcODy0DtSGA=; b=PVCSyL8riY8xeuY02g6/LZUUTHYR0
-        WV0lboQgHgzVJDPnN8UIsvA22EexWzX+N/oZwbpuqxj+EokFXmh4P1BEspLYd/in
-        la1Ir22fAN3wlh1+G3J6uGSXycSzy33yIXpjR3aeanFXd5ewbxLQEzK9LjqT34eN
-        OF8hyf9EpAAn57KnjoEiTDL59fHzE77CKDwiGZkEX5+YiBWyjlINqZ8wXu+poGYW
-        IDmFEbc9YYQJAi0VThnlkAPC9nVPe/x5R2IpiV/XOGqdz7WJP2nTC6kATTIHHyiH
-        p275tJ23IflS//JIdknt/tEIK5XWH4jokjZxLH9zIvibWdwPAF+BynpKg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=sRNO0ReEEWwLa
+        bTWRSjhfPjtyQxPG1rXo9Lu0AoR/OQ=; b=cPonwAXD/UhcBBn6rbM0tozLBDjhc
+        PP1hQDnpu2ousQjOepi+LslV6QwLz3kSydM+0fc1UEaGm2d0v9HqjBTgpRIg6YgX
+        xRLBasJq5UA5tnSLjhyjxae9GffBZagiTr4E/CSSWpyWBlMyph+g+6j4lXtTKVHs
+        YX/RRDcSz++z5awTrrK94jUDT4YMnEj3ejOL5Rf4ZdUFqQ6MU2w46e0G2H1PmIM5
+        Zby8xRBCy1uFMiBWGmDbO6PJFIcYHNHlsG4FhExGN2J/ZoUqodOjKD4Tlwo2v5PI
+        7oFSMHtMn9xrgXJwH5xx68qhO342NpYo9wVAPxcbJj8OGqqd9P/N8Dt4Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=npF0HKx+aZLDo9f7QIlgBlgphFmkdTwImcODy0DtSGA=; b=rz9Gdq5T
-        ThXpLjA24Ht3IP7MYMi44beACZ+vgBfRF7fXyC857SKNww4eaXHQet1PdU9xyrfv
-        H7I3lQQwJLPr2ActrYts9p9loycGekTLckDgP8GKjmQmpFuIBYuqcJzSDKEgDaUs
-        rTzPGt5VdUsm5RRuidGYgFiSsWv6Gvb5JW9A05kod7KB9zwEi7kfYmU7Fpx2Ia4s
-        cPMWnRaSDNAjnzFeSECpmGnKvXHpuA24Cfh7eU7h5vQpMf8zXbTMiqO6CRlkz/3Z
-        yQp8ymmXkChuK+dFS9I8UZAtPqSOQdo771IKzoCwf5xIQnxV/b7/cALhY7U48LPh
-        MAbzAtg4jK98VA==
-X-ME-Sender: <xms:Xsk3YEhYvP06oTy5bYGub9uvY1Spl0WXJgx_JmW_4QGWRss9-zdQPg>
-    <xme:Xsk3YI4Zxwm0lwVA3iFsLruCt15ZXz-UhN3TYs1FkG39eotvZ91w2LHg43Ldyu10r
-    6l_IE_Gp29NZKooo9s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeelgdekhecutefuodetggdotefrodftvf
+        fm2; bh=sRNO0ReEEWwLabTWRSjhfPjtyQxPG1rXo9Lu0AoR/OQ=; b=jjOselDB
+        4ND4YhV2BV8peo0kywUpKNtoQVNz6Rv5yEf6aSY1yOwr/LMzmHkLEAxKypcUQITV
+        QNoyCnTtRiYuL4fsl44ueNTR8g1DJWYxzPIoGXd1G7n4qj6dZJmC3/gy/qSbwYKT
+        ZcdEl57iH72Dzd5C+Rzo3cE36eFIQPJlNiby6O57XtQr/9Jgj9kEFRAppU5MvxS/
+        luR7p/x20KIS10XJAvdaP1/9RH2t4uPAzqxj85/YdcJKVEOpJ4p2GSMp82MO4enJ
+        bsRoa3UYysKDVEjrX8hMeEayyjaCEJh92jCmrDFXOWi3oeuDmmkaPNLX3uDaZCf1
+        L/JxDHzoaNdd1g==
+X-ME-Sender: <xms:XMk3YP3cRPbaicGmUo3OX6u4grdhrDT9zpgud5HTJAS4I4xuBlKezw>
+    <xme:XMk3YApGzQu66vz2f5vWC715dvY81EUQbYPd3CzXQpmN8Wv2lsuo5Ecdq7WMAa9Tk
+    0p5wrtXvlmCeJOl8jI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrkeelgdekgecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
     ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
     gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpeefnecurf
+    vdenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
     grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:Xsk3YJGQbo1N3VdtcyH1dwrdPhNSO3cyF1iXhHqWZEFX6pE80qwKDg>
-    <xmx:Xsk3YKI-004GNCzgF2vslqVU_R-5aajd6_xS09_qnzcXs63iNC-v9g>
-    <xmx:Xsk3YGhw4FtH7fg6n8tWnZMUdaGCmHbZti5NBum_4ec_7Gkqav2EHA>
-    <xmx:Xsk3YDsppxyPOm4iBUivH8_j75PXT5gXrPlegTx1cKxe2_Uuz3HgSKEvDpU>
+X-ME-Proxy: <xmx:XMk3YDijqTcER9a4_02Bz3HvMlrY38enRfVSwwF_deHuWv-sDqmlvg>
+    <xmx:XMk3YE-ECzH29Opw6V9i0rRbF62mB7iSarXdhfozqYEWfC0HVY0z4w>
+    <xmx:XMk3YHV_GjeQ07nr_4kYzxeRhW1NkKwgem5seD01Zr19rVvRISsihw>
+    <xmx:Xsk3YOdxcih8drielNvDdf9YbIjoeuuXBUDsSoMWwIO4Tk_e37MTBVnEUWw>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EAC361080064;
-        Thu, 25 Feb 2021 10:59:25 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 66672108005F;
+        Thu, 25 Feb 2021 10:59:24 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
@@ -77,9 +77,9 @@ Cc:     Phil Elwell <phil@raspberrypi.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Daniel Vetter <daniel.vetter@intel.com>,
         David Airlie <airlied@linux.ie>
-Subject: [PATCH 8/8] drm/vc4: plane: Remove redundant assignment
-Date:   Thu, 25 Feb 2021 16:59:09 +0100
-Message-Id: <20210225155909.1853812-9-maxime@cerno.tech>
+Subject: [PATCH 7/8] drm/vc4: plane: Fix typo in scaler width and height
+Date:   Thu, 25 Feb 2021 16:59:08 +0100
+Message-Id: <20210225155909.1853812-8-maxime@cerno.tech>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210225155909.1853812-1-maxime@cerno.tech>
 References: <20210225155909.1853812-1-maxime@cerno.tech>
@@ -91,21 +91,25 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/vc4/vc4_plane.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/vc4/vc4_plane.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index 5e8b7f72dc05..201831e924d9 100644
+index 4a075294ff4c..5e8b7f72dc05 100644
 --- a/drivers/gpu/drm/vc4/vc4_plane.c
 +++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -1131,7 +1131,6 @@ static void vc4_plane_atomic_async_update(struct drm_plane *plane,
- 	plane->state->src_y = state->src_y;
- 	plane->state->src_w = state->src_w;
- 	plane->state->src_h = state->src_h;
--	plane->state->src_h = state->src_h;
- 	plane->state->alpha = state->alpha;
- 	plane->state->pixel_blend_mode = state->pixel_blend_mode;
- 	plane->state->rotation = state->rotation;
+@@ -912,9 +912,9 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
+ 		if (!vc4_state->is_unity) {
+ 			vc4_dlist_write(vc4_state,
+ 					VC4_SET_FIELD(vc4_state->crtc_w,
+-						      SCALER_POS1_SCL_WIDTH) |
++						      SCALER5_POS1_SCL_WIDTH) |
+ 					VC4_SET_FIELD(vc4_state->crtc_h,
+-						      SCALER_POS1_SCL_HEIGHT));
++						      SCALER5_POS1_SCL_HEIGHT));
+ 		}
+ 
+ 		/* Position Word 2: Source Image Size */
 -- 
 2.29.2
 
