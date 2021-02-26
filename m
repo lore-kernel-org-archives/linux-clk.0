@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411F7C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD37C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E617F64EED
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCF764EE7
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:24:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbhBZPNN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Feb 2021 10:13:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
+        id S229989AbhBZPX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 10:23:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbhBZPNN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 10:13:13 -0500
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446ACC06174A;
-        Fri, 26 Feb 2021 07:12:33 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id p5so5458708plo.4;
-        Fri, 26 Feb 2021 07:12:33 -0800 (PST)
+        with ESMTP id S229823AbhBZPX4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 10:23:56 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1ACC061574;
+        Fri, 26 Feb 2021 07:23:15 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id a4so6376547pgc.11;
+        Fri, 26 Feb 2021 07:23:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OpIyGBzoBd6MLrPLDZTlJu8redllCjYqsJySEq0aRr0=;
-        b=Gq/ik7mtmJxM3De0wpzf9IPIlgAH+eM/ASvPGsfmHKPlBcheBxjSuzemIiDHsTTl89
-         J761O+JTO6Iq9ymsicpFEw9RbvYPJ5eLAeotAfZG1N6LFAPjIwYkEhWoijgHnARGyo0j
-         KtMvhhbO/gpSznTwjb+shOCfw7wuDLybWZfxGMjLPbmxmWv5AC7yWwC4ic67IxqYV2bk
-         Li03jogRm0vcAA1AaVaVZoi44V6r/9U0SatG7OXUUBHy5ZykrgWKX5LD+ZzbszC/Zr+j
-         bYxCIx/SKFe90hdNwqcCN62kN1MzdJCcPmsR/KLFeoQhpGcdWzdHcAgOl/ZTErRaLnBI
-         5PAw==
+        bh=QHXSVsXuKx/MuCcoIzA9gGr9Kr4SzJ4/NTJV4xdPiLE=;
+        b=bg2stdC71+bgN8bhm92ZNYTejyoO/Gcm9LW4jOHsZ2ItE5nxs2BJnAiaSoBB+yaLx0
+         qMz2FO5paUx9R+OdJLJDkwAkw99qmGwHnV7lCP5ZC78zgCdy+XDjOEhqPHe25NXwZEQL
+         43hS5bYgP/onLPvgSaKObjgDKMRETB7fwPAEgHf0yRoVraHE2DO9c0gXmTpzwrsPyG7f
+         U2Pvkcz66BhlEcNMCeBZICL2xQU48D5ZNBrbR30jQYevLfZzLEfWgsQ/46HMpdp5npHJ
+         So18s9U6Wr5gz/JhiyuYdo/QyC4bObinEauEuwHJxauJTg0YGnWKJf+NgsuJ7tRAHKIz
+         Xq0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=OpIyGBzoBd6MLrPLDZTlJu8redllCjYqsJySEq0aRr0=;
-        b=j3zVTspdEmYEDgVz7XQvJmho9sbVcDqVNakY4nnjNTGOjuU0z0UuIEfTf9Axocsez4
-         2DCrjxe9DK7vOm73H3ApR9KOKIXKBA1BiDtDlxr6fI8qOh6N+428vuIa1lAt0nvkoSD/
-         mckx/xK+7SQL/BbT3XqRi2kaEGXafquKPfovpWLmHLbRLSPQtwtlsxMKXgZ/7eX/sSDi
-         fdon52z0/c+4gMDKYssNh76zKFY87HDo1Ch+1E2FzjQ1+8NBQ7j8y9IOm6MWJgtOW9nr
-         DIzr+1FeyvRoInRR6J0VX6pLamP4pUbzbdveYd0pFD255+JXxaQ2h41ZO4uF0QqOvc62
-         s9xw==
-X-Gm-Message-State: AOAM533RphLXEEgaprhBWkec346a064rMoRL1mZFd2cKhE0yglpwf4xB
-        kjt9bycR/Rfa/wTGr5ALYWo=
-X-Google-Smtp-Source: ABdhPJyNZ6JZHSDzMC9k34yewcgCLGyK6ej+AvpC7xQgVS7Ftwx7ibTmj8qMYnFIvJdYG9tRSZqFDg==
-X-Received: by 2002:a17:90a:f82:: with SMTP id 2mr4030406pjz.196.1614352352701;
-        Fri, 26 Feb 2021 07:12:32 -0800 (PST)
+        bh=QHXSVsXuKx/MuCcoIzA9gGr9Kr4SzJ4/NTJV4xdPiLE=;
+        b=rcqdKkKUZGexIH27+P2yNHTdS3V82bjdqE1JEDN2Jnpw01c10AYzcWmae0ptyUQmoR
+         4ppuu0ROpNO6b1yrodxAU+vBQp6cjtiF5AYMytNhT94zOoEv+5wWYTS5CoWVh3iP4rlo
+         Wb/VnnDOw1X8s3VoiGbHbRN8+DbjCnozkZghx3QLkN4KH4PwI4WdyCrvHfFYTjtVussQ
+         jUsiTP6X49MwkUk8+6zir/Wb3cxNQVSwmf4eUdvGbZ414XTNSrc66ksIEy+QqmsVb4jm
+         8N+/uhYBfpNEN+Ax7qk9hsf2SSh10ylxpB8tq4tpB7VoRKhvcMPU7zIucmTccm2/04au
+         E1HQ==
+X-Gm-Message-State: AOAM531H+U/zf5sYK1cDgMfSEEgvEfauLHLS3/Mr1qIB0DbGU5Bblwyr
+        VgDSglbnbBOwQfOvSsuqVCo=
+X-Google-Smtp-Source: ABdhPJzt8BF/doAkmZUR6YeiIzcrt84/ecWfGKljw82X+19oR9qeBhNWLtNCimzGQ+8smXNI/AMnIw==
+X-Received: by 2002:a63:724a:: with SMTP id c10mr3377749pgn.124.1614352994989;
+        Fri, 26 Feb 2021 07:23:14 -0800 (PST)
 Received: from [172.30.1.19] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id i10sm10650818pgo.75.2021.02.26.07.12.26
+        by smtp.gmail.com with ESMTPSA id s27sm8854875pgk.77.2021.02.26.07.23.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 07:12:32 -0800 (PST)
-Subject: Re: [RFC 06/19] devfreq: imx8m-ddrc: Use the opps acquired from EL3
+        Fri, 26 Feb 2021 07:23:14 -0800 (PST)
+Subject: Re: [RFC 07/19] devfreq: imx8m-ddrc: Add late system sleep PM ops
 To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -73,14 +73,14 @@ To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     NXP Linux Team <linux-imx@nxp.com>
 References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <1613750416-11901-7-git-send-email-abel.vesa@nxp.com>
+ <1613750416-11901-8-git-send-email-abel.vesa@nxp.com>
 From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <62dd9f7d-f767-01ee-87eb-bd0553b53417@gmail.com>
-Date:   Sat, 27 Feb 2021 00:12:24 +0900
+Message-ID: <58c4b791-fe7c-6b34-0c13-9e41a6960c7f@gmail.com>
+Date:   Sat, 27 Feb 2021 00:23:07 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <1613750416-11901-7-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1613750416-11901-8-git-send-email-abel.vesa@nxp.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -88,110 +88,88 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+
 
 On 21. 2. 20. 오전 1:00, Abel Vesa wrote:
-> i.MX8M platforms get their dram OPPs from the EL3.
-> We don't need to duplicate that in the kernel dram dts node.
-> We should just trust the OPPs provided by the EL3.
+> Seems that, in order to be able to resume from suspend, the dram rate
+> needs to be the highest one available. Therefore, add the late system
+> suspend/resume PM ops which set the highest rate on suspend and the
+> latest one used before suspending on resume.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->   drivers/devfreq/imx8m-ddrc.c | 49 ++----------------------------------
->   1 file changed, 2 insertions(+), 47 deletions(-)
+>   drivers/devfreq/imx8m-ddrc.c | 26 ++++++++++++++++++++++++++
+>   1 file changed, 26 insertions(+)
 > 
 > diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-> index 3a6c04ba4f2e..33de83acfd8b 100644
+> index 33de83acfd8b..04347dee781b 100644
 > --- a/drivers/devfreq/imx8m-ddrc.c
 > +++ b/drivers/devfreq/imx8m-ddrc.c
-> @@ -333,38 +333,9 @@ static int imx8m_ddrc_init_freq_info(struct device *dev)
->   		if (freq->dram_core_parent_index == 2 &&
->   				freq->dram_alt_parent_index == 0)
->   			return -ENODEV;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int imx8m_ddrc_check_opps(struct device *dev)
-> -{
-> -	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-> -	struct imx8m_ddrc_freq *freq_info;
-> -	struct dev_pm_opp *opp;
-> -	unsigned long freq;
-> -	int i, opp_count;
-> -
-> -	/* Enumerate DT OPPs and disable those not supported by firmware */
-> -	opp_count = dev_pm_opp_get_opp_count(dev);
-> -	if (opp_count < 0)
-> -		return opp_count;
-> -	for (i = 0, freq = 0; i < opp_count; ++i, ++freq) {
-> -		opp = dev_pm_opp_find_freq_ceil(dev, &freq);
-> -		if (IS_ERR(opp)) {
-> -			dev_err(dev, "Failed enumerating OPPs: %ld\n",
-> -				PTR_ERR(opp));
-> -			return PTR_ERR(opp);
-> -		}
-> -		dev_pm_opp_put(opp);
+> @@ -72,6 +72,8 @@ struct imx8m_ddrc {
+>   	struct clk *dram_alt;
+>   	struct clk *dram_apb;
 >   
-> -		freq_info = imx8m_ddrc_find_freq(priv, freq);
-> -		if (!freq_info) {
-> -			dev_info(dev, "Disable unsupported OPP %luHz %luMT/s\n",
-> -					freq, DIV_ROUND_CLOSEST(freq, 250000));
-> -			dev_pm_opp_disable(dev, freq);
-> -		}
-> +		if (dev_pm_opp_add(dev, freq->rate * 250000, 0))
-> +			return -ENODEV;
->   	}
->   
->   	return 0;
-> @@ -372,7 +343,6 @@ static int imx8m_ddrc_check_opps(struct device *dev)
->   
->   static void imx8m_ddrc_exit(struct device *dev)
->   {
-> -	dev_pm_opp_of_remove_table(dev);
->   }
->   
->   static int imx8m_ddrc_probe(struct platform_device *pdev)
-> @@ -419,16 +389,6 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
->   		return ret;
->   	}
->   
-> -	ret = dev_pm_opp_of_add_table(dev);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to get OPP table\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = imx8m_ddrc_check_opps(dev);
-> -	if (ret < 0)
-> -		goto err;
-
-In the devfreq_add_device(), if devfreq->profile->freq_table is NULL,
-set_freq_table() function fill out the devfreq->profile->freq_table by 
-using the OPP information.
-
-After this patch, devfreq->profile.freq_table is NULL and there are no 
-any OPP entries for this device, I think that this driver cannot add 
-devfreq device without any frequency information. Is it working without 
-any device frequency information?
-
-> -
->   	priv->profile.polling_ms = 1000;
->   	priv->profile.target = imx8m_ddrc_target;
->   	priv->profile.get_dev_status = imx8m_ddrc_get_dev_status;
-> @@ -441,13 +401,8 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
->   	if (IS_ERR(priv->devfreq)) {
->   		ret = PTR_ERR(priv->devfreq);
->   		dev_err(dev, "failed to add devfreq device: %d\n", ret);
-> -		goto err;
->   	}
->   
-> -	return 0;
-> -
-> -err:
-> -	dev_pm_opp_of_remove_table(dev);
+> +	unsigned long suspend_rate;
+> +	unsigned long resume_rate;
+>   	int freq_count;
+>   	struct imx8m_ddrc_freq freq_table[IMX8M_DDRC_MAX_FREQ_COUNT];
+>   };
+> @@ -271,6 +273,22 @@ static int imx8m_ddrc_target(struct device *dev, unsigned long *freq, u32 flags)
 >   	return ret;
 >   }
 >   
+> +static int imx8m_ddrc_suspend(struct device *dev)
+> +{
+> +	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
+> +
+> +	priv->resume_rate = clk_get_rate(priv->dram_core);
+> +
+> +	return imx8m_ddrc_target(dev, &priv->suspend_rate, 0);
+> +}
+> +
+> +static int imx8m_ddrc_resume(struct device *dev)
+> +{
+> +	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
+> +
+> +	return imx8m_ddrc_target(dev, &priv->resume_rate, 0);
+> +}
+> +
+>   static int imx8m_ddrc_get_cur_freq(struct device *dev, unsigned long *freq)
+>   {
+>   	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
+> @@ -336,6 +354,9 @@ static int imx8m_ddrc_init_freq_info(struct device *dev)
+>   
+>   		if (dev_pm_opp_add(dev, freq->rate * 250000, 0))
+>   			return -ENODEV;
+> +
+> +		if (index ==  0)
+> +			priv->suspend_rate = freq->rate * 250000;
+>   	}
+>   
+>   	return 0;
+> @@ -412,10 +433,15 @@ static const struct of_device_id imx8m_ddrc_of_match[] = {
+>   };
+>   MODULE_DEVICE_TABLE(of, imx8m_ddrc_of_match);
+>   
+> +static const struct dev_pm_ops imx8m_ddrc_pm_ops = {
+> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx8m_ddrc_suspend, imx8m_ddrc_resume)
+> +};
+
+Are there any reason to use suspend_late instead of suspend?
+Usually, it is enough to change the frequency on normal suspend() step.
+The devfreq supports the 'opp-suspend' property[1]. If you keep the OPP 
+entries on DT, you simply support your goal with 'opp-suspend'.
+
+[1] 
+https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/opp/opp.txt#L156
+
+> +
+>   static struct platform_driver imx8m_ddrc_platdrv = {
+>   	.probe		= imx8m_ddrc_probe,
+>   	.driver = {
+>   		.name	= "imx8m-ddrc-devfreq",
+> +		.pm = &imx8m_ddrc_pm_ops,
+>   		.of_match_table = of_match_ptr(imx8m_ddrc_of_match),
+>   	},
+>   };
 > 
