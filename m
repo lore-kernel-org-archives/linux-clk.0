@@ -2,114 +2,180 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281E6C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956E9C433DB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E679464EEE
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C6F364F13
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbhBZQgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Feb 2021 11:36:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
+        id S229586AbhBZQxs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 11:53:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbhBZQgF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 11:36:05 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECFA2C061786
-        for <linux-clk@vger.kernel.org>; Fri, 26 Feb 2021 08:35:22 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id c6so11799490ede.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Feb 2021 08:35:22 -0800 (PST)
+        with ESMTP id S229550AbhBZQxe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 11:53:34 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6138C06174A;
+        Fri, 26 Feb 2021 08:52:51 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id d12so4090252pfo.7;
+        Fri, 26 Feb 2021 08:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cOneb72+9BMDKFMeXHoHtH5MZRyiWygS1afzq3OOa+o=;
-        b=E4DbkXF/qcHn1t53N2ZY0ECGTpmXtZVoY6SFeeKj+vTG082gR2f+HYW/wmeBaK7HBp
-         4Snk/JOoGLiyEYKKMyvH6jjpQfHqHq2hdqW5M+sUcVlgLtybZXDdfYUr+SZDNtkfkvSb
-         JAK9hzKINrmqy5B8aGnMd6jvnlQo1FETWwF6U=
+        bh=caRvlzKeZCwZCXCDqu+48wHhGcclJlGyLeU2ooguUWk=;
+        b=YNXgbGQ88/iMEZR8HkZe53EcnGTDPVQe+AygraOZB+2C5EreOAAD6NGmMTGkhZCJS0
+         M64QCturuu3MlLQiOHRXGGLZI7XyowmhQE23hoOvFgq1+O4hZiD/ijaLy3n3CIITHg2i
+         uYSjK32s9c7JCKhJM93dTpEanbjPzL/UNi+2gD2EaAGFTRBuK/FYA2LxMy3Qtp3+oEn6
+         fqoTSx2wQ+pwqcLwXasEBE/sbtF0e9Qx7bFjTVhrpfByKkJG6nOPoVSrjNlhQXZXKO2T
+         FTcIoT9oyKRuGgQjCa2wqwejSU/GK7cm9Tgh2r5s3qiW+VoWnf6y3W1TBEOOnCN7UVb2
+         9J2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=cOneb72+9BMDKFMeXHoHtH5MZRyiWygS1afzq3OOa+o=;
-        b=nSVKaluaJraoFKU6vMZiGiy8WXsrILTj711wfUWz3W3hV8dFxAL7n24pHNQdqonrQL
-         85oOQEthPrfGm4L6AqiFQU4TB48SqyH3qrNRaPaX9Uibi5liwvejju4nnxcq7OvEURbq
-         snDF6OneBCByd0keu5hIUxksvzH8qnFIlANupydwU0YaOPUBCfZBU36KMhgCL7fSuEwC
-         x6rBACfNAFsUommQl1oRUiUfDoE0kAlQEzXsfEDe/CF7zfnullOMxC+mZPFuvfoeqe2S
-         zsmhwOhJmvIM0Nu9BOtWp7SmzV3E4lBaP12KyhdqpmtFLrcQ0P7vXiP9AybJnfAUkKoG
-         TjKw==
-X-Gm-Message-State: AOAM532GBCW8osAVO6qBpUo4uoJdafI+Qn+Db/r1T3j+so1p/uL0bsmr
-        uGSbSY2JXJxKgblW/fm0DuqVoA==
-X-Google-Smtp-Source: ABdhPJxgWKA9baDmnn7v/NyJDUc1IXanLiIYaaEflz+WN2lJxW3UHkfK6YObK8/eFA/ReW3JQLO+5g==
-X-Received: by 2002:aa7:c386:: with SMTP id k6mr1400939edq.224.1614357321498;
-        Fri, 26 Feb 2021 08:35:21 -0800 (PST)
-Received: from [192.168.1.149] ([80.208.71.141])
-        by smtp.gmail.com with ESMTPSA id u18sm5589671ejc.76.2021.02.26.08.35.20
+        bh=caRvlzKeZCwZCXCDqu+48wHhGcclJlGyLeU2ooguUWk=;
+        b=P7D3WA+cGkxJ3jd2labNJYh2IdEKqPRjNDrwyfTIbdFLtsKB8jr1qKx0I2Xr4ZTs/J
+         OnFi/fUURvPEnVYrNRS/UHbNgfhzHQ+Yv5g7wusg3d0gpmk2/fjnznb34ru7lZ8hrXPx
+         dqm/UqGVdS5I6mJ5SY8bxsY3G2BGEwClYMYLpaxQ4n79Kq8q90l5EgcodkstNPYPqPMb
+         0zGX7s8NfeQ3sWeiu0MGf97jlNZiBi79VghmpzloXE1F7BdRjCg3gWyKcWiXoAL4KPpQ
+         bbFrnQZTVAm07M97ORLyp7erDuRAUt0dmILjM1J6uNZhYPwRN/mCzy6KuumllvzhA3b+
+         6MNw==
+X-Gm-Message-State: AOAM53037iCLOWJSROtqWd1pjsus7YJnc01nhRkLcAJDs5Qzn8DlvHAO
+        004HvuDh9stiBmj4nxW5pFE=
+X-Google-Smtp-Source: ABdhPJy4TYujm2RcZnuPZrcZjoAOTPx53fJcRTB521JN8cVbqd/utfMS5jC3swp8eOHZWjkp5TJtFQ==
+X-Received: by 2002:a63:4207:: with SMTP id p7mr3695325pga.406.1614358371158;
+        Fri, 26 Feb 2021 08:52:51 -0800 (PST)
+Received: from [172.30.1.19] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id i2sm9363685pgs.82.2021.02.26.08.52.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 08:35:21 -0800 (PST)
-Subject: Re: [PATCH 0/2] add ripple counter dt binding and driver
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
- <CAK8P3a2=nZ3bbeguXjbFrhz0nWeUOcLM7mRudhPDrcb+jZ4VvQ@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <e5fd7ce3-3ba6-e5de-1cbc-fa31bd46942c@rasmusvillemoes.dk>
-Date:   Fri, 26 Feb 2021 17:35:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 26 Feb 2021 08:52:50 -0800 (PST)
+Subject: Re: [RFC 04/19] devfreq: imx-bus: Decouple imx-bus from icc made
+To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>
+References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+ <1613750416-11901-5-git-send-email-abel.vesa@nxp.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <970ea39a-d371-6d17-3aa8-768ca4821809@gmail.com>
+Date:   Sat, 27 Feb 2021 01:52:42 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2=nZ3bbeguXjbFrhz0nWeUOcLM7mRudhPDrcb+jZ4VvQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1613750416-11901-5-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/02/2021 15.35, Arnd Bergmann wrote:
-> On Fri, Feb 26, 2021 at 3:14 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
+
+
+On 21. 2. 20. 오전 1:00, Abel Vesa wrote:
+> The link between an imx-bus device and its icc id will be done
+> through the fsl,icc-id property in each dts node. The imx
+> interconnect driver will pick up all the dts nodes that have that
+> property defined and will link them to the rightfull icc id.
 > 
->>
->> So I'm thinking that the proper way to handle this is to be able to
->> represent that ripple counter as a clock consumer in DT and have a
->> driver do the clk_prepare_enable(), even if that driver doesn't and
->> can't do anything else. But I'm certainly open to other suggestions.
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>   drivers/devfreq/imx-bus.c | 40 +++------------------------------------
+>   1 file changed, 3 insertions(+), 37 deletions(-)
 > 
-> How about adding support for the optional clock to the gpio_wdt driver,
-> would that work?
+> diff --git a/drivers/devfreq/imx-bus.c b/drivers/devfreq/imx-bus.c
+> index 1c0c92d0eb08..9f0df88b29c1 100644
+> --- a/drivers/devfreq/imx-bus.c
+> +++ b/drivers/devfreq/imx-bus.c
+> @@ -65,36 +65,6 @@ static void imx_bus_exit(struct device *dev)
+>   	platform_device_unregister(priv->icc_pdev);
+>   }
+>   
+> -/* imx_bus_init_icc() - register matching icc provider if required */
+> -static int imx_bus_init_icc(struct device *dev)
+> -{
+> -	struct imx_bus *priv = dev_get_drvdata(dev);
+> -	const char *icc_driver_name;
+> -
+> -	if (!of_get_property(dev->of_node, "#interconnect-cells", 0))
+> -		return 0;
+> -	if (!IS_ENABLED(CONFIG_INTERCONNECT_IMX)) {
+> -		dev_warn(dev, "imx interconnect drivers disabled\n");
+> -		return 0;
+> -	}
+> -
+> -	icc_driver_name = of_device_get_match_data(dev);
+> -	if (!icc_driver_name) {
+> -		dev_err(dev, "unknown interconnect driver\n");
+> -		return 0;
+> -	}
+> -
+> -	priv->icc_pdev = platform_device_register_data(
+> -			dev, icc_driver_name, -1, NULL, 0);
+> -	if (IS_ERR(priv->icc_pdev)) {
+> -		dev_err(dev, "failed to register icc provider %s: %ld\n",
+> -				icc_driver_name, PTR_ERR(priv->icc_pdev));
+> -		return PTR_ERR(priv->icc_pdev);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>   static int imx_bus_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -144,10 +114,6 @@ static int imx_bus_probe(struct platform_device *pdev)
+>   		goto err;
+>   	}
+>   
+> -	ret = imx_bus_init_icc(dev);
+> -	if (ret)
+> -		goto err;
+> -
+>   	return 0;
+>   
+>   err:
+> @@ -156,9 +122,9 @@ static int imx_bus_probe(struct platform_device *pdev)
+>   }
+>   
+>   static const struct of_device_id imx_bus_of_match[] = {
+> -	{ .compatible = "fsl,imx8mq-noc", .data = "imx8mq-interconnect", },
+> -	{ .compatible = "fsl,imx8mm-noc", .data = "imx8mm-interconnect", },
+> -	{ .compatible = "fsl,imx8mn-noc", .data = "imx8mn-interconnect", },
+> +	{ .compatible = "fsl,imx8mq-noc",},
+> +	{ .compatible = "fsl,imx8mm-noc",},
+> +	{ .compatible = "fsl,imx8mn-noc",},
+>   	{ .compatible = "fsl,imx8m-noc", },
+>   	{ .compatible = "fsl,imx8m-nic", },
+>   	{ /* sentinel */ },
+> 
 
-I think it would _work_ (all I need is some piece of code doing the
-clock_prepare_enable(), and until now we've just stashed that in some
-otherwise unrelated out-of-tree driver, but we're trying to get rid of
-that one), but the watchdog chip isn't really the consumer of the clock
-signal, so in-so-far as DT is supposed to describe the hardware, I don't
-think it's appropriate.
+For this patch, you need to get the ack of use of new 'fsl,icc-id 
+property'. IMO, looks good to me.
 
-OTOH, one could argue that the watchdog chip and the ripple counter
-together constitute the watchdog circuit.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Cc += watchdog maintainers. Context: I have a gpio-wdt which can
-unfortunately effectively be disabled by disabling a clock output, and
-that happens automatically unless the clock has a consumer in DT. But
-the actual consumer is not the gpio-wdt.
-Please see
-https://lore.kernel.org/lkml/20210226141411.2517368-1-linux@rasmusvillemoes.dk/
-for the original thread.
 
-Rasmus
+And you must update the DT binding document.
+[1] Documentation/devicetree/bindings/interconnect/fsl,imx8m-noc.yaml
 
+Thanks,
+Chanwoo Choi
