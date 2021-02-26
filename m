@@ -2,174 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD37C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281E6C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFCF764EE7
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E679464EEE
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 16:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbhBZPX5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Feb 2021 10:23:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34958 "EHLO
+        id S229999AbhBZQgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 11:36:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbhBZPX4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 10:23:56 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1ACC061574;
-        Fri, 26 Feb 2021 07:23:15 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id a4so6376547pgc.11;
-        Fri, 26 Feb 2021 07:23:15 -0800 (PST)
+        with ESMTP id S229967AbhBZQgF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 11:36:05 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECFA2C061786
+        for <linux-clk@vger.kernel.org>; Fri, 26 Feb 2021 08:35:22 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id c6so11799490ede.0
+        for <linux-clk@vger.kernel.org>; Fri, 26 Feb 2021 08:35:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=rasmusvillemoes.dk; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QHXSVsXuKx/MuCcoIzA9gGr9Kr4SzJ4/NTJV4xdPiLE=;
-        b=bg2stdC71+bgN8bhm92ZNYTejyoO/Gcm9LW4jOHsZ2ItE5nxs2BJnAiaSoBB+yaLx0
-         qMz2FO5paUx9R+OdJLJDkwAkw99qmGwHnV7lCP5ZC78zgCdy+XDjOEhqPHe25NXwZEQL
-         43hS5bYgP/onLPvgSaKObjgDKMRETB7fwPAEgHf0yRoVraHE2DO9c0gXmTpzwrsPyG7f
-         U2Pvkcz66BhlEcNMCeBZICL2xQU48D5ZNBrbR30jQYevLfZzLEfWgsQ/46HMpdp5npHJ
-         So18s9U6Wr5gz/JhiyuYdo/QyC4bObinEauEuwHJxauJTg0YGnWKJf+NgsuJ7tRAHKIz
-         Xq0w==
+        bh=cOneb72+9BMDKFMeXHoHtH5MZRyiWygS1afzq3OOa+o=;
+        b=E4DbkXF/qcHn1t53N2ZY0ECGTpmXtZVoY6SFeeKj+vTG082gR2f+HYW/wmeBaK7HBp
+         4Snk/JOoGLiyEYKKMyvH6jjpQfHqHq2hdqW5M+sUcVlgLtybZXDdfYUr+SZDNtkfkvSb
+         JAK9hzKINrmqy5B8aGnMd6jvnlQo1FETWwF6U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=QHXSVsXuKx/MuCcoIzA9gGr9Kr4SzJ4/NTJV4xdPiLE=;
-        b=rcqdKkKUZGexIH27+P2yNHTdS3V82bjdqE1JEDN2Jnpw01c10AYzcWmae0ptyUQmoR
-         4ppuu0ROpNO6b1yrodxAU+vBQp6cjtiF5AYMytNhT94zOoEv+5wWYTS5CoWVh3iP4rlo
-         Wb/VnnDOw1X8s3VoiGbHbRN8+DbjCnozkZghx3QLkN4KH4PwI4WdyCrvHfFYTjtVussQ
-         jUsiTP6X49MwkUk8+6zir/Wb3cxNQVSwmf4eUdvGbZ414XTNSrc66ksIEy+QqmsVb4jm
-         8N+/uhYBfpNEN+Ax7qk9hsf2SSh10ylxpB8tq4tpB7VoRKhvcMPU7zIucmTccm2/04au
-         E1HQ==
-X-Gm-Message-State: AOAM531H+U/zf5sYK1cDgMfSEEgvEfauLHLS3/Mr1qIB0DbGU5Bblwyr
-        VgDSglbnbBOwQfOvSsuqVCo=
-X-Google-Smtp-Source: ABdhPJzt8BF/doAkmZUR6YeiIzcrt84/ecWfGKljw82X+19oR9qeBhNWLtNCimzGQ+8smXNI/AMnIw==
-X-Received: by 2002:a63:724a:: with SMTP id c10mr3377749pgn.124.1614352994989;
-        Fri, 26 Feb 2021 07:23:14 -0800 (PST)
-Received: from [172.30.1.19] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id s27sm8854875pgk.77.2021.02.26.07.23.08
+        bh=cOneb72+9BMDKFMeXHoHtH5MZRyiWygS1afzq3OOa+o=;
+        b=nSVKaluaJraoFKU6vMZiGiy8WXsrILTj711wfUWz3W3hV8dFxAL7n24pHNQdqonrQL
+         85oOQEthPrfGm4L6AqiFQU4TB48SqyH3qrNRaPaX9Uibi5liwvejju4nnxcq7OvEURbq
+         snDF6OneBCByd0keu5hIUxksvzH8qnFIlANupydwU0YaOPUBCfZBU36KMhgCL7fSuEwC
+         x6rBACfNAFsUommQl1oRUiUfDoE0kAlQEzXsfEDe/CF7zfnullOMxC+mZPFuvfoeqe2S
+         zsmhwOhJmvIM0Nu9BOtWp7SmzV3E4lBaP12KyhdqpmtFLrcQ0P7vXiP9AybJnfAUkKoG
+         TjKw==
+X-Gm-Message-State: AOAM532GBCW8osAVO6qBpUo4uoJdafI+Qn+Db/r1T3j+so1p/uL0bsmr
+        uGSbSY2JXJxKgblW/fm0DuqVoA==
+X-Google-Smtp-Source: ABdhPJxgWKA9baDmnn7v/NyJDUc1IXanLiIYaaEflz+WN2lJxW3UHkfK6YObK8/eFA/ReW3JQLO+5g==
+X-Received: by 2002:aa7:c386:: with SMTP id k6mr1400939edq.224.1614357321498;
+        Fri, 26 Feb 2021 08:35:21 -0800 (PST)
+Received: from [192.168.1.149] ([80.208.71.141])
+        by smtp.gmail.com with ESMTPSA id u18sm5589671ejc.76.2021.02.26.08.35.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 07:23:14 -0800 (PST)
-Subject: Re: [RFC 07/19] devfreq: imx8m-ddrc: Add late system sleep PM ops
-To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <1613750416-11901-8-git-send-email-abel.vesa@nxp.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <58c4b791-fe7c-6b34-0c13-9e41a6960c7f@gmail.com>
-Date:   Sat, 27 Feb 2021 00:23:07 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Fri, 26 Feb 2021 08:35:21 -0800 (PST)
+Subject: Re: [PATCH 0/2] add ripple counter dt binding and driver
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <CAK8P3a2=nZ3bbeguXjbFrhz0nWeUOcLM7mRudhPDrcb+jZ4VvQ@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <e5fd7ce3-3ba6-e5de-1cbc-fa31bd46942c@rasmusvillemoes.dk>
+Date:   Fri, 26 Feb 2021 17:35:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1613750416-11901-8-git-send-email-abel.vesa@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAK8P3a2=nZ3bbeguXjbFrhz0nWeUOcLM7mRudhPDrcb+jZ4VvQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 21. 2. 20. 오전 1:00, Abel Vesa wrote:
-> Seems that, in order to be able to resume from suspend, the dram rate
-> needs to be the highest one available. Therefore, add the late system
-> suspend/resume PM ops which set the highest rate on suspend and the
-> latest one used before suspending on resume.
+On 26/02/2021 15.35, Arnd Bergmann wrote:
+> On Fri, Feb 26, 2021 at 3:14 PM Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->   drivers/devfreq/imx8m-ddrc.c | 26 ++++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
+>>
+>> So I'm thinking that the proper way to handle this is to be able to
+>> represent that ripple counter as a clock consumer in DT and have a
+>> driver do the clk_prepare_enable(), even if that driver doesn't and
+>> can't do anything else. But I'm certainly open to other suggestions.
 > 
-> diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-> index 33de83acfd8b..04347dee781b 100644
-> --- a/drivers/devfreq/imx8m-ddrc.c
-> +++ b/drivers/devfreq/imx8m-ddrc.c
-> @@ -72,6 +72,8 @@ struct imx8m_ddrc {
->   	struct clk *dram_alt;
->   	struct clk *dram_apb;
->   
-> +	unsigned long suspend_rate;
-> +	unsigned long resume_rate;
->   	int freq_count;
->   	struct imx8m_ddrc_freq freq_table[IMX8M_DDRC_MAX_FREQ_COUNT];
->   };
-> @@ -271,6 +273,22 @@ static int imx8m_ddrc_target(struct device *dev, unsigned long *freq, u32 flags)
->   	return ret;
->   }
->   
-> +static int imx8m_ddrc_suspend(struct device *dev)
-> +{
-> +	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-> +
-> +	priv->resume_rate = clk_get_rate(priv->dram_core);
-> +
-> +	return imx8m_ddrc_target(dev, &priv->suspend_rate, 0);
-> +}
-> +
-> +static int imx8m_ddrc_resume(struct device *dev)
-> +{
-> +	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-> +
-> +	return imx8m_ddrc_target(dev, &priv->resume_rate, 0);
-> +}
-> +
->   static int imx8m_ddrc_get_cur_freq(struct device *dev, unsigned long *freq)
->   {
->   	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
-> @@ -336,6 +354,9 @@ static int imx8m_ddrc_init_freq_info(struct device *dev)
->   
->   		if (dev_pm_opp_add(dev, freq->rate * 250000, 0))
->   			return -ENODEV;
-> +
-> +		if (index ==  0)
-> +			priv->suspend_rate = freq->rate * 250000;
->   	}
->   
->   	return 0;
-> @@ -412,10 +433,15 @@ static const struct of_device_id imx8m_ddrc_of_match[] = {
->   };
->   MODULE_DEVICE_TABLE(of, imx8m_ddrc_of_match);
->   
-> +static const struct dev_pm_ops imx8m_ddrc_pm_ops = {
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(imx8m_ddrc_suspend, imx8m_ddrc_resume)
-> +};
+> How about adding support for the optional clock to the gpio_wdt driver,
+> would that work?
 
-Are there any reason to use suspend_late instead of suspend?
-Usually, it is enough to change the frequency on normal suspend() step.
-The devfreq supports the 'opp-suspend' property[1]. If you keep the OPP 
-entries on DT, you simply support your goal with 'opp-suspend'.
+I think it would _work_ (all I need is some piece of code doing the
+clock_prepare_enable(), and until now we've just stashed that in some
+otherwise unrelated out-of-tree driver, but we're trying to get rid of
+that one), but the watchdog chip isn't really the consumer of the clock
+signal, so in-so-far as DT is supposed to describe the hardware, I don't
+think it's appropriate.
 
-[1] 
-https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/opp/opp.txt#L156
+OTOH, one could argue that the watchdog chip and the ripple counter
+together constitute the watchdog circuit.
 
-> +
->   static struct platform_driver imx8m_ddrc_platdrv = {
->   	.probe		= imx8m_ddrc_probe,
->   	.driver = {
->   		.name	= "imx8m-ddrc-devfreq",
-> +		.pm = &imx8m_ddrc_pm_ops,
->   		.of_match_table = of_match_ptr(imx8m_ddrc_of_match),
->   	},
->   };
-> 
+Cc += watchdog maintainers. Context: I have a gpio-wdt which can
+unfortunately effectively be disabled by disabling a clock output, and
+that happens automatically unless the clock has a consumer in DT. But
+the actual consumer is not the gpio-wdt.
+Please see
+https://lore.kernel.org/lkml/20210226141411.2517368-1-linux@rasmusvillemoes.dk/
+for the original thread.
+
+Rasmus
+
