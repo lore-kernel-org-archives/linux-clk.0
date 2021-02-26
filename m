@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7473C433DB
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 14:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411F7C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9826D64E28
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 14:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E617F64EED
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 15:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbhBZOsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Feb 2021 09:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55586 "EHLO
+        id S230024AbhBZPNN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 10:13:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbhBZOsN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 09:48:13 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148BDC06174A;
-        Fri, 26 Feb 2021 06:47:33 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id l18so6224697pji.3;
-        Fri, 26 Feb 2021 06:47:33 -0800 (PST)
+        with ESMTP id S229535AbhBZPNN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 10:13:13 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446ACC06174A;
+        Fri, 26 Feb 2021 07:12:33 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id p5so5458708plo.4;
+        Fri, 26 Feb 2021 07:12:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=06hoVuL+4FkXVA5D70wEqeJNXy4eA4qnPKR2e/Lq8tI=;
-        b=GybIpNgNKurPC5wMmuAKUv1px2nTFUQkPadiGBtJl7j3Y40Eu4ATUSNW1cju9DooDH
-         TKYQqvoj+HlZ//KC2DKuoKuCy+wlbAIuw0qYxS6wh2Sj8bRAuT+qoAPuPTUX6324lmY/
-         qzLx97pLBaMw526GvVB84kV7m9QAJ4DjV8GbamwZWb5Hqwc0X7UvNkCAo/Qs0Q5xVXRe
-         j0rBxb1AHoOUOgjz2Ozzi1WAtdSD4MSWTx5Y7h4pJjQvkX4aXkkSQsjvxF8f8sJckwtQ
-         3vYti+TPYBqmuy922KUy/176T5J5i34eBI4I19jsGiUV0tqzQu1U7fBGBRvv+hraMcN0
-         PNBQ==
+        bh=OpIyGBzoBd6MLrPLDZTlJu8redllCjYqsJySEq0aRr0=;
+        b=Gq/ik7mtmJxM3De0wpzf9IPIlgAH+eM/ASvPGsfmHKPlBcheBxjSuzemIiDHsTTl89
+         J761O+JTO6Iq9ymsicpFEw9RbvYPJ5eLAeotAfZG1N6LFAPjIwYkEhWoijgHnARGyo0j
+         KtMvhhbO/gpSznTwjb+shOCfw7wuDLybWZfxGMjLPbmxmWv5AC7yWwC4ic67IxqYV2bk
+         Li03jogRm0vcAA1AaVaVZoi44V6r/9U0SatG7OXUUBHy5ZykrgWKX5LD+ZzbszC/Zr+j
+         bYxCIx/SKFe90hdNwqcCN62kN1MzdJCcPmsR/KLFeoQhpGcdWzdHcAgOl/ZTErRaLnBI
+         5PAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=06hoVuL+4FkXVA5D70wEqeJNXy4eA4qnPKR2e/Lq8tI=;
-        b=uFq8hiZW19WKFfbgvRAd2PoJ9ozfRAt0mibWqh5fFbsU2ZF5XeOrMGQ0Lp+tRLluHm
-         e8diyH/bQyV+zSvw3fcOGKJpX/C4Sc2sphtd6+uLWENgcfL3rewTpUcEiuOrBPpX3835
-         8USd1rim0aVzdbKTkwuVDEHXZE27rJoIta+OpMppU3kXG0O0okWcHTX2NaLo80yLLcLM
-         mVLfMRMjptomWZ5AifVR6T5Wo0KrzudCTDyWDnyzgApYQd3G7NF6C2GtRBM3SwZjl4/K
-         sYjHmayVtc99G0Uqq+MQw1RWOury0kcpPLiTNG5Njl7lKLbZ8zictblffciT9wRqITtb
-         bIwg==
-X-Gm-Message-State: AOAM531W06bai5YO3IY/vy0rFAm3VMBZ0twiKv0GMRW14RMR/1OvzRYz
-        VugOpHocXGCvqiWp85P7z3Y=
-X-Google-Smtp-Source: ABdhPJy6+B41oTn4lehC44EJr5d4guyexK7uc0xzPWi86zzobJ/b+P61+cY1dlPrVfdKHUAVmSfhjg==
-X-Received: by 2002:a17:902:7898:b029:e4:182f:e31d with SMTP id q24-20020a1709027898b02900e4182fe31dmr3524091pll.13.1614350852531;
-        Fri, 26 Feb 2021 06:47:32 -0800 (PST)
+        bh=OpIyGBzoBd6MLrPLDZTlJu8redllCjYqsJySEq0aRr0=;
+        b=j3zVTspdEmYEDgVz7XQvJmho9sbVcDqVNakY4nnjNTGOjuU0z0UuIEfTf9Axocsez4
+         2DCrjxe9DK7vOm73H3ApR9KOKIXKBA1BiDtDlxr6fI8qOh6N+428vuIa1lAt0nvkoSD/
+         mckx/xK+7SQL/BbT3XqRi2kaEGXafquKPfovpWLmHLbRLSPQtwtlsxMKXgZ/7eX/sSDi
+         fdon52z0/c+4gMDKYssNh76zKFY87HDo1Ch+1E2FzjQ1+8NBQ7j8y9IOm6MWJgtOW9nr
+         DIzr+1FeyvRoInRR6J0VX6pLamP4pUbzbdveYd0pFD255+JXxaQ2h41ZO4uF0QqOvc62
+         s9xw==
+X-Gm-Message-State: AOAM533RphLXEEgaprhBWkec346a064rMoRL1mZFd2cKhE0yglpwf4xB
+        kjt9bycR/Rfa/wTGr5ALYWo=
+X-Google-Smtp-Source: ABdhPJyNZ6JZHSDzMC9k34yewcgCLGyK6ej+AvpC7xQgVS7Ftwx7ibTmj8qMYnFIvJdYG9tRSZqFDg==
+X-Received: by 2002:a17:90a:f82:: with SMTP id 2mr4030406pjz.196.1614352352701;
+        Fri, 26 Feb 2021 07:12:32 -0800 (PST)
 Received: from [172.30.1.19] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id k69sm10042620pfd.4.2021.02.26.06.47.25
+        by smtp.gmail.com with ESMTPSA id i10sm10650818pgo.75.2021.02.26.07.12.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 06:47:31 -0800 (PST)
-Subject: Re: [RFC 05/19] devfreq: imx8m-ddrc: Change governor to powersave
+        Fri, 26 Feb 2021 07:12:32 -0800 (PST)
+Subject: Re: [RFC 06/19] devfreq: imx8m-ddrc: Use the opps acquired from EL3
 To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -73,14 +73,14 @@ To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     NXP Linux Team <linux-imx@nxp.com>
 References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <1613750416-11901-6-git-send-email-abel.vesa@nxp.com>
+ <1613750416-11901-7-git-send-email-abel.vesa@nxp.com>
 From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <28f71f5f-9fad-38ed-340a-6086b002f5c3@gmail.com>
-Date:   Fri, 26 Feb 2021 23:47:24 +0900
+Message-ID: <62dd9f7d-f767-01ee-87eb-bd0553b53417@gmail.com>
+Date:   Sat, 27 Feb 2021 00:12:24 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <1613750416-11901-6-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1613750416-11901-7-git-send-email-abel.vesa@nxp.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -88,33 +88,110 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
+Hi,
 
 On 21. 2. 20. 오전 1:00, Abel Vesa wrote:
-> By switching to powersave governor, we allow the imx8m-ddrc to always
-> run at minimum rate needed by all the running masters.
+> i.MX8M platforms get their dram OPPs from the EL3.
+> We don't need to duplicate that in the kernel dram dts node.
+> We should just trust the OPPs provided by the EL3.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->   drivers/devfreq/imx8m-ddrc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/devfreq/imx8m-ddrc.c | 49 ++----------------------------------
+>   1 file changed, 2 insertions(+), 47 deletions(-)
 > 
 > diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
-> index bc82d3653bff..3a6c04ba4f2e 100644
+> index 3a6c04ba4f2e..33de83acfd8b 100644
 > --- a/drivers/devfreq/imx8m-ddrc.c
 > +++ b/drivers/devfreq/imx8m-ddrc.c
-> @@ -379,7 +379,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct imx8m_ddrc *priv;
-> -	const char *gov = DEVFREQ_GOV_USERSPACE;
-> +	const char *gov = DEVFREQ_GOV_POWERSAVE;
->   	int ret;
+> @@ -333,38 +333,9 @@ static int imx8m_ddrc_init_freq_info(struct device *dev)
+>   		if (freq->dram_core_parent_index == 2 &&
+>   				freq->dram_alt_parent_index == 0)
+>   			return -ENODEV;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int imx8m_ddrc_check_opps(struct device *dev)
+> -{
+> -	struct imx8m_ddrc *priv = dev_get_drvdata(dev);
+> -	struct imx8m_ddrc_freq *freq_info;
+> -	struct dev_pm_opp *opp;
+> -	unsigned long freq;
+> -	int i, opp_count;
+> -
+> -	/* Enumerate DT OPPs and disable those not supported by firmware */
+> -	opp_count = dev_pm_opp_get_opp_count(dev);
+> -	if (opp_count < 0)
+> -		return opp_count;
+> -	for (i = 0, freq = 0; i < opp_count; ++i, ++freq) {
+> -		opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+> -		if (IS_ERR(opp)) {
+> -			dev_err(dev, "Failed enumerating OPPs: %ld\n",
+> -				PTR_ERR(opp));
+> -			return PTR_ERR(opp);
+> -		}
+> -		dev_pm_opp_put(opp);
 >   
->   	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> -		freq_info = imx8m_ddrc_find_freq(priv, freq);
+> -		if (!freq_info) {
+> -			dev_info(dev, "Disable unsupported OPP %luHz %luMT/s\n",
+> -					freq, DIV_ROUND_CLOSEST(freq, 250000));
+> -			dev_pm_opp_disable(dev, freq);
+> -		}
+> +		if (dev_pm_opp_add(dev, freq->rate * 250000, 0))
+> +			return -ENODEV;
+>   	}
+>   
+>   	return 0;
+> @@ -372,7 +343,6 @@ static int imx8m_ddrc_check_opps(struct device *dev)
+>   
+>   static void imx8m_ddrc_exit(struct device *dev)
+>   {
+> -	dev_pm_opp_of_remove_table(dev);
+>   }
+>   
+>   static int imx8m_ddrc_probe(struct platform_device *pdev)
+> @@ -419,16 +389,6 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+>   		return ret;
+>   	}
+>   
+> -	ret = dev_pm_opp_of_add_table(dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to get OPP table\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = imx8m_ddrc_check_opps(dev);
+> -	if (ret < 0)
+> -		goto err;
+
+In the devfreq_add_device(), if devfreq->profile->freq_table is NULL,
+set_freq_table() function fill out the devfreq->profile->freq_table by 
+using the OPP information.
+
+After this patch, devfreq->profile.freq_table is NULL and there are no 
+any OPP entries for this device, I think that this driver cannot add 
+devfreq device without any frequency information. Is it working without 
+any device frequency information?
+
+> -
+>   	priv->profile.polling_ms = 1000;
+>   	priv->profile.target = imx8m_ddrc_target;
+>   	priv->profile.get_dev_status = imx8m_ddrc_get_dev_status;
+> @@ -441,13 +401,8 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(priv->devfreq)) {
+>   		ret = PTR_ERR(priv->devfreq);
+>   		dev_err(dev, "failed to add devfreq device: %d\n", ret);
+> -		goto err;
+>   	}
+>   
+> -	return 0;
+> -
+> -err:
+> -	dev_pm_opp_of_remove_table(dev);
+>   	return ret;
+>   }
+>   
 > 
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
