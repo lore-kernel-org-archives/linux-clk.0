@@ -2,168 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C72C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 19:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F32AC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 23:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5A4764EAF
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 19:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F4664EE2
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 23:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229991AbhBZTyC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Feb 2021 14:54:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36296 "EHLO
+        id S230087AbhBZXFl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 18:05:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhBZTyA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 14:54:00 -0500
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA3AC061786;
-        Fri, 26 Feb 2021 11:53:20 -0800 (PST)
-Received: by mail-oi1-x230.google.com with SMTP id z126so10936626oiz.6;
-        Fri, 26 Feb 2021 11:53:20 -0800 (PST)
+        with ESMTP id S230014AbhBZXFj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 18:05:39 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F291C06174A;
+        Fri, 26 Feb 2021 15:04:59 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id t9so6859148pjl.5;
+        Fri, 26 Feb 2021 15:04:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fhZMDDNAuvyoi6Q1oQYjvRFeDXsfEhM3TJa22IcYiiU=;
-        b=Gsfu5OB/Czx81TfcU31Iu65nK2fWkuRSetI/XguUwNafQRQFSkYozK6b3IGVBh6NeY
-         OHe3JqX/mfyFIXN1cOxb8g4ydP4UyVEpfFF5zbquu8CKiqK87OdpdYUJv9NS+RDI6I34
-         52uY+lQwJpE40xSTwI1LJzMiFE9sgNM+A4847QzBYg1AiNOeSzyiWoCigfDCmgkVWP6R
-         eb9MSZ4Y8tZ/lKgs+5+p+LAlTI14oB+JZsgEz6WG58GLA2xx99nWpQWy0tE06dqhwzA/
-         gyZFEX97ONctcDTIeAKPk2zS2YlWk2QdKmbEQBd5qk26SnnQYXpRUsVqfC/XlBdDBvV0
-         L/sw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2RxeM0yijnoNlTINwzzd+KCKF/DAIhG1UdTOfwx8N/o=;
+        b=HuNZ4Jqry98TyKjAmSVE74O3H+y6KGzp/6YG+3Y7qYO+THQJCLWQq9yqFkABEjhYTe
+         8O8BmI3b5fdbkMQ7Ym759pnW6/koHWsgR0P33jMTNofE/1EGUcugSgDuHmRRXwAayrwk
+         vNwp2eYvHVfCJwmhHgocz4zqS6FjX/Flgox2SOkwSZmNnw9qAOjZpJNulhDfYYQdHSZn
+         YD7T5Nym2FhuIvyaZSUxhKVBz4dIbD3W9JlXkVHnOBjz7Uf3v9h8NnqMfHd7aw8rLYZz
+         RSOqM6c3Q160yNYTorVHwJZy0v0LPIwv6bx74+yDz5lQrHU0ZbM2WCYd6opakxtfQWiJ
+         txWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=fhZMDDNAuvyoi6Q1oQYjvRFeDXsfEhM3TJa22IcYiiU=;
-        b=YVBx0nulFJ2Pi+hT2zqk4KYa5KqVHUhH1ymwdkl8o/IDm1wYj/6+zxg7vyqevnYjxT
-         kESWlAKB/3jXBDG4IyWyKwHZd5M73VAMxv7Lt9nySGY6HQyFeQ6Bc6egEW59WLag+8kV
-         wcr6izLVHuvobnElXVVJW5tN7xLrHWCl/URM9lJMHHYX+gUPxWEiU1TICcfpCuPLtokk
-         44ZKHKiqI7YL48zNiloErzygeunkWaE5AM1P8/Cco+4PyTp9cHF4GbF/sHUIP+r93gWx
-         zmnPR7S/g1enVMJEb4Czfg2kf7suTyq8uq2epai6xBeijdVFUvjZvs0NSpTCHWYQZtUT
-         5Fjg==
-X-Gm-Message-State: AOAM532PCdJYu2wk3k5ppMB29lyZM6UxPrf+zjJ+joF668376PSak+wx
-        OjgdYLP2tQj/p5PHRRev8bExpa38Pjs=
-X-Google-Smtp-Source: ABdhPJw6dPs0c2oc9wOPM339L6g0LJMKPzrvodWTNcQSMtwTMzgygZQxqVzaK9fDw96VTnJvhxSe1g==
-X-Received: by 2002:a05:6808:8cb:: with SMTP id k11mr3243253oij.151.1614369199004;
-        Fri, 26 Feb 2021 11:53:19 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f29sm1929789ook.7.2021.02.26.11.53.15
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2RxeM0yijnoNlTINwzzd+KCKF/DAIhG1UdTOfwx8N/o=;
+        b=njpNPy5X7tm0Xs0XdPWjJKUWwIBGc9uA4GEWu1CzqUL0HgZVF4dATenvxi2eBbFco7
+         1bEIXNmvgjJb5vwhl8a6BMZbJTCczMk74XvcrSasV+E9zMaApenezdTx3geeOSgLxIYC
+         tC1P5e9UnUZpMj5RdIuIBS4CRfpvr2v+yVdeIVuPFzYDA03TcqqOJkHyw4qk++4Pt7nJ
+         P5wq52sGkCG3HafYLUcdqavUKaG0w6xEahJMfp4vDVz1M+nhFEP4Yq7ba5HY1RO2hHpA
+         bSYM8PS9KoUoN3D8llK1rZUjViNZHZnEv8qZCSCkHujM7VA8ww+9OhnO7B+pELFxN/CY
+         VgOA==
+X-Gm-Message-State: AOAM531xvKaiBXZYk3QOXtdMod9RzABrYpeaZHpPAxhon+Pa84hqTXHE
+        pYPgY7U3jv/xuocBbVh6rgWQ1HH23BFkhg==
+X-Google-Smtp-Source: ABdhPJzBRm5p29RXoLWL0ErdVU0iNimtD+CgQGAsC5BoJpPKdEJ3LrZigx+C19G7U1i8GcFXgthXRg==
+X-Received: by 2002:a17:902:b7cb:b029:e4:55cd:ddf0 with SMTP id v11-20020a170902b7cbb02900e455cdddf0mr5229301plz.45.1614380698483;
+        Fri, 26 Feb 2021 15:04:58 -0800 (PST)
+Received: from [172.30.1.19] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id ie12sm9668602pjb.52.2021.02.26.15.04.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Feb 2021 11:53:17 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH 0/2] add ripple counter dt binding and driver
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
-References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
- <CAK8P3a2=nZ3bbeguXjbFrhz0nWeUOcLM7mRudhPDrcb+jZ4VvQ@mail.gmail.com>
- <e5fd7ce3-3ba6-e5de-1cbc-fa31bd46942c@rasmusvillemoes.dk>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <2208f466-e509-6bbe-0358-34effb965610@roeck-us.net>
-Date:   Fri, 26 Feb 2021 11:53:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 26 Feb 2021 15:04:57 -0800 (PST)
+Subject: Re: [RFC 00/19] Rework support for i.MX8MQ interconnect with devfreq
+To:     Abel Vesa <abel.vesa@nxp.com>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>
+References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <def4e2dd-5e9c-5878-a116-754f9bfe735e@gmail.com>
+Date:   Sat, 27 Feb 2021 08:04:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <e5fd7ce3-3ba6-e5de-1cbc-fa31bd46942c@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/26/21 8:35 AM, Rasmus Villemoes wrote:
-> On 26/02/2021 15.35, Arnd Bergmann wrote:
->> On Fri, Feb 26, 2021 at 3:14 PM Rasmus Villemoes
->> <linux@rasmusvillemoes.dk> wrote:
->>
->>>
->>> So I'm thinking that the proper way to handle this is to be able to
->>> represent that ripple counter as a clock consumer in DT and have a
->>> driver do the clk_prepare_enable(), even if that driver doesn't and
->>> can't do anything else. But I'm certainly open to other suggestions.
->>
->> How about adding support for the optional clock to the gpio_wdt driver,
->> would that work?
-> 
-> I think it would _work_ (all I need is some piece of code doing the
-> clock_prepare_enable(), and until now we've just stashed that in some
-> otherwise unrelated out-of-tree driver, but we're trying to get rid of
-> that one), but the watchdog chip isn't really the consumer of the clock
-> signal, so in-so-far as DT is supposed to describe the hardware, I don't
-> think it's appropriate.
-> 
-> OTOH, one could argue that the watchdog chip and the ripple counter
-> together constitute the watchdog circuit.
-> 
-> Cc += watchdog maintainers. Context: I have a gpio-wdt which can
-> unfortunately effectively be disabled by disabling a clock output, and
-> that happens automatically unless the clock has a consumer in DT. But
-> the actual consumer is not the gpio-wdt.
-> Please see
-> https://lore.kernel.org/lkml/20210226141411.2517368-1-linux@rasmusvillemoes.dk/
-> for the original thread.
-> 
+Hi,
 
-Sorry, I am missing something. If the watchdog is controlled by the clock,
-it is a consumer of that clock. What else does "consumer" mean ? And why
-not just add optional clock support to the gpio_wdt driver ?
+You missed sending the patches to linux-pm mailing list.
+On next version, please send it linux-pm.
 
-Guenter
+Thanks,
+Chanwoo Choi
+
+On 21. 2. 20. 오전 12:59, Abel Vesa wrote:
+> This has been on my queue for quite some time now. It is more of a
+> proof-of-concept.
+> 
+> This rework is done with the compatibility of future i.MX platforms in
+> mind. For example, the i.MX8MP platform has multiple NoCs. This
+> patchsets prepares the imx interconnect and imx devfreq for that too.
+> 
+> As of now, none of the drivers involved are being used and there is no
+> icc consumer on any off the i.MX platforms.
+> 
+> Basically, the steps taken here are the following:
+> 
+> 1. Make the dram_apb clock "reparantable" from kernel.
+> This is needed in order to keep track of the actual parent of the
+> dram_apb clock in the kernel clock hierarchy. Note that the actual
+> switch is done EL3 (TF-A).
+> 
+> 2. Rework the imx-bus so the actual link between the icc and the
+> NoCs or the pl301s is not tightly coupled. This allows us to have
+> as many NoCs as necessary but also allows as to use the same driver
+> for the pl301s. The pl301s have their own clocks too, so we need to
+> reduce their rates too.
+> 
+> 3. Rework the imx8m-ddrc driver. Remove the support for dts defined
+> OPPs. The EL3 provides those. So instead of havingi to keep the OPP table in
+> both EL3 and kernel in sync, we rely on what the EL3 gives us.
+> Also, when the platform suspends, the bus needs to be running at highest
+> rate, otherwise there is a chance it might not resume anymore.
+> By adding the late system sleep PM ops we can handle that easily.
+> 
+> 4. Rework the imx interconnect driver to use the fsl,icc-id instead
+> of the robust imx_icc_node_adj_desc for linking with the target node.
+> By adding the fsl,icc-id property to all the NoC and pl301 dts nodes,
+> we can link each icc node to their corresponding NoC, pl301 or dram.
+> Basically, when the imx interconnect platform specific driver probes,
+> it will take each node defined for that platform and look-up the
+> corresponding dts node based on the id and add that as the qos device.
+> 
+> 5. Added the fec and usdhc as icc consumers. This is just as an example.
+> All the other consumers can be added later. Basically, each consumer
+> will add a path to their device node and in the driver will have to
+> handle that icc path accordingly.
+> 
+> Abel Vesa (19):
+>    clk: imx8mq: Replace critical with ignore_unused flag for dram_apb
+>      clock
+>    dt-bindings: interconnect: imx8mq: Add missing pl301 and SAI ids
+>    devfreq: imx-bus: Switch governor to powersave
+>    devfreq: imx-bus: Decouple imx-bus from icc made
+>    devfreq: imx8m-ddrc: Change governor to powersave
+>    devfreq: imx8m-ddrc: Use the opps acquired from EL3
+>    devfreq: imx8m-ddrc: Add late system sleep PM ops
+>    interconnect: imx: Switch from imx_icc_node_adj_desc to fsl,icc-id
+>      node assignment
+>    interconnect: imx8: Remove the imx_icc_node_adj_desc
+>    interconnect: imx8mq: Add the pl301_per_m and pl301_wakeup nodes and
+>      subnodes
+>    interconnect: imx8mq: Add of_match_table
+>    interconnect: imx: Add imx_icc_get_bw and imx_icc_aggregate functions
+>    arm64: dts: imx8mq: Add fsl,icc-id property to ddrc node
+>    arm64: dts: imx8mq: Add fsl,icc-id to noc node
+>    arm64: dts: imx8mq: Add all pl301 nodes
+>    arm64: dts: imx8mq: Add the interconnect node
+>    arm64: dts: imx8mq: Add interconnect properties to icc consumer nodes
+>    net: ethernet: fec_main: Add interconnect support
+>    mmc: sdhci-esdhc-imx: Add interconnect support
+> 
+>   arch/arm64/boot/dts/freescale/imx8mq.dtsi | 200 +++++++++++++++++++++-
+>   drivers/clk/imx/clk-imx8mq.c              |   2 +-
+>   drivers/devfreq/imx-bus.c                 |  42 +----
+>   drivers/devfreq/imx8m-ddrc.c              |  75 +++-----
+>   drivers/interconnect/imx/imx.c            |  92 +++++-----
+>   drivers/interconnect/imx/imx.h            |  19 +-
+>   drivers/interconnect/imx/imx8mm.c         |  32 ++--
+>   drivers/interconnect/imx/imx8mn.c         |  28 +--
+>   drivers/interconnect/imx/imx8mq.c         |  59 ++++---
+>   drivers/mmc/host/sdhci-esdhc-imx.c        |  26 +++
+>   drivers/net/ethernet/freescale/fec.h      |   3 +
+>   drivers/net/ethernet/freescale/fec_main.c |  19 ++
+>   include/dt-bindings/interconnect/imx8mq.h |   9 +
+>   scripts/dtc/fdtoverlay                    | Bin 0 -> 61280 bytes
+>   14 files changed, 393 insertions(+), 213 deletions(-)
+>   create mode 100755 scripts/dtc/fdtoverlay
+> 
