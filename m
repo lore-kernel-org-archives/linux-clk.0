@@ -2,73 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF88CC433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 20:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D28C433E9
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 08:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98CA964F4F
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Feb 2021 20:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2AD564EEE
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Feb 2021 08:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233738AbhBYUWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Feb 2021 15:22:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234111AbhBYUWI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Feb 2021 15:22:08 -0500
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A156C061574;
-        Thu, 25 Feb 2021 12:21:13 -0800 (PST)
-Received: from localhost.localdomain (abab236.neoplus.adsl.tpnet.pl [83.6.165.236])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id 933203F356;
-        Thu, 25 Feb 2021 21:21:07 +0100 (CET)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: clock: qcom,gcc: Document MSM8976 compatibles
-Date:   Thu, 25 Feb 2021 21:18:42 +0100
-Message-Id: <20210225201845.109670-1-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.30.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S230107AbhBZIZI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Feb 2021 03:25:08 -0500
+Received: from lucky1.263xmail.com ([211.157.147.131]:57118 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230010AbhBZIZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Feb 2021 03:25:07 -0500
+Received: from localhost (unknown [192.168.167.225])
+        by lucky1.263xmail.com (Postfix) with ESMTP id D5C2EB879F;
+        Fri, 26 Feb 2021 16:22:42 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P5973T140596920432384S1614327760837004_;
+        Fri, 26 Feb 2021 16:22:42 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <55aca934b821fe2b99e3523b58234e25>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: mturquette@baylibre.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-System-Flag: 0
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        heiko@sntech.de
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, tony.xie@rock-chips.com,
+        finley.xiao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 0/4] clk: rockchip: add clock controller for rk3568
+Date:   Fri, 26 Feb 2021 16:22:30 +0800
+Message-Id: <20210226082234.1733-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the newly added compatibles for 8976 GCC.
+Add the clock tree definition for the new rk3568 SoC.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- Documentation/devicetree/bindings/clock/qcom,gcc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Change in V2:
+[PATCH v2 1/4]: Convert rockchip,rk3568-cru.txt to YAML,
+		And update commit message.
+[PATCH v2 2/4]: No change.
+[PATCH v2 3/4]: Use arrays to support more core independent div settings.
+[PATCH v2 4/4]: Adapter [PATCH v2 3/4] changes.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-index ee0467fb5e31..af4427ab6017 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-@@ -46,6 +46,8 @@ properties:
-       - qcom,gcc-msm8939
-       - qcom,gcc-msm8960
-       - qcom,gcc-msm8974
-+      - qcom,gcc-msm8976
-+      - qcom,gcc-msm8976-v1.1
-       - qcom,gcc-msm8974pro
-       - qcom,gcc-msm8974pro-ac
-       - qcom,gcc-msm8994
+Elaine Zhang (4):
+  dt-binding: clock: Document rockchip,rk3568-cru bindings
+  clk: rockchip: add dt-binding header for rk3568
+  clk: rockchip: support more core div setting
+  clk: rockchip: add clock controller for rk3568
+
+ .../bindings/clock/rockchip,rk3568-cru.yaml   |   55 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-cpu.c                |   40 +-
+ drivers/clk/rockchip/clk-px30.c               |    7 +-
+ drivers/clk/rockchip/clk-rk3036.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3128.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3188.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3228.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3288.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3308.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3328.c             |    7 +-
+ drivers/clk/rockchip/clk-rk3368.c             |   14 +-
+ drivers/clk/rockchip/clk-rk3399.c             |   14 +-
+ drivers/clk/rockchip/clk-rk3568.c             | 1726 +++++++++++++++++
+ drivers/clk/rockchip/clk-rv1108.c             |    7 +-
+ drivers/clk/rockchip/clk.h                    |   54 +-
+ include/dt-bindings/clock/rk3568-cru.h        |  926 +++++++++
+ 18 files changed, 2834 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3568.c
+ create mode 100644 include/dt-bindings/clock/rk3568-cru.h
+
 -- 
-2.30.1
+2.17.1
+
+
 
