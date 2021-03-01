@@ -2,127 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C06A4C43381
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Mar 2021 17:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545AFC433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Mar 2021 20:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A94A6504B
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Mar 2021 17:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A1D4600CD
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Mar 2021 20:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237696AbhCARRe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Mar 2021 12:17:34 -0500
-Received: from z11.mailgun.us ([104.130.96.11]:55824 "EHLO z11.mailgun.us"
+        id S235853AbhCAUln (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Mar 2021 15:41:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234736AbhCAROr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Mar 2021 12:14:47 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1614618827; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=BfVrcOWVRzGvz+Dbm8uCXcC2vuzUg8HrSEaSSdN8Zi8=; b=YRteEqYpoRlHorrxxSbgrNOz1friekH3BgpFNneyZ2w0RAJ2NPxh5CAMiJzKGnXIXy8+vyIV
- EQqFRZUylB85vjGV2bU2JVIrrbM5DN77+TnFJ1+5j6NfaJ7+fhDmDoUl7ANPIDsez1bqGy+t
- /pJKg7IPFqYpb7CI1JgXlfWoHyI=
-X-Mailgun-Sending-Ip: 104.130.96.11
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 603d1db6832f19b9ef925434 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 01 Mar 2021 17:00:38
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 954D6C43465; Mon,  1 Mar 2021 17:00:38 +0000 (UTC)
-Received: from [192.168.0.110] (unknown [49.204.182.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D4055C433CA;
-        Mon,  1 Mar 2021 17:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D4055C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: gcc-sc7180: Use floor ops for the correct
- sdcc1 clk
-To:     Douglas Anderson <dianders@chromium.org>, sboyd@kernel.org
-Cc:     vbadigan@codeaurora.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S242740AbhCAUfc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Mar 2021 15:35:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EEE6B64DD0;
+        Mon,  1 Mar 2021 19:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614626427;
+        bh=4Fbz/Gcym0foCbh9vStNcQpQ+1PRuy7d+jh0MaZf+Qg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ot0QeQLqnqrW8Yz+bSpChMgzrHQz7xltTkG5tYLWTlCXrGOabF+Z8zIaGno3aSxDu
+         1GzmQu5NiWG+GtA8VRbwLHvUlCbueAtvCnJY1NbscWaqniFLc6JyrFwZRj+NX4KLm/
+         +8vupFIFYu2Ru5BWG1h+FpTqP9ZwQj2MyjMbF2jhZXCLUJZ9Zpf/t8wJqo/gIxsmHQ
+         CLN/q4BSeZrHgyKGpEDCXxcb/02vJeD2iiW0/FNeW1ogHlIvREpSs5UUhdoo9KhUYH
+         +DpyHEaEoPgtSk97dJNMgGdo/EsfJyl4sPrBcWJUqwXENkHvG7j+GfIMpcauscGL4m
+         yW/p+rmpgPdrw==
+Received: by pali.im (Postfix)
+        id B140DA32; Mon,  1 Mar 2021 20:20:24 +0100 (CET)
+Date:   Mon, 1 Mar 2021 20:20:24 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Gregory Clement <gregory.clement@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210224095013.1.I2e2ba4978cfca06520dfb5d757768f9c42140f7c@changeid>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <3b972d6d-15df-ddf6-c57f-9e1ad08564db@codeaurora.org>
-Date:   Mon, 1 Mar 2021 22:30:31 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tomasz Maciej Nowak <tmn505@gmail.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Andre Heider <a.heider@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?utf-8?Q?G=C3=A9rald?= Kerma <gerald@gk2.net>,
+        Konstantin Porotchkin <kostap@marvell.com>
+Subject: Re: [PATCH mvebu v3 00/10] Armada 37xx: Fix cpufreq changing base
+ CPU speed to 800 MHz from 1000 MHz
+Message-ID: <20210301192024.tgvp6f5zscbknepo@pali>
+References: <20210114124032.12765-1-pali@kernel.org>
+ <20210222194158.12342-1-pali@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210224095013.1.I2e2ba4978cfca06520dfb5d757768f9c42140f7c@changeid>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210222194158.12342-1-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Reviewed-by: Taniya Das <tdas@codeaurora.org>
+Hello Gregory!
 
-On 2/24/2021 11:20 PM, Douglas Anderson wrote:
-> While picking commit a8cd989e1a57 ("mmc: sdhci-msm: Warn about
-> overclocking SD/MMC") back to my tree I was surprised that it was
-> reporting warnings.  I thought I fixed those!  Looking closer at the
-> fix, I see that I totally bungled it (or at least I halfway bungled
-> it).  The SD card clock got fixed (and that was the one I was really
-> focused on fixing), but I totally adjusted the wrong clock for eMMC.
-> Sigh.  Let's fix my dumb mistake.
-> 
-> Now both SD and eMMC have floor for the "apps" clock.
-> 
-> This doesn't matter a lot for the final clock rate for HS400 eMMC but
-> could matter if someone happens to put some slower eMMC on a sc7180.
-> We also transition through some of these lower rates sometimes and
-> having them wrong could cause problems during these transitions.
-> These were the messages I was seeing at boot:
->    mmc1: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
->    mmc1: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
->    mmc1: Card appears overclocked; req 104000000 Hz, actual 192000000 Hz
-> 
-> Fixes: 6d37a8d19283 ("clk: qcom: gcc-sc7180: Use floor ops for sdcc clks")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
->   drivers/clk/qcom/gcc-sc7180.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index c5c2e93bda8e..5cacd20a31b3 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -620,7 +620,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
->   		.name = "gcc_sdcc1_apps_clk_src",
->   		.parent_data = gcc_parent_data_1,
->   		.num_parents = 5,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->   	},
->   };
->   
-> @@ -642,7 +642,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
->   		.name = "gcc_sdcc1_ice_core_clk_src",
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = 4,
-> -		.ops = &clk_rcg2_floor_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> 
+Patches are the for almost two months and more people have tested them.
+They are marked with Fixed/CC-stable tags, they should go also into
+stable trees as they are fixing CPU scaling and instability issues.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Are there any issues with these patches? If not, could you please merge
+them for upcoming Linux version?
 
---
+On Monday 22 February 2021 20:41:48 Pali Rohár wrote:
+> Hello!
+> 
+> This is third version of patches for Armada 37xx cpufreq driver which
+> fix CPU scaling with 1 GHz base frequency.
+> 
+> The only change in this third version is modified patch 04/10 with fixes
+> for 1.2 GHz variant of Espressobin. Minimal CPU voltage in L1 load for
+> 1.2 GHz variant was increased to 1.155V.
+> 
+> Patches are now rebased on top of the kernel version 5.11 with all
+> collected Acked-by/Tested-by lines and are available also in my git
+> tree in branch a3720-cpufreq-issues:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/pali/linux.git/log/?h=a3720-cpufreq-issues
+> 
+> If you have other Armada 3720 boards with 1.2 GHz CPU, including
+> Espressobin V7, let us know if it is working fine for you.
+> 
+> Marek & Pali
+> 
+> Marek Behún (3):
+>   arm64: dts: marvell: armada-37xx: add syscon compatible to NB clk node
+>   cpufreq: armada-37xx: Fix setting TBG parent for load levels
+>   clk: mvebu: armada-37xx-periph: remove .set_parent method for CPU PM
+>     clock
+> 
+> Pali Rohár (7):
+>   cpufreq: armada-37xx: Fix the AVS value for load L1
+>   clk: mvebu: armada-37xx-periph: Fix switching CPU freq from 250 Mhz to
+>     1 GHz
+>   clk: mvebu: armada-37xx-periph: Fix workaround for switching from L1
+>     to L0
+>   cpufreq: armada-37xx: Fix driver cleanup when registration failed
+>   cpufreq: armada-37xx: Fix determining base CPU frequency
+>   cpufreq: armada-37xx: Remove cur_frequency variable
+>   cpufreq: armada-37xx: Fix module unloading
+> 
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi |   3 +-
+>  drivers/clk/mvebu/armada-37xx-periph.c       |  83 +++++++-------
+>  drivers/cpufreq/armada-37xx-cpufreq.c        | 111 +++++++++++++++----
+>  3 files changed, 135 insertions(+), 62 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
