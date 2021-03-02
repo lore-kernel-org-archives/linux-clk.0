@@ -2,168 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A630C4360C
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AD5C4321A
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C698A64E86
+	by mail.kernel.org (Postfix) with ESMTP id 45F4664E87
 	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352795AbhCCEPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:15:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351078AbhCBVmm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Mar 2021 16:42:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E949864F35;
-        Tue,  2 Mar 2021 21:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614721322;
-        bh=7Wrbh9hE4WdC65V/AJ8ebT2/ZBfh581DMtymckjIKoA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdMW2/tB3Yp/04GqRn9+IRSz0xA3QsRG3zv/3k/hnkZqTtMNQy6ArVTAg2lz+W8Er
-         Dh+Xsgu6VhnwaEF9zaKjqXbqfzaWJVbIwkcB0jLRkOvz8EZOUIMlSMSTXH6Tx+k/lk
-         1f6MtywgWWMIAWQJq/YlkWvcKlsT76n6uptSh7WKynPoQSXt29ZP2bRPG0X7sS9tns
-         kDq2CdqYwV7yKwE+tLyZpTjNUBzTjUtV+fR8LLeBj9e3j9snbj++/rA3SE+/Z3XTPv
-         icnxy4LXEHnLP5GYl2h125QNaclyxsU8qGG3+9hNNRIlo7tMyX5376rAzX3LWZEL3m
-         nj5QGPjjCrJiQ==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     sboyd@kernel.org
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] clk: socfpga: arria10: convert to use clk_hw
-Date:   Tue,  2 Mar 2021 15:41:50 -0600
-Message-Id: <20210302214151.1333447-2-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210302214151.1333447-1-dinguyen@kernel.org>
-References: <20210302214151.1333447-1-dinguyen@kernel.org>
+        id S233257AbhCCEPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:15:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1580308AbhCBSBl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 13:01:41 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030FDC061793;
+        Tue,  2 Mar 2021 03:51:43 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id p15so14621375ljc.13;
+        Tue, 02 Mar 2021 03:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=S2GajrmIPPhVShSD9htWQH0c4G3php+jiJW9ohFhNDc=;
+        b=a5NQi+dCliDqU3MZIq+HV1G7Hv02G5jQ0YFeFVSZ05AtJzCjeBzkUuynfOhQQrsZT1
+         +YSsRtVpekBd60kcBJL2wZWhFrnVdIdyrp3DSFSOWq1WzwaYFoydtpytUmoE0LGo+hdO
+         PuGVU8a7n1MgPrQ7uD84HL4NdY0tcJJqyy/73Tn7geG0d8+OJ/L6G9tACVPZ2XiikmkB
+         8xUYvwGXLOeQaQ40VYUTwDc76BfOwVoEAC0TkyYDzy3gjltu1B9iZZB8P4rwmF/C7iJp
+         1WzbACU6/uQmiq7wUMQ9euWMHbDN13X8WKiyvtMHHG93/hAHrsj8syG3lMQgRgJZTn7i
+         qwGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=S2GajrmIPPhVShSD9htWQH0c4G3php+jiJW9ohFhNDc=;
+        b=GQNboFbL8xcfNKc1TudNyrDTxPKpsrRoATSM39RhQliQU29yJlNr6bYWzUOhU9pD0G
+         FPEhGW8VauBFSw/OqAbEaHhNh3JuUpFA6e6UhDCzwoE/H7morsz4i4hjgYoF4FvN8Jns
+         9SUeHEfXedd/ns3afH5EozuWQaI85p0Q/w5Y4imV64lEvjfxGgUwZG4U2DMuqBzEEcJF
+         Kb1AQT59jFT3u1yWniNwPbq+uZcsOgzc/L4Ys3SLI6KGMAjo9wae3d1cIL7WJTae9NwV
+         81HNN7g4HnqKxEKQgCoyUZG+9aZQpOogmwyfA7/3nczzvfE/8kIv+nf8EczCL8/MAUE8
+         zdHQ==
+X-Gm-Message-State: AOAM53112BJoqeth2ol8GhddOLMPc/s2tbIZSNXQ6PqqPCIJ99NUXGNB
+        +zXRI5jNN2umGXHdCZgCWiA=
+X-Google-Smtp-Source: ABdhPJyI63/HAHDw1/qnwJWecxidCq4Nihj3lXQGz7sFgGtD9auDUtWwRaK52RQSayhmGEumTOeeSw==
+X-Received: by 2002:a2e:b4c8:: with SMTP id r8mr6000300ljm.57.1614685901553;
+        Tue, 02 Mar 2021 03:51:41 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 03:51:41 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/6] clk: tegra30: Use 300MHz for video decoder by default
+Date:   Tue,  2 Mar 2021 14:51:12 +0300
+Message-Id: <20210302115117.9375-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302115117.9375-1-digetx@gmail.com>
+References: <20210302115117.9375-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As recommended by Stephen Boyd, convert the Arria10 clock driver to use
-the clk_hw registration method.
+The 600MHz is a too high clock rate for some SoC versions for the video
+decoder hardware and this may cause stability issues. Use 300MHz for the
+video decoder by default, which is supported by all hardware versions.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/socfpga/clk-gate-a10.c   |  8 ++++----
- drivers/clk/socfpga/clk-periph-a10.c | 11 ++++++-----
- drivers/clk/socfpga/clk-pll-a10.c    | 12 ++++++------
- 3 files changed, 16 insertions(+), 15 deletions(-)
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index cd5df9103614..f5cba8298712 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -98,7 +98,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	u32 div_reg[3];
- 	u32 clk_phase[2];
- 	u32 fixed_div;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
-@@ -159,13 +159,13 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
- 	init.parent_names = parent_name;
- 	socfpga_clk->hw.hw.init = &init;
-+	hw_clk = &socfpga_clk->hw.hw;
- 
--	clk = clk_register(NULL, &socfpga_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	if (clk_hw_register(NULL, hw_clk)) {
- 		kfree(socfpga_clk);
- 		return;
- 	}
--	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
- 	if (WARN_ON(rc))
- 		return;
- }
-diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
-index 3e0c55727b89..b9cdde4b8441 100644
---- a/drivers/clk/socfpga/clk-periph-a10.c
-+++ b/drivers/clk/socfpga/clk-periph-a10.c
-@@ -61,7 +61,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	const struct clk_ops *ops)
- {
- 	u32 reg;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
-@@ -104,12 +104,13 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 
- 	periph_clk->hw.hw.init = &init;
- 
--	clk = clk_register(NULL, &periph_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	hw_clk = &periph_clk->hw.hw;
-+
-+	if (clk_hw_register(NULL, hw_clk)) {
- 		kfree(periph_clk);
- 		return;
- 	}
--	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
- 	if (rc < 0) {
- 		pr_err("Could not register clock provider for node:%s\n",
- 		       clk_name);
-@@ -119,7 +120,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	return;
- 
- err_clk:
--	clk_unregister(clk);
-+	clk_hw_unregister(hw_clk);
- }
- 
- void __init socfpga_a10_periph_init(struct device_node *node)
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 3338f054fe98..bee0f7da5b6e 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -63,11 +63,11 @@ static const struct clk_ops clk_pll_ops = {
- 	.get_parent = clk_pll_get_parent,
- };
- 
--static struct clk * __init __socfpga_pll_init(struct device_node *node,
-+static struct clk_hw * __init __socfpga_pll_init(struct device_node *node,
- 	const struct clk_ops *ops)
- {
- 	u32 reg;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFGPA_MAX_PARENTS];
-@@ -101,14 +101,14 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
- 	pll_clk->hw.hw.init = &init;
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
-+	hw_clk = &pll_clk->hw.hw;
- 
--	clk = clk_register(NULL, &pll_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	if (clk_hw_register(NULL, hw_clk)) {
- 		kfree(pll_clk);
- 		return NULL;
- 	}
--	of_clk_add_provider(node, of_clk_src_simple_get, clk);
--	return clk;
-+	of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
-+	return hw_clk;
- }
- 
- void __init socfpga_a10_pll_init(struct device_node *node)
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 16dbf83d2f62..a33688b2359e 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1245,7 +1245,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
+-	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
 -- 
-2.30.0
+2.29.2
 
