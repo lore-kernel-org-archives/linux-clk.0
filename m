@@ -2,159 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E300C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0229C432C3
 	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE1F964E87
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F91A64E84
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352750AbhCCEOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:14:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
+        id S1352740AbhCCEPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:15:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578599AbhCBPZZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 10:25:25 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C720C061794
-        for <linux-clk@vger.kernel.org>; Tue,  2 Mar 2021 07:10:54 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id o2so2598554wme.5
-        for <linux-clk@vger.kernel.org>; Tue, 02 Mar 2021 07:10:54 -0800 (PST)
+        with ESMTP id S1580311AbhCBSBl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 13:01:41 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A1DC0617AA;
+        Tue,  2 Mar 2021 03:51:46 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id k9so10901744lfo.12;
+        Tue, 02 Mar 2021 03:51:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iXOLlDxgBV9CPVsJZhCVv2ZAjJMGwcQADbotLvfbenk=;
-        b=S+M6qzZ7yCmHcy3il0rDzNS/Vlzq84AvNlMDXuGTEwX6ZJ9wa7uAgNCDxFnAr04WKk
-         +XEHnKh+yg3E3Ppd7Jjdh/DwXO9Dn99pRYfrQjREe0W/zmG8CwLz9NxzK2x94OfLMJtE
-         2RyfT0UVnZB4jCrpDyLXl7kkibonIrCQRZFzBokWzByp3YJqOLsQzjdRHcGaaMRAiKz/
-         zmmmyoQ6rkaubYyoG9MN9MaJDioEi3dEsLDRY2I0CTn/8/nvogJroDKMvz0CvXaeUNzx
-         6R8dkZ1WVVc+3Y2jAkUfQRL3SUFjMB0JvUvX8eD7tPqypJC5bVz6kE/vpWuMROxIzQaR
-         +/NA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Aptp5NmMT0c2/gtpHM3jND6fOADz+c+cCW4tHwby9/0=;
+        b=CX7XQ3GoFscwZMGxuAprdkK2a4Ju5XArGZ24+JTaHoSZbDUMIX3tylUM85HR+lIYwy
+         7EZLUdpKL34vby84vZXUo4i7EGGsd/Iq66dzQZNVvqPW3FTYpJFpRe3mrz+DKuSLzirC
+         bEO+uBMbnnDiWPe42HL2721BLautywGKFN/DIqogn1BrjQmKG5VLYUXmEB7KKhkOhTeN
+         Lp9n6BksMGi27Vei5UegQzsmt/OFS1A0gdbrarFEYhTm8jgAY5vTXf9Q6NpkeOlfs6RA
+         umCVj6yOSH4emp6nwUDu4zrEJGXWWZXH1+I+AaBNY6JpYIHxTnRXj05wadUrjWLaAgnw
+         ZgOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iXOLlDxgBV9CPVsJZhCVv2ZAjJMGwcQADbotLvfbenk=;
-        b=kImUR7/nN+b8RGZ91IHAXCewdyZMqAWBb6vw9wd+YU1CQBbpXHk4dv4sxYJDzvcB3U
-         00acGegVbNSVBj8O4NW7wZ3x8pFB06gSPChg0iOpL2lMz5jc8dmUEW+A0R0b2nKZXjFY
-         adL+gwk7yzmZSv58s6//Al/35q02haMoZDwC+OJyye+f9/Pbj6TDwpSDv7utF7y/rssp
-         q3OsHPmWxlOtv6FPorktVGBAlz9Ii0S1R3QgrXncUmkN8b1AFqVALScbpCMjfMTo9P/9
-         P+AV13NZr2+SNd1cRBkL7ZlTh1feBbRyHyJB+2ai5rkBZMLW2MbBCltHqPZ17KcYkvSA
-         nYvQ==
-X-Gm-Message-State: AOAM530GUIsovUPJpwJpWxenfnLD2jccJXmkSTs4DbC/ui3W+GN+iEDL
-        XmlQhVg3EiX5psRfxhlru0QfygHvb1b/hXo465ZsQw==
-X-Google-Smtp-Source: ABdhPJyAoGvTCSUcVybeiOLq0BiGe/yxxG90GrRzZerwITF1bUCaDidNmZLCBCAQSjq4LRzRo8HrnjteTLi1tMeDZRI=
-X-Received: by 2002:a1c:28c1:: with SMTP id o184mr4336707wmo.183.1614697852764;
- Tue, 02 Mar 2021 07:10:52 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Aptp5NmMT0c2/gtpHM3jND6fOADz+c+cCW4tHwby9/0=;
+        b=ZsMZHFr3yQhmPzdbxzHEJZvEWh7DB5CVF7bDmRaYllKxl852GX8pntlp+hm9nth9tH
+         PzLdjOhLLlncflCAQC7UYbaOGvd0bGW94FSvhrSCuEcOl/4KhUhgb8efDdwxq4ocdKoC
+         kPDsQJcBlWMcl7kKYaBzKl7HBRtsRUi5IxysC0i+FQQ1+y9ZjCe+CbTUgHvTuWcZ2Gum
+         kqnFtSsMXEMS33GRoglMWfrXdArx2RhrNU+TCKC8MiE3UskK+4T6KlThzfXN9ED3uErk
+         J2mvkzjGWKNtvchRPNuvpRHmLaQ1Op46sM6Y7p2Bq+Oe4ijtfwWjAa090V7gm6fFQasi
+         pgJA==
+X-Gm-Message-State: AOAM53101k1kGkzj5Qbb65R2M0qZxwIg+Jxf0dw+TO8Rf/TaTJVMqb7q
+        jj4Isoo9PdZs3tG8i7VvwIk=
+X-Google-Smtp-Source: ABdhPJwUa/fs69l5VobYIqUc2szq+QvQXNGsM9mxk1A52i95jEswLEFCVUXMJqqtPYq9V8LLFOrgFA==
+X-Received: by 2002:a19:c3c3:: with SMTP id t186mr11924940lff.596.1614685904824;
+        Tue, 02 Mar 2021 03:51:44 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 03:51:44 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 6/6] clk: tegra: Don't allow zero clock rate for PLLs
+Date:   Tue,  2 Mar 2021 14:51:17 +0300
+Message-Id: <20210302115117.9375-7-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210302115117.9375-1-digetx@gmail.com>
+References: <20210302115117.9375-1-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20210225155909.1853812-1-maxime@cerno.tech> <20210225155909.1853812-5-maxime@cerno.tech>
- <CAPY8ntDwQG1Ax8wgc2zZMKZgXk2+efBtFFiu7YF=_RX4Y4YUiA@mail.gmail.com> <20210302130154.o4ljnzqjr3gfsvpn@gilmour>
-In-Reply-To: <20210302130154.o4ljnzqjr3gfsvpn@gilmour>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Tue, 2 Mar 2021 15:10:37 +0000
-Message-ID: <CAPY8ntCh510mg_J7+2J_d1bd1Dgd+q8rGwfM4D9nA63z1-DFtA@mail.gmail.com>
-Subject: Re: [PATCH 4/8] drm/vc4: hdmi: Check and warn if we can't reach 4kp60 frequencies
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2 Mar 2021 at 13:02, Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi Dave,
->
-> Thanks for your review
->
-> On Thu, Feb 25, 2021 at 04:38:37PM +0000, Dave Stevenson wrote:
-> > On Thu, 25 Feb 2021 at 15:59, Maxime Ripard <maxime@cerno.tech> wrote:
-> > >
-> > > In order to reach the frequencies needed to output at 594MHz, the
-> > > firmware needs to be configured with the appropriate parameters in the
-> > > config.txt file (enable_hdmi_4kp60 and force_turbo).
-> >
-> > force_turbo isn't the right way to go about this as it permanently
-> > bumps all the clocks up, even if running the display at VGA.
->
-> so enable_hdmi_4kp60 is enough?
+Zero clock rate doesn't make sense for PLLs and tegra-clk driver enters
+into infinite loop on trying to calculate PLL parameters for zero rate.
+Make code to error out if requested rate is zero.
 
-No, but force_turbo=1 is the wrong way to go about fixing that.
+Originally this trouble was found by Robert Yang while he was trying to
+bring up upstream kernel on Samsung Galaxy Tab, which happened due to a
+bug in Tegra DRM driver that erroneously sets PLL rate to zero. This
+issues came over again recently during of kernel bring up on ASUS TF700T.
 
-I'll start a thread with Dom & Tim to discuss the best way of doing
-this. Immediate thoughts are that either vc4_hdmi needs to request the
-core clock be increased, or potentially the firmware could note the
-boosted BVB rate and increase core accordingly.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-pll.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  Dave
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index d709ecb7d8d7..af7d4941042e 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -558,6 +558,9 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	u32 p_div = 0;
+ 	int ret;
+ 
++	if (!rate)
++		return -EINVAL;
++
+ 	switch (parent_rate) {
+ 	case 12000000:
+ 	case 26000000:
+-- 
+2.29.2
 
-> > > Let's detect it at bind time, warn the user if we can't, and filter out
-> > > the relevant modes.
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 17 +++++++++++++++++
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  8 ++++++++
-> > >  2 files changed, 25 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > index b5bc742993a4..f05f6da286f7 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > @@ -953,6 +953,9 @@ static int vc4_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
-> > >         if (pixel_rate > vc4_hdmi->variant->max_pixel_clock)
-> > >                 return -EINVAL;
-> > >
-> > > +       if (vc4_hdmi->disable_4kp60 && (pixel_rate > HDMI_14_MAX_TMDS_CLK))
-> > > +               return -EINVAL;
-> > > +
-> > >         vc4_state->pixel_rate = pixel_rate;
-> > >
-> > >         return 0;
-> > > @@ -972,6 +975,9 @@ vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
-> > >         if ((mode->clock * 1000) > vc4_hdmi->variant->max_pixel_clock)
-> > >                 return MODE_CLOCK_HIGH;
-> > >
-> > > +       if (vc4_hdmi->disable_4kp60 && ((mode->clock * 1000) > HDMI_14_MAX_TMDS_CLK))
-> > > +               return MODE_CLOCK_HIGH;
-> > > +
-> > >         return MODE_OK;
-> > >  }
-> > >
-> > > @@ -1986,6 +1992,17 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
-> > >         vc4_hdmi->disable_wifi_frequencies =
-> > >                 of_property_read_bool(dev->of_node, "wifi-2.4ghz-coexistence");
-> > >
-> > > +       if (variant->max_pixel_clock == 600000000) {
-> > > +               struct vc4_dev *vc4 = to_vc4_dev(drm);
-> > > +               long max_rate = clk_get_max_rate(vc4->hvs->core_clk);
-> > > +
-> > > +               if (max_rate < 550000000) {
-> > > +                       drm_warn(drm, "The core clock cannot reach frequencies high enough to support 4k @ 60Hz.");
-> > > +                       drm_warn(drm, "Please change your config.txt file to add hdmi_enable_4kp60 and force_turbo");
-> >
-> > Do we really want to warn in bind? Again you could have a VGA
-> > resolution monitor attached but that would trigger this warning.
-> > Can we warn (once) on processing the mode list and filtering out a clk
-> > > HDMI_14_MAX_TMDS_CLK mode instead?
->
-> That's a good idea indeed, I'll rework the patch to do that
->
-> Thanks!
-> Maxime
