@@ -2,126 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C42C433DB
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09726C4332B
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D02E64E84
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDEBD64E84
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352697AbhCCELg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:11:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1443553AbhCBMLd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Mar 2021 07:11:33 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DE7EE64F62;
-        Tue,  2 Mar 2021 11:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614686234;
-        bh=vopivRZMCYdSGdIVT75/EUSZHcJpdNCmqrcBNRYkY2E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHOEaGWELZg4zu/6xkHnJiP1h454JqzKkMhNnShPg2l5vicWkgCXUQHGh+MkeMx0e
-         +AVGaIyElCVPfN5IxFpn8XzyWX3cAZJqM8EkbX1lHuAUjmh3Iv6n+HNEuNj2cRA8rw
-         ZUte+OLPiFfgZtgpDqY1gnocnimufL4gD9goQewBvXoT+hE0rUP/IiwGXL948lwzvk
-         ybZ4GzoxzrI9caTP7gFwKHnJrOOqfw3bWt67oU8hbUvA7p6wYtpwRwOOiaPEmWaIdJ
-         JOMqm/xdhs6gOnmOVQ3NNClKSZZq56ytB9Gaq1Cepb0yafxgLFYVrFQWc7awgGj0hz
-         YX8bolhBfCTFQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 22/47] clk: qcom: gdsc: Implement NO_RET_PERIPH flag
-Date:   Tue,  2 Mar 2021 06:56:21 -0500
-Message-Id: <20210302115646.62291-22-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210302115646.62291-1-sashal@kernel.org>
-References: <20210302115646.62291-1-sashal@kernel.org>
+        id S1352700AbhCCEMO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:12:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1383899AbhCBMcS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 07:32:18 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8F8C06178C;
+        Tue,  2 Mar 2021 03:51:42 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id f1so30840688lfu.3;
+        Tue, 02 Mar 2021 03:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PmzRd7ne9yP74dYg3lDIMJ/jrvhsKEQVEGvRcfpnvR0=;
+        b=DCQX8jLGEIrXvqbGyWJTaR0MHS/tIYyw50B+/ULFgox6dbfww7qwR50ulh0OGziijW
+         CUXAvJm9dkkr+uXga9CpjSB3QnMcdNYl5YlH6+hFMN47BRVVq+WVlk3J59PyFeO/FTkI
+         iYhceT3qDe2VF/SxY/GEDMH55uYr/GHaIhJz5rQBO3BnFpgJPI8DTbsxY59HhF1alolM
+         BoG3wyu54qf2nTpEDdHMDI+qrD38j2sz8H90uy0XdMjje2Q/xobGrdvJwQvXX9igWlOw
+         WnwdQniFduJMd7gkSviN9zHrBVZuXphSyzjn+P+3jeOFP5A58tDUZNp1ryuDS2+cBbTX
+         +AMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PmzRd7ne9yP74dYg3lDIMJ/jrvhsKEQVEGvRcfpnvR0=;
+        b=UK43ckXcPomfqtRWteX8Amg3TRaDgwuWfdqWIDkDGuNpP+1cYXhyvVFjmKoO25gNEo
+         5IsQ07dZrAlMleKus+Qzyxs98JknkalhgthtQtMtFzGa6vkGunBr44DCjzBVDO6OEVfx
+         4z+xmtWpNBzyzmNH4ZLgU04/i2rRjffsAfNqI5lframtkAWyC4V75EaD6Dz++23WPxLo
+         gBJZtGC+Xm2Rp16BgIh+eujNnpqV8CYSobr+vW7qGDqGYfYVGaIbZhaeYY9lVwZD8wax
+         ceaXtgQmJidKW8+K5uRTXWnZVIpmPHM2eqwLW/1KwQ5H1TKQZv1MgIRBe/VI1boRXxbY
+         pKBg==
+X-Gm-Message-State: AOAM531a6MN4Ai/M6CKZ417nBNTb/qnkdzpVcVmBUYysDS3ZSh1Iaf9e
+        4qnx5xPhoUP8hQ93TiTCh2M=
+X-Google-Smtp-Source: ABdhPJzcvY41ZqULKyhqNo9CbbjMJVxagadNnyAQMOTeRMSXApWYGM3qO/jLueLjZbvJ0+dxOPTRvA==
+X-Received: by 2002:ac2:4e04:: with SMTP id e4mr11764215lfr.39.1614685900913;
+        Tue, 02 Mar 2021 03:51:40 -0800 (PST)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Mar 2021 03:51:40 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] Couple improvements for Tegra clk driver
+Date:   Tue,  2 Mar 2021 14:51:11 +0300
+Message-Id: <20210302115117.9375-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+This series fixes couple minor standalone problems of the Tegra clk
+driver.
 
-[ Upstream commit 785c02eb35009a4be6dbc68f4f7d916e90b7177d ]
+Changelog:
 
-In some rare occasions, we want to only set the RETAIN_MEM bit, but
-not the RETAIN_PERIPH one: this is seen on at least SDM630/636/660's
-GPU-GX GDSC, where unsetting and setting back the RETAIN_PERIPH bit
-will generate chaos and panics during GPU suspend time (mainly, the
-chaos is unaligned access).
+v3: - Added acks from Thierry Reding that he gave to v2.
 
-For this reason, introduce a new NO_RET_PERIPH flag to the GDSC
-driver to address this corner case.
+    - Added new patch "clk: tegra: Don't allow zero clock rate for PLLs".
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Link: https://lore.kernel.org/r/20210113183817.447866-8-angelogioacchino.delregno@somainline.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/qcom/gdsc.c | 10 ++++++++--
- drivers/clk/qcom/gdsc.h |  3 ++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+v2: - Added these new patches:
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index af26e0695b86..51ed640e527b 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -183,7 +183,10 @@ static inline int gdsc_assert_reset(struct gdsc *sc)
- static inline void gdsc_force_mem_on(struct gdsc *sc)
- {
- 	int i;
--	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
-+	u32 mask = RETAIN_MEM;
-+
-+	if (!(sc->flags & NO_RET_PERIPH))
-+		mask |= RETAIN_PERIPH;
- 
- 	for (i = 0; i < sc->cxc_count; i++)
- 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, mask);
-@@ -192,7 +195,10 @@ static inline void gdsc_force_mem_on(struct gdsc *sc)
- static inline void gdsc_clear_mem_on(struct gdsc *sc)
- {
- 	int i;
--	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
-+	u32 mask = RETAIN_MEM;
-+
-+	if (!(sc->flags & NO_RET_PERIPH))
-+		mask |= RETAIN_PERIPH;
- 
- 	for (i = 0; i < sc->cxc_count; i++)
- 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, 0);
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index bd537438c793..5bb396b344d1 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -42,7 +42,7 @@ struct gdsc {
- #define PWRSTS_ON		BIT(2)
- #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
- #define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
--	const u8			flags;
-+	const u16			flags;
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
- #define HW_CTRL		BIT(2)
-@@ -51,6 +51,7 @@ struct gdsc {
- #define POLL_CFG_GDSCR	BIT(5)
- #define ALWAYS_ON	BIT(6)
- #define RETAIN_FF_ENABLE	BIT(7)
-+#define NO_RET_PERIPH	BIT(8)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
+      clk: tegra: Halve SCLK rate on Tegra20
+      MAINTAINERS: Hand Tegra clk driver to Jon and Thierry
+
+v1: - Collected clk patches into a single series.
+
+Dmitry Osipenko (6):
+  clk: tegra30: Use 300MHz for video decoder by default
+  clk: tegra: Fix refcounting of gate clocks
+  clk: tegra: Ensure that PLLU configuration is applied properly
+  clk: tegra: Halve SCLK rate on Tegra20
+  MAINTAINERS: Hand Tegra clk driver to Jon and Thierry
+  clk: tegra: Don't allow zero clock rate for PLLs
+
+ CREDITS                             |  6 +++
+ MAINTAINERS                         |  4 +-
+ drivers/clk/tegra/clk-periph-gate.c | 72 +++++++++++++++++++----------
+ drivers/clk/tegra/clk-periph.c      | 11 +++++
+ drivers/clk/tegra/clk-pll.c         | 12 +++--
+ drivers/clk/tegra/clk-tegra20.c     |  6 +--
+ drivers/clk/tegra/clk-tegra30.c     |  2 +-
+ 7 files changed, 77 insertions(+), 36 deletions(-)
+
 -- 
-2.30.1
+2.29.2
 
