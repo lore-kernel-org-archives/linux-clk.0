@@ -2,174 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDA7C4361A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0565C4160E
 	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F157E64EC4
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A3364E84
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352796AbhCCEPi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:15:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56436 "EHLO mail.kernel.org"
+        id S1352801AbhCCEPu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:15:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351072AbhCBVmm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Mar 2021 16:42:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 64A2464F32;
-        Tue,  2 Mar 2021 21:41:59 +0000 (UTC)
+        id S1838133AbhCBXFN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Mar 2021 18:05:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BB845614A7;
+        Tue,  2 Mar 2021 23:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614721320;
-        bh=nZ1YPBcTEc5Eb+9gTvd2F1g+zdYEeqMk6SozTaIVERs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=d5G4KDNhrdzlhGKMbcTCP1DHrr/CzW1gxHKPsJqIC7VlImP1U6FELXvv5jLPdhL08
-         hxCblVaUJYSR3nfYW3gG84raaR6btSQ67gba2BMX4FuLxPXwXOJYc0Ag9JmaKnkdZx
-         WfAvDhNzMP1USoWZXtnZ4EBRoFfTiY2CwUA9YReEN9takunX52ICOB8fgSVgOzLV+V
-         4J36X37DZmcV1qnJF0yX7pCjE+jutOwWXzkeH2jGlhH39EWN3dkNWSO39ZGg9/0A8A
-         0rUylqNldazls9cVqdJ/1AKepnB43dm2fLw+DKVEc2XBzCKfMfywoW4MTZhpR3rXIt
-         J/ntVvJks230w==
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     sboyd@kernel.org
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] clk: socfpga: use clk_hw_register for a5/c5
-Date:   Tue,  2 Mar 2021 15:41:49 -0600
-Message-Id: <20210302214151.1333447-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.30.0
+        s=k20201202; t=1614726272;
+        bh=VmZ6Ik2ZSnnZpTOZSIxyVdcyKcQ9ArweNZ4G9uZr2Ks=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=iyJnaNrzKJ4WcqrcLThQe9GUC3Goimq5X/WFpNyrCT8VCBI4pyUuzPPLPSk+vMW7a
+         EdxCwT2tpH+3P71T+C6egnwQ+ybtt1j02kGby3sfn/NVjzHkNzznYymEC/NXD+60wX
+         IMuRxl/c2DVquTx/wCfXvChrrR7rd7MERbYkm3rUYuh2nZL1u8JNyozflC+5eeCZc6
+         xjIjb8nO5Yx8QhCVnW/ohyoBDhW5QEQE2M35qyMQ/E+QQ9sCcO4Xu2/QhRhk+Qci+D
+         ddAF6xzt7PVK5XfDumBFs46nTdZyFEI5np5AKk/LEob7MMDdoTJ9Njc/H4fjGBe3Cp
+         c05KQCIxEPB2A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210302115646.62291-22-sashal@kernel.org>
+References: <20210302115646.62291-1-sashal@kernel.org> <20210302115646.62291-22-sashal@kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.10 22/47] clk: qcom: gdsc: Implement NO_RET_PERIPH flag
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Tue, 02 Mar 2021 15:04:31 -0800
+Message-ID: <161472627150.1254594.15331941259835237534@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As recommended by Stephen Boyd, convert the cyclone5/arria5 clock driver
-to use the clk_hw registration method.
+Quoting Sasha Levin (2021-03-02 03:56:21)
+> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.or=
+g>
+>=20
+> [ Upstream commit 785c02eb35009a4be6dbc68f4f7d916e90b7177d ]
+>=20
+> In some rare occasions, we want to only set the RETAIN_MEM bit, but
+> not the RETAIN_PERIPH one: this is seen on at least SDM630/636/660's
+> GPU-GX GDSC, where unsetting and setting back the RETAIN_PERIPH bit
+> will generate chaos and panics during GPU suspend time (mainly, the
+> chaos is unaligned access).
+>=20
+> For this reason, introduce a new NO_RET_PERIPH flag to the GDSC
+> driver to address this corner case.
+>=20
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-gate.c   | 11 +++++++----
- drivers/clk/socfpga/clk-periph.c |  8 ++++----
- drivers/clk/socfpga/clk-pll.c    | 18 +++++++++++-------
- 3 files changed, 22 insertions(+), 15 deletions(-)
+Same comment as on 5.11
 
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index 43ecd507bf83..b17aba5799d2 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -174,13 +174,14 @@ void __init socfpga_gate_init(struct device_node *node)
- 	u32 div_reg[3];
- 	u32 clk_phase[2];
- 	u32 fixed_div;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	struct clk_ops *ops;
- 	int rc;
-+	int err;
- 
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
- 	if (WARN_ON(!socfpga_clk))
-@@ -238,12 +239,14 @@ void __init socfpga_gate_init(struct device_node *node)
- 	init.parent_names = parent_name;
- 	socfpga_clk->hw.hw.init = &init;
- 
--	clk = clk_register(NULL, &socfpga_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	hw_clk = &socfpga_clk->hw.hw;
-+
-+	err = clk_hw_register(NULL, hw_clk);
-+	if (err) {
- 		kfree(socfpga_clk);
- 		return;
- 	}
--	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
- 	if (WARN_ON(rc))
- 		return;
- }
-diff --git a/drivers/clk/socfpga/clk-periph.c b/drivers/clk/socfpga/clk-periph.c
-index 5e0c4b45f77f..43707e2d7248 100644
---- a/drivers/clk/socfpga/clk-periph.c
-+++ b/drivers/clk/socfpga/clk-periph.c
-@@ -51,7 +51,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	const struct clk_ops *ops)
- {
- 	u32 reg;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
-@@ -94,13 +94,13 @@ static __init void __socfpga_periph_init(struct device_node *node,
- 	init.parent_names = parent_name;
- 
- 	periph_clk->hw.hw.init = &init;
-+	hw_clk = &periph_clk->hw.hw;
- 
--	clk = clk_register(NULL, &periph_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	if (clk_hw_register(NULL, hw_clk)) {
- 		kfree(periph_clk);
- 		return;
- 	}
--	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
- }
- 
- void __init socfpga_periph_init(struct device_node *node)
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index 3cf99df7d005..dcb573d44034 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -70,16 +70,18 @@ static const struct clk_ops clk_pll_ops = {
- 	.get_parent = clk_pll_get_parent,
- };
- 
--static __init struct clk *__socfpga_pll_init(struct device_node *node,
-+static __init struct clk_hw *__socfpga_pll_init(struct device_node *node,
- 	const struct clk_ops *ops)
- {
- 	u32 reg;
--	struct clk *clk;
-+	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
- 	struct device_node *clkmgr_np;
-+	int rc;
-+	int err;
- 
- 	of_property_read_u32(node, "reg", &reg);
- 
-@@ -105,13 +107,15 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
- 
--	clk = clk_register(NULL, &pll_clk->hw.hw);
--	if (WARN_ON(IS_ERR(clk))) {
-+	hw_clk = &pll_clk->hw.hw;
-+
-+	err = clk_hw_register(NULL, hw_clk);
-+	if (err) {
- 		kfree(pll_clk);
--		return NULL;
-+		return ERR_PTR(err);
- 	}
--	of_clk_add_provider(node, of_clk_src_simple_get, clk);
--	return clk;
-+	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
-+	return hw_clk;
- }
- 
- void __init socfpga_pll_init(struct device_node *node)
--- 
-2.30.0
-
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@soma=
+inline.org>
+> Link: https://lore.kernel.org/r/20210113183817.447866-8-angelogioacchino.=
+delregno@somainline.org
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 10 ++++++++--
+>  drivers/clk/qcom/gdsc.h |  3 ++-
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index af26e0695b86..51ed640e527b 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -183,7 +183,10 @@ static inline int gdsc_assert_reset(struct gdsc *sc)
+>  static inline void gdsc_force_mem_on(struct gdsc *sc)
+>  {
+>         int i;
+> -       u32 mask =3D RETAIN_MEM | RETAIN_PERIPH;
+> +       u32 mask =3D RETAIN_MEM;
+> +
+> +       if (!(sc->flags & NO_RET_PERIPH))
+> +               mask |=3D RETAIN_PERIPH;
+> =20
+>         for (i =3D 0; i < sc->cxc_count; i++)
+>                 regmap_update_bits(sc->regmap, sc->cxcs[i], mask, mask);
+> @@ -192,7 +195,10 @@ static inline void gdsc_force_mem_on(struct gdsc *sc)
+>  static inline void gdsc_clear_mem_on(struct gdsc *sc)
+>  {
+>         int i;
+> -       u32 mask =3D RETAIN_MEM | RETAIN_PERIPH;
+> +       u32 mask =3D RETAIN_MEM;
+> +
+> +       if (!(sc->flags & NO_RET_PERIPH))
+> +               mask |=3D RETAIN_PERIPH;
+> =20
+>         for (i =3D 0; i < sc->cxc_count; i++)
+>                 regmap_update_bits(sc->regmap, sc->cxcs[i], mask, 0);
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index bd537438c793..5bb396b344d1 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -42,7 +42,7 @@ struct gdsc {
+>  #define PWRSTS_ON              BIT(2)
+>  #define PWRSTS_OFF_ON          (PWRSTS_OFF | PWRSTS_ON)
+>  #define PWRSTS_RET_ON          (PWRSTS_RET | PWRSTS_ON)
+> -       const u8                        flags;
+> +       const u16                       flags;
+>  #define VOTABLE                BIT(0)
+>  #define CLAMP_IO       BIT(1)
+>  #define HW_CTRL                BIT(2)
+> @@ -51,6 +51,7 @@ struct gdsc {
+>  #define POLL_CFG_GDSCR BIT(5)
+>  #define ALWAYS_ON      BIT(6)
+>  #define RETAIN_FF_ENABLE       BIT(7)
+> +#define NO_RET_PERIPH  BIT(8)
+>         struct reset_controller_dev     *rcdev;
+>         unsigned int                    *resets;
+>         unsigned int                    reset_count;
+> --=20
+> 2.30.1
+>
