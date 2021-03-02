@@ -2,109 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0229C432C3
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A630C4360C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F91A64E84
+	by mail.kernel.org (Postfix) with ESMTP id C698A64E86
 	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352740AbhCCEPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:15:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1580311AbhCBSBl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 13:01:41 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A1DC0617AA;
-        Tue,  2 Mar 2021 03:51:46 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id k9so10901744lfo.12;
-        Tue, 02 Mar 2021 03:51:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Aptp5NmMT0c2/gtpHM3jND6fOADz+c+cCW4tHwby9/0=;
-        b=CX7XQ3GoFscwZMGxuAprdkK2a4Ju5XArGZ24+JTaHoSZbDUMIX3tylUM85HR+lIYwy
-         7EZLUdpKL34vby84vZXUo4i7EGGsd/Iq66dzQZNVvqPW3FTYpJFpRe3mrz+DKuSLzirC
-         bEO+uBMbnnDiWPe42HL2721BLautywGKFN/DIqogn1BrjQmKG5VLYUXmEB7KKhkOhTeN
-         Lp9n6BksMGi27Vei5UegQzsmt/OFS1A0gdbrarFEYhTm8jgAY5vTXf9Q6NpkeOlfs6RA
-         umCVj6yOSH4emp6nwUDu4zrEJGXWWZXH1+I+AaBNY6JpYIHxTnRXj05wadUrjWLaAgnw
-         ZgOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Aptp5NmMT0c2/gtpHM3jND6fOADz+c+cCW4tHwby9/0=;
-        b=ZsMZHFr3yQhmPzdbxzHEJZvEWh7DB5CVF7bDmRaYllKxl852GX8pntlp+hm9nth9tH
-         PzLdjOhLLlncflCAQC7UYbaOGvd0bGW94FSvhrSCuEcOl/4KhUhgb8efDdwxq4ocdKoC
-         kPDsQJcBlWMcl7kKYaBzKl7HBRtsRUi5IxysC0i+FQQ1+y9ZjCe+CbTUgHvTuWcZ2Gum
-         kqnFtSsMXEMS33GRoglMWfrXdArx2RhrNU+TCKC8MiE3UskK+4T6KlThzfXN9ED3uErk
-         J2mvkzjGWKNtvchRPNuvpRHmLaQ1Op46sM6Y7p2Bq+Oe4ijtfwWjAa090V7gm6fFQasi
-         pgJA==
-X-Gm-Message-State: AOAM53101k1kGkzj5Qbb65R2M0qZxwIg+Jxf0dw+TO8Rf/TaTJVMqb7q
-        jj4Isoo9PdZs3tG8i7VvwIk=
-X-Google-Smtp-Source: ABdhPJwUa/fs69l5VobYIqUc2szq+QvQXNGsM9mxk1A52i95jEswLEFCVUXMJqqtPYq9V8LLFOrgFA==
-X-Received: by 2002:a19:c3c3:: with SMTP id t186mr11924940lff.596.1614685904824;
-        Tue, 02 Mar 2021 03:51:44 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 03:51:44 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] clk: tegra: Don't allow zero clock rate for PLLs
-Date:   Tue,  2 Mar 2021 14:51:17 +0300
-Message-Id: <20210302115117.9375-7-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302115117.9375-1-digetx@gmail.com>
-References: <20210302115117.9375-1-digetx@gmail.com>
+        id S1352795AbhCCEPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:15:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351078AbhCBVmm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Mar 2021 16:42:42 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E949864F35;
+        Tue,  2 Mar 2021 21:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614721322;
+        bh=7Wrbh9hE4WdC65V/AJ8ebT2/ZBfh581DMtymckjIKoA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rdMW2/tB3Yp/04GqRn9+IRSz0xA3QsRG3zv/3k/hnkZqTtMNQy6ArVTAg2lz+W8Er
+         Dh+Xsgu6VhnwaEF9zaKjqXbqfzaWJVbIwkcB0jLRkOvz8EZOUIMlSMSTXH6Tx+k/lk
+         1f6MtywgWWMIAWQJq/YlkWvcKlsT76n6uptSh7WKynPoQSXt29ZP2bRPG0X7sS9tns
+         kDq2CdqYwV7yKwE+tLyZpTjNUBzTjUtV+fR8LLeBj9e3j9snbj++/rA3SE+/Z3XTPv
+         icnxy4LXEHnLP5GYl2h125QNaclyxsU8qGG3+9hNNRIlo7tMyX5376rAzX3LWZEL3m
+         nj5QGPjjCrJiQ==
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     sboyd@kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] clk: socfpga: arria10: convert to use clk_hw
+Date:   Tue,  2 Mar 2021 15:41:50 -0600
+Message-Id: <20210302214151.1333447-2-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210302214151.1333447-1-dinguyen@kernel.org>
+References: <20210302214151.1333447-1-dinguyen@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Zero clock rate doesn't make sense for PLLs and tegra-clk driver enters
-into infinite loop on trying to calculate PLL parameters for zero rate.
-Make code to error out if requested rate is zero.
+As recommended by Stephen Boyd, convert the Arria10 clock driver to use
+the clk_hw registration method.
 
-Originally this trouble was found by Robert Yang while he was trying to
-bring up upstream kernel on Samsung Galaxy Tab, which happened due to a
-bug in Tegra DRM driver that erroneously sets PLL rate to zero. This
-issues came over again recently during of kernel bring up on ASUS TF700T.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/clk/tegra/clk-pll.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/socfpga/clk-gate-a10.c   |  8 ++++----
+ drivers/clk/socfpga/clk-periph-a10.c | 11 ++++++-----
+ drivers/clk/socfpga/clk-pll-a10.c    | 12 ++++++------
+ 3 files changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d709ecb7d8d7..af7d4941042e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -558,6 +558,9 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	u32 p_div = 0;
- 	int ret;
+diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
+index cd5df9103614..f5cba8298712 100644
+--- a/drivers/clk/socfpga/clk-gate-a10.c
++++ b/drivers/clk/socfpga/clk-gate-a10.c
+@@ -98,7 +98,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	u32 div_reg[3];
+ 	u32 clk_phase[2];
+ 	u32 fixed_div;
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_gate_clk *socfpga_clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+@@ -159,13 +159,13 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+ 	init.parent_names = parent_name;
+ 	socfpga_clk->hw.hw.init = &init;
++	hw_clk = &socfpga_clk->hw.hw;
  
-+	if (!rate)
-+		return -EINVAL;
+-	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	if (clk_hw_register(NULL, hw_clk)) {
+ 		kfree(socfpga_clk);
+ 		return;
+ 	}
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+ 	if (WARN_ON(rc))
+ 		return;
+ }
+diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
+index 3e0c55727b89..b9cdde4b8441 100644
+--- a/drivers/clk/socfpga/clk-periph-a10.c
++++ b/drivers/clk/socfpga/clk-periph-a10.c
+@@ -61,7 +61,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	const struct clk_ops *ops)
+ {
+ 	u32 reg;
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+@@ -104,12 +104,13 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+-	clk = clk_register(NULL, &periph_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	hw_clk = &periph_clk->hw.hw;
 +
- 	switch (parent_rate) {
- 	case 12000000:
- 	case 26000000:
++	if (clk_hw_register(NULL, hw_clk)) {
+ 		kfree(periph_clk);
+ 		return;
+ 	}
+-	rc = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	rc = of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
+ 	if (rc < 0) {
+ 		pr_err("Could not register clock provider for node:%s\n",
+ 		       clk_name);
+@@ -119,7 +120,7 @@ static __init void __socfpga_periph_init(struct device_node *node,
+ 	return;
+ 
+ err_clk:
+-	clk_unregister(clk);
++	clk_hw_unregister(hw_clk);
+ }
+ 
+ void __init socfpga_a10_periph_init(struct device_node *node)
+diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
+index 3338f054fe98..bee0f7da5b6e 100644
+--- a/drivers/clk/socfpga/clk-pll-a10.c
++++ b/drivers/clk/socfpga/clk-pll-a10.c
+@@ -63,11 +63,11 @@ static const struct clk_ops clk_pll_ops = {
+ 	.get_parent = clk_pll_get_parent,
+ };
+ 
+-static struct clk * __init __socfpga_pll_init(struct device_node *node,
++static struct clk_hw * __init __socfpga_pll_init(struct device_node *node,
+ 	const struct clk_ops *ops)
+ {
+ 	u32 reg;
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_pll *pll_clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name[SOCFGPA_MAX_PARENTS];
+@@ -101,14 +101,14 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
++	hw_clk = &pll_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &pll_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	if (clk_hw_register(NULL, hw_clk)) {
+ 		kfree(pll_clk);
+ 		return NULL;
+ 	}
+-	of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-	return clk;
++	of_clk_add_provider(node, of_clk_src_simple_get, hw_clk);
++	return hw_clk;
+ }
+ 
+ void __init socfpga_a10_pll_init(struct device_node *node)
 -- 
-2.29.2
+2.30.0
 
