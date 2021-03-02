@@ -2,105 +2,756 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AD5C4321A
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B770C43603
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45F4664E87
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47BB864E86
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233257AbhCCEPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:15:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1580308AbhCBSBl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 13:01:41 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030FDC061793;
-        Tue,  2 Mar 2021 03:51:43 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id p15so14621375ljc.13;
-        Tue, 02 Mar 2021 03:51:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=S2GajrmIPPhVShSD9htWQH0c4G3php+jiJW9ohFhNDc=;
-        b=a5NQi+dCliDqU3MZIq+HV1G7Hv02G5jQ0YFeFVSZ05AtJzCjeBzkUuynfOhQQrsZT1
-         +YSsRtVpekBd60kcBJL2wZWhFrnVdIdyrp3DSFSOWq1WzwaYFoydtpytUmoE0LGo+hdO
-         PuGVU8a7n1MgPrQ7uD84HL4NdY0tcJJqyy/73Tn7geG0d8+OJ/L6G9tACVPZ2XiikmkB
-         8xUYvwGXLOeQaQ40VYUTwDc76BfOwVoEAC0TkyYDzy3gjltu1B9iZZB8P4rwmF/C7iJp
-         1WzbACU6/uQmiq7wUMQ9euWMHbDN13X8WKiyvtMHHG93/hAHrsj8syG3lMQgRgJZTn7i
-         qwGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S2GajrmIPPhVShSD9htWQH0c4G3php+jiJW9ohFhNDc=;
-        b=GQNboFbL8xcfNKc1TudNyrDTxPKpsrRoATSM39RhQliQU29yJlNr6bYWzUOhU9pD0G
-         FPEhGW8VauBFSw/OqAbEaHhNh3JuUpFA6e6UhDCzwoE/H7morsz4i4hjgYoF4FvN8Jns
-         9SUeHEfXedd/ns3afH5EozuWQaI85p0Q/w5Y4imV64lEvjfxGgUwZG4U2DMuqBzEEcJF
-         Kb1AQT59jFT3u1yWniNwPbq+uZcsOgzc/L4Ys3SLI6KGMAjo9wae3d1cIL7WJTae9NwV
-         81HNN7g4HnqKxEKQgCoyUZG+9aZQpOogmwyfA7/3nczzvfE/8kIv+nf8EczCL8/MAUE8
-         zdHQ==
-X-Gm-Message-State: AOAM53112BJoqeth2ol8GhddOLMPc/s2tbIZSNXQ6PqqPCIJ99NUXGNB
-        +zXRI5jNN2umGXHdCZgCWiA=
-X-Google-Smtp-Source: ABdhPJyI63/HAHDw1/qnwJWecxidCq4Nihj3lXQGz7sFgGtD9auDUtWwRaK52RQSayhmGEumTOeeSw==
-X-Received: by 2002:a2e:b4c8:: with SMTP id r8mr6000300ljm.57.1614685901553;
-        Tue, 02 Mar 2021 03:51:41 -0800 (PST)
-Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
-        by smtp.gmail.com with ESMTPSA id f4sm2720151lja.69.2021.03.02.03.51.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 03:51:41 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/6] clk: tegra30: Use 300MHz for video decoder by default
-Date:   Tue,  2 Mar 2021 14:51:12 +0300
-Message-Id: <20210302115117.9375-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210302115117.9375-1-digetx@gmail.com>
-References: <20210302115117.9375-1-digetx@gmail.com>
+        id S1352799AbhCCEPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351081AbhCBVmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Mar 2021 16:42:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 866CC64F34;
+        Tue,  2 Mar 2021 21:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614721323;
+        bh=5ZWDjPlSsimBioG9Isf0JvfbEeVDd9jx8ia2qBvh5Rw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l0w+Vx7o7Gm1SoKZjOKyIJixywunAQ544q7P2Y9eMrGeactSVvNbMVRcwfOR8ZPSK
+         3uimi3Dx9nox4mWiBCZH9+cLsToUOFtIjxZPzUB3lEP6rphbQl6Uw3VdKSoFBRADlN
+         lgI5h9eqXMeR2ChJEqdY6yf/VNAbp5RzSzzSB531vuD5vRJTk/09jR3IyXkXZTRXsu
+         FkoYmGYeoOyIhiPqpLdA9/V3sx32OCNzkVuutw+JKaL4zhg/PACnLv8I5iVxgD3iPM
+         wlXty0FKeRUVA2fiNrliELu2neZC2VWxQYLudAm2JwaHA9oroetqkfTCkwLaxZbVXt
+         iURnOTlYz1v6Q==
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     sboyd@kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] clk: socfpga: Convert to s10/agilex/n5x to use clk_hw
+Date:   Tue,  2 Mar 2021 15:41:51 -0600
+Message-Id: <20210302214151.1333447-3-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210302214151.1333447-1-dinguyen@kernel.org>
+References: <20210302214151.1333447-1-dinguyen@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 600MHz is a too high clock rate for some SoC versions for the video
-decoder hardware and this may cause stability issues. Use 300MHz for the
-video decoder by default, which is supported by all hardware versions.
+As recommended by Stephen Boyd, convert the Agilex/Stratix10/n5x clock
+driver to use the clk_hw registration method.
 
-Fixes: ed1a2459e20c ("clk: tegra: Add Tegra20/30 EMC clock implementation")
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra30.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/socfpga/clk-agilex.c     | 114 ++++++++++++++-------------
+ drivers/clk/socfpga/clk-gate-s10.c   |  15 ++--
+ drivers/clk/socfpga/clk-periph-s10.c |  42 +++++-----
+ drivers/clk/socfpga/clk-pll-s10.c    |  43 +++++-----
+ drivers/clk/socfpga/clk-s10.c        |  68 +++++++---------
+ drivers/clk/socfpga/stratix10-clk.h  |  24 +++---
+ 6 files changed, 159 insertions(+), 147 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 16dbf83d2f62..a33688b2359e 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1245,7 +1245,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
--	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
-+	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+index 7689bdd0a914..319c69112bcf 100644
+--- a/drivers/clk/socfpga/clk-agilex.c
++++ b/drivers/clk/socfpga/clk-agilex.c
+@@ -303,18 +303,18 @@ static const struct stratix10_gate_clock agilex_gate_clks[] = {
+ static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
+ 				       int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = n5x_register_periph(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = n5x_register_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 	return 0;
+ }
+@@ -322,18 +322,18 @@ static int n5x_clk_register_c_perip(const struct n5x_perip_c_clock *clks,
+ static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
+ 				       int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_periph(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 	return 0;
+ }
+@@ -341,18 +341,18 @@ static int agilex_clk_register_c_perip(const struct stratix10_perip_c_clock *clk
+ static int agilex_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *clks,
+ 					 int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_cnt_periph(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_cnt_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+@@ -360,18 +360,18 @@ static int agilex_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock
+ 
+ static int agilex_clk_register_gate(const struct stratix10_gate_clock *clks,					    int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_gate(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_gate(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+@@ -380,18 +380,18 @@ static int agilex_clk_register_gate(const struct stratix10_gate_clock *clks,
+ static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
+ 				 int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = agilex_register_pll(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = agilex_register_pll(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+@@ -400,64 +400,49 @@ static int agilex_clk_register_pll(const struct stratix10_pll_clock *clks,
+ static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
+ 				 int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = n5x_register_pll(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = n5x_register_pll(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static struct stratix10_clock_data *__socfpga_agilex_clk_init(struct platform_device *pdev,
+-						    int nr_clks)
++static int agilex_clkmgr_init(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device *dev = &pdev->dev;
+ 	struct stratix10_clock_data *clk_data;
+-	struct clk **clk_table;
+ 	struct resource *res;
+ 	void __iomem *base;
+-	int ret;
++	int i, num_clks;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base))
+-		return ERR_CAST(base);
+-
+-	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
+-	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
++		return PTR_ERR(base);
+ 
+-	clk_data->base = base;
+-	clk_table = devm_kcalloc(dev, nr_clks, sizeof(*clk_table), GFP_KERNEL);
+-	if (!clk_table)
+-		return ERR_PTR(-ENOMEM);
+-
+-	clk_data->clk_data.clks = clk_table;
+-	clk_data->clk_data.clk_num = nr_clks;
+-	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+-	if (ret)
+-		return ERR_PTR(ret);
++	num_clks = AGILEX_NUM_CLKS;
+ 
+-	return clk_data;
+-}
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
++				num_clks), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+-static int agilex_clkmgr_init(struct platform_device *pdev)
+-{
+-	struct stratix10_clock_data *clk_data;
++	for (i = 0; i < num_clks; i++)
++		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
+ 
+-	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
+-	if (IS_ERR(clk_data))
+-		return PTR_ERR(clk_data);
++	clk_data->base = base;
++	clk_data->clk_data.num = num_clks;
+ 
+ 	agilex_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
+ 
+@@ -470,16 +455,36 @@ static int agilex_clkmgr_init(struct platform_device *pdev)
+ 
+ 	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+ 			      clk_data);
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+ 	return 0;
+ }
+ 
+ static int n5x_clkmgr_init(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
+ 	struct stratix10_clock_data *clk_data;
++	struct resource *res;
++	void __iomem *base;
++	int i, num_clks;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	num_clks = AGILEX_NUM_CLKS;
++
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
++				num_clks), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	for (i = 0; i < num_clks; i++)
++		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
+ 
+-	clk_data = __socfpga_agilex_clk_init(pdev, AGILEX_NUM_CLKS);
+-	if (IS_ERR(clk_data))
+-		return PTR_ERR(clk_data);
++	clk_data->base = base;
++	clk_data->clk_data.num = num_clks;
+ 
+ 	n5x_clk_register_pll(agilex_pll_clks, ARRAY_SIZE(agilex_pll_clks), clk_data);
+ 
+@@ -492,6 +497,7 @@ static int n5x_clkmgr_init(struct platform_device *pdev)
+ 
+ 	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+ 			      clk_data);
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
+index 083b2ec21fdd..f9f403d7bb58 100644
+--- a/drivers/clk/socfpga/clk-gate-s10.c
++++ b/drivers/clk/socfpga/clk-gate-s10.c
+@@ -65,12 +65,13 @@ static const struct clk_ops dbgclk_ops = {
+ 	.get_parent = socfpga_gate_get_parent,
+ };
+ 
+-struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __iomem *regbase)
++struct clk_hw *s10_register_gate(const struct stratix10_gate_clock *clks, void __iomem *regbase)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_gate_clk *socfpga_clk;
+ 	struct clk_init_data init;
+ 	const char *parent_name = clks->parent_name;
++	int ret;
+ 
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+ 	if (!socfpga_clk)
+@@ -112,10 +113,12 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
+ 		init.parent_data = clks->parent_data;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+-	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	hw_clk = &socfpga_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, &socfpga_clk->hw.hw);
++	if (ret) {
+ 		kfree(socfpga_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+index 0ff2b9d24035..e5a5fef76df7 100644
+--- a/drivers/clk/socfpga/clk-periph-s10.c
++++ b/drivers/clk/socfpga/clk-periph-s10.c
+@@ -93,14 +93,15 @@ static const struct clk_ops peri_cnt_clk_ops = {
+ 	.get_parent = clk_periclk_get_parent,
+ };
+ 
+-struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
++struct clk_hw *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 				void __iomem *reg)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
++	int ret;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -118,23 +119,25 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
++	hw_clk = &periph_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &periph_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(periph_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+ 
+-struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
++struct clk_hw *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+ 				void __iomem *regbase)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
++	int ret;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -151,23 +154,25 @@ struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+ 	init.parent_names = parent_name ? &parent_name : NULL;
+ 
+ 	periph_clk->hw.hw.init = &init;
++	hw_clk = &periph_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &periph_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(periph_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+ 
+-struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
++struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
+ 				    void __iomem *regbase)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_periph_clk *periph_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
++	int ret;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -195,11 +200,12 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
+ 		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
++	hw_clk = &periph_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &periph_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(periph_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+index f6f66e08e1f4..bc37461d43c0 100644
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -187,13 +187,14 @@ static const struct clk_ops clk_boot_ops = {
+ 	.prepare = clk_pll_prepare,
+ };
+ 
+-struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
++struct clk_hw *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 			     void __iomem *reg)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_pll *pll_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
++	int ret;
+ 
+ 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+ 	if (WARN_ON(!pll_clk))
+@@ -216,21 +217,24 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
+ 
+-	clk = clk_register(NULL, &pll_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	hw_clk = &pll_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(pll_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+ 
+-struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
++struct clk_hw *agilex_register_pll(const struct stratix10_pll_clock *clks,
+ 				void __iomem *reg)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_pll *pll_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
++	int ret;
+ 
+ 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+ 	if (WARN_ON(!pll_clk))
+@@ -252,22 +256,24 @@ struct clk *agilex_register_pll(const struct stratix10_pll_clock *clks,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
++	hw_clk = &pll_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &pll_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(pll_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+ 
+-struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
++struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
+ 			     void __iomem *reg)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	struct socfpga_pll *pll_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
++	int ret;
+ 
+ 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+ 	if (WARN_ON(!pll_clk))
+@@ -289,11 +295,12 @@ struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
++	hw_clk = &pll_clk->hw.hw;
+ 
+-	clk = clk_register(NULL, &pll_clk->hw.hw);
+-	if (WARN_ON(IS_ERR(clk))) {
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
+ 		kfree(pll_clk);
+-		return NULL;
++		return ERR_PTR(ret);
+ 	}
+-	return clk;
++	return hw_clk;
+ }
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index 661a8e9bfb9b..f0bd77138ecb 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -274,18 +274,18 @@ static const struct stratix10_gate_clock s10_gate_clks[] = {
+ static int s10_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
+ 				    int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_periph(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 	return 0;
+ }
+@@ -293,18 +293,18 @@ static int s10_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
+ static int s10_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *clks,
+ 				      int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_cnt_periph(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_cnt_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+@@ -313,18 +313,18 @@ static int s10_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *cl
+ static int s10_clk_register_gate(const struct stratix10_gate_clock *clks,
+ 				 int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_gate(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_gate(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+@@ -333,62 +333,50 @@ static int s10_clk_register_gate(const struct stratix10_gate_clock *clks,
+ static int s10_clk_register_pll(const struct stratix10_pll_clock *clks,
+ 				 int nums, struct stratix10_clock_data *data)
+ {
+-	struct clk *clk;
++	struct clk_hw *hw_clk;
+ 	void __iomem *base = data->base;
+ 	int i;
+ 
+ 	for (i = 0; i < nums; i++) {
+-		clk = s10_register_pll(&clks[i], base);
+-		if (IS_ERR(clk)) {
++		hw_clk = s10_register_pll(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
+ 			pr_err("%s: failed to register clock %s\n",
+ 			       __func__, clks[i].name);
+ 			continue;
+ 		}
+-		data->clk_data.clks[clks[i].id] = clk;
++		data->clk_data.hws[clks[i].id] = hw_clk;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static struct stratix10_clock_data *__socfpga_s10_clk_init(struct platform_device *pdev,
+-						    int nr_clks)
++static int s10_clkmgr_init(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device *dev = &pdev->dev;
+ 	struct stratix10_clock_data *clk_data;
+-	struct clk **clk_table;
+ 	struct resource *res;
+ 	void __iomem *base;
++	int i, num_clks;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base)) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+-		return ERR_CAST(base);
++		return PTR_ERR(base);
+ 	}
+ 
+-	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
++	num_clks = STRATIX10_NUM_CLKS;
++	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
++						 num_clks), GFP_KERNEL);
+ 	if (!clk_data)
+-		return ERR_PTR(-ENOMEM);
++		return -ENOMEM;
+ 
+-	clk_data->base = base;
+-	clk_table = devm_kcalloc(dev, nr_clks, sizeof(*clk_table), GFP_KERNEL);
+-	if (!clk_table)
+-		return ERR_PTR(-ENOMEM);
+-
+-	clk_data->clk_data.clks = clk_table;
+-	clk_data->clk_data.clk_num = nr_clks;
+-	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
+-	return clk_data;
+-}
++	for (i = 0; i < num_clks; i++)
++		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
+ 
+-static int s10_clkmgr_init(struct platform_device *pdev)
+-{
+-	struct stratix10_clock_data *clk_data;
+-
+-	clk_data = __socfpga_s10_clk_init(pdev, STRATIX10_NUM_CLKS);
+-	if (IS_ERR(clk_data))
+-		return PTR_ERR(clk_data);
++	clk_data->base = base;
++	clk_data->clk_data.num = num_clks;
+ 
+ 	s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
+ 
+@@ -401,6 +389,8 @@ static int s10_clkmgr_init(struct platform_device *pdev)
+ 
+ 	s10_clk_register_gate(s10_gate_clks, ARRAY_SIZE(s10_gate_clks),
+ 			      clk_data);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
+index 420deed677ce..61eaf3a41fbb 100644
+--- a/drivers/clk/socfpga/stratix10-clk.h
++++ b/drivers/clk/socfpga/stratix10-clk.h
+@@ -7,7 +7,7 @@
+ #define	__STRATIX10_CLK_H
+ 
+ struct stratix10_clock_data {
+-	struct clk_onecell_data	clk_data;
++	struct clk_hw_onecell_data	clk_data;
+ 	void __iomem		*base;
+ };
+ 
+@@ -71,18 +71,18 @@ struct stratix10_gate_clock {
+ 	u8			fixed_div;
+ };
+ 
+-struct clk *s10_register_pll(const struct stratix10_pll_clock *,
+-			     void __iomem *);
+-struct clk *agilex_register_pll(const struct stratix10_pll_clock *,
+-				void __iomem *);
+-struct clk *n5x_register_pll(const struct stratix10_pll_clock *clks,
++struct clk_hw *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 			     void __iomem *reg);
+-struct clk *s10_register_periph(const struct stratix10_perip_c_clock *,
++struct clk_hw *agilex_register_pll(const struct stratix10_pll_clock *clks,
+ 				void __iomem *reg);
+-struct clk *n5x_register_periph(const struct n5x_perip_c_clock *clks,
++struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
++			     void __iomem *reg);
++struct clk_hw *s10_register_periph(const struct stratix10_perip_c_clock *clks,
++				void __iomem *reg);
++struct clk_hw *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+ 				void __iomem *reg);
+-struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *,
+-				    void __iomem *);
+-struct clk *s10_register_gate(const struct stratix10_gate_clock *,
+-			      void __iomem *);
++struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks,
++				    void __iomem *reg);
++struct clk_hw *s10_register_gate(const struct stratix10_gate_clock *clks,
++			      void __iomem *reg);
+ #endif	/* __STRATIX10_CLK_H */
 -- 
-2.29.2
+2.30.0
 
