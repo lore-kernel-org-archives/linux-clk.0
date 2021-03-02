@@ -2,114 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DBFC43331
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4BBC4361B
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0A2864E86
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CAFD64E84
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Mar 2021 04:25:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235968AbhCCEJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Mar 2021 23:09:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349645AbhCBLAY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 06:00:24 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6374DC06178A
-        for <linux-clk@vger.kernel.org>; Tue,  2 Mar 2021 02:59:28 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id b15so1699717pjb.0
-        for <linux-clk@vger.kernel.org>; Tue, 02 Mar 2021 02:59:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bxei/8aDMCYKqmTkktTk9ZHLkhHxr5aG3PN4M0TW8C4=;
-        b=O5WIbc61G3ZDHjgS4F7URCW/4/U7Isq2Mu3Wvdscu+y5vjL7ou79cWwbkvEnMvSgxq
-         1hzCTP07F89/w9x4GCJYWoM72kALz0iJfAWEJmmpHI0lFed1eRkp2DDe9YzHvtaTIZOl
-         vOuYG5dMQg0TLfE7crXbgi98xIBLaAl2GJmy+UMx5vYLZ4Yz4T1h7SzQoa+RNw3iqJ1U
-         ssCHXncGsytBp7FBr2Py8/qa53OWNBYf5gFCJ1LdXz6IkNZBloB4hKeCMspdquSxmZxc
-         0Zp6zzcH9fJwVtBv1DoVoVh6h+AmcHOMV/EoCxHt4CgJuGoF+r2+VN0EhKGaRyOBJSu9
-         yyDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bxei/8aDMCYKqmTkktTk9ZHLkhHxr5aG3PN4M0TW8C4=;
-        b=HtZBlKDvFhEfJSrttU+8UeE9Bu6OQy/r7LcLHdY+cErx8i4VZsPxftcYfURIChDOVH
-         JnLCb4w0aKuZ7xqrKo8tToOC9hBNqFxHPxoFjyMO15m3HlYu2QkOtCsTsPVnfhlK6kiq
-         TN3WOf6WBBGBXWqdY1mC9zJgZNPdqYv/tWXHMmZipO7IwVoxcGwb+ADCKW4OOAbLfZRB
-         O7NW4XKR9pcPUzesxHfT2Nky/Jn0bCniFL5k9zqfnbVLE7jJhaaX5clqq1UmvNRMBG93
-         g29NJsjFF+b5FpFWf3ng0BAOfYUhCg0wJhHxIYc+PZ6rGqCVmtxkaIPI6/pStpg8fCb6
-         jC4Q==
-X-Gm-Message-State: AOAM533Bs3FkkoPC95VI/s8WRf61A4eiAU1X1gMUsqMKAgdatAjGDOk7
-        AybkuSjSMayiKUlwz2NkQZZpug==
-X-Google-Smtp-Source: ABdhPJwIhIDCZFAmjDINOMpTIcq157qIxL63LYhmKeq117MzPFuyqWv2PhA0oDZBd4g793JCy1+/lQ==
-X-Received: by 2002:a17:90a:5d09:: with SMTP id s9mr3715808pji.172.1614682767885;
-        Tue, 02 Mar 2021 02:59:27 -0800 (PST)
-Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
-        by smtp.gmail.com with ESMTPSA id t26sm19500451pfq.208.2021.03.02.02.59.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Mar 2021 02:59:27 -0800 (PST)
-From:   Greentime Hu <greentime.hu@sifive.com>
-To:     greentime.hu@sifive.com, paul.walmsley@sifive.com, hes@sifive.com,
-        erik.danie@sifive.com, zong.li@sifive.com, bhelgaas@google.com,
-        robh+dt@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
-        alex.dewar90@gmail.com, khilman@baylibre.com,
-        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
-        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [RFC PATCH 0/6] Add SiFive FU740 PCIe host controller driver support
-Date:   Tue,  2 Mar 2021 18:59:11 +0800
-Message-Id: <cover.1614681831.git.greentime.hu@sifive.com>
-X-Mailer: git-send-email 2.30.0
+        id S1350420AbhCCEK6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Mar 2021 23:10:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244730AbhCBMC5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Mar 2021 07:02:57 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 838BE64F2D;
+        Tue,  2 Mar 2021 11:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614686169;
+        bh=vopivRZMCYdSGdIVT75/EUSZHcJpdNCmqrcBNRYkY2E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FIZKPjatggsaG/yk39phWy6xovpvJX0BF/BDuN2v3CYi7uD09ytnTcI/o7CZICNVK
+         JTDuxuaVXrBcH7GuZ+PwgqCtGutcQlPrBygn6c6HcKQJHozz9euxIstwaAyjrT2WzX
+         3YYPqmVI5qJjYsnzkUAhoAS6l0fj/TUwiT2ctxOT6fBypVIlG8wdb2XlVpe832jHiA
+         tiy/uSvjVKYe3BLxS8hqcbcKlNfEAipBKTCzRVxbCeMqhO9MhrTxhTQIe8URaH23KG
+         4ZY26dC1/R104p98pA/caypZEO31qBZGzZxasWfVcntLkBqh6ug5ln8TQqOBK2uDUV
+         AD3W7kAARi7xA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.11 26/52] clk: qcom: gdsc: Implement NO_RET_PERIPH flag
+Date:   Tue,  2 Mar 2021 06:55:07 -0500
+Message-Id: <20210302115534.61800-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210302115534.61800-1-sashal@kernel.org>
+References: <20210302115534.61800-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset includes SiFive FU740 PCIe host controller driver. We also
-add pcie_aux clock and pcie_power_on_reset controller to prci driver for
-PCIe driver to use it.
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 
-This is tested with e1000e: Intel(R) PRO/1000 Network Card and SP M.2 PCIe
-Gen 3 SSD in SiFive Unmatched.
+[ Upstream commit 785c02eb35009a4be6dbc68f4f7d916e90b7177d ]
 
-Greentime Hu (5):
-  clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
-  clk: sifive: Use reset-simple in prci driver for PCIe driver
-  MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
-  dt-bindings: PCI: Add SiFive FU740 PCIe host controller
-  riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
+In some rare occasions, we want to only set the RETAIN_MEM bit, but
+not the RETAIN_PERIPH one: this is seen on at least SDM630/636/660's
+GPU-GX GDSC, where unsetting and setting back the RETAIN_PERIPH bit
+will generate chaos and panics during GPU suspend time (mainly, the
+chaos is unaligned access).
 
-Paul Walmsley (1):
-  PCI: designware: Add SiFive FU740 PCIe host controller driver
+For this reason, introduce a new NO_RET_PERIPH flag to the GDSC
+driver to address this corner case.
 
- .../bindings/pci/sifive,fu740-pcie.yaml       | 119 +++++
- MAINTAINERS                                   |   8 +
- arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  34 ++
- drivers/clk/sifive/Kconfig                    |   2 +
- drivers/clk/sifive/fu740-prci.c               |  11 +
- drivers/clk/sifive/fu740-prci.h               |   2 +-
- drivers/clk/sifive/sifive-prci.c              |  55 +++
- drivers/clk/sifive/sifive-prci.h              |  13 +
- drivers/pci/controller/dwc/Kconfig            |   9 +
- drivers/pci/controller/dwc/Makefile           |   1 +
- drivers/pci/controller/dwc/pcie-fu740.c       | 455 ++++++++++++++++++
- drivers/reset/Kconfig                         |   3 +-
- include/dt-bindings/clock/sifive-fu740-prci.h |   1 +
- 13 files changed, 711 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
- create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Link: https://lore.kernel.org/r/20210113183817.447866-8-angelogioacchino.delregno@somainline.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/qcom/gdsc.c | 10 ++++++++--
+ drivers/clk/qcom/gdsc.h |  3 ++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index af26e0695b86..51ed640e527b 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -183,7 +183,10 @@ static inline int gdsc_assert_reset(struct gdsc *sc)
+ static inline void gdsc_force_mem_on(struct gdsc *sc)
+ {
+ 	int i;
+-	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
++	u32 mask = RETAIN_MEM;
++
++	if (!(sc->flags & NO_RET_PERIPH))
++		mask |= RETAIN_PERIPH;
+ 
+ 	for (i = 0; i < sc->cxc_count; i++)
+ 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, mask);
+@@ -192,7 +195,10 @@ static inline void gdsc_force_mem_on(struct gdsc *sc)
+ static inline void gdsc_clear_mem_on(struct gdsc *sc)
+ {
+ 	int i;
+-	u32 mask = RETAIN_MEM | RETAIN_PERIPH;
++	u32 mask = RETAIN_MEM;
++
++	if (!(sc->flags & NO_RET_PERIPH))
++		mask |= RETAIN_PERIPH;
+ 
+ 	for (i = 0; i < sc->cxc_count; i++)
+ 		regmap_update_bits(sc->regmap, sc->cxcs[i], mask, 0);
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index bd537438c793..5bb396b344d1 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -42,7 +42,7 @@ struct gdsc {
+ #define PWRSTS_ON		BIT(2)
+ #define PWRSTS_OFF_ON		(PWRSTS_OFF | PWRSTS_ON)
+ #define PWRSTS_RET_ON		(PWRSTS_RET | PWRSTS_ON)
+-	const u8			flags;
++	const u16			flags;
+ #define VOTABLE		BIT(0)
+ #define CLAMP_IO	BIT(1)
+ #define HW_CTRL		BIT(2)
+@@ -51,6 +51,7 @@ struct gdsc {
+ #define POLL_CFG_GDSCR	BIT(5)
+ #define ALWAYS_ON	BIT(6)
+ #define RETAIN_FF_ENABLE	BIT(7)
++#define NO_RET_PERIPH	BIT(8)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 -- 
-2.30.0
+2.30.1
 
