@@ -2,116 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C775C4161F
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9432C433E9
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2BA64EE6
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 881BF64EA4
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384022AbhCDAYZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:24:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
+        id S1384467AbhCDAYc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Mar 2021 19:24:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352793AbhCCEPK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Mar 2021 23:15:10 -0500
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 930C0C061788;
-        Tue,  2 Mar 2021 20:14:25 -0800 (PST)
-Received: by mail-io1-xd2b.google.com with SMTP id o11so16335213iob.1;
-        Tue, 02 Mar 2021 20:14:25 -0800 (PST)
+        with ESMTP id S1381611AbhCCOaz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Mar 2021 09:30:55 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D4CC061223
+        for <linux-clk@vger.kernel.org>; Wed,  3 Mar 2021 06:24:36 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id f12so20081295wrx.8
+        for <linux-clk@vger.kernel.org>; Wed, 03 Mar 2021 06:24:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zo3gUJWs9393wYgyXzymuxSeQ7dueyNuYkM5wpdwoFc=;
-        b=MD552PY6y65xJrjhF29XV7iOg3/islIe+vIrmqoJmYDzIeMhb3J3GCX1PP6wiUYECp
-         thgKt0/GztI/M5vFWL7FzGq3RdZ4kxnV5GgLZrUFzq1v3ykoCHipGjNHu1MOmLsLKRay
-         P67sK1jFWaSZLQJ62O3l2GnlJz9k41+bF+4dEzsE2I7t3ocx/qE0v7D4miQrJOBOLS1E
-         Z91retAEUT+LWCOV3+tq8p4Hl8UvhWMf1F/LkVKvwUQgjobj1axJFNfsec1vR15aXrLC
-         PIZA1sAjI8xYS/9PIdqP6wtcLw1tUvI+r/RaA4hbMNLOPfXzgao3Ek4S9eKnLLqB2xCs
-         ujTQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=it9P+DK6iP5ErXy9xYVyQcqeuX2qzCsyNDD/pOpRMy8=;
+        b=bCv0+BZqoHxmgNSoh3joTZ0q1LHIPhmjZuKV0OGmOkG4szC9K8mr5c3x4o3/55qPvR
+         TFyqxXYXXQaaXLajKGcgmFrzJ/uAeZK0EhV6u2SbBZ1vSgwHpA5CS1nkzSSdG7p2xCX4
+         GRsLxCg7Cx/cZeRjVYNei/8ZQCzo9m3awXUyzRGhEKVr109SsSurUUCbwHZfzkmey5kX
+         yi2nE3Kamp2p8Vaw+AXUzZI7LhGJxQsVyYgYsPyCCzr4Nn6W8TuuAn58GWG+lh1YcyF2
+         BrLxXAXAn/nXa/XbnYarXVNzFXIrdNSMf1U8r7nXuG1VVCLVNjg/Rt3IgcU+rYSw2LaM
+         CDwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zo3gUJWs9393wYgyXzymuxSeQ7dueyNuYkM5wpdwoFc=;
-        b=dHw3CeoQxzKWW7rqt+NH5cJ19WTlhVu8CRp0irI1g4mOFBb9irmicXgyt7ejTmNVJH
-         YuTW7gVJEd8ObMnLj7yVyqMh2CzRYhytOJ4udrFzGD2aelQfgVYkZOv9XYaWzix10Q9J
-         PWCV5ZDBA9Op7LZAPOpLVe831FzdXTzzokBHDr1UodeavwtfiyU2FoIKs7/NClzeu+eP
-         a4eZDWueE6JzImogZaGKAxi+3KIN17vlx6fH6PEzkH/Cjh98afGGMocFC56J3cFTkyXU
-         S5i9sUQdi2QEvWDYngCh8YPaV6WSnZbZ3XAcs3rf8cqytt4wWSgIUUKtNhTtQmcUf5FW
-         DPpw==
-X-Gm-Message-State: AOAM53171sEV8Hs/jy3gSkLZryNozdADa4eUWFavxbgVDYVlMmvQJwBa
-        D9k43cveFR9UKGHuqvCAFjnac0HyVjx+fG31pO8=
-X-Google-Smtp-Source: ABdhPJzoKgmT7fYr2kid6o7rDtiDHt+lUnnHDYJTdjFjqvo6EX9gZlEDB1kVQp3jZgnUtq/0IqH1JIfqAQ/GqpxWl70=
-X-Received: by 2002:a6b:be86:: with SMTP id o128mr20008278iof.111.1614744865089;
- Tue, 02 Mar 2021 20:14:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=it9P+DK6iP5ErXy9xYVyQcqeuX2qzCsyNDD/pOpRMy8=;
+        b=mzb4tWTAZfXZbEEqUWMxGdaah3uSUVgam9EAXL6p8AJw02xiMppKjh36rgghX/JiHX
+         9txOCnmdNedmaf9cM19mFTW70bMREV5WtLo+QxyxOH+eRHTxfRra397jbv8rp0gyK+om
+         nHi9DR6UiRKjhFrf/7hBfO2NchC7xYhl06Ik6bCNM/6vMd/nnmk3qg4Ou/iIdfVeDJLZ
+         +Ql6VGYkvFa6PSpKuS+ZSekZZCCPf2w+HGvgjl0nfGfoIjbG37ADZKWWgwHJho7/Lqvh
+         LgsU68KkSxC+9lpuHylAO1HpNIA6NCpQq3pmseuLdi6tHo/RW4wuDooWhmzzhMSviIci
+         wMnQ==
+X-Gm-Message-State: AOAM532ZTMYu+TfBFNdnQgv01qC/vOxv1SCyxixVEsMrv+uRGqMNoChC
+        zYPvrONrf/HmydOEs+ut05Bb0g==
+X-Google-Smtp-Source: ABdhPJw3CMoWWzbFtNcbV2/R1Pvc1edPxvMhVQScvKeuKIRLwW+pwgQ1OvHFltJYOw7xGmviS7p9lw==
+X-Received: by 2002:adf:e791:: with SMTP id n17mr27533260wrm.322.1614781474798;
+        Wed, 03 Mar 2021 06:24:34 -0800 (PST)
+Received: from dell.default ([91.110.221.155])
+        by smtp.gmail.com with ESMTPSA id b17sm10202399wrt.17.2021.03.03.06.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Mar 2021 06:24:34 -0800 (PST)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     lee.jones@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/1] clk: sunxi: Demote non-conformant kernel-doc headers
+Date:   Wed,  3 Mar 2021 14:24:30 +0000
+Message-Id: <20210303142430.3168703-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <1613623791-4598-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1613623791-4598-2-git-send-email-shubhrajyoti.datta@xilinx.com>
- <20210218092804.6c78c99c@xps13> <161369785558.1254594.14662342386099652001@swboyd.mtv.corp.google.com>
- <CAKfKVtH1rSc4d8MMZCegMNG8shNxgXfu6qTd9WxuaGGFMEJ6CA@mail.gmail.com> <161472644984.1478170.5535993198933302108@swboyd.mtv.corp.google.com>
-In-Reply-To: <161472644984.1478170.5535993198933302108@swboyd.mtv.corp.google.com>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Wed, 3 Mar 2021 09:44:14 +0530
-Message-ID: <CAKfKVtEvmMq6YB_0a-P-R2WcHYF3Ri80WYSYo_PFtG_Vxw+cUA@mail.gmail.com>
-Subject: Re: [PATCH v9 1/7] dt-bindings: add documentation of xilinx clocking wizard
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Headers must describe their parameters.
 
-On Wed, Mar 3, 2021 at 4:37 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Shubhrajyoti Datta (2021-02-24 06:10:08)
-> > On Fri, Feb 19, 2021 at 6:54 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > > > +
-> > > > > +  xlnx,speed-grade:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > > +    enum: [1, 2, 3]
-> > > > > +    description:
-> > > > > +      Speed grade of the device.
-> > > >
-> > > > A bit of explanation of what this describes would be welcome.
-> > > >
-> > > > Don't forget that binding are not tied to any driver implementation,
-> > > > these are supposed to be hardware description properties.
-> > >
-> > > Would opp tables work for this?
-> > This is the parameter is for speed of the fabric.
->
-> Ok. Yes or no? Is it configuring the speed of the fabric? Sounds like
-> assigned-clock-rates or assigned-interconnect-bandwidth or something
-> like that.
+Fixes the following W=1 kernel build warning(s):
 
-I do not think we could use opp tables.
-Xilinx has products where we have partly FPGA and patrly PS(hardware
-is not programmable) so the ip could be in PL
-and the processor  in PS.
+ drivers/clk/sunxi/clk-sun9i-core.c:27: warning: Function parameter or member 'req' not described in 'sun9i_a80_get_pll4_factors'
+ drivers/clk/sunxi/clk-sun9i-core.c:100: warning: Function parameter or member 'req' not described in 'sun9i_a80_get_gt_factors'
+ drivers/clk/sunxi/clk-sun9i-core.c:155: warning: Function parameter or member 'req' not described in 'sun9i_a80_get_ahb_factors'
+ drivers/clk/sunxi/clk-sun9i-core.c:235: warning: Function parameter or member 'req' not described in 'sun9i_a80_get_apb1_factors'
+ drivers/clk/sunxi/clk-usb.c:22: warning: cannot understand function prototype: 'struct usb_reset_data '
+ drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or member 'req' not described in 'sun6i_get_ar100_factors'
 
-The speed grade influences a variety of timing parameters in the FPGA,
-including fabric (slice), multiplier/DSP48x, BlockRAM, I/O, and other
-resources parameters.
+Cc: "Emilio López" <emilio@elopez.com.ar>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/clk/sunxi/clk-sun6i-ar100.c | 2 +-
+ drivers/clk/sunxi/clk-sun9i-core.c  | 8 ++++----
+ drivers/clk/sunxi/clk-usb.c         | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Basically the timing of the fabric is determined by it. Also we are
-notifying the speed grade to the driver no configuration is done.
-We are telling which speed-grade fabric we are running on.
+diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+index e1b7d0929cf7f..54babc2b4b9ee 100644
+--- a/drivers/clk/sunxi/clk-sun6i-ar100.c
++++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+@@ -16,7 +16,7 @@
+ 
+ #include "clk-factors.h"
+ 
+-/**
++/*
+  * sun6i_get_ar100_factors - Calculates factors p, m for AR100
+  *
+  * AR100 rate is calculated as follows
+diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
+index 305ad78d5fb4f..d93c7a53c6c02 100644
+--- a/drivers/clk/sunxi/clk-sun9i-core.c
++++ b/drivers/clk/sunxi/clk-sun9i-core.c
+@@ -14,7 +14,7 @@
+ #include "clk-factors.h"
+ 
+ 
+-/**
++/*
+  * sun9i_a80_get_pll4_factors() - calculates n, p, m factors for PLL4
+  * PLL4 rate is calculated as follows
+  * rate = (parent_rate * n >> p) / (m + 1);
+@@ -90,7 +90,7 @@ static void __init sun9i_a80_pll4_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun9i_a80_pll4, "allwinner,sun9i-a80-pll4-clk", sun9i_a80_pll4_setup);
+ 
+ 
+-/**
++/*
+  * sun9i_a80_get_gt_factors() - calculates m factor for GT
+  * GT rate is calculated as follows
+  * rate = parent_rate / (m + 1);
+@@ -145,7 +145,7 @@ static void __init sun9i_a80_gt_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun9i_a80_gt, "allwinner,sun9i-a80-gt-clk", sun9i_a80_gt_setup);
+ 
+ 
+-/**
++/*
+  * sun9i_a80_get_ahb_factors() - calculates p factor for AHB0/1/2
+  * AHB rate is calculated as follows
+  * rate = parent_rate >> p;
+@@ -225,7 +225,7 @@ static void __init sun9i_a80_apb0_setup(struct device_node *node)
+ CLK_OF_DECLARE(sun9i_a80_apb0, "allwinner,sun9i-a80-apb0-clk", sun9i_a80_apb0_setup);
+ 
+ 
+-/**
++/*
+  * sun9i_a80_get_apb1_factors() - calculates m, p factors for APB1
+  * APB1 rate is calculated as follows
+  * rate = (parent_rate >> p) / (m + 1);
+diff --git a/drivers/clk/sunxi/clk-usb.c b/drivers/clk/sunxi/clk-usb.c
+index d78a78495bede..5460218f3467a 100644
+--- a/drivers/clk/sunxi/clk-usb.c
++++ b/drivers/clk/sunxi/clk-usb.c
+@@ -15,7 +15,7 @@
+ #include <linux/spinlock.h>
+ 
+ 
+-/**
++/*
+  * sunxi_usb_reset... - reset bits in usb clk registers handling
+  */
+ 
+-- 
+2.27.0
 
- There is no correlation between these numbers. It is really a
-relative metric of performance within a specific family.
