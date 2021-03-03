@@ -2,216 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C75A6C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785F1C433DB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA7464EF8
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 399FA64E12
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 00:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384052AbhCDAY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1356705AbhCDAY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 3 Mar 2021 19:24:27 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:45012 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232960AbhCCMKq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Mar 2021 07:10:46 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BE6F21A0B19;
-        Wed,  3 Mar 2021 09:31:19 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B01B61A0B38;
-        Wed,  3 Mar 2021 09:31:19 +0100 (CET)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B5AC20308;
-        Wed,  3 Mar 2021 09:31:19 +0100 (CET)
-Date:   Wed, 3 Mar 2021 10:31:19 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350426AbhCCLAh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Mar 2021 06:00:37 -0500
+Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561FFC06178B;
+        Wed,  3 Mar 2021 02:59:56 -0800 (PST)
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4Dr9qH5dqjz1rx7x;
+        Wed,  3 Mar 2021 11:54:19 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4Dr9qH326vz1qqkR;
+        Wed,  3 Mar 2021 11:54:19 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id v6gy5bSX7M2G; Wed,  3 Mar 2021 11:54:16 +0100 (CET)
+X-Auth-Info: roSn6tOU3w5pXrcc+IARpM25f0IDnV9/nFeCPIcD4aU=
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed,  3 Mar 2021 11:54:16 +0100 (CET)
+Subject: Re: [PATCH v5 00/14] Add BLK_CTL support for i.MX8MP
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3] clk: imx: Fix reparenting of UARTs not associated
- with sdout
-Message-ID: <20210303083119.wadme5a7j4zf7vuz@fsr-ub1664-175>
-References: <20210120151305.GC19063@pengutronix.de>
- <20210120152813.x2pbs5vprevkly23@fsr-ub1664-175>
- <20210120155001.GD19063@pengutronix.de>
- <20210120161421.h3yng57m3fetwwih@fsr-ub1664-175>
- <20210121095617.GI19063@pengutronix.de>
- <20210121102450.lisl3mzqczdsmzda@fsr-ub1664-175>
- <CAHCN7x+eMHncRya3KWm5g=stzVf0fzNojS5mFxwvGW-sVoLsYQ@mail.gmail.com>
- <CAHCN7xLc6dnkA5Fw4cC1_nDG3KrrR4AffUzy-8gG4UKLn-rhzQ@mail.gmail.com>
- <20210215130620.3la4bexamozzcvjx@fsr-ub1664-175>
- <CAHCN7xK1rWkDK6JE6MvN1UoV0b3Z5dQjeWZDNgnZHRwD1XkuZQ@mail.gmail.com>
+        Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, pete.zhang@nxp.com,
+        Claudius Heine <ch@denx.de>
+References: <1604402306-5348-1-git-send-email-abel.vesa@nxp.com>
+ <20210303104719.74guq4bfm75dyzvj@fsr-ub1664-175>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <70bac3c5-4ccc-b9dd-05e8-a278a0650601@denx.de>
+Date:   Wed, 3 Mar 2021 11:54:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHCN7xK1rWkDK6JE6MvN1UoV0b3Z5dQjeWZDNgnZHRwD1XkuZQ@mail.gmail.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20210303104719.74guq4bfm75dyzvj@fsr-ub1664-175>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-03-02 13:03:04, Adam Ford wrote:
-> On Mon, Feb 15, 2021 at 7:06 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> >
-> > On 21-02-13 08:44:28, Adam Ford wrote:
-> > > On Wed, Feb 3, 2021 at 3:22 PM Adam Ford <aford173@gmail.com> wrote:
-> > > >
-> > > > On Thu, Jan 21, 2021 at 4:24 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > > > >
-> > > > > On 21-01-21 10:56:17, Sascha Hauer wrote:
-> > > > > > On Wed, Jan 20, 2021 at 06:14:21PM +0200, Abel Vesa wrote:
-> > > > > > > On 21-01-20 16:50:01, Sascha Hauer wrote:
-> > > > > > > > On Wed, Jan 20, 2021 at 05:28:13PM +0200, Abel Vesa wrote:
-> > > > > > > > > On 21-01-20 16:13:05, Sascha Hauer wrote:
-> > > > > > > > > > Hi Abel,
-> > > > > > > > > >
-> > > > > > > > > > On Wed, Jan 20, 2021 at 04:44:54PM +0200, Abel Vesa wrote:
-> > > > > > > > > > > On 21-01-18 08:00:43, Adam Ford wrote:
-> > > > > > > > > > > > On Mon, Jan 18, 2021 at 6:52 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > > > > > > > >
-> > > > > > > > > ...
-> > > > > > > > >
-> > > > > > > > > > > >
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > TBH, I'm against the idea of having to call consumer API from a clock provider driver.
-> > > > > > > > > > > > > I'm still investigating a way of moving the uart clock control calls in drivers/serial/imx,
-> > > > > > > > > > > > > where they belong.
-> > > > > > > > > > > >
-> > > > > > > > > > > > That makes sense.
-> > > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > Just a thought. The uart clock used for console remains on from u-boot,
-> > > > > > > > > > > so maybe it's enough to just add the CLK_IGNORE_UNUSED flag to all the
-> > > > > > > > > > > uart root clocks and remove the prepare/enable calls for uart clocks
-> > > > > > > > > > > for good. I don't really have a way to test it right now, but maybe
-> > > > > > > > > > > you could give it a try.
-> > > > > > > > > >
-> > > > > > > > > > That would mean that UART clocks will never be disabled, regardless of
-> > > > > > > > > > whether they are used for console or not. That doesn't sound very
-> > > > > > > > > > appealing.
-> > > > > > > > >
-> > > > > > > > > AFAIK, the only uart clock that is enabled by u-boot is the one used for
-> > > > > > > > > the console. Later on, when the serial driver probes, it will enable it itself.
-> > > > > > > > >
-> > > > > > > > > Unless I'm missing something, this is exactly what we need.
-> > > > > > > >
-> > > > > > > > It might enable it, but with CLK_IGNORE_UNUSED the clock won't be
-> > > > > > > > disabled again when a port is closed after usage
-> > > > > > >
-> > > > > > > OK, tell me what I'm getting wrong in the following scenario:
-> > > > > > >
-> > > > > > > U-boot leaves the console uart clock enabled. All the other ones are disabled.
-> > > > > > >
-> > > > > > > Kernel i.MX clk driver registers the uart clocks with flag CLK_IGNORE_UNUSED.
-> > > > > >
-> > > > > > I was wrong at that point. I originally thought the kernel will never
-> > > > > > disable these clocks, but in fact it only leaves them enabled during the
-> > > > > > clk_disable_unused call.
-> > > > > >
-> > > > > > However, when CLK_IGNORE_UNUSED becomes relevant it's too late already.
-> > > > > > I just chatted with Lucas and he told me what the original problem was
-> > > > > > that his patch solved.
-> > > > > >
-> > > > > > The problem comes when an unrelated device and the earlycon UART have
-> > > > > > the same parent clocks. The parent clock is enabled, but it's reference
-> > > > > > count is zero. Now when the unrelated device probes and toggles its
-> > > > > > clocks then the shared parent clock will be disabled due to the
-> > > > > > reference count being zero. Next time earlycon prints a character the
-> > > > > > system hangs because the UART gates are still enabled, but their parent
-> > > > > > clocks no longer are.
-> > > > > >
-> > > > >
-> > > > > Hmm, that is indeed a problem. That's why I think there should be some
-> > > > > kind of NOCACHE flag for almost all the types of clocks. For example,
-> > > > > in this case, it makes sense for the core to check the bit in the register
-> > > > > and then disable the parent based on that instead of relying on the refcount.
-> > > > > Anyway, that's something that needs to be added in the CCF.
-> > > > >
-> > > > > > Overall I think Lucas' patches are still valid and relevant and with
-> > > > > > Adams patches we even no longer have to enable all UART clocks, but
-> > > > > > only the ones which are actually needed.
-> > > > >
-> > > > > Yeah, for now, I think we can go with Adam's patches. But longterm, I would
-> > > > > like to remove the special case of the uart clocks we have right now in all
-> > > > > the i.MX clock drivers.
-> > >
-> > > I looked around at other serial drivers, and I found nothing like this
-> > > function for enabling all UART clocks.  There are generic functions
-> > > for registering consoles, earlycon etc, and the serial driver fetches
-> > > the per and igp clocks from the device tree, so I attempted to simply
-> > > remove imx_register_uart_clocks().  I booted an i.MX8M Nano from a
-> > > fully-powered off state, and my serial console came up just fine.
-> >
-> > Just because it works, doesn't mean it is safe. To put it simply, the
-> > risk of some  driver disabling a clock that is parent of the uart clock
-> > would render the earlycon broken.
-> >
-> > >
-> > > I checked the clk_summary, and the clock parents are set correctly and
-> > > the respective clock rates appear to be correct (ie, the console is
-> > > working at the desired baud rate, and Bluetooth is happy)
-> > >
-> > > Since I don't fully understand the serial driver and the clock
-> > > dependencies, I don't want to just simply remove the function without
-> > > discussing it, because I don't know the ramifications.  However, when
-> > > testing on the i.MX8M Nano, things look OK.
-> > > I also tested suspend-resume and the console UART appears to return
-> > > and the Bluetooth UART set to 4Mbps works just fine too.
-> > >
-> > > I'd like to post a V4 which just removes imx_register_uart_clocks and
-> > > the corresponding calls to it.  I don't know enough about the older
-> > > 32-bit i.MX SoC's, but I have build-tested it, and I can generate a
-> > > patch. Are there any objections and/or concerns?
-> > >
-> >
-> > Please don't remove the imx_register_uart_clocks for now. As much as I
-> > would like it gone, the way the earlycon could end up broken is
-> > so ugly that it would make it a real pain to debug it later on.
+On 3/3/21 11:47 AM, Abel Vesa wrote:
+> On 20-11-03 13:18:12, Abel Vesa wrote:
+>> The BLK_CTL according to HW design is basically the wrapper of the entire
+>> function specific group of IPs and holds GPRs that usually cannot be placed
+>> into one specific IP from that group. Some of these GPRs are used to control
+>> some clocks, other some resets, others some very specific function that does
+>> not fit into clocks or resets. Since the clocks are registered using the i.MX
+>> clock subsystem API, the driver is placed into the clock subsystem, but it
+>> also registers the resets. For the other functionalities that other GPRs might
+>> have, the syscon is used.
+>>
 > 
-> I won't do a V4, but where do we go from here?  I have a V3 that was
-> waiting for reviews, but there were some concerns.  We currently
-> cannot re-parent the UART's on iMX8MM or iMX8MN.  Should I resend V3,
-> or are there fixes/changes requested to V3?
+> This approach seems to be introducing a possible ABBA deadlock due to
+> the core clock and genpd locking. Here is a backtrace I got from Pete
+> Zhang (he reported the issue on the internal mailing list):
 > 
+> [   11.667711][  T108] -> #1 (&genpd->mlock){+.+.}-{3:3}:
+> [   11.675041][  T108]        __lock_acquire+0xae4/0xef8
+> [   11.680093][  T108]        lock_acquire+0xfc/0x2f8
+> [   11.684888][  T108]        __mutex_lock+0x90/0x870
+> [   11.689685][  T108]        mutex_lock_nested+0x44/0x50
+> [   11.694826][  T108]        genpd_lock_mtx+0x18/0x24
+> [   11.699706][  T108]        genpd_runtime_resume+0x90/0x214 (hold genpd->mlock)
+> [   11.705194][  T108]        __rpm_callback+0x80/0x2c0
+> [   11.710160][  T108]        rpm_resume+0x468/0x650
+> [   11.714866][  T108]        __pm_runtime_resume+0x60/0x88
+> [   11.720180][  T108]        clk_pm_runtime_get+0x28/0x9c
+> [   11.725410][  T108]        clk_disable_unused_subtree+0x8c/0x144
+> [   11.731420][  T108]        clk_disable_unused_subtree+0x124/0x144
+> [   11.737518][  T108]        clk_disable_unused+0xa4/0x11c (hold prepare_lock)
+> [   11.742833][  T108]        do_one_initcall+0x98/0x178
+> [   11.747888][  T108]        do_initcall_level+0x9c/0xb8
+> [   11.753028][  T108]        do_initcalls+0x54/0x94
+> [   11.757736][  T108]        do_basic_setup+0x24/0x30
+> [   11.762614][  T108]        kernel_init_freeable+0x70/0xa4
+> [   11.768014][  T108]        kernel_init+0x14/0x18c
+> [   11.772722][  T108]        ret_from_fork+0x10/0x18
+> 
+> [   11.777512][  T108] -> #0 (prepare_lock){+.+.}-{3:3}:
+> [   11.784749][  T108]        check_noncircular+0x134/0x13c
+> [   11.790064][  T108]        validate_chain+0x590/0x2a04
+> [   11.795204][  T108]        __lock_acquire+0xae4/0xef8
+> [   11.800258][  T108]        lock_acquire+0xfc/0x2f8
+> [   11.805050][  T108]        __mutex_lock+0x90/0x870
+> [   11.809841][  T108]        mutex_lock_nested+0x44/0x50
+> [   11.814983][  T108]        clk_unprepare+0x5c/0x100 ((hold prepare_lock))
+> [   11.819864][  T108]        imx8m_pd_power_off+0xac/0x110
+> [   11.825179][  T108]        genpd_power_off+0x1b4/0x2dc
+> [   11.830318][  T108]        genpd_power_off_work_fn+0x38/0x58 (hold genpd->mlock)
+> [   11.835981][  T108]        process_one_work+0x270/0x444
+> [   11.841208][  T108]        worker_thread+0x280/0x4e4
+> [   11.846176][  T108]        kthread+0x13c/0x14
+> [   11.850621][  T108]        ret_from_fork+0x10/0x18
+> 
+> Now, this has been reproduced only on the NXP internal tree, but I think
+> it is pretty obvious this could happen in upstream too, with this
+> patchset applied.
+> 
+> First, my thought was to change the prepare_lock/enable_lock in clock
+> core, from a global approach to a per clock basis. But that doesn't
+> actually fix the issue.
+> 
+> The usecase seen above is due to clk_disable_unused, but the same could
+> happen when a clock consumer calls prepare/unprepare on a clock.
+> 
+> I guess the conclusion is that the current state of the clock core and
+> genpd implementation does not support a usecase where a clock controller
+> has a PD which in turn uses another clock (from another clock controller).
+> 
+> Jacky, Pete, did I miss anything here ?
 
-The v3 is fine. No need to resend.
-
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-
-> adam
-> >
-> > > adam
-> > > > >
-> > > >
-> > > > Is the patch I submitted good enough for someone's acked-by or
-> > > > reviewed-by, or are there changes I need to implement?
-> > > >
-> > > > adam
-> > > >
-> > > > > >
-> > > > > > Sascha
-> > > > > >
-> > > > > >
-> > > > > > --
-> > > > > > Pengutronix e.K.                           |                             |
-> > > > > > Steuerwalder Str. 21                       | https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.pengutronix.de%2F&amp;data=04%7C01%7Cabel.vesa%40nxp.com%7C900fb6f7dfdf49776eb208d8ddadd7b7%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637503086023262296%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=ulZnxvilARLN03%2BEr%2BTKmVOPxRTukN%2FDg3oPY8UJ2AU%3D&amp;reserved=0  |
-> > > > > > 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> > > > > > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Just for completeness, I have a feeling I already managed to trigger 
+this and discussed this with Lucas before, so this concern is certainly 
+valid.
