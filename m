@@ -2,123 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F4EC433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CA7C43381
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52DF865000
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1AB64FF1
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbhCDWMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Mar 2021 17:12:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50516 "EHLO
+        id S231313AbhCDWMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Mar 2021 17:12:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbhCDWMv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Mar 2021 17:12:51 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A3C061574
-        for <linux-clk@vger.kernel.org>; Thu,  4 Mar 2021 14:12:51 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id p8so26180722ejb.10
-        for <linux-clk@vger.kernel.org>; Thu, 04 Mar 2021 14:12:51 -0800 (PST)
+        with ESMTP id S230124AbhCDWMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Mar 2021 17:12:53 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC29C061756
+        for <linux-clk@vger.kernel.org>; Thu,  4 Mar 2021 14:12:53 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id b13so27855234edx.1
+        for <linux-clk@vger.kernel.org>; Thu, 04 Mar 2021 14:12:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uVV/5lGgGwVoyFOLAdPK3mAZTTVkR2SgKcDQqmfi5f0=;
-        b=d6eQx8gQ4lAf/nIR6K9Z1w1AR6tECcgQbDMHIM0DKJnp0b/cZyKkmpgU1qKwvxC+Ca
-         L6NGDTaBjBZ1+wNUOUnYRcrCVoPWiU146bdQjrCd6xliDWN1hjGOMAuXHhF7fMGzMM4B
-         oGjrKIox9PScpCqRaE6VCrEHh4JtwF+K/pFis=
+        bh=v/pPDOAIiRjR7lEs29siBxnpMbhMpFCg4qL6RvapyuQ=;
+        b=ZvgjxCFdW+xEIJQRTSrZL9RG99WKcuzdTurrplaWC8+EC8MZwlMwU+OBT9Nm8QNzO5
+         NdOoYpYInzinJHNu6McP1uHtYkzgOrhNUi32Us+kUjDel5XCS1sga1lOsHnl9S6lAqYl
+         N+2auUjyYr0kuUMvKyhGGBAlXCZ08f4U1dgJY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uVV/5lGgGwVoyFOLAdPK3mAZTTVkR2SgKcDQqmfi5f0=;
-        b=VryOG4scIaWmIlTowdye4kA6QRkg9ujF44JOJe9zkax1Y5v14/t2TRLg4Us20YZqRp
-         NvHNqwkNk+8cSnHHHhkd3hSOVV2yzQXPxPikShxhMr0VdbbPYXUjm5liHYJiw6QXWZci
-         lSCYHO6URNgsZ9UASb9q5jJXlvYK3mddVdNlLMdQovVtco9oXPzllarkPsT9vFzrDaBV
-         Ja4fwaG2ricx0sEWigIUWKdS8O5pSiYllVbd5LTdHY+ElpfuTGkQy0EnOmKf7YWVurah
-         ZAlc081myiogxvxP7ToXXDL+VIno4cUbelTpxW1F3Tt6CQ6PkbJ7IVYNu3wGpr+Di3bc
-         aCAg==
-X-Gm-Message-State: AOAM5313nepc2zFCwjBqcvj2eDxaGx7zZ+uVU099heS87elXvrISpPTo
-        NzJPxMKHvnhH1MVD9dHNpR0YtQ==
-X-Google-Smtp-Source: ABdhPJwiESwMPtAfz3YFxc1xkgUfgpYGdvxzTe7pMrbVH8PkUSyTPv7/tTB6Mnqx/O4zqtQ49S2OSg==
-X-Received: by 2002:a17:906:3b99:: with SMTP id u25mr6481602ejf.277.1614895970165;
-        Thu, 04 Mar 2021 14:12:50 -0800 (PST)
+        bh=v/pPDOAIiRjR7lEs29siBxnpMbhMpFCg4qL6RvapyuQ=;
+        b=Adx1H1SSPD9BPrePI6HNbR5wi0LwK3aLzOLxQmqoTGsoouXkiH/P4M4VhCSyDVGiKA
+         VJz7ClxKfQegJvEx7j20ImVQ+YTBYUrxqPZYL0jRQ0QnB7DyQbYKCWzmeS3I3cad95bs
+         tGuG36OwyIVA4JD0XNY5mMVxl6C37ZfIOi51vbgwvYlHqTLnrdViGX37nA/gStavY/ip
+         mLQISpeWMPPj2iLD3XHsN94JpRq6FD5pwHQYivtEqymOTXGdzyaZHR2O8BEpvi9xGbXV
+         /5gvD6BXf93BtyujuOniM6uc/OK8OyPxNYW1Kh2IH0jjC90mKk0sys7af8t/SYDNuB/1
+         31vg==
+X-Gm-Message-State: AOAM530vO0rdzlSdjt5ViPnam3kRh495GHFn2d2VzSI0Wbm5LcY/EH4f
+        QaBJbttuR8GRPVn8GlY0XHnmOA==
+X-Google-Smtp-Source: ABdhPJy3H4qGxTqJAT6Dy3t671giI6caxeE5c2SF84vG2D259IJR/Gin3MwbgSzzwbdGCsregOluwQ==
+X-Received: by 2002:aa7:c889:: with SMTP id p9mr6615207eds.82.1614895972167;
+        Thu, 04 Mar 2021 14:12:52 -0800 (PST)
 Received: from prevas-ravi.prevas.se ([80.208.71.141])
-        by smtp.gmail.com with ESMTPSA id q22sm362099ejy.5.2021.03.04.14.12.48
+        by smtp.gmail.com with ESMTPSA id q22sm362099ejy.5.2021.03.04.14.12.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 14:12:49 -0800 (PST)
+        Thu, 04 Mar 2021 14:12:51 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-watchdog@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 0/3] add "delay" clock support to gpio_wdt
-Date:   Thu,  4 Mar 2021 23:12:44 +0100
-Message-Id: <20210304221247.488173-1-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@kernel.org>
+Subject: [PATCH v2 2/3] dt-bindings: watchdog: add optional "delay" clock to gpio-wdt binding
+Date:   Thu,  4 Mar 2021 23:12:46 +0100
+Message-Id: <20210304221247.488173-3-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20210304221247.488173-1-linux@rasmusvillemoes.dk>
 References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <20210304221247.488173-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As Arnd and Guenther suggested, this adds support to the gpio_wdt
-driver for being a consumer of the clock driving the ripple
-counter. However, I don't think it should be merged as-is, see below.
+[DO NOT MERGE - see cover letter]
 
-The first patch makes sense on its own, quick grepping suggests plenty
-of places that could benefit from this, and I thought it would be odd
-to have to re-introduce a .remove callback in the gpio_wdt driver.
+We have a board where the reset output from the ADM706S is split in
+two: directly routed to an interrupt, and also to start a ripple
+counter, which 64 ms later than pulls the SOC's reset pin. That ripple
+counter only works if the RTC's 32kHz output is enabled, and since
+linux by default disables unused clocks, that effectively renders the
+watchdog useless. So add an optional "delay" clock binding.
 
-Unfortunately, this turns out to be a bit of an "operation succeeded,
-patient (almost) died": We use CONFIG_GPIO_WATCHDOG_ARCH_INITCALL
-because the watchdog has a rather short timeout (1.0-2.25s, 1.6s
-typical according to data sheet). At first, I put the new code right
-after the devm_gpiod_get(), but the problem is that this early, we get
--EPROBE_DEFER since the clock provider (the RTC which sits off i2c)
-isn't probed yet. But then the board would reset because it takes way
-too long for the rest of the machine to initialize. [The bootloader
-makes sure to turn on the RTC's clock output so the watchdog is
-actually functional, the task here is to figure out the proper way to
-prevent clk_disable_unused() from disabling it.]
+Suggested-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ Documentation/devicetree/bindings/watchdog/gpio-wdt.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Moving the logic to after the first "is it always-running and if so
-give it an initial ping" made the board survive, but unfortunately the
-second, and succesful, probe happens a little more than a second
-later, which happens to work on this particular board, but is
-obviously not suitable for production given that it's already above
-what the spec says, and other random changes in the future might make
-the gap even wider.
-
-So I don't know. The hardware is obviously misdesigned, and I don't
-know how far the mainline kernel should stretch to support this; OTOH
-the kernel does contain lots of workarounds for quirks and hardware
-bugs. 
-
-
-
-
-Rasmus Villemoes (3):
-  clk: add devm_clk_prepare_enable() helper
-  dt-bindings: watchdog: add optional "delay" clock to gpio-wdt binding
-  watchdog: gpio_wdt: implement support for optional "delay" clock
-
- .../devicetree/bindings/watchdog/gpio-wdt.txt |  6 ++++
- .../driver-api/driver-model/devres.rst        |  1 +
- drivers/clk/clk-devres.c                      | 29 +++++++++++++++++++
- drivers/watchdog/gpio_wdt.c                   |  9 ++++++
- include/linux/clk.h                           | 13 +++++++++
- 5 files changed, 58 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/watchdog/gpio-wdt.txt b/Documentation/devicetree/bindings/watchdog/gpio-wdt.txt
+index 198794963786..527be6b30451 100644
+--- a/Documentation/devicetree/bindings/watchdog/gpio-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/gpio-wdt.txt
+@@ -17,6 +17,10 @@ Optional Properties:
+ - always-running: If the watchdog timer cannot be disabled, add this flag to
+   have the driver keep toggling the signal without a client. It will only cease
+   to toggle the signal when the device is open and the timeout elapsed.
++- clock-names: May contain the entry "delay" if the board has logic
++  that delays the reset signal from the watchdog and which requires an
++  external signal to function.
++- clocks: Phandles corresponding to the clock-names.
+ 
+ Example:
+ 	watchdog: watchdog {
+@@ -25,4 +29,6 @@ Example:
+ 		gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
+ 		hw_algo = "toggle";
+ 		hw_margin_ms = <1600>;
++		clock-names = "delay";
++		clocks = <&rtc 1>;
+ 	};
 -- 
 2.29.2
 
