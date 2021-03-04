@@ -2,76 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F98C433E9
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 21:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F4EC433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA0765001
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 21:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52DF865000
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239759AbhCDVbt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Mar 2021 16:31:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239763AbhCDVbY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Mar 2021 16:31:24 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D25A964FE1;
-        Thu,  4 Mar 2021 21:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614893444;
-        bh=uxC+OSAfuVYvvoWdm7rpwbwHMidZTVl9vdI9BVGO684=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T8gCX3lAdL+4kW2yZ5dn3RhaT/dylZXzW/zlmhcTGeAz/jK9QfpTRaqM7EbOeW+ZQ
-         aEBDOy5hl2d2D+YqB+Sv9KKVPM9n7nC6Wxa3NuSOy4H2SpVFJxLHYBJtYHgkWzgyOJ
-         DgFZJoDtj+RVacV1jweKKhgtY+Uh+sgBCFYijZZq2uNCJYWOuvyAok6FgzSrLE726p
-         FXUWM2c5mgtpsu/xXqDz4kOkspE0BTb71l/w4Ej07guBzRgDq4xhE3rsjJIxrR673t
-         67Wx2Bupbq2NUV+Z/aPVTSD4v2zuHR1ACidW1MHS1KUaYZJ1UiU2fGlDkDtAjAxj3g
-         V5gzxrYEyBsFQ==
-Date:   Thu, 4 Mar 2021 16:30:42 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.11 26/52] clk: qcom: gdsc: Implement
- NO_RET_PERIPH flag
-Message-ID: <YEFRgsJr4qwxbpTO@sashalap>
-References: <20210302115534.61800-1-sashal@kernel.org>
- <20210302115534.61800-26-sashal@kernel.org>
- <161472614572.1254594.7093847798808554286@swboyd.mtv.corp.google.com>
+        id S230401AbhCDWMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Mar 2021 17:12:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50516 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229919AbhCDWMv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Mar 2021 17:12:51 -0500
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A3C061574
+        for <linux-clk@vger.kernel.org>; Thu,  4 Mar 2021 14:12:51 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id p8so26180722ejb.10
+        for <linux-clk@vger.kernel.org>; Thu, 04 Mar 2021 14:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uVV/5lGgGwVoyFOLAdPK3mAZTTVkR2SgKcDQqmfi5f0=;
+        b=d6eQx8gQ4lAf/nIR6K9Z1w1AR6tECcgQbDMHIM0DKJnp0b/cZyKkmpgU1qKwvxC+Ca
+         L6NGDTaBjBZ1+wNUOUnYRcrCVoPWiU146bdQjrCd6xliDWN1hjGOMAuXHhF7fMGzMM4B
+         oGjrKIox9PScpCqRaE6VCrEHh4JtwF+K/pFis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uVV/5lGgGwVoyFOLAdPK3mAZTTVkR2SgKcDQqmfi5f0=;
+        b=VryOG4scIaWmIlTowdye4kA6QRkg9ujF44JOJe9zkax1Y5v14/t2TRLg4Us20YZqRp
+         NvHNqwkNk+8cSnHHHhkd3hSOVV2yzQXPxPikShxhMr0VdbbPYXUjm5liHYJiw6QXWZci
+         lSCYHO6URNgsZ9UASb9q5jJXlvYK3mddVdNlLMdQovVtco9oXPzllarkPsT9vFzrDaBV
+         Ja4fwaG2ricx0sEWigIUWKdS8O5pSiYllVbd5LTdHY+ElpfuTGkQy0EnOmKf7YWVurah
+         ZAlc081myiogxvxP7ToXXDL+VIno4cUbelTpxW1F3Tt6CQ6PkbJ7IVYNu3wGpr+Di3bc
+         aCAg==
+X-Gm-Message-State: AOAM5313nepc2zFCwjBqcvj2eDxaGx7zZ+uVU099heS87elXvrISpPTo
+        NzJPxMKHvnhH1MVD9dHNpR0YtQ==
+X-Google-Smtp-Source: ABdhPJwiESwMPtAfz3YFxc1xkgUfgpYGdvxzTe7pMrbVH8PkUSyTPv7/tTB6Mnqx/O4zqtQ49S2OSg==
+X-Received: by 2002:a17:906:3b99:: with SMTP id u25mr6481602ejf.277.1614895970165;
+        Thu, 04 Mar 2021 14:12:50 -0800 (PST)
+Received: from prevas-ravi.prevas.se ([80.208.71.141])
+        by smtp.gmail.com with ESMTPSA id q22sm362099ejy.5.2021.03.04.14.12.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 14:12:49 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 0/3] add "delay" clock support to gpio_wdt
+Date:   Thu,  4 Mar 2021 23:12:44 +0100
+Message-Id: <20210304221247.488173-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <161472614572.1254594.7093847798808554286@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 02, 2021 at 03:02:25PM -0800, Stephen Boyd wrote:
->Quoting Sasha Levin (2021-03-02 03:55:07)
->> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
->>
->> [ Upstream commit 785c02eb35009a4be6dbc68f4f7d916e90b7177d ]
->>
->> In some rare occasions, we want to only set the RETAIN_MEM bit, but
->> not the RETAIN_PERIPH one: this is seen on at least SDM630/636/660's
->> GPU-GX GDSC, where unsetting and setting back the RETAIN_PERIPH bit
->> will generate chaos and panics during GPU suspend time (mainly, the
->> chaos is unaligned access).
->>
->> For this reason, introduce a new NO_RET_PERIPH flag to the GDSC
->> driver to address this corner case.
->
->Is there a patch that's going to use this in stable trees? On its own
->this patch doesn't make sense to backport.
+As Arnd and Guenther suggested, this adds support to the gpio_wdt
+driver for being a consumer of the clock driving the ripple
+counter. However, I don't think it should be merged as-is, see below.
 
-Right, I'll also grab a59c16c80bd7 ("clk: qcom: gpucc-msm8998: Add
-resets, cxc, fix flags on gpu_gx_gdsc") for 5.10 and 5.11. Thanks!
+The first patch makes sense on its own, quick grepping suggests plenty
+of places that could benefit from this, and I thought it would be odd
+to have to re-introduce a .remove callback in the gpio_wdt driver.
+
+Unfortunately, this turns out to be a bit of an "operation succeeded,
+patient (almost) died": We use CONFIG_GPIO_WATCHDOG_ARCH_INITCALL
+because the watchdog has a rather short timeout (1.0-2.25s, 1.6s
+typical according to data sheet). At first, I put the new code right
+after the devm_gpiod_get(), but the problem is that this early, we get
+-EPROBE_DEFER since the clock provider (the RTC which sits off i2c)
+isn't probed yet. But then the board would reset because it takes way
+too long for the rest of the machine to initialize. [The bootloader
+makes sure to turn on the RTC's clock output so the watchdog is
+actually functional, the task here is to figure out the proper way to
+prevent clk_disable_unused() from disabling it.]
+
+Moving the logic to after the first "is it always-running and if so
+give it an initial ping" made the board survive, but unfortunately the
+second, and succesful, probe happens a little more than a second
+later, which happens to work on this particular board, but is
+obviously not suitable for production given that it's already above
+what the spec says, and other random changes in the future might make
+the gap even wider.
+
+So I don't know. The hardware is obviously misdesigned, and I don't
+know how far the mainline kernel should stretch to support this; OTOH
+the kernel does contain lots of workarounds for quirks and hardware
+bugs. 
+
+
+
+
+Rasmus Villemoes (3):
+  clk: add devm_clk_prepare_enable() helper
+  dt-bindings: watchdog: add optional "delay" clock to gpio-wdt binding
+  watchdog: gpio_wdt: implement support for optional "delay" clock
+
+ .../devicetree/bindings/watchdog/gpio-wdt.txt |  6 ++++
+ .../driver-api/driver-model/devres.rst        |  1 +
+ drivers/clk/clk-devres.c                      | 29 +++++++++++++++++++
+ drivers/watchdog/gpio_wdt.c                   |  9 ++++++
+ include/linux/clk.h                           | 13 +++++++++
+ 5 files changed, 58 insertions(+)
 
 -- 
-Thanks,
-Sasha
+2.29.2
+
