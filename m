@@ -2,127 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E627EC433E6
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1CC433DB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B34A865000
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92BD65017
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231187AbhCDWMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Mar 2021 17:12:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231453AbhCDWMy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Mar 2021 17:12:54 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2530EC061764
-        for <linux-clk@vger.kernel.org>; Thu,  4 Mar 2021 14:12:54 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id m9so8491157edd.5
-        for <linux-clk@vger.kernel.org>; Thu, 04 Mar 2021 14:12:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UCo3mKQIbcpollGcJ9PYHtksoboB7Ro207jOYrCfzdo=;
-        b=g1Zn6sewFIleBOXnOHM71n+XqDprG9IKVcU3vrwC/LmP7RiEYZWioiuOo6u8eay8rp
-         1efpcjma6Y7hUyfQyOqliLwpMX7YVcRtMkHFwd4IttHF9G22LrA/mMggvqUZaqDgqmU1
-         133cDV7S24kpbxsZu8wG18e2IJ81VwzKnsak4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UCo3mKQIbcpollGcJ9PYHtksoboB7Ro207jOYrCfzdo=;
-        b=fFXssmaxyX/F3WAOJUH2kv/y2yENR7wLRgA/TtWVh/buRQF9UY0CF1djzPzjBr1nsF
-         ZgXH+/bM2864pYN/4vHQ2MEBQ3bYsshUR7ZT8Ml9Sx9YQqAjgTzF8APPW13ZUqhXpKyQ
-         esIxj0Pnwset7V2SaOagQ+XwlMTYkNKG6oUV4/3Wlk7Ubu7NrSggeesPBVg9UKEUFGC3
-         HZh/s9sCKNcOazUCVTEnce+kh42GKQmigEK7mKO18DilLioN4ElZW5i+GSwXc68qtKjO
-         vEVz+6TokO/Tk9Sy4FzoiLKeECz/l6IjS+Jf4yOlWy7m8es1YLBisSrETr7VF47Gk4Hv
-         /yEw==
-X-Gm-Message-State: AOAM5301lwtxZ7Fw4lCcmsHNIDEslLGG3qz85eck/25rKDRDiVV//hUC
-        /USKDnzozJaZkeWjaB/2PTt/ow==
-X-Google-Smtp-Source: ABdhPJzme5MAAWpf/zramDLF/Q+YNk0uNjfX+zRiBm3mY5cw1s0ZQPbrq+hYw2HTPbmIl+2U4okoLg==
-X-Received: by 2002:aa7:cd8c:: with SMTP id x12mr6809476edv.355.1614895972903;
-        Thu, 04 Mar 2021 14:12:52 -0800 (PST)
-Received: from prevas-ravi.prevas.se ([80.208.71.141])
-        by smtp.gmail.com with ESMTPSA id q22sm362099ejy.5.2021.03.04.14.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Mar 2021 14:12:52 -0800 (PST)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Arnd Bergmann <arnd@arndb.de>, Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 3/3] watchdog: gpio_wdt: implement support for optional "delay" clock
-Date:   Thu,  4 Mar 2021 23:12:47 +0100
-Message-Id: <20210304221247.488173-4-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210304221247.488173-1-linux@rasmusvillemoes.dk>
-References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
- <20210304221247.488173-1-linux@rasmusvillemoes.dk>
+        id S231837AbhCDWsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Mar 2021 17:48:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231736AbhCDWsy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Mar 2021 17:48:54 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D15E6501C;
+        Thu,  4 Mar 2021 22:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614898134;
+        bh=GrerDAoTAovyyWNYvvC+zs2BPxmDLs2XKLKb4mqZLDY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fl2hoAYr4FyvTGzDjQer3murYeBpxPsKxixW9QAs3SiMjkbVs1F6FyKCasSDdBKDp
+         zms401sqEExyK82KF2BP0C5B1QnWwF8GmIE9Rht6pQkWowXTn1Xp/S3LL6Oba5r0nQ
+         fULHUIHs0N1ZDiSWS/9Zyac6uOLCmzYZvxglLV5bpA286cjBBokgvz4c8AJFxjB8+8
+         ORBXxQ3v1FqOKOS7oGjPWBs5NziUFCirD/ZmwTFS5WzWJCCMITmC37DONZR5KN48R3
+         e6ZhYA4UocjazvhXkVhggBXfwbffEMI3He5G+faTJl3AjHo03NKinnRCBxeqmKF4nP
+         Hg7CymCsevq4g==
+Received: by mail-ej1-f46.google.com with SMTP id w1so52703037ejf.11;
+        Thu, 04 Mar 2021 14:48:53 -0800 (PST)
+X-Gm-Message-State: AOAM532shjaGSfTJW3GVXYwzHU4fQjeVzgcy307Wk6xGu3GgzPg52dMO
+        B/S9rGWEGcN73G4U1+Tcoq7lauTljwHNT175ng==
+X-Google-Smtp-Source: ABdhPJwsSfTpWjPL+cZrEMvosQ1IPs0l8gQZ/vIA9NHMjVhs68GFDG/L9SRf5PtvlaFJJ8yVPqheQ48Al0kdk2WAF/c=
+X-Received: by 2002:a17:906:380b:: with SMTP id v11mr6717737ejc.183.1614898132557;
+ Thu, 04 Mar 2021 14:48:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1614222604-27066-1-git-send-email-peng.fan@oss.nxp.com> <1614222604-27066-5-git-send-email-peng.fan@oss.nxp.com>
+In-Reply-To: <1614222604-27066-5-git-send-email-peng.fan@oss.nxp.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 4 Mar 2021 16:48:40 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKAOUKnVLvu-VNeDVg0ShXPy56wxhCQv38+rO2k961v+g@mail.gmail.com>
+Message-ID: <CAL_JsqKAOUKnVLvu-VNeDVg0ShXPy56wxhCQv38+rO2k961v+g@mail.gmail.com>
+Subject: Re: [PATCH V3 4/5] dt-bindings: mmc: fsl-imx-esdhc: add clock bindings
+To:     peng.fan@oss.nxp.com
+Cc:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[DO NOT MERGE - see cover letter]
+On Wed, Feb 24, 2021 at 9:23 PM <peng.fan@oss.nxp.com> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Add clock bindings for fsl-imx-esdhc yaml
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/mmc/fsl-imx-esdhc.yaml        | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-We have a board where the reset output from the ADM706S is split in
-two: directly routed to an interrupt, and also to start a ripple
-counter, which 64 ms later than pulls the SOC's reset pin. That ripple
-counter only works if the RTC's 32kHz output is enabled, and since
-linux by default disables unused clocks, that effectively renders the
-watchdog useless.
+Looks like this landed in linux-next and introduces warnings:
 
-Add driver support for an optional "delay" clock, as documented in the
-preceding patch.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- drivers/watchdog/gpio_wdt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/watchdog/gpio_wdt.c b/drivers/watchdog/gpio_wdt.c
-index 0923201ce874..f812c39bc1e8 100644
---- a/drivers/watchdog/gpio_wdt.c
-+++ b/drivers/watchdog/gpio_wdt.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/err.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/gpio/consumer.h>
-@@ -111,6 +112,7 @@ static int gpio_wdt_probe(struct platform_device *pdev)
- 	enum gpiod_flags gflags;
- 	unsigned int hw_margin;
- 	const char *algo;
-+	struct clk *clk;
- 	int ret;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -164,6 +166,13 @@ static int gpio_wdt_probe(struct platform_device *pdev)
- 	if (priv->always_running)
- 		gpio_wdt_start(&priv->wdd);
- 
-+	clk = devm_clk_get_optional(dev, "delay");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	ret = devm_clk_prepare_enable(dev, clk);
-+	if (ret)
-+		return ret;
-+
- 	return devm_watchdog_register_device(dev, &priv->wdd);
- }
- 
--- 
-2.29.2
-
+/builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
+mmc@5b010000: clock-names:1: 'ahb' was expected
+ From schema: /builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+/builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
+mmc@5b010000: clock-names:2: 'per' was expected
+ From schema: /builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
