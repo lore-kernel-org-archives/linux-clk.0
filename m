@@ -2,85 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1CC433DB
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40959C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 00:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92BD65017
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Mar 2021 22:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 087B264FFD
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 00:33:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbhCDWsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Mar 2021 17:48:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231736AbhCDWsy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Mar 2021 17:48:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D15E6501C;
-        Thu,  4 Mar 2021 22:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614898134;
-        bh=GrerDAoTAovyyWNYvvC+zs2BPxmDLs2XKLKb4mqZLDY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fl2hoAYr4FyvTGzDjQer3murYeBpxPsKxixW9QAs3SiMjkbVs1F6FyKCasSDdBKDp
-         zms401sqEExyK82KF2BP0C5B1QnWwF8GmIE9Rht6pQkWowXTn1Xp/S3LL6Oba5r0nQ
-         fULHUIHs0N1ZDiSWS/9Zyac6uOLCmzYZvxglLV5bpA286cjBBokgvz4c8AJFxjB8+8
-         ORBXxQ3v1FqOKOS7oGjPWBs5NziUFCirD/ZmwTFS5WzWJCCMITmC37DONZR5KN48R3
-         e6ZhYA4UocjazvhXkVhggBXfwbffEMI3He5G+faTJl3AjHo03NKinnRCBxeqmKF4nP
-         Hg7CymCsevq4g==
-Received: by mail-ej1-f46.google.com with SMTP id w1so52703037ejf.11;
-        Thu, 04 Mar 2021 14:48:53 -0800 (PST)
-X-Gm-Message-State: AOAM532shjaGSfTJW3GVXYwzHU4fQjeVzgcy307Wk6xGu3GgzPg52dMO
-        B/S9rGWEGcN73G4U1+Tcoq7lauTljwHNT175ng==
-X-Google-Smtp-Source: ABdhPJwsSfTpWjPL+cZrEMvosQ1IPs0l8gQZ/vIA9NHMjVhs68GFDG/L9SRf5PtvlaFJJ8yVPqheQ48Al0kdk2WAF/c=
-X-Received: by 2002:a17:906:380b:: with SMTP id v11mr6717737ejc.183.1614898132557;
- Thu, 04 Mar 2021 14:48:52 -0800 (PST)
+        id S229631AbhCEAdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Mar 2021 19:33:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229601AbhCEAdk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Mar 2021 19:33:40 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 387F5C061756
+        for <linux-clk@vger.kernel.org>; Thu,  4 Mar 2021 16:33:38 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id w1so104164ejf.11
+        for <linux-clk@vger.kernel.org>; Thu, 04 Mar 2021 16:33:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UERQO4egOHXp3lfQJ/sHEH1TG5FquGO2TdMFVt16Qp0=;
+        b=Gi09YjnZ8XiisKl6ZPp/ol6m5jzpaVysKvVemGggbWEt4G9eN0T+z0MF5xvHOkb6rN
+         Q5diwLSfZ+gYDpm4TOUdB2NhGMjiRL3Gnho1H8RwiXJtoH6/e9KRX465ScXr87B27M33
+         n3KFFs6amgzDp6wg1dNVvW1J4xj+ZUjuxSPXY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UERQO4egOHXp3lfQJ/sHEH1TG5FquGO2TdMFVt16Qp0=;
+        b=lC/3N+gh5loVlwDv1DHvtVyAf84yFObtQv0MI0spwoTUILWt/ff+8TwibxGAsZGcnY
+         NmRnJHjG8AREB74yFdt6pUpBxRB47Ex/wNZvj3WGQCD75C5s8FYiVA4qSBhDnyYgtHSx
+         kqFaUAdsTo5VWjDu56lHeDR1n1XAc2dXE2B0lKS1Gjt1nV4+ZDitEp9zbWGKbOkh/NM5
+         s2VY1dtsYwUsAkbdanZ4nRhFUtRLKSTSEzTlDBs2D0z6Ej2hVE+W58G9NDRPSXq1sLhM
+         ksxK7SWe88SfCO+y0tPYWVkC584jAgQrO65YCWatx7dVF3AcMBqSGF5TdoBnecA7fKbn
+         QYng==
+X-Gm-Message-State: AOAM531JqCEDqpH7ok6rVxuIvOQiQTMB/50iIY36aR3eWsgJtcK6rlkh
+        RWf+tXV/10/jqnW3lbAh5g4BGw==
+X-Google-Smtp-Source: ABdhPJxCOohUu+cWq4gro8zy06L2dPjtaZpCUWVSEqxDSbI5zc1MwpXZedAWWvlZiYyw+XUSJVfTxg==
+X-Received: by 2002:a17:907:2075:: with SMTP id qp21mr93448ejb.451.1614904416948;
+        Thu, 04 Mar 2021 16:33:36 -0800 (PST)
+Received: from prevas-ravi.prevas.se ([80.208.71.141])
+        by smtp.gmail.com with ESMTPSA id r13sm549501edy.3.2021.03.04.16.33.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 16:33:36 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: use clk_core_enable_lock() a bit more
+Date:   Fri,  5 Mar 2021 01:33:34 +0100
+Message-Id: <20210305003334.575831-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <1614222604-27066-1-git-send-email-peng.fan@oss.nxp.com> <1614222604-27066-5-git-send-email-peng.fan@oss.nxp.com>
-In-Reply-To: <1614222604-27066-5-git-send-email-peng.fan@oss.nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 4 Mar 2021 16:48:40 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKAOUKnVLvu-VNeDVg0ShXPy56wxhCQv38+rO2k961v+g@mail.gmail.com>
-Message-ID: <CAL_JsqKAOUKnVLvu-VNeDVg0ShXPy56wxhCQv38+rO2k961v+g@mail.gmail.com>
-Subject: Re: [PATCH V3 4/5] dt-bindings: mmc: fsl-imx-esdhc: add clock bindings
-To:     peng.fan@oss.nxp.com
-Cc:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 24, 2021 at 9:23 PM <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Add clock bindings for fsl-imx-esdhc yaml
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../devicetree/bindings/mmc/fsl-imx-esdhc.yaml        | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+Use clk_core_enable_lock() and clk_core_disable_lock() in a few places
+rather than open-coding them.
 
-Looks like this landed in linux-next and introduces warnings:
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/clk/clk.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-/builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
-mmc@5b010000: clock-names:1: 'ahb' was expected
- From schema: /builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-/builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
-mmc@5b010000: clock-names:2: 'per' was expected
- From schema: /builds/robherring/linux-dt-bindings/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5052541a0986..8c1ed844b97e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2078,12 +2078,8 @@ static void clk_change_rate(struct clk_core *core)
+ 		return;
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+-		unsigned long flags;
+-
+ 		clk_core_prepare(core);
+-		flags = clk_enable_lock();
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		clk_core_enable_lock(core);
+ 	}
+ 
+ 	if (core->new_parent && core->new_parent != core->parent) {
+@@ -2116,11 +2112,7 @@ static void clk_change_rate(struct clk_core *core)
+ 	core->rate = clk_recalc(core, best_parent_rate);
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+-		unsigned long flags;
+-
+-		flags = clk_enable_lock();
+-		clk_core_disable(core);
+-		clk_enable_unlock(flags);
++		clk_core_disable_lock(core);
+ 		clk_core_unprepare(core);
+ 	}
+ 
+@@ -3564,8 +3556,6 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * reparenting clocks
+ 	 */
+ 	if (core->flags & CLK_IS_CRITICAL) {
+-		unsigned long flags;
+-
+ 		ret = clk_core_prepare(core);
+ 		if (ret) {
+ 			pr_warn("%s: critical clk '%s' failed to prepare\n",
+@@ -3573,9 +3563,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			goto out;
+ 		}
+ 
+-		flags = clk_enable_lock();
+-		ret = clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		ret = clk_core_enable_lock(core);
+ 		if (ret) {
+ 			pr_warn("%s: critical clk '%s' failed to enable\n",
+ 			       __func__, core->name);
+-- 
+2.29.2
+
