@@ -1,124 +1,165 @@
-Return-Path: <linux-clk-owner@kernel.org>
+Return-Path: <SRS0=rTxN=ID=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3D2C433DB
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 14:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7219AC433E6
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 19:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4974D65021
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 14:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42F9864F69
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 19:13:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbhCEOOl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Mar 2021 09:14:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230514AbhCEOOh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Mar 2021 09:14:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A0C06501A;
-        Fri,  5 Mar 2021 14:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614953676;
-        bh=nJW/qzlXmQLjEx5WtjuS7q3GToRzq3WGjVZX19qD8Jg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ujT6mUNrqJ6jlXFWAX1PRjYK0tftZpfJWLEY3DbgBEJ/3/vZY2zPlcu+MPfP/f/C9
-         gxcjtYUNWqGHyIP9Offdvt5GU/9lHxv8AgwSewkvn98xQOyhslh/E3TD+W51q56Nkz
-         1GR68fvhBdnD7bdTOneaZ/DzbB8Su8/p/5IaM1MNgwvXqLnxwLTlUs8qTw3was3Ut+
-         b/k34hD8fPTzR7sA4hcj9I/mvl3YS09wjbpjo7NPx0tNYggrK048TXf4Vg7CBpfgRI
-         RfPHFba9UWVx7rLCUvzU7IL0LBGymZCJZ8ZQ/J79ggYzOeK8B6xuw7wX6NOz2rFgiw
-         jNOB5eYbz/9Cg==
-Received: by mail-ej1-f54.google.com with SMTP id c10so3700009ejx.9;
-        Fri, 05 Mar 2021 06:14:36 -0800 (PST)
-X-Gm-Message-State: AOAM533JXMe/UOx97mPDBvOudoA4AmL2PsFIIbSr2XeiCQ25MrOFeMrp
-        1QwGe+ZQKF/lpLYpQbg9ajCo6yxvNRYRzDIgPw==
-X-Google-Smtp-Source: ABdhPJwNz6f1WnjfIEjnIlOIQSeFUxdiphznagy089tysI2uTGcdeuYk8oheFpgpAvN7aSri3oqhBTW4L9fuXdOWSes=
-X-Received: by 2002:a17:906:d153:: with SMTP id br19mr2329504ejb.360.1614953674952;
- Fri, 05 Mar 2021 06:14:34 -0800 (PST)
-MIME-Version: 1.0
-References: <1614222604-27066-1-git-send-email-peng.fan@oss.nxp.com>
- <1614222604-27066-5-git-send-email-peng.fan@oss.nxp.com> <AM6PR04MB4966041BFFDDAF1EF00BE1AD80969@AM6PR04MB4966.eurprd04.prod.outlook.com>
-In-Reply-To: <AM6PR04MB4966041BFFDDAF1EF00BE1AD80969@AM6PR04MB4966.eurprd04.prod.outlook.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 5 Mar 2021 08:14:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKK8t6XUqTuOKPzOviJbysqWqga_mdxWE0P0N4ejTgG=A@mail.gmail.com>
-Message-ID: <CAL_JsqKK8t6XUqTuOKPzOviJbysqWqga_mdxWE0P0N4ejTgG=A@mail.gmail.com>
-Subject: Re: [PATCH V3 4/5] dt-bindings: mmc: fsl-imx-esdhc: add clock bindings
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S229875AbhCETNY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Mar 2021 14:13:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229797AbhCETNN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Mar 2021 14:13:13 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7431CC061574
+        for <linux-clk@vger.kernel.org>; Fri,  5 Mar 2021 11:13:13 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id m11so4123764lji.10
+        for <linux-clk@vger.kernel.org>; Fri, 05 Mar 2021 11:13:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=3GKGzv8vDMt2VBW8tVmUh30Ue3oIYcjLILvqtVzhXBQ=;
+        b=nCQ51OtKPNWmk+zEwuTEd6kugMBon8dTSE9AyKIo5ED6ZBmpL7hApeiX8vzK4FbENF
+         IwMMOZsdU6Uuf0PbibJktfiWKYzXVTxupSiAdSJHQE/4dtkA70n71s5/oMEWnulbKrpg
+         BJtThfCc88PwYwXR4bKhKe/B0pAp6KVAnYE1KHuHiEpPWUhKAYUZ9xcQUejCKBJ/+KpG
+         5ORpbqFPXOhCryIDvn5jGyEYE19mktuUDfATlq0/gUFjCN5BrVMJUGCuhcidnWYOr5Dv
+         TeoBUNODKOWEPrJl46Jj2fSyJLNZnTjYC3v2DWB+lcQ+//Xbe+k4z6u4/QFHnoO86Lcd
+         aI/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3GKGzv8vDMt2VBW8tVmUh30Ue3oIYcjLILvqtVzhXBQ=;
+        b=ac16MtKvU0DX5KdtB0rFbLTRy65QFlJ3TBCvZFL5CODMaPxA/3xQ4NTpmcEbOv0Lcg
+         cPMSZO/zAe04IRo+ANTgUpJoN590ddW/dZFUx3/j4lefYzp2qflDztWWaDbZ9CvKm/E+
+         v9wRBpLhnzzmZzqfpV2sSBVFAoyRLWKZcKaqrYRCkNFrC5ufj2DoM/V7t7Vh4U513joi
+         1ues2i6NBXV9o2zvQCiRpv2pUMAVJlRyua1qjyQvxB3/v/QtT5EN2/AcUZp+kX0tADMR
+         7NNWg+u82rOqBms48cy69jFo8iWaHW7ADizZioT+Tq9tf4zhwIruIbQiE0o+4EfBJwce
+         N2Ig==
+X-Gm-Message-State: AOAM530uA9brABBEc21s+41p2kLqK5Q1ZYs+Wu6wwfEMwmVI+oEe1L70
+        DlGMNnIE0CKScRItNX8O9KuX
+X-Google-Smtp-Source: ABdhPJwUkiqVkUTrM8Ooxsgm+VmuKNxx8d3H1zcOShgLlIuvffaCm9eLwWF1n10kbpEbDGQR8wbhVg==
+X-Received: by 2002:a2e:9148:: with SMTP id q8mr6085414ljg.356.1614971592044;
+        Fri, 05 Mar 2021 11:13:12 -0800 (PST)
+Received: from luke.int.semihalf.com (host-193.106.246.138.static.3s.pl. [193.106.246.138])
+        by smtp.gmail.com with ESMTPSA id g21sm404067lfr.212.2021.03.05.11.13.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Mar 2021 11:13:11 -0800 (PST)
+From:   Lukasz Bartosik <lb@semihalf.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, upstream@semihalf.com
+Subject: [PATCH v1] clk: fix invalid usage of list_for_each_entry cursor
+Date:   Fri,  5 Mar 2021 20:13:07 +0100
+Message-Id: <20210305191307.15915-1-lb@semihalf.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 5, 2021 at 8:09 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
->
-> Hi Rob,
->
-> > From: Peng Fan (OSS) <peng.fan@oss.nxp.com>
-> > Sent: Thursday, February 25, 2021 11:10 AM
-> >
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Add clock bindings for fsl-imx-esdhc yaml
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  .../devicetree/bindings/mmc/fsl-imx-esdhc.yaml        | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-> > b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-> > index a7fbd8cc1e38..369471814496 100644
-> > --- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
-> > @@ -103,6 +103,17 @@ properties:
-> >        Only eMMC HS400 mode need to take care of this property.
-> >      default: 0
-> >
-> > +  clocks:
-> > +    maxItems: 3
-> > +    description:
-> > +      Handle clocks for the sdhc controller.
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: ipg
-> > +      - const: ahb
-> > +      - const: per
->
-> One question:
-> The side effect of this patch is that it imposes a forced order of clk names
-> In DT which actually was not needed.
->
-> Do we really have to do that?
+Fix invalid usage of list_for_each_entry cursor. When list
+is empty then list cursor does not point to a valid entry
+and therefore should not be used.
 
-Yes.
+The issue was dicovered when running 5.12-rc1 kernel on x86_64
+with KASAN enabled:
+BUG: KASAN: global-out-of-bounds in clk_notifier_register+0xab/0x230
+Read of size 8 at addr ffffffffa0d10588 by task swapper/0/1
 
-> Or any other better approach to allow a random order to match the DT
-> usage better?
+CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc1 #1
+Hardware name: Google Caroline/Caroline,
+BIOS Google_Caroline.7820.430.0 07/20/2018
+Call Trace:
+ dump_stack+0xee/0x15c
+ print_address_description+0x1e/0x2dc
+ kasan_report+0x188/0x1ce
+ ? clk_notifier_register+0xab/0x230
+ ? clk_prepare_lock+0x15/0x7b
+ ? clk_notifier_register+0xab/0x230
+ clk_notifier_register+0xab/0x230
+ dw8250_probe+0xc01/0x10d4
+...
+Memory state around the buggy address:
+ ffffffffa0d10480: 00 00 00 00 00 03 f9 f9 f9 f9 f9 f9 00 00 00 00
+ ffffffffa0d10500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
+>ffffffffa0d10580: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
+                      ^
+ ffffffffa0d10600: 00 00 00 00 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00
+ ffffffffa0d10680: 00 00 00 00 00 00 00 00 f9 f9 f9 f9 00 00 00 00
+ ==================================================================
 
-Why do you need random order?
+Fixes: (b2476490ef11 clk: introduce the common clock framework)
 
-We can not enforce the order, but we only do that when there's
-multiple optional entries.
+Reported-by: Lukasz Majczak <lma@semihalf.com>
+Signed-off-by: Lukasz Bartosik <lb@semihalf.com>
+---
+ drivers/clk/clk.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-Rob
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3412a7cc03fd..bd90de885392 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4360,6 +4360,7 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+ {
+ 	struct clk_notifier *cn;
+ 	int ret = -ENOMEM;
++	bool entry_found = false;
+ 
+ 	if (!clk || !nb)
+ 		return -EINVAL;
+@@ -4367,12 +4368,15 @@ int clk_notifier_register(struct clk *clk, struct notifier_block *nb)
+ 	clk_prepare_lock();
+ 
+ 	/* search the list of notifiers for this clk */
+-	list_for_each_entry(cn, &clk_notifier_list, node)
+-		if (cn->clk == clk)
++	list_for_each_entry(cn, &clk_notifier_list, node) {
++		if (cn->clk == clk) {
++			entry_found = true;
+ 			break;
++		}
++	}
+ 
+ 	/* if clk wasn't in the notifier list, allocate new clk_notifier */
+-	if (cn->clk != clk) {
++	if (!entry_found) {
+ 		cn = kzalloc(sizeof(*cn), GFP_KERNEL);
+ 		if (!cn)
+ 			goto out;
+@@ -4409,17 +4413,21 @@ int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb)
+ {
+ 	struct clk_notifier *cn = NULL;
+ 	int ret = -EINVAL;
++	bool entry_found = false;
+ 
+ 	if (!clk || !nb)
+ 		return -EINVAL;
+ 
+ 	clk_prepare_lock();
+ 
+-	list_for_each_entry(cn, &clk_notifier_list, node)
+-		if (cn->clk == clk)
++	list_for_each_entry(cn, &clk_notifier_list, node) {
++		if (cn->clk == clk) {
++			entry_found = true;
+ 			break;
++		}
++	}
+ 
+-	if (cn->clk == clk) {
++	if (entry_found) {
+ 		ret = srcu_notifier_chain_unregister(&cn->notifier_head, nb);
+ 
+ 		clk->core->notifier_count--;
+-- 
+2.17.1
+
