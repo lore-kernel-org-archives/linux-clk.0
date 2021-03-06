@@ -2,184 +2,179 @@ Return-Path: <SRS0=v13c=IE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68942C43381
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 09:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F44DC433E6
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 20:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38E656502C
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 09:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 188F4650AE
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 20:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbhCFJyr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Mar 2021 04:54:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57616 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbhCFJyY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Mar 2021 04:54:24 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC636C06175F;
-        Sat,  6 Mar 2021 01:54:23 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id b8so4293769oti.7;
-        Sat, 06 Mar 2021 01:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o3VJe+ZuS7Fy+8jhh+o3TzrnaFKjAbnnuNEMdGEuQ4E=;
-        b=QuJn9ttAkQRO7rHC8UcuVjfI3su2spVFllMTP309N67RH4n1ImxdQ9iveaaMtGX5qd
-         02bdzY929BsWffTrw8VuFhuY7uGMZZHubF4rBGfaiU+18Mdc7LGC+n2AQ91M2UqHw/4a
-         YWudRWPV9tVmocf6M8vJr9G3dNP4QuGJtJU4y7JFoc0fN4d8qQfXVYPXwBDlIiu2vfuy
-         KgDt55Ze+3Twr87NRaFinoFXHBwZL/PBKNDYcrgf3BvjhSSceF1PQCbai4f/DDeqzxWI
-         +HobtGisW7Kizuk5oJqoe6QPJLAaJrtBC0yMnMKsK8ibezGst8Gn5KfUlZsSvX+NhzFq
-         b2xA==
+        id S231211AbhCFUUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Mar 2021 15:20:36 -0500
+Received: from mail-qk1-f175.google.com ([209.85.222.175]:32863 "EHLO
+        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231147AbhCFUUc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Mar 2021 15:20:32 -0500
+Received: by mail-qk1-f175.google.com with SMTP id l4so5637802qkl.0;
+        Sat, 06 Mar 2021 12:20:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o3VJe+ZuS7Fy+8jhh+o3TzrnaFKjAbnnuNEMdGEuQ4E=;
-        b=ex0Nj522jzKYa469SbSbpHvyaveTSh6eD4Je6RPtQgVkSD1mumzcT8s0CXec00nEcD
-         axpTA9dqBvWII/3hKmtAXVf/sdRmlUeIgu6IelcWni0Og0hh2+RwrUcQ7OVHKG9iISxs
-         cPPvcf615gDBxZNNxAFQXsTILS0105r2SYhfergTIlx5klkizPvutcnVEyDHNipT9Q5E
-         iu0ViV8EgRvXtS52d5dSsVlwW8/qIh9Xw/3vaFtsX9+evnUzPJ0pRbbY7jHB7Q7+y+AC
-         UqDUUPtuG29Hf5AV0qN6gSUJRwWGO0GvCceQ32eoJjf/Bp90y6ToTWB5zzQH/Aff5Pdc
-         2kdg==
-X-Gm-Message-State: AOAM531S8Gfo3fsXhTC6C1iPv31NPoJEy+D3odANcMbwWLgNRvECrA4+
-        gcLL7Su7BEsCg7KtUQe4FGXQrK91lRCjQj53hnu78fLlpQmWWA==
-X-Google-Smtp-Source: ABdhPJybzMi6Zw1D5o/q36FweHJTgQsEC4CUoErnRfmyhvEIJiB7hgtCgLLtx8z+JX/kKaXVdimIgJXII5x018M6qXQ=
-X-Received: by 2002:a9d:6e01:: with SMTP id e1mr11415112otr.74.1615024462779;
- Sat, 06 Mar 2021 01:54:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zWfn7H/UEf+l7pWxANCNIEOtNbl8gBUKRtLIogG6HU4=;
+        b=ZAEF+p+IvfT3Jf3782JCjMvJRAQ7kThDM1LyHvRyA28jHzz56020Vz2s7dpUnZpuu+
+         CR6zL7t35M8IcuqN+UBI4CqJ0PO7ama4Odzfqv71FAmbhn/yk05/9ow9naXDK5AH6S4a
+         s8nZ/OqXz4JRoEOXwAWYz+MYPAa/WjHyEYSd39aHPm7YL6kwRZ3LiUeJJLhObq1Js9ZI
+         jJ4oYT4K8qCxbR4iLO1vHImfdTqNty01Blrz6bae8k7HWBD7QI8q5BFXWo92kyEzhs9k
+         2AWnObNzTEsvCqH3JVh6OLNASX5KrljvMyTiJVVnU+0tt4VmwCQ4LlKvlA9AXzUiF04c
+         Uf4g==
+X-Gm-Message-State: AOAM532x+vArn1qxQXZQavFXZqJMnth2+ZE/3K10AMB4m/isYL9L+Zzx
+        3QS+Ah1F/9rsGBt06OTvrQ==
+X-Google-Smtp-Source: ABdhPJw26Xz201By6e4mJ0f7HTFQskHAuUpIAQYA5A5yuiz6PQxGnYdEUczCOCgU8Xafebhb5xFZtA==
+X-Received: by 2002:a05:620a:164c:: with SMTP id c12mr15761060qko.285.1615062031242;
+        Sat, 06 Mar 2021 12:20:31 -0800 (PST)
+Received: from robh.at.kernel.org ([172.58.27.98])
+        by smtp.gmail.com with ESMTPSA id e18sm4491041qtr.69.2021.03.06.12.20.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Mar 2021 12:20:30 -0800 (PST)
+Received: (nullmailer pid 1151680 invoked by uid 1000);
+        Sat, 06 Mar 2021 20:20:22 -0000
+Date:   Sat, 6 Mar 2021 13:20:22 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        gregkh@linuxfoundation.org, sboyd@kernel.org,
+        mturquette@baylibre.com, shubhrajyoti.datta@gmail.com,
+        git@xilinx.com, miquel.raynal@bootlin.com,
+        devel@driverdev.osuosl.org
+Subject: Re: [PATCH v10 8/9] dt-bindings: add documentation of xilinx
+ clocking wizard
+Message-ID: <20210306202022.GA1146983@robh.at.kernel.org>
+References: <1614172241-17326-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <1614172241-17326-9-git-send-email-shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
-References: <20210218070709.11932-1-sergio.paracuellos@gmail.com>
- <20210218070709.11932-3-sergio.paracuellos@gmail.com> <20210305224756.GA777984@robh.at.kernel.org>
- <CAMhs-H_RoA-JvT9Q1K+8tEA1vqS6HWuE-D4=kWVsoOWTwjTGbw@mail.gmail.com>
-In-Reply-To: <CAMhs-H_RoA-JvT9Q1K+8tEA1vqS6HWuE-D4=kWVsoOWTwjTGbw@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sat, 6 Mar 2021 10:54:11 +0100
-Message-ID: <CAMhs-H9noK84G_PgLdL1kTS9YuEa=bKojrOojYTBtOeKy+L7RA@mail.gmail.com>
-Subject: Re: [PATCH v9 2/6] dt: bindings: add mt7621-clk device tree binding documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, John Crispin <john@phrozen.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        NeilBrown <neil@brown.name>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1614172241-17326-9-git-send-email-shubhrajyoti.datta@xilinx.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi again,
+On Wed, Feb 24, 2021 at 06:40:40PM +0530, Shubhrajyoti Datta wrote:
+> Add the devicetree binding for the xilinx clocking wizard.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+>  v6:
+>  Fix a yaml warning
+>  v7:
+>  Add vendor prefix speed-grade
+>  v8:
+>  Fix the warnings
+>  v10:
+>  Add nr-outputs
+> 
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       | 72 ++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> new file mode 100644
+> index 0000000..280eb09
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Xilinx clocking wizard
+> +
+> +maintainers:
+> +  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> +
+> +description:
+> +  The clocking wizard is a soft ip clocking block of Xilinx versal. It
+> +  reads required input clock frequencies from the devicetree and acts as clock
+> +  clock output.
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,clocking-wizard
 
-On Sat, Mar 6, 2021 at 8:12 AM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> Hi Rob,
->
-> On Fri, Mar 5, 2021 at 11:47 PM Rob Herring <robh@kernel.org> wrote:
-> [snip]
-> > > +
-> > > +  ralink,sysctl:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description:
-> > > +      phandle of syscon used to control system registers
-> > > +
-> > > +  ralink,memctl:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description:
-> > > +      phandle of syscon used to control memory registers
-> >
-> > I assume one of these phandles are the main registers for the clocks?
-> > Make this a child node and drop that phandle.
->
-> The 'ralink,sysctl' phandle is to read bootstrap register to be able
-> to derive xtal and a clk gate register for the peripherals.
-> The 'ralink,memctl' phandle is to read the cpu clock frequency from
-> the memory controller.
->
-> So there is not "main registers". I already put this as a child node
-> in v4 and I was told to get rid of child nodes. I need this as a
-> regmap to other DT node registers (sysctl, and memctl) to be able to
-> use the driver without specific architecture operations and properly
-> enable for COMPILE_TEST without dirty Makefile arch flags. Both sysctl
-> and memctl has no other child nodes, and I think that's why I was told
-> to avoid child nodes at the end. I explained here [0] current sysctl
-> and memctl in the mt7621 device tree and my view of the need for this
-> two syscons:
->
-> [0]: https://lkml.org/lkml/2021/1/2/9
->
-> So to avoid to send again "a previous version" on this patch, please
-> guide me in the correct thing to do. Stephen, Rob, I will be really
-> happy with your help :)
+Not very specific. Only 1 version of this h/w?
 
-Since there are no other child nodes for this sysc, should merge clock
-properties
-with this node in the following way a valid approach:
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: clock input
+> +      - description: axi clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: clk_in1
+> +      - const: s_axi_aclk
+> +
+> +
+> +  xlnx,speed-grade:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 3]
+> +    description:
+> +      Speed grade of the device. Higher the speed grade faster is the FPGA device.
 
- sysc: sysc@0 {
-     compatible = "mediatek,mt7621-sysc", "syscon";
-     reg = <0x0 0x100>;
-     #clock-cells = <1>;
-     ralink,memctl = <&memc>;
-     clock-output-names = "xtal", "cpu", "bus",
-                                        "50m", "125m", "150m",
-                                        "250m", "270m";
-};
+How does one decide what value?
 
-Consumer clock:
+> +
+> +  nr-outputs:
 
-node: node@0 {
-  ...
-  clocks = <&sysc MT7621_CLK_WHATEVER>;
- ...
-};
+xlnx,nr-outputs
 
-If that is the case... and since 'sysc' is used as system control
-registers for all the rest of the world, where should be the yaml file
-with bindings placed?
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 3, 4, 5, 6, 7, 8]
 
-Thanks in advance again for your help.
+minimum: 1
+maximum: 8
 
-Best regards,
-    Sergio Paracuellos
+> +    description:
+> +      Number of outputs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - xlnx,speed-grade
+> +  - nr-outputs
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    wizard@b0000000  {
 
->
-> Best regards,
->     Sergio Paracuellos
-> >
-> > > +
-> > > +  clock-output-names:
-> > > +    maxItems: 8
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - '#clock-cells'
-> > > +  - ralink,sysctl
-> > > +  - ralink,memctl
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/clock/mt7621-clk.h>
-> > > +
-> > > +    pll {
-> > > +      compatible = "mediatek,mt7621-clk";
-> > > +      #clock-cells = <1>;
-> > > +      ralink,sysctl = <&sysc>;
-> > > +      ralink,memctl = <&memc>;
-> > > +      clock-output-names = "xtal", "cpu", "bus",
-> > > +                           "50m", "125m", "150m",
-> > > +                           "250m", "270m";
-> > > +    };
-> > > --
-> > > 2.25.1
-> > >
+clock-controller@...
+
+> +        compatible = "xlnx,clocking-wizard";
+> +        reg = <0xb0000000 0x10000>;
+> +        #clock-cells = <1>;
+> +        xlnx,speed-grade = <1>;
+> +        nr-outputs = <6>;
+> +        clock-names = "clk_in1", "s_axi_aclk";
+> +        clocks = <&clkc 15>, <&clkc 15>;
+> +    };
+> +...
+> -- 
+> 2.1.1
+> 
