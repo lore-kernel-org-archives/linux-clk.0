@@ -3,77 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4851DC433E9
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 21:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB55DC433E6
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 21:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E297650AE
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 21:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2B9A64FCC
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 21:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhCFVJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Mar 2021 16:09:57 -0500
-Received: from mail-pf1-f171.google.com ([209.85.210.171]:40400 "EHLO
-        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbhCFVJn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Mar 2021 16:09:43 -0500
-Received: by mail-pf1-f171.google.com with SMTP id x7so1188346pfi.7;
-        Sat, 06 Mar 2021 13:09:42 -0800 (PST)
+        id S229704AbhCFVSE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Mar 2021 16:18:04 -0500
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:45557 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229642AbhCFVRk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Mar 2021 16:17:40 -0500
+Received: by mail-pg1-f171.google.com with SMTP id p21so3790338pgl.12;
+        Sat, 06 Mar 2021 13:17:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=1NFomRzi4xgjHlzifXEdAJagWvD2oXKyv02N+cpRX0s=;
-        b=rQDehLatn+1uhaGsewYCcFvKHPbkhLE9sphMqYIff4qmTJCp+XaCC1qkN1xZuo3cjW
-         12GIyr7vf+wEMbgqDj7KKuaLbvyTLQgw/lxQtFtX1h9BFhAqIWaINDoFePqlcXANsRAh
-         y5a9kDVK0HoKUZp7hEM1DJSlkDvEoY2kZ0UWxA1mE80ymziEMtozmMxzz5w+dfsbIcDY
-         tbMhLEtzaIifLJhsY8ms1dzw1qAmGre0q4+6q6x2kQSe1OO/gwIBzWrvL6/H+wiC3y6L
-         ZxeMku9QgwWRzmp/nU9XhVVqQ0W9yg+gmNmmyPPZi5a/HicjDLYiVzTSDyS96XaSsdV9
-         BZ7A==
-X-Gm-Message-State: AOAM530SXSEgeCYKkSeuPPe2GZf7nQvLsnRpnO3ZM4FxBC4zg4IkhPqm
-        iSy2rsh3LeJl4IxJCeNkPQ==
-X-Google-Smtp-Source: ABdhPJxjdjj9u38fIN3Momyu/WLXQ5qzFlXPV8oF+wZYsDGIcuXMUWGgE3MOfQ1J0YG7hfxmNR4SHw==
-X-Received: by 2002:a63:1524:: with SMTP id v36mr13979377pgl.221.1615064982615;
-        Sat, 06 Mar 2021 13:09:42 -0800 (PST)
+        bh=IWHmhpA5Zif3jh65FB3tGXdQJMd1ekxEEqmbz03yaN8=;
+        b=gcsSKKsaeYXV3Dkb7X9eHHj0p+yR40+zJ6jToA6DdN+rcZAaB6I/LJmftAzMLz4Bgh
+         GBQ3vQyVJAP3Ipfo/yo5chpFWR+zJv5xveJcrrsJupOaDeCo9Yohdrw/VoSGMRuXk8MP
+         7xwxcEubvAZ97n3m1RMAW8tnz+R0LzdR09r40w6Cql2/TeJYtLASYeC6iVCo+w7Xcz1o
+         7BKt2fwLlGyHuByqaiXaR3mtcFQdDINEsmpksCykoFmVI9PkXqQNc2p3Ca6D5qmeyR14
+         fhbhL6CCMwFO6RgKJfc7k2mPu3nV9yaHDrZXbEpzyeDizF5uW+ASAYNdMhvosUvEswdH
+         ATgg==
+X-Gm-Message-State: AOAM531scKDywBBJbd+GhuL3RW/JdtmY1Fe/3UqTAkSXRE7syo8tsWa2
+        /+wH3zjRsbqpJDTjrZi/VA==
+X-Google-Smtp-Source: ABdhPJywDi/r2KgcjPXrkjgG6vYPU1S7xfMTuKGVlHqtBL08Xj7le4J0IijdMaIFVwJO3A/0AjkrrQ==
+X-Received: by 2002:a63:4808:: with SMTP id v8mr14093452pga.381.1615065457517;
+        Sat, 06 Mar 2021 13:17:37 -0800 (PST)
 Received: from robh.at.kernel.org ([172.58.27.98])
-        by smtp.gmail.com with ESMTPSA id v185sm6201829pfb.125.2021.03.06.13.09.39
+        by smtp.gmail.com with ESMTPSA id o62sm5696367pga.43.2021.03.06.13.17.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Mar 2021 13:09:41 -0800 (PST)
-Received: (nullmailer pid 1217154 invoked by uid 1000);
-        Sat, 06 Mar 2021 21:09:37 -0000
-Date:   Sat, 6 Mar 2021 14:09:37 -0700
+        Sat, 06 Mar 2021 13:17:36 -0800 (PST)
+Received: (nullmailer pid 1227466 invoked by uid 1000);
+        Sat, 06 Mar 2021 21:17:31 -0000
+Date:   Sat, 6 Mar 2021 14:17:31 -0700
 From:   Rob Herring <robh@kernel.org>
 To:     =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
-Cc:     devicetree@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+Cc:     jonas.gorski@gmail.com,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>, jonas.gorski@gmail.com,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/4] mips: bmips: add BCM63268 timer clock definitions
-Message-ID: <20210306210937.GA1217101@robh.at.kernel.org>
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] mips: bmips: add BCM63268 timer reset definitions
+Message-ID: <20210306211731.GA1217377@robh.at.kernel.org>
 References: <20210225194201.17001-1-noltari@gmail.com>
- <20210225194201.17001-2-noltari@gmail.com>
+ <20210225194201.17001-3-noltari@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210225194201.17001-2-noltari@gmail.com>
+In-Reply-To: <20210225194201.17001-3-noltari@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 25 Feb 2021 20:41:58 +0100, Álvaro Fernández Rojas wrote:
-> Add missing timer clock definitions for BCM63268.
+On Thu, Feb 25, 2021 at 08:41:59PM +0100, Álvaro Fernández Rojas wrote:
+> Add missing timer reset definitions for BCM63268.
 > 
 > Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 > ---
->  include/dt-bindings/clock/bcm63268-clock.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  include/dt-bindings/reset/bcm63268-reset.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
+> diff --git a/include/dt-bindings/reset/bcm63268-reset.h b/include/dt-bindings/reset/bcm63268-reset.h
+> index 6a6403a4c2d5..d87a7882782a 100644
+> --- a/include/dt-bindings/reset/bcm63268-reset.h
+> +++ b/include/dt-bindings/reset/bcm63268-reset.h
+> @@ -23,4 +23,8 @@
+>  #define BCM63268_RST_PCIE_HARD	17
+>  #define BCM63268_RST_GPHY	18
+>  
+> +#define BCM63268_TRST_SW	29
+> +#define BCM63268_TRST_HW	30
+> +#define BCM63268_TRST_POR	31
 
-Acked-by: Rob Herring <robh@kernel.org>
+Numbering should be local to the provider, so shouldn't this be 0-2? 
+Unless these numbers correspond to something in the h/w (bit positions 
+for example).
+
+> +
+>  #endif /* __DT_BINDINGS_RESET_BCM63268_H */
+> -- 
+> 2.20.1
+> 
