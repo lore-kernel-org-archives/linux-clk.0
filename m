@@ -1,86 +1,159 @@
-Return-Path: <SRS0=rTxN=ID=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=v13c=IE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF7AC433DB
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 23:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E745C433E9
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 01:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4C33650AD
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Mar 2021 23:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7EAE64E44
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Mar 2021 01:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230045AbhCEXK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Mar 2021 18:10:56 -0500
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:38455 "EHLO
-        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230184AbhCEXK3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Mar 2021 18:10:29 -0500
-Received: by mail-oi1-f180.google.com with SMTP id q203so4338831oih.5;
-        Fri, 05 Mar 2021 15:10:29 -0800 (PST)
+        id S229631AbhCFBxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Mar 2021 20:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229493AbhCFBxA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Mar 2021 20:53:00 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5015C06175F;
+        Fri,  5 Mar 2021 17:53:00 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id u20so4016318iot.9;
+        Fri, 05 Mar 2021 17:53:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DKCLycYpc3HKoJmuKPBdeHcQJ9gEh+09JrAX4tJjuOo=;
+        b=cHA5c3x+i5YpdF7NuMdeZOez2mxXfShWziiUFDPqrxH2zSdnXomtkyZWz5cthIvO22
+         s7s9mWe44nPB0jvEnJPAMuDjQENwQJocVHeHIL44ea35Kr/6KChALv9HMbGZrHYVJM3P
+         tJh4N6yQziZs+KFrQYAn7UUJNQoXCcgQu2qXKsiLHnepo6ZdkoAKdkPe0mlHLx9NE0o7
+         Ls2jWUArF/X1tsGCL23QKaDXAtbRQUGrpFKAmKVARI3vf+1/vPYM64F3nhVsAIqWybFv
+         s26KUHJmv4gG9/Khhgb+cOiMCO4F7GUEp5VgCYRthGKo4AdfJJ7aECMzveFsBwC5A8GE
+         XTew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qwx/lahU6C6mQtmf70dfF7d8Nl+xThqYqme8HF212Hk=;
-        b=JH/2rN56Ao7JU+nvz5WOVhCQwFesSJKw8FbXEjBXryhq4PocWJNXDGB2+/4KhuZPOl
-         tlMrKDReJ1hIcrZE9pmTm6eSqfQY5lKTAt4MkR2oWwJwPEJEbVYT6OJwnfKNmiJHW4pp
-         M9GLCc/5Rk+2YgF4n+5jJzBg0Q1+QyQDE3NkS1IDvJPNEamM9mQcY7aY4jXI7jqILtv5
-         iiwTFY4fzF0SnAIQWS/MSP+wsc6KySt6sNMboRCap97WhShek/OPSAzzFCDmhRIiqPz+
-         70DW072grfAlZaY9T0o87T5E4DnMb7PaAINLkC2ah9KahQQ+8hTXzF+Bhl+zEjnOHfOl
-         FR8Q==
-X-Gm-Message-State: AOAM531bHhbYvcTZEpOVOtoubIcIlJ8oIELNuLE2HkdY87sYrNniVfvX
-        HgpMA5jkR5b+ImfNUKrA7g==
-X-Google-Smtp-Source: ABdhPJyiY3zuSXP+XPB+MNCejavIyEyX+k7RYCnvsME89Efwvpyn9848KWc7gA1bozqcYndRTpYVeA==
-X-Received: by 2002:aca:5f83:: with SMTP id t125mr9010781oib.114.1614985828782;
-        Fri, 05 Mar 2021 15:10:28 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k21sm892029otl.27.2021.03.05.15.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Mar 2021 15:10:27 -0800 (PST)
-Received: (nullmailer pid 814164 invoked by uid 1000);
-        Fri, 05 Mar 2021 23:10:26 -0000
-Date:   Fri, 5 Mar 2021 17:10:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Martin Kepplinger <martink@posteo.de>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>
-Subject: Re: [RFC 02/19] dt-bindings: interconnect: imx8mq: Add missing pl301
- and SAI ids
-Message-ID: <20210305231026.GA814130@robh.at.kernel.org>
-References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com>
- <1613750416-11901-3-git-send-email-abel.vesa@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DKCLycYpc3HKoJmuKPBdeHcQJ9gEh+09JrAX4tJjuOo=;
+        b=M1ho9KDA4lW9Imfl2mqOCMusWtAqgUuBcxDrdnZdBkDVslvYFj8CUUi8TkGkAycInb
+         X/uf2Z1PVqbY79gtMIkVzLzQjIpPU9k2eVS8YWsuTbEoUZUWR/vxp9qLivyYsLqSyGHj
+         FQCd2UocuRQaNZtkXOWZV97m5bfPmMIOuGwpFcABptDuvXtTbXLdYy4cwh8pC6PZNBUf
+         FwR0Im4tGoQiTzLvN2tN31b3Q0jBLXZM6piU9NGcrDWDOaNDv6Rp5Xg6G9DtEzptDfi7
+         3r2ru0k0DC6rGvZv6nQMp6PwBqRoxIN4eHUTRuDO0khEKFaQimc3zgoS3BYxRji5uvJn
+         vmNw==
+X-Gm-Message-State: AOAM530zjI6zvXE8+ZFMeXqfVUvVQ3En/o6FgfE8IwOkVlA+XJLxHpKp
+        emFShekwyKQRo/lfkDfYJnzQ0eet3SdAlKNC+Ls=
+X-Google-Smtp-Source: ABdhPJz1LKvjkKpi0mhhWNpQ/jhaYsdcSFGnQIHJxnvPcCnrRZkUL3VDIXLbOq9IltszwFxvj536k9ZaQDcbQggHQWs=
+X-Received: by 2002:a5d:97c9:: with SMTP id k9mr10521371ios.45.1614995580001;
+ Fri, 05 Mar 2021 17:53:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1613750416-11901-3-git-send-email-abel.vesa@nxp.com>
+References: <20210218070709.11932-1-sergio.paracuellos@gmail.com>
+ <20210218070709.11932-3-sergio.paracuellos@gmail.com> <20210305224756.GA777984@robh.at.kernel.org>
+In-Reply-To: <20210305224756.GA777984@robh.at.kernel.org>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Sat, 6 Mar 2021 09:52:48 +0800
+Message-ID: <CAJsYDVLJy_F6HYbQUjFzB+YKnaNujBH_Fqo0rinvTfs-0o8xfA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/6] dt: bindings: add mt7621-clk device tree binding documentation
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        John Crispin <john@phrozen.org>, NeilBrown <neil@brown.name>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 19 Feb 2021 17:59:59 +0200, Abel Vesa wrote:
-> According to the bus diagram, there are two more pl301s that need to
-> be added here. The pl301_per_m which is an intermediary node between
-> pl301_main and its masters: usdhc1, usdhc2 and sdma. The pl301_wakeup
-> is an intermediary node between pl301_main and its masters, in this case
-> all the SAIs.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  include/dt-bindings/interconnect/imx8mq.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
+Hi Rob!
 
-Acked-by: Rob Herring <robh@kernel.org>
+On Sat, Mar 6, 2021 at 6:48 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, Feb 18, 2021 at 08:07:05AM +0100, Sergio Paracuellos wrote:
+> > Adds device tree binding documentation for clocks in the
+> > MT7621 SOC.
+> >
+> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > ---
+> >  .../bindings/clock/mediatek,mt7621-clk.yaml   | 66 +++++++++++++++++++
+> >  1 file changed, 66 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> > new file mode 100644
+> > index 000000000000..842a0f2c9d40
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-clk.yaml
+> > @@ -0,0 +1,66 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/mediatek,mt7621-clk.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: MT7621 Clock Device Tree Bindings
+> > +
+> > +maintainers:
+> > +  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> > +
+> > +description: |
+> > +  The MT7621 has a PLL controller from where the cpu clock is provided
+> > +  as well as derived clocks for the bus and the peripherals. It also
+> > +  can gate SoC device clocks.
+> > +
+> > +  Each clock is assigned an identifier and client nodes use this identifier
+> > +  to specify the clock which they consume.
+> > +
+> > +  All these identifiers could be found in:
+> > +  [1]: <include/dt-bindings/clock/mt7621-clk.h>.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: mediatek,mt7621-clk
+> > +
+> > +  "#clock-cells":
+> > +    description:
+> > +      The first cell indicates the clock number, see [1] for available
+> > +      clocks.
+> > +    const: 1
+> > +
+> > +  ralink,sysctl:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      phandle of syscon used to control system registers
+> > +
+> > +  ralink,memctl:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      phandle of syscon used to control memory registers
+>
+> I assume one of these phandles are the main registers for the clocks?
+> Make this a child node and drop that phandle.
+
+On MT7621, CPU clock can be chosen from 3 sources: crystal clock,
+a fixed 500MHz clock or a clock created by the memory controller.
+sysctl contains a bootstrap register to determine crystal clock, a
+clock mux for choosing between the 3 sources for CPU clock, and
+a clock gate register for various peripherals. The ralink,memctl
+phandle here is to read the cpu clock frequency from the memory
+controller.
+The original implementation hides this hardware detail to avoid
+splitting the driver into three just for the CPU clock.
+Is this approach okay and we can put it under sysctl node,
+or this driver needs to be further splitted?
+
+-- 
+Regards,
+Chuanhong Guo
