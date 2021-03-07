@@ -2,22 +2,23 @@ Return-Path: <SRS0=MqlC=IF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892F2C433E9
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 14:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9FDC433E0
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 14:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57DF865104
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 14:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4088164FF0
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 14:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbhCGOSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Mar 2021 09:18:23 -0500
-Received: from aposti.net ([89.234.176.197]:51610 "EHLO aposti.net"
+        id S232157AbhCGOS5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Mar 2021 09:18:57 -0500
+Received: from aposti.net ([89.234.176.197]:51654 "EHLO aposti.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230184AbhCGOSO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 7 Mar 2021 09:18:14 -0500
+        id S232148AbhCGOS3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 7 Mar 2021 09:18:29 -0500
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -26,51 +27,306 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     od@zcrc.me, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 0/6] clk: Ingenic JZ4760(B) support
-Date:   Sun,  7 Mar 2021 14:17:53 +0000
-Message-Id: <20210307141759.30426-1-paul@crapouillou.net>
+Subject: [PATCH 2/6] clk: Support bypassing dividers
+Date:   Sun,  7 Mar 2021 14:17:55 +0000
+Message-Id: <20210307141759.30426-3-paul@crapouillou.net>
+In-Reply-To: <20210307141759.30426-1-paul@crapouillou.net>
+References: <20210307141759.30426-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+When a clock is declared as both CGU_CLK_DIV and CGU_CLK_MUX, the CGU
+code expects the mux to be applied first, the divider second.
 
-Here are a set of patches to add support for the Ingenic JZ4760(B) SoCs.
+On the JZ4760, and maybe on some other SoCs, some clocks also have a mux
+setting and a divider, but the divider is not applied to all parents
+selectable from the mux.
 
-One thing to note is that the ingenic,jz4760-tcu is undocumented for now,
-as I will update the TCU documentation in a different patchset.
+This could be solved by creating two clocks, one with CGU_CLK_DIV and
+one with CGU_CLK_MUX, but that would increase the number of clocks.
 
-Zhou: the CGU code now supports overriding the PLL M/N/OD calc
-algorithm, please tell me if it works for you.
+Instead, add a 8-bit mask to CGU_CLK_DIV clocks. If the bit
+corresponding to the parent clock's index is set, the divider is
+bypassed.
 
-Cheers,
--Paul
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/clk/ingenic/cgu.c         | 33 ++++++++++++++++++++-----------
+ drivers/clk/ingenic/cgu.h         |  2 ++
+ drivers/clk/ingenic/jz4725b-cgu.c | 12 +++++------
+ drivers/clk/ingenic/jz4740-cgu.c  | 12 +++++------
+ drivers/clk/ingenic/jz4770-cgu.c  | 12 +++++------
+ 5 files changed, 42 insertions(+), 29 deletions(-)
 
-Paul Cercueil (6):
-  dt-bindings: clock: ingenic: Add ingenic,jz4760{,b}-cgu compatibles
-  clk: Support bypassing dividers
-  clk: ingenic: Read bypass register only when there is one
-  clk: ingenic: Remove pll_info.no_bypass_bit
-  clk: ingenic: Support overriding PLLs M/N/OD calc algorithm
-  clk: ingenic: Add support for the JZ4760
-
- .../bindings/clock/ingenic,cgu.yaml           |   4 +
- drivers/clk/ingenic/Kconfig                   |  10 +
- drivers/clk/ingenic/Makefile                  |   1 +
- drivers/clk/ingenic/cgu.c                     |  92 ++--
- drivers/clk/ingenic/cgu.h                     |  12 +-
- drivers/clk/ingenic/jz4725b-cgu.c             |  12 +-
- drivers/clk/ingenic/jz4740-cgu.c              |  12 +-
- drivers/clk/ingenic/jz4760-cgu.c              | 433 ++++++++++++++++++
- drivers/clk/ingenic/jz4770-cgu.c              |  15 +-
- drivers/clk/ingenic/tcu.c                     |   2 +
- include/dt-bindings/clock/jz4760-cgu.h        |  54 +++
- 11 files changed, 591 insertions(+), 56 deletions(-)
- create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
- create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
-
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index c8e9cb6c8e39..0619d45a950c 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -369,18 +369,23 @@ ingenic_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+ 	unsigned long rate = parent_rate;
+ 	u32 div_reg, div;
++	u8 parent;
+ 
+ 	if (clk_info->type & CGU_CLK_DIV) {
+-		div_reg = readl(cgu->base + clk_info->div.reg);
+-		div = (div_reg >> clk_info->div.shift) &
+-		      GENMASK(clk_info->div.bits - 1, 0);
++		parent = ingenic_clk_get_parent(hw);
+ 
+-		if (clk_info->div.div_table)
+-			div = clk_info->div.div_table[div];
+-		else
+-			div = (div + 1) * clk_info->div.div;
++		if (!(clk_info->div.bypass_mask & BIT(parent))) {
++			div_reg = readl(cgu->base + clk_info->div.reg);
++			div = (div_reg >> clk_info->div.shift) &
++			      GENMASK(clk_info->div.bits - 1, 0);
++
++			if (clk_info->div.div_table)
++				div = clk_info->div.div_table[div];
++			else
++				div = (div + 1) * clk_info->div.div;
+ 
+-		rate /= div;
++			rate /= div;
++		}
+ 	} else if (clk_info->type & CGU_CLK_FIXDIV) {
+ 		rate /= clk_info->fixdiv.div;
+ 	}
+@@ -410,10 +415,16 @@ ingenic_clk_calc_hw_div(const struct ingenic_cgu_clk_info *clk_info,
+ }
+ 
+ static unsigned
+-ingenic_clk_calc_div(const struct ingenic_cgu_clk_info *clk_info,
++ingenic_clk_calc_div(struct clk_hw *hw,
++		     const struct ingenic_cgu_clk_info *clk_info,
+ 		     unsigned long parent_rate, unsigned long req_rate)
+ {
+ 	unsigned int div, hw_div;
++	u8 parent;
++
++	parent = ingenic_clk_get_parent(hw);
++	if (clk_info->div.bypass_mask & BIT(parent))
++		return 1;
+ 
+ 	/* calculate the divide */
+ 	div = DIV_ROUND_UP(parent_rate, req_rate);
+@@ -448,7 +459,7 @@ ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	unsigned int div = 1;
+ 
+ 	if (clk_info->type & CGU_CLK_DIV)
+-		div = ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
++		div = ingenic_clk_calc_div(hw, clk_info, *parent_rate, req_rate);
+ 	else if (clk_info->type & CGU_CLK_FIXDIV)
+ 		div = clk_info->fixdiv.div;
+ 	else if (clk_hw_can_set_rate_parent(hw))
+@@ -480,7 +491,7 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	int ret = 0;
+ 
+ 	if (clk_info->type & CGU_CLK_DIV) {
+-		div = ingenic_clk_calc_div(clk_info, parent_rate, req_rate);
++		div = ingenic_clk_calc_div(hw, clk_info, parent_rate, req_rate);
+ 		rate = DIV_ROUND_UP(parent_rate, div);
+ 
+ 		if (rate != req_rate)
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 2c75ef4a36f5..44d97a259692 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -84,6 +84,7 @@ struct ingenic_cgu_mux_info {
+  *          isn't one
+  * @busy_bit: the index of the busy bit within reg, or -1 if there isn't one
+  * @stop_bit: the index of the stop bit within reg, or -1 if there isn't one
++ * @bypass_mask: mask of parent clocks for which the divider does not apply
+  * @div_table: optional table to map the value read from the register to the
+  *             actual divider value
+  */
+@@ -95,6 +96,7 @@ struct ingenic_cgu_div_info {
+ 	s8 ce_bit;
+ 	s8 busy_bit;
+ 	s8 stop_bit;
++	u8 bypass_mask;
+ 	const u8 *div_table;
+ };
+ 
+diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
+index 8c38e72d14a7..5154b0cf8ad6 100644
+--- a/drivers/clk/ingenic/jz4725b-cgu.c
++++ b/drivers/clk/ingenic/jz4725b-cgu.c
+@@ -80,7 +80,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
++			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1, 0,
+ 			jz4725b_cgu_pll_half_div_table,
+ 		},
+ 	},
+@@ -89,7 +89,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"cclk", CGU_CLK_DIV,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1, 0,
+ 			jz4725b_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -98,7 +98,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"hclk", CGU_CLK_DIV,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1, 0,
+ 			jz4725b_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -107,7 +107,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1, 0,
+ 			jz4725b_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -116,7 +116,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"mclk", CGU_CLK_DIV,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1, 0,
+ 			jz4725b_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -125,7 +125,7 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"ipu", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1, 0,
+ 			jz4725b_cgu_cpccr_div_table,
+ 		},
+ 		.gate = { CGU_REG_CLKGR, 13 },
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index c0ac9196a581..cd878f08aca3 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -95,7 +95,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
++			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1, 0,
+ 			jz4740_cgu_pll_half_div_table,
+ 		},
+ 	},
+@@ -104,7 +104,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"cclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1, 0,
+ 			jz4740_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -113,7 +113,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"hclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1, 0,
+ 			jz4740_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -122,7 +122,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1, 0,
+ 			jz4740_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -131,7 +131,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"mclk", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1, 0,
+ 			jz4740_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -140,7 +140,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4740_CLK_PLL_HALF, -1, -1, -1 },
+ 		.div = {
+-			CGU_REG_CPCCR, 16, 1, 5, 22, -1, -1,
++			CGU_REG_CPCCR, 16, 1, 5, 22, -1, -1, 0,
+ 			jz4740_cgu_cpccr_div_table,
+ 		},
+ 		.gate = { CGU_REG_CLKGR, 10 },
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index 9ea4490ecb7f..381a27f20b51 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -152,7 +152,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"cclk", CGU_CLK_DIV,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -160,7 +160,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"h0clk", CGU_CLK_DIV,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -168,7 +168,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"h1clk", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 24, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 24, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 		.gate = { CGU_REG_CLKGR1, 7 },
+@@ -177,7 +177,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"h2clk", CGU_CLK_DIV,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 	},
+@@ -185,7 +185,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"c1clk", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 		.gate = { CGU_REG_OPCR, 31, true }, // disable CCLK stop on idle
+@@ -194,7 +194,7 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"pclk", CGU_CLK_DIV,
+ 		.parents = { JZ4770_CLK_PLL0, },
+ 		.div = {
+-			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1,
++			CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1, 0,
+ 			jz4770_cgu_cpccr_div_table,
+ 		},
+ 	},
 -- 
 2.30.1
 
