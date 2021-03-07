@@ -2,68 +2,92 @@ Return-Path: <SRS0=MqlC=IF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A8CC4332E
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 17:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3981C4321A
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 18:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4629D650F7
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 17:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D8265172
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Mar 2021 18:56:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231395AbhCGRIV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Mar 2021 12:08:21 -0500
-Received: from aposti.net ([89.234.176.197]:40118 "EHLO aposti.net"
+        id S231890AbhCGSwl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Mar 2021 13:52:41 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55638 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232535AbhCGRHz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 7 Mar 2021 12:07:55 -0500
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 0/2] mmc: jz4740: Support PLL frequency changes
-Date:   Sun,  7 Mar 2021 17:07:40 +0000
-Message-Id: <20210307170742.70949-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S231612AbhCGSw3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 7 Mar 2021 13:52:29 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C70C1A0848;
+        Sun,  7 Mar 2021 19:52:28 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 506BE1A0833;
+        Sun,  7 Mar 2021 19:52:28 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B9492030D;
+        Sun,  7 Mar 2021 19:52:28 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: Call clk_core_enable_lock variant when lock is needed
+Date:   Sun,  7 Mar 2021 20:52:08 +0200
+Message-Id: <1615143128-6141-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Instead of locking explicitly every time, call the clk_core_enable_lock
+variant.
 
-This set of two patches enables the MMC driver to cope with the main PLL
-updating its rate, typically when the CPU frequency is being updated.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/clk.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-The first patch introduces clk_get_first_to_set_rate(), which will allow
-the MMC driver to get a pointer to the clock that will effectively be
-modified when calling clk_set_rate(); this is required to avoid a
-chicken-and-egg situation with the clock notifier.
-
-If accepted, this function will be reused in a few more drivers which
-need to perform the same operation.
-
-The patch to the MMC driver adds a atomic/mutex couple so that the
-frequency change will happen when we know that the controller is not in
-use.
-
-Cheers,
--Paul
-
-Paul Cercueil (2):
-  clk: Add clk_get_first_to_set_rate
-  mmc: jz4740: Add support for monitoring PLL clock rate changes
-
- drivers/clk/clk.c             |  9 +++++
- drivers/mmc/host/jz4740_mmc.c | 70 ++++++++++++++++++++++++++++++++++-
- include/linux/clk.h           | 16 ++++++++
- 3 files changed, 94 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 5052541..fd37773 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2078,12 +2078,8 @@ static void clk_change_rate(struct clk_core *core)
+ 		return;
+ 
+ 	if (core->flags & CLK_SET_RATE_UNGATE) {
+-		unsigned long flags;
+-
+ 		clk_core_prepare(core);
+-		flags = clk_enable_lock();
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		clk_core_enable_lock(core);
+ 	}
+ 
+ 	if (core->new_parent && core->new_parent != core->parent) {
+@@ -3564,8 +3560,6 @@ static int __clk_core_init(struct clk_core *core)
+ 	 * reparenting clocks
+ 	 */
+ 	if (core->flags & CLK_IS_CRITICAL) {
+-		unsigned long flags;
+-
+ 		ret = clk_core_prepare(core);
+ 		if (ret) {
+ 			pr_warn("%s: critical clk '%s' failed to prepare\n",
+@@ -3573,9 +3567,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			goto out;
+ 		}
+ 
+-		flags = clk_enable_lock();
+-		ret = clk_core_enable(core);
+-		clk_enable_unlock(flags);
++		ret = clk_core_enable_lock(core);
+ 		if (ret) {
+ 			pr_warn("%s: critical clk '%s' failed to enable\n",
+ 			       __func__, core->name);
 -- 
-2.30.1
+2.7.4
 
