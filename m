@@ -2,218 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A214C433E6
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 14:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1790EC433E6
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCE3D650ED
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 14:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FD465225
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbhCHOrV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 09:47:21 -0500
-Received: from aposti.net ([89.234.176.197]:47378 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229697AbhCHOq5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Mar 2021 09:46:57 -0500
-Date:   Mon, 08 Mar 2021 14:46:26 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 2/2] mmc: jz4740: Add support for monitoring PLL clock
- rate changes
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S229829AbhCHPp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 10:45:58 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:47049 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229646AbhCHPp3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 10:45:29 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 6D77358076B;
+        Mon,  8 Mar 2021 10:45:28 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 08 Mar 2021 10:45:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=qc3IVkUwpKxiQwYWY9vhXc66NlT
+        4SAHkuz3yHGTAYnA=; b=XYT8/kpBeWXXKwTXdlPxquUxb5651KDDu2Pc/VqJ9Fw
+        BJ9ak9AAI8W5YcJE5p/ertQcBuPT5ioDmhQccf7cA48TdAbvHUxwsukS8VR1TzZO
+        KAcV8A1hMZEwGW7xYXMfd9qjZAV8jbPbTJ3rT9LjbHVYluu6/XwxlaOl3lNsl2zD
+        UuySP+qOwXo64I30k4codE2HZuIMa2E8FgiFZdBeIH40I+desCVzgJU5NaOKfvPo
+        EqF9xgOS8KmkRZWdD7o5RUPlRAhUTB2+ozQQ0pyaTBuFUQ1wLqqBMGpu/O+tkoaE
+        kHRgHF8UL2gxyidoUd45PMqUzEakdrKwS7GIf0Od0bQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=qc3IVk
+        UwpKxiQwYWY9vhXc66NlT4SAHkuz3yHGTAYnA=; b=mSviPQk/oIGtwAAt5aW7bN
+        5A07xKQaoTH7+zG+Qnt7OhLpLLIqroA0D6IkiuLvwby7EwgHxq3xXnZZkpnDhHED
+        mkrdye42tk82Ph1WMFAJb7eXjqDl9SHliuglaREWv8r6kVm0y7QG9bUx6QwPS/wK
+        7KZ9CbVGBZz4b/Kryastn6kGz6HY1vpRSE8WowDcOu4ogKEcF6XnnnF7JDfw1SRL
+        ieMFWNL4nKMe57jObRsv8LP855JD2adGtQI3K4h2WPdqtyeCHZCOEfxstg/ZptN7
+        b+sr1B+ZMZ0zlSEJUXa8EmVgYu4kFtsXRmUfRgYZ+zp+r+AZgJ1cMyMVK8Nh5qhA
+        ==
+X-ME-Sender: <xms:lEZGYNCarRpb21GEn6Eba_NYl7erMBuE15nr56jvJourkbkn3aevfQ>
+    <xme:lEZGYGbUlNpjQHNWbGPR29NgCqna-XD8cHXFUKvAEzi0Oc6eFBxup5FVT5NxVl8cM
+    v4fLAWhSOrOhY9924o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddugedgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:lEZGYAbUaG3Tav7JlxVBh1E8BW-poBzRP3nRth0OxEn7YUrGoaYk0w>
+    <xmx:lEZGYF-4kdsfmSKR32vdk_N1aFudSxE344fHw0XW6D3uTcT1Hd_eSQ>
+    <xmx:lEZGYHjoZJt3BDCkxHiqx6b7j4lrEe4YepGhxFttI5r5yG7gpR7VgA>
+    <xmx:mEZGYOJekUwqy4kmwc3GN0f1vE8zC77HFmKZ7Uy_DK9J-Jz7YuB8Hg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6758224005C;
+        Mon,  8 Mar 2021 10:45:24 -0500 (EST)
+Date:   Mon, 8 Mar 2021 16:45:22 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Message-Id: <EPNNPQ.GYRRY95IUVFU@crapouillou.net>
-In-Reply-To: <20210307170742.70949-3-paul@crapouillou.net>
-References: <20210307170742.70949-1-paul@crapouillou.net>
-        <20210307170742.70949-3-paul@crapouillou.net>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Andre Przywara <andre.przywara@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805
+ PMIC connection
+Message-ID: <20210308154522.mkbxh3dpxidxhzzs@gilmour>
+References: <20210103100007.32867-1-samuel@sholland.org>
+ <20210103100007.32867-5-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wnc5wrbsyokytltm"
+Content-Disposition: inline
+In-Reply-To: <20210103100007.32867-5-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--wnc5wrbsyokytltm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le dim. 7 mars 2021 à 17:07, Paul Cercueil <paul@crapouillou.net> a 
-écrit :
-> The main PLL can have its rate changed at any moment. To keep the MMC
-> clock running at a rate that fits the specifications, we need to
-> recompute the MMC clock rate every time the PLL rate changes.
-> 
-> Use a mutex to ensure that the MMC is idle before performing the PLL 
-> and
-> MMC rate changes.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/mmc/host/jz4740_mmc.c | 70 
-> ++++++++++++++++++++++++++++++++++-
->  1 file changed, 69 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/jz4740_mmc.c 
-> b/drivers/mmc/host/jz4740_mmc.c
-> index b3c636edbb46..1197b8c6b6ed 100644
-> --- a/drivers/mmc/host/jz4740_mmc.c
-> +++ b/drivers/mmc/host/jz4740_mmc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/slot-gpio.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
->  #include <linux/of_device.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
-> @@ -149,6 +150,10 @@ struct jz4740_mmc_host {
->  	struct platform_device *pdev;
->  	struct clk *clk;
-> 
-> +	atomic_t clk_mutex_count;
-> +	struct mutex clk_mutex;
-> +	struct notifier_block clock_nb;
-> +
->  	enum jz4740_mmc_version version;
-> 
->  	int irq;
-> @@ -338,6 +343,9 @@ static void jz4740_mmc_pre_request(struct 
-> mmc_host *mmc,
->  	struct jz4740_mmc_host *host = mmc_priv(mmc);
->  	struct mmc_data *data = mrq->data;
-> 
-> +	if (atomic_inc_and_test(&host->clk_mutex_count))
-> +		mutex_lock(&host->clk_mutex);
+On Sun, Jan 03, 2021 at 04:00:07AM -0600, Samuel Holland wrote:
+> On boards where the only peripheral connected to PL0/PL1 is an X-Powers
+> PMIC, configure the connection to use the RSB bus rather than the I2C
+> bus. Compared to the I2C controller that shares the pins, the RSB
+> controller allows a higher bus frequency, and it is more CPU-efficient.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-There's an obvious race here, let me rewrite this using the proper 
-locking mechanism.
+Applied, thanks
 
--Paul
+Maxime
 
-> +
->  	if (!host->use_dma)
->  		return;
-> 
-> @@ -353,6 +361,9 @@ static void jz4740_mmc_post_request(struct 
-> mmc_host *mmc,
->  	struct jz4740_mmc_host *host = mmc_priv(mmc);
->  	struct mmc_data *data = mrq->data;
-> 
-> +	if (atomic_dec_return(&host->clk_mutex_count) == -1)
-> +		mutex_unlock(&host->clk_mutex);
-> +
->  	if (data && data->host_cookie != COOKIE_UNMAPPED)
->  		jz4740_mmc_dma_unmap(host, data);
-> 
-> @@ -955,6 +966,48 @@ static const struct mmc_host_ops jz4740_mmc_ops 
-> = {
->  	.enable_sdio_irq = jz4740_mmc_enable_sdio_irq,
->  };
-> 
-> +static inline struct jz4740_mmc_host *
-> +jz4740_mmc_nb_get_priv(struct notifier_block *nb)
-> +{
-> +	return container_of(nb, struct jz4740_mmc_host, clock_nb);
-> +}
-> +
-> +static struct clk *jz4740_mmc_get_parent_clk(struct clk *clk)
-> +{
-> +	/*
-> +	 * Return the first clock above the one that will effectively modify
-> +	 * its rate when clk_set_rate(clk) is called.
-> +	 */
-> +	clk = clk_get_first_to_set_rate(clk);
-> +
-> +	return clk_get_parent(clk);
-> +}
-> +
-> +static int jz4740_mmc_update_clk(struct notifier_block *nb,
-> +				 unsigned long action,
-> +				 void *data)
-> +{
-> +	struct jz4740_mmc_host *host = jz4740_mmc_nb_get_priv(nb);
-> +
-> +	/*
-> +	 * PLL may have changed its frequency; our clock may be running 
-> above
-> +	 * spec. Wait until MMC is idle (using host->clk_mutex) before 
-> changing
-> +	 * the PLL clock, and after it's done, reset our clock rate.
-> +	 */
-> +
-> +	switch (action) {
-> +	case PRE_RATE_CHANGE:
-> +		mutex_lock(&host->clk_mutex);
-> +		break;
-> +	default:
-> +		clk_set_rate(host->clk, host->mmc->f_max);
-> +		mutex_unlock(&host->clk_mutex);
-> +		break;
-> +	}
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
->  static const struct of_device_id jz4740_mmc_of_match[] = {
->  	{ .compatible = "ingenic,jz4740-mmc", .data = (void *) 
-> JZ_MMC_JZ4740 },
->  	{ .compatible = "ingenic,jz4725b-mmc", .data = (void 
-> *)JZ_MMC_JZ4725B },
-> @@ -971,6 +1024,7 @@ static int jz4740_mmc_probe(struct 
-> platform_device* pdev)
->  	struct mmc_host *mmc;
->  	struct jz4740_mmc_host *host;
->  	const struct of_device_id *match;
-> +	struct clk *parent_clk;
-> 
->  	mmc = mmc_alloc_host(sizeof(struct jz4740_mmc_host), &pdev->dev);
->  	if (!mmc) {
-> @@ -1058,12 +1112,24 @@ static int jz4740_mmc_probe(struct 
-> platform_device* pdev)
->  		goto err_free_irq;
->  	host->use_dma = !ret;
-> 
-> +	atomic_set(&host->clk_mutex_count, -1);
-> +	mutex_init(&host->clk_mutex);
-> +	host->clock_nb.notifier_call = jz4740_mmc_update_clk;
-> +
-> +	parent_clk = jz4740_mmc_get_parent_clk(host->clk);
-> +
-> +	ret = clk_notifier_register(parent_clk, &host->clock_nb);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Unable to register clock notifier\n");
-> +		goto err_release_dma;
-> +	}
-> +
->  	platform_set_drvdata(pdev, host);
->  	ret = mmc_add_host(mmc);
-> 
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to add mmc host: %d\n", ret);
-> -		goto err_release_dma;
-> +		goto err_unregister_clk_notifier;
->  	}
->  	dev_info(&pdev->dev, "Ingenic SD/MMC card driver registered\n");
-> 
-> @@ -1074,6 +1140,8 @@ static int jz4740_mmc_probe(struct 
-> platform_device* pdev)
-> 
->  	return 0;
-> 
-> +err_unregister_clk_notifier:
-> +	clk_notifier_unregister(parent_clk, &host->clock_nb);
->  err_release_dma:
->  	if (host->use_dma)
->  		jz4740_mmc_release_dma_channels(host);
-> --
-> 2.30.1
-> 
+--wnc5wrbsyokytltm
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYEZGkgAKCRDj7w1vZxhR
+xV1zAP0dY5wXW8BW5mbE+J3SUziA79rXyUNU7WgazhU7htgleAEA3o5GrAotOGGD
+LxGr99nLKfWaa7x2MVKcAgFJOPzIsgM=
+=oxjb
+-----END PGP SIGNATURE-----
+
+--wnc5wrbsyokytltm--
