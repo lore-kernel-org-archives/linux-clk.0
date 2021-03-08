@@ -2,111 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1615C433DB
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 20:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56F1C433E9
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 21:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F14165260
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 20:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52A465253
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 21:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbhCHUDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 15:03:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231584AbhCHUCd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 15:02:33 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB12C061760
-        for <linux-clk@vger.kernel.org>; Mon,  8 Mar 2021 12:02:32 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id b7so16574841edz.8
-        for <linux-clk@vger.kernel.org>; Mon, 08 Mar 2021 12:02:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3t+/FGTFmIQyffd5lnhNae0bF0FU3qV628NjTAJ6fqE=;
-        b=gfrGxsctj7ZgdCnjBxZzvzOU616fh/vzNa6UCLMa0GN0zjbz5QSFtF6qTKVMimAaoI
-         QhKxVI51bWGOap7MLvgcUlqAIi4le1i+TDXZDDSs1NALQfBw6biPjSEzE79xNFPda7fe
-         IQYUh3fImXPDcH/e/yq2x1VfZ0L0zDngwciu8=
+        id S229488AbhCHVjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 16:39:03 -0500
+Received: from mail-io1-f54.google.com ([209.85.166.54]:46797 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230039AbhCHVih (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 16:38:37 -0500
+Received: by mail-io1-f54.google.com with SMTP id u8so11579759ior.13;
+        Mon, 08 Mar 2021 13:38:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3t+/FGTFmIQyffd5lnhNae0bF0FU3qV628NjTAJ6fqE=;
-        b=Hi2Fg2L7mTu56XeHmQKctHknEGgQ3058HcsgapsomyT/RKKw5DRT9Gp5BLE/niQUce
-         KTWQiR3DqgMU+1FcbO5ZodPj2vZc+oJd2PzZP3OuyvBhtPHHc/xMYMo5ibLraERev659
-         t3weMyEznX4HMRQzJciEIL1efAbrM2c5nRqsnMHKQ1G7bj1Lnzfa1DDauLsqjnCaoaQS
-         oQhMQi5oWYTGlwQrVr9sYO7pPOGLQTfBRcT1h1UrteiEXhIV5dZbGMkjSv2dmkipLSxC
-         V25ol+EunTNyUoQKoarWX1iAmUtHviSS2yAv9GDlJTcosIhpFFDrCjfDo6/njVplJcMA
-         rNHg==
-X-Gm-Message-State: AOAM530zdRAY0/H6iAbq3uY1G1LfFZxBtsBE2jxz7OTZ1QuF0TwWOv/O
-        bBZ3urFZvgraYJqt2KuzNjv9gA==
-X-Google-Smtp-Source: ABdhPJz/N2WXkp/XWbteDUOpmfs9kTJ7J7qctEPtW6OeYiZrs1L3DFi1SC7Cg9aRy5AoqQKH3np2jA==
-X-Received: by 2002:a05:6402:b2d:: with SMTP id bo13mr292159edb.120.1615233751171;
-        Mon, 08 Mar 2021 12:02:31 -0800 (PST)
-Received: from [192.168.1.149] ([80.208.71.141])
-        by smtp.gmail.com with ESMTPSA id jj16sm7158657ejc.19.2021.03.08.12.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Mar 2021 12:02:30 -0800 (PST)
-Subject: Re: [PATCH 1/2] dt-bindings: misc: add binding for generic ripple
- counter
-To:     Rob Herring <robh@kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Wu8ygw+DLkA/IZAWrdk6TaRb1zQwZe4XwnS40aehw3k=;
+        b=laEuazBARK4NQ+18ZPWnAfqAAKjSG7w2NsUn8mFUEgKF2tRh/JM/aFtFQL8dbRR48o
+         pxbdkrzFs55xeo/bABvch3qZXYfB9zl9p3Oc96lOcwtjNPDTZlNoIIbQLCTt2bb32xrh
+         Tc9tGzfXrPKXf+pKtNPrrLiUY0h6qvU3B9WYria2NrdTR+Swx87eBdwcvfbJ7F2NO+4k
+         GUsnw4JLUQWrWm+W1cBhC2kPZpoU8n0zG3dNzzI66bwB4qfGMxx+4tSkCsvIgQWeYLsR
+         hUpSJ36F5lFJXEJS7SU04wAAfad/EA5AaWeLg+VtuoRg+hJNkGpvXlUQIbWTWZRECHoZ
+         QEmw==
+X-Gm-Message-State: AOAM531p9VTmSxTkHcUoFbHb0TP73n6nwsCS09A5WYng0BbKMOYb/ahC
+        2LScdf5c4GAD0U89YX6fRQO5Ou20sQ==
+X-Google-Smtp-Source: ABdhPJzHQtVzOuYxFh4XozV1PFZ2C9+1/yYdPuIGWskBfSzRjszK9pn6TUPXZl+8u85DAeAq15IZ+w==
+X-Received: by 2002:a02:53:: with SMTP id 80mr597992jaa.96.1615239516846;
+        Mon, 08 Mar 2021 13:38:36 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id s7sm6458068ioj.16.2021.03.08.13.38.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 13:38:36 -0800 (PST)
+Received: (nullmailer pid 2999323 invoked by uid 1000);
+        Mon, 08 Mar 2021 21:38:34 -0000
+Date:   Mon, 8 Mar 2021 14:38:34 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 1/2] dt-bindings: misc: add binding for generic ripple
+ counter
+Message-ID: <20210308213834.GA2973251@robh.at.kernel.org>
 References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
  <20210226141411.2517368-2-linux@rasmusvillemoes.dk>
  <20210308172153.GA2505339@robh.at.kernel.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <12be138b-631a-4f82-aae9-6bbdc7bc2bcf@rasmusvillemoes.dk>
-Date:   Mon, 8 Mar 2021 21:02:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ <12be138b-631a-4f82-aae9-6bbdc7bc2bcf@rasmusvillemoes.dk>
 MIME-Version: 1.0
-In-Reply-To: <20210308172153.GA2505339@robh.at.kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12be138b-631a-4f82-aae9-6bbdc7bc2bcf@rasmusvillemoes.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/03/2021 18.21, Rob Herring wrote:
-> On Fri, Feb 26, 2021 at 03:14:10PM +0100, Rasmus Villemoes wrote:
->> While a ripple counter can not usually be interfaced with (directly)
->> from software, it may still be a crucial component in a board
->> layout. To prevent its input clock from being disabled by the clock
->> core because it apparently has no consumer, one needs to be able to
->> represent that consumer in DT.
+On Mon, Mar 08, 2021 at 09:02:29PM +0100, Rasmus Villemoes wrote:
+> On 08/03/2021 18.21, Rob Herring wrote:
+> > On Fri, Feb 26, 2021 at 03:14:10PM +0100, Rasmus Villemoes wrote:
+> >> While a ripple counter can not usually be interfaced with (directly)
+> >> from software, it may still be a crucial component in a board
+> >> layout. To prevent its input clock from being disabled by the clock
+> >> core because it apparently has no consumer, one needs to be able to
+> >> represent that consumer in DT.
+> > 
+> > I'm okay with this as it is describing h/w, but we already 
+> > 'protected-clocks' property which should work.
 > 
-> I'm okay with this as it is describing h/w, but we already 
-> 'protected-clocks' property which should work.
+> Hm. Unless
+> https://lore.kernel.org/lkml/20200903040015.5627-2-samuel@sholland.org/
+> gets merged, I don't see how this would work out-of-the-box.
 
-Hm. Unless
-https://lore.kernel.org/lkml/20200903040015.5627-2-samuel@sholland.org/
-gets merged, I don't see how this would work out-of-the-box.
+Hum, no really clear what the hold up is there given it seems it was 
+asked for. Letting it sit for 5 months is certainly not the way 
+to get it merged. Anyways, that's the kernel's problem, not mine as far 
+as DT bindings are concerned.
 
-Note that I sent a completely different v2, which made the gpio-wdt the
-clock consumer based on feedback from Guenter and Arnd, but that v2
-isn't suitable for our case because it post-poned handling of the
-watchdog till after i2c is ready, which is too late. Somewhat similar to
-https://lore.kernel.org/lkml/20210222171247.97609-2-sebastian.reichel@collabora.com/
-it seems.
-
->> +
->> +Required properties:
->> +- compatible: Must be "linux,ripple-ctr".
 > 
-> Nothing linux specific about this.
+> Note that I sent a completely different v2, which made the gpio-wdt the
+> clock consumer based on feedback from Guenter and Arnd, but that v2
+> isn't suitable for our case because it post-poned handling of the
+> watchdog till after i2c is ready, which is too late. Somewhat similar to
+> https://lore.kernel.org/lkml/20210222171247.97609-2-sebastian.reichel@collabora.com/
+> it seems.
 
-True, but I was following the lead of the existing gpio-wdt binding. Is
-there some other "vendor" name one can and should use for completely
-generic and simple components like these? "generic"?
+Now at that one in my queue... I think 'protected-clocks' is the best 
+way to avoid any driver probe ordering issues. It's the only thing that 
+really captures don't turn off this clock. The ripple counter binding 
+doesn't really capture that or what it is related to. Also, the 
+ripple-counter driver could be a module and you'd still have the same 
+issue as v2.
 
-Rasmus
+> >> +
+> >> +Required properties:
+> >> +- compatible: Must be "linux,ripple-ctr".
+> > 
+> > Nothing linux specific about this.
+> 
+> True, but I was following the lead of the existing gpio-wdt binding. Is
+> there some other "vendor" name one can and should use for completely
+> generic and simple components like these? "generic"?
+
+Most 'generic' and GPIO based interfaces have no vendor prefix.
+
+Rob
