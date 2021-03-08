@@ -3,141 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4709AC433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEC3C433DB
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1258465229
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC77A65215
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbhCHPsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 10:48:37 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40179 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229459AbhCHPsM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 10:48:12 -0500
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id AB1B75C0065;
-        Mon,  8 Mar 2021 10:48:11 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Mon, 08 Mar 2021 10:48:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=RnEavwGRxlLSFmOVcdiWgzlkElE
-        f0ZIkYfj/r5zG3Wo=; b=XdreZdBc//ytwXMmasq02zF0VA4DGLNLJb9hV0HRyXd
-        gG77hNpUCuBAkbaxuXNmG+/L6Qeh6eM/AjrUa07DhJ3ELpTMtTzNVNr8+LrUW7+E
-        Q3IQdFvDs+eCo9TMzTHaW1SZcfeO4HPDO5uB/omdKJC8Y9A/FxacmSTT+D47FdOa
-        TT3oxsJUwzPnmWEoTLrJ8q1G8/us3jp4RNhFG8r5gElfZkzveVY6dhhz3jlsLpMf
-        ensOhBaueDaWzV4VZhYOcNiqiqG+uf1DhcYhyP2j2W3HfQW897bjB5eeErrpcaQA
-        JHktSOUjle8WIHikb0HXYW7aCbffAdMAA53BhSB9RKQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=RnEavw
-        GRxlLSFmOVcdiWgzlkElEf0ZIkYfj/r5zG3Wo=; b=gRYJAiztJyXDzLiWkKvVjc
-        0zkkeYDEyvZUZgvl4SeeZbblynI829UL2DnKAPJ2Z7uzfcXXSahlKXuB+xJzYR1n
-        vV3VBsC675yXt6hR7uK3iwNi756bNl4dRIQe2pmWj9p5oKJZMzR4B6ShSU6TKqT+
-        VyIAQia1RNILgnsAewRG+zprTGNjDlhnxjW0FP98vpkKSP7M9dedstvMw1/X4fJM
-        fCkQhfyb5KrNS97bLdofPkaRbkbikoWSmJWa2xgVJZLpLWZXnKaAUkwGrfzIfjXg
-        e8BqCfOz3QfNkP4JP2ZAHAcW3rgBP5LD+MR+mfKq2qCoT4Us4CrAmu/wJmcDPfVA
-        ==
-X-ME-Sender: <xms:OEdGYI4xOgWHKxF8oYJIWM_5kPKMUDd-ReuABU6S25G-HWXC_lozTw>
-    <xme:OEdGYKVj1ma6a787As77OmrSV8oyxCTDD6C7vSFLuMCSIuQjjbsZpLtdceaW7R5kg
-    ANwJQGc072e7DIY18g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddugedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepuddvudfhkeekhefgffetffelgffftdehffduffegveetffehueeivddvjedv
-    gfevnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:OUdGYIKn8SFj0xhyGox_ApzXUAtzuSqHkfzpT8NwAfbMQvIBVQI0Xg>
-    <xmx:OUdGYEsFBzAaXp2wpuO6H5LhGdwY3M0YVjZ4DAcTCEgWPWR-zedTMw>
-    <xmx:OUdGYNLbiCCIrQriLzJV4byrEaeLVUDLjIzubQNhB9xeNAerb_zj_g>
-    <xmx:O0dGYIhyqHhqOhj3RZwG4HS5hXiBCcxo_q5bQuMtafdbxTbLViSReA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C051F1080067;
-        Mon,  8 Mar 2021 10:48:08 -0500 (EST)
-Date:   Mon, 8 Mar 2021 16:48:07 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        id S230488AbhCHRTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 12:19:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229469AbhCHRSf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 12:18:35 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A173C06174A;
+        Mon,  8 Mar 2021 09:18:35 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id v13so15836201edw.9;
+        Mon, 08 Mar 2021 09:18:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QpRX9dp3uicxVv487h+YjKRAB2MLML02Fr523RHwB5s=;
+        b=mHa/jW+vlyasWldZBY6HZM513XUl/gya5pGtS+wXqYOpOxqp7uAihBmTeVdjXGiIKO
+         b36Ncucl/Q8dEgXFGvPwsjS0sIjGXGblBiE27wnryuI/cg+N82dP8U/eMwKPHl1k9zwc
+         mWZIKBkHRaQLp0tq/OfSIMNRKX3MOSW6DVo/ae4U88h7iE1nSoWaywWkqVgFkSGx9P7U
+         OU98Sb6+tw+NZLk/PuX8YflzyeTcyViT7Azjlqyd8+sh9b2m+yxdxvTeS715/sfX/JjO
+         zMrByMSKf/F5SPNOYeDW48ri7LElmh9qGLuabSu9XuvGGPmblCpJBp5TrsPy4Dp2Spqk
+         6ekg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QpRX9dp3uicxVv487h+YjKRAB2MLML02Fr523RHwB5s=;
+        b=JfNRHhDIaP43aZ78jDq9i1isHVjBonx+0MCuR2poI/dV6xOUo6hZTH5xtDBIWeZ5B+
+         TOs8nV/aEns48e/4DXuCueE6kne2ywIeTu8BHs2vfCgmy2h+HzGBtVAlA55nN0A86AoB
+         WQ82D/lZVIt+NZOIqPo+xdcOfZ45y18gtiEYhJQN3aRMhrMP1Oc0VLNr/SQHR/x9Sm1X
+         Eh8EGLJ9kE2Juu2ZgQjkblL31NtH6GmEu64zGyDS9XkYSL3ryxbIZNuJ9siGfD33gF+x
+         iNaw4ERdkAgpK0eQdQTFGkxLqn5VjA+XJ/wvIHT0P/20qI4nE5oGTiULDRbwVmwHuzwD
+         FI3Q==
+X-Gm-Message-State: AOAM532VqzZkhm0aFIdIPMVPQukF6S05LxG+2M/kYbf/eCaqRqWQEi95
+        BT693NvwwBpmtupfEc7cyPU=
+X-Google-Smtp-Source: ABdhPJwkvSPZSwD1j5sECQgHvEdWtfLEdfmXXdY2vdntniG6pn8yWoVCqpYkNaSqUnHUswEE9/Pv1g==
+X-Received: by 2002:aa7:cd6a:: with SMTP id ca10mr23422692edb.7.1615223913709;
+        Mon, 08 Mar 2021 09:18:33 -0800 (PST)
+Received: from localhost.localdomain ([81.18.95.223])
+        by smtp.gmail.com with ESMTPSA id r5sm7457714eds.49.2021.03.08.09.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 09:18:33 -0800 (PST)
+From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] clk: sunxi: Demote non-conformant kernel-doc headers
-Message-ID: <20210308154807.j6llubzzbcxd6b55@gilmour>
-References: <20210303142430.3168703-1-lee.jones@linaro.org>
- <161481702291.1478170.841537456605456317@swboyd.mtv.corp.google.com>
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 0/6] Improve clock support for Actions S500 SoC
+Date:   Mon,  8 Mar 2021 19:18:25 +0200
+Message-Id: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cdun35vxb6d37qvr"
-Content-Disposition: inline
-In-Reply-To: <161481702291.1478170.841537456605456317@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+While working on a driver to support the Actions Semi Owl Ethernet MAC,
+I found and fixed some issues on the existing implementation of the S500
+SoC clock subsystem and, additionally, I added two missing clocks.
 
---cdun35vxb6d37qvr
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks,
+Cristi
 
-On Wed, Mar 03, 2021 at 04:17:02PM -0800, Stephen Boyd wrote:
-> Quoting Lee Jones (2021-03-03 06:24:30)
-> > Headers must describe their parameters.
-> >=20
-> > Fixes the following W=3D1 kernel build warning(s):
-> >=20
-> >  drivers/clk/sunxi/clk-sun9i-core.c:27: warning: Function parameter or =
-member 'req' not described in 'sun9i_a80_get_pll4_factors'
-> >  drivers/clk/sunxi/clk-sun9i-core.c:100: warning: Function parameter or=
- member 'req' not described in 'sun9i_a80_get_gt_factors'
-> >  drivers/clk/sunxi/clk-sun9i-core.c:155: warning: Function parameter or=
- member 'req' not described in 'sun9i_a80_get_ahb_factors'
-> >  drivers/clk/sunxi/clk-sun9i-core.c:235: warning: Function parameter or=
- member 'req' not described in 'sun9i_a80_get_apb1_factors'
-> >  drivers/clk/sunxi/clk-usb.c:22: warning: cannot understand function pr=
-ototype: 'struct usb_reset_data '
-> >  drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or=
- member 'req' not described in 'sun6i_get_ar100_factors'
-> >=20
-> > Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: Chen-Yu Tsai <wens@csie.org>
-> > Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> > Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
->=20
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+Cristian Ciocaltea (6):
+  clk: actions: Fix UART clock dividers on Owl S500 SoC
+  clk: actions: Fix SD clocks factor table on Owl S500 SoC
+  clk: actions: Fix bisp_factor_table based clocks on Owl S500 SoC
+  clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl S500 SoC
+  dt-bindings: clock: Add NIC and ETHERNET bindings for Actions S500 SoC
+  clk: actions: Add NIC and ETHERNET clock support for Actions S500 SoC
 
-Applied
+ drivers/clk/actions/owl-s500.c               | 99 +++++++++++++-------
+ include/dt-bindings/clock/actions,s500-cmu.h |  6 +-
+ 2 files changed, 70 insertions(+), 35 deletions(-)
 
-Maxime
+-- 
+2.30.1
 
---cdun35vxb6d37qvr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYEZHNwAKCRDj7w1vZxhR
-xU79AQCzPtUTayiFwjMgMYuzW273X0qfnDb37uGFa9+2V+439gEAiFJYrZRzfL6R
-1WCIHHBYcwz2hpCP6tXrurZuB9tEIwk=
-=ZcjV
------END PGP SIGNATURE-----
-
---cdun35vxb6d37qvr--
