@@ -2,114 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829EAC4332E
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 18:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1615C433DB
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 20:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6445A65230
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 18:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F14165260
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 20:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbhCHSYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 13:24:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36035 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbhCHSXy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 13:23:54 -0500
-Received: from mail-wr1-f69.google.com ([209.85.221.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lJKXp-0004CO-Mb
-        for linux-clk@vger.kernel.org; Mon, 08 Mar 2021 18:23:53 +0000
-Received: by mail-wr1-f69.google.com with SMTP id m23so202077wrh.7
-        for <linux-clk@vger.kernel.org>; Mon, 08 Mar 2021 10:23:53 -0800 (PST)
+        id S231646AbhCHUDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 15:03:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231584AbhCHUCd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 15:02:33 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB12C061760
+        for <linux-clk@vger.kernel.org>; Mon,  8 Mar 2021 12:02:32 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id b7so16574841edz.8
+        for <linux-clk@vger.kernel.org>; Mon, 08 Mar 2021 12:02:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3t+/FGTFmIQyffd5lnhNae0bF0FU3qV628NjTAJ6fqE=;
+        b=gfrGxsctj7ZgdCnjBxZzvzOU616fh/vzNa6UCLMa0GN0zjbz5QSFtF6qTKVMimAaoI
+         QhKxVI51bWGOap7MLvgcUlqAIi4le1i+TDXZDDSs1NALQfBw6biPjSEzE79xNFPda7fe
+         IQYUh3fImXPDcH/e/yq2x1VfZ0L0zDngwciu8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jymu3EByRYEIYMZqwvOwIlXmg/aB/evOdJ/m4CaTdu4=;
-        b=tstOlPuVMnz+mTQKv6Vn2fQzuie+CGEiXHpv6AvCbxS3aghU/KUVlib89t6pifwqGX
-         WETU7q9l+f7XVkU9la14spxPyI079jr5BpX1RwH1ArpHJpIXrZyZKKgdwfnTsr1nIrjk
-         EbtVUwXbaDRFQdlETQ+F4A4xVNLQFM4Gefv4jJdZjXTwyjshlMlVogHaJgluWiWEnou5
-         /gZk/N5GXXjFvr563++3sG+0LgiPvlAuwAm0H1lpjYivTah1qfj30hkt8atYrtVlhKIz
-         YLL8dK66XNeCJvP8JH8hLimsmQl32ZmqS1eNv0lgsooQMmYpYb3dNjSu3txgxVayC71J
-         ewgg==
-X-Gm-Message-State: AOAM532+JH4gMD0EBGKP7kAHdKTfHsKTdozdBocS2RyUiJtte/i5b8nG
-        IaXtPP8748yPGsDfGPYVMjf1TbGU/TXg2Amjk7jNvhnO71SHYAOHUbpx0R67GyEsaTqV+el03VB
-        8gqU1YWt0K27zKB+Em751xPH8uelPZ9wY+45nBw==
-X-Received: by 2002:a05:600c:4f14:: with SMTP id l20mr90594wmq.71.1615227833246;
-        Mon, 08 Mar 2021 10:23:53 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzvx3QjvMhUgtRrkNT3iony3aNl5ECgG9Nj1FpImbQaEIixS7Crze+Ph3daeR20dkp9tEnIeQ==
-X-Received: by 2002:a05:600c:4f14:: with SMTP id l20mr90579wmq.71.1615227833061;
-        Mon, 08 Mar 2021 10:23:53 -0800 (PST)
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id f22sm158207wmb.31.2021.03.08.10.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 10:23:52 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH 2/3] clk: socfpga: drop duplicated lines in Makefile
-Date:   Mon,  8 Mar 2021 19:23:38 +0100
-Message-Id: <20210308182339.379775-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210308182339.379775-1-krzysztof.kozlowski@canonical.com>
-References: <20210308182339.379775-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3t+/FGTFmIQyffd5lnhNae0bF0FU3qV628NjTAJ6fqE=;
+        b=Hi2Fg2L7mTu56XeHmQKctHknEGgQ3058HcsgapsomyT/RKKw5DRT9Gp5BLE/niQUce
+         KTWQiR3DqgMU+1FcbO5ZodPj2vZc+oJd2PzZP3OuyvBhtPHHc/xMYMo5ibLraERev659
+         t3weMyEznX4HMRQzJciEIL1efAbrM2c5nRqsnMHKQ1G7bj1Lnzfa1DDauLsqjnCaoaQS
+         oQhMQi5oWYTGlwQrVr9sYO7pPOGLQTfBRcT1h1UrteiEXhIV5dZbGMkjSv2dmkipLSxC
+         V25ol+EunTNyUoQKoarWX1iAmUtHviSS2yAv9GDlJTcosIhpFFDrCjfDo6/njVplJcMA
+         rNHg==
+X-Gm-Message-State: AOAM530zdRAY0/H6iAbq3uY1G1LfFZxBtsBE2jxz7OTZ1QuF0TwWOv/O
+        bBZ3urFZvgraYJqt2KuzNjv9gA==
+X-Google-Smtp-Source: ABdhPJz/N2WXkp/XWbteDUOpmfs9kTJ7J7qctEPtW6OeYiZrs1L3DFi1SC7Cg9aRy5AoqQKH3np2jA==
+X-Received: by 2002:a05:6402:b2d:: with SMTP id bo13mr292159edb.120.1615233751171;
+        Mon, 08 Mar 2021 12:02:31 -0800 (PST)
+Received: from [192.168.1.149] ([80.208.71.141])
+        by smtp.gmail.com with ESMTPSA id jj16sm7158657ejc.19.2021.03.08.12.02.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Mar 2021 12:02:30 -0800 (PST)
+Subject: Re: [PATCH 1/2] dt-bindings: misc: add binding for generic ripple
+ counter
+To:     Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <20210226141411.2517368-2-linux@rasmusvillemoes.dk>
+ <20210308172153.GA2505339@robh.at.kernel.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <12be138b-631a-4f82-aae9-6bbdc7bc2bcf@rasmusvillemoes.dk>
+Date:   Mon, 8 Mar 2021 21:02:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210308172153.GA2505339@robh.at.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Three clock drivers are used by Stratix 10, Agilex and N5X, so use
-separate dedicated Kconfig entry to get rid of duplicated Makefile
-lines.  This will also allow later compile testing.
+On 08/03/2021 18.21, Rob Herring wrote:
+> On Fri, Feb 26, 2021 at 03:14:10PM +0100, Rasmus Villemoes wrote:
+>> While a ripple counter can not usually be interfaced with (directly)
+>> from software, it may still be a crucial component in a board
+>> layout. To prevent its input clock from being disabled by the clock
+>> core because it apparently has no consumer, one needs to be able to
+>> represent that consumer in DT.
+> 
+> I'm okay with this as it is describing h/w, but we already 
+> 'protected-clocks' property which should work.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- drivers/clk/socfpga/Kconfig  | 7 +++++++
- drivers/clk/socfpga/Makefile | 3 +--
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Hm. Unless
+https://lore.kernel.org/lkml/20200903040015.5627-2-samuel@sholland.org/
+gets merged, I don't see how this would work out-of-the-box.
 
-diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
-index cae6fd9fac64..4922cc35f4cc 100644
---- a/drivers/clk/socfpga/Kconfig
-+++ b/drivers/clk/socfpga/Kconfig
-@@ -1,6 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0
-+config COMMON_CLK_STRATIX10
-+	bool
-+	# Intel Stratix / Agilex / N5X clock controller support
-+	default y if ARCH_AGILEX || ARCH_N5X || ARCH_STRATIX10
-+	depends on ARCH_AGILEX || ARCH_N5X || ARCH_STRATIX10
-+
- config COMMON_CLK_AGILEX
- 	bool
- 	# Intel Agilex / N5X clock controller support
- 	default y if ARCH_AGILEX || ARCH_N5X
- 	depends on ARCH_AGILEX || ARCH_N5X
-+	select COMMON_CLK_STRATIX10
-diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-index e3614f758184..8a875de971fc 100644
---- a/drivers/clk/socfpga/Makefile
-+++ b/drivers/clk/socfpga/Makefile
-@@ -2,6 +2,5 @@
- obj-$(CONFIG_ARCH_SOCFPGA) += clk.o clk-gate.o clk-pll.o clk-periph.o
- obj-$(CONFIG_ARCH_SOCFPGA) += clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
- obj-$(CONFIG_ARCH_STRATIX10) += clk-s10.o
--obj-$(CONFIG_ARCH_STRATIX10) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-+obj-$(CONFIG_COMMON_CLK_STRATIX10) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
- obj-$(CONFIG_COMMON_CLK_AGILEX) += clk-agilex.o
--obj-$(CONFIG_COMMON_CLK_AGILEX) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
--- 
-2.25.1
+Note that I sent a completely different v2, which made the gpio-wdt the
+clock consumer based on feedback from Guenter and Arnd, but that v2
+isn't suitable for our case because it post-poned handling of the
+watchdog till after i2c is ready, which is too late. Somewhat similar to
+https://lore.kernel.org/lkml/20210222171247.97609-2-sebastian.reichel@collabora.com/
+it seems.
 
+>> +
+>> +Required properties:
+>> +- compatible: Must be "linux,ripple-ctr".
+> 
+> Nothing linux specific about this.
+
+True, but I was following the lead of the existing gpio-wdt binding. Is
+there some other "vendor" name one can and should use for completely
+generic and simple components like these? "generic"?
+
+Rasmus
