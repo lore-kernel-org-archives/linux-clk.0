@@ -1,119 +1,219 @@
-Return-Path: <SRS0=FIFX=IG=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D7FC433E9
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 10:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A214C433E6
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 14:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C70E651FF
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 10:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE3D650ED
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 14:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbhCHKqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 05:46:04 -0500
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:41136 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231128AbhCHKpw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 05:45:52 -0500
-Received: by mail-lf1-f45.google.com with SMTP id q25so20240671lfc.8;
-        Mon, 08 Mar 2021 02:45:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=scj6590os1eA48Uwmp8IjLfDALuVaAXiJhdeu5i0Feo=;
-        b=hnTbztR3tzFrBMdaWYfEcmGcK9XMPK4/tNZ3yxGWXy5M+KhbzgObxQkdWKXgrEJNsp
-         fb63CRIekSqPDDfcCLx4e5nw2BLtGhaaSriW3CUFHVvYI5q/p9nJE0fCtmmHMc3afmqk
-         VYR4HUBAqpIBp2XQW1sjQP6wLtUENO4yUV9zdU/RGWYbSxywQMV74K6KoFEqek1Vki9y
-         bA1xiM5xjGoaGSzjyVlqk2BHEBgqLtcz/RmTV/grxLtL6BsUkC4nkYZkME94y6RLpWi+
-         QhLjb39b0w65FkFPuqlQB3yH051xbLzvOoGVqTtvrqUk2/Dy457oM6zD+xuOiqapfxuF
-         yyBg==
-X-Gm-Message-State: AOAM5314T+xDwu1D2M3IivHs9bqa+ZG1z7LNocxJiY8PhNGmKvkJEpN+
-        p+QfClfvDx3IyCtejUsAUdc=
-X-Google-Smtp-Source: ABdhPJx3O+o2xGGkev21iCH55Gk+EjK/5NDUKlb0GrPN9ZlLNYR3hNjQmvCkrauFPWbVHOAFbEtkCQ==
-X-Received: by 2002:a19:6109:: with SMTP id v9mr14466171lfb.546.1615200350696;
-        Mon, 08 Mar 2021 02:45:50 -0800 (PST)
-Received: from localhost.localdomain (dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::4])
-        by smtp.gmail.com with ESMTPSA id r7sm1349227lfr.230.2021.03.08.02.45.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 02:45:50 -0800 (PST)
-Date:   Mon, 8 Mar 2021 12:45:44 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S229690AbhCHOrV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 09:47:21 -0500
+Received: from aposti.net ([89.234.176.197]:47378 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229697AbhCHOq5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Mar 2021 09:46:57 -0500
+Date:   Mon, 08 Mar 2021 14:46:26 +0000
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 2/2] mmc: jz4740: Add support for monitoring PLL clock
+ rate changes
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH v3 15/15] MAINTAINERS: Add ROHM BD71815AGW
-Message-ID: <c73fdf1ef1da3538d93035a75029103fdb87b8c8.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Message-Id: <EPNNPQ.GYRRY95IUVFU@crapouillou.net>
+In-Reply-To: <20210307170742.70949-3-paul@crapouillou.net>
+References: <20210307170742.70949-1-paul@crapouillou.net>
+        <20210307170742.70949-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add maintainer entries for ROHM BD71815AGW drivers.
-New regulator and GPIO drivers were introduced for these PMICs.
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d92f85ca831d..ac6eb095ab0c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15452,18 +15452,21 @@ F:	Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
- F:	Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd70528.c
-+F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
- F:	drivers/mfd/rohm-bd70528.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/power/supply/bd70528-charger.c
- F:	drivers/regulator/bd70528-regulator.c
-+F:	drivers/regulator/bd71815-regulator.c
- F:	drivers/regulator/bd71828-regulator.c
- F:	drivers/regulator/bd718x7-regulator.c
- F:	drivers/regulator/rohm-regulator.c
- F:	drivers/rtc/rtc-bd70528.c
- F:	drivers/watchdog/bd70528_wdt.c
- F:	include/linux/mfd/rohm-bd70528.h
-+F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
- F:	include/linux/mfd/rohm-generic.h
--- 
-2.25.4
 
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Le dim. 7 mars 2021 à 17:07, Paul Cercueil <paul@crapouillou.net> a 
+écrit :
+> The main PLL can have its rate changed at any moment. To keep the MMC
+> clock running at a rate that fits the specifications, we need to
+> recompute the MMC clock rate every time the PLL rate changes.
+> 
+> Use a mutex to ensure that the MMC is idle before performing the PLL 
+> and
+> MMC rate changes.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/mmc/host/jz4740_mmc.c | 70 
+> ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 69 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/jz4740_mmc.c 
+> b/drivers/mmc/host/jz4740_mmc.c
+> index b3c636edbb46..1197b8c6b6ed 100644
+> --- a/drivers/mmc/host/jz4740_mmc.c
+> +++ b/drivers/mmc/host/jz4740_mmc.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/mmc/host.h>
+>  #include <linux/mmc/slot-gpio.h>
+>  #include <linux/module.h>
+> +#include <linux/mutex.h>
+>  #include <linux/of_device.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+> @@ -149,6 +150,10 @@ struct jz4740_mmc_host {
+>  	struct platform_device *pdev;
+>  	struct clk *clk;
+> 
+> +	atomic_t clk_mutex_count;
+> +	struct mutex clk_mutex;
+> +	struct notifier_block clock_nb;
+> +
+>  	enum jz4740_mmc_version version;
+> 
+>  	int irq;
+> @@ -338,6 +343,9 @@ static void jz4740_mmc_pre_request(struct 
+> mmc_host *mmc,
+>  	struct jz4740_mmc_host *host = mmc_priv(mmc);
+>  	struct mmc_data *data = mrq->data;
+> 
+> +	if (atomic_inc_and_test(&host->clk_mutex_count))
+> +		mutex_lock(&host->clk_mutex);
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+There's an obvious race here, let me rewrite this using the proper 
+locking mechanism.
+
+-Paul
+
+> +
+>  	if (!host->use_dma)
+>  		return;
+> 
+> @@ -353,6 +361,9 @@ static void jz4740_mmc_post_request(struct 
+> mmc_host *mmc,
+>  	struct jz4740_mmc_host *host = mmc_priv(mmc);
+>  	struct mmc_data *data = mrq->data;
+> 
+> +	if (atomic_dec_return(&host->clk_mutex_count) == -1)
+> +		mutex_unlock(&host->clk_mutex);
+> +
+>  	if (data && data->host_cookie != COOKIE_UNMAPPED)
+>  		jz4740_mmc_dma_unmap(host, data);
+> 
+> @@ -955,6 +966,48 @@ static const struct mmc_host_ops jz4740_mmc_ops 
+> = {
+>  	.enable_sdio_irq = jz4740_mmc_enable_sdio_irq,
+>  };
+> 
+> +static inline struct jz4740_mmc_host *
+> +jz4740_mmc_nb_get_priv(struct notifier_block *nb)
+> +{
+> +	return container_of(nb, struct jz4740_mmc_host, clock_nb);
+> +}
+> +
+> +static struct clk *jz4740_mmc_get_parent_clk(struct clk *clk)
+> +{
+> +	/*
+> +	 * Return the first clock above the one that will effectively modify
+> +	 * its rate when clk_set_rate(clk) is called.
+> +	 */
+> +	clk = clk_get_first_to_set_rate(clk);
+> +
+> +	return clk_get_parent(clk);
+> +}
+> +
+> +static int jz4740_mmc_update_clk(struct notifier_block *nb,
+> +				 unsigned long action,
+> +				 void *data)
+> +{
+> +	struct jz4740_mmc_host *host = jz4740_mmc_nb_get_priv(nb);
+> +
+> +	/*
+> +	 * PLL may have changed its frequency; our clock may be running 
+> above
+> +	 * spec. Wait until MMC is idle (using host->clk_mutex) before 
+> changing
+> +	 * the PLL clock, and after it's done, reset our clock rate.
+> +	 */
+> +
+> +	switch (action) {
+> +	case PRE_RATE_CHANGE:
+> +		mutex_lock(&host->clk_mutex);
+> +		break;
+> +	default:
+> +		clk_set_rate(host->clk, host->mmc->f_max);
+> +		mutex_unlock(&host->clk_mutex);
+> +		break;
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+>  static const struct of_device_id jz4740_mmc_of_match[] = {
+>  	{ .compatible = "ingenic,jz4740-mmc", .data = (void *) 
+> JZ_MMC_JZ4740 },
+>  	{ .compatible = "ingenic,jz4725b-mmc", .data = (void 
+> *)JZ_MMC_JZ4725B },
+> @@ -971,6 +1024,7 @@ static int jz4740_mmc_probe(struct 
+> platform_device* pdev)
+>  	struct mmc_host *mmc;
+>  	struct jz4740_mmc_host *host;
+>  	const struct of_device_id *match;
+> +	struct clk *parent_clk;
+> 
+>  	mmc = mmc_alloc_host(sizeof(struct jz4740_mmc_host), &pdev->dev);
+>  	if (!mmc) {
+> @@ -1058,12 +1112,24 @@ static int jz4740_mmc_probe(struct 
+> platform_device* pdev)
+>  		goto err_free_irq;
+>  	host->use_dma = !ret;
+> 
+> +	atomic_set(&host->clk_mutex_count, -1);
+> +	mutex_init(&host->clk_mutex);
+> +	host->clock_nb.notifier_call = jz4740_mmc_update_clk;
+> +
+> +	parent_clk = jz4740_mmc_get_parent_clk(host->clk);
+> +
+> +	ret = clk_notifier_register(parent_clk, &host->clock_nb);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Unable to register clock notifier\n");
+> +		goto err_release_dma;
+> +	}
+> +
+>  	platform_set_drvdata(pdev, host);
+>  	ret = mmc_add_host(mmc);
+> 
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to add mmc host: %d\n", ret);
+> -		goto err_release_dma;
+> +		goto err_unregister_clk_notifier;
+>  	}
+>  	dev_info(&pdev->dev, "Ingenic SD/MMC card driver registered\n");
+> 
+> @@ -1074,6 +1140,8 @@ static int jz4740_mmc_probe(struct 
+> platform_device* pdev)
+> 
+>  	return 0;
+> 
+> +err_unregister_clk_notifier:
+> +	clk_notifier_unregister(parent_clk, &host->clock_nb);
+>  err_release_dma:
+>  	if (host->use_dma)
+>  		jz4740_mmc_release_dma_channels(host);
+> --
+> 2.30.1
+> 
+
+
