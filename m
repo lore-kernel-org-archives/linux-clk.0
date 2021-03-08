@@ -2,78 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C48C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F03CC433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 18:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBBA4652A8
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D91C64FE3
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 18:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbhCHR2p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 12:28:45 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:39341 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230429AbhCHR2c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 12:28:32 -0500
-Received: by mail-io1-f54.google.com with SMTP id o9so10791421iow.6;
-        Mon, 08 Mar 2021 09:28:32 -0800 (PST)
+        id S230412AbhCHSYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 13:24:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36021 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230075AbhCHSXx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 13:23:53 -0500
+Received: from mail-wr1-f72.google.com ([209.85.221.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lJKXo-0004Bi-Bl
+        for linux-clk@vger.kernel.org; Mon, 08 Mar 2021 18:23:52 +0000
+Received: by mail-wr1-f72.google.com with SMTP id s10so5196932wre.0
+        for <linux-clk@vger.kernel.org>; Mon, 08 Mar 2021 10:23:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fws5MonGu3/ugwq9UdenhDT89R0PYuNDK5UhBQCoBJM=;
-        b=SH8LGVHJHVv/epe9nfZ2indrOYHhK917+G1FVQRE22GacgQ6qXksQWw0qm/Y12SZnV
-         m5LSfNhsKiXPS94lahN3eOxwK5nkp7H+Ks+jiYMaPwJzeby9SYuPKgYqSFjs7Et8t2Ae
-         mnHPBm6tvpKZc6GTmgrb11LGrq/GhTCfEsIGP/9gYivnT9VFBlRfEmnULDdPkCCjWeXb
-         vL/3+tdaV0Pt0xNoRpCojhP8Ho5xPAhr5ZIO7rcKMQYu6E18OJrFuMMYmxnva4d5sbl4
-         JGRT5pXU9oYg7sahuU8eMspgXZQUTAtEzLXfJ9K6dlAMW/nVdyxmB7KORJ8Yj5qUJtg2
-         OZkw==
-X-Gm-Message-State: AOAM530uZWe5I4v9mq2irVQ8G6FmAlBts73DhV6k53+4EIXNUL/9VH+v
-        v7Q0m+N7BOJtxTw+z9+b9LtB5vsJAA==
-X-Google-Smtp-Source: ABdhPJyS+nur54q9MG9oIinTctfWUfF+pR/TVr6q+ykJUS8fdebTkaBQHkqp6/2E7igSyd/swhT75w==
-X-Received: by 2002:a05:6638:238c:: with SMTP id q12mr24925610jat.114.1615224511898;
-        Mon, 08 Mar 2021 09:28:31 -0800 (PST)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id h23sm6189744ila.15.2021.03.08.09.28.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7UxAFifTu8sU7gViKdQC961bKcjK3MvZFPTtwzp8Z94=;
+        b=BoDIP960iMY8LQTuHZfErGmHhAvsqXEnw8YKJSeC1dbWbuIB9ln9bWkIMzjicL65Uz
+         L7gKXDTSOMBhVY743ZPiz8WA4mGvTIPl1Zi+3dZQmRHwcVcnZPn54H1fEQIIFjTgAb2D
+         3nGkqbpOWM6dQU4oGbyGLNeXJ3dfQzYPvjExshsIimZtKFcR6CdHZoWSZMSgT6fJKQTH
+         q2DarclJCzXKCjw9mppE6AN73z/PYIm8N6PMcnIdJDJbcaiGRaEK9x5y4JlEcbtaTW8l
+         3S3jdKdncc5g9+1MctIZdAs5GulUC338nRjy6gKzTJOhUUW5Fuu8guN4rJSIhRZU3CFx
+         0HhQ==
+X-Gm-Message-State: AOAM530pVZDJdqObEY3nb5PqsIZXRQFZKZh6HqLmrrFEqN+PigfB2vc5
+        pMng7dhLnDptFdz3fglaqRSdG3fZLSwy53wEcw7WXRTacIF7o+qlEA616aS29a/tQhxs+xy0CHG
+        Uim4darWTU6G1bQ1qsTiKW6wXvo993J3jKZrySA==
+X-Received: by 2002:a1c:f406:: with SMTP id z6mr132645wma.24.1615227832118;
+        Mon, 08 Mar 2021 10:23:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxymop8OErUZRul6POmDIrZ6Y+KDeTclhUhXd0/JcISls13iNOiFYgxgU60LZorVFUMm549ww==
+X-Received: by 2002:a1c:f406:: with SMTP id z6mr132630wma.24.1615227831995;
+        Mon, 08 Mar 2021 10:23:51 -0800 (PST)
+Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id f22sm158207wmb.31.2021.03.08.10.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 09:28:31 -0800 (PST)
-Received: (nullmailer pid 2664795 invoked by uid 1000);
-        Mon, 08 Mar 2021 17:28:28 -0000
-Date:   Mon, 8 Mar 2021 10:28:28 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     huangtao@rock-chips.com, finley.xiao@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        heiko@sntech.de, sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        tony.xie@rock-chips.com, kever.yang@rock-chips.com,
-        cl@rock-chips.com
-Subject: Re: [PATCH v3 2/4] clk: rockchip: add dt-binding header for rk3568
-Message-ID: <20210308172828.GA2664738@robh.at.kernel.org>
-References: <20210301064749.10392-1-zhangqing@rock-chips.com>
- <20210301064749.10392-3-zhangqing@rock-chips.com>
+        Mon, 08 Mar 2021 10:23:51 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 1/3] clk: socfpga: allow building N5X clocks with ARCH_N5X
+Date:   Mon,  8 Mar 2021 19:23:37 +0100
+Message-Id: <20210308182339.379775-2-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210308182339.379775-1-krzysztof.kozlowski@canonical.com>
+References: <20210308182339.379775-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210301064749.10392-3-zhangqing@rock-chips.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 01 Mar 2021 14:47:47 +0800, Elaine Zhang wrote:
-> Add the dt-bindings header for the rk3568, that gets shared between
-> the clock controller and the clock references in the dts.
-> Add softreset ID for rk3568.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  include/dt-bindings/clock/rk3568-cru.h | 926 +++++++++++++++++++++++++
->  1 file changed, 926 insertions(+)
->  create mode 100644 include/dt-bindings/clock/rk3568-cru.h
-> 
+The Intel's eASIC N5X (ARCH_N5X) architecture shares a lot with Agilex
+(ARCH_AGILEX) so it uses the same socfpga_agilex.dtsi, with minor
+changes.  Also the clock drivers are the same.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+However the clock drivers won't be build without ARCH_AGILEX.  One could
+assume that ARCH_N5X simply depends on ARCH_AGILEX but this was not
+modeled in Kconfig.  In current stage the ARCH_N5X is simply
+unbootable.
+
+Add a separate Kconfig entry for clocks used by both ARCH_N5X and
+ARCH_AGILEX so the necessary objects will be built if either of them is
+selected.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/clk/Kconfig          | 1 +
+ drivers/clk/Makefile         | 1 +
+ drivers/clk/socfpga/Kconfig  | 6 ++++++
+ drivers/clk/socfpga/Makefile | 4 ++--
+ 4 files changed, 10 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/socfpga/Kconfig
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index a588d56502d4..1d1891b9cad2 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -394,6 +394,7 @@ source "drivers/clk/renesas/Kconfig"
+ source "drivers/clk/rockchip/Kconfig"
+ source "drivers/clk/samsung/Kconfig"
+ source "drivers/clk/sifive/Kconfig"
++source "drivers/clk/socfpga/Kconfig"
+ source "drivers/clk/sprd/Kconfig"
+ source "drivers/clk/sunxi/Kconfig"
+ source "drivers/clk/sunxi-ng/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index b22ae4f81e0b..12e46b12e587 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -106,6 +106,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_ARCH_AGILEX)		+= socfpga/
++obj-$(CONFIG_ARCH_N5X)			+= socfpga/
+ obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+ obj-y					+= sprd/
+diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
+new file mode 100644
+index 000000000000..cae6fd9fac64
+--- /dev/null
++++ b/drivers/clk/socfpga/Kconfig
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
++config COMMON_CLK_AGILEX
++	bool
++	# Intel Agilex / N5X clock controller support
++	default y if ARCH_AGILEX || ARCH_N5X
++	depends on ARCH_AGILEX || ARCH_N5X
+diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
+index bf736f8d201a..e3614f758184 100644
+--- a/drivers/clk/socfpga/Makefile
++++ b/drivers/clk/socfpga/Makefile
+@@ -3,5 +3,5 @@ obj-$(CONFIG_ARCH_SOCFPGA) += clk.o clk-gate.o clk-pll.o clk-periph.o
+ obj-$(CONFIG_ARCH_SOCFPGA) += clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
+ obj-$(CONFIG_ARCH_STRATIX10) += clk-s10.o
+ obj-$(CONFIG_ARCH_STRATIX10) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
+-obj-$(CONFIG_ARCH_AGILEX) += clk-agilex.o
+-obj-$(CONFIG_ARCH_AGILEX) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
++obj-$(CONFIG_COMMON_CLK_AGILEX) += clk-agilex.o
++obj-$(CONFIG_COMMON_CLK_AGILEX) += clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
+-- 
+2.25.1
+
