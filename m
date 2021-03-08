@@ -2,163 +2,188 @@ Return-Path: <SRS0=FIFX=IG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDF6C433E6
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 07:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02908C433E6
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 10:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92EE565146
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 07:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9482651E8
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 10:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbhCHHRn convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 02:17:43 -0500
-Received: from twhmllg4.macronix.com ([211.75.127.132]:51985 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235180AbhCHHRX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 02:17:23 -0500
-X-Greylist: delayed 1002 seconds by postgrey-1.27 at vger.kernel.org; Mon, 08 Mar 2021 02:17:23 EST
-Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
-        by TWHMLLG4.macronix.com with ESMTP id 12870ekE007405;
-        Mon, 8 Mar 2021 15:00:40 +0800 (GMT-8)
-        (envelope-from zhengxunli@mxic.com.tw)
-Received: from twhfm1p2.macronix.com (twhfmlp2.macronix.com [172.17.20.92])
-        by TWHMLLG4.macronix.com with ESMTP id 1286xkGD005918;
-        Mon, 8 Mar 2021 14:59:46 +0800 (GMT-8)
-        (envelope-from zhengxunli@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
-        by Forcepoint Email with ESMTP id 801AD206CE2A7AD5EB65;
-        Mon,  8 Mar 2021 14:59:47 +0800 (CST)
-To:     shubhrajyoti.datta@xilinx.com
-Cc:     devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
-        git@xilinx.com, gregkh@linuxfoundation.org,
-        linux-clk@vger.kernel.org, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        shubhrajyoti.datta@gmail.com, juliensu@mxic.com.tw,
-        slwu@mxic.com.tw
-Subject: Re: [PATCH v10 5/9] staging: clocking-wizard: Add support for dynamic
- reconfiguration
+        id S230271AbhCHKji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 05:39:38 -0500
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:44863 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230125AbhCHKjQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 05:39:16 -0500
+Received: by mail-lj1-f179.google.com with SMTP id r25so15390315ljk.11;
+        Mon, 08 Mar 2021 02:39:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=2ix2Opgr3c569Pm2cWE4kGR7oYQ1dcLNUE+xhanB+/Y=;
+        b=S/lMnSGWbIa3sXOf5tU+v5ycpSXlh3xuQMhquXxO1awmWSykXVonxVbRQZysi8FWqn
+         jHlFQ9JntfxNs7EuTFYwB6OGSAG5aban8pvKpLjtDIb37EaJn0gm5CoqvShGbr4pcUU3
+         kpb1Wt9wgOQgYjZLcRqg+mOpUmrpwstTraFYcugYXSfCrNxAKrg2KPV8T2QpLRv04QGI
+         j2X8vnChwFXweQjAWwlS2ym7oOh/qU9LNL567tel16hZMOs+n6VuSnY40YEZL8PeTelq
+         CQ/zz8XREnYVS/LFO/ZhW47Hsj9/+SeGhnX6UP/C9mVQiW47+PFyXkiBAyJ6rzU7Vnra
+         m6VA==
+X-Gm-Message-State: AOAM532CeU6k/FAdPBIbNL9jXKs6e1ewYY1zciBae0illkmOyZKtQLTB
+        cYYkaRIWRlrcsxI8ySY2lKo=
+X-Google-Smtp-Source: ABdhPJyxDZK+J/TI4Sd7AOsQgW4DIy4exeiSY5pvwI8sPJty57hh/Uuni4jiAEA8cM/nXjbAytiS/A==
+X-Received: by 2002:a2e:9857:: with SMTP id e23mr13640811ljj.78.1615199954536;
+        Mon, 08 Mar 2021 02:39:14 -0800 (PST)
+Received: from localhost.localdomain (dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::4])
+        by smtp.gmail.com with ESMTPSA id h18sm1315801lft.4.2021.03.08.02.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Mar 2021 02:39:13 -0800 (PST)
+Date:   Mon, 8 Mar 2021 12:39:07 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v3 00/15] Support ROHM BD71815 PMIC
+Message-ID: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-KeepSent: 146ABDBB:F4474CC3-48258692:000D1A0C;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP6 SHF907 April 26, 2018
-Message-ID: <OF146ABDBB.F4474CC3-ON48258692.000D1A0C-48258692.00266ED2@mxic.com.tw>
-From:   zhengxunli@mxic.com.tw
-Date:   Mon, 8 Mar 2021 14:59:47 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2021/03/08 PM 02:59:47,
-        Serialize complete at 2021/03/08 PM 02:59:47
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-MAIL: TWHMLLG4.macronix.com 1286xkGD005918
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Patch series introducing support for ROHM BD71815 PMIC
 
-Hi Shubhrajyoti,
+ROHM BD71815 is a power management IC used in some battery powered
+systems. It contains regulators, GPO(s), charger + coulomb counter, RTC
+and a clock gate.
 
-My name is Zhengxun and I am the engineer from Macronix. We are
-using the platform PicoZed 7015/7030 SOM (System On Module),
-which is based on Xilinx Zynq®-7000 All Programmable (AP) SoC to
-verify our Flash dirver. Of course, we are also using your clock
-wizard, our version seems to be v5.2, but something went wrong.
+All regulators can be controlled via I2C. LDO4 can additionally be set to
+be enabled/disabled by a GPIO. LDO3 voltage could be selected from two
+voltages written into separate VSEL reisters using GPIO but this mode is
+not supported by driver. On top of that the PMIC has the typical HW
+state machine which is present also on many other ROHM PMICs.
 
-+static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long 
-rate,
-+ unsigned long parent_rate)
-+{
-+                int err;
-+                u32 value;
-+                unsigned long flags = 0;
-+                struct clk_wzrd_divider *divider = 
-to_clk_wzrd_divider(hw);
-+                void __iomem *div_addr = divider->base + divider->offset;
-+
-+                if (divider->lock)
-+                                spin_lock_irqsave(divider->lock, flags);
-+                else
-+                                __acquire(divider->lock);
-+
-+                value = DIV_ROUND_CLOSEST(parent_rate, rate);
-+
-+                /* Cap the value to max */
-+                min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
-+
-+                /* Set divisor and clear phase offset */
-+                writel(value, div_addr);
-+                writel(0x00, div_addr + WZRD_DR_DIV_TO_PHASE_OFFSET);
+IC contains two GPOs - but one of the GPOs is marked as GND in
+data-sheet. Thus the driver by default only exposes one GPO. The second
+GPO can be enabled by special DT property.
 
-Why phase always set to zero? We want to support DTR operation in
-Flash driver. Can you add a set_phase function to adjust the phase?
+RTC is almost similar to what is on BD71828. For currently used features
+only the register address offset to RTC block differs.
 
-+                /* Check status register */
-+                err = readl_poll_timeout(divider->base + 
-WZRD_DR_STATUS_REG_OFFSET,
-+                                                                 value, 
-value & WZRD_DR_LOCK_BIT_MASK,
-+ WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-+                if (err)
-+                                goto err_reconfig;
-+
-+                /* Initiate reconfiguration */
-+                writel(WZRD_DR_BEGIN_DYNA_RECONF,
-+                       divider->base + WZRD_DR_INIT_REG_OFFSET);
-+
-+                /* Check status register */
-+                err = readl_poll_timeout(divider->base + 
-WZRD_DR_STATUS_REG_OFFSET,
-+                                                                 value, 
-value & WZRD_DR_LOCK_BIT_MASK,
-+ WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+The charger driver is not included in this series. ROHM has a charger
+driver with some fuel-gauging logig written in but this is not included
+here. I am working on separating the logic from HW specific driver and
+supporting both BD71815 and BD71828 chargers in separate patch series.
 
-According to pg015-clk-wiz.pdf, Clocking Wizard v5.2 and later, need to 
-write
-0x00000007 followed by 0x00000002 into Clock Configuration Register 23, to
-consolidate the redundant bits that the IP has upgraded, right?
-
-Can you compatible to v5.2?
-
-+err_reconfig:
-+                if (divider->lock)
-+                                spin_unlock_irqrestore(divider->lock, 
-flags);
-+                else
-+                                __release(divider->lock);
-+                return err;
-+}
-
-Thanks,
-Zhengxun
+Changelog v3:
+  - GPIO clean-up as suggested by Bartosz
+  - MFD clean-up as suggested by Lee
+  - clk-mode dt-binding handling in MFD driver corrected to reflect new
+    property values.
+  - Dropped already applied patches
+  - Rebased on v5.12-rc2
+Changelog v2:
+  - Rebased on top of v5.11-rc3
+  - Added another "preliminary patch" which fixes HW-dvs voltage
+    handling (patch 1)
+  - split regulator patch to two.
+  - changed dt-binding patch ordering.
+  regulators:
+    - staticized probe
+    - removed some unnecessary defines
+    - updated comments
+    - split rohm-regulator patch adding SNVS and supporting simple
+      linear mapping into two - one adding support for mapping, other
+      adding SNVS.
+  GPIO:
+    - removed unnecessary headers
+    - clarified dev/parent->dev usage
+    - removed forgotten #define DEBUG
+  dt-bindings:
+    - changed patch order to meet ref-dependencies
+    - added missing regulator nodes
+    - changed string property for clk mode to tristated
+  MFD:
+    - header cleanups.
+  CLK:
+    - fixed commit message
 
 
-CONFIDENTIALITY NOTE:
+Matti Vaittinen (15):
+  rtc: bd70528: Do not require parent data
+  mfd: bd718x7: simplify by cleaning unnecessary device data
+  dt_bindings: bd71828: Add clock output mode
+  dt_bindings: regulator: Add ROHM BD71815 PMIC regulators
+  dt_bindings: mfd: Add ROHM BD71815 PMIC
+  mfd: Add ROHM BD71815 ID
+  mfd: Support for ROHM BD71815 PMIC core
+  gpio: support ROHM BD71815 GPOs
+  regulator: helpers: Export helper voltage listing
+  regulator: rohm-regulator: linear voltage support
+  regulator: rohm-regulator: Support SNVS HW state.
+  regulator: Support ROHM BD71815 regulators
+  clk: bd718x7: Add support for clk gate on ROHM BD71815 PMIC
+  rtc: bd70528: Support RTC on ROHM BD71815
+  MAINTAINERS: Add ROHM BD71815AGW
 
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
+ .../bindings/mfd/rohm,bd71815-pmic.yaml       | 201 ++++++
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       |   6 +
+ .../regulator/rohm,bd71815-regulator.yaml     | 116 +++
+ MAINTAINERS                                   |   3 +
+ drivers/clk/clk-bd718x7.c                     |   9 +-
+ drivers/gpio/Kconfig                          |  10 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd71815.c                   | 176 +++++
+ drivers/mfd/Kconfig                           |  15 +-
+ drivers/mfd/rohm-bd71828.c                    | 486 +++++++++----
+ drivers/mfd/rohm-bd718x7.c                    |  43 +-
+ drivers/regulator/Kconfig                     |  11 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/bd71815-regulator.c         | 682 ++++++++++++++++++
+ drivers/regulator/helpers.c                   |  36 +-
+ drivers/regulator/rohm-regulator.c            |  23 +-
+ drivers/rtc/Kconfig                           |   6 +-
+ drivers/rtc/rtc-bd70528.c                     | 104 ++-
+ include/linux/mfd/rohm-bd71815.h              | 563 +++++++++++++++
+ include/linux/mfd/rohm-bd71828.h              |   3 +
+ include/linux/mfd/rohm-bd718x7.h              |  13 -
+ include/linux/mfd/rohm-generic.h              |   7 +-
+ include/linux/regulator/driver.h              |   2 +
+ 23 files changed, 2289 insertions(+), 228 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71815-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd71815.c
+ create mode 100644 drivers/regulator/bd71815-regulator.c
+ create mode 100644 include/linux/mfd/rohm-bd71815.h
 
-Macronix International Co., Ltd.
 
-=====================================================================
+base-commit: a38fd8748464831584a19438cbb3082b5a2dab15
+-- 
+2.25.4
 
 
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
