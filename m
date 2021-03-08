@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40137C1550C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9645BC1550D
 	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15F3365239
+	by mail.kernel.org (Postfix) with ESMTP id 72DD065215
 	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 17:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231156AbhCHRTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 12:19:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37204 "EHLO
+        id S230519AbhCHRTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 12:19:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbhCHRSl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 12:18:41 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0F3C06174A;
-        Mon,  8 Mar 2021 09:18:40 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id lr13so21936623ejb.8;
-        Mon, 08 Mar 2021 09:18:40 -0800 (PST)
+        with ESMTP id S230301AbhCHRSi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 12:18:38 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90BDFC06174A;
+        Mon,  8 Mar 2021 09:18:38 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id w9so15786686edt.13;
+        Mon, 08 Mar 2021 09:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wbKnutjFeuKN2eCb9zbjA189ugDvCI2YrROp3wTICT4=;
-        b=VM+O3J7thF6KXIkr30kOwBkv0Tc38k1Jvlm6YNjLzz50+bz8wX6MSYf8T4MSnRTTqO
-         b7+q+W4OaSbimhETBoMAHrau0LXQN1NNupJRRPiPM+HWG49PQjhpyKtZQxrZejeMWkXO
-         xOPpSsEsw7ILsAzhl/rjTymtk37vwlPjjHzi3qxBwRcWygjPBnxr02KPQEn1RWo9aan1
-         hIzPfJE1BN9VPYJziNywKBHUoBqp7GlM0OYaQ4TseZuf0+ntg92PISjgIL24qjWXTOGO
-         bO6mSrV18HnVUm7RNsms02cNSZFnr0r0DEcVIKfZIVpviGaDQO8kwXiIo4IWceEOwskr
-         KqfA==
+        bh=AICUc7/WIpyKcr6PZSNCmOkXDiStUBOvDovzIM4PHc0=;
+        b=IMMOE+olayuWnwpdCosd+VnWOE+l5I/V8Swj7e5oJkoyfsBmKklQvkxaIXB24/cqza
+         Il0R5JV5EOjUSPNh6KegfM6VcSp+3ZTTxw49dbTjTbr2jac3vyNCCd/oVNgrjrXnEFXt
+         iNZz/PHd5wXjSwRci3u7yVnR66TkEfB4c4L+Hx9gQ5UaH85Frm8UBjFe+RcQS9AN5v5p
+         v+cKvzraES7nJ8QCc1p9gWogLcO5aOG5mRY4rYgB2YDSvFLuDc/dEZR2D5AVlx3AM1/d
+         WATsI1ifLp6N0T937G8SY2IOZ2uPTUhjUquPjWUjROcTPnpxuO5BGDGqg5gYwVzOdSVD
+         pJnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wbKnutjFeuKN2eCb9zbjA189ugDvCI2YrROp3wTICT4=;
-        b=eMPlQfvYUqve0vn0akZ24nVkaWOzQ7F/K/0eJ2BaVfBF4W5d8KJCAK5Av+0001a1+X
-         ARVTlqdiJHkDzaC5RqO+lErNHl6U3H7KUfbIa2MM7qUz4KYlLLgbS/UVEEzvgTMNJu/v
-         mZD7HrF65bjKO18zp0bi1pNfaor5B0FVKz3M/F0IRy104oHpl4mBW4wSU0EWzSS7lbF5
-         2qrFrNpFyJOiqZuAjg0D0SfpYtaWkk1DoPVcZz+BY+jFML0ijZ2Zuv+wva4LaqJCb/Wz
-         Fd1qsmNS6jJnUcDRQfoCambLfRSDVSBavTYB2bWkJfm3LufkW73PKb9Zz8ON/jgToBIf
-         e/EQ==
-X-Gm-Message-State: AOAM531BcujlHcRstXIrv6ZltHeJfPVit9WCvSfD5opnj7VcEGSS2FRp
-        RTyz3iot7fW2DiYZeJcS+lE=
-X-Google-Smtp-Source: ABdhPJylZIODIf2YTYVcYrnYaUyYSLxrDdQA9Fl2UhMyGSt1EURUu8O3OE+j5LPAzBL/4gweoILfBQ==
-X-Received: by 2002:a17:906:3899:: with SMTP id q25mr15845840ejd.157.1615223919714;
-        Mon, 08 Mar 2021 09:18:39 -0800 (PST)
+        bh=AICUc7/WIpyKcr6PZSNCmOkXDiStUBOvDovzIM4PHc0=;
+        b=eO9mQ3RtGoH+xT+1zakgloLKHLc/nQkrbbOukC7nsvN2DdMArkpEw82RALN3nMNsWb
+         xxvm+jmb5Ss3QtIZ+D+pfYLLPVKi6elO6F+NfQqjaRisEFG3PbGdEZ72mOhUAg3PST7W
+         VFYrMf2JiGJoE8azI60NXKm6o7U0xrKxcESNo1V1uyvTvlEY58WfDkp7HNyh73V7jtqh
+         tIYfWaxOEkOJTt1LIr0blCNsAzN5IvH5OTkGdZT8F9qCHOLzXe36vk9GfOJpgBtXE/uw
+         KIZpPxGalWaNxTAwiDa/b94Y2naH9p1Pi9eE8AzO+7ICmUYQMPmZ+BLSYxoiL6YUsXPQ
+         Sr1g==
+X-Gm-Message-State: AOAM533v720J+oMmTRmsHmi/3UPoZY4njBrAESZ+AvOXF4rFvpUWnQMv
+        ce/7Clj4oJZ+mFZolUyaXyRehOpHmyk=
+X-Google-Smtp-Source: ABdhPJwOMKO9OQ4XcBludL34Vaqc3ppmltZZNdItDdPx/DWvUQePT23vy6WJGJ2swzkRpwvmxbWUUg==
+X-Received: by 2002:aa7:cf17:: with SMTP id a23mr23943922edy.30.1615223917333;
+        Mon, 08 Mar 2021 09:18:37 -0800 (PST)
 Received: from localhost.localdomain ([81.18.95.223])
-        by smtp.gmail.com with ESMTPSA id r5sm7457714eds.49.2021.03.08.09.18.38
+        by smtp.gmail.com with ESMTPSA id r5sm7457714eds.49.2021.03.08.09.18.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Mar 2021 09:18:39 -0800 (PST)
+        Mon, 08 Mar 2021 09:18:36 -0800 (PST)
 From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
@@ -65,9 +65,9 @@ To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 5/6] dt-bindings: clock: Add NIC and ETHERNET bindings for Actions S500 SoC
-Date:   Mon,  8 Mar 2021 19:18:30 +0200
-Message-Id: <fa6bcb2dc4309ca1972340694aebbcc5f55bd61c.1615221459.git.cristian.ciocaltea@gmail.com>
+Subject: [PATCH 3/6] clk: actions: Fix bisp_factor_table based clocks on Owl S500 SoC
+Date:   Mon,  8 Mar 2021 19:18:28 +0200
+Message-Id: <13576ddb604a9097603d95cd2605275c20fb2f56.1615221459.git.cristian.ciocaltea@gmail.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
 References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
@@ -77,33 +77,135 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing NIC and ETHERNET clock bindings constants for Actions
-Semi Owl S500 SoC.
+The following clocks of the Actions Semi Owl S500 SoC have been defined
+to use a shared clock factor table 'bisp_factor_table[]': DE[1-2], VCE,
+VDE, BISP, SENSOR[0-1]
 
+There are several issues involved in this approach:
+
+* 'bisp_factor_table[]' describes the configuration of a regular 8-rates
+  divider, so its usage is redundant. Additionally, judging by the BISP
+  clock context, it is incomplete since it maps only 8 out of 12
+  possible entries.
+
+* The clocks mentioned above are not identical in terms of the available
+  rates, therefore cannot rely on the same factor table. Specifically,
+  BISP and SENSOR* are standard 12-rate dividers so their configuration
+  should rely on a proper clock div table, while VCE and VDE require a
+  factor table that is a actually a subset of the one needed for DE[1-2]
+  clocks.
+
+Let's fix this by implementing the following:
+
+* Add new factor tables 'de_factor_table' and 'hde_factor_table' to
+  properly handle DE[1-2], VCE and VDE clocks.
+
+* Add a common div table 'std12rate_div_table' for BISP and SENSOR[0-1]
+  clocks converted to OWL_COMP_DIV.
+
+* Drop the now unused 'bisp_factor_table[]'.
+
+Additionally, since SENSOR[0-1] are not gated, unset the OWL_GATE_HW
+configuration and drop the CLK_IGNORE_UNUSED flag in their definitions.
+
+Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 ---
- include/dt-bindings/clock/actions,s500-cmu.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/actions/owl-s500.c | 48 ++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
 
-diff --git a/include/dt-bindings/clock/actions,s500-cmu.h b/include/dt-bindings/clock/actions,s500-cmu.h
-index a250a52a6192..a237eb26accb 100644
---- a/include/dt-bindings/clock/actions,s500-cmu.h
-+++ b/include/dt-bindings/clock/actions,s500-cmu.h
-@@ -74,10 +74,12 @@
- #define CLK_RMII_REF		54
- #define CLK_GPIO		55
+diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+index 69cd959205f5..abe8874353de 100644
+--- a/drivers/clk/actions/owl-s500.c
++++ b/drivers/clk/actions/owl-s500.c
+@@ -138,9 +138,16 @@ static struct clk_factor_table sd_factor_table[] = {
+ 	{ 0, 0, 0 },
+ };
  
--/* system clock (part 2) */
-+/* additional clocks */
- #define CLK_APB			56
- #define CLK_DMAC		57
-+#define CLK_NIC			58
-+#define CLK_ETHERNET		59
+-static struct clk_factor_table bisp_factor_table[] = {
+-	{ 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
+-	{ 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
++static struct clk_factor_table de_factor_table[] = {
++	{ 0, 1, 1 }, { 1, 2, 3 }, { 2, 1, 2 }, { 3, 2, 5 },
++	{ 4, 1, 3 }, { 5, 1, 4 }, { 6, 1, 6 }, { 7, 1, 8 },
++	{ 8, 1, 12 },
++	{ 0, 0, 0 },
++};
++
++static struct clk_factor_table hde_factor_table[] = {
++	{ 0, 1, 1 }, { 1, 2, 3 }, { 2, 1, 2 }, { 3, 2, 5 },
++	{ 4, 1, 3 }, { 5, 1, 4 }, { 6, 1, 6 }, { 7, 1, 8 },
+ 	{ 0, 0, 0 },
+ };
  
--#define CLK_NR_CLKS		(CLK_DMAC + 1)
-+#define CLK_NR_CLKS		(CLK_ETHERNET + 1)
+@@ -154,6 +161,13 @@ static struct clk_div_table rmii_ref_div_table[] = {
+ 	{ 0, 0 },
+ };
  
- #endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
++static struct clk_div_table std12rate_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
++	{ 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 8 },
++	{ 8, 9 }, { 9, 10 }, { 10, 11 }, { 11, 12 },
++	{ 0, 0 },
++};
++
+ static struct clk_div_table i2s_div_table[] = {
+ 	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
+ 	{ 4, 6 }, { 5, 8 }, { 6, 12 }, { 7, 16 },
+@@ -189,39 +203,39 @@ static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk", CMU_ETHERNE
+ 
+ /* factor clocks */
+ static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2, ahb_factor_table, 0, 0);
+-static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 3, bisp_factor_table, 0, 0);
+-static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 3, bisp_factor_table, 0, 0);
++static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 4, de_factor_table, 0, 0);
++static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 4, de_factor_table, 0, 0);
+ 
+ /* composite clocks */
+ static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
+ 			OWL_MUX_HW(CMU_VCECLK, 4, 2),
+ 			OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
+-			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, bisp_factor_table),
++			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, hde_factor_table),
+ 			0);
+ 
+ static OWL_COMP_FACTOR(vde_clk, "vde_clk", hde_clk_mux_p,
+ 			OWL_MUX_HW(CMU_VDECLK, 4, 2),
+ 			OWL_GATE_HW(CMU_DEVCLKEN0, 25, 0),
+-			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, bisp_factor_table),
++			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, hde_factor_table),
+ 			0);
+ 
+-static OWL_COMP_FACTOR(bisp_clk, "bisp_clk", bisp_clk_mux_p,
++static OWL_COMP_DIV(bisp_clk, "bisp_clk", bisp_clk_mux_p,
+ 			OWL_MUX_HW(CMU_BISPCLK, 4, 1),
+ 			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
+-			OWL_FACTOR_HW(CMU_BISPCLK, 0, 3, 0, bisp_factor_table),
++			OWL_DIVIDER_HW(CMU_BISPCLK, 0, 4, 0, std12rate_div_table),
+ 			0);
+ 
+-static OWL_COMP_FACTOR(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
++static OWL_COMP_DIV(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
+ 			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
+-			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
+-			OWL_FACTOR_HW(CMU_SENSORCLK, 0, 3, 0, bisp_factor_table),
+-			CLK_IGNORE_UNUSED);
++			{ 0 },
++			OWL_DIVIDER_HW(CMU_SENSORCLK, 0, 4, 0, std12rate_div_table),
++			0);
+ 
+-static OWL_COMP_FACTOR(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
++static OWL_COMP_DIV(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
+ 			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
+-			OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
+-			OWL_FACTOR_HW(CMU_SENSORCLK, 8, 3, 0, bisp_factor_table),
+-			CLK_IGNORE_UNUSED);
++			{ 0 },
++			OWL_DIVIDER_HW(CMU_SENSORCLK, 8, 4, 0, std12rate_div_table),
++			0);
+ 
+ static OWL_COMP_FACTOR(sd0_clk, "sd0_clk", sd_clk_mux_p,
+ 			OWL_MUX_HW(CMU_SD0CLK, 9, 1),
 -- 
 2.30.1
 
