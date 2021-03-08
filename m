@@ -4,119 +4,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1790EC433E6
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4709AC433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5FD465225
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1258465229
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Mar 2021 15:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbhCHPp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Mar 2021 10:45:58 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:47049 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229646AbhCHPp3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 10:45:29 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6D77358076B;
-        Mon,  8 Mar 2021 10:45:28 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 08 Mar 2021 10:45:28 -0500
+        id S229797AbhCHPsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Mar 2021 10:48:37 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40179 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229459AbhCHPsM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Mar 2021 10:48:12 -0500
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id AB1B75C0065;
+        Mon,  8 Mar 2021 10:48:11 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Mon, 08 Mar 2021 10:48:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=qc3IVkUwpKxiQwYWY9vhXc66NlT
-        4SAHkuz3yHGTAYnA=; b=XYT8/kpBeWXXKwTXdlPxquUxb5651KDDu2Pc/VqJ9Fw
-        BJ9ak9AAI8W5YcJE5p/ertQcBuPT5ioDmhQccf7cA48TdAbvHUxwsukS8VR1TzZO
-        KAcV8A1hMZEwGW7xYXMfd9qjZAV8jbPbTJ3rT9LjbHVYluu6/XwxlaOl3lNsl2zD
-        UuySP+qOwXo64I30k4codE2HZuIMa2E8FgiFZdBeIH40I+desCVzgJU5NaOKfvPo
-        EqF9xgOS8KmkRZWdD7o5RUPlRAhUTB2+ozQQ0pyaTBuFUQ1wLqqBMGpu/O+tkoaE
-        kHRgHF8UL2gxyidoUd45PMqUzEakdrKwS7GIf0Od0bQ==
+        :content-type:in-reply-to; s=fm2; bh=RnEavwGRxlLSFmOVcdiWgzlkElE
+        f0ZIkYfj/r5zG3Wo=; b=XdreZdBc//ytwXMmasq02zF0VA4DGLNLJb9hV0HRyXd
+        gG77hNpUCuBAkbaxuXNmG+/L6Qeh6eM/AjrUa07DhJ3ELpTMtTzNVNr8+LrUW7+E
+        Q3IQdFvDs+eCo9TMzTHaW1SZcfeO4HPDO5uB/omdKJC8Y9A/FxacmSTT+D47FdOa
+        TT3oxsJUwzPnmWEoTLrJ8q1G8/us3jp4RNhFG8r5gElfZkzveVY6dhhz3jlsLpMf
+        ensOhBaueDaWzV4VZhYOcNiqiqG+uf1DhcYhyP2j2W3HfQW897bjB5eeErrpcaQA
+        JHktSOUjle8WIHikb0HXYW7aCbffAdMAA53BhSB9RKQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=qc3IVk
-        UwpKxiQwYWY9vhXc66NlT4SAHkuz3yHGTAYnA=; b=mSviPQk/oIGtwAAt5aW7bN
-        5A07xKQaoTH7+zG+Qnt7OhLpLLIqroA0D6IkiuLvwby7EwgHxq3xXnZZkpnDhHED
-        mkrdye42tk82Ph1WMFAJb7eXjqDl9SHliuglaREWv8r6kVm0y7QG9bUx6QwPS/wK
-        7KZ9CbVGBZz4b/Kryastn6kGz6HY1vpRSE8WowDcOu4ogKEcF6XnnnF7JDfw1SRL
-        ieMFWNL4nKMe57jObRsv8LP855JD2adGtQI3K4h2WPdqtyeCHZCOEfxstg/ZptN7
-        b+sr1B+ZMZ0zlSEJUXa8EmVgYu4kFtsXRmUfRgYZ+zp+r+AZgJ1cMyMVK8Nh5qhA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=RnEavw
+        GRxlLSFmOVcdiWgzlkElEf0ZIkYfj/r5zG3Wo=; b=gRYJAiztJyXDzLiWkKvVjc
+        0zkkeYDEyvZUZgvl4SeeZbblynI829UL2DnKAPJ2Z7uzfcXXSahlKXuB+xJzYR1n
+        vV3VBsC675yXt6hR7uK3iwNi756bNl4dRIQe2pmWj9p5oKJZMzR4B6ShSU6TKqT+
+        VyIAQia1RNILgnsAewRG+zprTGNjDlhnxjW0FP98vpkKSP7M9dedstvMw1/X4fJM
+        fCkQhfyb5KrNS97bLdofPkaRbkbikoWSmJWa2xgVJZLpLWZXnKaAUkwGrfzIfjXg
+        e8BqCfOz3QfNkP4JP2ZAHAcW3rgBP5LD+MR+mfKq2qCoT4Us4CrAmu/wJmcDPfVA
         ==
-X-ME-Sender: <xms:lEZGYNCarRpb21GEn6Eba_NYl7erMBuE15nr56jvJourkbkn3aevfQ>
-    <xme:lEZGYGbUlNpjQHNWbGPR29NgCqna-XD8cHXFUKvAEzi0Oc6eFBxup5FVT5NxVl8cM
-    v4fLAWhSOrOhY9924o>
+X-ME-Sender: <xms:OEdGYI4xOgWHKxF8oYJIWM_5kPKMUDd-ReuABU6S25G-HWXC_lozTw>
+    <xme:OEdGYKVj1ma6a787As77OmrSV8oyxCTDD6C7vSFLuMCSIuQjjbsZpLtdceaW7R5kg
+    ANwJQGc072e7DIY18g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddugedgudejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    htvghrnhepuddvudfhkeekhefgffetffelgffftdehffduffegveetffehueeivddvjedv
+    gfevnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
     frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:lEZGYAbUaG3Tav7JlxVBh1E8BW-poBzRP3nRth0OxEn7YUrGoaYk0w>
-    <xmx:lEZGYF-4kdsfmSKR32vdk_N1aFudSxE344fHw0XW6D3uTcT1Hd_eSQ>
-    <xmx:lEZGYHjoZJt3BDCkxHiqx6b7j4lrEe4YepGhxFttI5r5yG7gpR7VgA>
-    <xmx:mEZGYOJekUwqy4kmwc3GN0f1vE8zC77HFmKZ7Uy_DK9J-Jz7YuB8Hg>
+X-ME-Proxy: <xmx:OUdGYIKn8SFj0xhyGox_ApzXUAtzuSqHkfzpT8NwAfbMQvIBVQI0Xg>
+    <xmx:OUdGYEsFBzAaXp2wpuO6H5LhGdwY3M0YVjZ4DAcTCEgWPWR-zedTMw>
+    <xmx:OUdGYNLbiCCIrQriLzJV4byrEaeLVUDLjIzubQNhB9xeNAerb_zj_g>
+    <xmx:O0dGYIhyqHhqOhj3RZwG4HS5hXiBCcxo_q5bQuMtafdbxTbLViSReA>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6758224005C;
-        Mon,  8 Mar 2021 10:45:24 -0500 (EST)
-Date:   Mon, 8 Mar 2021 16:45:22 +0100
+        by mail.messagingengine.com (Postfix) with ESMTPA id C051F1080067;
+        Mon,  8 Mar 2021 10:48:08 -0500 (EST)
+Date:   Mon, 8 Mar 2021 16:48:07 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andre Przywara <andre.przywara@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/4] arm64: dts: allwinner: h6: Use RSB for AXP805
- PMIC connection
-Message-ID: <20210308154522.mkbxh3dpxidxhzzs@gilmour>
-References: <20210103100007.32867-1-samuel@sholland.org>
- <20210103100007.32867-5-samuel@sholland.org>
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/1] clk: sunxi: Demote non-conformant kernel-doc headers
+Message-ID: <20210308154807.j6llubzzbcxd6b55@gilmour>
+References: <20210303142430.3168703-1-lee.jones@linaro.org>
+ <161481702291.1478170.841537456605456317@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wnc5wrbsyokytltm"
+        protocol="application/pgp-signature"; boundary="cdun35vxb6d37qvr"
 Content-Disposition: inline
-In-Reply-To: <20210103100007.32867-5-samuel@sholland.org>
+In-Reply-To: <161481702291.1478170.841537456605456317@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---wnc5wrbsyokytltm
-Content-Type: text/plain; charset=us-ascii
+--cdun35vxb6d37qvr
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 03, 2021 at 04:00:07AM -0600, Samuel Holland wrote:
-> On boards where the only peripheral connected to PL0/PL1 is an X-Powers
-> PMIC, configure the connection to use the RSB bus rather than the I2C
-> bus. Compared to the I2C controller that shares the pins, the RSB
-> controller allows a higher bus frequency, and it is more CPU-efficient.
+On Wed, Mar 03, 2021 at 04:17:02PM -0800, Stephen Boyd wrote:
+> Quoting Lee Jones (2021-03-03 06:24:30)
+> > Headers must describe their parameters.
+> >=20
+> > Fixes the following W=3D1 kernel build warning(s):
+> >=20
+> >  drivers/clk/sunxi/clk-sun9i-core.c:27: warning: Function parameter or =
+member 'req' not described in 'sun9i_a80_get_pll4_factors'
+> >  drivers/clk/sunxi/clk-sun9i-core.c:100: warning: Function parameter or=
+ member 'req' not described in 'sun9i_a80_get_gt_factors'
+> >  drivers/clk/sunxi/clk-sun9i-core.c:155: warning: Function parameter or=
+ member 'req' not described in 'sun9i_a80_get_ahb_factors'
+> >  drivers/clk/sunxi/clk-sun9i-core.c:235: warning: Function parameter or=
+ member 'req' not described in 'sun9i_a80_get_apb1_factors'
+> >  drivers/clk/sunxi/clk-usb.c:22: warning: cannot understand function pr=
+ototype: 'struct usb_reset_data '
+> >  drivers/clk/sunxi/clk-sun6i-ar100.c:26: warning: Function parameter or=
+ member 'req' not described in 'sun6i_get_ar100_factors'
+> >=20
+> > Cc: "Emilio L=F3pez" <emilio@elopez.com.ar>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Maxime Ripard <mripard@kernel.org>
+> > Cc: Chen-Yu Tsai <wens@csie.org>
+> > Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> > Cc: Boris BREZILLON <boris.brezillon@free-electrons.com>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
 >=20
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Applied, thanks
+Applied
 
 Maxime
 
---wnc5wrbsyokytltm
+--cdun35vxb6d37qvr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYEZGkgAKCRDj7w1vZxhR
-xV1zAP0dY5wXW8BW5mbE+J3SUziA79rXyUNU7WgazhU7htgleAEA3o5GrAotOGGD
-LxGr99nLKfWaa7x2MVKcAgFJOPzIsgM=
-=oxjb
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYEZHNwAKCRDj7w1vZxhR
+xU79AQCzPtUTayiFwjMgMYuzW273X0qfnDb37uGFa9+2V+439gEAiFJYrZRzfL6R
+1WCIHHBYcwz2hpCP6tXrurZuB9tEIwk=
+=ZcjV
 -----END PGP SIGNATURE-----
 
---wnc5wrbsyokytltm--
+--cdun35vxb6d37qvr--
