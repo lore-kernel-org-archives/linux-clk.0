@@ -2,106 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 655CBC433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 06:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EAFC433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 07:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16682652A4
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 06:34:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1068F652B5
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 07:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbhCIGd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 01:33:26 -0500
-Received: from out28-100.mail.aliyun.com ([115.124.28.100]:43762 "EHLO
-        out28-100.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhCIGdP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 01:33:15 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1749291|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0121347-0.000267848-0.987597;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047201;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.JiMa0r5_1615271589;
-Received: from 192.168.1.112(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JiMa0r5_1615271589)
-          by smtp.aliyun-inc.com(10.147.42.198);
-          Tue, 09 Mar 2021 14:33:10 +0800
-Subject: Re: [PATCH 0/6] clk: Ingenic JZ4760(B) support
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20210307141759.30426-1-paul@crapouillou.net>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <feef3ac6-1df3-1e81-950d-e11886ee7ae2@wanyeetech.com>
-Date:   Tue, 9 Mar 2021 14:31:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S229924AbhCIHXb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 02:23:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhCIHX1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 02:23:27 -0500
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8568BC06175F
+        for <linux-clk@vger.kernel.org>; Mon,  8 Mar 2021 23:23:27 -0800 (PST)
+Received: by mail-qk1-x72a.google.com with SMTP id a9so12045993qkn.13
+        for <linux-clk@vger.kernel.org>; Mon, 08 Mar 2021 23:23:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oqO7RxhDDe9vwKp/BB6AgPJShCvp9ZtWoA6Sh+EENcs=;
+        b=Ud3PEmS7F/HL1ClBM5fvcc71dFxIGph/JiVvIxFtoAACgUhUdwd3d1JDpZAWyryI4/
+         H00WQUh6kjUPafd2ThBYw9ZtS34nshFF5tWtZGNZ1EgBfQTdUN3XYkl7kzREpnyavn71
+         TK+awh0xLrq0MfmLyTt1/Y13AGmNR3ZBJ15axGl3gd82rU/QKEwN/OMs+2mvmBscgDVy
+         BZeZLu7f0meD98GsZFypmTNkG5/8iycndvsukzJpMwALx2+3+j4rat0gZlbufwYXVt82
+         vFlOJutYcZmd4oW9S7VQwWQPDoXikWAturt0OVgGLzb5SQ+c5k0WpbbIHyWni6dbwUGq
+         Kaow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oqO7RxhDDe9vwKp/BB6AgPJShCvp9ZtWoA6Sh+EENcs=;
+        b=nE54+gTJG2EHXdZrMWGw30w3V9vpsVeFpFctm7ks80fJ5lClLHewuKPnhUKZ29/TBq
+         y2ZNKdgxpnoXERiSkjLR2izwviKumCWa1wm9DfB5sMx+N36kuCMsAwPGMldioFxNvgT/
+         Hq4hzSiHNYv9Wj2NM1jEQpEiRgeilP3Dwr0MKZOdm1Sr9XeVvcE3jjaudABOZCexFs88
+         jcNFiovBe8H9V560eHrn/iGbm4m5OD62fA6OvJDF3OpvFIl+IEosVbOIeZB8bl9ZsEwF
+         OCqHF3ZyZE7uqA/anxc3ZowCW8031deZUauQRYsfLlgG4IHDqdXIZ6hxwrIjcwb1hS6a
+         TnQg==
+X-Gm-Message-State: AOAM533ikswPFhhrJh6IE84YBDX7YFpIKSPxRmf8IMG4j3mbisU6bavM
+        H0x0wSt/O/qRGlyWbtAVYhh7OPVzpk3IIe3lVLw+lg==
+X-Google-Smtp-Source: ABdhPJwtYPYtApR4EueplUtwNsjPnC8GSeKATOROKTHuWvVYiLX1g7t/b1oVki8yJ8MfrVSGPDDRQGIb0ZVn6cn5YHw=
+X-Received: by 2002:a37:66cd:: with SMTP id a196mr16664749qkc.374.1615274606652;
+ Mon, 08 Mar 2021 23:23:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210307141759.30426-1-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <cover.1614681831.git.greentime.hu@sifive.com> <e2bd7db9db3c196b9b0399f0655a56939a0f3d62.1614681831.git.greentime.hu@sifive.com>
+ <81c45bf40b397b57343f159baae896528fa32d89.camel@pengutronix.de>
+In-Reply-To: <81c45bf40b397b57343f159baae896528fa32d89.camel@pengutronix.de>
+From:   Greentime Hu <greentime.hu@sifive.com>
+Date:   Tue, 9 Mar 2021 15:23:14 +0800
+Message-ID: <CAHCEehK3P7jXq-v_xVm-0+BQsugG21VgjU0teyuUgANyR5ErKA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/6] clk: sifive: Use reset-simple in prci driver for
+ PCIe driver
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>, hes@sifive.com,
+        Erik Danie <erik.danie@sifive.com>,
+        Zong Li <zong.li@sifive.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        lorenzo.pieralisi@arm.com, alex.dewar90@gmail.com,
+        khilman@baylibre.com, hayashi.kunihiko@socionext.com,
+        vidyas@nvidia.com, jh80.chung@samsung.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
-
-On 2021/3/7 下午10:17, Paul Cercueil wrote:
-> Hi,
+Philipp Zabel <p.zabel@pengutronix.de> =E6=96=BC 2021=E5=B9=B43=E6=9C=884=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=887:58=E5=AF=AB=E9=81=93=EF=BC=
+=9A
 >
-> Here are a set of patches to add support for the Ingenic JZ4760(B) SoCs.
+> On Tue, 2021-03-02 at 18:59 +0800, Greentime Hu wrote:
+> > We use reset-simple in this patch so that pcie driver can use
+> > devm_reset_control_get() to get this reset data structure and use
+> > reset_control_deassert() to deassert pcie_power_up_rst_n.
+> >
+> > Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+> > ---
+> >  drivers/clk/sifive/Kconfig       |  2 ++
+> >  drivers/clk/sifive/sifive-prci.c | 14 ++++++++++++++
+> >  drivers/clk/sifive/sifive-prci.h |  4 ++++
+> >  drivers/reset/Kconfig            |  3 ++-
+> >  4 files changed, 22 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
+> > index 1c14eb20c066..9132c3c4aa86 100644
+> > --- a/drivers/clk/sifive/Kconfig
+> > +++ b/drivers/clk/sifive/Kconfig
+> > @@ -10,6 +10,8 @@ if CLK_SIFIVE
+> >
+> >  config CLK_SIFIVE_PRCI
+> >       bool "PRCI driver for SiFive SoCs"
+> > +     select RESET_CONTROLLER
+> > +     select RESET_SIMPLE
+> >       select CLK_ANALOGBITS_WRPLL_CLN28HPC
+> >       help
+> >         Supports the Power Reset Clock interface (PRCI) IP block found =
+in
+> > diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifi=
+ve-prci.c
+> > index baf7313dac92..925affc6de55 100644
+> > --- a/drivers/clk/sifive/sifive-prci.c
+> > +++ b/drivers/clk/sifive/sifive-prci.c
+> > @@ -583,7 +583,21 @@ static int sifive_prci_probe(struct platform_devic=
+e *pdev)
+> >       if (IS_ERR(pd->va))
+> >               return PTR_ERR(pd->va);
+> >
+> > +     pd->reset.rcdev.owner =3D THIS_MODULE;
+> > +     pd->reset.rcdev.nr_resets =3D PRCI_RST_NR;
+> > +     pd->reset.rcdev.ops =3D &reset_simple_ops;
+> > +     pd->reset.rcdev.of_node =3D pdev->dev.of_node;
+> > +     pd->reset.active_low =3D true;
+> > +     pd->reset.membase =3D pd->va + PRCI_DEVICESRESETREG_OFFSET;
+> > +     spin_lock_init(&pd->reset.lock);
+> > +
+> > +     r =3D devm_reset_controller_register(&pdev->dev, &pd->reset.rcdev=
+);
+> > +     if (r) {
+> > +             dev_err(dev, "could not register reset controller: %d\n",=
+ r);
+> > +             return r;
+> > +     }
+> >       r =3D __prci_register_clocks(dev, pd, desc);
+> > +
 >
-> One thing to note is that the ingenic,jz4760-tcu is undocumented for now,
-> as I will update the TCU documentation in a different patchset.
+> Accidental whitespace?
 >
-> Zhou: the CGU code now supports overriding the PLL M/N/OD calc
-> algorithm, please tell me if it works for you.
-
-
-After set "od = 1;", the overriding works, but I think we still need 
-some further improvements related to OD,
-
-because there is no OD bits in the I2S PLL, this will cause error in 
-"ingenic_pll_recalc_rate()", and may cause
-
-"ingenic_pll_calc()" to also have error(if we will introduce support for 
-non 1 od values).
-
-
-I think maybe we can add codes to detect if there is an 
-"pll_od_encoding". If it is NULL, it means no OD bits, then
-
-do some corresponding processing( for example, setting corresponding 
-variable to 1) to ensure proper calculation.
-
-
-Thanks and best regards!
-
-
-> Cheers,
-> -Paul
+> Otherwise,
 >
-> Paul Cercueil (6):
->    dt-bindings: clock: ingenic: Add ingenic,jz4760{,b}-cgu compatibles
->    clk: Support bypassing dividers
->    clk: ingenic: Read bypass register only when there is one
->    clk: ingenic: Remove pll_info.no_bypass_bit
->    clk: ingenic: Support overriding PLLs M/N/OD calc algorithm
->    clk: ingenic: Add support for the JZ4760
->
->   .../bindings/clock/ingenic,cgu.yaml           |   4 +
->   drivers/clk/ingenic/Kconfig                   |  10 +
->   drivers/clk/ingenic/Makefile                  |   1 +
->   drivers/clk/ingenic/cgu.c                     |  92 ++--
->   drivers/clk/ingenic/cgu.h                     |  12 +-
->   drivers/clk/ingenic/jz4725b-cgu.c             |  12 +-
->   drivers/clk/ingenic/jz4740-cgu.c              |  12 +-
->   drivers/clk/ingenic/jz4760-cgu.c              | 433 ++++++++++++++++++
->   drivers/clk/ingenic/jz4770-cgu.c              |  15 +-
->   drivers/clk/ingenic/tcu.c                     |   2 +
->   include/dt-bindings/clock/jz4760-cgu.h        |  54 +++
->   11 files changed, 591 insertions(+), 56 deletions(-)
->   create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
->   create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
->
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+Thank you, Philipp.
+Yes, it is an accidental whitespace. I'll remove it in my next version patc=
+h.
