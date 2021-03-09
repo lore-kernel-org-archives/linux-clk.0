@@ -2,77 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640FAC433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 17:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5955BC433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 19:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 329E264F2E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 17:00:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C3C06523F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 19:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230464AbhCIQ7b convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 11:59:31 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:44406 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230449AbhCIQ7W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 11:59:22 -0500
-Received: by mail-ua1-f51.google.com with SMTP id a31so4736168uae.11;
-        Tue, 09 Mar 2021 08:59:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XCvYpfzoKzKTKDp1QXX9VmpkRBgj4/yBOtg/LfXDr1w=;
-        b=Fzd+AEm6IWpsKYSg6gHXMVUUgQyQWMtOVmE/yiCmkSonKKrF6zdoMy/w3Nw4WWEB0g
-         13x1M6rnO2tjDaUG9qqaKU0Z4JrG/rR3j+O7f+XUs4/9hDzg+nmF/ordU2/4IWxtdQkM
-         gJfkwbDRXIJz4o39ApQzNgK0k55zU5KYODR92c4zJdr38ZOR5yeRuxpE++kNMheRmkCX
-         Wh0AQL+WjR4BY6LxIrOeT4q1mLBHo8Hhq2TimyHrcXRo4zs+OEeSFpH5jxaB75yEBH1J
-         vPMAE8NLq1AH9f0fyVYLiAjwyEFrvY3R01wzc958m7zXf+Wo9JT6RVQ56xd+gu2S0QBv
-         ICqg==
-X-Gm-Message-State: AOAM533TLIDI1DoH/WlBvGSJ4iRT0qRh+cJSgcApJCK6NplmhkGkJ77K
-        /3+q5vilE2scJUiOifuAmR/i2tCyDqz+8VT3dnaCXQNb
-X-Google-Smtp-Source: ABdhPJzryIfdhUQrVQzIC6pzc/Cca71PAjHg8J4xH1qgaSPDR0W6rS7x2N8R2zUdivThVOwrp5V/HxN1OAdQgP6+yxg=
-X-Received: by 2002:ab0:20b3:: with SMTP id y19mr16846500ual.2.1615309162004;
- Tue, 09 Mar 2021 08:59:22 -0800 (PST)
+        id S231384AbhCITWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 14:22:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230173AbhCITWE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Mar 2021 14:22:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 108DA65237;
+        Tue,  9 Mar 2021 19:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615317724;
+        bh=AaO+UbGAEZUo3o9QYbxnPDFnaxXOUUGrUBCbEaRrUqw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m/dBrQ1+uo1RqzGpHsIWLJzqjcWhuOoEE+iuSSc0rR/xOug/QrPbbotHfKKqcbjM5
+         RIHFVUQWrZyKqyyASEB1jntulVnFyl9pzmNYIIe305SZw4SwbHBjITgWQlzyrd/rnR
+         aCgXnVHLmLwASYzuNuOvsJFrqfCBbYLWOjP1GEESnuPQxZEpxEHRUEGfB9hGfhvJsJ
+         ebJpuhVzZvKwQTsjQIyV/r7jken4639UrWYTKVJ0PvyBqcCEPuPr+U+q42XvEcPTV2
+         oz68rihY5v8t1st/NWKI3vMgOF9Tlo7UV5503VAiqn3dzCWmjEQWqytPKEV3bKRrLh
+         VAbujl3ZqVhiQ==
+Received: by mail-ej1-f46.google.com with SMTP id jt13so30968284ejb.0;
+        Tue, 09 Mar 2021 11:22:03 -0800 (PST)
+X-Gm-Message-State: AOAM532fW5fUcFqBnb4qvjG8aWy3PxLa0cYsfSYbHdrKnhBplXPgliZC
+        olvBCwn+AMLfwW++b1QheCmz4DOoUB/dqnKavQ==
+X-Google-Smtp-Source: ABdhPJx9xoFco5obxQqg/gaAD5xU1Y8MOt0uO1HqmPol3JnaNkH/1zNviaIH/UHGYG9X+yHYVwGlwdD9FZ8o5qG5wjQ=
+X-Received: by 2002:a17:906:7f84:: with SMTP id f4mr21383291ejr.525.1615317722613;
+ Tue, 09 Mar 2021 11:22:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20210309165538.2682268-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20210309165538.2682268-1-niklas.soderlund+renesas@ragnatech.se>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 9 Mar 2021 17:59:10 +0100
-Message-ID: <CAMuHMdV5Zi4hPP7PsfB7_hycen534_zBjE0Et08Q2BwNrcZppA@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: renesas: r8a779a0: Add TSC clock
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20210225194201.17001-1-noltari@gmail.com> <20210225194201.17001-3-noltari@gmail.com>
+ <20210306211731.GA1217377@robh.at.kernel.org> <f60cc3a8-9629-3659-c3e5-4a42a588b63e@gmail.com>
+In-Reply-To: <f60cc3a8-9629-3659-c3e5-4a42a588b63e@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 9 Mar 2021 12:21:50 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqLk5LWKarMxfnXhJ5VJZMvWEYnCnhP2qQ+LgOfUZALiyA@mail.gmail.com>
+Message-ID: <CAL_JsqLk5LWKarMxfnXhJ5VJZMvWEYnCnhP2qQ+LgOfUZALiyA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mips: bmips: add BCM63268 timer reset definitions
+To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
+Cc:     Jonas Gorski <jonas.gorski@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 9, 2021 at 5:56 PM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Implement support for the TSC clock on V3U.
+On Sun, Mar 7, 2021 at 3:08 AM =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gm=
+ail.com> wrote:
 >
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
-> * Changes since v2
-> - Reuse R8A779A0_CLK_CL16MCK instead of introducing R8A779A0_CLK_CL16M.
+> Hi Rob,
+>
+> El 06/03/2021 a las 22:17, Rob Herring escribi=C3=B3:
+> > On Thu, Feb 25, 2021 at 08:41:59PM +0100, =C3=81lvaro Fern=C3=A1ndez Ro=
+jas wrote:
+> >> Add missing timer reset definitions for BCM63268.
+> >>
+> >> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> >> ---
+> >>   include/dt-bindings/reset/bcm63268-reset.h | 4 ++++
+> >>   1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/include/dt-bindings/reset/bcm63268-reset.h b/include/dt-b=
+indings/reset/bcm63268-reset.h
+> >> index 6a6403a4c2d5..d87a7882782a 100644
+> >> --- a/include/dt-bindings/reset/bcm63268-reset.h
+> >> +++ b/include/dt-bindings/reset/bcm63268-reset.h
+> >> @@ -23,4 +23,8 @@
+> >>   #define BCM63268_RST_PCIE_HARD     17
+> >>   #define BCM63268_RST_GPHY  18
+> >>
+> >> +#define BCM63268_TRST_SW    29
+> >> +#define BCM63268_TRST_HW    30
+> >> +#define BCM63268_TRST_POR   31
+> >
+> > Numbering should be local to the provider, so shouldn't this be 0-2?
+> > Unless these numbers correspond to something in the h/w (bit positions
+> > for example).
+>
+> Numbering corresponds to bit positions in the HW:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.13.
+Okay, good.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Rob Herring <robh@kernel.org>
