@@ -2,409 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685F0C43331
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A65C433E6
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 13:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 354A6652C8
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDC1564F51
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 13:41:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbhCIMHe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 07:07:34 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51209 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230215AbhCIMHW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 07:07:22 -0500
-X-UUID: 1337efe634534a0fb3e4de84a64f9028-20210309
-X-UUID: 1337efe634534a0fb3e4de84a64f9028-20210309
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <macpaul.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 218345198; Tue, 09 Mar 2021 20:07:16 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 9 Mar 2021 20:07:15 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 9 Mar 2021 20:07:15 +0800
-From:   Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wendell Lin <Wendell.Lin@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Macpaul Lin <Macpaul.Lin@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Evan Green <evgreen@chromium.org>, <Yong.Wu@mediatek.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     Ainge Hsu <ainge.hsu@mediatek.com>,
-        Eddie Hung <eddie.hung@mediatek.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        Macpaul Lin <macpaul@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-Subject: [PATCH v9 3/4] arm64: dts: mediatek: add mt6765 support
-Date:   Tue, 9 Mar 2021 20:05:37 +0800
-Message-ID: <1615291538-9799-4-git-send-email-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
-References: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
- <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
+        id S231137AbhCINkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 08:40:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231197AbhCINkR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 08:40:17 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D4FC06174A;
+        Tue,  9 Mar 2021 05:40:17 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id x135so10450185oia.9;
+        Tue, 09 Mar 2021 05:40:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cjli9VTdeq1MHBIa7+/aJFhlvAvBCO+ZUMujE9XxcMY=;
+        b=OxTf9zIel19a81G5L5Eri7/vPF/0G0bCp8oJgnflFGL63bWcealBg5P9bzfErt8Lr6
+         HN4ScNJ3KPP1X8XR/YQYx2yu7QaFEzRZalIxkd1keWF3piaIL+CLzD1371My31gm2vfr
+         guISn4sLm9Ta5uSihq9LkJfufNRzxlAVQMdNcAvI++T+tWQ+Egt8GhVPsVbypB1qmsD1
+         U5DdKko//6RKB2uOsVnQ/X2f5SBGo3zMlZoknF9gRr6Cy76spFWdM09M3uyzWShKEndx
+         KKST07V9ObGiPYwsfmHc/mjJ+JA/rf3WQ0H/lynM1UHnx6jt5bJbG9hqMToy8Dg8q9T2
+         MPmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cjli9VTdeq1MHBIa7+/aJFhlvAvBCO+ZUMujE9XxcMY=;
+        b=ryJnLWGJ+lCJePSduBjbGTkZpYLeP2aBDSLj10zaB36MPCLZz4cFowRKbuvgC6bt+w
+         4kOIMmIY1EgQYYgQgc4ssqJObKoP/ejewPG8UvhiRfW/PrSPX//82UdPfc+m2FcoLCe0
+         i+35Lu+7VkHntq1lOP9JFLzhEABKsXVGK3LfAAxbF/d8iCtAgCUoRcBaYtRVPWrwiPQ2
+         YmaPjoz5w9OF+f+mLSeO5rr5F8qiiT53c7fGEcZnnEspPSv6nN8iWYAZo3VyveLl81ZE
+         nfq0VSnyeMVlpJncKLAkk8I+uyMcVoKieBpJ3Bxz9uYLsDZb8KMlSEpp5ldnesmA2/Ec
+         krTA==
+X-Gm-Message-State: AOAM533eWy90F7+0lkAiPDTCwl+Sr2yIPYurrPLeiZtIm30z/9Qy0LEL
+        44W58b0JhARkzC8XJkudUISUMQfR4m4+uH+zwG8=
+X-Google-Smtp-Source: ABdhPJzpWnBeI8JNju63ZqLrfMEwGSCPE5hb9/9S8BFE/siwMRlDk/QkAw2ATsh10255EmJqnoLg1w0+OAjQlm0cUa4=
+X-Received: by 2002:aca:ab86:: with SMTP id u128mr2985140oie.47.1615297216832;
+ Tue, 09 Mar 2021 05:40:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <1613750416-11901-1-git-send-email-abel.vesa@nxp.com> <1613750416-11901-6-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1613750416-11901-6-git-send-email-abel.vesa@nxp.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Tue, 9 Mar 2021 21:40:17 +0800
+Message-ID: <CAA+hA=TE+=uiVi1QGijO9icYwHOwwXYSXTrs=NYKfBjyCq4cTw@mail.gmail.com>
+Subject: Re: [RFC 05/19] devfreq: imx8m-ddrc: Change governor to powersave
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Mars Cheng <mars.cheng@mediatek.com>
+On Sat, Feb 20, 2021 at 12:03 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> By switching to powersave governor, we allow the imx8m-ddrc to always
+> run at minimum rate needed by all the running masters.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-Add basic chip support for Mediatek 6765, include
-uart node with correct uart clocks, pwrap device
+Would you please help clarify a bit more why need use powersave by default?
 
-Add clock controller nodes, include topckgen, infracfg,
-apmixedsys and subsystem.
+Regards
+Aisheng
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm64/boot/dts/mediatek/Makefile       |   1 +
- arch/arm64/boot/dts/mediatek/mt6765-evb.dts |  33 +++
- arch/arm64/boot/dts/mediatek/mt6765.dtsi    | 253 ++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
-
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index deba27ab7657..176c817f9f9a 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6765-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt6765-evb.dts b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-new file mode 100644
-index 000000000000..36dddff2b7f8
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * dts file for Mediatek MT6765
-+ *
-+ * (C) Copyright 2018. Mediatek, Inc.
-+ *
-+ * Mars Cheng <mars.cheng@mediatek.com>
-+ */
-+
-+/dts-v1/;
-+#include "mt6765.dtsi"
-+
-+/ {
-+	model = "MediaTek MT6765 EVB";
-+	compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x1e800000>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:921600n8";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-new file mode 100644
-index 000000000000..2662470fe607
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * dts file for Mediatek MT6765
-+ *
-+ * (C) Copyright 2018. Mediatek, Inc.
-+ *
-+ * Mars Cheng <mars.cheng@mediatek.com>
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/mt6765-clk.h>
-+
-+/ {
-+	compatible = "mediatek,mt6765";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x001>;
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x002>;
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x003>;
-+		};
-+
-+		cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x100>;
-+		};
-+
-+		cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x101>;
-+		};
-+
-+		cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x102>;
-+		};
-+
-+		cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x103>;
-+		};
-+	};
-+
-+	clocks {
-+		clk26m: clk26m {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <26000000>;
-+		};
-+
-+		clk32k: clk32k {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-+			      <0 0x0c100000 0 0x200000>, /* GICR */
-+			      <0 0x0c400000 0 0x2000>,   /* GICC */
-+			      <0 0x0c410000 0 0x2000>,   /* GICH */
-+			      <0 0x0c420000 0 0x20000>;  /* GICV */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		topckgen: syscon@10000000 {
-+			compatible = "mediatek,mt6765-topckgen", "syscon";
-+			reg = <0 0x10000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		infracfg: syscon@10001000 {
-+			compatible = "mediatek,mt6765-infracfg", "syscon";
-+			reg = <0 0x10001000 0 0x1000>;
-+			interrupts = <GIC_SPI 147 IRQ_TYPE_EDGE_RISING>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pericfg: pericfg@10003000 {
-+			compatible = "mediatek,mt6765-pericfg", "syscon";
-+			reg = <0 0x10003000 0 0x1000>;
-+		};
-+
-+		scpsys: scpsys@10006000 {
-+			compatible = "mediatek,mt6765-scpsys";
-+			reg =	<0 0x10006000 0 0x1000>; /* spm */
-+			#power-domain-cells = <1>;
-+			clocks = <&topckgen CLK_TOP_MFG_SEL>,
-+				 <&topckgen CLK_TOP_MM_SEL>,
-+				 <&mmsys_config CLK_MM_SMI_COMMON>,
-+				 <&mmsys_config CLK_MM_SMI_COMM0>,
-+				 <&mmsys_config CLK_MM_SMI_COMM1>,
-+				 <&mmsys_config CLK_MM_SMI_LARB0>,
-+				 <&imgsys CLK_IMG_LARB2>,
-+				 <&mmsys_config CLK_MM_SMI_IMG>,
-+				 <&camsys CLK_CAM_LARB3>,
-+				 <&camsys CLK_CAM_DFP_VAD>,
-+				 <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAM_CCU>,
-+				 <&mmsys_config CLK_MM_SMI_CAM>;
-+			clock-names = "mfg", "mm",
-+				      "mm-0", "mm-1", "mm-2", "mm-3",
-+				      "isp-0", "isp-1", "cam-0", "cam-1",
-+				      "cam-2", "cam-3", "cam-4";
-+			infracfg = <&infracfg>;
-+			smi_comm = <&smi_common>;
-+		};
-+
-+		apmixed: syscon@1000c000 {
-+			compatible = "mediatek,mt6765-apmixedsys", "syscon";
-+			reg = <0 0x1000c000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		sysirq: interrupt-controller@10200a80 {
-+			compatible = "mediatek,mt6765-sysirq",
-+				     "mediatek,mt6577-sysirq";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			reg = <0 0x10200a80 0 0x50>;
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt6765-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_IFR_UART0>,
-+				 <&infracfg CLK_IFR_AP_DMA>;
-+			clock-names = "baud", "bus";
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt6765-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_IFR_UART1>,
-+				 <&infracfg CLK_IFR_AP_DMA>;
-+			clock-names = "baud", "bus";
-+			status = "disabled";
-+		};
-+
-+		audio: syscon@11220000 {
-+			compatible = "mediatek,mt6765-audsys", "syscon";
-+			reg = <0 0x11220000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mipi_rx_ana_csi0a: syscon@11c10000 {
-+			compatible = "mediatek,mt6765-mipi0a",
-+				     "syscon";
-+			reg = <0 0x11c10000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mmsys_config: syscon@14000000 {
-+			compatible = "mediatek,mt6765-mmsys", "syscon";
-+			reg = <0 0x14000000 0 0x1000>;
-+			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_LOW>;
-+			#clock-cells = <1>;
-+		};
-+
-+		smi_common: smi_common@14002000 {
-+			compatible = "mediatek,mt6765-smi-common", "syscon";
-+			reg = <0 0x14002000 0 0x1000>;
-+		};
-+
-+		imgsys: syscon@15020000 {
-+			compatible = "mediatek,mt6765-imgsys", "syscon";
-+			reg = <0 0x15020000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		venc_gcon: syscon@17000000 {
-+			compatible = "mediatek,mt6765-vcodecsys", "syscon";
-+			reg = <0 0x17000000 0 0x10000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		camsys: syscon@1a000000  {
-+			compatible = "mediatek,mt6765-camsys", "syscon";
-+			reg = <0 0x1a000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+	}; /* end of soc */
-+};
--- 
-2.18.0
-
+> ---
+>  drivers/devfreq/imx8m-ddrc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
+> index bc82d3653bff..3a6c04ba4f2e 100644
+> --- a/drivers/devfreq/imx8m-ddrc.c
+> +++ b/drivers/devfreq/imx8m-ddrc.c
+> @@ -379,7 +379,7 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+>         struct imx8m_ddrc *priv;
+> -       const char *gov = DEVFREQ_GOV_USERSPACE;
+> +       const char *gov = DEVFREQ_GOV_POWERSAVE;
+>         int ret;
+>
+>         priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> --
+> 2.29.2
+>
