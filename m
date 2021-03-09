@@ -4,323 +4,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E3EC433E9
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3367EC433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E76666529C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09155652A8
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbhCIFWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 00:22:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53128 "EHLO
+        id S229916AbhCIFXF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 00:23:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbhCIFWb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 00:22:31 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5406C06174A;
-        Mon,  8 Mar 2021 21:22:30 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id u14so13832586wri.3;
-        Mon, 08 Mar 2021 21:22:30 -0800 (PST)
+        with ESMTP id S229656AbhCIFWd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 00:22:33 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA00C06174A;
+        Mon,  8 Mar 2021 21:22:33 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id l12so13818603wry.2;
+        Mon, 08 Mar 2021 21:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OKoswqM2ZDMuRj0ssq0BqWfMeJ7ddDJzBT++MKgDZfM=;
-        b=C1H2+v2Bakf8ZvYkfql0Wbbs8pSEqwcEnhMaadsmlP0NB41gJqj/3Bw8aOWJrOSJmT
-         Jq8Cwz0vBB9viWJi3Lsd3XeltK0cnaWk3WPT/51mzOurs4/EhcyP3GbQ0whB5n9So703
-         Q97VmgNziLCStANiJwzy77PTgJRMFtGXdvB6jEx6/O8tBgHu1ppmBX5D21B/VpU8ZDCe
-         szPcH76AG42J4K9QjQSE7e1/knxrnDBJzQfwnAc0zpKzQl4gHzEn+kvB0Hx8tuytpawM
-         34fWmQV8uBvx5DL/GkwEAzGt5oleeV5Nyjton1wddPkUgD6eJd0CSknEv3DYvOPRUS+O
-         eN7Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mHNdz7wiYLAaKp9tiPgIXb93/c7+pySo7q7uYWDN7Ww=;
+        b=glKHc/3GDe12dfQPlUheb+PEOpoI7QcdBK6XMSZU42PcAZrL0+1bs3TNe8seW7rUA5
+         rLgu0zWk9bUTBF3oqEm/w766GdDiuTsEv0O8reRzONZkWM+Nd8OVk+RSah3nQetzF6oT
+         kEFaXg3afvhijFo8JE0QTq62hiihcwA7L5WnHfPoIZFbM77+vlRj51phPOzUgvVQHXTh
+         donntP5ERhXqcA7S9KVULsTENYC38+5GBozlcPvcE2lLtZZTOepY8HopqLaFixQOHzRj
+         sGgoADyWo7n93S6EjzqkkbtaLhNGKRDX27kgvdb/d9cIxTmqjxFOZ+CMIKOoL5kNxtd0
+         iEYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OKoswqM2ZDMuRj0ssq0BqWfMeJ7ddDJzBT++MKgDZfM=;
-        b=UkoFEoG8JUyEbK8XbBY8PZE9JiZOcVjzN84FSWzBVPA/SUACmf9J8HhpL6SdaXdCHI
-         v9qPM7EYxouOas22+W1lAQpZm8/l4xp+qRHtyJsh3XuhVrvg9DjzSLBzaoWLzyEqTXa0
-         iEddHXa0N1rKnQx4naDd20AGQSa5KpnzSobWlg4LI48q7dSvEwxSpvUop4bNkvfTPJ/C
-         kbImNin4TVV+gt3Nu6qu9Ev4msNWztUIhzTQPnpSy/nc+bD7lDja3R6yTUOrY+i9Stty
-         tXDnAiRxUC6BZ9+mF1NkSYsF/yOcvbh3nlAF/mbF+AxucA6bg/Vob1m4fv4Lkbiie5jd
-         2LCQ==
-X-Gm-Message-State: AOAM532XSt9o86m+dvIj6x/grg2cWzPmtbKMEcq/2zYwdAcJ9TbtKAu0
-        LeIIJ7aEGDBn80Nep1vPlHh9K4GXagbtBw==
-X-Google-Smtp-Source: ABdhPJwl09RH1XkC/07xmMChWcnXVyGUelKKyosAP1nYTRT3mzy0uDM3k/2UaMy6srJz5+uImyIWGA==
-X-Received: by 2002:adf:8545:: with SMTP id 63mr25627630wrh.128.1615267349275;
-        Mon, 08 Mar 2021 21:22:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mHNdz7wiYLAaKp9tiPgIXb93/c7+pySo7q7uYWDN7Ww=;
+        b=e1UuDRGRpuTAp7vfw5XMV51bh3ZFRiI9+0bexX5ruUo9v5rOlUrbYdSRJX3fx0Zf8i
+         KjNRXCVwBu9aN61X/Z4LdzUDY4Hioll18BwI3OdhL5vJkQ/sFdx1fMcv8kLRnbQBWLnu
+         xKOGP/DOWLvNbk58wG4iJ/xb6/soZcF9abU0yEhHiFCpz3hFNCAf1VGnA9G79l9oWmxd
+         rKPFCpEdoRwHMfkNSHxM2F4s6lY7Y3dibPeZaSqDw6TDGkBMJX6KqsurQNRFwgYMKYkC
+         AMwWfjkN7RwC+WMPSFD4umczGKBTc6kuXSBMwzJnLXsR6mAFr1FTpxknFcmcu2G6xGlP
+         wAxg==
+X-Gm-Message-State: AOAM532dIcWDo4L4CoajIx3FYFA6yLu99z5/Pdg3q4fUqAeNQZEL2VB3
+        Q687mUgnLJ1qjXi/d04WQAM=
+X-Google-Smtp-Source: ABdhPJxE7fLtfygneQFdky3FAeBtoVDsuoNVTpIuTmTFAmGi7hT2E24WpclEXHSBS1C+V3RuZdyazg==
+X-Received: by 2002:adf:f587:: with SMTP id f7mr26394681wro.147.1615267352124;
+        Mon, 08 Mar 2021 21:22:32 -0800 (PST)
 Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
-        by smtp.gmail.com with ESMTPSA id c11sm23450743wrm.67.2021.03.08.21.22.27
+        by smtp.gmail.com with ESMTPSA id c11sm23450743wrm.67.2021.03.08.21.22.31
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Mar 2021 21:22:28 -0800 (PST)
+        Mon, 08 Mar 2021 21:22:31 -0800 (PST)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     sboyd@kernel.org
 Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
         gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
         devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 0/6] MIPS: ralink: add CPU clock detection and clock driver for MT7621
-Date:   Tue,  9 Mar 2021 06:22:20 +0100
-Message-Id: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v11 2/6] dt: bindings: add mt7621-sysc device tree binding documentation
+Date:   Tue,  9 Mar 2021 06:22:22 +0100
+Message-Id: <20210309052226.29531-3-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
+References: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset ports CPU clock detection for MT7621 from OpenWrt
-and adds a complete clock plan for the mt7621 SOC.
+Adds device tree binding documentation for clocks in the
+MT7621 SOC.
 
-The documentation for this SOC only talks about two registers
-regarding to the clocks:
-* SYSC_REG_CPLL_CLKCFG0 - provides some information about boostrapped
-refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
-* SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
-all or some ip cores.
-
-Registers needed for this driver to work are in two already mapped areas
-in its platform's device tree. These are 'sysc' and 'memc' nodes. Most
-of other drivers just make use of platform operations defined in
-'asm/mach-ralink/ralink_regs.h' but this can be avoided declaring this
-two nodes to be accesible through syscon. Main registers for the clocks
-are in the sysc control node so this node is merged with clock properties
-and will also be the clock provider for the SoC.
-
-No documentation about a probably existent set of dividers for each ip
-core is included in the datasheets. So we cannot make anything better,
-AFAICT.
-
-Looking into driver code, and some openWRT patched there are
-another frequences which are used in some drivers (uart, sd...).
-According to all of this information the clock plan for this
-SoC is set as follows:
- - Main top clock "xtal" from where all the rest of the world is
-   derived.
- - CPU clock "cpu" derived from "xtal" frequencies and a bunch of
-   register reads and predividers.
- - BUS clock "bus" derived from "cpu" and with (cpu / 4) MHz.
- - Fixed clocks from "xtal":
-    * "50m": 50 MHz.
-    * "125m": 125 MHz.
-    * "150m": 150 MHz.
-    * "250m": 250 MHz.
-    * "270m": 270 MHz.
-
-We also have a buch of gate clocks with their parents:
- - "hsdma": "150m"
- - "fe": "250m"
- - "sp_divtx": "270m"
- - "timer": "50m"
- - "pcm": "270m"
- - "pio": "50m"
- - "gdma": "bus"
- - "nand": "125m"
- - "i2c": "50m"
- - "i2s": "270m"
- - "spi": "bus"
- - "uart1": "50m"
- - "uart2": "50m"
- - "uart3": "50m"
- - "eth": "50m"
- - "pcie0": "125m"
- - "pcie1": "125m"
- - "pcie2": "125m"
- - "crypto": "250m"
- - "shxc": "50m"
-
-There was a previous attempt of doing this here[0] but the author
-(Chuanhong Guo) did not wanted to make assumptions of a clock plan
-for the platform that time. It seems that now he has a better idea of
-how the clocks are dispossed for this SoC so he share code[1] where
-some frequencies and clock parents for the gates are coded from a
-real mediatek private clock plan.
-                                                
-I do really want this to be upstreamed so according to the comments
-in previous attempt[0] from Oleksij Rempel and the frequencies in
-code[1] I have tried to do this by myself.
-
-All of this patches have been tested in a GNUBee PC1 resulting in a
-working platform.
-
-Changes in v11:
- - Collect Rob's Reviewed-by in bindings documentation patch.
- - Fix MAINTAINERS patch using file 'mediatek,mt7621-sysc.yaml'
-   for documentation bindings.
-
-Changes in v10:
- - Merge clock properties into 'sysc' system control node making
-   this node a clock provider.
- - Update driver to use 'mediatek,mt7621-sysc' as compatible string.
- - Update documentation bindings and its related filename to 
-   'mediatek,mt7621-sysc.yaml'.
- - Make use of 'linux/bitfields.h' header to avoid some preprocesor
-   shift definitions and just use bit masks decreasing a bit LOC.
-
-Changes in v9:
- - Set two missing ret values to its related PTR_ERR in function
-   'mt7621_clk_probe' (also related with [3]).
- - Select MFC_SYSCON in Kconfig.
-
-Changes in v8:
- - Fix kernel test robot complain about the use of 'ret' variable
-   initialized: see [3]
-
-Changes in v7:
- - Make use of CLK_OF_DECLARE_DRIVER instead of CLK_OF_DECLARE and
-   register there only the top clocks that are needed in 'of_clk_init'.
-   The rest of the clocks (fixed and gates) are now registered using
-   a platform driver. Because we have avoid architecture dependent stuff
-   now this has sense because we can enable this driver for COMPILE_TEST.
- - Convert fixed clocks and gates related function to receive a 'struct
-   device' pointer instead of 'struct device_node' one.
- - Make use of dev_ APIS in stuff related with platform driver instead
-   of use device_node related stuff. 
- - Add new static global 'mt7621_clk_early' to store pointers to clk_hw
-   registered at 'of_clk_init' stage. Make use of this in platform device
-   probe function to properly copy this into the new required 'clk_data'
-   to provide a properly hierarchy clock structure.
- - Rename 'mt7621_register_top_clocks' function into a more accurate 
-   name now which is 'mt7621_register_early_clocks'.
- - Enable driver for COMPILE_TEST.
-
-Changes in v6:
- - Rewrite bindings to properly access the registers needed for the driver
-   making use of syscon for two different areas: 'sysc' and 'memc'. With
-   this changes architecture dependent include 'asm/mach-ralink/ralink_regs.h'
-   is not needed anymore because we access this two syscons using a phandle
-   through kernel's regmap APIs. Explanation of this two areas is in [2].
- - Add new 'mt7621_clk_priv' struct to store there pointers to regmap handlers
-   to be able to use regmap operations from normal clock api functions. Add
-   this pointer in 'mt7621_clk' and 'mt7621_clk_gate' before register its
-   related clocks to make things work.
- - Add Greg's Acked-by in patches 4 and 5.
- - Rebase this series on the top of linux-next tag 'next-20210215'.
-
-v5 RESEND notes:
- - I am resending this as I was told to do that.
- - Please, take into account Rob's comments to DT node patch and my
-   reply with explanation about how are the current device tree nodes
-   for this architecture being used in [2].
-
-Changes in v5:
- - Avoid the use of syscon. All drivers of this platform are just using
-   platform operations defined in 'asm/mach-ralink/ralink_regs.h'. We also
-   need them for some PLL registers that are not in the sys control area.
-   Hence, since we must use this dependency avoid to define clock driver
-   as a child of the sysc node in the device tree and follow current
-   platform code style.
- - Update bindings documentation to don't refer the syscon and make
-   remove 'clock-output-names' property from required ones.
- - Use 'asm/mach-ralink/ralink_regs.h' platform read and write operations
-   instead of regmap from the syscon node.
- - Remove 'mt7621_clk_provider' and directly declare 'clk_hw_onecell_data'
-   pointer in 'mt7621_clk_init' and pass from there into different register
-   functions. Remove pointers to 'mt7621_clk_provider' in the rest fo structs
-   used in this driver.
- - Remove MHZ macro and just pass values directly in hertzs.
- - Avoid 'CLK_IGNORE_UNUSED' flag for gates and add a new function called
-   'mt7621_prepare_enable_clocks' to prepare all of them to make clocks
-   referenced and don't affect current driver code.
- - Remove COMPILE_TEST from Kconfig because of the use of especific arch
-   stuff.
- - Fix commit message where a typo for "frequencies" word was present.
- - Make use of parent_clk_data in 'CLK_BASE' macro.
- - Remove MODULE_* macros from code since this is not a module.
- - Remove not needed includes.
- - Hardcode "xtal" as parent in FIXED macro.
- - Change 'else if' clause into 'if' clause since a return statement was
-   being used in 'mt7621_xtal_recalc_rate'.
-
- NOTES:
-   - Driver is still being declared using 'CLK_OF_DECLARE' for all the  
-     clocks. I have explored the possibility to make some of them available
-     afterwards using 'CLK_OF_DECLARE_DRIVER' for top clocks and the rest
-     using a platform driver. The resulting code was uglier since we only want
-     to use the same device tree node and the top clocks must be copied again
-     for the new platform register stuff to properly have a good hierarchy.
-     New globals needs to be introduced and in this particular case I don't
-     really see the benefits of doing in this way. I am totally ok to have all
-     the clocks registered at early stage since from other drivers perspective
-     we only really need to enable gates. So, I prefer to have them in that
-     way if it is not a real problem, of course.
-
-Changes in v4:
- - Add Acked-by from Rob Herring for binding headers (PATCH 1/6).
- - Convert bindings to not use syscon phandle and declare clock as
-   a child of the syscon node. Update device tree and binding doc
-   accordly.
- - Make use of 'syscon_node_to_regmap' in driver code instead of
-   get this using the phandle function.
- - Properly unregister clocks for the error path of the function
-   'mt7621_clk_init'.
- - Include ARRAY_SIZE of fixed clocks in the 'count' to kzalloc
-   of 'clk_data'.
- - Add new patch changing invalid vendor 'mtk' in favour of 'mediatek'
-   which is the one listed in 'vendor-prefixes.yaml'. Update mt7621 code
-   accordly. I have added this patch inside this series because clk
-   binding is referring syscon node and the string for that node was
-   with not listed vendor. Hence update and have all of this correct
-   in the same series.
-
-Changes in v3:
- - Fix compilation warnings reported by kernel test robot because of
-   ignoring return values of 'of_clk_hw_register' in functions
-   'mt7621_register_top_clocks' and 'mt7621_gate_ops_init'.
- - Fix dts file and binding documentation 'clock-output-names'.
-
-Changes in v2:
- - Remove the following patches:
-   * dt: bindings: add mt7621-pll device tree binding documentation.
-   * MIPS: ralink: add clock device providing cpu/ahb/apb clock for mt7621.
- - Move all relevant clock code to 'drivers/clk/ralink/clk-mt7621.c' and
-   unify there previous 'mt7621-pll' and 'mt7621-clk' into a unique driver
-   and binding 'mt7621-clk'.
- - Driver is not a platform driver anymore and now make use of 'CLK_OF_DECLARE'
-   because we need clocks available in 'plat_time_init' before setting up
-   the timer for the GIC.
- - Use new fixed clocks as parents for different gates and deriving from 'xtal'
-   using frequencies in[1].
- - Adapt dts file and bindings header and documentation for new changes.
- - Change MAINTAINERS file to only contains clk-mt7621.c code and
-   mediatek,mt7621-clk.yaml file.
-
-[0]: https://www.lkml.org/lkml/2019/7/23/1044
-[1]: https://github.com/981213/linux/commit/2eca1f045e4c3db18c941135464c0d7422ad8133
-[2]: https://lkml.org/lkml/2020/12/20/47
-[3]: http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/2021-February/150772.html
-
-Sergio Paracuellos (6):
-  dt-bindings: clock: add dt binding header for mt7621 clocks
-  dt: bindings: add mt7621-sysc device tree binding documentation
-  clk: ralink: add clock driver for mt7621 SoC
-  staging: mt7621-dts: make use of new 'mt7621-clk'
-  staging: mt7621-dts: use valid vendor 'mediatek' instead of invalid
-    'mtk'
-  MAINTAINERS: add MT7621 CLOCK maintainer
-
- .../bindings/clock/mediatek,mt7621-sysc.yaml  |  68 +++
- MAINTAINERS                                   |   6 +
- arch/mips/ralink/mt7621.c                     |   6 +-
- drivers/clk/Kconfig                           |   1 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/ralink/Kconfig                    |  15 +
- drivers/clk/ralink/Makefile                   |   2 +
- drivers/clk/ralink/clk-mt7621.c               | 528 ++++++++++++++++++
- drivers/staging/mt7621-dts/gbpc1.dts          |  11 -
- drivers/staging/mt7621-dts/mt7621.dtsi        |  82 ++-
- include/dt-bindings/clock/mt7621-clk.h        |  41 ++
- 11 files changed, 702 insertions(+), 59 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ .../bindings/clock/mediatek,mt7621-sysc.yaml  | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
- create mode 100644 drivers/clk/ralink/Kconfig
- create mode 100644 drivers/clk/ralink/Makefile
- create mode 100644 drivers/clk/ralink/clk-mt7621.c
- create mode 100644 include/dt-bindings/clock/mt7621-clk.h
 
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
+new file mode 100644
+index 000000000000..915f84efd763
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/mediatek,mt7621-sysc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MT7621 Clock Device Tree Bindings
++
++maintainers:
++  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
++
++description: |
++  The MT7621 has a PLL controller from where the cpu clock is provided
++  as well as derived clocks for the bus and the peripherals. It also
++  can gate SoC device clocks.
++
++  Each clock is assigned an identifier and client nodes use this identifier
++  to specify the clock which they consume.
++
++  All these identifiers could be found in:
++  [1]: <include/dt-bindings/clock/mt7621-clk.h>.
++
++  The clocks are provided inside a system controller node.
++
++properties:
++  compatible:
++    items:
++      - const: mediatek,mt7621-sysc
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    description:
++      The first cell indicates the clock number, see [1] for available
++      clocks.
++    const: 1
++
++  ralink,memctl:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandle of syscon used to control memory registers
++
++  clock-output-names:
++    maxItems: 8
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - ralink,memctl
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/mt7621-clk.h>
++
++    sysc: sysc@0 {
++      compatible = "mediatek,mt7621-sysc", "syscon";
++      reg = <0x0 0x100>;
++      #clock-cells = <1>;
++      ralink,memctl = <&memc>;
++      clock-output-names = "xtal", "cpu", "bus",
++                           "50m", "125m", "150m",
++                           "250m", "270m";
++    };
 -- 
 2.25.1
 
