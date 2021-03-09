@@ -2,69 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CF4C4332B
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961E8C433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7932665274
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:18:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD9D6526E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231673AbhCIPRt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 10:17:49 -0500
-Received: from elvis.franken.de ([193.175.24.41]:35367 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231815AbhCIPRc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Mar 2021 10:17:32 -0500
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1lJe70-0002C8-00; Tue, 09 Mar 2021 16:17:30 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id E2D1AC1BA6; Tue,  9 Mar 2021 16:07:29 +0100 (CET)
-Date:   Tue, 9 Mar 2021 16:07:29 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     sboyd@kernel.org, robh+dt@kernel.org, john@phrozen.org,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 5/6] staging: mt7621-dts: use valid vendor 'mediatek'
- instead of invalid 'mtk'
-Message-ID: <20210309150729.GA12267@alpha.franken.de>
-References: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
- <20210309052226.29531-6-sergio.paracuellos@gmail.com>
+        id S231320AbhCIPec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 10:34:32 -0500
+Received: from out28-53.mail.aliyun.com ([115.124.28.53]:34750 "EHLO
+        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231653AbhCIPeA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 10:34:00 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2349536|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0121347-0.000267848-0.987597;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047205;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.JiaAhdf_1615304034;
+Received: from 192.168.10.152(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JiaAhdf_1615304034)
+          by smtp.aliyun-inc.com(10.147.42.135);
+          Tue, 09 Mar 2021 23:33:55 +0800
+Subject: Re: [PATCH 0/6] clk: Ingenic JZ4760(B) support
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20210307141759.30426-1-paul@crapouillou.net>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <8d03b294-822f-6012-0c5a-f925e30de2e4@wanyeetech.com>
+Date:   Tue, 9 Mar 2021 23:33:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210309052226.29531-6-sergio.paracuellos@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210307141759.30426-1-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 09, 2021 at 06:22:25AM +0100, Sergio Paracuellos wrote:
-> Vendor listed for mediatek in kernel vendor file 'vendor-prefixes.yaml'
-> contains 'mediatek' as a valid vendor string. Some nodes in the device
-> tree are using an invalid vendor string vfor 'mtk' instead. Fix all of
-> them in dts file. Update also ralink mt7621 related code to properly
-> match new strings. Even there are used in the device tree there are
-> some strings that are not referred anywhere but have been also updated
-> with new vendor name. These are 'mtk,mt7621-wdt', 'mtk,mt7621-nand',
-> 'mtk,mt7621-mc', and 'mtk,mt7621-cpc'.
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
->  arch/mips/ralink/mt7621.c              |  6 +++---
+Hi Paul,
 
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+On 2021/3/7 下午10:17, Paul Cercueil wrote:
+> Hi,
+>
+> Here are a set of patches to add support for the Ingenic JZ4760(B) SoCs.
+>
+> One thing to note is that the ingenic,jz4760-tcu is undocumented for now,
+> as I will update the TCU documentation in a different patchset.
+>
+> Zhou: the CGU code now supports overriding the PLL M/N/OD calc
+> algorithm, please tell me if it works for you.
 
-Thomas.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Newly found two problems, the first problem is because I2S PLL does not 
+have a stable bit, so we need to follow the bypass bit, which is only do 
+corresponding processing when "stable_bit > = 0".
+
+The second problem is that the I2S PLL cannot switch the parent clock 
+after using the PLL framework, so it cannot use SCLKA and MPLL as the 
+parent clock (when trying to switch the parent clock, it will stuck and 
+accompany "clk: failed  to reparent i2s to mpll: -22").
+
+
+>
+> Cheers,
+> -Paul
+>
+> Paul Cercueil (6):
+>    dt-bindings: clock: ingenic: Add ingenic,jz4760{,b}-cgu compatibles
+>    clk: Support bypassing dividers
+>    clk: ingenic: Read bypass register only when there is one
+>    clk: ingenic: Remove pll_info.no_bypass_bit
+>    clk: ingenic: Support overriding PLLs M/N/OD calc algorithm
+>    clk: ingenic: Add support for the JZ4760
+>
+>   .../bindings/clock/ingenic,cgu.yaml           |   4 +
+>   drivers/clk/ingenic/Kconfig                   |  10 +
+>   drivers/clk/ingenic/Makefile                  |   1 +
+>   drivers/clk/ingenic/cgu.c                     |  92 ++--
+>   drivers/clk/ingenic/cgu.h                     |  12 +-
+>   drivers/clk/ingenic/jz4725b-cgu.c             |  12 +-
+>   drivers/clk/ingenic/jz4740-cgu.c              |  12 +-
+>   drivers/clk/ingenic/jz4760-cgu.c              | 433 ++++++++++++++++++
+>   drivers/clk/ingenic/jz4770-cgu.c              |  15 +-
+>   drivers/clk/ingenic/tcu.c                     |   2 +
+>   include/dt-bindings/clock/jz4760-cgu.h        |  54 +++
+>   11 files changed, 591 insertions(+), 56 deletions(-)
+>   create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
+>   create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
+>
