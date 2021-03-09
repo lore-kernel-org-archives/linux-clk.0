@@ -2,130 +2,385 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A48EC433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 09:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1438FC4332D
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 09:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 526F065165
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 09:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0B2065274
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 09:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbhCIJDc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 04:03:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59595 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbhCIJDA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 04:03:00 -0500
-Received: from mail-wr1-f70.google.com ([209.85.221.70])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lJYGZ-0003tz-FD
-        for linux-clk@vger.kernel.org; Tue, 09 Mar 2021 09:02:59 +0000
-Received: by mail-wr1-f70.google.com with SMTP id v13so6126236wrs.21
-        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 01:02:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rQi3mMyCx5V6nVRVkrOz/LCzu7P2PiFtdcIbz05GpxM=;
-        b=nDcR76nf8uLjHGy50rJ/cXCGNS+7JD6jKxcKDan5ItyB/XGOOqb5JJgbRBu2738vjq
-         PCfpnn51MG5XI+Cd1wWLbKbax1655Rf6vNCIzcFcygKef/+OtF5SxC/dbcap9N99RSGW
-         GvYmBH5GlUtq7muI3124LkZa7vGZugBilJ3rQ+Uf07+gPztnvbbXQGyvzw9kn0YePoWp
-         mc/4dmwHSolRMegnRlvRaDsmpM6Ykbg1CUCkMfdsC5RDTP11vbjUy8lJYrE6ui7t9KGy
-         85ylrH28HPW/Eks1Tca7zHByjefmIlHGVvpk6QKJnQqEclgSEdRXAi6Hc7un9Po7Cc91
-         bx2Q==
-X-Gm-Message-State: AOAM531AXzBemvcZsS6KC4Y1M3NdpWuDKF8whH6J1RbyWHc52qQfj3j4
-        FzOJIEzp0hhnZDgJL1eGr0+iyNCoHTbJLNyB8ZSsqe94VBzcp/KQCwxAeBTnxVs/EXbQp06iNMU
-        2728YDoFF2S8bgMxN5SeUbM/5urENBWf6UuiHmQ==
-X-Received: by 2002:adf:aa08:: with SMTP id p8mr26511772wrd.232.1615280579206;
-        Tue, 09 Mar 2021 01:02:59 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyK7Ib4y+Oq/NBTnNNAXU1SyTnxC1WzGjqyRuPWJZbtvY6SWvvZ4QuBGaz00HnFgPsH5ZSIcw==
-X-Received: by 2002:adf:aa08:: with SMTP id p8mr26511747wrd.232.1615280578985;
-        Tue, 09 Mar 2021 01:02:58 -0800 (PST)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id p16sm26521729wrt.54.2021.03.09.01.02.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Mar 2021 01:02:58 -0800 (PST)
-Subject: Re: [PATCH 3/3] clk: socfpga: allow compile testing of Stratix 10 /
- Agilex clocks
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-kernel@lists.infradead.org
-References: <20210308182339.379775-1-krzysztof.kozlowski@canonical.com>
- <20210308182339.379775-4-krzysztof.kozlowski@canonical.com>
- <9c8109f7-47b3-a865-5bd7-656b7c3c318f@canonical.com>
-Message-ID: <7e4fb9fb-493f-2f05-20fe-e9d8cc6a4ed2@canonical.com>
-Date:   Tue, 9 Mar 2021 10:02:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        id S229815AbhCIJ7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 04:59:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59890 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229775AbhCIJ7F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Mar 2021 04:59:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D23F1AB8C;
+        Tue,  9 Mar 2021 09:59:02 +0000 (UTC)
+Message-ID: <957566acbdbe1155eeb561c324d2404bbbf7e7af.camel@suse.de>
+Subject: Re: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     u.kleine-koenig@pengutronix.de
+Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com
+Date:   Tue, 09 Mar 2021 10:59:00 +0100
+In-Reply-To: <20210118123244.13669-12-nsaenzjulienne@suse.de>
+References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
+         <20210118123244.13669-12-nsaenzjulienne@suse.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-XkvVwEIv7TyrTi24H2y+"
+User-Agent: Evolution 3.38.4 
 MIME-Version: 1.0
-In-Reply-To: <9c8109f7-47b3-a865-5bd7-656b7c3c318f@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 09/03/2021 09:49, Krzysztof Kozlowski wrote:
-> On 08/03/2021 19:23, Krzysztof Kozlowski wrote:
->> The Stratix 10 / Agilex / N5X clocks do not use anything other
->> than OF or COMMON_CLK so they should be compile testable on most of
->> the platforms.
->> 
->> Signed-off-by: Krzysztof Kozlowski 
->> <krzysztof.kozlowski@canonical.com> --- drivers/clk/Makefile |  5 
->> +---- drivers/clk/socfpga/Kconfig | 22 ++++++++++++++++------ 2 
->> files changed, 17 insertions(+), 10 deletions(-)
->> 
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile index 
->> 12e46b12e587..9b582b3fca34 100644 --- a/drivers/clk/Makefile +++ 
->> b/drivers/clk/Makefile @@ -104,10 +104,7 @@ obj-y					+= renesas/ 
->> obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/ 
->> obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/ 
->> obj-$(CONFIG_CLK_SIFIVE)		+= sifive/ -obj-$(CONFIG_ARCH_SOCFPGA) +=
->> socfpga/ -obj-$(CONFIG_ARCH_AGILEX)		+= socfpga/ 
->> -obj-$(CONFIG_ARCH_N5X)			+= socfpga/
->> -obj-$(CONFIG_ARCH_STRATIX10) += socfpga/ +obj-y					+= socfpga/
->> obj-$(CONFIG_PLAT_SPEAR)		+= spear/ obj-y					+= sprd/
->> obj-$(CONFIG_ARCH_STI)			+= st/ diff --git
->> a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig index
->> 4922cc35f4cc..de7b3137e215 100644 --- a/drivers/clk/socfpga/Kconfig
->> +++ b/drivers/clk/socfpga/Kconfig @@ -1,13 +1,23 @@ #
->> SPDX-License-Identifier: GPL-2.0 +config COMMON_CLK_SOCFPGA +	bool
->> "Intel SoCFPGA family clock support" if COMPILE_TEST
-> 
-> Kernel test robot found here wrong configuration - possibility to 
-> disable the clocks with compile test. I'll send a v2.
+--=-XkvVwEIv7TyrTi24H2y+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Uh, that's not that easy. Intel created three different arm64 architectures
-for one real arm64 architecture... I guess it was driven by
-the marketing but here we are - the solution would be to have entries like:
+On Mon, 2021-01-18 at 13:32 +0100, Nicolas Saenz Julienne wrote:
+> Adds support to control the PWM bus available in official Raspberry Pi
+> PoE HAT. Only RPi's co-processor has access to it, so commands have to
+> be sent through RPi's firmware mailbox interface.
+>=20
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>=20
+> ---
 
-bool "Intel SoCFPGA family clock support" if COMPILE_TEST && !ARCH_AGILEX && !ARCH_N5X && !ARCH_SOCFPGA && !ARCH_STRATIX10
-...
-bool "Intel Stratix / Agilex / N5X clock controller support" if COMPILE_TEST && !ARCH_AGILEX && !ARCH_N5X && !ARCH_STRATIX10
-...
-bool "Intel Agilex / N5X clock controller support" if COMPILE_TEST && !ARCH_AGILEX && !ARCH_N5X
-...
+ping :)
 
-I think it looks wrong. The stratix/agilex/n5x are basically flavors of
-socfpga from Linux point of view. This is the same architecture for Linux
-kernel, from high level point of view. Instead of going with unified ARCH_SOCFPGA
-(like all other platforms, e.g. Renesas, NXP), the Intel create three
-different kernel-wide arm64 ARCH_xxx symbols.
+> Changes since v6:
+> - Use %pe
+> - Round divisions properly
+> - Use dev_err_probe()
+> - Pass check_patch
+>=20
+> Changes since v3:
+> =C2=A0- Rename compatible string to be more explicit WRT to bus's limitat=
+ions
+>=20
+> Changes since v2:
+> =C2=A0- Use devm_rpi_firmware_get()
+> =C2=A0- Rename driver
+> =C2=A0- Small cleanups
+>=20
+> Changes since v1:
+> =C2=A0- Use default pwm bindings and get rid of xlate() function
+> =C2=A0- Correct spelling errors
+> =C2=A0- Correct apply() function
+> =C2=A0- Round values
+> =C2=A0- Fix divisions in arm32 mode
+> =C2=A0- Small cleanups
+>=20
+> =C2=A0drivers/pwm/Kconfig               |   9 ++
+> =C2=A0drivers/pwm/Makefile              |   1 +
+> =C2=A0drivers/pwm/pwm-raspberrypi-poe.c | 220 +++++++++++++++++++++++++++=
++++
+> =C2=A03 files changed, 230 insertions(+)
+> =C2=A0create mode 100644 drivers/pwm/pwm-raspberrypi-poe.c
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 0937e1c047ac..75e2344703b3 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -423,6 +423,15 @@ config PWM_PXA
+> =C2=A0	  To compile this driver as a module, choose M here: the module
+> =C2=A0	  will be called pwm-pxa.
+> =C2=A0
+>=20
+> +config PWM_RASPBERRYPI_POE
+> +	tristate "Raspberry Pi Firwmware PoE Hat PWM support"
+> +	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
+> +	# happen when COMPILE_TEST=3Dy, hence the added !RASPBERRYPI_FIRMWARE.
+> +	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWA=
+RE)
+> +	help
+> +	  Enable Raspberry Pi firmware controller PWM bus used to control the
+> +	  official RPI PoE hat
+> +
+> =C2=A0config PWM_RCAR
+> =C2=A0	tristate "Renesas R-Car PWM support"
+> =C2=A0	depends on ARCH_RENESAS || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 18b89d7fd092..ed28d7bd4c64 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_MXS)		+=3D pwm-mxs.o
+> =C2=A0obj-$(CONFIG_PWM_OMAP_DMTIMER)	+=3D pwm-omap-dmtimer.o
+> =C2=A0obj-$(CONFIG_PWM_PCA9685)	+=3D pwm-pca9685.o
+> =C2=A0obj-$(CONFIG_PWM_PXA)		+=3D pwm-pxa.o
+> +obj-$(CONFIG_PWM_RASPBERRYPI_POE)	+=3D pwm-raspberrypi-poe.o
+> =C2=A0obj-$(CONFIG_PWM_RCAR)		+=3D pwm-rcar.o
+> =C2=A0obj-$(CONFIG_PWM_RENESAS_TPU)	+=3D pwm-renesas-tpu.o
+> =C2=A0obj-$(CONFIG_PWM_ROCKCHIP)	+=3D pwm-rockchip.o
+> diff --git a/drivers/pwm/pwm-raspberrypi-poe.c b/drivers/pwm/pwm-raspberr=
+ypi-poe.c
+> new file mode 100644
+> index 000000000000..ca845e8fabe6
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-raspberrypi-poe.c
+> @@ -0,0 +1,220 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> + * For more information on Raspberry Pi's PoE hat see:
+> + * https://www.raspberrypi.org/products/poe-hat/
+> + *
+> + * Limitations:
+> + *  - No disable bit, so a disabled PWM is simulated by duty_cycle 0
+> + *  - Only normal polarity
+> + *  - Fixed 12.5 kHz period
+> + *
+> + * The current period is completed when HW is reconfigured.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +
+> +#include <soc/bcm2835/raspberrypi-firmware.h>
+> +#include <dt-bindings/pwm/raspberrypi,firmware-poe-pwm.h>
+> +
+> +#define RPI_PWM_MAX_DUTY		255
+> +#define RPI_PWM_PERIOD_NS		80000 /* 12.5 kHz */
+> +
+> +#define RPI_PWM_CUR_DUTY_REG		0x0
+> +#define RPI_PWM_DEF_DUTY_REG		0x1
+> +
+> +struct raspberrypi_pwm {
+> +	struct rpi_firmware *firmware;
+> +	struct pwm_chip chip;
+> +	unsigned int duty_cycle;
+> +};
+> +
+> +struct raspberrypi_pwm_prop {
+> +	__le32 reg;
+> +	__le32 val;
+> +	__le32 ret;
+> +} __packed;
+> +
+> +static inline
+> +struct raspberrypi_pwm *raspberrypi_pwm_from_chip(struct pwm_chip *chip)
+> +{
+> +	return container_of(chip, struct raspberrypi_pwm, chip);
+> +}
+> +
+> +static int raspberrypi_pwm_set_property(struct rpi_firmware *firmware,
+> +					u32 reg, u32 val)
+> +{
+> +	struct raspberrypi_pwm_prop msg =3D {
+> +		.reg =3D cpu_to_le32(reg),
+> +		.val =3D cpu_to_le32(val),
+> +	};
+> +	int ret;
+> +
+> +	ret =3D rpi_firmware_property(firmware, RPI_FIRMWARE_SET_POE_HAT_VAL,
+> +				    &msg, sizeof(msg));
+> +	if (ret)
+> +		return ret;
+> +	if (msg.ret)
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +static int raspberrypi_pwm_get_property(struct rpi_firmware *firmware,
+> +					u32 reg, u32 *val)
+> +{
+> +	struct raspberrypi_pwm_prop msg =3D {
+> +		.reg =3D reg
+> +	};
+> +	int ret;
+> +
+> +	ret =3D rpi_firmware_property(firmware, RPI_FIRMWARE_GET_POE_HAT_VAL,
+> +				    &msg, sizeof(msg));
+> +	if (ret)
+> +		return ret;
+> +	if (msg.ret)
+> +		return -EIO;
+> +
+> +	*val =3D le32_to_cpu(msg.val);
+> +
+> +	return 0;
+> +}
+> +
+> +static void raspberrypi_pwm_get_state(struct pwm_chip *chip,
+> +				      struct pwm_device *pwm,
+> +				      struct pwm_state *state)
+> +{
+> +	struct raspberrypi_pwm *rpipwm =3D raspberrypi_pwm_from_chip(chip);
+> +
+> +	state->period =3D RPI_PWM_PERIOD_NS;
+> +	state->duty_cycle =3D DIV_ROUND_UP(rpipwm->duty_cycle * RPI_PWM_PERIOD_=
+NS,
+> +					 RPI_PWM_MAX_DUTY);
+> +	state->enabled =3D !!(rpipwm->duty_cycle);
+> +	state->polarity =3D PWM_POLARITY_NORMAL;
+> +}
+> +
+> +static int raspberrypi_pwm_apply(struct pwm_chip *chip, struct pwm_devic=
+e *pwm,
+> +				 const struct pwm_state *state)
+> +{
+> +	struct raspberrypi_pwm *rpipwm =3D raspberrypi_pwm_from_chip(chip);
+> +	unsigned int duty_cycle;
+> +	int ret;
+> +
+> +	if (state->period < RPI_PWM_PERIOD_NS ||
+> +	    state->polarity !=3D PWM_POLARITY_NORMAL)
+> +		return -EINVAL;
+> +
+> +	if (!state->enabled)
+> +		duty_cycle =3D 0;
+> +	else if (state->duty_cycle < RPI_PWM_PERIOD_NS)
+> +		duty_cycle =3D DIV_ROUND_DOWN_ULL(state->duty_cycle * RPI_PWM_MAX_DUTY=
+,
+> +						RPI_PWM_PERIOD_NS);
+> +	else
+> +		duty_cycle =3D RPI_PWM_MAX_DUTY;
+> +
+> +	if (duty_cycle =3D=3D rpipwm->duty_cycle)
+> +		return 0;
+> +
+> +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DUTY=
+_REG,
+> +					   duty_cycle);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to set duty cycle: %pe\n",
+> +			ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * This sets the default duty cycle after resetting the board, we
+> +	 * updated it every time to mimic Raspberry Pi's downstream's driver
+> +	 * behaviour.
+> +	 */
+> +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DUTY=
+_REG,
+> +					   duty_cycle);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to set default duty cycle: %pe\n",
+> +			ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	rpipwm->duty_cycle =3D duty_cycle;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops raspberrypi_pwm_ops =3D {
+> +	.get_state =3D raspberrypi_pwm_get_state,
+> +	.apply =3D raspberrypi_pwm_apply,
+> +	.owner =3D THIS_MODULE,
+> +};
+> +
+> +static int raspberrypi_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *firmware_node;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct rpi_firmware *firmware;
+> +	struct raspberrypi_pwm *rpipwm;
+> +	int ret;
+> +
+> +	firmware_node =3D of_get_parent(dev->of_node);
+> +	if (!firmware_node) {
+> +		dev_err(dev, "Missing firmware node\n");
+> +		return -ENOENT;
+> +	}
+> +
+> +	firmware =3D devm_rpi_firmware_get(&pdev->dev, firmware_node);
+> +	of_node_put(firmware_node);
+> +	if (!firmware)
+> +		return dev_err_probe(dev, -EPROBE_DEFER,
+> +				     "Failed to get firmware handle\n");
+> +
+> +	rpipwm =3D devm_kzalloc(&pdev->dev, sizeof(*rpipwm), GFP_KERNEL);
+> +	if (!rpipwm)
+> +		return -ENOMEM;
+> +
+> +	rpipwm->firmware =3D firmware;
+> +	rpipwm->chip.dev =3D dev;
+> +	rpipwm->chip.ops =3D &raspberrypi_pwm_ops;
+> +	rpipwm->chip.base =3D -1;
+> +	rpipwm->chip.npwm =3D RASPBERRYPI_FIRMWARE_PWM_NUM;
+> +
+> +	platform_set_drvdata(pdev, rpipwm);
+> +
+> +	ret =3D raspberrypi_pwm_get_property(rpipwm->firmware, RPI_PWM_CUR_DUTY=
+_REG,
+> +					   &rpipwm->duty_cycle);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to get duty cycle: %pe\n", ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	return pwmchip_add(&rpipwm->chip);
+> +}
+> +
+> +static int raspberrypi_pwm_remove(struct platform_device *pdev)
+> +{
+> +	struct raspberrypi_pwm *rpipwm =3D platform_get_drvdata(pdev);
+> +
+> +	return pwmchip_remove(&rpipwm->chip);
+> +}
+> +
+> +static const struct of_device_id raspberrypi_pwm_of_match[] =3D {
+> +	{ .compatible =3D "raspberrypi,firmware-poe-pwm", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, raspberrypi_pwm_of_match);
+> +
+> +static struct platform_driver raspberrypi_pwm_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "raspberrypi-poe-pwm",
+> +		.of_match_table =3D raspberrypi_pwm_of_match,
+> +	},
+> +	.probe =3D raspberrypi_pwm_probe,
+> +	.remove =3D raspberrypi_pwm_remove,
+> +};
+> +module_platform_driver(raspberrypi_pwm_driver);
+> +
+> +MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
+> +MODULE_DESCRIPTION("Raspberry Pi Firmware Based PWM Bus Driver");
+> +MODULE_LICENSE("GPL v2");
 
-It's too much. How about converting all these arm64 Intel platforms to ARCH_SOCFPGA?
 
-Best regards,
-Krzysztof
+
+--=-XkvVwEIv7TyrTi24H2y+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmBHRuQACgkQlfZmHno8
+x/6bhAgAjegsPioj3j6MWcBDKcu5q9aMkfekHwUUrVQTw97Ee7H4pzxnrprNHUSx
+cBkz+ZkNh1wcjq3CBgicqP2au9oQVvadK59lOPd09lsuaYgOuS2umWQAmEm0ei1j
+1l+3R93k1yBEGT61bkAA75n6ygFugkjgHyQ3kffUlrHCNH2A582pwYdFLbuGa/4P
+j44MNokRo6uWKxVp9dQ5WgyQM6IN9Iwz6Kfyl9Bah7YcLiv+RMwHv+k6DW9Fnqm1
+mzahMTf/vJ/7NQyXwl0XFsyaYnDGfTxExce8i83Yyke1eLY32HWBkzJA4r8k0TIt
+DjouL9S4PLDtkSLmje4Caiapg1s+ng==
+=3nSG
+-----END PGP SIGNATURE-----
+
+--=-XkvVwEIv7TyrTi24H2y+--
+
