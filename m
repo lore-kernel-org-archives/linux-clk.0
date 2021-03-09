@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDAEC43381
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF25C433E9
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C030465272
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DAA265259
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbhCIMHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 07:07:32 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35859 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230156AbhCIMHT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 07:07:19 -0500
-X-UUID: 7b328a5f42d14e19b29c629789e5c6ac-20210309
-X-UUID: 7b328a5f42d14e19b29c629789e5c6ac-20210309
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        id S229544AbhCIMHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 07:07:33 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51200 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230198AbhCIMHV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 07:07:21 -0500
+X-UUID: 218ebf2c5b7e4834baf348eab195e202-20210309
+X-UUID: 218ebf2c5b7e4834baf348eab195e202-20210309
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <macpaul.lin@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1833598757; Tue, 09 Mar 2021 20:07:16 +0800
+        with ESMTP id 388061136; Tue, 09 Mar 2021 20:07:18 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 9 Mar 2021 20:07:14 +0800
+ 15.0.1497.2; Tue, 9 Mar 2021 20:07:15 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 9 Mar 2021 20:07:14 +0800
+ Transport; Tue, 9 Mar 2021 20:07:15 +0800
 From:   Macpaul Lin <macpaul.lin@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -61,125 +61,157 @@ CC:     Ainge Hsu <ainge.hsu@mediatek.com>,
         Macpaul Lin <macpaul@gmail.com>,
         CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>
-Subject: [PATCH v9 0/4] Add basic SoC support for mt6765
-Date:   Tue, 9 Mar 2021 20:05:34 +0800
-Message-ID: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
+Subject: [PATCH v9 2/4] soc: mediatek: add MT6765 scpsys and subdomain support
+Date:   Tue, 9 Mar 2021 20:05:36 +0800
+Message-ID: <1615291538-9799-3-git-send-email-macpaul.lin@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
+In-Reply-To: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
 References: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
+ <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 39137A29FDBB1265CB4CEC99945BA23088741D7A29E572B09F27580A7F34DD562000:8
+X-TM-SNTS-SMTP: 10077B360794735DA5A36B74D72895A4BAB0164F2899C0819775FA33E8DDA8D22000:8
 X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds basic SoC support for Mediatek's new 8-core SoC,
-MT6765, which is mainly for smartphone application.
+From: Mars Cheng <mars.cheng@mediatek.com>
 
-Changes in V9:
-1. Origin V8 patchset:
-   https://patchwork.kernel.org/cover/11396015/
-   [v9,1/4] dt-bindings: mediatek: Add smi dts binding for Mediatek
-            MT6765 SoC
-     - No Change.
-   [v9,2/4] soc: mediatek: add MT6765 scpsys and subdomain support
-     - Fix build error based on 5.11-rc1 because
-       - bp_table has been deprecated.
-       - basic_clk_id has been renamed to clk_id.
-       - correct the number order in marco GENMASK().
-   Note: mediatek is working on porting mt6765's scpsys to driver
-         "mtk-pm-domains", however we think supporting for "mtk-scpsys" is
-         required before new glue is available.
-   [v9,3/4] arm64: dts: mediatek: add mt6765 support
-     - No Change.
-   [v9,4/4] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-     - No Change.
+This adds scpsys support for MT6765
+Add subdomain support for MT6765:
+isp, mm, connsys, mfg, and cam.
 
-Changes in V8:
-1. Origin V7 patchset:
-   https://patchwork.kernel.org/cover/11370105/
-   Split origin V7 patchset into 2 patchset,
-   keep remain patches #2, #5, #6, and #7 in the same order as this
-   V8 patchset.
-   [v7,2/7] dt-bindings: mediatek: Add smi dts binding for Mediatek
-            MT6765 SoC
-   [v7,5/7] soc: mediatek: add MT6765 scpsys and subdomain support
-   [v7,6/7] arm64: dts: mediatek: add mt6765 support
-   [v7,7/7] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 91 +++++++++++++++++++++++++++++++
+ 1 file changed, 91 insertions(+)
 
-Changes in V7:
-1. Adapt V6's patchset to latest kernel tree 5.5-rc1.
-   Origin V6 patchset:
-   https://patchwork.kernel.org/cover/11041963/
-2. Correct 2 clock-controller type in documentation:
-   mipi0 and venc_gcon.
-   [v7 1/7] dt-bindings: clock: mediatek: document clk bindings
-3. Remove V6's patch 03 because it has been taken into 5.5-next-soc
-   [v6, 03/08] dt-bindings: mediatek: add MT6765 power dt-bindings
-3. Update Reviewed-by: Rob Herring <robh@kernel.org> for
-   [v6, 04/08] clk: mediatek: add mt6765 clock IDs
-   --> [v7, 03/07] clk: mediatek: add mt6765 clock IDs
-4. Update SPDX tag for
-   [v6, 05/08] clk: mediatek: Add MT6765 clock support
-   --> [v7, 04/07] clk: mediatek: Add MT6765 clock support
-
-Changes in V6:
-1. Adapt V5's patchset to latest kernel tree.
-   Origin V5 patchset.
-   https://lore.kernel.org/patchwork/cover/963612/
-2. Due to clk's common code has been submit by other platform,
-   this patch set will have dependencies with the following patchsets
-   as the following orders.
-   2.a. [v8,00/21] MT8183 IOMMU SUPPORT
-        https://patchwork.kernel.org/cover/11023585/
-   2.b. [v11,0/6] Add basic node support for Mediatek MT8183 SoC
-        https://patchwork.kernel.org/cover/10962385/
-   2.c. [v6,00/14] Mediatek MT8183 scpsys support
-        https://patchwork.kernel.org/cover/11005751/
-3. Correct power related patches into dt-binding patches.
-4. Re-order V5's 4/11, 6/11, and 7/11 due clk common code change
-   and make dependencies in order.
-5. Update some commit message in clk related patches.
-
-Changes in V5:
-1. add clk support
-
-Changes in V4:
-1. add gic's settings in reg properties
-2. remove some patches about dt-bindings since GKH already took them
-
-Changes in V3:
-1. split dt-binding document patchs
-2. fix mt6765.dtsi warnings with W=12
-3. remove uncessary PPI affinity for timer
-4. add gicc base for gic dt node
-
-Changes in V2:
-1. fix clk properties in uart dts node
-2. fix typo in submit title
-3. add simple-bus in mt6765.dtsi
-4. use correct SPDX license format
-
-Mars Cheng (3):
-  dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
-  soc: mediatek: add MT6765 scpsys and subdomain support
-  arm64: dts: mediatek: add mt6765 support
-
-Owen Chen (1):
-  arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-
- .../memory-controllers/mediatek,smi-common.txt     |    1 +
- arch/arm64/boot/dts/mediatek/Makefile              |    1 +
- arch/arm64/boot/dts/mediatek/mt6765-evb.dts        |   33 +++
- arch/arm64/boot/dts/mediatek/mt6765.dtsi           |  253 ++++++++++++++++++++
- arch/arm64/configs/defconfig                       |    6 +
- drivers/soc/mediatek/mtk-scpsys.c                  |  130 ++++++++++
- 6 files changed, 424 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
-
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index ca75b14931ec..fc8d3858f1b4 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -15,6 +15,7 @@
+ 
+ #include <dt-bindings/power/mt2701-power.h>
+ #include <dt-bindings/power/mt2712-power.h>
++#include <dt-bindings/power/mt6765-power.h>
+ #include <dt-bindings/power/mt6797-power.h>
+ #include <dt-bindings/power/mt7622-power.h>
+ #include <dt-bindings/power/mt7623a-power.h>
+@@ -750,6 +751,81 @@ static const struct scp_subdomain scp_subdomain_mt2712[] = {
+ 	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
+ };
+ 
++/*
++ * MT6765 power domain support
++ */
++#define SPM_PWR_STATUS_MT6765			0x0180
++#define SPM_PWR_STATUS_2ND_MT6765		0x0184
++
++static const struct scp_domain_data scp_domain_data_mt6765[] = {
++	[MT6765_POWER_DOMAIN_VCODEC] = {
++		.name = "vcodec",
++		.sta_mask = BIT(26),
++		.ctl_offs = 0x300,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++	},
++	[MT6765_POWER_DOMAIN_ISP] = {
++		.name = "isp",
++		.sta_mask = BIT(5),
++		.ctl_offs = 0x308,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++	},
++	[MT6765_POWER_DOMAIN_MM] = {
++		.name = "mm",
++		.sta_mask = BIT(3),
++		.ctl_offs = 0x30C,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++		.clk_id = {CLK_MM},
++	},
++	[MT6765_POWER_DOMAIN_CONN] = {
++		.name = "conn",
++		.sta_mask = BIT(1),
++		.ctl_offs = 0x32C,
++		.sram_pdn_bits = 0,
++		.sram_pdn_ack_bits = 0,
++	},
++	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
++		.name = "mfg_async",
++		.sta_mask = BIT(23),
++		.ctl_offs = 0x334,
++		.sram_pdn_bits = 0,
++		.sram_pdn_ack_bits = 0,
++		.clk_id = {CLK_MFG},
++	},
++	[MT6765_POWER_DOMAIN_MFG] = {
++		.name = "mfg",
++		.sta_mask = BIT(4),
++		.ctl_offs = 0x338,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++	},
++	[MT6765_POWER_DOMAIN_CAM] = {
++		.name = "cam",
++		.sta_mask = BIT(25),
++		.ctl_offs = 0x344,
++		.sram_pdn_bits = GENMASK(9, 8),
++		.sram_pdn_ack_bits = GENMASK(13, 12),
++	},
++	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
++		.name = "mfg_core0",
++		.sta_mask = BIT(7),
++		.ctl_offs = 0x34C,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(12, 12),
++	},
++};
++
++static const struct scp_subdomain scp_subdomain_mt6765[] = {
++	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
++	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
++	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
++	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
++	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
++};
++
+ /*
+  * MT6797 power domain support
+  */
+@@ -1033,6 +1109,18 @@ static const struct scp_soc_data mt2712_data = {
+ 	.bus_prot_reg_update = false,
+ };
+ 
++static const struct scp_soc_data mt6765_data = {
++	.domains = scp_domain_data_mt6765,
++	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
++	.subdomains = scp_subdomain_mt6765,
++	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
++	.regs = {
++		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
++		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
++	},
++	.bus_prot_reg_update = true,
++};
++
+ static const struct scp_soc_data mt6797_data = {
+ 	.domains = scp_domain_data_mt6797,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+@@ -1088,6 +1176,9 @@ static const struct of_device_id of_scpsys_match_tbl[] = {
+ 	}, {
+ 		.compatible = "mediatek,mt2712-scpsys",
+ 		.data = &mt2712_data,
++	}, {
++		.compatible = "mediatek,mt6765-scpsys",
++		.data = &mt6765_data,
+ 	}, {
+ 		.compatible = "mediatek,mt6797-scpsys",
+ 		.data = &mt6797_data,
 -- 
-1.7.9.5
+2.18.0
 
