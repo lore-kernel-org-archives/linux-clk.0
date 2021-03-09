@@ -2,103 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8828C4360C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B0BC433DB
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7AC65290
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:23:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CF864F0F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 05:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbhCIFXI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 00:23:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
+        id S229524AbhCIF27 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 00:28:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbhCIFWi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 00:22:38 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBD0C06174A;
-        Mon,  8 Mar 2021 21:22:37 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id d139-20020a1c1d910000b029010b895cb6f2so5146983wmd.5;
-        Mon, 08 Mar 2021 21:22:37 -0800 (PST)
+        with ESMTP id S229475AbhCIF2b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 00:28:31 -0500
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB628C06174A;
+        Mon,  8 Mar 2021 21:28:31 -0800 (PST)
+Received: by mail-oo1-xc33.google.com with SMTP id l5so2768983ooj.7;
+        Mon, 08 Mar 2021 21:28:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TQPV/D5Slla4tO1OZEdplYJsUdKoA4adaddnoqiUdzE=;
-        b=j4nx9wi2uDYxsUVnmo9+5g9FZwURUigLvfcxKssOyiTLzdGf0nJf/BKNn6jBiylSle
-         U8aK52HsqECZTfVKnL0q9HgbQOtEo804zwcyrUdnuAPBC4Mcak9hP6JcfuXFxSPIjuz4
-         3kzhKt/UtYwealsmYwSvy6I2XdAG42b0gwTqbzhcMZjBO3En1LpvLcj1cbuLyBQ2wX5D
-         jpw9AgQq8sX2qGVtAbnqeDMZPcmBk7VdcEoKje+lfYBwd5DQICQ7jTxtgEbteB3QdLqB
-         szLHy+4mpEkGclJUVuR/9wagGP2ZOneWzArX/p70bv2IckJibwLWPNSpv+4RPVxX2ThB
-         A6aQ==
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OB87Z/fkFmKzuRifmqIHiIBkTD16UmoOu+JztA7Y7bc=;
+        b=XGWm0N4bK3IZsVMo2XV0Qu4IvswF5exGsn0AhoIlxugaNV8QtzDAWGNnbk2zBoE0wG
+         gwtpNfFfPGbW0siWX8CG4zduSMWD5e2ca5GvREsXHRJeAOKnnqUilGpHkS1ZtCRF5/IU
+         zCTOxCxAzoKXfHveu03F+tCG42x7wt3zaD+QjpAlTqnFWBh52R+eniXAhysg8O5lf/Tg
+         3if1Tjf0G+72F5NzkiRaSYeYqVzXcwsYz35O62pvAJU/PHZPGwTcRRknbkjmDBtvPWro
+         xiPik7NJ6hXHBf115v7rtGZvUpBcR8Id+IstYnStq1ZzwzRDCMxfBYaXoRlBnZdGk2la
+         nEXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TQPV/D5Slla4tO1OZEdplYJsUdKoA4adaddnoqiUdzE=;
-        b=X4UUqfASFh7I4uewgcNmtLTheD9iQa9z9xk56ZBvBXp1ai9kM4CU1w+wbElbdaEi8u
-         mycTxJClE/lWp7rHJjEL6NNbmwk354dDitW/O2sxSQnnPDUSc1FGnOQb/gPXaGoReqjB
-         MSZj288ZYDdKbzNxzeesY1zHlJDTrfjU0am7TgPS26FOltldRbmU81fYm7g9SPJbIA/P
-         NHKeZZhSd1kRqztUZSg87cc3MdYTwrGFQp9HWsReHJDrF+fwhyhXJuey80XOLrlBqhBi
-         WUl8L60qcJte9q8KWE41Z9HwG+m4OnPRaQXsua0sKao6OoidjRguaQGAGkj3F/cCHyjX
-         02cA==
-X-Gm-Message-State: AOAM53337VAoag3ozGCHMgc9SeFM1jQ3fadUlG92l2SORTbWAfcWdtWH
-        dsRTnlBxIo3oklgP8tle9RA=
-X-Google-Smtp-Source: ABdhPJwr04NnozIaTUbjHRSOni9XcQDzRZS5zaH95MTIJP/0BiEEHYQCPeg17eIMZqefkx1YwjHujA==
-X-Received: by 2002:a05:600c:4a06:: with SMTP id c6mr1969051wmp.35.1615267356763;
-        Mon, 08 Mar 2021 21:22:36 -0800 (PST)
-Received: from localhost.localdomain (67.red-83-54-30.dynamicip.rima-tde.net. [83.54.30.67])
-        by smtp.gmail.com with ESMTPSA id c11sm23450743wrm.67.2021.03.08.21.22.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Mar 2021 21:22:36 -0800 (PST)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     sboyd@kernel.org
-Cc:     robh+dt@kernel.org, john@phrozen.org, tsbogend@alpha.franken.de,
-        gregkh@linuxfoundation.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        devel@driverdev.osuosl.org, neil@brown.name,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v11 6/6] MAINTAINERS: add MT7621 CLOCK maintainer
-Date:   Tue,  9 Mar 2021 06:22:26 +0100
-Message-Id: <20210309052226.29531-7-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
-References: <20210309052226.29531-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=OB87Z/fkFmKzuRifmqIHiIBkTD16UmoOu+JztA7Y7bc=;
+        b=JaOpDPjbLgkXbrgKjdNTNN6AB3cAPhOKM1C7iSmaRtoainr7vnfWpmPgET9votWwUT
+         CopAaBB/e7JF32Q8M1MDB5CJIDQbwoXjrMvjt3RPzErtHhpIiEd3r1YmdgEoMY/EORq/
+         rm7n4Nsh3fFY0DG/ldteCSSLI5R2YYObLe0kC6Bspap/RECaqdyTESIMk8hopXEXTtcj
+         80bAFgGhsFTpXqlqbuLLZbXBZ4I0TvWEXN+bPbh4clP19hrEKNLl+dwRMWZ+tgY7c11s
+         mxMHE51hPKa74rt0NdqWzvqxm8WiyFWSdBh0E95sk9nsRyB66DEKC1hbzqNDe/89GVmS
+         wijg==
+X-Gm-Message-State: AOAM533vMdsWHgYDTLY9P6q0xGwlRDKOFFdwKRKNIMcidPMpNN3yhYsT
+        A2457siRl/ukXoxRlJvSXc1sGml8T3w=
+X-Google-Smtp-Source: ABdhPJxOc9yChcryOuMC3Kf8kh25fJqb5ZBsiOZlKfZSl3HCRleGCLeC3WqoijdbWURl2KDq8kelRQ==
+X-Received: by 2002:a05:6820:3c8:: with SMTP id s8mr21117712ooj.49.1615267711057;
+        Mon, 08 Mar 2021 21:28:31 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f19sm2894581oiw.38.2021.03.08.21.28.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Mar 2021 21:28:30 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: add devm_clk_prepare_enable() helper
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <20210304221247.488173-1-linux@rasmusvillemoes.dk>
+ <20210304221247.488173-2-linux@rasmusvillemoes.dk>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <4b560502-3885-91a0-3100-4b5506a17b32@roeck-us.net>
+Date:   Mon, 8 Mar 2021 21:28:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210304221247.488173-2-linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adding myself as maintainer for mt7621 clock driver.
+On 3/4/21 2:12 PM, Rasmus Villemoes wrote:
+> Add a managed wrapper for clk_prepare_enable().
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+That has been tried several times, including by yours truly,
+and has always been rejected.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 809a68af5efd..ecad5d972122 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11288,6 +11288,12 @@ L:	linux-wireless@vger.kernel.org
- S:	Maintained
- F:	drivers/net/wireless/mediatek/mt7601u/
- 
-+MEDIATEK MT7621 CLOCK DRIVER
-+M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/clock/mediatek,mt7621-sysc.yaml
-+F:	drivers/clk/ralink/clk-mt7621.c
-+
- MEDIATEK MT7621/28/88 I2C DRIVER
- M:	Stefan Roese <sr@denx.de>
- L:	linux-i2c@vger.kernel.org
--- 
-2.25.1
+Just use devm_add_action_or_reset() like many other watchdog
+drivers.
 
+Guenter
