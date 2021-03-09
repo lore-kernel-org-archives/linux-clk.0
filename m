@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5A5C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB66BC433E0
 	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEB24652AB
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923256525F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 12:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbhCIMHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 07:07:32 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35847 "EHLO
+        id S229851AbhCIMHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 07:07:33 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35859 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230122AbhCIMHT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 07:07:19 -0500
-X-UUID: 72cd4f680ad3467e8e4229c3aa8c40d9-20210309
-X-UUID: 72cd4f680ad3467e8e4229c3aa8c40d9-20210309
+        with ESMTP id S230173AbhCIMHU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 07:07:20 -0500
+X-UUID: a0feffcbd81f44ce95b09b34c67b5c84-20210309
+X-UUID: a0feffcbd81f44ce95b09b34c67b5c84-20210309
 Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
         (envelope-from <macpaul.lin@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1307233760; Tue, 09 Mar 2021 20:07:16 +0800
+        with ESMTP id 1280078577; Tue, 09 Mar 2021 20:07:17 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 9 Mar 2021 20:07:14 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 9 Mar 2021 20:07:15 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
  Transport; Tue, 9 Mar 2021 20:07:15 +0800
@@ -61,44 +61,49 @@ CC:     Ainge Hsu <ainge.hsu@mediatek.com>,
         Macpaul Lin <macpaul@gmail.com>,
         CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>
-Subject: [PATCH v9 1/4] dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
-Date:   Tue, 9 Mar 2021 20:05:35 +0800
-Message-ID: <1615291538-9799-2-git-send-email-macpaul.lin@mediatek.com>
+Subject: [PATCH v9 4/4] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
+Date:   Tue, 9 Mar 2021 20:05:38 +0800
+Message-ID: <1615291538-9799-5-git-send-email-macpaul.lin@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
 References: <1582279929-11535-1-git-send-email-macpaul.lin@mediatek.com>
  <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: FDAF47F11F74DEFFB31581AA99BF3EADAD476DBDEB9F270F6DFD6775057A74402000:8
 X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Mars Cheng <mars.cheng@mediatek.com>
+From: Owen Chen <owen.chen@mediatek.com>
 
-This patch adds MT6765 smi binding document
+Enable MT6765 clock configs, include topckgen, apmixedsys,
+infracfg, and subsystem clocks.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/memory-controllers/mediatek,smi-common.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-index a08a32340987..4a4f4377576f 100644
---- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
-@@ -31,6 +31,7 @@ properties:
-       - enum:
-           - mediatek,mt2701-smi-common
-           - mediatek,mt2712-smi-common
-+          - mediatek,mt6765-smi-common
-           - mediatek,mt6779-smi-common
-           - mediatek,mt8167-smi-common
-           - mediatek,mt8173-smi-common
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index d612f633b771..553137e81b8e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -622,6 +622,12 @@ CONFIG_REGULATOR_RK808=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_TPS65132=m
+ CONFIG_REGULATOR_VCTRL=m
++CONFIG_COMMON_CLK_MT6765_AUDIOSYS=y
++CONFIG_COMMON_CLK_MT6765_CAMSYS=y
++CONFIG_COMMON_CLK_MT6765_MMSYS=y
++CONFIG_COMMON_CLK_MT6765_IMGSYS=y
++CONFIG_COMMON_CLK_MT6765_VCODECSYS=y
++CONFIG_COMMON_CLK_MT6765_MIPI0ASYS=y
+ CONFIG_RC_CORE=m
+ CONFIG_RC_DECODERS=y
+ CONFIG_RC_DEVICES=y
 -- 
 2.18.0
 
