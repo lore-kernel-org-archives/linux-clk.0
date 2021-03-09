@@ -2,97 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961E8C433DB
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56353C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD9D6526E
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8AE6526E
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Mar 2021 15:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231320AbhCIPec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Mar 2021 10:34:32 -0500
-Received: from out28-53.mail.aliyun.com ([115.124.28.53]:34750 "EHLO
-        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231653AbhCIPeA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Mar 2021 10:34:00 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2349536|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0121347-0.000267848-0.987597;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047205;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.JiaAhdf_1615304034;
-Received: from 192.168.10.152(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.JiaAhdf_1615304034)
-          by smtp.aliyun-inc.com(10.147.42.135);
-          Tue, 09 Mar 2021 23:33:55 +0800
-Subject: Re: [PATCH 0/6] clk: Ingenic JZ4760(B) support
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20210307141759.30426-1-paul@crapouillou.net>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <8d03b294-822f-6012-0c5a-f925e30de2e4@wanyeetech.com>
-Date:   Tue, 9 Mar 2021 23:33:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S231338AbhCIPow (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Mar 2021 10:44:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229815AbhCIPon (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Mar 2021 10:44:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C9EC365279;
+        Tue,  9 Mar 2021 15:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615304683;
+        bh=F6sLrQc6A133M6TKwbXu0Bde8uGEs5tBN2d2E39D7h0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PxzD6yqe+HlDZzX8dZdj3WMjEiStNwR9PKXMEGPKRRGTZwiIzELfDb/OAZKsmmwxS
+         kVM162ViBvNxfydpoqp+XVAnJQWRHQDECiH2DKQtccGeF1I9zYuEByhaJEtGtIv2Ro
+         wL2Psi9DqMn8c0bokF5HBjvOaqhX3/p+o0uY8XOkmwnycNqHCDZmWOWHvgCoCIQXjh
+         v+FhBMQoo+bLqO4qGQqIevcv404ba4SlrErZ6sDF3qYISKI14k898VtGSF1onGZrDk
+         /Vw0soApdpXxmEwoiCnq8+QGXs5t2ldoFCXD6Ub8vKG/nBenCDD5dPy/6ou4/lKm3a
+         qX2hZOGhTEE0w==
+Received: by mail-ej1-f46.google.com with SMTP id mm21so28873486ejb.12;
+        Tue, 09 Mar 2021 07:44:42 -0800 (PST)
+X-Gm-Message-State: AOAM530AeXHa37+wKkHMplUw6NlM5B4pn/f+V0d1UP2haTE/zR/fYrND
+        H1scpXuN1E6PPdiRlKGtoqHwZoTz0bRoACYlAg==
+X-Google-Smtp-Source: ABdhPJw2iDp9uMT9RSu865E9aEUm8iR3HOOYNsjo4uwY6hOq2aYgQTezI0+ACByEzPk2X5WtrEFNpkY6PIaUKNItCxM=
+X-Received: by 2002:a17:906:25c4:: with SMTP id n4mr21099636ejb.359.1615304681326;
+ Tue, 09 Mar 2021 07:44:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210307141759.30426-1-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <20210226141411.2517368-2-linux@rasmusvillemoes.dk> <20210308172153.GA2505339@robh.at.kernel.org>
+ <12be138b-631a-4f82-aae9-6bbdc7bc2bcf@rasmusvillemoes.dk> <20210308213834.GA2973251@robh.at.kernel.org>
+ <11a604cc-6f81-7d26-06a4-3e338b051c5a@prevas.dk>
+In-Reply-To: <11a604cc-6f81-7d26-06a4-3e338b051c5a@prevas.dk>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 9 Mar 2021 08:44:29 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqKEGaFpiFV_oAtE+S_bnHkg4qry+bhx2EDs=NSbVf_giA@mail.gmail.com>
+Message-ID: <CAL_JsqKEGaFpiFV_oAtE+S_bnHkg4qry+bhx2EDs=NSbVf_giA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: misc: add binding for generic ripple counter
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+On Tue, Mar 9, 2021 at 12:39 AM Rasmus Villemoes
+<rasmus.villemoes@prevas.dk> wrote:
+>
+> On 08/03/2021 22.38, Rob Herring wrote:
+> > On Mon, Mar 08, 2021 at 09:02:29PM +0100, Rasmus Villemoes wrote:
+> >> On 08/03/2021 18.21, Rob Herring wrote:
+> >>> On Fri, Feb 26, 2021 at 03:14:10PM +0100, Rasmus Villemoes wrote:
+> >>>> While a ripple counter can not usually be interfaced with (directly)
+> >>>> from software, it may still be a crucial component in a board
+> >>>> layout. To prevent its input clock from being disabled by the clock
+> >>>> core because it apparently has no consumer, one needs to be able to
+> >>>> represent that consumer in DT.
+> >>>
+> >>> I'm okay with this as it is describing h/w, but we already
+> >>> 'protected-clocks' property which should work.
+> >>
+> >> Hm. Unless
+> >> https://lore.kernel.org/lkml/20200903040015.5627-2-samuel@sholland.org/
+> >> gets merged, I don't see how this would work out-of-the-box.
+> >
+> > Hum, no really clear what the hold up is there given it seems it was
+> > asked for. Letting it sit for 5 months is certainly not the way
+> > to get it merged. Anyways, that's the kernel's problem, not mine as far
+> > as DT bindings are concerned.
+> >
+> >>
+> >> Note that I sent a completely different v2, which made the gpio-wdt the
+> >> clock consumer based on feedback from Guenter and Arnd, but that v2
+> >> isn't suitable for our case because it post-poned handling of the
+> >> watchdog till after i2c is ready, which is too late. Somewhat similar to
+> >> https://lore.kernel.org/lkml/20210222171247.97609-2-sebastian.reichel@collabora.com/
+> >> it seems.
+> >
+> > Now at that one in my queue... I think 'protected-clocks' is the best
+> > way to avoid any driver probe ordering issues. It's the only thing that
+> > really captures don't turn off this clock.
+>
+> Agreed, and I did start by looking for a generic way to mark the clock
+> as either "hands off, kernel" (relying on the bootloader to enable it),
+> or better "make sure it's enabled". The closest I found was
+> of_clk_detect_critical(), but the comment above that one says not to use
+> it, so adding a call to some random RTC driver to support the
+> clock-critical property just for my use case didn't seem like the right
+> way to go.
+>
+> I didn't know about protected-clocks until you mentioned it, and it does
+> seem to be the right way to handle these situations (which are
+> apparently more common than I thought).
+>
+> The ripple counter binding
+> > doesn't really capture that or what it is related to.
+>
+> Agreed, it was a "hail mary" and why I explained what I was really
+> trying to achieve in the cover letter.
+>
+> Also, the
+> > ripple-counter driver could be a module and you'd still have the same
+> > issue as v2.
+>
+> Well, not quite. First of all, for a board like this, one always uses a
+> tailor-made .config, where one would never set that to be a module (and
+> even more obviously one wouldn't make the gpio-wdt driver a module).
 
-On 2021/3/7 下午10:17, Paul Cercueil wrote:
-> Hi,
->
-> Here are a set of patches to add support for the Ingenic JZ4760(B) SoCs.
->
-> One thing to note is that the ingenic,jz4760-tcu is undocumented for now,
-> as I will update the TCU documentation in a different patchset.
->
-> Zhou: the CGU code now supports overriding the PLL M/N/OD calc
-> algorithm, please tell me if it works for you.
+Yes, I'd expect so in this case, but in general we really should try
+to avoid things dependent on being built-in (and ordering of
+initcalls).
 
+The whole notion of disabling resources in late_initcall is also kind
+of broken IMO and doesn't account for modules.
 
-Newly found two problems, the first problem is because I2S PLL does not 
-have a stable bit, so we need to follow the bypass bit, which is only do 
-corresponding processing when "stable_bit > = 0".
+> Second, it wouldn't be the same issue as v2. Rather, if the clock only
+> gets enabled later when the ripple counter module would get loaded,
+> there would be a period of time where the watchdog was rendered useless
+> - the problem with v2 was that the watchdog wouldn't be petted in time,
+> so the board would be reset before it booted completely.
+>
+> >>>> +Required properties:
+> >>>> +- compatible: Must be "linux,ripple-ctr".
+> >>>
+> >>> Nothing linux specific about this.
+> >>
+> >> True, but I was following the lead of the existing gpio-wdt binding. Is
+> >> there some other "vendor" name one can and should use for completely
+> >> generic and simple components like these? "generic"?
+> >
+> > Most 'generic' and GPIO based interfaces have no vendor prefix.
+>
+> Ah, I see. Can we add just plain "wdt-gpio" to the gpio-wdt binding, and
+> deprecate the "linux,wdt-gpio"? It's a little awkward to handle a
+> "linux,wdt-gpio" compatible in a U-Boot driver.
 
-The second problem is that the I2S PLL cannot switch the parent clock 
-after using the PLL framework, so it cannot use SCLKA and MPLL as the 
-parent clock (when trying to switch the parent clock, it will stuck and 
-accompany "clk: failed  to reparent i2s to mpll: -22").
+No, just leave it. We have a few of these, but let's just not add new
+ones. In the end, it's just a string identifier.
 
-
->
-> Cheers,
-> -Paul
->
-> Paul Cercueil (6):
->    dt-bindings: clock: ingenic: Add ingenic,jz4760{,b}-cgu compatibles
->    clk: Support bypassing dividers
->    clk: ingenic: Read bypass register only when there is one
->    clk: ingenic: Remove pll_info.no_bypass_bit
->    clk: ingenic: Support overriding PLLs M/N/OD calc algorithm
->    clk: ingenic: Add support for the JZ4760
->
->   .../bindings/clock/ingenic,cgu.yaml           |   4 +
->   drivers/clk/ingenic/Kconfig                   |  10 +
->   drivers/clk/ingenic/Makefile                  |   1 +
->   drivers/clk/ingenic/cgu.c                     |  92 ++--
->   drivers/clk/ingenic/cgu.h                     |  12 +-
->   drivers/clk/ingenic/jz4725b-cgu.c             |  12 +-
->   drivers/clk/ingenic/jz4740-cgu.c              |  12 +-
->   drivers/clk/ingenic/jz4760-cgu.c              | 433 ++++++++++++++++++
->   drivers/clk/ingenic/jz4770-cgu.c              |  15 +-
->   drivers/clk/ingenic/tcu.c                     |   2 +
->   include/dt-bindings/clock/jz4760-cgu.h        |  54 +++
->   11 files changed, 591 insertions(+), 56 deletions(-)
->   create mode 100644 drivers/clk/ingenic/jz4760-cgu.c
->   create mode 100644 include/dt-bindings/clock/jz4760-cgu.h
->
+Rob
