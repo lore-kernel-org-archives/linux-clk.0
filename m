@@ -2,169 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D2FC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 08:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E032C43381
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 09:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3863E64FF3
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 08:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33FA164FE5
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 09:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232356AbhCJI4u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 03:56:50 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:32881 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231899AbhCJI4r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 03:56:47 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id B69C25C00A9;
-        Wed, 10 Mar 2021 03:56:46 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 10 Mar 2021 03:56:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=dhpbj3Bm/YirP1Wo9nWvDfpHcaC
-        0BIpgfsBiWqT5VhM=; b=jOk+Wux6scGrrEpkS3VDNcm3SsnlMVrfOQ8VPilI2XI
-        OuTqbmgtn+skq3mnH2rCS2pPHm/SEY0kWXPLVwUNW35U0R1XQQaJpn18xwjYI7DE
-        yiLIpCjYGdkCx6u0NpwKzwvnwUW0hwi6ldJrLvr2SiMWiDISpUOUWeKdhZLoJ1qo
-        a2Xz4MrB5SI8mKREozfnqAeXsTMtWUQV7VwSWJ4ugr3d8wqTSj3sOcA6CuW2yxxC
-        BsSJ0fMdzCN5/wgEFiDDIX1rzCfWU8rjTS8iaQ5PVk1qDxOad/DoK6OhDAFDLcsj
-        zy0uyrm9cLqq81LOtyn1jDwmQH9JpFHEMbXb2xF0A+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=dhpbj3
-        Bm/YirP1Wo9nWvDfpHcaC0BIpgfsBiWqT5VhM=; b=IpY7Ghk7pDzKLLowJWTUBi
-        qaBbvYsAO5VVBf4l9p6a2ZgbIIkxuymOTb+vBhV8/ZgeTBLJv8WP9O5cExRpwsuM
-        o71nkNbpFEeDg2d62TgInTPVdoGygfVOJ8d3dV9VFEn0FCMJMoAqZv4bijrWRs/N
-        mXBPKh/CDzVrNe2HyfCRMudA33SrvtE86Fm0ps3s0VIriJnXGisQaDEdGKeiqKm/
-        B75WdPZ1T6BBMSXLY1ChWUJLWTsxyXC4FH+rEuLZwU72dgW1yLqG2rPKxpO3NQPS
-        nGtZeXVVsyrSU+3k9wHDS1+bIyoKmWn3FofEbqhVvxqjh2KBKqK0vMfLG/a+bwfQ
-        ==
-X-ME-Sender: <xms:zYlIYJjkJAXdy1Vo8zQCLeXO9ib3n64qxRCM8iD_gcudd7BJjxDb9Q>
-    <xme:zYlIYOAALCqeZapqUV5lYidEQ5QrytqLoRmmYvanqTq-vsR8dhWd5OEEcuSREfKJv
-    bPbJqiXselUqyQIZ0E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledruddujedguddugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeuueelieeugeelvdehhfffteetgfehieejhffgtdegvdehgfeuveehjeej
-    lefgveenucffohhmrghinhepshhpihhnihgtshdrnhgvthdpkhgvrhhnvghlrdhorhhgne
-    cukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghr
-    rghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:zYlIYJH3ZYPz3AdW3HLTZsIjLS-Mk6ojeIKwgSTiiOxG92huaYNR8A>
-    <xmx:zYlIYOQaZsv_E600i6Ma4ru_OTngf1q-JexBU8-ZoCIXd25O2GzTJg>
-    <xmx:zYlIYGwPFhXzOYoGnRkJFNoD92zMuAmU8-o4eZSOcOZCt8KfYD1IPA>
-    <xmx:zolIYByDF2XnlCVhXJ6lIRlwq-YIDtU8fyBgyTlV3RTpbu0ZF3VMQA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 34EF21080063;
-        Wed, 10 Mar 2021 03:56:45 -0500 (EST)
-Date:   Wed, 10 Mar 2021 09:56:42 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S232528AbhCJJpp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 04:45:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232541AbhCJJpb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 04:45:31 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96BA3C061760
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 01:45:31 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id w11so22553223wrr.10
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 01:45:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=0Erx94zt8ljBM/yS3nXtNjrWvctYWuUVNAQLWpYJJRo=;
+        b=gmhG//67uUiQkJT3GRUTS9z+Tq+SpQbswnEQR3XBOpiU7cuv9y1ZxqWW5di7WTiU0z
+         5IGBqN7qnmOOotjHLYfwHb3ymzghFWrRTY1lWccM1Jx+OctRRl2HrazL+Ie3zn+oOLg4
+         +Cr93FaZA5kDLdCQdfSnM2ocPGfjV/4QFyjlmLL+A/yeCntkZRxL1Y6VHE3Ix0XGWvt0
+         6g/f18dGAHNtTske/QJGnxe1q9MAz0KsF1R4s87be2nrW/bOkzR56VrkiKlK8Lct6oeX
+         n8ruIEf/G85aTXWUgm6d5CINJa9ul6yAnrKIqzkWyNT+48PSH1UtSBhOAi5f8ntwPNJr
+         7JyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=0Erx94zt8ljBM/yS3nXtNjrWvctYWuUVNAQLWpYJJRo=;
+        b=AeDwX5fIdUShPcj9ngoFRvNvlmRNuixwPZFtZYQso5EYih0eSqtbqCpti1DDGGsvrA
+         Bgy28pbc1POItVZAJKEGxxVlBrGSlUVZYhvBLumslxqcMivBANgPcD2Kfs65RMrI+jQU
+         gzJNjmLLf0dRtq2evtuBZ3EBdW+CWGyI3kwwOwAEloV0Sj1u2uJhnbokaaiEMgCgNz1A
+         cLgzu05xbtQRzfRhZR0vGBT10STK5YzBhirEfc9zZ708s8hfGfJW29rAFixZZDli2SoO
+         5wk2y+5pcCFSBx7Q+tu94Rk/sA1+tpvV+n1hOHBmogx268lZMqQN/mbECxTk70+bcHHD
+         4xoQ==
+X-Gm-Message-State: AOAM530BlAcBiRuK1QBsGjgceaS8ueTO6nwQEtMrA72jfSx5EZyXgY/f
+        RqXrYPdiSF3TJrUWkr54wp5Rsg==
+X-Google-Smtp-Source: ABdhPJxcv9V5lAz+sEJ4HCtbzjFqfXkdmpxw/ngT7vdSlUljH3RkiAsQdLLVCP49qFAMYuC+GEIjxg==
+X-Received: by 2002:a5d:6381:: with SMTP id p1mr2649040wru.266.1615369530343;
+        Wed, 10 Mar 2021 01:45:30 -0800 (PST)
+Received: from dell ([91.110.221.204])
+        by smtp.gmail.com with ESMTPSA id c9sm11764201wrr.78.2021.03.10.01.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 01:45:29 -0800 (PST)
+Date:   Wed, 10 Mar 2021 09:45:27 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH RESEND 0/2] Common protected-clocks implementation
-Message-ID: <20210310085642.ugywtfct66x2bo5j@gilmour>
-References: <20200903040015.5627-1-samuel@sholland.org>
- <9363f63f-8584-2d84-71fd-baca13e16164@rasmusvillemoes.dk>
+        Stephen Boyd <sboyd@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-fpga@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [RFC v2 3/5] arm64: socfpga: rename ARCH_STRATIX10 to
+ ARCH_SOCFPGA64
+Message-ID: <20210310094527.GA701493@dell>
+References: <20210310083327.480837-1-krzysztof.kozlowski@canonical.com>
+ <20210310083840.481615-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="supdipipenbcn226"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9363f63f-8584-2d84-71fd-baca13e16164@rasmusvillemoes.dk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210310083840.481615-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 10 Mar 2021, Krzysztof Kozlowski wrote:
 
---supdipipenbcn226
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Prepare for merging Stratix 10, Agilex and N5X into one arm64
+> architecture by first renaming the ARCH_STRATIX10 into ARCH_SOCFPGA64.
+> 
+> The existing ARCH_SOCFPGA (in ARMv7) Kconfig symbol cannot be used
+> because altera_edac driver builds differently between them (with
+> ifdefs).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  arch/arm64/Kconfig.platforms                |  7 ++++---
+>  arch/arm64/boot/dts/altera/Makefile         |  2 +-
+>  arch/arm64/configs/defconfig                |  2 +-
+>  drivers/clk/Makefile                        |  2 +-
+>  drivers/clk/socfpga/Kconfig                 |  4 ++--
+>  drivers/edac/Kconfig                        |  2 +-
+>  drivers/edac/altera_edac.c                  | 10 +++++-----
+>  drivers/firmware/Kconfig                    |  2 +-
+>  drivers/fpga/Kconfig                        |  2 +-
 
-Hi,
+>  drivers/mfd/Kconfig                         |  2 +-
 
-On Tue, Mar 09, 2021 at 09:03:14AM +0100, Rasmus Villemoes wrote:
-> On 03/09/2020 06.00, Samuel Holland wrote:
-> > Stephen, Maxime,
-> >=20
-> > You previously asked me to implement the protected-clocks property in a
-> > driver-independent way:
-> >=20
-> > https://www.spinics.net/lists/arm-kernel/msg753832.html
-> >=20
-> > I provided an implementation 6 months ago, which I am resending now:
-> >=20
-> > https://patchwork.kernel.org/patch/11398629/
-> >=20
-> > Do you have any comments on it?
->=20
-> I'm also interested [1] in getting something like this supported in a
-> generic fashion - i.e., being able to mark a clock as
-> protected/critical/whatnot by just adding an appropriate property in the
-> clock provider's DT node, but without modifying the driver to opt-in to
-> handling it.
->=20
-> Now, as to this implementation, the commit 48d7f160b1 which added the
-> common protected-clocks binding says
->=20
->   For example, on some Qualcomm firmwares reading or writing certain clk
->   registers causes the entire system to reboot,
->=20
-> so I'm not sure handling protected-clocks by translating it to
-> CLK_CRITICAL and thus calling prepare/enable on it is the right thing to
-> do - clks that behave like above are truly "hands off, kernel", so the
-> current driver-specific implementation of simply not registering those
-> clocks seems to be the right thing to do - or at least the clk framework
-> would need to be taught to not actually call any methods on such
-> protected clocks.
+If it's okay with everyone else, it'll be okay with me:
 
-The idea to use CLK_CRITICAL was also there to allow any clock to be
-marked as protected, and not just the root ones. Indeed, by just
-ignoring that clock, the parent clock could end up in a situation where
-it doesn't have any (registered) child and thus would be disabled,
-disabling the ignored clock as well. Reparenting could cause the same
-issue.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Calling clk_prepare_enable just allows the kernel to track that it (and
-thus its parent) should never be disabled, ever.
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig |  4 ++--
+>  drivers/reset/Kconfig                       |  2 +-
+>  12 files changed, 21 insertions(+), 20 deletions(-)
 
-> For my use case, either "hands off kernel" or "make sure this clock is
-> enabled" would work since the bootloader anyway enables the clock.
-
-The current protected clocks semantics have been that the clock
-shouldn't be disabled by the kernel, but "hands off kernel" clocks imply
-a slightly different one. I would expect that the bootloader in this
-case wouldn't expect any parent or rate (or phase, or any other
-parameter really) change, while it might be ok for some other use cases
-(like the one Samuel was trying to address for example).
-
-And even if we wanted the kernel to behave that way (making sure there's
-no way to change the rate, parents, phase, etc.), the kernel would have
-to have knowledge of it to also propagate that restriction to the whole
-chain of parents.
-
-Maxim
-
---supdipipenbcn226
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYEiJygAKCRDj7w1vZxhR
-xQR8AQD/+TN0gj9knlLqLn2CHZlAnj0A92xKow/bZnO58HhvwQEA6M0KautXexRL
-iinBv4Y7M5goEbbXeZtBJkB3c56USg4=
-=it6C
------END PGP SIGNATURE-----
-
---supdipipenbcn226--
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
