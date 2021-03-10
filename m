@@ -2,139 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1AFC43381
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A196C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 20:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 134B064FB1
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66D1464F93
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 20:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232616AbhCJSoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 13:44:24 -0500
-Received: from m42-2.mailgun.net ([69.72.42.2]:17889 "EHLO m42-2.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233130AbhCJSoV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Mar 2021 13:44:21 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1615401861; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=F2JTvsNlkIMMJh2BTm0uaQtaxygT/jOeBnJgSyPDleU=; b=h/tRtjy/ugRC+umFelSDz3gNQOdagTOTl7Qae+vL5fo2oA8zRdwRYfauzRVqcXLWtGIU4ReV
- uPJY+61CYpXn5K5Fz2t8wRAnHqMR8j/l7EbWU/vtdBLNdYHA6YeqpfLd3SqsrFmMNhicr90t
- goZGj0+5SNPf645+0NbkTEiVPhY=
-X-Mailgun-Sending-Ip: 69.72.42.2
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 60491378fa6ebd85e8008ec0 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 18:44:08
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8BCA8C433CA; Wed, 10 Mar 2021 18:44:08 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E526BC433C6;
-        Wed, 10 Mar 2021 18:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E526BC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
-Date:   Thu, 11 Mar 2021 00:13:48 +0530
-Message-Id: <1615401828-6905-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S230215AbhCJUNG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 15:13:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230491AbhCJUND (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 15:13:03 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65FB1C061574
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 12:13:03 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id j8so17705368otc.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 12:13:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ParB71IxhiRrfBGpAi87T+sw94LRbdpcOA901A69TgA=;
+        b=l9TN+s8G4fphqlAMXmxn0VTICbyOlt5MCFF/fUR/8oug0GoivqZ4PHhuFHh5SbZtyX
+         0MN1f3BqjFJ9KZB0opLj49yl27RHF3KQAG9oX8nUsh2QbgHxIcMtkPbD2ki38nki9qbI
+         ehc+6w1G3/oSnkOORqaQCC+f0XmGfuToDdeHPgM6/jWUURIHuOnl5ZA82W6/1eEhMfYG
+         QMJyTjJ250M+Bqq/tB03enMaqc4eGMUzHPEPFgRhDYvYhwRnAdOsGqbEMkFCYbI+Hm0X
+         TGkaIZ8L8rdMsJMJXYvQJ4qTVBEblp1XRzlaaVCDVGvPtuMM19ecJWAiDkml71Z9q44k
+         2CHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ParB71IxhiRrfBGpAi87T+sw94LRbdpcOA901A69TgA=;
+        b=h4pusvbtoBTLFnAjunIMy233M+RyHEwsuT1bnI5HlRRV4uXgPbBDaneL3YjxfsWdwD
+         PzzRtq6Uit1bYKo1nz+HznUSvsUHp1prSQ1jk3u1l3dhSNrQifNUfFyFI/P4TtH141EN
+         v6crMyXvl3srE0Bqd4Z97kMpxzEQKY9bnaeZd1lZuWyPw19uGgSJJxvaYFcbp6xSLGpj
+         yvlThULkIT98dhwXOZUcWqTepPHyL/UV3NhEg7pltG6CUhR4lz+vMxnkZTGdikukU52X
+         7SMtHKfgAK+C/gkwnhxfcgCcd1BBTTnF6nPgZQSzc+QCMKJhzI2bYoOYcyDMuxxPLbb+
+         HEUg==
+X-Gm-Message-State: AOAM530TO27R+S8y/ZywmP2vGdJMpzmOh/8LINJ2vEbObcPfvWJgm6wB
+        ss/QYJWY92Y0UGLBAMPbknSWNw==
+X-Google-Smtp-Source: ABdhPJxG71p4NqMut9jm2BctnUtl0uE1+wVO4QiKMsPrTKbFBAfQ1ej1T/mHQqfW4Ul/TSOVfc/7Bg==
+X-Received: by 2002:a05:6830:1da8:: with SMTP id z8mr3844420oti.11.1615407182801;
+        Wed, 10 Mar 2021 12:13:02 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id j19sm98919oie.6.2021.03.10.12.13.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 12:13:02 -0800 (PST)
+Date:   Wed, 10 Mar 2021 14:13:00 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH RESEND 0/2] Common protected-clocks implementation
+Message-ID: <YEkoTEJqzpRacByw@builder.lan>
+References: <20200903040015.5627-1-samuel@sholland.org>
+ <9363f63f-8584-2d84-71fd-baca13e16164@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9363f63f-8584-2d84-71fd-baca13e16164@rasmusvillemoes.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The root clock generators with MND divider has the capability to support
-change in duty-cycle by updating the 'D'. Add the clock ops which would
-check all the boundary conditions and enable setting the desired duty-cycle
-as per the consumer.
+On Tue 09 Mar 02:03 CST 2021, Rasmus Villemoes wrote:
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg2.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+> On 03/09/2020 06.00, Samuel Holland wrote:
+> > Stephen, Maxime,
+> > 
+> > You previously asked me to implement the protected-clocks property in a
+> > driver-independent way:
+> > 
+> > https://www.spinics.net/lists/arm-kernel/msg753832.html
+> > 
+> > I provided an implementation 6 months ago, which I am resending now:
+> > 
+> > https://patchwork.kernel.org/patch/11398629/
+> > 
+> > Do you have any comments on it?
+> 
+> I'm also interested [1] in getting something like this supported in a
+> generic fashion - i.e., being able to mark a clock as
+> protected/critical/whatnot by just adding an appropriate property in the
+> clock provider's DT node, but without modifying the driver to opt-in to
+> handling it.
+> 
+> Now, as to this implementation, the commit 48d7f160b1 which added the
+> common protected-clocks binding says
+> 
+>   For example, on some Qualcomm firmwares reading or writing certain clk
+>   registers causes the entire system to reboot,
+> 
+> so I'm not sure handling protected-clocks by translating it to
+> CLK_CRITICAL and thus calling prepare/enable on it is the right thing to
+> do - clks that behave like above are truly "hands off, kernel", so the
+> current driver-specific implementation of simply not registering those
+> clocks seems to be the right thing to do - or at least the clk framework
+> would need to be taught to not actually call any methods on such
+> protected clocks.
+> 
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 42f13a2..e070f1a 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -357,6 +357,44 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
- 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
- }
+I can confirm that this is the case. Marking the clocks as critical does
+not prevent the kernel from touching these registers so the boards where
+this is used doesn't boot with the two patches applied.
 
-+static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask, duty_per;
-+	int ret;
-+
-+	if (!rcg->mnd_width)
-+		return 0;
-+
-+	mask = BIT(rcg->mnd_width) - 1;
-+
-+	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
-+	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
-+
-+	n_val = (~(notn_m_val) + m_val) & mask;
-+
-+	/* Calculate 2d value */
-+	d_val = DIV_ROUND_CLOSEST(n_val * duty_per * 2, 100);
-+
-+	 /* Check BIT WIDTHS OF 2d. If D is too big reduce Duty cycle. */
-+	if (d_val > mask)
-+		d_val = mask;
-+
-+	if ((d_val / 2) > (n_val - m_val))
-+		d_val = (n_val - m_val) * 2;
-+	else if ((d_val / 2) < (m_val / 2))
-+		d_val = m_val;
-+
-+	not2d_val = ~d_val & mask;
-+
-+	ret = regmap_update_bits(rcg->clkr.regmap, RCG_D_OFFSET(rcg), mask,
-+				 not2d_val);
-+	if (ret)
-+		return ret;
-+
-+	return update_config(rcg);
-+}
-+
- const struct clk_ops clk_rcg2_ops = {
- 	.is_enabled = clk_rcg2_is_enabled,
- 	.get_parent = clk_rcg2_get_parent,
-@@ -365,6 +403,7 @@ const struct clk_ops clk_rcg2_ops = {
- 	.determine_rate = clk_rcg2_determine_rate,
- 	.set_rate = clk_rcg2_set_rate,
- 	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
-+	.set_duty_cycle = clk_rcg2_set_duty_cycle,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+> For my use case, either "hands off kernel" or "make sure this clock is
+> enabled" would work since the bootloader anyway enables the clock.
+> 
 
-@@ -376,6 +415,7 @@ const struct clk_ops clk_rcg2_floor_ops = {
- 	.determine_rate = clk_rcg2_determine_floor_rate,
- 	.set_rate = clk_rcg2_set_floor_rate,
- 	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
-+	.set_duty_cycle = clk_rcg2_set_duty_cycle,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+Our use case is that depending on firmware these platform might handle
+some specific clocks in firmware or in the kernel, and in the prior case
+security permissions are set up such that these registers are off limit
+for the kernel.
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Regards,
+Bjorn
 
+> Rasmus
+> 
+> [1]
+> https://lore.kernel.org/lkml/20210226141411.2517368-1-linux@rasmusvillemoes.dk/
+> 
