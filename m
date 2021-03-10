@@ -2,127 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0082C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5ABC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCA764FF4
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 381FB64F4D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232091AbhCJNDE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 08:03:04 -0500
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:33448 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231517AbhCJNCs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 08:02:48 -0500
-Received: by mail-lj1-f170.google.com with SMTP id h4so25498455ljl.0;
-        Wed, 10 Mar 2021 05:02:47 -0800 (PST)
+        id S232565AbhCJNPa convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 08:15:30 -0500
+Received: from mail-vs1-f45.google.com ([209.85.217.45]:43020 "EHLO
+        mail-vs1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231519AbhCJNPB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 08:15:01 -0500
+Received: by mail-vs1-f45.google.com with SMTP id w76so8686960vsw.10;
+        Wed, 10 Mar 2021 05:15:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc
-         :in-reply-to:references:mime-version:date:user-agent
-         :content-transfer-encoding;
-        bh=sTSRxDbi5nvaP9NyY08bdt6i+cb/v1XJzy+djVvVXTo=;
-        b=mBDyIWtn422OA1bBMJvcyyCS00DvEk639c0JnOozeqmUDiIsrd4EYmwj7UZdDbAIjD
-         wn4OQWMASC5DqWPk2baSogDsIMqg7y5cjD6PP5QNVOqAVOCA3MuZf/Z3X2LhhZKEq2+p
-         AIEut3TjOqFgnNjlfRqa08SEGJRr8jsQapodSOeQtZ93RHa1TMh365z1JeyXzfgZsEr5
-         Aod5OY9rKoVXdLtgOlhd+518c9oPmM8JWF7MN6UpAQVQsy940uO1+gQKmR5j/eWmdz57
-         B1T6r2SH5IilajJhkXQbLXuWPMFlu7jRkfp8MPmSZa+xdPpXn8LkgUnPoDQhO+4OmtIB
-         VIQg==
-X-Gm-Message-State: AOAM530BT2NJTUOrjtBfN7viqjHKZt+X1qLcIHnYkAdRNhjXbZlJz7AE
-        sJmD3Vw3hBPS2I6V6MIbe1mYF38tKtY=
-X-Google-Smtp-Source: ABdhPJyTWbVFlX45RasDQubh0t6WJRM3nMQEVbIHwXKWfU220B53iYVZGYCKqnnbQ8phhUhHQDliUA==
-X-Received: by 2002:a2e:86c8:: with SMTP id n8mr1844498ljj.409.1615381366389;
-        Wed, 10 Mar 2021 05:02:46 -0800 (PST)
-Received: from dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi (dc7vkhyyyyyyyyyyyyycy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::4])
-        by smtp.gmail.com with ESMTPSA id r5sm2868521lfc.235.2021.03.10.05.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 05:02:45 -0800 (PST)
-Message-ID: <e7bb00af76de65c60061c58a570d5b6f40961eb0.camel@fi.rohmeurope.com>
-Subject: Re: [PATCH v3 06/15] mfd: Add ROHM BD71815 ID
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reply-To: matti.vaittinen@fi.rohmeurope.com
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-In-Reply-To: <20210310111755.GN701493@dell>
-References: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
-         <be0e8cd06ed75e799c942e5076ee7b56ad658467.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
-         <20210310103639.GG701493@dell>
-         <a631bbc3dd3bd0f02693d1c35f9a14dbaec67cc3.camel@fi.rohmeurope.com>
-         <20210310111755.GN701493@dell>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QDfO23mATK6CqDaHcYM85sjaBlq0z2F1PZtWMpKT3Sw=;
+        b=r0xsMCINSPdWlSdOm+MIcvXUWRV4cbZ5g7HS6T504ntJj9Xotsgeb1EMvCzt4X3zTf
+         p+TlK/K6Ww41soWls67EMZRNThWKlPz+H5gQlrBPOTUlaAhoL27P01JApuNrqHBB8ohA
+         KhPdjXYAFXC0XVYEfm7tLTvQ/0CCr4ibfHQ+tXg73vFsqQyZevfq+cBK3u2DgFNzCgiw
+         l+rjqoI+XRFpKWQTuv2FdaFtJdpo2vv72/2IArQ3HVscwgNQ8s8xGhYMX/YWfyoVzIiJ
+         n3ofaGnO21G//Mc+3PfRorI3ouY3qGwJ+5gzH7pZdBMP/5iJI1QWRGp+phKWI0iJxkaz
+         sfMA==
+X-Gm-Message-State: AOAM532ZJpE9ENJVdn2H86VavJgf53H8I3twzv+r1mptKUao6gbn30EL
+        KGm/I+DE/TabKSCXPhr7OEB0aVkA3NfQKtHmADU=
+X-Google-Smtp-Source: ABdhPJwOpI5TUFI2LAahJvjU1nMrfVI3/HHEDjfc939oZUxyrLf/J72sVqysnvB/fK/u6KRSfxQ7MzEF9Kn+bQYqARg=
+X-Received: by 2002:a67:ef0e:: with SMTP id j14mr1168284vsr.40.1615382100365;
+ Wed, 10 Mar 2021 05:15:00 -0800 (PST)
 MIME-Version: 1.0
-Date:   Wed, 10 Mar 2021 15:02:41 +0200
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-Content-Transfer-Encoding: 7bit
+References: <20210310104554.3281912-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20210310104554.3281912-1-niklas.soderlund+renesas@ragnatech.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 10 Mar 2021 14:14:49 +0100
+Message-ID: <CAMuHMdU9e43174aSMb6BNWavVMNBv7Gs2eSWenX-soZ-nX+BNA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r8a7795: Add TMU clocks
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2021-03-10 at 11:17 +0000, Lee Jones wrote:
-> On Wed, 10 Mar 2021, Vaittinen, Matti wrote:
-> 
-> > Hello Lee,
-> > 
-> > On Wed, 2021-03-10 at 10:36 +0000, Lee Jones wrote:
-> > > On Mon, 08 Mar 2021, Matti Vaittinen wrote:
-> > > 
-> > > > Add chip ID for ROHM BD71815 and PMIC so that drivers can
-> > > > identify
-> > > > this IC.
-> > > > 
-> > > > Signed-off-by: Matti Vaittinen <
-> > > > matti.vaittinen@fi.rohmeurope.com>
-> > > > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > > > ---
-> > > >  include/linux/mfd/rohm-generic.h | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/include/linux/mfd/rohm-generic.h
-> > > > b/include/linux/mfd/rohm-generic.h
-> > > > index 66f673c35303..e5392bcbc098 100644
-> > > > --- a/include/linux/mfd/rohm-generic.h
-> > > > +++ b/include/linux/mfd/rohm-generic.h
-> > > > @@ -14,6 +14,7 @@ enum rohm_chip_type {
-> > > >  	ROHM_CHIP_TYPE_BD71828,
-> > > >  	ROHM_CHIP_TYPE_BD9571,
-> > > >  	ROHM_CHIP_TYPE_BD9574,
-> > > > +	ROHM_CHIP_TYPE_BD71815,
-> > > 
-> > > Is there a technical reason why these can't be re-ordered?
-> > 
-> > No, I don't think so.
-> > 
-> > BTW. there will probably be a (trivial) conflict here as both this
-> > series and the BD9576/BD9573 series add an ID here. Let me guess,
-> > you'd
-> 
-> That's fine.  I will resolve that manually.
+Hi Niklas,
 
-Thanks :)
+On Wed, Mar 10, 2021 at 11:46 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add TMU{0,1,2,3,4} clocks.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+> * Changes since v1
+> - Set TMU4 parent clock to S3D2 for ES1.
 
-> 
-> > like to see them sorted?
-> 
-> Wouldn't that be nice? :)
-Aesthetics is not really my cup of tea. OTOH, if amount of IDs grow,
-then sorting helps spotting whether some IC has an ID here. So yes, it
-kind of makes sense.
+Thanks for the update!
 
-Can you do sorting while resolving the conflict between series or do
-you want me to
-a) do sorting if (when) I re-spin the series
-b) send separate sorting patch as a part of this series
-c) send sepatate sorting patch after all the pending patches touching
-these IDs have been merged?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.13.
 
---Matti
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
