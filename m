@@ -5,43 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA15C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1AFC43381
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1C6664FBA
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134B064FB1
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233569AbhCJSTJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 13:19:09 -0500
-Received: from m42-2.mailgun.net ([69.72.42.2]:47786 "EHLO m42-2.mailgun.net"
+        id S232616AbhCJSoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 13:44:24 -0500
+Received: from m42-2.mailgun.net ([69.72.42.2]:17889 "EHLO m42-2.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229950AbhCJSSg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Mar 2021 13:18:36 -0500
+        id S233130AbhCJSoV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Mar 2021 13:44:21 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1615400316; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=Oe2A04ooxiUiKh+2PZjPlM+r01T98GTea9DKcUo6+Cs=; b=HOVDFTp6Crl4vsCsSFZWDHpEt6VE7tQCtuWi4KAJKY8e8SZ6bhaWlvPDEpTfNleWgaSuWOrL
- GLq4hLtmahlyO/mJKWKgqMX2/7uvi6YNbqwFJqGhKGMMVSGvKzUGTiAZ9LdnCpqY19dR9cX4
- pKwFdoflisSVyOaynyIGytYbYB0=
+ s=smtp; t=1615401861; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=F2JTvsNlkIMMJh2BTm0uaQtaxygT/jOeBnJgSyPDleU=; b=h/tRtjy/ugRC+umFelSDz3gNQOdagTOTl7Qae+vL5fo2oA8zRdwRYfauzRVqcXLWtGIU4ReV
+ uPJY+61CYpXn5K5Fz2t8wRAnHqMR8j/l7EbWU/vtdBLNdYHA6YeqpfLd3SqsrFmMNhicr90t
+ goZGj0+5SNPf645+0NbkTEiVPhY=
 X-Mailgun-Sending-Ip: 69.72.42.2
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 60490d64155a7cd234a868dc (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 18:18:12
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 60491378fa6ebd85e8008ec0 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 18:44:08
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DC086C43461; Wed, 10 Mar 2021 18:18:12 +0000 (UTC)
+        id 8BCA8C433CA; Wed, 10 Mar 2021 18:44:08 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AB3A0C433ED;
-        Wed, 10 Mar 2021 18:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB3A0C433ED
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E526BC433C6;
+        Wed, 10 Mar 2021 18:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E526BC433C6
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -51,42 +51,89 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: rpmh: Update the XO clock source for SC7280
-Date:   Wed, 10 Mar 2021 23:48:03 +0530
-Message-Id: <1615400283-20100-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
+Date:   Thu, 11 Mar 2021 00:13:48 +0530
+Message-Id: <1615401828-6905-1-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The bi_tcxo clock source for SC7280 requires a div 4 to derive 19.2MHz
-from the xo_board. Thus update the same.
+The root clock generators with MND divider has the capability to support
+change in duty-cycle by updating the 'D'. Add the clock ops which would
+check all the boundary conditions and enable setting the desired duty-cycle
+as per the consumer.
 
-Fixes: fff2b9a65162 ("clk: qcom: rpmh: Add support for RPMH clocks on SC7280")
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/clk-rpmh.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-rcg2.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 91dc390..c623ce9 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -510,9 +510,12 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
- 	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
- };
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 42f13a2..e070f1a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -357,6 +357,44 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+ 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
 
-+/* Resource name must match resource id present in cmd-db */
-+DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
++static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask, duty_per;
++	int ret;
 +
- static struct clk_hw *sc7280_rpmh_clocks[] = {
--	[RPMH_CXO_CLK]      = &sdm845_bi_tcxo.hw,
--	[RPMH_CXO_CLK_A]    = &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
- 	[RPMH_LN_BB_CLK2]   = &sdm845_ln_bb_clk2.hw,
- 	[RPMH_LN_BB_CLK2_A] = &sdm845_ln_bb_clk2_ao.hw,
- 	[RPMH_RF_CLK1]      = &sdm845_rf_clk1.hw,
++	if (!rcg->mnd_width)
++		return 0;
++
++	mask = BIT(rcg->mnd_width) - 1;
++
++	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
++	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
++
++	n_val = (~(notn_m_val) + m_val) & mask;
++
++	/* Calculate 2d value */
++	d_val = DIV_ROUND_CLOSEST(n_val * duty_per * 2, 100);
++
++	 /* Check BIT WIDTHS OF 2d. If D is too big reduce Duty cycle. */
++	if (d_val > mask)
++		d_val = mask;
++
++	if ((d_val / 2) > (n_val - m_val))
++		d_val = (n_val - m_val) * 2;
++	else if ((d_val / 2) < (m_val / 2))
++		d_val = m_val;
++
++	not2d_val = ~d_val & mask;
++
++	ret = regmap_update_bits(rcg->clkr.regmap, RCG_D_OFFSET(rcg), mask,
++				 not2d_val);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
+ const struct clk_ops clk_rcg2_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+@@ -365,6 +403,7 @@ const struct clk_ops clk_rcg2_ops = {
+ 	.determine_rate = clk_rcg2_determine_rate,
+ 	.set_rate = clk_rcg2_set_rate,
+ 	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+
+@@ -376,6 +415,7 @@ const struct clk_ops clk_rcg2_floor_ops = {
+ 	.determine_rate = clk_rcg2_determine_floor_rate,
+ 	.set_rate = clk_rcg2_set_floor_rate,
+ 	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
