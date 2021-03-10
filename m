@@ -2,125 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D585C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366F5C433DB
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD0664FF2
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E000564F16
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbhCJLSa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 06:18:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46552 "EHLO
+        id S230435AbhCJLoD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 06:44:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbhCJLR7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 06:17:59 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F98EC061761
-        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 03:17:59 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id w11so22873487wrr.10
-        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 03:17:59 -0800 (PST)
+        with ESMTP id S231356AbhCJLnn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 06:43:43 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F002FC06174A;
+        Wed, 10 Mar 2021 03:43:41 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id p16so17578718ioj.4;
+        Wed, 10 Mar 2021 03:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=8/BvaC/nK4OARL6liXjkIyGeKizu5NW5s37p+jzN3rQ=;
-        b=Psywx4DhVt3ugx3PIxZeB43//KWnVK4bTpb2dRxGAtIDzQ9t/VwoqLeTXFxEuYSBpX
-         CMpuokQ6B+5jaKqmQP0KA4n9ha86S9L55WvCW3bmITc56n2AmeOV+/Z4rhSMpwRBwSEt
-         BTspTOBFMnm6ftya42im4dgEPRLD9KzI83DFx5A0y7gJC6VBeGZgfvBJjBy27oDVk4mz
-         PfKzL72xoDzNzYkkqn55uMjaFBw+jJbIZ8NlM59TxZBQjq18is1nRhjXUGCfFuonFcp7
-         UYCmvR4PeEIxdVeS7RyasXbzymv+eRKk5KAaI4fNR0iEYuzU+tPZih/J5b9KKUJQx+Qo
-         Gipg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7MDculd5PWLFOFwl290sy7CTqICAtBb0zJmC/83JNiY=;
+        b=jyhuw1uUViTVh9mqzgoJ/J29crJCPM2TJeyX7WB/RlRW8RVVbQjnWXpzdkbCZfVK7y
+         RRrsVERxnfxdAdkz2Wf6fgMQwHQl2It5TUvgjZbP1buY9VW1KR7M/9aF3D/QnUKV/wEi
+         0eV7hG5BSbChAnQSi7vhkbAdfpTyn3eiIwZbKdRdU1FMzRH0XrE0EyxjNo5CgF+fzKAm
+         i08ouwrBHH3ksVRAE7HJ7qX2f2p4KcP8AQz2XuiChoZ72uOpj1oWu0rCxwH1MzwczzzS
+         lDyySAebm6U41iADqPqpRAQMBt1vPFmbIYT316NfnAOljlhkKJhuins3NibQAaRdQNd0
+         0cOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=8/BvaC/nK4OARL6liXjkIyGeKizu5NW5s37p+jzN3rQ=;
-        b=s625yaban+ST+FYG2X+BbHbC4M5S5NcjxP33SYg2PNv5y83MhiXAM2OeDUTjjCYOXg
-         osb+AVY79vvtOVXj86RC4T/Ju5FdqfruVXs2tN2T1SxC9iAYkFwrxwB+28YyWaEZsmwp
-         WOtyKPkprVMXskxaTxWgW9ZgRbT5HJRH/4/6h/xJkN1/FOuGSTC0q/iRPm64fBK8ldSS
-         Tp/MaZhzAn3slNkv9zpLL1kOIEgCArlUNiygw9O/m24xQH+RQobFT1K6MHS/G3HtsUQz
-         nABmR+Eg9ltNQ4fpKOY1DlATw5sQBjfjsmM/NxUfcQU/UXzh3c1EzzFo3ZywpQgmJ/hU
-         aoSw==
-X-Gm-Message-State: AOAM533WwWZ5cwJ5wqglN1K11p5NjtCXTbvXKy4d/quZyYlpfrJxZYBZ
-        mJBhjB43s63o5ESlrqsD8koIQFOaX7WC0w==
-X-Google-Smtp-Source: ABdhPJx3IYKM3QBCdZT4QUUshLK1DxO4Zo6U2/nM97niWViFKQGFICLI7dFD9eafmhr+BAl2HPBtEA==
-X-Received: by 2002:adf:ed12:: with SMTP id a18mr3016460wro.249.1615375077845;
-        Wed, 10 Mar 2021 03:17:57 -0800 (PST)
-Received: from dell ([91.110.221.204])
-        by smtp.gmail.com with ESMTPSA id h25sm3711077wml.32.2021.03.10.03.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 03:17:57 -0800 (PST)
-Date:   Wed, 10 Mar 2021 11:17:55 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-Subject: Re: [PATCH v3 06/15] mfd: Add ROHM BD71815 ID
-Message-ID: <20210310111755.GN701493@dell>
-References: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
- <be0e8cd06ed75e799c942e5076ee7b56ad658467.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
- <20210310103639.GG701493@dell>
- <a631bbc3dd3bd0f02693d1c35f9a14dbaec67cc3.camel@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7MDculd5PWLFOFwl290sy7CTqICAtBb0zJmC/83JNiY=;
+        b=bgI/AnZRt/Y+uj0t1U4nQfKI70HPpvSYx//HoIPgEP1EaQvisDECBfZw/8CV+DWTtN
+         U3zxSRtukGrF9nrvEuaSQSKXWYU9AlUe0EfX959FRfyb8wDDCzfiTxHlaSPe5aeosHfd
+         3KKDhlgv6AWCPuCNRJ6upbdPxiZApdf5vN+4yPnw04v7qmlouVqpMHXghMmp6ASnzEqw
+         c6HCa39GWhuMQdSfoLeOZMRbIhBg3D6u+3zRNLKU+2TOx4EIDDBtJroSidg6B0Vue08+
+         adQeMNm6sy4WH9X2yaJxscrnZkkiPDqA3wHtVdESARYSlmIXXANKAasqDrMT++BOYZ7+
+         vR+g==
+X-Gm-Message-State: AOAM531fVtTa3lLU1OVK5eWjcO6p4IjdT00g58znKBIGqw8Ufn3l+sfN
+        yhfWP0oIEkmS/gnVOHUF5Zk0qMNDQippnzPFEmA=
+X-Google-Smtp-Source: ABdhPJymqoFFgZdz05brxOTgEYkI3NFm4i5o0rEnCSDmm6k2DAHa0k4EB+ukDihO1Mqa2o6zn3/4hb1NiTISMd094i4=
+X-Received: by 2002:a6b:4f09:: with SMTP id d9mr2013952iob.60.1615376621486;
+ Wed, 10 Mar 2021 03:43:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a631bbc3dd3bd0f02693d1c35f9a14dbaec67cc3.camel@fi.rohmeurope.com>
+References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+ <1590564453-24499-6-git-send-email-dillon.minfei@gmail.com> <159056850384.88029.10852284922297394339@swboyd.mtv.corp.google.com>
+In-Reply-To: <159056850384.88029.10852284922297394339@swboyd.mtv.corp.google.com>
+From:   dillon min <dillon.minfei@gmail.com>
+Date:   Wed, 10 Mar 2021 19:43:05 +0800
+Message-ID: <CAL9mu0+Uh84UGQ-1EW4+eVE1cFxuxJxLTLAa0rgJ_5C2pchUgA@mail.gmail.com>
+Subject: Re: [PATCH v6 5/9] clk: stm32: Fix stm32f429's ltdc driver hang in
+ set clock rate
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        p.zabel@pengutronix.de, Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, thierry.reding@gmail.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Hua Dillon <dillonhua@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 10 Mar 2021, Vaittinen, Matti wrote:
+still need more expert to review, so just a gentle ping for this patch
 
-> Hello Lee,
-> 
-> On Wed, 2021-03-10 at 10:36 +0000, Lee Jones wrote:
-> > On Mon, 08 Mar 2021, Matti Vaittinen wrote:
-> > 
-> > > Add chip ID for ROHM BD71815 and PMIC so that drivers can identify
-> > > this IC.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > > ---
-> > >  include/linux/mfd/rohm-generic.h | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/include/linux/mfd/rohm-generic.h
-> > > b/include/linux/mfd/rohm-generic.h
-> > > index 66f673c35303..e5392bcbc098 100644
-> > > --- a/include/linux/mfd/rohm-generic.h
-> > > +++ b/include/linux/mfd/rohm-generic.h
-> > > @@ -14,6 +14,7 @@ enum rohm_chip_type {
-> > >  	ROHM_CHIP_TYPE_BD71828,
-> > >  	ROHM_CHIP_TYPE_BD9571,
-> > >  	ROHM_CHIP_TYPE_BD9574,
-> > > +	ROHM_CHIP_TYPE_BD71815,
-> > 
-> > Is there a technical reason why these can't be re-ordered?
-> 
-> No, I don't think so.
-> 
-> BTW. there will probably be a (trivial) conflict here as both this
-> series and the BD9576/BD9573 series add an ID here. Let me guess, you'd
-
-That's fine.  I will resolve that manually.
-
-> like to see them sorted?
-
-Wouldn't that be nice? :)
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On Wed, May 27, 2020 at 4:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting dillon.minfei@gmail.com (2020-05-27 00:27:29)
+> > From: dillon min <dillon.minfei@gmail.com>
+> >
+> > This is due to misuse \u2018PLL_VCO_SAI' and'PLL_SAI' in clk-stm32f4.c
+> > 'PLL_SAI' is 2, 'PLL_VCO_SAI' is 7(defined in
+> > include/dt-bindings/clock/stm32fx-clock.h).
+> >
+> > 'post_div' point to 'post_div_data[]', 'post_div->pll_num'
+> > is PLL_I2S or PLL_SAI.
+> >
+> > 'clks[PLL_VCO_SAI]' has valid 'struct clk_hw* ' return
+> > from stm32f4_rcc_register_pll() but, at line 1777 of
+> > driver/clk/clk-stm32f4.c, use the 'clks[post_div->pll_num]',
+> > equal to 'clks[PLL_SAI]', this is invalid array member at that time.
+> >
+> > Fixes: 517633ef630e ("clk: stm32f4: Add post divisor for I2S & SAI PLLs")
+> > Signed-off-by: dillon min <dillon.minfei@gmail.com>
+> > ---
+>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
