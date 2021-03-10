@@ -2,128 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8831C43381
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 10:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCC3C433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 10:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70A1064FE4
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 10:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D132664FE1
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 10:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232458AbhCJKlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 05:41:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38388 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231785AbhCJKlE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 05:41:04 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F35C061761
-        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 02:41:03 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id u14so22746054wri.3
-        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 02:41:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=WkEYLNZKWBGlnhJh5/km8rZ3DoQwSCNLt1pwHkgN/WY=;
-        b=mHQYTozuc0TTEvwola4UDXnujaWX5hjYQa9oyx2Km6taceH5yU6itTe3PHtZRoodFk
-         PcpDyrzEdhly/3+4FAgeUEG40pSos2nmuPn1KTn0DaKzmxXkOLlhaSMgX3xY0TP5yGho
-         XUAGxYyDak/7+4NtvRj+ZYLT5U1J2/9BlGZ3cDktu+mUvRsohm8uzz6kt2LvcNFTcmIJ
-         iLoeMXyTF9AvGdP4MtkZmWxddvxG8KX8rGFLE97/3fMt941pJ/GCNgLhf3sq73X85KMT
-         ZvEMyGQ06vuK16Gnxi7/pPa0ZujXMlI26tTXN4iq9PCwUotcEIAVxQcOPv9rOzFR0PW4
-         Q9ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=WkEYLNZKWBGlnhJh5/km8rZ3DoQwSCNLt1pwHkgN/WY=;
-        b=T0rErZ+eHfgCDx4AWioiAVsEzx1LzYa4VBbQ463F4v6IJxpkjg9C07H5CBfHJJWN5d
-         ZrqbCOQok7uFTgtHwOtWCrtAKYpkcHDmXTXEMI5Ex8aekAF/E5CDmkmy8t7Da6zgoeCj
-         a6z+Nig104yLFjI8kIqkmHZspT52gTRaavCas4yR4UiaptGiye9E+3vjGf+hDnsCjjVW
-         WWI3ZkGzIBHVMuFFU+5A+q/mqRsJkt7laa5OzpTlWwzGRPplK/+Gg8bSVAVlPdExSQKG
-         JaXoNXGzBYagprnFu7QdAgGKNB5Jg+AyOt/2n4m+JnpMDf6zpKUSlot/oz6lwrCP2yBF
-         MmEg==
-X-Gm-Message-State: AOAM533OJFpYPBYyU8uBIhqU2Xh7ymsyLFWnKzh8M9/rbkaDvjxGBAaA
-        nDxTUx5AoC5fdRW8CoHwGdIqew==
-X-Google-Smtp-Source: ABdhPJxwjavMwOHE+n1ODwYYFNhz44dTAKmAcPmhdGkziT2QVK5lAqeefbljMchSOuIx6t1sYrSA2w==
-X-Received: by 2002:adf:fecc:: with SMTP id q12mr2761099wrs.317.1615372862210;
-        Wed, 10 Mar 2021 02:41:02 -0800 (PST)
-Received: from dell ([91.110.221.204])
-        by smtp.gmail.com with ESMTPSA id x11sm8453405wmi.3.2021.03.10.02.41.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Mar 2021 02:41:01 -0800 (PST)
-Date:   Wed, 10 Mar 2021 10:40:58 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v3 07/15] mfd: Support for ROHM BD71815 PMIC core
-Message-ID: <20210310104058.GH701493@dell>
-References: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
- <aaec00c776c83d301cfe66685ca9c8e01cccc9d8.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
+        id S232519AbhCJKqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 05:46:39 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:18551 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230266AbhCJKqI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 05:46:08 -0500
+X-Halon-ID: cd5601ed-818d-11eb-b73f-0050569116f7
+Authorized-sender: niklas.soderlund@fsdn.se
+Received: from bismarck.berto.se (p54ac5521.dip0.t-ipconnect.de [84.172.85.33])
+        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
+        id cd5601ed-818d-11eb-b73f-0050569116f7;
+        Wed, 10 Mar 2021 11:46:04 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-clk@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] clk: renesas: r8a7795: Add TMU clocks
+Date:   Wed, 10 Mar 2021 11:45:54 +0100
+Message-Id: <20210310104554.3281912-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aaec00c776c83d301cfe66685ca9c8e01cccc9d8.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 08 Mar 2021, Matti Vaittinen wrote:
+Add TMU{0,1,2,3,4} clocks.
 
-> Add core support for ROHM BD71815 Power Management IC.
-> 
-> The IC integrates regulators, a battery charger with a coulomb counter,
-> a real-time clock (RTC), clock gate and general-purpose outputs (GPO).
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
-> Changes since v2:
->   - styling / clean-ups suggested by Lee
->   - corrected clk-mode dt property values to match changed bindings
-> 
->  drivers/mfd/Kconfig              |  15 +-
->  drivers/mfd/rohm-bd71828.c       | 486 +++++++++++++++++++-------
->  include/linux/mfd/rohm-bd71815.h | 563 +++++++++++++++++++++++++++++++
->  include/linux/mfd/rohm-bd71828.h |   3 +
->  4 files changed, 934 insertions(+), 133 deletions(-)
->  create mode 100644 include/linux/mfd/rohm-bd71815.h
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+* Changes since v1
+- Set TMU4 parent clock to S3D2 for ES1.
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[...]
-
-> diff --git a/include/linux/mfd/rohm-bd71815.h b/include/linux/mfd/rohm-bd71815.h
-> new file mode 100644
-> index 000000000000..9927aadac234
-> --- /dev/null
-> +++ b/include/linux/mfd/rohm-bd71815.h
-> @@ -0,0 +1,563 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + *
-
-Nit: If you rework this for any reason, please remove this line.
-
-For my own reference (apply this as-is to your sign-off block):
-
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 068018ae3c6e2254..c32d2c678046939d 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -128,6 +128,11 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("fdp1-2",		 117,	R8A7795_CLK_S2D1), /* ES1.x */
+ 	DEF_MOD("fdp1-1",		 118,	R8A7795_CLK_S0D1),
+ 	DEF_MOD("fdp1-0",		 119,	R8A7795_CLK_S0D1),
++	DEF_MOD("tmu4",			 121,	R8A7795_CLK_S0D6),
++	DEF_MOD("tmu3",			 122,	R8A7795_CLK_S3D2),
++	DEF_MOD("tmu2",			 123,	R8A7795_CLK_S3D2),
++	DEF_MOD("tmu1",			 124,	R8A7795_CLK_S3D2),
++	DEF_MOD("tmu0",			 125,	R8A7795_CLK_CP),
+ 	DEF_MOD("scif5",		 202,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("scif4",		 203,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("scif3",		 204,	R8A7795_CLK_S3D4),
+@@ -362,6 +367,7 @@ static const unsigned int r8a7795es1_mod_nullify[] __initconst = {
+ static const struct mssr_mod_reparent r8a7795es1_mod_reparent[] __initconst = {
+ 	{ MOD_CLK_ID(118), R8A7795_CLK_S2D1 },	/* FDP1-1 */
+ 	{ MOD_CLK_ID(119), R8A7795_CLK_S2D1 },	/* FDP1-0 */
++	{ MOD_CLK_ID(121), R8A7795_CLK_S3D2 },	/* TMU4 */
+ 	{ MOD_CLK_ID(217), R8A7795_CLK_S3D1 },	/* SYS-DMAC2 */
+ 	{ MOD_CLK_ID(218), R8A7795_CLK_S3D1 },	/* SYS-DMAC1 */
+ 	{ MOD_CLK_ID(219), R8A7795_CLK_S3D1 },	/* SYS-DMAC0 */
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.30.1
+
