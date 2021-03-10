@@ -2,109 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF1C433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B5CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1FBB64FE7
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B5C64FE8
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 11:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231907AbhCJLoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 06:44:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52256 "EHLO
+        id S231382AbhCJLvC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 06:51:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232425AbhCJLoV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 06:44:21 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020DDC06174A;
-        Wed, 10 Mar 2021 03:44:19 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id i8so17533119iog.7;
-        Wed, 10 Mar 2021 03:44:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=op8MuAs4SRxmTKVvah22QByz3q7Mi3iArZEjUk+Thxk=;
-        b=tbZ0SW438zSVkyxkrUhPs282MdsJiT0nydSL1+q+VaeYCp1wR8gU7zUe/TUlSYglgs
-         iIIIODc35S1SjI7uAF2/h03PXLNXux2vFLXcDxyq/ltPNbSZZ+PQHSXmj/FRCFuqxbto
-         lxjj5dWzSescFEfPuLEUc5QVzR9hZEli26Wt4Q5IAuiWYr35c/1Xe+qihbPXQ9JSDBqH
-         YPQ8wM3w5MZBkLolu9DGVN443g1F1hXK4D9B1/hjCnDMAeLrNQDuck9jIUCkskFy6Ezb
-         /0N+E/Ry/VxfIWVLKcCCb5RLWGmjPoNitIV/QJL26I8g429kqEVv8PTtGYxzzuTnST9l
-         yKUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=op8MuAs4SRxmTKVvah22QByz3q7Mi3iArZEjUk+Thxk=;
-        b=T9FllSKU9cuQ4sNFzBHPGXK7xAQbfIZbKJ6a+VHKqczrtsxo2vDD4WOUZc1Zq5v95V
-         d/bx4UnPC5untZs8A98mByhmh0zaUbDDrapMIvmiICj4vvgfSrHlIwGw1mNkFeWI5mIy
-         Mnpj1dvWVDz++CiLONuX3nW9z/vcO8TWy1VwSXa+Z/zOpzsxn/w6vil0bBij/dvZ4lBB
-         c2sYLwrxh56AST/gpxH9/wQheqbFUoC7RRcBo5xz/NImICUGNT1TY8FJZNDCXL4dBYrL
-         4sGgSM9426gWZaIdXL0L5dPwwHCz9Eg3HrgIt2q5lBS7STC8adO6NQ+r6o20xWKOCu0a
-         /T0g==
-X-Gm-Message-State: AOAM531G87/qsSU6YkmzuYqazIj3sygnFIMFi24JhX6chaM6Rc7WDLjF
-        +pvzLjL6nVAMWkyof0/Uktfhmdkx+Ea/vCnjuP0=
-X-Google-Smtp-Source: ABdhPJz5M2eWPKf4NxOL+8DZYRTGWBX7CV9I1yHd6MspCfR/Ca1EfgXEzeeymZdkKrLM+bP4UCLuaOhuoetCi1bJpNg=
-X-Received: by 2002:a5e:a519:: with SMTP id 25mr1857796iog.3.1615376658157;
- Wed, 10 Mar 2021 03:44:18 -0800 (PST)
+        with ESMTP id S231517AbhCJLux (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 06:50:53 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D4DC061760
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 03:50:53 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lJxMS-0000dy-H8; Wed, 10 Mar 2021 12:50:44 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1lJxMQ-0001h5-O7; Wed, 10 Mar 2021 12:50:42 +0100
+Date:   Wed, 10 Mar 2021 12:50:41 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com
+Subject: Re: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
+Message-ID: <20210310115041.s7tzvgdpksws6yss@pengutronix.de>
+References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
+ <20210118123244.13669-12-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
-References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
- <1590564453-24499-7-git-send-email-dillon.minfei@gmail.com> <159056850835.88029.9264848839121822798@swboyd.mtv.corp.google.com>
-In-Reply-To: <159056850835.88029.9264848839121822798@swboyd.mtv.corp.google.com>
-From:   dillon min <dillon.minfei@gmail.com>
-Date:   Wed, 10 Mar 2021 19:43:42 +0800
-Message-ID: <CAL9mu0KBKVufGx96=_5dWokC0uJBW35TnFxEofXA44QhpEK6-g@mail.gmail.com>
-Subject: Re: [PATCH v6 6/9] clk: stm32: Fix ltdc's clock turn off by
- clk_disable_unused() after kernel startup
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        p.zabel@pengutronix.de, Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>, thierry.reding@gmail.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Hua Dillon <dillonhua@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ul6qbztvwf7nowqu"
+Content-Disposition: inline
+In-Reply-To: <20210118123244.13669-12-nsaenzjulienne@suse.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-still need more expert to review, so just a gentle ping for this patch
 
-On Wed, May 27, 2020 at 4:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting dillon.minfei@gmail.com (2020-05-27 00:27:30)
-> > From: dillon min <dillon.minfei@gmail.com>
-> >
-> > stm32's clk driver register two ltdc gate clk to clk core by
-> > clk_hw_register_gate() and clk_hw_register_composite()
-> >
-> > first: 'stm32f429_gates[]', clk name is 'ltdc', which no user to use.
-> > second: 'stm32f429_aux_clk[]', clk name is 'lcd-tft', used by ltdc driver
-> >
-> > both of them point to the same offset of stm32's RCC register. after
-> > kernel enter console, clk core turn off ltdc's clk as 'stm32f429_gates[]'
-> > is no one to use. but, actually 'stm32f429_aux_clk[]' is in use.
-> >
-> > Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
-> > Signed-off-by: dillon min <dillon.minfei@gmail.com>
-> > ---
->
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+--ul6qbztvwf7nowqu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Nicolas,
+
+On Mon, Jan 18, 2021 at 01:32:44PM +0100, Nicolas Saenz Julienne wrote:
+> diff --git a/drivers/pwm/pwm-raspberrypi-poe.c b/drivers/pwm/pwm-raspberr=
+ypi-poe.c
+> new file mode 100644
+> index 000000000000..ca845e8fabe6
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-raspberrypi-poe.c
+> @@ -0,0 +1,220 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> + * For more information on Raspberry Pi's PoE hat see:
+> + * https://www.raspberrypi.org/products/poe-hat/
+> + *
+> + * Limitations:
+> + *  - No disable bit, so a disabled PWM is simulated by duty_cycle 0
+> + *  - Only normal polarity
+> + *  - Fixed 12.5 kHz period
+> + *
+> + * The current period is completed when HW is reconfigured.
+
+nice.
+
+> + */
+> +
+> [...]
+> +static int raspberrypi_pwm_apply(struct pwm_chip *chip, struct pwm_devic=
+e *pwm,
+> +				 const struct pwm_state *state)
+> +{
+> +	struct raspberrypi_pwm *rpipwm =3D raspberrypi_pwm_from_chip(chip);
+> +	unsigned int duty_cycle;
+> +	int ret;
+> +
+> +	if (state->period < RPI_PWM_PERIOD_NS ||
+> +	    state->polarity !=3D PWM_POLARITY_NORMAL)
+> +		return -EINVAL;
+> +
+> +	if (!state->enabled)
+> +		duty_cycle =3D 0;
+> +	else if (state->duty_cycle < RPI_PWM_PERIOD_NS)
+> +		duty_cycle =3D DIV_ROUND_DOWN_ULL(state->duty_cycle * RPI_PWM_MAX_DUTY,
+> +						RPI_PWM_PERIOD_NS);
+> +	else
+> +		duty_cycle =3D RPI_PWM_MAX_DUTY;
+> +
+> +	if (duty_cycle =3D=3D rpipwm->duty_cycle)
+> +		return 0;
+> +
+> +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_CUR_DUTY=
+_REG,
+> +					   duty_cycle);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to set duty cycle: %pe\n",
+> +			ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * This sets the default duty cycle after resetting the board, we
+> +	 * updated it every time to mimic Raspberry Pi's downstream's driver
+> +	 * behaviour.
+> +	 */
+> +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_DUTY=
+_REG,
+> +					   duty_cycle);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Failed to set default duty cycle: %pe\n",
+> +			ERR_PTR(ret));
+> +		return ret;
+
+This only has an effect for the next reboot, right? If so I wonder if it
+is a good idea in general. (Think: The current PWM setting enables a
+motor that makes a self-driving car move at 100 km/h. Consider the rpi
+crashes, do I want to car to pick up driving 100 km/h at power up even
+before Linux is up again?) And if we agree it's a good idea: Should
+raspberrypi_pwm_apply return 0 if setting the duty cycle succeeded and
+only setting the default didn't?
+
+Other than that the patch looks fine.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--ul6qbztvwf7nowqu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBIso0ACgkQwfwUeK3K
+7An3RQgAk7LiLPojRn3qgp/eEHGcY24aQQQnYHXFzwvNNsqfY9q1T6NOjwiJlIBj
+owBPtq8IteT+V4qhiiQuB4MLMbNeaBZ+iR4l7OVDwzwuPrHtZuGFxz7vZumxdIET
+Eqq1G++2nk48ZFJOUnKeWM733IgWZQwaM0XEr04i58ZjnoJ9mZo7g4nC2c8O6F6A
+HQshnIGC2hEIZbpmpQrBOMI92Uh0pt03ScuCXM4o/YUuKxb8oeygwt963lrJwhXp
+Vb1/aPD/lELD/kAAeOa3cje1nAdfEJPzH0kjIMfXNTkX8TeEEA0klNEEOXkVxrTP
+0c+bK2SaxSe/2i1555OooX7x1H2VCg==
+=540n
+-----END PGP SIGNATURE-----
+
+--ul6qbztvwf7nowqu--
