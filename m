@@ -2,63 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02AFC4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD447C43332
 	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93F9064FFB
+	by mail.kernel.org (Postfix) with ESMTP id C7D2864FF6
 	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232213AbhCJF0R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 00:26:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54812 "EHLO
+        id S232354AbhCJF0T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 00:26:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232301AbhCJFZv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:25:51 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B3AC06174A
-        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:25:50 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id w34so9554595pga.8
-        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:25:50 -0800 (PST)
+        with ESMTP id S232323AbhCJF0D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:26:03 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33053C061762
+        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:26:03 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id d23so4691502plq.2
+        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:26:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rCnpcLpuqTdHmtaa7vEu9Tx55M7Ej3EbyXNq00c5adU=;
-        b=sJR0eTnWGvsWHfKsGs1GxG5L1cwoqOeg3Yd0ioLF14Xa3dmshqNyd1Gl4BzpsteYUz
-         DHpLTFAWqi5QMX8fFbywmvPnSZBQtkuHyoyvXfxDn0/JLUjpY6vYxSyHcrE7RqqfC804
-         4WgBcuXlgH9BPCmvnFp8UKsJRVJLQQezriFNkQvo9y+Z+Zthu2nsTVZJeE9WNj8g6jA9
-         cELC7WpcQnuQJFdOIm3iD8rOdfsdx46CY7iRF3/2Mee6KJyUU5S+fPq4MHxJk0eT2TDO
-         lhJvDD6/zSv5yBOXG/fI4ppo/D0ryDRleseOhCQuueTh3ASNP/xDxukS+M77Mnbxb5No
-         IAww==
+        bh=MyRCvPaVcQpraU+Ca0FoAU2tyJOU/YwufLj6r26LxEI=;
+        b=D6lyYhKUOzYxKJP9wW1OlrsACoqZ0od54Zu2hf1RH5ThM8X+8haQ322vVyG0VgGYG8
+         a3OvxE2iPvBMOand9IusfG8625ACzjFrUixK3WHIif4P951pozwIY85ijfSiSPPjkPmq
+         hJqSd/n8HdGW68p3z0QW0LUgDbDlrte3gxd3M/NWvUhDJVQ2KPSaCDFaws6YNWUxg0rY
+         tagg1+7vwkHCLiZ6weBdJhTmhavbvgLhu2TCKMLZeNGHa2o6aXHlczxFoVAjgYoUveKv
+         mkVBqmB+ffwF6l49jMrZmLQbuEP++cdfYQtCBkosOQHoqdGBnNc3uDaqwXOs4z73XnLQ
+         nQ9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rCnpcLpuqTdHmtaa7vEu9Tx55M7Ej3EbyXNq00c5adU=;
-        b=HeNJgwZ7EQjNZpKf/rTa23mvQpAl38qlJgXSflvIRvP/7sGXFQKrDXSrsfzsU++RTT
-         B18J7LUHzVXBX4z+3zEXcypNH6b8i9/Q5Lk6WOgTiaj29SVeCb01tmWx/2AQtwAJPJxa
-         PIGbPjIrmILQChmmtJtwvfS9/7Bp+HT8RSkTDkny+aEP4vYKa2UrDK40K8X+5+JSYnoc
-         aBmv6/fE7NVmJ1ZjmYguImWYvcqbMTCaXmRYfLd1m9kb2YTcxS40Gtgkcnc4Q6Yev/IX
-         fHb0oNUuD45Zx4Q1snUNy79mhrFYWoeRX61wngZKP4bQ5iFE06IaVIAeTprgoI4kjfh9
-         HNkA==
-X-Gm-Message-State: AOAM530OCgMR4Iy9xhV25RC3/VwovWAWXD2/TjqgAPdMkCuVJiUKTliS
-        8LRL+HKPBIatj65rMIizoxnBBw==
-X-Google-Smtp-Source: ABdhPJzmRPeOWu16uPBVPML5utQZj0PB0c1OsJTfAdIhHMoFqp1dfNL6o3ViJOXYPndUKRT5BvtY4Q==
-X-Received: by 2002:a65:6a44:: with SMTP id o4mr1313921pgu.312.1615353950393;
-        Tue, 09 Mar 2021 21:25:50 -0800 (PST)
+        bh=MyRCvPaVcQpraU+Ca0FoAU2tyJOU/YwufLj6r26LxEI=;
+        b=DZL7getxXKwZ7r36NM4+fId4PWpQD39C7NFX/u6pHTOrtL6/W0PizqgMJ/Z8USyRmk
+         OXIVimL+kBgrqy82y0qt84kW0k29nTc4zG5X0b+wei8Iq29FILSkFeH3M2RmtmWrWCgW
+         ee0RebnIeBfsjsPfmX4MAaKUQftRugXRla83HbyYOemJne+BPPdcaLOSlbB1AKtpCB9E
+         4YKwmqFPLv0l+L0h+2/hf0Xi1YyNSN7L+IiU7yvVb3FOFhEp3pVUgI4kSdlG4rGGx0tZ
+         GHW/BmuCLWjni9cC2u5mKoMILRVqBJL7QZMQ1jZMnVXqJprb5goBpg7MFaqjwb1li1gk
+         xJVw==
+X-Gm-Message-State: AOAM530tDO0Il9sa1Yo5R0hzpo5n51NJgkQDCxvNWiBKsm6xOhF+t1JG
+        DdWmSDpRuTv5HQZELi/+RQc8yA==
+X-Google-Smtp-Source: ABdhPJz3/IVhZZduaRV272ANjvrN6PpFXwgaoJQOGccIirWhB2t2MT3WW+JVnlbUGlhy+GyZuy3QzA==
+X-Received: by 2002:a17:90a:987:: with SMTP id 7mr1729387pjo.97.1615353962846;
+        Tue, 09 Mar 2021 21:26:02 -0800 (PST)
 Received: from localhost.localdomain ([2402:3a80:9f4:a436:21bd:7573:25c0:73a0])
-        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.43
+        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Mar 2021 21:25:50 -0800 (PST)
+        Tue, 09 Mar 2021 21:26:02 -0800 (PST)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org,
+Cc:     bhupesh.sharma@linaro.org, Vinod Koul <vkoul@kernel.org>,
         Thara Gopinath <thara.gopinath@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -70,9 +69,9 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH 4/8] dt-bindings/clock: qcom: sm8250: Add gcc clocks for sm8250 crypto block
-Date:   Wed, 10 Mar 2021 10:54:59 +0530
-Message-Id: <20210310052503.3618486-5-bhupesh.sharma@linaro.org>
+Subject: [PATCH 6/8] clk: qcom: Add gcc clocks for crypto block on sm8250
+Date:   Wed, 10 Mar 2021 10:55:01 +0530
+Message-Id: <20210310052503.3618486-7-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
 References: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
@@ -83,9 +82,10 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 This patch adds the global clock controller (gcc) clocks required
-by the sm8250 crypto block to function to the dt-binding header file
-(namely: GCC_CE1_AHB_CLK, GCC_CE1_AXI_CLK and GCC_CE1_CLK).
+by the sm8250 crypto block to function, namely: GCC_CE1_AHB_CLK,
+GCC_CE1_AXI_CLK and GCC_CE1_CLK.
 
+Cc: Vinod Koul <vkoul@kernel.org>
 Cc: Thara Gopinath <thara.gopinath@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Rob Herring <robh+dt@kernel.org>
@@ -101,23 +101,71 @@ Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
- include/dt-bindings/clock/qcom,gcc-sm8250.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/qcom/gcc-sm8250.c | 44 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-sm8250.h b/include/dt-bindings/clock/qcom,gcc-sm8250.h
-index 7b7abe327e37..6c58320238c4 100644
---- a/include/dt-bindings/clock/qcom,gcc-sm8250.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sm8250.h
-@@ -207,6 +207,9 @@
- #define GCC_VIDEO_AXI0_CLK					197
- #define GCC_VIDEO_AXI1_CLK					198
- #define GCC_VIDEO_XO_CLK					199
-+#define GCC_CE1_AHB_CLK						200
-+#define GCC_CE1_AXI_CLK						201
-+#define GCC_CE1_CLK						202
+diff --git a/drivers/clk/qcom/gcc-sm8250.c b/drivers/clk/qcom/gcc-sm8250.c
+index ab594a0f0c40..0df5ac346c93 100644
+--- a/drivers/clk/qcom/gcc-sm8250.c
++++ b/drivers/clk/qcom/gcc-sm8250.c
+@@ -1198,6 +1198,47 @@ static struct clk_branch gcc_camera_xo_clk = {
+ 	},
+ };
  
- /* GCC resets */
- #define GCC_GPU_BCR						0
++static struct clk_branch gcc_ce1_ahb_clk = {
++	.halt_reg = 0x4100c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.hwcg_reg = 0x4100c,
++	.hwcg_bit = 1,
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(3),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ce1_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ce1_axi_clk = {
++	.halt_reg = 0x41008,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ce1_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_ce1_clk = {
++	.halt_reg = 0x41004,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(5),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_ce1_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_cfg_noc_usb3_prim_axi_clk = {
+ 	.halt_reg = 0xf07c,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -3325,6 +3366,9 @@ static struct clk_regmap *gcc_sm8250_clocks[] = {
+ 	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
+ 	[GCC_CAMERA_SF_AXI_CLK] = &gcc_camera_sf_axi_clk.clkr,
+ 	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
++	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
++	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
++	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
+ 	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
+ 	[GCC_CFG_NOC_USB3_SEC_AXI_CLK] = &gcc_cfg_noc_usb3_sec_axi_clk.clkr,
+ 	[GCC_CPUSS_AHB_CLK] = &gcc_cpuss_ahb_clk.clkr,
 -- 
 2.29.2
 
