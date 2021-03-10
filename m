@@ -2,82 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5ABC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BF2C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 381FB64F4D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D5565000
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 13:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232565AbhCJNPa convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 08:15:30 -0500
-Received: from mail-vs1-f45.google.com ([209.85.217.45]:43020 "EHLO
-        mail-vs1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231519AbhCJNPB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 08:15:01 -0500
-Received: by mail-vs1-f45.google.com with SMTP id w76so8686960vsw.10;
-        Wed, 10 Mar 2021 05:15:00 -0800 (PST)
+        id S234783AbhCJNc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 08:32:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234461AbhCJNbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 08:31:40 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650FAC061761
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 05:31:40 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id f22-20020a7bc8d60000b029010c024a1407so11031696wml.2
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 05:31:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=bMOvPe8N8rGJXOLjCxzS5gSb/gTvdEZoEOlGF4GuSFs=;
+        b=NLPCffky6G7GzaObhllkOllIgtNjBeMsGjkEMASPl+1pYHywRsMYpm2dtlcyg8Mib8
+         KwVVv4nAqkmnzcogt078Dvez0a507CpBKA+tJqKRJBcxaYDNWIi7zlQV2h4gZ9wKz3L6
+         j3kQgf/A+1u4o9qE7lMpQ7EEJOiZI6/9tl0x/oaILLtId4rQGq0DiqT9WTLHIMixEUWJ
+         Osd21hXPUX+hEuewL193hn1+YN+pQznzUc5B9A/MJ13U8ort3kQ35MparokcriCZU9YH
+         hwDXRCPg/vCK/Lthwuf6UThwdLUGaK/BxDJ9Azo/RtJUMNwP/L+WSKFIGnylkhmpWbmH
+         OAFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QDfO23mATK6CqDaHcYM85sjaBlq0z2F1PZtWMpKT3Sw=;
-        b=r0xsMCINSPdWlSdOm+MIcvXUWRV4cbZ5g7HS6T504ntJj9Xotsgeb1EMvCzt4X3zTf
-         p+TlK/K6Ww41soWls67EMZRNThWKlPz+H5gQlrBPOTUlaAhoL27P01JApuNrqHBB8ohA
-         KhPdjXYAFXC0XVYEfm7tLTvQ/0CCr4ibfHQ+tXg73vFsqQyZevfq+cBK3u2DgFNzCgiw
-         l+rjqoI+XRFpKWQTuv2FdaFtJdpo2vv72/2IArQ3HVscwgNQ8s8xGhYMX/YWfyoVzIiJ
-         n3ofaGnO21G//Mc+3PfRorI3ouY3qGwJ+5gzH7pZdBMP/5iJI1QWRGp+phKWI0iJxkaz
-         sfMA==
-X-Gm-Message-State: AOAM532ZJpE9ENJVdn2H86VavJgf53H8I3twzv+r1mptKUao6gbn30EL
-        KGm/I+DE/TabKSCXPhr7OEB0aVkA3NfQKtHmADU=
-X-Google-Smtp-Source: ABdhPJwOpI5TUFI2LAahJvjU1nMrfVI3/HHEDjfc939oZUxyrLf/J72sVqysnvB/fK/u6KRSfxQ7MzEF9Kn+bQYqARg=
-X-Received: by 2002:a67:ef0e:: with SMTP id j14mr1168284vsr.40.1615382100365;
- Wed, 10 Mar 2021 05:15:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=bMOvPe8N8rGJXOLjCxzS5gSb/gTvdEZoEOlGF4GuSFs=;
+        b=V13UUtZooqJhJu4pGInrIPxhmz0rV1tCef1PDd2C6kqjKqKzNB370IkeIaynjVVwm/
+         8ITWa59eqBp/VC+y8gV5SWj89Rk6RD+x+JBVVnR8+M9K0wc3pF8qZ/R97L7xuSD631Pb
+         ATuxuLTdX4hgSZJh59N+HbOwdwWxZDLHahZVzrJZg8WtfBLU8KTQUGCAm8EU5Th5cFa7
+         XINF+5wys/Y9Dg13mIRAzqqTdM9T+wCT7NhP7AXtuIvxRjWSsxiqJNUnuCcxFCxsWOpL
+         vNuf4QkJTPQhEHcrwqGlqTvy91HsaC05twB+1kXhwHJ1wo4jMbxR4BRJ70clIBy7l8+r
+         d4ng==
+X-Gm-Message-State: AOAM531TCSI12FPUigsu1hUXuUPf1H0lM6ygILFvzm12aHZdvclpxpyo
+        1v2JsE4VxhhA7tTwgOMNAe3/n28KC0mgvA==
+X-Google-Smtp-Source: ABdhPJyfXWtzHaUWQl/M4ZEr0SSi/Fz8xcU7IHooODBN0RLT7MhUmViUHHQQEekoUzXnBL6YUKMhJQ==
+X-Received: by 2002:a05:600c:4a06:: with SMTP id c6mr3384475wmp.35.1615383098982;
+        Wed, 10 Mar 2021 05:31:38 -0800 (PST)
+Received: from dell ([91.110.221.204])
+        by smtp.gmail.com with ESMTPSA id j13sm13409331wrt.29.2021.03.10.05.31.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 05:31:38 -0800 (PST)
+Date:   Wed, 10 Mar 2021 13:31:36 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     linux-power <linux-power@fi.rohmeurope.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
+Subject: Re: [PATCH v3 06/15] mfd: Add ROHM BD71815 ID
+Message-ID: <20210310133136.GQ701493@dell>
+References: <cover.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
+ <be0e8cd06ed75e799c942e5076ee7b56ad658467.1615198094.git.matti.vaittinen@fi.rohmeurope.com>
+ <20210310103639.GG701493@dell>
+ <a631bbc3dd3bd0f02693d1c35f9a14dbaec67cc3.camel@fi.rohmeurope.com>
+ <20210310111755.GN701493@dell>
+ <e7bb00af76de65c60061c58a570d5b6f40961eb0.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20210310104554.3281912-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20210310104554.3281912-1-niklas.soderlund+renesas@ragnatech.se>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 10 Mar 2021 14:14:49 +0100
-Message-ID: <CAMuHMdU9e43174aSMb6BNWavVMNBv7Gs2eSWenX-soZ-nX+BNA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r8a7795: Add TMU clocks
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e7bb00af76de65c60061c58a570d5b6f40961eb0.camel@fi.rohmeurope.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Niklas,
+On Wed, 10 Mar 2021, Matti Vaittinen wrote:
 
-On Wed, Mar 10, 2021 at 11:46 AM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add TMU{0,1,2,3,4} clocks.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
-> * Changes since v1
-> - Set TMU4 parent clock to S3D2 for ES1.
+> On Wed, 2021-03-10 at 11:17 +0000, Lee Jones wrote:
+> > On Wed, 10 Mar 2021, Vaittinen, Matti wrote:
+> > 
+> > > Hello Lee,
+> > > 
+> > > On Wed, 2021-03-10 at 10:36 +0000, Lee Jones wrote:
+> > > > On Mon, 08 Mar 2021, Matti Vaittinen wrote:
+> > > > 
+> > > > > Add chip ID for ROHM BD71815 and PMIC so that drivers can
+> > > > > identify
+> > > > > this IC.
+> > > > > 
+> > > > > Signed-off-by: Matti Vaittinen <
+> > > > > matti.vaittinen@fi.rohmeurope.com>
+> > > > > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > > > > ---
+> > > > >  include/linux/mfd/rohm-generic.h | 1 +
+> > > > >  1 file changed, 1 insertion(+)
+> > > > > 
+> > > > > diff --git a/include/linux/mfd/rohm-generic.h
+> > > > > b/include/linux/mfd/rohm-generic.h
+> > > > > index 66f673c35303..e5392bcbc098 100644
+> > > > > --- a/include/linux/mfd/rohm-generic.h
+> > > > > +++ b/include/linux/mfd/rohm-generic.h
+> > > > > @@ -14,6 +14,7 @@ enum rohm_chip_type {
+> > > > >  	ROHM_CHIP_TYPE_BD71828,
+> > > > >  	ROHM_CHIP_TYPE_BD9571,
+> > > > >  	ROHM_CHIP_TYPE_BD9574,
+> > > > > +	ROHM_CHIP_TYPE_BD71815,
+> > > > 
+> > > > Is there a technical reason why these can't be re-ordered?
+> > > 
+> > > No, I don't think so.
+> > > 
+> > > BTW. there will probably be a (trivial) conflict here as both this
+> > > series and the BD9576/BD9573 series add an ID here. Let me guess,
+> > > you'd
+> > 
+> > That's fine.  I will resolve that manually.
+> 
+> Thanks :)
+> 
+> > 
+> > > like to see them sorted?
+> > 
+> > Wouldn't that be nice? :)
+> Aesthetics is not really my cup of tea. OTOH, if amount of IDs grow,
+> then sorting helps spotting whether some IC has an ID here. So yes, it
+> kind of makes sense.
 
-Thanks for the update!
+By 'nice' I don't mean 'pretty'.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.13.
+I mean 'improving readability/maintainability would be nice'.
 
-Gr{oetje,eeting}s,
+> Can you do sorting while resolving the conflict between series or do
+> you want me to
+> a) do sorting if (when) I re-spin the series
+> b) send separate sorting patch as a part of this series
+> c) send sepatate sorting patch after all the pending patches touching
+> these IDs have been merged?
 
-                        Geert
+I'll let you use your imagination.
+
+I just noticed that the latest entry did not fit well inside the
+current list.  Why don't you start by putting that in the list where
+it makes the most sense i.e. somewhere near ROHM_CHIP_TYPE_BD71828,
+and see how you get on.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
