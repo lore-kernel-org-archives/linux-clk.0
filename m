@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E0AC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5122EC43331
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDAA64FF4
+	by mail.kernel.org (Postfix) with ESMTP id 024BC64FF7
 	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbhCJFZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 00:25:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54684 "EHLO
+        id S231398AbhCJFZp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 00:25:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232131AbhCJFZY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:25:24 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 622FFC061761
-        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:25:24 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id gb6so927280pjb.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:25:24 -0800 (PST)
+        with ESMTP id S232191AbhCJFZa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:25:30 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80436C061760
+        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:25:30 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id g4so10619207pgj.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:25:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lmRk4W9psPWHB+/Q1B7Q6YGKf/tXK67nMAE63UGJDWU=;
-        b=HmOgRJjIG7OX0jjpBPFCcoNkZGVp9FjfUwR4gDs5cpJzHgHyQqkNjqE0q+5vj2gZsS
-         xIumY9RzZ1zZlRXqP6McPi2HXAu1tVO6Xq/DfxMyAIofnQVm0L0qMgjMD744Sw8Ds1w8
-         gCRUBY6d43wawzhoccso9X5MNTO3vutxcjzkH96MziYlSU2MLnBI+Gxnx8EEf5CDdz+Q
-         3lqgTCsMHmoIotfQjaFu6+q30yU86HXDVblHD8iB26pm2btY5ejtRfVtdAnNaSKZMwdC
-         96x1dpmFIthR4PShQrUCXo34CYDkeD6vsiqEBs152t4Hy95P86fsrTjb7D9RoKBUDm20
-         /Tbw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=00Qj3y18Y6HEZTQemqqh4Pl0Lyv+swPhAM+M8xYZg30=;
+        b=HQ9BQEzxD10uSnjlp0tQau1zqNP1/AQG2ieW3xcPQZMFBQ/AFgIqZJfNBJkIztjKqH
+         JsVzZvt7BWvGKJIH8CjXAK/fj6QVO03l/F6wKZZeCFpskXmHneQEI375vKdWp9xUqsxq
+         g+VOFQOX8E2Fu4milwd7D3xnb/VVbd7cN88GuHts5IF03WVSiUmKeZM3TupXr2roB9oT
+         TGBQXafPfOpVIuzxQvGRYluaBk6qt+XUEEX5QHn0FkTm/ya3EbPm5gw/Gvgj3hXC8Sek
+         E+whyWF9itbCwqV91MF+ecgyCS5cqxG52nWHZ5524H/2xxKPJI47s9oaZ9mgPOZJcXIS
+         TZ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lmRk4W9psPWHB+/Q1B7Q6YGKf/tXK67nMAE63UGJDWU=;
-        b=UjCsch0c6BfBUTDUgg5M5z7UqxYjoCKUXii/YmVoOTrHIy5seSJUBvmM9ExagvFPw8
-         89PJuk8mNIuaJ7esDHfVAfQumabX1AaXGukNo+yTwobas++n4eEnWB2yoS9fCb+HK8T8
-         /XrUqI1bQGcL1YwJnX29U1BDtpjlRW7X9n4quQioqbJiOtMhxLgMgyzX1YB//pXPttNv
-         LjmYQvfni7o5NGrm/RPDSUcrw9k+6EHkRGwGFEHAvfP/DS8yg+c8YTDy9cmJZ8k6d4BW
-         yPhHxa6LGU3AeHW53bbGs/cqfcPRd9P/CzS+6fFVsEj28a4P6w9VUfJVECCROHQpBrKv
-         grYA==
-X-Gm-Message-State: AOAM5302M9G7yA2LhcT5ilo/jXrJofStoUeF0bAcvht4RZYJ9de5NMiS
-        Xn6EAM0onsw6ZuRwhSUecQ7G8w==
-X-Google-Smtp-Source: ABdhPJyPBZ8rYvr2UCW1gOkvSX4hRlcWea4qu2bNh7MA1mhWDB3UAODRk9IL8RPxRR16pSQuHPo7vw==
-X-Received: by 2002:a17:90a:c257:: with SMTP id d23mr1734557pjx.102.1615353924025;
-        Tue, 09 Mar 2021 21:25:24 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=00Qj3y18Y6HEZTQemqqh4Pl0Lyv+swPhAM+M8xYZg30=;
+        b=W65jKTO+kGFC3VqAmMIpFJBU3CRLjRyCII6ggzdiQjP30hII923cKa8O/mvKlWI10u
+         W9hv66HLM53x4/KOQ0VMEztY4nV2pVVcCArmGNZoXwtSykI/EEkBvNgzesRR/7j4+F6A
+         OA8LejQK6OCZew/nl1AsgopK725r8eIJT/Qh8hFShjpHWfVT8tJL4RDwf8WuI/07riEk
+         YzIoSfUoxNnjHNOaAYicRwdi4V2ZL4kTzCzMzP7+Gj/pY/fDWkZYPME9T8AGgLDamVoG
+         Wl017xJpU+SSsg4EBdooQ3ONmrUSD3viYO6kiBWedo5Xtjk+VjBTpKcqPmICJJaSm9/4
+         hLJw==
+X-Gm-Message-State: AOAM532EOfdYJ79xRLAm8SXk4Id/C4yHy5044apibrxaZMGIuP6sIL0/
+        INLAwE3DNLzkk1f+ha08I0eY1g==
+X-Google-Smtp-Source: ABdhPJwfyJA7R9hJ6TqvcQhg8m3LL00lMVdevq2ilYQbeQdkIkW5NLWx+2xHXbaKD10ANJEyIvRakg==
+X-Received: by 2002:a63:207:: with SMTP id 7mr1298617pgc.346.1615353930118;
+        Tue, 09 Mar 2021 21:25:30 -0800 (PST)
 Received: from localhost.localdomain ([2402:3a80:9f4:a436:21bd:7573:25c0:73a0])
-        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.17
+        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Mar 2021 21:25:23 -0800 (PST)
+        Tue, 09 Mar 2021 21:25:29 -0800 (PST)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -69,25 +69,22 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH 0/8] Enable Qualcomm Crypto Engine on sm8250
-Date:   Wed, 10 Mar 2021 10:54:55 +0530
-Message-Id: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
+Subject: [PATCH 1/8] dt-bindings: qcom-qce: Add 'iommus' to required properties
+Date:   Wed, 10 Mar 2021 10:54:56 +0530
+Message-Id: <20210310052503.3618486-2-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
+References: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Qualcomm crypto engine is also available on sm8250 SoC.
-It supports hardware accelerated algorithms for encryption
-and authentication. It also provides support for aes, des, 3des
-encryption algorithms and sha1, sha256, hmac(sha1), hmac(sha256)
-authentication algorithms.
+This patch adds the missing required property - 'iommus' to the
+device-tree binding documentation for qcom-qce crypto IP.
 
-While at it, also make a minor fix in 'sdm845.dtsi', to make
-sure it confirms with the other .dtsi files which expose
-crypto nodes on qcom SoCs.
+This property describes the phandle(s) to apps_smmu node with sid mask.
 
 Cc: Thara Gopinath <thara.gopinath@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -102,27 +99,23 @@ Cc: linux-crypto@vger.kernel.org
 Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+---
+ Documentation/devicetree/bindings/crypto/qcom-qce.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bhupesh Sharma (8):
-  dt-bindings: qcom-qce: Add 'iommus' to required properties
-  dt-bindings: crypto : Add new compatible strings for qcom-qce
-  arm64/dts: qcom: sdm845: Use RPMH_CE_CLK macro directly
-  dt-bindings/clock: qcom: sm8250: Add gcc clocks for sm8250 crypto
-    block
-  clk: qcom: clk-rpmh: Add CE clock on sm8250
-  clk: qcom: Add gcc clocks for crypto block on sm8250
-  drivers: crypto: qce: Enable support for crypto engine on sm8250.
-  arm64/dts: qcom: sm8250: Add dt entries to support crypto engine.
-
- .../devicetree/bindings/crypto/qcom-qce.txt   |  7 ++-
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |  4 +-
- arch/arm64/boot/dts/qcom/sm8250.dtsi          | 36 +++++++++++++++
- drivers/clk/qcom/clk-rpmh.c                   |  1 +
- drivers/clk/qcom/gcc-sm8250.c                 | 44 +++++++++++++++++++
- drivers/crypto/qce/core.c                     |  1 +
- include/dt-bindings/clock/qcom,gcc-sm8250.h   |  3 ++
- 7 files changed, 93 insertions(+), 3 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.txt b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+index fdd53b184ba8..07ee1b12000b 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom-qce.txt
++++ b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+@@ -11,6 +11,7 @@ Required properties:
+ - dmas        : DMA specifiers for tx and rx dma channels. For more see
+                 Documentation/devicetree/bindings/dma/dma.txt
+ - dma-names   : DMA request names should be "rx" and "tx"
++- iommus      : phandle to apps_smmu node with sid mask
+ 
+ Example:
+ 	crypto@fd45a000 {
 -- 
 2.29.2
 
