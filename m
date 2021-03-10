@@ -2,196 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8BCC43332
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 06:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7DEC433E9
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 08:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D793465003
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 06:37:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C655364FDE
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 08:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231712AbhCJGhM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 01:37:12 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:33515 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232203AbhCJGhG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 01:37:06 -0500
-X-UUID: b473a9ab44014da2be911e72d17a1802-20210310
-X-UUID: b473a9ab44014da2be911e72d17a1802-20210310
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <macpaul.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1396320664; Wed, 10 Mar 2021 14:37:02 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 10 Mar 2021 14:37:00 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 10 Mar 2021 14:37:00 +0800
-From:   Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        id S231539AbhCJIeD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 03:34:03 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41007 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231899AbhCJIdd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 03:33:33 -0500
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lJuHb-0003GI-BP
+        for linux-clk@vger.kernel.org; Wed, 10 Mar 2021 08:33:31 +0000
+Received: by mail-wm1-f71.google.com with SMTP id n25so2350089wmk.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Mar 2021 00:33:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RZxvgYZhRwx3vtBKrExOY7yB1Rao/D3y6ddDmt53T8k=;
+        b=fqDRYUlH7emj8hPOWrThJQDkURanu6C3ShSaXnnOhu/C/QIwiWN9ocad4KsyvOKe2A
+         FDklHx0Mt+EkU2iDvhcLRWcnQLM2yWnItMtIrFkJZ/KCNIxWAE/WIt3CZpKtrXF6RUfh
+         gySuHCbg2BzmZllq+4d7H9njsP5SSD6TmlGtN6KRiqHtn48KReuxz/O5b+aJ3KaTbyUr
+         WvlXzekBx8YHHncYCRdV1FqdxI06inY7Eqd6RdXO7fcjSadsYaEhsYERjElgSkC+JDit
+         dvZo4awleclpWc/8MN46Q5JZTerb1JoktbvXAPJw9VzujrI7fJk2yVCdXz4eGPifdUXL
+         ATBQ==
+X-Gm-Message-State: AOAM532HiEgYaHjGkkC9zhs5hOyoNBg7l0C0a6ZuwSoBzjMdi32S1kvY
+        ov2tcZudqXFEJbNGhsZruO+d6WjUeuvwCOWV5CO8pcuZSTPMXZRQgUDvwxxte5zlhHTyyHxw2eF
+        IdmswdGuII+pIKE22SxPWTlj3k637jyNvYp0I8g==
+X-Received: by 2002:a1c:f406:: with SMTP id z6mr2225374wma.24.1615365211048;
+        Wed, 10 Mar 2021 00:33:31 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx+uPRMBgFfoVCHx5kur24yVECBMZDDtyDQfyluEn8gAohH3gku3X1wAI4MIWrYIO0FNDk1jQ==
+X-Received: by 2002:a1c:f406:: with SMTP id z6mr2225348wma.24.1615365210807;
+        Wed, 10 Mar 2021 00:33:30 -0800 (PST)
+Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id m17sm28675495wrx.92.2021.03.10.00.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Mar 2021 00:33:30 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Wendell Lin <Wendell.Lin@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Macpaul Lin <Macpaul.Lin@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Evan Green <evgreen@chromium.org>, <Yong.Wu@mediatek.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     Ainge Hsu <ainge.hsu@mediatek.com>,
-        Eddie Hung <eddie.hung@mediatek.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        Macpaul Lin <macpaul@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-Subject: [PATCH v10 0/4] Add basic SoC support for mt6765
-Date:   Wed, 10 Mar 2021 14:36:54 +0800
-Message-ID: <1615358218-6540-1-git-send-email-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
-References: <1615291538-9799-1-git-send-email-macpaul.lin@mediatek.com>
+        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-fpga@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [RFC v2 0/5] arm64 / clk: socfpga: simplifying, cleanups and compile testing
+Date:   Wed, 10 Mar 2021 09:33:22 +0100
+Message-Id: <20210310083327.480837-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 434342E2F5CF57348F9BEE9B788608533B4CB2C5C4A939C944A86D8F12F56F4D2000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds basic SoC support for Mediatek's new 8-core SoC,
-MT6765, which is mainly for smartphone application.
+Hi,
 
-Changes in V10:
-   [v10,1/4] dt-bindings: mediatek: Add smi dts binding for Mediatek
-            MT6765 SoC
-     - No Change.
-   [v10,2/4] soc: mediatek: add MT6765 scpsys and subdomain support
-     - No Change.
-   [v10,3/4] arm64: dts: mediatek: add mt6765 support
-     - Remove interrupt in mmsys node.
-     - Replace smi_common@14002000 to smi@14002000
-   [v10,4/4] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-     - No Change.
+All three Intel arm64 SoCFPGA architectures (Agilex, N5X and Stratix 10)
+are basically flavors/platforms of the same architecture.  At least from
+the Linux point of view.  Up to a point that N5X and Agilex share DTSI.
+Having three top-level architectures for the same one barely makes
+sense and complicates driver selection.
 
-Changes in V9:
-1. Origin V8 patchset:
-   https://patchwork.kernel.org/cover/11396015/
-   [v9,1/4] dt-bindings: mediatek: Add smi dts binding for Mediatek
-            MT6765 SoC
-     - No Change.
-   [v9,2/4] soc: mediatek: add MT6765 scpsys and subdomain support
-     - Fix build error based on 5.11-rc1 because
-       - bp_table has been deprecated.
-       - basic_clk_id has been renamed to clk_id.
-       - correct the number order in marco GENMASK().
-   Note: mediatek is working on porting mt6765's scpsys to driver
-         "mtk-pm-domains", however we think supporting for "mtk-scpsys" is
-         required before new glue is available.
-   [v9,3/4] arm64: dts: mediatek: add mt6765 support
-     - No Change.
-   [v9,4/4] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-     - No Change.
+Try to unify them.
 
-Changes in V8:
-1. Origin V7 patchset:
-   https://patchwork.kernel.org/cover/11370105/
-   Split origin V7 patchset into 2 patchset,
-   keep remain patches #2, #5, #6, and #7 in the same order as this
-   V8 patchset.
-   [v7,2/7] dt-bindings: mediatek: Add smi dts binding for Mediatek
-            MT6765 SoC
-   [v7,5/7] soc: mediatek: add MT6765 scpsys and subdomain support
-   [v7,6/7] arm64: dts: mediatek: add mt6765 support
-   [v7,7/7] arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
+Changes since v1:
+=================
+1. New patch 3/5: arm64: socfpga: rename ARCH_STRATIX10 to ARCH_SOCFPGA64
+2. New patch 4/5: arm64: intel: merge Agilex and N5X into ARCH_SOCFPGA64
+3. Fix build issue reported by kernel test robot (with ARCH_STRATIX10
+   and COMPILE_TEST but without selecting some of the clocks).
 
-Changes in V7:
-1. Adapt V6's patchset to latest kernel tree 5.5-rc1.
-   Origin V6 patchset:
-   https://patchwork.kernel.org/cover/11041963/
-2. Correct 2 clock-controller type in documentation:
-   mipi0 and venc_gcon.
-   [v7 1/7] dt-bindings: clock: mediatek: document clk bindings
-3. Remove V6's patch 03 because it has been taken into 5.5-next-soc
-   [v6, 03/08] dt-bindings: mediatek: add MT6765 power dt-bindings
-3. Update Reviewed-by: Rob Herring <robh@kernel.org> for
-   [v6, 04/08] clk: mediatek: add mt6765 clock IDs
-   --> [v7, 03/07] clk: mediatek: add mt6765 clock IDs
-4. Update SPDX tag for
-   [v6, 05/08] clk: mediatek: Add MT6765 clock support
-   --> [v7, 04/07] clk: mediatek: Add MT6765 clock support
+I tested compile builds on few configurations, so I hope kbuild 0-day
+will check more options (please give it few days on the lists).
 
-Changes in V6:
-1. Adapt V5's patchset to latest kernel tree.
-   Origin V5 patchset.
-   https://lore.kernel.org/patchwork/cover/963612/
-2. Due to clk's common code has been submit by other platform,
-   this patch set will have dependencies with the following patchsets
-   as the following orders.
-   2.a. [v8,00/21] MT8183 IOMMU SUPPORT
-        https://patchwork.kernel.org/cover/11023585/
-   2.b. [v11,0/6] Add basic node support for Mediatek MT8183 SoC
-        https://patchwork.kernel.org/cover/10962385/
-   2.c. [v6,00/14] Mediatek MT8183 scpsys support
-        https://patchwork.kernel.org/cover/11005751/
-3. Correct power related patches into dt-binding patches.
-4. Re-order V5's 4/11, 6/11, and 7/11 due clk common code change
-   and make dependencies in order.
-5. Update some commit message in clk related patches.
+Best regards,
+Krzysztof
 
-Changes in V5:
-1. add clk support
 
-Changes in V4:
-1. add gic's settings in reg properties
-2. remove some patches about dt-bindings since GKH already took them
+Krzysztof Kozlowski (5):
+  clk: socfpga: allow building N5X clocks with ARCH_N5X
+  clk: socfpga: build together Stratix 10, Agilex and N5X clock drivers
+  arm64: socfpga: rename ARCH_STRATIX10 to ARCH_SOCFPGA64
+  arm64: intel: merge Agilex and N5X into ARCH_SOCFPGA64
+  clk: socfpga: allow compile testing of Stratix 10 / Agilex clocks
 
-Changes in V3:
-1. split dt-binding document patchs
-2. fix mt6765.dtsi warnings with W=12
-3. remove uncessary PPI affinity for timer
-4. add gicc base for gic dt node
-
-Changes in V2:
-1. fix clk properties in uart dts node
-2. fix typo in submit title
-3. add simple-bus in mt6765.dtsi
-4. use correct SPDX license format
-
-Mars Cheng (3):
-  dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
-  soc: mediatek: add MT6765 scpsys and subdomain support
-  arm64: dts: mediatek: add mt6765 support
-
-Owen Chen (1):
-  arm64: defconfig: add CONFIG_COMMON_CLK_MT6765_XXX clocks
-
- .../mediatek,smi-common.yaml                  |   1 +
- arch/arm64/boot/dts/mediatek/Makefile         |   1 +
- arch/arm64/boot/dts/mediatek/mt6765-evb.dts   |  33 +++
- arch/arm64/boot/dts/mediatek/mt6765.dtsi      | 252 ++++++++++++++++++
- arch/arm64/configs/defconfig                  |   6 +
- drivers/soc/mediatek/mtk-scpsys.c             |  91 +++++++
- 6 files changed, 384 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+ arch/arm64/Kconfig.platforms                | 17 ++++-------------
+ arch/arm64/boot/dts/altera/Makefile         |  2 +-
+ arch/arm64/boot/dts/intel/Makefile          |  6 +++---
+ arch/arm64/configs/defconfig                |  3 +--
+ drivers/clk/Kconfig                         |  1 +
+ drivers/clk/Makefile                        |  4 +---
+ drivers/clk/socfpga/Kconfig                 | 17 +++++++++++++++++
+ drivers/clk/socfpga/Makefile                |  7 +++----
+ drivers/edac/Kconfig                        |  2 +-
+ drivers/edac/altera_edac.c                  | 10 +++++-----
+ drivers/firmware/Kconfig                    |  2 +-
+ drivers/fpga/Kconfig                        |  2 +-
+ drivers/mfd/Kconfig                         |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/Kconfig |  4 ++--
+ drivers/reset/Kconfig                       |  2 +-
+ 15 files changed, 43 insertions(+), 38 deletions(-)
+ create mode 100644 drivers/clk/socfpga/Kconfig
 
 -- 
-2.18.0
+2.25.1
 
