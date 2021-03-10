@@ -2,90 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26AFC433E6
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 16:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA15C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1D6764FC3
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 16:50:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C6664FBA
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 18:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231961AbhCJQt3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 11:49:29 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:41249 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233403AbhCJQtS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 11:49:18 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MZkxd-1lHRcJ1fzL-00Wn2Y; Wed, 10 Mar 2021 17:49:16 +0100
-Received: by mail-ot1-f44.google.com with SMTP id f8so11962703otp.8;
-        Wed, 10 Mar 2021 08:49:15 -0800 (PST)
-X-Gm-Message-State: AOAM533hQ+xG6dX7imtpVcnOSbp0W3hWw6zAzLLsZI8NK7GV1NugFXuy
-        /3LH8CPE+Kj77hCIr01N9ARXTFDiXytnxeBrR3k=
-X-Google-Smtp-Source: ABdhPJw1kIhr8ttdGXD5g+DpuAzvAToYG1aFxOSVPDl56eSY4x70c4eQdWZH4tiH2ZUpEN9KrRB/9/YZCrDgnKY8YZU=
-X-Received: by 2002:a05:6830:14c1:: with SMTP id t1mr3227502otq.305.1615394954588;
- Wed, 10 Mar 2021 08:49:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20210310083327.480837-1-krzysztof.kozlowski@canonical.com>
- <20210310083840.481615-1-krzysztof.kozlowski@canonical.com> <20210310083840.481615-3-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20210310083840.481615-3-krzysztof.kozlowski@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 10 Mar 2021 17:48:58 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a27hAExCKtsO7k1HQwLKk-5Q8uxYYt_G2v-Osq8RZv2tg@mail.gmail.com>
-Message-ID: <CAK8P3a27hAExCKtsO7k1HQwLKk-5Q8uxYYt_G2v-Osq8RZv2tg@mail.gmail.com>
-Subject: Re: [RFC v2 5/5] clk: socfpga: allow compile testing of Stratix 10 /
- Agilex clocks
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-edac@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>, Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:UpF+IKYWh1Pc1r65f61MWWUzwAfDePicEmQd6YhxfkvjnX8dOr+
- ICz2/kJDiaAWWb6Lsh6CxGoVmPSVZWfzh2g960mHqUaQRxQ/RBkQbakZt0W8y5R+LtLAYUV
- vDnT39U36yusfTCTbtRHUlR/GtjyIEC5opA8/1Pyy4mqX6sdhMkCJp/HswNg3LYUnpb4Clx
- 6x8zW0wO2ujskcBfKsMAg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BECPo1lR3ZY=:w74Ff2HwUIYjwaEBMZUU4F
- GlYvFmvUchmTeBU1459yu4h4+FmwtrHuouAHEHhyJYn1h2DOqx6yaeJh4/xx/IPdTRyFgjqJW
- Wpo1c02oOks0npEfpemuj+2+gM+six/cN2BzVrDOMOdP4zGa2wzMM1vVfGPztg7A9ZPcce6wO
- o30XlDj9oL4BxqDXVVhqPrYRUx8SS/mLUeSrZzatAP/oL9DRmqYB4WD1vCLbmYeXY6QzXQjlp
- 79hdmOd06JxkTxCWu2G+p5sStoHnqQ64yHro31voae7jiLSumWgPBXq8ofGDiZXbzWUSvJg6n
- /4pXOEvFrITGjVrcIl/eea8d2EXvb3nntxATRuyn9dgbSDbnJM1NX2KEpKhAHGTiqbce3QO+r
- xwTtLiyw7fC8GQXOX2GgbsKqy1wQVMEI9GXFiakfYicvXQDAEdhIt+PERyekQWaaowRFgoSYq
- BnedSwNlIDjy4fbohX+u1Kolx+8UKQHBlb9ieD7egcfpuBz/sbHY5j8HVl+OC+qMyU9nyqWqZ
- v73/pY77FU1caY0ED4QY28X0PqJnAwVmUigamsLmCirCfpUpatEd1LY7TGUrfazrw==
+        id S233569AbhCJSTJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 13:19:09 -0500
+Received: from m42-2.mailgun.net ([69.72.42.2]:47786 "EHLO m42-2.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229950AbhCJSSg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Mar 2021 13:18:36 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1615400316; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=Oe2A04ooxiUiKh+2PZjPlM+r01T98GTea9DKcUo6+Cs=; b=HOVDFTp6Crl4vsCsSFZWDHpEt6VE7tQCtuWi4KAJKY8e8SZ6bhaWlvPDEpTfNleWgaSuWOrL
+ GLq4hLtmahlyO/mJKWKgqMX2/7uvi6YNbqwFJqGhKGMMVSGvKzUGTiAZ9LdnCpqY19dR9cX4
+ pKwFdoflisSVyOaynyIGytYbYB0=
+X-Mailgun-Sending-Ip: 69.72.42.2
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 60490d64155a7cd234a868dc (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 10 Mar 2021 18:18:12
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DC086C43461; Wed, 10 Mar 2021 18:18:12 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AB3A0C433ED;
+        Wed, 10 Mar 2021 18:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB3A0C433ED
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: rpmh: Update the XO clock source for SC7280
+Date:   Wed, 10 Mar 2021 23:48:03 +0530
+Message-Id: <1615400283-20100-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 10, 2021 at 9:38 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
-> --- a/drivers/clk/socfpga/Kconfig
-> +++ b/drivers/clk/socfpga/Kconfig
-> @@ -1,6 +1,17 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +config COMMON_CLK_SOCFPGA
-> +       bool "Intel SoCFPGA family clock support" if COMPILE_TEST && !ARCH_SOCFPGA && !ARCH_SOCFPGA64
-> +       depends on ARCH_SOCFPGA || ARCH_SOCFPGA64 || COMPILE_TEST
-> +       default y if ARCH_SOCFPGA || ARCH_SOCFPGA64
+The bi_tcxo clock source for SC7280 requires a div 4 to derive 19.2MHz
+from the xo_board. Thus update the same.
 
-I think the 'depends on' line here is redundant if you also have the
-'if' line and the default.
+Fixes: fff2b9a65162 ("clk: qcom: rpmh: Add support for RPMH clocks on SC7280")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rpmh.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-        Arnd
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 91dc390..c623ce9 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -510,9 +510,12 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
+ 	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
+ };
+
++/* Resource name must match resource id present in cmd-db */
++DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
++
+ static struct clk_hw *sc7280_rpmh_clocks[] = {
+-	[RPMH_CXO_CLK]      = &sdm845_bi_tcxo.hw,
+-	[RPMH_CXO_CLK_A]    = &sdm845_bi_tcxo_ao.hw,
++	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
+ 	[RPMH_LN_BB_CLK2]   = &sdm845_ln_bb_clk2.hw,
+ 	[RPMH_LN_BB_CLK2_A] = &sdm845_ln_bb_clk2_ao.hw,
+ 	[RPMH_RF_CLK1]      = &sdm845_rf_clk1.hw,
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
