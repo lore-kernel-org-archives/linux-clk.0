@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284F7C4360C
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75799C433E9
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E631C64FF7
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F84664FEF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Mar 2021 05:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232191AbhCJFZq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Mar 2021 00:25:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54752 "EHLO
+        id S232312AbhCJF0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Mar 2021 00:26:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbhCJFZh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:25:37 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C87EC061761
-        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:25:37 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id q2-20020a17090a2e02b02900bee668844dso6579233pjd.3
-        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:25:37 -0800 (PST)
+        with ESMTP id S232315AbhCJFZ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Mar 2021 00:25:56 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA86FC061761
+        for <linux-clk@vger.kernel.org>; Tue,  9 Mar 2021 21:25:56 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso6833144pjb.4
+        for <linux-clk@vger.kernel.org>; Tue, 09 Mar 2021 21:25:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p4MDtuxttZdWJgfIxJ4SM6O/1KHz1jNmyfxro35Wyqk=;
-        b=OLHdvE3oZF1gLJa3AqWetIIfuy8vOkVDfzZoQEvKGMoqQll51NJnHR4+YTKjp5oNN4
-         Q3pHVyEBvacEC4lEMZOV1gQfcjTbqVqHVRGtydSp8ix/HuUI8wUvwKp/8/C6yTieKNDX
-         mIWq9D1aOFMRp6jfgljPMR9uNLYyNw1gXqemix4izHO/f4wLz7TVJDoVojOZ8aopH3yF
-         nQ+i1t5lL3z1M4ATMVBcbdhU/ZLbAA67XQP0rF34qeZ9EHc4u1fvMSw3U2F3rD4n++9p
-         VL1VdRZtRP1bGjhKFe25FQEW9O011aNS+AnPAjCJzFdtxr0sisR3Eg62J769ZuFBb2Yf
-         S46Q==
+        bh=VmOMUUhp3vtSE7CptEWQ9fYIwV1ThT78JbnR+RZ0uIQ=;
+        b=TqE0mZ6ZH/dhIJ1JDztPKdeokaTI8W2brCl7nkuChEyTAn29JJhimIDqG+Zeb8ABH9
+         +eUxVbGOkkBfpjptJZxEA4yxQo4UWi5+HQm87PusbYbcX7h+ZIp6ErI3FKJzdF/V8AMV
+         rn3goVF13mF3/IhQG+bm4cELSJWjt7DPDTqXchcRwUNR/014/WpHdkhob4AlWS42sIne
+         2N+A8k5gtSd1pPmc9sXXUhlP12k/UNE7nxha+iz9X/LDFU0BnOKBJ93MA8VvqYSU3PkD
+         KQCYf7xfuvp3SWGaPy7zOjTv+6jtSYOdXdYhEn4581kXudurSOJ2QHENaqBeI3HfKh7j
+         GLRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p4MDtuxttZdWJgfIxJ4SM6O/1KHz1jNmyfxro35Wyqk=;
-        b=d6vuhb77ISxJK2iF2P07yj504PJ7tEIvpqMx4gbllvV63ML2rN30i/Y6QVAch3zFlw
-         9LKqyxqGfQiWEBZEabwG7Qtji6g2/xj7cpO2BmjbikThnfhbQq0un1cTez1FNHf0m06m
-         HsOqE6oy3qwOyTi+HUUhCucA4zqYs1pdaPPqAiuxWbHoF8AnshR603dOZWh9tzpYKMH8
-         bhaX1MV6K5ivdXA8HVznJCgncoVOgBZf46roZFyQRZ8/stT4eqIe5TgL3BSFCaqgFLUA
-         HWHgC0j3BgSGOEooKEAoHTMaFR2m6RRirt7dBKeK6TtKSyTKuQzK6e3EzrQf9tHb65Z9
-         6K4w==
-X-Gm-Message-State: AOAM5324Q3Jkot4WuOszR6c/H7UrZ3pm7kEH9OXQGkEu47LYDSc7NhRE
-        YCEQQ/sTgP7KQfPJnB31CoWuBw==
-X-Google-Smtp-Source: ABdhPJyS5ECOzQLssg9/FjnR9+o0WdEdayJ0uAQQhEFdmEQ23w+cSKxH0RA+0EEs/vpnz5noxWwQvg==
-X-Received: by 2002:a17:902:f702:b029:e3:dd3f:d151 with SMTP id h2-20020a170902f702b02900e3dd3fd151mr1643353plo.18.1615353937065;
-        Tue, 09 Mar 2021 21:25:37 -0800 (PST)
+        bh=VmOMUUhp3vtSE7CptEWQ9fYIwV1ThT78JbnR+RZ0uIQ=;
+        b=RoMK1s0NJux2NY+QO1srOVOf96hLZMswavI+FYYOcTiK8Caf2FW6BQYdSxiEh7C2xo
+         mqAyqU0wDb4Xoq0u/Rrbsdqvt3Gr0/ibomaK2N3Yc629BHZO/y/GpbslqREtlxOmVYLj
+         fte/8Pemg924DTYcdKv8PCptbj519wOvk1BCfHP+Ei3Sc2I0aXtN+apB6aCbTqdJ7hTX
+         lN1xEQaf4q6w1TH814Zwg3BMJUBND0lHgZxtaL/SsnXy6Ozq/l3z09o1d6hwoNjBDBCO
+         8oBwbYF4BpSVjNPrBKnAuBkI8yPtmb25R2qR6518rwmvbItoxkyyX0lcald2wcBDD1Bh
+         fBWA==
+X-Gm-Message-State: AOAM531Sn1skPhMhdeoKeNLXFnMzlK5E7NkpqGDbUj0jB4LebGzpfBV/
+        pU8ZszE9aujY5POxA4kAQlgsmg==
+X-Google-Smtp-Source: ABdhPJwTXHZP5PDYf47cVuytOuWRQMvaZxPhsVLjHkn2E/yCYJ/LpAqCdIaO/es35OFo7YfEcCYo3Q==
+X-Received: by 2002:a17:902:dacb:b029:e5:b538:9ce6 with SMTP id q11-20020a170902dacbb02900e5b5389ce6mr1444258plx.8.1615353956435;
+        Tue, 09 Mar 2021 21:25:56 -0800 (PST)
 Received: from localhost.localdomain ([2402:3a80:9f4:a436:21bd:7573:25c0:73a0])
-        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.30
+        by smtp.gmail.com with ESMTPSA id g7sm13915224pgb.10.2021.03.09.21.25.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Mar 2021 21:25:36 -0800 (PST)
+        Tue, 09 Mar 2021 21:25:56 -0800 (PST)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org,
@@ -69,9 +69,9 @@ Cc:     bhupesh.sharma@linaro.org,
         linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         bhupesh.linux@gmail.com
-Subject: [PATCH 2/8] dt-bindings: crypto : Add new compatible strings for qcom-qce
-Date:   Wed, 10 Mar 2021 10:54:57 +0530
-Message-Id: <20210310052503.3618486-3-bhupesh.sharma@linaro.org>
+Subject: [PATCH 5/8] clk: qcom: clk-rpmh: Add CE clock on sm8250
+Date:   Wed, 10 Mar 2021 10:55:00 +0530
+Message-Id: <20210310052503.3618486-6-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
 References: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
@@ -81,18 +81,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Newer qcom chips support newer versions of the qce IP, so add
-new compatible strings for qcom-qce (in addition to the existing
-"qcom,crypto-v5.1").
-
-With [1], Thara tried to add the support for new compatible strings,
-but we couldn't conclude on the approach to be used. Since we have
-a number of new qcom arm64 SoCs available now, several of which
-support the same crypto IP version, so it makes more sense to use
-the IP version for the compatible string, rather than using the soc
-name as the compatible string.
-
-[1]. https://lore.kernel.org/linux-arm-msm/20201119155233.3974286-7-thara.gopinath@linaro.org/
+The Qualcomm CE clock resource (managed by BCM) is also required
+by sm8250 crypto driver to access the core clock, so add an entry
+for the same in 'sm8250_rpmh_clocks' array.
 
 Cc: Thara Gopinath <thara.gopinath@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -109,26 +100,21 @@ Cc: linux-kernel@vger.kernel.org
 Cc: bhupesh.linux@gmail.com
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
- Documentation/devicetree/bindings/crypto/qcom-qce.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/clk-rpmh.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.txt b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
-index 07ee1b12000b..217b37dbd58a 100644
---- a/Documentation/devicetree/bindings/crypto/qcom-qce.txt
-+++ b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
-@@ -2,7 +2,11 @@ Qualcomm crypto engine driver
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 91dc390a583b..59f73494a9c1 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -470,6 +470,7 @@ static struct clk_hw *sm8250_rpmh_clocks[] = {
+ 	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
+ 	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
+ 	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++	[RPMH_CE_CLK]		= &sdm845_ce.hw,
+ };
  
- Required properties:
- 
--- compatible  : should be "qcom,crypto-v5.1"
-+- compatible  : Supported versions are:
-+		- "qcom,crypto-v5.1", for ipq6018
-+		- "qcom,crypto-v5.4", for sdm845, sm8150
-+		- "qcom,crypto-v5.5", for sm8250
-+		- "qcom,crypto-v5.6", for sm8350
- - reg         : specifies base physical address and size of the registers map
- - clocks      : phandle to clock-controller plus clock-specifier pair
- - clock-names : "iface" clocks register interface
+ static const struct clk_rpmh_desc clk_rpmh_sm8250 = {
 -- 
 2.29.2
 
