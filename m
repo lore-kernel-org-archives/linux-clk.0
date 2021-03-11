@@ -2,116 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14B1C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 09:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C5FC43381
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 11:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0DFA64FB9
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 09:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515BC64FAA
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 11:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbhCKJP0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 04:15:26 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:36025 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbhCKJPM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 04:15:12 -0500
-Received: from mail-ot1-f53.google.com ([209.85.210.53]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MFbFW-1lWvnJ0PaY-00H7e9; Thu, 11 Mar 2021 10:15:07 +0100
-Received: by mail-ot1-f53.google.com with SMTP id 75so854357otn.4;
-        Thu, 11 Mar 2021 01:15:06 -0800 (PST)
-X-Gm-Message-State: AOAM530eVF7rVrpAp1XLvQIrseRQla+swzeBKntkJBil4am9F6BNaHgT
-        /7lc/bi2WdFhGObsvTlTFukx3xklGp4XhWG4Fm0=
-X-Google-Smtp-Source: ABdhPJyn+biUFqeUpWbgYz+onSoY1lB5lZXnaVdOJ59ivfe6fWw6B/LYP9dm97k0WNF1I7ZVkGTZlALTwC9lFjwxZew=
-X-Received: by 2002:a05:6830:14c1:: with SMTP id t1mr6129948otq.305.1615454105254;
- Thu, 11 Mar 2021 01:15:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20210310083327.480837-1-krzysztof.kozlowski@canonical.com>
- <20210310083840.481615-1-krzysztof.kozlowski@canonical.com>
- <20210310094527.GA701493@dell> <35c39c81-08e4-24c8-f683-2fa7a7ea71de@redhat.com>
- <1c06cb74-f0b0-66e5-a594-ed1ee9bc876e@canonical.com> <CAK8P3a1CCQwbeH4KiUgif+-HdubVjjZBkMXimEjYkgeh4eJ7cg@mail.gmail.com>
- <52d0489f-0f77-76a2-3269-e3004c6b6c07@canonical.com> <ba2536a6-7c74-0cca-023f-cc6179950d37@canonical.com>
- <CAK8P3a1k7c5X5x=-_-=f=ACwY+uQQ8YEcAGXYfdTdSnqpo96sA@mail.gmail.com> <fb0d8ca3-ac46-f547-02b0-7f47ff8fff6b@canonical.com>
-In-Reply-To: <fb0d8ca3-ac46-f547-02b0-7f47ff8fff6b@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Mar 2021 10:14:49 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a05VkttECKTgonxKCSjJR0W4V1TRrUYMydgUGywbCSCWQ@mail.gmail.com>
-Message-ID: <CAK8P3a05VkttECKTgonxKCSjJR0W4V1TRrUYMydgUGywbCSCWQ@mail.gmail.com>
-Subject: Re: [RFC v2 3/5] arm64: socfpga: rename ARCH_STRATIX10 to ARCH_SOCFPGA64
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Tom Rix <trix@redhat.com>, Lee Jones <lee.jones@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S232759AbhCKLng (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 06:43:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232757AbhCKLnO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 06:43:14 -0500
+Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26513C061574;
+        Thu, 11 Mar 2021 03:43:14 -0800 (PST)
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4Dx6Wv6wKFz1ry9k;
+        Thu, 11 Mar 2021 12:43:07 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4Dx6Wv4vCTz1qr4m;
+        Thu, 11 Mar 2021 12:43:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id bwhSiK_6OLsr; Thu, 11 Mar 2021 12:43:05 +0100 (CET)
+X-Auth-Info: PWDLWpU/RF1mQ0vyUrR2TmlPpbT0QFk+u0aQwwhF6ik=
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu, 11 Mar 2021 12:43:05 +0100 (CET)
+Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
+To:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Alex G." <mr.nuke.me@gmail.com>,
+        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne CARRIERE <etienne.carriere@st.com>,
+        Alexandre TORGUE - foss <alexandre.torgue@foss.st.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-edac@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>, Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:8zSo19FEMGDxyiVQDBPRPGNk7oUpBJKvj23wAA3LeoGeGTVaVDe
- tYcAtEWJuc6QF3xHchWKOFHw7SzdIyvsUGzwG5ZCAIbpfSiEs2I44sZv8Ig0uLr7MILLENl
- cggEdUK03qWlQ/08UCGbvsKoo6DI2tigOl0tTfxiLh2W3CnAAeAKnlFxyt1SxNWb91t9oNT
- f3uj0KvErM5ZZx+1XApng==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DHa3uyTr8Bg=:mYAf3HuyZSpvNDQzaYFPIa
- LQ8jH4G5xwF5IsG18LSCUNEXu4cXgmL7HkSnx6t4Odmq50eV26cIJzOSX95EuRoTU568WFmVF
- 6D6D2deAwUPjNAd5o/5141PGlP5tMgZPA3BihdFgV9Vw8oifzBng1y8RuPF4IX6cUvqY5NNbz
- en5TQeAfMSBlKae749fUXQxsregl6IgMbfo+qesr2t5g5x2bCVIUzGqMysf6XNbekDVasEP3g
- 6EXFmth3Dl/KzQzYt3UXUELR8LXIo7HFiARyafcLr85kuYQpClWDo5ZRL1uOd+ggzsJb/7YIE
- CGe/BYpm/a3+KFbtnRLNP15PnpWixRxwkjNUvGXUaeCU9viIXWzITSL9ZLlZatpM1k3BK4VZp
- gadboAk6GmkTmKrcXZfqvdunIX95jT0D0bli/LjuuMhmXSPV40LWZHonSaELFmzWfjcBHMIJ5
- z3Fq8/5O8dgcvuQ3hGKZOMoL+YW/IWvOOEsxT4sU+CK9ihrHpjVf/eIrZ8h4RNFNvXWG6gPgJ
- M+CdNro9r1nbTqwf74QTm4hvH8nIJCY5WcW0ZvCL+Ii/J7pF2RXZfOlA/V0c0xtqA==
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
+ <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
+Date:   Thu, 11 Mar 2021 12:43:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
+MIME-Version: 1.0
+In-Reply-To: <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 11, 2021 at 8:08 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
-> On 10/03/2021 17:42, Arnd Bergmann wrote:
-> > On Wed, Mar 10, 2021 at 4:54 PM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >> On 10/03/2021 16:47, Krzysztof Kozlowski wrote:
-> >>> This edac Altera driver is very weird... it uses the same compatible
-> >>> differently depending whether this is 32-bit or 64-bit (e.g. Stratix
-> >>> 10)! On ARMv7 the compatible means for example one IRQ... On ARMv8, we
-> >>> have two. It's quite a new code (2019 from Intel), not some ancient
-> >>> legacy, so it should never have been accepted...
-> >>
-> >> Oh, it's not that horrible as it sounds. They actually have different
-> >> compatibles for edac driver with these differences (e.g. in interrupts).
-> >> They just do not use them and instead check for the basic (common?)
-> >> compatible and architecture... Anyway without testing I am not the
-> >> person to fix the edac driver.
-> >
-> > Ok, This should be fixed properly as you describe, but as a quick hack
-> > it wouldn't be hard to just change the #ifdef to check for CONFIG_64BIT
-> > instead of CONFIG_ARCH_STRATIX10 during the rename of the config
-> > symbol.
->
-> This would work. The trouble with renaming ARCH_SOCFPGA into
-> ARCH_INTEL_SOCFPGA is that still SOCFPGA will appear in many other
-> Kconfig symbols or even directory paths.
->
-> Let me use ARCH_INTEL_SOCFPGA for 64bit here and renaming of 32bit a
-> little bit later.
+On 3/11/21 9:08 AM, Alexandre TORGUE wrote:
+> Hi ALex
 
-Maybe you can introduce a hidden 'ARCH_INTEL_SOCFPGA' option first
-and select that from both the 32-bit and the 64-bit platforms in the first step.
+Hello everyone,
 
-That should decouple the cleanups, so you can change the drivers to
-(only) 'depends on ARCH_INTEL_SOCFPGA' before removing the other
-names.
+[...]
 
-        Arnd
+>> Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
+>>
+>> On 1/26/21 3:01 AM, gabriel.fernandez@foss.st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>
+>>> Platform STM32MP1 can be used in configuration where some clocks and
+>>> IP resets can relate as secure resources.
+>>> These resources are moved from a RCC clock/reset handle to a SCMI
+>>> clock/reset_domain handle.
+>>>
+>>> The RCC clock driver is now dependent of the SCMI driver, then we have
+>>> to manage now the probe defering.
+>>>
+>>> v1 -> v2:
+>>>     - fix yamllint warnings.
+>>
+>> Hi Gabriel,
+>>
+>> I don't have much clout with the maintainers, but I have to NAK this series
+>> after finding major breakage.
+>>
+>> The problem with series is that it breaks pretty much every board it touches.
+>> I have a DK2 here that I'm using for development, which no longer boots with
+>> this series applied.
+>>
+>> The crux of the matter is that this series assumes all boards will boot with an
+>> FSBL that implements a very specific SCMI clock tree. This is major ABI
+>> breakage for anyone not using TF-A as the first stage bootloader. Anyone
+>> using u-boot SPL is screwed.
+>>
+>> This series imposes a SOC-wide change via the dtsi files. So even boards that
+>> you don't intend to convert to SCMI will get broken this way.
+>> Adding a -no-scmi file that isn't used anywhere doesn't help things.
+> 
+> You are right. We mainly take care about NO ST (DH/...) boards, but  not really about current usage
+> Of our stm32 boards. Several options exist:
+
+Since a lot of people benefit from the good upstream support for the MP1 
+_and_ keep updating their machines to get the latest fixes, it is very 
+important to keep the current usage working.
+
+> 1- Break the current ABI: as soon as those patches are merged, stm32mp157c-dk2.dtb will impose to use
+> A tf-a for scmi clocks. For people using u-boot spl, the will have to create their own "no-secure" devicetree.
+
+NAK, this breaks existing boards and existing setups, e.g. DK2 that does 
+not use ATF.
+
+> 2-As you suggest, create a new "secure" dtb per boards (Not my wish for maintenance perspectives).
+
+I agree with Alex (G) that the "secure" option should be opt-in.
+That way existing setups remain working and no extra requirements are 
+imposed on MP1 users. Esp. since as far as I understand this, the 
+"secure" part isn't really about security, but rather about moving clock 
+configuration from Linux to some firmware blob.
+
+> 3- Keep kernel device tree as they are and applied this secure layer (scmi clocks phandle) thanks to dtbo in
+> U-boot.
+
+Is this really better than
+#include "stm32mp15xx-enable-secure-stuff.dtsi"
+in a board DT ? Because that is how I imagine the opt-in "secure" option 
+could work.
+
+> The third could be the less costly.
+
+[...]
