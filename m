@@ -2,230 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FD6C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD57FC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 20:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B15464FE7
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9450364F80
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 20:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbhCKSrp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 13:47:45 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:40829 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbhCKSre (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 13:47:34 -0500
-Received: from mail-wr1-f71.google.com ([209.85.221.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lKQLM-0003UB-Ar
-        for linux-clk@vger.kernel.org; Thu, 11 Mar 2021 18:47:32 +0000
-Received: by mail-wr1-f71.google.com with SMTP id n16so8860142wro.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 10:47:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AGhsYhdCQ1elD24yTKdnrXd5i7xOjzN52nW5SEJ7/Fo=;
-        b=qFXeNvlZKxf9GOKra3D52AqIRcDcjkn215aNHDPMz9LPeX8rau7X9tfSRa38VCk6qv
-         7l1rI1Ho/B9sGUMgjRVCQY0VtAHlKU6kWyWn1+ZaD+Kx5EnjrMjIi9yoU2gVdMwPksgE
-         MBBLatpHn0LPspjcPgDu5NNQN1tMOXZitjUoFg2Cx63gjwbH+SyDESwdGoTZ6zdI5IQf
-         h4Iiq1KfoNFV1RJaLgzh4lsKdMCh42igKKGzMTbszluJUU7vrb0E8jSD2RTbbProlBfx
-         6oqKUNuLLeSW+6ksUXWM7huw5HvBBRkbvVqkDBl9WtkKTORFSqUF596Ex28Snicqk9Ge
-         H9Hg==
-X-Gm-Message-State: AOAM533iHvmltr/DQI8GjnU9Fatg1VeRSHRwXYrkhkKAmjbqm2MMTJx4
-        cgMFQ0zMJYA562iboT8aYGYrnGb5jqTisZeQ/PGfTaDW0v398vzXlanOmiQpXyTxNXsa4634cBA
-        rI4qlLJ2P58ZQY/87DSeIrE/t/isUSGa9BSJqtQ==
-X-Received: by 2002:a5d:5141:: with SMTP id u1mr10282895wrt.31.1615488451951;
-        Thu, 11 Mar 2021 10:47:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzEiONe/luicUkBQrryf9RIkvIG+x8+UJPcdgITbiuaICznSQKmKVThfd4wAkfQtdO2oa9H6A==
-X-Received: by 2002:a5d:5141:: with SMTP id u1mr10282871wrt.31.1615488451652;
-        Thu, 11 Mar 2021 10:47:31 -0800 (PST)
-Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id h6sm4972118wmi.6.2021.03.11.10.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Mar 2021 10:47:31 -0800 (PST)
-Subject: Re: [PATCH v3 00/15] arm64 / clk: socfpga: simplifying, cleanups and
- compile testing
-List-Id: <soc.lore.kernel.org>
-To:     Tom Rix <trix@redhat.com>, Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        id S229607AbhCKUJr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 15:09:47 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:41985 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229868AbhCKUJq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 15:09:46 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4DxKmR5bXsz1qs38;
+        Thu, 11 Mar 2021 21:09:43 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4DxKmR3gKNz1qr4s;
+        Thu, 11 Mar 2021 21:09:43 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id xdvMXdWRZ0pI; Thu, 11 Mar 2021 21:09:41 +0100 (CET)
+X-Auth-Info: 4h4LNEsJBJd7/MPZriIKyOYb+MfyZ+tSGG76SXiY4q8=
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu, 11 Mar 2021 21:09:41 +0100 (CET)
+Subject: Re: [Linux-stm32] [PATCH v2 00/14] Introduce STM32MP1 RCC in secured
+ mode
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Alex G." <mr.nuke.me@gmail.com>,
+        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
- <f0b90916-9047-d5da-5cde-75d4330cf041@redhat.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <f581f103-270f-90ed-6946-de63b6712e82@canonical.com>
-Date:   Thu, 11 Mar 2021 19:47:30 +0100
+        Etienne CARRIERE <etienne.carriere@st.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
+ <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+ <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
+ <463dafed-ec60-cd9a-33d2-ba118a6af629@foss.st.com>
+ <c1c9c89b-8794-9b91-b626-d743cd8ff31e@pengutronix.de>
+ <b87a2b24-678a-724d-e5df-1eabf5969ad2@denx.de>
+ <a23933fa-0c94-1e22-6100-d5b1a50826dd@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <58d107c4-eb3d-e49a-8377-007b6f21baf4@denx.de>
+Date:   Thu, 11 Mar 2021 21:09:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <f0b90916-9047-d5da-5cde-75d4330cf041@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a23933fa-0c94-1e22-6100-d5b1a50826dd@foss.st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/03/2021 19:26, Tom Rix wrote:
+On 3/11/21 7:10 PM, Alexandre TORGUE wrote:
+> Hi Guys
 > 
-> On 3/11/21 7:25 AM, Krzysztof Kozlowski wrote:
+> On 3/11/21 5:11 PM, Marek Vasut wrote:
+>> On 3/11/21 3:41 PM, Ahmad Fatoum wrote:
+>>> Hello,
+>>
 >> Hi,
 >>
->> All three Intel arm64 SoCFPGA architectures (Agilex, N5X and Stratix 10)
->> are basically flavors/platforms of the same architecture.  At least from
->> the Linux point of view.  Up to a point that N5X and Agilex share DTSI.
->> Having three top-level architectures for the same one barely makes
->> sense and complicates driver selection.
+>>> On 11.03.21 15:02, Alexandre TORGUE wrote:
+>>>> On 3/11/21 12:43 PM, Marek Vasut wrote:
+>>>>> On 3/11/21 9:08 AM, Alexandre TORGUE wrote:
+>>>>>> 1- Break the current ABI: as soon as those patches are merged, 
+>>>>>> stm32mp157c-dk2.dtb will impose to use
+>>>>>> A tf-a for scmi clocks. For people using u-boot spl, the will have 
+>>>>>> to create their own "no-secure" devicetree.
+>>>>>
+>>>>> NAK, this breaks existing boards and existing setups, e.g. DK2 that 
+>>>>> does not use ATF.
+>>>>>
+>>>>>> 2-As you suggest, create a new "secure" dtb per boards (Not my 
+>>>>>> wish for maintenance perspectives).
+>>>>>
+>>>>> I agree with Alex (G) that the "secure" option should be opt-in.
+>>>>> That way existing setups remain working and no extra requirements 
+>>>>> are imposed on MP1 users. Esp. since as far as I understand this, 
+>>>>> the "secure" part isn't really about security, but rather about 
+>>>>> moving clock configuration from Linux to some firmware blob.
+>>>>>
+>>>>>> 3- Keep kernel device tree as they are and applied this secure 
+>>>>>> layer (scmi clocks phandle) thanks to dtbo in
+>>>>>> U-boot.
+>>>>>
+>>>>> Is this really better than
+>>>>> #include "stm32mp15xx-enable-secure-stuff.dtsi"
+>>>>> in a board DT ? Because that is how I imagine the opt-in "secure" 
+>>>>> option could work.
+>>>>>
+>>>>
+>>>> Discussing with Patrick about u-boot, we could use dtbo application 
+>>>> thanks to extlinux.conf. BUT it it will not prevent other case (i.e. 
+>>>> TF-A which jump directly in kernel@). So the "least worst" solution 
+>>>> is to create a new "stm32mp1257c-scmi-dk2 board which will overload 
+>>>> clock entries with a scmi phandle (as proposed by Alex).
+>>>
+>>> I raised this issue before with your colleagues. I still believe the 
+>>> correct way
+>>> would be for the TF-A to pass down either a device tree or an overlay 
+>>> with the
+>>> actual settings in use, e.g.:
+>>>
+>>>    - Clocks/Resets done via SCMI
+>>>    - Reserved memory regions
+>>>
+>>> If TF-A directly boots Linux, it can apply the overlay itself, 
+>>> otherwise it's
+>>> passed down to SSBL that applies it before booting Linux.
 >>
->> Additionally it was pointed out that ARCH_SOCFPGA name is too generic.
->> There are other vendors making SoC+FPGA designs, so the name should be
->> changed to have real vendor (currently: Intel).
+>> That sounds good and it is something e.g. R-Car already does, it 
+>> merges DT fragment from prior stages at U-Boot level and then passes 
+>> the result to Linux.
 >>
->>
->> Dependencies / merging
->> ======================
->> 1. Patch 1 is used as base, so other changes depend on its hunks.
->>    I put it at beginning as it is something close to a fix, so candidate
->>    for stable (even though I did not mark it like that).
->> 2. Patch 2: everything depends on it.
->>
->> 3. 64-bit path:
->> 3a. Patches 3-7: depend on patch 2, from 64-bit point of view.
->> 3b. Patch 8: depends on 2-7 as it finally removes 64-bit ARCH_XXX
->>     symbols.
->>
->> 4. 32-bit path:
->> 4a. Patches 9-14: depend on 2, from 32-bit point of view.
->> 4b. Patch 15: depends on 9-14 as it finally removes 32-bit ARCH_SOCFPGA
->>     symbol.
->>
->> If the patches look good, proposed merging is via SoC tree (after
->> getting acks from everyone). Sharing immutable branches is also a way.
->>
->>
->> Changes since v2
->> ================
->> 1. Several new patches and changes.
->> 2. Rename ARCH_SOCFPGA to ARCH_INTEL_SOCFPGA on 32-bit and 64-bit.
->> 3. Enable compile testing of 32-bit socfpga clock drivers.
->> 4. Split changes per subsystems for easier review.
->> 5. I already received an ack from Lee Jones, but I did not add it as
->>    there was big refactoring.  Please kindly ack one more time if it
->>    looks good.
->>
->> Changes since v1
->> ================
->> 1. New patch 3: arm64: socfpga: rename ARCH_STRATIX10 to ARCH_SOCFPGA64.
->> 2. New patch 4: arm64: intel: merge Agilex and N5X into ARCH_SOCFPGA64.
->> 3. Fix build is.sue reported by kernel test robot (with ARCH_STRATIX10
->>    and COMPILE_TEST but without selecting some of the clocks).
->>
->>
->> RFT
->> ===
->> I tested compile builds on few configurations, so I hope kbuild 0-day
->> will check more options (please give it few days on the lists).
->> I compare the generated autoconf.h and found no issues.  Testing on real
->> hardware would be appreciated.
->>
->> Best regards,
->> Krzysztof
->>
->> Krzysztof Kozlowski (15):
->>   clk: socfpga: allow building N5X clocks with ARCH_N5X
->>   ARM: socfpga: introduce common ARCH_INTEL_SOCFPGA
->>   mfd: altera: merge ARCH_SOCFPGA and ARCH_STRATIX10
->>   net: stmmac: merge ARCH_SOCFPGA and ARCH_STRATIX10
->>   clk: socfpga: build together Stratix 10, Agilex and N5X clock drivers
->>   clk: socfpga: merge ARCH_SOCFPGA and ARCH_STRATIX10
->>   EDAC: altera: merge ARCH_SOCFPGA and ARCH_STRATIX10
->>   arm64: socfpga: merge Agilex and N5X into ARCH_INTEL_SOCFPGA
->>   clk: socfpga: allow compile testing of Stratix 10 / Agilex clocks
->>   clk: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs (and
->>     compile test)
->>   dmaengine: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
->>   fpga: altera: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
->>   i2c: altera: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
->>   reset: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
->>   ARM: socfpga: drop ARCH_SOCFPGA
->>
->>  arch/arm/Kconfig                            |  2 +-
->>  arch/arm/Kconfig.debug                      |  6 +++---
->>  arch/arm/Makefile                           |  2 +-
->>  arch/arm/boot/dts/Makefile                  |  2 +-
->>  arch/arm/configs/multi_v7_defconfig         |  2 +-
->>  arch/arm/configs/socfpga_defconfig          |  2 +-
->>  arch/arm/mach-socfpga/Kconfig               |  4 ++--
->>  arch/arm64/Kconfig.platforms                | 17 ++++-------------
->>  arch/arm64/boot/dts/altera/Makefile         |  2 +-
->>  arch/arm64/boot/dts/intel/Makefile          |  6 +++---
->>  arch/arm64/configs/defconfig                |  3 +--
->>  drivers/clk/Kconfig                         |  1 +
->>  drivers/clk/Makefile                        |  4 +---
->>  drivers/clk/socfpga/Kconfig                 | 19 +++++++++++++++++++
->>  drivers/clk/socfpga/Makefile                | 11 +++++------
->>  drivers/dma/Kconfig                         |  2 +-
->>  drivers/edac/Kconfig                        |  2 +-
->>  drivers/edac/altera_edac.c                  | 17 +++++++++++------
->>  drivers/firmware/Kconfig                    |  2 +-
->>  drivers/fpga/Kconfig                        |  8 ++++----
->>  drivers/i2c/busses/Kconfig                  |  2 +-
->>  drivers/mfd/Kconfig                         |  4 ++--
->>  drivers/net/ethernet/stmicro/stmmac/Kconfig |  4 ++--
->>  drivers/reset/Kconfig                       |  6 +++---
->>  24 files changed, 71 insertions(+), 59 deletions(-)
->>  create mode 100644 drivers/clk/socfpga/Kconfig
->>
-> Thanks for changing the config name.
+>> So on ST hardware, the same could very well happen and it would work 
+>> for both non-ATF / ATF / ATF+TEE options.
 > 
-> Please review checkpatch --strict on this set, the typical complaint is
-> 
-> clk: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs (and compile test)    
-> WARNING: please write a paragraph that describes the config symbol fully
-> #35: FILE: drivers/clk/socfpg/Kconfig:11:                       
-> +config CLK_INTEL_SOCFPGA32
+> Even this solution sounds good but we are currently not able to do it in 
+> our TF-A/u-boot so not feasible for the moment.
 
-This symbol is not visible to the user, not selectable, so documenting
-it more than what is already written in option title (the one going
-after "bool") makes little sense. We don't do it for such drivers.
-Mostly because it would be duplication of the option title or include
-useless information (it's like documenting "int i" with "counter used
-for loop"). The checkpatch complains if this is less than three lines,
-but it is not possible to write here anything meaningful for more than
-one line.
+Why not ? U-Boot is perfectly capable of merging prior stage DT and DT 
+loaded from elsewhere. See R-Car3 for example.
 
-Really, it does not make sense. If you think otherwise, please suggest
-the text which is not duplicating option title and does not include
-common stuff from clocks.
+> So we have to find a 
+> solution for now. Create a new dtb can be this solution. Our internal 
+> strategy is to use scmi on our official ST board. It will be a really 
+> drawback to include a "no-scmi.dtsi" in DH boards (for example) and to 
+> create a stm32mp157c-noscmi-dk2.dts ?
 
-Best regards,
-Krzysztof
+I would highly prefer the SCMI to be opt-in, not opt-out.
+
+But still, isn't it possible to auto-detect the board configuration in 
+Linux and pick the clock enumeration based on that automatically ?
