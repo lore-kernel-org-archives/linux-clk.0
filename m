@@ -2,96 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA88C433E9
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 14:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CCEC433E9
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 14:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC6964FF2
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 14:49:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7572764FE9
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 14:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233892AbhCKOtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 09:49:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60704 "EHLO
+        id S233573AbhCKOvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 09:51:12 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60813 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233691AbhCKOsk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 09:48:40 -0500
-Received: from mail-ed1-f71.google.com ([209.85.208.71])
+        with ESMTP id S233653AbhCKOui (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 09:50:38 -0500
+Received: from mail-wm1-f72.google.com ([209.85.128.72])
         by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lKMcB-0001JK-Jn
-        for linux-clk@vger.kernel.org; Thu, 11 Mar 2021 14:48:39 +0000
-Received: by mail-ed1-f71.google.com with SMTP id h2so9949320edw.10
-        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 06:48:39 -0800 (PST)
+        id 1lKMe5-0001X0-3n
+        for linux-clk@vger.kernel.org; Thu, 11 Mar 2021 14:50:37 +0000
+Received: by mail-wm1-f72.google.com with SMTP id a63so1610412wmd.8
+        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 06:50:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AfZi1aLqaVnii5CtMfRTKmgGkJ5oB3CQKhmO+KpjKXk=;
-        b=jkZJcgPtNQOTWZYBmiyZ/jPXah9+tDt/wkP2g9tBW3JzNVHP591pv5A71FD0BMDcn6
-         0IiPjmY83LswJLrXE+yEC4LRiLuDPekq4WDBItVD7uvhEfJNVbN9zm9Xfzy/k35Iu1FV
-         f6nbLsx4OCnRpZGkrAHF692vEeoEWVeMsirpq7aF3wF6WGPMs48UuXkz+cm0DU/kwYm2
-         2+d8BxdK0IiW5nIyN9MdJ6IJbo2qQmmO8uFZ1zitLbUJxYhZs5F39M5xBNezbrCHRo5f
-         3nUhaTTwNSK0ftqp4Gy8gGErXUyV33qEH3bSysHCxqvUonS2p5wkNMAfZzpQ69dv5Xyc
-         2RLQ==
-X-Gm-Message-State: AOAM531ErJwSrg8/wqt6QTdGhnUPhUlpVO7ELyJ35iy5ltkc3cu96wnj
-        QSAHV0P0NjDYbiRtt6x3FNmUhhImOtH3ov8/Le/cLs/aLQtww3JCn7j+gGd1AQ7/+4BNzNxj3xG
-        bWxxE7t8nUBIb8sfffbU/76X/Ck6eIU3Z//YZ+w==
-X-Received: by 2002:a17:906:d9d1:: with SMTP id qk17mr3415850ejb.52.1615474119390;
-        Thu, 11 Mar 2021 06:48:39 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyagpzsCI1n5bt7Tkf7ZjVO9M2j0SJ55XaHVkf0RzwuAx+DX5ofwBgGUu7nSq8q0RydQaLX5Q==
-X-Received: by 2002:a17:906:d9d1:: with SMTP id qk17mr3415833ejb.52.1615474119145;
-        Thu, 11 Mar 2021 06:48:39 -0800 (PST)
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id u59sm1559995edc.73.2021.03.11.06.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 06:48:38 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
+        bh=uKAiLuqa2i9OZl7ygZkPLgKIbolSbL3Tro2Nub/Uk4Y=;
+        b=gJ4gvoQik4VucgbgP2yRxKNVMbZbmHfH3cmYlwEz0TXMAkwSSIG9VkVjSic566Y2Ya
+         UFa7QTv/2roqqWAXbnvoWX+qiLRIuBpkOjBGyl/KqxiqIIun+RESKUz7/tUwEHZs61ka
+         PA3NXm6YEMVUikf/C6iI5pcbK3/B6Il/A+zYJuksWYljXjasWeH1jGtw80r+7tT/JN2d
+         aiiod4Jfw60HLvPmAztMYLKqowCp+kqBHWLQrHA3ULeFBGknI9fGuWradxvkYda6C63G
+         VG7eJqEOgBkySDBW2l/SBz28kE7aO3pQ8QpnKUA8zsZZIrym3e03UpRNUwZNZ46dC9Ob
+         SsqA==
+X-Gm-Message-State: AOAM532mTHpIvbK5n7SAGMhZbVQUSrAE5zErfYHlwjgM0fpwRYo1fodY
+        S5i3vX6osWa22ilGTDWVfsxooDr5ckRGFWg5TzaL6zqvl46GnF0QK2Rq8ZzKLAu1f8qaIS7ZuMQ
+        M2sjbZq7SA9fK5jjEWFI+y2BAFB7Iqh79EFVIQw==
+X-Received: by 2002:adf:f852:: with SMTP id d18mr9342162wrq.210.1615474236737;
+        Thu, 11 Mar 2021 06:50:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyesJMeh5P/4D8iW/copAeKCALuE0/kYNU8cA4lvJq7myQHewdqjAfZPd2tqbyUu+ezagHw4g==
+X-Received: by 2002:adf:f852:: with SMTP id d18mr9342138wrq.210.1615474236553;
+        Thu, 11 Mar 2021 06:50:36 -0800 (PST)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id 4sm4433053wma.0.2021.03.11.06.50.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Mar 2021 06:50:36 -0800 (PST)
+Subject: Re: [RFC v2 3/5] arm64: socfpga: rename ARCH_STRATIX10 to
+ ARCH_SOCFPGA64
+To:     Arnd Bergmann <arnd@arndb.de>
+List-Id: <soc.lore.kernel.org>
+Cc:     Tom Rix <trix@redhat.com>, Lee Jones <lee.jones@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH] clk: socfpga: fix iomem pointer cast on 64-bit
-Date:   Thu, 11 Mar 2021 15:48:33 +0100
-Message-Id: <20210311144833.1313387-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Stephen Boyd <sboyd@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-edac@vger.kernel.org, linux-fpga@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Olof Johansson <olof@lixom.net>
+References: <20210310083327.480837-1-krzysztof.kozlowski@canonical.com>
+ <20210310083840.481615-1-krzysztof.kozlowski@canonical.com>
+ <20210310094527.GA701493@dell>
+ <35c39c81-08e4-24c8-f683-2fa7a7ea71de@redhat.com>
+ <1c06cb74-f0b0-66e5-a594-ed1ee9bc876e@canonical.com>
+ <CAK8P3a1CCQwbeH4KiUgif+-HdubVjjZBkMXimEjYkgeh4eJ7cg@mail.gmail.com>
+ <52d0489f-0f77-76a2-3269-e3004c6b6c07@canonical.com>
+ <ba2536a6-7c74-0cca-023f-cc6179950d37@canonical.com>
+ <CAK8P3a1k7c5X5x=-_-=f=ACwY+uQQ8YEcAGXYfdTdSnqpo96sA@mail.gmail.com>
+ <fb0d8ca3-ac46-f547-02b0-7f47ff8fff6b@canonical.com>
+ <CAK8P3a05VkttECKTgonxKCSjJR0W4V1TRrUYMydgUGywbCSCWQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <30ba7549-c60d-4ee9-3502-b863bca8d3a7@canonical.com>
+Date:   Thu, 11 Mar 2021 15:50:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a05VkttECKTgonxKCSjJR0W4V1TRrUYMydgUGywbCSCWQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Pointers should be cast to unsigned long instead of integer.  This fixes
-warning when compile testing on ARM64:
+On 11/03/2021 10:14, Arnd Bergmann wrote:
+> On Thu, Mar 11, 2021 at 8:08 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>> On 10/03/2021 17:42, Arnd Bergmann wrote:
+>>> On Wed, Mar 10, 2021 at 4:54 PM Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@canonical.com> wrote:
+>>>> On 10/03/2021 16:47, Krzysztof Kozlowski wrote:
+>>>>> This edac Altera driver is very weird... it uses the same compatible
+>>>>> differently depending whether this is 32-bit or 64-bit (e.g. Stratix
+>>>>> 10)! On ARMv7 the compatible means for example one IRQ... On ARMv8, we
+>>>>> have two. It's quite a new code (2019 from Intel), not some ancient
+>>>>> legacy, so it should never have been accepted...
+>>>>
+>>>> Oh, it's not that horrible as it sounds. They actually have different
+>>>> compatibles for edac driver with these differences (e.g. in interrupts).
+>>>> They just do not use them and instead check for the basic (common?)
+>>>> compatible and architecture... Anyway without testing I am not the
+>>>> person to fix the edac driver.
+>>>
+>>> Ok, This should be fixed properly as you describe, but as a quick hack
+>>> it wouldn't be hard to just change the #ifdef to check for CONFIG_64BIT
+>>> instead of CONFIG_ARCH_STRATIX10 during the rename of the config
+>>> symbol.
+>>
+>> This would work. The trouble with renaming ARCH_SOCFPGA into
+>> ARCH_INTEL_SOCFPGA is that still SOCFPGA will appear in many other
+>> Kconfig symbols or even directory paths.
+>>
+>> Let me use ARCH_INTEL_SOCFPGA for 64bit here and renaming of 32bit a
+>> little bit later.
+> 
+> Maybe you can introduce a hidden 'ARCH_INTEL_SOCFPGA' option first
+> and select that from both the 32-bit and the 64-bit platforms in the first step.
+> 
+> That should decouple the cleanups, so you can change the drivers to
+> (only) 'depends on ARCH_INTEL_SOCFPGA' before removing the other
+> names.
 
-  drivers/clk/socfpga/clk-gate.c: In function ‘socfpga_clk_recalc_rate’:
-  drivers/clk/socfpga/clk-gate.c:102:7: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+Sure, let me try that. I have a v3 almost ready.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- drivers/clk/socfpga/clk-gate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index 43ecd507bf83..c876523d5d51 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -99,7 +99,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
- 		val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
- 		val &= GENMASK(socfpgaclk->width - 1, 0);
- 		/* Check for GPIO_DB_CLK by its offset */
--		if ((int) socfpgaclk->div_reg & SOCFPGA_GPIO_DB_CLK_OFFSET)
-+		if ((unsigned long) socfpgaclk->div_reg & SOCFPGA_GPIO_DB_CLK_OFFSET)
- 			div = val + 1;
- 		else
- 			div = (1 << val);
--- 
-2.25.1
-
+Best regards,
+Krzysztof
