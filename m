@@ -2,65 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6E0C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E783BC433E9
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 22:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9375A64F19
+	by mail.kernel.org (Postfix) with ESMTP id C3C8D64F86
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 22:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbhCKWsI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229688AbhCKWsI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 11 Mar 2021 17:48:08 -0500
-Received: from mx0c-0054df01.pphosted.com ([67.231.159.91]:41029 "EHLO
+Received: from mx0c-0054df01.pphosted.com ([67.231.159.91]:41026 "EHLO
         mx0c-0054df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229553AbhCKWrm (ORCPT
+        by vger.kernel.org with ESMTP id S229562AbhCKWrm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 17:47:42 -0500
 Received: from pps.filterd (m0208999.ppops.net [127.0.0.1])
-        by mx0c-0054df01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BMLkjI009820;
-        Thu, 11 Mar 2021 17:25:11 -0500
-Received: from can01-to1-obe.outbound.protection.outlook.com (mail-to1can01lp2052.outbound.protection.outlook.com [104.47.61.52])
-        by mx0c-0054df01.pphosted.com with ESMTP id 376bes9m83-1
+        by mx0c-0054df01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BMLkgV009817;
+        Thu, 11 Mar 2021 17:25:19 -0500
+Received: from can01-to1-obe.outbound.protection.outlook.com (mail-to1can01lp2059.outbound.protection.outlook.com [104.47.61.59])
+        by mx0c-0054df01.pphosted.com with ESMTP id 376bes9m86-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 17:25:10 -0500
+        Thu, 11 Mar 2021 17:25:18 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qmns7X8JutTVPnj3l8F/stBBMimyAmzNlCtdnRhZIKwViqrRwFbwmirV6hkLQF1BPzEay9ge2OKzO6chea1F1/fbkOHeU7WUBbVuVgDHBp4W/t/oWijezZb/U9WZ+WgsqSsVeD4nJbATx/PfB3+nWkqNEdOUWGifjz4UqBgic0xI6sZbwg0D6YnkfI4GBM0gjOJIF+KVdqKCe06GdNBjpQUe2TfxXDo1gPWHDKRas4Kr54ns4b9+fj4l4+eT0me8H8d/TGZqApWALhOSZrPxAANy2OtXfV4dSxVJX95RautUnFtIjSSOqQ+b+zI6irDVjC4HT0DdcDFwCmQkfiJ7wA==
+ b=oO5DT4htzVUvA0QiwGiFi77bCQIgE/s/uZ3onkcLTbtvbW+JQcOJXf7r8bsVgsNCXutPbKwq56hmV8fcNHgsSkE8iQGQTaOaQ1/jmA3IEHs4xSAyjXvqXXNRoYVy3CdgmRbqWaOUeIivxnt21YJLyIA4iVNHI7Jt5Dt9d7IXo2156xjrTO8sVku1ZKfgnNW4Lj9bWXVCy+6fytyC8UWMI6sHysydHXLTSYWbCRFBhKKbQQdHZFULLrZafGoMrAEOsRlw4VH16o+qC/U7MJZo8z83Q5RYhQSQZPgQPv+4UkPCQ3qXefs9cUKVIWy9feBQTQCrwp6PQUDhm4hNCmomhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y7Zvi/oorIy4mTslUfQQatnXxwI40tGSvu8GL+ar32w=;
- b=FmhqzBeUp96uSprJ7QhvRcjkWA3wyNms5TQ5ZYCXE0yFZYZsgxjGlcYFlN5viWVTkg9z0Q5hlhWtubWqr30WCvdZPAtuwUg5A7NcKhviZ2E/nzHK42b6aAbhsDUwpzj1mp8N4pj7Hft7zw8VpRnr0elwH+DhaEtZd8uYYxI8zD0VZCpKIqoLwjLxB5jXT4n68FRHQxdeazOHCRcZ2Lrjyn157stWxPlyVwxSOceEyE5zI4n+64jKBVE9DKdbL4VNen1AyGeFmqtJ9RLnePPyPSTS//dfIVxFxj75gQIAUajSQE6WqNHVQ7uHWiXjtvqtFJfuhpQN73yg5mqcx+dapw==
+ bh=4UVZZfuFmGSz17yssT97BuPz7Iw9bV/xAe6p7IRgE5E=;
+ b=YKtJ2ucoXMU3to/wgyNFrhNawx33uipqEoJTTvKg1tkUJakZ42Q+ryjudkTwmCYT9stxE+tXmaIjw8DCJDg3uvXDMnAIN2XCRc24sTX1G5i734dXfJM1/yg0BCdYPsnzL8LgOEvCiwgzkKjZqogxvfsEacZXfHrkf6N6pfLVNdJih10I4y4NOdz/56g6DmGCcLw/pJzWSr4ClZqydfCc/4Nn4Tfg1gB8fs9k4ia3JI80TP63XfWDLsQcbQ1uuSIwWVwitqElLvsyqNjmVYsfsRTVcMIHsWvbRtwWk96Yy1nl7Tduk5IihQCmBIIXGTzljS5i9iIGp4ppa3bFqg5sUg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=calian.com; dmarc=pass action=none header.from=calian.com;
  dkim=pass header.d=calian.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=calian.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y7Zvi/oorIy4mTslUfQQatnXxwI40tGSvu8GL+ar32w=;
- b=pg/io8K+hSGa99R0TrePO133+S6NJI+e/jy3A0+bu0fnpD4os3kmHjrQj8mMG84ali1Axt+ERo4TuUqlVnOrAeOJkxZRvQIJ/+n0iBRE76+R0wxL1F1nLLMI/wO0VJjcyCzcJvwSfPOSdhK3Nj5B93VYRegnvhyhkugVFRZcfdA=
+ bh=4UVZZfuFmGSz17yssT97BuPz7Iw9bV/xAe6p7IRgE5E=;
+ b=KTgT0c1sWJkdo19Y6f7fq/oHXIk9CspX30O/AgnsaI/lD+W8ZqCSSPhMyiUSyoH92ZqHeXO+jSmXCiv16uo7iJHEjyID24C1KFPgY7elMb81SV9YbtlRuvutWIBbqAx326Z88PN5PXbcHu9KfEZPZuOsx+QN3Gli33AnMFvTMyI=
 Authentication-Results: baylibre.com; dkim=none (message not signed)
  header.d=none;baylibre.com; dmarc=none action=none header.from=calian.com;
 Received: from YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:f::20)
  by YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b00:b::25) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.28; Thu, 11 Mar
- 2021 22:25:09 +0000
+ 2021 22:25:18 +0000
 Received: from YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::90d4:4d5b:b4c2:fdeb]) by YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::90d4:4d5b:b4c2:fdeb%7]) with mapi id 15.20.3912.027; Thu, 11 Mar 2021
- 22:25:09 +0000
+ 22:25:18 +0000
 From:   Robert Hancock <robert.hancock@calian.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     mike.looijmans@topic.nl, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Robert Hancock <robert.hancock@calian.com>
-Subject: [PATCH 1/9] dt-bindings: clock: clk-si5341: Add new attributes
-Date:   Thu, 11 Mar 2021 16:24:28 -0600
-Message-Id: <20210311222436.3826800-2-robert.hancock@calian.com>
+Subject: [PATCH 7/9] clk: si5341: Add silabs,xaxb-ext-clk property
+Date:   Thu, 11 Mar 2021 16:24:34 -0600
+Message-Id: <20210311222436.3826800-8-robert.hancock@calian.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210311222436.3826800-1-robert.hancock@calian.com>
 References: <20210311222436.3826800-1-robert.hancock@calian.com>
@@ -72,50 +71,50 @@ X-ClientProxiedBy: MWHPR12CA0055.namprd12.prod.outlook.com
  (2603:10b6:b01:f::20)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (204.83.154.189) by MWHPR12CA0055.namprd12.prod.outlook.com (2603:10b6:300:103::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Thu, 11 Mar 2021 22:25:08 +0000
+Received: from localhost.localdomain (204.83.154.189) by MWHPR12CA0055.namprd12.prod.outlook.com (2603:10b6:300:103::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Thu, 11 Mar 2021 22:25:17 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2db513db-31aa-4837-ee48-08d8e4dc87c1
+X-MS-Office365-Filtering-Correlation-Id: fec8b4a2-f917-4b15-ed5a-08d8e4dc8cdd
 X-MS-TrafficTypeDiagnostic: YTXPR0101MB0960:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <YTXPR0101MB09603D9A3D87FC338399FBFDEC909@YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <YTXPR0101MB0960FC40765E60CAED6B7105EC909@YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 18eVDjpa/K3jYn7LsxjAX0rR64OpCU6DrZmQVLHcOWfyL0aX62/yWFLOMMeafcOE0x5dsFv7I1+AaWDuO1dEJzc4kPrmWEkLKop70+Cv/IqF67m+YP3p+oPlLNelDFdZ4GVZCmGbfmQWoKT/mmfQf2QuTZPDcrXRPboI3tIvGbybJvVyGiF0eAO/t0/4tmYAbtows2owcXEW/7P69NA95+K7rJ+TM7mmJCDPzuIyM9gIVdFjoVo6vwHsOHa0Zmsf+z784xXLZUGvEb62tMDeiyt2QmDp6Qorhcv/Cb5HQxYOrZMCJ66PuyHenSUPdcQDUWg+3k1boRsu9pj0oKV2/vN1EE//8KskEShRLDuNdSLhUChKu02IiTrpP+0z6EahWu4C1DrlRn7JHLqBnaPoq5I6ECNlpzDthfqEED9cMDDMC3vAEQYtDKtIujLxpFP81gE8DG1aiHfqL8oTehIQUEy02tWN95aHDGrrdkVI9m1I876aPfu2O132Ge0LaSj7a0irFNNdnywGpIgoEp251UVZ+6xQm0whBvNnsoseRiEjGtpfwo5TbaNTYyIar9+wKGCny59944I1Hj7/EH/xgA==
+X-Microsoft-Antispam-Message-Info: p7otFdpSou+F6a7Cm4ad72oKsxkW1K3Jzguf/kp74rK7DgWtFaqrJg797PE3zocuNU2uuwy1FWRx6yz+dyu2YWk+qiDoDTs8oQ5OgegwMW1S0c39QF8x+sbIMesPdrAdZI5lqJERYGMjPnUfFDxGnwNg9nbqMs3lEXsIj3HHqSkfsH11v0bPyXax1OhUZezJbxUYmwldK0dN7R18U/r0Mb6Ttl3XiTJxrnvi21LAKS5b+Ud+l6aXu5q21Vp4NqoEG8f8xXguCdq3QR+4ygrtaCRXzX5M5+z08GL8M2M4xLmTIYnk+UJUWGkfzddXOTazTQvTMl/2gAH7h2dL4CvxhOhP7lvuYbYYGRJ/8zYDbU2YttcRnRtGaXDFKtN7mcTieG3CaH06L0xT1VncnnBjRTDM3MaXN+mTuGSIGOEzou3aXXFW9a4V+nlFGXo9rHaX5V76ezNKN7SY/jpPdHGOga/4YZpUCj0lyXn+6YgQsdwqh+BiqFgv1YFNbHdlt4qsI08JGgratyuJdRng1mWrROiYFvJvoPcA4kZKBPaQFp5YiADU4Zg241jWzEpzSDRiLmsrHQxZpareiaXzdeZ6gA==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(376002)(39850400004)(366004)(136003)(346002)(396003)(69590400012)(6666004)(6506007)(26005)(66946007)(66556008)(16526019)(44832011)(2616005)(956004)(478600001)(107886003)(6512007)(83380400001)(8676002)(4326008)(36756003)(8936002)(6486002)(186003)(1076003)(52116002)(66476007)(2906002)(5660300002)(316002)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?oeXfiw+SCXOS1xhfAmWrcJdy+bWn1jlAEq7RAQuyGRCTm/YyNIuRfpaZfTbd?=
- =?us-ascii?Q?WZHK/BjnkoQRRIxo1PMLA/rTrJKVb6r0To0wHVrAY14+XAndPKOtAu0U8bT2?=
- =?us-ascii?Q?dUjIyN/IwcNFR8Ky+URdaCGtbjfiqBVkreIW89tRhrEDu97OciJtrsqnQXVh?=
- =?us-ascii?Q?mXZl2893VGpDUhspyi9MgAoG7aA1lVi7c9h6+p9eJxp59NjyeZxeY99t1JAT?=
- =?us-ascii?Q?ojpN/8Cfi43FqPqOFPhf45IQB00+3cpyN7fJAiRIqvRmq+11PosWZnhwv8C7?=
- =?us-ascii?Q?me5+bUq5upJMyhd7TJW/3bxUhstbnomIcDGM70fpKHd8/5YXob/4tpV65kaf?=
- =?us-ascii?Q?EdDykMgHvR6nI/gAFY4K4/bO1hwYiViZBVvuFzHs5vec1fi3arE91gapKgOm?=
- =?us-ascii?Q?qnKEo23ZjZn0oX8DaJMKeYP1P5PvPVW62WAvOFcSOxtu7CLBMW1EB6H8kwD2?=
- =?us-ascii?Q?4kTOKwp2rHyDBlWmS9Av45IHh11SUCzwMKsPGungoUaktoL4XeVJsYtBB+6A?=
- =?us-ascii?Q?BhFXG7JqvG0W4qE5qfNgwvEzN6wV/X09gYVF0Cl4XlCNsgK4wLWpYUOPm2Nw?=
- =?us-ascii?Q?egmQm6csOUOFT0SaA9qutXtGzqooqiWfH/U611I4kzxkNC9yxpwmFnXKzjhZ?=
- =?us-ascii?Q?JZEMibINdHy2d3GIhYgBTLIyrjgQ3y4r5Q5sar3wdGm8+QdtF7Eus5EThj8R?=
- =?us-ascii?Q?mJWMIUzuJBoTR7vBwZFdhWZbcghYjDwq+f7xyAIQ+E9EOe7Q1fs6KIENjVJI?=
- =?us-ascii?Q?M9n5kt8vQohzQjbdWidBkwhmD5XudZfc+0x5N0+vU5UyIfG7Dy3b9AHBaVnG?=
- =?us-ascii?Q?4QO7qXAY1J0TRUdObC2LaYDGUoYGg0MP4NELYJktu17fuLgODIFDr+ngI3Ay?=
- =?us-ascii?Q?NRNfsPM1yXAOlyHhub7vSQOuLezYDRl4z92FhfsxMj6kDowzOg3S9PXkx4Wc?=
- =?us-ascii?Q?t3P2pibKzdlZiURD56M33Tmzn73GR25LqoSwyCGK8GFp6MSxVi5jY84uoD2B?=
- =?us-ascii?Q?ymqaH982/x0BZtTPD6FPZI9i2eBox41Cvbkht/GBBaQENje0tPGYwI8Vee4q?=
- =?us-ascii?Q?3KekxSNumBqVZVg/JrGEEOMvyJlMK589kGZaTtu4RtHXR/SEPHLDiA0mFWq4?=
- =?us-ascii?Q?GgTuI3PvU+NUQPABQWG/c4maslJgEk972YEPTFM5aNJGWhykUtrex+R7s1h7?=
- =?us-ascii?Q?yplfE0EhIr7vFnzGofy+CFKEV+MRhCyykxrcOHUP3VHGnmfALiM+yEhQ7pfH?=
- =?us-ascii?Q?YRbpeRY1USN7NpfytSAofwXZ0jO9rv34spZxldCEvg85t6lZEK6VgxATdVKh?=
- =?us-ascii?Q?xp5dYtTDIxKJtvVuTqSR7wkN?=
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?81bC53ZtqKNKCo5y3qfz5sN9FifSMUNbB/Y6BjRSpGcuDa2U6819cRaMmGNl?=
+ =?us-ascii?Q?I+9MWzZrWR9fzIgqOzuTs6YyzT9RhpN8qsHRHAj4j99Tt5wOXCwuj9ikBeK4?=
+ =?us-ascii?Q?4D/Ii0DJ21CC7DLE2jVNqY1YhTaZyhNc4pmcV5y7btzgZ5Ql+whAaEfOc0oY?=
+ =?us-ascii?Q?vGtmeFfYFGTizXRwa64e9CIpR+I/UdkO9vd5XxYWbjNAsPd0N/qTyYQP0zNw?=
+ =?us-ascii?Q?JffNd2iWIiTtSJloacwPx+BZ2d+2g3Rn4ADLvADzSbLOmVCD0sVRhNm1b193?=
+ =?us-ascii?Q?TdyvRyp1ECXhq9VK5TjP9+sMovuDPliZMsvaT5bswcUvxDiyId8Mx3SOTuFw?=
+ =?us-ascii?Q?AN0mLDh852ZZuk+yxOW7CEPmXY4ZyXWoj7uyue09O1CJgzaPO7MWNrxTMJI1?=
+ =?us-ascii?Q?6GIC9JhxkKrPR7RZrGPI1xn0G/e0nJCGSLHws1+hODnPQ+F7kSXALzliqWMm?=
+ =?us-ascii?Q?QWHNSrFM7E/ggUwMc06UhhISmoiIsWRSNwW+ZbkYTmTWThv3qrqZlUVu0jM2?=
+ =?us-ascii?Q?4SyhViEVL2V7WnbJYU4aYYH8HrmeF/4uAiqPI/fO56c871RdqTFxC/K6m2p0?=
+ =?us-ascii?Q?6fglm52XJisYivUdMHSDaHIMZN/eT2kILyLKsp8Bzr1FYFPpZaW7euHR6eMk?=
+ =?us-ascii?Q?topbOZsYqgWTUMDBe/deEt/XyggkcYp/SCJPaEroRb5bsSf4HBcLa0byVOwf?=
+ =?us-ascii?Q?+pTqVlxQUsaMlT54g5kI6je+CV65rmd2GrDzMxih83ehFUpdykkAy1WdiuX2?=
+ =?us-ascii?Q?JX0fTVMxd7c82fzvKhjG8kUZkLkRbFr0EiYyZJ9J6DhuzJ17cG+0GJsa/dxe?=
+ =?us-ascii?Q?yKBjNqqMzD2iSeA1jVq+tlMh8Mw1TxlwAeDQSRPYzM/e3IPVBu52zfxHLMhk?=
+ =?us-ascii?Q?y32H99b3hvv0L0HTatzkQYxSBmmFUJb+nTuGv4fdV3nSar8reFx1h1aW6db3?=
+ =?us-ascii?Q?Ra16ePr2m8GT90Fu1+JEpU6ld1p5LTfPLvqA1YYpHqvY+Ih7bOgeb5aHM8Iz?=
+ =?us-ascii?Q?ptwA/N/xMCZfdCkiga6YxWubUq2LEVh6Nc5gNW8zEiwO+uVbP/P43OJE5/Th?=
+ =?us-ascii?Q?UkF+sVu5ivArjO6z11RIfAoYDSrk2bHhZeekw4VNIPx8r8KTSV4lB7gU7cE7?=
+ =?us-ascii?Q?XKdq3X8xbqWC26fTqV8/a6lr+F7w8vCJLVAkhS4aKbj6IzbC/MmNcrJiviMt?=
+ =?us-ascii?Q?Fvq5zGxkFYuBJumPF1YV4o2EJ1FxIp34hn6xpBvJPSLF8u8FIfL/pKrqfj6J?=
+ =?us-ascii?Q?rq1WZb/91maBsRgsMkaifw7RKnF8NnEi1sxD+kF3643bOCCXEPGuQ/sbn/TT?=
+ =?us-ascii?Q?nN/uW7wd15nMt630DO0Y9OzS?=
 X-OriginatorOrg: calian.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2db513db-31aa-4837-ee48-08d8e4dc87c1
+X-MS-Exchange-CrossTenant-Network-Message-Id: fec8b4a2-f917-4b15-ed5a-08d8e4dc8cdd
 X-MS-Exchange-CrossTenant-AuthSource: YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 22:25:09.5956
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 22:25:18.1576
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 23b57807-562f-49ad-92c4-3bb0f07a1fdf
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 94ZKHtv47iLuYGJRAopqBD07ZAbyuhA/6KpEnkMjrMFowI7AgkoICpkEySy0/gRQEOmXVwcxyo5+J0kISrJ+N44lm9qBGqpZHo8waiwy1JA=
+X-MS-Exchange-CrossTenant-UserPrincipalName: hdx08Zbo8Higx5D9u5NP72frdnc7uUb7WEb7qSWTy/Peao4M5l6jlwDUde+PIi8E71+Bm/P8QIpYjRA266h7mYFgw504Issk63ajoh0r/NQ=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB0960
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-03-11_12:2021-03-10,2021-03-11 signatures=0
@@ -128,72 +127,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add new silabs,xaxb-ext-clk and silabs,iovdd-33 properties.
-
-Changed vdd-supply on top-level node to optional since it is not actually
-used by the driver.
-
-Removed vdd-supply from output sub-nodes, as it was not supported by the
-driver and it is not easily possible to support this in that location with
-the kernel regulator infrastructure. Changed to have vddX-supply
-attributes for each output on the top-level device node.
+Add a property to allow specifying that the device XA/XB pins are used for
+an external clock input rather than for a clock crystal.
 
 Signed-off-by: Robert Hancock <robert.hancock@calian.com>
 ---
- .../devicetree/bindings/clock/silabs,si5341.txt  | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/clk/clk-si5341.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si5341.txt b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
-index 504cce3abe46..1cf7e002cb16 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si5341.txt
-+++ b/Documentation/devicetree/bindings/clock/silabs,si5341.txt
-@@ -24,9 +24,8 @@ it.
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index f01a20fdf005..11740855bcde 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -80,6 +80,7 @@ struct clk_si5341 {
+ 	u8 num_outputs;
+ 	u8 num_synth;
+ 	u16 chip_id;
++	bool xaxb_ext_clk;
+ };
+ #define to_clk_si5341(_hw)	container_of(_hw, struct clk_si5341, hw)
  
- The device type, speed grade and revision are determined runtime by probing.
+@@ -529,9 +530,11 @@ static int si5341_clk_reparent(struct clk_si5341 *data, u8 index)
+ 		if (err < 0)
+ 			return err;
  
--The driver currently only supports XTAL input mode, and does not support any
--fancy input configurations. They can still be programmed into the chip and
--the driver will leave them "as is".
-+The driver currently does not support any fancy input configurations. They can
-+still be programmed into the chip and the driver will leave them "as is".
+-		/* Power up XTAL oscillator and buffer */
++		/* Power up XTAL oscillator and buffer, select clock mode */
+ 		err = regmap_update_bits(data->regmap, SI5341_XAXB_CFG,
+-				SI5341_XAXB_CFG_PDNB, SI5341_XAXB_CFG_PDNB);
++				SI5341_XAXB_CFG_PDNB | SI5341_XAXB_CFG_EXTCLK_EN,
++				SI5341_XAXB_CFG_PDNB | (data->xaxb_ext_clk ?
++					SI5341_XAXB_CFG_EXTCLK_EN : 0));
+ 		if (err < 0)
+ 			return err;
+ 	}
+@@ -1560,6 +1563,8 @@ static int si5341_probe(struct i2c_client *client,
  
- ==I2C device node==
+ 		initialization_required = !err;
+ 	}
++	data->xaxb_ext_clk = of_property_read_bool(client->dev.of_node,
++						   "silabs,xaxb-ext-clk");
  
-@@ -45,9 +44,9 @@ Required properties:
- 	corresponding to inputs. Use a fixed clock for the "xtal" input.
- 	At least one must be present.
- - clock-names: One of: "xtal", "in0", "in1", "in2"
--- vdd-supply: Regulator node for VDD
- 
- Optional properties:
-+- vdd-supply: Regulator node for VDD
- - vdda-supply: Regulator node for VDDA
- - vdds-supply: Regulator node for VDDS
- - silabs,pll-m-num, silabs,pll-m-den: Numerator and denominator for PLL
-@@ -60,7 +59,14 @@ Optional properties:
-   be initialized, and always performs the soft-reset routine. Since this will
-   temporarily stop all output clocks, don't do this if the chip is generating
-   the CPU clock for example.
-+- silabs,xaxb-ext-clk: When present, indicates that the XA/XB pins are used
-+  in EXTCLK (external reference clock) rather than XTAL (crystal) mode.
- - interrupts: Interrupt for INTRb pin.
-+- silabs,iovdd-33: When present, indicates that the I2C lines are using 3.3V
-+  rather than 1.8V thresholds.
-+- vddX-supply (where X is an output index): Regulator node for VDD for the
-+  specified output. The driver selects the output VDD_SEL setting based on this
-+  voltage.
- - #address-cells: shall be set to 1.
- - #size-cells: shall be set to 0.
- 
-@@ -77,8 +83,6 @@ Required child node properties:
- - reg: number of clock output.
- 
- Optional child node properties:
--- vdd-supply: Regulator node for VDD for this output. The driver selects default
--	values for common-mode and amplitude based on the voltage.
- - silabs,format: Output format, one of:
- 	1 = differential (defaults to LVDS levels)
- 	2 = low-power (defaults to HCSL levels)
+ 	if (initialization_required) {
+ 		/* Populate the regmap cache in preparation for "cache only" */
 -- 
 2.27.0
 
