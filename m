@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D52C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8093C433E6
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 22:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F62A64F88
+	by mail.kernel.org (Postfix) with ESMTP id 7AE3164F26
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 22:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbhCKWp7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229683AbhCKWp7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 11 Mar 2021 17:45:59 -0500
 Received: from mx0c-0054df01.pphosted.com ([67.231.159.91]:25427 "EHLO
         mx0c-0054df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229664AbhCKWpq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 17:45:46 -0500
+        by vger.kernel.org with ESMTP id S229574AbhCKWpp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 17:45:45 -0500
 Received: from pps.filterd (m0208999.ppops.net [127.0.0.1])
-        by mx0c-0054df01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BMLvD6009850;
-        Thu, 11 Mar 2021 17:25:14 -0500
-Received: from can01-to1-obe.outbound.protection.outlook.com (mail-to1can01lp2052.outbound.protection.outlook.com [104.47.61.52])
-        by mx0c-0054df01.pphosted.com with ESMTP id 376bes9m84-1
+        by mx0c-0054df01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BMLkgU009817;
+        Thu, 11 Mar 2021 17:25:18 -0500
+Received: from can01-to1-obe.outbound.protection.outlook.com (mail-to1can01lp2059.outbound.protection.outlook.com [104.47.61.59])
+        by mx0c-0054df01.pphosted.com with ESMTP id 376bes9m86-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 17:25:14 -0500
+        Thu, 11 Mar 2021 17:25:18 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cgix1WGu72dsD6wg9wKd4lQhPMVa64wVolhAPwC4yMRTyYo1dfnONpSlMZC9qpaMjrMksHaejF2I0uSFPPewj8qvi9SLjldwJK+W8iwx2DchhylGYh2Hu8PnaQT58XJXwR8+vI57ICMrqsipyncxR2xO3Nuxn2vRXZgs42lU4xhkREExjY+ZYZWIcutOTS/Ik5PpBAgzuJWi4826KjHCoDdxCZ8o/yKk2veefPDJrNBMZ89PJlTPk+/cgfcratjQlJb2jwi04oaVkaSdwZTG8MZX2oJ5sZqE3HEgC/a3lYFPVVD/caRu7FpDMLwRoy/w95wC4CdIjReZsRVBhTIpXQ==
+ b=nMrwj9cwIDzG5yNp6qNao5abXV+PZUYLqClVkNZLQOPT059+pdETryiAOgZewLuEvRzp3lGOq86Zo7tYX4pfxITQYlTU0aj3mddW+ZQ2fxLM1zNfFYJkyp18bFeMGISfytGFdQrHJq8S0Hi0YjV3/QJGxa6MUWcdj/9qC00DGfL98lXkXT1sWiDjyR2Tk9jT0kXrhArpp99S+I0ZOUbV2JdXpQdTZYdH3IGxiHuZITeVfE6zd/NOJgZ6cv4syBXaokly42QplxjszNXvsyS7z+M1XFgQzl/Aq8wRxvZh8FVQfcPdPe0VV4A+2X32jkzlci+G74ufbHqS8QlsHD4E3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJQLceEnUqW4NPmr4QN64XNbQGtz8vEx3AGlcgu4jk8=;
- b=drp5mHnaTTMfH75RywpDLNT6nVUwkVsy5GXT99PlN8wCsAbLSLP8NySrB6ODb7reAQPqx5//Bk8frJwp4JeCjCoGtZcazGQbmyJV2PuAc05y7DvMeU920Y/a30EPDI6q6jUv89tsETamT20nF7jByO5z1N4vhgOcWhLeVN9R45tZDvLH43Lg2l+w52H2ImGNRYkCUUVC9qR46BxbGK66yucSQlIShJxhpsq1a9qt23zXwO3p55S80ZWL/YzkwuRGvvnenqxs1ZSUpC0iSHLnyc1XJCrFkXVf02KssVvkmakFzGQI2ihxHmEiF8TCQ7h/eGT8qY7iewRReb0Ru7e7sg==
+ bh=CjcKKyNUvpP2gbc3MnQKFtCAOrmz+UNMPDn966oOCRE=;
+ b=iJqm2RW1XC3sMm47/reR1sYlEn0R5EihGLp6oiQzf9VEpIxfzMngy9sBTNS15LZ8zWyce8gXmkBHHI6P3QKsGUDKv3S+oGunAsAWlTcQ7xKTR0tlNJTpJHcv7XOhMG0bQr5bkgbdZyNg/53dP1nkDXX1QgF9BmKecUMji+9Zydm8l4XBtMcuM0FAUhBDLvKYUYIEjLuiTLbYujBrqqul3r0W2LNP/37qo++usq3cjJlPwkfeexGrIcLSTffHnhctcBjfW+G9aRawgwhGEEP1YRcJzFTsLsRRw3xJz7tngxjCNUuYQZ+5rM/gi5/WPbZKvtsxFEOyPke7z8QLNYkQPg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=calian.com; dmarc=pass action=none header.from=calian.com;
  dkim=pass header.d=calian.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=calian.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJQLceEnUqW4NPmr4QN64XNbQGtz8vEx3AGlcgu4jk8=;
- b=vfxX08yWPm9fmuGjIcUKE6GYM8SMvL5FCs0wL0KYf5sIfNNVuajafMUaXzddQ8Qe6sLSrsiJpkbX3krNVryNF8MnOPlry73tPllZNEonVARkhYFYYiVzRo0qkdWoDUI103RRb9VelK7E23gzCGah/JEojOEHwn6H/7k4MBCfTu0=
+ bh=CjcKKyNUvpP2gbc3MnQKFtCAOrmz+UNMPDn966oOCRE=;
+ b=G6wSr4HKq0YxsDCjEYxOoC9sIbn7rP26J5LgAzlvKqRz5P9cDW9GfB28iCOUeD6tTXDHIkAtQJ18kRKFbcbYk3Jya7XHt/x0bWfRNBN1sp2wzE8Vmtr0TYgJyCGENVehV6A2Hiyp5Soq0EQ6iWi21PYjw2cxPq5HM1PapvIZfAI=
 Authentication-Results: baylibre.com; dkim=none (message not signed)
  header.d=none;baylibre.com; dmarc=none action=none header.from=calian.com;
 Received: from YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:f::20)
  by YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b00:b::25) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.28; Thu, 11 Mar
- 2021 22:25:13 +0000
+ 2021 22:25:17 +0000
 Received: from YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::90d4:4d5b:b4c2:fdeb]) by YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::90d4:4d5b:b4c2:fdeb%7]) with mapi id 15.20.3912.027; Thu, 11 Mar 2021
- 22:25:13 +0000
+ 22:25:17 +0000
 From:   Robert Hancock <robert.hancock@calian.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     mike.looijmans@topic.nl, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Robert Hancock <robert.hancock@calian.com>
-Subject: [PATCH 4/9] clk: si5341: Check for input clock presence and PLL lock on startup
-Date:   Thu, 11 Mar 2021 16:24:31 -0600
-Message-Id: <20210311222436.3826800-5-robert.hancock@calian.com>
+Subject: [PATCH 6/9] clk: si5341: Allow different output VDD_SEL values
+Date:   Thu, 11 Mar 2021 16:24:33 -0600
+Message-Id: <20210311222436.3826800-7-robert.hancock@calian.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210311222436.3826800-1-robert.hancock@calian.com>
 References: <20210311222436.3826800-1-robert.hancock@calian.com>
@@ -71,50 +71,50 @@ X-ClientProxiedBy: MWHPR12CA0055.namprd12.prod.outlook.com
  (2603:10b6:b01:f::20)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (204.83.154.189) by MWHPR12CA0055.namprd12.prod.outlook.com (2603:10b6:300:103::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Thu, 11 Mar 2021 22:25:12 +0000
+Received: from localhost.localdomain (204.83.154.189) by MWHPR12CA0055.namprd12.prod.outlook.com (2603:10b6:300:103::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Thu, 11 Mar 2021 22:25:15 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 235c12aa-2405-484d-35c4-08d8e4dc8a0d
+X-MS-Office365-Filtering-Correlation-Id: 954eef2f-b666-4fd4-5a06-08d8e4dc8c22
 X-MS-TrafficTypeDiagnostic: YTXPR0101MB0960:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <YTXPR0101MB096052249DC46475953E8BDEEC909@YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Microsoft-Antispam-PRVS: <YTXPR0101MB09601F8C234B095333A139E7EC909@YTXPR0101MB0960.CANPRD01.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:983;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bo13AGcKTiPa4/L6pRl4psM8YJT7aPoeTWvF1H7UfK7x/a2kYBTSOjNXCZ0cxurKBH7saVM6xzoe65xn1GdFGGtbqJhUq0nMirfhSe53TDVj9LAueEzqYO1kRboFNdW5FIFOn8/xJ48G625Z2sPiZWLJNd2SCECLHZL1sQ3H2FqmzIGlKcuWKGUgIUEf0CT4xtLL6UyLW0dqL9Fsp9F2rAtq1JWLMVLRkW8BmIbJB+lYUszJg4HdS4BI4An90SSIdafQ6YCB01WmMeGcYh8VO4hwIDDsWQoHBcZdCILGJUz8E1L0nMP7EMSmPJ3tODlY2E+vyT7MzBKWKVhifuMu3jOLu6M1QrCNeiROtkDbDUhWgZmi7D5LOsDw+kFxuLz+WtS7APQTGzrrf1ZgfsM/hQUZJbDE7e9vLIjN3ckeSbzhddIMMwHixGg2W1ORrbKVSnM5/l9Thf0TADiUArIEnJW2CJGWTaIk8cnxjkGyn5x8ZRuxcdgITfkAiIZtiUmYhuhwEEjwgPe+cL+2eDRT2f+wGFKb9n6PuF+jC9ZWqOqwVqbKzRqYk+DGPKPjYFofJaamNDKdSNq3snVU+FpcNg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(376002)(39850400004)(366004)(136003)(346002)(396003)(69590400012)(6666004)(6506007)(26005)(66946007)(66556008)(16526019)(44832011)(2616005)(956004)(478600001)(107886003)(6512007)(83380400001)(8676002)(4326008)(36756003)(8936002)(6486002)(186003)(1076003)(52116002)(66476007)(2906002)(5660300002)(316002)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?qgwhBQKqjbnqCe6YaT05dD5szJghlNFHaXP3ySbnjFqOoex9KBbAAhnnj1rL?=
- =?us-ascii?Q?RiCvgGSiLLZ49zBdH2c8uL1WogwxHgl8/dSj1MThzJaz9EVSawuP8gzqbwB0?=
- =?us-ascii?Q?fQVDJTSeMb/ikZMXkdbrOGVrpOS1A/DUhi61Kfc2VMEU8HIVpxaiHO5oXLKl?=
- =?us-ascii?Q?ynzEsTJ8xl0huWBdQQVM5vajKEc7G3um645Sr2moDdf73GDbasfLkaF7ZopS?=
- =?us-ascii?Q?lJPYrtHaJYfcw4EMS6Zb9fYhKm6+cb0SLoUqihhaw3XPRUUF3RvU5bwwGq/W?=
- =?us-ascii?Q?sZWes0r0RDGsBLEO0e9P33AQ9RNabP4tbOWCYiSNvVEJGfnFOQwUz67ThOx8?=
- =?us-ascii?Q?KiGz0sVo9e9KZe6mEH5T92qovekfVJ3k57m0VC/niftkFjdyfZY1wfL4yZ5z?=
- =?us-ascii?Q?ZGr/BDolcmgPFaYdfcbI0fm83osx4lpJ5BGc7BhV5LnNU++8a1mxAxFpTMk8?=
- =?us-ascii?Q?gRtyGyBDk+GpprtwvjRiNxsnKtJnUXd42J+Trd9GJsdkkBXsIPijSJPyajpb?=
- =?us-ascii?Q?RwMkr+0TTrDHX0ozZIjHqN2a1nTSso7iBKXNq9X7D9Bk1MxpTgq+egyZM4Jg?=
- =?us-ascii?Q?053YJ+Ynu3cseit4Ro16ERtOJ0fQtzqSl5ocdJe/tfmiSiGTdWjfaTzJqZ/u?=
- =?us-ascii?Q?OU1MW+mDpoG167tis9STWRnyqLaaZVxEMckqZX9Ck/NUc1XGz4T+JL7UIN47?=
- =?us-ascii?Q?fcH76jthFReW7lJ2TB/qV1SnPzirF7Yon62XplGZHz3bB9oy5MPSwkueYxNc?=
- =?us-ascii?Q?1mx+dIWT9WS4WtBUb56wmlt10wz0raE8DzNXOkD/myYxtw+SlYJWrm1dmZKc?=
- =?us-ascii?Q?dpn//CPaKp4dIwqtIUTPOLTZvrON/dzhBe0zXh9YZqZ+PCLMy2qOvkP+vUjC?=
- =?us-ascii?Q?XHPF2c7+b8V05EUNu4x4cOlFLReHX8pCoXJv4oe79u4ItL4ydccLqSph5Ny6?=
- =?us-ascii?Q?eI9f1YDYHXPz0VnEMK6MdOUQdmCKltkRqh5vnuPpaBzurjXgbpXAUVzZh2Vk?=
- =?us-ascii?Q?bQOUT1TF5juJBNkrOwUqeEurGoGNY1+VUVQOUAIGy+XDxnxlMWWsqvI3tbUU?=
- =?us-ascii?Q?KOvWBWjxBRhMMiEL81mS/wKs+dCdgBZFA9lnrJvLVK3kR3TyVgNCxctmNcvb?=
- =?us-ascii?Q?uFm/JwqN19Bx2gDM4mLWKhdbD+nK+M+0wt+kAk0yTu9+OjVFZwxjVsdiKlrb?=
- =?us-ascii?Q?7v2CLaO0yFas5uUXsQySO4dqz4jvB1XgtnSLvjJvKQLybseznAQVqlkrL1eG?=
- =?us-ascii?Q?rf5w8MtzFO6dy674etsYAYLPla4Wnt1e21+LN87m7ik6wnnRyV3+2Fi6OfLk?=
- =?us-ascii?Q?j12lQmu91gZxGb3RtaomE+oI?=
+X-Microsoft-Antispam-Message-Info: i0/CpYj90o+aXCXhvv/6nBh6RxLmeX3oTH1iXYTbxoBThCdrXGN31BIpH5XU3YGmMS3u72kukRpk+5Q8dHhJv72KEG/+KHrTP76PgzTaVzqcvT2L79oN1kRwFhHWvErgbuFn8Or37EO3CVNkii8SNLBLSAZoXRAvSIx/b76Gzaf7tsmb6t0BEXbS4YOPpJlEUOq/ZANHb55Qx4YKjk4CRgEDlYTMEF4UYOcxR4oNixsCbN4XLO/8Mehf7HmsbOwDt0xog9NZQazkvON4L4o4SDurfydNu2bO7qfN8d8xPsp4Q0TPwz2cvXJ8RvDMlkdSUz5jslLq1OqpLpi3Gpx/lhWelzLUyOVm37HclAcYGtPxuaW/EU5lGJf3XDzSOf3bHOM2LhK9yKTanEzzlNsrxMsarQKSS+mxg1AlbcVSQ8puJ5QKwso1ze8qa8MLEvxiilbVDIDUd4UBuuMlEy2bCwpjZsckPdgGLXZUqSY8Bl/LnKtb4a38jHBLipuwPOZnq7OaDRa4o9y82ZofT0ZKxyWGG2FMS3GSe6nLZdD2BCtHxww4JKC2dkqoGaRObgdlkWBakv+D9RDMiUNUm4Mh8yTa5jBtlMuJomfImQbJ5l4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(376002)(39850400004)(366004)(136003)(346002)(396003)(69590400012)(6666004)(6506007)(26005)(66946007)(66556008)(16526019)(44832011)(2616005)(956004)(478600001)(107886003)(6512007)(83380400001)(8676002)(4326008)(36756003)(8936002)(6486002)(186003)(1076003)(52116002)(66476007)(2906002)(5660300002)(316002)(86362001)(461764006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?vMREDbY3WIQ+Xt+V7wkxXwom0Bipb99ltqQ//T6WB/xU0gMqecbxjtCDXzgS?=
+ =?us-ascii?Q?KxxtV5MjZPc2+ghU+ILwvox4rUoWzWKcxiw/JivrPEcdMLnFc13anjcfLP1o?=
+ =?us-ascii?Q?RJw/dVoc9NXCm6GTt2OGao2hm+XaslHNIloscvl0LVTIiJ5yVSs2v7XFJEFR?=
+ =?us-ascii?Q?zzIVLdKisPSE7TtBFQVDrO4R9tCRl1X2LB7Vdp/I1UJx8qWCJeTvyQkwihzY?=
+ =?us-ascii?Q?MimVkTXWVoXZxbmH7oVNbE9dvt5Xa5nUDIQ9CvBx5YKJznpCkHsOwZoNF/0L?=
+ =?us-ascii?Q?sncKAiZrd9amjv0KrI2EpW7RkCrhZMzR4h8/InhwVhLAIVOWnJovn9jyrGFk?=
+ =?us-ascii?Q?7ei9xXAMXsp186rWL97tcdOZekGR7j9IKCi8PIZ8z5jlV+oehUYAykTLwIK1?=
+ =?us-ascii?Q?kAyR7c13GZwhkMEk7ZJEVPb+x8Ud8dOIs0fyQnB7dw/MkUhpfLls31nJZiuF?=
+ =?us-ascii?Q?H465FlQrqpwpppgq0C0wpxGNXkSgdx69UknuiAN+4V5jbbry2uJB/Q3YSCgU?=
+ =?us-ascii?Q?ZFizzH91Ilyh/ynF7iLBOqP79fOR5bjRxNN4yWrkB00AHlgksxL2VuICm0L3?=
+ =?us-ascii?Q?QmS6kH1s1YYXesMAyVeVNWP3N5EVlV+zm6MSQ7oT1+J4vbR50Av47mKx3ivs?=
+ =?us-ascii?Q?BiEkp7yCS0UYPVsZoo1Wsiwnfxt3Xaavr4ibLBRWFkIUetFJQWfX089qZToo?=
+ =?us-ascii?Q?DWVcKE+QUvKX/yae4e1Cfvqz1uxzWuCoM+5lyH85CgBTMVRS5CCC/v67gDK6?=
+ =?us-ascii?Q?OH319NQ3wG72Ntp3ifCQSYEQN88dVzMK5yS3E2+v/75I4ZpRnoGxgWW6TjRa?=
+ =?us-ascii?Q?/K18mWeYg++7mpwTA0XMjdolCvG3rrpgbAjFUoac6aVPDyprIvCvKBGcHEw9?=
+ =?us-ascii?Q?9DF0Xgbg2dWSnSa/q64hsd1suM0dmO2H8k3C6nJXbCpGi+o0q5OaqXW1pBrM?=
+ =?us-ascii?Q?iAJ1pMLjs5lpcGLLJ9tv5c4eHlXFRicyFrrs4QMC15AHBnZhzrfqkMKY6mE5?=
+ =?us-ascii?Q?JOyanltO4FPnAYFJB+mRA3JSD5KlelgdtQXWPvSLRbW3rN86SD6bDg3Wscz2?=
+ =?us-ascii?Q?M+TFeJtNzRbfL5C2mZ10ZfKfZdl0+nmqHuKnLJ46u44dptD31/3QtIDVx0Cc?=
+ =?us-ascii?Q?5YJNBGTjQRhFEOjymGNL16Dz+xvv+akNP8D8JbMQzsaozj3fmnKviMkCGh1f?=
+ =?us-ascii?Q?U7jkDVIZaYDYxWpFN+nOa8K15nVEjW6T1tnnkuPeGSVavRwrpi2aEbXHlhoK?=
+ =?us-ascii?Q?Zk6Xt0lyhAXB3F8yvMkvg7rSrq0TLdDTSlQ+iWHqNpwQ3lLiomO8G+Y9yGbd?=
+ =?us-ascii?Q?dJffdDxtAUwdV7d7Cnh6HCgA?=
 X-OriginatorOrg: calian.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 235c12aa-2405-484d-35c4-08d8e4dc8a0d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 954eef2f-b666-4fd4-5a06-08d8e4dc8c22
 X-MS-Exchange-CrossTenant-AuthSource: YT1PR01MB3546.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 22:25:13.4543
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2021 22:25:16.9273
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 23b57807-562f-49ad-92c4-3bb0f07a1fdf
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UaTPM8qmWNS0BdyCuXRLFVU9Ks1hhmvTXkmq/LghnJ0Lk+Fwj/otB4U2vKvfu6d0I34A8KwafQVj3a0nWKu1Z63DwstZqD/SITRdkSMv++c=
+X-MS-Exchange-CrossTenant-UserPrincipalName: aetl636mKYUmL6N+y7FVZt1eobcPGO0zrSxzwrTQBk5mJ44NUcgx0dmveSXXD2plbzCXFRlX9kFWhObLFnuSy6EZuqMgMHM36F3r7kYWG4M=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB0960
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-03-11_12:2021-03-10,2021-03-11 signatures=0
@@ -127,94 +127,351 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After initializing the device, allow sufficient time for the PLL to lock
-(if we reconfigured it) and verify that the input clock is present and the
-PLL has locked before declaring success.
+The driver was not previously programming the VDD_SEL values for each
+output to indicate what external VDD voltage was used for each. Add
+ability to specify a regulator supplying the VDD pin for each output of
+the device. The voltage of the regulator is used to automatically set the
+VDD_SEL value appropriately. If no regulator is specified and the chip is
+being reconfigured, assume 2.5V which appears to be the chip default.
 
-Fixes: 3044a860fd ("clk: Add Si5341/Si5340 driver")
 Signed-off-by: Robert Hancock <robert.hancock@calian.com>
 ---
- drivers/clk/clk-si5341.c | 46 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/clk/clk-si5341.c | 136 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 110 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 2d69b2144acf..5221e431f6cb 100644
+index b758cc9987ca..f01a20fdf005 100644
 --- a/drivers/clk/clk-si5341.c
 +++ b/drivers/clk/clk-si5341.c
-@@ -92,6 +92,9 @@ struct clk_si5341_output_config {
- #define SI5341_PN_BASE		0x0002
- #define SI5341_DEVICE_REV	0x0005
- #define SI5341_STATUS		0x000C
-+#define SI5341_LOS		0x000D
-+#define SI5341_STATUS_STICKY	0x0011
-+#define SI5341_LOS_STICKY	0x0012
- #define SI5341_SOFT_RST		0x001C
- #define SI5341_IN_SEL		0x0021
- #define SI5341_DEVICE_READY	0x00FE
-@@ -99,6 +102,12 @@ struct clk_si5341_output_config {
- #define SI5341_IN_EN		0x0949
- #define SI5341_INX_TO_PFD_EN	0x094A
+@@ -19,6 +19,7 @@
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <asm/unaligned.h>
  
-+/* Status bits */
-+#define SI5341_STATUS_SYSINCAL	BIT(0)
-+#define SI5341_STATUS_LOSXAXB	BIT(1)
-+#define SI5341_STATUS_LOSREF	BIT(2)
-+#define SI5341_STATUS_LOL	BIT(3)
-+
- /* Input selection */
- #define SI5341_IN_SEL_MASK	0x06
- #define SI5341_IN_SEL_SHIFT	1
-@@ -1403,6 +1412,29 @@ static int si5341_clk_select_active_input(struct clk_si5341 *data)
- 	return res;
- }
+@@ -59,6 +60,7 @@ struct clk_si5341_synth {
+ struct clk_si5341_output {
+ 	struct clk_hw hw;
+ 	struct clk_si5341 *data;
++	struct regulator *vdd_reg;
+ 	u8 index;
+ };
+ #define to_clk_si5341_output(_hw) \
+@@ -84,6 +86,7 @@ struct clk_si5341 {
+ struct clk_si5341_output_config {
+ 	u8 out_format_drv_bits;
+ 	u8 out_cm_ampl_bits;
++	u8 vdd_sel_bits;
+ 	bool synth_master;
+ 	bool always_on;
+ };
+@@ -136,6 +139,8 @@ struct clk_si5341_output_config {
+ #define SI5341_OUT_R_REG(output)	\
+ 			((output)->data->reg_rdiv_offset[(output)->index])
  
-+static int si5341_check_healthy(struct clk_si5341 *data)
-+{
-+	u32 status;
-+	int res = regmap_read(data->regmap, SI5341_STATUS, &status);
++#define SI5341_OUT_MUX_VDD_SEL_MASK 0x38
 +
-+	if (res < 0) {
-+		dev_err(&data->i2c_client->dev, "failed to read status\n");
-+		return res;
-+	}
-+
-+	if ((status & SI5341_STATUS_LOSREF)) {
-+		dev_err(&data->i2c_client->dev, "input clock not present\n");
-+		return -EIO;
-+	}
-+
-+	if ((status & SI5341_STATUS_LOL)) {
-+		dev_err(&data->i2c_client->dev, "PLL not locked\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
- static int si5341_probe(struct i2c_client *client,
- 		const struct i2c_device_id *id)
+ /* Synthesize N divider */
+ #define SI5341_SYNTH_N_NUM(x)	(0x0302 + ((x) * 11))
+ #define SI5341_SYNTH_N_DEN(x)	(0x0308 + ((x) * 11))
+@@ -1247,11 +1252,11 @@ static const struct regmap_config si5341_regmap_config = {
+ 	.volatile_table = &si5341_regmap_volatile,
+ };
+ 
+-static int si5341_dt_parse_dt(struct i2c_client *client,
+-	struct clk_si5341_output_config *config)
++static int si5341_dt_parse_dt(struct clk_si5341 *data,
++			      struct clk_si5341_output_config *config)
  {
-@@ -1580,6 +1612,20 @@ static int si5341_probe(struct i2c_client *client,
+ 	struct device_node *child;
+-	struct device_node *np = client->dev.of_node;
++	struct device_node *np = data->i2c_client->dev.of_node;
+ 	u32 num;
+ 	u32 val;
+ 
+@@ -1260,13 +1265,13 @@ static int si5341_dt_parse_dt(struct i2c_client *client,
+ 
+ 	for_each_child_of_node(np, child) {
+ 		if (of_property_read_u32(child, "reg", &num)) {
+-			dev_err(&client->dev, "missing reg property of %s\n",
++			dev_err(&data->i2c_client->dev, "missing reg property of %s\n",
+ 				child->name);
+ 			goto put_child;
+ 		}
+ 
+ 		if (num >= SI5341_MAX_NUM_OUTPUTS) {
+-			dev_err(&client->dev, "invalid clkout %d\n", num);
++			dev_err(&data->i2c_client->dev, "invalid clkout %d\n", num);
+ 			goto put_child;
+ 		}
+ 
+@@ -1285,7 +1290,7 @@ static int si5341_dt_parse_dt(struct i2c_client *client,
+ 				config[num].out_format_drv_bits |= 0xc0;
+ 				break;
+ 			default:
+-				dev_err(&client->dev,
++				dev_err(&data->i2c_client->dev,
+ 					"invalid silabs,format %u for %u\n",
+ 					val, num);
+ 				goto put_child;
+@@ -1298,7 +1303,7 @@ static int si5341_dt_parse_dt(struct i2c_client *client,
+ 
+ 		if (!of_property_read_u32(child, "silabs,common-mode", &val)) {
+ 			if (val > 0xf) {
+-				dev_err(&client->dev,
++				dev_err(&data->i2c_client->dev,
+ 					"invalid silabs,common-mode %u\n",
+ 					val);
+ 				goto put_child;
+@@ -1309,7 +1314,7 @@ static int si5341_dt_parse_dt(struct i2c_client *client,
+ 
+ 		if (!of_property_read_u32(child, "silabs,amplitude", &val)) {
+ 			if (val > 0xf) {
+-				dev_err(&client->dev,
++				dev_err(&data->i2c_client->dev,
+ 					"invalid silabs,amplitude %u\n",
+ 					val);
+ 				goto put_child;
+@@ -1326,6 +1331,34 @@ static int si5341_dt_parse_dt(struct i2c_client *client,
+ 
+ 		config[num].always_on =
+ 			of_property_read_bool(child, "always-on");
++
++		config[num].vdd_sel_bits = 0x08;
++		if (data->clk[num].vdd_reg) {
++			int vdd = regulator_get_voltage(data->clk[num].vdd_reg);
++
++			switch (vdd) {
++			case 3300000:
++				config[num].vdd_sel_bits |= 0 << 4;
++				break;
++			case 1800000:
++				config[num].vdd_sel_bits |= 1 << 4;
++				break;
++			case 2500000:
++				config[num].vdd_sel_bits |= 2 << 4;
++				break;
++			default:
++				dev_err(&data->i2c_client->dev,
++					"unsupported vdd voltage %d for %s\n",
++					vdd, child->name);
++				goto put_child;
++			}
++		} else {
++			/* chip seems to default to 2.5V when not set */
++			dev_warn(&data->i2c_client->dev,
++				"no regulator set, defaulting vdd_sel to 2.5V for %s\n",
++				child->name);
++			config[num].vdd_sel_bits |= 2 << 4;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -1473,9 +1506,33 @@ static int si5341_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
+-	err = si5341_dt_parse_dt(client, config);
++	for (i = 0; i < SI5341_MAX_NUM_OUTPUTS; ++i) {
++		char reg_name[10];
++
++		snprintf(reg_name, sizeof(reg_name), "vdd%d", i);
++		data->clk[i].vdd_reg = devm_regulator_get_optional(
++			&client->dev, reg_name);
++		if (IS_ERR(data->clk[i].vdd_reg)) {
++			err = PTR_ERR(data->clk[i].vdd_reg);
++			data->clk[i].vdd_reg = NULL;
++			if (err == -ENODEV)
++				continue;
++			goto cleanup;
++		} else {
++			err = regulator_enable(data->clk[i].vdd_reg);
++			if (err) {
++				dev_err(&client->dev,
++					"failed to enable %s regulator: %d\n",
++					reg_name, err);
++				data->clk[i].vdd_reg = NULL;
++				goto cleanup;
++			}
++		}
++	}
++
++	err = si5341_dt_parse_dt(data, config);
+ 	if (err)
+-		return err;
++		goto cleanup;
+ 
+ 	if (of_property_read_string(client->dev.of_node, "clock-output-names",
+ 			&init.name))
+@@ -1483,21 +1540,23 @@ static int si5341_probe(struct i2c_client *client,
+ 	root_clock_name = init.name;
+ 
+ 	data->regmap = devm_regmap_init_i2c(client, &si5341_regmap_config);
+-	if (IS_ERR(data->regmap))
+-		return PTR_ERR(data->regmap);
++	if (IS_ERR(data->regmap)) {
++		err = PTR_ERR(data->regmap);
++		goto cleanup;
++	}
+ 
+ 	i2c_set_clientdata(client, data);
+ 
+ 	err = si5341_probe_chip_id(data);
+ 	if (err < 0)
+-		return err;
++		goto cleanup;
+ 
+ 	if (of_property_read_bool(client->dev.of_node, "silabs,reprogram")) {
+ 		initialization_required = true;
+ 	} else {
+ 		err = si5341_is_programmed_already(data);
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 
+ 		initialization_required = !err;
+ 	}
+@@ -1506,11 +1565,11 @@ static int si5341_probe(struct i2c_client *client,
+ 		/* Populate the regmap cache in preparation for "cache only" */
+ 		err = si5341_read_settings(data);
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 
+ 		err = si5341_send_preamble(data);
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 
+ 		/*
+ 		 * We intend to send all 'final' register values in a single
+@@ -1523,19 +1582,19 @@ static int si5341_probe(struct i2c_client *client,
+ 		err = si5341_write_multiple(data, si5341_reg_defaults,
+ 					ARRAY_SIZE(si5341_reg_defaults));
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 	}
+ 
+ 	/* Input must be up and running at this point */
+ 	err = si5341_clk_select_active_input(data);
+ 	if (err < 0)
+-		return err;
++		goto cleanup;
+ 
+ 	if (initialization_required) {
+ 		/* PLL configuration is required */
+ 		err = si5341_initialize_pll(data);
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 	}
+ 
+ 	/* Register the PLL */
+@@ -1548,7 +1607,7 @@ static int si5341_probe(struct i2c_client *client,
+ 	err = devm_clk_hw_register(&client->dev, &data->hw);
+ 	if (err) {
+ 		dev_err(&client->dev, "clock registration failed\n");
+-		return err;
++		goto cleanup;
+ 	}
+ 
+ 	init.num_parents = 1;
+@@ -1585,13 +1644,17 @@ static int si5341_probe(struct i2c_client *client,
+ 			regmap_write(data->regmap,
+ 				SI5341_OUT_CM(&data->clk[i]),
+ 				config[i].out_cm_ampl_bits);
++			regmap_update_bits(data->regmap,
++				SI5341_OUT_MUX_SEL(&data->clk[i]),
++				SI5341_OUT_MUX_VDD_SEL_MASK,
++				config[i].vdd_sel_bits);
+ 		}
+ 		err = devm_clk_hw_register(&client->dev, &data->clk[i].hw);
+ 		kfree(init.name); /* clock framework made a copy of the name */
+ 		if (err) {
+ 			dev_err(&client->dev,
+ 				"output %u registration failed\n", i);
+-			return err;
++			goto cleanup;
+ 		}
+ 		if (config[i].always_on)
+ 			clk_prepare(data->clk[i].hw.clk);
+@@ -1601,7 +1664,7 @@ static int si5341_probe(struct i2c_client *client,
+ 			data);
+ 	if (err) {
+ 		dev_err(&client->dev, "unable to add clk provider\n");
+-		return err;
++		goto cleanup;
+ 	}
+ 
+ 	if (initialization_required) {
+@@ -1609,11 +1672,11 @@ static int si5341_probe(struct i2c_client *client,
+ 		regcache_cache_only(data->regmap, false);
+ 		err = regcache_sync(data->regmap);
+ 		if (err < 0)
+-			return err;
++			goto cleanup;
+ 
  		err = si5341_finalize_defaults(data);
  		if (err < 0)
- 			return err;
-+
-+		/* allow time for PLL to lock */
-+		msleep(250);
-+	}
-+
-+	err = si5341_check_healthy(data);
-+	if (err)
-+		return err;
-+
-+	/* clear sticky alarm bits from initialization */
-+	err = regmap_write(data->regmap, SI5341_STATUS_STICKY, 0);
-+	if (err) {
-+		dev_err(&client->dev, "unable to clear sticky status\n");
-+		return err;
+-			return err;
++			goto cleanup;
+ 
+ 		/* allow time for PLL to lock */
+ 		msleep(250);
+@@ -1621,13 +1684,13 @@ static int si5341_probe(struct i2c_client *client,
+ 
+ 	err = si5341_check_healthy(data);
+ 	if (err)
+-		return err;
++		goto cleanup;
+ 
+ 	/* clear sticky alarm bits from initialization */
+ 	err = regmap_write(data->regmap, SI5341_STATUS_STICKY, 0);
+ 	if (err) {
+ 		dev_err(&client->dev, "unable to clear sticky status\n");
+-		return err;
++		goto cleanup;
  	}
  
  	/* Free the names, clk framework makes copies */
+@@ -1635,6 +1698,26 @@ static int si5341_probe(struct i2c_client *client,
+ 		 devm_kfree(&client->dev, (void *)synth_clock_names[i]);
+ 
+ 	return 0;
++
++cleanup:
++	for (i = 0; i < SI5341_MAX_NUM_OUTPUTS; ++i) {
++		if (data->clk[i].vdd_reg)
++			regulator_disable(data->clk[i].vdd_reg);
++	}
++	return err;
++}
++
++int si5341_remove(struct i2c_client *client)
++{
++	struct clk_si5341 *data = i2c_get_clientdata(client);
++	int i;
++
++	for (i = 0; i < SI5341_MAX_NUM_OUTPUTS; ++i) {
++		if (data->clk[i].vdd_reg)
++			regulator_disable(data->clk[i].vdd_reg);
++	}
++
++	return 0;
+ }
+ 
+ static const struct i2c_device_id si5341_id[] = {
+@@ -1663,6 +1746,7 @@ static struct i2c_driver si5341_driver = {
+ 		.of_match_table = clk_si5341_of_match,
+ 	},
+ 	.probe		= si5341_probe,
++	.remove		= si5341_remove,
+ 	.id_table	= si5341_id,
+ };
+ module_i2c_driver(si5341_driver);
 -- 
 2.27.0
 
