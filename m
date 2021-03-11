@@ -2,131 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC29C2BA11
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 15:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EEDC433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 15:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 055B964E3F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 15:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C3264FF3
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 15:50:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234398AbhCKP2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 10:28:06 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34338 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234055AbhCKP1v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 10:27:51 -0500
-Received: from mail-lf1-f71.google.com ([209.85.167.71])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lKNE5-0005lr-Vh
-        for linux-clk@vger.kernel.org; Thu, 11 Mar 2021 15:27:50 +0000
-Received: by mail-lf1-f71.google.com with SMTP id b1so6836802lft.11
-        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 07:27:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xL1edBPIXb5EtPx7dtqi4BTArR+ixt/89Ez9ALjb7AY=;
-        b=hFld5z2DgZ8nmvKTfWXMzGTwmBRlnCtBxg+8G4uhlfqak5IOHExC7eJTUQxmFDHFwj
-         37lxFODeXw7JaGYPfdCOg3R2xUXYu1Cnkr+jsgLULjMfHde8w7EIfS+EEOHIG9vqbQrP
-         xublA5gC9nyWtZCZfbT1PLaq0LqMnVm5uGY6Hlf+OTMYFVvhua3pbVj/x1WeJODGWO7A
-         V+PAgndDP0rf+w3fspzrXNGN/qoW+HdKHhsSQCMgLjRovbxzxa6uLaIsIqNiWHzE2RKh
-         gDud4QXUGy95eBlGOleDw3GzNAm3CVvTXW9GwuzVCrgpE0PUCnKkxQyUNLpqKr7DVRyT
-         Y4Ew==
-X-Gm-Message-State: AOAM533HaqEqPeR98jBv+Zqsp9mmiTGuvz3x7JW132BCQk5RYmf2b1aJ
-        iK61EpPorUgLhQHPpCLpopjkjKUMwFLLuuT9qlNaGKn+HRj+nngo9R/OB2CqCYNM5QRVj9HGQLq
-        npMfx3vDEeGn0qOL8bqa4lT3QAHdzylmfMk9BnQ==
-X-Received: by 2002:a05:6402:10c8:: with SMTP id p8mr8958374edu.144.1615476457312;
-        Thu, 11 Mar 2021 07:27:37 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwym688lccoWS0vQKon5fsVW74N9HWG5xLsZvi1pg+uqrC83DObGrD7/MK6ibsjBN6gGqRDFQ==
-X-Received: by 2002:a05:6402:10c8:: with SMTP id p8mr8958352edu.144.1615476457175;
-        Thu, 11 Mar 2021 07:27:37 -0800 (PST)
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
-        by smtp.gmail.com with ESMTPSA id eo22sm1528960ejc.0.2021.03.11.07.27.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Mar 2021 07:27:36 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-List-Id: <soc.lore.kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        id S234176AbhCKPtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 10:49:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234137AbhCKPtN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 10:49:13 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912A5C061760
+        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 07:49:13 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lKNYm-0002P8-5J; Thu, 11 Mar 2021 16:49:12 +0100
+Subject: Re: [Linux-stm32] [PATCH v2 00/14] Introduce STM32MP1 RCC in secured
+ mode
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Marek Vasut <marex@denx.de>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Alex G." <mr.nuke.me@gmail.com>,
+        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v3 12/15] fpga: altera: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
-Date:   Thu, 11 Mar 2021 16:27:35 +0100
-Message-Id: <20210311152735.1318487-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
-References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
+        Etienne CARRIERE <etienne.carriere@st.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
+ <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+ <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
+ <463dafed-ec60-cd9a-33d2-ba118a6af629@foss.st.com>
+ <c1c9c89b-8794-9b91-b626-d743cd8ff31e@pengutronix.de>
+ <c0898d96-2ea1-9b50-a195-8f619121c91c@foss.st.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <4e4bb5eb-54af-f6aa-6c77-f54d03fd7323@pengutronix.de>
+Date:   Thu, 11 Mar 2021 16:49:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
+In-Reply-To: <c0898d96-2ea1-9b50-a195-8f619121c91c@foss.st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ARCH_SOCFPGA is being renamed to ARCH_INTEL_SOCFPGA so adjust the
-32-bit ARM drivers to rely on new symbol.
+Hello,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- drivers/fpga/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 11.03.21 16:18, Alexandre TORGUE wrote:
+>> I raised this issue before with your colleagues. I still believe the correct way
+>> would be for the TF-A to pass down either a device tree or an overlay with the
+>> actual settings in use, e.g.:
+>>
+>>    - Clocks/Resets done via SCMI
+>>    - Reserved memory regions
+>>
+>> If TF-A directly boots Linux, it can apply the overlay itself, otherwise it's
+>> passed down to SSBL that applies it before booting Linux.
+> Discussing with tf-a and u-boot guys, this solution could imply hard synchronization between tf-a/u-boot. The most simple remains a "secure" dts.
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index fd325e9c5ce6..b1026c6fb119 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -14,13 +14,13 @@ if FPGA
- 
- config FPGA_MGR_SOCFPGA
- 	tristate "Altera SOCFPGA FPGA Manager"
--	depends on ARCH_SOCFPGA || COMPILE_TEST
-+	depends on ARCH_INTEL_SOCFPGA || COMPILE_TEST
- 	help
- 	  FPGA manager driver support for Altera SOCFPGA.
- 
- config FPGA_MGR_SOCFPGA_A10
- 	tristate "Altera SoCFPGA Arria10"
--	depends on ARCH_SOCFPGA || COMPILE_TEST
-+	depends on ARCH_INTEL_SOCFPGA || COMPILE_TEST
- 	select REGMAP_MMIO
- 	help
- 	  FPGA manager driver support for Altera Arria10 SoCFPGA.
-@@ -99,7 +99,7 @@ config FPGA_BRIDGE
- 
- config SOCFPGA_FPGA_BRIDGE
- 	tristate "Altera SoCFPGA FPGA Bridges"
--	depends on ARCH_SOCFPGA && FPGA_BRIDGE
-+	depends on ARCH_INTEL_SOCFPGA && FPGA_BRIDGE
- 	help
- 	  Say Y to enable drivers for FPGA bridges for Altera SOCFPGA
- 	  devices.
+OP-TEE can be configured via CFG_EXTERNAL_DTB_OVERLAY to pass
+along an overlay that describes the reserved memory regions it uses.
+
+A similiar approach could work here. The only synchronization you need
+in Linux is to keep phandles that the overlay can reference.
+
+Cheers,
+Ahmad
+
+> 
+> regards
+> Alex
+> 
+>> Cheers,
+>> Ahmad
+>>
+>>>
+>>> Gabriel, can you wait a bit before sending something about SCMI in dtsi, I would like to align this strategy internally.
+>>>
+>>> Marek, Alex: thanks for your inputs.
+>>>
+>>> Regards
+>>> Alex
+>>>
+>>>>> The third could be the less costly.
+>>>>
+>>>> [...]
+>>> _______________________________________________
+>>> Linux-stm32 mailing list
+>>> Linux-stm32@st-md-mailman.stormreply.com
+>>> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+>>
+> 
+
 -- 
-2.25.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
