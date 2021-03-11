@@ -2,141 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FCCC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 13:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A62C433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 13:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0DAE64ED5
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 13:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD4764ED5
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 13:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233372AbhCKNTO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 08:19:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233465AbhCKNTC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 08:19:02 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC74C061574
-        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 05:19:02 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lKLDI-0008Jt-7H; Thu, 11 Mar 2021 14:18:52 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1lKLDE-0002l3-Lz; Thu, 11 Mar 2021 14:18:48 +0100
-Date:   Thu, 11 Mar 2021 14:18:45 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        wahrenst@gmx.net, linux-input@vger.kernel.org,
-        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v7 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
-Message-ID: <20210311131845.x3zybis3x2liu2uk@pengutronix.de>
-References: <20210118123244.13669-1-nsaenzjulienne@suse.de>
- <20210118123244.13669-12-nsaenzjulienne@suse.de>
- <20210310115041.s7tzvgdpksws6yss@pengutronix.de>
- <fc60ac5ab9760d791aa5e184258accf53e07ce1e.camel@suse.de>
+        id S233512AbhCKNXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 08:23:30 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:45956 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233522AbhCKNXR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 08:23:17 -0500
+X-Greylist: delayed 6006 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Mar 2021 08:23:16 EST
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4Dx8lR0Tzqz1rxM2;
+        Thu, 11 Mar 2021 14:23:15 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4Dx8lQ5SnGz1qr4q;
+        Thu, 11 Mar 2021 14:23:14 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id vqhgIlzpzvH2; Thu, 11 Mar 2021 14:23:12 +0100 (CET)
+X-Auth-Info: vaM/MyCctl1jnKfAoeQi+iHMyd++jHdcGuu7CUSTTKQ=
+Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu, 11 Mar 2021 14:23:12 +0100 (CET)
+Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Alex G." <mr.nuke.me@gmail.com>,
+        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Etienne CARRIERE <etienne.carriere@st.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
+ <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
+ <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
+ <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
+ <ac98b89f-9664-b89c-c12c-24c1cbd29b00@foss.st.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <838b70a1-c02c-0433-ac3d-fc48874b132d@denx.de>
+Date:   Thu, 11 Mar 2021 14:23:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jhlssdtxmegt66au"
-Content-Disposition: inline
-In-Reply-To: <fc60ac5ab9760d791aa5e184258accf53e07ce1e.camel@suse.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <ac98b89f-9664-b89c-c12c-24c1cbd29b00@foss.st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 3/11/21 2:15 PM, Alexandre TORGUE wrote:
+> Hi Marek
 
---jhlssdtxmegt66au
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Alexandre,
 
-Hello Nicolas,
+> On 3/11/21 12:43 PM, Marek Vasut wrote:
+>> On 3/11/21 9:08 AM, Alexandre TORGUE wrote:
+>>> Hi ALex
+>>
+>> Hello everyone,
+>>
+>> [...]
+>>
+>>>> Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
+>>>>
+>>>> On 1/26/21 3:01 AM, gabriel.fernandez@foss.st.com wrote:
+>>>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>>>>
+>>>>> Platform STM32MP1 can be used in configuration where some clocks and
+>>>>> IP resets can relate as secure resources.
+>>>>> These resources are moved from a RCC clock/reset handle to a SCMI
+>>>>> clock/reset_domain handle.
+>>>>>
+>>>>> The RCC clock driver is now dependent of the SCMI driver, then we have
+>>>>> to manage now the probe defering.
+>>>>>
+>>>>> v1 -> v2:
+>>>>>     - fix yamllint warnings.
+>>>>
+>>>> Hi Gabriel,
+>>>>
+>>>> I don't have much clout with the maintainers, but I have to NAK this 
+>>>> series
+>>>> after finding major breakage.
+>>>>
+>>>> The problem with series is that it breaks pretty much every board it 
+>>>> touches.
+>>>> I have a DK2 here that I'm using for development, which no longer 
+>>>> boots with
+>>>> this series applied.
+>>>>
+>>>> The crux of the matter is that this series assumes all boards will 
+>>>> boot with an
+>>>> FSBL that implements a very specific SCMI clock tree. This is major ABI
+>>>> breakage for anyone not using TF-A as the first stage bootloader. 
+>>>> Anyone
+>>>> using u-boot SPL is screwed.
+>>>>
+>>>> This series imposes a SOC-wide change via the dtsi files. So even 
+>>>> boards that
+>>>> you don't intend to convert to SCMI will get broken this way.
+>>>> Adding a -no-scmi file that isn't used anywhere doesn't help things.
+>>>
+>>> You are right. We mainly take care about NO ST (DH/...) boards, but 
+>>> not really about current usage
+>>> Of our stm32 boards. Several options exist:
+>>
+>> Since a lot of people benefit from the good upstream support for the 
+>> MP1 _and_ keep updating their machines to get the latest fixes, it is 
+>> very important to keep the current usage working.
+>>
+>>> 1- Break the current ABI: as soon as those patches are merged, 
+>>> stm32mp157c-dk2.dtb will impose to use
+>>> A tf-a for scmi clocks. For people using u-boot spl, the will have to 
+>>> create their own "no-secure" devicetree.
+>>
+>> NAK, this breaks existing boards and existing setups, e.g. DK2 that 
+>> does not use ATF. >
+>>> 2-As you suggest, create a new "secure" dtb per boards (Not my wish 
+>>> for maintenance perspectives).
+>>
+>> I agree with Alex (G) that the "secure" option should be opt-in.
+>> That way existing setups remain working and no extra requirements are 
+>> imposed on MP1 users. Esp. since as far as I understand this, the 
+>> "secure" part isn't really about security, but rather about moving 
+>> clock configuration from Linux to some firmware blob.
+>>
+>>> 3- Keep kernel device tree as they are and applied this secure layer 
+>>> (scmi clocks phandle) thanks to dtbo in
+>>> U-boot.
+>>
+>> Is this really better than
+>> #include "stm32mp15xx-enable-secure-stuff.dtsi"
+>> in a board DT ? Because that is how I imagine the opt-in "secure" 
+>> option could work.
+> 
+> The dtbo usage could avoid to add another st board (actually a secure 
+> config) in arch/arm/boot/dts.
 
-On Thu, Mar 11, 2021 at 02:01:00PM +0100, Nicolas Saenz Julienne wrote:
-> On Wed, 2021-03-10 at 12:50 +0100, Uwe Kleine-K=F6nig wrote:
-> > On Mon, Jan 18, 2021 at 01:32:44PM +0100, Nicolas Saenz Julienne wrote:
->=20
-> [...]
->=20
-> > > +	/*
-> > > +	 * This sets the default duty cycle after resetting the board, we
-> > > +	 * updated it every time to mimic Raspberry Pi's downstream's driver
-> > > +	 * behaviour.
-> > > +	 */
-> > > +	ret =3D raspberrypi_pwm_set_property(rpipwm->firmware, RPI_PWM_DEF_=
-DUTY_REG,
-> > > +					   duty_cycle);
-> > > +	if (ret) {
-> > > +		dev_err(chip->dev, "Failed to set default duty cycle: %pe\n",
-> > > +			ERR_PTR(ret));
-> > > +		return ret;
-> >=20
-> > This only has an effect for the next reboot, right?
->=20
-> It effects all reboots until it's further changed.
->=20
-> > If so I wonder if it is a good idea in general. (Think: The current PWM
-> > setting enables a motor that makes a self-driving car move at 100 km/h.
-> > Consider the rpi crashes, do I want to car to pick up driving 100 km/h =
-at
-> > power up even before Linux is up again?)
->=20
-> I get your point. But this isn't used as a general purpose PWM. For now t=
-he
-> interface is solely there to drive a PWM fan that's arguably harmless. Th=
-is
-> doesn't mean that the RPi foundation will not reuse the firmware interfac=
-e for
-> other means in the future. In such case we can always use a new DT compat=
-ible
-> and bypass this feature (the current DT string is
-> 'raspberrypi,firmware-poe-pwm', which is specific to this use-case).
->=20
-> My aim here is to be on par feature wise with RPi's downstream implementa=
-tion.
-
-Just because the downstream kernel does it should not be the (single)
-reason to do that. My gut feeling is: For a motor restoring the PWM
-config on reboot is bad and for a fan it doesn't really hurt if it
-doesn't restart automatically. So I'd prefer to to drop this feature.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---jhlssdtxmegt66au
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmBKGLIACgkQwfwUeK3K
-7AmVtwf/VJTFZ6KfFb0/nBuZLz71q/mBcEZrZwWPlKFMsb9C2jLRRJpnJ/1+zUoM
-Q41GHxf9j/O0tW/e7Hl8gR/ri8qMtJN6a4LOI31Icx7b4d3jFuiWVSIg+9UfhLwN
-Oq6m1B3VzzUmL4LWK+9qsfHwKJi/1FozbnMFFDCs7tnN4b9OmmZn2JkGNInxK5FT
-NQyA3wL9Pv+HyVliXk4948HvKO73dzj9yZCVfY3cb/XTb3HADs5+kwa3IT+l/g74
-nFj5qaKNNR4+QUibzclk9PGoj63N2XsS6vDEsncDoV2QHtJumODIQat6920OyNqh
-UvNUyCqUmLZntZ28GK0jzSeX+Kz3IA==
-=DtDQ
------END PGP SIGNATURE-----
-
---jhlssdtxmegt66au--
+It isn't even a board, it is a configuration. Could you detect this 
+secure/non-secure state at runtime, have both clock options in the DT, 
+and handle it accordingly ? That might be even better option.
