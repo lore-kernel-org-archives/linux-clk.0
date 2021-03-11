@@ -2,184 +2,224 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4488CC4332D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA89C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BEB564FD4
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE3F164FD4
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 18:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbhCKSYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 13:24:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53854 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230162AbhCKSXw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 13:23:52 -0500
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B15CC061574;
-        Thu, 11 Mar 2021 10:23:52 -0800 (PST)
-Received: by mail-ot1-x331.google.com with SMTP id m21-20020a9d7ad50000b02901b83efc84a0so77878otn.10;
-        Thu, 11 Mar 2021 10:23:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X2TrxazCY9UP4CB1vU4flOfkXW+UhcWuBfdkGL2i0ls=;
-        b=BUtq+4jn2klGMKpxl2wR35WkkEZRdFysShY3uG2jaEHooE5HIc95GqTSX4danc4zMU
-         qsBYqW1K22GAI3c7WPdEgjeMPgAgvQG7CpPSIoEUSlU6Vey/U1rdMc2BPpBORnyvio+R
-         bzArVzZ7NRpCjhrOFVEtVqpfcqt+5cNUYqiBCHOT4t/+WzA9sPQKpHHQhRdlRzU0stjR
-         crVK1HfaLduy6I8LXQQ0HfVmDcthoqFZUVjUNPVewAan2cLH0K7GEP8uHV7yu8A9zyJo
-         ovg6OFKRr8pJVDCahIGNKzStPzIqfaEcHe4Np8JG09s0eVFtMwRbMdOpOajM9+ewvYrg
-         z4uA==
+        id S230027AbhCKS0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 13:26:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51426 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230000AbhCKS0j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 13:26:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615487199;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7/wSGYLh9BUQ/m4VK2E3Iu8L1K7AWw+HwFDDXH/P7x4=;
+        b=Dt56iO4QJuJA+k3BrHjVi7X4akcMO+fRI3Op/0Vlc4YS1d0fSliXBiTt5M6YPh81npUeAo
+        DONzHVH3vUzM3i7Q/rhj6Wb86BvX9R713O30qm86eYnTVWaw712H2o2v2ckbvL/zzFODWg
+        NXs61CYptcr97lCFNI+HveKAq/RCz64=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-486-8EsrXeBOOqGg01tA-Uu0Hg-1; Thu, 11 Mar 2021 13:26:37 -0500
+X-MC-Unique: 8EsrXeBOOqGg01tA-Uu0Hg-1
+Received: by mail-qk1-f198.google.com with SMTP id g18so16283533qki.15
+        for <linux-clk@vger.kernel.org>; Thu, 11 Mar 2021 10:26:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X2TrxazCY9UP4CB1vU4flOfkXW+UhcWuBfdkGL2i0ls=;
-        b=oOpO34LFgfFhbXw5N3KClCjgfbyPNSgYcD/qJlI02gMNkmfHYMidfhxEjuTyUxsZ1H
-         sR80claCIr0ElvAinQP+ZKQKis4wAZMwVBYgYFdpmSn9aERrPj7bkAke3Gh3hosoSals
-         BemjOEkpwrXNfVOQFAg5x7DjvTD4Q0r0/Y0WIqef+KjzCDKfQRrOGtsipsheWKGQY655
-         HnujLrbBfloWzA4DuWbVOViuX+K4T1dj0aORzy64HpMKt0g3Mqdl63pLJsWbJ50ryh0K
-         PCm06fcVljkfMMbKOlrU5kSJfIuohzKD9r4uXritrWf72DonU56jpRmIQZu12jNqUVCi
-         Hr1w==
-X-Gm-Message-State: AOAM533Jfm0iTjM40AcscTraupfoIMOgcZ4ydb9CcJjv2hD2FE67JWVY
-        NOejxFIINTvSy5eUEg4/+5BkeAmVPyC+vA==
-X-Google-Smtp-Source: ABdhPJwfReDNY3UNDzP/Lron5+DB+qEb1RaV1nW4bRx4prAzn7c5QIcnORnFi7XILA1BRkgwA9hCAA==
-X-Received: by 2002:a9d:480d:: with SMTP id c13mr155104otf.149.1615487031747;
-        Thu, 11 Mar 2021 10:23:51 -0800 (PST)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id m11sm691670oih.34.2021.03.11.10.23.50
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=7/wSGYLh9BUQ/m4VK2E3Iu8L1K7AWw+HwFDDXH/P7x4=;
+        b=L3dMp97jHQ4OHqu5008lNNEwTcw04U9J1VmA/sz3ANh/2gXXLdUoLVe22nSs6QxnZX
+         wmRaeaZcgW4VgUUEiP3AH97/a+OhtADAGMbU1dO623/FaGCDwb2zAzulNqiq68WIjXoO
+         l/fnZKfLdVN6kV319pIwByMPkj6gKgAR/xu1YNlVaVEL1eUAHev4fE5dJRFVcv9CeZi5
+         GfZJgZEqyJBc/ldvD7eC2YpesfGTpw/jTq/TZTMtnZt3KWWOv878xXa85owTpGK2yLvN
+         9BGQ8LG/dfFUOCuB/zen1wUjL7DqcTYSNYA65v40Pn9urUgy0Pz4I2cLoqSjw4UQL+q/
+         uCAQ==
+X-Gm-Message-State: AOAM530jL9LB81YLttIowncveezBF+xYDPbYPnJvehjM+/JgrYh/nujU
+        C/eUsAsLZwaPtzeHCObp+YeeGYseBhfKNHDDOC1K1ir3kztRjfLhKissoNsW3neME6NSj5XEbql
+        s86O912WaSf/Us6fVKVDc
+X-Received: by 2002:ac8:68d:: with SMTP id f13mr8512365qth.300.1615487197330;
+        Thu, 11 Mar 2021 10:26:37 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJykrRpLf1VdnWeXfJOmyNvXTcgKB/EbD8MxyP146EU0lCHJTfc5M6K1GGvBKnS5gI4cz7i4ig==
+X-Received: by 2002:ac8:68d:: with SMTP id f13mr8512326qth.300.1615487197076;
+        Thu, 11 Mar 2021 10:26:37 -0800 (PST)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id 77sm2571571qko.48.2021.03.11.10.26.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Mar 2021 10:23:51 -0800 (PST)
-Subject: Re: [Linux-stm32] [PATCH v2 00/14] Introduce STM32MP1 RCC in secured
- mode
-To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Marek Vasut <marex@denx.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
+        Thu, 11 Mar 2021 10:26:36 -0800 (PST)
+Subject: Re: [PATCH v3 00/15] arm64 / clk: socfpga: simplifying, cleanups and
+ compile testing
+List-Id: <soc.lore.kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Etienne CARRIERE <etienne.carriere@st.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
- <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
- <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
- <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
- <463dafed-ec60-cd9a-33d2-ba118a6af629@foss.st.com>
- <c1c9c89b-8794-9b91-b626-d743cd8ff31e@pengutronix.de>
- <b87a2b24-678a-724d-e5df-1eabf5969ad2@denx.de>
- <a23933fa-0c94-1e22-6100-d5b1a50826dd@foss.st.com>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <6c470715-0042-622b-d53d-59445cab8ed1@gmail.com>
-Date:   Thu, 11 Mar 2021 12:23:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <f0b90916-9047-d5da-5cde-75d4330cf041@redhat.com>
+Date:   Thu, 11 Mar 2021 10:26:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-In-Reply-To: <a23933fa-0c94-1e22-6100-d5b1a50826dd@foss.st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20210311152545.1317581-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On 3/11/21 7:25 AM, Krzysztof Kozlowski wrote:
+> Hi,
+>
+> All three Intel arm64 SoCFPGA architectures (Agilex, N5X and Stratix 10)
+> are basically flavors/platforms of the same architecture.  At least from
+> the Linux point of view.  Up to a point that N5X and Agilex share DTSI.
+> Having three top-level architectures for the same one barely makes
+> sense and complicates driver selection.
+>
+> Additionally it was pointed out that ARCH_SOCFPGA name is too generic.
+> There are other vendors making SoC+FPGA designs, so the name should be
+> changed to have real vendor (currently: Intel).
+>
+>
+> Dependencies / merging
+> ======================
+> 1. Patch 1 is used as base, so other changes depend on its hunks.
+>    I put it at beginning as it is something close to a fix, so candidate
+>    for stable (even though I did not mark it like that).
+> 2. Patch 2: everything depends on it.
+>
+> 3. 64-bit path:
+> 3a. Patches 3-7: depend on patch 2, from 64-bit point of view.
+> 3b. Patch 8: depends on 2-7 as it finally removes 64-bit ARCH_XXX
+>     symbols.
+>
+> 4. 32-bit path:
+> 4a. Patches 9-14: depend on 2, from 32-bit point of view.
+> 4b. Patch 15: depends on 9-14 as it finally removes 32-bit ARCH_SOCFPGA
+>     symbol.
+>
+> If the patches look good, proposed merging is via SoC tree (after
+> getting acks from everyone). Sharing immutable branches is also a way.
+>
+>
+> Changes since v2
+> ================
+> 1. Several new patches and changes.
+> 2. Rename ARCH_SOCFPGA to ARCH_INTEL_SOCFPGA on 32-bit and 64-bit.
+> 3. Enable compile testing of 32-bit socfpga clock drivers.
+> 4. Split changes per subsystems for easier review.
+> 5. I already received an ack from Lee Jones, but I did not add it as
+>    there was big refactoring.  Please kindly ack one more time if it
+>    looks good.
+>
+> Changes since v1
+> ================
+> 1. New patch 3: arm64: socfpga: rename ARCH_STRATIX10 to ARCH_SOCFPGA64.
+> 2. New patch 4: arm64: intel: merge Agilex and N5X into ARCH_SOCFPGA64.
+> 3. Fix build is.sue reported by kernel test robot (with ARCH_STRATIX10
+>    and COMPILE_TEST but without selecting some of the clocks).
+>
+>
+> RFT
+> ===
+> I tested compile builds on few configurations, so I hope kbuild 0-day
+> will check more options (please give it few days on the lists).
+> I compare the generated autoconf.h and found no issues.  Testing on real
+> hardware would be appreciated.
+>
+> Best regards,
+> Krzysztof
+>
+> Krzysztof Kozlowski (15):
+>   clk: socfpga: allow building N5X clocks with ARCH_N5X
+>   ARM: socfpga: introduce common ARCH_INTEL_SOCFPGA
+>   mfd: altera: merge ARCH_SOCFPGA and ARCH_STRATIX10
+>   net: stmmac: merge ARCH_SOCFPGA and ARCH_STRATIX10
+>   clk: socfpga: build together Stratix 10, Agilex and N5X clock drivers
+>   clk: socfpga: merge ARCH_SOCFPGA and ARCH_STRATIX10
+>   EDAC: altera: merge ARCH_SOCFPGA and ARCH_STRATIX10
+>   arm64: socfpga: merge Agilex and N5X into ARCH_INTEL_SOCFPGA
+>   clk: socfpga: allow compile testing of Stratix 10 / Agilex clocks
+>   clk: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs (and
+>     compile test)
+>   dmaengine: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
+>   fpga: altera: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
+>   i2c: altera: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
+>   reset: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs
+>   ARM: socfpga: drop ARCH_SOCFPGA
+>
+>  arch/arm/Kconfig                            |  2 +-
+>  arch/arm/Kconfig.debug                      |  6 +++---
+>  arch/arm/Makefile                           |  2 +-
+>  arch/arm/boot/dts/Makefile                  |  2 +-
+>  arch/arm/configs/multi_v7_defconfig         |  2 +-
+>  arch/arm/configs/socfpga_defconfig          |  2 +-
+>  arch/arm/mach-socfpga/Kconfig               |  4 ++--
+>  arch/arm64/Kconfig.platforms                | 17 ++++-------------
+>  arch/arm64/boot/dts/altera/Makefile         |  2 +-
+>  arch/arm64/boot/dts/intel/Makefile          |  6 +++---
+>  arch/arm64/configs/defconfig                |  3 +--
+>  drivers/clk/Kconfig                         |  1 +
+>  drivers/clk/Makefile                        |  4 +---
+>  drivers/clk/socfpga/Kconfig                 | 19 +++++++++++++++++++
+>  drivers/clk/socfpga/Makefile                | 11 +++++------
+>  drivers/dma/Kconfig                         |  2 +-
+>  drivers/edac/Kconfig                        |  2 +-
+>  drivers/edac/altera_edac.c                  | 17 +++++++++++------
+>  drivers/firmware/Kconfig                    |  2 +-
+>  drivers/fpga/Kconfig                        |  8 ++++----
+>  drivers/i2c/busses/Kconfig                  |  2 +-
+>  drivers/mfd/Kconfig                         |  4 ++--
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig |  4 ++--
+>  drivers/reset/Kconfig                       |  6 +++---
+>  24 files changed, 71 insertions(+), 59 deletions(-)
+>  create mode 100644 drivers/clk/socfpga/Kconfig
+>
+Thanks for changing the config name.
 
-On 3/11/21 12:10 PM, Alexandre TORGUE wrote:
-> Hi Guys
-> 
-> On 3/11/21 5:11 PM, Marek Vasut wrote:
->> On 3/11/21 3:41 PM, Ahmad Fatoum wrote:
->>> Hello,
->>
->> Hi,
->>
->>> On 11.03.21 15:02, Alexandre TORGUE wrote:
->>>> On 3/11/21 12:43 PM, Marek Vasut wrote:
->>>>> On 3/11/21 9:08 AM, Alexandre TORGUE wrote:
->>>>>> 1- Break the current ABI: as soon as those patches are merged, 
->>>>>> stm32mp157c-dk2.dtb will impose to use
->>>>>> A tf-a for scmi clocks. For people using u-boot spl, the will have 
->>>>>> to create their own "no-secure" devicetree.
->>>>>
->>>>> NAK, this breaks existing boards and existing setups, e.g. DK2 that 
->>>>> does not use ATF.
->>>>>
->>>>>> 2-As you suggest, create a new "secure" dtb per boards (Not my 
->>>>>> wish for maintenance perspectives).
->>>>>
->>>>> I agree with Alex (G) that the "secure" option should be opt-in.
->>>>> That way existing setups remain working and no extra requirements 
->>>>> are imposed on MP1 users. Esp. since as far as I understand this, 
->>>>> the "secure" part isn't really about security, but rather about 
->>>>> moving clock configuration from Linux to some firmware blob.
->>>>>
->>>>>> 3- Keep kernel device tree as they are and applied this secure 
->>>>>> layer (scmi clocks phandle) thanks to dtbo in
->>>>>> U-boot.
->>>>>
->>>>> Is this really better than
->>>>> #include "stm32mp15xx-enable-secure-stuff.dtsi"
->>>>> in a board DT ? Because that is how I imagine the opt-in "secure" 
->>>>> option could work.
->>>>>
->>>>
->>>> Discussing with Patrick about u-boot, we could use dtbo application 
->>>> thanks to extlinux.conf. BUT it it will not prevent other case (i.e. 
->>>> TF-A which jump directly in kernel@). So the "least worst" solution 
->>>> is to create a new "stm32mp1257c-scmi-dk2 board which will overload 
->>>> clock entries with a scmi phandle (as proposed by Alex).
->>>
->>> I raised this issue before with your colleagues. I still believe the 
->>> correct way
->>> would be for the TF-A to pass down either a device tree or an overlay 
->>> with the
->>> actual settings in use, e.g.:
->>>
->>>    - Clocks/Resets done via SCMI
->>>    - Reserved memory regions
->>>
->>> If TF-A directly boots Linux, it can apply the overlay itself, 
->>> otherwise it's
->>> passed down to SSBL that applies it before booting Linux.
->>
->> That sounds good and it is something e.g. R-Car already does, it 
->> merges DT fragment from prior stages at U-Boot level and then passes 
->> the result to Linux.
->>
->> So on ST hardware, the same could very well happen and it would work 
->> for both non-ATF / ATF / ATF+TEE options.
-> 
-> Even this solution sounds good but we are currently not able to do it in 
-> our TF-A/u-boot so not feasible for the moment. So we have to find a 
-> solution for now. Create a new dtb can be this solution. Our internal 
-> strategy is to use scmi on our official ST board. It will be a really 
-> drawback to include a "no-scmi.dtsi" in DH boards (for example) and to 
-> create a stm32mp157c-noscmi-dk2.dts ?
+Please review checkpatch --strict on this set, the typical complaint is
 
-It could work, as long as all users are reminded to change their build 
-scripts to pick up a "-noscmi.dtb". I suspect that if this were the case 
-we'll see quite a few bug reports saying "stm32mp1 no longer boots with 
-kernel v5.13".
+clk: socfpga: use ARCH_INTEL_SOCFPGA also for 32-bit ARM SoCs (and compile test)    
+WARNING: please write a paragraph that describes the config symbol fully
+#35: FILE: drivers/clk/socfpg/Kconfig:11:                       
++config CLK_INTEL_SOCFPGA32
 
-I didn't think of this originally, though u-boot already does the DTB 
-patching for OPTEE reserved memory regions. It's not too hard to also 
-patch in the SCMI clocks at boot. In u-boot's case, runtime detection 
-might even be feasible.
+Tom
 
-Alex
