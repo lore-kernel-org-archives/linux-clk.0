@@ -2,147 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C5FC43381
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 11:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88210C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 12:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 515BC64FAA
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 11:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34A7464FC3
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Mar 2021 12:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbhCKLng (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Mar 2021 06:43:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232757AbhCKLnO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Mar 2021 06:43:14 -0500
-Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26513C061574;
-        Thu, 11 Mar 2021 03:43:14 -0800 (PST)
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4Dx6Wv6wKFz1ry9k;
-        Thu, 11 Mar 2021 12:43:07 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4Dx6Wv4vCTz1qr4m;
-        Thu, 11 Mar 2021 12:43:07 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id bwhSiK_6OLsr; Thu, 11 Mar 2021 12:43:05 +0100 (CET)
-X-Auth-Info: PWDLWpU/RF1mQ0vyUrR2TmlPpbT0QFk+u0aQwwhF6ik=
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S233155AbhCKMvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Mar 2021 07:51:54 -0500
+Received: from z11.mailgun.us ([104.130.96.11]:35723 "EHLO z11.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233250AbhCKMvu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Mar 2021 07:51:50 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1615467110; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=lEjPYvoALiGGyRhX1AzfcP+F007PTFPI9XdXMUWl2FQ=; b=sv816Maf8wY2EyZvp3Wti6Srg/8WGOsJYxUzzZOa1nsab0jCFuMDEny7XhJgSRSLhUsX3igi
+ nJOmlO041v9LUS9OUWNBvTU6CM5R0d9xfIjQj6MhJ5U+0N9pfrI2cvPR+17g/mES4tYlkBkJ
+ lJnnQ+P0Gqq8LiggrXcNbcTihnw=
+X-Mailgun-Sending-Ip: 104.130.96.11
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 604a1262fa6ebd85e8080069 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 11 Mar 2021 12:51:46
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D33B0C43461; Thu, 11 Mar 2021 12:51:45 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 11 Mar 2021 12:43:05 +0100 (CET)
-Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
-To:     Alexandre TORGUE <alexandre.torgue@st.com>,
-        "Alex G." <mr.nuke.me@gmail.com>,
-        Gabriel FERNANDEZ - foss <gabriel.fernandez@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Etienne CARRIERE <etienne.carriere@st.com>,
-        Alexandre TORGUE - foss <alexandre.torgue@foss.st.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20210126090120.19900-1-gabriel.fernandez@foss.st.com>
- <2e04f814-b694-119d-fe8a-13e6df129536@gmail.com>
- <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <c57775fe-41ef-07f5-56a2-04b8f70797c1@denx.de>
-Date:   Thu, 11 Mar 2021 12:43:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
-MIME-Version: 1.0
-In-Reply-To: <AS8PR10MB4712C27260707345FA99ED5AEE909@AS8PR10MB4712.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F1FF2C433CA;
+        Thu, 11 Mar 2021 12:51:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F1FF2C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2] clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
+Date:   Thu, 11 Mar 2021 18:21:32 +0530
+Message-Id: <1615467092-6982-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/11/21 9:08 AM, Alexandre TORGUE wrote:
-> Hi ALex
+The root clock generators with MND divider has the capability to support
+change in duty-cycle by updating the 'D'. Add the clock ops which would
+check all the boundary conditions and enable setting the desired duty-cycle
+as per the consumer.
 
-Hello everyone,
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-[...]
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 42f13a2..aac6893 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -357,6 +357,46 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+ 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
 
->> Subject: Re: [PATCH v2 00/14] Introduce STM32MP1 RCC in secured mode
->>
->> On 1/26/21 3:01 AM, gabriel.fernandez@foss.st.com wrote:
->>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>>
->>> Platform STM32MP1 can be used in configuration where some clocks and
->>> IP resets can relate as secure resources.
->>> These resources are moved from a RCC clock/reset handle to a SCMI
->>> clock/reset_domain handle.
->>>
->>> The RCC clock driver is now dependent of the SCMI driver, then we have
->>> to manage now the probe defering.
->>>
->>> v1 -> v2:
->>>     - fix yamllint warnings.
->>
->> Hi Gabriel,
->>
->> I don't have much clout with the maintainers, but I have to NAK this series
->> after finding major breakage.
->>
->> The problem with series is that it breaks pretty much every board it touches.
->> I have a DK2 here that I'm using for development, which no longer boots with
->> this series applied.
->>
->> The crux of the matter is that this series assumes all boards will boot with an
->> FSBL that implements a very specific SCMI clock tree. This is major ABI
->> breakage for anyone not using TF-A as the first stage bootloader. Anyone
->> using u-boot SPL is screwed.
->>
->> This series imposes a SOC-wide change via the dtsi files. So even boards that
->> you don't intend to convert to SCMI will get broken this way.
->> Adding a -no-scmi file that isn't used anywhere doesn't help things.
-> 
-> You are right. We mainly take care about NO ST (DH/...) boards, but  not really about current usage
-> Of our stm32 boards. Several options exist:
++static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask, duty_per;
++	int ret;
++
++	if (!rcg->mnd_width)
++		return 0;
++
++	mask = BIT(rcg->mnd_width) - 1;
++
++	regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
++	regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
++
++	n_val = (~(notn_m_val) + m_val) & mask;
++
++	duty_per = (duty->num * 100) / duty->den;
++
++	/* Calculate 2d value */
++	d_val = DIV_ROUND_CLOSEST(n_val * duty_per * 2, 100);
++
++	 /* Check BIT WIDTHS OF 2d. If D is too big reduce Duty cycle. */
++	if (d_val > mask)
++		d_val = mask;
++
++	if ((d_val / 2) > (n_val - m_val))
++		d_val = (n_val - m_val) * 2;
++	else if ((d_val / 2) < (m_val / 2))
++		d_val = m_val;
++
++	not2d_val = ~d_val & mask;
++
++	ret = regmap_update_bits(rcg->clkr.regmap, RCG_D_OFFSET(rcg), mask,
++				 not2d_val);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
+ const struct clk_ops clk_rcg2_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+@@ -365,6 +405,7 @@ const struct clk_ops clk_rcg2_ops = {
+ 	.determine_rate = clk_rcg2_determine_rate,
+ 	.set_rate = clk_rcg2_set_rate,
+ 	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
 
-Since a lot of people benefit from the good upstream support for the MP1 
-_and_ keep updating their machines to get the latest fixes, it is very 
-important to keep the current usage working.
+@@ -376,6 +417,7 @@ const struct clk_ops clk_rcg2_floor_ops = {
+ 	.determine_rate = clk_rcg2_determine_floor_rate,
+ 	.set_rate = clk_rcg2_set_floor_rate,
+ 	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
 
-> 1- Break the current ABI: as soon as those patches are merged, stm32mp157c-dk2.dtb will impose to use
-> A tf-a for scmi clocks. For people using u-boot spl, the will have to create their own "no-secure" devicetree.
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
-NAK, this breaks existing boards and existing setups, e.g. DK2 that does 
-not use ATF.
-
-> 2-As you suggest, create a new "secure" dtb per boards (Not my wish for maintenance perspectives).
-
-I agree with Alex (G) that the "secure" option should be opt-in.
-That way existing setups remain working and no extra requirements are 
-imposed on MP1 users. Esp. since as far as I understand this, the 
-"secure" part isn't really about security, but rather about moving clock 
-configuration from Linux to some firmware blob.
-
-> 3- Keep kernel device tree as they are and applied this secure layer (scmi clocks phandle) thanks to dtbo in
-> U-boot.
-
-Is this really better than
-#include "stm32mp15xx-enable-secure-stuff.dtsi"
-in a board DT ? Because that is how I imagine the opt-in "secure" option 
-could work.
-
-> The third could be the less costly.
-
-[...]
