@@ -2,39 +2,39 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CB0C433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Mar 2021 06:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB57BC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Mar 2021 06:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4018664F89
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Mar 2021 06:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8CB464F80
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Mar 2021 06:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbhCLGkR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Mar 2021 01:40:17 -0500
-Received: from mail-eopbgr60051.outbound.protection.outlook.com ([40.107.6.51]:47360
+        id S231630AbhCLGpG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Mar 2021 01:45:06 -0500
+Received: from mail-eopbgr60041.outbound.protection.outlook.com ([40.107.6.41]:49454
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231130AbhCLGjp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Mar 2021 01:39:45 -0500
+        id S231609AbhCLGog (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Mar 2021 01:44:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=topicbv.onmicrosoft.com; s=selector2-topicbv-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CmTIX5hypqLqfCn401l0tizTcgh1ef2I00dgRHQPnBM=;
- b=OsREVHnvsOYfknLGKeCv/J8Tu7CZtCwZWlFpk0fHGQOWT++CztE4vrvWsaXuH3EkpRo4Ox1upaeKwTQwa6ieEq6LGSRFjdmchp20WDJ2nY8LQCRaQJBkH+J2BDe3AQeMsIEW131XwfWCiYsyqYo0VZtFYvEkdFC/6E8G7LeVmWk=
-Received: from AM5PR0101CA0017.eurprd01.prod.exchangelabs.com
- (2603:10a6:206:16::30) by VI1PR0401MB2270.eurprd04.prod.outlook.com
- (2603:10a6:800:28::27) with Microsoft SMTP Server (version=TLS1_2,
+ bh=EProBeTwxqO89GRSGWdcpVUF7mkKvLwlvZ8C/iqjbzo=;
+ b=WhcKTvyoumBSq39BqcnpyXFniqVMb2y7DUtVAcvHaU/2c7dFiMWGXxiCNSOOWBJ2N9MuVqI7puC8mlWSqMDiN07Ooa7seWMQqObbACu2SClDNgUfH5AicYaeRasc4mJuu1xpEm9vAlLS9TyZ85lv3hX+scAYq4rdImKm50HjdLk=
+Received: from DU2PR04CA0005.eurprd04.prod.outlook.com (2603:10a6:10:3b::10)
+ by AM0PR04MB6275.eurprd04.prod.outlook.com (2603:10a6:208:147::22) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Fri, 12 Mar
- 2021 06:39:40 +0000
-Received: from HE1EUR01FT005.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:206:16:cafe::cd) by AM5PR0101CA0017.outlook.office365.com
- (2603:10a6:206:16::30) with Microsoft SMTP Server (version=TLS1_2,
+ 2021 06:44:33 +0000
+Received: from DB5EUR01FT049.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:3b:cafe::b4) by DU2PR04CA0005.outlook.office365.com
+ (2603:10a6:10:3b::10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend
- Transport; Fri, 12 Mar 2021 06:39:40 +0000
+ Transport; Fri, 12 Mar 2021 06:44:33 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 40.68.112.65)
  smtp.mailfrom=topicproducts.com; vger.kernel.org; dkim=none (message not
  signed) header.d=none;vger.kernel.org; dmarc=none action=none
@@ -43,17 +43,17 @@ Received-SPF: Pass (protection.outlook.com: domain of topicproducts.com
  designates 40.68.112.65 as permitted sender) receiver=protection.outlook.com;
  client-ip=40.68.112.65; helo=westeu12-emailsignatures-cloud.codetwo.com;
 Received: from westeu12-emailsignatures-cloud.codetwo.com (40.68.112.65) by
- HE1EUR01FT005.mail.protection.outlook.com (10.152.1.229) with Microsoft SMTP
+ DB5EUR01FT049.mail.protection.outlook.com (10.152.5.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3933.31 via Frontend Transport; Fri, 12 Mar 2021 06:39:39 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (104.47.18.105) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Fri, 12 Mar 2021 06:39:38 +0000
+ 15.20.3933.31 via Frontend Transport; Fri, 12 Mar 2021 06:44:32 +0000
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (104.47.17.170) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Fri, 12 Mar 2021 06:44:31 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PVGjO/SpxAmGfv1HA7v8mykwebv2epRaQ6PdWwhc3VQ7AgFgNSuRfnsf9Kg33X2ROW80lvjM3cVv6AU3tbjBVCx3qK1YgtPdgIx1Uxe/agn3dA2FrgUoJZlV3K84K9lMd5lR7MKBQoNZ5w+8IPQ0ILugHImqyoEXTihfMxZPquTGh6b7jeSqEW07FKuIAo/mzns2xmGinU+7DYHwxYJt2EZrZKYSO6BQ9uh8VZtlmFlL1NNPxJjbuoBgeST/Ec0oHVwklwojKtV+x3RFgHL0BCjfxKZExMXEpYDwRafeghEr3rfsrhsldudcbd2KttmfKZMT7sycCsMbWoiyXfcJfQ==
+ b=gyFqSDxfkv1TtGuF99eqONlpsUpghDcmwm+87nH9YgJQs4vQMpsiUlCprIxcc9FTjalEq9r53b4fi3MT5+XFWpLbBZygH5F0sPWZNzP5AGnNAe5hgXC5QRccGSXLRMi7gfIlDCpKvTtPZKabnBaEQty2/x69bM8SyfrUU19B03pq1/9GPAJ7FrxwhAejFrysvQcHXY/2+l4QrYzWn6VAcwU/uGIpsczSfmn69Kc3mNVySCyi8ufqpyzU4PP2v2iRQ3hW71KvmyC7Jkc4gIleu38cyMJdTa7Fv0QVpbSgy2G9VnyvmJ+H1V8Ym65yh53aj1OhHInCs/6Z73UGwFiP1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=geQwxFk0wCBd4xZCb1HtD7QyAczG4xiIgOq8CYrfOY8=;
- b=a8ULWUMQQLlZYeF8w4V1cs+a5gDo72MFdh9n6l2O6Vzt7yQjSrVH7p5oRwBCeNgKwbSqzFojRwneheKCA9scLikfoFmGVLtA7aNNj98zUnGjvV/d2kEBULAgYp/AVei1rHwB2t2zqaYFdLdQtGaqB1wJBWebwAoi2vs+rFw88+pwvSUg0xdeG5A1BYo0bH9zTYTUnFc1tVWKYG5It9yu4vE7/Zm3ufpoMCRnMYDY4S3VZyXWjdaqKx2YLnrP0klPnNV74k/YqYooyhXXAh0GRRmzypE3s3136m8wx+nFLan79DLJd4bD0kQ+socx1sqDupZ/knYaId8BI+cJkJ9Pvg==
+ bh=67I4YOVcEidrxYw3mVJt40F4toFHNm2nNyEEPn2BV40=;
+ b=YIwpzTt2vtJJUfgkivGW3zxAdNSvlgTwTYUXxsdT6a/clszfFze3Q/eHfs0qjuXTD18oiNfz/ndHo+dQqQY1je6HpACXVYtktpVaf3+iPbAFIkcq0FyuAeD+luZyMazKavxy5ZgWdIu7kFEp2QdRrEtphWfBWJs40h7x+K3wlNzdAa4wvNHvdzlqiU6zVYkS7VYnTRAMEGehOE/ZjnTA+3Num/S8xGOJnPXTDSgPoXOo8zJdVdvI1lmOQ/kuri4c1xO+GVaS4+I3KVzb7WHYWlCvdZBCGpd21oaCWjBU0fMaqPritGias2A0zBC1s5RaBVIIcZcV2KUzyio+ZNdI3g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=topicproducts.com; dmarc=pass action=none header.from=topic.nl;
  dkim=pass header.d=topic.nl; arc=none
@@ -61,102 +61,100 @@ Authentication-Results-Original: vger.kernel.org; dkim=none (message not
  signed) header.d=none;vger.kernel.org; dmarc=none action=none
  header.from=topic.nl;
 Received: from DB8PR04MB6523.eurprd04.prod.outlook.com (2603:10a6:10:10f::26)
- by DB3PR0402MB3721.eurprd04.prod.outlook.com (2603:10a6:8:7::13) with
+ by DBAPR04MB7381.eurprd04.prod.outlook.com (2603:10a6:10:1a2::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.26; Fri, 12 Mar
- 2021 06:39:37 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17; Fri, 12 Mar
+ 2021 06:44:30 +0000
 Received: from DB8PR04MB6523.eurprd04.prod.outlook.com
  ([fe80::38d2:189b:f7da:b988]) by DB8PR04MB6523.eurprd04.prod.outlook.com
  ([fe80::38d2:189b:f7da:b988%7]) with mapi id 15.20.3933.031; Fri, 12 Mar 2021
- 06:39:37 +0000
-Subject: Re: [PATCH 2/9] clk: si5341: Wait for DEVICE_READY on startup
+ 06:44:30 +0000
+Subject: Re: [PATCH 8/9] clk: si5341: Add silabs,iovdd-33 property
 To:     Robert Hancock <robert.hancock@calian.com>,
         mturquette@baylibre.com, sboyd@kernel.org
 CC:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20210311222436.3826800-1-robert.hancock@calian.com>
- <20210311222436.3826800-3-robert.hancock@calian.com>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.b1dc66c0-d7df-44f1-9f1a-e729e77f49c2@emailsignatures365.codetwo.com>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.0d2bd5fa-15cc-4b27-b94e-83614f9e5b38.b83fe2f2-a0e4-4df3-9cc5-fc8594d38aac@emailsignatures365.codetwo.com>
+ <20210311222436.3826800-9-robert.hancock@calian.com>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.a5c64a18-101d-4705-9716-1c41c644d43a@emailsignatures365.codetwo.com>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.0d2bd5fa-15cc-4b27-b94e-83614f9e5b38.be185266-2f1c-4483-b746-841259f81420@emailsignatures365.codetwo.com>
 From:   Mike Looijmans <mike.looijmans@topic.nl>
 Organization: Topic
-Message-ID: <6ac7a45b-4e68-0c96-92a0-52ecdf2c97fc@topic.nl>
-Date:   Fri, 12 Mar 2021 07:39:36 +0100
+Message-ID: <81e8670c-d302-ff20-1767-4a6befe34a0e@topic.nl>
+Date:   Fri, 12 Mar 2021 07:44:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
-In-Reply-To: <20210311222436.3826800-3-robert.hancock@calian.com>
+In-Reply-To: <20210311222436.3826800-9-robert.hancock@calian.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
 X-Originating-IP: [83.128.90.119]
-X-ClientProxiedBy: AM3PR05CA0101.eurprd05.prod.outlook.com
- (2603:10a6:207:1::27) To DB8PR04MB6523.eurprd04.prod.outlook.com
+X-ClientProxiedBy: AM0PR02CA0153.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28d::20) To DB8PR04MB6523.eurprd04.prod.outlook.com
  (2603:10a6:10:10f::26)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.130] (83.128.90.119) by AM3PR05CA0101.eurprd05.prod.outlook.com (2603:10a6:207:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.18 via Frontend Transport; Fri, 12 Mar 2021 06:39:37 +0000
+Received: from [192.168.1.130] (83.128.90.119) by AM0PR02CA0153.eurprd02.prod.outlook.com (2603:10a6:20b:28d::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3912.17 via Frontend Transport; Fri, 12 Mar 2021 06:44:30 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3361ae63-27cc-4f11-3630-08d8e5219cd0
-X-MS-TrafficTypeDiagnostic: DB3PR0402MB3721:|VI1PR0401MB2270:
-X-Microsoft-Antispam-PRVS: <VI1PR0401MB2270755D0FFC492717F89F5A966F9@VI1PR0401MB2270.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;OLM:8273;
+X-MS-Office365-Filtering-Correlation-Id: e8dbb443-6c9c-452f-cc71-08d8e5224b6b
+X-MS-TrafficTypeDiagnostic: DBAPR04MB7381:|AM0PR04MB6275:
+X-Microsoft-Antispam-PRVS: <AM0PR04MB627526DB4FAF5273DE77870F966F9@AM0PR04MB6275.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;OLM:6430;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: ojER5D9mHzN2zNxREeSXJQ0AHBZw99GgQy1HDJ4ekNbW2cU/Jiz3PBTq0Zq8cZqW06F+BihMw5NXAELvF7snjSLmRkzN5Tk7cZHaiqKh+1mHg/B+ZC8djErCN5+zOSx7Vz/OAVBWyYJe6d/MIgFcbBlTtxE1pbSjcgS1e+WIgpPeIPQ0Sl4MSOvUZxEn+irpv+raWOv+SDtM7zMwuGJbEPzILUcPaBbsdG08oww1DAKElW1FCtZBIFiN0PLFtaIQJ3Ern49fBTZFMKiwyyc+XQXsiLvVRcBqsgZ8ttK4SYXPHa5Htx2eU+mcrdzh0uE25asaYThEt7R81UV+5tr7XSbIc1TegCklxW7TYx+0dJKspJFr46zgxi0yTMsc48tGITfHqK8Om5lIkKet9GEFBNglEgpb0At0t8+PPoiC0JFY8XKZAJVLHZso/6h5qcd2bMwjRoyNm9TvWBxDta6IJOj81CnMZ/MMeMciajl5oQXP3Sc1kinWHmXiVaGv5SdAf6A2TqlyA9TcywFnMrKsKfEV2qf7iXnS3zY5WKXzXIa5ouhUaufIFxS/cXvRbuYdeRA7QQv/a8Eyz1gfSS8K//od7snPydUXZdgjed95uBo=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6523.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(376002)(136003)(366004)(396003)(39830400003)(36756003)(31696002)(5660300002)(16576012)(2906002)(8676002)(52116002)(53546011)(4326008)(316002)(36916002)(42882007)(83380400001)(16526019)(31686004)(66476007)(66946007)(44832011)(8936002)(956004)(66556008)(6486002)(478600001)(83170400001)(2616005)(26005)(186003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?V0oybndocUxxNW92a2lhcmpCZ2IyQURqZWhvYUdaZFVUUXpXald5dmZaNENL?=
- =?utf-8?B?VFUxSEovTzZjcHpkU0VTdFlVRnRRd1pwWW5mT0s4ZDQwVnJoN3k1bkFGTGsv?=
- =?utf-8?B?aDFyWWlPOTZwNmRaQXRBUzFuWFBIT2o3dHJxektWU2ZUNkFhb212THFSbUJG?=
- =?utf-8?B?bll0OVk5bnRyOU1EeVJNaWd3NkNkU2J5SHgxTzdCNkRQRlRmdWhDUU5FamVj?=
- =?utf-8?B?dHJ4WHdDVS9maTRNQW1sTEVXRlBETm1xTmo3WkY1aWt1N2lqemxpRjdmNzFY?=
- =?utf-8?B?VThxRHJsRWprbmc1NG9HZVU4RVVadmhRWkJjdkdKYmxHT2lhSDkyd0lSTEdI?=
- =?utf-8?B?OHBybW1OUzN3Tm0vZ0FLRnNURHFOR2pQMkQxaTdhVHpGbWVPbFp0WEFkRHI3?=
- =?utf-8?B?RnJUOWhOY2IyOW5DK1F3RjJMdWx3eGs5ZTJsSU9jSU9EYXFzYXFNLzFGV3JC?=
- =?utf-8?B?V3ozVUQwU0hIVXlzY3JUOHNscFVydm93RnR3cFlmLzBHVnZiUGdDYVpBTXZp?=
- =?utf-8?B?ZW14YXY2RjZJTEpXeWdZak1zVFBxZUh2WXVuNWVWOXlvb2hST2ZHNHN1TzFx?=
- =?utf-8?B?Q1JvWEVzTElMQVhPN2phT0RjQkxjc3huSnQrNXY5RUhGTkl5NkVSQjJoUzFN?=
- =?utf-8?B?MGovVndua296ZllheWpqSkVyZTd4L3RhNWg0V2NoMVdQdFR5VWdRL2lTMDdJ?=
- =?utf-8?B?TzVJRkNZcktZQ29tR0hSellJRTZUb2cyZ2NWWGRqaFFqUG1VVWhEQURINldL?=
- =?utf-8?B?enRnUEVadWFjSmcrbnh2em90TGpqQ0YxZmNIcFpGb2xQb0NBUlgxRHQ2RlVz?=
- =?utf-8?B?ay9EK3JOVGk0Nk9tV05JTmFkSHpoUE14OGc1T3BrZklzZ1l6L01UQjloNXpX?=
- =?utf-8?B?dXRKZklZMnBJYjdMK1JqY2ZWRCthbHlRMDYwTHV3R3p4em96T1EwOXlmcmd5?=
- =?utf-8?B?ZHA4SllGeXVpRHk5NXBLYmx5WU9NRW5UWW1oaE5RZldWV1AycW9rNHlheUp1?=
- =?utf-8?B?S3Q5K3ZKOS91bitMbERhdHNkQkVPUmNCUDFlaS9MRndEaEMzaEF3RTZlcDdR?=
- =?utf-8?B?YmpyazVWYlYwaUo0N3R2cE9VK3ZLLzJlZlViZ3g1VW1CWmlmTGl6M2xjYUZI?=
- =?utf-8?B?Z1pRT0V2dnRidnhFbUtKa2tMb2JzRHpRY0g5YUd0bmtLUmg2dys2ZDFhazlt?=
- =?utf-8?B?WlF2Yi9RK3duWUtseEZWMWMyZGpMTmhVajdXcTluK1c4YjE5VktvUDBJclEy?=
- =?utf-8?B?RXZtVUYvUURMN0JYY0krdGNzd042ckkxcTBrRmp3VURpMUx1anNoQzhESUV3?=
- =?utf-8?B?S0Z6ZGlvQ2padEZZSm9Jb3VzbHZtd3phb2FIMldKeXZWaGtLTUZsdzV5M3RJ?=
- =?utf-8?B?U2Vvci96eVd5eG53R1h5NFN1QVpWTVkwTTRmZkRkN2ZKRmhEbDA4eFpHUEZ1?=
- =?utf-8?B?V1VpdWdPMEoxN3VGYVJDeEpnMW5wSWYrOGdYb2prcGk3dGxhSitvNW90aUxN?=
- =?utf-8?B?RitXbVlnNnFDM1IyM3d6aFgvT1BrZE85ZVNEZ2UyUHcwV2lSa3JLdFlBVXRr?=
- =?utf-8?B?c1BSQVJDM0pBS29MQXZqWXkvVW9PUVQxY2VTTHd5eXZHKzJvczV4UG94R1Fl?=
- =?utf-8?B?MmpDTEFLanp5aWI2c25YSkJWeUFnSCtDVVE2NDRSTVNNVGtRSkM1YVk2Qk5S?=
- =?utf-8?B?dUcxSDdRUjFCM05OUmVYaTJYNkNwZDM4Vng3RE5yMmFhcWxOMnN4MXFoanRj?=
- =?utf-8?Q?ATWdODEuBN6rPkhQ2+XNHJ8WW+PsVCv2W74izni?=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3721
-X-CodeTwo-MessageID: f72b9efa-39e3-455d-b774-a61ba7a8c56d.20210312063938@westeu12-emailsignatures-cloud.codetwo.com
+X-Microsoft-Antispam-Message-Info-Original: hYVO+q+MEr0B3uWE8bf7tHIanId8REvz5nXNha+csymL/CW11Kb2eoTIQjkWACbwd3ubwqax+c95YWfNSF5l8NZcmzDI1on34IWLKl4X/bmvgr98ump+EYAtsRfNU5YfOAP13TEAr6LDZjzNhr7maBWMX4mHjghppxXLuGRAYLBn8YE7/UQBhWd51kwYCdjJeyzG6Z9GVl3Gm4oygzmKsymmmzLPIy2+eRJOqycpfD8FWPX38FxdhYYnaaJeqXrxMAOg05Rx5GDmsJjN8tDOy2fqHZflFMTO9Ier04WcgXvIO7smBQ0n2Yk9nhQ4POHQkud/dowHw31P52BH/Vzxf4T2r0JYuLriVorHtn/dF1c1HhTZE5FEm3ojrREL4D5WfwVu8OsI9cANgliO1hzZeFsiPgmssTYCYY2CgS79QiMbG1VUZ/j/JbgwrZXMm316/jkocqILV9bX5sRbiul2Rj5EAieuRsc5LzuMfoUbSo9Q++PFqgcVZUX0NJSNKPi2gVxCsCu9uq76LPMsjupBDSffX8guBMOMPD0H5NmiYw4ZdlpApm6qgB48f1KhQi3yOrip5LqpUKlgYNpGsCSYZcjs5sNqTl46rOmAJQKBf+s=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6523.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(39830400003)(396003)(136003)(366004)(376002)(346002)(8936002)(6486002)(2906002)(8676002)(478600001)(4326008)(2616005)(5660300002)(956004)(44832011)(36916002)(66556008)(186003)(26005)(53546011)(316002)(16526019)(66476007)(66946007)(31696002)(42882007)(52116002)(83170400001)(83380400001)(16576012)(36756003)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?MTJlaFVSVkNjN2hjbTc3S2RlYUhWNGdmcXF5ZGdZbXpPcGl0QXN5Ri9nQjgw?=
+ =?utf-8?B?Q1FYeWZjMmJOMmY1TENIOHNkS0JNMXhleFpVUVBibXM2QTZHTGNjSzBzMkJ2?=
+ =?utf-8?B?alFvekpYeU1sdzZaUjBNMzh2dEdwajNiMVUvVWJHRUJQUjJBaU8xaDBBRy9x?=
+ =?utf-8?B?dUJ5OFdTUjlHRkdvV2xOM3JmWFl1MjA2UDJJZjdpbHk1WFA1VFJlL0ZYcUJT?=
+ =?utf-8?B?RTFMK1NmdXB6UVdWT1JIR1NDSGVSbnhaa0xFQitFRUN2MjBIRGpkTzAxYks2?=
+ =?utf-8?B?VWgrZWllTHluODV2alZ0aFVmbjRRQnRRVEJaYzl4Z3R0bXphYXBUZmlkc3hR?=
+ =?utf-8?B?M04xRmp6TWk0ODFnaDByOEdmLzRuMFJNS2RkMXpmSmdmWG9ReGlaR1h0V2hP?=
+ =?utf-8?B?akxPbjdibDBWR0FXeFhYWHZzRUhCTWk1T3Q1U25VQktBSUVnZktJSGpQU0ZQ?=
+ =?utf-8?B?RU9uLzBJOHhYYmVkWSs2QkJzS3pzMWJQd3g5a3ZxZmhRL1hpRUdOOEc2SWpE?=
+ =?utf-8?B?RFRjVklidXI4OTFGUVFTV3BZcEF1RndhMDBKTHlVWXE2V2M3SmNOVXhoK1RY?=
+ =?utf-8?B?Nzg5SWwycE9LS3ZXY3UvSS81OXB0NDV4eCtKRlpoWkdJdjJBL3ZZMTYzNG94?=
+ =?utf-8?B?UDd4b2dDSlJXTEMwaGk1eWRFMjdWVmw3UUIyS1ZTRzAveEQxa0ZORWxsb2dz?=
+ =?utf-8?B?NmFFWlYveThsbGhPeDhnRGNMbS9vaW51NjdXWTI0MVlKLzdVTlo4TTkzNkRX?=
+ =?utf-8?B?Rmt1aEt4Q3ZRUW1GcEVvQjRLVmlscHd2UEJTVTR4WTZxN2dscTNHa3NZVmNj?=
+ =?utf-8?B?ejVxYkg1VXRSOTdUQ3lRdEt6TWdIZEhXSkYveUx5cGFEbk01cys2dFZjNlBQ?=
+ =?utf-8?B?UE5sUVM0WmFYTHF2U3hTR2JaRmpxb2x5Uk9lN1NNRFdheGZtRzBWaHpoKytt?=
+ =?utf-8?B?NnNUODJHZGVsQ0Q5dDlGRnQ2T0d5NU8zY0RHeDRYb0NtaVduUW8rM29XaU5z?=
+ =?utf-8?B?QmQzL1ZNSGc0TkZiY3pFRTZrS2NIUnBsZWRxOTVtbHVPelJEaG9saktMaGR4?=
+ =?utf-8?B?NkhibHYrSkNuMWNwa005ckcrNkFxWld5dGtEd0xzTjhlVEdja1QxOW5PaUhi?=
+ =?utf-8?B?bGlBRHB4czE5MG53eEFVdUkzVjhLZ3VjZmtnNm1HcFFzTy9CMEhzYUU4Mk1l?=
+ =?utf-8?B?a25mSStTN0Z4N0ZlUWZ2WTF2eWlNOTloWlFrZEl1UXJzU3V2ajBwSC9HV0Nm?=
+ =?utf-8?B?UlU5Z1VmQXNMRkZNTDFzRjFKZVQ3eGV1RnAvN0Vrc3BIM2h2VEQ2V3BWQmo5?=
+ =?utf-8?B?WnV1ZFBPT1JQTTNaL1NLNW5wa2M0VVYxeFFNZTFldXlSSFdUVmJFblRxU0Nx?=
+ =?utf-8?B?VE1CNnpEbnJrWjU1cXZSTExnUjdMVjhhdktyVEI5cWJ3aGx3Z1JKcm00eTFp?=
+ =?utf-8?B?Q2ppRnJVNkovS3crdkcrVlh5TFllVW15SUFhQk9QdytTVTk5RVhvUXRwMndR?=
+ =?utf-8?B?V0RoNUN2NThBMnFNNXhxVVZjMTRxUDVTeElzSEZid05aaDRCRjVIMTk4ZWdy?=
+ =?utf-8?B?dU9uQWdPR1RDMG4vT0Iva0VsK0YzNkg5c3lGdzE5UmhYRGh1ZEVLVkNHN0FQ?=
+ =?utf-8?B?NmxIRFZwNnRGaDdlRmlGQXFYeis3N2ZDa0tBS0ttV3ZYSUp3Ulcrb2QvTEN2?=
+ =?utf-8?B?SGViVkNpN2R5T2pRSytHbVMvUGYrbHE0U05BdS9GTDhjWG8yQ2g0YUlNZFV1?=
+ =?utf-8?Q?mzQrrz22Opcg/w0+3jvq7NeldjynS3CKFxieCEK?=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7381
+X-CodeTwo-MessageID: f6cb98bd-b84b-4e03-bf26-bd3792608017.20210312064431@westeu12-emailsignatures-cloud.codetwo.com
 X-CodeTwoProcessed: true
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: HE1EUR01FT005.eop-EUR01.prod.protection.outlook.com
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 453d7344-edb4-4baf-5159-08d8e5219b47
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR01FT049.eop-EUR01.prod.protection.outlook.com
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 1d5cec86-d68b-4863-1f23-08d8e52249cb
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rw2+naVc3Jjj9g8LTcfmSITlc8XZVNPf29zFR5afcWfPbtvmUAvjDZhzXBNaDP5KjKz2fuuinNB8NCZbJdigTXTTGf/RBE1VxAHFJd8Tel2nrA9rTznnoihZ218qvKqGt5cehu8E8KVT2xweds9+ZJyiAOJJPrqzPbTtgxsyBGqGBg+uTZWkimdZyskkIBGqZXvyFI998p2GRRSah7HiX8f/xckl6oH1LvKs0SlSkd3OcIWDRsLJI4Onbq72qh3xOKXio65bIGgADfn3q0n27EY3/b87HqB17uCNnn8TcuX5pi/grBywpAIx/BuOJlttaR9YGKfRk4QHXpWXDSYkDCpwf52Y1fu4dZH/nrBaRoVJE8X7V9A3L1dbAbDZhqMTr2UEIor79xEar1WQA3Xbv1cHUlCU34PtQLzgYrFGwJjKutivRGkXZTQWWtxfRkRsHlKd6Gsphi2Hxaq55hQTMSCBmwvK8hpk9CBKXH1H6/0rHyRMhysbx0njA0MkdFfgdrvOOj0uNsxtbqcKKxud3GXiHW1Sxz8l6YDrz1dz8iTWSylwDl3izp+XIB8kCPjNO7b0K4ihib1kU57bx2E9jJrS6fxc1OaO+ujRg/C0azF7bjApVK+PYHTaon03nKV4Z9R76jnvR2HQVna3GDl0SmX3gnDy4ethH4RfX9SBwxewfvBM/Nf/ByjDlVe3Yl51dEVPaF6LW8vKvQ2thtcgIAo8S+lWejIvdWp3aBt8HCPdwQDTJidKTjW7aMj6M7grpAO2I3dxaAN2yvtg3DLCaA==
-X-Forefront-Antispam-Report: CIP:40.68.112.65;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(39830400003)(346002)(136003)(396003)(376002)(46966006)(36840700001)(8676002)(8936002)(4326008)(15974865002)(44832011)(26005)(16576012)(356005)(42882007)(5660300002)(478600001)(47076005)(83380400001)(36916002)(83170400001)(336012)(186003)(82310400003)(31686004)(316002)(36860700001)(53546011)(956004)(6486002)(31696002)(70586007)(2616005)(7596003)(70206006)(2906002)(7636003)(36756003)(16526019)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: HlDeurT0al52iNhwJQOqOzyDnJrbSKpgP9E8TASoy76o/kCstW6SMT4OwdANGVFL9ewHkOpaznnsDm/h8bK6CZfnZkGibiwGW8+p+hDt5OsMKeT58KMvKKphPE2vT/RmXOFOmT6K3Ir2CMTfiCdUGEtMVtmGaB2UlSPmvw48pUF+mhpoKI9BGvqiz8dhWABYq2dV1nsd+BF9xXNKc3x2Qt4J5W8v3yngdHz4tpPVAODAIXUa1RlHrzRDYZkbqgAG9VAiwK31/4FgHpXcJT/hv8X3iOnDAhzgV7Mi70yh1iAj3Tt5LmOhpvolADfLm3UsJ9gIHF/IuQbhjnR+zi20QQVdUvUHeOXnNAbzHxB4Y5agyopcOowf0spDSv5MmZV8FMlbR13O7QIXm51dFDeZDVlJd1P064dsJw0G5xO/4f2zfDHvVb9Jb2JBKnOuwKX+9naWzwl1v2k5AEtbToW09GZoWXiIK7C5nQQf2R+uvckl8dSjCeKGcnVi+Ehlq+rnDew4MyivsqHwfBf0e93qTuUnnk1mJcSwu+B3uNpQaam6kWdtkRX8Q2RX1qlEWBknkfXi22nyV7ckO9N1DiL8UqNCrlewEcXLk5YNhAXvY3CNfH+IJrR5PxZcVtxLBzgeDDeVuHI8I5xKWAgD/HQRV9XJ68WUpO+Uizr4elLIJWphlL7zbOSdtIbb4yV1cwolk2faqmNTVHSYzqYBZUaplO/Jfw34lOqAiNYKt3wKcmZ0WL3YGTShK+EhH1C2/PSDBQkWHPsuN/B4QbP5DL/wGw==
+X-Forefront-Antispam-Report: CIP:40.68.112.65;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(39830400003)(396003)(376002)(136003)(346002)(46966006)(36840700001)(7636003)(7596003)(16526019)(336012)(2906002)(42882007)(70206006)(15974865002)(31696002)(5660300002)(70586007)(36860700001)(316002)(83380400001)(2616005)(31686004)(26005)(956004)(478600001)(8676002)(36756003)(186003)(36916002)(83170400001)(4326008)(356005)(8936002)(16576012)(6486002)(47076005)(82310400003)(44832011)(53546011)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2021 06:39:39.8785
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2021 06:44:32.8780
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3361ae63-27cc-4f11-3630-08d8e5219cd0
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8dbb443-6c9c-452f-cc71-08d8e5224b6b
 X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[40.68.112.65];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource: HE1EUR01FT005.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT049.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2270
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6275
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-
-One remark below.
 
 
 Met vriendelijke groet / kind regards,=0A=
@@ -175,89 +173,71 @@ W: www.topicproducts.com=0A=
 =0A=
 Please consider the environment before printing this e-mail=0A=
 On 11-03-2021 23:24, Robert Hancock wrote:
-> The Si5341 datasheet warns that before accessing any other registers,
-> including the PAGE register, we need to wait for the DEVICE_READY registe=
-r
-> to indicate the device is ready, or the process of the device loading its
-> state from NVM can be corrupted. Wait for DEVICE_READY on startup before
-> continuing initialization. This is done using a raw I2C register read
-> prior to setting up regmap to avoid any potential unwanted automatic PAGE
-> register accesses from regmap at this stage.
+> Add a property to allow specifying that the external I2C IO pins are usin=
+g
+> 3.3V voltage thresholds rather than 1.8V.
 >
-> Fixes: 3044a860fd ("clk: Add Si5341/Si5340 driver")
 > Signed-off-by: Robert Hancock <robert.hancock@calian.com>
 > ---
->   drivers/clk/clk-si5341.c | 31 +++++++++++++++++++++++++++++++
->   1 file changed, 31 insertions(+)
+>   drivers/clk/clk-si5341.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
 >
 > diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-> index e0446e66fa64..f210860fb96e 100644
+> index 11740855bcde..4cd80ef389d2 100644
 > --- a/drivers/clk/clk-si5341.c
 > +++ b/drivers/clk/clk-si5341.c
-> @@ -94,6 +94,7 @@ struct clk_si5341_output_config {
->   #define SI5341_STATUS		0x000C
->   #define SI5341_SOFT_RST		0x001C
+> @@ -81,6 +81,7 @@ struct clk_si5341 {
+>   	u8 num_synth;
+>   	u16 chip_id;
+>   	bool xaxb_ext_clk;
+> +	bool iovdd_33;
+>   };
+>   #define to_clk_si5341(_hw)	container_of(_hw, struct clk_si5341, hw)
+>  =20
+> @@ -103,6 +104,7 @@ struct clk_si5341_output_config {
 >   #define SI5341_IN_SEL		0x0021
-> +#define SI5341_DEVICE_READY	0x00FE
+>   #define SI5341_DEVICE_READY	0x00FE
 >   #define SI5341_XAXB_CFG		0x090E
+> +#define SI5341_IO_VDD_SEL	0x0943
 >   #define SI5341_IN_EN		0x0949
 >   #define SI5341_INX_TO_PFD_EN	0x094A
-> @@ -1189,6 +1190,31 @@ static const struct regmap_range_cfg si5341_regmap=
-_ranges[] =3D {
->   	},
->   };
 >  =20
-> +static int si5341_wait_device_ready(struct i2c_client *client)
-> +{
-> +	int count;
-> +
-> +	/* Datasheet warns: Any attempt to read or write any register other
-> +	 * than DEVICE_READY before DEVICE_READY reads as 0x0F may corrupt the
-> +	 * NVM programming and may corrupt the register contents, as they are
-> +	 * read from NVM. Note that this includes accesses to the PAGE register=
-.
-> +	 * Also: DEVICE_READY is available on every register page, so no page
-> +	 * change is needed to read it.
-> +	 * Do this outside regmap to avoid automatic PAGE register access.
-> +	 */
-> +	for (count =3D 0; count < 10; ++count) {
-> +		s32 result =3D i2c_smbus_read_byte_data(client,
-> +						      SI5341_DEVICE_READY);
-> +		if (result < 0)
-> +			return result;
-> +		if (result =3D=3D 0x0F)
-> +			return 0;
-> +		usleep_range(1000, 20000);
-> +	}
-> +	dev_err(&client->dev, "timeout waiting for DEVICE_READY\n");
-
-The "timeout" here is random between 10 and 200 milliseconds.
-
-The datasheet says that the device may take 300ms to initialize, so I=20
-guess 300 milliseconds would be a good timeout.
-
-I'm also pretty sure there's a built-in kernel function to poll a=20
-register with timeout that you should use here.
-
-
-> +	return -EIO;
-> +}
-> +
->   static const struct regmap_config si5341_regmap_config =3D {
->   	.reg_bits =3D 8,
->   	.val_bits =3D 8,
-> @@ -1385,6 +1411,11 @@ static int si5341_probe(struct i2c_client *client,
+> @@ -351,7 +353,6 @@ static const struct si5341_reg_default si5341_reg_def=
+aults[] =3D {
+>   	{ 0x0804, 0x00 }, /* Not in datasheet */
+>   	{ 0x090E, 0x02 }, /* XAXB_EXTCLK_EN=3D0 XAXB_PDNB=3D1 (use XTAL) */
+>   	{ 0x091C, 0x04 }, /* ZDM_EN=3D4 (Normal mode) */
+> -	{ 0x0943, 0x00 }, /* IO_VDD_SEL=3D0 (0=3D1v8, use 1=3D3v3) */
+>   	{ 0x0949, 0x00 }, /* IN_EN (disable input clocks) */
+>   	{ 0x094A, 0x00 }, /* INx_TO_PFD_EN (disabled) */
+>   	{ 0x0A02, 0x00 }, /* Not in datasheet */
+> @@ -1160,6 +1161,11 @@ static int si5341_finalize_defaults(struct clk_si5=
+341 *data)
+>   	int res;
+>   	u32 revision;
 >  =20
->   	data->i2c_client =3D client;
->  =20
-> +	/* Must be done before otherwise touching hardware */
-> +	err =3D si5341_wait_device_ready(client);
-> +	if (err)
-> +		return err;
+> +	res =3D regmap_write(data->regmap, SI5341_IO_VDD_SEL,
+> +			   data->iovdd_33 ? 1 : 0);
+> +	if (res < 0)
+> +		return res;
 > +
->   	for (i =3D 0; i < SI5341_NUM_INPUTS; ++i) {
->   		input =3D devm_clk_get(&client->dev, si5341_input_clock_names[i]);
->   		if (IS_ERR(input)) {
+>   	res =3D regmap_read(data->regmap, SI5341_DEVICE_REV, &revision);
+>   	if (res < 0)
+>   		return res;
+> @@ -1565,6 +1571,8 @@ static int si5341_probe(struct i2c_client *client,
+>   	}
+>   	data->xaxb_ext_clk =3D of_property_read_bool(client->dev.of_node,
+>   						   "silabs,xaxb-ext-clk");
+> +	data->iovdd_33 =3D of_property_read_bool(client->dev.of_node,
+> +					       "silabs,iovdd-33");
+>  =20
+
+Seems a waste to me to store this in the 'data' object forever while it=20
+is to be used only once during init and never again after that.
+
+
+>   	if (initialization_required) {
+>   		/* Populate the regmap cache in preparation for "cache only" */
 
 
 --=20
