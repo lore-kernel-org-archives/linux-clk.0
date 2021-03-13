@@ -2,57 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179B1C433E6
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 22:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E43C433E6
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 23:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D15FF6146B
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 22:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC4A64ED9
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 23:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234259AbhCMWzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Mar 2021 17:55:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56814 "EHLO mail.kernel.org"
+        id S233219AbhCMXAA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Mar 2021 18:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234385AbhCMWzN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Mar 2021 17:55:13 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E478B64E87;
-        Sat, 13 Mar 2021 22:55:12 +0000 (UTC)
+        id S231756AbhCMXAA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Mar 2021 18:00:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2090064E87;
+        Sat, 13 Mar 2021 23:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615676113;
-        bh=nmj/YjrCki02M7Zkgk1um+80r1CXKmId8/fAOXULvTA=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=HB93rejFx5mLTzFS91LT4Y4PlDidGj1C41H/uk7bsqeCCmv60oZSm/B3272CQENwm
-         /Ea399K1Jq/hTanTDlX/UXtvPWy9/JR/0gJ4+73D+xXig2XTesjh00QrPTjUA1Jo8Y
-         LDSmMrkDoyi1FITmq4La+qBbCGcfQAmIgjVd61F/faPHgxu/DXl8CKCF0WraBtQJRX
-         6Syh0nSSs9pj3ENczuU16Q5HZoqCF/0IM66J/QE7lVU1Dj/NaoM+HgS+LBChNi0nRe
-         dAIpxMDXmL9lk5YzMh5SRtW1z/acpdkxdiu+EilnAnXi3LPPXb3ytGxb2klm2JG+M0
-         7l1IpynwjZ9wA==
+        s=k20201202; t=1615676400;
+        bh=JvN2gE2cwHT9RI41PHOKMwum4FYziRMG+R+kWsNa02Q=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=adaM4hqQBNnRAXFMA3Hm8KSklIkDvXedtL+Au187klkwYnhUZiuqCvdE1DHaAhjMx
+         0vn1iOC2Jnfpd0SRTQkE+pm5uywSq4IiJIMJZ8sT6CvRANwav485wnRiUsLAomrS1n
+         ooKAbs9K/MBgGcIHWtqqm4oNYubE98kcX1I06e/9J1GS+lAooGomuphgo7ze8YproS
+         4eefVSwS3oUgXiTSJ8rNUcFO5XXYrvbpsvtrx8nXFhDcNMhs4tCQzu7YXCR1Yg3pdD
+         bapyZVYlkGoBal16GPZww8YyitD94D764PKG37LQc6Sz2PKt+YLRTCPiuZkULNefzJ
+         C6MtWf5i3GYuQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210225194201.17001-2-noltari@gmail.com>
-References: <20210225194201.17001-1-noltari@gmail.com> <20210225194201.17001-2-noltari@gmail.com>
-Subject: Re: [PATCH 1/4] mips: bmips: add BCM63268 timer clock definitions
+In-Reply-To: <1615467092-6982-1-git-send-email-tdas@codeaurora.org>
+References: <1615467092-6982-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v2] clk: qcom: clk-rcg2: Add support for duty-cycle for RCG
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        devicetree@vger.kernel.org, jonas.gorski@gmail.com,
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alvaro Fernandez Rojas <noltari@gmail.com>
-Date:   Sat, 13 Mar 2021 14:55:11 -0800
-Message-ID: <161567611170.1478170.3306012721372270137@swboyd.mtv.corp.google.com>
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Sat, 13 Mar 2021 14:59:58 -0800
+Message-ID: <161567639878.1478170.18101287599042992816@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Subject should probably be clk related instead of mips prefixed. Or
-dt-bindings: clk: ?
+Quoting Taniya Das (2021-03-11 04:51:32)
+> The root clock generators with MND divider has the capability to support
+> change in duty-cycle by updating the 'D'. Add the clock ops which would
+> check all the boundary conditions and enable setting the desired duty-cyc=
+le
+> as per the consumer.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/clk-rcg2.c | 42 +++++++++++++++++++++++++++++++++++++++=
++++
+>  1 file changed, 42 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 42f13a2..aac6893 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -357,6 +357,46 @@ static int clk_rcg2_set_floor_rate_and_parent(struct=
+ clk_hw *hw,
+>         return __clk_rcg2_set_rate(hw, rate, FLOOR);
+>  }
+>=20
+> +static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *d=
+uty)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       u32 notn_m_val, n_val, m_val, d_val, not2d_val, mask, duty_per;
+> +       int ret;
+> +
+> +       if (!rcg->mnd_width)
+> +               return 0;
+
+Shouldn't we fail this call if the duty cycle can't be changed? Or have
+another set of clk ops that doesn't support this clk op if the mnd=20
+isn't present.
+
+> +
+> +       mask =3D BIT(rcg->mnd_width) - 1;
+> +
+> +       regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m_val);
+> +       regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m_val);
+> +
+> +       n_val =3D (~(notn_m_val) + m_val) & mask;
+> +
+> +       duty_per =3D (duty->num * 100) / duty->den;
+> +
+> +       /* Calculate 2d value */
+> +       d_val =3D DIV_ROUND_CLOSEST(n_val * duty_per * 2, 100);
+> +
+> +        /* Check BIT WIDTHS OF 2d. If D is too big reduce Duty cycle. */
+
+Why is BIT WIDTHS capitalized? And Duty?
+
+> +       if (d_val > mask)
+> +               d_val =3D mask;
+> +
+> +       if ((d_val / 2) > (n_val - m_val))
+> +               d_val =3D (n_val - m_val) * 2;
+> +       else if ((d_val / 2) < (m_val / 2))
+> +               d_val =3D m_val;
+> +
+> +       not2d_val =3D ~d_val & mask;
+> +
+> +       ret =3D regmap_update_bits(rcg->clkr.regmap, RCG_D_OFFSET(rcg), m=
+ask,
+> +                                not2d_val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return update_config(rcg);
+> +}
+> +
+>  const struct clk_ops clk_rcg2_ops =3D {
+>         .is_enabled =3D clk_rcg2_is_enabled,
+>         .get_parent =3D clk_rcg2_get_parent,
+> @@ -365,6 +405,7 @@ const struct clk_ops clk_rcg2_ops =3D {
+>         .determine_rate =3D clk_rcg2_determine_rate,
+>         .set_rate =3D clk_rcg2_set_rate,
+>         .set_rate_and_parent =3D clk_rcg2_set_rate_and_parent,
+> +       .set_duty_cycle =3D clk_rcg2_set_duty_cycle,
+
+Can you also implement get_duty_cycle?
+
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+>
