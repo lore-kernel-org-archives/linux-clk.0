@@ -2,91 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EDBC433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 03:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB960C433E6
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 05:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 628BA64F77
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 03:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9CEE64E76
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 05:35:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231789AbhCMDli (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Mar 2021 22:41:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
+        id S230349AbhCMFfJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Mar 2021 00:35:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231597AbhCMDlS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Mar 2021 22:41:18 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC9BCC061574;
-        Fri, 12 Mar 2021 19:41:17 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id p21so17093996pgl.12;
-        Fri, 12 Mar 2021 19:41:17 -0800 (PST)
+        with ESMTP id S229968AbhCMFex (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Mar 2021 00:34:53 -0500
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310DAC061574;
+        Fri, 12 Mar 2021 21:34:53 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id 6so5573740qty.3;
+        Fri, 12 Mar 2021 21:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition;
-        bh=hZAc/P9lVDwEuLdchgvOWQUpCDDfjKHCr/i1rQtJgnQ=;
-        b=WPiMI+YwDhwV3gbg9LhZ/BMF8AqtGY23VQDotn+5TMPbIaqA1vQbRTFpBkEK1oGI7Y
-         wEbPMsPB7O7qJcgxP0nqBic4bPBSMPZdMELxxEKP72vDtovFc68LduI5xSZW+cg3FHlI
-         J2CCcLh3FiMiWW+ZGVz7RBVHt9w5ZAyVXuo75G3sUL0T2ziH30bYCDxn2Rys70g/R8Z/
-         TUsanaB0d5G7LH7aahzvfWVeXd+cv7WB2w61OVGo6YRVKO2tr3EeL/FZ2uUJJhEqnJ69
-         ccqwR5RrdR8PSw8A0mwOJxH8dHpbJtW/gh2kAOr1Gaj0NAWUp38v1codDCNHYurnckql
-         iFHw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dyjCmj1CmFNVIOJG5PnrvOeviEQ2s4TZykEyZaAYjTM=;
+        b=t+j90VQoTIruQ9n5aPpFQQ1ef3+MD8HERR7V6yVn3CsEUXJV0i8UuaPKUcxFVxczbR
+         J9B9ULBWtBrCPsWRVckTKdFn4afc7gagrr1iEousQytSV3oGYUDSRQq2OEYudFqTt0vd
+         uex84dypSG4u59WagTFAQtTDSH01CZD4/xERFXtQSNqOc8J0BBnYk4clY0nxIvBVHrQL
+         ubgXZOTLKix9PBhq9ZSw5Xje5XToIhqt5DG0Ej3SMQLEYj+2XCHH7Ooo3obZf8KvsDIV
+         O7XJ2elK7WKiEnSRgOTdHo1HsFKNcUGB2TDarG0dtbbgtHMPHjINnqhrFwDzEa2qCJKN
+         66+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=hZAc/P9lVDwEuLdchgvOWQUpCDDfjKHCr/i1rQtJgnQ=;
-        b=bPzIKhWpsIUw3eltmQ6f10HujcT3lqIfaMlLr0tJ+DLeEwP7cffToMv+d01SLSYMGF
-         uyBA7ZK3ByXVWwD4xwd6mmkJs1xR5caoLBp2b5i3cnf1iwm7dhx8LdOyVzj8wv4e2Xob
-         vhQ93ODMQIRjb+wd5VQCr47pVVFyt0eWS/agoCva1z/17cQlRoR4FVD2QoxpA0wh2LgL
-         yUbloq4f/etRN6pIHq8+8jLioL8oCvXuNPq+9vHI/GOpnFLdwfqI9MU44zU0oYgunhh0
-         Q380cese9xu9JKIcMgDSYZ41JblirAE/bfhtazEUZKjALJaqvsZLLi+bdsvNT3hLaQqP
-         5v5w==
-X-Gm-Message-State: AOAM5314LgK+umD3gN+f6+MuU6eiysxYmVLHH5H7tGSSyQvzSNJ/fHWm
-        xNrFYsKjqWBVQLsHpqzHeXcE+ZYPiMMdew==
-X-Google-Smtp-Source: ABdhPJzCASMGYCWc3KRX93SEyI78Eqrnh9XrnwkcaGmkTzzA90jyODKcCF1goIhbVBUXPwP44U9Htg==
-X-Received: by 2002:a65:4508:: with SMTP id n8mr14071593pgq.294.1615606877047;
-        Fri, 12 Mar 2021 19:41:17 -0800 (PST)
-Received: from pallavi ([223.186.24.218])
-        by smtp.gmail.com with ESMTPSA id 202sm6626308pfu.46.2021.03.12.19.41.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dyjCmj1CmFNVIOJG5PnrvOeviEQ2s4TZykEyZaAYjTM=;
+        b=RCM7xfXtQd6VtO/G5FJxlSE2ElNwvt2cOCV8acEPyNebwssdCv8BYeCqA0bmPjCCUG
+         gB7ISU7sQQdF1r6PNwgYYWmaUEM8tym3YvJdX4a4tCSGplqYn6IAoqSw5NXScEeNywZ4
+         2SMQN0Aw0ViF6LLPpRYytDm90fDCHnmayj2AAyevTZBKBc/EaHwOujqwwp+sjPuUgeJy
+         G05YESulrEhN+WnLZPQFK3QidJTUvP2Kx6LVKAwErOJf4IDk5JfJ3VQgeDo1sfJnvBY2
+         z/QsdE1tccSrFsVsejHCdllQCUJf/nSLfT5FyhXFU/0EcbnQ5VIC80AfoR7BvmWcaSLT
+         TNHw==
+X-Gm-Message-State: AOAM5332S8juyGhfUmHIu8K2GbNKrOcma/MXv/DArMWxeydzF3tkAfD0
+        J19e9WblYcfKelDKw8809ck=
+X-Google-Smtp-Source: ABdhPJykRmtpfr9UhSUl53QlRuna8xH7Tgnj/fzFFpiYBsLAhn/lhsugzMEkyduhLAG877j/Rlcf+g==
+X-Received: by 2002:ac8:4d43:: with SMTP id x3mr2693011qtv.326.1615613692291;
+        Fri, 12 Mar 2021 21:34:52 -0800 (PST)
+Received: from localhost.localdomain ([37.19.198.104])
+        by smtp.gmail.com with ESMTPSA id h6sm5321306qtj.75.2021.03.12.21.34.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Mar 2021 19:41:16 -0800 (PST)
-Date:   Sat, 13 Mar 2021 09:11:12 +0530
-From:   Pallavi Prabhu <rpallaviprabhu@gmail.com>
+        Fri, 12 Mar 2021 21:34:51 -0800 (PST)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: clk.c: Fixed statics initialized to 0
-Message-ID: <20210313034112.eqa7zxtes2ruklqj@pallavi>
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, claudiu.beznea@microchip.com,
+        eugen.hristev@microchip.com, unixbhaskar@gmail.com,
+        tudor.ambarus@microchip.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org
+Subject: [PATCH] clk: at91: Trivial typo fixes in the file sama7g5.c
+Date:   Sat, 13 Mar 2021 11:02:22 +0530
+Message-Id: <20210313053222.14706-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Uninitialized static variable from 0, as statics get auto-initialized to 0 during execution.
-Signed-off-by: Pallavi Prabhu <rpallaviprabhu@gmail.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5052541a0986..763ad2c960bd 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2931,7 +2931,7 @@ EXPORT_SYMBOL_GPL(clk_is_match);
- #include <linux/debugfs.h>
- 
- static struct dentry *rootdir;
--static int inited = 0;
-+static int inited;
- static DEFINE_MUTEX(clk_debug_lock);
- static HLIST_HEAD(clk_debug_list);
- 
--- 
-2.25.1
+s/critial/critical/  ......two different places
+s/parrent/parent/
+
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ drivers/clk/at91/sama7g5.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index a6e20b35960e..9e1ec48c4474 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -166,7 +166,7 @@ static const struct {
+ 		  .c = &pll_characteristics,
+ 		  .t = PLL_TYPE_FRAC,
+ 		   /*
+-		    * This feeds syspll_divpmcck which may feed critial parts
++		    * This feeds syspll_divpmcck which may feed critical parts
+ 		    * of the systems like timers. Therefore it should not be
+ 		    * disabled.
+ 		    */
+@@ -178,7 +178,7 @@ static const struct {
+ 		  .c = &pll_characteristics,
+ 		  .t = PLL_TYPE_DIV,
+ 		   /*
+-		    * This may feed critial parts of the systems like timers.
++		    * This may feed critical parts of the systems like timers.
+ 		    * Therefore it should not be disabled.
+ 		    */
+ 		  .f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
+@@ -455,7 +455,7 @@ static const struct {
+  * @pp:			PLL parents
+  * @pp_mux_table:	PLL parents mux table
+  * @r:			clock output range
+- * @pp_chg_id:		id in parrent array of changeable PLL parent
++ * @pp_chg_id:		id in parent array of changeable PLL parent
+  * @pp_count:		PLL parents count
+  * @id:			clock id
+  */
+--
+2.26.2
 
