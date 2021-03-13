@@ -7,24 +7,21 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C26FC4360C
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 02:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B651C28E8A
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 02:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15E3164FA6
+	by mail.kernel.org (Postfix) with ESMTP id 03A6464F9E
 	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 02:22:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbhCMCVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Mar 2021 21:21:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232880AbhCMCUy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Mar 2021 21:20:54 -0500
-Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B506C061761
-        for <linux-clk@vger.kernel.org>; Fri, 12 Mar 2021 18:20:54 -0800 (PST)
+        id S232905AbhCMCVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Mar 2021 21:21:31 -0500
+Received: from m-r1.th.seeweb.it ([5.144.164.170]:43169 "EHLO
+        m-r1.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232942AbhCMCU4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Mar 2021 21:20:56 -0500
 Received: from localhost.localdomain (abac242.neoplus.adsl.tpnet.pl [83.6.166.242])
-        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 1261D1F88F;
-        Sat, 13 Mar 2021 03:20:52 +0100 (CET)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id A68B71F9BF;
+        Sat, 13 Mar 2021 03:20:54 +0100 (CET)
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 To:     ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
@@ -39,9 +36,9 @@ Cc:     martin.botka@somainline.org,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] clk: qcom: gcc-msm8994: Remove the inexistent GDSC_PCIE
-Date:   Sat, 13 Mar 2021 03:19:15 +0100
-Message-Id: <20210313021919.435332-6-konrad.dybcio@somainline.org>
+Subject: [PATCH 8/9] clk: qcom: gcc-msm8994: Add proper msm8992 support
+Date:   Sat, 13 Mar 2021 03:19:17 +0100
+Message-Id: <20210313021919.435332-8-konrad.dybcio@somainline.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210313021919.435332-1-konrad.dybcio@somainline.org>
 References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
@@ -51,42 +48,122 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This GDSC is not present on msm8994.
+MSM8992 is a cut-down version of MSM8994, featuring
+largely the same hardware.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 ---
- drivers/clk/qcom/gcc-msm8994.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/clk/qcom/gcc-msm8994.c | 70 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 962107b5f1af..e1e40982ebee 100644
+index fae784b4242f..a5b9db7678d1 100644
 --- a/drivers/clk/qcom/gcc-msm8994.c
 +++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -2493,14 +2493,6 @@ static struct clk_branch gcc_prng_ahb_clk = {
- 	},
+@@ -8,6 +8,7 @@
+ #include <linux/ctype.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
+@@ -220,6 +221,17 @@ static struct freq_tbl ftbl_blsp1_qup1_spi_apps_clk_src[] = {
+ 	{ }
  };
  
--static struct gdsc pcie_gdsc = {
--		.gdscr = 0x1e18,
--		.pd = {
--			.name = "pcie",
--		},
--		.pwrsts = PWRSTS_OFF_ON,
--};
--
- static struct gdsc pcie_0_gdsc = {
- 		.gdscr = 0x1ac4,
- 		.pd = {
-@@ -2690,7 +2682,8 @@ static struct clk_regmap *gcc_msm8994_clocks[] = {
++static struct freq_tbl ftbl_blsp1_qup_spi_apps_clk_src_8992[] = {
++	F(960000, P_XO, 10, 1, 2),
++	F(4800000, P_XO, 4, 0, 0),
++	F(9600000, P_XO, 2, 0, 0),
++	F(15000000, P_GPLL0, 10, 1, 4),
++	F(19200000, P_XO, 1, 0, 0),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(50000000, P_GPLL0, 12, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 blsp1_qup1_spi_apps_clk_src = {
+ 	.cmd_rcgr = 0x064c,
+ 	.mnd_width = 8,
+@@ -980,6 +992,18 @@ static struct freq_tbl ftbl_sdcc1_apps_clk_src[] = {
+ 	{ }
  };
  
- static struct gdsc *gcc_msm8994_gdscs[] = {
--	[PCIE_GDSC] = &pcie_gdsc,
-+	/* This GDSC does not exist, but ABI has to remain intact */
-+	[PCIE_GDSC] = 0,
- 	[PCIE_0_GDSC] = &pcie_0_gdsc,
- 	[PCIE_1_GDSC] = &pcie_1_gdsc,
- 	[USB30_GDSC] = &usb30_gdsc,
++static struct freq_tbl ftbl_sdcc1_apps_clk_src_8992[] = {
++	F(144000, P_XO, 16, 3, 25),
++	F(400000, P_XO, 12, 1, 4),
++	F(20000000, P_GPLL0, 15, 1, 2),
++	F(25000000, P_GPLL0, 12, 1, 2),
++	F(50000000, P_GPLL0, 12, 0, 0),
++	F(100000000, P_GPLL0, 6, 0, 0),
++	F(172000000, P_GPLL4, 2, 0, 0),
++	F(344000000, P_GPLL4, 1, 0, 0),
++	{ }
++};
++
+ static struct clk_rcg2 sdcc1_apps_clk_src = {
+ 	.cmd_rcgr = 0x04d0,
+ 	.mnd_width = 8,
+@@ -2718,13 +2742,57 @@ static const struct qcom_cc_desc gcc_msm8994_desc = {
+ };
+ 
+ static const struct of_device_id gcc_msm8994_match_table[] = {
+-	{ .compatible = "qcom,gcc-msm8994" },
++	{ .compatible = "qcom,gcc-msm8992" },
++	{ .compatible = "qcom,gcc-msm8994" }, /* V2 and V2.1 */
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, gcc_msm8994_match_table);
+ 
+ static int gcc_msm8994_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
++	bool is_msm8992;
++
++	is_msm8992 = of_device_is_compatible(pdev->dev.of_node, "qcom,gcc-msm8992");
++
++	if (is_msm8992) {
++		/* MSM8992 features less clocks and some have different freq tables */
++		gcc_msm8994_desc.clks[GCC_LPASS_Q6_AXI_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_PCIE_1_AUX_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_PCIE_1_CFG_AHB_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_PCIE_1_MSTR_AXI_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_PCIE_1_PIPE_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_PCIE_1_SLV_AXI_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_SYS_NOC_UFS_AXI_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_AHB_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_AXI_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_RX_CFG_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_RX_SYMBOL_0_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_RX_SYMBOL_1_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_TX_CFG_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_TX_SYMBOL_0_CLK] = 0;
++		gcc_msm8994_desc.clks[GCC_UFS_TX_SYMBOL_1_CLK] = 0;
++		gcc_msm8994_desc.clks[PCIE_1_AUX_CLK_SRC] = 0;
++		gcc_msm8994_desc.clks[PCIE_1_PIPE_CLK_SRC] = 0;
++		gcc_msm8994_desc.clks[PCIE_1_PHY_LDO] = 0;
++		gcc_msm8994_desc.clks[UFS_AXI_CLK_SRC] = 0;
++		gcc_msm8994_desc.clks[UFS_PHY_LDO] = 0;
++
++		sdcc1_apps_clk_src.freq_tbl = ftbl_sdcc1_apps_clk_src_8992;
++		blsp1_qup1_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp1_qup2_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp1_qup3_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp1_qup4_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp1_qup5_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp1_qup6_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup1_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup2_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup3_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup4_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup5_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++		blsp2_qup6_i2c_apps_clk_src.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src_8992;
++	}
++
+ 	return qcom_cc_probe(pdev, &gcc_msm8994_desc);
+ }
+ 
 -- 
 2.30.2
 
