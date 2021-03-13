@@ -6,53 +6,57 @@ X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D31C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 20:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB20EC433DB
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 20:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74F0F64E62
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 20:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E4A64ED1
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 20:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234535AbhCMUiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Mar 2021 15:38:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36968 "EHLO mail.kernel.org"
+        id S234714AbhCMU64 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Mar 2021 15:58:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234697AbhCMUiK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Mar 2021 15:38:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C5C1964ECD;
-        Sat, 13 Mar 2021 20:38:09 +0000 (UTC)
+        id S234331AbhCMU63 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Mar 2021 15:58:29 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 82CA964E99;
+        Sat, 13 Mar 2021 20:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615667889;
-        bh=y3AzkWl/QkhO0HyMix80Bdu2IWVQbZY6mwVEyUe6XEA=;
+        s=k20201202; t=1615669108;
+        bh=eOxb6i2eiQLuIs3xBLFm2d74piMq/JM2zbepFvbw4VQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=d3ZBX4+08x+8QWxRvV2Hfe0XPAinUiX+SNnw2IAbecZMWj0WHn/QxOg0LIE3BImZj
-         gHd0tYJ36DZEjZwxl2xe44uFzDm7XnrKQq8BudfC6p/qp9u5la/h+hRWJ57AuyDsLV
-         9RpSFx6bYoD7F/4kyINX7k46Or8YRKCtcJPwEQ/ZbvvsukIraemisr8HxSHb4m97H/
-         5pLSV5wP4tUImXFSRdUKRvj0mvtF1W57vEfGV+nTsLPJkwfgg/A7XvUXETslFBhmVr
-         uOFQIgOcBvKqdA6SNt2Hq+4MT4GsM2Kl5EVPyU1r+dVWZ19M58yBiezjTT9jbSSbBp
-         coM3Ib6PqfpiA==
+        b=O6TSXBb3zvPCtGMNuCn35Uzdu+qI6x7PuSYZ+SaibI4OpHpCMfeja1GV2xnH3wKts
+         XTW+kMtdIlDK9CBntM5PGeTKrAnnWZ6dZtp6IwJ3Ua3pv6gLkHHdVel7IZf1i/4RaZ
+         8s+VC95dN+4GB2izpUEpJR24OJOYQK/U7ZgLZz5NrO8ujV7zhkttfNuVHgFlFTaIy1
+         Ca8BA3QCORyi2tpvkPsVKU2yKt5eYB5+zeXpn7Qlbj+/Kr6NyQXbptuhlqGBTzJaCd
+         CqpZrHymQjchZXfpvK/FUU61f4odJNPnhdDEX91EmE8k5uU6363Qn9FddQOYBuVIjF
+         sk0Q6OJzpQZrg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210305003334.575831-1-linux@rasmusvillemoes.dk>
-References: <20210305003334.575831-1-linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH] clk: use clk_core_enable_lock() a bit more
+In-Reply-To: <1615400283-20100-1-git-send-email-tdas@codeaurora.org>
+References: <1615400283-20100-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1] clk: qcom: rpmh: Update the XO clock source for SC7280
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date:   Sat, 13 Mar 2021 12:38:08 -0800
-Message-ID: <161566788864.1478170.2232755793586125893@swboyd.mtv.corp.google.com>
+        Taniya Das <tdas@codeaurora.org>
+Date:   Sat, 13 Mar 2021 12:58:27 -0800
+Message-ID: <161566910713.1478170.4881967524115069645@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rasmus Villemoes (2021-03-04 16:33:34)
-> Use clk_core_enable_lock() and clk_core_disable_lock() in a few places
-> rather than open-coding them.
+Quoting Taniya Das (2021-03-10 10:18:03)
+> The bi_tcxo clock source for SC7280 requires a div 4 to derive 19.2MHz
+> from the xo_board. Thus update the same.
 >=20
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Fixes: fff2b9a65162 ("clk: qcom: rpmh: Add support for RPMH clocks on SC7=
+280")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
