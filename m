@@ -4,90 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EB4C433DB
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 21:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27896C4321A
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 22:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A05964EC9
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 21:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0330664EDF
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 22:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234593AbhCMVKv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Mar 2021 16:10:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43610 "EHLO mail.kernel.org"
+        id S234859AbhCMWZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Mar 2021 17:25:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234806AbhCMVKm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Mar 2021 16:10:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CA08064EC9;
-        Sat, 13 Mar 2021 21:10:41 +0000 (UTC)
+        id S234753AbhCMWZR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Mar 2021 17:25:17 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8BA0E64EC9;
+        Sat, 13 Mar 2021 22:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615669841;
-        bh=hl68pVNU/U66bkT8vIOkXoVrb98xd7FMxIn6tWimdq8=;
+        s=k20201202; t=1615674316;
+        bh=XNgqaZ2i3/Zjc4Q3m1D1qEEm/vTGTGwUoIYDh1YUMx4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BwlCubBucKTHAICQ0XE9XQWGA+d0xKdeOWkzEx153Y7W5vEzPXwngn85fM4sxJcDp
-         zwJgRS9CMFzbNfXj7QaJPVQzI0EuhlWfOEzP5QF5QDv9Mqddt1RpLmKzwuhu7tfO+H
-         6NXqiq5uo5idHOk37/m2ybb+qW8ROhktZwDU/4KRZ9O2UWC7X+fFk3bAURT+NSb2ka
-         5AZ0Nm2dTiBOfAWREVD1tobeIHufR45wgWbtr2cAxNDmidhRW3yZ+AQM4Od/oP81w3
-         rmtRRNr6q0UWc5PfeE61RKLZXi5WSNja/u6GGE2uRBxkaIVggB9s3nzGnXWKNbXjXC
-         pbkrGIga4Wb6Q==
+        b=VvS7SMUhIcP5DmSLkgLps5Ohia0lLPsz77zbFIk3XrvkVYiEPHBT1DqRACuwnF26y
+         RO9O8Mi9zGLMIDe2esJfAAlZMjUcwg8QsI8MGyexqtUNT6Vr/Yur5NNFO72lbkHckx
+         v2JRpwd4EHYq+CqcZAAYlpXUzj5Tbrr9k8Iq3HOczddpzgWOgGOczAeuFisWNbJfJI
+         9MSFU71NOWA+yIHk7Z7AksXNpmI8pDl7HumYSEJmI+zLmzkkSAbQ03apJVZ0U+0rFh
+         pc7+OBsOwNwUogvOR94nkUa53IchUwZc9vmBbqah78+ISFv10Qqmr9QXj5RQoy5JaU
+         pF9ZQ8ehXr/Zg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210311144833.1313387-1-krzysztof.kozlowski@canonical.com>
-References: <20210311144833.1313387-1-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH] clk: socfpga: fix iomem pointer cast on 64-bit
+In-Reply-To: <20210301064749.10392-5-zhangqing@rock-chips.com>
+References: <20210301064749.10392-1-zhangqing@rock-chips.com> <20210301064749.10392-5-zhangqing@rock-chips.com>
+Subject: Re: [PATCH v3 4/4] clk: rockchip: add clock controller for rk3568
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sat, 13 Mar 2021 13:10:40 -0800
-Message-ID: <161566984049.1478170.1891806275092209249@swboyd.mtv.corp.google.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com, tony.xie@rock-chips.com,
+        finley.xiao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Date:   Sat, 13 Mar 2021 14:25:15 -0800
+Message-ID: <161567431517.1478170.18210364268176534887@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2021-03-11 06:48:33)
-> Pointers should be cast to unsigned long instead of integer.  This fixes
-> warning when compile testing on ARM64:
+Quoting Elaine Zhang (2021-02-28 22:47:49)
+> Add the clock tree definition for the new rk3568 SoC.
 >=20
->   drivers/clk/socfpga/clk-gate.c: In function =E2=80=98socfpga_clk_recalc=
-_rate=E2=80=99:
->   drivers/clk/socfpga/clk-gate.c:102:7: warning: cast from pointer to int=
-eger of different size [-Wpointer-to-int-cast]
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Any Fixes tag?
-
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 > ---
->  drivers/clk/socfpga/clk-gate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/rockchip/Kconfig      |    7 +
+>  drivers/clk/rockchip/Makefile     |    1 +
+>  drivers/clk/rockchip/clk-rk3568.c | 1726 +++++++++++++++++++++++++++++
+>  drivers/clk/rockchip/clk.h        |   30 +-
+>  4 files changed, 1763 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/rockchip/clk-rk3568.c
 >=20
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gat=
-e.c
-> index 43ecd507bf83..c876523d5d51 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -99,7 +99,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk=
-_hw *hwclk,
->                 val =3D readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
->                 val &=3D GENMASK(socfpgaclk->width - 1, 0);
->                 /* Check for GPIO_DB_CLK by its offset */
-> -               if ((int) socfpgaclk->div_reg & SOCFPGA_GPIO_DB_CLK_OFFSE=
-T)
-> +               if ((unsigned long) socfpgaclk->div_reg & SOCFPGA_GPIO_DB=
-_CLK_OFFSET)
+> diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
+> index effd05032e85..2e31901f4213 100644
+> --- a/drivers/clk/rockchip/Kconfig
+> +++ b/drivers/clk/rockchip/Kconfig
+> @@ -85,4 +85,11 @@ config CLK_RK3399
+>         default y
+>         help
+>           Build the driver for RK3399 Clock Driver.
+> +
+> +config CLK_RK3568
+> +       tristate "Rockchip RK3568 clock controller support"
+> +       depends on (ARM64 || COMPILE_TEST)
 
-Should it be uintptr_t casted instead? This isn't a very great code
-pattern given the way we store information in the iomem pointer about
-which clk type it is and then have to cast the pointer and assume
-alignment. Would be nice to get rid of it but I understand.
+Drop parenthesis please.
 
->                         div =3D val + 1;
->                 else
->                         div =3D (1 << val);
+> +       default y
+> +       help
+> +         Build the driver for RK3568 Clock Driver.
+>  endif
+> diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk=
+-rk3568.c
+> new file mode 100644
+> index 000000000000..60913aa91897
+> --- /dev/null
+> +++ b/drivers/clk/rockchip/clk-rk3568.c
+> @@ -0,0 +1,1726 @@
+[...]
+> +};
+> +builtin_platform_driver_probe(clk_rk3568_driver, clk_rk3568_probe);
+> +
+> +MODULE_DESCRIPTION("Rockchip RK3568 Clock Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:clk-rk3568");
+
+I think module alias does nothing?
