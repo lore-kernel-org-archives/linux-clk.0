@@ -2,88 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C6FC433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 23:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89262C433DB
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 06:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A94E164EC4
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Mar 2021 23:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5136264E90
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 06:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231597AbhCMXKD convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Mar 2021 18:10:03 -0500
-Received: from aposti.net ([89.234.176.197]:37604 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231329AbhCMXJs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Mar 2021 18:09:48 -0500
-Date:   Sat, 13 Mar 2021 23:09:23 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/2] clk: Add clk_get_first_to_set_rate
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson <ulf.hansson@linaro.org>, od@zcrc.me,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org
-Message-Id: <NBKXPQ.SZZ17JHCOG5G@crapouillou.net>
-In-Reply-To: <161567452539.1478170.2985873696192051312@swboyd.mtv.corp.google.com>
-References: <20210307170742.70949-1-paul@crapouillou.net>
-        <20210307170742.70949-2-paul@crapouillou.net>
-        <161567452539.1478170.2985873696192051312@swboyd.mtv.corp.google.com>
+        id S232662AbhCNGVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Mar 2021 01:21:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34398 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230097AbhCNGVf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Mar 2021 01:21:35 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103B6C061574;
+        Sat, 13 Mar 2021 22:21:35 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so12723942pjh.1;
+        Sat, 13 Mar 2021 22:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rph+DllBJw5pxzAmfhUhmv7C1Vvgzgzf1YgbvK7mPSA=;
+        b=UIsHzdDDF5FSXYG8V2EMtj8alAO+hy8IdATaWB69OR5lYtvjpNfeqTqB8VP1bOH52H
+         1z3WFEXuD5l+OBHCtsa4aguBPGV2J5POOi+0XyfkvzffXPh9chlisvE6MRdQBGo5jO1o
+         ZvbWuXiDcJz/3+2eIca2wzd79bS1LuOKMAKy25W+h1TQHbgZp71onO/lR18KLhr/Jkn2
+         GvsJFmAAseWRqjZ9+5lxIuaqRNFDivrzLoYJOfETG0440qJ/Ew5Fb30m5+9hAO/4r5kC
+         EWKHM06+zRSLyjn7QtVKet7qvHtiY1vy8iQGVNzRkcN66zXpZs8Jlnj9JqK78H3JbIsE
+         s1bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rph+DllBJw5pxzAmfhUhmv7C1Vvgzgzf1YgbvK7mPSA=;
+        b=ojYxy+oI22yFiF/V7twqBqJz0LNXF6Jlnqai2QFEIWlfaBCh10OAFh+oBfnujzNAj1
+         k5W5QaS9BFHwsQwCqxDTIS7odMsHcyZf+tH7vtmNkTWRzA2TTpIO5oFeJyDx9nHVHVbV
+         bFUHsmBDDezLx4oJVGZHMKMpEQntZ/OV230z+X0AEbfFiVbbRhI+toXxxCUU9j6yeE9c
+         WGaQ3QUiVtzpdEJRRuwfGvxGlLr5Aq3rrQyKaXRB5UwxoKqZlNrCU6nPtDeHLnDdFQw5
+         sCwIAPpnEkdJiaDSiKzt23g6jJRMdaW+9/2HRi9EQZ77m6euBYpy2BdgWS3pHmVdbshZ
+         ylUg==
+X-Gm-Message-State: AOAM5330KKw8L1mdIVl5s8muXB9XSNDb/EQ/4dCX0kVyMvUm4N4adCHE
+        gC2RlpO+xeb/V1wJqa8EZo4gkGPAVzD1irKmlZ0=
+X-Google-Smtp-Source: ABdhPJzxmKJ9gj6/4m2mHd6/zI3LRbuXXa/oaGtebd9YoH3GxSS0dQ6fmaLQOM3cCdns+P/RmCnABaTj1cgNjzNbqyM=
+X-Received: by 2002:a17:90a:31cf:: with SMTP id j15mr6502039pjf.41.1615702894701;
+ Sat, 13 Mar 2021 22:21:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+References: <20210313034112.eqa7zxtes2ruklqj@pallavi> <161566957437.1478170.3351022111021245800@swboyd.mtv.corp.google.com>
+In-Reply-To: <161566957437.1478170.3351022111021245800@swboyd.mtv.corp.google.com>
+From:   Pallavi Prabhu <rpallaviprabhu@gmail.com>
+Date:   Sun, 14 Mar 2021 11:51:21 +0530
+Message-ID: <CA+aYaU8XfQbnbtSa9RRW6LYwC9nE1oJ6T0tvbJJnhrWyezDrTg@mail.gmail.com>
+Subject: Re: [PATCH] clk: clk.c: Fixed statics initialized to 0
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-
-Le sam. 13 mars 2021 à 14:28, Stephen Boyd <sboyd@kernel.org> a écrit 
-:
-> Quoting Paul Cercueil (2021-03-07 09:07:41)
->>  The purpose of this function is to be used along with the notifier
->>  mechanism.
->> 
->>  When a parent clock can see its rate externally changed at any 
->> moment,
->>  and a driver needs a specific clock rate to function, it can 
->> register a
->>  notifier on the parent clock, and call clk_set_rate() on the base 
->> clock
->>  to adjust its frequency according to the new parent clock.
-> 
-> Can the driver use the rate locking mechanism to get a certain rate
-> instead of registering for notifiers and trying to react to changes?
-
-You mean with clk_rate_exclusive_get()? That sounds like a good idea, 
-but what would happen when a different driver calls the non-exclusive 
-clk_set_rate() on this clock (or the parent), would it return -EBUSY, 
-lock on a mutex? ...
-
-Cheers,
--Paul
-
-> 
->> 
->>  This works fine, until the base clock has the CLK_SET_RATE_PARENT 
->> flag
->>  set. In that case, calling clk_set_rate() on the base clock will 
->> call
->>  clk_set_rate() on the parent clock, which will trigger the notifier
->>  again, and we're in a loop.
->> 
->>  For that reason, we need to register the notifier on the parent 
->> clock of
->>  the first ancestor of the base clock that will effectively modify 
->> its
->>  rate when clk_set_rate() is called, which we can now obtain with
->>  clk_get_first_to_set_rate().
->> 
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-
-
+On Sun, 14 Mar 2021 at 02:36, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Pallavi Prabhu (2021-03-12 19:41:12)
+> > Uninitialized static variable from 0, as statics get auto-initialized to 0 during execution.
+> > Signed-off-by: Pallavi Prabhu <rpallaviprabhu@gmail.com>
+>
+> Need a newline between signed-off-by line and commit text. Also please
+> wrap the commit text at 80 or 78 characters or so.
+>
+> > ---
+> >  drivers/clk/clk.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 5052541a0986..763ad2c960bd 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2931,7 +2931,7 @@ EXPORT_SYMBOL_GPL(clk_is_match);
+> >  #include <linux/debugfs.h>
+> >
+> >  static struct dentry *rootdir;
+> > -static int inited = 0;
+> > +static int inited;
+>
+> I think it's being explicit; although it is the same. Is this noticed by
+> some static checker or something? I'd like to ignore this patch if
+> possible.
+The Static variable initialized to 0 was noticed by the checkpatch.
+This error message was corrected.
+Would you want me to send a v2 with the proper commit text?
