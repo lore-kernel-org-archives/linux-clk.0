@@ -2,100 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD98C433E6
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 09:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71256C433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 11:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E50464EC6
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 09:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40CC364EB7
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 11:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235041AbhCNJlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Mar 2021 05:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235029AbhCNJkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Mar 2021 05:40:42 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E25C061574
-        for <linux-clk@vger.kernel.org>; Sun, 14 Mar 2021 01:40:42 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1lLNEb-0000iR-MW; Sun, 14 Mar 2021 10:40:29 +0100
-Subject: Re: [PATCH V4] clk: imx: Fix reparenting of UARTs not associated with
- stdout
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
+        id S234362AbhCNLFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Mar 2021 07:05:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58789 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235225AbhCNLEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Mar 2021 07:04:36 -0400
+Received: from mail-wr1-f70.google.com ([209.85.221.70])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lLOXx-0003NH-Pt
+        for linux-clk@vger.kernel.org; Sun, 14 Mar 2021 11:04:33 +0000
+Received: by mail-wr1-f70.google.com with SMTP id h5so13606537wrr.17
+        for <linux-clk@vger.kernel.org>; Sun, 14 Mar 2021 04:04:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/4FZlK8TmHAjuapB8AlwDbpmIGJr32ZFSixHpqXZ9pg=;
+        b=hlovtTBpTikNkMpKKa+rYgnfwN2Qzh+n56VCyshZkxS0hRCwCRU7i0p8dvrF/IRU1H
+         JrIv+7ruq1ZXwq+htsBvIg66iPvC4A1QWL3bIyFYfzVP8hjEpurqA/WNicBh/8L6POJq
+         EAtM5/GmbgnFefgWo9pDOlPpYfZBgRieLeHrPixqrj/2KvdEtpGXnokMXGLRjlScu6ZH
+         PkTDFcViwMRSrLzPfgTpQXaZhwl0S4YxrJvBuFi9nh62lG5I63JDTSAkZoEm9hzSLjnC
+         jSATvM8/uHA41MhQt1Rcnn6fS4rZ21jZZGTxMNqg2MDLFNBUHyhF6xDeUGN5xW5OiP94
+         Ae7w==
+X-Gm-Message-State: AOAM532j0LMPve70KkfC+zVW4JDJvO4OP1KRFBj9QCbb72xZUN+JGX58
+        nMsn9lTSeMF9A2lKAb1hIoPjqBwCVL/9a/G6fp2z89YPEEowrtcnHpMkg1MxIGad3rAzi5AZaUl
+        NeRxBz55pkuX5jTXOOJxkICGNDOy0/IVDxccvTw==
+X-Received: by 2002:a7b:cbc1:: with SMTP id n1mr21780640wmi.30.1615719873245;
+        Sun, 14 Mar 2021 04:04:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyjd1ztS9AgHaBu5UXec7saJLQB/ttHqHk3WZPTd6ZQaBlxShB38VGGEsz1DOst3D3NEHuVEQ==
+X-Received: by 2002:a7b:cbc1:: with SMTP id n1mr21780629wmi.30.1615719873105;
+        Sun, 14 Mar 2021 04:04:33 -0700 (PDT)
+Received: from [192.168.1.116] (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.gmail.com with ESMTPSA id v6sm14931080wrx.32.2021.03.14.04.04.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Mar 2021 04:04:32 -0700 (PDT)
+Subject: Re: [PATCH] clk: socfpga: fix iomem pointer cast on 64-bit
+To:     Stephen Boyd <sboyd@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        aford@beaconembedded.com, linux-kernel@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20210313122818.445228-1-aford173@gmail.com>
- <e754a185-4aa2-295a-37a8-dd0c7ebc289f@pengutronix.de>
-Message-ID: <0361ab5b-a26e-7631-9bae-8909715f6354@pengutronix.de>
-Date:   Sun, 14 Mar 2021 10:40:24 +0100
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>
+References: <20210311144833.1313387-1-krzysztof.kozlowski@canonical.com>
+ <161566984049.1478170.1891806275092209249@swboyd.mtv.corp.google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <7943a259-d40c-4191-1d0d-461edfc3a218@canonical.com>
+Date:   Sun, 14 Mar 2021 12:04:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <e754a185-4aa2-295a-37a8-dd0c7ebc289f@pengutronix.de>
+In-Reply-To: <161566984049.1478170.1891806275092209249@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13.03.21 16:16, Ahmad Fatoum wrote:
->> +/* i.MX boards use device trees now.  For build tests without CONFIG_OF, do nothing */
->> +#ifdef CONFIG_OF
->>  	if (imx_keep_uart_clocks) {
->>  		int i;
->>  
->> -		imx_uart_clocks = clks;
->> -		for (i = 0; imx_uart_clocks[i]; i++)
->> -			clk_prepare_enable(*imx_uart_clocks[i]);
->> +		imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
->> +
->> +		if (!of_stdout)
->> +			return;
+On 13/03/2021 22:10, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2021-03-11 06:48:33)
+>> Pointers should be cast to unsigned long instead of integer.  This fixes
+>> warning when compile testing on ARM64:
+>>
+>>   drivers/clk/socfpga/clk-gate.c: In function ‘socfpga_clk_recalc_rate’:
+>>   drivers/clk/socfpga/clk-gate.c:102:7: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > 
-> Memory leak. Just do if (imx_keep_uart_clocks && of_stdout)
+> Any Fixes tag?
 
-Please dismiss. I overlooked that you free it in a later initcall.
+I'll add it.
 
->>  static int __init imx_clk_disable_uart(void)
->>  {
->> -	if (imx_keep_uart_clocks && imx_uart_clocks) {
->> +	if (imx_keep_uart_clocks && imx_enabled_uart_clocks) {
->>  		int i;
->>  
->> -		for (i = 0; imx_uart_clocks[i]; i++)
->> -			clk_disable_unprepare(*imx_uart_clocks[i]);
->> +		for (i = 0; i < imx_enabled_uart_clocks; i++) {
->> +			clk_disable_unprepare(imx_uart_clocks[i]);
->> +			clk_put(imx_uart_clocks[i]);
->> +		};
->> +		kfree(imx_uart_clocks);
->>  	}
+> 
+>> ---
+>>  drivers/clk/socfpga/clk-gate.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+>> index 43ecd507bf83..c876523d5d51 100644
+>> --- a/drivers/clk/socfpga/clk-gate.c
+>> +++ b/drivers/clk/socfpga/clk-gate.c
+>> @@ -99,7 +99,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+>>                 val = readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
+>>                 val &= GENMASK(socfpgaclk->width - 1, 0);
+>>                 /* Check for GPIO_DB_CLK by its offset */
+>> -               if ((int) socfpgaclk->div_reg & SOCFPGA_GPIO_DB_CLK_OFFSET)
+>> +               if ((unsigned long) socfpgaclk->div_reg & SOCFPGA_GPIO_DB_CLK_OFFSET)
+> 
+> Should it be uintptr_t casted instead?
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Good point, thanks!
+
+> his isn't a very great code
+> pattern given the way we store information in the iomem pointer about
+> which clk type it is and then have to cast the pointer and assume
+> alignment. Would be nice to get rid of it but I understand.
+
+Best regards,
+Krzysztof
