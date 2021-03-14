@@ -2,98 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89262C433DB
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 06:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD98C433E6
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 09:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5136264E90
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 06:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E50464EC6
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Mar 2021 09:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232662AbhCNGVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Mar 2021 01:21:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34398 "EHLO
+        id S235041AbhCNJlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Mar 2021 05:41:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhCNGVf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Mar 2021 01:21:35 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103B6C061574;
-        Sat, 13 Mar 2021 22:21:35 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id f2-20020a17090a4a82b02900c67bf8dc69so12723942pjh.1;
-        Sat, 13 Mar 2021 22:21:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rph+DllBJw5pxzAmfhUhmv7C1Vvgzgzf1YgbvK7mPSA=;
-        b=UIsHzdDDF5FSXYG8V2EMtj8alAO+hy8IdATaWB69OR5lYtvjpNfeqTqB8VP1bOH52H
-         1z3WFEXuD5l+OBHCtsa4aguBPGV2J5POOi+0XyfkvzffXPh9chlisvE6MRdQBGo5jO1o
-         ZvbWuXiDcJz/3+2eIca2wzd79bS1LuOKMAKy25W+h1TQHbgZp71onO/lR18KLhr/Jkn2
-         GvsJFmAAseWRqjZ9+5lxIuaqRNFDivrzLoYJOfETG0440qJ/Ew5Fb30m5+9hAO/4r5kC
-         EWKHM06+zRSLyjn7QtVKet7qvHtiY1vy8iQGVNzRkcN66zXpZs8Jlnj9JqK78H3JbIsE
-         s1bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rph+DllBJw5pxzAmfhUhmv7C1Vvgzgzf1YgbvK7mPSA=;
-        b=ojYxy+oI22yFiF/V7twqBqJz0LNXF6Jlnqai2QFEIWlfaBCh10OAFh+oBfnujzNAj1
-         k5W5QaS9BFHwsQwCqxDTIS7odMsHcyZf+tH7vtmNkTWRzA2TTpIO5oFeJyDx9nHVHVbV
-         bFUHsmBDDezLx4oJVGZHMKMpEQntZ/OV230z+X0AEbfFiVbbRhI+toXxxCUU9j6yeE9c
-         WGaQ3QUiVtzpdEJRRuwfGvxGlLr5Aq3rrQyKaXRB5UwxoKqZlNrCU6nPtDeHLnDdFQw5
-         sCwIAPpnEkdJiaDSiKzt23g6jJRMdaW+9/2HRi9EQZ77m6euBYpy2BdgWS3pHmVdbshZ
-         ylUg==
-X-Gm-Message-State: AOAM5330KKw8L1mdIVl5s8muXB9XSNDb/EQ/4dCX0kVyMvUm4N4adCHE
-        gC2RlpO+xeb/V1wJqa8EZo4gkGPAVzD1irKmlZ0=
-X-Google-Smtp-Source: ABdhPJzxmKJ9gj6/4m2mHd6/zI3LRbuXXa/oaGtebd9YoH3GxSS0dQ6fmaLQOM3cCdns+P/RmCnABaTj1cgNjzNbqyM=
-X-Received: by 2002:a17:90a:31cf:: with SMTP id j15mr6502039pjf.41.1615702894701;
- Sat, 13 Mar 2021 22:21:34 -0800 (PST)
+        with ESMTP id S235029AbhCNJkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Mar 2021 05:40:42 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E25C061574
+        for <linux-clk@vger.kernel.org>; Sun, 14 Mar 2021 01:40:42 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lLNEb-0000iR-MW; Sun, 14 Mar 2021 10:40:29 +0100
+Subject: Re: [PATCH V4] clk: imx: Fix reparenting of UARTs not associated with
+ stdout
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        aford@beaconembedded.com, linux-kernel@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <20210313122818.445228-1-aford173@gmail.com>
+ <e754a185-4aa2-295a-37a8-dd0c7ebc289f@pengutronix.de>
+Message-ID: <0361ab5b-a26e-7631-9bae-8909715f6354@pengutronix.de>
+Date:   Sun, 14 Mar 2021 10:40:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-References: <20210313034112.eqa7zxtes2ruklqj@pallavi> <161566957437.1478170.3351022111021245800@swboyd.mtv.corp.google.com>
-In-Reply-To: <161566957437.1478170.3351022111021245800@swboyd.mtv.corp.google.com>
-From:   Pallavi Prabhu <rpallaviprabhu@gmail.com>
-Date:   Sun, 14 Mar 2021 11:51:21 +0530
-Message-ID: <CA+aYaU8XfQbnbtSa9RRW6LYwC9nE1oJ6T0tvbJJnhrWyezDrTg@mail.gmail.com>
-Subject: Re: [PATCH] clk: clk.c: Fixed statics initialized to 0
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e754a185-4aa2-295a-37a8-dd0c7ebc289f@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 14 Mar 2021 at 02:36, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Pallavi Prabhu (2021-03-12 19:41:12)
-> > Uninitialized static variable from 0, as statics get auto-initialized to 0 during execution.
-> > Signed-off-by: Pallavi Prabhu <rpallaviprabhu@gmail.com>
->
-> Need a newline between signed-off-by line and commit text. Also please
-> wrap the commit text at 80 or 78 characters or so.
->
-> > ---
-> >  drivers/clk/clk.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 5052541a0986..763ad2c960bd 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2931,7 +2931,7 @@ EXPORT_SYMBOL_GPL(clk_is_match);
-> >  #include <linux/debugfs.h>
-> >
-> >  static struct dentry *rootdir;
-> > -static int inited = 0;
-> > +static int inited;
->
-> I think it's being explicit; although it is the same. Is this noticed by
-> some static checker or something? I'd like to ignore this patch if
-> possible.
-The Static variable initialized to 0 was noticed by the checkpatch.
-This error message was corrected.
-Would you want me to send a v2 with the proper commit text?
+On 13.03.21 16:16, Ahmad Fatoum wrote:
+>> +/* i.MX boards use device trees now.  For build tests without CONFIG_OF, do nothing */
+>> +#ifdef CONFIG_OF
+>>  	if (imx_keep_uart_clocks) {
+>>  		int i;
+>>  
+>> -		imx_uart_clocks = clks;
+>> -		for (i = 0; imx_uart_clocks[i]; i++)
+>> -			clk_prepare_enable(*imx_uart_clocks[i]);
+>> +		imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
+>> +
+>> +		if (!of_stdout)
+>> +			return;
+> 
+> Memory leak. Just do if (imx_keep_uart_clocks && of_stdout)
+
+Please dismiss. I overlooked that you free it in a later initcall.
+
+>>  static int __init imx_clk_disable_uart(void)
+>>  {
+>> -	if (imx_keep_uart_clocks && imx_uart_clocks) {
+>> +	if (imx_keep_uart_clocks && imx_enabled_uart_clocks) {
+>>  		int i;
+>>  
+>> -		for (i = 0; imx_uart_clocks[i]; i++)
+>> -			clk_disable_unprepare(*imx_uart_clocks[i]);
+>> +		for (i = 0; i < imx_enabled_uart_clocks; i++) {
+>> +			clk_disable_unprepare(imx_uart_clocks[i]);
+>> +			clk_put(imx_uart_clocks[i]);
+>> +		};
+>> +		kfree(imx_uart_clocks);
+>>  	}
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
