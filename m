@@ -3,87 +3,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DCAC433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DA2C433E9
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AED964EB3
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABC3764EE2
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbhCOPxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:53:38 -0400
-Received: from mail-io1-f50.google.com ([209.85.166.50]:40935 "EHLO
-        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbhCOPxN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 11:53:13 -0400
-Received: by mail-io1-f50.google.com with SMTP id m7so14831831iow.7;
-        Mon, 15 Mar 2021 08:53:13 -0700 (PDT)
+        id S230173AbhCOPym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Mar 2021 11:54:42 -0400
+Received: from mail-il1-f177.google.com ([209.85.166.177]:35984 "EHLO
+        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230074AbhCOPya (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 11:54:30 -0400
+Received: by mail-il1-f177.google.com with SMTP id g9so9826429ilc.3;
+        Mon, 15 Mar 2021 08:54:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=qUzbYoLRVLqBw5frbABFgMY67VGZ4J3muyE0zF2BAGI=;
-        b=S/bBDas3d+hlT942LkrOxJWmd1Sc1O5jLyVag4DBn/7xcABpGcLr2matbWEZ7c4zZ6
-         lq9319jLvrImE94ljLIDBLDRZomJC+b1BvFNJm9l8vx4ofU/QegW1ruM5qKb25lU7gFt
-         7qcs06QboRHqjesSfyTIs1XPbAPh1KfrSEDDf7eiSO4JUmopPY/QS+5gBa6jQTURNIDv
-         gd1R8/AmI/2IKWvDUQg2FejhkVFR9sFBGJjbH9RPKaBH0HqsVlRNJGL4+bW7ULi1TGG0
-         w3yW8DlH0D+m/AoCbfGTIgsFRe4ohd1+ivM5HlO44+V9EU6KHYdKTEH9ZKhlNQDhiflk
-         dsnw==
-X-Gm-Message-State: AOAM532aJNU+z3IF8IX2KGEpgPdoWAQqooonnyK33XpZMyvSSQuB21yy
-        lrAdUgs3i3GLHBbfQ2uE3w==
-X-Google-Smtp-Source: ABdhPJwBn8VhCV20lHqxJ2qfBas4ppj+UCeNwTs+/nl+6LEfMl8M7thRj1+mRM9aQeucmUoE1/5tDw==
-X-Received: by 2002:a6b:ed08:: with SMTP id n8mr143877iog.197.1615823592800;
-        Mon, 15 Mar 2021 08:53:12 -0700 (PDT)
+        bh=BV2tBvpQhGTolvZKbVnY6CtsKG/9mQ2MNLQv1g5WpSs=;
+        b=XKP6hk9tlwcnEiA58I89rHQbXslG7oAZhqQkEQDwxGz0yF3ZXimIpedlQeKehhbFTO
+         WnEcKvEErFPl/kL04Kg/zm4FN8mDm+t8765UoC/eZ2qdt0x/gNQt+EUysbgehsyVFQ7x
+         6F4b9Y2orWgHY5M141/SPGYfD2cU7v/G8POdV7uLMnmmVGRUuS4I4thDovHc78EX573F
+         ApBjAWageuQVWn9vwSkZX7Ij3IyYxquAvajKXRXodCll3PX+Sx43p3UiVO85TvUKomJX
+         n61yjO5SUyhu3HtRWpMCtHpOvG1iFtY1kjc17OmtZzi6gqs6sckl3zYrgrX09kZw4mj6
+         yQag==
+X-Gm-Message-State: AOAM530jI5AicQjfDxWkn8onywEzBKB/GjKew+Lx5lNoHsdLXfsh/Jbt
+        RoQbN4D/x8nnH0spl9tB5w==
+X-Google-Smtp-Source: ABdhPJyS0HQsSUoIM0WYGJTXQJQ/ayw6jP4Y327PsM22ujuGoIzmDuYiJdkCA+GI20wBQRY7xHuyYg==
+X-Received: by 2002:a92:4a0e:: with SMTP id m14mr195561ilf.117.1615823669738;
+        Mon, 15 Mar 2021 08:54:29 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id m4sm3399641ilf.80.2021.03.15.08.53.11
+        by smtp.gmail.com with ESMTPSA id m5sm7995561ilq.65.2021.03.15.08.54.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 08:53:12 -0700 (PDT)
-Received: (nullmailer pid 932438 invoked by uid 1000);
-        Mon, 15 Mar 2021 15:53:10 -0000
-Date:   Mon, 15 Mar 2021 09:53:10 -0600
+        Mon, 15 Mar 2021 08:54:28 -0700 (PDT)
+Received: (nullmailer pid 934191 invoked by uid 1000);
+        Mon, 15 Mar 2021 15:54:25 -0000
+Date:   Mon, 15 Mar 2021 09:54:25 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] dt-bindings: clock: tegra: Convert to schema
-Message-ID: <20210315155310.GA926230@robh.at.kernel.org>
-References: <20210312163632.8861-1-digetx@gmail.com>
- <20210312163632.8861-8-digetx@gmail.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC
+ driver
+Message-ID: <20210315155425.GA932686@robh.at.kernel.org>
+References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210312163632.8861-8-digetx@gmail.com>
+In-Reply-To: <20210313021919.435332-1-konrad.dybcio@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 12, 2021 at 07:36:32PM +0300, Dmitry Osipenko wrote:
-> Convert NVIDIA Tegra clock bindings to schema.
+On Sat, Mar 13, 2021 at 03:19:10AM +0100, Konrad Dybcio wrote:
+> Add documentation for the MSM8994 GCC driver.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 > ---
->  .../bindings/clock/nvidia,tegra-car.yaml      | 118 ++++++++++++++++++
->  .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
->  .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
+>  .../bindings/clock/qcom,gcc-msm8994.yaml      | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+> new file mode 100644
+> index 000000000000..f8067fb1bbd6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets and
+> +  power domains on MSM8994 and MSM8992.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,gcc-msm8994.h
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,gcc-msm8992
+> +      - qcom,gcc-msm8994
 
-Seems like this one is a bit different and should remain a separate 
-binding?
+qcom,msm8994-gcc
 
->  .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
->  .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
->  .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
->  6 files changed, 118 insertions(+), 352 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra-car.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
->  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO source
+> +      - description: Sleep clock source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +      - const: sleep
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  protected-clocks:
+> +    description:
+> +      Protected clock specifier list as per common clock binding.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@300000 {
+> +      compatible = "qcom,gcc-msm8994";
+> +      reg = <0x300000 0x90000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      clocks = <&xo_board>, <&sleep_clk>;
+> +      clock-names = "xo", "sleep";
+> +    };
+> +...
+> -- 
+> 2.30.2
+> 
