@@ -2,63 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4793C433DB
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 11:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F1EC433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 12:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A25E264E81
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 11:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86D3F64EDD
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 12:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbhCOLZd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Mar 2021 07:25:33 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:33732 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229602AbhCOLZR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Mar 2021 07:25:17 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.lan)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1lLlLT-0007LD-VY; Mon, 15 Mar 2021 12:25:12 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     heiko@sntech.de
-Cc:     linux-clk@vger.kernel.org, zhangqing@rock-chips.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 2/2] clk: rockchip: drop MODULE_ALIAS from rk3399 clock controller
-Date:   Mon, 15 Mar 2021 12:25:02 +0100
-Message-Id: <20210315112502.343699-2-heiko@sntech.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210315112502.343699-1-heiko@sntech.de>
-References: <20210315112502.343699-1-heiko@sntech.de>
+        id S229564AbhCOM0Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Mar 2021 08:26:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52652 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229713AbhCOM0J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 08:26:09 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605E1C061574;
+        Mon, 15 Mar 2021 05:26:09 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id t9so5586776wrn.11;
+        Mon, 15 Mar 2021 05:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OGtlc8c4S3KD8tus9t3HydkaPfEfvyPfR1Hv2y1FzZw=;
+        b=IX6mTFbCXkuco7A1Rg/XWkFdtJAL3DF8iAj043sw2278Kot/5A8aws5S0fH3bZzQIs
+         tNWJ5cBjoBrwIq/zHkfp/9mSKk1f5SZ9XlDsEfmuEtnENU51n5hPQSfkEVsKl3jpulgL
+         vNQQ7KqZR5/SlCUlJ1jtokGaj0WigXmmRug5ayzrg0+dy/NtifMW5tFof7bsK9qk6P9m
+         lDO6W9l0BA8yku2Jt5OfVYkgkj1vzEhuSfFt2BwJtMZA5QwgLSgSyh1JKtCK61b9qSDm
+         P93AdLQ5Z8kT+npvOJ7ZBJ6e3lw3aLqibVJIJ61nKopKXPMs43yAXJUhEFA7HcOn4d2t
+         JXdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OGtlc8c4S3KD8tus9t3HydkaPfEfvyPfR1Hv2y1FzZw=;
+        b=cWo5EkEgR6GNU3y7tTQM0jWuMd/kNAdbRPyXStbI0mhsMtyFncJhoJ2xIiJJ8piN2F
+         c/HSJwgyqO50nJFm1OXRb+a7+B8WOAMceAaK3FW0Y8rF8v+BTl8yBZutPxdnRMasz2K8
+         8HDaPW0UwhHwiXknBI46o1AxjWImISuSA+/oFg62HLskGRf5X0iGbGOXSL1fcfDfGCym
+         BoQU9bPDTukbra1pOiEBz+LsfVlTPJJNWA6gAXIG2KvaxE0Qctbhl6D93ZIQfMFwFpME
+         2hTw3bdt9liPoM2b4FtePMNlDt9HOL4JZsNuj1GbPGxfakanP7pomT6tV3XWzSzwnfez
+         FfmQ==
+X-Gm-Message-State: AOAM533mRa2SI8WAISGROcHdEDvjXlC6k2u54b/gstVg+l/6JAZPE570
+        VSiYPmo6cb16M5EhYjokk54=
+X-Google-Smtp-Source: ABdhPJy1IAUZ1fPAY233A3at4rZ9rX0T/CuPah7233IIFCHU2JkWGnvzo34Vl7VKV+twzHfcyvBWLw==
+X-Received: by 2002:adf:f587:: with SMTP id f7mr27244970wro.147.1615811168113;
+        Mon, 15 Mar 2021 05:26:08 -0700 (PDT)
+Received: from skynet.lan ([80.31.204.166])
+        by smtp.gmail.com with ESMTPSA id o7sm18317851wrs.16.2021.03.15.05.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 05:26:07 -0700 (PDT)
+From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+To:     jonas.gorski@gmail.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>, Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 1/4] dt-bindings: clk: add BCM63268 timer clock definitions
+Date:   Mon, 15 Mar 2021 13:26:02 +0100
+Message-Id: <20210315122605.28437-2-noltari@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20210315122605.28437-1-noltari@gmail.com>
+References: <20210315122605.28437-1-noltari@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As suggested by Stephen during the rk3568 clock review, the MOUDLE_ALIAS
-doesn't serve any meaningful purpose, so drop it from the rk3399 as well.
+Add missing timer clock definitions for BCM63268.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3399.c | 1 -
- 1 file changed, 1 deletion(-)
+ v2: change commit title, as suggested by Stephen Boyd
 
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 7df2f1e00347..5fe40a2b5d2e 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -1655,4 +1655,3 @@ builtin_platform_driver_probe(clk_rk3399_driver, clk_rk3399_probe);
+ include/dt-bindings/clock/bcm63268-clock.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/include/dt-bindings/clock/bcm63268-clock.h b/include/dt-bindings/clock/bcm63268-clock.h
+index da23e691d359..dea8adc8510e 100644
+--- a/include/dt-bindings/clock/bcm63268-clock.h
++++ b/include/dt-bindings/clock/bcm63268-clock.h
+@@ -27,4 +27,17 @@
+ #define BCM63268_CLK_TBUS	27
+ #define BCM63268_CLK_ROBOSW250	31
  
- MODULE_DESCRIPTION("Rockchip RK3399 Clock Driver");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:clk-rk3399");
++#define BCM63268_TCLK_EPHY1		0
++#define BCM63268_TCLK_EPHY2		1
++#define BCM63268_TCLK_EPHY3		2
++#define BCM63268_TCLK_GPHY1		3
++#define BCM63268_TCLK_DSL		4
++#define BCM63268_TCLK_WAKEON_EPHY	6
++#define BCM63268_TCLK_WAKEON_DSL	7
++#define BCM63268_TCLK_FAP1		11
++#define BCM63268_TCLK_FAP2		15
++#define BCM63268_TCLK_UTO_50		16
++#define BCM63268_TCLK_UTO_EXTIN		17
++#define BCM63268_TCLK_USB_REF		18
++
+ #endif /* __DT_BINDINGS_CLOCK_BCM63268_H */
 -- 
-2.29.2
+2.20.1
 
