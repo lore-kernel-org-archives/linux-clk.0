@@ -2,160 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DA2C433E9
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D5CC433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 16:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABC3764EE2
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 15:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2D1D64F00
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 16:13:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbhCOPym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:54:42 -0400
-Received: from mail-il1-f177.google.com ([209.85.166.177]:35984 "EHLO
-        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230074AbhCOPya (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 11:54:30 -0400
-Received: by mail-il1-f177.google.com with SMTP id g9so9826429ilc.3;
-        Mon, 15 Mar 2021 08:54:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BV2tBvpQhGTolvZKbVnY6CtsKG/9mQ2MNLQv1g5WpSs=;
-        b=XKP6hk9tlwcnEiA58I89rHQbXslG7oAZhqQkEQDwxGz0yF3ZXimIpedlQeKehhbFTO
-         WnEcKvEErFPl/kL04Kg/zm4FN8mDm+t8765UoC/eZ2qdt0x/gNQt+EUysbgehsyVFQ7x
-         6F4b9Y2orWgHY5M141/SPGYfD2cU7v/G8POdV7uLMnmmVGRUuS4I4thDovHc78EX573F
-         ApBjAWageuQVWn9vwSkZX7Ij3IyYxquAvajKXRXodCll3PX+Sx43p3UiVO85TvUKomJX
-         n61yjO5SUyhu3HtRWpMCtHpOvG1iFtY1kjc17OmtZzi6gqs6sckl3zYrgrX09kZw4mj6
-         yQag==
-X-Gm-Message-State: AOAM530jI5AicQjfDxWkn8onywEzBKB/GjKew+Lx5lNoHsdLXfsh/Jbt
-        RoQbN4D/x8nnH0spl9tB5w==
-X-Google-Smtp-Source: ABdhPJyS0HQsSUoIM0WYGJTXQJQ/ayw6jP4Y327PsM22ujuGoIzmDuYiJdkCA+GI20wBQRY7xHuyYg==
-X-Received: by 2002:a92:4a0e:: with SMTP id m14mr195561ilf.117.1615823669738;
-        Mon, 15 Mar 2021 08:54:29 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id m5sm7995561ilq.65.2021.03.15.08.54.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 08:54:28 -0700 (PDT)
-Received: (nullmailer pid 934191 invoked by uid 1000);
-        Mon, 15 Mar 2021 15:54:25 -0000
-Date:   Mon, 15 Mar 2021 09:54:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom: Add bindings for MSM8994 GCC
- driver
-Message-ID: <20210315155425.GA932686@robh.at.kernel.org>
-References: <20210313021919.435332-1-konrad.dybcio@somainline.org>
+        id S230475AbhCOQMu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Mar 2021 12:12:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37062 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229931AbhCOQMs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Mar 2021 12:12:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 1A270AE44;
+        Mon, 15 Mar 2021 16:12:46 +0000 (UTC)
+Message-ID: <1255e56c66c8704c93adad77f605357267de0231.camel@suse.de>
+Subject: Re: [PATCH v8 11/11] pwm: Add Raspberry Pi Firmware based PWM bus
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        wahrenst@gmx.net, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, p.zabel@pengutronix.de,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-rpi-kernel@lists.infradead.org, bgolaszewski@baylibre.com,
+        andy.shevchenko@gmail.com
+Date:   Mon, 15 Mar 2021 17:12:44 +0100
+In-Reply-To: <20210312201217.n2sav23swy7ii4uo@pengutronix.de>
+References: <20210312122454.24480-1-nsaenzjulienne@suse.de>
+         <20210312122454.24480-12-nsaenzjulienne@suse.de>
+         <20210312201217.n2sav23swy7ii4uo@pengutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-JjHV4KNwgAtLbBPYBur8"
+User-Agent: Evolution 3.38.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210313021919.435332-1-konrad.dybcio@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Mar 13, 2021 at 03:19:10AM +0100, Konrad Dybcio wrote:
-> Add documentation for the MSM8994 GCC driver.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> ---
->  .../bindings/clock/qcom,gcc-msm8994.yaml      | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-> new file mode 100644
-> index 000000000000..f8067fb1bbd6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/clock/qcom,gcc-msm8994.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for MSM8994
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on MSM8994 and MSM8992.
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,gcc-msm8994.h
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,gcc-msm8992
-> +      - qcom,gcc-msm8994
 
-qcom,msm8994-gcc
+--=-JjHV4KNwgAtLbBPYBur8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +  clocks:
-> +    items:
-> +      - description: XO source
-> +      - description: Sleep clock source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +      - const: sleep
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  protected-clocks:
-> +    description:
-> +      Protected clock specifier list as per common clock binding.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@300000 {
-> +      compatible = "qcom,gcc-msm8994";
-> +      reg = <0x300000 0x90000>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +      clocks = <&xo_board>, <&sleep_clk>;
-> +      clock-names = "xo", "sleep";
-> +    };
-> +...
-> -- 
-> 2.30.2
-> 
+Hi Uwe,
+
+On Fri, 2021-03-12 at 21:12 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Nicolas,
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright 2020 Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+>=20
+> 2021?
+
+Yes.
+
+> > + * For more information on Raspberry Pi's PoE hat see:
+> > + * https://www.raspberrypi.org/products/poe-hat/
+>=20
+> Out of personal interest: Is this hat also able to power a RPi CM4?
+
+I haven't tested it, and can't at the moment (no PoE injector available). B=
+ut
+the physical pin layout, and routing in CM4's IO board fits the hat. So I'd=
+ say
+yes.
+
+> > + * Limitations:
+> > + *  - No disable bit, so a disabled PWM is simulated by duty_cycle 0
+> > + *  - Only normal polarity
+> > + *  - Fixed 12.5 kHz period
+> > + *
+> > + * The current period is completed when HW is reconfigured.
+> > + */
+>=20
+> Other than that as mentioned in the previous round: This looks good,
+>=20
+> Reviewed-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+
+Thanks!
+
+> What is your thought about how to get this series merged?
+> At least input, staging, armsoc, clk, reset anf firmware are touched. Do =
+you
+> prepare a branch for merging in the relevant trees (once you have all the
+> necessary Acks)?
+
+As per Linusw suggestion I'll send a pull request myself into the SoC tree =
+and
+hope for the best. :)
+
+Regards,
+Nicolas
+
+
+--=-JjHV4KNwgAtLbBPYBur8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAmBPh3wACgkQlfZmHno8
+x/53LQf/dUgfBEd6vbH95M6DCLvf5pt99cSCUEMCwlP7yqwyFwU0PwzaIaaWDZr6
+ndzNDlkPo08HzcPgZ4YenCX25lpjQNMsJ4XAmXsWNv+mmSfFTHlqyZPD9zlfvFe4
+uCxDMhTSdDOW6but1Qq5GoTIOWS49aU6v0ycjXPL6xky1xL6na9w4XuBI0fzQJa8
+cH3A/zt0sFSE6zedvH88o2JcKJqASiIC6M5P8dhShbpQFyJIZSzcebENxCt3AoeA
+Asui9I4P4auIKH3UlvuVYtr2q438+xMD24EpDeMVxeimtYrTcQyB7bwP4v+0cH49
+VTZL6KPpv5TbPD0BnhXJI0owDekNSQ==
+=RDjK
+-----END PGP SIGNATURE-----
+
+--=-JjHV4KNwgAtLbBPYBur8--
+
