@@ -2,368 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471DCC432C3
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 12:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7037C2BB85
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 14:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07B5964E86
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 12:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5200650BD
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Mar 2021 14:25:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbhCOM02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Mar 2021 08:26:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbhCOM0O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 08:26:14 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58DACC061574;
-        Mon, 15 Mar 2021 05:26:12 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id w11so8562691wrr.10;
-        Mon, 15 Mar 2021 05:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=+9zt49fikWOqfDxTMbEBEb4hG/YqPjQSW82REHjyXDA=;
-        b=vQArxQRp0hSz2PkncaILmCft97NDuAqBp31KJn2dK9y6Qo6K7ZoxkDx/dKpwViwLUt
-         ho8GhyfDdGN4T9Z5/XToemJ97fo+wIYysVmjcKGWiwTs8xJ5qOZ+aiDWM25MeFe/AZz1
-         iCFihtvMYMtzluf9nBRcI+QYpH5n9KVoy4oRW2MtJ50dzCh8GR+IgvxAuySj0kXsOChu
-         j2jabx+4EZmj0mESZ5UHsvkBy8hJpArvGdLjy0TyVsabp8jNl/Qz5jbLnMlpDFGfwNOn
-         3Xz0RbTMTrCwyuuMfc3UZUJYZJWZuRouDn/YPOWnlxjUnqgwjSgwAa8YWZoonHZbPVJ4
-         dv6w==
+        id S234070AbhCOOYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Mar 2021 10:24:37 -0400
+Received: from mail-io1-f51.google.com ([209.85.166.51]:37768 "EHLO
+        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238272AbhCOOXB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Mar 2021 10:23:01 -0400
+Received: by mail-io1-f51.google.com with SMTP id y20so15198574iot.4;
+        Mon, 15 Mar 2021 07:23:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+9zt49fikWOqfDxTMbEBEb4hG/YqPjQSW82REHjyXDA=;
-        b=PdYNBtWRBXxJYcBTUm/W2LPthtPTYlx3cF9cNqr6RYJbr42H9VxcsGG3dlVQ654zTR
-         Rrlci8227sKgIFP8lZFDeoEJVLv6kyzMJy9jaV1X01bNWkK3l2RDGBwLANY7d1uP0NIM
-         WLtRWeQHaaVRGlOyXJN9UJfpypiIYcYNAB2B3gZE6Euz+PBVPIofsHMv27fazIQl4cGz
-         DqWeTCcXUYEhQWLU+HwpaYuxYCQm9W0eo1Z5nkjlWSNEB6X+4dW43g4mXHdXRJuB51QQ
-         L/SJCXvBLn5VTfdeMB5sSYDAjEuB7ZsUGstKoiQTeRvKUgeqNTitC35SaAifqfmnHJk6
-         pSbQ==
-X-Gm-Message-State: AOAM532kiSbm5lA5MdN9WEiGjoFXsoZnTnahzLzXdj01yZRZ7XKT5u5X
-        HrFUu+Tlqh9HaVxDyAypxKo=
-X-Google-Smtp-Source: ABdhPJw3myQ/eowQUQ0FJIE6cG+CnV6fuDCB1J3HqUxY392nHUfJ6qv6YOSqliVY30l1gFZeVze30A==
-X-Received: by 2002:a5d:4e83:: with SMTP id e3mr27228955wru.82.1615811170956;
-        Mon, 15 Mar 2021 05:26:10 -0700 (PDT)
-Received: from skynet.lan ([80.31.204.166])
-        by smtp.gmail.com with ESMTPSA id o7sm18317851wrs.16.2021.03.15.05.26.10
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=LxM7hzlAWbd4b9S2ghwuGhozbMVLirqSVwvceryZHMg=;
+        b=LOTcjxVFtpalr7NUWwA6nFeFlOob6DwkSG06OJXDsU2nNNmdUYyXdbnwG2JXDu+YRT
+         7ZfAhhI0Y3bID6E4bCyohE8KoSBjiWKS7msSplhhf2DEEjvfP9G0u57juvtmR7cgi4i6
+         ZP+CnN9VIKx+QspyEEhXNJmtKBY2vmiXQ+lJtBbUO94IO4yyP6n1lJmtVkWZixXL+8Vj
+         xCGRlK44vHMOX9PxDkFDGq/XD0UcJLlnRz/T3O5mtN4lmOmA39fvmtZkNnlOhoCqzF8Z
+         ozFl8XBuRvTylw58otlq3/JeTq/lceESFB7oCoxDexZa2s+ti1Rm7DEG+04rPwLwSPmY
+         QKCw==
+X-Gm-Message-State: AOAM531BqLaoXeiJGInO5RDpOV79gO9rn5v6PdbmFKie6PIxwJoa7nKI
+        jmWSPPRO82Hw6e75p9Bk8A==
+X-Google-Smtp-Source: ABdhPJydLNF3JmlZ5vRUiq3eZlrjxBPtW7HkMazAM247jI2fLn42xzIi4VQEGHdfbq530f3sZHvSlQ==
+X-Received: by 2002:a5e:de0d:: with SMTP id e13mr2277351iok.208.1615818180155;
+        Mon, 15 Mar 2021 07:23:00 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id l14sm7837111ilc.33.2021.03.15.07.22.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Mar 2021 05:26:10 -0700 (PDT)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     jonas.gorski@gmail.com,
+        Mon, 15 Mar 2021 07:22:58 -0700 (PDT)
+Received: (nullmailer pid 876368 invoked by uid 1000);
+        Mon, 15 Mar 2021 14:22:57 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>, Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] clk: bcm: Add BCM63268 timer clock and reset driver
-Date:   Mon, 15 Mar 2021 13:26:05 +0100
-Message-Id: <20210315122605.28437-5-noltari@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210315122605.28437-1-noltari@gmail.com>
-References: <20210315122605.28437-1-noltari@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20210312163632.8861-8-digetx@gmail.com>
+References: <20210312163632.8861-1-digetx@gmail.com> <20210312163632.8861-8-digetx@gmail.com>
+Subject: Re: [PATCH v4 7/7] dt-bindings: clock: tegra: Convert to schema
+Date:   Mon, 15 Mar 2021 08:22:57 -0600
+Message-Id: <1615818177.169631.876367.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add driver for BCM63268 timer clock and reset controller.
+On Fri, 12 Mar 2021 19:36:32 +0300, Dmitry Osipenko wrote:
+> Convert NVIDIA Tegra clock bindings to schema.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../bindings/clock/nvidia,tegra-car.yaml      | 118 ++++++++++++++++++
+>  .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
+>  .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
+>  .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
+>  .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
+>  .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
+>  6 files changed, 118 insertions(+), 352 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra-car.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+> 
 
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
----
- v2: add changes suggested by Stephen Boyd
+My bot found errors running 'make dt_binding_check' on your patch:
 
- drivers/clk/bcm/Kconfig              |   9 ++
- drivers/clk/bcm/Makefile             |   1 +
- drivers/clk/bcm/clk-bcm63268-timer.c | 231 +++++++++++++++++++++++++++
- 3 files changed, 241 insertions(+)
- create mode 100644 drivers/clk/bcm/clk-bcm63268-timer.c
+yamllint warnings/errors:
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index ec738f74a026..952c3b6ff71a 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -37,6 +37,15 @@ config CLK_BCM_63XX_GATE
- 	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
- 	  based on the MIPS architecture
- 
-+config CLK_BCM63268_TIMER
-+	bool "Broadcom BCM63268 timer clock and reset support"
-+	depends on BMIPS_GENERIC || COMPILE_TEST
-+	default BMIPS_GENERIC
-+	select RESET_CONTROLLER
-+	help
-+	  Enable timer clock and reset support for Broadcom BCM63268 DSL SoCs
-+	  based on the MIPS architecture.
-+
- config CLK_BCM_KONA
- 	bool "Broadcom Kona CCU clock support"
- 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
-diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-index edb66b44cb27..d0b6f4b1fb08 100644
---- a/drivers/clk/bcm/Makefile
-+++ b/drivers/clk/bcm/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_CLK_BCM_63XX)	+= clk-bcm63xx.o
- obj-$(CONFIG_CLK_BCM_63XX_GATE)	+= clk-bcm63xx-gate.o
-+obj-$(CONFIG_CLK_BCM63268_TIMER) += clk-bcm63268-timer.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
- obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
-diff --git a/drivers/clk/bcm/clk-bcm63268-timer.c b/drivers/clk/bcm/clk-bcm63268-timer.c
-new file mode 100644
-index 000000000000..c86394b434ec
---- /dev/null
-+++ b/drivers/clk/bcm/clk-bcm63268-timer.c
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * BCM63268 Timer Clock and Reset Controller Driver
-+ *
-+ * Copyright (C) 2021 Álvaro Fernández Rojas <noltari@gmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+
-+#include <dt-bindings/clock/bcm63268-clock.h>
-+
-+#define BCM63268_TIMER_RESET_SLEEP_MIN_US	10000
-+#define BCM63268_TIMER_RESET_SLEEP_MAX_US	20000
-+
-+struct bcm63268_tclkrst_hw {
-+	void __iomem *regs;
-+	spinlock_t lock;
-+
-+	struct reset_controller_dev rcdev;
-+	struct clk_hw_onecell_data data;
-+};
-+
-+struct bcm63268_tclk_table_entry {
-+	const char * const name;
-+	u8 bit;
-+};
-+
-+static const struct bcm63268_tclk_table_entry bcm63268_timer_clocks[] = {
-+	{
-+		.name = "ephy1",
-+		.bit = BCM63268_TCLK_EPHY1,
-+	}, {
-+		.name = "ephy2",
-+		.bit = BCM63268_TCLK_EPHY2,
-+	}, {
-+		.name = "ephy3",
-+		.bit = BCM63268_TCLK_EPHY3,
-+	}, {
-+		.name = "gphy1",
-+		.bit = BCM63268_TCLK_GPHY1,
-+	}, {
-+		.name = "dsl",
-+		.bit = BCM63268_TCLK_DSL,
-+	}, {
-+		.name = "wakeon_ephy",
-+		.bit = BCM63268_TCLK_WAKEON_EPHY,
-+	}, {
-+		.name = "wakeon_dsl",
-+		.bit = BCM63268_TCLK_WAKEON_DSL,
-+	}, {
-+		.name = "fap1_pll",
-+		.bit = BCM63268_TCLK_FAP1,
-+	}, {
-+		.name = "fap2_pll",
-+		.bit = BCM63268_TCLK_FAP2,
-+	}, {
-+		.name = "uto_50",
-+		.bit = BCM63268_TCLK_UTO_50,
-+	}, {
-+		.name = "uto_extin",
-+		.bit = BCM63268_TCLK_UTO_EXTIN,
-+	}, {
-+		.name = "usb_ref",
-+		.bit = BCM63268_TCLK_USB_REF,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static inline struct bcm63268_tclkrst_hw *
-+to_bcm63268_timer_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct bcm63268_tclkrst_hw, rcdev);
-+}
-+
-+static int bcm63268_timer_reset_update(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct bcm63268_tclkrst_hw *reset = to_bcm63268_timer_reset(rcdev);
-+	unsigned long flags;
-+	uint32_t val;
-+
-+	spin_lock_irqsave(&reset->lock, flags);
-+	val = __raw_readl(reset->regs);
-+	if (assert)
-+		val &= ~BIT(id);
-+	else
-+		val |= BIT(id);
-+	__raw_writel(val, reset->regs);
-+	spin_unlock_irqrestore(&reset->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int bcm63268_timer_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return bcm63268_timer_reset_update(rcdev, id, true);
-+}
-+
-+static int bcm63268_timer_reset_deassert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	return bcm63268_timer_reset_update(rcdev, id, false);
-+}
-+
-+static int bcm63268_timer_reset_reset(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	bcm63268_timer_reset_update(rcdev, id, true);
-+	usleep_range(BCM63268_TIMER_RESET_SLEEP_MIN_US,
-+		     BCM63268_TIMER_RESET_SLEEP_MAX_US);
-+
-+	bcm63268_timer_reset_update(rcdev, id, false);
-+	/*
-+	 * Ensure component is taken out reset state by sleeping also after
-+	 * deasserting the reset. Otherwise, the component may not be ready
-+	 * for operation.
-+	 */
-+	usleep_range(BCM63268_TIMER_RESET_SLEEP_MIN_US,
-+		     BCM63268_TIMER_RESET_SLEEP_MAX_US);
-+
-+	return 0;
-+}
-+
-+static int bcm63268_timer_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct bcm63268_tclkrst_hw *reset = to_bcm63268_timer_reset(rcdev);
-+
-+	return !(__raw_readl(reset->regs) & BIT(id));
-+}
-+
-+static struct reset_control_ops bcm63268_timer_reset_ops = {
-+	.assert = bcm63268_timer_reset_assert,
-+	.deassert = bcm63268_timer_reset_deassert,
-+	.reset = bcm63268_timer_reset_reset,
-+	.status = bcm63268_timer_reset_status,
-+};
-+
-+static int bcm63268_tclk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct bcm63268_tclk_table_entry *entry, *table;
-+	struct bcm63268_tclkrst_hw *hw;
-+	struct clk_hw *clk;
-+	u8 maxbit = 0;
-+	int i, ret;
-+
-+	table = of_device_get_match_data(dev);
-+	if (!table)
-+		return -EINVAL;
-+
-+	for (entry = table; entry->name; entry++)
-+		maxbit = max(maxbit, entry->bit);
-+	maxbit++;
-+
-+	hw = devm_kzalloc(&pdev->dev, struct_size(hw, data.hws, maxbit),
-+			  GFP_KERNEL);
-+	if (!hw)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, hw);
-+
-+	spin_lock_init(&hw->lock);
-+
-+	hw->data.num = maxbit;
-+	for (i = 0; i < maxbit; i++)
-+		hw->data.hws[i] = ERR_PTR(-ENODEV);
-+
-+	hw->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(hw->regs))
-+		return PTR_ERR(hw->regs);
-+
-+	for (entry = table; entry->name; entry++) {
-+		clk = clk_hw_register_gate(dev, entry->name, NULL, 0,
-+					   hw->regs, entry->bit,
-+					   CLK_GATE_BIG_ENDIAN, &hw->lock);
-+		if (IS_ERR(clk)) {
-+			ret = PTR_ERR(clk);
-+			goto out_err;
-+		}
-+
-+		hw->data.hws[entry->bit] = clk;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					  &hw->data);
-+	if (ret)
-+		return ret;
-+
-+	hw->rcdev.of_node = dev->of_node;
-+	hw->rcdev.ops = &bcm63268_timer_reset_ops;
-+
-+	ret = devm_reset_controller_register(dev, &hw->rcdev);
-+	if (ret)
-+		dev_err(dev, "Failed to register reset controller\n");
-+
-+	return 0;
-+
-+out_err:
-+	for (i = 0; i < hw->data.num; i++) {
-+		if (!IS_ERR(hw->data.hws[i]))
-+			clk_hw_unregister_gate(hw->data.hws[i]);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id bcm63268_tclk_dt_ids[] = {
-+	{
-+		.compatible = "brcm,bcm63268-timer-clocks",
-+		.data = &bcm63268_timer_clocks,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver bcm63268_tclk = {
-+	.probe = bcm63268_tclk_probe,
-+	.driver = {
-+		.name = "bcm63268-timer-clock",
-+		.of_match_table = bcm63268_tclk_dt_ids,
-+	},
-+};
-+builtin_platform_driver(bcm63268_tclk);
--- 
-2.20.1
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra-car.example.dt.yaml: usb-controller@c5004000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['nvidia,tegra20-ehci', 'usb-ehci'] is too long
+	Additional items are not allowed ('usb-ehci' was unexpected)
+	'nvidia,tegra20-ehci' is not one of ['allwinner,sun4i-a10-ehci', 'allwinner,sun50i-a64-ehci', 'allwinner,sun50i-h6-ehci', 'allwinner,sun5i-a13-ehci', 'allwinner,sun6i-a31-ehci', 'allwinner,sun7i-a20-ehci', 'allwinner,sun8i-a23-ehci', 'allwinner,sun8i-h3-ehci', 'allwinner,sun8i-r40-ehci', 'allwinner,sun9i-a80-ehci', 'aspeed,ast2400-ehci', 'aspeed,ast2500-ehci', 'aspeed,ast2600-ehci', 'brcm,bcm3384-ehci', 'brcm,bcm63268-ehci', 'brcm,bcm6328-ehci', 'brcm,bcm6358-ehci', 'brcm,bcm6362-ehci', 'brcm,bcm6368-ehci', 'brcm,bcm7125-ehci', 'brcm,bcm7346-ehci', 'brcm,bcm7358-ehci', 'brcm,bcm7360-ehci', 'brcm,bcm7362-ehci', 'brcm,bcm7420-ehci', 'brcm,bcm7425-ehci', 'brcm,bcm7435-ehci', 'ibm,476gtr-ehci', 'nxp,lpc1850-ehci', 'qca,ar7100-ehci', 'snps,hsdk-v1.0-ehci', 'socionext,uniphier-ehci']
+	'nvidia,tegra20-ehci' is not one of ['cavium,octeon-6335-ehci', 'ibm,usb-ehci-440epx', 'ibm,usb-ehci-460ex', 'nintendo,hollywood-usb-ehci', 'st,spear600-ehci']
+	'nvidia,tegra20-ehci' is not one of ['generic-ehci', 'usb-ehci']
+	'generic-ehci' was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nvidia,tegra-car.example.dt.yaml: usb-controller@c5004000: 'oneOf' conditional failed, one must be fixed:
+	'interrupts' is a required property
+	'interrupts-extended' is a required property
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+
+See https://patchwork.ozlabs.org/patch/1452220
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
