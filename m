@@ -3,79 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C835C433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 22:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55892C433E9
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 22:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0514A64F8A
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 22:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B1964F21
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 22:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbhCPWAx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Mar 2021 18:00:53 -0400
-Received: from mail-il1-f176.google.com ([209.85.166.176]:36167 "EHLO
-        mail-il1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbhCPWAv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 18:00:51 -0400
-Received: by mail-il1-f176.google.com with SMTP id g9so14199277ilc.3;
-        Tue, 16 Mar 2021 15:00:51 -0700 (PDT)
+        id S231249AbhCPW2b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Mar 2021 18:28:31 -0400
+Received: from mail-il1-f177.google.com ([209.85.166.177]:37976 "EHLO
+        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231219AbhCPW2a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 18:28:30 -0400
+Received: by mail-il1-f177.google.com with SMTP id f10so14220731ilq.5;
+        Tue, 16 Mar 2021 15:28:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=RqWjNc+e+7pVSRjuH47CWTburU+IekIrrOek0pTQW54=;
-        b=jek1B6ZTSuqNYLTwNfpdIOKdDz/hPIKnIE3LOxbgbKjFiYMi1q8V1sFoi8iRAKy0z5
-         6tEPKoexZAauiD9k8HooTwApmm7IPIMvjpX0k0MEHMJl0ut4gGzoZ61R/OJtaF1CpQkf
-         PjWbDdeWduzj5jBnOxKuLdR0PtX63PQ6BY29PLdJUh+lLNL6vqtvaRKtiYrWBsjkYtS7
-         DbxRo3Tt8CFzXG1dPOy1ygY0TzxZOzqjed/EW5KRMZuKtqRlzXrFiIDIR54aqS7BXMs+
-         /ax4hO2v2HRoXItW8jvV1vQxOvaO0i20dFpeavG60OnbCcG4e+u3VnG1sdmJpDdLLL28
-         podw==
-X-Gm-Message-State: AOAM533Dc79wdbHu7RDbsymVd6yYC7UBg/4aF9EdlDT45A3YX9PKCwFl
-        0oCbI7Qf1eG9ISLvNkINZw==
-X-Google-Smtp-Source: ABdhPJyoUgSOBxZENuGIi2GsE47RTs4+bxmWNYK0Sfu0ldDpJetkChasC98ONnGGouYSKTAk1P50Qw==
-X-Received: by 2002:a92:d6d2:: with SMTP id z18mr5568800ilp.30.1615932050820;
-        Tue, 16 Mar 2021 15:00:50 -0700 (PDT)
+        bh=KZF2IUAZVdcUGG23s3R2g6WJv4TZQM/Lti0qI3yptWc=;
+        b=LocLgHjLfH5OrNjgVJWTVT4z4gSaL3S8J/TC79XbgnWrx5i69gzABLe7+BQ9wa1PUs
+         KYSA1tYA4HekDtsIcxXXa0PfoPmUhXXRGm7frhAlod0EHBbCj0DWRk+jLYaJ7+2cYYcB
+         n2ZpAjOXOLefM3K72Hoz7KWBUl17AuN+bDNMorHtRexA8MXG8J8hASJDcJbN6X9OT2ad
+         MDGuCUL0PB3LgmiqGNYjOeOZWKfv0ZMxzrcMZzyLn6KCVW4iwdiurApWt33Yx2agSSJg
+         h/1RzsIWdFJfVfFQ2lfRn6F4gk4gXHeS/vlhG8Ig7eLBAgYip8eJlCZ1BS4p33s4Q/yu
+         26iQ==
+X-Gm-Message-State: AOAM533EBGwRiK2bUPZrZeFowY9p+8eT5NqBdwi+gd6vRIRDaDMUKHiG
+        et8iQiTviOtxHwTX/I2WoQ==
+X-Google-Smtp-Source: ABdhPJwh3xw/09JpuwcCGh+7MpZW+l36DoUCtfOz7o2ub5/Q7DpAbPKwpLRdckE8SGmnfOuRX2FMTA==
+X-Received: by 2002:a05:6e02:178e:: with SMTP id y14mr5303720ilu.175.1615933709855;
+        Tue, 16 Mar 2021 15:28:29 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id f3sm10023386ilk.74.2021.03.16.15.00.48
+        by smtp.gmail.com with ESMTPSA id c18sm10296673ild.37.2021.03.16.15.28.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 15:00:49 -0700 (PDT)
-Received: (nullmailer pid 3754285 invoked by uid 1000);
-        Tue, 16 Mar 2021 22:00:46 -0000
-Date:   Tue, 16 Mar 2021 16:00:46 -0600
+        Tue, 16 Mar 2021 15:28:29 -0700 (PDT)
+Received: (nullmailer pid 3798476 invoked by uid 1000);
+        Tue, 16 Mar 2021 22:28:25 -0000
+Date:   Tue, 16 Mar 2021 16:28:25 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
         Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        linux-actions@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] dt-bindings: clock: Add NIC and ETHERNET bindings
- for Actions S500 SoC
-Message-ID: <20210316220046.GA3754207@robh.at.kernel.org>
-References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
- <fa6bcb2dc4309ca1972340694aebbcc5f55bd61c.1615221459.git.cristian.ciocaltea@gmail.com>
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhupesh.linux@gmail.com
+Subject: Re: [PATCH 2/8] dt-bindings: crypto : Add new compatible strings for
+ qcom-qce
+Message-ID: <20210316222825.GA3792517@robh.at.kernel.org>
+References: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
+ <20210310052503.3618486-3-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa6bcb2dc4309ca1972340694aebbcc5f55bd61c.1615221459.git.cristian.ciocaltea@gmail.com>
+In-Reply-To: <20210310052503.3618486-3-bhupesh.sharma@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 08 Mar 2021 19:18:30 +0200, Cristian Ciocaltea wrote:
-> Add the missing NIC and ETHERNET clock bindings constants for Actions
-> Semi Owl S500 SoC.
+On Wed, Mar 10, 2021 at 10:54:57AM +0530, Bhupesh Sharma wrote:
+> Newer qcom chips support newer versions of the qce IP, so add
+> new compatible strings for qcom-qce (in addition to the existing
+> "qcom,crypto-v5.1").
 > 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+> With [1], Thara tried to add the support for new compatible strings,
+> but we couldn't conclude on the approach to be used. Since we have
+> a number of new qcom arm64 SoCs available now, several of which
+> support the same crypto IP version, so it makes more sense to use
+> the IP version for the compatible string, rather than using the soc
+> name as the compatible string.
+> 
+> [1]. https://lore.kernel.org/linux-arm-msm/20201119155233.3974286-7-thara.gopinath@linaro.org/
+> 
+> Cc: Thara Gopinath <thara.gopinath@linaro.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: bhupesh.linux@gmail.com
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 > ---
->  include/dt-bindings/clock/actions,s500-cmu.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/crypto/qcom-qce.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.txt b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> index 07ee1b12000b..217b37dbd58a 100644
+> --- a/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> +++ b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> @@ -2,7 +2,11 @@ Qualcomm crypto engine driver
+>  
+>  Required properties:
+>  
+> -- compatible  : should be "qcom,crypto-v5.1"
+> +- compatible  : Supported versions are:
+> +		- "qcom,crypto-v5.1", for ipq6018
+> +		- "qcom,crypto-v5.4", for sdm845, sm8150
 
-Acked-by: Rob Herring <robh@kernel.org>
+2 SoCs sharing 1 version doesn't convince me on using version numbers. 
+Having 4 versions for 5 SoCs further convinces me you should stick with 
+SoC specific compatibles as *everyone* else does (including most QCom 
+bindings).
+
+> +		- "qcom,crypto-v5.5", for sm8250
+> +		- "qcom,crypto-v5.6", for sm8350
+>  - reg         : specifies base physical address and size of the registers map
+>  - clocks      : phandle to clock-controller plus clock-specifier pair
+>  - clock-names : "iface" clocks register interface
+> -- 
+> 2.29.2
+> 
