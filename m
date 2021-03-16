@@ -2,113 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E01EC433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 19:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43582C433E9
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 19:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69E7D65147
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 19:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF2464E33
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 19:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236423AbhCPTCs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Mar 2021 15:02:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54774 "EHLO
+        id S234134AbhCPTp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Mar 2021 15:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbhCPTCc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 15:02:32 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F72EC06174A;
-        Tue, 16 Mar 2021 12:02:32 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id p7so62669295eju.6;
-        Tue, 16 Mar 2021 12:02:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qFBhBN1yONQEPO410hIh3UpTMwleQYs7kA4kb54O5Ck=;
-        b=L86As8EpxwOV1JW/wPMSMwzrPG5IW8NoYbOzLBYZc6g0SVG/ApgUJ1dxTei3Rz8sBX
-         fYwRyiJJ4AENe8mA3qD+7bQSLxu15mG/Oa9hUVzfkAxdcctFRa0Vf4uqU+BEYWoOZmFy
-         Hbm1/vSk5i//pi1bUWqtT08v7HDcLP7lmcUgI9oYUPOJLwfzJbWrssO7BJST690hO8ic
-         wleH3+b77WuNI63hNZ1Ylknma7Su+VF3BQngLup5pcarDJFt+g+rafMEYPKeQ47fzQ6M
-         v2Fz7XKhAVXA/ctPbPdsgkf8dOIytnwZs0WJMO8fEID5bRNfxuPt0KYK4KkRTJAHMgxb
-         lU7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qFBhBN1yONQEPO410hIh3UpTMwleQYs7kA4kb54O5Ck=;
-        b=qoHjP0O9jhNsPY6dELFnCuNIXLCjQ/AP5DkvxhYdWV1kVWT1UbiXb/rgNgLaMVZhad
-         ww0y4nMupeQ1NjfsLJWfk8frDRo+ALi3QWEb/jmJgaAImYCBMO3bsFu7JKaEL5pQGJhu
-         CUIYqUW2Cn7GT/+pCtMFUdcJH63y6KJfGHy+A/G1S6gK4KNYLxZIMOXOmSGI068gigOx
-         2MoHdaaCIf/xLm5wqS7ChwMhPNCi1TSJHHpsxCqfvZgS1vhhZwzTqgm/sQCeaEbKLtHl
-         P62JM/bREdJQOza2I6tPG01E+pCa24lmc7sTZ/7tBHkkB3Aw2ZMJZCkmAtP7WIAm8wXU
-         15BQ==
-X-Gm-Message-State: AOAM532PHvHg5ZzlfoQzzfwekVvEFZhYQzhSE1xPI8WWcdfnartLMx7+
-        Ny14ZMuLd/4G2i6sGQ7E9f4=
-X-Google-Smtp-Source: ABdhPJxVueNvtGbxRg3YfrgB7C448w3zGcxkiK+XtXlQYCVJfUI4m+Chx7jKMRpgmk3DpR2SC6t3Yg==
-X-Received: by 2002:a17:907:75c2:: with SMTP id jl2mr31734646ejc.334.1615921351189;
-        Tue, 16 Mar 2021 12:02:31 -0700 (PDT)
-Received: from BV030612LT ([188.24.140.160])
-        by smtp.gmail.com with ESMTPSA id q25sm7003226edt.51.2021.03.16.12.02.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 12:02:30 -0700 (PDT)
-Date:   Tue, 16 Mar 2021 21:02:28 +0200
-From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 6/6] clk: actions: Add NIC and ETHERNET clock support for
- Actions S500 SoC
-Message-ID: <20210316190228.GE1111731@BV030612LT>
-References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
- <ddafbffafe48fc55bed050728e2ce2610c934e7b.1615221459.git.cristian.ciocaltea@gmail.com>
- <20210316055240.GE1798@thinkpad>
+        with ESMTP id S240635AbhCPTpR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 15:45:17 -0400
+Received: from mail-out.m-online.net (mail-out.m-online.net [IPv6:2001:a60:0:28:0:1:25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE03EC06174A;
+        Tue, 16 Mar 2021 12:45:14 -0700 (PDT)
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4F0Nzp5fCLz1rxMm;
+        Tue, 16 Mar 2021 20:45:10 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4F0Nzp42vgz1qqlD;
+        Tue, 16 Mar 2021 20:45:10 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id HVprAfGCzxsU; Tue, 16 Mar 2021 20:45:09 +0100 (CET)
+X-Auth-Info: SurgzyzvOEKJPZRKHt6wkP9W5Z0YUNK8ZVcNfo2fRZpxXEba/9GDDNhI7l/OoTV0
+Received: from igel.home (ppp-46-244-163-222.dynamic.mnet-online.de [46.244.163.222])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 16 Mar 2021 20:45:09 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+        id E3E372C37EC; Tue, 16 Mar 2021 20:45:08 +0100 (CET)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Zong Li <zong.li@sifive.com>
+Cc:     paul.walmsley@sifive.com, palmer@dabbelt.com, sboyd@kernel.org,
+        pragnesh.patel@openfive.com, aou@eecs.berkeley.edu,
+        mturquette@baylibre.com, yash.shah@sifive.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 0/5] clk: add driver for the SiFive FU740
+References: <20201209094916.17383-1-zong.li@sifive.com>
+X-Yow:  When you said ``HEAVILY FORESTED'' it reminded me of an overdue
+ CLEANING BILL..  Don't you SEE?  O'Grogan SWALLOWED a VALUABLE
+ COIN COLLECTION and HAD to murder the ONLY MAN who KNEW!!
+Date:   Tue, 16 Mar 2021 20:45:08 +0100
+In-Reply-To: <20201209094916.17383-1-zong.li@sifive.com> (Zong Li's message of
+        "Wed, 9 Dec 2020 17:49:11 +0800")
+Message-ID: <87v99qyjaz.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210316055240.GE1798@thinkpad>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 11:22:40AM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Mar 08, 2021 at 07:18:31PM +0200, Cristian Ciocaltea wrote:
-> > Add support for the missing NIC and ETHERNET clocks in the Actions Semi
-> > Owl S500 SoC clock driver.
-> > 
-> > Additionally, change APB clock parent from AHB to the newly added NIC.
-> > 
-> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-> > ---
-> >  drivers/clk/actions/owl-s500.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-> > index b9e434173b4f..0ccc9619b302 100644
-> > --- a/drivers/clk/actions/owl-s500.c
-> > +++ b/drivers/clk/actions/owl-s500.c
-> > @@ -112,6 +112,7 @@ static const char * const bisp_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
-> >  static const char * const sensor_clk_mux_p[] = { "hosc", "bisp_clk" };
-> >  static const char * const sd_clk_mux_p[] = { "dev_clk", "nand_pll_clk" };
-> >  static const char * const pwm_clk_mux_p[] = { "losc", "hosc" };
-> > +static const char * const nic_clk_mux_p[] = { "dev_clk", "display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
-> 
-> As per the reg field order, this should come after "ahbprediv_clk_mux_p"
+On Dez 09 2020, Zong Li wrote:
 
-Fixed, thanks!
+> Add a driver for the SiFive FU740 PRCI IP block, which handles more
+> clocks than FU540. These patches also refactor the original
+> implementation by spliting the dependent-code of fu540 and fu740
+> respectively.
 
-> Rest looks good.
-> 
-> Thanks,
-> Mani
-> 
-[...]
+That breaks ethernet on the fu540.
+
+Andreas.
+
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
