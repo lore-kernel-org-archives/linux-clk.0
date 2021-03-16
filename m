@@ -2,136 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9FCC433E6
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 16:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F389C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A42D64EFC
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 16:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8BD65108
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238778AbhCPQ11 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Mar 2021 12:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49048 "EHLO
+        id S236381AbhCPSPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Mar 2021 14:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236684AbhCPQ0u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 12:26:50 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A388C06175F
-        for <linux-clk@vger.kernel.org>; Tue, 16 Mar 2021 09:26:49 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b1e0:9434:c5b6:aecd])
-        by laurent.telenet-ops.be with bizsmtp
-        id h4So240010UTkXy014SohF; Tue, 16 Mar 2021 17:26:48 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lMCWt-008ASu-Gk; Tue, 16 Mar 2021 17:26:47 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lMCWs-00AFW8-Kw; Tue, 16 Mar 2021 17:26:46 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        with ESMTP id S239839AbhCPSOm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 14:14:42 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF3CC06174A;
+        Tue, 16 Mar 2021 11:14:41 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id o19so22693227edc.3;
+        Tue, 16 Mar 2021 11:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1281BEyC1N/sT0yDV1ajNVpUCqqu0ZuaYNj98TiHdxs=;
+        b=Ma6frPA12KuX2NdGrfivrV6AEKXf4Czg2U6M5tAJ9qOqAIT0iBHLP5bR/FdRCdzhD2
+         Pe23/e0EIDYbdsK41mWnugxrZj+ss1W1xiXA6zEK8d0EFPV2L0DI5u/H+yzN9Zsw1ch7
+         FNgXLuk1RIcEfC2QMWi6jl6VYWEkoNfe52iF0vswYhDTTqlPDo3v2jXgEd3q/vEB5gZT
+         HZIuWI0nCHo3MOnBVZzt1XasjtqNpbiOvGHTLIqsuJZBPtgM0jPlzYr1OZvJCeRW5naV
+         AueELZZ8JyW/5Klgx6YxKcItM89Va+2/Ev3dDCdfN4Vh8EhddwuJj9bqfQ/vt20jMQCn
+         Qq3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1281BEyC1N/sT0yDV1ajNVpUCqqu0ZuaYNj98TiHdxs=;
+        b=ETp/4URa5YKwx0BxVG6i8Tic3EDesfHh+rCLF/egUwWCRfPyfJo3bU4G1R267jW19C
+         2px/9ouakYD1VjwGL6VpNeUCu1Vx+DK5Ib+n1+uJtjYyB/j+F6XpfGV9vQtV6CR5dcGm
+         7suZX1Sub3DCtmrKwMxSryzxCh5mZ+rUdUREkpxtHRKZSe/qixKhdlBXsH6B+TSFYCsL
+         +N/eVVjixN6RHwMNhfFCH9xhcgHlkP9RZ6/wqgwNC5/4EQj3W8hS1FWQZygKwWRhdTK/
+         L9S8QoAf0iM2wRjbpQPf1kzvO/ZUJ288yvQdt8yg+Zb980YzRJn6Z5Vt6uKC5HYuMPHI
+         GkYA==
+X-Gm-Message-State: AOAM532XELiQXE43fGcmGdTvgo5VrecSwEP4edw1zzRmel20f9tZTG5A
+        WvE/3pmoepw9mVbmz4Pix6I=
+X-Google-Smtp-Source: ABdhPJy8qZ/Cu2VDNKCPnDxtC3JYXd3ZuKHkEtvTp8zsQo8ZWZQ0NiR8EUdREsP9WiMpngWnZ78V2Q==
+X-Received: by 2002:a05:6402:2695:: with SMTP id w21mr37578680edd.99.1615918480553;
+        Tue, 16 Mar 2021 11:14:40 -0700 (PDT)
+Received: from BV030612LT ([188.24.140.160])
+        by smtp.gmail.com with ESMTPSA id g20sm9797574ejz.54.2021.03.16.11.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 11:14:39 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 20:14:37 +0200
+From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
-Date:   Tue, 16 Mar 2021 17:26:43 +0100
-Message-Id: <20210316162643.2442885-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: actions: Fix SD clocks factor table on Owl S500
+ SoC
+Message-ID: <20210316181437.GB1111731@BV030612LT>
+References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
+ <973b08fe414321ba4ade096a4917cadc2013426e.1615221459.git.cristian.ciocaltea@gmail.com>
+ <20210316035845.GB1798@thinkpad>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210316035845.GB1798@thinkpad>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  - Remove unneeded references for "idt,xtal-load-femtofarads" and
-    "idt,slew-percent", as vendor specific properties having a standard
-    unit suffix don't need a type,
-  - Add missing "additionalProperties: false" for subnodes, to catch
-    typos in properties,
-  - Fix property names in example.
+Hi Mani,
 
-Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
-This depends on dt-schema v2021.2.1.
+Thanks for reviewing this patch series!
 
-v4:
-  - Add Reviewed-by, Acked-by,
+On Tue, Mar 16, 2021 at 09:28:45AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Mar 08, 2021 at 07:18:27PM +0200, Cristian Ciocaltea wrote:
+> > Drop the unsupported entries in the factor table used for the SD[0-2]
+> > clocks definitions on the Actions Semi Owl S500 SoC.
+> > 
+> > Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+> > ---
+> >  drivers/clk/actions/owl-s500.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+> > index 75b7186185b0..69cd959205f5 100644
+> > --- a/drivers/clk/actions/owl-s500.c
+> > +++ b/drivers/clk/actions/owl-s500.c
+> > @@ -127,8 +127,6 @@ static struct clk_factor_table sd_factor_table[] = {
+> >  	{ 12, 1, 13 }, { 13, 1, 14 }, { 14, 1, 15 }, { 15, 1, 16 },
+> >  	{ 16, 1, 17 }, { 17, 1, 18 }, { 18, 1, 19 }, { 19, 1, 20 },
+> >  	{ 20, 1, 21 }, { 21, 1, 22 }, { 22, 1, 23 }, { 23, 1, 24 },
+> > -	{ 24, 1, 25 }, { 25, 1, 26 }, { 26, 1, 27 }, { 27, 1, 28 },
+> > -	{ 28, 1, 29 }, { 29, 1, 30 }, { 30, 1, 31 }, { 31, 1, 32 },
+> 
+> How did you determine that these values are not supported?
+> 
+> I've seen cases where the datasheet has the incomplete information about the
+> supported ranges but the downstream driver has everything.
 
-v3:
-  - Drop references for "idt,voltage-microvolt" and "idt,slew-percent",
+My primary source of information is the xapp-le kernel source code:
+https://github.com/xapp-le/kernel
 
-v2:
-  - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
-    ('clk: vc5: Use "idt,voltage-microvolt" instead of
-    "idt,voltage-microvolts"'),
-  - Drop reference to clock.yaml, which is already applied
-    unconditionally,
-  - Drop removal of allOf around if condition, as it is unnecessary
-    churn.
+I always try to double check the implementation with the information
+in the datasheet, but sometimes, as you already pointed out, it is
+incomplete.
 
-squash! dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+For the SD clocks, it is even worse: there is absolutely no information
+related to the CMU_SD[0-2]CLK registers. Therefore I had to rely
+exclusively on the downstream driver code.
 
-v5:
-  - Drop reference for "idt,xtal-load-femtofarads",
----
- .../devicetree/bindings/clock/idt,versaclock5.yaml     | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Hence, for the SD1 clock, I identified the following code snippets:
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index c268debe5b8d58cd..434212320c9aa7ab 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -60,7 +60,6 @@ properties:
-     maxItems: 2
- 
-   idt,xtal-load-femtofarads:
--    $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 9000
-     maximum: 22760
-     description: Optional load capacitor for XTAL1 and XTAL2
-@@ -84,9 +83,10 @@ patternProperties:
-         enum: [ 1800000, 2500000, 3300000 ]
-       idt,slew-percent:
-         description: The Slew rate control for CMOS single-ended.
--        $ref: /schemas/types.yaml#/definitions/uint32
-         enum: [ 80, 85, 90, 100 ]
- 
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -141,13 +141,13 @@ examples:
-             clock-names = "xin";
- 
-             OUT1 {
--                idt,drive-mode = <VC5_CMOSD>;
--                idt,voltage-microvolts = <1800000>;
-+                idt,mode = <VC5_CMOSD>;
-+                idt,voltage-microvolt = <1800000>;
-                 idt,slew-percent = <80>;
-             };
- 
-             OUT4 {
--                idt,drive-mode = <VC5_LVDS>;
-+                idt,mode = <VC5_LVDS>;
-             };
-         };
-     };
--- 
-2.25.1
+static struct owl_clkreq divbit_PRESD0_CLK          = BITMAP(CMU_SD0CLK,                0x0000001f, 0);
+static struct owl_clkreq divbit_SD0_CLK_2X          = BITMAP(CMU_SD0CLK,                0x00000100, 8);
+static struct owl_refertab T_sdx2   = {{1, 128, -1}, 0};
 
+static struct owl_div divider_PRESD0_CLK = {
+    .type = DIV_T_NATURE,
+    .range_from = 0,
+    .range_to = 24,
+    .reg = &divbit_PRESD0_CLK,
+};
+
+static struct owl_div divider_SD0_CLK_2X = {
+    .type = DIV_T_TABLE,
+    .range_from = 0,
+    .range_to = 1,
+    .ext = {.tab = &T_sdx2,},
+    .reg = &divbit_SD0_CLK_2X,
+};
+
+This is basically what gets translated to sd_factor_table and I removed
+the extra entries 25..31. Actually I also dropped the 24th one, since
+that would give us an odd number of items, although I'm not quite sure
+this is a bug in the xapp-le code or the HW is really supposed to work
+like that.
+
+Kind regards,
+Cristi
+
+> Thanks,
+> Mani
+> 
+> >  
+> >  	/* bit8: /128 */
+> >  	{ 256, 1, 1 * 128 }, { 257, 1, 2 * 128 }, { 258, 1, 3 * 128 }, { 259, 1, 4 * 128 },
+> > @@ -137,8 +135,6 @@ static struct clk_factor_table sd_factor_table[] = {
+> >  	{ 268, 1, 13 * 128 }, { 269, 1, 14 * 128 }, { 270, 1, 15 * 128 }, { 271, 1, 16 * 128 },
+> >  	{ 272, 1, 17 * 128 }, { 273, 1, 18 * 128 }, { 274, 1, 19 * 128 }, { 275, 1, 20 * 128 },
+> >  	{ 276, 1, 21 * 128 }, { 277, 1, 22 * 128 }, { 278, 1, 23 * 128 }, { 279, 1, 24 * 128 },
+> > -	{ 280, 1, 25 * 128 }, { 281, 1, 26 * 128 }, { 282, 1, 27 * 128 }, { 283, 1, 28 * 128 },
+> > -	{ 284, 1, 29 * 128 }, { 285, 1, 30 * 128 }, { 286, 1, 31 * 128 }, { 287, 1, 32 * 128 },
+> >  	{ 0, 0, 0 },
+> >  };
+> >  
+> > -- 
+> > 2.30.1
+> > 
