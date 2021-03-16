@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64832C433DB
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B339AC433E6
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29ACE650EF
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84F596514A
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Mar 2021 18:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231279AbhCPSiO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Mar 2021 14:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49456 "EHLO
+        id S229844AbhCPSua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Mar 2021 14:50:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237121AbhCPSh6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 14:37:58 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8FE6C06174A;
-        Tue, 16 Mar 2021 11:37:57 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id dx17so73915410ejb.2;
-        Tue, 16 Mar 2021 11:37:57 -0700 (PDT)
+        with ESMTP id S229702AbhCPSuT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 14:50:19 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5871C06174A;
+        Tue, 16 Mar 2021 11:50:18 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id jt13so73980821ejb.0;
+        Tue, 16 Mar 2021 11:50:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=YKhM0XlAMOLzACqYYkiuA73dVilEbBHwLHGpYjZZuLA=;
-        b=LMwP2wyE/NPvLsJ8SINLONbIhkEUHlaQEZLTZykYVn0JYGGzcjfHvWsuRGO4IMYKwj
-         NBW5x249A3uyCyf1PGfYId+o1cj5q+YVEY7K819nBVYgrY7NEBj4EI0Z64vw5f8A0Brb
-         kkHyXyjx+YCo3gdp1MpbYab1bH2uLnwUSSEKhu+hv//uoTPYfR6Akq2ZuTRNSXROfrZs
-         Glxouse4umV8swnd/4knJlh6g4XG9JrETLK1X81Ix8CusVuN1aUyGGRjWeQCwiUVPuAc
-         9x0+fNib/uHpqm4D67n1hTE2WnMK1YaxsnDXLPZVm1+7rDAz76BA8F8VSpB07DBxtzDX
-         aU+g==
+        bh=JIDWJVCtqVTctPuvCcddfFP45PGJhsx7ii6usu9k8kI=;
+        b=r0s92RsLYdx+MT4mzPcDqJIf7njkm7DryrHjr8C8yN5Nr2/DxAd9tzVM6Jg3fk9oEw
+         oNP1xa32uW7a0zKLb+owgbLGCrngGZEwU/Oh+NCtn7hAql3tC9s0tB83soABU5Labjq1
+         OrhZMwqvQSyvCUf79h+gGK+gU3G/bFpmqydafAKuhe/JE1kA02SZnK5a0bFK1Biy9AXt
+         JDanZJmKzPrrIOxMTO2ncU0mpXFFkdl1tBgtSLnqu2sUQlfd+F5tY2taf2WawqIXysGN
+         0A64WFshUOge4vG/+68k1ODWKayXFi6kBuvM0lY13AFuuhLjcqkGVSThBMD8f4eC9fat
+         X1Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=YKhM0XlAMOLzACqYYkiuA73dVilEbBHwLHGpYjZZuLA=;
-        b=nj8jpW6ArGyZhZpyCBjypaniW1FgZJwrFlxrXpy1gCjhHDKV7OmU4Nwx5odUtpO7YH
-         EySTFFULaY+EotDg5kUNR9ZjiwLRCCJ6xa/vzCTPonsWMRtzBOaM1UkMeMM8kPzgjVKT
-         siNUaaU+wUNQFiEnFmoeFjN+JFigiE/jIUABED88SfOeLhd3u8gDs8hFc8asnNFxW5Oc
-         VmBqcuJNdBQSjar4mhhnhzTZfnn/wKx5WjKxqLKkla1bccsHqjdo0GiS+v+pf6FVzto7
-         tnb9L+RkP4JGYNeHCC5j7vwLhxyNeti/lvTznt1X16Zprn0oNqL2XDPsRTAxlgrwEZwF
-         KMGg==
-X-Gm-Message-State: AOAM5338usnsbypen40UqvhbOm4YHz2cPKi8lzdvTUEPvP6DQplNaNdr
-        nHcZkVLg0CGr+oigEsFW8Ln49pMZkhI=
-X-Google-Smtp-Source: ABdhPJxE3Bx8oGOnSfAhjX7BzEscKYYvdLAVXmnu+5BzLmusb25sZLXK+EijAXmBWgIBd3RdtLLQjQ==
-X-Received: by 2002:a17:906:ef2:: with SMTP id x18mr31817161eji.323.1615919876457;
-        Tue, 16 Mar 2021 11:37:56 -0700 (PDT)
+        bh=JIDWJVCtqVTctPuvCcddfFP45PGJhsx7ii6usu9k8kI=;
+        b=pAwFbzsVH7osOE13y8+8ntLItBdb59rWHKuFs7K/W29nfjHUEu5YrLMyJS5NeW4H8M
+         drA8ftT1tpLuSIySYKwa7h2K3lX5q5Cow5daZtqjnD4xO3/RD+45ptAUTzhxmKGngab4
+         X+UrZuAWw3sLDgOoZErdgmrhlOw+1xG3N5KfrXzsXHqR34S7Wdls6FgBFfUTIQzI23P2
+         pozHGOlKMn9riSYgiSsHXl6oBrEj6oBCkMYALy8tmspg66EpH0B24iemxifuWMmyKk5+
+         f746dKhh3n5LcFwRSDvVrFQDUszpLwzGz5MT69Rw6JypyAxs7i8dgDBYfIDQ6249jTsd
+         Xycw==
+X-Gm-Message-State: AOAM531KeRWyUdVkKj5lsUzD3qtPkMFAEC5tEKb1ZiFgU8KZ5vJfJk2O
+        Q0WeKNQjT6Z6PL8yUXP5Pj8=
+X-Google-Smtp-Source: ABdhPJxcsp8sHhglDnHjuUw4lQyDPqrEFmSQ6145fz7Iaf0s+0BRl7H7zTp9dHnVJ8Gik7sBF16ulw==
+X-Received: by 2002:a17:906:6c93:: with SMTP id s19mr30978725ejr.151.1615920617571;
+        Tue, 16 Mar 2021 11:50:17 -0700 (PDT)
 Received: from BV030612LT ([188.24.140.160])
-        by smtp.gmail.com with ESMTPSA id g11sm7412527edw.37.2021.03.16.11.37.54
+        by smtp.gmail.com with ESMTPSA id y20sm2023626ejj.43.2021.03.16.11.50.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Mar 2021 11:37:55 -0700 (PDT)
-Date:   Tue, 16 Mar 2021 20:37:53 +0200
+        Tue, 16 Mar 2021 11:50:16 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 20:50:14 +0200
 From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -65,71 +65,54 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/6] clk: actions: Fix bisp_factor_table based clocks on
- Owl S500 SoC
-Message-ID: <20210316183753.GC1111731@BV030612LT>
+Subject: Re: [PATCH 4/6] clk: actions: Fix AHPPREDIV-H-AHB clock chain on Owl
+ S500 SoC
+Message-ID: <20210316185014.GD1111731@BV030612LT>
 References: <cover.1615221459.git.cristian.ciocaltea@gmail.com>
- <13576ddb604a9097603d95cd2605275c20fb2f56.1615221459.git.cristian.ciocaltea@gmail.com>
- <20210316041739.GC1798@thinkpad>
+ <58225ced4893018792d581c0476a0f1c70e08907.1615221459.git.cristian.ciocaltea@gmail.com>
+ <20210316054547.GD1798@thinkpad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210316041739.GC1798@thinkpad>
+In-Reply-To: <20210316054547.GD1798@thinkpad>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 09:47:39AM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Mar 08, 2021 at 07:18:28PM +0200, Cristian Ciocaltea wrote:
-> > The following clocks of the Actions Semi Owl S500 SoC have been defined
-> > to use a shared clock factor table 'bisp_factor_table[]': DE[1-2], VCE,
-> > VDE, BISP, SENSOR[0-1]
+On Tue, Mar 16, 2021 at 11:15:47AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Mar 08, 2021 at 07:18:29PM +0200, Cristian Ciocaltea wrote:
+> > There are a few issues with the setup of the Actions Semi Owl S500 SoC's
+> > clock chain involving AHPPREDIV, H and AHB clocks:
 > > 
-> > There are several issues involved in this approach:
-> > 
-> > * 'bisp_factor_table[]' describes the configuration of a regular 8-rates
-> >   divider, so its usage is redundant. Additionally, judging by the BISP
-> >   clock context, it is incomplete since it maps only 8 out of 12
-> >   possible entries.
-> > 
-> > * The clocks mentioned above are not identical in terms of the available
-> >   rates, therefore cannot rely on the same factor table. Specifically,
-> >   BISP and SENSOR* are standard 12-rate dividers so their configuration
-> >   should rely on a proper clock div table, while VCE and VDE require a
-> >   factor table that is a actually a subset of the one needed for DE[1-2]
-> >   clocks.
-> > 
-> > Let's fix this by implementing the following:
-> > 
-> > * Add new factor tables 'de_factor_table' and 'hde_factor_table' to
-> >   properly handle DE[1-2], VCE and VDE clocks.
-> > 
-> > * Add a common div table 'std12rate_div_table' for BISP and SENSOR[0-1]
-> >   clocks converted to OWL_COMP_DIV.
-> > 
-> > * Drop the now unused 'bisp_factor_table[]'.
-> > 
+> > * AHBPREDIV clock is defined as a muxer only, although it also acts as
+> >   a divider.
+> > * H clock is defined as a standard divider, although the raw value zero
+> >   is not supported.
 > 
-> Nice!
-> 
-> > Additionally, since SENSOR[0-1] are not gated, unset the OWL_GATE_HW
-> > configuration and drop the CLK_IGNORE_UNUSED flag in their definitions.
-> > 
-> 
-> No. You should not screen the functionality exposed by the hw, that's what the
-> purpose of these CLK_ flags.
+> What do you mean by not supported? The datasheet lists "0" as the valid divisor
+> value for divide by 1.
 
-I'm not sure I get this, or maybe I wasn't clear enough with my
-explanation regarding the changes to SENSOR clocks: they are not gated
-in hardware, hence the statement 'OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0)' 
-was invalid and I replaced it with '{ 0 }'.
+Unfortunately CMU_BUSCLK1 is not documented in my S500 Datasheet
+(Version: 1.6, 2016-03-07). Do you have a newer (or a more official)
+one?
 
-Additionally, I assumed the 'CLK_IGNORE_UNUSED' flag makes sense only
-for the gated clocks. Do I miss something?
+The reference xapp-le code snipped is:
 
-> Other than that, this patch looks good to me.
+static struct owl_div divider_H_CLK = {
+    .type = DIV_T_NATURE,
+    .range_from = 1,  /* reserve H_CLK divsor 1 */
+    .range_to = 3,
+    .reg = &divbit_H_CLK,
+};
+
+Not sure why divisor 1 has been reserved..
 
 Thanks,
 Cristi
 
+> Rest looks good to me.
+> 
+> Thanks,
+> Mani
+> 
 [...]
