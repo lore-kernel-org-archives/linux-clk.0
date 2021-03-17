@@ -2,80 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75208C4332B
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 10:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19E3C433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 10:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5419064F6C
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 10:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D71564F5E
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 10:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230150AbhCQKEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 06:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230255AbhCQKEG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Mar 2021 06:04:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F1EF864E27;
-        Wed, 17 Mar 2021 10:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615975445;
-        bh=QDZydGcTtHUis2/3WI6dsm0emvhCUjMzugPN7PcCtDs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bYjK9BFrFu5veHYn+z3996REW08FGcefktVWTLQ0WVQUUrfXMTLwcQRUs/m6a0DDB
-         hso+VFUpSJg/0lfbrggyogvyszOPF9moCtRRTZudOFOkzbsTg36KlZu/c7ASIFlpPi
-         Vkv+k1SJa77oudShQm9Mbvr5QKhtEPaJOYe8eUDeRbsGzCc2chANbvEM5hMd4EPWcZ
-         8YQcU7G8prgVocfLMlzqOMs0E5+EY9U956S2qq/WOuunVV16bbj58o0E6qjkG0HqGz
-         sixx+pKf3WXbwLrl6CGLVhtRSdtVt/r9qdHMb1T74TrrDSzaZy6fbTPEzj1ho7JTQ6
-         rs5Xy7ynHuoVg==
-Date:   Wed, 17 Mar 2021 15:34:01 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Clean-up undocumented compatible strings
-Message-ID: <YFHUEVk/F0zoTe7c@vkoul-mobl.Dlink>
-References: <20210316194918.3528417-1-robh@kernel.org>
+        id S229613AbhCQKJS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 06:09:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229541AbhCQKJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 06:09:01 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA11C06174A;
+        Wed, 17 Mar 2021 03:09:01 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id q9so1076457qvm.6;
+        Wed, 17 Mar 2021 03:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1VDJYRlDO5LH/DCrDo0YeGF2d0vdBASCM6MaReKqK50=;
+        b=g3hb7f5l45vzqS56JuVCvtBcF0rvd+njYw17q+WQYjk1h7iLv6FEXzhzdAIS37wJbb
+         RgfjIRNWGWl8i9ipZgiJpsiuAedCU48323IHK09ZCD2/Kenhn7cmoFrZU2sO7dI+CLrM
+         mA3kBSPLKGYl63UOd+oJYJAIQcEhPIPHyk+CyzJjITEGU+zR0AQAoaFom/tJmP324HGo
+         2MTlQxz/985R9rg/RksRu8YEZ9nG1WND4AscQj0B4nilDiJJLtSt+DTz/fYDFTTAsasr
+         00bSU2ct0E5PdZeWSg5fHyD7X/yH7+xKRqAEXorjJD+fud4ILpNjp4tixPRZc5Jz4/t7
+         Vs9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1VDJYRlDO5LH/DCrDo0YeGF2d0vdBASCM6MaReKqK50=;
+        b=nAQ2/YNg58/09x49xtdbbJjuBwrrrjXv8idaVCPpRR5GbCnKOuCzf2xmFg70ckBv06
+         3ELc7gQgcfF5Naeen+BZ41LUrSVfn55Nxzcl6Vqchv2qnDDyTsWRWuY8+MEtvYSxKtDq
+         SR1Y83Ul69lEfSpEHKNY6CYsU3zaSKJ6m1UBLupekNAnzdWyqBos+0PUW9hhgPig0ryg
+         4eEboliO2qHJVrf2fGrrT802wD+AyNypYKoH27JTDaX8vXyGia8eCqB4IMdwSGsFf12r
+         hAUxh+eAqLPDCBPiMnOce1TT13HwnyzB00yvgcIlk9WFKmnJGeIqUdFAlFmedghw33IW
+         w+7Q==
+X-Gm-Message-State: AOAM532LClQoq5aGOTBR4FrGdZsov7+ChjfmwcZd7MU7y28epYY2RryW
+        OdB1kQRS7GEkULog9sZLBz4=
+X-Google-Smtp-Source: ABdhPJyWeb9GtWjaFYS7TNqDVph5ukB9x61rk98v6qnntbKqtnQ9oG9MWKOkn2ZUimgyYKb79bzfrg==
+X-Received: by 2002:a0c:f946:: with SMTP id i6mr4565757qvo.40.1615975740168;
+        Wed, 17 Mar 2021 03:09:00 -0700 (PDT)
+Received: from localhost.localdomain ([37.19.198.48])
+        by smtp.gmail.com with ESMTPSA id i9sm17702054qko.69.2021.03.17.03.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 03:08:59 -0700 (PDT)
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] devicetree: bindings: clock: Minor typo fix in the file armada3700-tbg-clock.txt
+Date:   Wed, 17 Mar 2021 15:38:40 +0530
+Message-Id: <20210317100840.2449462-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210316194918.3528417-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16-03-21, 13:49, Rob Herring wrote:
 
-> ---
->  .../clock/allwinner,sun4i-a10-pll1-clk.yaml   |  2 +-
->  .../bindings/clock/milbeaut-clock.yaml        | 12 +++++----
->  .../bindings/display/brcm,bcm2835-dsi0.yaml   |  6 -----
->  .../bindings/display/panel/panel-dpi.yaml     |  2 +-
->  .../devicetree/bindings/dma/qcom,gpi.yaml     |  2 +-
+s/provde/provide/
 
-...
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+---
+ .../devicetree/bindings/clock/armada3700-tbg-clock.txt          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  .../bindings/phy/ti,phy-j721e-wiz.yaml        |  2 +-
+diff --git a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+index 0ba1d83ff363..ed1df32c577a 100644
+--- a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
++++ b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
+@@ -1,6 +1,6 @@
+ * Time Base Generator Clock bindings for Marvell Armada 37xx SoCs
 
-Acked-By: Vinod Koul <vkoul@kernel.org>
+-Marvell Armada 37xx SoCs provde Time Base Generator clocks which are
++Marvell Armada 37xx SoCs provide Time Base Generator clocks which are
+ used as parent clocks for the peripheral clocks.
 
+ The TBG clock consumer should specify the desired clock by having the
+--
+2.30.2
 
--- 
-~Vinod
