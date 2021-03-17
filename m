@@ -7,192 +7,142 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09E6C433DB
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 13:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEADC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 13:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1F764F50
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 13:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8A2A64F50
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 13:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbhCQNEn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 09:04:43 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33387 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229460AbhCQNEK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 09:04:10 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7564D580E7F;
-        Wed, 17 Mar 2021 09:04:09 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 17 Mar 2021 09:04:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=X+JMiDx99qnQ/mxxmcAoaRsPbxj
-        JwehnTGBW3syNHdo=; b=gZ/NzPQ9Sn9gKoebwaDWUgubC9eFxS28y1o0vtvWT1c
-        VKEI3qtEUci+2fErGACQpXX5Gn239zrAS4O2LEoqpC+kiZlbnID9upJsNCSLg/g7
-        DJotrib56+DjwEh6/eFPteTDvwNoKjXvAiMnKhyxTuDMuvk/EaFndKf23aInyrKI
-        WhCQbh9lCe1mM9ZepAg5biR2vu5U+/QJU4JemLT9VmZpMUdv1RjqQcNVCBkiClaA
-        lyPe3UBWqFpnM0p6bQ+EylSWC3OkUoiz9QntWIiaDuTLBrPssIfUBWffyMSc9ZSJ
-        PS9pqGsOSHGOiysGFLX4C8AHFBS5JPd4TvQHzs/Geog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=X+JMiD
-        x99qnQ/mxxmcAoaRsPbxjJwehnTGBW3syNHdo=; b=c/y3e1kDlsRT4cw9YPuwQ9
-        lTY+t+ma6H39aFSOW8cVxUYULFDEHVjDVckyEW5NOvw8n9tJg6j79w1I3Pib1V7U
-        PW8rt+rUFHJkybmGBl0woetlAUbPJpjy4o5ig4k/cjzoj4+Qn4+dhHScAcUBeG7H
-        Ntm37jG03VoVbb59J/R9GUV+BSrKDPq43PQAwGZOg/TE9rjFJquaFdpDY4HUurmC
-        L6a3csTquiJR11ZzPyblQB4tzY2bnE4ENlhwyNzqrJhWB496v/GZaJQUSspB9Zen
-        icTOuq6inmfS9iyc0BgPwBJfEpXRtjaD/kwgWRIsDyXE97AkBQxT3oov3IZFuUEg
-        ==
-X-ME-Sender: <xms:R_5RYKhE4CtE07FgwxujBMngkrLSgVUA2hGqivmNZ055v0PVz5QrYA>
-    <xme:R_5RYK-sgY-qBujajLny9iExxYT8hjT2I3VSZ8ZNzq23qkOVI-EN_i68hENaTxZSV
-    yisJPfoKcuNSyjMm-c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrudefgedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:R_5RYO-11C96E3GKBscqizjXUrIIGZeBMkTSQ6XxHcNV9R1MfJJsLg>
-    <xmx:R_5RYLAdBTW2reoiCCyLODeJZjSHLwwkqUHshHANArqOvnaJdSrfRw>
-    <xmx:R_5RYGzNGDmuDoYvfMdxdvcupDH6dcSQ5e4eAO3i21e9BgpZExWkXQ>
-    <xmx:Sf5RYPXnzC6ncf8RZUETsmbbF1VUZ2Qudnk5DBbDHJ9qdweYaMGD1w>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 16E5A24005B;
-        Wed, 17 Mar 2021 09:04:07 -0400 (EDT)
-Date:   Wed, 17 Mar 2021 14:04:04 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        Phil Elwell <phil@raspberrypi.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Subject: Re: [PATCH 1/8] clk: Add range accessors
-Message-ID: <20210317130404.djerabewynzhvfol@gilmour>
-References: <20210225155909.1853812-1-maxime@cerno.tech>
- <20210225155909.1853812-2-maxime@cerno.tech>
- <161472713858.1478170.9594904338107431350@swboyd.mtv.corp.google.com>
- <20210303084527.rziaoiqsr7r4bhcv@gilmour>
- <161594320095.1478170.16988206902476583714@swboyd.mtv.corp.google.com>
+        id S230057AbhCQNVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 09:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231148AbhCQNUu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 09:20:50 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4045BC061763
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 06:20:50 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id w65so41718923oie.7
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 06:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ajom+qoaBVWvI/o5yJYUTXtAcdgS/F3iXCD59b+2ARE=;
+        b=U936Qixe60vWzMVURSAw8RqVD016hKL3IrWdWxt3ZMSodiR8i6SGPvoyRwGTgCQATk
+         dTnNZdDc4s1hcBop0WYFE+4NAq2vKaCWEXt09j1di5EnLljLaddsK5kqgbyVtwfStBd8
+         7+8TEGurjTFRvfWGm2mV6CNDH9LKZVGuW1Lxq8LboLX+c2qLybWxXbG18L1WdRnvlhfQ
+         hG8K0WgV2pRnrUvFXcCojo8G1Wu6r7aYmessvdlxqMAtyIMQSFPIJWyN3SEg/FclMPBS
+         oENrbv62mwPOvNvSxOgIwBIBrkLT5/mZc/MWVpGVrvuDg6TGW94F/tFBhxjlnmCp9RHH
+         2OzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ajom+qoaBVWvI/o5yJYUTXtAcdgS/F3iXCD59b+2ARE=;
+        b=Si1Xh2MvwVD30XAZGyrKnqV+amJ47fSaxcsRE0Whw5yWYajEZDItdBT2oFtDcJur3V
+         7Kz+2ObY0/Nzr7DRRhYIzXcWYyUa9ChtCdVjprZPaX5dq891GQhM1++6F2Ra6a8zP/DR
+         CGf0AAaJtxPYSb2qxGpkM8Nf6S+VeUYgwbG0n03edpFvHfQ+Cs6ASwdH9BhCWJEzvBvh
+         ytEL/2csMOOAc85K+Snmwr2KYG1I/AYpSfyHblR61xSwjjHvsPnzU6lmEM+X7ecP7Qje
+         JXsZddK6uBY7fx+AXHLwnsvrlHhlPLaZZJ/xSPU/SsGauXwdbOE9C1xiZ+dkjcq7Y9px
+         DpFg==
+X-Gm-Message-State: AOAM531HMpqBt2ED6SediMHl9TZMXqBljflYJUCFAxRn7/VgTjw2lM3O
+        Vs6Prb0/8PpMv5UsMiEfHDdokxCyzwkoj/897L7TZw==
+X-Google-Smtp-Source: ABdhPJyXMS61jORQoueJSGAiIEgP7/O76pOuZO2+PRMPv2KLW56V6uSfLC1n+2k7X3AfIlpXZQbL+bB6VONbxFccCLo=
+X-Received: by 2002:a54:4590:: with SMTP id z16mr2825628oib.40.1615987249445;
+ Wed, 17 Mar 2021 06:20:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="23ldu23v25ksbcb5"
-Content-Disposition: inline
-In-Reply-To: <161594320095.1478170.16988206902476583714@swboyd.mtv.corp.google.com>
+References: <20210310052503.3618486-1-bhupesh.sharma@linaro.org>
+ <20210310052503.3618486-3-bhupesh.sharma@linaro.org> <20210316222825.GA3792517@robh.at.kernel.org>
+In-Reply-To: <20210316222825.GA3792517@robh.at.kernel.org>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Date:   Wed, 17 Mar 2021 18:50:38 +0530
+Message-ID: <CAH=2Ntw2dMaSYsx-Q=mXx_mMBr5PcmwhhBvTcmPYYKmy=rcCqw@mail.gmail.com>
+Subject: Re: [PATCH 2/8] dt-bindings: crypto : Add new compatible strings for qcom-qce
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhupesh.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Rob,
 
---23ldu23v25ksbcb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your review.
 
-On Tue, Mar 16, 2021 at 06:06:40PM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2021-03-03 00:45:27)
-> > Hi Stephen,
-> >=20
-> > On Tue, Mar 02, 2021 at 03:18:58PM -0800, Stephen Boyd wrote:
-> > > Quoting Maxime Ripard (2021-02-25 07:59:02)
-> > > > Some devices might need to access the current available range of a =
-clock
-> > > > to discover their capabilities. Let's add those accessors.
-> > >=20
-> > > This needs more than two sentences to describe what's required.
-> > >=20
-> > > >=20
-> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > > ---
-> > > >  drivers/clk/clk.c   | 30 ++++++++++++++++++++++++++++++
-> > > >  include/linux/clk.h | 16 ++++++++++++++++
-> > > >  2 files changed, 46 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index 8c1d04db990d..b7307d4f090d 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > @@ -2407,6 +2407,36 @@ int clk_set_max_rate(struct clk *clk, unsign=
-ed long rate)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(clk_set_max_rate);
-> > > > =20
-> > > > +long clk_get_min_rate(struct clk *clk)
-> > >=20
-> > > I need to read the rest of the patches but I don't see the justificat=
-ion
-> > > for this sort of API vs. having the consumer constrain the clk freque=
-ncy
-> > > that it wants. Is the code that's setting the min/max constraints not
-> > > the same as the code that's calling this API? Would an OPP table bett=
-er
-> > > serve this so the device knows what frequencies are valid?s Please
-> > > provide the use case/justification in the commit text.
-> >=20
-> > The patch that uses it is the patch 4
-> >=20
-> > The issue I'm trying to solve is that all the RaspberryPi have a
-> > configuration file for the firmware, and the firmware is in charge of
-> > the clocks communicating through a mailbox interface.
-> >=20
-> > By default, one of the main clocks in the system can only reach 500MHz,
-> > and that's the range reported by the firmware when queried. However, in
-> > order to support display modes with a fairly high bandwidth such as 4k
-> > at 60Hz, that clock needs to be raised to at least 550MHz, and the
-> > firmware configuration has a special parameter for that one. Setting
-> > that parameter will increase the range of the clock to have proper
-> > boundaries for that display mode.
-> >=20
-> > If a user doesn't enable it and tries to use those display modes, the
-> > display will be completely blank.
-> >=20
-> > There's no way to query the firmware configuration directly, so we can
-> > instead query the range of the clock and see if the firmware enables us
-> > to use those modes, warn the user and ignore the modes that wouldn't
-> > work. That's what those accessors are here for
->=20
-> How does the clk driver query the firmware but it can't be done
-> directly by the drm driver?=20
+On Wed, 17 Mar 2021 at 03:58, Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Mar 10, 2021 at 10:54:57AM +0530, Bhupesh Sharma wrote:
+> > Newer qcom chips support newer versions of the qce IP, so add
+> > new compatible strings for qcom-qce (in addition to the existing
+> > "qcom,crypto-v5.1").
+> >
+> > With [1], Thara tried to add the support for new compatible strings,
+> > but we couldn't conclude on the approach to be used. Since we have
+> > a number of new qcom arm64 SoCs available now, several of which
+> > support the same crypto IP version, so it makes more sense to use
+> > the IP version for the compatible string, rather than using the soc
+> > name as the compatible string.
+> >
+> > [1]. https://lore.kernel.org/linux-arm-msm/20201119155233.3974286-7-thara.gopinath@linaro.org/
+> >
+> > Cc: Thara Gopinath <thara.gopinath@linaro.org>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Andy Gross <agross@kernel.org>
+> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> > Cc: David S. Miller <davem@davemloft.net>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-crypto@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: bhupesh.linux@gmail.com
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/crypto/qcom-qce.txt | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.txt b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> > index 07ee1b12000b..217b37dbd58a 100644
+> > --- a/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> > +++ b/Documentation/devicetree/bindings/crypto/qcom-qce.txt
+> > @@ -2,7 +2,11 @@ Qualcomm crypto engine driver
+> >
+> >  Required properties:
+> >
+> > -- compatible  : should be "qcom,crypto-v5.1"
+> > +- compatible  : Supported versions are:
+> > +             - "qcom,crypto-v5.1", for ipq6018
+> > +             - "qcom,crypto-v5.4", for sdm845, sm8150
+>
+> 2 SoCs sharing 1 version doesn't convince me on using version numbers.
+> Having 4 versions for 5 SoCs further convinces me you should stick with
+> SoC specific compatibles as *everyone* else does (including most QCom
+> bindings).
 
-The configuration is done through a text file accessed by the firmware.
-What I meant was that the kernel cannot access the content of that file
-to make sure the right options have been enabled.
+Fair enough. I will add SoC specific compatibles in v2, which should
+be out shortly.
 
-However, it can indeed communicate with the firmware through the extent
-of the API it provides, but it's fairly limited. In our case, the only
-way to tell is to look for side effects of the configuration option, ie
-the maximum rate of the clock that has been increased.
+Regards,
+Bhupesh
 
-> > > Why two functions instead of one function to get both min and max?
-> >=20
-> > Since we have clk_set_min_rate and clk_set_max_rate, it made sense to me
-> > to mirror that, but I'd be happy to change if you think otherwise
->=20
-> Does using clk_round_rate() work just as well?
-
-I guess it could work too, I'll try it out
-
-Maxime
-
---23ldu23v25ksbcb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYFH+RAAKCRDj7w1vZxhR
-xTn+AP0eeKcFH5a9IEZWMRDaQf9BoLcamyE1qvq3VAwkdZ9S+QD+JLlEVK7b9TwI
-f7ZZ1kf7GGk38kE+DF6nSH3ae7+BxwE=
-=IVWD
------END PGP SIGNATURE-----
-
---23ldu23v25ksbcb5--
+> > +             - "qcom,crypto-v5.5", for sm8250
+> > +             - "qcom,crypto-v5.6", for sm8350
+> >  - reg         : specifies base physical address and size of the registers map
+> >  - clocks      : phandle to clock-controller plus clock-specifier pair
+> >  - clock-names : "iface" clocks register interface
+> > --
+> > 2.29.2
+> >
