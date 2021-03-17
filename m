@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7E7C43142
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD52C43332
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BEC764FB2
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76E7364F6E
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232138AbhCQOlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 10:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57648 "EHLO
+        id S232163AbhCQOk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 10:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232029AbhCQOku (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 10:40:50 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A88CC06174A
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:40:50 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id v2so3319596lft.9
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:40:50 -0700 (PDT)
+        with ESMTP id S232160AbhCQOkp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 10:40:45 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC74C061762
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:40:43 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 16so3438859ljc.11
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:40:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TscfKBluf79lgkugTpB2yP6anB28Zw6TF3a1Wvw1v4s=;
-        b=IW5geN+t0FtsrYDgc2LDTwbhVsnZfsKm8DkOHqFU0qH6fxXdoYo8F6WRu+bt+ckm0C
-         JV2vXpBlYPw5sZEVV+Pjv2/3AF5BAim9jX6M2dkRuuTBRunBq4gZ5umfAjlK+2LXTWxo
-         sLDdDF5/WWzqCSPUugI3ugNC4YpLFYsh1zysCX8a9pVaJQkFFarLa2J3a2EUTY0Gj+NT
-         jwZJPYQ3VCLlH7O1s0jMlDiNWK7CdfrC13oeoIHHLUIYc6n03UW8YLYel7mW5x5at5qk
-         kWfKx/IZWTUDuH2cUx5vpKLxASakfBPmknNcje/Y94DOEOtWsypVdy9mKhLhtOnIQC/P
-         DNSA==
+        bh=fvhlkx4xo48Lrm5ulhQx7P9OeXo+UeYdR2FET2xIgts=;
+        b=pnTeO43vRrTTIyH/0Kf9thZqUQDzE7amtRzGouGc2QcNAkg3xnnWiA5lgxsBccDHtd
+         m89FM+q6AIwCsWRO0YRZko+kyjxwE/5mo7ypDHy4haD1RosVlLBgcTiM/dvqxGcVo+Ur
+         Dk2zweHYjDZfH8FdcWhUtScz0I1ZGlALKjRhFZHW5762Bv2pvjjEqVViPYGS3M9ivRR9
+         ciY3txcksWbhjRxQ5S6SCmRQ2g45AsYckeWJEnTXb1eRiq0PbyxYUChTl9/cKx+cYsuP
+         W2nrulk+YgrZgxg7uNpOCED7WqL2YiQQKDfwCN849UVBbODaGTGCyHfNrdkmJukj8n+S
+         wQxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TscfKBluf79lgkugTpB2yP6anB28Zw6TF3a1Wvw1v4s=;
-        b=gAWGu/Df1Utb/wOtz/njfX0bxe4Os5V4lvW9quFT3SF2Ag4wS/w1hl20o3xnGY5U7m
-         PkW1MQaggdVMNfKxRiXzGT/oGKA/3R8hn8BC3qAjkXlKE8mqNpHo0fligpdUJt5v7ywP
-         dRtaVV63URJxOVo4SaaugCGNxwWpYbpQbtP1tNtZNmmxiWzKnwMtRfl0luUw+9Pi3rWv
-         9pTEigMA8EC720L6SJyKxSNEX05UOXYeiXnAHHB7VbyoILj28/P4ha6QXSXuzaTjj4fL
-         Eyl3Uhe3EdXDNmHct7FelkzfHcNp4PNJBItsDFsR874OxA17e7h0Gult9GPycTe6GMRp
-         Hr3A==
-X-Gm-Message-State: AOAM533mbbTtDg8oCJCf8lfO0Ip/tugFFrpIbwEKyTVWTHO98cD+Lnb9
-        XtO20nAItsR+3Tge63+7FhfqgQ==
-X-Google-Smtp-Source: ABdhPJwfRlob8sAfjR/prsGeAAbT2RIEOYxXCzaeV2xJVTUcd+7QqAGthfTCHrW0fP+DQnNZds9UNQ==
-X-Received: by 2002:ac2:51a4:: with SMTP id f4mr2469826lfk.411.1615992048092;
-        Wed, 17 Mar 2021 07:40:48 -0700 (PDT)
+        bh=fvhlkx4xo48Lrm5ulhQx7P9OeXo+UeYdR2FET2xIgts=;
+        b=b5CIcg/xa7YjKzFSLFUQcMP7mItpXcEwLpaRauBB5yCdwwDgCKX1X/NOY25qtY+iqu
+         b0384nx6qUaPG7+LSFij4z73UkneN0Qi8P6VVaJunn+YN3brCVOKWbIoUE9llwnXVBIm
+         V/4vuwRrMqbY2zURHTIqdz+6LnBVf3HhGWSIttbpjsPa87wLlJcb46MdhPC+TQx7Gavo
+         0MB/u5nnC1JX6j6KXeYvt6Omymac3n8V1M1wUj+0RkEOCe9lxkERUHkT9w5U7cCJEpK1
+         ZHvpD7bAmvOgIUoijH8m9JAHNRiJk/0tfD/M2wziQGybfgLQAPZAWrMNVhyx0NgRXQWf
+         G87Q==
+X-Gm-Message-State: AOAM533xN64rB2ZHtMlnnOsXm80JU0agRhj2w9W9Ollymwy+PK2SsE/p
+        8oAgHvZRfLlh0rU4r0Y+L/shZw==
+X-Google-Smtp-Source: ABdhPJzmCrc7lv3T+k1mtzhrq65ATRhhEHbFaPLQEu4C6EV5jaGVeVV69aSMLfrvvJH3IkW41dE2/Q==
+X-Received: by 2002:a2e:9151:: with SMTP id q17mr2578808ljg.107.1615992042332;
+        Wed, 17 Mar 2021 07:40:42 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id q8sm1484309lfc.223.2021.03.17.07.40.46
+        by smtp.gmail.com with ESMTPSA id q8sm1484309lfc.223.2021.03.17.07.40.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 07:40:47 -0700 (PDT)
+        Wed, 17 Mar 2021 07:40:41 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Jonathan Marek <jonathan@marek.ca>,
@@ -63,9 +63,9 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v1 06/26] drm/msm/dsi: move min/max PLL rate to phy config
-Date:   Wed, 17 Mar 2021 17:40:19 +0300
-Message-Id: <20210317144039.556409-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v1 01/26] clk: mux: provide devm_clk_hw_register_mux()
+Date:   Wed, 17 Mar 2021 17:40:14 +0300
+Message-Id: <20210317144039.556409-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210317144039.556409-1-dmitry.baryshkov@linaro.org>
 References: <20210317144039.556409-1-dmitry.baryshkov@linaro.org>
@@ -75,235 +75,99 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add devm_clk_hw_register_mux() - devres-managed version of
+clk_hw_register_mux().
+
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           |  3 +++
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      |  6 ++++--
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      |  6 ++++--
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 10 ++++++----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c |  4 ++--
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 12 ++++--------
- drivers/gpu/drm/msm/dsi/phy/dsi_pll.c           |  8 ++++----
- drivers/gpu/drm/msm/dsi/phy/dsi_pll.h           |  3 ---
- 8 files changed, 27 insertions(+), 25 deletions(-)
+ drivers/clk/clk-mux.c        | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h | 13 +++++++++++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-index 45ab2f23ac5b..ce2969c63927 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-@@ -43,6 +43,9 @@ struct msm_dsi_phy_cfg {
- 	struct msm_dsi_phy_ops ops;
- 	const struct msm_dsi_pll_ops pll_ops;
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index e54e79714818..20582aae7a35 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -8,6 +8,7 @@
+  */
  
-+	unsigned long	min_pll_rate;
-+	unsigned long	max_pll_rate;
-+
- 	/*
- 	 * Each cell {phy_id, pll_id} of the truth table indicates
- 	 * if the source PLL selection bit should be set for each PHY.
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-index 49eb1440a269..799d7f44cf6d 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-@@ -861,8 +861,6 @@ static int dsi_pll_10nm_init(struct msm_dsi_phy *phy)
- 	spin_lock_init(&pll_10nm->postdiv_lock);
- 
- 	pll = &pll_10nm->base;
--	pll->min_rate = 1000000000UL;
--	pll->max_rate = 3500000000UL;
- 	pll->cfg = phy->cfg;
- 
- 	pll_10nm->vco_delay = 1;
-@@ -1126,6 +1124,8 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs = {
- 		.restore_state = dsi_pll_10nm_restore_state,
- 		.set_usecase = dsi_pll_10nm_set_usecase,
- 	},
-+	.min_pll_rate = 1000000000UL,
-+	.max_pll_rate = 3500000000UL,
- 	.io_start = { 0xae94400, 0xae96400 },
- 	.num_dsi_phy = 2,
- };
-@@ -1152,6 +1152,8 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs = {
- 		.restore_state = dsi_pll_10nm_restore_state,
- 		.set_usecase = dsi_pll_10nm_set_usecase,
- 	},
-+	.min_pll_rate = 1000000000UL,
-+	.max_pll_rate = 3500000000UL,
- 	.io_start = { 0xc994400, 0xc996400 },
- 	.num_dsi_phy = 2,
- 	.quirks = V3_0_0_10NM_OLD_TIMINGS_QUIRK,
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-index 82e5d225d83e..cd66b01ad17d 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-@@ -1078,8 +1078,6 @@ static int dsi_pll_14nm_init(struct msm_dsi_phy *phy)
- 	spin_lock_init(&pll_14nm->postdiv_lock);
- 
- 	pll = &pll_14nm->base;
--	pll->min_rate = VCO_MIN_RATE;
--	pll->max_rate = VCO_MAX_RATE;
- 	pll->cfg = phy->cfg;
- 
- 	pll_14nm->vco_delay = 1;
-@@ -1253,6 +1251,8 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
- 		.disable_seq = dsi_pll_14nm_disable_seq,
- 		.enable_seq = dsi_pll_14nm_enable_seq,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0x994400, 0x996400 },
- 	.num_dsi_phy = 2,
- };
-@@ -1281,6 +1281,8 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
- 		.disable_seq = dsi_pll_14nm_disable_seq,
- 		.enable_seq = dsi_pll_14nm_enable_seq,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0xc994400, 0xc996000 },
- 	.num_dsi_phy = 2,
- };
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index 7330672d95c0..4ddb68f5a82a 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -622,8 +622,6 @@ static int dsi_pll_28nm_hpm_init(struct msm_dsi_phy *phy)
- 	}
- 
- 	pll = &pll_28nm->base;
--	pll->min_rate = VCO_MIN_RATE;
--	pll->max_rate = VCO_MAX_RATE;
- 	pll_28nm->vco_delay = 1;
- 
- 	pll->cfg = phy->cfg;
-@@ -664,8 +662,6 @@ static int dsi_pll_28nm_lp_init(struct msm_dsi_phy *phy)
- 	}
- 
- 	pll = &pll_28nm->base;
--	pll->min_rate = VCO_MIN_RATE;
--	pll->max_rate = VCO_MAX_RATE;
- 	pll_28nm->vco_delay = 1000;
- 
- 	pll->cfg = phy->cfg;
-@@ -849,6 +845,8 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs = {
- 		.disable_seq = dsi_pll_28nm_disable_seq,
- 		.enable_seq = dsi_pll_28nm_enable_seq_hpm,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0xfd922b00, 0xfd923100 },
- 	.num_dsi_phy = 2,
- };
-@@ -876,6 +874,8 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs = {
- 		.disable_seq = dsi_pll_28nm_disable_seq,
- 		.enable_seq = dsi_pll_28nm_enable_seq_hpm,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0x1a94400, 0x1a96400 },
- 	.num_dsi_phy = 2,
- };
-@@ -903,6 +903,8 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs = {
- 		.disable_seq = dsi_pll_28nm_disable_seq,
- 		.enable_seq = dsi_pll_28nm_enable_seq_lp,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0x1a98500 },
- 	.num_dsi_phy = 1,
- };
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-index d6f8b1ee868b..bd2582575a07 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-@@ -508,8 +508,6 @@ static int dsi_pll_28nm_8960_init(struct msm_dsi_phy *phy)
- 	}
- 
- 	pll = &pll_28nm->base;
--	pll->min_rate = VCO_MIN_RATE;
--	pll->max_rate = VCO_MAX_RATE;
- 
- 	pll->cfg = phy->cfg;
- 
-@@ -712,6 +710,8 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs = {
- 		.disable_seq = dsi_pll_28nm_disable_seq,
- 		.enable_seq = dsi_pll_28nm_enable_seq,
- 	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0x4700300, 0x5800300 },
- 	.num_dsi_phy = 2,
- };
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index e12f2f7a54ea..5e53682c4275 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -886,14 +886,6 @@ static int dsi_pll_7nm_init(struct msm_dsi_phy *phy)
- 	spin_lock_init(&pll_7nm->postdiv_lock);
- 
- 	pll = &pll_7nm->base;
--	pll->min_rate = 1000000000UL;
--	pll->max_rate = 3500000000UL;
--	if (phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
--		pll->min_rate = 600000000UL;
--		pll->max_rate = (unsigned long)5000000000ULL;
--		/* workaround for max rate overflowing on 32-bit builds: */
--		pll->max_rate = max(pll->max_rate, 0xffffffffUL);
--	}
- 	pll->cfg = phy->cfg;
- 
- 	pll_7nm->vco_delay = 1;
-@@ -1165,6 +1157,8 @@ const struct msm_dsi_phy_cfg dsi_phy_7nm_cfgs = {
- 		.restore_state = dsi_pll_7nm_restore_state,
- 		.set_usecase = dsi_pll_7nm_set_usecase,
- 	},
-+	.min_pll_rate = 1000000000UL,
-+	.max_pll_rate = 3500000000UL,
- 	.io_start = { 0xae94400, 0xae96400 },
- 	.num_dsi_phy = 2,
- };
-@@ -1191,6 +1185,8 @@ const struct msm_dsi_phy_cfg dsi_phy_7nm_8150_cfgs = {
- 		.restore_state = dsi_pll_7nm_restore_state,
- 		.set_usecase = dsi_pll_7nm_set_usecase,
- 	},
-+	.min_pll_rate = 600000000UL,
-+	.max_pll_rate = (5000000000ULL < ULONG_MAX) ? 5000000000ULL : ULONG_MAX,
- 	.io_start = { 0xae94400, 0xae96400 },
- 	.num_dsi_phy = 2,
- };
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
-index c7ff0eba0e8b..e607adffe001 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.c
-@@ -14,10 +14,10 @@ long msm_dsi_pll_helper_clk_round_rate(struct clk_hw *hw,
- {
- 	struct msm_dsi_pll *pll = hw_clk_to_pll(hw);
- 
--	if      (rate < pll->min_rate)
--		return  pll->min_rate;
--	else if (rate > pll->max_rate)
--		return  pll->max_rate;
-+	if      (rate < pll->cfg->min_pll_rate)
-+		return  pll->cfg->min_pll_rate;
-+	else if (rate > pll->cfg->max_pll_rate)
-+		return  pll->cfg->max_pll_rate;
- 	else
- 		return rate;
+ #include <linux/clk-provider.h>
++#include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+@@ -206,6 +207,40 @@ struct clk_hw *__clk_hw_register_mux(struct device *dev, struct device_node *np,
  }
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
-index 4fa73fbcba52..8306911f8318 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_pll.h
-@@ -18,9 +18,6 @@ struct msm_dsi_pll {
- 	bool		pll_on;
- 	bool		state_saved;
+ EXPORT_SYMBOL_GPL(__clk_hw_register_mux);
  
--	unsigned long	min_rate;
--	unsigned long	max_rate;
--
- 	const struct msm_dsi_phy_cfg *cfg;
- };
++static void devm_clk_hw_release_mux(struct device *dev, void *res)
++{
++	clk_hw_unregister_mux(*(struct clk_hw **)res);
++}
++
++struct clk_hw *__devm_clk_hw_register_mux(struct device *dev, struct device_node *np,
++		const char *name, u8 num_parents,
++		const char * const *parent_names,
++		const struct clk_hw **parent_hws,
++		const struct clk_parent_data *parent_data,
++		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
++{
++	struct clk_hw **ptr, *hw;
++
++	ptr = devres_alloc(devm_clk_hw_release_mux, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hw = __clk_hw_register_mux(dev, np, name, num_parents, parent_names, parent_hws,
++				       parent_data, flags, reg, shift, mask,
++				       clk_mux_flags, table, lock);
++
++	if (!IS_ERR(hw)) {
++		*ptr = hw;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hw;
++}
++EXPORT_SYMBOL_GPL(__devm_clk_hw_register_mux);
++
+ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 58f6fe866ae9..3eb15e0262f5 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -868,6 +868,13 @@ struct clk_hw *__clk_hw_register_mux(struct device *dev, struct device_node *np,
+ 		const struct clk_parent_data *parent_data,
+ 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
+ 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
++struct clk_hw *__devm_clk_hw_register_mux(struct device *dev, struct device_node *np,
++		const char *name, u8 num_parents,
++		const char * const *parent_names,
++		const struct clk_hw **parent_hws,
++		const struct clk_parent_data *parent_data,
++		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
+ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 shift, u32 mask,
+@@ -902,6 +909,12 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 	__clk_hw_register_mux((dev), NULL, (name), (num_parents), NULL, NULL, \
+ 			      (parent_data), (flags), (reg), (shift),	      \
+ 			      BIT((width)) - 1, (clk_mux_flags), NULL, (lock))
++#define devm_clk_hw_register_mux(dev, name, parent_names, num_parents, flags, reg, \
++			    shift, width, clk_mux_flags, lock)		      \
++	__devm_clk_hw_register_mux((dev), NULL, (name), (num_parents),	      \
++			      (parent_names), NULL, NULL, (flags), (reg),     \
++			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
++			      NULL, (lock))
  
+ int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
+ 			 unsigned int val);
 -- 
 2.30.2
 
