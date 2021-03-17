@@ -2,128 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A95C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 01:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B33AC433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 01:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B17364F96
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 01:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009FD64F92
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 01:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231209AbhCQBH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Mar 2021 21:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232374AbhCQBGm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Mar 2021 21:06:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 46A0964EFC;
-        Wed, 17 Mar 2021 01:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615943202;
-        bh=etM6EonOQ37rooBRvfkW08PwTfwbsMEucMYsLYsb6ro=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RC+JJ7wV3hCa2TZIbGKAwIGF5N2+2ir1/MgU6Hw9GVXkvF0fZEB+mvgpMULsGPOg1
-         a81so27BuA2Y4cuqwQ/wm2pjbNHp7Hmuxoxdks/IKoG+rU9MxOBEK8yO97GBuvKKBO
-         47pT0sknrQUs6FCiQLuI58ylgkJUXhiieYLqZsv+zaavuyngMu/L10uCSdyQvnTpbP
-         R505CpJKh1DEiplMQX9xIPaePR0y1m0JyndnxfUI9Hu9HRrgt/hlNEW1OfaXmKGpTR
-         m1G6BPLz6jlWsUkNS6GrSUgmvwIQ0gMpB9TxC7+2oZdg1DPfvYTHotqUoZ8rgKKVJL
-         K7xANRuJpFCZg==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210303084527.rziaoiqsr7r4bhcv@gilmour>
-References: <20210225155909.1853812-1-maxime@cerno.tech> <20210225155909.1853812-2-maxime@cerno.tech> <161472713858.1478170.9594904338107431350@swboyd.mtv.corp.google.com> <20210303084527.rziaoiqsr7r4bhcv@gilmour>
-Subject: Re: [PATCH 1/8] clk: Add range accessors
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        Phil Elwell <phil@raspberrypi.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-To:     Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 16 Mar 2021 18:06:40 -0700
-Message-ID: <161594320095.1478170.16988206902476583714@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        id S229865AbhCQB1r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Mar 2021 21:27:47 -0400
+Received: from a0.mail.mailgun.net ([198.61.254.59]:46751 "EHLO
+        a0.mail.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229739AbhCQB1n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Mar 2021 21:27:43 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1615944462; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=prRJqyplMooPFtSjbrDtYPwI/727BjBuJlZh58u9B08=; b=YJ4JgIwyxBnnnY8txYpQvdOwHZ2KFoln0IjamdERH6BsKIH5DqgoaB2daIk9CpLGQJDKpXCT
+ yezYZebX6q269JBPF9mVp02nW2FN34S7eNJZpi68+cPp0M/hoSR5VN8/MKtA1Eruzr+Dj7ss
+ 6uDIDv3pBo1Mt/k8Es4zY97jBwI=
+X-Mailgun-Sending-Ip: 198.61.254.59
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
+ 605159db4db3bb6801177d4f (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 17 Mar 2021 01:22:35
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 09110C433CA; Wed, 17 Mar 2021 01:22:35 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 78E66C433C6;
+        Wed, 17 Mar 2021 01:22:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78E66C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/6] Add support for DISP/VIDEO/GPU CCs for SC7280
+Date:   Wed, 17 Mar 2021 06:52:16 +0530
+Message-Id: <1615944142-12171-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2021-03-03 00:45:27)
-> Hi Stephen,
->=20
-> On Tue, Mar 02, 2021 at 03:18:58PM -0800, Stephen Boyd wrote:
-> > Quoting Maxime Ripard (2021-02-25 07:59:02)
-> > > Some devices might need to access the current available range of a cl=
-ock
-> > > to discover their capabilities. Let's add those accessors.
-> >=20
-> > This needs more than two sentences to describe what's required.
-> >=20
-> > >=20
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > ---
-> > >  drivers/clk/clk.c   | 30 ++++++++++++++++++++++++++++++
-> > >  include/linux/clk.h | 16 ++++++++++++++++
-> > >  2 files changed, 46 insertions(+)
-> > >=20
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 8c1d04db990d..b7307d4f090d 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -2407,6 +2407,36 @@ int clk_set_max_rate(struct clk *clk, unsigned=
- long rate)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(clk_set_max_rate);
-> > > =20
-> > > +long clk_get_min_rate(struct clk *clk)
-> >=20
-> > I need to read the rest of the patches but I don't see the justification
-> > for this sort of API vs. having the consumer constrain the clk frequency
-> > that it wants. Is the code that's setting the min/max constraints not
-> > the same as the code that's calling this API? Would an OPP table better
-> > serve this so the device knows what frequencies are valid?s Please
-> > provide the use case/justification in the commit text.
->=20
-> The patch that uses it is the patch 4
->=20
-> The issue I'm trying to solve is that all the RaspberryPi have a
-> configuration file for the firmware, and the firmware is in charge of
-> the clocks communicating through a mailbox interface.
->=20
-> By default, one of the main clocks in the system can only reach 500MHz,
-> and that's the range reported by the firmware when queried. However, in
-> order to support display modes with a fairly high bandwidth such as 4k
-> at 60Hz, that clock needs to be raised to at least 550MHz, and the
-> firmware configuration has a special parameter for that one. Setting
-> that parameter will increase the range of the clock to have proper
-> boundaries for that display mode.
->=20
-> If a user doesn't enable it and tries to use those display modes, the
-> display will be completely blank.
->=20
-> There's no way to query the firmware configuration directly, so we can
-> instead query the range of the clock and see if the firmware enables us
-> to use those modes, warn the user and ignore the modes that wouldn't
-> work. That's what those accessors are here for
+Add support for display, video & graphics clock controllers on SC7280
+along with the bindings for each of the clock controllers.
 
-How does the clk driver query the firmware but it can't be done
-directly by the drm driver?=20
+Taniya Das (6):
+  dt-bindings: clock: Add SC7280 DISPCC clock binding
+  clk: qcom: Add display clock controller driver for SC7280
+  dt-bindings: clock: Add SC7280 GPUCC clock binding
+  clk: qcom: Add graphics clock controller driver for SC7280
+  dt-bindings: clock: Add SC7280 VideoCC clock binding
+  clk: qcom: Add video clock controller driver for SC7280
 
->=20
-> > Why two functions instead of one function to get both min and max?
->=20
-> Since we have clk_set_min_rate and clk_set_max_rate, it made sense to me
-> to mirror that, but I'd be happy to change if you think otherwise
->=20
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |   4 +-
+ .../bindings/clock/qcom,sc7280-dispcc.yaml         |  94 +++
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |   4 +-
+ drivers/clk/qcom/Kconfig                           |  25 +
+ drivers/clk/qcom/Makefile                          |   3 +
+ drivers/clk/qcom/dispcc-sc7280.c                   | 908 +++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sc7280.c                    | 491 +++++++++++
+ drivers/clk/qcom/videocc-sc7280.c                  | 372 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sc7280.h     |  55 ++
+ include/dt-bindings/clock/qcom,gpucc-sc7280.h      |  35 +
+ include/dt-bindings/clock/qcom,videocc-sc7280.h    |  27 +
+ 11 files changed, 2016 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sc7280.c
+ create mode 100644 drivers/clk/qcom/gpucc-sc7280.c
+ create mode 100644 drivers/clk/qcom/videocc-sc7280.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7280.h
 
-Does using clk_round_rate() work just as well?
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
