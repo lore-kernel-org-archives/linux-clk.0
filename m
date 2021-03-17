@@ -2,94 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AE1C2BB1F
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 17:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F371EC433E6
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 19:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AFE764FAB
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 17:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACFC864E98
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 19:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231809AbhCQRdH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 13:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
+        id S233191AbhCQTbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 15:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231465AbhCQRc6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 13:32:58 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D21C06174A;
-        Wed, 17 Mar 2021 10:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=M2U69fnHtSDeQy8UM59zhzg/Vai3uTHHXB9W3I5zXPg=; b=gBs8YaMxW+u/Tsz1jBGmoQpZsZ
-        jPW07LUYgAwo3GS74aRF+JVVxN2JW7QMAeBUcVDI0EHjNfP+jbHaORzfLlgNviDrVBSrXhKeu3qpf
-        ZMm2Gw7QXAf1hO7JKLnhEiFvncqd6lXeJa9qaYQLjYVXDIj+kjlc9h6QaxOnD2R6Rdjo/roAjiBNj
-        DAyNTSC/isoGJoji7buiqtrej7vcHGo4DPh77d0SeJHIlCMUrJSyE+sTKLhxrJucrHeWIEtlkdSyh
-        VAVZ117uCMZmTh3w32DiTfc1To3BcP0W4UuoBuTIAYpikXzpMKPCbXutWMKvBMKJ9BaKObQKUuheK
-        peq9IHwA==;
-Received: from [2601:1c0:6280:3f0::9757]
-        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
-        id 1lMa2Q-001fTl-TX; Wed, 17 Mar 2021 17:32:56 +0000
-Subject: Re: [PATCH] devicetree: bindings: clock: Minor typo fix in the file
- armada3700-tbg-clock.txt
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S233112AbhCQTbY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 15:31:24 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E18AC06174A;
+        Wed, 17 Mar 2021 12:31:23 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id m12so683381lfq.10;
+        Wed, 17 Mar 2021 12:31:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=73TjCXjVrkI58MW+Nim3q1ayD1X0BXNWSG6Q1INh2NQ=;
+        b=e/lOgyIE+jGT4cotYrNiAE+c+4C5ZYHt4ordarHogFxS99/5oUnB5b+XfsWV8VOqYn
+         FGlbzgIwQzzjKCh+tI8FEEBeRUAuibv7OQGwBxUo6aYA9CEKROF75qKqIXqOVzQJ6tST
+         LslAhdhuc1Rx71KCa1Fp6mEi6z/r72alvwzNd+EnKJTcR0w6QTKjveelq5j/ydwryZZI
+         7kznsPz6GXVXIWpF/0ao4nl4wAwQaiPy5L6LT0EtqdEAfU8TTD3KONmpozF8UhnAD1Uw
+         Ly45v+dsIxB8at6hf5TBcR+gEG5Df50ObdCYKkG2mQE+w1hVv8tO1xmSzio+tUtivB0W
+         b++Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=73TjCXjVrkI58MW+Nim3q1ayD1X0BXNWSG6Q1INh2NQ=;
+        b=GeZiO+zCz/4uuT00aX5G8P6jL62zgLfqwkJKpRjWu9W1B+QCv0Sm76MAeqc1HDJhQp
+         lNmVfS+Z9LfpKhpOpy/IUa2zhcBEv5XZGbQ1MdNu6hj61ANCOJftNPrqDj9n37sEh3sn
+         yq6CeqxMqQu0qLy7wpGqktRe4ExXcBhpMfJNkiUeKbI83BckEUu1cfu2j8DtfErmDPuB
+         1wni9eQ2vFKHk9ibcYWAhnuuGkC5pBf3Hi1j5Hb+qthNIl6g04baE/pwJWpBqYu3YAsr
+         YkUmrjUfMkBtsiFrQqYNKcJYWowbw1AVqBZnXsq5RKCteJXzBa3u+ylSOrPf4WREEYaU
+         a38Q==
+X-Gm-Message-State: AOAM532kV70/wHnu7a+NkWM8EW2t/iK6MRmdnLzzQ6gFtrLgutWTQTos
+        uedK/F4V+OXE3/khX8UHzt0=
+X-Google-Smtp-Source: ABdhPJw570vvk63jmImjLYg9KSlx1saOpjJ0148MYcR6pgOd66+xlrMJNj57vGDtjOEU62JLasEjIA==
+X-Received: by 2002:ac2:5c0a:: with SMTP id r10mr3013997lfp.47.1616009482197;
+        Wed, 17 Mar 2021 12:31:22 -0700 (PDT)
+Received: from localhost.localdomain (109-252-193-52.dynamic.spd-mgts.ru. [109.252.193.52])
+        by smtp.gmail.com with ESMTPSA id q24sm3623098lji.40.2021.03.17.12.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 12:31:21 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-References: <20210317100840.2449462-1-unixbhaskar@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <546989ea-c6b2-42e4-46b2-d7de5d208728@infradead.org>
-Date:   Wed, 17 Mar 2021 10:32:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v5 0/7] Couple improvements for Tegra clk driver
+Date:   Wed, 17 Mar 2021 22:29:59 +0300
+Message-Id: <20210317193006.29633-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20210317100840.2449462-1-unixbhaskar@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/17/21 3:08 AM, Bhaskar Chowdhury wrote:
-> 
-> s/provde/provide/
-> 
-> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+This series fixes couple minor standalone problems of the Tegra clk
+driver.
 
-Bhaskar,
+Changelog:
 
-Did you send this one to "robh+dt@kernel.org"?
-AFAICT, it was sent to "dt@kernel.org", which bounces.
+v5: - Corrected example in the schema binding to silence dt_binding_check
+      warning.
 
-If you used "robh+dt@kernel.org", it appears that 'get send-email' has a problem with that.
+    - The Tegra124 binding is factored out into standalone binding since
+      Tegra124 has properties that aren't used by other SoCs and I couldn't
+      figure out how to make them conditional in schema.
 
-thanks.
+v4: - Added new patch that converts DT bindings to schema.
 
-> ---
->  .../devicetree/bindings/clock/armada3700-tbg-clock.txt          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-> index 0ba1d83ff363..ed1df32c577a 100644
-> --- a/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/armada3700-tbg-clock.txt
-> @@ -1,6 +1,6 @@
->  * Time Base Generator Clock bindings for Marvell Armada 37xx SoCs
-> 
-> -Marvell Armada 37xx SoCs provde Time Base Generator clocks which are
-> +Marvell Armada 37xx SoCs provide Time Base Generator clocks which are
->  used as parent clocks for the peripheral clocks.
-> 
->  The TBG clock consumer should specify the desired clock by having the
-> --
+v3: - Added acks from Thierry Reding that he gave to v2.
 
+    - Added new patch "clk: tegra: Don't allow zero clock rate for PLLs".
+
+v2: - Added these new patches:
+
+      clk: tegra: Halve SCLK rate on Tegra20
+      MAINTAINERS: Hand Tegra clk driver to Jon and Thierry
+
+v1: - Collected clk patches into a single series.
+
+Dmitry Osipenko (7):
+  clk: tegra30: Use 300MHz for video decoder by default
+  clk: tegra: Fix refcounting of gate clocks
+  clk: tegra: Ensure that PLLU configuration is applied properly
+  clk: tegra: Halve SCLK rate on Tegra20
+  MAINTAINERS: Hand Tegra clk driver to Jon and Thierry
+  clk: tegra: Don't allow zero clock rate for PLLs
+  dt-bindings: clock: tegra: Convert to schema
+
+ CREDITS                                       |   6 +
+ .../bindings/clock/nvidia,tegra114-car.txt    |  63 ----------
+ .../bindings/clock/nvidia,tegra124-car.txt    | 107 ----------------
+ .../bindings/clock/nvidia,tegra124-car.yaml   | 115 ++++++++++++++++++
+ .../bindings/clock/nvidia,tegra20-car.txt     |  63 ----------
+ .../bindings/clock/nvidia,tegra20-car.yaml    |  69 +++++++++++
+ .../bindings/clock/nvidia,tegra210-car.txt    |  56 ---------
+ .../bindings/clock/nvidia,tegra30-car.txt     |  63 ----------
+ MAINTAINERS                                   |   4 +-
+ drivers/clk/tegra/clk-periph-gate.c           |  72 +++++++----
+ drivers/clk/tegra/clk-periph.c                |  11 ++
+ drivers/clk/tegra/clk-pll.c                   |  12 +-
+ drivers/clk/tegra/clk-tegra20.c               |   6 +-
+ drivers/clk/tegra/clk-tegra30.c               |   2 +-
+ 14 files changed, 261 insertions(+), 388 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
 
 -- 
-~Randy
+2.30.2
 
