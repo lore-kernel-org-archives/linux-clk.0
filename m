@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C00FC28E86
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7129AC28E85
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EECAE64F40
+	by mail.kernel.org (Postfix) with ESMTP id 45B5964F6E
 	for <linux-clk@archiver.kernel.org>; Wed, 17 Mar 2021 14:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232193AbhCQOlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 10:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57786 "EHLO
+        id S232105AbhCQOlh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 10:41:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231842AbhCQOlH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 10:41:07 -0400
+        with ESMTP id S232311AbhCQOlE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 10:41:04 -0400
 Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75C5C06174A
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:41:06 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id f26so3462221ljp.8
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:41:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EA0C06175F
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:41:04 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id z8so3429499ljm.12
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 07:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nP3iOBLM5ZoU4QmpwHMaEerumnNqXyVrKcIMHPiRyvY=;
-        b=vXINXGezd16NvLEurZ0oNmR4aAe9/hKNo7nJ6AOwIZoxJ3jyxlxrQx6OA1UH9riGag
-         F3yprPV0YrC4cS0Swt15sILo9p+zO/Cvso9F/tOUIsqwd8wN1A06SRDtB3hzC6Yz+kXK
-         rAetYTtE/Kk/mZeDuW3aO+YLAwD6lX6596S5cycgBq2psbhhRROVlW13xsmL2ombTjwr
-         sq0YvIS9M80byVaqbHenpBq2BKwYOdqwsQ6t3trioP+yMNrvsqz0bKItVAhYxBM4giHP
-         jGFOnMrJ7J1AnAVFWBdluaT1qtirzKOUbvOWHE32k5Y8XqTqnB6ueuaDH28l5ye3biVB
-         kAMQ==
+        bh=ISGEhZuLbLQY8UAM/Rab/o4eDKv8PVCCKbP7LOJlN5o=;
+        b=WHMVlR7WPhoo/4r0OHfwTZltqlgvy/8NKgDY1yW3mZQv3TC7Rrol07MxOPLXQw8+FH
+         4p8eD1RS/vB4TUtcqFSKk0Tsa1WccObgl63qVPkinXvOH+cDc7sofAcZTsTgcfUTcq4y
+         O2S6R9CWgGlne0mzRhWpRyDxQrb3+hnwiokQAnJdtu9b2dtSjcfZ0qSzeNExExLKpohD
+         Hwa23tq//0veb62nmUVJ7fHdw9rsmI/Xlri7Dz8uzMZEW8rse0zlRchiHpNFvToN8Gj6
+         khzmYrFzHwHTBSGl7U94Y2Ah5HecelyZAGSPihMr1ZL3Xwt0YYC6AEJc9ieMnbw/jj4r
+         +pGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nP3iOBLM5ZoU4QmpwHMaEerumnNqXyVrKcIMHPiRyvY=;
-        b=U1SWxhrDIUyzTu8RgO5tiEVVpVDhKBw7rWLhAE8lK7DO283zFLC2oJFeiA9wx/TacC
-         MXdbeX/Z6ND14RECSmxIk3MqIW7YOYm1Sw5kptnnfCTGVB75+wnG1FbEPlikVDq2MFRs
-         mzLeMesg/6epQplW4jB4E/AVNz6JJJXhrHwx6jyq8x15ooAv0Y1g+Ppmzn2iY3DJJPKs
-         WlX/xTtC9uaUReMIhbBnto6K3yXc94JwdJXGqyt0U7RLo1lXIXVYQi4f2J34Bb0XzS0j
-         lYTYx9ay7PZZjUoQSv3qB6eZmEHqr+PIJGbtBrnKOZTxfmTdQBhfuneMsDIe0iBAE9Em
-         cQHA==
-X-Gm-Message-State: AOAM532Tc88356K32yRWqLCkBwWedU70CZBuacgSXF+egssGz0dacwez
-        6G+paS8Z/j2BbCprW1v/x4KlrA==
-X-Google-Smtp-Source: ABdhPJxBMufC0eJRqfossH8WhoVXcTKzaLNhm70/Ox8eF+oJWJoYX+yFgbbquGaMsSbah6BxdlFDmw==
-X-Received: by 2002:a2e:8e91:: with SMTP id z17mr2617073ljk.384.1615992065390;
-        Wed, 17 Mar 2021 07:41:05 -0700 (PDT)
+        bh=ISGEhZuLbLQY8UAM/Rab/o4eDKv8PVCCKbP7LOJlN5o=;
+        b=jnHVn54jZAc0mFQT0Vo0Vp8pVTt5vuvR63QSVrqcXoFmy+RT9j4FxdPG5FKbvuHICQ
+         +zbQgdyIdLypzzGlllYFRJnjLMalMV4ihx9hy34SrelU1746gLVWdQJa+WOqB/CCvcZW
+         X2KItMTZ7r7LGGIER68B+lwLeUNkvCFllv+alqHlM/79ScIonmTb77J1/tdVsF9oPAph
+         p/xc3bkw+9355yYxhzfvHBJimHUqvAFliFV2eSqMCEMHKSnqx2jSptYHxA2S6XhLZbtH
+         7dLAYMcGw9GHCo3BMRmzCgG719OA28WEZLqr10Lx86PX8E91CDJ9pQirHjUvGLmAKKGL
+         XirQ==
+X-Gm-Message-State: AOAM533cjP5OAvfPfNZvitytHDdO2vS6ObNJAPJtwhqEQRRAp1kRtsGU
+        wI2ledVJNR4LglhGLhaGYSeqPg==
+X-Google-Smtp-Source: ABdhPJzqs0EBono6BVMsH1vVf9rGtDi+iWxoPRS21qLyrsnaDBNYKpZpMYp/OV/s8yWLaoeXGNvkXg==
+X-Received: by 2002:a2e:800b:: with SMTP id j11mr2728105ljg.94.1615992062483;
+        Wed, 17 Mar 2021 07:41:02 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id q8sm1484309lfc.223.2021.03.17.07.41.04
+        by smtp.gmail.com with ESMTPSA id q8sm1484309lfc.223.2021.03.17.07.41.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 07:41:05 -0700 (PDT)
+        Wed, 17 Mar 2021 07:41:02 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         Jonathan Marek <jonathan@marek.ca>,
@@ -63,9 +63,9 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v1 24/26] drm/msm/dsi: drop global msm_dsi_phy_type enumaration
-Date:   Wed, 17 Mar 2021 17:40:37 +0300
-Message-Id: <20210317144039.556409-25-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v1 21/26] drm/msm/dsi: move ioremaps to dsi_phy_driver_probe
+Date:   Wed, 17 Mar 2021 17:40:34 +0300
+Message-Id: <20210317144039.556409-22-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210317144039.556409-1-dmitry.baryshkov@linaro.org>
 References: <20210317144039.556409-1-dmitry.baryshkov@linaro.org>
@@ -75,317 +75,975 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With the current upstream driver the msm_dsi_phy_type enum does not make
-much sense: all DSI PHYs are probed using the dt bindings, the phy type
-is not passed between drivers. Use quirks in phy individual PHY drivers
-to differentiate minor harware differences and drop the enum.
+All PHY drivers would map dsi_pll area. Some PHY drivers would also
+map dsi_phy area again (a leftover from old PHY/PLL separation). Move
+all ioremaps to the common dsi_phy driver code and drop individual
+ioremapped areas from PHY drivers.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi.h                  | 12 ------------
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h          |  4 ----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c     | 11 ++++++-----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c     |  2 --
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c     |  1 -
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c     | 15 ++++++++-------
- .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c    |  1 -
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c      | 18 ++++++++++--------
- 8 files changed, 24 insertions(+), 40 deletions(-)
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c         |  7 ++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h         |  1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 75 +++++++-----------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    | 49 ++++--------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 40 +++-------
+ .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 27 +++----
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 79 ++++++++-----------
+ 7 files changed, 108 insertions(+), 170 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
-index 351bfbeb53bd..5c32ee2b3605 100644
---- a/drivers/gpu/drm/msm/dsi/dsi.h
-+++ b/drivers/gpu/drm/msm/dsi/dsi.h
-@@ -23,18 +23,6 @@
- struct msm_dsi_phy_shared_timings;
- struct msm_dsi_phy_clk_request;
- 
--enum msm_dsi_phy_type {
--	MSM_DSI_PHY_28NM_HPM,
--	MSM_DSI_PHY_28NM_LP,
--	MSM_DSI_PHY_20NM,
--	MSM_DSI_PHY_28NM_8960,
--	MSM_DSI_PHY_14NM,
--	MSM_DSI_PHY_10NM,
--	MSM_DSI_PHY_7NM,
--	MSM_DSI_PHY_7NM_V4_1,
--	MSM_DSI_PHY_MAX
--};
--
- enum msm_dsi_phy_usecase {
- 	MSM_DSI_PHY_STANDALONE,
- 	MSM_DSI_PHY_MASTER,
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-index 0aa2729ed4b5..8e828c5ca8f4 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-@@ -17,9 +17,6 @@
- #define dsi_phy_write_udelay(offset, data, delay_us) { msm_writel((data), (offset)); udelay(delay_us); }
- #define dsi_phy_write_ndelay(offset, data, delay_ns) { msm_writel((data), (offset)); ndelay(delay_ns); }
- 
--/* v3.0.0 10nm implementation that requires the old timings settings */
--#define V3_0_0_10NM_OLD_TIMINGS_QUIRK	BIT(0)
--
- struct msm_dsi_phy_ops {
- 	int (*pll_init)(struct msm_dsi_phy *phy);
- 	int (*enable)(struct msm_dsi_phy *phy, int src_pll_id,
-@@ -30,7 +27,6 @@ struct msm_dsi_phy_ops {
- };
- 
- struct msm_dsi_phy_cfg {
--	enum msm_dsi_phy_type type;
- 	struct dsi_reg_config reg_cfg;
- 	struct msm_dsi_phy_ops ops;
- 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-index d402a2fa487c..e7039486c3af 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-@@ -38,6 +38,9 @@
- #define VCO_REF_CLK_RATE		19200000
- #define FRAC_BITS 18
- 
-+/* v3.0.0 10nm implementation that requires the old timings settings */
-+#define DSI_PHY_10NM_QUIRK_OLD_TIMINGS	BIT(0)
-+
- struct dsi_pll_config {
- 	bool enable_ssc;
- 	bool ssc_center;
-@@ -741,7 +744,7 @@ static void dsi_phy_hw_v3_0_lane_settings(struct msm_dsi_phy *phy)
- 	u8 tx_dctrl[] = { 0x00, 0x00, 0x00, 0x04, 0x01 };
- 	void __iomem *lane_base = phy->lane_base;
- 
--	if (phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK)
-+	if (phy->cfg->quirks & DSI_PHY_10NM_QUIRK_OLD_TIMINGS)
- 		tx_dctrl[3] = 0x02;
- 
- 	/* Strength ctrl settings */
-@@ -776,7 +779,7 @@ static void dsi_phy_hw_v3_0_lane_settings(struct msm_dsi_phy *phy)
- 			      tx_dctrl[i]);
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+index 2ef9abaf052d..5b1cba4ba672 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+@@ -682,6 +682,13 @@ static int dsi_phy_driver_probe(struct platform_device *pdev)
+ 		goto fail;
  	}
  
--	if (!(phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK)) {
-+	if (!(phy->cfg->quirks & DSI_PHY_10NM_QUIRK_OLD_TIMINGS)) {
- 		/* Toggle BIT 0 to release freeze I/0 */
- 		dsi_phy_write(lane_base + REG_DSI_10nm_PHY_LN_TX_DCTRL(3), 0x05);
- 		dsi_phy_write(lane_base + REG_DSI_10nm_PHY_LN_TX_DCTRL(3), 0x04);
-@@ -916,7 +919,6 @@ static void dsi_10nm_phy_disable(struct msm_dsi_phy *phy)
++	phy->pll_base = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
++	if (IS_ERR(phy->pll_base)) {
++		DRM_DEV_ERROR(&pdev->dev, "%s: failed to map pll base\n", __func__);
++		ret = -ENOMEM;
++		goto fail;
++	}
++
+ 	if (phy->cfg->has_phy_lane) {
+ 		phy->lane_base = msm_ioremap(pdev, "dsi_phy_lane", "DSI_PHY_LANE");
+ 		if (IS_ERR(phy->lane_base)) {
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+index 43c4b43cb41f..0aa2729ed4b5 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+@@ -92,6 +92,7 @@ struct msm_dsi_dphy_timing {
+ struct msm_dsi_phy {
+ 	struct platform_device *pdev;
+ 	void __iomem *base;
++	void __iomem *pll_base;
+ 	void __iomem *reg_base;
+ 	void __iomem *lane_base;
+ 	int id;
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+index 6eb18a159bf5..d2f483d6d343 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+@@ -88,9 +88,6 @@ struct dsi_pll_10nm {
+ 
+ 	struct msm_dsi_phy *phy;
+ 
+-	void __iomem *phy_cmn_mmio;
+-	void __iomem *mmio;
+-
+ 	u64 vco_ref_clk_rate;
+ 	u64 vco_current_rate;
+ 
+@@ -225,7 +222,7 @@ static void dsi_pll_calc_ssc(struct dsi_pll_10nm *pll)
+ 
+ static void dsi_pll_ssc_commit(struct dsi_pll_10nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	struct dsi_pll_regs *regs = &pll->reg_setup;
+ 
+ 	if (pll->pll_configuration.enable_ssc) {
+@@ -250,7 +247,7 @@ static void dsi_pll_ssc_commit(struct dsi_pll_10nm *pll)
+ 
+ static void dsi_pll_config_hzindep_reg(struct dsi_pll_10nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 
+ 	dsi_phy_write(base + REG_DSI_10nm_PHY_PLL_ANALOG_CONTROLS_ONE, 0x80);
+ 	dsi_phy_write(base + REG_DSI_10nm_PHY_PLL_ANALOG_CONTROLS_TWO, 0x03);
+@@ -276,7 +273,7 @@ static void dsi_pll_config_hzindep_reg(struct dsi_pll_10nm *pll)
+ 
+ static void dsi_pll_commit(struct dsi_pll_10nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	struct dsi_pll_regs *reg = &pll->reg_setup;
+ 
+ 	dsi_phy_write(base + REG_DSI_10nm_PHY_PLL_CORE_INPUT_OVERRIDE, 0x12);
+@@ -333,7 +330,7 @@ static int dsi_pll_10nm_lock_status(struct dsi_pll_10nm *pll)
+ 	u32 const delay_us = 100;
+ 	u32 const timeout_us = 5000;
+ 
+-	rc = readl_poll_timeout_atomic(pll->mmio +
++	rc = readl_poll_timeout_atomic(pll->phy->pll_base +
+ 				       REG_DSI_10nm_PHY_PLL_COMMON_STATUS_ONE,
+ 				       status,
+ 				       ((status & BIT(0)) > 0),
+@@ -348,21 +345,21 @@ static int dsi_pll_10nm_lock_status(struct dsi_pll_10nm *pll)
+ 
+ static void dsi_pll_disable_pll_bias(struct dsi_pll_10nm *pll)
+ {
+-	u32 data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CTRL_0);
++	u32 data = dsi_phy_read(pll->phy->base + REG_DSI_10nm_PHY_CMN_CTRL_0);
+ 
+-	dsi_phy_write(pll->mmio + REG_DSI_10nm_PHY_PLL_SYSTEM_MUXES, 0);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CTRL_0,
++	dsi_phy_write(pll->phy->pll_base + REG_DSI_10nm_PHY_PLL_SYSTEM_MUXES, 0);
++	dsi_phy_write(pll->phy->base + REG_DSI_10nm_PHY_CMN_CTRL_0,
+ 		  data & ~BIT(5));
+ 	ndelay(250);
  }
  
- const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs = {
--	.type = MSM_DSI_PHY_10NM,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
-@@ -939,7 +941,6 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs = {
- };
+ static void dsi_pll_enable_pll_bias(struct dsi_pll_10nm *pll)
+ {
+-	u32 data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CTRL_0);
++	u32 data = dsi_phy_read(pll->phy->base + REG_DSI_10nm_PHY_CMN_CTRL_0);
  
- const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs = {
--	.type = MSM_DSI_PHY_10NM,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
-@@ -959,5 +960,5 @@ const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs = {
- 	.max_pll_rate = 3500000000UL,
- 	.io_start = { 0xc994400, 0xc996400 },
- 	.num_dsi_phy = 2,
--	.quirks = V3_0_0_10NM_OLD_TIMINGS_QUIRK,
-+	.quirks = DSI_PHY_10NM_QUIRK_OLD_TIMINGS,
- };
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CTRL_0,
++	dsi_phy_write(pll->phy->base + REG_DSI_10nm_PHY_CMN_CTRL_0,
+ 		  data | BIT(5));
+-	dsi_phy_write(pll->mmio + REG_DSI_10nm_PHY_PLL_SYSTEM_MUXES, 0xc0);
++	dsi_phy_write(pll->phy->pll_base + REG_DSI_10nm_PHY_PLL_SYSTEM_MUXES, 0xc0);
+ 	ndelay(250);
+ }
+ 
+@@ -370,8 +367,8 @@ static void dsi_pll_disable_global_clk(struct dsi_pll_10nm *pll)
+ {
+ 	u32 data;
+ 
+-	data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CLK_CFG1);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CLK_CFG1,
++	data = dsi_phy_read(pll->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG1);
++	dsi_phy_write(pll->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG1,
+ 		  data & ~BIT(5));
+ }
+ 
+@@ -379,8 +376,8 @@ static void dsi_pll_enable_global_clk(struct dsi_pll_10nm *pll)
+ {
+ 	u32 data;
+ 
+-	data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CLK_CFG1);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_CLK_CFG1,
++	data = dsi_phy_read(pll->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG1);
++	dsi_phy_write(pll->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG1,
+ 		  data | BIT(5));
+ }
+ 
+@@ -401,7 +398,7 @@ static int dsi_pll_10nm_vco_prepare(struct clk_hw *hw)
+ 	}
+ 
+ 	/* Start PLL */
+-	dsi_phy_write(pll_10nm->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_PLL_CNTRL,
++	dsi_phy_write(pll_10nm->phy->base + REG_DSI_10nm_PHY_CMN_PLL_CNTRL,
+ 		  0x01);
+ 
+ 	/*
+@@ -423,10 +420,10 @@ static int dsi_pll_10nm_vco_prepare(struct clk_hw *hw)
+ 	if (pll_10nm->slave)
+ 		dsi_pll_enable_global_clk(pll_10nm->slave);
+ 
+-	dsi_phy_write(pll_10nm->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_RBUF_CTRL,
++	dsi_phy_write(pll_10nm->phy->base + REG_DSI_10nm_PHY_CMN_RBUF_CTRL,
+ 		  0x01);
+ 	if (pll_10nm->slave)
+-		dsi_phy_write(pll_10nm->slave->phy_cmn_mmio +
++		dsi_phy_write(pll_10nm->slave->phy->base +
+ 			  REG_DSI_10nm_PHY_CMN_RBUF_CTRL, 0x01);
+ 
+ error:
+@@ -435,7 +432,7 @@ static int dsi_pll_10nm_vco_prepare(struct clk_hw *hw)
+ 
+ static void dsi_pll_disable_sub(struct dsi_pll_10nm *pll)
+ {
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_RBUF_CTRL, 0);
++	dsi_phy_write(pll->phy->base + REG_DSI_10nm_PHY_CMN_RBUF_CTRL, 0);
+ 	dsi_pll_disable_pll_bias(pll);
+ }
+ 
+@@ -449,7 +446,7 @@ static void dsi_pll_10nm_vco_unprepare(struct clk_hw *hw)
+ 	 * powering down the PLL
+ 	 */
+ 	dsi_pll_disable_global_clk(pll_10nm);
+-	dsi_phy_write(pll_10nm->phy_cmn_mmio + REG_DSI_10nm_PHY_CMN_PLL_CNTRL, 0);
++	dsi_phy_write(pll_10nm->phy->base + REG_DSI_10nm_PHY_CMN_PLL_CNTRL, 0);
+ 	dsi_pll_disable_sub(pll_10nm);
+ 	if (pll_10nm->slave) {
+ 		dsi_pll_disable_global_clk(pll_10nm->slave);
+@@ -465,7 +462,7 @@ static unsigned long dsi_pll_10nm_vco_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct dsi_pll_10nm *pll_10nm = to_pll_10nm(hw);
+ 	struct dsi_pll_config *config = &pll_10nm->pll_configuration;
+-	void __iomem *base = pll_10nm->mmio;
++	void __iomem *base = pll_10nm->phy->pll_base;
+ 	u64 ref_clk = pll_10nm->vco_ref_clk_rate;
+ 	u64 vco_rate = 0x0;
+ 	u64 multiplier;
+@@ -528,10 +525,10 @@ static void dsi_10nm_save_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_10nm *pll_10nm = to_pll_10nm(phy->vco_hw);
+ 	struct pll_10nm_cached_state *cached = &pll_10nm->cached_state;
+-	void __iomem *phy_base = pll_10nm->phy_cmn_mmio;
++	void __iomem *phy_base = pll_10nm->phy->base;
+ 	u32 cmn_clk_cfg0, cmn_clk_cfg1;
+ 
+-	cached->pll_out_div = dsi_phy_read(pll_10nm->mmio +
++	cached->pll_out_div = dsi_phy_read(pll_10nm->phy->pll_base +
+ 				       REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE);
+ 	cached->pll_out_div &= 0x3;
+ 
+@@ -551,14 +548,14 @@ static int dsi_10nm_restore_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_10nm *pll_10nm = to_pll_10nm(phy->vco_hw);
+ 	struct pll_10nm_cached_state *cached = &pll_10nm->cached_state;
+-	void __iomem *phy_base = pll_10nm->phy_cmn_mmio;
++	void __iomem *phy_base = pll_10nm->phy->base;
+ 	u32 val;
+ 	int ret;
+ 
+-	val = dsi_phy_read(pll_10nm->mmio + REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE);
++	val = dsi_phy_read(pll_10nm->phy->pll_base + REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE);
+ 	val &= ~0x3;
+ 	val |= cached->pll_out_div;
+-	dsi_phy_write(pll_10nm->mmio + REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE, val);
++	dsi_phy_write(pll_10nm->phy->pll_base + REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE, val);
+ 
+ 	dsi_phy_write(phy_base + REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+ 		  cached->bit_clk_div | (cached->pix_clk_div << 4));
+@@ -583,7 +580,7 @@ static int dsi_10nm_restore_state(struct msm_dsi_phy *phy)
+ static int dsi_10nm_set_usecase(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_10nm *pll_10nm = to_pll_10nm(phy->vco_hw);
+-	void __iomem *base = pll_10nm->phy_cmn_mmio;
++	void __iomem *base = phy->base;
+ 	u32 data = 0x0;	/* internal PLL */
+ 
+ 	DBG("DSI PLL%d", pll_10nm->id);
+@@ -642,7 +639,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw_onecel
+ 
+ 	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				     parent, CLK_SET_RATE_PARENT,
+-				     pll_10nm->mmio +
++				     pll_10nm->phy->pll_base +
+ 				     REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE,
+ 				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 	if (IS_ERR(hw)) {
+@@ -656,7 +653,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw_onecel
+ 	/* BIT CLK: DIV_CTRL_3_0 */
+ 	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     CLK_SET_RATE_PARENT,
+-				     pll_10nm->phy_cmn_mmio +
++				     pll_10nm->phy->base +
+ 				     REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+ 				     0, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_10nm->postdiv_lock);
+@@ -707,7 +704,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw_onecel
+ 	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 				 ((const char *[]){
+ 				 parent, parent2, parent3, parent4
+-				 }), 4, 0, pll_10nm->phy_cmn_mmio +
++				 }), 4, 0, pll_10nm->phy->base +
+ 				 REG_DSI_10nm_PHY_CMN_CLK_CFG1,
+ 				 0, 2, 0, NULL);
+ 	if (IS_ERR(hw)) {
+@@ -720,7 +717,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw_onecel
+ 
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+ 	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+-				     0, pll_10nm->phy_cmn_mmio +
++				     0, pll_10nm->phy->base +
+ 					REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+ 				     4, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_10nm->postdiv_lock);
+@@ -755,18 +752,6 @@ static int dsi_pll_10nm_init(struct msm_dsi_phy *phy)
+ 	pll_10nm->id = id;
+ 	pll_10nm_list[id] = pll_10nm;
+ 
+-	pll_10nm->phy_cmn_mmio = msm_ioremap(pdev, "dsi_phy", "DSI_PHY");
+-	if (IS_ERR_OR_NULL(pll_10nm->phy_cmn_mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map CMN PHY base\n");
+-		return -ENOMEM;
+-	}
+-
+-	pll_10nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_10nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map PLL base\n");
+-		return -ENOMEM;
+-	}
+-
+ 	spin_lock_init(&pll_10nm->postdiv_lock);
+ 
+ 	pll_10nm->phy = phy;
 diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-index 1459aff3d979..fe7ec4cd6f92 100644
+index 96f8317154a7..30475687e445 100644
 --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
 +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-@@ -1021,7 +1021,6 @@ static void dsi_14nm_phy_disable(struct msm_dsi_phy *phy)
- }
+@@ -118,9 +118,6 @@ struct dsi_pll_14nm {
+ 	int id;
+ 	struct platform_device *pdev;
  
- const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
--	.type = MSM_DSI_PHY_14NM,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
-@@ -1044,7 +1043,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
- };
+-	void __iomem *phy_cmn_mmio;
+-	void __iomem *mmio;
+-
+ 	struct msm_dsi_phy *phy;
  
- const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
--	.type = MSM_DSI_PHY_14NM,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-index b752636f7f21..5e73f811d645 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_20nm.c
-@@ -125,7 +125,6 @@ static void dsi_20nm_phy_disable(struct msm_dsi_phy *phy)
- }
+ 	struct dsi_pll_input in;
+@@ -167,7 +164,7 @@ static bool pll_14nm_poll_for_ready(struct dsi_pll_14nm *pll_14nm,
+ 				    u32 nb_tries, u32 timeout_us)
+ {
+ 	bool pll_locked = false;
+-	void __iomem *base = pll_14nm->mmio;
++	void __iomem *base = pll_14nm->phy->pll_base;
+ 	u32 tries, val;
  
- const struct msm_dsi_phy_cfg dsi_phy_20nm_cfgs = {
--	.type = MSM_DSI_PHY_20NM,
- 	.src_pll_truthtable = { {false, true}, {false, true} },
- 	.has_phy_regulator = true,
- 	.reg_cfg = {
+ 	tries = nb_tries;
+@@ -380,7 +377,7 @@ static void pll_14nm_calc_vco_count(struct dsi_pll_14nm *pll)
+ 
+ static void pll_db_commit_ssc(struct dsi_pll_14nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	struct dsi_pll_input *pin = &pll->in;
+ 	struct dsi_pll_output *pout = &pll->out;
+ 	u8 data;
+@@ -418,7 +415,7 @@ static void pll_db_commit_common(struct dsi_pll_14nm *pll,
+ 				 struct dsi_pll_input *pin,
+ 				 struct dsi_pll_output *pout)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	u8 data;
+ 
+ 	/* confgiure the non frequency dependent pll registers */
+@@ -478,7 +475,7 @@ static void pll_db_commit_common(struct dsi_pll_14nm *pll,
+ 
+ static void pll_14nm_software_reset(struct dsi_pll_14nm *pll_14nm)
+ {
+-	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
++	void __iomem *cmn_base = pll_14nm->phy->base;
+ 
+ 	/* de assert pll start and apply pll sw reset */
+ 
+@@ -497,8 +494,8 @@ static void pll_db_commit_14nm(struct dsi_pll_14nm *pll,
+ 			       struct dsi_pll_input *pin,
+ 			       struct dsi_pll_output *pout)
+ {
+-	void __iomem *base = pll->mmio;
+-	void __iomem *cmn_base = pll->phy_cmn_mmio;
++	void __iomem *base = pll->phy->pll_base;
++	void __iomem *cmn_base = pll->phy->base;
+ 	u8 data;
+ 
+ 	DBG("DSI%d PLL", pll->id);
+@@ -614,7 +611,7 @@ static unsigned long dsi_pll_14nm_vco_recalc_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(hw);
+-	void __iomem *base = pll_14nm->mmio;
++	void __iomem *base = pll_14nm->phy->pll_base;
+ 	u64 vco_rate, multiplier = BIT(20);
+ 	u32 div_frac_start;
+ 	u32 dec_start;
+@@ -653,8 +650,8 @@ static unsigned long dsi_pll_14nm_vco_recalc_rate(struct clk_hw *hw,
+ static int dsi_pll_14nm_vco_prepare(struct clk_hw *hw)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(hw);
+-	void __iomem *base = pll_14nm->mmio;
+-	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
++	void __iomem *base = pll_14nm->phy->pll_base;
++	void __iomem *cmn_base = pll_14nm->phy->base;
+ 	bool locked;
+ 
+ 	DBG("");
+@@ -682,7 +679,7 @@ static int dsi_pll_14nm_vco_prepare(struct clk_hw *hw)
+ static void dsi_pll_14nm_vco_unprepare(struct clk_hw *hw)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(hw);
+-	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
++	void __iomem *cmn_base = pll_14nm->phy->base;
+ 
+ 	DBG("");
+ 
+@@ -724,7 +721,7 @@ static unsigned long dsi_pll_14nm_postdiv_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct dsi_pll_14nm_postdiv *postdiv = to_pll_14nm_postdiv(hw);
+ 	struct dsi_pll_14nm *pll_14nm = postdiv->pll;
+-	void __iomem *base = pll_14nm->phy_cmn_mmio;
++	void __iomem *base = pll_14nm->phy->base;
+ 	u8 shift = postdiv->shift;
+ 	u8 width = postdiv->width;
+ 	u32 val;
+@@ -757,7 +754,7 @@ static int dsi_pll_14nm_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct dsi_pll_14nm_postdiv *postdiv = to_pll_14nm_postdiv(hw);
+ 	struct dsi_pll_14nm *pll_14nm = postdiv->pll;
+-	void __iomem *base = pll_14nm->phy_cmn_mmio;
++	void __iomem *base = pll_14nm->phy->base;
+ 	spinlock_t *lock = &pll_14nm->postdiv_lock;
+ 	u8 shift = postdiv->shift;
+ 	u8 width = postdiv->width;
+@@ -784,7 +781,7 @@ static int dsi_pll_14nm_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 */
+ 	if (pll_14nm->phy->usecase == MSM_DSI_PHY_MASTER) {
+ 		struct dsi_pll_14nm *pll_14nm_slave = pll_14nm->slave;
+-		void __iomem *slave_base = pll_14nm_slave->phy_cmn_mmio;
++		void __iomem *slave_base = pll_14nm_slave->phy->base;
+ 
+ 		dsi_phy_write(slave_base + REG_DSI_14nm_PHY_CMN_CLK_CFG0, val);
+ 	}
+@@ -808,7 +805,7 @@ static void dsi_14nm_save_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(phy->vco_hw);
+ 	struct pll_14nm_cached_state *cached_state = &pll_14nm->cached_state;
+-	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
++	void __iomem *cmn_base = pll_14nm->phy->base;
+ 	u32 data;
+ 
+ 	data = dsi_phy_read(cmn_base + REG_DSI_14nm_PHY_CMN_CLK_CFG0);
+@@ -826,7 +823,7 @@ static int dsi_14nm_restore_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(phy->vco_hw);
+ 	struct pll_14nm_cached_state *cached_state = &pll_14nm->cached_state;
+-	void __iomem *cmn_base = pll_14nm->phy_cmn_mmio;
++	void __iomem *cmn_base = pll_14nm->phy->base;
+ 	u32 data;
+ 	int ret;
+ 
+@@ -848,7 +845,7 @@ static int dsi_14nm_restore_state(struct msm_dsi_phy *phy)
+ 	/* also restore post-dividers for slave DSI PLL */
+ 	if (phy->usecase == MSM_DSI_PHY_MASTER) {
+ 		struct dsi_pll_14nm *pll_14nm_slave = pll_14nm->slave;
+-		void __iomem *slave_base = pll_14nm_slave->phy_cmn_mmio;
++		void __iomem *slave_base = pll_14nm_slave->phy->base;
+ 
+ 		dsi_phy_write(slave_base + REG_DSI_14nm_PHY_CMN_CLK_CFG0, data);
+ 	}
+@@ -859,7 +856,7 @@ static int dsi_14nm_restore_state(struct msm_dsi_phy *phy)
+ static int dsi_14nm_set_usecase(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_14nm *pll_14nm = to_pll_14nm(phy->vco_hw);
+-	void __iomem *base = pll_14nm->mmio;
++	void __iomem *base = phy->pll_base;
+ 	u32 clkbuflr_en, bandgap = 0;
+ 
+ 	switch (phy->usecase) {
+@@ -1011,18 +1008,6 @@ static int dsi_pll_14nm_init(struct msm_dsi_phy *phy)
+ 	pll_14nm->id = id;
+ 	pll_14nm_list[id] = pll_14nm;
+ 
+-	pll_14nm->phy_cmn_mmio = msm_ioremap(pdev, "dsi_phy", "DSI_PHY");
+-	if (IS_ERR_OR_NULL(pll_14nm->phy_cmn_mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map CMN PHY base\n");
+-		return -ENOMEM;
+-	}
+-
+-	pll_14nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_14nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map PLL base\n");
+-		return -ENOMEM;
+-	}
+-
+ 	spin_lock_init(&pll_14nm->postdiv_lock);
+ 
+ 	pll_14nm->phy = phy;
 diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index 6e391f0d3ffb..d859a39c69b2 100644
+index cfc76796717b..901286ff3a83 100644
 --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
 +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -34,6 +34,9 @@
- #define VCO_MIN_RATE			350000000
- #define VCO_MAX_RATE			750000000
+@@ -69,8 +69,6 @@ struct dsi_pll_28nm {
  
-+/* v2.0.0 28nm LP implementation */
-+#define DSI_PHY_28NM_QUIRK_PHY_LP	BIT(0)
-+
- #define LPFR_LUT_SIZE			10
- struct lpfr_cfg {
- 	unsigned long vco_rate;
-@@ -203,10 +206,10 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_PLL_SDM_CFG4, 0x00);
+ 	struct msm_dsi_phy *phy;
  
- 	/* Add hardware recommended delay for correct PLL configuration */
--	if (pll_28nm->phy->cfg->type == MSM_DSI_PHY_28NM_HPM)
--		udelay(1);
--	else /* LP */
-+	if (pll_28nm->phy->cfg->quirks & DSI_PHY_28NM_QUIRK_PHY_LP)
- 		udelay(1000);
-+	else
-+		udelay(1);
+-	void __iomem *mmio;
+-
+ 	struct pll_28nm_cached_state cached_state;
+ };
  
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_PLL_REFCLK_CFG, refclk_cfg);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_PLL_PWRGEN_CFG, 0x00);
-@@ -698,7 +701,7 @@ static void dsi_28nm_phy_regulator_enable_ldo(struct msm_dsi_phy *phy)
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_1, 0x1);
- 	dsi_phy_write(base + REG_DSI_28nm_PHY_REGULATOR_CTRL_4, 0x20);
+@@ -83,7 +81,7 @@ static bool pll_28nm_poll_for_ready(struct dsi_pll_28nm *pll_28nm,
+ 	u32 val;
  
--	if (phy->cfg->type == MSM_DSI_PHY_28NM_LP)
-+	if (phy->cfg->quirks & DSI_PHY_28NM_QUIRK_PHY_LP)
- 		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x05);
- 	else
- 		dsi_phy_write(phy->base + REG_DSI_28nm_PHY_LDO_CNTRL, 0x0d);
-@@ -783,7 +786,6 @@ static void dsi_28nm_phy_disable(struct msm_dsi_phy *phy)
+ 	while (nb_tries--) {
+-		val = dsi_phy_read(pll_28nm->mmio + REG_DSI_28nm_PHY_PLL_STATUS);
++		val = dsi_phy_read(pll_28nm->phy->pll_base + REG_DSI_28nm_PHY_PLL_STATUS);
+ 		pll_locked = !!(val & DSI_28nm_PHY_PLL_STATUS_PLL_RDY);
+ 
+ 		if (pll_locked)
+@@ -98,7 +96,7 @@ static bool pll_28nm_poll_for_ready(struct dsi_pll_28nm *pll_28nm,
+ 
+ static void pll_28nm_software_reset(struct dsi_pll_28nm *pll_28nm)
+ {
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 
+ 	/*
+ 	 * Add HW recommended delays after toggling the software
+@@ -117,7 +115,7 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	unsigned long div_fbx1000, gen_vco_clk;
+ 	u32 refclk_cfg, frac_n_mode, frac_n_value;
+ 	u32 sdm_cfg0, sdm_cfg1, sdm_cfg2, sdm_cfg3;
+@@ -241,7 +239,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	u32 sdm0, doubler, sdm_byp_div;
+ 	u32 sdm_dc_off, sdm_freq_seed, sdm2, sdm3;
+ 	u32 ref_clk = VCO_REF_CLK_RATE;
+@@ -288,7 +286,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
+ static int _dsi_pll_28nm_vco_prepare_hpm(struct dsi_pll_28nm *pll_28nm)
+ {
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	u32 max_reads = 5, timeout_us = 100;
+ 	bool locked;
+ 	u32 val;
+@@ -382,7 +380,7 @@ static int dsi_pll_28nm_vco_prepare_lp(struct clk_hw *hw)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	bool locked;
+ 	u32 max_reads = 10, timeout_us = 50;
+ 	u32 val;
+@@ -436,7 +434,7 @@ static void dsi_pll_28nm_vco_unprepare(struct clk_hw *hw)
+ 	if (unlikely(!pll_28nm->phy->pll_on))
+ 		return;
+ 
+-	dsi_phy_write(pll_28nm->mmio + REG_DSI_28nm_PHY_PLL_GLB_CFG, 0x00);
++	dsi_phy_write(pll_28nm->phy->pll_base + REG_DSI_28nm_PHY_PLL_GLB_CFG, 0x00);
+ 
+ 	pll_28nm->phy->pll_on = false;
  }
+@@ -480,7 +478,7 @@ static void dsi_28nm_save_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(phy->vco_hw);
+ 	struct pll_28nm_cached_state *cached_state = &pll_28nm->cached_state;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
  
- const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs = {
--	.type = MSM_DSI_PHY_28NM_HPM,
- 	.src_pll_truthtable = { {true, true}, {false, true} },
- 	.has_phy_regulator = true,
- 	.reg_cfg = {
-@@ -806,7 +808,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs = {
- };
+ 	cached_state->postdiv3 =
+ 			dsi_phy_read(base + REG_DSI_28nm_PHY_PLL_POSTDIV3_CFG);
+@@ -497,7 +495,7 @@ static int dsi_28nm_restore_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(phy->vco_hw);
+ 	struct pll_28nm_cached_state *cached_state = &pll_28nm->cached_state;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	int ret;
  
- const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs = {
--	.type = MSM_DSI_PHY_28NM_HPM,
- 	.src_pll_truthtable = { {true, true}, {false, true} },
- 	.has_phy_regulator = true,
- 	.reg_cfg = {
-@@ -829,7 +830,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs = {
- };
+ 	ret = dsi_pll_28nm_clk_set_rate(phy->vco_hw,
+@@ -544,7 +542,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw_onecel
+ 	snprintf(parent1, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 			parent1, CLK_SET_RATE_PARENT,
+-			pll_28nm->mmio +
++			pll_28nm->phy->pll_base +
+ 			REG_DSI_28nm_PHY_PLL_POSTDIV1_CFG,
+ 			0, 4, 0, NULL);
+ 	if (IS_ERR(hw))
+@@ -561,7 +559,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw_onecel
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_28nm->id);
+ 	snprintf(parent1, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	hw = devm_clk_hw_register_divider(dev, clk_name,
+-				parent1, 0, pll_28nm->mmio +
++				parent1, 0, pll_28nm->phy->pll_base +
+ 				REG_DSI_28nm_PHY_PLL_POSTDIV3_CFG,
+ 				0, 8, 0, NULL);
+ 	if (IS_ERR(hw))
+@@ -574,7 +572,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw_onecel
+ 	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 			((const char *[]){
+ 				parent1, parent2
+-			}), 2, CLK_SET_RATE_PARENT, pll_28nm->mmio +
++			}), 2, CLK_SET_RATE_PARENT, pll_28nm->phy->pll_base +
+ 			REG_DSI_28nm_PHY_PLL_VREG_CFG, 1, 1, 0, NULL);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+@@ -606,13 +604,6 @@ static int dsi_pll_28nm_hpm_init(struct msm_dsi_phy *phy)
  
- const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs = {
--	.type = MSM_DSI_PHY_28NM_LP,
- 	.src_pll_truthtable = { {true, true}, {true, true} },
- 	.has_phy_regulator = true,
- 	.reg_cfg = {
-@@ -849,5 +849,6 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs = {
- 	.max_pll_rate = VCO_MAX_RATE,
- 	.io_start = { 0x1a98500 },
- 	.num_dsi_phy = 1,
-+	.quirks = DSI_PHY_28NM_QUIRK_PHY_LP,
- };
+ 	pll_28nm->pdev = pdev;
+ 	pll_28nm->id = id;
+-
+-	pll_28nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_28nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "%s: failed to map pll base\n", __func__);
+-		return -ENOMEM;
+-	}
+-
+ 	pll_28nm->phy = phy;
  
+ 	ret = pll_28nm_register(pll_28nm, phy->provided_clocks, &clk_ops_dsi_pll_28nm_vco_hpm);
+@@ -642,13 +633,6 @@ static int dsi_pll_28nm_lp_init(struct msm_dsi_phy *phy)
+ 
+ 	pll_28nm->pdev = pdev;
+ 	pll_28nm->id = id;
+-
+-	pll_28nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_28nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "%s: failed to map pll base\n", __func__);
+-		return -ENOMEM;
+-	}
+-
+ 	pll_28nm->phy = phy;
+ 
+ 	ret = pll_28nm_register(pll_28nm, phy->provided_clocks, &clk_ops_dsi_pll_28nm_vco_lp);
 diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-index e3a6148e1d3b..33aabddeeb1f 100644
+index b2e47a60d944..8576b900b016 100644
 --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
 +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-@@ -642,7 +642,6 @@ static void dsi_28nm_phy_disable(struct msm_dsi_phy *phy)
- }
+@@ -64,8 +64,6 @@ struct dsi_pll_28nm {
  
- const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs = {
--	.type = MSM_DSI_PHY_28NM_8960,
- 	.src_pll_truthtable = { {true, true}, {false, true} },
- 	.has_phy_regulator = true,
- 	.reg_cfg = {
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 1ea11fd7a3b5..ecd514ac5787 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -38,6 +38,9 @@
- #define VCO_REF_CLK_RATE		19200000
- #define FRAC_BITS 18
+ 	struct msm_dsi_phy *phy;
  
-+/* Hardware is V4.1 */
-+#define DSI_PHY_7NM_QUIRK_V4_1		BIT(0)
-+
- struct dsi_pll_config {
- 	bool enable_ssc;
- 	bool ssc_center;
-@@ -114,7 +117,7 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
- 
- 	dec = div_u64(dec_multiple, multiplier);
- 
--	if (pll->phy->cfg->type != MSM_DSI_PHY_7NM_V4_1)
-+	if (!(pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1))
- 		config->pll_clock_inverters = 0x28;
- 	else if (pll_freq <= 1000000000ULL)
- 		config->pll_clock_inverters = 0xa0;
-@@ -195,7 +198,7 @@ static void dsi_pll_config_hzindep_reg(struct dsi_pll_7nm *pll)
- 	void __iomem *base = pll->phy->pll_base;
- 	u8 analog_controls_five_1 = 0x01, vco_config_1 = 0x00;
- 
--	if (pll->phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
-+	if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1) {
- 		if (pll->vco_current_rate >= 3100000000ULL)
- 			analog_controls_five_1 = 0x03;
- 
-@@ -229,9 +232,9 @@ static void dsi_pll_config_hzindep_reg(struct dsi_pll_7nm *pll)
- 	dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_PFILT, 0x2f);
- 	dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_IFILT, 0x2a);
- 	dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_IFILT,
--		  pll->phy->cfg->type == MSM_DSI_PHY_7NM_V4_1 ? 0x3f : 0x22);
-+		  pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1 ? 0x3f : 0x22);
- 
--	if (pll->phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
-+	if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1) {
- 		dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_PERF_OPTIMIZE, 0x22);
- 		if (pll->slave)
- 			dsi_phy_write(pll->slave->phy->pll_base + REG_DSI_7nm_PHY_PLL_PERF_OPTIMIZE, 0x22);
-@@ -772,7 +775,7 @@ static void dsi_phy_hw_v4_0_lane_settings(struct msm_dsi_phy *phy)
- 	const u8 *tx_dctrl = tx_dctrl_0;
- 	void __iomem *lane_base = phy->lane_base;
- 
--	if (phy->cfg->type == MSM_DSI_PHY_7NM_V4_1)
-+	if (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1)
- 		tx_dctrl = tx_dctrl_1;
- 
- 	/* Strength ctrl settings */
-@@ -836,7 +839,7 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy, int src_pll_id,
- 	/* Alter PHY configurations if data rate less than 1.5GHZ*/
- 	less_than_1500_mhz = (clk_req->bitclk_rate <= 1500000000);
- 
--	if (phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
-+	if (phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1) {
- 		vreg_ctrl_0 = less_than_1500_mhz ? 0x53 : 0x52;
- 		glbl_rescode_top_ctrl = less_than_1500_mhz ? 0x3d :  0x00;
- 		glbl_rescode_bot_ctrl = less_than_1500_mhz ? 0x39 :  0x3c;
-@@ -953,7 +956,6 @@ static void dsi_7nm_phy_disable(struct msm_dsi_phy *phy)
- }
- 
- const struct msm_dsi_phy_cfg dsi_phy_7nm_cfgs = {
--	.type = MSM_DSI_PHY_7NM_V4_1,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
-@@ -973,10 +975,10 @@ const struct msm_dsi_phy_cfg dsi_phy_7nm_cfgs = {
- 	.max_pll_rate = 3500000000UL,
- 	.io_start = { 0xae94400, 0xae96400 },
- 	.num_dsi_phy = 2,
-+	.quirks = DSI_PHY_7NM_QUIRK_V4_1,
+-	void __iomem *mmio;
+-
+ 	struct pll_28nm_cached_state cached_state;
  };
  
- const struct msm_dsi_phy_cfg dsi_phy_7nm_8150_cfgs = {
--	.type = MSM_DSI_PHY_7NM,
- 	.src_pll_truthtable = { {false, false}, {true, false} },
- 	.has_phy_lane = true,
- 	.reg_cfg = {
+@@ -78,7 +76,7 @@ static bool pll_28nm_poll_for_ready(struct dsi_pll_28nm *pll_28nm,
+ 	u32 val;
+ 
+ 	while (nb_tries--) {
+-		val = dsi_phy_read(pll_28nm->mmio + REG_DSI_28nm_8960_PHY_PLL_RDY);
++		val = dsi_phy_read(pll_28nm->phy->pll_base + REG_DSI_28nm_8960_PHY_PLL_RDY);
+ 		pll_locked = !!(val & DSI_28nm_8960_PHY_PLL_RDY_PLL_RDY);
+ 
+ 		if (pll_locked)
+@@ -98,7 +96,7 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				     unsigned long parent_rate)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	u32 val, temp, fb_divider;
+ 
+ 	DBG("rate=%lu, parent's=%lu", rate, parent_rate);
+@@ -147,7 +145,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	unsigned long vco_rate;
+ 	u32 status, fb_divider, temp, ref_divider;
+ 
+@@ -181,7 +179,7 @@ static int dsi_pll_28nm_vco_prepare(struct clk_hw *hw)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(hw);
+ 	struct device *dev = &pll_28nm->pdev->dev;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	bool locked;
+ 	unsigned int bit_div, byte_div;
+ 	int max_reads = 1000, timeout_us = 100;
+@@ -234,7 +232,7 @@ static void dsi_pll_28nm_vco_unprepare(struct clk_hw *hw)
+ 	if (unlikely(!pll_28nm->phy->pll_on))
+ 		return;
+ 
+-	dsi_phy_write(pll_28nm->mmio + REG_DSI_28nm_8960_PHY_PLL_CTRL_0, 0x00);
++	dsi_phy_write(pll_28nm->phy->pll_base + REG_DSI_28nm_8960_PHY_PLL_CTRL_0, 0x00);
+ 
+ 	pll_28nm->phy->pll_on = false;
+ }
+@@ -348,7 +346,7 @@ static void dsi_28nm_save_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(phy->vco_hw);
+ 	struct pll_28nm_cached_state *cached_state = &pll_28nm->cached_state;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 
+ 	cached_state->postdiv3 =
+ 			dsi_phy_read(base + REG_DSI_28nm_8960_PHY_PLL_CTRL_10);
+@@ -364,7 +362,7 @@ static int dsi_28nm_restore_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_28nm *pll_28nm = to_pll_28nm(phy->vco_hw);
+ 	struct pll_28nm_cached_state *cached_state = &pll_28nm->cached_state;
+-	void __iomem *base = pll_28nm->mmio;
++	void __iomem *base = pll_28nm->phy->pll_base;
+ 	int ret;
+ 
+ 	ret = dsi_pll_28nm_clk_set_rate(phy->vco_hw,
+@@ -425,7 +423,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw_onecel
+ 
+ 	/* prepare and register bytediv */
+ 	bytediv->hw.init = &bytediv_init;
+-	bytediv->reg = pll_28nm->mmio + REG_DSI_28nm_8960_PHY_PLL_CTRL_9;
++	bytediv->reg = pll_28nm->phy->pll_base + REG_DSI_28nm_8960_PHY_PLL_CTRL_9;
+ 
+ 	snprintf(parent_name, 32, "dsi%dvco_clk", pll_28nm->id);
+ 	snprintf(clk_name, 32, "dsi%dpllbyte", pll_28nm->id);
+@@ -445,7 +443,7 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw_onecel
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_28nm->id);
+ 	/* DIV3 */
+ 	hw = devm_clk_hw_register_divider(dev, clk_name,
+-				parent_name, 0, pll_28nm->mmio +
++				parent_name, 0, pll_28nm->phy->pll_base +
+ 				REG_DSI_28nm_8960_PHY_PLL_CTRL_10,
+ 				0, 8, 0, NULL);
+ 	if (IS_ERR(hw))
+@@ -471,13 +469,6 @@ static int dsi_pll_28nm_8960_init(struct msm_dsi_phy *phy)
+ 
+ 	pll_28nm->pdev = pdev;
+ 	pll_28nm->id = id + 1;
+-
+-	pll_28nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_28nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "%s: failed to map pll base\n", __func__);
+-		return -ENOMEM;
+-	}
+-
+ 	pll_28nm->phy = phy;
+ 
+ 	ret = pll_28nm_register(pll_28nm, phy->provided_clocks);
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index 2357a019cdd9..ae5edaf4df77 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -88,9 +88,6 @@ struct dsi_pll_7nm {
+ 
+ 	struct msm_dsi_phy *phy;
+ 
+-	void __iomem *phy_cmn_mmio;
+-	void __iomem *mmio;
+-
+ 	u64 vco_ref_clk_rate;
+ 	u64 vco_current_rate;
+ 
+@@ -228,7 +225,7 @@ static void dsi_pll_calc_ssc(struct dsi_pll_7nm *pll)
+ 
+ static void dsi_pll_ssc_commit(struct dsi_pll_7nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	struct dsi_pll_regs *regs = &pll->reg_setup;
+ 
+ 	if (pll->pll_configuration.enable_ssc) {
+@@ -253,7 +250,7 @@ static void dsi_pll_ssc_commit(struct dsi_pll_7nm *pll)
+ 
+ static void dsi_pll_config_hzindep_reg(struct dsi_pll_7nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	u8 analog_controls_five_1 = 0x01, vco_config_1 = 0x00;
+ 
+ 	if (pll->phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
+@@ -295,13 +292,13 @@ static void dsi_pll_config_hzindep_reg(struct dsi_pll_7nm *pll)
+ 	if (pll->phy->cfg->type == MSM_DSI_PHY_7NM_V4_1) {
+ 		dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_PERF_OPTIMIZE, 0x22);
+ 		if (pll->slave)
+-			dsi_phy_write(pll->slave->mmio + REG_DSI_7nm_PHY_PLL_PERF_OPTIMIZE, 0x22);
++			dsi_phy_write(pll->slave->phy->pll_base + REG_DSI_7nm_PHY_PLL_PERF_OPTIMIZE, 0x22);
+ 	}
+ }
+ 
+ static void dsi_pll_commit(struct dsi_pll_7nm *pll)
+ {
+-	void __iomem *base = pll->mmio;
++	void __iomem *base = pll->phy->pll_base;
+ 	struct dsi_pll_regs *reg = &pll->reg_setup;
+ 
+ 	dsi_phy_write(base + REG_DSI_7nm_PHY_PLL_CORE_INPUT_OVERRIDE, 0x12);
+@@ -351,7 +348,7 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
+ 	u32 const delay_us = 100;
+ 	u32 const timeout_us = 5000;
+ 
+-	rc = readl_poll_timeout_atomic(pll->mmio +
++	rc = readl_poll_timeout_atomic(pll->phy->pll_base +
+ 				       REG_DSI_7nm_PHY_PLL_COMMON_STATUS_ONE,
+ 				       status,
+ 				       ((status & BIT(0)) > 0),
+@@ -366,19 +363,19 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
+ 
+ static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
+ {
+-	u32 data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CTRL_0);
++	u32 data = dsi_phy_read(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+ 
+-	dsi_phy_write(pll->mmio + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES, 0);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CTRL_0, data & ~BIT(5));
++	dsi_phy_write(pll->phy->pll_base + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES, 0);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0, data & ~BIT(5));
+ 	ndelay(250);
+ }
+ 
+ static void dsi_pll_enable_pll_bias(struct dsi_pll_7nm *pll)
+ {
+-	u32 data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CTRL_0);
++	u32 data = dsi_phy_read(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+ 
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CTRL_0, data | BIT(5));
+-	dsi_phy_write(pll->mmio + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES, 0xc0);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0, data | BIT(5));
++	dsi_phy_write(pll->phy->pll_base + REG_DSI_7nm_PHY_PLL_SYSTEM_MUXES, 0xc0);
+ 	ndelay(250);
+ }
+ 
+@@ -386,18 +383,18 @@ static void dsi_pll_disable_global_clk(struct dsi_pll_7nm *pll)
+ {
+ 	u32 data;
+ 
+-	data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CLK_CFG1, data & ~BIT(5));
++	data = dsi_phy_read(pll->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1, data & ~BIT(5));
+ }
+ 
+ static void dsi_pll_enable_global_clk(struct dsi_pll_7nm *pll)
+ {
+ 	u32 data;
+ 
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CTRL_3, 0x04);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_3, 0x04);
+ 
+-	data = dsi_phy_read(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_CLK_CFG1,
++	data = dsi_phy_read(pll->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1,
+ 		  data | BIT(5) | BIT(4));
+ }
+ 
+@@ -408,9 +405,9 @@ static void dsi_pll_phy_dig_reset(struct dsi_pll_7nm *pll)
+ 	 * coming out of a CX or analog rail power collapse while
+ 	 * ensuring that the pads maintain LP00 or LP11 state
+ 	 */
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE4, BIT(0));
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE4, BIT(0));
+ 	wmb(); /* Ensure that the reset is deasserted */
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE4, 0x0);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_GLBL_DIGTOP_SPARE4, 0x0);
+ 	wmb(); /* Ensure that the reset is deasserted */
+ }
+ 
+@@ -424,7 +421,7 @@ static int dsi_pll_7nm_vco_prepare(struct clk_hw *hw)
+ 		dsi_pll_enable_pll_bias(pll_7nm->slave);
+ 
+ 	/* Start PLL */
+-	dsi_phy_write(pll_7nm->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_PLL_CNTRL, 0x01);
++	dsi_phy_write(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_PLL_CNTRL, 0x01);
+ 
+ 	/*
+ 	 * ensure all PLL configurations are written prior to checking
+@@ -460,7 +457,7 @@ static int dsi_pll_7nm_vco_prepare(struct clk_hw *hw)
+ 
+ static void dsi_pll_disable_sub(struct dsi_pll_7nm *pll)
+ {
+-	dsi_phy_write(pll->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_RBUF_CTRL, 0);
++	dsi_phy_write(pll->phy->base + REG_DSI_7nm_PHY_CMN_RBUF_CTRL, 0);
+ 	dsi_pll_disable_pll_bias(pll);
+ }
+ 
+@@ -474,7 +471,7 @@ static void dsi_pll_7nm_vco_unprepare(struct clk_hw *hw)
+ 	 * powering down the PLL
+ 	 */
+ 	dsi_pll_disable_global_clk(pll_7nm);
+-	dsi_phy_write(pll_7nm->phy_cmn_mmio + REG_DSI_7nm_PHY_CMN_PLL_CNTRL, 0);
++	dsi_phy_write(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_PLL_CNTRL, 0);
+ 	dsi_pll_disable_sub(pll_7nm);
+ 	if (pll_7nm->slave) {
+ 		dsi_pll_disable_global_clk(pll_7nm->slave);
+@@ -489,7 +486,7 @@ static unsigned long dsi_pll_7nm_vco_recalc_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(hw);
+-	void __iomem *base = pll_7nm->mmio;
++	void __iomem *base = pll_7nm->phy->pll_base;
+ 	u64 ref_clk = pll_7nm->vco_ref_clk_rate;
+ 	u64 vco_rate = 0x0;
+ 	u64 multiplier;
+@@ -553,10 +550,10 @@ static void dsi_7nm_save_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(phy->vco_hw);
+ 	struct pll_7nm_cached_state *cached = &pll_7nm->cached_state;
+-	void __iomem *phy_base = pll_7nm->phy_cmn_mmio;
++	void __iomem *phy_base = pll_7nm->phy->base;
+ 	u32 cmn_clk_cfg0, cmn_clk_cfg1;
+ 
+-	cached->pll_out_div = dsi_phy_read(pll_7nm->mmio +
++	cached->pll_out_div = dsi_phy_read(pll_7nm->phy->pll_base +
+ 				       REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE);
+ 	cached->pll_out_div &= 0x3;
+ 
+@@ -576,14 +573,14 @@ static int dsi_7nm_restore_state(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(phy->vco_hw);
+ 	struct pll_7nm_cached_state *cached = &pll_7nm->cached_state;
+-	void __iomem *phy_base = pll_7nm->phy_cmn_mmio;
++	void __iomem *phy_base = pll_7nm->phy->base;
+ 	u32 val;
+ 	int ret;
+ 
+-	val = dsi_phy_read(pll_7nm->mmio + REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE);
++	val = dsi_phy_read(pll_7nm->phy->pll_base + REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE);
+ 	val &= ~0x3;
+ 	val |= cached->pll_out_div;
+-	dsi_phy_write(pll_7nm->mmio + REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE, val);
++	dsi_phy_write(pll_7nm->phy->pll_base + REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE, val);
+ 
+ 	dsi_phy_write(phy_base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
+ 		  cached->bit_clk_div | (cached->pix_clk_div << 4));
+@@ -608,7 +605,7 @@ static int dsi_7nm_restore_state(struct msm_dsi_phy *phy)
+ static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
+ {
+ 	struct dsi_pll_7nm *pll_7nm = to_pll_7nm(phy->vco_hw);
+-	void __iomem *base = pll_7nm->phy_cmn_mmio;
++	void __iomem *base = phy->base;
+ 	u32 data = 0x0;	/* internal PLL */
+ 
+ 	DBG("DSI PLL%d", pll_7nm->id);
+@@ -667,7 +664,7 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw_onecell_d
+ 
+ 	hw = devm_clk_hw_register_divider(dev, clk_name,
+ 				     parent, CLK_SET_RATE_PARENT,
+-				     pll_7nm->mmio +
++				     pll_7nm->phy->pll_base +
+ 				     REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
+ 				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 	if (IS_ERR(hw)) {
+@@ -681,7 +678,7 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw_onecell_d
+ 	/* BIT CLK: DIV_CTRL_3_0 */
+ 	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+ 				     CLK_SET_RATE_PARENT,
+-				     pll_7nm->phy_cmn_mmio +
++				     pll_7nm->phy->base +
+ 				     REG_DSI_7nm_PHY_CMN_CLK_CFG0,
+ 				     0, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_7nm->postdiv_lock);
+@@ -732,7 +729,7 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw_onecell_d
+ 	hw = devm_clk_hw_register_mux(dev, clk_name,
+ 				 ((const char *[]){
+ 				 parent, parent2, parent3, parent4
+-				 }), 4, 0, pll_7nm->phy_cmn_mmio +
++				 }), 4, 0, pll_7nm->phy->base +
+ 				 REG_DSI_7nm_PHY_CMN_CLK_CFG1,
+ 				 0, 2, 0, NULL);
+ 	if (IS_ERR(hw)) {
+@@ -745,7 +742,7 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw_onecell_d
+ 
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+ 	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+-				     0, pll_7nm->phy_cmn_mmio +
++				     0, pll_7nm->phy->base +
+ 					REG_DSI_7nm_PHY_CMN_CLK_CFG0,
+ 				     4, 4, CLK_DIVIDER_ONE_BASED,
+ 				     &pll_7nm->postdiv_lock);
+@@ -780,18 +777,6 @@ static int dsi_pll_7nm_init(struct msm_dsi_phy *phy)
+ 	pll_7nm->id = id;
+ 	pll_7nm_list[id] = pll_7nm;
+ 
+-	pll_7nm->phy_cmn_mmio = msm_ioremap(pdev, "dsi_phy", "DSI_PHY");
+-	if (IS_ERR_OR_NULL(pll_7nm->phy_cmn_mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map CMN PHY base\n");
+-		return -ENOMEM;
+-	}
+-
+-	pll_7nm->mmio = msm_ioremap(pdev, "dsi_pll", "DSI_PLL");
+-	if (IS_ERR_OR_NULL(pll_7nm->mmio)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to map PLL base\n");
+-		return -ENOMEM;
+-	}
+-
+ 	spin_lock_init(&pll_7nm->postdiv_lock);
+ 
+ 	pll_7nm->phy = phy;
 -- 
 2.30.2
 
