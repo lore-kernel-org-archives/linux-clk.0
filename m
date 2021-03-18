@@ -2,148 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56E9C433E6
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA6BC433E6
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 03:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF9B64F40
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 02:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE92764EFC
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 03:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbhCRCLU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Mar 2021 22:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36830 "EHLO
+        id S231161AbhCRDTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Mar 2021 23:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230105AbhCRCKv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 22:10:51 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECA1C06175F
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:10:51 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id w21-20020a9d63950000b02901ce7b8c45b4so3782097otk.5
-        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 19:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/eUcg0X5VUIePvtm+rdhKH75GAS9jZwtwPgS7YKHJh4=;
-        b=b3nH3tDdN6X9tWCkrPUmCz++vd43nsDG1G3j5JbHwl6XFrsbO7gGrrL1/PKQh0030A
-         wQVARi9iJnT1vjyfQSrdODBjvhBqq9z+PfPSH8utKDKg3TYjc3OOiQXT161GLJSbsnac
-         3s/1Du4xl65YzutMvV3RVExp89e8n3tqOL7zPBUXHlJ/SvXVGWXCZE8AhbbxQsjDd9Uj
-         +zc7fakqZffWVDmMkRyDp4Q4bnOOmn3Q6yZv4jQsoiGsIt0dxh3HiB/6BhE/00zGwH09
-         wCMxIh8/sCnuIRVPzmj1H4MNJxoQ7QSZpRzqUfbcdUDPJNgC5Hq5xr+DHMNsO4vkZ5+N
-         E7CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/eUcg0X5VUIePvtm+rdhKH75GAS9jZwtwPgS7YKHJh4=;
-        b=U4eQs0Qgge7dWMqZ2/2p62x5AcTMc5KvpjjtLWMr+HBVWKNUyJKNfJaT6I2H7F1XWV
-         YP0CAutbCUUou/pCzGMeYAnuRsVZtQB1K0mRjYTaWSI7Zry4vF5MepmqkDJVg/ALN/HG
-         2xGOapKF6/dbdjZrzINmgFzyk7s0PlN9sshMTBSILI0V1Rh/mFLplNYYB0dlg1RCfIzO
-         RAuFVRFCE+DWDXWRVnodQtlq/CkZmYws+KVWBObbahSs+O98d95bWxJyUtks2/AaCh8G
-         I6m4Q403nL3va/d9VE7+fF02ryei1LO8ELEHUkeUpMz7N0AU4VO7eqSOlplxHaheViiP
-         yZOw==
-X-Gm-Message-State: AOAM533BQtLjB+EfqHqxz3TDJpsGWO/z0uzvcEMXc8FSB4+tN8fCyjdN
-        AuwE2ITxsswp8a4HSDBx02rtBw==
-X-Google-Smtp-Source: ABdhPJxvDz6D8BIG2BMVUDnZ2a0wHB9Fmt2Gr4GiNu5pqGK8tryq0WsnLEcjBGUNoptBjTCzf/kcCQ==
-X-Received: by 2002:a05:6830:24a1:: with SMTP id v1mr5361822ots.119.1616033451092;
-        Wed, 17 Mar 2021 19:10:51 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w16sm162442otq.15.2021.03.17.19.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 19:10:50 -0700 (PDT)
-Date:   Wed, 17 Mar 2021 21:10:48 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Cc:     sboyd@kernel.org, agross@kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
-        robh+dt@kernel.org, sricharan@codeaurora.org
-Subject: Re: [PATCH 2/3] remoteproc: qcom: wcss: populate driver data for
- IPQ6018
-Message-ID: <YFK2qL+/50L7+LKV@builder.lan>
-References: <1611940320-24830-1-git-send-email-gokulsri@codeaurora.org>
- <1611940320-24830-3-git-send-email-gokulsri@codeaurora.org>
+        with ESMTP id S230476AbhCRDTh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Mar 2021 23:19:37 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1234::107])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9630DC06174A;
+        Wed, 17 Mar 2021 20:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Cc:Subject:From:To:Sender:Reply-To:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=pKHYq1hC0taBlkjCvHKcp3eR8zexcs9SDXnvZOh+BtM=; b=JbClyA67QHU0fDZAxAEByRwKY3
+        Kjdxim4mw14IYawYSOtQRHag+7WrFWDQQNeZOkmEf7VvlUwV3bw5qMIMTMga6zGdbjC0HOczNqU7f
+        GLx/6Natu/Pl4p1tGrVLrcUamZCCrjjRhQmdgtCqGf37v1q79IWEsZQelCruis0KsHOpkLixqIzqe
+        bOx2ZidngIAJyOndMCa3113fziBPrSWW7cSADJ6+9qWbSU0uhe9yaxiJ+A9dItdWoENDDbyfqEd5f
+        N4LJhHG8jxHeusWX026tEPY+kInbicq5A6Ru0dLl3SqbCXdVavKRdnwSBdeTPNZyqRd9eEd4WMyBX
+        bWchQpBA==;
+Received: from [2601:1c0:6280:3f0::9757]
+        by merlin.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1lMjBz-001i9Q-0r; Thu, 18 Mar 2021 03:19:32 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: S390: all HAS_IOMEM build failures in one fell swoop
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Message-ID: <5a0172d7-36b1-f18a-ec0f-eb9ee8964a1b@infradead.org>
+Date:   Wed, 17 Mar 2021 20:19:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1611940320-24830-3-git-send-email-gokulsri@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 29 Jan 11:11 CST 2021, Gokul Sriram Palanisamy wrote:
 
-> Populate hardcoded param using driver data for IPQ6018 SoCs.
-> 
-> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_wcss.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index 7c64bfc..bc9531c 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -965,7 +965,7 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
->  	return 0;
->  }
->  
-> -static int ipq8074_init_clock(struct q6v5_wcss *wcss)
-> +static int ipq_init_clock(struct q6v5_wcss *wcss)
->  {
->  	int ret;
->  
-> @@ -1172,7 +1172,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
->  }
->  
->  static const struct wcss_data wcss_ipq8074_res_init = {
-> -	.init_clock = ipq8074_init_clock,
-> +	.init_clock = ipq_init_clock,
->  	.q6_firmware_name = "IPQ8074/q6_fw.mdt",
->  	.m3_firmware_name = "IPQ8074/m3_fw.mdt",
->  	.crash_reason_smem = WCSS_CRASH_REASON,
-> @@ -1185,6 +1185,20 @@ static const struct wcss_data wcss_ipq8074_res_init = {
->  	.need_mem_protection = true,
->  };
->  
-> +static const struct wcss_data wcss_ipq6018_res_init = {
-> +	.init_clock = ipq_init_clock,
-> +	.q6_firmware_name = "IPQ6018/q6_fw.mdt",
-> +	.m3_firmware_name = "IPQ6018/m3_fw.mdt",
-> +	.crash_reason_smem = WCSS_CRASH_REASON,
-> +	.aon_reset_required = true,
-> +	.wcss_q6_reset_required = true,
-> +	.bcr_reset_required = false,
-> +	.ssr_name = "q6wcss",
-> +	.ops = &q6v5_wcss_ipq8074_ops,
-> +	.requires_force_stop = true,
-> +	.need_mem_protection = true,
-> +};
-> +
->  static const struct wcss_data wcss_qcs404_res_init = {
->  	.init_clock = qcs404_init_clock,
->  	.init_regulator = qcs404_init_regulator,
-> @@ -1203,6 +1217,7 @@ static const struct wcss_data wcss_qcs404_res_init = {
->  
->  static const struct of_device_id q6v5_wcss_of_match[] = {
->  	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
-> +	{ .compatible = "qcom,ipq6018-wcss-pil", .data = &wcss_ipq6018_res_init },
+On ARCH=s390:
 
-As you rebase on the reworked dependency, please sorted alphabetically
-(i.e 6 < 8)
+By disabling CONFIG_PCI and hence also disabling CONFIG_HAS_IOMEM
+(after having done 'make ARCH=s390 allmodconfig'),
+we can see all of the drivers that use IOMEM-related interfaces
+without mentioning that they do so (in their respective Kconfig files).
 
-Regards,
-Bjorn
+This should catch all of them, instead of various randconfig builds
+catching a few of them at a time.
+(I'm not trying to pick on arch/s390/ here -- more on the piecemeal
+randconfig approach of some 'bot'. :)
 
->  	{ .compatible = "qcom,qcs404-wcss-pil", .data = &wcss_qcs404_res_init },
->  	{ },
->  };
-> -- 
-> 2.7.4
-> 
+
+I have grouped them by subsystem (more or less).
+(This was done on linux-next of 2021-03-15.)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+make[1]: Entering directory 'linux-next-20210315/S390'
+
+kernel/dma:
+
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_memory':
+coherent.c:(.text+0x39c): undefined reference to `memremap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: coherent.c:(.text+0x4e0): undefined reference to `memunmap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coherent_memory':
+coherent.c:(.text+0xac6): undefined reference to `memunmap'
+
+irqchip:
+
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_dt':
+irq-al-fic.c:(.init.text+0x6c): undefined reference to `of_iomap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: irq-al-fic.c:(.init.text+0x49c): undefined reference to `iounmap'
+
+clk / clocksource:
+
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
+clk-fixed-mmio.c:(.text+0x9a): undefined reference to `of_iomap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: clk-fixed-mmio.c:(.text+0xe6): undefined reference to `iounmap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_init':
+timer-of.c:(.init.text+0x8e): undefined reference to `of_iomap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: timer-of.c:(.init.text+0x6ec): undefined reference to `iounmap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_cleanup':
+timer-of.c:(.init.text+0x8f2): undefined reference to `iounmap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in function `mchp_pit64b_dt_init_timer':
+timer-microchip-pit64b.c:(.init.text+0xf2): undefined reference to `of_iomap'
+gcc-9.3.0-nolibc/s390-linux/bin/s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xa18): undefined reference to `iounmap'
+
+iio:
+
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/iio/adc/adi-axi-adc.ko] undefined!
+
+pcmcia:
+
+ERROR: modpost: "ioremap" [drivers/pcmcia/pcmcia.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/pcmcia/pcmcia.ko] undefined!
+
+mtd:
+
+ERROR: modpost: "devm_ioremap_resource" [drivers/mtd/nand/raw/denali_dt.ko] undefined!
+
+nvmem:
+
+ERROR: modpost: "memunmap" [drivers/nvmem/nvmem-rmem.ko] undefined!
+ERROR: modpost: "memremap" [drivers/nvmem/nvmem-rmem.ko] undefined!
+
+crypto:
+
+ERROR: modpost: "devm_ioremap_resource" [drivers/crypto/ccree/ccree.ko] undefined!
+ERROR: modpost: "debugfs_create_regset32" [drivers/crypto/ccree/ccree.ko] undefined!
+
+media:
+
+ERROR: modpost: "devm_ioremap_resource" [drivers/media/rc/ir-hix5hd2.ko] undefined!
+
+input:
+
+ERROR: modpost: "devm_ioremap" [drivers/input/keyboard/samsung-keypad.ko] undefined!
+
+net:
+
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/net/can/grcan.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/arcnet/arc-rimi.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/arcnet/arc-rimi.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/arcnet/com90xx.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/arcnet/com90xx.ko] undefined!
+ERROR: modpost: "devm_ioremap" [drivers/net/ethernet/altera/altera_tse.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/ethernet/xircom/xirc2ps_cs.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/ethernet/xircom/xirc2ps_cs.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/net/ethernet/xilinx/xilinx_emac.ko] undefined!
+ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/xilinx_emac.ko] undefined!
+ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/xilinx_emaclite.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/net/ethernet/xilinx/xilinx_emaclite.ko] undefined!
+ERROR: modpost: "devm_platform_ioremap_resource_byname" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
+ERROR: modpost: "of_address_to_resource" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
+ERROR: modpost: "devm_of_iomap" [drivers/net/ethernet/xilinx/ll_temac.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/ethernet/smsc/smc91c92_cs.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/ethernet/smsc/smc91c92_cs.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/ethernet/fujitsu/fmvj18x_cs.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/ethernet/fujitsu/fmvj18x_cs.ko] undefined!
+ERROR: modpost: "ioremap" [drivers/net/ethernet/8390/pcnet_cs.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/net/ethernet/8390/pcnet_cs.ko] undefined!
+
+char:
+
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/char/xillybus/xillybus_of.ko] undefined!
+
+tty:
+
+ERROR: modpost: "ioremap" [drivers/tty/ipwireless/ipwireless.ko] undefined!
+ERROR: modpost: "iounmap" [drivers/tty/ipwireless/ipwireless.ko] undefined!
+
+dma:
+
+ERROR: modpost: "devm_ioremap_resource" [drivers/dma/sf-pdma/sf-pdma.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/dma/idma64.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/dma/fsl-edma.ko] undefined!
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/dma/dw/dw_dmac.ko] undefined!
+ERROR: modpost: "devm_ioremap" [drivers/dma/altera-msgdma.ko] undefined!
+ERROR: modpost: "devm_platform_ioremap_resource" [drivers/dma/xilinx/xilinx_dpdma.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/dma/qcom/hdma.ko] undefined!
+ERROR: modpost: "devm_ioremap_resource" [drivers/dma/qcom/hdma_mgmt.ko] undefined!
+ERROR: modpost: "of_address_to_resource" [drivers/dma/qcom/hdma_mgmt.ko] undefined!
+
+make[1]: Leaving directory 'linux-next-20210315/S390'
+
+-- 
+~Randy
+
