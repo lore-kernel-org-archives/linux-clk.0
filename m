@@ -2,118 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D04C433DB
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 05:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EE2C433DB
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 06:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2A4C64F38
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 05:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA0B64F18
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Mar 2021 06:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbhCRFmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Mar 2021 01:42:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53686 "EHLO
+        id S229707AbhCRGId (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Mar 2021 02:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbhCRFmJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Mar 2021 01:42:09 -0400
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64996C06174A;
-        Wed, 17 Mar 2021 22:42:09 -0700 (PDT)
-Received: by mail-ot1-x336.google.com with SMTP id g8-20020a9d6c480000b02901b65ca2432cso4134780otq.3;
-        Wed, 17 Mar 2021 22:42:09 -0700 (PDT)
+        with ESMTP id S229664AbhCRGI2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Mar 2021 02:08:28 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20876C061762
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 23:08:28 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id lr1-20020a17090b4b81b02900ea0a3f38c1so6382900pjb.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Mar 2021 23:08:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=e5E4cv+qzO6RqNYov3uCSW6dw7gV2q0enyiUMpZ0Cjg=;
-        b=LyAApYYT3TQfh+yLVjVHE9ILKZZh3xAndVkUTbEakNpMFn9lKsw5w9XmVMhGg/1XBU
-         l0SZqx+mpRqgQia+R0sTQAiMn9Fzu+Y44k6u2WRsGjJtmbmRfqNmSXI7Cg3IeqXa7Iep
-         k9xcmerxp+WXJDzUQ8CfrtfJH7333tZXfx0mmEQKdBxL0lG5Lz1qy3PNY335ceNrsf5U
-         YIjpsqqJCH/FwpsH0conEXCANsFNO/HtbAfpUMUc2KmjvJgrNG9aG+9m8/sTHuFn4RFP
-         /7ZiqAP/rSuYYuLnN5tMrIp3Jv4OHZJw6v+TMMtgYaJpTuEyVcjiMrj2B1dxSFMNbh3X
-         uQPg==
+        d=sifive.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8GhH4cTVoL0LfJc3UZUszeYbDpRmL5TWL1BjWP50Uz4=;
+        b=mIubeFddqSR3EKaZVNy5rbrJaHNUXne4naiUVYafpvQO15fTp7eXRmAHopzbbbLyED
+         RRQdw09/QKisZ6TGKn8it60oMIU4SxpAMmsjw9CKd0BLSU6GvXJLzGeLVnJFWYLQiLQP
+         GfutHjdWILN8FfZlo9XkQiSNhHk2L/q4vVNXboDBpjTEt2cmXtlu3p3K9TiRkiLAaoWS
+         W4TAguGoxlSfhHs8xhayrBYiSvoJW8KIAvhCoEmQDxU557DOlUmNLkYWRknx6mWQV73Y
+         AYMXkgj5idW282tScN8YI0cUqykrpR0mUckheXXdUo6d9SThPgmR3RGpCrkIAzBLopRe
+         lHZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e5E4cv+qzO6RqNYov3uCSW6dw7gV2q0enyiUMpZ0Cjg=;
-        b=lvQSkx9H/hbK3D064K/U1zzTzZZu/f97e9dmGlgGD3XkhoYE0L5eXaULwiHuAUQNoB
-         q4BNZp3oP8ZJWupRs6FZ2fRCkgZtUeO7RreZRv3EKSyq7t++kcUyu8wxwkyIxc3OQ6Dm
-         cOpfybc9dsWpUzjFp3cqhw0+D9sqLLZZH7VZAzAiViXAVuTcPVFrh6PZzSpYsOFWZv7n
-         d7d6aANFq8bV4Di0xK9c3RureAhlWbTKmlA7fqLkrfs4sSPX0EReI/6vgv7/t+Zc58qn
-         euS5GOYgb8aAoDUZ5SnvvDWtTffUdfR/8Xc4WlvZJXmGbczYlrt0zeDBbNtzYuyEtXEA
-         zcSA==
-X-Gm-Message-State: AOAM532PUMLJ9/7FE99/2xILDLFKHl1fWEev0T6PD4+BwqhdKgP9DqmC
-        fnXH3pt6/RPxOkj+lVq44eUdk7Y7TxUVqmwCArA=
-X-Google-Smtp-Source: ABdhPJy2GkYXi/bDDIvaBgNq+ChA9bCJlBqUGUMTmp+/pVXcMOoHj/tpoSVgbNFMMT5RUvJ8GYHRr2F0cRWbhh8qNIA=
-X-Received: by 2002:a05:6830:408a:: with SMTP id x10mr6147308ott.248.1616046128852;
- Wed, 17 Mar 2021 22:42:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8GhH4cTVoL0LfJc3UZUszeYbDpRmL5TWL1BjWP50Uz4=;
+        b=is6/QDUJtO8b9ciRXPRrqJJFtHUuLIpahRnY9rB+x11yQHTsw4d2LAPgZrn1B47CHK
+         7fDpu12wUlr+vwrvnKHcDSthpwTQRKb/VTICR3bkQBprkV4/TqZ250ID5Uu01IHYWLzF
+         ihnGt2W/n5AcTESTsoVXC/M4eY3Z6laGbdSSDx4p9YghKPBYlhczLOydvoSHlCFQjDTU
+         MVJus01IzSNyrEwWmZjDrjtfRm8nUjANUI4zbvrelA8ZdP2DAoWou6+hAQXaLBVesnCJ
+         LdATaT9RAU+Oi1cWbjE1AxfE6QSzB6JrCBQhNPnWPVDR3dgZdDdpwtYTZJ9UTV+7XIuH
+         tmTQ==
+X-Gm-Message-State: AOAM532iCWCcT8Y50WFXIJmd2T7BzrGVJt4Ktc9IhyAboVoc8D4mYElC
+        hF7TXC/KKVfeWkrMfCeR2hFc5Q==
+X-Google-Smtp-Source: ABdhPJzeHTjGVcWo4WvxhySCrEqEcLBWg1WasA9ZJ0Y4RCv1bFsY+eYb1iAciVjVCp3+v6vNUtG1yQ==
+X-Received: by 2002:a17:902:9304:b029:e6:8d24:b5ce with SMTP id bc4-20020a1709029304b02900e68d24b5cemr7821316plb.27.1616047707395;
+        Wed, 17 Mar 2021 23:08:27 -0700 (PDT)
+Received: from hsinchu02.internal.sifive.com (114-34-229-221.HINET-IP.hinet.net. [114.34.229.221])
+        by smtp.gmail.com with ESMTPSA id 68sm967353pfd.75.2021.03.17.23.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 23:08:26 -0700 (PDT)
+From:   Greentime Hu <greentime.hu@sifive.com>
+To:     greentime.hu@sifive.com, paul.walmsley@sifive.com, hes@sifive.com,
+        erik.danie@sifive.com, zong.li@sifive.com, bhelgaas@google.com,
+        robh+dt@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
+        alex.dewar90@gmail.com, khilman@baylibre.com,
+        hayashi.kunihiko@socionext.com, vidyas@nvidia.com,
+        jh80.chung@samsung.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        helgaas@kernel.org
+Subject: [PATCH v2 0/6] Add SiFive FU740 PCIe host controller driver support
+Date:   Thu, 18 Mar 2021 14:08:07 +0800
+Message-Id: <cover.1615954045.git.greentime.hu@sifive.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <CACY_kjSRbgSWsfo+JTyQdqorQ+wcy8OqAtKSbJt6tL4t-AUciw@mail.gmail.com>
-In-Reply-To: <CACY_kjSRbgSWsfo+JTyQdqorQ+wcy8OqAtKSbJt6tL4t-AUciw@mail.gmail.com>
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date:   Thu, 18 Mar 2021 11:11:57 +0530
-Message-ID: <CAKfKVtF+9XyOXq2aLoEyMFr9ZsvHOsqPaAPu79ziUtF-VeMnWw@mail.gmail.com>
-Subject: Re: [PATCH v10 5/9] staging: clocking-wizard: Add support for dynamic reconfiguration
-To:     Zhengxun Li <zhengxunli.mxic@gmail.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        devel@driverdev.osuosl.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, git@xilinx.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, zhengxunli@mxic.com.tw,
-        Julien Su <juliensu@mxic.com.tw>, slwu@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 15, 2021 at 12:37 PM Zhengxun Li <zhengxunli.mxic@gmail.com> wr=
-ote:
->
-> Hi Shubhrajyoti,
->
-> My name is Zhengxun and I am the engineer from Macronix. We are
-> using the platform PicoZed 7015/7030 SOM (System On Module),
-> which is based on Xilinx Zynq=C2=AE-7000 All Programmable (AP) SoC to
-> verify our Flash driver. Of course, we are also using your clock
-> wizard, our version seems to be v5.2, but something went wrong.
->
-> +static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long ra=
-te,
-> + unsigned long parent_rate)
-> +{
-> + int err;
-> + u32 value;
-> + unsigned long flags =3D 0;
-> + struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
-> + void __iomem *div_addr =3D divider->base + divider->offset;
-> +
-> + if (divider->lock)
-> + spin_lock_irqsave(divider->lock, flags);
-> + else
-> + __acquire(divider->lock);
-> +
-> + value =3D DIV_ROUND_CLOSEST(parent_rate, rate);
-> +
-> + /* Cap the value to max */
-> + min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
-> +
-> + /* Set divisor and clear phase offset */
-> + writel(value, div_addr);
-> + writel(0x00, div_addr + WZRD_DR_DIV_TO_PHASE_OFFSET);
->
-> Why phase always set to zero? We want to support DTR operation in
-> Flash driver. Can you add a set_phase function to adjust the phase?
->
-The phase setting is a separate feature will address in a separate series.
+This patchset includes SiFive FU740 PCIe host controller driver. We also
+add pcie_aux clock and pcie_power_on_reset controller to prci driver for
+PCIe driver to use it.
 
->
+This is tested with e1000e: Intel(R) PRO/1000 Network Card, AMD Radeon R5
+230 graphics card and SP M.2 PCIe Gen 3 SSD in SiFive Unmatched based on
+v5.11 Linux kernel.
+
+Changes in v2:
+ - Refine codes based on reviewers' feedback
+ - Remove define and use the common one
+ - Replace __raw_writel with writel_relaxed
+ - Split fu740_phyregreadwrite to write function
+ - Use readl_poll_timeout in stead of while loop checking
+ - Use dwc common codes
+ - Use gpio descriptors and the gpiod_* api.
+ - Replace devm_ioremap_resource with devm_platform_ioremap_resource_byname
+ - Replace devm_reset_control_get with devm_reset_control_get_exclusive
+ - Add more comments for delay and sleep
+ - Remove "phy ? x : y" expressions
+ - Refine code logic to remove possible infinite loop
+ - Replace magic number with meaningful define
+ - Remove fu740_pcie_pm_ops
+ - Use builtin_platform_driver
+
+Greentime Hu (5):
+  clk: sifive: Add pcie_aux clock in prci driver for PCIe driver
+  clk: sifive: Use reset-simple in prci driver for PCIe driver
+  MAINTAINERS: Add maintainers for SiFive FU740 PCIe driver
+  dt-bindings: PCI: Add SiFive FU740 PCIe host controller
+  riscv: dts: Add PCIe support for the SiFive FU740-C000 SoC
+
+Paul Walmsley (1):
+  PCI: fu740: Add SiFive FU740 PCIe host controller driver
+
+ .../bindings/pci/sifive,fu740-pcie.yaml       | 119 +++++++
+ MAINTAINERS                                   |   8 +
+ arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  34 ++
+ drivers/clk/sifive/Kconfig                    |   2 +
+ drivers/clk/sifive/fu740-prci.c               |  11 +
+ drivers/clk/sifive/fu740-prci.h               |   2 +-
+ drivers/clk/sifive/sifive-prci.c              |  54 +++
+ drivers/clk/sifive/sifive-prci.h              |  13 +
+ drivers/pci/controller/dwc/Kconfig            |   9 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-fu740.c       | 324 ++++++++++++++++++
+ drivers/reset/Kconfig                         |   3 +-
+ include/dt-bindings/clock/sifive-fu740-prci.h |   1 +
+ 13 files changed, 579 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-fu740.c
+
+-- 
+2.30.2
+
